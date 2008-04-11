@@ -45,33 +45,29 @@ package loci.formats.meta;
 public interface MetadataRetrieve {
 
   // - Entity counting -
-#foreach ($entity in $entities)
-#if ($entity.countable())
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+#if ($q.countable())
 
-  int get$entity.name()Count($entity.indicesList(true, true, false));
+  int get${entity}Count($q.indicesList(true, true, false));
 #end###if countable
 #end##foreach $entity
 
   // - Entity retrieval -
-#foreach ($entity in $entities)
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+
+  // - $entity property retrieval -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
 
   /**
-   * Gets an object representing a particular $entity.name(), for use with certain methods of {@link MetadataStore}.
+   * For a particular $entity, gets $q.doc()
+#foreach ($index in $q.indices())
+   * @param $q.var("${index}Index") index of the $index
+#end##foreach $index
    */
-  Object get$entity.name()($entity.indicesList(true, true));
-#end##foreach $entity
-#foreach ($entity in $entities)
-
-  // - $entity.name() property retrieval -
-#foreach ($prop in $entity.props())
-
-  /**
-   * Gets $prop.desc() for a particular $entity.name() object.
-#foreach ($prop in $entity.indices())
-   * @param $prop.varName() $prop.desc()
-#end
-   */
-  $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true));
+  $q.type() get$entity$prop($q.indicesList(true, true));
 #end
 #end
 

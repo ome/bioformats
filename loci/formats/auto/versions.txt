@@ -1,5 +1,5 @@
 #
-# MetadataAutogenVersions.txt
+# versions.txt
 #
 
 # LOCI Bio-Formats package for reading and converting biological file formats.
@@ -23,7 +23,7 @@
 # Add new OME-XML schema version definitions to this file.
 
 #[200802]
-#class = OMEXML200802Metadata
+#className = OMEXML200802Metadata
 #id = OMEXML200802Metadata.java
 #basePackage = ome.xml.r200802
 #subPackage = ome
@@ -31,7 +31,7 @@
 #legacy = false
 
 [200706]
-class = OMEXML200706Metadata
+className = OMEXML200706Metadata
 id = OMEXML200706Metadata.java
 basePackage = ome.xml.r200706
 subPackage = ome
@@ -39,11 +39,9 @@ version = 2007-06
 legacy = false
 
 [2003FC]
-class = OMEXML2003FCMetadata
+className = OMEXML2003FCMetadata
 id = OMEXML2003FCMetadata.java
 basePackage = org.openmicroscopy.xml
 subPackage = st
 version = 2003-FC
 legacy = true
-
-[-]

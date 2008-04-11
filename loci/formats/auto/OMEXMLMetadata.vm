@@ -32,33 +32,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-#if ($legacy == "true")
+#if ($q.legacy())
 import $basePackage.*;
-#end##$legacy
-import $basePackage.$subPackage.*;
+#end##if legacy
+import $q.basePackage().$q.subPackage().*;
 import java.util.List;
 import loci.formats.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
- * DOMs for the $version version of OME-XML. It requires the
- * $basePackage package to compile (part of ome-java.jar).
+ * DOMs for the $q.version() version of OME-XML. It requires the
+ * $q.basePackage() package to compile (part of ome-java.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/$id">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/$id">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/$q.id()">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/$q.id()">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class $class extends OMEXMLMetadata {
+public class $q.className() extends OMEXMLMetadata {
 
   // -- OMEXMLMetadata API methods --
 
   /* @see OMEXMLMetadata#dumpXML() */
   public String dumpXML() {
     if (root == null) return null;
-#if ($legacy == "true")
+#if ($q.legacy())
     try { return ((OMENode) root).writeOME(false); }
     catch (javax.xml.transform.TransformerException exc) {
       LogTools.trace(exc);
@@ -79,24 +79,26 @@ public class $class extends OMEXMLMetadata {
       LogTools.trace(exc);
     }
     return null;
-#end##if $legacy
+#end##if legacy
   }
 
   // -- MetadataRetrieve API methods --
 
   // - Entity counting -
-#foreach ($entity in $entities)
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
 #if ($entity.countable())
-#set ($last = $entity.last($versionKey))
+#set ($last = $q.last())
 
   /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
   public int get$entity.name()Count($entity.indicesList(true, true, false)) {
-#if ($last == "-")
+    return 0;//TEMP!
+#if ($q.path() == "-")
     // NB: $entity.name() unsupported for schema version $version
     return -1;
 #else
     for (int i=0; i<Integer.MAX_VALUE; i++) {
-      if (get$entity.name()($entity.indicesList(false, true).replaceFirst("[a-zA-Z_0-9]+$", "i")) == null) return i;
+      if (get$entity($q.indicesList(false, true).replaceFirst("[a-zA-Z_0-9]+$", "i")) == null) return i;
     }
     return -1;
 #end##if "-"
@@ -105,26 +107,16 @@ public class $class extends OMEXMLMetadata {
 #end##foreach $entity
 
   // - Entity retrieval -
-#foreach ($entity in $entities)
-#set ($last = $entity.last($versionKey))
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+#set ($last = $q.last())
+#set ($lastVar = $q.var($last))
 
-  /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()($entity.indicesList(true, false)) */
-  public Object get$entity.name()($entity.indicesList(true, true)) {
-#if ($last == "-")
-    // NB: $entity.name() unsupported for schema version $version
-    return null;
-#else
-    return get${last}Node($entity.indicesList(false, true), false);
-#end##if "-"
-  }
-#end##foreach $entity
-#foreach ($entity in $entities)
-#set ($last = $entity.last($versionKey))
-#set ($lastVar = $entity.lastVar($versionKey))
-
-  // - $entity.name() property retrieval -
+  // - $entity property retrieval -
 #foreach ($prop in $entity.props())
-#set ($mappedName = $prop.mappedName($versionKey))
+#set ($dummy = $q.setProperty($prop))
+  CTR START HERE
+#set ($mappedName = $q.Name($versionKey))
 #set ($convert = $mappedName.endsWith("%"))
 #set ($mappedName = $mappedName.replaceAll("%", ""))
 #set ($mappedPrefix = $prop.mappedPrefix($versionKey))

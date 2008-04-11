@@ -49,31 +49,27 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   // -- MetadataRetrieve API methods --
 
   // - Entity counting -
-#foreach ($entity in $entities)
-#if ($entity.countable())
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+#if ($q.countable())
 
-  /* @see MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
-  public int get$entity.name()Count($entity.indicesList(true, true, false)) {
+  /* @see MetadataRetrieve#get${entity}Count($q.indicesList(true, false, false)) */
+  public int get${entity}Count($q.indicesList(true, true, false)) {
     return -1;
   }
 #end##if countable
 #end##foreach $entity
 
   // - Entity retrieval -
-#foreach ($entity in $entities)
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
 
-  /* @see MetadataRetrieve#get$entity.name()($entity.indicesList(true, false)) */
-  public Object get$entity.name()($entity.indicesList(true, true)) {
-    return null;
-  }
-#end##foreach $entity
-#foreach ($entity in $entities)
+  // - $entity property retrieval -
 
-  // - $entity.name() property retrieval -
-
-#foreach ($prop in $entity.props())
-  /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
-  public $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
+  /* @see MetadataRetrieve#get$entity$prop($q.indicesList(true, false)) */
+  public $q.type() get$entity$prop($q.indicesList(true, true)) {
     return null;
   }
 #end##foreach $prop
@@ -91,13 +87,15 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setRoot(Object root) {
   }
 
-#foreach ($entity in $entities)
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
 
-  // - $entity.name() property storage -
-#foreach ($prop in $entity.props())
+  // - $entity property storage -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
 
-  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
-  public void set$entity.name()$prop.name()($prop.type(true) $prop.varName(), $entity.indicesList(true, true)) {
+  /* @see MetadataStore#set$entity$prop($q.type(), $q.indicesList(true, false)) */
+  public void set$entity$prop($q.type() $q.var($prop), $q.indicesList(true, true)) {
   }
 #end##foreach $prop
 #end##foreach $entity

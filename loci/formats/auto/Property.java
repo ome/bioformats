@@ -27,7 +27,11 @@ package loci.formats.auto;
 import java.util.Hashtable;
 
 /**
- * CTR TODO Property javadoc.
+ * A property is an object that belongs to a particular {@link Entity}.
+ * It has a list of default attributes (key/value pairs),
+ * as well as a list of version overrides for those attributes.
+ *
+ * @see {EntityList}
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/auto/Property.java">Trac</a>,
@@ -39,91 +43,18 @@ public class Property {
 
   // -- Fields --
 
-  private String name;
-  private String type;
-  private String desc;
-  private Entity entity;
-  private String prefix;
-  private String varName;
+  /** The property's attributes. */
+  protected Hashtable<String, String> attrs;
 
-  private Hashtable nameMap;
+  /** The property's version overrides. */
+  protected Hashtable<String, Hashtable<String, String>> versions =
+    new Hashtable<String, Hashtable<String, String>>();
 
   // -- Constructor --
 
-  public Property(String name, String type, String desc,
-    Entity entity, boolean index)
-  {
-    this.name = name;
-    this.type = type;
-    this.desc = desc;
-    this.entity = entity;
-    if (!index) entity.addProperty(this);
-
-    nameMap = new Hashtable();
-
-    // strip off any lower case prefix
-    int prefixIndex = getPrefixIndex(name);
-    if (prefixIndex > 0) {
-      prefix = name.substring(0, prefixIndex);
-      name = name.substring(prefixIndex);
-    }
-    else prefix = "get";
-
-    varName = entity.toVarName(name);
-  }
-
-  // -- Property API methods --
-
-  public String name() { return name; }
-
-  public String mappedName(String version) {
-    String mapped = (String) nameMap.get(version);
-    if (mapped == null) return name;
-    // strip off any lower case prefix
-    int prefixIndex = getPrefixIndex(mapped);
-    return mapped.substring(prefixIndex);
-  }
-
-  public String desc() { return desc; }
-
-  public String type() { return type(false); }
-
-  public String type(boolean safe) {
-    return safe && isNode() ? "Object" : type;
-  }
-
-  public String prefix() { return prefix; }
-
-  public String mappedPrefix(String version) {
-    String mapped = (String) nameMap.get(version);
-    if (mapped == null) return prefix;
-    int prefixIndex = getPrefixIndex(mapped);
-    return prefixIndex > 0 ? mapped.substring(0, prefixIndex) : "get";
-  }
-
-  public String varName() { return varName; }
-
-  public String varName(boolean safe) {
-    return safe && isNode() ? "(" + type + ") " + varName : varName;
-  }
-
-  public boolean isNode() { return type.endsWith("Node"); }
-
-  public void addMappedName(String version, String name) {
-    nameMap.put(version, name);
-  }
-
-  // -- Object API methods --
-
-  public String toString() { return name; }
-
-  // -- Helper methods --
-
-  protected int getPrefixIndex(String s) {
-    char[] c = s.toCharArray();
-    int i = 0;
-    while (i < c.length && c[i] >= 'a' && c[i] <= 'z') i++;
-    return i;
+  /** Creates a new property with the given attributes. */
+  public Property(Hashtable<String, String> attrs) {
+    this.attrs = attrs;
   }
 
 }

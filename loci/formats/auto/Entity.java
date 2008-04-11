@@ -24,10 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.auto;
 
-import java.util.*;
+import java.util.Hashtable;
 
 /**
- * CTR TODO Entity javadoc.
+ * An entity is an object that contains a bundle of {@link Property} objects.
+ * It has a list of default attributes (key/value pairs),
+ * as well as a list of version overrides for those attributes.
+ *
+ * @see {EntityList}
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/auto/Entity.java">Trac</a>,
@@ -35,163 +39,26 @@ import java.util.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class Entity implements Comparable {
+public class Entity {
 
   // -- Fields --
 
-  /** Whether a count method should be created for the entity. */
-  private boolean countable;
+  /** The entity's attributes. */
+  protected Hashtable<String, String> attrs;
 
-  /** Name of the entity. */
-  private String name;
+  /** The entity's properties. */
+  protected Hashtable<String, Property> props =
+    new Hashtable<String, Property>();
 
-  /** Sentence fragment description of the entity. */
-  private String desc;
-
-  /** Extra sentences to tack on to the Javadoc description. */
-  private String extra;
-
-  /**
-   * List of node paths for the entity.
-   * Keys are version strings, values are path strings.
-   */
-  private Hashtable paths = new Hashtable();
-
-  /** List of properties associated with the entity. */
-  private Vector props = new Vector();
-
-  /** List of properties corresponding to needed indices for a node. */
-  private Vector indices = new Vector();
+  /** The entity's version overrides. */
+  protected Hashtable<String, Hashtable<String, String>> versions =
+    new Hashtable<String, Hashtable<String, String>>();
 
   // -- Constructor --
 
-  public Entity(String name, String desc, String extra) {
-    countable = name.endsWith("+");
-    if (countable) name = name.substring(0, name.length() - 1);
-    this.name = name;
-    this.desc = desc;
-    this.extra = extra;
-  }
-
-  // -- Entity API methods --
-
-  public boolean countable() { return countable; }
-
-  public String name() { return name; }
-
-  /** Javadoc for this entity's MetadataStore setter methods. */
-  public String doc() {
-    StringBuffer sb = new StringBuffer();
-    sb.append(desc);
-    sb.append(".");
-    if (!"-".equals(extra)) {
-      sb.append(" ");
-      sb.append(extra);
-    }
-    return sb.toString();
-  }
-
-  public Hashtable paths() { return paths; }
-
-  public String path(String version) {
-    String s = (String) paths.get(version);
-    return s == null ? (String) paths.get("Default") : s;
-  }
-
-  public String[] pathNodes(String version) {
-    return path(version).split("\\/");
-  }
-
-  public String last(String version) {
-    String path = path(version);
-    int first = path.lastIndexOf("/") + 1;
-    return path.substring(first).replaceAll("[@\\!\\+]", "");
-  }
-
-  public String lastVar(String version) {
-    return toVarName(last(version));
-  }
-
-  public Vector props() { return props; }
-
-  public Vector indices() { return indices; }
-
-  public String indicesList(boolean doTypes, boolean doVars) {
-    return indicesList(doTypes, doVars, true);
-  }
-
-  public String indicesList(boolean doTypes, boolean doVars, boolean doLast) {
-    StringBuffer sb = new StringBuffer();
-    int size = indices.size();
-    if (!doLast) size--;
-    for (int i=0; i<size; i++) {
-      Property p = (Property) indices.get(i);
-      if (i > 0) sb.append(", ");
-      if (doTypes) sb.append(p.type(true));
-      if (doTypes && doVars) sb.append(" ");
-      if (doVars) sb.append(p.varName());
-    }
-    return sb.toString();
-  }
-
-  /** Adds a path override for a particular metadata version. */
-  public void addPath(String version, String path) {
-    paths.put(version, path);
-    if (version.equals("Default")) {
-      // compute indices
-      StringTokenizer st = new StringTokenizer(path, "/");
-      int tokens = st.countTokens();
-      for (int i=0; i<tokens; i++) {
-        String t = st.nextToken();
-        if (t.endsWith("+")) {
-          t = t.substring(t.startsWith("@") ? 1 : 0, t.length() - 1);
-          Property p = new Property(t + "Index",
-            "int", "index of the " + t, this, true);
-          indices.add(p);
-        }
-      }
-    }
-  }
-
-  /** Converts name in CamelCase to variable in variableCase. */
-  public String toVarName(String s) {
-    // NB: This method could be static, but is an instance method
-    // to make it easier for Velocity templates to reference it.
-    char[] c = s.toCharArray();
-    for (int i=0; i<c.length; i++) {
-      if (c[i] >= 'A' && c[i] <= 'Z') c[i] += 'a' - 'A';
-      else {
-        if (i > 1) c[i - 1] += 'A' - 'a'; // keep last character capitalized
-        break;
-      }
-    }
-    return new String(c).replaceAll("[@!+%]", "");
-  }
-
-  // -- Internal Entity API methods --
-
-  /** Adds a property associated with this entity. */
-  protected void addProperty(Property prop) {
-    props.add(prop);
-  }
-
-  // -- Comparable API methods --
-
-  /** Enables sorting by indices. */
-  public int compareTo(Object o) {
-    Entity e = (Entity) o;
-    int isize = indices.size();
-    int jsize = e.indices.size();
-    int minSize = isize < jsize ? isize : jsize;
-    for (int i=0; i<minSize; i++) {
-      Property pi = (Property) indices.get(i);
-      Property pj = (Property) e.indices.get(i);
-      int rval = pi.name().compareTo(pj.name());
-      if (rval != 0) return rval;
-    }
-    if (isize < jsize) return -1;
-    if (jsize < isize) return 1;
-    return 0;
+  /** Creates a new entity with the given attributes. */
+  public Entity(Hashtable<String, String> attrs) {
+    this.attrs = attrs;
   }
 
 }

@@ -1,0 +1,1179 @@
+#
+# entities.txt
+#
+
+# LOCI Bio-Formats package for reading and converting biological file formats.
+# Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+# Eric Kjellman and Brian Loranger.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# This file enumerates the metadata entity and property definitions for the
+# loci.formats.meta package, and loci.formats.ome.OMEXML*Metadata classes.
+
+# Path key and syntax notes:
+#
+# 1) Path elements ending in plus (+) have maxOccurs > 1 and generate an
+#    index parameter to allow differentiation between them.
+#
+# 2) Path elements beginning with at (@) are not direct children of the
+#    previous element, but instead reference the parent via an ID reference.
+#
+# 3) Path elements beginning with at-bang (@!) also use a parent reference but
+#    the API is slightly different -- e.g., for a LightSource accessing a
+#    child Laser, the method is lightSource.getLaserListByLightSource()
+#    rather than lightSource.getLaserList().
+
+### Entities for 5D Image information ###
+
+## Image ##
+
+[Image]
+countable = true
+path = Image+
+description = an image in the metadata store
+
+[Image ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Image Name]
+type = String
+description = the full name of the image
+
+[Image CreationDate]
+type = String
+description = the creation date of the image
+
+[Image CreationDate 2003FC]
+getter = getCreated
+setter = setCreated
+
+[Image Description]
+type = String
+description = the full description of the image
+
+## Pixels ##
+
+[Pixels]
+countable = true
+path = Image+/Pixels+
+description = A pixels set in the metadata store.
+
+[Pixels 2003FC]
+path = Image+/CA/Pixels+
+
+[Pixels ID]
+type = String
+getter = getNodeID
+setter = getNodeID
+description = TODO
+
+[Pixels SizeX]
+type = Integer
+description = The size of an individual plane or section's X axis (width).
+
+[Pixels SizeY]
+type = Integer
+description = The size of an individual plane or section's Y axis (height).
+
+[Pixels SizeZ]
+type = Integer
+description = number of optical sections per stack
+
+[Pixels SizeC]
+type = Integer
+description = number of channels per timepoint
+
+[Pixels SizeT]
+type = Integer
+description = number of timepoints
+
+[Pixels PixelType]
+type = String
+description = the pixel type
+
+[Pixels BigEndian]
+type = Boolean
+description = endianness of the pixels set
+
+[Pixels BigEndian 2003FC]
+getter = isBigEndian
+
+[Pixels DimensionOrder]
+type = String
+description = the dimension order of the pixels set
+
+## Dimensions ##
+
+[Dimensions]
+path = Image+/Pixels+
+description = a set of pixel dimensions in the metadata store \
+              with a particular index
+#notes = Unless both values are non-null, the MetadataStore should assume \
+#        physicalSizeX equals physicalSizeY (i.e., should populate the null \
+#        field with the other field's value).
+# TODO Does Bio-Formats still rely on the above requirement?
+
+[Dimensions 2003FC]
+path = Image+/CA/Dimensions
+
+[Dimensions PhysicalSizeX]
+type = Float
+description = the size of an individual pixel's X axis in microns
+
+[Dimensions PhysicalSizeX 2003FC]
+getter = getPixelSizeX
+setter = setPixelSizeX
+
+[Dimensions PhysicalSizeY]
+type = Float
+description = the size of an individual pixel's Y axis in microns
+
+[Dimensions PhysicalSizeY 2003FC]
+getter = getPixelSizeY
+setter = setPixelSizeY
+
+[Dimensions PhysicalSizeZ]
+type = Float
+description = the size of an individual pixel's Z axis in microns
+
+[Dimensions PhysicalSizeZ 2003FC]
+getter = getPixelSizeZ
+setter = setPixelSizeZ
+
+[Dimensions TimeIncrement]
+type = Float
+description = the distance between adjacent time points in seconds
+
+[Dimensions TimeIncrement 2003FC]
+getter = getPixelSizeT
+setter = setPixelSizeT
+
+[Dimensions WaveStart]
+type = Integer
+description = the starting wavelength in nanometers
+
+[Dimensions WaveStart 2003FC]
+path = -
+
+[Dimensions WaveIncrement]
+type = Integer
+description = the distance between adjacent wavelengths in nanometers
+
+[Dimensions WaveIncrement 2003FC]
+type = Float
+getter = getPixelSizeC
+setter = setPixelSizeC
+
+## ImagingEnvironment ##
+
+[ImagingEnvironment]
+path = Image+/ImagingEnvironment
+description = the imaging environment for a particular image
+
+[ImagingEnvironment 2003FC]
+path = Image+/CA/ImagingEnvironment
+
+[ImagingEnvironment Temperature]
+type = Float
+description = TODO
+
+[ImagingEnvironment AirPressure]
+type = Float
+description = TODO
+
+[ImagingEnvironment Humidity]
+type = Float
+description = TODO
+
+[ImagingEnvironment CO2Percent]
+type = Float
+description = TODO
+
+## Plane ##
+
+[Plane]
+countable = true
+path = Image+/Pixels+/Plane+
+description = the plane information for a specific X-Y plane (section) \
+              within a particular pixels set
+
+[Plane 2003FC]
+path = -
+
+[Plane TheZ]
+type = Integer
+description = the optical section index
+
+[Plane TheC]
+type = Integer
+description = the channel index
+
+[Plane TheT]
+type = Integer
+description = the timepoint
+
+## PlaneTiming ##
+
+[PlaneTiming]
+path = Image+/Pixels+/Plane+/PlaneTiming
+description = the timing information for a specific X-Y plane (section) \
+              within a particular pixels set
+
+[PlaneTiming 2003FC]
+path = -
+
+[PlaneTiming DeltaT]
+type = Float
+description = the time in seconds since the beginning of the experiment
+
+[PlaneTiming ExposureTime]
+type = Float
+description = the exposure time in seconds
+
+## StagePosition ##
+
+[StagePosition]
+path = Image+/Pixels+/Plane+/StagePosition
+description = the stage position for a specific X-Y plane (section) \
+              within a particular pixels set
+
+[StagePosition 2003FC]
+path = -
+
+[StagePosition PositionX]
+type = Float
+description = the X coordinate of the stage position
+
+[StagePosition PositionY]
+type = Float
+description = the Y coordinate of the stage position
+
+[StagePosition PositionZ]
+type = Float
+description = the Z coordinate of the stage position
+
+### Entities for channel information for a particular Image ###
+
+## LogicalChannel ##
+
+[LogicalChannel]
+countable = true
+path = Image+/LogicalChannel+
+description = a logical channel and physical channel in the metadata store \
+              for a particular pixels set
+
+[LogicalChannel 2003FC]
+path = Image+/CA/LogicalChannel+
+
+[LogicalChannel ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[LogicalChannel Name]
+type = String
+description = the logical channel's name
+
+[LogicalChannel SamplesPerPixel]
+type = Integer
+description = TODO
+
+[LogicalChannel IlluminationType]
+type = String
+description = the illumination type
+
+[LogicalChannel PinholeSize]
+type = Integer
+description = the size of the pinhole
+
+[LogicalChannel PhotometricInterpretation]
+type = String
+description = the photometric interpretation type
+
+[LogicalChannel Mode]
+type = String
+description = the acquisition mode
+
+[LogicalChannel ContrastMethod]
+type = String
+description = the constrast method name
+
+[LogicalChannel ExWave]
+type = Integer
+description = the excitation wavelength
+
+[LogicalChannel ExWave 2003FC]
+getter = getExcitationWavelength
+setter = setExcitationWavelength
+
+[LogicalChannel EmWave]
+type = Integer
+description = the emission wavelength
+
+[LogicalChannel EmWave 2003FC]
+getter = getEmissionWavelength
+setter = setEmissionWavelength
+
+[LogicalChannel Fluor]
+type = String
+description = the fluorescence type
+
+[LogicalChannel NdFilter]
+type = Float
+description = the neutral-density filter value
+
+[LogicalChannel NdFilter 2003FC]
+getter = getNDFilter
+setter = setNDFilter
+
+[LogicalChannel PockelCellSetting]
+type = Integer
+description = TODO
+
+[LogicalChannel PockelCellSetting 2003FC]
+path = -
+
+## ChannelComponent ##
+
+[ChannelComponent]
+countable = true
+path = Image+/LogicalChannel+/ChannelComponent+
+description = a channel component describes how each channel \
+              in the pixel array relates to the logical channels
+
+[ChannelComponent 2003FC]
+path = Image+/CA/LogicalChannel+/@PixelChannelComponent+
+
+[ChannelComponent Index]
+type = Integer
+description = the index into the channel dimension of the 5-D pixel array
+
+[ChannelComponent ColorDomain]
+type = String
+description = which color channel this ChannelComponent belongs to \
+              (for example, 'R' for an 'RGB' PhotometricInterpretation)
+
+# FIXME xsd-fu needs to include get/setPixels methods in ChannelComponentNode?
+#[ChannelComponent Pixels]
+#type = String
+#description = the pixels to which this channel component corresponds
+
+## DisplayOptions ##
+
+[DisplayOptions]
+path = Image+/DisplayOptions
+description = various display options for a particular pixels set
+
+[DisplayOptions 2003FC]
+path = Image+/CA/DisplayOptions
+
+[DisplayOptions ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+# FIXME xsd-fu needs to include get/setPixels methods in DisplayOptionsNode
+#[DisplayOptions Pixels]
+#type = String
+#description = the pixels to which these display options correspond
+
+[DisplayOptions Zoom]
+type = Float
+description = zoom factor for use in the display (NOT THE LENS ZOOM)
+
+## RedChannel ##
+
+# FIXME xsd-fu needs to include RedChannelNode (extension of ChannelSpecNode)
+#[RedChannel]
+#path = Image+/DisplayOptions/RedChannel
+#description = information about the red channel for a particular image
+#
+# FIXME the 2003FC path below will cause compilation errors because RedChannel
+# is not of type RedChannelNode, but DisplayChannelNode; need a notation to
+# specify the distinction between node type and method getter name
+#[RedChannel 2003FC]
+#path = Image+/CA/DisplayOptions/RedChannel
+#
+#[RedChannel ChannelNumber]
+#type = Integer
+#description = TODO
+#
+#[RedChannel WhiteLevel]
+#type = Float
+#description = TODO
+#
+#[RedChannel BlackLevel]
+#type = Float
+#description = TODO
+#
+#[RedChannel Gamma]
+#type = Float
+#description = TODO
+
+## RedChannelToggle ##
+
+# FIXME xsd-fu needs to include RedChannelNode (extension of ChannelSpecNode)
+#[RedChannelToggle]
+#description = visibility toggle for a particular image's red channel
+#path = Image+/DisplayOptions/RedChannel
+#
+#[RedChannelToggle 2003FC]
+#path = Image+/CA/DisplayOptions
+#
+#[RedChannelToggle Enabled]
+#type = Boolean
+#getter = getisOn
+#setter = setisOn
+#description = indicator for whether red channel is active in the display
+#
+#[RedChannelToggle Enabled 2003FC
+#getter = isRedChannelOn
+#setter = setRedChannelOn
+
+## GreenChannel ##
+
+# FIXME xsd-fu needs to include GreenChannelNode (extension of ChannelSpecNode)
+#[GreenChannel]
+#path = Image+/DisplayOptions/GreenChannel
+#description = information about the green channel for a particular image
+#
+# FIXME the 2003FC path below will cause compilation errors because GreenChannel
+# is not of type GreenChannelNode, but DisplayChannelNode; need a notation to
+# specify the distinction between node type and method getter name
+#[GreenChannel 2003FC]
+#path = Image+/CA/DisplayOptions/GreenChannel
+#
+#[GreenChannel ChannelNumber]
+#type = Integer
+#description = TODO
+#
+#[GreenChannel WhiteLevel]
+#type = Float
+#description = TODO
+#
+#[GreenChannel BlackLevel]
+#type = Float
+#description = TODO
+#
+#[GreenChannel Gamma]
+#type = Float
+#description = TODO
+
+## GreenChannelToggle ##
+
+# FIXME xsd-fu needs to include GreenChannelNode (extension of ChannelSpecNode)
+#[GreenChannelToggle]
+#description = visibility toggle for a particular image's green channel
+#path = Image+/DisplayOptions/GreenChannel
+#
+#[GreenChannelToggle 2003FC]
+#path = Image+/CA/DisplayOptions
+#
+#[GreenChannelToggle Enabled]
+#type = Boolean
+#getter = getisOn
+#setter = setisOn
+#description = indicator for whether Green channel is active in the display
+#
+#[GreenChannelToggle Enabled 2003FC
+#getter = isGreenChannelOn
+#setter = setGreenChannelOn
+
+## BlueChannel ##
+
+# FIXME xsd-fu needs to include BlueChannelNode (extension of ChannelSpecNode)
+#[BlueChannel]
+#path = Image+/DisplayOptions/BlueChannel
+#description = information about the blue channel for a particular image
+#
+# FIXME the 2003FC path below will cause compilation errors because BlueChannel
+# is not of type BlueChannelNode, but DisplayChannelNode; need a notation to
+# specify the distinction between node type and method getter name
+#[BlueChannel 2003FC]
+#path = Image+/CA/DisplayOptions/BlueChannel
+#
+#[BlueChannel ChannelNumber]
+#type = Integer
+#description = TODO
+#
+#[BlueChannel WhiteLevel]
+#type = Float
+#description = TODO
+#
+#[BlueChannel BlackLevel]
+#type = Float
+#description = TODO
+#
+#[BlueChannel Gamma]
+#type = Float
+#description = TODO
+
+## BlueChannelToggle ##
+
+# FIXME xsd-fu needs to include BlueChannelNode (extension of ChannelSpecNode)
+#[BlueChannelToggle]
+#description = visibility toggle for a particular image's blue channel
+#path = Image+/DisplayOptions/BlueChannel
+#
+#[BlueChannelToggle 2003FC]
+#path = Image+/CA/DisplayOptions
+#
+#[BlueChannelToggle Enabled]
+#type = Boolean
+#getter = getisOn
+#setter = setisOn
+#description = indicator for whether red channel is active in the display
+#
+#[BlueChannelToggle Enabled 2003FC
+#getter = isBlueChannelOn
+#setter = setBlueChannelOn
+
+## GreyChannel ##
+
+# FIXME xsd-fu needs to include GreyChannelNode
+#[GreyChannel]
+#path = Image+/DisplayOptions/GreyChannel
+#description = information about the grey channel for a particular image
+#
+# FIXME the 2003FC path below will cause compilation errors because
+# GreyChannel is not of type GreyChannelNode, but DisplayChannelNode; need a
+# notation to specify the distinction between node type and method getter name
+#[GreyChannel 2003FC]
+#path = Image+/CA/DisplayOptions/GreyChannel
+#
+#[GreyChannel ChannelNumber]
+#type = Integer
+#description = TODO
+#
+#[GreyChannel WhiteLevel]
+#type = Float
+#description = TODO
+#
+#[GreyChannel BlackLevel]
+#type = Float
+#description = TODO
+#
+#[GreyChannel Gamma]
+#type = Float
+#description = TODO
+
+## GreyChannelMap ##
+
+# FIXME xsd-fu needs to include GreyChannelNode
+#[GreyChannelMap]
+#path = Image+/DisplayOptions/GreyChannel
+#description = color map setting for a particular image's grey channel
+#
+#[GreyChannelMap 2003FC]
+#path = Image+/CA/DisplayOptions
+#
+#[GreyChannelMap ColorMap]
+#type = String
+#description = TODO
+#
+# FIXME need to implement this conversion method in OMEXMLNode
+#[GreyChannelMap ColorMap 2003FC]
+#type = Boolean
+#getter = isDisplayRGB
+#setter = setDisplayRGB
+
+## DisplayOptionsProjection ##
+
+[DisplayOptionsProjection]
+path = Image+/DisplayOptions/Projection
+description = maximum intensity projection-related display options \
+              for a particular image
+
+[DisplayOptionsProjection 2003FC]
+path = Image+/CA/DisplayOptions
+
+[DisplayOptionsProjection ZStart]
+type = Integer
+description = the first focal plane to include \
+              in the maximum intensity projection
+
+[DisplayOptionsProjection ZStop]
+type = Integer
+description = the last focal plane to include \
+              in the maximum intensity projection
+
+## DisplayOptionsTime ##
+
+[DisplayOptionsTime]
+path = Image+/DisplayOptions/Time
+description = time range-related display options for a particular image
+
+[DisplayOptionsTime 2003FC]
+path = Image+/CA/DisplayOptions
+
+[DisplayOptionsTime TStart]
+type = Integer
+description = the first time point to include in the animation
+
+[DisplayOptionsTime TStop]
+type = Integer
+description = the last time point to include in the animation
+
+## ROI ##
+
+[ROI]
+countable = true
+path = Image+/DisplayOptions/ROI+
+description = a 5D bounding box region of interest in the metadata store \
+              with a particular index
+
+[ROI 2003FC]
+path = Image+/CA/DisplayOptions/@DisplayROI+
+
+[ROI ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[ROI X0]
+type = Integer
+description = the starting X coordinate
+
+[ROI Y0]
+type = Integer
+description = the starting Y coordinate
+
+[ROI X1]
+type = Integer
+description = the ending X coordinate
+
+[ROI Y1]
+type = Integer
+description = the ending Y coordinate
+
+[ROI Z0]
+type = Integer
+description = the starting Z coordinate
+
+[ROI Z1]
+type = Integer
+description = the ending Z coordinate
+
+[ROI T0]
+type = Integer
+description = the starting timepoint
+
+[ROI T1]
+type = Integer
+description = the ending timepoint
+
+### Entities for Instrument settings for a particular Image ###
+
+## DetectorSettings ##
+
+[DetectorSettings]
+path = Image+/LogicalChannel+/DetectorRef
+description = the detector associated with a particular logical channel
+
+[DetectorSettings 2003FC]
+path = Image+/CA/LogicalChannel+
+
+[DetectorSettings Detector]
+type = String
+# TODO
+description = the detector associated with this channel
+
+[DetectorSettings Offset]
+type = Float
+description = the detector offset
+
+[DetectorSettings Offset 2003FC]
+getter = getDetectorOffset
+setter = setDetectorOffset
+
+[DetectorSettings Gain]
+type = Float
+description = the detector gain
+
+[DetectorSettings Gain 2003FC]
+getter = getDetectorGain
+setter = setDetectorGain
+
+## LightSourceSettings ##
+
+[LightSourceSettings]
+path = Image+/LogicalChannel+/LightSourceRef
+description = the light source associated with a particular logical channel
+
+[LightSourceSettings 2003FC]
+path = Image+/CA/LogicalChannel+
+
+[LightSourceSettings LightSource]
+type = String
+# TODO
+description = the primary light source
+
+[LightSourceSettings Attenuation]
+type = Float
+description = the primary light source attenuation
+
+[LightSourceSettings Attenuation 2003FC]
+getter = getLightAttenuation
+setter = setLightAttenuation
+
+[LightSourceSettings Wavelength]
+type = Integer
+description = the primary light source wavelength
+
+[LightSourceSettings Wavelength 2003FC]
+getter = getLightWavelength
+setter = setLightWavelength
+
+### Entities for other Image-specific information ###
+
+## StageLabel ##
+
+[StageLabel]
+path = Image+/StageLabel
+description = a stage label in the metadata store with a particular index
+
+[StageLabel 2003FC]
+path = Image+/CA/StageLabel
+
+[StageLabel Name]
+type = String
+description = a name for the stage label
+
+[StageLabel X]
+type = Float
+description = the x coordinate of the stage
+
+[StageLabel Y]
+type = Float
+description = the y coordinate of the stage
+
+[StageLabel Z]
+type = Float
+description = the z coordinate of the stage
+
+### Entities for Instrument hardware -- these DO NOT vary by Image ###
+
+## Instrument ##
+
+[Instrument]
+countable = true
+path = Instrument+
+description = an instrument in the metadata store with a particular index
+
+[Instrument 2003FC]
+path = CA/Instrument+
+
+[Instrument ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+## LightSource ##
+
+[LightSource]
+countable = true
+path = Instrument+/LightSource+
+description = a light source for a particular instrument
+
+[LightSource 2003FC]
+path = CA/Instrument+/@LightSource+
+
+[LightSource ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[LightSource Manufacturer]
+type = String
+description = TODO
+
+[LightSource Model]
+type = String
+description = TODO
+
+[LightSource SerialNumber]
+type = String
+description = TODO
+
+## Laser ##
+
+[Laser]
+path = Instrument+/LightSource+/Laser
+description = a laser for a particular instrument
+
+[Laser 2003FC]
+path = CA/Instrument+/@LightSource+/@!Laser
+
+[Laser Type]
+type = String
+description = TODO
+
+[Laser LaserMedium]
+type = String
+description = TODO
+
+[Laser LaserMedium 2003FC]
+getter = getMedium
+setter = setMedium
+
+[Laser Wavelength]
+type = Integer
+description = TODO
+
+[Laser FrequencyMultiplication]
+type = Integer
+description = TODO
+
+[Laser FrequencyMultiplication 2003FC]
+type = Boolean
+getter = isFrequencyDoubled
+setter = setFrequencyDoubled
+
+[Laser Tuneable]
+type = Boolean
+description = TODO
+
+[Laser Tuneable 2003FC]
+getter = isTunable
+setter = setTunable
+
+[Laser Pulse]
+type = String
+description = TODO
+
+## Filament ##
+
+[Filament]
+path = Instrument+/LightSource+/Filament
+description = a filament for a particular instrument
+
+[Filament 2003FC]
+path = CA/Instrument+/@LightSource+/@Filament
+
+[Filament Type]
+type = String
+description = TODO
+
+[Filament Power]
+type = Float
+description = TODO
+
+## Arc ##
+
+[Arc]
+path = Instrument+/LightSource+/Arc
+description = an arc for a particular instrument
+
+[Arc 2003FC]
+path = CA/Instrument+/@LightSource+/@Arc
+
+[Arc Type]
+type = String
+description = TODO
+
+[Arc Power]
+type = Float
+description = TODO
+
+## Detector ##
+
+[Detector]
+countable = true
+path = Instrument+/Detector+
+description = a detector for a particular instrument
+
+[Detector 2003FC]
+path = CA/Instrument+/@Detector+
+
+[Detector ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Detector Manufacturer]
+type = String
+description = TODO
+
+[Detector Model]
+type = String
+description = TODO
+
+[Detector SerialNumber]
+type = String
+description = TODO
+
+[Detector Type]
+type = String
+description = TODO
+
+[Detector Gain]
+type = Float
+description = TODO
+
+[Detector Voltage]
+type = Float
+description = TODO
+
+[Detector Offset]
+type = Float
+description = TODO
+
+## Objective ##
+
+[Objective]
+countable = true
+path = Instrument+/Objective+
+description = an objective for a particular instrument
+
+[Objective 2003FC]
+path = CA/Instrument+/@Objective+
+
+[Objective ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Objective Manufacturer]
+type = String
+description = TODO
+
+[Objective Model]
+type = String
+description = TODO
+
+[Objective SerialNumber]
+type = String
+description = TODO
+
+[Objective Correction]
+type = String
+description = TODO
+
+[Objective Correction 2003FC]
+path = -
+
+[Objective Immersion]
+type = String
+description = TODO
+
+[Objective Immersion 2003FC]
+path = -
+
+[Objective LensNA]
+type = Float
+description = TODO
+
+[Objective NominalMagnification]
+type = Integer
+description = TODO
+
+[Objective NominalMagnification 2003FC]
+path = -
+
+[Objective CalibratedMagnification]
+type = Float
+description = TODO
+
+[Objective CalibratedMagnification 2003FC]
+getter = getMagnification
+setter = setMagnification
+
+[Objective WorkingDistance]
+type = Float
+description = TODO
+
+[Objective WorkingDistance 2003FC]
+path = -
+
+#TODO figure out how to reconcile the two filter models
+
+#http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd
+#http://ome-xml.org/wiki/FilterAndFilterSet
+
+#http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd
+#http://openmicroscopy.org/api/xml/OME/ome-instrument.html
+
+## ExcitationFilter ##
+
+#[ExcitationFilter]
+#path = ?
+#description = an excitation filter for a particular instrument
+#
+#[ExcitationFilter 2003FC]
+#path = CA/ExcitationFilter+
+#
+#[ExcitationFilter Manufacturer]
+#type = String
+#description = TODO
+#
+#[ExcitationFilter Model]
+#type = String
+#description = TODO
+#
+#[ExcitationFilter LotNumber]
+#type = String
+#description = TODO
+#
+#[ExcitationFilter Type]
+#type = String
+#description = TODO
+
+## Dichroic ##
+
+#[Dichroic]
+#path = ?
+#description = a dichroic for a particular instrument
+#
+#[Dichroic 2003FC]
+#path = CA/Dichroic+
+#
+#[Dichroic Manufacturer]
+#type = String
+#description = TODO
+#
+#[Dichroic Model]
+#type = String
+#description = TODO
+#
+#[Dichroic LotNumber]
+#type = String
+#description = TODO
+
+## EmissionFilter ##
+
+#[EmissionFilter]
+#path = ?
+#description = an emission filter for a particular instrument
+#
+#[EmissionFilter 2003FC]
+#path = CA/EmissionFilter+
+#
+#[EmissionFilter Manufacturer]
+#type = String
+#description = TODO
+#
+#[EmissionFilter Model]
+#type = String
+#description = TODO
+#
+#[EmissionFilter LotNumber]
+#type = String
+#description = TODO
+#
+#[EmissionFilter Type]
+#type = String
+#description = TODO
+
+## FilterSet ##
+
+#[FilterSet]
+#path = ?
+#description = a filter set for a particular instrument
+#
+#[FilterSet 2003FC]
+#path = CA/FilterSet+
+#
+#[FilterSet Manufacturer]
+#type = String
+#description = TODO
+#
+#[FilterSet Model]
+#type = String
+#description = TODO
+#
+#[FilterSet LotNumber]
+#type = String
+#description = TODO
+
+## OTF ##
+
+[OTF]
+countable = true
+path = Instrument+/OTF+
+description = an optical transfer function for a particular instrument
+
+[OTF 2003FC]
+path = CA/Instrument+/@OTF+
+
+[OTF ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[OTF SizeX]
+type = Integer
+description = TODO
+
+[OTF SizeY]
+type = Integer
+description = TODO
+
+[OTF PixelType]
+type = String
+description = TODO
+
+[OTF OpticalAxisAveraged]
+type = Boolean
+description = TODO
+
+[OTF OpticalAxisAveraged 2003FC]
+getter = isOpticalAxisAverage
+setter = setOpticalAxisAverage
+
+### Entities for Experimenter details ###
+
+## Experimenter ##
+
+[Experimenter]
+countable = true
+path = Experimenter+
+description = an experimenter in the metadata store with a particular index
+
+[Experimenter 2003FC]
+path = CA/Experimenter+
+
+[Experimenter ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Experimenter FirstName]
+type = String
+description = the first name of the experimenter
+
+[Experimenter LastName]
+type = String
+description = the last name of the experimenter
+
+[Experimenter Email]
+type = String
+description = the e-mail address of the experimenter
+
+[Experimenter Institution]
+type = String
+description = the institution to which the experimenter belongs

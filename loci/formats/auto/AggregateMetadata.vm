@@ -93,16 +93,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   // -- MetadataRetrieve API methods --
 
   // - Entity counting -
-#foreach ($entity in $entities)
-#if ($entity.countable())
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+#if ($q.countable())
 
-  /* @see MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
-  public int get$entity.name()Count($entity.indicesList(true, true, false)) {
+  /* @see MetadataRetrieve#get${entity}Count($q.indicesList(true, false, false)) */
+  public int get${entity}Count($q.indicesList(true, true, false)) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result = retrieve.get$entity.name()Count($entity.indicesList(false, true, false));
+        int result = retrieve.get${entity}Count($q.indicesList(false, true, false));
         if (result >= 0) return result;
       }
     }
@@ -112,33 +113,20 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 #end##foreach $entity
 
   // - Entity retrieval -
-#foreach ($entity in $entities)
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
 
-  /* @see MetadataRetrieve#get$entity.name()($entity.indicesList(true, false)) */
-  public Object get$entity.name()($entity.indicesList(true, true)) {
+  // - $entity property retrieval -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
+
+  /* @see MetadataRetrieve#get$entity$prop($q.indicesList(true, false)) */
+  public $q.type() get$entity$prop($q.indicesList(true, true)) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Object result = retrieve.get$entity.name()($entity.indicesList(false, true));
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-#end##foreach $entity
-#foreach ($entity in $entities)
-
-  // - $entity.name() property retrieval -
-#foreach ($prop in $entity.props())
-
-  /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
-  public $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true)) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        $prop.type(true) result = retrieve.get$entity.name()$prop.name()($entity.indicesList(false, true));
+        $q.type() result = retrieve.get$entity$prop($q.indicesList(false, true));
         if (result != null) return result;
       }
     }
@@ -176,18 +164,20 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     throw new RuntimeException("Unsupported with AggregateMetadata. " +
       "Use getDelegates() and setRoot().");
   }
-#foreach ($entity in $entities)
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
 
-  // - $entity.name() property storage -
-#foreach ($prop in $entity.props())
+  // - $entity property storage -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
 
-  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
-  public void set$entity.name()$prop.name()($prop.type(true) $prop.varName(), $entity.indicesList(true, true)) {
+  /* @see MetadataStore#set$entity$prop($q.type(), $q.indicesList(true, false)) */
+  public void set$entity$prop($q.type() $q.var($prop), $q.indicesList(true, true)) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.set$entity.name()$prop.name()($prop.varName(), $entity.indicesList(false, true));
+        store.set$entity$prop($q.var($prop), $q.indicesList(false, true));
       }
     }
   }

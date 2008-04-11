@@ -43,47 +43,51 @@ import loci.formats.DataTools;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/FilterMetadata.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/FilterMetadata.java">SVN</a></dd></dl>
  *
+ * @author Melissa Linkert linkert at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FilterMetadata implements MetadataStore {
 
   // -- Fields --
 
-  private MetadataStore delegate;
+  private MetadataStore store;
   private boolean filter;
 
   // -- Constructor --
 
-  public FilterMetadata(MetadataStore delegate, boolean filter) {
-    this.delegate = delegate;
+  public FilterMetadata(MetadataStore store, boolean filter) {
+    this.store = store;
     this.filter = filter;
   }
 
   // -- MetadataStore API methods --
 
   public void createRoot() {
-    delegate.createRoot();
+    store.createRoot();
   }
 
   public Object getRoot() {
-    return delegate.getRoot();
+    return store.getRoot();
   }
 
   public void setRoot(Object root) {
-    delegate.setRoot(root);
+    store.setRoot(root);
   }
 
-#foreach ($entity in $entities)
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
 
-  // -- $entity.name() property storage -
-#foreach ($prop in $entity.props())
+  // -- $entity property storage -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
 
-  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
-  public void set$entity.name()$prop.name()($prop.type(true) $prop.varName(), $entity.indicesList(true, true)) {
-#if ($prop.type(true) == "String")
-    String temp = filter ? DataTools.sanitize($prop.varName()) : $prop.varName();
-    delegate.set$entity.name()$prop.name()(temp, $entity.indicesList(false, true));
+  /* @see MetadataStore#set$entity$prop($q.type(), $q.indicesList(true, false)) */
+  public void set$entity$prop($q.type() $q.var($prop), $q.indicesList(true, true)) {
+#if ($q.type() == "String")
+    String value = filter ? DataTools.sanitize($q.var($prop)) : $q.var($prop);
+    store.set$entity$prop(value, $q.indicesList(false, true));
 #else
-    delegate.set$entity.name()$prop.name()($prop.varName(), $entity.indicesList(false, true));
+    store.set$entity$prop($q.var($prop), $q.indicesList(false, true));
 #end
   }
 #end##foreach $prop
