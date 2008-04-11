@@ -98,6 +98,7 @@ public class TiffWriter extends FormatWriter {
 
       RandomAccessStream tmp = new RandomAccessStream(currentId);
       if (tmp.length() == 0) {
+        // write TIFF header
         DataOutputStream dataOut = new DataOutputStream(out);
         dataOut.writeByte(TiffTools.BIG);
         dataOut.writeByte(TiffTools.BIG);
@@ -137,13 +138,12 @@ public class TiffWriter extends FormatWriter {
       RandomAccessStream tmp = new RandomAccessStream(currentId);
       isBigTiff = (tmp.length() + 2 * plane) >= 4294967296L;
       if (isBigTiff) {
-        throw new FormatException("File is to large.  Call setBigTiff(true)");
+        throw new FormatException("File is too large; call setBigTiff(true)");
       }
       tmp.close();
     }
 
     // write the image
-
     lastOffset +=
       TiffTools.writeImage(img, ifd, out, lastOffset, last, isBigTiff);
     if (last) close();

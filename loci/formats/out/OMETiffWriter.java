@@ -45,7 +45,7 @@ public class OMETiffWriter extends TiffWriter {
     "<!-- Warning: this comment is an OME-XML metadata block, which " +
     "contains crucial dimensional parameters and other important metadata. " +
     "Please edit cautiously (if at all), and back up the original data " +
-    "before doing so.  For more information, see the OME-TIFF web site: " +
+    "before doing so. For more information, see the OME-TIFF web site: " +
     "http://loci.wisc.edu/ome/ome-tiff.html. -->";
 
   // -- Fields --
@@ -68,6 +68,28 @@ public class OMETiffWriter extends TiffWriter {
       // extract OME-XML string from metadata object
       MetadataRetrieve retrieve = getMetadataRetrieve();
       String xml = MetadataTools.getOMEXML(retrieve);
+
+      // CTR TODO - convert OME-XML to DOM
+      // rather than build from string, just dump from retrieve into latest
+      // OME-XML metadata store using MetadataTools
+
+      // inject TiffData elements
+      // use DOMUtil.findElementList(String, Document) to get list of Pixels
+      // each Pixels corresponds to one series, in order
+
+      // generate UUID and add to OME element
+      // but need a separate UUID for each file's OME element!
+      // now all TiffData elements are identical across all files!
+      // the ONLY change is the UUID of the root OME element
+
+      // can we use a file pattern string as the id in the saveImage method?
+      // main challenge is that programmer must still provide TiffData tag
+      // list indicating which IFDs of which files correspond to which planes.
+
+      // should we add TiffData as an entity in metadata store? would that
+      // work well, or at all? give it more thought
+
+      // prepend warning comment
 
       // insert warning comment
 
@@ -130,8 +152,7 @@ public class OMETiffWriter extends TiffWriter {
         TiffTools.overwriteComment(currentId, xml);
       }
       catch (FormatException exc) {
-        IOException io =
-          new IOException("Unable to append OME-XML comment");
+        IOException io = new IOException("Unable to append OME-XML comment");
         io.initCause(exc);
         throw io;
       }
