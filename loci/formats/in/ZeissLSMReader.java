@@ -436,12 +436,20 @@ public class ZeissLSMReader extends BaseTiffReader {
         in.seek(eventListOffset + 4);
         int numEvents = in.readInt();
         for (int i=0; i<numEvents; i++) {
-          int size = in.readInt();
-          double eventTime = in.readDouble();
-          int eventType = in.readInt();
-          put("Event" + i + " Time", eventTime);
-          put("Event" + i + " Type", eventType);
-          put("Event" + i + " Description", in.readString(size - 16));
+          if (in.getFilePointer() + 16 <= in.length()) {
+            int size = in.readInt();
+            double eventTime = in.readDouble();
+            int eventType = in.readInt();
+            put("Event" + i + " Time", eventTime);
+            put("Event" + i + " Type", eventType);
+            long fp = in.getFilePointer();
+            int len = size - 16;
+            if (len > 65536) len = 65536;
+            if (len < 0) len = 0;
+            put("Event" + i + " Description", in.readString(len));
+            in.seek(fp + size - 16);
+            if (in.getFilePointer() < 0) break;
+          }
         }
       }
 
@@ -760,8 +768,15 @@ public class ZeissLSMReader extends BaseTiffReader {
       core.sizeY[0] = 1;
     }
     else if (core.imageCount[0] != ifds.length) {
+      int diff = core.imageCount[0] - ifds.length;
       core.imageCount[0] = ifds.length;
-      if (core.sizeZ[0] > 1) {
+      if (diff % core.sizeZ[0] == 0) {
+        core.sizeT[0] -= (diff / core.sizeZ[0]);
+      }
+      else if (diff % core.sizeT[0] == 0) {
+        core.sizeZ[0] -= (diff / core.sizeT[0]);
+      }
+      else if (core.sizeZ[0] > 1) {
         core.sizeZ[0] = ifds.length;
         core.sizeT[0] = 1;
       }

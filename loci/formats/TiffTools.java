@@ -1091,9 +1091,11 @@ public final class TiffTools {
         }
       }
 
-      //for (int i=0; i<stripByteCounts.length; i++) {
-      //  stripByteCounts[i] *= 2;
-      //}
+      if (compression != UNCOMPRESSED) {
+        for (int i=0; i<stripByteCounts.length; i++) {
+          stripByteCounts[i] *= 2;
+        }
+      }
     }
 
     if (lastBitsZero) {
