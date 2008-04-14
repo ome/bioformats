@@ -897,8 +897,14 @@ public class LeicaReader extends FormatReader {
       if (core.sizeC[i] == 0) core.sizeC[i] = 1;
       if (core.rgb[i]) core.sizeC[i] *= 3;
       core.sizeT[i] += 1;
-      core.currentOrder[i] = core.sizeC[i] == 1 ? "XYZTC" : "XYCZT";
       if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
+      if (!core.rgb[i] && core.imageCount[i] == 1) { 
+        tiff[i][0].setId((String) files[i].get(0));
+        core.rgb[i] = tiff[i][0].isRGB(); 
+        core.indexed[i] = tiff[i][0].isIndexed(); 
+        core.sizeC[i] = tiff[i][0].getSizeC(); 
+      }
+      core.currentOrder[i] = core.sizeC[i] == 1 ? "XYZTC" : "XYCZT";
 
       if (i < timestamps.length && timestamps[i] != null) {
         SimpleDateFormat parse =
