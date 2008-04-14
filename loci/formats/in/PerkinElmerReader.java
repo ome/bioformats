@@ -369,6 +369,28 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     for (int i=0; i<files.length; i++) allFiles.add(files[i]);
+    if (isTiff) Arrays.sort(files);
+    else {
+      Comparator c = new Comparator() {
+        public int compare(Object o1, Object o2) {
+          String s1 = (String) o1;
+          String s2 = (String) o2;
+          String prefix1 = s1, prefix2 = s2, suffix1 = s1, suffix2 = s2;
+          if (s1.indexOf(".") != -1) {
+            prefix1 = s1.substring(0, s1.lastIndexOf("."));
+            suffix1 = s1.substring(s1.lastIndexOf(".") + 1);
+          }
+          if (s2.indexOf(".") != -1) {
+            prefix2 = s2.substring(0, s2.lastIndexOf("."));
+            suffix2 = s2.substring(s2.lastIndexOf(".") + 1);
+          }
+          int cmp = prefix1.compareTo(prefix2);
+          if (cmp != 0) return cmp;
+          return Integer.parseInt(suffix1, 16) - Integer.parseInt(suffix2, 16);
+        }
+      };
+      Arrays.sort(files, c);
+    }
 
     core.imageCount[0] = files.length;
     RandomAccessStream read;

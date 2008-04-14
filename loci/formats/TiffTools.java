@@ -1823,7 +1823,7 @@ public final class TiffTools {
         }
       }
       else if (bitsPerSample[0] <= 16) {
-        short[] s = (short[]) DataTools.makeDataArray(input, 2, false, !little);
+        short[] s = (short[]) DataTools.makeDataArray(input, 2, false, little);
         for (int b=0; b<s.length; b++) {
           if (b / len % width == 0) continue;
           s[b] += s[b - len];

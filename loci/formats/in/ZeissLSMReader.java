@@ -116,6 +116,18 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Constructs a new Zeiss LSM reader. */
   public ZeissLSMReader() { super("Zeiss Laser-Scanning Microscopy", "lsm"); }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
+    lut = null;
+    thumbnailsRemoved = false;
+    timestamps = null;
+    validChannels = 0;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -157,11 +169,11 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (core.sizeY[0] > 1) {
       // check that predictor is set to 1 if anything other
       // than LZW compression is used
-      if (TiffTools.getCompression(ifds[2*no]) != TiffTools.LZW) {
-        ifds[2*no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
+      if (TiffTools.getCompression(ifds[no]) != TiffTools.LZW) {
+        ifds[no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
       }
 
-      TiffTools.getSamples(ifds[2*no], in, buf, x, y, w, h);
+      TiffTools.getSamples(ifds[no], in, buf, x, y, w, h);
     }
     else {
       if (TiffTools.getCompression(ifds[0]) != TiffTools.LZW) {
@@ -172,6 +184,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
     return buf;
   }
+
 
   // -- Internal BaseTiffReader API methods --
 
@@ -358,7 +371,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       long linescanOverlayOffset = ras.readInt();
 
       put("ToolbarFlags", ras.readInt());
-      ras.skipBytes(20);
+      ras.close();
 
       // read referenced structures
 
@@ -680,7 +693,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       store.setPlaneTheC(new Integer(zct[1]), 0, 0, i);
       store.setPlaneTheT(new Integer(zct[2]), 0, 0, i);
 
-      if (zct[2] < timestamps.size()) {
+      if (zct[2] + 1 < timestamps.size()) {
         float thisStamp = ((Double) timestamps.get(zct[2])).floatValue();
         store.setPlaneTimingDeltaT(new Float(thisStamp), 0, 0, i);
         float nextStamp = i < core.sizeT[0] - 1 ?
@@ -742,18 +755,22 @@ public class ZeissLSMReader extends BaseTiffReader {
     thumbnailsRemoved = true;
 
     initMetadata();
-    ifds = TiffTools.getIFDs(in);
 
-    if (ifds.length > 1) {
-      core.thumbSizeX[0] = TiffTools.getIFDIntValue(ifds[1],
-        TiffTools.IMAGE_WIDTH, false, 1);
-      core.thumbSizeY[0] = TiffTools.getIFDIntValue(ifds[1],
-        TiffTools.IMAGE_LENGTH, false, 1);
-    }
-
-    if (ifds.length == 2 && core.imageCount[0] > ifds.length / 2) {
+    if (ifds.length == 1 && core.imageCount[0] > ifds.length) {
       core.sizeY[0] = 1;
     }
+    else if (core.imageCount[0] != ifds.length) {
+      core.imageCount[0] = ifds.length;
+      if (core.sizeZ[0] > 1) {
+        core.sizeZ[0] = ifds.length;
+        core.sizeT[0] = 1;
+      }
+      else if (core.sizeT[0] > 1) {
+        core.sizeT[0] = ifds.length;
+        core.sizeZ[0] = 1;
+      }
+    }
+    core.littleEndian[0] = !core.littleEndian[0];
   }
 
   // -- Helper methods --
