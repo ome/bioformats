@@ -508,42 +508,40 @@ public class ND2Reader extends FormatReader {
       }
 
       if (offsets[0].length != core.imageCount[0]) {
-        long[][] tmpOffsets = offsets;
-        offsets = new long[1][core.imageCount[0]];
-        int next = 0;
-        for (int i=0; i<tmpOffsets.length; i++) {
-          for (int j=0; j<tmpOffsets[i].length; j++) {
-            if (next < offsets[0].length) {
-              offsets[0][next++] = tmpOffsets[i][j];
-            }
-          }
-        }
         int x = core.sizeX[0];
         int y = core.sizeY[0];
-        int z = core.sizeZ[0];
         int c = core.sizeC[0];
-        int t = core.sizeT[0];
-        int count = core.imageCount[0];
-        int type = core.pixelType[0];
-        core = new CoreMetadata(1);
-        core.sizeX[0] = x;
-        core.sizeY[0] = y;
-        core.sizeZ[0] = z;
-        core.sizeC[0] = c;
-        core.sizeT[0] = t;
-        core.imageCount[0] = count;
-        core.pixelType[0] = type;
+        int pixelType = core.pixelType[0];
+        boolean rgb = core.rgb[0];
+        core = new CoreMetadata(offsets.length);
+	Arrays.fill(core.sizeX, x);
+	Arrays.fill(core.sizeY, y);
+	Arrays.fill(core.sizeC, c);
+	Arrays.fill(core.pixelType, pixelType);
+	Arrays.fill(core.rgb, rgb);
+        Arrays.fill(core.sizeZ, 1);
+        for (int i=0; i<offsets.length; i++) {
+          int invalid = 0;
+          for (int q=0; q<offsets[i].length; q++) {
+            if (offsets[i][q] == 0) invalid++;
+          } 
+          core.sizeT[i] = (offsets[i].length - invalid) / core.sizeC[i]; 
+          core.imageCount[i] = offsets[i].length - invalid; 
+        } 
+      }
+      else {
+        Arrays.fill(core.sizeX, core.sizeX[0]);
+        Arrays.fill(core.sizeY, core.sizeY[0]);
+        Arrays.fill(core.sizeC, core.sizeC[0] == 0 ? 1 : core.sizeC[0]);
+        Arrays.fill(core.sizeZ, core.sizeZ[0] == 0 ? 1 : core.sizeZ[0]);
+        Arrays.fill(core.sizeT, core.sizeT[0] == 0 ? 1 : core.sizeT[0]);
+        Arrays.fill(core.imageCount, core.imageCount[0]);
+        Arrays.fill(core.pixelType, core.pixelType[0]);
       }
 
-      Arrays.fill(core.sizeX, core.sizeX[0]);
-      Arrays.fill(core.sizeY, core.sizeY[0]);
-      Arrays.fill(core.sizeC, core.sizeC[0] == 0 ? 1 : core.sizeC[0]);
-      Arrays.fill(core.sizeZ, core.sizeZ[0] == 0 ? 1 : core.sizeZ[0]);
-      Arrays.fill(core.sizeT, core.sizeT[0] == 0 ? 1 : core.sizeT[0]);
-      Arrays.fill(core.imageCount, core.imageCount[0]);
-      Arrays.fill(core.pixelType, core.pixelType[0]);
-
+      if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
       if (core.sizeC[0] == 0) Arrays.fill(core.sizeC, 1);
+      if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
       Arrays.fill(core.currentOrder, "XYCZT");
       Arrays.fill(core.rgb, core.sizeC[0] > 1);
 
@@ -924,29 +922,7 @@ public class ND2Reader extends FormatReader {
         }
       }
       else if (qName.startsWith("TextInfoItem")) {
-        String value = attributes.getValue("value");
-        if (value != null && value.indexOf("Dimensions") != -1) {
-          int ndx = value.indexOf("Dimensions");
-          value = value.substring(ndx + 11, value.indexOf("\n", ndx)).trim();
-          StringTokenizer st = new StringTokenizer(value, " x ");
-          while (st.hasMoreTokens()) {
-            String token = st.nextToken().trim();
-            ndx = token.indexOf("(") + 1;
-            if (ndx == 0) continue;
-            int v = Integer.parseInt(token.substring(ndx, token.indexOf(")")));
-            if (token.startsWith("T")) {
-              core.sizeT[0] = v;
-            }
-            else if (token.startsWith("Z")) core.sizeZ[0] = v;
-            else if (!token.startsWith("XY")) core.sizeC[0] = v;
-          }
-          if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
-          if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-          if (core.sizeT[0] == 0) {
-            core.sizeT[0] = 1;
-          }
-          core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-        }
+        parseKeyAndValue(qName, attributes.getValue("Text"));       
       }
       else if (qName.equals("dCompressionParam")) {
         int v = Integer.parseInt(attributes.getValue("value"));
@@ -1009,7 +985,7 @@ public class ND2Reader extends FormatReader {
         core.sizeT[0] = Integer.parseInt(value);
       }
     }
-    else if (key.endsWith("TextInfoItem Text")) {
+    else if (key.endsWith("TextInfoItem")) {
       value = value.replaceAll("&#x000d;&#x000a;", "\n");
       StringTokenizer tokens = new StringTokenizer(value, "\n");
       while (tokens.hasMoreTokens()) {
