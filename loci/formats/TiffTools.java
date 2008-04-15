@@ -1817,7 +1817,7 @@ public final class TiffTools {
     if (predictor == 2) {
       if (DEBUG) debug("reversing horizontal differencing");
       int len = bitsPerSample.length;
-      if (bitsPerSample[len - 1] == 0) len = 1;
+      if (planarConfig == 2 || bitsPerSample[len - 1] == 0) len = 1;
       if (bitsPerSample[0] <= 8) {
         for (int b=0; b<input.length; b++) {
           if (b / len % width == 0) continue;
