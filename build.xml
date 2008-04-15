@@ -476,9 +476,16 @@ Apache XML-RPC
   </target>
 
   <target name="dev-compile" description="compile classes in-place (no copy)">
+    <!-- By default, source files should compile under Java 1.4 -->
     <javac srcdir="." destdir="." debug="true" classpath="${ext.jars}"
       deprecation="true" source="1.4" target="1.4">
       <include name="loci/**"/>
+      <exclude name="${java15.dirs}"/>
+    </javac>
+    <!-- Source files requiring Java 1.5 -->
+    <javac srcdir="." destdir="." debug="true" classpath="${ext.jars}"
+      deprecation="true" source="1.5" target="1.5">
+      <include name="${java15.dirs}"/>
     </javac>
   </target>
 
