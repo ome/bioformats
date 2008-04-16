@@ -263,7 +263,7 @@ public class ImporterOptions implements ItemListener {
     stackFormat = Prefs.get(PREF_STACK, VIEW_STANDARD);
     stackOrder = Prefs.get(PREF_ORDER, ORDER_DEFAULT);
     mergeChannels = Prefs.get(PREF_MERGE, false);
-    colorize = Prefs.get(PREF_COLORIZE, false);
+    colorize = Prefs.get(PREF_COLORIZE, true);
     splitChannels = Prefs.get(PREF_C, true);
     splitFocalPlanes = Prefs.get(PREF_Z, false);
     splitTimepoints = Prefs.get(PREF_T, false);
