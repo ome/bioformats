@@ -494,15 +494,10 @@ public class ND2Reader extends FormatReader {
               if ((off == 0 && c == '!')) off = i + 1;
             }
             for (int j = off; j<len; j+=8) {
-              tsT.add(new Double(arr2double(b, j)));
+              double s = DataTools.bytesToDouble(b, j, 8, true);
+              tsT.add(new Double(s));
+              addMeta("timestamp " + (tsT.size() - 1), String.valueOf(s));
             }
-            addMeta("ts_t", tsT);
-            // adds the whole vector of times to the meta data
-            // I do not know if this will run in to trouble with the
-            // size limits on the length of strings in the hash table
-            addMeta("ts_t_sz", new Integer(tsT.size()));
-            // adds the length of the acq time vector to the hash table
-            // as a double check
           }
 
           if (core.imageCount[0] > 0 && offsets == null) {
@@ -617,15 +612,20 @@ public class ND2Reader extends FormatReader {
         store.setImageName("Series " + i, i);
         store.setImageCreationDate(
           DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
-        // CTR CHECK
-//        for (int j=0; j<core.sizeC[i]; j++) {
-//          store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//            null, null, null, null, null, null, null, null, null, null, null,
-//            null, null, null, null, null, new Integer(i));
-//        }
+      
+        if (tsT.size() > 0) {
+          setSeries(i);
+          for (int n=0; n<core.imageCount[i]; n++) {
+            int[] coords = getZCTCoords(n);
+            store.setPlaneTheZ(new Integer(coords[0]), i, 0, n);
+            store.setPlaneTheC(new Integer(coords[1]), i, 0, n);
+            store.setPlaneTheT(new Integer(coords[2]), i, 0, n);
+            float stamp = ((Double) tsT.get(coords[2])).floatValue();
+            store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n); 
+          }
+        }
       }
-      //addMeta("ts", ts.elementAt(25));
-      //addMeta("tssz", new Integer(ts.size()));
+      setSeries(0);
 
       return;
     }
@@ -1023,7 +1023,7 @@ public class ND2Reader extends FormatReader {
       long v = (long) Double.parseDouble(value);
       if (!ts.contains(new Long(v))) {
         ts.add(new Long(v));
-        addMeta("changes", new Integer(ts.size()));
+        addMeta("number of timepoints", new Integer(ts.size()));
       }
     }
     else if (key.endsWith("dZPos")) {
@@ -1086,29 +1086,6 @@ public class ND2Reader extends FormatReader {
         }
       }
     }
-  }
-
-  /**
-   * Helper function for parsing acq times.
-   * Code from http://www.captain.at/howto-java-convert-binary-data.php
-   */
-  private double arr2double(byte[] arr, int start) {
-    // I am not sure what the protocol on this is
-    int i = 0;
-    int len = 8;
-    int cnt = 0;
-    byte[] tmp = new byte[len];
-    for (i = start; i < (start + len); i++) {
-      tmp[cnt] = arr[i];
-      cnt++;
-    }
-    long accum = 0;
-    i = 0;
-    for (int shiftBy = 0; shiftBy < 64; shiftBy += 8) {
-      accum |= ((long) (tmp[i] & 0xff)) << shiftBy;
-      i++;
-    }
-    return Double.longBitsToDouble(accum);
   }
 
 }
