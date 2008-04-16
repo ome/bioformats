@@ -940,18 +940,12 @@ public class ImporterOptions implements ItemListener {
       if (colorizeBox.getState()) {
         mergeBox.setState(false);
         changed.add(mergeBox);
-        splitCBox.setState(true);
-        changed.add(splitCBox);
       }
     }
     else if (src == splitCBox) {
       if (splitCBox.getState()) {
         mergeBox.setState(false);
         changed.add(mergeBox);
-      }
-      else {
-        colorizeBox.setState(false);
-        changed.add(colorizeBox);
       }
     }
     else if (src == metadataBox) {

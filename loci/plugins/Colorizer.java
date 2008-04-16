@@ -152,22 +152,39 @@ public class Colorizer implements PlugInFilter {
     boolean closeOriginal = true;
 
     if (color) {
-      ImageStack newStack = new ImageStack(stack.getWidth(), stack.getHeight());
-      for (int i=1; i<=stack.getSize(); i++) {
-        newStack.addSlice(stack.getSliceLabel(i), stack.getProcessor(i));
+      if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG)) {
+        // use reflection to construct CompositeImage,
+        // in case ImageJ version is too old
+        try {
+          r.setVar("imp", Util.reorder(imp, stackOrder, "XYCZT"));
+          newImp = (ImagePlus)
+            r.exec("new CompositeImage(imp, CompositeImage.COLOR)");
+        }
+        catch (ReflectException exc) {
+          ByteArrayOutputStream s = new ByteArrayOutputStream();
+          exc.printStackTrace(new PrintStream(s));
+          IJ.error(s.toString());
+        }
       }
-      byte[] lut = new byte[256];
-      byte[] blank = new byte[256];
-      Arrays.fill(blank, (byte) 0);
-      for (int i=0; i<lut.length; i++) {
-        lut[i] = (byte) i;
-      }
+      else {
+        ImageStack newStack =
+          new ImageStack(stack.getWidth(), stack.getHeight());
+        for (int i=1; i<=stack.getSize(); i++) {
+          newStack.addSlice(stack.getSliceLabel(i), stack.getProcessor(i));
+        }
+        byte[] lut = new byte[256];
+        byte[] blank = new byte[256];
+        Arrays.fill(blank, (byte) 0);
+        for (int i=0; i<lut.length; i++) {
+          lut[i] = (byte) i;
+        }
 
-      IndexColorModel model = new IndexColorModel(8, 256,
-        colorNdx == 0 ? lut : blank, colorNdx == 1 ? lut : blank,
-        colorNdx == 2 ? lut : blank);
-      newStack.setColorModel(model);
-      newImp.setStack(imp.getTitle(), newStack);
+        IndexColorModel model = new IndexColorModel(8, 256,
+          colorNdx == 0 ? lut : blank, colorNdx == 1 ? lut : blank,
+          colorNdx == 2 ? lut : blank);
+        newStack.setColorModel(model);
+        newImp.setStack(imp.getTitle(), newStack);
+      }
     }
     else {
       int type = imp.getType();

@@ -673,20 +673,6 @@ public class Importer {
     else if (!options.isViewNone()) {
       if (IJ.getVersion().compareTo("1.39l") >= 0) {
         boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-        if (nChannels > 1 && imp.getBitDepth() != 24) {
-          // open multichannel image as a composite image
-          ReflectedUniverse ru = new ReflectedUniverse();
-          try {
-            ru.exec("import ij.CompositeImage");
-            ru.setVar("imp", imp);
-            imp = (ImagePlus) ru.exec(
-              "new CompositeImage(imp, CompositeImage.COLOR)");
-          }
-          catch (ReflectException exc) {
-            // problem creating composite image; ignore for now
-            LogTools.println(exc);
-          }
-        }
         imp.setOpenAsHyperStack(hyper);
       }
 
