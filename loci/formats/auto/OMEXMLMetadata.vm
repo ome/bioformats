@@ -1,5 +1,5 @@
 //
-// $id
+// $q.id()
 //
 
 /*
@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.ome;
 
 #if ($q.legacy())
-import $basePackage.*;
+import $q.basePackage().*;
 #end##if legacy
 import $q.basePackage().$q.subPackage().*;
 import java.util.List;
@@ -92,7 +92,7 @@ public class $q.className() extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
   public int get$entity.name()Count($entity.indicesList(true, true, false)) {
-    return 0;//TEMP!
+    if (true) return 0;//TEMP!
 #if ($q.path() == "-")
     // NB: $entity.name() unsupported for schema version $version
     return -1;
@@ -113,23 +113,21 @@ public class $q.className() extends OMEXMLMetadata {
 #set ($lastVar = $q.var($last))
 
   // - $entity property retrieval -
-#foreach ($prop in $entity.props())
+#foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
-  CTR START HERE
-#set ($mappedName = $q.Name($versionKey))
-#set ($convert = $mappedName.endsWith("%"))
-#set ($mappedName = $mappedName.replaceAll("%", ""))
-#set ($mappedPrefix = $prop.mappedPrefix($versionKey))
+#set ($convert = $q.convert())
+#set ($var = $q.var($q.last()))
+#set ($get = $q.getter());
 
-  /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
-  public $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true)) {
-#if ($last == "-" || $mappedName == "-")
-    // NB: $prop.name() unsupported for schema version $version
+  /* @see loci.formats.meta.MetadataRetrieve#get$entity$prop$q.indicesList(true, false)) */
+  public $q.type() get$entity$prop($q.indicesList(true, true)) {
+#if ($q.path() == "-")
+    // NB: $prop unsupported for schema version $q.version()
     return null;
 #else
     ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), false);
-#if ($convert)
-    return $lastVar == null ? null : $lastVar${mappedName}To$prop.type()(${lastVar}.$mappedPrefix$mappedName());
+#if ($convert != null)
+    return $lastVar == null ? null : $convert(${lastVar}.$q.getter()); $lastVar${mappedName}To$q.type()(${lastVar}.$mappedPrefix$mappedName());
 #else
     return $lastVar == null ? null : ${lastVar}.$mappedPrefix$mappedName();
 #end##if $convert
@@ -142,7 +140,7 @@ public class $q.className() extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void createRoot() {
-#if ($legacy == "true")
+#if ($q.legacy())
     try {
       root = new OMENode();
     }
@@ -151,7 +149,7 @@ public class $q.className() extends OMEXMLMetadata {
     }
 #else
     try {
-      root = ome.xml.OMEXMLFactory.newOMENode("$version");
+      root = ome.xml.OMEXMLFactory.newOMENode("$q.version()");
     }
 #end##if $legacy
     catch (java.io.IOException exc) { LogTools.trace(exc); }
@@ -178,22 +176,21 @@ public class $q.className() extends OMEXMLMetadata {
   // - $entity.name() property storage -
 #foreach ($prop in $entity.props())
 #set ($varName = $prop.varName())
-#set ($varNameSafe = $prop.varName(true))
 #set ($mappedName = $prop.mappedName($versionKey))
 #set ($convert = $mappedName.endsWith("%"))
 #set ($mappedName = $mappedName.replaceAll("%", ""))
 
-  /* @see loci.formats.meta.MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
-  public void set$entity.name()$prop.name()($prop.type(true) $varName, $entity.indicesList(true, true)) {
-#if ($last == "-" || $mappedName == "-")
-    // NB: $prop.name() unsupported for schema version $version
+  /* @see loci.formats.meta.MetadataStore#set$entity$prop($q.type(), $q.indicesList(true, false)) */
+  public void set$entity$prop($q.type() $varName, $q.indicesList(true, true)) {
+#if ($q.path() == "-")
+    // NB: $prop unsupported for schema version $q.version()
 #else
     if ($varName == null) return;
     ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), true);
 #if ($convert)
-    ${lastVar}.set$mappedName($lastVar${mappedName}From$prop.type()($varNameSafe));
+    ${lastVar}.set$mappedName($lastVar${mappedName}From$q.type()($varName));
 #else
-    ${lastVar}.set$mappedName($varNameSafe);
+    ${lastVar}.set$mappedName($varName);
 #end##if $convert
 #end##if "-"
   }
@@ -201,11 +198,11 @@ public class $q.className() extends OMEXMLMetadata {
 #end##foreach $entity
 
   // -- Helper methods --
-#foreach ($entity in $unique)
-#set ($last = $entity.last($versionKey))
+#foreach ($path in $q.unique())
+#set ($last = $q.last($path))
 
-  // $entity.path($versionKey)
-  private ${last}Node get${last}Node($entity.indicesList(true, true), boolean create) {
+  // $path
+  private ${last}Node get${last}Node($q.indicesList($path, true, true, true), boolean create) {
     int ndx, count;
     List list;
     // get OME node
@@ -214,24 +211,24 @@ public class $q.className() extends OMEXMLMetadata {
 #set ($pVar = "ome")
 #set ($pNode = "OME")
 #set ($multiCount = 0)
-#foreach ($node in $entity.pathNodes($versionKey))
+#foreach ($node in $path.split("\\/"))
 #set ($multi = $node.endsWith("+"))
 #set ($ref = $node.startsWith("@"))
 #set ($bang = $node.startsWith("@!"))
 #set ($node = $node.replaceAll("[@!+]", ""))
 #set ($ca = $pVar.equals("ca"))
-#set ($var = $entity.toVarName($node))
+#set ($var = $q.var($node))
     // get $node node
 #if ($node.equals("CA"))
 #set ($node = "CustomAttributes")
-#end##if
+#end##if CA
 #if ($multi)
-#set ($prop = $entity.indices().get($multiCount))
+#set ($prop = $q.indices($path).get($multiCount))
 #set ($multiCount = $multiCount + 1)
-    ndx = $prop.varName();
+    ndx = ${var}Index;
 #if ($ca)
     count = ${pVar}.countCAList("$node");
-#elseif ($legacy == "true")
+#elseif ($q.legacy())
     count = ${pVar}.count${node}List();
 #else
     count = ${pVar}.get${node}Count();
