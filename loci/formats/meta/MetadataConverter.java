@@ -103,10 +103,10 @@ public final class MetadataConverter {
         dest.setLogicalChannelFluor(src.getLogicalChannelFluor(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLogicalChannelNdFilter(src.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLogicalChannelPockelCellSetting(src.getLogicalChannelPockelCellSetting(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setDetectorSettingsDetector(src.getDetectorSettingsDetector(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
+        //dest.setDetectorSettingsDetector(src.getDetectorSettingsDetector(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setDetectorSettingsOffset(src.getDetectorSettingsOffset(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setDetectorSettingsGain(src.getDetectorSettingsGain(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLightSourceSettingsLightSource(src.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
+        //dest.setLightSourceSettingsLightSource(src.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLightSourceSettingsAttenuation(src.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLightSourceSettingsWavelength(src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         int channelComponentCount = src.getChannelComponentCount(imageIndex, logicalChannelIndex);
