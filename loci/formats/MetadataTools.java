@@ -156,6 +156,7 @@ public final class MetadataTools {
    *   of {@link loci.formats.ome.OMEXMLMetadata} or ome.xml.OMEXMLNode.
    */
   public static String getOMEXMLVersion(Object o) {
+    if (o == null) return null;
     String name = o.getClass().getName();
     if (isOMEXMLMetadata(o)) {
       final String prefix = "loci.formats.ome.OMEXML";
