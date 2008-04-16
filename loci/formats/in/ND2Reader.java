@@ -48,8 +48,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * (2) the JAI jar file precedes JJ2000 in the classpath.
  *
  * Also note that there is alternate ND2 reader for Windows
- * (see LegacyND2Reader.java) that requires a native library.  If that native
+ * (see LegacyND2Reader.java) that requires a native library. If that native
  * library is installed, then ND2Reader's logic will be bypassed.
+ *
+ * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ND2Reader.java">Trac</a>,
@@ -150,6 +152,7 @@ public class ND2Reader extends FormatReader {
 
   private Vector zs = new Vector();
   private Vector ts = new Vector();
+  private Vector tsT = new Vector();
 
   private int numSeries;
 
@@ -479,6 +482,28 @@ public class ND2Reader extends FormatReader {
               }
             }
           }
+          else if (len >= 12 && b[0] == 'C' && b[1] == 'u' && b[2] == 's' &&
+            b[3] == 't' && b[4] == 'o' && b[5] == 'm' && b[6] == 'D' &&
+            b[7] == 'a' && b[8] == 't' && b[9] == 'a'&&b[10]=='|'&&b[11]=='A')
+            // b.startsWith("CustomData|A")
+          {
+            // the acqtimecache is a undeliniated stream of doubles
+            int off = 0;
+            for (int i=0; i<len; i++) {
+              char c = (char) b[i];
+              if ((off == 0 && c == '!')) off = i + 1;
+            }
+            for (int j = off; j<len; j+=8) {
+              tsT.add(new Double(arr2double(b, j)));
+            }
+            addMeta("ts_t", tsT);
+            // adds the whole vector of times to the meta data
+            // I do not know if this will run in to trouble with the
+            // size limits on the length of strings in the hash table
+            addMeta("ts_t_sz", new Integer(tsT.size()));
+            // adds the length of the acq time vector to the hash table
+            // as a double check
+          }
 
           if (core.imageCount[0] > 0 && offsets == null) {
             if (numSeries == 0) numSeries = 1;
@@ -519,7 +544,7 @@ public class ND2Reader extends FormatReader {
           for (int j=0; j<offsets[i].length; j++) {
             offsets[i][j] = tmpOffsets[j][i];
           }
-        } 
+        }
       }
       else if (offsets.length != core.imageCount.length) {
         int x = core.sizeX[0];
@@ -599,6 +624,8 @@ public class ND2Reader extends FormatReader {
 //            null, null, null, null, null, new Integer(i));
 //        }
       }
+      //addMeta("ts", ts.elementAt(25));
+      //addMeta("tssz", new Integer(ts.size()));
 
       return;
     }
@@ -996,6 +1023,7 @@ public class ND2Reader extends FormatReader {
       long v = (long) Double.parseDouble(value);
       if (!ts.contains(new Long(v))) {
         ts.add(new Long(v));
+        addMeta("changes", new Integer(ts.size()));
       }
     }
     else if (key.endsWith("dZPos")) {
@@ -1058,6 +1086,29 @@ public class ND2Reader extends FormatReader {
         }
       }
     }
+  }
+
+  /**
+   * Helper function for parsing acq times.
+   * Code from http://www.captain.at/howto-java-convert-binary-data.php
+   */
+  private double arr2double(byte[] arr, int start) {
+    // I am not sure what the protocol on this is
+    int i = 0;
+    int len = 8;
+    int cnt = 0;
+    byte[] tmp = new byte[len];
+    for (i = start; i < (start + len); i++) {
+      tmp[cnt] = arr[i];
+      cnt++;
+    }
+    long accum = 0;
+    i = 0;
+    for (int shiftBy = 0; shiftBy < 64; shiftBy += 8) {
+      accum |= ((long) (tmp[i] & 0xff)) << shiftBy;
+      i++;
+    }
+    return Double.longBitsToDouble(accum);
   }
 
 }
