@@ -397,6 +397,17 @@ public final class DataTools {
     return bytesToLong(bytes, 0, 8, little);
   }
 
+  /** 
+   * Translates the specified number of bytes of a byte array to a double.
+   * If there are fewer than 8 bytes in the array, the MSBs are all assumed
+   * to be zero (regardless of endianness).
+   */
+  public static double bytesToDouble(byte[] bytes, int offset, int len,
+     boolean little) 
+  {
+    return Double.longBitsToDouble(bytesToLong(bytes, offset, len, little));
+  }
+
   /**
    * Translates the short value into two bytes, and places them in a byte
    * array at the given index.
