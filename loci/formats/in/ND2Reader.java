@@ -461,6 +461,8 @@ public class ND2Reader extends FormatReader {
                 throw new FormatException(exc);
               }
 
+              s.close();
+
               // adjust SizeT, if necessary
               long planeSize = core.sizeX[0] * core.sizeY[0] *
                 FormatTools.getBytesPerPixel(core.pixelType[0]) * core.sizeC[0];
@@ -507,27 +509,39 @@ public class ND2Reader extends FormatReader {
         }
       }
 
-      if (offsets[0].length != core.imageCount[0]) {
+      if (offsets.length != core.imageCount.length && core.imageCount[0] == 1) {
+        core.imageCount[0] = offsets.length;
+        core.sizeT[0] = offsets.length / core.sizeC[0];
+        core.sizeZ[0] = 1;
+        long[][] tmpOffsets = offsets;
+        offsets = new long[core.imageCount.length][core.imageCount[0]];
+        for (int i=0; i<offsets.length; i++) {
+          for (int j=0; j<offsets[i].length; j++) {
+            offsets[i][j] = tmpOffsets[j][i];
+          }
+        } 
+      }
+      else if (offsets.length != core.imageCount.length) {
         int x = core.sizeX[0];
         int y = core.sizeY[0];
         int c = core.sizeC[0];
         int pixelType = core.pixelType[0];
         boolean rgb = core.rgb[0];
         core = new CoreMetadata(offsets.length);
-	Arrays.fill(core.sizeX, x);
-	Arrays.fill(core.sizeY, y);
-	Arrays.fill(core.sizeC, c);
-	Arrays.fill(core.pixelType, pixelType);
-	Arrays.fill(core.rgb, rgb);
+        Arrays.fill(core.sizeX, x);
+        Arrays.fill(core.sizeY, y);
+        Arrays.fill(core.sizeC, c);
+        Arrays.fill(core.pixelType, pixelType);
+        Arrays.fill(core.rgb, rgb);
         Arrays.fill(core.sizeZ, 1);
         for (int i=0; i<offsets.length; i++) {
           int invalid = 0;
           for (int q=0; q<offsets[i].length; q++) {
             if (offsets[i][q] == 0) invalid++;
-          } 
-          core.sizeT[i] = (offsets[i].length - invalid) / core.sizeC[i]; 
-          core.imageCount[i] = offsets[i].length - invalid; 
-        } 
+          }
+          core.sizeT[i] = (offsets[i].length - invalid) / core.sizeC[i];
+          core.imageCount[i] = offsets[i].length - invalid;
+        }
       }
       else {
         Arrays.fill(core.sizeX, core.sizeX[0]);
@@ -725,6 +739,11 @@ public class ND2Reader extends FormatReader {
       core.sizeZ[0] = zs.size();
       core.sizeT[0] = ts.size();
       core.imageCount[0] = core.sizeC[0] * core.sizeZ[0] * core.sizeT[0];
+      if (vs.size() > core.imageCount[0]) {
+        core.sizeT[0] = vs.size() / (core.rgb[0] ? 1 : core.sizeC[0]);
+        core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
+        if (!core.rgb[0]) core.imageCount[0] *= core.sizeC[0];
+      }
     }
 
     if (core.imageCount[0] == 0) core.imageCount[0] = 1;
@@ -783,6 +802,13 @@ public class ND2Reader extends FormatReader {
 
     if (!core.rgb[0] && core.imageCount[0] == 1) {
       Arrays.fill(core.sizeC, 1);
+    }
+
+    if (core.rgb[0] && core.imageCount[0] > core.sizeZ[0] * core.sizeT[0]) {
+      if (core.sizeZ[0] > 1) core.sizeZ[0] *= core.sizeC[0];
+      else core.sizeT[0] *= core.sizeC[0];
+      Arrays.fill(core.sizeT, core.sizeT[0]);
+      Arrays.fill(core.sizeZ, core.sizeZ[0]);
     }
 
     if (vs.size() < core.imageCount[0]) {
@@ -880,10 +906,9 @@ public class ND2Reader extends FormatReader {
         int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
         if (v == numSeries) numSeries++;
       }
-      else if (qName.equals("uiComp")) {
-        if (core.sizeC[0] == 0) {
-          core.sizeC[0] = Integer.parseInt(attributes.getValue("value"));
-        }
+      else if (qName.equals("uiCompCount")) {
+        int v = Integer.parseInt(attributes.getValue("value"));
+        if (v > core.sizeC[0]) core.sizeC[0] = v;
       }
       else if (qName.equals("uiBpcInMemory")) {
         if (attributes.getValue("value") == null) return;
@@ -921,8 +946,8 @@ public class ND2Reader extends FormatReader {
           core.sizeZ[0] = 1;
         }
       }
-      else if (qName.startsWith("TextInfoItem")) {
-        parseKeyAndValue(qName, attributes.getValue("Text"));       
+      else if (qName.startsWith("TextInfo")) {
+        parseKeyAndValue(qName, attributes.getValue("Text"));
       }
       else if (qName.equals("dCompressionParam")) {
         int v = Integer.parseInt(attributes.getValue("value"));
@@ -939,7 +964,6 @@ public class ND2Reader extends FormatReader {
           sb.append(" ");
         }
         sb.append(qName);
-        if (prefix != null) sb.append(" value");
         parseKeyAndValue(sb.toString(), attributes.getValue("value"));
       }
     }
@@ -949,38 +973,38 @@ public class ND2Reader extends FormatReader {
 
   private void parseKeyAndValue(String key, String value) {
     addMeta(key, value);
-    if (key.endsWith("dCalibration value")) {
+    if (key.endsWith("dCalibration")) {
       pixelSizeX = Float.parseFloat(value);
       pixelSizeY = pixelSizeX;
     }
-    else if (key.endsWith("dAspect value")) {
+    else if (key.endsWith("dAspect")) {
       pixelSizeZ = Float.parseFloat(value);
     }
-    else if (key.endsWith("dGain value")) {
+    else if (key.endsWith("dGain")) {
       gain = value;
     }
-    else if (key.endsWith("dLampVoltage value")) {
+    else if (key.endsWith("dLampVoltage")) {
       voltage = value;
     }
-    else if (key.endsWith("dObjectiveMag value")) {
+    else if (key.endsWith("dObjectiveMag")) {
       mag = value;
     }
-    else if (key.endsWith("dObjectiveNA value")) {
+    else if (key.endsWith("dObjectiveNA")) {
       na = value;
     }
-    else if (key.endsWith("dTimeMSec value")) {
+    else if (key.endsWith("dTimeMSec")) {
       long v = (long) Double.parseDouble(value);
       if (!ts.contains(new Long(v))) {
         ts.add(new Long(v));
       }
     }
-    else if (key.endsWith("dZPos value")) {
+    else if (key.endsWith("dZPos")) {
       long v = (long) Double.parseDouble(value);
       if (!zs.contains(new Long(v))) {
         zs.add(new Long(v));
       }
     }
-    else if (key.endsWith("uiCount value")) {
+    else if (key.endsWith("uiCount")) {
       if (core.sizeT[0] == 0) {
         core.sizeT[0] = Integer.parseInt(value);
       }
