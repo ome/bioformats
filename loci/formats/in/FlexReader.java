@@ -75,6 +75,8 @@ public class FlexReader extends BaseTiffReader {
   {
     FormatTools.assertId(currentId, true, 1);
 
+    int nBytes = TiffTools.getBitsPerSample(ifds[no])[0] / 8;
+
     // expand pixel values with multiplication by factor[no]
     byte[] bytes = super.openBytes(no, buf, x, y, w, h);
     if (core.pixelType[0] == FormatTools.UINT8) {
@@ -87,14 +89,18 @@ public class FlexReader extends BaseTiffReader {
     if (core.pixelType[0] == FormatTools.UINT16) {
       int num = bytes.length / 2;
       for (int i=num-1; i>=0; i--) {
-        int q = (int) ((bytes[i] & 0xff) * factors[no]);
+        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
+          (int) (DataTools.bytesToInt(bytes, i*2, 2, core.littleEndian[0]) *
+          factors[no]);
         DataTools.unpackBytes(q, bytes, i * 2, 2, core.littleEndian[0]);
       }
     }
     else if (core.pixelType[0] == FormatTools.UINT32) {
       int num = bytes.length / 4;
       for (int i=num-1; i>=0; i--) {
-        int q = (int) ((bytes[i] & 0xff) * factors[no]);
+        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
+          (int) (DataTools.bytesToInt(bytes, i*4, nBytes,
+          core.littleEndian[0]) * factors[no]);
         DataTools.unpackBytes(q, bytes, i * 4, 4, core.littleEndian[0]);
       }
     }
@@ -176,7 +182,6 @@ public class FlexReader extends BaseTiffReader {
     // determine pixel type
     if (factors[max] > 256) core.pixelType[0] = FormatTools.UINT32;
     else if (factors[max] > 1) core.pixelType[0] = FormatTools.UINT16;
-    else core.pixelType[0] = FormatTools.UINT8;
   }
 
   // -- Helper classes --
