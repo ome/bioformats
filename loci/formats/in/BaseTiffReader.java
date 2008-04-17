@@ -541,7 +541,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
     // TIFF comment
     String comment = TiffTools.getComment(ifd);
-    if (comment != null) {
+    if (comment != null && !comment.startsWith("<?xml")) {
       // sanitize comment
       comment = comment.replaceAll("\r\n", "\n"); // CR-LF to LF
       comment = comment.replaceAll("\r", "\n"); // CR to LF
