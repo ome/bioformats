@@ -26,6 +26,7 @@ package loci.formats.ome;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.List;
 import loci.formats.*;
 import loci.formats.meta.MetadataStore;
 
@@ -211,6 +212,28 @@ public class OMEReader extends FormatReader {
 
       core.thumbSizeX[0] = ((Integer) r.getVar("thumbX")).intValue();
       core.thumbSizeY[0] = ((Integer) r.getVar("thumbY")).intValue();
+
+      // grab original metadata
+
+      r.setVar("IMG_ID", "image_id");
+      r.setVar("NAME", "Name");
+      r.setVar("VALUE", "Value");
+      r.exec("c = new Criteria()");
+      r.exec("c.addWantedField(ID)");
+      r.exec("c.addWantedField(NAME)");
+      r.exec("c.addWantedField(VALUE)");
+      r.exec("c.addWantedField(IMG_ID)");
+      r.exec("c.addFilter(IMG_ID, EQUALS, IMAGE_ID)");
+      r.setVar("ORIGINAL_METADATA", "OriginalMetadata");
+      r.exec("original = df.retrieveList(ORIGINAL_METADATA, c)");
+
+      List l = (List) r.getVar("original");
+      for (int i=0; i<l.size(); i++) {
+        r.setVar("index", i);
+        r.exec("v = original.get(index)");
+        addMeta((String) r.exec("v.getStringElement(NAME)"),
+          (String) r.exec("v.getStringElement(VALUE)"));
+      }
     }
     catch (ReflectException e) {
       throw new FormatException(e);
