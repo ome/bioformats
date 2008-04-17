@@ -1,3 +1,18 @@
+2007 April 17:
+* Fixed bugs in Slidebook, ND2, FV1000 OIB/OIF, Perkin Elmer, TIFF, Prairie,
+  Openlab, Zeiss LSM, MNG, Molecular Dynamics GEL, and OME-TIFF
+* Fixed bugs in OME and OMERO download functionality
+* Fixed bugs in OME server-side import
+* Fixed bugs in Data Browser
+* Added support for downloading from OMERO 2.3 servers
+* Added configuration plugin
+* Updates to MetadataStore API
+* Updates to OME-XML generation - 2007-06 schema used by default
+* Added support for Li-Cor L2D format
+* Major updates to TestNG testing framework
+* Added support for writing multi-series OME-TIFF files
+* Added support for writing BigTIFF files
+
 2007 Feb 12:
 * Fixed bugs in QuickTime, SimplePCI and DICOM
 * Fixed a bug in channel splitting logic
