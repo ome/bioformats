@@ -638,7 +638,8 @@ public class FV1000Reader extends FormatReader {
 
     lut = new short[core.sizeC[0]][3][65536];
     byte[] buffer = new byte[65536 * 4];
-    for (int c=0; c<core.sizeC[0]; c++) {
+    int count = (int) Math.min(core.sizeC[0], lutNames.size());
+    for (int c=0; c<count; c++) {
       RandomAccessStream stream = getFile((String) lutNames.get(c));
       stream.seek(stream.length() - 65536 * 4);
       stream.read(buffer);
