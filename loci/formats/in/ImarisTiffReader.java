@@ -151,15 +151,21 @@ public class ImarisTiffReader extends BaseTiffReader {
           store.setImageDescription(value, 0);
         }
         else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
-          store.setLogicalChannelEmWave(new Integer(value), 0,
-            channelIndexes[1]++);
+          if (channelIndexes[1] < core.sizeC[0]) {
+            store.setLogicalChannelEmWave(new Integer(value), 0,
+              channelIndexes[1]++);
+          }
         }
         else if (key.equals("LSMExcitationWavelength") && !value.equals("0")) {
-          store.setLogicalChannelExWave(new Integer(value), 0,
-            channelIndexes[2]++);
+          if (channelIndexes[2] < core.sizeC[0]) {
+            store.setLogicalChannelExWave(new Integer(value), 0,
+              channelIndexes[2]++);
+          }
         }
         else if (key.equals("Name") && !currentId.endsWith(value)) {
-          store.setLogicalChannelName(value, 0, channelIndexes[0]++);
+          if (channelIndexes[0] < core.sizeC[0]) {
+            store.setLogicalChannelName(value, 0, channelIndexes[0]++);
+          }
         }
         else if (key.equals("RecordingDate")) {
           value = value.replaceAll(" ", "T");

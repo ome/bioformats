@@ -157,6 +157,7 @@ public class TCSReader extends FormatReader {
     for (int i=0; i<tiffs.size(); i++) {
       v.add(tiffs.get(i));
     }
+    if (!v.contains(currentId)) v.add(currentId);
     return (String[]) v.toArray(new String[0]);
   }
 
