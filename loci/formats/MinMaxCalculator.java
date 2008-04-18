@@ -100,7 +100,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int series = getSeries();
 
-    // check that all planes have been reade
+    // check that all planes have been read
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
     }
@@ -359,7 +359,13 @@ public class MinMaxCalculator extends ReaderWrapper {
           long threshold = (long) Math.pow(2, bytes * 8 - 1);
           if (bits >= threshold) bits -= 2*threshold;
         }
-        double v = fp ? Double.longBitsToDouble(bits) : (double) bits;
+        double v = (double) bits;
+        if (pixelType == FormatTools.FLOAT) {
+          v = Float.intBitsToFloat((int) bits);
+        }
+        else if (pixelType == FormatTools.DOUBLE) {
+          v = Double.longBitsToDouble(bits);
+        }
 
         if (v > chanMax[series][cBase + c]) {
           chanMax[series][cBase + c] = v;

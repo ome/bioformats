@@ -329,6 +329,17 @@ public final class DataTools {
   }
 
   /**
+   * Translates up to the first 4 bytes of a byte array to a float.
+   * If there are fewer than 4 bytes in the array, the MSBs are all
+   * assumed to be zero (regardless of endianness).
+   */
+  public static float bytesToFloat(byte[] bytes, int off, int len,
+    boolean little)
+  {
+    return Float.intBitsToFloat(bytesToInt(bytes, off, len, little));
+  }
+
+  /**
    * Translates up to the first len bytes of a byte array beyond the given
    * offset to a long. If there are fewer than 8 bytes in the array,
    * the MSBs are all assumed to be zero (regardless of endianness).
@@ -535,6 +546,14 @@ public final class DataTools {
   public static long swap(long x) {
     return (long) (((long) swap((int) x) << 32) |
       ((long) swap((int) (x >> 32)) & 0xFFFFFFFFL));
+  }
+
+  public static float swap(float x) {
+    return Float.intBitsToFloat(swap(Float.floatToIntBits(x)));
+  }
+
+  public static double swap(double x) {
+    return Double.longBitsToDouble(swap(Double.doubleToLongBits(x)));
   }
 
   // -- Miscellaneous --
