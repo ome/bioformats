@@ -185,13 +185,17 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Image_Height") != -1) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        core.sizeY[0] =
-          (int) ((DataTools.bytesToLong(b, 0, false) & 0x1f00) >> 8) * 64;
+        long val = DataTools.bytesToLong(b, 0, false);
+        int mul = (int) ((val & 0x1f00) >> 8);
+        if (mul == 0) mul = (int) ((val & 0xf000) >> 12);
+        core.sizeY[0] = mul * 64;
       }
       else if (relativePath.indexOf("Image_Width") != -1) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        core.sizeX[0] =
-          (int) ((DataTools.bytesToLong(b, 0, false) & 0x1f00) >> 8) * 64;
+        long val = DataTools.bytesToLong(b, 0, false);
+        int mul = (int) ((val & 0x1f00) >> 8);
+        if (mul == 0) mul = (int) ((val & 0xf000) >> 12);
+        core.sizeX[0] = mul * 64;
       }
     }
 
