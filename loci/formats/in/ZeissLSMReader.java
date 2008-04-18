@@ -176,22 +176,13 @@ public class ZeissLSMReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    if (core.sizeY[0] > 1) {
-      // check that predictor is set to 1 if anything other
-      // than LZW compression is used
-      if (TiffTools.getCompression(ifds[no]) != TiffTools.LZW) {
-        ifds[no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
-      }
-
-      TiffTools.getSamples(ifds[no], in, buf, x, y, w, h);
+    // check that predictor is set to 1 if anything other
+    // than LZW compression is used
+    if (TiffTools.getCompression(ifds[no]) != TiffTools.LZW) {
+      ifds[no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
     }
-    else {
-      if (TiffTools.getCompression(ifds[0]) != TiffTools.LZW) {
-        ifds[0].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
-      }
 
-      TiffTools.getSamples(ifds[0], in, buf, x, no, w, 1);
-    }
+    TiffTools.getSamples(ifds[no], in, buf, x, y, w, h);
     return buf;
   }
 
@@ -566,7 +557,7 @@ public class ZeissLSMReader extends BaseTiffReader {
                   break;
                 case SUBBLOCK_END:
                   count = 1;
-                  prefix.pop();
+                  if (prefix.size() > 0) prefix.pop();
                   if (prefix.size() == 0) done = true;
                   break;
               }
@@ -775,10 +766,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     initMetadata();
 
-    if (ifds.length == 1 && core.imageCount[0] > ifds.length) {
-      core.sizeY[0] = 1;
-    }
-    else if (core.imageCount[0] != ifds.length) {
+    if (core.imageCount[0] != ifds.length) {
       int diff = core.imageCount[0] - ifds.length;
       core.imageCount[0] = ifds.length;
       if (diff % core.sizeZ[0] == 0) {
