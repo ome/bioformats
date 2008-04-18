@@ -60,6 +60,10 @@ public class LociFunctions extends MacroFunctions {
 
   // -- LociFunctions API methods - loci.formats.IFormatReader --
 
+  public void getImageCount(Integer[] imageCount) {
+    imageCount[0] = new Integer(r.getImageCount());
+  }
+
   public void getSizeX(Double[] sizeX) { sizeX[0] = new Double(r.getSizeX()); }
   public void getSizeY(Double[] sizeY) { sizeY[0] = new Double(r.getSizeY()); }
   public void getSizeZ(Double[] sizeZ) { sizeZ[0] = new Double(r.getSizeZ()); }
@@ -338,6 +342,8 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("");
       IJ.write("-== Applying to the current series ==-");
       IJ.write("");
+      IJ.write("Ext.getImageCount(imageCount)");
+      IJ.write("-- Gets the total number of planes in the current dataset.");
       IJ.write("Ext.getSizeX(sizeX)");
       IJ.write("-- Gets the width of each image plane in pixels.");
       IJ.write("Ext.getSizeY(sizeY)");
