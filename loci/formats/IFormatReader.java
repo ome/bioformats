@@ -180,7 +180,7 @@ public interface IFormatReader extends IFormatHandler {
    * exists because some data with multiple rasterized sub-dimensions within
    * C have one sub-dimension interleaved, and the other not&mdash;e.g.,
    * {@link loci.formats.in.SDTReader} handles spectral-lifetime data with
-   * the interleaved lifetime bins and non-interleaved spectral channels.
+   * interleaved lifetime bins and non-interleaved spectral channels.
    */
   boolean isInterleaved(int subC);
 

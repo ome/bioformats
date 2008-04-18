@@ -26,6 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ImageProcessor;
+import java.awt.Rectangle;
 import java.io.IOException;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
@@ -63,8 +66,8 @@ public class LociFunctions extends MacroFunctions {
   public void getSizeC(Double[] sizeC) { sizeC[0] = new Double(r.getSizeC()); }
   public void getSizeT(Double[] sizeT) { sizeT[0] = new Double(r.getSizeT()); }
 
-  public void getPixelType(Double[] pixelType) {
-    pixelType[0] = new Double(r.getPixelType());
+  public void getPixelType(String[] pixelType) {
+    pixelType[0] = FormatTools.getPixelTypeString(r.getPixelType());
   }
 
   public void getEffectiveSizeC(Double[] effectiveSizeC) {
@@ -91,13 +94,13 @@ public class LociFunctions extends MacroFunctions {
     channelDimType[0] = new Double(r.getChannelDimTypes()[i.intValue()]);
   }
 
-  public void getThumbSizeX(Double[] thumbSizeX) {
-    thumbSizeX[0] = new Double(r.getThumbSizeX());
-  }
+//  public void getThumbSizeX(Double[] thumbSizeX) {
+//    thumbSizeX[0] = new Double(r.getThumbSizeX());
+//  }
 
-  public void getThumbSizeY(Double[] thumbSizeY) {
-    thumbSizeY[0] = new Double(r.getThumbSizeY());
-  }
+//  public void getThumbSizeY(Double[] thumbSizeY) {
+//    thumbSizeY[0] = new Double(r.getThumbSizeY());
+//  }
 
   public void isLittleEndian(String[] littleEndian) {
     littleEndian[0] = r.isLittleEndian() ? "true" : "false";
@@ -119,6 +122,22 @@ public class LociFunctions extends MacroFunctions {
     interleaved[0] = r.isInterleaved(subC.intValue()) ? "true" : "false";
   }
 
+  public void openImage(String title, Integer no)
+    throws FormatException, IOException
+  {
+    ImageProcessor ip = Util.openProcessor(r, no.intValue());
+    new ImagePlus(title, ip).show();
+  }
+
+  public void openImage(String title, Integer no, Integer x, Integer y,
+    Integer width, Integer height) throws FormatException, IOException
+  {
+    Rectangle crop = new Rectangle(x.intValue(), y.intValue(),
+      width.intValue(), height.intValue());
+    ImageProcessor ip = Util.openProcessor(r, no.intValue(), crop);
+    new ImagePlus(title, ip).show();
+  }
+
   public void close() throws IOException { r.close(); }
   public void closeFileOnly() throws IOException { r.close(true); }
 
@@ -132,6 +151,30 @@ public class LociFunctions extends MacroFunctions {
 
   public void getSeries(Double[] seriesNum) {
     seriesNum[0] = new Double(r.getSeries());
+  }
+
+  public void setNormalized(Boolean normalize) {
+    r.setNormalized(normalize.booleanValue());
+  }
+
+  public void isNormalized(Boolean[] normalize) {
+    normalize[0] = new Boolean(r.isNormalized());
+  }
+
+  public void setMetadataCollected(Boolean collect) {
+    r.setMetadataCollected(collect.booleanValue());
+  }
+
+  public void isMetadataCollected(Boolean[] collect) {
+    collect[0] = new Boolean(r.isMetadataCollected());
+  }
+
+  public void setOriginalMetadataPopulated(Boolean populate) {
+    r.setOriginalMetadataPopulated(populate.booleanValue());
+  }
+
+  public void isOriginalMetadataPopulated(Boolean[] populate) {
+    populate[0] = new Boolean(r.isOriginalMetadataPopulated());
   }
 
   public void setGroupFiles(String groupFiles) {
@@ -216,6 +259,10 @@ public class LociFunctions extends MacroFunctions {
   public void run(String arg) {
     if (IJ.macroRunning()) super.run(arg);
     else {
+      IJ.showMessage("LOCI Plugins for ImageJ",
+        "The macro extensions are designed to be used within a macro.\n" +
+        "Instructions on doing so will be printed to the Results window.");
+
       IJ.write("To gain access to more advanced features of Bio-Formats");
       IJ.write("from within a macro, put the following line at the");
       IJ.write("beginning of your macro:");
@@ -227,68 +274,141 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("-= Usable any time =-");
       IJ.write("");
       IJ.write("Ext.setId(id)");
-      IJ.write("-- opens a file");
+      IJ.write("-- Initializes the given id (filename).");
       IJ.write("Ext.isMetadataComplete(complete)");
+      IJ.write("-- True if Bio-Formats completely parses the current");
+      IJ.write("   dataset's file format. If this function returns false,");
+      IJ.write("   there are known limitations or missing features in how");
+      IJ.write("   Bio-Formats handles this file format.");
       IJ.write("Ext.fileGroupOption(id, fileGroupOption)");
+      IJ.write("-- Returns a code indicating the file grouping policy for");
+      IJ.write("   for the current dataset. Possible values are:");
+      IJ.write("     must, can, cannot, unknown");
       IJ.write("");
-      IJ.write("-= Usable before opening a file =-");
+      IJ.write("-= Usable before initializing a file =-");
       IJ.write("");
       IJ.write("Ext.setNormalized(normalize)");
+      IJ.write("-- Sets whether to normalize floating point data to [0-1].");
       IJ.write("Ext.isNormalized(normalize)");
+      IJ.write("-- Gets whether float data is being normalized to [0-1].");
       IJ.write("Ext.setMetadataCollected(collect)");
+      IJ.write("-- Sets whether Bio-Formats should extract metadata at all.");
       IJ.write("Ext.isMetadataCollected(collect)");
+      IJ.write("-- Gets whether Bio-Formats is supposed to extract metadata.");
       IJ.write("Ext.setOriginalMetadataPopulated(populate)");
+      IJ.write("-- Sets whether Bio-Formats should save proprietary metadata");
+      IJ.write("   to the OME metadata store as custom attributes.");
       IJ.write("Ext.isOriginalMetadataPopulated(populate)");
+      IJ.write("-- Sets whether Bio-Formats is saving proprietary metadata");
+      IJ.write("   to the OME metadata store as custom attributes.");
       IJ.write("Ext.setGroupFiles(group)");
+      IJ.write("-- For multi-file formats, sets whether to force grouping.");
       IJ.write("Ext.isGroupFiles(group)");
+      IJ.write("-- Gets whether grouping is forced for multi-file formats..");
       IJ.write("Ext.setMetadataFiltered(filter)");
+      IJ.write("-- Sets whether to filter out ugly metadata from the table");
+      IJ.write("   (i.e., entries with unprintable characters, and extremely");
+      IJ.write("   long values).");
       IJ.write("Ext.isMetadataFiltered(filter)");
+      IJ.write("-- Gets whether ugly metadata is being filtered out.");
       IJ.write("");
-      IJ.write("-== Usable after opening a file ==-");
+      IJ.write("-== Usable after initializing a file ==-");
       IJ.write("");
       IJ.write("Ext.getSeriesCount(seriesCount)");
-      IJ.write("-- gets the number of image series in the active dataset");
+      IJ.write("-- Gets the number of image series in the active dataset.");
       IJ.write("Ext.setSeries(seriesNum)");
-      IJ.write("-- sets the current series within the active dataset");
+      IJ.write("-- Sets the current series within the active dataset.");
       IJ.write("Ext.getSeries(seriesNum)");
-      IJ.write("-- gets the current series within the active dataset");
+      IJ.write("-- Gets the current series within the active dataset.");
       IJ.write("Ext.getUsedFileCount(count)");
+      IJ.write("-- Gets the number of files that are part of this dataset.");
       IJ.write("Ext.getUsedFile(i, used)");
+      IJ.write("-- Gets the i'th filename part of this dataset.");
       IJ.write("Ext.getCurrentFile(file)");
+      IJ.write("-- Gets the base filename used to initialize this dataset.");
+      IJ.write("Ext.openImage(title, no)");
+      IJ.write("-- Opens the no'th plane in a new window named 'title'.");
+      IJ.write("Ext.openImage(title, no, x, y, width, height)");
+      IJ.write("-- Opens a subset of the no'th plane in a new window");
+      IJ.write("   named 'title'.");
       IJ.write("Ext.close()");
-      IJ.write("-- closes the active dataset");
+      IJ.write("-- Closes the active dataset.");
       IJ.write("Ext.closeFileOnly()");
-      IJ.write("-- closes open files, leaving the current dataset active");
+      IJ.write("-- Closes open files, leaving the current dataset active.");
       IJ.write("");
       IJ.write("-== Applying to the current series ==-");
       IJ.write("");
       IJ.write("Ext.getSizeX(sizeX)");
+      IJ.write("-- Gets the width of each image plane in pixels.");
       IJ.write("Ext.getSizeY(sizeY)");
+      IJ.write("-- Gets the height of each image plane in pixels.");
       IJ.write("Ext.getSizeZ(sizeZ)");
+      IJ.write("-- Gets the number of focal planes in the dataset.");
       IJ.write("Ext.getSizeC(sizeC)");
+      IJ.write("-- Gets the number of channels in the dataset.");
       IJ.write("Ext.getSizeT(sizeT)");
+      IJ.write("-- Gets the number of time points in the dataset.");
       IJ.write("Ext.getPixelType(pixelType)");
+      IJ.write("-- Gets a code representing the pixel type of the image.");
+      IJ.write("   Possible values include:");
+      IJ.write("     int8, uint8, int16, uint16, int32, uint32, float, double");
       IJ.write("Ext.getEffectiveSizeC(effectiveSizeC)");
+      IJ.write("-- Gets the 'effective' number of channels, such that:");
+      IJ.write("   effectiveSizeC * sizeZ * sizeT == imageCount");
       IJ.write("Ext.getRGBChannelCount(rgbChannelCount)");
+      IJ.write("-- Gets the number of channels per composite image plane:");
+      IJ.write("   sizeC / rgbChannelCount == effectiveSizeC");
       IJ.write("Ext.isIndexed(indexed)");
+      IJ.write("-- Gets whether the image planes are stored as indexed color");
+      IJ.write("   (i.e., whether they have embedded LUTs).");
       IJ.write("Ext.getChannelDimCount(channelDimCount)");
+      IJ.write("-- For highly multidimensional image data, the C dimension");
+      IJ.write("   may consist of multiple embedded 'sub' dimensions.");
+      IJ.write("   This function returns the number of such dimensions.");
       IJ.write("Ext.getChannelDimLength(i, channelDimLength)");
+      IJ.write("-- Gets the length of the i'th embedded 'sub' dimension.");
       IJ.write("Ext.getChannelDimType(i, channelDimType)");
-      IJ.write("Ext.getThumbSizeX(thumbSizeX)");
-      IJ.write("Ext.getThumbSizeY(thumbSizeY)");
+      IJ.write("-- Gets a string label for the i'th embedded 'sub' channel.");
       IJ.write("Ext.isLittleEndian(littleEndian)");
+      IJ.write("-- For multi-byte pixel types, get the data's endianness.");
       IJ.write("Ext.getDimensionOrder(dimOrder)");
+      IJ.write("-- Gets a five-character string representing the dimensional");
+      IJ.write("   rasterization order within the dataset. Valid orders are:");
+      IJ.write("     XYCTZ, XYCZT, XYTCZ, XYTZC, XYZCT, XYZTC");
+      IJ.write("   In cases where the channels are interleaved (e.g., CXYTZ),");
+      IJ.write("   C will be the first dimension after X and Y (e.g., XYCTZ)");
+      IJ.write("   and the isInterleaved function will return true.");
       IJ.write("Ext.isOrderCertain(orderCertain)");
+      IJ.write("-- Gets whether the dimension order and sizes are known,");
+      IJ.write("   or merely guesses.");
       IJ.write("Ext.isInterleaved(interleaved)");
+      IJ.write("-- Gets whether or not the channels are interleaved.");
+      IJ.write("   This function exists because X and Y must appear first");
+      IJ.write("   in the dimension order. For interleaved data, XYCTZ or");
+      IJ.write("   XYCZT is used, and this method returns true.");
       IJ.write("Ext.isInterleavedSubC(subC, interleaved)");
+      IJ.write("-- Gets whether the given 'sub' channel is interleaved.");
+      IJ.write("   This method exists because some data with multiple");
+      IJ.write("   rasterized sub-dimensions within C have one sub-dimension");
+      IJ.write("   interleaved, and the other not -- e.g., the SDT reader");
+      IJ.write("   handles spectral-lifetime data with interleaved lifetime");
+      IJ.write("   bins and non-interleaved spectral channels.");
       IJ.write("Ext.getIndex(z, c, t, index)");
+      IJ.write("-- Gets the rasterized index corresponding to the given");
+      IJ.write("   Z, C and T coordinates, according to the dataset's");
+      IJ.write("   dimension order.");
       IJ.write("Ext.getZCTCoords(index, z, c, t)");
+      IJ.write("-- Gets the Z, C and T coordinates corresponding to the given");
+      IJ.write("   rasterized index value, according to the dataset's");
+      IJ.write("   dimension order.");
       IJ.write("Ext.getMetadataValue(field, value)");
+      IJ.write("-- Obtains the specified metadata field's value.");
       IJ.write("Ext.getSeriesName(seriesName)");
-
-      IJ.showMessage("LOCI Plugins for ImageJ",
-        "The macro extensions are designed to be used within a macro.\n" +
-        "Instructions on doing so have been printed to the Results window.");
+      IJ.write("-- Obtains the name of the current series.");
+      IJ.write("");
+      IJ.write("For more information, see the online Javadocs for the");
+      IJ.write("loci.formats.IFormatReader interface, available at:");
+      IJ.write("http://www.loci.wisc.edu/software/docs/");
     }
   }
 
