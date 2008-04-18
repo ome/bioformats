@@ -165,7 +165,7 @@ public class L2DReader extends FormatReader {
 
       String scanPath =
         new Location(scanDir, scanName + ".scn").getAbsolutePath();
-      used.add(scanPath);
+      addDirectory(scanDir.getAbsolutePath());
       RandomAccessStream scan = new RandomAccessStream(scanPath);
       line = scan.readLine().trim();
       while (line != null && line.length() > 0) {
@@ -183,7 +183,6 @@ public class L2DReader extends FormatReader {
             while (names.hasMoreTokens()) {
               String path = names.nextToken().trim();
               String tiff = new Location(scanDir, path).getAbsolutePath();
-              used.add(tiff);
               tiffs[i].add(tiff);
             }
           }
@@ -225,6 +224,30 @@ public class L2DReader extends FormatReader {
     }
 
     MetadataTools.populatePixels(store, this);
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Recursively add all of the files in the given directory to the
+   * used file list.
+   */
+  private void addDirectory(String path) { Location dir = new Location(path);
+    String[] files = dir.list();
+    for (int i=0; i<files.length; i++) {
+      Location file = new Location(path, files[i]);
+      if (file.isDirectory()) {
+        addDirectory(file.getAbsolutePath());
+      }
+      else {
+        String check = files[i].toLowerCase();
+        if (check.endsWith(".tif") || check.endsWith(".data") ||
+          check.endsWith(".log") || check.endsWith(".scn"))
+        {
+          used.add(file.getAbsolutePath());
+        }
+      }
+    }
   }
 
 }

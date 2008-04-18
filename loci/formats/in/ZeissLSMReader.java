@@ -111,6 +111,8 @@ public class ZeissLSMReader extends BaseTiffReader {
   private Vector timestamps;
   private int validChannels;
 
+  private String mdbFilename;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -126,9 +128,17 @@ public class ZeissLSMReader extends BaseTiffReader {
     thumbnailsRemoved = false;
     timestamps = null;
     validChannels = 0;
+    mdbFilename = null;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    if (mdbFilename == null) return super.getUsedFiles();
+    return new String[] {currentId, mdbFilename};
+  }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
@@ -722,8 +732,9 @@ public class ZeissLSMReader extends BaseTiffReader {
     for (int i=0; i<dirList.length; i++) {
       if (checkSuffix(dirList[i], MDB_SUFFIX)) {
         try {
-          MDBParser.parseDatabase((new Location(dir.getPath(),
-            dirList[i])).getAbsolutePath(), metadata);
+          mdbFilename =
+            (new Location(dir.getPath(), dirList[i])).getAbsolutePath();
+          MDBParser.parseDatabase(mdbFilename, metadata);
         }
         catch (Exception exc) {
           if (debug) trace(exc);

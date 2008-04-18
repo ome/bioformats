@@ -73,6 +73,8 @@ public class MetamorphReader extends BaseTiffReader {
   /** List of STK files in the dataset. */
   private String[][] stks;
 
+  private String ndFilename;
+
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
@@ -102,7 +104,16 @@ public class MetamorphReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
-    return stks == null ? super.getUsedFiles() : stks[series];
+    FormatTools.assertId(currentId, true, 1);
+    if (stks == null) return super.getUsedFiles();
+    Vector v = new Vector();
+    if (ndFilename != null) v.add(ndFilename);
+    for (int i=0; i<stks.length; i++) {
+      for (int j=0; j<stks[i].length; j++) {
+        v.add(stks[i][j]);
+      }
+    }
+    return (String[]) v.toArray(new String[0]);
   }
 
   /**
@@ -138,6 +149,7 @@ public class MetamorphReader extends BaseTiffReader {
     emWavelength = null;
     stks = null;
     mmPlanes = 0;
+    ndFilename = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -191,6 +203,8 @@ public class MetamorphReader extends BaseTiffReader {
       (fileGroupOption(id) == FormatTools.MUST_GROUP || isGroupFiles()))
     {
       // parse key/value pairs from .nd file
+
+      ndFilename = ndfile.getAbsolutePath();
 
       RandomAccessStream ndStream =
         new RandomAccessStream(ndfile.getAbsolutePath());
