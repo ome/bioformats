@@ -110,6 +110,11 @@ public class OMETiffWriter extends TiffWriter {
           if ((((Integer) seriesMap.get(q))).intValue() == series) imageCount++;
         }
 
+        // if RGB planes were written, adjust sizeC
+        if (imageCount < sizeZ * sizeC * sizeT) {
+          sizeC = imageCount / (sizeZ * sizeT);
+        }
+
         StringBuffer tiffData = new StringBuffer();
         tiffData.append(">");
         int num = 0;
