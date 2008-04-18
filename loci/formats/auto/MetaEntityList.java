@@ -65,14 +65,14 @@ public class MetaEntityList extends EntityList {
 
   public String version() { return value("version"); }
 
-  public boolean legacy() { return "true".equals(value("legacy")); }
-
   // -- MetaEntityList API methods - entities --
 
   /** Whether the entity can appear multiple times. */
   public boolean countable() { return "true".equals(value("countable")); }
 
   public String path() { return value("path"); }
+
+  public String defaultPath() { return value("path", null, ent, prop); }
 
   /** List of nodes in the path, with markup symbols. Derived from path. */
   public String[] pathNodes() { return path().split("\\/"); }
@@ -89,6 +89,10 @@ public class MetaEntityList extends EntityList {
 
   public String indicesList(boolean doTypes, boolean doVars, boolean doLast) {
     return indicesList(path(), doTypes, doVars, doLast);
+  }
+
+  public String defaultIndicesList(boolean doTypes, boolean doVars, boolean doLast) {
+    return indicesList(defaultPath(), doTypes, doVars, doLast);
   }
 
   /**
@@ -113,6 +117,7 @@ public class MetaEntityList extends EntityList {
         }
       }
     }
+    Collections.sort(unique);
     return unique;
   }
 
@@ -120,22 +125,30 @@ public class MetaEntityList extends EntityList {
 
   public String type() { return value("type"); }
 
-  /** Conversion method to call, if any. Derived from type. */
-  public String convert() {
-    String type = type();
-    String defaultType = value("type", null, ent, prop);
-    if (type.equals(defaultType)) return null;
-    return type + "To" + defaultType;
-  }
+  public String defaultType() { return value("type", null, ent, prop); }
 
   public String getter() {
     String getter = value("getter");
-    return getter == null ? "get" + name() : getter;
+    String s = getter == null ? "get" + name() : getter;
+
+    // inject conversion method if needed
+    String type = type();
+    String defaultType = defaultType();
+    if (type.equals(defaultType)) s = s + "()";
+    else s = var(type) + "To" + defaultType + "(" + s + "())";
+    return s;
   }
 
-  public String setter() {
+  public String setter(String value) {
     String setter = value("setter");
-    return setter == null ? "set" + name() : setter;
+    String s = setter == null ? "set" + name() : setter;
+
+    // inject conversion method if needed
+    String type = type();
+    String defaultType = defaultType();
+    if (type.equals(defaultType)) s = s + "(" + value + ")";
+    else s = s + "(" + var(defaultType) + "To" + type + "(" + value + "))";
+    return s;
   }
 
   // -- MetaEntityList API methods - entities/properties --
@@ -198,7 +211,9 @@ public class MetaEntityList extends EntityList {
   {
     StringBuffer sb = new StringBuffer();
     Vector<String> indices = indices(path);
-    if (!doLast) indices.remove(indices.size() - 1); // ignore last element
+    if (!doLast && indices.size() > 0) {
+      indices.remove(indices.size() - 1); // ignore last element
+    }
     boolean first = true;
     for (String index : indices) {
       if (first) first = false;

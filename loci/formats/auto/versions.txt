@@ -28,7 +28,6 @@
 #basePackage = ome.xml.r200802
 #subPackage = ome
 #version = 2008-02
-#legacy = false
 
 [200706]
 className = OMEXML200706Metadata
@@ -36,12 +35,10 @@ id = OMEXML200706Metadata.java
 basePackage = ome.xml.r200706
 subPackage = ome
 version = 2007-06
-legacy = false
 
 [2003FC]
 className = OMEXML2003FCMetadata
 id = OMEXML2003FCMetadata.java
-basePackage = org.openmicroscopy.xml
-subPackage = st
+basePackage = ome.xml.r2003fc
+subPackage = ome
 version = 2003-FC
-legacy = true

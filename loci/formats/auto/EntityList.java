@@ -42,7 +42,6 @@ import java.util.*;
  * |  |   \- basePackage = ome.xml.r200706
  * |  |   \- subPackage = ome
  * |  |   \- version = 2007-06
- * |  |   \- legacy = false
  * |  |--+ 200802
  * |  |   ...
  * |  |...
@@ -224,6 +223,7 @@ public class EntityList {
   /** Sets the active entity. */
   public void setEntity(String entity) {
     ent = entity;
+    prop = null;
   }
 
   /** Sets the active property. */

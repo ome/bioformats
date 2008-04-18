@@ -87,14 +87,15 @@ public class $q.className() extends OMEXMLMetadata {
   // - Entity counting -
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
-#if ($entity.countable())
+#if ($q.countable())
 #set ($last = $q.last())
 
-  /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
-  public int get$entity.name()Count($entity.indicesList(true, true, false)) {
-    if (true) return 0;//TEMP!
+  /* @see loci.formats.meta.MetadataRetrieve#get${entity}Count($q.indicesList(true, false, false)) */
+  public int get${entity}Count($q.indicesList(true, true, false)) {
+    return 0;//TEMP
+/*
 #if ($q.path() == "-")
-    // NB: $entity.name() unsupported for schema version $version
+    // NB: $entity unsupported for schema version $q.version()
     return -1;
 #else
     for (int i=0; i<Integer.MAX_VALUE; i++) {
@@ -102,6 +103,7 @@ public class $q.className() extends OMEXMLMetadata {
     }
     return -1;
 #end##if "-"
+*/
   }
 #end##if countable
 #end##foreach $entity
@@ -115,22 +117,15 @@ public class $q.className() extends OMEXMLMetadata {
   // - $entity property retrieval -
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
-#set ($convert = $q.convert())
-#set ($var = $q.var($q.last()))
-#set ($get = $q.getter());
 
-  /* @see loci.formats.meta.MetadataRetrieve#get$entity$prop$q.indicesList(true, false)) */
-  public $q.type() get$entity$prop($q.indicesList(true, true)) {
+  /* @see loci.formats.meta.MetadataRetrieve#get$entity$prop($q.defaultIndicesList(true, false, true)) */
+  public $q.defaultType() get$entity$prop($q.defaultIndicesList(true, true, true)) {
 #if ($q.path() == "-")
     // NB: $prop unsupported for schema version $q.version()
     return null;
 #else
-    ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), false);
-#if ($convert != null)
-    return $lastVar == null ? null : $convert(${lastVar}.$q.getter()); $lastVar${mappedName}To$q.type()(${lastVar}.$mappedPrefix$mappedName());
-#else
-    return $lastVar == null ? null : ${lastVar}.$mappedPrefix$mappedName();
-#end##if $convert
+    ${last}Node $lastVar = get${last}Node($q.indicesList(false, true), false);
+    return $lastVar == null ? null : ${lastVar}.$q.getter();
 #end##if "-"
   }
 #end##foreach $prop
@@ -169,29 +164,24 @@ public class $q.className() extends OMEXMLMetadata {
     }
     this.root = (OMENode) root;
   }
-#foreach ($entity in $entities)
-#set ($last = $entity.last($versionKey))
-#set ($lastVar = $entity.lastVar($versionKey))
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+#set ($last = $q.last())
+#set ($lastVar = $q.var($last))
 
-  // - $entity.name() property storage -
-#foreach ($prop in $entity.props())
-#set ($varName = $prop.varName())
-#set ($mappedName = $prop.mappedName($versionKey))
-#set ($convert = $mappedName.endsWith("%"))
-#set ($mappedName = $mappedName.replaceAll("%", ""))
+  // - $entity property storage -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
+#set ($varName = $q.var($prop))
 
-  /* @see loci.formats.meta.MetadataStore#set$entity$prop($q.type(), $q.indicesList(true, false)) */
-  public void set$entity$prop($q.type() $varName, $q.indicesList(true, true)) {
+  /* @see loci.formats.meta.MetadataStore#set$entity$prop($q.defaultType(), $q.defaultIndicesList(true, false, true)) */
+  public void set$entity$prop($q.defaultType() $varName, $q.defaultIndicesList(true, true, true)) {
 #if ($q.path() == "-")
     // NB: $prop unsupported for schema version $q.version()
 #else
     if ($varName == null) return;
-    ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), true);
-#if ($convert)
-    ${lastVar}.set$mappedName($lastVar${mappedName}From$q.type()($varName));
-#else
-    ${lastVar}.set$mappedName($varName);
-#end##if $convert
+    ${last}Node $lastVar = get${last}Node($q.indicesList(false, true), true);
+    ${lastVar}.$q.setter($varName);
 #end##if "-"
   }
 #end##foreach $prop
@@ -200,90 +190,40 @@ public class $q.className() extends OMEXMLMetadata {
   // -- Helper methods --
 #foreach ($path in $q.unique())
 #set ($last = $q.last($path))
+#set ($lastVar = $q.var($last))
 
   // $path
   private ${last}Node get${last}Node($q.indicesList($path, true, true, true), boolean create) {
-    int ndx, count;
-    List list;
-    // get OME node
-    OMENode ome = (OMENode) root;
-#set ($var = "ome")
-#set ($pVar = "ome")
-#set ($pNode = "OME")
-#set ($multiCount = 0)
-#foreach ($node in $path.split("\\/"))
-#set ($multi = $node.endsWith("+"))
-#set ($ref = $node.startsWith("@"))
-#set ($bang = $node.startsWith("@!"))
-#set ($node = $node.replaceAll("[@!+]", ""))
-#set ($ca = $pVar.equals("ca"))
-#set ($var = $q.var($node))
-    // get $node node
-#if ($node.equals("CA"))
-#set ($node = "CustomAttributes")
-#end##if CA
+#set ($slash = $path.lastIndexOf("/"))
+#if ($slash < 0)
+#set ($pre = "")
+#set ($node = "OME")
+#else
+#set ($pre = $path.substring(0, $slash))
+#set ($node = $q.last($pre))
+#end##if $slash < 0
+#set ($node = $node.replaceAll("\\+", ""))
+#set ($nodeVar = $q.var($node))
+#set ($multi = $path.endsWith("+"))
+#set ($indices = $q.indicesList($pre, false, true, true))
+#if ($indices == "")
+    ${node}Node $nodeVar = (${node}Node) root;
+#else
+    // get $pre node
+    ${node}Node $nodeVar = get${node}Node($indices, create);
+    if ($nodeVar == null) return null;
+#end##if $indices == ""
+    // get $last node
 #if ($multi)
-#set ($prop = $q.indices($path).get($multiCount))
-#set ($multiCount = $multiCount + 1)
-    ndx = ${var}Index;
-#if ($ca)
-    count = ${pVar}.countCAList("$node");
-#elseif ($q.legacy())
-    count = ${pVar}.count${node}List();
+    int count = ${nodeVar}.get${last}Count();
+    if (!create && count >= ${lastVar}Index) return null;
+    for (int i=count; i<=${lastVar}Index; i++) new ${last}Node($nodeVar);
+    List list = ${nodeVar}.get${last}List();
+    return (${last}Node) list.get(${lastVar}Index);
 #else
-    count = ${pVar}.get${node}Count();
-#end##if $ca, $legacy
-    if (!create && ndx >= count) return null;
-#if ($ref)
-    for (int i=count; i<=ndx; i++) {
-      new ${node}Node(ca).set$pNode($pVar);
-    }
-#else
-    for (int i=count; i<=ndx; i++) new ${node}Node($pVar);
-#end##if $ref
-#if ($ca)
-    list = ${pVar}.getCAList("$node");
-#else
-    list = ${pVar}.get${node}List();
-#end##if $ca
-    ${node}Node $var = (${node}Node) list.get(ndx);
-#else
-#if ($ca || $ref)
-#if ($bang)
-#set ($extra = "By$pNode")
-#else
-#set ($extra = "")
-#end##if $bang
-    ${node}Node $var = null;
-#if ($ca)
-    count = ca.countCAList("$node");
-    if (count >= 1) {
-      $var = (${node}Node) ca.getCAList("$node").get(0);
-    }
-#else
-    count = ${pVar}.count${node}List$extra();
-    if (count >= 1) {
-      $var = (${node}Node) ${pVar}.get${node}List$extra().get(0);
-    }
-#end##if $ca
-#else
-    ${node}Node $var = ${pVar}.get$node();
-#end##if $ca || $ref
-    if ($var == null) {
-      if (!create) return null;
-#if ($ref)
-      $var = new ${node}Node(ca);
-      ${var}.set$pNode($pVar);
-#else
-      $var = new ${node}Node($pVar);
-#end##if $ref
-    }
+    return ${nodeVar}.get$last();
 #end##if $multi
-#set ($pNode = $node)
-#set ($pVar = $var)
-#end##foreach $node
-    return $var;
   }
-#end##foreach $entity
+#end##foreach $path
 
 }
