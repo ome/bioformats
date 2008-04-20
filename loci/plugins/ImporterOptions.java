@@ -114,6 +114,7 @@ public class ImporterOptions implements ItemListener {
 
   public static final String PREF_FIRST = "bioformats.firstTime";
   public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
+  public static final String PREF_SWAP = "bioformats.swapDimensions";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -134,6 +135,7 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_AUTOSCALE = "Autoscale images";
   public static final String LABEL_VIRTUAL = "Use_virtual_stack";
   public static final String LABEL_ALL_SERIES = "Open_all_series";
+  public static final String LABEL_SWAP = "Swap_dimensions";
 
   public static final String LABEL_MERGE_OPTION = "Merging Options";
   public static final String LABEL_WINDOWLESS = "windowless";
@@ -160,6 +162,7 @@ public class ImporterOptions implements ItemListener {
   private Checkbox virtualBox;
   private Checkbox allSeriesBox;
   private Checkbox cropBox;
+  private Checkbox swapBox;
 
   // -- Fields - core options --
 
@@ -179,6 +182,7 @@ public class ImporterOptions implements ItemListener {
   private boolean autoscale;
   private boolean virtual;
   private boolean openAllSeries;
+  private boolean swapDimensions;
 
   private String mergeOption;
   private boolean windowless;
@@ -215,6 +219,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isVirtual() { return virtual; }
   public boolean openAllSeries() { return openAllSeries; }
   public boolean doCrop() { return crop; }
+  public boolean isSwapDimensions() { return swapDimensions; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
   public boolean isViewStandard() { return VIEW_STANDARD.equals(stackFormat); }
@@ -257,6 +262,7 @@ public class ImporterOptions implements ItemListener {
   public void setVirtual(boolean b) { virtual = b; }
   public void setOpenAllSeries(boolean b) { openAllSeries = b; }
   public void setCrop(boolean b) { crop = b; }
+  public void setSwapDimensions(boolean b) { swapDimensions = b; }
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
@@ -275,6 +281,7 @@ public class ImporterOptions implements ItemListener {
     autoscale = Prefs.get(PREF_AUTOSCALE, true);
     virtual = Prefs.get(PREF_VIRTUAL, false);
     openAllSeries = Prefs.get(PREF_ALL_SERIES, false);
+    swapDimensions = Prefs.get(PREF_SWAP, false);
 
     mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
     windowless = Prefs.get(PREF_WINDOWLESS, false);
@@ -301,6 +308,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_AUTOSCALE, autoscale);
     Prefs.set(PREF_VIRTUAL, virtual);
     Prefs.set(PREF_ALL_SERIES, openAllSeries);
+    Prefs.set(PREF_SWAP, swapDimensions);
 
     Prefs.set(PREF_MERGE_OPTION, mergeOption);
     Prefs.set(PREF_WINDOWLESS, windowless);
@@ -350,6 +358,7 @@ public class ImporterOptions implements ItemListener {
       autoscale = getMacroValue(arg, LABEL_AUTOSCALE, autoscale);
       virtual = getMacroValue(arg, LABEL_VIRTUAL, virtual);
       openAllSeries = getMacroValue(arg, LABEL_ALL_SERIES, openAllSeries);
+      swapDimensions = getMacroValue(arg, LABEL_SWAP, swapDimensions);
 
       mergeOption = Macro.getValue(arg, LABEL_MERGE_OPTION, mergeOption);
       windowless = getMacroValue(arg, LABEL_WINDOWLESS, windowless);
@@ -549,6 +558,7 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_AUTOSCALE, autoscale);
     gd.addCheckbox(LABEL_VIRTUAL, virtual);
     gd.addCheckbox(LABEL_ALL_SERIES, openAllSeries);
+    gd.addCheckbox(LABEL_SWAP, swapDimensions);
 
     // extract GUI components from dialog and add listeners
     Vector choices = gd.getChoices();
@@ -574,6 +584,7 @@ public class ImporterOptions implements ItemListener {
       autoscaleBox = (Checkbox) boxes.get(10);
       virtualBox = (Checkbox) boxes.get(11);
       allSeriesBox = (Checkbox) boxes.get(12);
+      swapBox = (Checkbox) boxes.get(13);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -597,6 +608,7 @@ public class ImporterOptions implements ItemListener {
     autoscale = gd.getNextBoolean();
     virtual = gd.getNextBoolean();
     openAllSeries = gd.getNextBoolean();
+    swapDimensions = gd.getNextBoolean();
 
     return STATUS_OK;
   }
@@ -878,6 +890,54 @@ public class ImporterOptions implements ItemListener {
       if (tEnd[i] >= sizeT) tEnd[i] = sizeT - 1;
       if (tStep[i] < 1) tStep[i] = 1;
     }
+
+    return STATUS_OK;
+  }
+
+  /** Prompt for dimension swapping options. */
+  public int promptSwap(DimensionSwapper r, boolean[] series) {
+    GenericDialog gd = new GenericDialog("Dimension swapping options");
+
+    int oldSeries = r.getSeries();
+    String[] labels = new String[] {"Z", "C", "T"};
+    for (int n=0; n<r.getSeriesCount(); n++) {
+      if (!series[n]) continue;
+      r.setSeries(n);
+
+      gd.addMessage("Series " + n + ":\n");
+
+      int[] axisSizes = new int[] {r.getSizeZ(), r.getSizeC(), r.getSizeT()};
+
+      for (int i=0; i<labels.length; i++) {
+        gd.addChoice(axisSizes[i] + "_planes", labels, labels[i]);
+      }
+    }
+    gd.showDialog();
+    if (gd.wasCanceled()) return STATUS_CANCELED;
+
+    for (int n=0; n<r.getSeriesCount(); n++) {
+      r.setSeries(n);
+      String z = gd.getNextChoice();
+      String c = gd.getNextChoice();
+      String t = gd.getNextChoice();
+
+      if (z.equals(t) || z.equals(c) || c.equals(t)) {
+        IJ.error("Invalid swapping options - each axis can be used only once.");
+        return promptSwap(r, series);
+      }
+
+      String originalOrder = r.getDimensionOrder();
+      StringBuffer sb = new StringBuffer();
+      sb.append("XY");
+      for (int i=2; i<originalOrder.length(); i++) {
+        if (originalOrder.charAt(i) == 'Z') sb.append(z);
+        else if (originalOrder.charAt(i) == 'C') sb.append(c);
+        else if (originalOrder.charAt(i) == 'T') sb.append(t);
+      }
+
+      r.swapDimensions(sb.toString());
+    }
+    r.setSeries(oldSeries);
 
     return STATUS_OK;
   }

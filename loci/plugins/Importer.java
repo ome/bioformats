@@ -131,6 +131,7 @@ public class Importer {
     boolean concatenate = options.isConcatenate();
     boolean specifyRanges = options.isSpecifyRanges();
     boolean cropOnImport = options.doCrop();
+    boolean swapDimensions = options.isSwapDimensions();
 
     // -- Step 4: analyze and read from data source --
 
@@ -160,7 +161,7 @@ public class Importer {
       }
 
       if (groupFiles) r = new FileStitcher(r, true);
-      r = new ChannelSeparator(r);
+      r = new DimensionSwapper(new ChannelSeparator(r));
       r.setId(id);
 
       // -- Step 4b: prompt for which series to import, if necessary --
@@ -248,7 +249,27 @@ public class Importer {
 
       if (options.openAllSeries()) Arrays.fill(series, true);
 
-      // -- Step 4c: prompt for the range of planes to import, if necessary --
+      // -- Step 4c: prompt for dimension swapping parameters, if necessary --
+
+      if (swapDimensions) {
+        options.promptSwap((DimensionSwapper) r, series);
+
+        for (int i=0; i<seriesCount; i++) {
+          r.setSeries(i);
+          num[i] = r.getImageCount();
+          sizeC[i] = r.getEffectiveSizeC();
+          sizeZ[i] = r.getSizeZ();
+          sizeT[i] = r.getSizeT();
+          certain[i] = r.isOrderCertain();
+          cBegin[i] = zBegin[i] = tBegin[i] = 0;
+          cEnd[i] = sizeC[i] - 1;
+          zEnd[i] = sizeZ[i] - 1;
+          tEnd[i] = sizeT[i] - 1;
+          cStep[i] = zStep[i] = tStep[i] = 1;
+        }
+      }
+
+      // -- Step 4d: prompt for the range of planes to import, if necessary --
 
       if (specifyRanges) {
         boolean needRange = false;
@@ -329,7 +350,7 @@ public class Importer {
         w.setVisible(true);
       }
 
-      // -- Step 4e: read pixel data --
+      // -- Step 4f: read pixel data --
 
       IJ.showStatus("Reading " + currentFile);
 
