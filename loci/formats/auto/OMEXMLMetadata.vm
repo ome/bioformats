@@ -32,9 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-#if ($q.legacy())
-import $q.basePackage().*;
-#end##if legacy
 import $q.basePackage().$q.subPackage().*;
 import java.util.List;
 import loci.formats.LogTools;
@@ -58,18 +55,6 @@ public class $q.className() extends OMEXMLMetadata {
   /* @see OMEXMLMetadata#dumpXML() */
   public String dumpXML() {
     if (root == null) return null;
-#if ($q.legacy())
-    try { return ((OMENode) root).writeOME(false); }
-    catch (javax.xml.transform.TransformerException exc) {
-      LogTools.trace(exc);
-    }
-    catch (java.io.IOException exc) { LogTools.trace(exc); }
-    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
-    catch (javax.xml.parsers.ParserConfigurationException exc) {
-      LogTools.trace(exc);
-    }
-    return null;
-#else
     try {
       java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
       ome.xml.DOMUtil.writeXML(os, root.getDOMElement().getOwnerDocument());
@@ -79,7 +64,6 @@ public class $q.className() extends OMEXMLMetadata {
       LogTools.trace(exc);
     }
     return null;
-#end##if legacy
   }
 
   // -- MetadataRetrieve API methods --
@@ -135,18 +119,9 @@ public class $q.className() extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void createRoot() {
-#if ($q.legacy())
-    try {
-      root = new OMENode();
-    }
-    catch (javax.xml.transform.TransformerException exc) {
-      LogTools.trace(exc);
-    }
-#else
     try {
       root = ome.xml.OMEXMLFactory.newOMENode("$q.version()");
     }
-#end##if $legacy
     catch (java.io.IOException exc) { LogTools.trace(exc); }
     catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
     catch (javax.xml.parsers.ParserConfigurationException exc) {
