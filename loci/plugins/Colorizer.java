@@ -152,7 +152,7 @@ public class Colorizer implements PlugInFilter {
     boolean closeOriginal = true;
 
     if (color) {
-      if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG)) {
+      if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG) && nChannels > 1) {
         // use reflection to construct CompositeImage,
         // in case ImageJ version is too old
         try {
