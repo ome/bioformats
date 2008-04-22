@@ -21,7 +21,7 @@ public class OutputFilter extends PrintStream {
   // -- PrintStream API methods --
 
   public void print(String s) {
-    if (!s.trim().startsWith("WARN:")) {
+    if (s == null || !s.trim().startsWith("WARN:")) {
       super.print(s);
     }
   }

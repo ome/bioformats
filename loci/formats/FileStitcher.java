@@ -44,7 +44,7 @@ public class FileStitcher implements IFormatReader {
   // -- Fields --
 
   /** FormatReader to use as a template for constituent readers. */
-  private IFormatReader reader;
+  private DimensionSwapper reader;
 
   /**
    * Whether string ids given should be treated
@@ -131,7 +131,8 @@ public class FileStitcher implements IFormatReader {
    *   patterns rather than single file paths.
    */
   public FileStitcher(IFormatReader r, boolean patternIds) {
-    reader = r;
+    if (r instanceof DimensionSwapper) reader = (DimensionSwapper) r;
+    else reader = new DimensionSwapper(r);
     this.patternIds = patternIds;
   }
 
@@ -907,6 +908,19 @@ public class FileStitcher implements IFormatReader {
       for (int i=0; i<seriesCount; i++) {
         files[i] = (String[]) fileVector.get(i);
       }
+    }
+
+    // check if multiple Z or multiple T axes were found
+
+    if (!reader.isOrderCertain() && ((guesser.getAxisCountZ() > 0 &&
+      reader.getSizeZ() > 1) || (guesser.getAxisCountT() > 0 &&
+      reader.getSizeT() > 1)))
+    {
+      String order = reader.getDimensionOrder();
+      order = order.replaceAll("Z", "p");
+      order = order.replaceAll("T", "Z");
+      order = order.replaceAll("p", "T");
+      reader.swapDimensions(order);
     }
 
     // verify that file pattern is valid and matches existing files
