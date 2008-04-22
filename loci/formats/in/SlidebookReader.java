@@ -365,15 +365,8 @@ public class SlidebookReader extends FormatReader {
       else if (n == 'h') hCount++;
       else if (n == 'j') {
         // this block should contain an image name
-        in.skipBytes(4);
-        in.order(!core.littleEndian[0]);
-        int length = in.readShort();
-        in.order(core.littleEndian[0]);
-        in.skipBytes(3);
-        // read image name, removing all non-whitespace and
-        // non-alphanumeric characters
-        imageNames[nextName++] =
-          in.readString(length).replaceAll("[\\W&&[\\S]]", "");
+        in.skipBytes(14);
+        imageNames[nextName++] = in.readCString().trim();
       }
     }
 
