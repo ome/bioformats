@@ -686,6 +686,25 @@ public class ZeissLSMReader extends BaseTiffReader {
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
       ((core.rgb[0] || core.indexed[0]) ? 1 : core.sizeC[0]);
 
+    if (core.imageCount[0] != ifds.length) {
+      int diff = core.imageCount[0] - ifds.length;
+      core.imageCount[0] = ifds.length;
+      if (diff % core.sizeZ[0] == 0) {
+        core.sizeT[0] -= (diff / core.sizeZ[0]);
+      }
+      else if (diff % core.sizeT[0] == 0) {
+        core.sizeZ[0] -= (diff / core.sizeT[0]);
+      }
+      else if (core.sizeZ[0] > 1) {
+        core.sizeZ[0] = ifds.length;
+        core.sizeT[0] = 1;
+      }
+      else if (core.sizeT[0] > 1) {
+        core.sizeT[0] = ifds.length;
+        core.sizeZ[0] = 1;
+      }
+    }
+
     MetadataTools.populatePixels(store, this);
 
     Float pixX = new Float((float) pixelSizeX);
@@ -766,24 +785,6 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     initMetadata();
 
-    if (core.imageCount[0] != ifds.length) {
-      int diff = core.imageCount[0] - ifds.length;
-      core.imageCount[0] = ifds.length;
-      if (diff % core.sizeZ[0] == 0) {
-        core.sizeT[0] -= (diff / core.sizeZ[0]);
-      }
-      else if (diff % core.sizeT[0] == 0) {
-        core.sizeZ[0] -= (diff / core.sizeT[0]);
-      }
-      else if (core.sizeZ[0] > 1) {
-        core.sizeZ[0] = ifds.length;
-        core.sizeT[0] = 1;
-      }
-      else if (core.sizeT[0] > 1) {
-        core.sizeT[0] = ifds.length;
-        core.sizeZ[0] = 1;
-      }
-    }
     core.littleEndian[0] = !core.littleEndian[0];
   }
 
