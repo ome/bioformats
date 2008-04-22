@@ -60,8 +60,8 @@ public class LociFunctions extends MacroFunctions {
 
   // -- LociFunctions API methods - loci.formats.IFormatReader --
 
-  public void getImageCount(Integer[] imageCount) {
-    imageCount[0] = new Integer(r.getImageCount());
+  public void getImageCount(Double[] imageCount) {
+    imageCount[0] = new Double(r.getImageCount());
   }
 
   public void getSizeX(Double[] sizeX) { sizeX[0] = new Double(r.getSizeX()); }
@@ -126,15 +126,15 @@ public class LociFunctions extends MacroFunctions {
     interleaved[0] = r.isInterleaved(subC.intValue()) ? "true" : "false";
   }
 
-  public void openImage(String title, Integer no)
+  public void openImage(String title, Double no)
     throws FormatException, IOException
   {
     ImageProcessor ip = Util.openProcessor(r, no.intValue());
     new ImagePlus(title, ip).show();
   }
 
-  public void openImage(String title, Integer no, Integer x, Integer y,
-    Integer width, Integer height) throws FormatException, IOException
+  public void openImage(String title, Double no, Double x, Double y,
+    Double width, Double height) throws FormatException, IOException
   {
     Rectangle crop = new Rectangle(x.intValue(), y.intValue(),
       width.intValue(), height.intValue());
