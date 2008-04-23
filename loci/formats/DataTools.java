@@ -601,6 +601,17 @@ public final class DataTools {
     return buf.toString();
   }
 
+  /** Remove invalid characters from an XML string. */
+  public static String sanitizeXML(String s) {
+    for (int i=0; i<s.length(); i++) {
+      char c = s.charAt(i);
+      if (Character.isISOControl(c) || !Character.isDefined(c) || c > '~') {
+        s = s.replace(c, ' ');
+      }
+    }
+    return s;
+  }
+
   /**
    * Load a list of metadata tags and their corresponding descriptions.
    */

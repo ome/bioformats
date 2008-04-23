@@ -92,16 +92,7 @@ public class OMETiffReader extends BaseTiffReader {
     temporaryKeyMetadata = new Hashtable();
 
     OMETiffHandler handler = new OMETiffHandler(false);
-    String comment = TiffTools.getComment(ifds[0]);
-
-    // remove invalid characters from comment
-
-    for (int i=0; i<comment.length(); i++) {
-      char c = comment.charAt(i);
-      if (Character.isISOControl(c) || !Character.isDefined(c)) {
-        comment = comment.replace(c, ' ');
-      }
-    }
+    String comment = DataTools.sanitizeXML(TiffTools.getComment(ifds[0]));
 
     currentSeries = -1;
     seriesCount = 0;

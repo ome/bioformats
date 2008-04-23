@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
+import java.util.Hashtable;
+import java.util.List;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -111,6 +113,27 @@ public abstract class OMEXMLMetadata
     DOMUtil.setAttribute("ID", root.makeID(originalMetadata), om);
     DOMUtil.setAttribute("Name", key, om);
     DOMUtil.setAttribute("Value", value, om);
+  }
+
+  /** Get a list of all OriginalMetadata key/value pairs. */
+  public Hashtable getOriginalMetadata() {
+    Element ome = root.getDOMElement();
+    Element image = DOMUtil.getChildElement("Image", ome);
+    if (image == null) return null;
+
+    Element ca = DOMUtil.getChildElement("CustomAttributes", image);
+    if (ca == null) return null;
+
+    String key = "OriginalMetadata";
+    List elements = DOMUtil.getChildElements(key, ca);
+    if (elements == null) return null;
+
+    Hashtable h = new Hashtable();
+    for (int i=0; i<elements.size(); i++) {
+      Element e = (Element) elements.get(i);
+      h.put(DOMUtil.getAttribute("Name", e), DOMUtil.getAttribute("Value", e));
+    }
+    return h;
   }
 
   // -- MetadataStore API methods --

@@ -26,6 +26,7 @@ package loci.formats.ome;
 
 import java.awt.Image;
 import java.io.*;
+import java.util.Hashtable;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -340,6 +341,27 @@ public class OMEWriter extends FormatWriter {
         r.exec("physical.setModuleExecution(ii)");
         r.exec("df.update(physical)");
 
+        // upload original metadata, if available
+
+        if (MetadataTools.isOMEXMLMetadata(metadataRetrieve)) {
+          r.setVar("metadata", metadataRetrieve);
+          Hashtable meta = (Hashtable) r.exec("metadata.getOriginalMetadata()");
+          String[] keys = (String[]) meta.keySet().toArray(new String[0]);
+          r.setVar("ORIGINAL_METADATA", "OriginalMetadata");
+          r.setVar("NAME", "Name");
+          r.setVar("VALUE", "Value");
+          for (int i=0; i<keys.length; i++) {
+            r.exec("attribute = df.createNew(ORIGINAL_METADATA)");
+            r.setVar("K", DataTools.sanitizeXML(keys[i]));
+            r.setVar("V", DataTools.sanitizeXML((String) meta.get(keys[i])));
+            r.exec("attribute.setStringElement(NAME, K)");
+            r.exec("attribute.setStringElement(VALUE, V)");
+            r.exec("attribute.setImage(img)");
+            r.exec("attribute.setModuleExecution(ii)");
+            r.exec("df.update(attribute)");
+          }
+        }
+
         r.setVar("FINISHED", "FINISHED");
 
         if (originalFiles != null) {
@@ -536,6 +558,7 @@ public class OMEWriter extends FormatWriter {
     });
 
     FileStitcher reader = new FileStitcher();
+    reader.setOriginalMetadataPopulated(true);
     reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
     reader.setId(id);
 
