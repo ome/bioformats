@@ -650,7 +650,7 @@ public class FormatReaderTest {
       // unwrap reader
       while (true) {
         if (r instanceof ReaderWrapper) {
-          r = ((ImageReader) r).getReader();
+          r = ((ReaderWrapper) r).getReader();
         }
         else if (r instanceof FileStitcher) {
           r = ((FileStitcher) r).getReader();
