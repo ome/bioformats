@@ -466,30 +466,32 @@ public class FV1000Reader extends FormatReader {
         if (ss.endsWith(".tif")) v.add(ss);
       }
       previewNames = v;
-      String previewName = (String) previewNames.get(0);
-      core = new CoreMetadata(2);
-      Hashtable[] ifds = TiffTools.getIFDs(getFile(previewName));
-      core.imageCount[1] = ifds.length * previewNames.size();
-      core.sizeX[1] = (int) TiffTools.getImageWidth(ifds[0]);
-      core.sizeY[1] = (int) TiffTools.getImageLength(ifds[0]);
-      core.sizeZ[1] = 1;
-      core.sizeT[1] = 1;
-      core.sizeC[1] = core.imageCount[1];
-      core.rgb[1] = false;
-      int bits = TiffTools.getBitsPerSample(ifds[0])[0];
-      while ((bits % 8) != 0) bits++;
-      switch (bits) {
-        case 8:
-          core.pixelType[1] = FormatTools.UINT8;
-          break;
-        case 16:
-          core.pixelType[1] = FormatTools.UINT16;
-          break;
-        case 32:
-          core.pixelType[1] = FormatTools.UINT32;
+      if (previewNames.size() > 0) {
+        String previewName = (String) previewNames.get(0);
+        core = new CoreMetadata(2);
+        Hashtable[] ifds = TiffTools.getIFDs(getFile(previewName));
+        core.imageCount[1] = ifds.length * previewNames.size();
+        core.sizeX[1] = (int) TiffTools.getImageWidth(ifds[0]);
+        core.sizeY[1] = (int) TiffTools.getImageLength(ifds[0]);
+        core.sizeZ[1] = 1;
+        core.sizeT[1] = 1;
+        core.sizeC[1] = core.imageCount[1];
+        core.rgb[1] = false;
+        int bits = TiffTools.getBitsPerSample(ifds[0])[0];
+        while ((bits % 8) != 0) bits++;
+        switch (bits) {
+          case 8:
+            core.pixelType[1] = FormatTools.UINT8;
+            break;
+          case 16:
+            core.pixelType[1] = FormatTools.UINT16;
+            break;
+          case 32:
+            core.pixelType[1] = FormatTools.UINT32;
+        }
+        core.currentOrder[1] = "XYCZT";
+        core.indexed[1] = false;
       }
-      core.currentOrder[1] = "XYCZT";
-      core.indexed[1] = false;
     }
 
     core.imageCount[0] = filenames.size();
