@@ -158,10 +158,10 @@ public final class Util {
         cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],
           byteTable[1], byteTable[2]);
       }
-      else {
-        short[][] shortTable = r.get16BitLookupTable();
-        model = new IndexedColorModel(16, shortTable[0].length, shortTable);
-      }
+      //else {
+      //  short[][] shortTable = r.get16BitLookupTable();
+      //  model = new IndexedColorModel(16, shortTable[0].length, shortTable);
+      //}
     }
 
     // construct image processor
