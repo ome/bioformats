@@ -185,15 +185,21 @@ public class $q.className() extends OMEXMLMetadata {
     ${node}Node $nodeVar = get${node}Node($vars, create);
     if ($nodeVar == null) return null;
 #end##if $vars == ""
-    // get $last node
 #if ($multi)
+    // get $last+ node
     int count = ${nodeVar}.get${last}Count();
-    if (!create && count >= ${lastVar}Index) return null;
+    if (!create && count <= ${lastVar}Index) return null;
     for (int i=count; i<=${lastVar}Index; i++) new ${last}Node($nodeVar);
     List list = ${nodeVar}.get${last}List();
     return (${last}Node) list.get(${lastVar}Index);
 #else
-    return ${nodeVar}.get$last();
+    // get $last node
+    ${last}Node $lastVar = ${nodeVar}.get$last();
+    if ($lastVar == null) {
+      if (create) $lastVar = new ${last}Node($nodeVar);
+      else return null;
+    }
+    return $lastVar;
 #end##if $multi
   }
 #end##foreach $path
