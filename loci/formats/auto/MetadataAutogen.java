@@ -112,18 +112,31 @@ public class MetadataAutogen {
     System.out.println("done.");
   }
 
-  private static String generateConvertMetadata(MetaEntityList q) {
+  private static String generateConvertMetadata(final MetaEntityList q) {
+    System.out.println("Generating convertMetadata body");
     StringWriter sw = new StringWriter();
     PrintWriter out = new PrintWriter(sw);
     final int indent = 2;
 
     Vector<String> entities = q.entities();
 
+    // sort entities by path
+    Collections.sort(entities, new Comparator<String>() {
+      public int compare(String e1, String e2) {
+        q.setEntity(e1);
+        String path1 = q.path();
+        q.setEntity(e2);
+        String path2 = q.path();
+        return path1.compareTo(path2);
+      }
+    });
+
     StringBuffer spaces = new StringBuffer();
     Vector<String> lastIndices = new Vector<String>();
 
     for (String entity : entities) {
       q.setEntity(entity);
+      System.out.println("\t" + q.path());
 
       Vector<String> indices = q.indices();
 
@@ -155,7 +168,7 @@ public class MetadataAutogen {
         String countVar = iVar.replaceFirst("Index$", "Count");
         out.println(spaces + "int " + countVar + " = " +
           "src.get" + index + "Count" + "(" +
-          q.indicesList(false, true, false) + ");");
+          q.varsList(q.chop(), q.chop(q.defaultPath())) + ");");
         out.println(spaces + "for (int " + iVar + "=0; " +
           iVar + "<" + countVar + "; " + iVar + "++) {");
       }
@@ -165,7 +178,7 @@ public class MetadataAutogen {
       Vector<String> props = q.props();
       for (String prop : props) {
         String methodName = entity + prop;
-        String iList = q.indicesList(false, true);
+        String iList = q.varsList();
         out.println(spaces + "  dest.set" + methodName +
           "(src.get" + methodName + "(" + iList + "), " + iList + ");");
       }

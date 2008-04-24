@@ -49,7 +49,7 @@ public interface MetadataRetrieve {
 #set ($dummy = $q.setEntity($entity))
 #if ($q.countable())
 
-  int get${entity}Count($q.indicesList(true, true, false));
+  int get${entity}Count($q.argsList($q.chop()));
 #end###if countable
 #end##foreach $entity
 
@@ -67,7 +67,7 @@ public interface MetadataRetrieve {
    * @param $q.var("${index}Index") index of the $index
 #end##foreach $index
    */
-  $q.type() get$entity$prop($q.indicesList(true, true));
+  $q.type() get$entity$prop($q.argsList());
 #end
 #end
 

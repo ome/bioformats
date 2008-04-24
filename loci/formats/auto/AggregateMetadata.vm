@@ -97,13 +97,13 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 #set ($dummy = $q.setEntity($entity))
 #if ($q.countable())
 
-  /* @see MetadataRetrieve#get${entity}Count($q.indicesList(true, false, false)) */
-  public int get${entity}Count($q.indicesList(true, true, false)) {
+  /* @see MetadataRetrieve#get${entity}Count($q.typesList($q.chop())) */
+  public int get${entity}Count($q.argsList($q.chop())) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result = retrieve.get${entity}Count($q.indicesList(false, true, false));
+        int result = retrieve.get${entity}Count($q.varsList($q.chop()));
         if (result >= 0) return result;
       }
     }
@@ -120,13 +120,13 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  /* @see MetadataRetrieve#get$entity$prop($q.indicesList(true, false)) */
-  public $q.type() get$entity$prop($q.indicesList(true, true)) {
+  /* @see MetadataRetrieve#get$entity$prop($q.typesList()) */
+  public $q.type() get$entity$prop($q.argsList()) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        $q.type() result = retrieve.get$entity$prop($q.indicesList(false, true));
+        $q.type() result = retrieve.get$entity$prop($q.varsList());
         if (result != null) return result;
       }
     }
@@ -171,13 +171,13 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  /* @see MetadataStore#set$entity$prop($q.type(), $q.indicesList(true, false)) */
-  public void set$entity$prop($q.type() $q.var($prop), $q.indicesList(true, true)) {
+  /* @see MetadataStore#set$entity$prop($q.type(), $q.typesList()) */
+  public void set$entity$prop($q.type() $q.var($prop), $q.argsList()) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.set$entity$prop($q.var($prop), $q.indicesList(false, true));
+        store.set$entity$prop($q.var($prop), $q.varsList());
       }
     }
   }

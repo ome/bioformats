@@ -220,15 +220,30 @@ public class EntityList {
     ver = version;
   }
 
+  /** Gets the active version. */
+  public String getVersion() {
+    return ver;
+  }
+
   /** Sets the active entity. */
   public void setEntity(String entity) {
     ent = entity;
     prop = null;
   }
 
+  /** Gets the active entity. */
+  public String getEntity() {
+    return ent;
+  }
+
   /** Sets the active property. */
   public void setProperty(String property) {
     prop = property;
+  }
+
+  /** Gets the active property. */
+  public String getProperty() {
+    return prop;
   }
 
   /** Gets list of versions in sorted order. */

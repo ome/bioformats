@@ -80,20 +80,20 @@ public class MetaEntityList extends EntityList {
   /** Last node in the path, without markup symbols. Derived from path. */
   public String last() { return last(path()); }
 
+  /** Path without its last <em>countable</em> node. Derived from path. */
+  public String chop() { return chop(path()); }
+
   /** List of indices in the path. Derived from path. */
   public Vector<String> indices() { return indices(path()); }
 
-  public String indicesList(boolean doTypes, boolean doVars) {
-    return indicesList(doTypes, doVars, true);
-  }
+  /** List of method arguments for the path indices. Derived from path. */
+  public String argsList() { return argsList(defaultPath()); }
 
-  public String indicesList(boolean doTypes, boolean doVars, boolean doLast) {
-    return indicesList(path(), doTypes, doVars, doLast);
-  }
+  /** List of types for the path indices. Derived from path. */
+  public String typesList() { return typesList(defaultPath()); }
 
-  public String defaultIndicesList(boolean doTypes, boolean doVars, boolean doLast) {
-    return indicesList(defaultPath(), doTypes, doVars, doLast);
-  }
+  /** List of variables for the path indices. Derived from path. */
+  public String varsList() { return varsList(path(), defaultPath()); }
 
   /**
    * List of distinct path values for the active version, including sub-paths.
@@ -127,9 +127,10 @@ public class MetaEntityList extends EntityList {
 
   public String defaultType() { return value("type", null, ent, prop); }
 
-  public String getter() {
+  public String getter(String nodeVar) {
     String getter = value("getter");
     String s = getter == null ? "get" + name() : getter;
+    s = nodeVar + "." + s;
 
     // inject conversion method if needed
     String type = type();
@@ -139,7 +140,7 @@ public class MetaEntityList extends EntityList {
     return s;
   }
 
-  public String setter(String value) {
+  public String setter(String nodeVar, String value) {
     String setter = value("setter");
     String s = setter == null ? "set" + name() : setter;
 
@@ -148,7 +149,7 @@ public class MetaEntityList extends EntityList {
     String defaultType = defaultType();
     if (type.equals(defaultType)) s = s + "(" + value + ")";
     else s = s + "(" + var(defaultType) + "To" + type + "(" + value + "))";
-    return s;
+    return nodeVar + "." + s;
   }
 
   // -- MetaEntityList API methods - entities/properties --
@@ -185,13 +186,21 @@ public class MetaEntityList extends EntityList {
         break;
       }
     }
-    return new String(c).replaceAll("[@!+]", "");
+    return new String(c).replaceAll("\\+", "");
   }
 
   /** Gets the last node in the given path, without markup symbols. */
   public String last(String path) {
     int first = path.lastIndexOf("/") + 1;
-    return path.substring(first).replaceAll("[@\\!\\+]", "");
+    return path.substring(first).replaceAll("\\+", "");
+  }
+
+  /** Gets a path without its last <em>countable</em> node. */
+  public String chop(String path) {
+    int plus = path.lastIndexOf("+");
+    if (plus < 0) return null;
+    int slash = path.lastIndexOf("/", plus);
+    return slash < 0 ? "" : path.substring(0, slash);
   }
 
   /** List of indices in the given path. */
@@ -201,21 +210,54 @@ public class MetaEntityList extends EntityList {
     int tokens = st.countTokens();
     for (int i=0; i<tokens; i++) {
       String t = st.nextToken();
-      if (t.endsWith("+")) list.add(t.replaceAll("[@\\!\\+]", ""));
+      if (t.endsWith("+")) list.add(t.replaceAll("\\+", ""));
     }
     return list;
   }
 
-  public String indicesList(String path,
-    boolean doTypes, boolean doVars, boolean doLast)
+  /**
+   * Gets a list of method arguments for the indices in the given path.
+   * E.g., "int imageIndex, int pixelsIndex, int planeIndex".
+   */
+  public String argsList(String path) {
+    return indicesList(path, path, true, true);
+  }
+
+  /**
+   * Gets a list of types for the indices in the given path.
+   * E.g., "int, int, int".
+   */
+  public String typesList(String path) {
+    return indicesList(path, path, true, false);
+  }
+
+  /**
+   * Gets a list of variables for the indices in the given path.
+   * E.g., "imageIndex, pixelsIndex, planeIndex".
+   */
+  public String varsList(String path) {
+    return varsList(path, path);
+  }
+
+  /**
+   * Gets a list of variables for the indices in the given path.
+   * E.g., "imageIndex, pixelsIndex, planeIndex".
+   */
+  public String varsList(String path, String defaultPath) {
+    return indicesList(path, defaultPath, false, true);
+  }
+
+  private String indicesList(String path, String defaultPath,
+    boolean doTypes, boolean doVars)
   {
     StringBuffer sb = new StringBuffer();
     Vector<String> indices = indices(path);
-    if (!doLast && indices.size() > 0) {
-      indices.remove(indices.size() - 1); // ignore last element
+    Vector<String> defaultIndices = indices(defaultPath);
+    while (defaultIndices.size() > indices.size()) {
+      defaultIndices.remove(defaultIndices.size() - 1);
     }
     boolean first = true;
-    for (String index : indices) {
+    for (String index : defaultIndices) {
       if (first) first = false;
       else sb.append(", ");
       if (doTypes) sb.append("int");
@@ -224,4 +266,5 @@ public class MetaEntityList extends EntityList {
     }
     return sb.toString();
   }
+
 }

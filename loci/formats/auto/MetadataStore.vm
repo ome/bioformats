@@ -68,7 +68,7 @@ public interface MetadataStore {
    * @param $q.var("${index}Index") index of the $index
 #end##foreach $index
    */
-  void set$entity$prop($q.type() $q.var($prop), $q.indicesList(true, true));
+  void set$entity$prop($q.type() $q.var($prop), $q.argsList());
 #end##foreach $prop
 #end##foreach $entity
 

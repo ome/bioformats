@@ -74,20 +74,17 @@ public class $q.className() extends OMEXMLMetadata {
 #if ($q.countable())
 #set ($last = $q.last())
 
-  /* @see loci.formats.meta.MetadataRetrieve#get${entity}Count($q.indicesList(true, false, false)) */
-  public int get${entity}Count($q.indicesList(true, true, false)) {
-    return 0;//TEMP
-/*
+  /* @see loci.formats.meta.MetadataRetrieve#get${entity}Count($q.typesList($q.chop($q.defaultPath()))) */
+  public int get${entity}Count($q.argsList($q.chop($q.defaultPath()))) {
 #if ($q.path() == "-")
     // NB: $entity unsupported for schema version $q.version()
     return -1;
 #else
     for (int i=0; i<Integer.MAX_VALUE; i++) {
-      if (get$entity($q.indicesList(false, true).replaceFirst("[a-zA-Z_0-9]+$", "i")) == null) return i;
+      if (get${last}Node($q.varsList().replaceFirst("[a-zA-Z_0-9]+$", "i"), false) == null) return i;
     }
     return -1;
 #end##if "-"
-*/
   }
 #end##if countable
 #end##foreach $entity
@@ -102,14 +99,14 @@ public class $q.className() extends OMEXMLMetadata {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  /* @see loci.formats.meta.MetadataRetrieve#get$entity$prop($q.defaultIndicesList(true, false, true)) */
-  public $q.defaultType() get$entity$prop($q.defaultIndicesList(true, true, true)) {
+  /* @see loci.formats.meta.MetadataRetrieve#get$entity$prop($q.typesList()) */
+  public $q.defaultType() get$entity$prop($q.argsList()) {
 #if ($q.path() == "-")
     // NB: $prop unsupported for schema version $q.version()
     return null;
 #else
-    ${last}Node $lastVar = get${last}Node($q.indicesList(false, true), false);
-    return $lastVar == null ? null : ${lastVar}.$q.getter();
+    ${last}Node $lastVar = get${last}Node($q.varsList(), false);
+    return $lastVar == null ? null : $q.getter($lastVar);
 #end##if "-"
   }
 #end##foreach $prop
@@ -149,14 +146,14 @@ public class $q.className() extends OMEXMLMetadata {
 #set ($dummy = $q.setProperty($prop))
 #set ($varName = $q.var($prop))
 
-  /* @see loci.formats.meta.MetadataStore#set$entity$prop($q.defaultType(), $q.defaultIndicesList(true, false, true)) */
-  public void set$entity$prop($q.defaultType() $varName, $q.defaultIndicesList(true, true, true)) {
+  /* @see loci.formats.meta.MetadataStore#set$entity$prop($q.defaultType(), $q.typesList()) */
+  public void set$entity$prop($q.defaultType() $varName, $q.argsList()) {
 #if ($q.path() == "-")
     // NB: $prop unsupported for schema version $q.version()
 #else
     if ($varName == null) return;
-    ${last}Node $lastVar = get${last}Node($q.indicesList(false, true), true);
-    ${lastVar}.$q.setter($varName);
+    ${last}Node $lastVar = get${last}Node($q.varsList(), true);
+    $q.setter($lastVar, $varName);
 #end##if "-"
   }
 #end##foreach $prop
@@ -168,7 +165,7 @@ public class $q.className() extends OMEXMLMetadata {
 #set ($lastVar = $q.var($last))
 
   // $path
-  private ${last}Node get${last}Node($q.indicesList($path, true, true, true), boolean create) {
+  private ${last}Node get${last}Node($q.argsList($path), boolean create) {
 #set ($slash = $path.lastIndexOf("/"))
 #if ($slash < 0)
 #set ($pre = "")
@@ -180,14 +177,14 @@ public class $q.className() extends OMEXMLMetadata {
 #set ($node = $node.replaceAll("\\+", ""))
 #set ($nodeVar = $q.var($node))
 #set ($multi = $path.endsWith("+"))
-#set ($indices = $q.indicesList($pre, false, true, true))
-#if ($indices == "")
+#set ($vars = $q.varsList($pre))
+#if ($vars == "")
     ${node}Node $nodeVar = (${node}Node) root;
 #else
     // get $pre node
-    ${node}Node $nodeVar = get${node}Node($indices, create);
+    ${node}Node $nodeVar = get${node}Node($vars, create);
     if ($nodeVar == null) return null;
-#end##if $indices == ""
+#end##if $vars == ""
     // get $last node
 #if ($multi)
     int count = ${nodeVar}.get${last}Count();

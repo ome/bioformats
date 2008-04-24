@@ -53,8 +53,8 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 #set ($dummy = $q.setEntity($entity))
 #if ($q.countable())
 
-  /* @see MetadataRetrieve#get${entity}Count($q.indicesList(true, false, false)) */
-  public int get${entity}Count($q.indicesList(true, true, false)) {
+  /* @see MetadataRetrieve#get${entity}Count($q.typesList($q.chop())) */
+  public int get${entity}Count($q.argsList($q.chop())) {
     return -1;
   }
 #end##if countable
@@ -68,8 +68,8 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
-  /* @see MetadataRetrieve#get$entity$prop($q.indicesList(true, false)) */
-  public $q.type() get$entity$prop($q.indicesList(true, true)) {
+  /* @see MetadataRetrieve#get$entity$prop($q.typesList()) */
+  public $q.type() get$entity$prop($q.argsList()) {
     return null;
   }
 #end##foreach $prop
@@ -94,8 +94,8 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  /* @see MetadataStore#set$entity$prop($q.type(), $q.indicesList(true, false)) */
-  public void set$entity$prop($q.type() $q.var($prop), $q.indicesList(true, true)) {
+  /* @see MetadataStore#set$entity$prop($q.type(), $q.typesList()) */
+  public void set$entity$prop($q.type() $q.var($prop), $q.argsList()) {
   }
 #end##foreach $prop
 #end##foreach $entity
