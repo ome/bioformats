@@ -22,12 +22,12 @@
 
 # Add new OME-XML schema version definitions to this file.
 
-#[200802]
-#className = OMEXML200802Metadata
-#id = OMEXML200802Metadata.java
-#basePackage = ome.xml.r200802
-#subPackage = ome
-#version = 2008-02
+[200802]
+className = OMEXML200802Metadata
+id = OMEXML200802Metadata.java
+basePackage = ome.xml.r200802
+subPackage = ome
+version = 2008-02
 
 [200706]
 className = OMEXML200706Metadata

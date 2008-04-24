@@ -754,6 +754,16 @@ description = TODO
 type = String
 description = TODO
 
+[LightSource Power]
+type = Float
+description = TODO
+
+[LightSource Power 200706]
+path = -
+
+[LightSource Power 2003FC]
+path = -
+
 ## Laser ##
 
 [Laser]
@@ -807,10 +817,6 @@ description = a filament for a particular instrument
 type = String
 description = TODO
 
-[Filament Power]
-type = Float
-description = TODO
-
 ## Arc ##
 
 [Arc]
@@ -819,10 +825,6 @@ description = an arc for a particular instrument
 
 [Arc Type]
 type = String
-description = TODO
-
-[Arc Power]
-type = Float
 description = TODO
 
 ## Detector ##
@@ -895,12 +897,20 @@ description = TODO
 type = String
 description = TODO
 
+# TEMP - until r200802 code is fixed
+[Objective Correction 200802]
+path = -
+
 [Objective Correction 2003FC]
 path = -
 
 [Objective Immersion]
 type = String
 description = TODO
+
+# TEMP - until r200802 code is fixed
+[Objective Immersion 200802]
+path = -
 
 [Objective Immersion 2003FC]
 path = -
