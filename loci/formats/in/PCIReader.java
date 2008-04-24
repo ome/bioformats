@@ -115,6 +115,8 @@ public class PCIReader extends FormatReader {
 
     poi = new POITools(Location.getMappedId(currentId));
 
+    float scaleFactor = 1f;
+
     Vector allFiles = poi.getDocumentList();
 
     for (int i=0; i<allFiles.size(); i++) {
@@ -142,6 +144,13 @@ public class PCIReader extends FormatReader {
             String key = token.substring(0, idx).trim();
             String value = token.substring(idx + 1).trim();
             addMeta(key, value);
+
+            if (key.equals("factor")) {
+              if (value.indexOf(";") != -1) {
+                value = value.substring(0, value.indexOf(";"));
+              }
+              scaleFactor = Float.parseFloat(value.trim());
+            }
           }
         }
       }
@@ -215,6 +224,8 @@ public class PCIReader extends FormatReader {
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
     MetadataTools.populatePixels(store, this);
+    store.setDimensionsPhysicalSizeX(new Float(scaleFactor), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(scaleFactor), 0, 0);
   }
 
 }
