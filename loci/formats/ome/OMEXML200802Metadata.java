@@ -1,5 +1,5 @@
 //
-// OMEXML2003FCMetadata.java
+// OMEXML200802Metadata.java
 //
 
 /*
@@ -32,23 +32,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import ome.xml.r2003fc.ome.*;
+import ome.xml.r200802.ome.*;
 import java.util.List;
 import loci.formats.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
- * DOMs for the 2003-FC version of OME-XML. It requires the
- * ome.xml.r2003fc package to compile (part of ome-java.jar).
+ * DOMs for the 2008-02 version of OME-XML. It requires the
+ * ome.xml.r200802 package to compile (part of ome-java.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEXML2003FCMetadata.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEXML2003FCMetadata.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEXML200802Metadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEXML200802Metadata.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class OMEXML2003FCMetadata extends OMEXMLMetadata {
+public class OMEXML200802Metadata extends OMEXMLMetadata {
 
   // -- OMEXMLMetadata API methods --
 
@@ -121,7 +121,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelCount(int) */
   public int getLogicalChannelCount(int imageIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
-      if (getChannelInfoNode(imageIndex, i, false) == null) return i;
+      if (getLogicalChannelNode(imageIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -152,7 +152,9 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getPlaneCount(int, int) */
   public int getPlaneCount(int imageIndex, int pixelsIndex) {
-    // NB: Plane unsupported for schema version 2003-FC
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getPlaneNode(imageIndex, pixelsIndex, i, false) == null) return i;
+    }
     return -1;
   }
 
@@ -262,38 +264,38 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getDimensionsPhysicalSizeX(int, int) */
   public Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex) {
-    ImageNode image = getImageNode(imageIndex, false);
-    return image == null ? null : image.getPixelSizeX();
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, false);
+    return pixels == null ? null : pixels.getPhysicalSizeX();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDimensionsPhysicalSizeY(int, int) */
   public Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex) {
-    ImageNode image = getImageNode(imageIndex, false);
-    return image == null ? null : image.getPixelSizeY();
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, false);
+    return pixels == null ? null : pixels.getPhysicalSizeY();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDimensionsPhysicalSizeZ(int, int) */
   public Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex) {
-    ImageNode image = getImageNode(imageIndex, false);
-    return image == null ? null : image.getPixelSizeZ();
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, false);
+    return pixels == null ? null : pixels.getPhysicalSizeZ();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDimensionsTimeIncrement(int, int) */
   public Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex) {
-    ImageNode image = getImageNode(imageIndex, false);
-    return image == null ? null : image.getTimeIncrement();
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, false);
+    return pixels == null ? null : pixels.getTimeIncrement();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDimensionsWaveIncrement(int, int) */
   public Integer getDimensionsWaveIncrement(int imageIndex, int pixelsIndex) {
-    ImageNode image = getImageNode(imageIndex, false);
-    return image == null ? null : image.getWaveIncrement();
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, false);
+    return pixels == null ? null : pixels.getWaveIncrement();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDimensionsWaveStart(int, int) */
   public Integer getDimensionsWaveStart(int imageIndex, int pixelsIndex) {
-    ImageNode image = getImageNode(imageIndex, false);
-    return image == null ? null : image.getWaveStart();
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, false);
+    return pixels == null ? null : pixels.getWaveStart();
   }
 
   // - DisplayOptions property retrieval -
@@ -315,13 +317,13 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsProjectionZStart(int) */
   public Integer getDisplayOptionsProjectionZStart(int imageIndex) {
     ProjectionNode projection = getProjectionNode(imageIndex, false);
-    return projection == null ? null : projection.getZstart();
+    return projection == null ? null : projection.getZStart();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsProjectionZStop(int) */
   public Integer getDisplayOptionsProjectionZStop(int imageIndex) {
     ProjectionNode projection = getProjectionNode(imageIndex, false);
-    return projection == null ? null : projection.getZstop();
+    return projection == null ? null : projection.getZStop();
   }
 
   // - DisplayOptionsTime property retrieval -
@@ -329,13 +331,13 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsTimeTStart(int) */
   public Integer getDisplayOptionsTimeTStart(int imageIndex) {
     TimeNode time = getTimeNode(imageIndex, false);
-    return time == null ? null : time.getTstart();
+    return time == null ? null : time.getTStart();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsTimeTStop(int) */
   public Integer getDisplayOptionsTimeTStop(int imageIndex) {
     TimeNode time = getTimeNode(imageIndex, false);
-    return time == null ? null : time.getTstop();
+    return time == null ? null : time.getTStop();
   }
 
   // - Experimenter property retrieval -
@@ -443,13 +445,13 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getLaserFrequencyMultiplication(int, int) */
   public Integer getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex) {
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, false);
-    return laser == null ? null : booleanToInteger(laser.getFrequencyDoubled());
+    return laser == null ? null : laser.getFrequencyMultiplication();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLaserLaserMedium(int, int) */
   public String getLaserLaserMedium(int instrumentIndex, int lightSourceIndex) {
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, false);
-    return laser == null ? null : laser.getMedium();
+    return laser == null ? null : laser.getLaserMedium();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLaserPulse(int, int) */
@@ -461,7 +463,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getLaserTuneable(int, int) */
   public Boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex) {
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, false);
-    return laser == null ? null : laser.getTunable();
+    return laser == null ? null : laser.getTuneable();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLaserType(int, int) */
@@ -498,8 +500,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getLightSourcePower(int, int) */
   public Float getLightSourcePower(int instrumentIndex, int lightSourceIndex) {
-    // NB: Power unsupported for schema version 2003-FC
-    return null;
+    LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, false);
+    return lightSource == null ? null : lightSource.getPower();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLightSourceSerialNumber(int, int) */
@@ -532,80 +534,80 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelContrastMethod(int, int) */
   public String getLogicalChannelContrastMethod(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getContrastMethod();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getContrastMethod();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelEmWave(int, int) */
   public Integer getLogicalChannelEmWave(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getEmWave();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getEmWave();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelExWave(int, int) */
   public Integer getLogicalChannelExWave(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getExWave();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getExWave();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelFluor(int, int) */
   public String getLogicalChannelFluor(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getFluor();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getFluor();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelID(int, int) */
   public String getLogicalChannelID(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getNodeID();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelIlluminationType(int, int) */
   public String getLogicalChannelIlluminationType(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getIlluminationType();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getIlluminationType();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelMode(int, int) */
   public String getLogicalChannelMode(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getMode();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getMode();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelName(int, int) */
   public String getLogicalChannelName(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getName();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getName();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelNdFilter(int, int) */
   public Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getNDfilter();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getNdFilter();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelPhotometricInterpretation(int, int) */
   public String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getPhotometricInterpretation();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getPhotometricInterpretation();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelPinholeSize(int, int) */
   public Integer getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getPinholeSize();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getPinholeSize();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelPockelCellSetting(int, int) */
   public Integer getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex) {
-    // NB: PockelCellSetting unsupported for schema version 2003-FC
-    return null;
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getPockelCellSetting();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelSamplesPerPixel(int, int) */
   public Integer getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex) {
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, false);
-    return channelInfo == null ? null : channelInfo.getSamplesPerPixel();
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getSamplesPerPixel();
   }
 
   // - OTF property retrieval -
@@ -619,7 +621,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getOTFOpticalAxisAveraged(int, int) */
   public Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex) {
     OTFNode otf = getOTFNode(instrumentIndex, otfIndex, false);
-    return otf == null ? null : otf.getOpticalAxisAvrg();
+    return otf == null ? null : otf.getOpticalAxisAveraged();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getOTFPixelType(int, int) */
@@ -645,12 +647,12 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveCalibratedMagnification(int, int) */
   public Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex) {
     ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, false);
-    return objective == null ? null : objective.getMagnification();
+    return objective == null ? null : objective.getCalibratedMagnification();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveCorrection(int, int) */
   public String getObjectiveCorrection(int instrumentIndex, int objectiveIndex) {
-    // NB: Correction unsupported for schema version 2003-FC
+    // NB: Correction unsupported for schema version 2008-02
     return null;
   }
 
@@ -662,7 +664,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveImmersion(int, int) */
   public String getObjectiveImmersion(int instrumentIndex, int objectiveIndex) {
-    // NB: Immersion unsupported for schema version 2003-FC
+    // NB: Immersion unsupported for schema version 2008-02
     return null;
   }
 
@@ -686,8 +688,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveNominalMagnification(int, int) */
   public Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex) {
-    // NB: NominalMagnification unsupported for schema version 2003-FC
-    return null;
+    ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, false);
+    return objective == null ? null : objective.getNominalMagnification();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveSerialNumber(int, int) */
@@ -698,8 +700,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveWorkingDistance(int, int) */
   public Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex) {
-    // NB: WorkingDistance unsupported for schema version 2003-FC
-    return null;
+    ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, false);
+    return objective == null ? null : objective.getWorkingDistance();
   }
 
   // - Pixels property retrieval -
@@ -762,34 +764,34 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getPlaneTheC(int, int, int) */
   public Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheC unsupported for schema version 2003-FC
-    return null;
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, false);
+    return plane == null ? null : plane.getTheC();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getPlaneTheT(int, int, int) */
   public Integer getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheT unsupported for schema version 2003-FC
-    return null;
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, false);
+    return plane == null ? null : plane.getTheT();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getPlaneTheZ(int, int, int) */
   public Integer getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheZ unsupported for schema version 2003-FC
-    return null;
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, false);
+    return plane == null ? null : plane.getTheZ();
   }
 
   // - PlaneTiming property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getPlaneTimingDeltaT(int, int, int) */
   public Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: DeltaT unsupported for schema version 2003-FC
-    return null;
+    PlaneTimingNode planeTiming = getPlaneTimingNode(imageIndex, pixelsIndex, planeIndex, false);
+    return planeTiming == null ? null : planeTiming.getDeltaT();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getPlaneTimingExposureTime(int, int, int) */
   public Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: ExposureTime unsupported for schema version 2003-FC
-    return null;
+    PlaneTimingNode planeTiming = getPlaneTimingNode(imageIndex, pixelsIndex, planeIndex, false);
+    return planeTiming == null ? null : planeTiming.getExposureTime();
   }
 
   // - ROI property retrieval -
@@ -878,20 +880,20 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getStagePositionPositionX(int, int, int) */
   public Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionX unsupported for schema version 2003-FC
-    return null;
+    StagePositionNode stagePosition = getStagePositionNode(imageIndex, pixelsIndex, planeIndex, false);
+    return stagePosition == null ? null : stagePosition.getPositionX();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getStagePositionPositionY(int, int, int) */
   public Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionY unsupported for schema version 2003-FC
-    return null;
+    StagePositionNode stagePosition = getStagePositionNode(imageIndex, pixelsIndex, planeIndex, false);
+    return stagePosition == null ? null : stagePosition.getPositionY();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getStagePositionPositionZ(int, int, int) */
   public Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionZ unsupported for schema version 2003-FC
-    return null;
+    StagePositionNode stagePosition = getStagePositionNode(imageIndex, pixelsIndex, planeIndex, false);
+    return stagePosition == null ? null : stagePosition.getPositionZ();
   }
 
   // -- MetadataStore API methods --
@@ -899,7 +901,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void createRoot() {
     try {
-      root = ome.xml.OMEXMLFactory.newOMENode("2003-FC");
+      root = ome.xml.OMEXMLFactory.newOMENode("2008-02");
     }
     catch (java.io.IOException exc) { LogTools.trace(exc); }
     catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
@@ -1030,43 +1032,43 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setDimensionsPhysicalSizeX(Float, int, int) */
   public void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex) {
     if (physicalSizeX == null) return;
-    ImageNode image = getImageNode(imageIndex, true);
-    image.setPixelSizeX(physicalSizeX);
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, true);
+    pixels.setPhysicalSizeX(physicalSizeX);
   }
 
   /* @see loci.formats.meta.MetadataStore#setDimensionsPhysicalSizeY(Float, int, int) */
   public void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex) {
     if (physicalSizeY == null) return;
-    ImageNode image = getImageNode(imageIndex, true);
-    image.setPixelSizeY(physicalSizeY);
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, true);
+    pixels.setPhysicalSizeY(physicalSizeY);
   }
 
   /* @see loci.formats.meta.MetadataStore#setDimensionsPhysicalSizeZ(Float, int, int) */
   public void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex) {
     if (physicalSizeZ == null) return;
-    ImageNode image = getImageNode(imageIndex, true);
-    image.setPixelSizeZ(physicalSizeZ);
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, true);
+    pixels.setPhysicalSizeZ(physicalSizeZ);
   }
 
   /* @see loci.formats.meta.MetadataStore#setDimensionsTimeIncrement(Float, int, int) */
   public void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex) {
     if (timeIncrement == null) return;
-    ImageNode image = getImageNode(imageIndex, true);
-    image.setTimeIncrement(timeIncrement);
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, true);
+    pixels.setTimeIncrement(timeIncrement);
   }
 
   /* @see loci.formats.meta.MetadataStore#setDimensionsWaveIncrement(Integer, int, int) */
   public void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex) {
     if (waveIncrement == null) return;
-    ImageNode image = getImageNode(imageIndex, true);
-    image.setWaveIncrement(waveIncrement);
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, true);
+    pixels.setWaveIncrement(waveIncrement);
   }
 
   /* @see loci.formats.meta.MetadataStore#setDimensionsWaveStart(Integer, int, int) */
   public void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex) {
     if (waveStart == null) return;
-    ImageNode image = getImageNode(imageIndex, true);
-    image.setWaveStart(waveStart);
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, true);
+    pixels.setWaveStart(waveStart);
   }
 
   // - DisplayOptions property storage -
@@ -1091,14 +1093,14 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
     if (zStart == null) return;
     ProjectionNode projection = getProjectionNode(imageIndex, true);
-    projection.setZstart(zStart);
+    projection.setZStart(zStart);
   }
 
   /* @see loci.formats.meta.MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
   public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
     if (zStop == null) return;
     ProjectionNode projection = getProjectionNode(imageIndex, true);
-    projection.setZstop(zStop);
+    projection.setZStop(zStop);
   }
 
   // - DisplayOptionsTime property storage -
@@ -1107,14 +1109,14 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
     if (tStart == null) return;
     TimeNode time = getTimeNode(imageIndex, true);
-    time.setTstart(tStart);
+    time.setTStart(tStart);
   }
 
   /* @see loci.formats.meta.MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
   public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
     if (tStop == null) return;
     TimeNode time = getTimeNode(imageIndex, true);
-    time.setTstop(tStop);
+    time.setTStop(tStop);
   }
 
   // - Experimenter property storage -
@@ -1238,14 +1240,14 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public void setLaserFrequencyMultiplication(Integer frequencyMultiplication, int instrumentIndex, int lightSourceIndex) {
     if (frequencyMultiplication == null) return;
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, true);
-    laser.setFrequencyDoubled(integerToBoolean(frequencyMultiplication));
+    laser.setFrequencyMultiplication(frequencyMultiplication);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLaserLaserMedium(String, int, int) */
   public void setLaserLaserMedium(String laserMedium, int instrumentIndex, int lightSourceIndex) {
     if (laserMedium == null) return;
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, true);
-    laser.setMedium(laserMedium);
+    laser.setLaserMedium(laserMedium);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLaserPulse(String, int, int) */
@@ -1259,7 +1261,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public void setLaserTuneable(Boolean tuneable, int instrumentIndex, int lightSourceIndex) {
     if (tuneable == null) return;
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, true);
-    laser.setTunable(tuneable);
+    laser.setTuneable(tuneable);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLaserType(String, int, int) */
@@ -1301,7 +1303,9 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setLightSourcePower(Float, int, int) */
   public void setLightSourcePower(Float power, int instrumentIndex, int lightSourceIndex) {
-    // NB: Power unsupported for schema version 2003-FC
+    if (power == null) return;
+    LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, true);
+    lightSource.setPower(power);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLightSourceSerialNumber(String, int, int) */
@@ -1339,90 +1343,92 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelContrastMethod(String, int, int) */
   public void setLogicalChannelContrastMethod(String contrastMethod, int imageIndex, int logicalChannelIndex) {
     if (contrastMethod == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setContrastMethod(contrastMethod);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setContrastMethod(contrastMethod);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelEmWave(Integer, int, int) */
   public void setLogicalChannelEmWave(Integer emWave, int imageIndex, int logicalChannelIndex) {
     if (emWave == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setEmWave(emWave);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setEmWave(emWave);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelExWave(Integer, int, int) */
   public void setLogicalChannelExWave(Integer exWave, int imageIndex, int logicalChannelIndex) {
     if (exWave == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setExWave(exWave);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setExWave(exWave);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelFluor(String, int, int) */
   public void setLogicalChannelFluor(String fluor, int imageIndex, int logicalChannelIndex) {
     if (fluor == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setFluor(fluor);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setFluor(fluor);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelID(String, int, int) */
   public void setLogicalChannelID(String id, int imageIndex, int logicalChannelIndex) {
     if (id == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setNodeID(id);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setNodeID(id);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelIlluminationType(String, int, int) */
   public void setLogicalChannelIlluminationType(String illuminationType, int imageIndex, int logicalChannelIndex) {
     if (illuminationType == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setIlluminationType(illuminationType);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setIlluminationType(illuminationType);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelMode(String, int, int) */
   public void setLogicalChannelMode(String mode, int imageIndex, int logicalChannelIndex) {
     if (mode == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setMode(mode);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setMode(mode);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelName(String, int, int) */
   public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex) {
     if (name == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setName(name);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setName(name);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelNdFilter(Float, int, int) */
   public void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex) {
     if (ndFilter == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setNDfilter(ndFilter);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setNdFilter(ndFilter);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelPhotometricInterpretation(String, int, int) */
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
     if (photometricInterpretation == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setPhotometricInterpretation(photometricInterpretation);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setPhotometricInterpretation(photometricInterpretation);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelPinholeSize(Integer, int, int) */
   public void setLogicalChannelPinholeSize(Integer pinholeSize, int imageIndex, int logicalChannelIndex) {
     if (pinholeSize == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setPinholeSize(pinholeSize);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setPinholeSize(pinholeSize);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelPockelCellSetting(Integer, int, int) */
   public void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex) {
-    // NB: PockelCellSetting unsupported for schema version 2003-FC
+    if (pockelCellSetting == null) return;
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setPockelCellSetting(pockelCellSetting);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelSamplesPerPixel(Integer, int, int) */
   public void setLogicalChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int logicalChannelIndex) {
     if (samplesPerPixel == null) return;
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, logicalChannelIndex, true);
-    channelInfo.setSamplesPerPixel(samplesPerPixel);
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannel.setSamplesPerPixel(samplesPerPixel);
   }
 
   // - OTF property storage -
@@ -1438,7 +1444,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex) {
     if (opticalAxisAveraged == null) return;
     OTFNode otf = getOTFNode(instrumentIndex, otfIndex, true);
-    otf.setOpticalAxisAvrg(opticalAxisAveraged);
+    otf.setOpticalAxisAveraged(opticalAxisAveraged);
   }
 
   /* @see loci.formats.meta.MetadataStore#setOTFPixelType(String, int, int) */
@@ -1468,12 +1474,12 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex) {
     if (calibratedMagnification == null) return;
     ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, true);
-    objective.setMagnification(calibratedMagnification);
+    objective.setCalibratedMagnification(calibratedMagnification);
   }
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveCorrection(String, int, int) */
   public void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex) {
-    // NB: Correction unsupported for schema version 2003-FC
+    // NB: Correction unsupported for schema version 2008-02
   }
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveID(String, int, int) */
@@ -1485,7 +1491,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveImmersion(String, int, int) */
   public void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex) {
-    // NB: Immersion unsupported for schema version 2003-FC
+    // NB: Immersion unsupported for schema version 2008-02
   }
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveLensNA(Float, int, int) */
@@ -1511,7 +1517,9 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveNominalMagnification(Integer, int, int) */
   public void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex) {
-    // NB: NominalMagnification unsupported for schema version 2003-FC
+    if (nominalMagnification == null) return;
+    ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, true);
+    objective.setNominalMagnification(nominalMagnification);
   }
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveSerialNumber(String, int, int) */
@@ -1523,7 +1531,9 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveWorkingDistance(Float, int, int) */
   public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex) {
-    // NB: WorkingDistance unsupported for schema version 2003-FC
+    if (workingDistance == null) return;
+    ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, true);
+    objective.setWorkingDistance(workingDistance);
   }
 
   // - Pixels property storage -
@@ -1595,29 +1605,39 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setPlaneTheC(Integer, int, int, int) */
   public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheC unsupported for schema version 2003-FC
+    if (theC == null) return;
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, true);
+    plane.setTheC(theC);
   }
 
   /* @see loci.formats.meta.MetadataStore#setPlaneTheT(Integer, int, int, int) */
   public void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheT unsupported for schema version 2003-FC
+    if (theT == null) return;
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, true);
+    plane.setTheT(theT);
   }
 
   /* @see loci.formats.meta.MetadataStore#setPlaneTheZ(Integer, int, int, int) */
   public void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheZ unsupported for schema version 2003-FC
+    if (theZ == null) return;
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, true);
+    plane.setTheZ(theZ);
   }
 
   // - PlaneTiming property storage -
 
   /* @see loci.formats.meta.MetadataStore#setPlaneTimingDeltaT(Float, int, int, int) */
   public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: DeltaT unsupported for schema version 2003-FC
+    if (deltaT == null) return;
+    PlaneTimingNode planeTiming = getPlaneTimingNode(imageIndex, pixelsIndex, planeIndex, true);
+    planeTiming.setDeltaT(deltaT);
   }
 
   /* @see loci.formats.meta.MetadataStore#setPlaneTimingExposureTime(Float, int, int, int) */
   public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: ExposureTime unsupported for schema version 2003-FC
+    if (exposureTime == null) return;
+    PlaneTimingNode planeTiming = getPlaneTimingNode(imageIndex, pixelsIndex, planeIndex, true);
+    planeTiming.setExposureTime(exposureTime);
   }
 
   // - ROI property storage -
@@ -1719,17 +1739,23 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setStagePositionPositionX(Float, int, int, int) */
   public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionX unsupported for schema version 2003-FC
+    if (positionX == null) return;
+    StagePositionNode stagePosition = getStagePositionNode(imageIndex, pixelsIndex, planeIndex, true);
+    stagePosition.setPositionX(positionX);
   }
 
   /* @see loci.formats.meta.MetadataStore#setStagePositionPositionY(Float, int, int, int) */
   public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionY unsupported for schema version 2003-FC
+    if (positionY == null) return;
+    StagePositionNode stagePosition = getStagePositionNode(imageIndex, pixelsIndex, planeIndex, true);
+    stagePosition.setPositionY(positionY);
   }
 
   /* @see loci.formats.meta.MetadataStore#setStagePositionPositionZ(Float, int, int, int) */
   public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionZ unsupported for schema version 2003-FC
+    if (positionZ == null) return;
+    StagePositionNode stagePosition = getStagePositionNode(imageIndex, pixelsIndex, planeIndex, true);
+    stagePosition.setPositionZ(positionZ);
   }
 
   // -- Helper methods --
@@ -1754,60 +1780,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=imageIndex; i++) new ImageNode(ome);
     List list = ome.getImageList();
     return (ImageNode) list.get(imageIndex);
-  }
-
-  // Image+/ChannelInfo+
-  private ChannelInfoNode getChannelInfoNode(int imageIndex, int channelInfoIndex, boolean create) {
-    // get Image+ node
-    ImageNode image = getImageNode(imageIndex, create);
-    if (image == null) return null;
-    // get ChannelInfo+ node
-    int count = image.getChannelInfoCount();
-    if (!create && count <= channelInfoIndex) return null;
-    for (int i=count; i<=channelInfoIndex; i++) new ChannelInfoNode(image);
-    List list = image.getChannelInfoList();
-    return (ChannelInfoNode) list.get(channelInfoIndex);
-  }
-
-  // Image+/ChannelInfo+/ChannelComponent+
-  private ChannelComponentNode getChannelComponentNode(int imageIndex, int channelInfoIndex, int channelComponentIndex, boolean create) {
-    // get Image+/ChannelInfo+ node
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, channelInfoIndex, create);
-    if (channelInfo == null) return null;
-    // get ChannelComponent+ node
-    int count = channelInfo.getChannelComponentCount();
-    if (!create && count <= channelComponentIndex) return null;
-    for (int i=count; i<=channelComponentIndex; i++) new ChannelComponentNode(channelInfo);
-    List list = channelInfo.getChannelComponentList();
-    return (ChannelComponentNode) list.get(channelComponentIndex);
-  }
-
-  // Image+/ChannelInfo+/DetectorRef
-  private DetectorRefNode getDetectorRefNode(int imageIndex, int channelInfoIndex, boolean create) {
-    // get Image+/ChannelInfo+ node
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, channelInfoIndex, create);
-    if (channelInfo == null) return null;
-    // get DetectorRef node
-    DetectorRefNode detectorRef = channelInfo.getDetectorRef();
-    if (detectorRef == null) {
-      if (create) detectorRef = new DetectorRefNode(channelInfo);
-      else return null;
-    }
-    return detectorRef;
-  }
-
-  // Image+/ChannelInfo+/LightSourceRef
-  private LightSourceRefNode getLightSourceRefNode(int imageIndex, int channelInfoIndex, boolean create) {
-    // get Image+/ChannelInfo+ node
-    ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, channelInfoIndex, create);
-    if (channelInfo == null) return null;
-    // get LightSourceRef node
-    LightSourceRefNode lightSourceRef = channelInfo.getLightSourceRef();
-    if (lightSourceRef == null) {
-      if (create) lightSourceRef = new LightSourceRefNode(channelInfo);
-      else return null;
-    }
-    return lightSourceRef;
   }
 
   // Image+/DisplayOptions
@@ -1879,6 +1851,60 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     return imagingEnvironment;
   }
 
+  // Image+/LogicalChannel+
+  private LogicalChannelNode getLogicalChannelNode(int imageIndex, int logicalChannelIndex, boolean create) {
+    // get Image+ node
+    ImageNode image = getImageNode(imageIndex, create);
+    if (image == null) return null;
+    // get LogicalChannel+ node
+    int count = image.getLogicalChannelCount();
+    if (!create && count <= logicalChannelIndex) return null;
+    for (int i=count; i<=logicalChannelIndex; i++) new LogicalChannelNode(image);
+    List list = image.getLogicalChannelList();
+    return (LogicalChannelNode) list.get(logicalChannelIndex);
+  }
+
+  // Image+/LogicalChannel+/ChannelComponent+
+  private ChannelComponentNode getChannelComponentNode(int imageIndex, int logicalChannelIndex, int channelComponentIndex, boolean create) {
+    // get Image+/LogicalChannel+ node
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
+    if (logicalChannel == null) return null;
+    // get ChannelComponent+ node
+    int count = logicalChannel.getChannelComponentCount();
+    if (!create && count <= channelComponentIndex) return null;
+    for (int i=count; i<=channelComponentIndex; i++) new ChannelComponentNode(logicalChannel);
+    List list = logicalChannel.getChannelComponentList();
+    return (ChannelComponentNode) list.get(channelComponentIndex);
+  }
+
+  // Image+/LogicalChannel+/DetectorRef
+  private DetectorRefNode getDetectorRefNode(int imageIndex, int logicalChannelIndex, boolean create) {
+    // get Image+/LogicalChannel+ node
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
+    if (logicalChannel == null) return null;
+    // get DetectorRef node
+    DetectorRefNode detectorRef = logicalChannel.getDetectorRef();
+    if (detectorRef == null) {
+      if (create) detectorRef = new DetectorRefNode(logicalChannel);
+      else return null;
+    }
+    return detectorRef;
+  }
+
+  // Image+/LogicalChannel+/LightSourceRef
+  private LightSourceRefNode getLightSourceRefNode(int imageIndex, int logicalChannelIndex, boolean create) {
+    // get Image+/LogicalChannel+ node
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
+    if (logicalChannel == null) return null;
+    // get LightSourceRef node
+    LightSourceRefNode lightSourceRef = logicalChannel.getLightSourceRef();
+    if (lightSourceRef == null) {
+      if (create) lightSourceRef = new LightSourceRefNode(logicalChannel);
+      else return null;
+    }
+    return lightSourceRef;
+  }
+
   // Image+/Pixels+
   private PixelsNode getPixelsNode(int imageIndex, int pixelsIndex, boolean create) {
     // get Image+ node
@@ -1890,6 +1916,47 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=pixelsIndex; i++) new PixelsNode(image);
     List list = image.getPixelsList();
     return (PixelsNode) list.get(pixelsIndex);
+  }
+
+  // Image+/Pixels+/Plane+
+  private PlaneNode getPlaneNode(int imageIndex, int pixelsIndex, int planeIndex, boolean create) {
+    // get Image+/Pixels+ node
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, create);
+    if (pixels == null) return null;
+    // get Plane+ node
+    int count = pixels.getPlaneCount();
+    if (!create && count <= planeIndex) return null;
+    for (int i=count; i<=planeIndex; i++) new PlaneNode(pixels);
+    List list = pixels.getPlaneList();
+    return (PlaneNode) list.get(planeIndex);
+  }
+
+  // Image+/Pixels+/Plane+/PlaneTiming
+  private PlaneTimingNode getPlaneTimingNode(int imageIndex, int pixelsIndex, int planeIndex, boolean create) {
+    // get Image+/Pixels+/Plane+ node
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, create);
+    if (plane == null) return null;
+    // get PlaneTiming node
+    PlaneTimingNode planeTiming = plane.getPlaneTiming();
+    if (planeTiming == null) {
+      if (create) planeTiming = new PlaneTimingNode(plane);
+      else return null;
+    }
+    return planeTiming;
+  }
+
+  // Image+/Pixels+/Plane+/StagePosition
+  private StagePositionNode getStagePositionNode(int imageIndex, int pixelsIndex, int planeIndex, boolean create) {
+    // get Image+/Pixels+/Plane+ node
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, create);
+    if (plane == null) return null;
+    // get StagePosition node
+    StagePositionNode stagePosition = plane.getStagePosition();
+    if (stagePosition == null) {
+      if (create) stagePosition = new StagePositionNode(plane);
+      else return null;
+    }
+    return stagePosition;
   }
 
   // Image+/StageLabel

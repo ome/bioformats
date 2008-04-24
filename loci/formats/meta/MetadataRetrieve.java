@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Mar 20, 2008 12:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Apr 24, 2008 4:44:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -46,509 +46,194 @@ public interface MetadataRetrieve {
 
   // - Entity counting -
 
-  int getImageCount();
-
-  int getPixelsCount(int imageIndex);
-
-  int getPlaneCount(int imageIndex, int pixelsIndex);
-
-  int getLogicalChannelCount(int imageIndex);
-
   int getChannelComponentCount(int imageIndex, int logicalChannelIndex);
 
-  int getROICount(int imageIndex);
+  int getDetectorCount(int instrumentIndex);
+
+  int getExperimenterCount();
+
+  int getImageCount();
 
   int getInstrumentCount();
 
   int getLightSourceCount(int instrumentIndex);
 
-  int getDetectorCount(int instrumentIndex);
-
-  int getObjectiveCount(int instrumentIndex);
+  int getLogicalChannelCount(int imageIndex);
 
   int getOTFCount(int instrumentIndex);
 
-  int getExperimenterCount();
+  int getObjectiveCount(int instrumentIndex);
+
+  int getPixelsCount(int imageIndex);
+
+  int getPlaneCount(int imageIndex, int pixelsIndex);
+
+  int getROICount(int imageIndex);
 
   // - Entity retrieval -
 
-  /**
-   * Gets an object representing a particular Image, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getImage(int imageIndex);
-
-  /**
-   * Gets an object representing a particular Pixels, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getPixels(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets an object representing a particular Dimensions, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getDimensions(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets an object representing a particular ImagingEnvironment, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getImagingEnvironment(int imageIndex);
-
-  /**
-   * Gets an object representing a particular Plane, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getPlane(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets an object representing a particular PlaneTiming, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getPlaneTiming(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets an object representing a particular StagePosition, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getStagePosition(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets an object representing a particular LogicalChannel, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getLogicalChannel(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets an object representing a particular ChannelComponent, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getChannelComponent(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-
-  /**
-   * Gets an object representing a particular DisplayOptions, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getDisplayOptions(int imageIndex);
-
-  /**
-   * Gets an object representing a particular DisplayOptionsProjection, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getDisplayOptionsProjection(int imageIndex);
-
-  /**
-   * Gets an object representing a particular DisplayOptionsTime, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getDisplayOptionsTime(int imageIndex);
-
-  /**
-   * Gets an object representing a particular ROI, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getROI(int imageIndex, int roiIndex);
-
-  /**
-   * Gets an object representing a particular DetectorSettings, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getDetectorSettings(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets an object representing a particular LightSourceSettings, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getLightSourceSettings(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets an object representing a particular StageLabel, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getStageLabel(int imageIndex);
-
-  /**
-   * Gets an object representing a particular Instrument, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getInstrument(int instrumentIndex);
-
-  /**
-   * Gets an object representing a particular LightSource, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getLightSource(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets an object representing a particular Laser, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getLaser(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets an object representing a particular Filament, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getFilament(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets an object representing a particular Arc, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getArc(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets an object representing a particular Detector, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getDetector(int instrumentIndex, int detectorIndex);
-
-  /**
-   * Gets an object representing a particular Objective, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getObjective(int instrumentIndex, int objectiveIndex);
-
-  /**
-   * Gets an object representing a particular OTF, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getOTF(int instrumentIndex, int otfIndex);
-
-  /**
-   * Gets an object representing a particular Experimenter, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getExperimenter(int experimenterIndex);
-
-  // - Image property retrieval -
-
-  /**
-   * Gets TODO for a particular Image object.
-   * @param imageIndex index of the Image
-   */
-  String getImageNodeID(int imageIndex);
-
-  /**
-   * Gets the full name of the image for a particular Image object.
-   * @param imageIndex index of the Image
-   */
-  String getImageName(int imageIndex);
-
-  /**
-   * Gets the creation date of the image for a particular Image object.
-   * @param imageIndex index of the Image
-   */
-  String getImageCreationDate(int imageIndex);
-
-  /**
-   * Gets the full description of the image for a particular Image object.
-   * @param imageIndex index of the Image
-   */
-  String getImageDescription(int imageIndex);
-
-  // - Pixels property retrieval -
-
-  /**
-   * Gets TODO for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  String getPixelsNodeID(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets size of an individual plane or section's X axis (width) for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Integer getPixelsSizeX(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets size of an individual plane of section's Y axis (height) for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Integer getPixelsSizeY(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets number of optical sections per stack for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Integer getPixelsSizeZ(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets number of channels per timepoint for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Integer getPixelsSizeC(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets number of timepoints for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Integer getPixelsSizeT(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets the pixel type for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  String getPixelsPixelType(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets if the pixels set is big endian or not for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Boolean getPixelsBigEndian(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets the dimension order of the pixels set for a particular Pixels object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  String getPixelsDimensionOrder(int imageIndex, int pixelsIndex);
-
-  // - Dimensions property retrieval -
-
-  /**
-   * Gets size of an individual pixel's X axis in microns for a particular Dimensions object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets size of an individual pixel's Y axis in microns for a particular Dimensions object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets size of an individual pixel's Z axis in microns for a particular Dimensions object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets distance between adjacent time points in seconds for a particular Dimensions object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets starting wavelength in nanometers for a particular Dimensions object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Integer getDimensionsWaveStart(int imageIndex, int pixelsIndex);
-
-  /**
-   * Gets distance between adjacent wavelengths in nanometers for a particular Dimensions object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  Integer getDimensionsWaveIncrement(int imageIndex, int pixelsIndex);
-
-  // - ImagingEnvironment property retrieval -
-
-  /**
-   * Gets TODO for a particular ImagingEnvironment object.
-   * @param imageIndex index of the Image
-   */
-  Float getImagingEnvironmentTemperature(int imageIndex);
-
-  /**
-   * Gets TODO for a particular ImagingEnvironment object.
-   * @param imageIndex index of the Image
-   */
-  Float getImagingEnvironmentAirPressure(int imageIndex);
-
-  /**
-   * Gets TODO for a particular ImagingEnvironment object.
-   * @param imageIndex index of the Image
-   */
-  Float getImagingEnvironmentHumidity(int imageIndex);
-
-  /**
-   * Gets TODO for a particular ImagingEnvironment object.
-   * @param imageIndex index of the Image
-   */
-  Float getImagingEnvironmentCO2Percent(int imageIndex);
-
-  // - Plane property retrieval -
-
-  /**
-   * Gets the optical section index for a particular Plane object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Integer getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets the channel index for a particular Plane object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets the timepoint for a particular Plane object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Integer getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - PlaneTiming property retrieval -
-
-  /**
-   * Gets the time in seconds since the beginning of the experiment for a particular PlaneTiming object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets the exposure time in seconds for a particular PlaneTiming object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - StagePosition property retrieval -
-
-  /**
-   * Gets the X coordinate of the stage position for a particular StagePosition object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets the Y coordinate of the stage position for a particular StagePosition object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * Gets the Z coordinate of the stage position for a particular StagePosition object.
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - LogicalChannel property retrieval -
-
-  /**
-   * Gets TODO for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getLogicalChannelNodeID(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the logical channel's name for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getLogicalChannelName(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets TODO for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  Integer getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the illumination type for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getLogicalChannelIlluminationType(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the size of the pinhole for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  Integer getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the photometric interpretation type for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the acquisition mode for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getLogicalChannelMode(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the constrast method name for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getLogicalChannelContrastMethod(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the excitation wavelength for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  Integer getLogicalChannelExWave(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the emission wavelength for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  Integer getLogicalChannelEmWave(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the fluorescence type for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getLogicalChannelFluor(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the neutral-density filter value for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
+  // - Arc property retrieval -
 
   /**
-   * Gets TODO for a particular LogicalChannel object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
+   * For a particular Arc, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
    */
-  Integer getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex);
+  String getArcType(int instrumentIndex, int lightSourceIndex);
 
   // - ChannelComponent property retrieval -
 
   /**
-   * Gets the index into the channel dimension of the 5-D pixel array for a particular ChannelComponent object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   * @param channelComponentIndex index of the ChannelComponent
-   */
-  Integer getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-
-  /**
-   * Gets which color channel this ChannelComponent belongs to (for example, 'R' for an 'RGB' PhotometricInterpretation) for a particular ChannelComponent object.
+   * For a particular ChannelComponent, gets which color channel this ChannelComponent belongs to (for example, 'R' for an 'RGB' PhotometricInterpretation).
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    * @param channelComponentIndex index of the ChannelComponent
    */
   String getChannelComponentColorDomain(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
 
+  /**
+   * For a particular ChannelComponent, gets the index into the channel dimension of the 5-D pixel array.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   * @param channelComponentIndex index of the ChannelComponent
+   */
+  Integer getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  // - Detector property retrieval -
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  Float getDetectorGain(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  String getDetectorID(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  String getDetectorManufacturer(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  String getDetectorModel(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  Float getDetectorOffset(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  String getDetectorSerialNumber(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  String getDetectorType(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  Float getDetectorVoltage(int instrumentIndex, int detectorIndex);
+
+  // - DetectorSettings property retrieval -
+
+  /**
+   * For a particular DetectorSettings, gets the detector associated with this channel.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular DetectorSettings, gets the detector gain.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  Float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular DetectorSettings, gets the detector offset.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
+
+  // - Dimensions property retrieval -
+
+  /**
+   * For a particular Dimensions, gets the size of an individual pixel's X axis in microns.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Dimensions, gets the size of an individual pixel's Y axis in microns.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Dimensions, gets the size of an individual pixel's Z axis in microns.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Dimensions, gets the distance between adjacent time points in seconds.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Dimensions, gets the distance between adjacent wavelengths in nanometers.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Integer getDimensionsWaveIncrement(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Dimensions, gets the starting wavelength in nanometers.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Integer getDimensionsWaveStart(int imageIndex, int pixelsIndex);
+
   // - DisplayOptions property retrieval -
 
   /**
-   * Gets TODO for a particular DisplayOptions object.
+   * For a particular DisplayOptions, gets TODO.
    * @param imageIndex index of the Image
    */
-  String getDisplayOptionsNodeID(int imageIndex);
+  String getDisplayOptionsID(int imageIndex);
 
   /**
-   * Gets zoom factor for use in the display (NOT THE LENS ZOOM) for a particular DisplayOptions object.
+   * For a particular DisplayOptions, gets zoom factor for use in the display (NOT THE LENS ZOOM).
    * @param imageIndex index of the Image
    */
   Float getDisplayOptionsZoom(int imageIndex);
@@ -556,13 +241,13 @@ public interface MetadataRetrieve {
   // - DisplayOptionsProjection property retrieval -
 
   /**
-   * Gets the first focal plane to include in the maximum intensity projection for a particular DisplayOptionsProjection object.
+   * For a particular DisplayOptionsProjection, gets the first focal plane to include in the maximum intensity projection.
    * @param imageIndex index of the Image
    */
   Integer getDisplayOptionsProjectionZStart(int imageIndex);
 
   /**
-   * Gets the last focal plane to include in the maximum intensity projection for a particular DisplayOptionsProjection object.
+   * For a particular DisplayOptionsProjection, gets the last focal plane to include in the maximum intensity projection.
    * @param imageIndex index of the Image
    */
   Integer getDisplayOptionsProjectionZStop(int imageIndex);
@@ -570,485 +255,648 @@ public interface MetadataRetrieve {
   // - DisplayOptionsTime property retrieval -
 
   /**
-   * Gets the first time point to include in the animation for a particular DisplayOptionsTime object.
+   * For a particular DisplayOptionsTime, gets the first time point to include in the animation.
    * @param imageIndex index of the Image
    */
   Integer getDisplayOptionsTimeTStart(int imageIndex);
 
   /**
-   * Gets the last time point to include in the animation for a particular DisplayOptionsTime object.
+   * For a particular DisplayOptionsTime, gets the last time point to include in the animation.
    * @param imageIndex index of the Image
    */
   Integer getDisplayOptionsTimeTStop(int imageIndex);
 
-  // - ROI property retrieval -
+  // - Experimenter property retrieval -
 
   /**
-   * Gets TODO for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
+   * For a particular Experimenter, gets the e-mail address of the experimenter.
+   * @param experimenterIndex index of the Experimenter
    */
-  String getROINodeID(int imageIndex, int roiIndex);
+  String getExperimenterEmail(int experimenterIndex);
 
   /**
-   * Gets the starting X coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
+   * For a particular Experimenter, gets the first name of the experimenter.
+   * @param experimenterIndex index of the Experimenter
    */
-  Integer getROIX0(int imageIndex, int roiIndex);
+  String getExperimenterFirstName(int experimenterIndex);
 
   /**
-   * Gets the starting Y coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
+   * For a particular Experimenter, gets TODO.
+   * @param experimenterIndex index of the Experimenter
    */
-  Integer getROIY0(int imageIndex, int roiIndex);
+  String getExperimenterID(int experimenterIndex);
 
   /**
-   * Gets the ending X coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
+   * For a particular Experimenter, gets the institution to which the experimenter belongs.
+   * @param experimenterIndex index of the Experimenter
    */
-  Integer getROIX1(int imageIndex, int roiIndex);
+  String getExperimenterInstitution(int experimenterIndex);
 
   /**
-   * Gets the ending Y coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
+   * For a particular Experimenter, gets the last name of the experimenter.
+   * @param experimenterIndex index of the Experimenter
    */
-  Integer getROIY1(int imageIndex, int roiIndex);
+  String getExperimenterLastName(int experimenterIndex);
+
+  // - Filament property retrieval -
 
   /**
-   * Gets the starting Z coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
+   * For a particular Filament, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
    */
-  Integer getROIZ0(int imageIndex, int roiIndex);
+  String getFilamentType(int instrumentIndex, int lightSourceIndex);
+
+  // - Image property retrieval -
 
   /**
-   * Gets the ending Z coordinate for a particular ROI object.
+   * For a particular Image, gets the creation date of the image.
    * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
    */
-  Integer getROIZ1(int imageIndex, int roiIndex);
+  String getImageCreationDate(int imageIndex);
 
   /**
-   * Gets the starting timepoint for a particular ROI object.
+   * For a particular Image, gets the full description of the image.
    * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
    */
-  Integer getROIT0(int imageIndex, int roiIndex);
+  String getImageDescription(int imageIndex);
 
   /**
-   * Gets the ending timepoint for a particular ROI object.
+   * For a particular Image, gets TODO.
    * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
    */
-  Integer getROIT1(int imageIndex, int roiIndex);
-
-  // - DetectorSettings property retrieval -
+  String getImageID(int imageIndex);
 
   /**
-   * Gets the detector associated with this channel for a particular DetectorSettings object.
+   * For a particular Image, gets the full name of the image.
    * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Object getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex);
+  String getImageName(int imageIndex);
+
+  // - ImagingEnvironment property retrieval -
 
   /**
-   * Gets the detector offset for a particular DetectorSettings object.
+   * For a particular ImagingEnvironment, gets TODO.
    * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
+  Float getImagingEnvironmentAirPressure(int imageIndex);
 
   /**
-   * Gets the detector gain for a particular DetectorSettings object.
+   * For a particular ImagingEnvironment, gets TODO.
    * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
-
-  // - LightSourceSettings property retrieval -
+  Float getImagingEnvironmentCO2Percent(int imageIndex);
 
   /**
-   * Gets the primary light source for a particular LightSourceSettings object.
+   * For a particular ImagingEnvironment, gets TODO.
    * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Object getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex);
+  Float getImagingEnvironmentHumidity(int imageIndex);
 
   /**
-   * Gets the primary light source attenuation for a particular LightSourceSettings object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets the primary light source wavelength for a particular LightSourceSettings object.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex);
-
-  // - StageLabel property retrieval -
-
-  /**
-   * Gets a name for the stage label for a particular StageLabel object.
+   * For a particular ImagingEnvironment, gets TODO.
    * @param imageIndex index of the Image
    */
-  String getStageLabelName(int imageIndex);
-
-  /**
-   * Gets x coordinate of the stage for a particular StageLabel object.
-   * @param imageIndex index of the Image
-   */
-  Float getStageLabelX(int imageIndex);
-
-  /**
-   * Gets y coordinate of the stage for a particular StageLabel object.
-   * @param imageIndex index of the Image
-   */
-  Float getStageLabelY(int imageIndex);
-
-  /**
-   * Gets z coordinate of the stage for a particular StageLabel object.
-   * @param imageIndex index of the Image
-   */
-  Float getStageLabelZ(int imageIndex);
+  Float getImagingEnvironmentTemperature(int imageIndex);
 
   // - Instrument property retrieval -
 
   /**
-   * Gets TODO for a particular Instrument object.
+   * For a particular Instrument, gets TODO.
    * @param instrumentIndex index of the Instrument
    */
-  String getInstrumentNodeID(int instrumentIndex);
-
-  // - LightSource property retrieval -
-
-  /**
-   * Gets TODO for a particular LightSource object.
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  String getLightSourceNodeID(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets TODO for a particular LightSource object.
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  String getLightSourceManufacturer(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets TODO for a particular LightSource object.
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  String getLightSourceModel(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets TODO for a particular LightSource object.
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex);
+  String getInstrumentID(int instrumentIndex);
 
   // - Laser property retrieval -
 
   /**
-   * Gets TODO for a particular Laser object.
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  String getLaserType(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets TODO for a particular Laser object.
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  String getLaserLaserMedium(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets TODO for a particular Laser object.
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  Integer getLaserWavelength(int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * Gets TODO for a particular Laser object.
+   * For a particular Laser, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   Integer getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Laser object.
+   * For a particular Laser, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  Boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex);
+  String getLaserLaserMedium(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Laser object.
+   * For a particular Laser, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLaserPulse(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Laser object.
+   * For a particular Laser, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  Float getLaserPower(int instrumentIndex, int lightSourceIndex);
-
-  // - Filament property retrieval -
+  Boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Filament object.
+   * For a particular Laser, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  String getFilamentType(int instrumentIndex, int lightSourceIndex);
+  String getLaserType(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Filament object.
+   * For a particular Laser, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  Float getFilamentPower(int instrumentIndex, int lightSourceIndex);
+  Integer getLaserWavelength(int instrumentIndex, int lightSourceIndex);
 
-  // - Arc property retrieval -
+  // - LightSource property retrieval -
 
   /**
-   * Gets TODO for a particular Arc object.
+   * For a particular LightSource, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  String getArcType(int instrumentIndex, int lightSourceIndex);
+  String getLightSourceID(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Arc object.
+   * For a particular LightSource, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  Float getArcPower(int instrumentIndex, int lightSourceIndex);
-
-  // - Detector property retrieval -
+  String getLightSourceManufacturer(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Detector object.
+   * For a particular LightSource, gets TODO.
    * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * @param lightSourceIndex index of the LightSource
    */
-  String getDetectorNodeID(int instrumentIndex, int detectorIndex);
+  String getLightSourceModel(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Detector object.
+   * For a particular LightSource, gets TODO.
    * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * @param lightSourceIndex index of the LightSource
    */
-  String getDetectorManufacturer(int instrumentIndex, int detectorIndex);
+  Float getLightSourcePower(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets TODO for a particular Detector object.
+   * For a particular LightSource, gets TODO.
    * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * @param lightSourceIndex index of the LightSource
    */
-  String getDetectorModel(int instrumentIndex, int detectorIndex);
+  String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex);
+
+  // - LightSourceSettings property retrieval -
 
   /**
-   * Gets TODO for a particular Detector object.
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * For a particular LightSourceSettings, gets the primary light source attenuation.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getDetectorSerialNumber(int instrumentIndex, int detectorIndex);
+  Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Detector object.
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * For a particular LightSourceSettings, gets the primary light source.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getDetectorType(int instrumentIndex, int detectorIndex);
+  String getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Detector object.
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * For a particular LightSourceSettings, gets the primary light source wavelength.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorGain(int instrumentIndex, int detectorIndex);
+  Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex);
+
+  // - LogicalChannel property retrieval -
 
   /**
-   * Gets TODO for a particular Detector object.
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * For a particular LogicalChannel, gets the constrast method name.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorVoltage(int instrumentIndex, int detectorIndex);
+  String getLogicalChannelContrastMethod(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Detector object.
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
+   * For a particular LogicalChannel, gets the emission wavelength.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorOffset(int instrumentIndex, int detectorIndex);
-
-  // - Objective property retrieval -
+  Integer getLogicalChannelEmWave(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the excitation wavelength.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getObjectiveNodeID(int instrumentIndex, int objectiveIndex);
+  Integer getLogicalChannelExWave(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the fluorescence type.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex);
+  String getLogicalChannelFluor(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets TODO.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getObjectiveModel(int instrumentIndex, int objectiveIndex);
+  String getLogicalChannelID(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the illumination type.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
+  String getLogicalChannelIlluminationType(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the acquisition mode.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
+  String getLogicalChannelMode(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the logical channel's name.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  String getObjectiveImmersion(int instrumentIndex, int objectiveIndex);
+  String getLogicalChannelName(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the neutral-density filter value.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
+  Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the photometric interpretation type.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex);
+  String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets the size of the pinhole.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
+  Integer getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets TODO for a particular Objective object.
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
+   * For a particular LogicalChannel, gets TODO.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
+  Integer getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, gets TODO.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  Integer getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex);
 
   // - OTF property retrieval -
 
   /**
-   * Gets TODO for a particular OTF object.
+   * For a particular OTF, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
-  String getOTFNodeID(int instrumentIndex, int otfIndex);
+  String getOTFID(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets TODO for a particular OTF object.
+   * For a particular OTF, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
-  Integer getOTFSizeX(int instrumentIndex, int otfIndex);
+  Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets TODO for a particular OTF object.
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  Integer getOTFSizeY(int instrumentIndex, int otfIndex);
-
-  /**
-   * Gets TODO for a particular OTF object.
+   * For a particular OTF, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   String getOTFPixelType(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets TODO for a particular OTF object.
+   * For a particular OTF, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
-  String getOTFPath(int instrumentIndex, int otfIndex);
+  Integer getOTFSizeX(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets TODO for a particular OTF object.
+   * For a particular OTF, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
-  Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex);
+  Integer getOTFSizeY(int instrumentIndex, int otfIndex);
 
-  // - Experimenter property retrieval -
-
-  /**
-   * Gets TODO for a particular Experimenter object.
-   * @param experimenterIndex index of the Experimenter
-   */
-  String getExperimenterNodeID(int experimenterIndex);
+  // - Objective property retrieval -
 
   /**
-   * Gets the first name of the experimenter for a particular Experimenter object.
-   * @param experimenterIndex index of the Experimenter
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
    */
-  String getExperimenterFirstName(int experimenterIndex);
+  Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets the last name of the experimenter for a particular Experimenter object.
-   * @param experimenterIndex index of the Experimenter
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
    */
-  String getExperimenterLastName(int experimenterIndex);
+  String getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets the e-mail address of the experimenter for a particular Experimenter object.
-   * @param experimenterIndex index of the Experimenter
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
    */
-  String getExperimenterEmail(int experimenterIndex);
+  String getObjectiveID(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets the institution to which the experimenter belongs for a particular Experimenter object.
-   * @param experimenterIndex index of the Experimenter
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
    */
-  String getExperimenterInstitution(int experimenterIndex);
+  String getObjectiveImmersion(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets the fully qualified path to the experimenter's data for a particular Experimenter object.
-   * @param experimenterIndex index of the Experimenter
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
    */
-  String getExperimenterDataDirectory(int experimenterIndex);
+  Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  String getObjectiveModel(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * For a particular Objective, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
+
+  // - Pixels property retrieval -
+
+  /**
+   * For a particular Pixels, gets endianness of the pixels set.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Boolean getPixelsBigEndian(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets the dimension order of the pixels set.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  String getPixelsDimensionOrder(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  String getPixelsID(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets the pixel type.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  String getPixelsPixelType(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets number of channels per timepoint.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Integer getPixelsSizeC(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets number of timepoints.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Integer getPixelsSizeT(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets The size of an individual plane or section's X axis (width)..
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Integer getPixelsSizeX(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets The size of an individual plane or section's Y axis (height)..
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Integer getPixelsSizeY(int imageIndex, int pixelsIndex);
+
+  /**
+   * For a particular Pixels, gets number of optical sections per stack.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  Integer getPixelsSizeZ(int imageIndex, int pixelsIndex);
+
+  // - Plane property retrieval -
+
+  /**
+   * For a particular Plane, gets the channel index.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * For a particular Plane, gets the timepoint.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Integer getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * For a particular Plane, gets the optical section index.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Integer getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex);
+
+  // - PlaneTiming property retrieval -
+
+  /**
+   * For a particular PlaneTiming, gets the time in seconds since the beginning of the experiment.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * For a particular PlaneTiming, gets the exposure time in seconds.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
+
+  // - ROI property retrieval -
+
+  /**
+   * For a particular ROI, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  String getROIID(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the starting timepoint.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIT0(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the ending timepoint.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIT1(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the starting X coordinate.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIX0(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the ending X coordinate.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIX1(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the starting Y coordinate.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIY0(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the ending Y coordinate.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIY1(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the starting Z coordinate.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIZ0(int imageIndex, int roiIndex);
+
+  /**
+   * For a particular ROI, gets the ending Z coordinate.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIZ1(int imageIndex, int roiIndex);
+
+  // - StageLabel property retrieval -
+
+  /**
+   * For a particular StageLabel, gets a name for the stage label.
+   * @param imageIndex index of the Image
+   */
+  String getStageLabelName(int imageIndex);
+
+  /**
+   * For a particular StageLabel, gets the x coordinate of the stage.
+   * @param imageIndex index of the Image
+   */
+  Float getStageLabelX(int imageIndex);
+
+  /**
+   * For a particular StageLabel, gets the y coordinate of the stage.
+   * @param imageIndex index of the Image
+   */
+  Float getStageLabelY(int imageIndex);
+
+  /**
+   * For a particular StageLabel, gets the z coordinate of the stage.
+   * @param imageIndex index of the Image
+   */
+  Float getStageLabelZ(int imageIndex);
+
+  // - StagePosition property retrieval -
+
+  /**
+   * For a particular StagePosition, gets the X coordinate of the stage position.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * For a particular StagePosition, gets the Y coordinate of the stage position.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * For a particular StagePosition, gets the Z coordinate of the stage position.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
 
 }

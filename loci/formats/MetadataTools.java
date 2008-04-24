@@ -151,7 +151,8 @@ public final class MetadataTools {
   }
 
   /**
-   * Gets the schema version for the given OME-XML metadata or root object.
+   * Gets the schema version for the given OME-XML metadata or root object
+   * (e.g., "2007-06" or "2003-FC").
    * @return OME-XML schema version, or null if the object is not an instance
    *   of {@link loci.formats.ome.OMEXMLMetadata} or ome.xml.OMEXMLNode.
    */
@@ -165,7 +166,8 @@ public final class MetadataTools {
         String numbers =
           name.substring(prefix.length(), name.length() - suffix.length());
         if (numbers.length() == 6) {
-          return numbers.substring(0, 4) + "-" + numbers.substring(4, 6);
+          return numbers.substring(0, 4) + "-" +
+            numbers.substring(4, 6).toUpperCase();
         }
       }
     }

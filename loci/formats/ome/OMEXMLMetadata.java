@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import java.util.Hashtable;
-import java.util.List;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -115,27 +113,6 @@ public abstract class OMEXMLMetadata
     DOMUtil.setAttribute("Value", value, om);
   }
 
-  /** Get a list of all OriginalMetadata key/value pairs. */
-  public Hashtable getOriginalMetadata() {
-    Element ome = root.getDOMElement();
-    Element image = DOMUtil.getChildElement("Image", ome);
-    if (image == null) return null;
-
-    Element ca = DOMUtil.getChildElement("CustomAttributes", image);
-    if (ca == null) return null;
-
-    String key = "OriginalMetadata";
-    List elements = DOMUtil.getChildElements(key, ca);
-    if (elements == null) return null;
-
-    Hashtable h = new Hashtable();
-    for (int i=0; i<elements.size(); i++) {
-      Element e = (Element) elements.get(i);
-      h.put(DOMUtil.getAttribute("Name", e), DOMUtil.getAttribute("Value", e));
-    }
-    return h;
-  }
-
   // -- MetadataStore API methods --
 
   /* @see loci.formats.MetadataStore#getRoot() */
@@ -143,37 +120,24 @@ public abstract class OMEXMLMetadata
     return root;
   }
 
-  // -- Helper methods --
-
-  /** Issues the given message as a warning. */
-  protected void warn(String msg) {
-    LogTools.println(msg);
-  }
-
-  /** Converts the given Integer into a primitive int. */
-  protected int i2i(Integer i) { return i == null ? 0 : i.intValue(); }
-
   // -- Type conversion methods --
 
-  /** Converts Dimensions.PixelSizeC Float value to Integer. */
-  protected Integer dimensionsPixelSizeCToInteger(Float value) {
-    return value == null ? null : new Integer(value.intValue());
-  }
-
-  /** Converts Integer value to Dimensions.PixelSizeC Float. */
-  protected Float dimensionsPixelSizeCFromInteger(Integer value) {
-    return value == null ? null : new Float(value.floatValue());
-  }
-
-  /** Converts Laser.FrequencyDoubled Boolean value to Integer. */
-  protected Integer laserFrequencyDoubledToInteger(Boolean value) {
+  /**
+   * Converts Boolean value to Integer. Used to convert
+   * from 2003-FC Laser element's FrequencyDoubled Boolean value
+   * to Laser entity's FrequencyMultiplication Integer value.
+   */
+  protected Integer booleanToInteger(Boolean value) {
     return value == null ? null : new Integer(value.booleanValue() ? 2 : 1);
   }
 
-  /** Converts Integer value to Laser.FrequencyDoubled Boolean. */
-  protected Boolean laserFrequencyDoubledFromInteger(Integer value) {
-    return value == null ? null : value.intValue() == 2 ?
-      Boolean.TRUE : Boolean.FALSE;
+  /**
+   * Converts Integer value to Boolean. Used to convert
+   * from Laser entity's FrequencyMultiplication Integer value
+   * to 2003-FC Laser element's FrequencyDoubled Boolean value.
+   */
+  protected Boolean integerToBoolean(Integer value) {
+    return value == null ? null : new Boolean(value.intValue() == 2);
   }
 
 }
