@@ -282,6 +282,15 @@ public class SlidebookReader extends FormatReader {
     }
 
     if (pixelOffsets.size() > 1) {
+      if (pixelOffsets.size() > 2) {
+        int size = pixelOffsets.size();
+        long last = ((Long) pixelOffsets.get(size - 1)).longValue();
+        long nextToLast = ((Long) pixelOffsets.get(size - 2)).longValue();
+        long diff = in.length() - last;
+        if (last - nextToLast > 2*diff && diff < (256 * 256 * 2)) {
+          pixelOffsets.removeElementAt(size - 1);
+        }
+      }
       boolean little = core.littleEndian[0];
       core = new CoreMetadata(pixelOffsets.size());
       Arrays.fill(core.littleEndian, little);
@@ -297,6 +306,7 @@ public class SlidebookReader extends FormatReader {
     }
 
     String[] imageNames = new String[core.sizeX.length];
+    Vector channelNames = new Vector();
     int nextName = 0;
 
     // try to find the width and height
@@ -305,6 +315,7 @@ public class SlidebookReader extends FormatReader {
     int uCount = 0;
     int prevSeries = -1;
     int prevSeriesU = -1;
+    int nextChannel = 0;
     for (int i=0; i<metadataOffsets.size(); i++) {
       long off = ((Long) metadataOffsets.get(i)).longValue();
       in.seek(off);
@@ -327,10 +338,8 @@ public class SlidebookReader extends FormatReader {
               int checkX = in.readShort();
               int checkY = in.readShort();
               int div = in.readShort();
-              //if (checkX >= 128 && div == 1) div = 2;
               core.sizeX[j - start] /= div;
               div = in.readShort();
-              //if (checkY>= 128 && div == 1) div = 2;
               core.sizeY[j - start] /= div;
             }
             if (prevSeries != j - start) {
@@ -366,7 +375,16 @@ public class SlidebookReader extends FormatReader {
       else if (n == 'j') {
         // this block should contain an image name
         in.skipBytes(14);
-        imageNames[nextName++] = in.readCString().trim();
+        if (nextName < imageNames.length) {
+          imageNames[nextName++] = in.readCString().trim();
+        }
+      }
+      else if (n == 'm') {
+        // this block should contain a channel name
+        if (in.getFilePointer() > ((Long) pixelOffsets.get(0)).longValue()) {
+          in.skipBytes(14);
+          channelNames.add(in.readCString().trim());
+        }
       }
     }
 
@@ -396,10 +414,18 @@ public class SlidebookReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
+    int index = 0;
+
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName(imageNames[i], i);
       store.setImageCreationDate(
         DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      for (int c=0; c<core.sizeC[i]; c++) {
+        if (index < channelNames.size()) {
+          store.setLogicalChannelName((String) channelNames.get(index++), i, c);
+          addMeta(imageNames[i] + " channel " + c, channelNames.get(index - 1));
+        }
+      }
     }
   }
 
