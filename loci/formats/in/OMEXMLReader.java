@@ -56,7 +56,7 @@ public class OMEXMLReader extends FormatReader {
 
   static {
     try {
-      Class.forName("org.openmicroscopy.xml.OMENode");
+      Class.forName("ome.xml.OMEXMLNode");
     }
     catch (Throwable t) {
       noOME = true;
@@ -180,24 +180,13 @@ public class OMEXMLReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessStream(id);
-    ReflectedUniverse r = new ReflectedUniverse();
-    try {
-      r.exec("import loci.formats.MetadataTools");
-    }
-    catch (ReflectException exc) {
-      throw new FormatException(exc);
-    }
 
     in.seek(0);
     String s = in.readString((int) in.length());
     in.seek(0);
-    try {
-      r.setVar("s", s);
-      r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata(s)");
-    }
-    catch (ReflectException exc) {
-      throw new FormatException(exc);
-    }
+
+    MetadataRetrieve omexmlMeta = (MetadataRetrieve)
+      MetadataTools.createOMEXMLMetadata(s);
 
     status("Determining endianness");
 
@@ -337,23 +326,13 @@ public class OMEXMLReader extends FormatReader {
 
       core.littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
 
-      Integer w = null, h = null, t = null, z = null, c = null;
-      String pixType = null;
-      try {
-        r.setVar("img", i);
-        r.setVar("pix", 0);
-        w = (Integer) r.exec("omexmlMeta.getPixelsSizeX(img, pix)");
-        h = (Integer) r.exec("omexmlMeta.getPixelsSizeY(img, pix)");
-        t = (Integer) r.exec("omexmlMeta.getPixelsSizeT(img, pix)");
-        z = (Integer) r.exec("omexmlMeta.getPixelsSizeZ(img, pix)");
-        c = (Integer) r.exec("omexmlMeta.getPixelsSizeC(img, pix)");
-        pixType = (String) r.exec("omexmlMeta.getPixelsPixelType(img, pix)");
-        core.currentOrder[i] =
-          (String) r.exec("omexmlMeta.getPixelsDimensionOrder(img, pix)");
-      }
-      catch (ReflectException exc) {
-        throw new FormatException(exc);
-      }
+      Integer w = omexmlMeta.getPixelsSizeX(i, 0);
+      Integer h = omexmlMeta.getPixelsSizeY(i, 0);
+      Integer t = omexmlMeta.getPixelsSizeT(i, 0);
+      Integer z = omexmlMeta.getPixelsSizeZ(i, 0);
+      Integer c = omexmlMeta.getPixelsSizeC(i, 0);
+      String pixType = omexmlMeta.getPixelsPixelType(i, 0);
+      core.currentOrder[i] = omexmlMeta.getPixelsDimensionOrder(i, 0);
       core.sizeX[i] = w.intValue();
       core.sizeY[i] = h.intValue();
       core.sizeT[i] = t.intValue();
@@ -420,14 +399,7 @@ public class OMEXMLReader extends FormatReader {
     // contents of the internal OME-XML metadata object
     MetadataStore store = getMetadataStore();
 
-    MetadataRetrieve omexmlMeta = null;
-    try {
-      omexmlMeta = (MetadataRetrieve) r.getVar("omexmlMeta");
-      MetadataTools.convertMetadata(omexmlMeta, store);
-    }
-    catch (ReflectException e) {
-      if (debug) LogTools.trace(e);
-    }
+    MetadataTools.convertMetadata(omexmlMeta, store);
   }
 
   // -- Helper methods --
