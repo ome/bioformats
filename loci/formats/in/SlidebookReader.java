@@ -319,71 +319,78 @@ public class SlidebookReader extends FormatReader {
     for (int i=0; i<metadataOffsets.size(); i++) {
       long off = ((Long) metadataOffsets.get(i)).longValue();
       in.seek(off);
-      char n = (char) in.readShort();
-      if (n == 'i') {
-        iCount++;
-        in.skipBytes(78);
-        int start = 0;
-        for (int j=start; j<pixelOffsets.size(); j++) {
-          long length = ((Long) pixelLengths.get(j)).longValue();
-          long offset = ((Long) pixelOffsets.get(j)).longValue();
-          long end = j == pixelOffsets.size() - 1 ? in.length() :
-            ((Long) pixelOffsets.get(j + 1)).longValue();
-          if (in.getFilePointer() >= (length + offset) &&
-            in.getFilePointer() < end)
-          {
-            if (core.sizeX[j - start] == 0) {
-              core.sizeX[j - start] = in.readShort();
-              core.sizeY[j - start] = in.readShort();
-              int checkX = in.readShort();
-              int checkY = in.readShort();
-              int div = in.readShort();
-              core.sizeX[j - start] /= div;
-              div = in.readShort();
-              core.sizeY[j - start] /= div;
+      long next = i == metadataOffsets.size() - 1 ? in.length() :
+        ((Long) metadataOffsets.get(i + 1)).longValue();
+      int count = 0;
+      while (off + count * 128 < next) {
+        in.seek(off + count * 128);
+        count++;
+        char n = (char) in.readShort();
+        if (n == 'i') {
+          iCount++;
+          in.skipBytes(78);
+          int start = 0;
+          for (int j=start; j<pixelOffsets.size(); j++) {
+            long length = ((Long) pixelLengths.get(j)).longValue();
+            long offset = ((Long) pixelOffsets.get(j)).longValue();
+            long end = j == pixelOffsets.size() - 1 ? in.length() :
+              ((Long) pixelOffsets.get(j + 1)).longValue();
+            if (in.getFilePointer() >= (length + offset) &&
+              in.getFilePointer() < end)
+            {
+              if (core.sizeX[j - start] == 0) {
+                core.sizeX[j - start] = in.readShort();
+                core.sizeY[j - start] = in.readShort();
+                int checkX = in.readShort();
+                int checkY = in.readShort();
+                int div = in.readShort();
+                core.sizeX[j - start] /= div;
+                div = in.readShort();
+                core.sizeY[j - start] /= div;
+              }
+              if (prevSeries != j - start) {
+                iCount = 1;
+              }
+              prevSeries = j - start;
+              core.sizeC[j - start] = iCount;
+              break;
             }
-            if (prevSeries != j - start) {
-              iCount = 1;
-            }
-            prevSeries = j - start;
-            core.sizeC[j - start] = iCount;
-            break;
           }
         }
-      }
-      else if (n == 'u') {
-        uCount++;
-        int start = 0;
-        for (int j=start; j<pixelOffsets.size(); j++) {
-          long length = ((Long) pixelLengths.get(j)).longValue();
-          long offset = ((Long) pixelOffsets.get(j)).longValue();
-          long end = j == pixelOffsets.size() - 1 ? in.length() :
-            ((Long) pixelOffsets.get(j + 1)).longValue();
-          if (in.getFilePointer() >= (length + offset) &&
-            in.getFilePointer() < end)
-          {
-            if (prevSeriesU != j - start) {
-              uCount = 1;
+        else if (n == 'u') {
+          uCount++;
+          int start = 0;
+          for (int j=start; j<pixelOffsets.size(); j++) {
+            long length = ((Long) pixelLengths.get(j)).longValue();
+            long offset = ((Long) pixelOffsets.get(j)).longValue();
+            long end = j == pixelOffsets.size() - 1 ? in.length() :
+              ((Long) pixelOffsets.get(j + 1)).longValue();
+            if (in.getFilePointer() >= (length + offset) &&
+              in.getFilePointer() < end)
+            {
+              if (prevSeriesU != j - start) {
+                uCount = 1;
+              }
+              prevSeriesU = j - start;
+              core.sizeZ[j - start] = uCount;
+              break;
             }
-            prevSeriesU = j - start;
-            core.sizeZ[j - start] = uCount;
-            break;
           }
         }
-      }
-      else if (n == 'h') hCount++;
-      else if (n == 'j') {
-        // this block should contain an image name
-        in.skipBytes(14);
-        if (nextName < imageNames.length) {
-          imageNames[nextName++] = in.readCString().trim();
-        }
-      }
-      else if (n == 'm') {
-        // this block should contain a channel name
-        if (in.getFilePointer() > ((Long) pixelOffsets.get(0)).longValue()) {
+        else if (n == 'h') hCount++;
+        else if (n == 'j') {
+          // this block should contain an image name
           in.skipBytes(14);
-          channelNames.add(in.readCString().trim());
+          if (nextName < imageNames.length) {
+            imageNames[nextName++] = in.readCString().trim();
+          }
+        }
+        else if (n == 'm') {
+          // this block should contain a channel name
+          if (in.getFilePointer() > ((Long) pixelOffsets.get(0)).longValue()) {
+            in.skipBytes(14);
+            channelNames.add(in.readCString().trim());
+          }
         }
       }
     }
