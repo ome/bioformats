@@ -259,7 +259,12 @@ public class ND2Reader extends FormatReader {
     throws FormatException, IOException
   {
     if (legacy) return openImage(no, x, y, w, h);
-    if (!isJPEG) return super.openImage(no, x, y, w, h);
+    if (!isJPEG) {
+      return ImageTools.makeImage(openBytes(no, x, y, w, h), core.sizeX[series],
+        core.sizeY[series], getRGBChannelCount(), core.interleaved[series],
+        FormatTools.getBytesPerPixel(core.pixelType[series]),
+        core.littleEndian[series]);
+    }
 
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
@@ -366,7 +371,7 @@ public class ND2Reader extends FormatReader {
       in.seek(0);
       in.order(true);
 
-      byte[] b = new byte[10 * 1024 * 1024];
+      byte[] b = new byte[1024 * 1024];
       int numValidPlanes = 0;
       while (in.getFilePointer() < in.length()) {
         if (in.read() == -38 && in.read() == -50 && in.read() == -66 &&
@@ -401,7 +406,8 @@ public class ND2Reader extends FormatReader {
             StringBuffer sb = new StringBuffer();
             int pt = 13;
             while (b[pt] != '!') {
-              sb.append((char) b[pt++]);
+              sb.append((char) b[pt]);
+              pt++;
             }
             int ndx = Integer.parseInt(sb.toString());
             if (core.sizeC[0] == 0 && core.sizeX[0] != 0 && core.sizeY[0] != 0)
@@ -430,10 +436,22 @@ public class ND2Reader extends FormatReader {
             ND2Handler handler = new ND2Handler();
 
             // strip out invalid characters
-            String xml = DataTools.sanitizeXML(new String(b, 0, len)).trim();
+            int off = 0;
+            for (int i=0; i<len; i++) {
+              char c = (char) b[i];
+              if ((off == 0 && c == '!') || c == 0) off = i + 1;
 
-            if (xml.startsWith("<?xml")) {
-              ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes());
+              if (Character.isISOControl(c) || !Character.isDefined(c)) {
+                b[i] = (byte) ' ';
+              }
+            }
+
+            if (len - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
+              b[off + 2] == 'x' && b[off + 3] == 'm' &&
+              b[off + 4] == 'l') // b.substring(off, off + 5).equals("<?xml")
+            {
+              ByteArrayInputStream s =
+                new ByteArrayInputStream(b, off, len - off);
 
               try {
                 SAXParser parser = SAX_FACTORY.newSAXParser();
@@ -594,7 +612,7 @@ public class ND2Reader extends FormatReader {
         store.setImageName("Series " + i, i);
         store.setImageCreationDate(
           DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
-
+      
         if (tsT.size() > 0) {
           setSeries(i);
           for (int n=0; n<core.imageCount[i]; n++) {
@@ -603,7 +621,7 @@ public class ND2Reader extends FormatReader {
             store.setPlaneTheC(new Integer(coords[1]), i, 0, n);
             store.setPlaneTheT(new Integer(coords[2]), i, 0, n);
             float stamp = ((Double) tsT.get(coords[2])).floatValue();
-            store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
+            store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n); 
           }
         }
       }
@@ -634,11 +652,12 @@ public class ND2Reader extends FormatReader {
       if (pos + length >= in.length() || length == 0) lastBoxFound = true;
       box = in.readInt();
       pos = in.getFilePointer();
+      length -= 8;
 
       if (box == 0x6a703263) {
         vs.add(new Long(in.getFilePointer()));
       }
-      if (!lastBoxFound) in.skipBytes(length - 8);
+      if (!lastBoxFound) in.seek(pos + length);
     }
 
     status("Finding XML metadata");
@@ -649,7 +668,7 @@ public class ND2Reader extends FormatReader {
 
     boolean found = false;
     long off = -1;
-    byte[] buf = new byte[1024 * 1024];
+    byte[] buf = new byte[2048];
     while (!found && in.getFilePointer() < in.length()) {
       int read = 0;
       if (in.getFilePointer() == ((Long) vs.get(vs.size() - 1)).longValue()) {
@@ -688,7 +707,7 @@ public class ND2Reader extends FormatReader {
 
       while (st.hasMoreTokens()) {
         String token = st.nextToken();
-        //token = token.replaceAll("<!--.*-->", "");
+        token = token.replaceAll("<!--.*-->", "");
         token = token.replaceAll(".*xml", "").trim();
         token = token.substring(0, token.lastIndexOf(">") + 1);
         if (token.startsWith("<")) sb.append(token);
@@ -699,9 +718,20 @@ public class ND2Reader extends FormatReader {
       ND2Handler handler = new ND2Handler();
 
       // strip out invalid characters
-      xml = DataTools.sanitizeXML(xml);
+      int offset = 0;
+      byte[] b = xml.getBytes();
+      int len = b.length;
+      for (int i=0; i<len; i++) {
+        char c = (char) b[i];
+        if (offset == 0 && c == '!') offset = i + 1;
 
-      ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes());
+        if (Character.isISOControl(c) || !Character.isDefined(c)) {
+          b[i] = (byte) ' ';
+        }
+      }
+
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(b, offset, len - offset);
 
       try {
         SAXParser parser = SAX_FACTORY.newSAXParser();
