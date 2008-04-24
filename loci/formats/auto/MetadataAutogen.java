@@ -134,9 +134,18 @@ public class MetadataAutogen {
     StringBuffer spaces = new StringBuffer();
     Vector<String> lastIndices = new Vector<String>();
 
+    int maxLen = 0;
+    for (String entity : entities) {
+      int len = entity.length();
+      if (len > maxLen) maxLen = len;
+    }
+
     for (String entity : entities) {
       q.setEntity(entity);
-      System.out.println("\t" + q.path());
+      System.out.print("\t");
+      System.out.print(entity);
+      for (int i=entity.length(); i<maxLen; i++) System.out.print(" ");
+      System.out.println(" | " + q.path());
 
       Vector<String> indices = q.indices();
 
