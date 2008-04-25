@@ -48,9 +48,7 @@ public class POITools {
 
   // -- Fields --
 
-  private boolean noPOI = false;
   private ReflectedUniverse r;
-
   private String id;
   private Vector filePath;
 
