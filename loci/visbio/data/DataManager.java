@@ -249,6 +249,7 @@ public class DataManager extends LogicManager {
           if (files[i].getName().endsWith(".visbio")) continue;
           pattern = FilePattern.findPattern(files[i]);
           if (pattern == null) pattern = files[i].getAbsolutePath();
+          break;
         }
         if (task.isStopped()) {
           task.setCompleted();
@@ -260,21 +261,12 @@ public class DataManager extends LogicManager {
         }
 
         FilePattern fp = new FilePattern(pattern);
-        int[] lengths = fp.getCount();
-
-        // assume first dimension is Time, last is Slice, and others are Other
-        int len = lengths.length;
-        String[] dims = new String[len + 1];
-        dims[0] = "Time";
-        for (int i=1; i<len; i++) dims[i] = "Other";
-        dims[len] = "Slice";
 
         if (task.isStopped()) {
           task.setCompleted();
           return;
         }
-        createDataset(dirName, pattern, fp.getFiles(),
-          lengths, dims, Float.NaN, Float.NaN, Float.NaN, task);
+        createDataset(dirName, pattern, task);
       }
     }.start();
   }
@@ -283,10 +275,7 @@ public class DataManager extends LogicManager {
    * Creates a dataset, updating the given task object as things progress.
    * If no task object is given, a new one is created to use.
    */
-  public void createDataset(String name, String pattern,
-    String[] ids, int[] lengths, String[] dims,
-    float width, float height, float step, BioTask bioTask)
-  {
+  public void createDataset(String name, String pattern, BioTask bioTask) {
     if (bioTask == null) {
       TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
       bioTask = tm.createTask(name);
@@ -302,8 +291,7 @@ public class DataManager extends LogicManager {
         task.setStatus(val, max, msg);
       }
     };
-    Dataset dataset = new Dataset(name, pattern,
-      ids, lengths, dims, width, height, step, sl);
+    Dataset dataset = new Dataset(name, pattern, sl);
     task.setCompleted();
     addData(dataset);
   }

@@ -24,21 +24,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.awt.*;
-import java.awt.datatransfer.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import loci.formats.*;
+import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataStore;
-import loci.formats.ome.OMEXMLMetadata;
+import loci.visbio.VisBioFrame;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
-import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.Element;
+import ome.xml.OMEXMLNode;
 import visad.*;
 
 /**
@@ -65,53 +67,21 @@ import visad.*;
  */
 public class Dataset extends ImageTransform {
 
-  // -- Static fields --
-
-  /** Dataset import dialog. */
-  protected static DatasetPane datasetImporter;
-
   // -- Data fields --
 
   /** A string pattern describing this dataset. */
   protected String pattern;
-
-  /** Source file array. */
-  protected String[] ids;
 
   /** Optional listener for constructor progress. */
   protected StatusListener listener;
 
   // -- Computed fields --
 
-  /** Data readers, one for each source file in the array. */
-  protected ImageReader[] readers;
+  /** Data reader. */
+  protected IFormatReader reader;
 
   /** Controls for this dataset. */
   protected DatasetWidget controls;
-
-  /** Number of images per source file. */
-  protected int numImages;
-
-  /** File format description of source files. */
-  protected String format;
-
-  /** Metadata associated with the first source file. */
-  protected Hashtable metadata;
-
-  /** OME node associated with the first source file. */
-  protected OMENode ome;
-
-  /** Range component count for each image. */
-  protected int numRange;
-
-  /** Width of each image. */
-  protected int resX;
-
-  /** Height of each image. */
-  protected int resY;
-
-  /** Computed offset coefficients into rasterized source file array. */
-  protected int[] offsets;
 
   /** Types mapped to spatial components (X, Y). */
   protected RealType[] spatial;
@@ -128,57 +98,17 @@ public class Dataset extends ImageTransform {
    * Constructs a multidimensional data object.
    * See the complete constructor for more information.
    */
-  public Dataset(String name, String pattern,
-    String[] ids, int[] lengths, String[] dims)
-  {
-    this(name, pattern, ids, lengths, dims,
-      Float.NaN, Float.NaN, Float.NaN, null);
-  }
+  public Dataset(String name, String pattern) { this(name, pattern, null); }
 
   /**
-   * Constructs a multidimensional data object.
-   * See the complete constructor for more information.
-   */
-  public Dataset(String name, String pattern, String[] ids,
-    int[] lengths, String[] dims, float width, float height, float step)
-  {
-    this(name, pattern, ids, lengths, dims, width, height, step, null);
-  }
-
-  /**
-   * Constructs a new multidimensional data object from the given list of
-   * source files. Any multidimensional file organization can be specified,
-   * rasterized, using the ids source file list coupled with the lengths
-   * array, which lists the length of each dimension in the structure.
-   * <p>
-   * Also, a list of what each dimension in the multidimensional structure
-   * means must be provided, using the dims array. Since each file can contain
-   * multiple images, those images implicitly define another dimension whose
-   * type must be specified as well. Thus, the dims array should be one element
-   * longer than the lengths array, with the final element of dims describing
-   * the type of this implicit dimension. Note that the number of images per
-   * file is automatically detected and appended to the lengths array, so there
-   * is no need to append it manually. Lastly, if there is only one image per
-   * file, the final dims element is ignored, and lengths is not affected.
-   *
-   * @param pattern String pattern describing the dataset.
-   * @param ids List of source files, with dimensions rasterized.
-   * @param lengths List of dimension lengths.
-   * @param dims List of each dimension's meaning (Time, Slice, etc.).
-   * @param width Physical width of each image, in microns.
-   * @param height Physical height of each image, in microns.
-   * @param step Physical distance between image slices, in microns.
+   * Constructs a new multidimensional data object from the given file pattern.
+   * @param name Label for the dataset.
+   * @param pattern File pattern identifying the dataset.
    * @param listener Listener object to be informed of construction progress.
    */
-  public Dataset(String name, String pattern, String[] ids,
-    int[] lengths, String[] dims, float width, float height, float step,
-    StatusListener listener)
-  {
-    super(null, name, width, height, step);
+  public Dataset(String name, String pattern, StatusListener listener) {
+    super(null, name);
     this.pattern = pattern;
-    this.ids = ids;
-    this.lengths = lengths;
-    this.dims = dims;
     this.listener = listener;
     initState(null);
   }
@@ -187,100 +117,57 @@ public class Dataset extends ImageTransform {
 
   /** Close all open ids. */
   public void close() throws FormatException, IOException {
-    for (int i=0; i<ids.length; i++) readers[i].close();
+    reader.close();
   }
 
   /** Gets the string pattern describing this dataset. */
   public String getPattern() { return pattern; }
 
   /** Gets filenames of all files in dataset. */
-  public String[] getFilenames() { return ids; }
-
-  /** Gets the number of images per source file. */
-  public int getImagesPerSource() { return numImages; }
+  public String[] getFilenames() { return reader.getUsedFiles(); }
 
   /** Gets a description of the source files' file format. */
-  public String getFileFormat() { return format; }
+  public String getFileFormat() { return reader.getFormat(); }
 
-  /** Gets metadata associated with the first source file. */
-  public Hashtable getMetadata() { return metadata; }
+  /** Gets metadata associated with the dataset. */
+  public Hashtable getMetadata() { return reader.getMetadata(); }
 
-  /** Gets the OME node associated with the first source file. */
-  public OMENode getOMENode() { return ome; }
+  /** Gets an OME-XML root for the dataset. */
+  public OMEXMLNode getOMEXMLRoot() {
+    MetadataStore store = reader.getMetadataStore();
+    return (OMEXMLNode) store.getRoot();
+  }
 
   // -- ImageTransform API methods --
 
   /** Obtains an image from the source(s) at the given dimensional position. */
   public BufferedImage getImage(int[] pos) {
-    int[] indices = getIndices(pos);
-    int fileIndex = indices[0];
-    if (fileIndex < 0 || fileIndex >= ids.length) {
-      System.err.println("Invalid file number #" + fileIndex);
-      return null;
-    }
-    int imgIndex = indices[1];
-    String filename = "\"" + new File(ids[fileIndex]).getName() + "\"";
-
+    int index = posToIndex(pos);
     BufferedImage img = null;
-
-    int numImg = -1;
     try {
-      readers[fileIndex].setId(ids[fileIndex]);
-      numImg = readers[fileIndex].getImageCount();
+      img = reader.openImage(index);
     }
-    catch (IOException exc) { numImg = -1; }
-    catch (FormatException exc) { numImg = -1; }
-    if (numImg < 0) {
-      System.err.println("Could not read file " + filename);
+    catch (IOException exc) {
+      if (VisBioFrame.DEBUG) exc.printStackTrace();
+    }
+    catch (FormatException exc) {
+      if (VisBioFrame.DEBUG) exc.printStackTrace();
+    }
+    if (img == null) {
+      System.err.println("Could not read image at index #" + index);
       return null;
-    }
-    else if (numImg == 0) {
-      System.err.println("File " + filename + " contains no images");
-      return null;
-    }
-    if (imgIndex < 0 || imgIndex >= numImg) {
-      System.err.println("Invalid image number #" + (imgIndex + 1) +
-        " for file " + filename + " (" + numImg + " found)");
-      return null;
-    }
-
-    int tries = 3;
-    while (tries > 0) {
-      boolean again = false;
-      try {
-        img = readers[fileIndex].openImage(imgIndex);
-      }
-      catch (IOException exc) {
-        String msg = exc.getMessage();
-        if (msg != null && msg.indexOf("Bad file descriptor") >= 0) {
-          // HACK - trap for catching sporadic exception; try again!
-          if (tries == 0) {
-            System.err.println("Unable to read image #" + (imgIndex + 1) +
-              " from file " + filename);
-            return null;
-          }
-          else again = true;
-        }
-      }
-      catch (FormatException exc) {
-        System.err.println("Unable to read image #" + (imgIndex + 1) +
-          " from file " + filename);
-        return null;
-      }
-      if (again) tries--;
-      else break;
     }
     return img;
   }
 
   /** Gets width of each image. */
-  public int getImageWidth() { return resX; }
+  public int getImageWidth() { return reader.getSizeX(); }
 
   /** Gets height of each image. */
-  public int getImageHeight() { return resY; }
+  public int getImageHeight() { return reader.getSizeY(); }
 
   /** Gets number of range components at each pixel. */
-  public int getRangeCount() { return numRange; }
+  public int getRangeCount() { return 1; }
 
   // -- Static DataTransform API methods --
 
@@ -296,41 +183,28 @@ public class Dataset extends ImageTransform {
   public static DataTransform makeTransform(DataManager dm,
     File file, Component parent)
   {
-    // create dataset import dialog if it doesn't already exist
-    if (datasetImporter == null) {
-      datasetImporter = new DatasetPane(dm, SwingUtil.getVisBioFileChooser());
-    }
-
-    // if clipboard contains a file name, use it as the default file pattern
     if (file == null) {
-      Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-      if (clip != null) {
-        Transferable t = null;
-        try {
-          t = clip.getContents(null);
-        }
-        catch (IllegalStateException exc) {
-          // clipboard contents unavailable
-        }
-        if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-          String s = null;
-          try { s = (String) t.getTransferData(DataFlavor.stringFlavor); }
-          catch (IOException exc) { exc.printStackTrace(); }
-          catch (UnsupportedFlavorException exc) { exc.printStackTrace(); }
-          if (s != null) {
-            File f = new File(s);
-            File dir = f.getParentFile();
-            if (f.exists() || (dir != null && dir.exists())) file = f;
-          }
-        }
-      }
+      // prompt for file to open
+      IFormatReader reader = new ChannelSeparator();
+      JFileChooser fc = GUITools.buildFileChooser(reader);
+      int rval = fc.showOpenDialog(parent);
+      if (rval != JFileChooser.APPROVE_OPTION) return null;
+      file = fc.getSelectedFile();
     }
-    datasetImporter.selectFile(file);
 
-    // get file pattern from dataset import dialog
-    datasetImporter.showDialog(parent);
+    FilePattern fp = new FilePattern(new Location(file));
+    String pattern = fp.getPattern();
+    if (pattern == null) pattern = file.getAbsolutePath();
+    String name = fp.getPrefix();
+    if (name == null) name = file.getName();
 
-    // dataset import dialog will add the resultant dataset to the Data panel
+    // confirm file pattern
+    pattern = (String) JOptionPane.showInputDialog(parent, "File pattern",
+      "VisBio", JOptionPane.QUESTION_MESSAGE, null, null, pattern);
+    if (pattern == null) return null;
+
+    // data manager will add the resultant dataset to the Data panel
+    dm.createDataset(name, pattern, null);
     return null;
   }
 
@@ -356,11 +230,9 @@ public class Dataset extends ImageTransform {
    */
   public String getCacheId(int[] pos, boolean global) {
     if (pos == null) return null;
-    int[] indices = getIndices(pos);
-    int fileIndex = indices[0];
-    int imgIndex = indices[1];
-    String file = global ? ids[fileIndex] : new File(ids[fileIndex]).getName();
-    return file + "/" + imgIndex;
+    int index = posToIndex(pos);
+    String prefix = global ? pattern : new File(pattern).getName();
+    return prefix + "/" + index;
   }
 
   /** Gets a description of this dataset, with HTML markup. */
@@ -389,6 +261,7 @@ public class Dataset extends ImageTransform {
     }
 
     // image resolution
+    int resX = getImageWidth(), resY = getImageHeight();
     sb.append("<li>");
     sb.append(resX);
     sb.append(" x ");
@@ -414,6 +287,7 @@ public class Dataset extends ImageTransform {
     }
 
     // range component count
+    int numRange = getRangeCount();
     sb.append("<li>");
     sb.append(numRange);
     sb.append(" range component");
@@ -421,11 +295,15 @@ public class Dataset extends ImageTransform {
     sb.append("</li>\n");
     sb.append("</ul>\n");
 
-    // file count
-    sb.append(ids.length);
-    sb.append(" ");
+    // file format
+    String format = getFileFormat();
+    sb.append("File format: ");
     sb.append(format);
-    sb.append(" in dataset.<br>\n");
+    sb.append("<br>\n");
+
+    // file count
+    sb.append(getFilenames().length);
+    sb.append(" files in dataset.<br>\n");
 
     // image and pixel counts
     BigInteger pixels = images.multiply(new BigInteger("" + resX));
@@ -453,8 +331,7 @@ public class Dataset extends ImageTransform {
     if (!super.matches(dyn) || !isCompatible(dyn)) return false;
     Dataset data = (Dataset) dyn;
 
-    return ObjectUtil.objectsEqual(pattern, data.pattern) &&
-      ObjectUtil.arraysEqual(ids, data.ids);
+    return ObjectUtil.objectsEqual(pattern, data.pattern);
   }
 
   /**
@@ -471,71 +348,47 @@ public class Dataset extends ImageTransform {
 
     if (data != null) {
       pattern = data.pattern;
-      ids = data.ids;
     }
 
-    int numTasks = 5;
+    int numTasks = 4;
 
-    // make sure each file exists
-    status(0, numTasks, "Checking files");
-    for (int i=0; i<ids.length; i++) {
-      File file = new File(ids[i]);
-      if (!file.exists()) {
-        System.err.println("File \"" + file.getName() + "\" does not exist.");
-        return;
-      }
-    }
-
-    // initialize data readers
-    readers = new ImageReader[ids.length];
-    for (int i=0; i<ids.length; i++) {
-      readers[i] = new ImageReader();
-      readers[i].setMetadataStore(MetadataTools.createOMEXMLMetadata());
-    }
+    // initialize data reader
+    reader = new ChannelSeparator(new FileStitcher(true));
+    reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
 
     // determine number of images per source file
-    status(1, numTasks, "Determining image count");
-    String filename = "\"" + new File(ids[0]).getName() + "\"";
+    status(1, numTasks, "Initializing dataset");
     try {
-      readers[0].setId(ids[0]);
-      numImages = readers[0].getImageCount();
-      format = readers[0].getFormat(ids[0]);
-      if (format.startsWith("TIFF")) {
-        format = (numImages > 1 ? "multi-page " : "single-image ") + format;
-      }
-      if (ids.length > 1) format += "s";
+      reader.setId(pattern);
     }
     catch (Exception exc) {
-      System.err.println("Could not determine number of images per file. " +
-        filename + " may be corrupt or invalid.");
+      System.err.println("Could not initialize the dataset. '" +
+        pattern + "' may be corrupt or invalid.");
+      if (VisBioFrame.DEBUG) exc.printStackTrace();
       return;
     }
-    if (numImages > 1 && dims.length > lengths.length) {
-      int[] nlen = new int[lengths.length + 1];
-      System.arraycopy(lengths, 0, nlen, 0, lengths.length);
-      nlen[lengths.length] = numImages;
-      lengths = nlen;
-    }
+    int[] cLen = reader.getChannelDimLengths();
+    lengths = new int[2 + cLen.length];
+    lengths[0] = reader.getSizeT();
+    lengths[1] = reader.getSizeZ();
+    System.arraycopy(cLen, 0, lengths, 2, cLen.length);
+    String[] cTypes = reader.getChannelDimTypes();
+    dims = new String[2 + cTypes.length];
+    dims[0] = "Time";
+    dims[1] = "Slice";
+    System.arraycopy(cTypes, 0, dims, 2, cTypes.length);
     makeLabels();
-
-    // initialize offsets convenience array
-    int len = numImages > 1 ? lengths.length - 1 : lengths.length;
-    offsets = new int[len];
-    if (len > 0) offsets[0] = 1;
-    for (int i=1; i<len; i++) {
-      offsets[i] = offsets[i - 1] * lengths[i - 1];
-    }
 
     // load first image for analysis
     status(2, numTasks, "Reading first image");
     BufferedImage img = null;
-    try { img = readers[0].openImage(0); }
+    try { img = reader.openImage(0); }
     catch (IOException exc) { img = null; }
     catch (FormatException exc) { img = null; }
     catch (NullPointerException exc) { img = null; }
     if (img == null) {
-      System.err.println("Could not read the first image. " +
-        filename + " may be corrupt or invalid.");
+      System.err.println("Could not read the first image. '" +
+        pattern + "' may be corrupt or invalid.");
       return;
     }
     ImageFlatField ff = null;
@@ -550,10 +403,6 @@ public class Dataset extends ImageTransform {
       exc.printStackTrace();
       return;
     }
-
-    // determine image resolution
-    resX = img.getWidth();
-    resY = img.getHeight();
 
     // extract range components
     FunctionType ftype = (FunctionType) ff.getType();
@@ -570,32 +419,17 @@ public class Dataset extends ImageTransform {
         range.getClass().getName() + ")");
       return;
     }
-    numRange = color.length;
 
     // extract domain types
     RealTupleType domain = ftype.getDomain();
     spatial = domain.getRealComponents();
 
-    // load metadata for the first source file
-    String fname = new File(ids[0]).getName();
-    status(3, numTasks, "Reading " + fname + " metadata");
-    metadata = readers[0].getMetadata();
-    if (metadata == null) {
-      System.err.println("Could not read metadata from " +
-        fname + ". The file may be corrupt or invalid.");
-      return;
-    }
-    MetadataStore ms = readers[0].getMetadataStore();
-    if (ms instanceof OMEXMLMetadata) {
-      ome = (OMENode) ((OMEXMLMetadata) ms).getRoot();
-    }
-
     // construct metadata controls
-    status(4, numTasks, "Finishing");
+    status(3, numTasks, "Finishing");
     controls = new DatasetWidget(this);
 
     // construct thumbnail handler
-    String path = new File(ids[0]).getParent();
+    String path = new File(pattern).getParent();
     if (path == null) path = "";
     thumbs = new ThumbnailHandler(this,
       path + File.separator + name + ".visbio");
@@ -609,41 +443,29 @@ public class Dataset extends ImageTransform {
     Element child = XMLUtil.createChild(el, "Dataset");
     super.saveState(child);
     child.setAttribute("pattern", pattern);
-    for (int i=0; i<ids.length; i++) {
-      Element fel = XMLUtil.createChild(child, "Filename");
-      XMLUtil.createText(fel, ids[i]);
-    }
   }
 
   /** Restores the current state from the given DOM element ("Dataset"). */
   public void restoreState(Element el) throws SaveException {
     super.restoreState(el);
     pattern = el.getAttribute("pattern");
-    Element[] els = XMLUtil.getChildren(el, "Filename");
-    ids = new String[els.length];
-    for (int i=0; i<ids.length; i++) ids[i] = XMLUtil.getText(els[i]);
   }
 
   // -- Helper methods --
 
-  /**
-   * Gets the corresponding file and image indices
-   * for the given dimensional position.
-   */
-  private int[] getIndices(int[] pos) {
-    int fileIndex = 0;
-    int imgIndex = 0;
-    if (numImages > 1) {
-      // file images form a new dimension
-      for (int i=0; i<offsets.length; i++) fileIndex += offsets[i] * pos[i];
-      imgIndex = pos[pos.length - 1];
-    }
-    else {
-      // only one image per file
-      for (int i=0; i<offsets.length; i++) fileIndex += offsets[i] * pos[i];
-      imgIndex = 0;
-    }
-    return new int[] {fileIndex, imgIndex};
+  /** Gets the 1-D index for the given position array. */
+  private int posToIndex(int[] pos) {
+    int t = pos[0];
+    int z = pos[1];
+
+    // rasterize C dimensions
+    int[] cLen = reader.getChannelDimLengths();
+    int[] cPos = new int[pos.length - 2];
+    System.arraycopy(pos, 2, cPos, 0, cPos.length);
+    int c = FormatTools.positionToRaster(cLen, cPos);
+
+    int index = reader.getIndex(z, c, t);
+    return index;
   }
 
   /** Notifies constructor task listener of a status update. */
