@@ -64,28 +64,32 @@ public class ImageUploader {
     try {
       OMEWriter writer = new OMEWriter();
       MetadataStore store = MetadataTools.createOMEXMLMetadata();
-      store.setRoot(data.getOMENode());
+      store.setRoot(data.getOMEXMLRoot());
       MetadataRetrieve retrieve = (MetadataRetrieve) store;
       writer.setMetadataRetrieve(retrieve);
 
       String id = server + "?user=" + username + "&password=" + password;
       writer.setId(id);
 
-      int numFiles = data.getFilenames().length;
-      int numImages = data.getImagesPerSource();
+      String order = retrieve.getPixelsDimensionOrder(0, 0);
+      int sizeZ = retrieve.getPixelsSizeZ(0, 0).intValue();
+      int sizeC = retrieve.getPixelsSizeZ(0, 0).intValue();
+      int sizeT = retrieve.getPixelsSizeZ(0, 0).intValue();
 
-      for (int i=0; i<numFiles; i++) {
-        for (int j=0; j<numImages; j++) {
-          int[] coords = FormatTools.getZCTCoords(
-            retrieve.getPixelsDimensionOrder(0, 0),
-            retrieve.getPixelsSizeZ(0, 0).intValue(),
-            retrieve.getPixelsSizeC(0, 0).intValue(),
-            retrieve.getPixelsSizeT(0, 0).intValue(),
-            numImages*numFiles, numImages*i + j);
-          writer.saveImage(
-            data.getImage(new int[] {coords[0], coords[1], coords[2], j}),
-            i == numFiles - 1 && j == numImages - 1);
-        }
+      int[] len = data.getLengths();
+      int total = FormatTools.getRasterLength(len);
+      int[] cLen = new int[len.length - 2];
+      System.arraycopy(len, 2, cLen, 0, cLen.length);
+
+      for (int i=0; i<total; i++) {
+        int[] zct = FormatTools.getZCTCoords(order,
+          sizeZ, sizeC, sizeT, total, i);
+        int[] cPos = FormatTools.rasterToPosition(cLen, zct[1]);
+        int[] pos = new int[2 + cPos.length];
+        pos[0] = zct[2];
+        pos[1] = zct[0];
+        System.arraycopy(cPos, 0, pos, 2, cPos.length);
+        writer.saveImage(data.getImage(pos), i == total - 1);
       }
 
       writer.close();
