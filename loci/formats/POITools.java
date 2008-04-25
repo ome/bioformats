@@ -46,30 +46,10 @@ public class POITools {
     "ImagePro IPW, and Zeiss ZVI files.  Please obtain poi-loci.jar from " +
     "http://loci.wisc.edu/ome/formats.html";
 
-  // -- Static fields --
-
-  private static boolean noPOI = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
-
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
-      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import org.apache.poi.util.RandomAccessStream");
-      r.exec("import java.util.Iterator");
-    }
-    catch (ReflectException exc) {
-      noPOI = true;
-      exc.printStackTrace();
-    }
-    return r;
-  }
-
   // -- Fields --
+
+  private boolean noPOI = false;
+  private ReflectedUniverse r;
 
   private String id;
   private Vector filePath;
@@ -157,7 +137,18 @@ public class POITools {
   // -- Helper methods --
 
   private void initialize(String file) throws FormatException, IOException {
-    if (noPOI) throw new FormatException(NO_POI_MSG);
+    try {
+      r = new ReflectedUniverse();
+      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
+      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
+      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
+      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import org.apache.poi.util.RandomAccessStream");
+      r.exec("import java.util.Iterator");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(NO_POI_MSG, exc);
+    }
 
     RandomAccessStream s = new RandomAccessStream(file);
     s.order(true);
