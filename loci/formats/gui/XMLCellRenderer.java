@@ -35,7 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
 
 /**
- * A tree cell renderer for display syntax highlighted XML in a JTree.
+ * A tree cell renderer for displaying syntax highlighted XML in a JTree.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/gui/XMLCellRenderer.java">Trac</a>,
