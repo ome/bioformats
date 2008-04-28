@@ -92,12 +92,12 @@ public class $q.className() extends OMEXMLMetadata {
   // - Entity retrieval -
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
-#set ($last = $q.last())
-#set ($lastVar = $q.var($last))
 
   // - $entity property retrieval -
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
+#set ($last = $q.last())
+#set ($lastVar = $q.var($last))
 
   /* @see loci.formats.meta.MetadataRetrieve#get$entity$prop($q.typesList()) */
   public $q.defaultType() get$entity$prop($q.argsList()) {
@@ -138,13 +138,13 @@ public class $q.className() extends OMEXMLMetadata {
   }
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
-#set ($last = $q.last())
-#set ($lastVar = $q.var($last))
 
   // - $entity property storage -
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 #set ($varName = $q.var($prop))
+#set ($last = $q.last())
+#set ($lastVar = $q.var($last))
 
   /* @see loci.formats.meta.MetadataStore#set$entity$prop($q.defaultType(), $q.typesList()) */
   public void set$entity$prop($q.defaultType() $varName, $q.argsList()) {
@@ -152,8 +152,8 @@ public class $q.className() extends OMEXMLMetadata {
     // NB: $prop unsupported for schema version $q.version()
 #else
     if ($varName == null) return;
-    ${last}Node $lastVar = get${last}Node($q.varsList(), true);
-    $q.setter($lastVar, $varName);
+    ${last}Node ${lastVar}Node = get${last}Node($q.varsList(), true);
+    $q.setter("${lastVar}Node", $varName);
 #end##if "-"
   }
 #end##foreach $prop

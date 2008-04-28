@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 24, 2008 4:44:24 PM CDT
+ * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -736,6 +736,45 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setStagePositionPositionZ(Float, int, int, int) */
   public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
     store.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex);
+  }
+
+  // -- TiffData property storage -
+
+  /* @see MetadataStore#setTiffDataFileName(String, int, int, int) */
+  public void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    String value = filter ? DataTools.sanitize(fileName) : fileName;
+    store.setTiffDataFileName(value, imageIndex, pixelsIndex, tiffDataIndex);
+  }
+
+  /* @see MetadataStore#setTiffDataFirstC(Integer, int, int, int) */
+  public void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    store.setTiffDataFirstC(firstC, imageIndex, pixelsIndex, tiffDataIndex);
+  }
+
+  /* @see MetadataStore#setTiffDataFirstT(Integer, int, int, int) */
+  public void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    store.setTiffDataFirstT(firstT, imageIndex, pixelsIndex, tiffDataIndex);
+  }
+
+  /* @see MetadataStore#setTiffDataFirstZ(Integer, int, int, int) */
+  public void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    store.setTiffDataFirstZ(firstZ, imageIndex, pixelsIndex, tiffDataIndex);
+  }
+
+  /* @see MetadataStore#setTiffDataIFD(Integer, int, int, int) */
+  public void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    store.setTiffDataIFD(ifd, imageIndex, pixelsIndex, tiffDataIndex);
+  }
+
+  /* @see MetadataStore#setTiffDataNumPlanes(Integer, int, int, int) */
+  public void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    store.setTiffDataNumPlanes(numPlanes, imageIndex, pixelsIndex, tiffDataIndex);
+  }
+
+  /* @see MetadataStore#setTiffDataUUID(String, int, int, int) */
+  public void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    String value = filter ? DataTools.sanitize(uuid) : uuid;
+    store.setTiffDataUUID(value, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
 }

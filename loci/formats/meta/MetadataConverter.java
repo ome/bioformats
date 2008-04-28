@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 24, 2008 4:44:24 PM CDT
+ * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -149,6 +149,16 @@ public final class MetadataConverter {
           dest.setStagePositionPositionX(src.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
           dest.setStagePositionPositionY(src.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
           dest.setStagePositionPositionZ(src.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
+        }
+        int tiffDataCount = src.getTiffDataCount(imageIndex, pixelsIndex);
+        for (int tiffDataIndex=0; tiffDataIndex<tiffDataCount; tiffDataIndex++) {
+          dest.setTiffDataFileName(src.getTiffDataFileName(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
+          dest.setTiffDataFirstC(src.getTiffDataFirstC(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
+          dest.setTiffDataFirstT(src.getTiffDataFirstT(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
+          dest.setTiffDataFirstZ(src.getTiffDataFirstZ(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
+          dest.setTiffDataIFD(src.getTiffDataIFD(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
+          dest.setTiffDataNumPlanes(src.getTiffDataNumPlanes(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
+          dest.setTiffDataUUID(src.getTiffDataUUID(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
         }
       }
         dest.setStageLabelName(src.getStageLabelName(imageIndex), imageIndex);

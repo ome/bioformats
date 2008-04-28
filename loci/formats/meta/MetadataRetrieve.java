@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 24, 2008 4:44:24 PM CDT
+ * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,6 +69,8 @@ public interface MetadataRetrieve {
   int getPlaneCount(int imageIndex, int pixelsIndex);
 
   int getROICount(int imageIndex);
+
+  int getTiffDataCount(int imageIndex, int pixelsIndex);
 
   // - Entity retrieval -
 
@@ -898,5 +900,63 @@ public interface MetadataRetrieve {
    * @param planeIndex index of the Plane
    */
   Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
+
+  // - TiffData property retrieval -
+
+  /**
+   * For a particular TiffData, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  String getTiffDataFileName(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  Integer getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  Integer getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  Integer getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  Integer getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  Integer getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, gets TODO.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex);
 
 }

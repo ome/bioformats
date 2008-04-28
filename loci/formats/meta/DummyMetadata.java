@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 24, 2008 4:44:24 PM CDT
+ * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -107,6 +107,11 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataRetrieve#getROICount(int) */
   public int getROICount(int imageIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataCount(int, int) */
+  public int getTiffDataCount(int imageIndex, int pixelsIndex) {
     return -1;
   }
 
@@ -639,6 +644,37 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - TiffData property retrieval -
+
+  /* @see MetadataRetrieve#getTiffDataFileName(int, int, int) */
+  public String getTiffDataFileName(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getTiffDataFirstC(int, int, int) */
+  public Integer getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getTiffDataFirstT(int, int, int) */
+  public Integer getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getTiffDataFirstZ(int, int, int) */
+  public Integer getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getTiffDataIFD(int, int, int) */
+  public Integer getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getTiffDataNumPlanes(int, int, int) */
+  public Integer getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getTiffDataUUID(int, int, int) */
+  public String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+
   // -- MetadataStore API methods --
 
   public void createRoot() {
@@ -1152,6 +1188,36 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setStagePositionPositionZ(Float, int, int, int) */
   public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  // - TiffData property storage -
+
+  /* @see MetadataStore#setTiffDataFileName(String, int, int, int) */
+  public void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+  }
+
+  /* @see MetadataStore#setTiffDataFirstC(Integer, int, int, int) */
+  public void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+  }
+
+  /* @see MetadataStore#setTiffDataFirstT(Integer, int, int, int) */
+  public void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+  }
+
+  /* @see MetadataStore#setTiffDataFirstZ(Integer, int, int, int) */
+  public void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+  }
+
+  /* @see MetadataStore#setTiffDataIFD(Integer, int, int, int) */
+  public void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+  }
+
+  /* @see MetadataStore#setTiffDataNumPlanes(Integer, int, int, int) */
+  public void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+  }
+
+  /* @see MetadataStore#setTiffDataUUID(String, int, int, int) */
+  public void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex) {
   }
 
 }

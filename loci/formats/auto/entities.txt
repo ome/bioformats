@@ -98,6 +98,60 @@ description = endianness of the pixels set
 type = String
 description = the dimension order of the pixels set
 
+## TiffData ##
+
+[TiffData]
+countable = true
+path = Image+/Pixels+/TiffData+
+description = TODO
+
+[TiffData 2003FC]
+path = -
+
+[TiffData FirstZ]
+type = Integer
+description = TODO
+
+[TiffData FirstT]
+type = Integer
+description = TODO
+
+[TiffData FirstC]
+type = Integer
+description = TODO
+
+[TiffData IFD]
+type = Integer
+description = TODO
+
+[TiffData NumPlanes]
+type = Integer
+description = TODO
+
+[TiffData UUID]
+path = Image+/Pixels+/TiffData+/UUID
+type = String
+getter = getCData
+setter = setCData
+description = TODO
+
+[TiffData UUID 200706]
+path = -
+
+[TiffData UUID 2003FC]
+path = -
+
+[TiffData FileName]
+path = Image+/Pixels+/TiffData+/UUID
+type = String
+description = TODO
+
+[TiffData FileName 200706]
+path = -
+
+[TiffData FileName 2003FC]
+path = -
+
 ## Dimensions ##
 
 [Dimensions]

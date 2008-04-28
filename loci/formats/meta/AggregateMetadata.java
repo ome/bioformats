@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 24, 2008 4:44:24 PM CDT
+ * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -244,6 +244,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getROICount(imageIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataCount(int, int) */
+  public int getTiffDataCount(int imageIndex, int pixelsIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getTiffDataCount(imageIndex, pixelsIndex);
         if (result >= 0) return result;
       }
     }
@@ -1771,6 +1784,99 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - TiffData property retrieval -
+
+  /* @see MetadataRetrieve#getTiffDataFileName(int, int, int) */
+  public String getTiffDataFileName(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getTiffDataFileName(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataFirstC(int, int, int) */
+  public Integer getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getTiffDataFirstC(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataFirstT(int, int, int) */
+  public Integer getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getTiffDataFirstT(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataFirstZ(int, int, int) */
+  public Integer getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getTiffDataFirstZ(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataIFD(int, int, int) */
+  public Integer getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getTiffDataIFD(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataNumPlanes(int, int, int) */
+  public Integer getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getTiffDataNumPlanes(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getTiffDataUUID(int, int, int) */
+  public String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getTiffDataUUID(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   // -- MetadataStore API methods --
 
   /* @see MetadataStore#createRoot() */
@@ -3090,6 +3196,85 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex);
+      }
+    }
+  }
+
+  // - TiffData property storage -
+
+  /* @see MetadataStore#setTiffDataFileName(String, int, int, int) */
+  public void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setTiffDataFileName(fileName, imageIndex, pixelsIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setTiffDataFirstC(Integer, int, int, int) */
+  public void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setTiffDataFirstC(firstC, imageIndex, pixelsIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setTiffDataFirstT(Integer, int, int, int) */
+  public void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setTiffDataFirstT(firstT, imageIndex, pixelsIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setTiffDataFirstZ(Integer, int, int, int) */
+  public void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setTiffDataFirstZ(firstZ, imageIndex, pixelsIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setTiffDataIFD(Integer, int, int, int) */
+  public void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setTiffDataIFD(ifd, imageIndex, pixelsIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setTiffDataNumPlanes(Integer, int, int, int) */
+  public void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setTiffDataNumPlanes(numPlanes, imageIndex, pixelsIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setTiffDataUUID(String, int, int, int) */
+  public void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setTiffDataUUID(uuid, imageIndex, pixelsIndex, tiffDataIndex);
       }
     }
   }

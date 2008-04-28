@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 24, 2008 4:44:24 PM CDT
+ * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -994,5 +994,70 @@ public interface MetadataStore {
    * @param planeIndex index of the Plane
    */
   void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
+
+  // - TiffData property storage -
+
+  /**
+   * For a particular TiffData, sets TODO.
+   * @param fileName TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, sets TODO.
+   * @param firstC TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, sets TODO.
+   * @param firstT TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, sets TODO.
+   * @param firstZ TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, sets TODO.
+   * @param ifd TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, sets TODO.
+   * @param numPlanes TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  /**
+   * For a particular TiffData, sets TODO.
+   * @param uuid TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param tiffDataIndex index of the TiffData
+   */
+  void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex);
 
 }

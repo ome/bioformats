@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import ome.xml.DOMUtil;
@@ -70,6 +69,18 @@ public abstract class OMEXMLMetadata
    * @return OME-XML as a string.
    */
   public abstract String dumpXML();
+
+  /** Sets the UUID for this OME-XML block. */
+  public void setUUID(String uuid) {
+    Element ome = root.getDOMElement();
+    DOMUtil.setAttribute("UUID", uuid, ome);
+  }
+
+  /** Gets the UUID for this OME-XML block. */
+  public String getUUID() {
+    Element ome = root.getDOMElement();
+    return DOMUtil.getAttribute("UUID", ome);
+  }
 
   /** Adds the key/value pair as a new OriginalMetadata node. */
   public void populateOriginalMetadata(String key, String value) {
