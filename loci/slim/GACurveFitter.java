@@ -241,13 +241,13 @@ public class GACurveFitter implements CurveFitter {
     if(degrees >= 1) {
       // TODO: Estimate c, factor it in below.
       /*
-      double guess_c = Double.MAX_VALUE;
+      double guessC = Double.MAX_VALUE;
       for(int i = 0; i < curveData.length; i++) {
-        if(curveData[i][1] < guess_c) guess_c = curveData[i][1];
+        if(curveData[i][1] < guessC) guessC = curveData[i][1];
       }
       */
 
-      double guess_c = 0.0d;
+      double guessC = 0.0d;
       
       // First, get a guess for the exponent.
       // The exponent should be "constant", but we'd also like to weight
@@ -255,45 +255,45 @@ public class GACurveFitter implements CurveFitter {
       double num = 0.0;
       double den = 0.0;
       for(int i = 1; i < curveData.length; i++) {
-        if(curveData[i][1] > guess_c && curveData[i-1][1] > guess_c) {
+        if(curveData[i][1] > guessC && curveData[i-1][1] > guessC) {
           double time = curveData[i][0] - curveData[i-1][0];
-          double factor = (curveData[i][1] - guess_c) / (curveData[i-1][1] - guess_c);
+          double factor = (curveData[i][1] - guessC) / (curveData[i-1][1] - guessC);
           double guess = (1.0 / time) * -Math.log(factor);
-          num += (guess * (curveData[i][1] - guess_c));
-          den += curveData[i][1] - guess_c;
+          num += (guess * (curveData[i][1] - guessC));
+          den += curveData[i][1] - guessC;
         }
       }
       double exp = num/den;
       num = 0.0;
       den = 0.0;
       for(int i = 0; i < curveData.length; i++) {
-        if(curveData[i][1] > guess_c) {
+        if(curveData[i][1] > guessC) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -curveData[i][0] * exp);
           // estimate a
-          double guess_a = curveData[i][1] / value;
-          num += guess_a * (curveData[i][1] - guess_c);
-          den += curveData[i][1] - guess_c;
+          double guessA = curveData[i][1] / value;
+          num += guessA * (curveData[i][1] - guessC);
+          den += curveData[i][1] - guessC;
         }
       }
       double mult = num/den;
       curveEstimate[0][0] = mult;
       curveEstimate[0][1] = exp;
-      curveEstimate[0][2] = guess_c;
+      curveEstimate[0][2] = guessC;
     }
     if(degrees == 2) {
-      double guess_c = 0.0d;
-      curveEstimate[0][2] = guess_c;
-      curveEstimate[1][2] = guess_c;
+      double guessC = 0.0d;
+      curveEstimate[0][2] = guessC;
+      curveEstimate[1][2] = guessC;
       
       // First, get a guess for the exponents.
       // To stabilize for error, do guesses over spans of 3 timepoints.
       double high = 0.0d;
       double low = Double.MAX_VALUE;
       for(int i = 3; i < curveData.length; i++) {
-        if(curveData[i][1] > guess_c && curveData[i-3][1] > guess_c + 10) {
+        if(curveData[i][1] > guessC && curveData[i-3][1] > guessC + 10) {
           double time = curveData[i][0] - curveData[i-3][0];
-          double factor = (curveData[i][1] - guess_c) / (curveData[i-3][1] - guess_c);
+          double factor = (curveData[i][1] - guessC) / (curveData[i-3][1] - guessC);
           double guess = (1.0 / time) * -Math.log(factor);
           if(guess > high) high = guess;
           if(guess < low) low = guess;
@@ -304,66 +304,66 @@ public class GACurveFitter implements CurveFitter {
       curveEstimate[0][1] = high;
       curveEstimate[1][1] = low;
 
-      double high_a = 0.0d;
-      double low_a = Double.MAX_VALUE;
+      double highA = 0.0d;
+      double lowA = Double.MAX_VALUE;
       for(int i = 0; i < curveData.length; i++) {
-        if(curveData[i][1] > guess_c + 10) {
+        if(curveData[i][1] > guessC + 10) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -curveData[i][0] * low);
           // estimate a
-          double guess_a = curveData[i][1] / value;
-          if(guess_a > high_a) high_a = guess_a;
-          if(guess_a < low_a) low_a = guess_a;
+          double guessA = curveData[i][1] / value;
+          if(guessA > highA) highA = guessA;
+          if(guessA < lowA) lowA = guessA;
         }
       }
-      if(10.0 > low_a) low_a = 10.0;
-      if(20.0 > high_a) high_a = 20.0;
-      curveEstimate[0][0] = high_a - low_a;
-      curveEstimate[1][0] = low_a;
+      if(10.0 > lowA) lowA = 10.0;
+      if(20.0 > highA) highA = 20.0;
+      curveEstimate[0][0] = highA - lowA;
+      curveEstimate[1][0] = lowA;
       // It seems like the low estimates are pretty good, usually.
       // It may be possible to get a better high estimate by subtracting out
       // the low estimate, and then recalculating as if it were single
       // exponential.
-      double[][] low_est = new double[1][3];
-      low_est[0][0] = curveEstimate[1][0];
-      low_est[0][1] = curveEstimate[1][1];
-      low_est[0][2] = curveEstimate[1][2];
-      double[] low_data = getEstimates(curveData, low_est);
-      double[][] low_values = new double[curveData.length][2];
-      for(int i = 0; i < low_values.length; i++) {
-        low_values[i][0] = curveData[i][0];
-        low_values[i][1] = curveData[i][1] - low_data[i];
+      double[][] lowEst = new double[1][3];
+      lowEst[0][0] = curveEstimate[1][0];
+      lowEst[0][1] = curveEstimate[1][1];
+      lowEst[0][2] = curveEstimate[1][2];
+      double[] lowData = getEstimates(curveData, lowEst);
+      double[][] lowValues = new double[curveData.length][2];
+      for(int i = 0; i < lowValues.length; i++) {
+        lowValues[i][0] = curveData[i][0];
+        lowValues[i][1] = curveData[i][1] - lowData[i];
       }
 
-      // now, treat low_values as a single exponent.
+      // now, treat lowValues as a single exponent.
       double num = 0.0;
       double den = 0.0;
-      for(int i = 1; i < low_values.length; i++) {
-        if(low_values[i][1] > guess_c && low_values[i-1][1] > guess_c) {
-          double time = low_values[i][0] - low_values[i-1][0];
-          double factor = (low_values[i][1] - guess_c) / (low_values[i-1][1] - guess_c);
+      for(int i = 1; i < lowValues.length; i++) {
+        if(lowValues[i][1] > guessC && lowValues[i-1][1] > guessC) {
+          double time = lowValues[i][0] - lowValues[i-1][0];
+          double factor = (lowValues[i][1] - guessC) / (lowValues[i-1][1] - guessC);
           double guess = (1.0 / time) * -Math.log(factor);
-          num += (guess * (low_values[i][1] - guess_c));
-          den += low_values[i][1] - guess_c;
+          num += (guess * (lowValues[i][1] - guessC));
+          den += lowValues[i][1] - guessC;
         }
       }
       double exp = num/den;
       num = 0.0;
       den = 0.0;
-      for(int i = 0; i < low_values.length; i++) {
-        if(low_values[i][1] > guess_c) {
+      for(int i = 0; i < lowValues.length; i++) {
+        if(lowValues[i][1] > guessC) {
           // calculate e^-bt based on our exponent estimate
-          double value = Math.pow(Math.E, -low_values[i][0] * exp);
+          double value = Math.pow(Math.E, -lowValues[i][0] * exp);
           // estimate a
-          double guess_a = low_values[i][1] / value;
-          num += guess_a * (low_values[i][1] - guess_c);
-          den += low_values[i][1] - guess_c;
+          double guessA = lowValues[i][1] / value;
+          num += guessA * (lowValues[i][1] - guessC);
+          den += lowValues[i][1] - guessC;
         }
       }
       double mult = num/den;
       curveEstimate[0][0] = mult;
       curveEstimate[0][1] = exp;
-      curveEstimate[0][2] = guess_c;
+      curveEstimate[0][2] = guessC;
       // TODO: It may be possible to tweak the estimate further by adjusting
       // the values of a to more accurately account for actual values, instead
       // of this estimation. One method would be using binary search to 

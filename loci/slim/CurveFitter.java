@@ -1,21 +1,21 @@
 package loci.slim;
 
-public interface CurveFitter {
+interface CurveFitter {
 
   /**
    * iterate() runs through one iteration of whatever curve fitting
    * technique this curve fitter uses. This will generally update the
    * information returned by getCurve and getChiSquaredError
    **/
-  public void iterate();
+  void iterate();
 
   // Returns the Chi Squared Error of the current curve estimate
-  public double getChiSquaredError();
+  double getChiSquaredError();
 
   // Returns the Reduced Chi Squared Error of the current curve estimate
   // This is based on the number of datapoints in data and the number
   // of exponentials in setDegrees
-  public double getReducedChiSquaredError();
+  double getReducedChiSquaredError();
   
   /**
    * Sets the data to be used to generate curve estimates.
@@ -23,7 +23,7 @@ public interface CurveFitter {
    * [][0] contains a time value, [][1] contains the data value.
    * TODO: Do I actually need the time values, or can I hardcode?
    **/
-  public void setData(double[][] data);
+  void setData(double[][] data);
 
   // TODO: Set time domain?
   
@@ -32,13 +32,13 @@ public interface CurveFitter {
    * Currently, more than 2 is not supported.
    * TODO: Change Degrees to exponentials or whatever
    **/
-  public void setDegrees(int degrees);
+  void setDegrees(int degrees);
 
   // Returns the number of exponentials to be fitted.
-  public int getDegrees();
+  int getDegrees();
 
   // Initializes the curve fitter with a starting curve estimate.
-  public void estimate();
+  void estimate();
 
   /**
    * Returns the current curve estimate.
@@ -47,13 +47,13 @@ public interface CurveFitter {
    * [][0] is a, [1] is b, [2] is c.
    * TODO: Make multiple exponentials a class, to remove multi-c stupidity
    **/
-  public double[][] getCurve();
+  double[][] getCurve();
 
   /**
    * Sets the current curve estimate, useful if information about the
    * curve is already known.
    * See getCurve for information about the array to pass.
    **/
-  public void setCurve(double[][] curve);
+  void setCurve(double[][] curve);
 
 }
