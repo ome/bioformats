@@ -379,10 +379,14 @@ public class SlidebookReader extends FormatReader {
         }
         else if (n == 'h') hCount++;
         else if (n == 'j') {
-          // this block should contain an image name
-          in.skipBytes(14);
-          if (nextName < imageNames.length) {
-            imageNames[nextName++] = in.readCString().trim();
+          in.skipBytes(2);
+          String check = in.readString(2);
+          if (check.equals("II") || check.equals("MM")) {
+            // this block should contain an image name
+            in.skipBytes(10);
+            if (nextName < imageNames.length) {
+              imageNames[nextName++] = in.readCString().trim();
+            }
           }
         }
         else if (n == 'm') {
