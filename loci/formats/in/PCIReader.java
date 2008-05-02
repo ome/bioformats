@@ -172,6 +172,13 @@ public class PCIReader extends FormatReader {
           core.sizeC[0] = poi.getFileSize(name) /
             (core.sizeX[0] * core.sizeY[0] *
             FormatTools.getBytesPerPixel(core.pixelType[0]));
+          if (core.sizeC[0] == 0) {
+            core.sizeX[0] /= 16;
+            core.sizeY[0] /= 16;
+            core.sizeC[0] = poi.getFileSize(name) /
+              (core.sizeX[0] * core.sizeY[0] *
+              FormatTools.getBytesPerPixel(core.pixelType[0]));
+          }
         }
       }
       else if (relativePath.indexOf("Image_Depth") != -1) {
@@ -192,21 +199,25 @@ public class PCIReader extends FormatReader {
             throw new FormatException("Unsupported bits per pixel : " + bits);
         }
       }
-      else if (relativePath.indexOf("Image_Height") != -1) {
+      else if (relativePath.indexOf("Image_Height") != -1 && core.sizeY[0] == 0)
+      {
         byte[] b = poi.getDocumentBytes(name, 8);
-        long val = DataTools.bytesToLong(b, 0, false);
-        int mul = (int) ((val & 0x1f00) >> 8);
-        if (mul == 0) mul = (int) ((val & 0xf000) >> 12);
-        core.sizeY[0] = mul * 64;
+        byte val = b[6];
+        byte mul = (byte) (val << 2);
+        if (mul == 0) mul = 32;
+        core.sizeY[0] = mul * 16;
       }
-      else if (relativePath.indexOf("Image_Width") != -1) {
+      else if (relativePath.indexOf("Image_Width") != -1 && core.sizeX[0] == 0)
+      {
         byte[] b = poi.getDocumentBytes(name, 8);
-        long val = DataTools.bytesToLong(b, 0, false);
-        int mul = (int) ((val & 0x1f00) >> 8);
-        if (mul == 0) mul = (int) ((val & 0xf000) >> 12);
-        core.sizeX[0] = mul * 64;
+        byte val = b[6];
+        byte mul = (byte) (val << 2);
+        if (mul == 0) mul = 32;
+        core.sizeX[0] = mul * 16;
       }
     }
+
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
 
     core.sizeZ[0] = core.imageCount[0];
     core.sizeT[0] = 1;
