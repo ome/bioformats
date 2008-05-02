@@ -140,10 +140,12 @@ public class GIFReader extends FormatReader {
     act = (int[]) colorTables.get(no);
 
     byte[] b = (byte[]) images.get(no);
-    if (no > 0) {
+    if (no > 0 && transparency) {
       byte[] prev = (byte[]) images.get(no - 1);
+      int idx = transIndex;
+      if (idx >= 127) idx = 0;
       for (int i=0; i<b.length; i++) {
-        if ((act[b[i] & 0xff] & 0xffffff) == 0) {
+        if ((act[b[i] & 0xff] & 0xffffff) == idx) {
           b[i] = prev[i];
         }
       }
