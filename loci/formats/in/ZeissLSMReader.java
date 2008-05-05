@@ -351,7 +351,6 @@ public class ZeissLSMReader extends BaseTiffReader {
       long channelColorsOffset = ras.readInt();
 
       put("TimeInterval", ras.readDouble());
-
       ras.skipBytes(4);
       long scanInformationOffset = ras.readInt();
       ras.skipBytes(4);
@@ -411,6 +410,7 @@ public class ZeissLSMReader extends BaseTiffReader {
           in.seek(namesOffset + channelColorsOffset);
 
           for (int i=0; i<numNames; i++) {
+            if (in.getFilePointer() >= in.length() - 1) break;
             // we want to read until we find a null char
             StringBuffer sb = new StringBuffer();
             char current = (char) in.read();
@@ -424,9 +424,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       if (timeStampOffset != 0) {
-        in.seek(timeStampOffset + 4);
-        int numberOfStamps = in.readInt();
-        for (int i=0; i<numberOfStamps; i++) {
+        if ((timeStampOffset % 2) == 1) in.seek(timeStampOffset + 7);
+        else in.seek(timeStampOffset - 248);
+        for (int i=0; i<core.sizeT[0]; i++) {
           double stamp = in.readDouble();
           put("TimeStamp" + i, stamp);
           timestamps.add(new Double(stamp));
