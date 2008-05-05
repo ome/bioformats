@@ -183,6 +183,16 @@ public class ImarisHDFReader extends FormatReader {
     previousImageNumber = -1;
     previousImage = null;
     seriesCount = 0;
+    channelParameters = null;
+    pixelSizeX = pixelSizeY = pixelSizeZ = 0;
+    minX = minY = minZ = maxX = maxY = maxZ = 0;
+
+    try {
+      r.exec("ncfile.close()");
+    }
+    catch (ReflectException e) {
+      if (debug) LogTools.trace(e);
+    }
   }
 
   // -- Internal FormatReader API methods --
