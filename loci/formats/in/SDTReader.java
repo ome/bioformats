@@ -131,42 +131,37 @@ public class SDTReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    if (intensity) {
-      in.seek(off + 2 * core.sizeX[series] * core.sizeY[series] *
-        timeBins * no);
-      byte[] b =
-        new byte[timeBins * 2 * core.sizeX[series] * core.sizeY[series]];
-      in.read(b);
-      int offset = y * core.sizeX[series] * timeBins * 2;
-      for (int row=0; row<h; row++) {
-        offset += x * timeBins * 2;
-        for (int col=0; col<w; col++) {
-          // read all lifetime bins at this pixel for this channel
+    int sizeX = core.sizeX[series];
+    int sizeY = core.sizeY[series];
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    boolean little = core.littleEndian[series];
 
-          // combine lifetime bins into intensity value
+    boolean direct = !intensity && x == 0 && y == 0 && w == sizeX && h == sizeY;
+    byte[] b = direct ? buf : new byte[sizeY * sizeX * timeBins * bpp];
+    in.seek(off + no * b.length);
+    in.readFully(b);
+    if (direct) return buf; // no cropping required
+
+    int scan = intensity ? bpp : timeBins * bpp;
+
+    for (int row=0; row<h; row++) {
+      int yi = (y + row) * sizeX * timeBins * bpp;
+      int ri = row * w * scan;
+      for (int col=0; col<w; col++) {
+        int xi = yi + (x + col) * timeBins * bpp;
+        int ci = ri + col * scan;
+        if (intensity) {
+          // combine all lifetime bins into single intensity value
           short sum = 0;
           for (int t=0; t<timeBins; t++) {
-            sum += DataTools.bytesToShort(b, offset, true);
-            offset += 2;
+            sum += DataTools.bytesToShort(b, xi + t * bpp, little);
           }
-          int ndx = 2 * (w * row + col);
-          DataTools.unpackShort(sum, buf, ndx, core.littleEndian[0]);
+          DataTools.unpackShort(sum, buf, ci, little);
         }
-        offset += timeBins * 2 * (core.sizeX[series] - w - x);
-      }
-    }
-    else {
-      in.seek(off + 2 * core.sizeX[series]*core.sizeY[series] * timeBins * no);
-      in.skipBytes(y * core.sizeX[series] * timeBins * 2);
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * timeBins * 2);
-        for (int col=0; col<w; col++) {
-          for (int t=0; t<timeBins; t++) {
-            int ndx = 2 * (timeBins * w * row + timeBins * col + t);
-            in.readFully(buf, ndx, 2);
-          }
+        else {
+          // each lifetime bin is a separate interleaved "channel"
+          System.arraycopy(b, xi, buf, ci, scan);
         }
-        in.skipBytes(timeBins * 2 * (core.sizeX[series] - w - x));
       }
     }
     return buf;
