@@ -60,7 +60,7 @@ public class ICSReader extends FormatReader {
     "s_params", "laser", "gain1", "gain2", "gain3", "gain4", "dwell",
     "shutter1", "shutter2", "shutter3", "pinhole", "laser1", "laser2",
     "laser3", "objective", "PassCount", "step1", "step2", "step3", "view",
-    "view1", "date", "GMTdate", "label"
+    "view1", "date", "GMTdate", "label", "software"
   };
 
   /** Metadata field sub-subcategories. */
@@ -101,6 +101,8 @@ public class ICSReader extends FormatReader {
   private long offset;
   private boolean gzip;
 
+  private boolean invertY;
+
   // -- Constructor --
 
   /** Constructs a new ICSReader. */
@@ -132,6 +134,8 @@ public class ICSReader extends FormatReader {
 
     int bpp = bitsPerPixel / 8;
     int len = core.sizeX[0] * core.sizeY[0] * bpp * getRGBChannelCount();
+    int pixel = bpp * getRGBChannelCount();
+    int rowLen = w * pixel;
 
     in.seek(offset + no * len);
 
@@ -151,9 +155,6 @@ public class ICSReader extends FormatReader {
       }
     }
     else {
-      int pixel = bpp * getRGBChannelCount();
-      int rowLen = w * pixel;
-
       if (!gzip) in.skipBytes(y * rowLen);
 
       if (x == 0 && core.sizeX[0] == w) {
@@ -177,6 +178,15 @@ public class ICSReader extends FormatReader {
             in.skipBytes(pixel * (core.sizeX[0] - w - x));
           }
         }
+      }
+    }
+
+    if (invertY) {
+      byte[] row = new byte[rowLen];
+      for (int r=0; r<h/2; r++) {
+        System.arraycopy(buf, r*rowLen, row, 0, rowLen);
+        System.arraycopy(buf, (h - r - 1)*rowLen, buf, r*rowLen, rowLen);
+        System.arraycopy(row, 0, buf, (h - r - 1)*rowLen, rowLen);
       }
     }
 
@@ -204,6 +214,7 @@ public class ICSReader extends FormatReader {
     bitsPerPixel = 0;
     versionTwo = false;
     gzip = false;
+    invertY = false;
   }
 
   // -- Internal FormatReader API methods --
@@ -309,6 +320,10 @@ public class ICSReader extends FormatReader {
           else if (k.equals("representation sign")) signed = v.equals("signed");
           else if (k.equals("sensor s_params LambdaEm")) em = v;
           else if (k.equals("sensor s_params LambdaEx")) ex = v;
+          else if (k.equals("history software") && v.indexOf("SVI") != -1) {
+            // ICS files written by SVI Huygens are inverted on the Y axis
+            invertY = true;
+          }
         }
         else {
           key.append(token);
