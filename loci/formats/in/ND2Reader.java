@@ -206,13 +206,10 @@ public class ND2Reader extends FormatReader {
       // plane is compressed using JPEG 2000
       BufferedImage b = openImage(no, x, y, w, h);
       byte[][] pixels = ImageTools.getPixelBytes(b, false);
-      if (pixels.length == 1 && getRGBChannelCount() > 1) {
-        pixels = ImageTools.splitChannels(pixels[series], getRGBChannelCount(),
-          bpp, false, !core.interleaved[series]);
-      }
       for (int i=0; i<getRGBChannelCount(); i++) {
-        System.arraycopy(pixels[i], 0, buf, i*pixels[i].length,
-          pixels[i].length);
+        byte[] p = ImageTools.splitChannels(pixels[series], i,
+          getRGBChannelCount(), bpp, false, !core.interleaved[series]);
+        System.arraycopy(p, 0, buf, i*p.length, p.length);
       }
       pixels = null;
     }
