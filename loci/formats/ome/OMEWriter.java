@@ -245,17 +245,19 @@ public class OMEWriter extends FormatWriter {
 
     try {
       int planeLength = x * y * bpp;
-      byte[][] b = ImageTools.splitChannels(bytes, bytes.length / planeLength,
-        bpp, false, true);
+      int nChannels = bytes.length / planeLength;
 
-      for (int ch=0; ch<b.length; ch++) {
+      for (int ch=0; ch<nChannels; ch++) {
         int[] coords = FormatTools.getZCTCoords(order, z, c, t, z*c*t,
           planesWritten);
+
+        byte[] b =
+          ImageTools.splitChannels(bytes, ch, nChannels, bpp, false, true);
 
         r.setVar("zndx", coords[0]);
         r.setVar("cndx", coords[1]);
         r.setVar("tndx", coords[2]);
-        r.setVar("bytes", b[ch]);
+        r.setVar("bytes", b);
         r.setVar("bigEndian", bigEndian);
 
         r.setVar("pixelsId", credentials.imageID);
