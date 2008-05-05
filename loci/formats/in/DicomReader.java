@@ -169,6 +169,11 @@ public class DicomReader extends FormatReader {
       in.read(b);
       PackbitsCodec codec = new PackbitsCodec();
       byte[] t = codec.decompress(b, new Integer(bytes));
+      if (t.length < bytes) {
+        byte[] tmp = t;
+        t = new byte[bytes];
+        System.arraycopy(tmp, 0, t, 0, tmp.length);
+      }
 
       if (bpp > 1) {
         int plane = bytes / bpp;
@@ -192,8 +197,11 @@ public class DicomReader extends FormatReader {
 
       for (int c=0; c<ec; c++) {
         for (int row=0; row<h; row++) {
-          System.arraycopy(t, c * srcPlane + (row + y) * srcRowLen + x * bpp,
-            buf, h * rowLen * c + row * rowLen, rowLen);
+          int src = c * srcPlane + (row + y) * srcRowLen + x * bpp;
+          int dest = h * rowLen * c + row * rowLen;
+          int len = (int) Math.min(rowLen, t.length - src - 1);
+          if (len < 0) break;
+          System.arraycopy(t, src, buf, dest, len);
         }
       }
     }
@@ -470,7 +478,7 @@ public class DicomReader extends FormatReader {
           in.seek(offsets[i - 1]);
           new PackbitsCodec().decompress(in, new Integer(plane));
         }
-        in.skipBytes(67);
+        in.skipBytes(i == 0 ? 78 : 67);
         while (in.read() == 0);
         offsets[i] = in.getFilePointer() - 1;
       }
@@ -697,7 +705,7 @@ public class DicomReader extends FormatReader {
     else return value;
   }
 
-  private int getLength() throws IOException {
+  private int getLength(int tag) throws IOException {
     byte[] b = new byte[4];
     in.read(b);
 
@@ -745,6 +753,9 @@ public class DicomReader extends FormatReader {
       case UT:
       case QQ:
         // Explicit VR with 16-bit length
+      	if (tag == 0x00283006) {
+    	 	  return DataTools.bytesToInt(b, 2, 2, core.littleEndian[0]);
+        }
         int n1 = DataTools.bytesToShort(b, 2, 2, core.littleEndian[0]);
         int n2 = DataTools.bytesToShort(b, 2, 2, !core.littleEndian[0]);
         return (int) Math.min(n1, n2);
@@ -765,14 +776,10 @@ public class DicomReader extends FormatReader {
     int elementWord = in.readShort();
     int tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
 
-    if (groupWord == 0x7fe0 && (isRLE || isJPEG)) {
-      in.skipBytes(20);
-    }
-
-    elementLength = getLength();
+    elementLength = getLength(tag);
 
     if (elementLength == 0 && groupWord == 0x7fe0) {
-      elementLength = getLength();
+      elementLength = getLength(tag);
     }
 
     // HACK - needed to read some GE files
