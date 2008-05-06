@@ -24,18 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Panel;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.sql.Timestamp;
 import java.util.*;
-import javax.swing.*;
 import loci.formats.*;
 import loci.formats.ome.OMECredentials;
-import loci.plugins.Util;
 
 /**
  * Utility methods for retrieving data from an OME database.
