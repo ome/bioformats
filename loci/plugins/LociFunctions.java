@@ -54,7 +54,7 @@ public class LociFunctions extends MacroFunctions {
   // -- Constructor --
 
   public LociFunctions() {
-    r = new FileStitcher(true);
+    r = new FileStitcher(new ChannelSeparator(), true);
     r.setMetadataStore(MetadataTools.createOMEXMLMetadata());
   }
 
@@ -133,7 +133,7 @@ public class LociFunctions extends MacroFunctions {
     new ImagePlus(title, ip).show();
   }
 
-  public void openImage(String title, Double no, Double x, Double y,
+  public void openSubImage(String title, Double no, Double x, Double y,
     Double width, Double height) throws FormatException, IOException
   {
     Rectangle crop = new Rectangle(x.intValue(), y.intValue(),
