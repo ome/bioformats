@@ -28,10 +28,14 @@ package loci.plugins;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import java.awt.TextField;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.*;
-import loci.formats.ReflectException;
+import javax.swing.*;
+import loci.formats.*;
 import loci.formats.ome.OMECredentials;
+import loci.formats.ome.OMEROReader;
 import loci.formats.ome.OMEUtils;
 
 /**
@@ -232,7 +236,7 @@ public class OMEPlugin implements PlugIn {
       long[] images = null;
       if (arg == null || arg.trim().equals("")) {
         if (IJ.debugMode) IJ.log("Found images...");
-        images = new OMEUtils().showTable(cred);
+        images = showTable(cred);
       }
 
       if (images == null || images.length == 0) {
@@ -282,6 +286,166 @@ public class OMEPlugin implements PlugIn {
     int colon = rtn.indexOf(":");
     if (colon >= 0) rtn = rtn.substring(0, colon);
     return rtn;
+  }
+
+  private long[] showTable(OMECredentials cred) throws ReflectException {
+    long[] ids = OMEUtils.getAllIDs(cred.isOMERO);
+    int[] x = OMEUtils.getAllWidths(cred.isOMERO);
+    int[] y = OMEUtils.getAllHeights(cred.isOMERO);
+    int[] z = OMEUtils.getAllZs(cred.isOMERO);
+    int[] c = OMEUtils.getAllChannels(cred.isOMERO);
+    int[] t = OMEUtils.getAllTs(cred.isOMERO);
+    String[] types = OMEUtils.getAllTypes(cred.isOMERO);
+    String[] names = OMEUtils.getAllNames(cred.isOMERO);
+    String[] descr = OMEUtils.getAllDescriptions(cred.isOMERO);
+    String[] created = OMEUtils.getAllDates(cred.isOMERO);
+    BufferedImage[] thumbs = OMEUtils.getAllThumbnails(cred.isOMERO);
+
+    if (ids.length == 0) {
+      IJ.error("No images found!");
+      return ids;
+    }
+
+    GenericDialog gd = new GenericDialog("OME/OMERO Plugin");
+    GridBagLayout gdl = (GridBagLayout) gd.getLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+
+    gbc.gridx = 2;
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+    Panel[] p = new Panel[ids.length];
+    String[] tips = new String[ids.length];
+    for (int i=0; i<ids.length; i++) {
+      if (names[i] == null) names[i] = "";
+
+      StringBuffer tip = new StringBuffer();
+      tip.append("<HTML>Name: ");
+      tip.append(names[i]);
+      tip.append("<BR>ID: ");
+      tip.append(ids[i]);
+      tip.append("<BR>Date Created: ");
+      tip.append(created[i]);
+      tip.append("<BR>Pixel type: ");
+      tip.append(types[i]);
+      tip.append("<BR>SizeX: ");
+      tip.append(x[i]);
+      tip.append("<BR>SizeY: ");
+      tip.append(y[i]);
+      tip.append("<BR>SizeZ: ");
+      tip.append(z[i]);
+      tip.append("<BR>SizeC: ");
+      tip.append(c[i]);
+      tip.append("<BR>SizeT: ");
+      tip.append(t[i]);
+      tip.append("<BR>Description: ");
+      tip.append(descr[i]);
+      tip.append("</HTML>");
+
+      tips[i] = tip.toString();
+
+      if (names[i].indexOf(File.separator) != -1) {
+        names[i] = names[i].substring(names[i].lastIndexOf(File.separator) + 1);
+      }
+
+      gd.addCheckbox(names[i] + " (" + ids[i] + ")", false);
+      p[i] = new Panel();
+      if (cred.isOMERO) {
+        p[i].add(Box.createRigidArea(new Dimension(128, 128)));
+        gbc.gridy = i;
+      }
+      else {
+        gbc.gridy = i;
+        JLabel label = new JLabel(new ImageIcon(thumbs[i]));
+        label.setToolTipText(tips[i]);
+        p[i].add(label);
+      }
+      gdl.setConstraints(p[i], gbc);
+      gd.add(p[i]);
+    }
+    Util.addScrollBars(gd);
+    if (cred.isOMERO) {
+      OMEROLoader l = new OMEROLoader(ids, cred, p, gd, tips);
+      gd.showDialog();
+      l.stop();
+    }
+    else gd.showDialog();
+    if (gd.wasCanceled()) return null;
+
+    boolean[] checked = new boolean[ids.length];
+    int numChecked = 0;
+    for (int i=0; i<ids.length; i++) {
+      checked[i] = gd.getNextBoolean();
+      if (checked[i]) numChecked++;
+    }
+
+    long[] results = new long[numChecked];
+    int n = 0;
+    for (int i=0; i<ids.length; i++) {
+      if (checked[i]) results[n++] = ids[i];
+    }
+    return results;
+  }
+
+  // -- Helper class --
+
+  class OMEROLoader implements Runnable {
+    private long[] ids;
+    private Panel[] p;
+    private GenericDialog gd;
+    private boolean stop;
+    private Thread loader;
+    private OMECredentials cred;
+    private String[] tips;
+
+    public OMEROLoader(long[] ids, OMECredentials cred, Panel[] p,
+      GenericDialog gd, String[] tips)
+    {
+      this.ids = ids;
+      this.p = p;
+      this.gd = gd;
+      this.cred = cred;
+      this.tips = tips;
+
+      loader = new Thread(this, "OMERO-ThumbLoader");
+      loader.start();
+    }
+
+    public void stop() {
+      if (loader == null) return;
+      stop = true;
+      try {
+        loader.join();
+        loader = null;
+      }
+      catch (InterruptedException exc) {
+        exc.printStackTrace();
+      }
+    }
+
+    public void run() {
+      try {
+        OMEROReader r = new OMEROReader();
+        for (int i=0; i<ids.length; i++) {
+          r.setId("server=" + cred.server + "\nusername=" + cred.username +
+            "\npassword=" + cred.password + "\nport=" + cred.port + "\nid=" +
+            ids[i]);
+          BufferedImage thumb = r.openThumbImage(0);
+          ImageIcon icon = new ImageIcon(thumb);
+          p[i].removeAll();
+          JLabel label = new JLabel(icon);
+          label.setToolTipText(tips[i]);
+          p[i].add(label);
+          if (gd != null) gd.validate();
+        }
+      }
+      catch (FormatException exc) {
+        exc.printStackTrace();
+      }
+      catch (IOException exc) {
+        exc.printStackTrace();
+      }
+    }
+
   }
 
 }

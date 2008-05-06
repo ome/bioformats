@@ -24,9 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Vector;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import loci.formats.*;
 import loci.formats.ome.OMECredentials;
 import loci.formats.ome.OMEReader;
@@ -34,6 +42,7 @@ import loci.formats.ome.OMEUtils;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
+import loci.visbio.util.DialogPane;
 import loci.visbio.util.ObjectUtil;
 import visad.*;
 
@@ -221,7 +230,7 @@ public class OMEImage extends ImageTransform {
           OMEUtils.login(cred);
 
           // TODO : find a better way of handling multiple IDs
-          long[] results = new OMEUtils().showTable(cred);
+          long[] results = showTable(cred);
           if (results == null) results = new long[0];
           if (results.length > 0) {
             imageId = results[0];
@@ -439,6 +448,68 @@ public class OMEImage extends ImageTransform {
       downloader.close();
     }
     catch (Exception exc) { exc.printStackTrace(); }
+  }
+
+  // -- Helper methods --
+
+  private static long[] showTable(OMECredentials cred) throws ReflectException {
+    long[] ids = OMEUtils.getAllIDs(cred.isOMERO);
+    int[] x = OMEUtils.getAllWidths(cred.isOMERO);
+    int[] y = OMEUtils.getAllHeights(cred.isOMERO);
+    int[] z = OMEUtils.getAllZs(cred.isOMERO);
+    int[] c = OMEUtils.getAllChannels(cred.isOMERO);
+    int[] t = OMEUtils.getAllTs(cred.isOMERO);
+    String[] types = OMEUtils.getAllTypes(cred.isOMERO);
+    String[] names = OMEUtils.getAllNames(cred.isOMERO);
+    String[] descr = OMEUtils.getAllDescriptions(cred.isOMERO);
+    String[] created = OMEUtils.getAllDates(cred.isOMERO);
+    BufferedImage[] thumbs = OMEUtils.getAllThumbnails(cred.isOMERO);
+
+    Object[][] tableData = new Object[ids.length][11];
+    for (int row=0; row<ids.length; row++) {
+      tableData[row][0] = new Boolean(false);
+      tableData[row][1] = new Long(ids[row]);
+      tableData[row][2] = names[row];
+      tableData[row][3] = descr[row];
+      tableData[row][4] = new Integer(x[row]);
+      tableData[row][5] = new Integer(y[row]);
+      tableData[row][6] = new Integer(z[row]);
+      tableData[row][7] = new Integer(c[row]);
+      tableData[row][8] = new Integer(t[row]);
+      tableData[row][9] = types[row];
+      tableData[row][10] = created[row];
+    }
+    String[] columnNames = new String[] {"", "ID", "Name", "Description", "X",
+      "Y", "Z", "C", "T", "Pixel type", "Creation date"};
+
+    DefaultTableModel model = new DefaultTableModel(tableData, columnNames) {
+      public boolean isCellEditable(int row, int col) {
+        return col == 0;
+      }
+
+      public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
+      }
+    };
+    JTable table = new JTable(model);
+    table.setVisible(true);
+    JScrollPane scroll = new JScrollPane(table);
+    scroll.setVisible(true);
+    DialogPane window = new DialogPane("OME Images");
+    window.add(scroll);
+    window.showDialog((Dialog) null);
+
+    Vector idList = new Vector();
+    for (int i=0; i<ids.length; i++) {
+      boolean download = ((Boolean) table.getValueAt(i, 0)).booleanValue();
+      if (download) idList.add(new Long(ids[i]));
+    }
+
+    long[] rtn = new long[idList.size()];
+    for (int i=0; i<rtn.length; i++) {
+      rtn[i] = ((Long) idList.get(i)).longValue();
+    }
+    return rtn;
   }
 
 }
