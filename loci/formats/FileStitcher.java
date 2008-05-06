@@ -549,7 +549,6 @@ public class FileStitcher implements IFormatReader {
     blankImage = null;
     blankBytes = null;
     currentId = null;
-    patternIds = false;
     fp = null;
     ag = null;
     files = null;
@@ -860,6 +859,7 @@ public class FileStitcher implements IFormatReader {
     }
 
     // if this is a multi-series dataset, we need some special logic
+
     AxisGuesser guesser = new AxisGuesser(fp, reader.getDimensionOrder(),
       reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
       reader.isOrderCertain());
