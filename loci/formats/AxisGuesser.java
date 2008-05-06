@@ -345,6 +345,7 @@ public class AxisGuesser {
           String[] prefixes = fp.getPrefixes();
           int[] axes = ag.getAxisTypes();
           String newOrder = ag.getAdjustedOrder();
+          boolean isCertain = ag.isCertain();
           LogTools.println("Axis types:");
           for (int i=0; i<blocks.length; i++) {
             String axis;
@@ -365,7 +366,8 @@ public class AxisGuesser {
               axis + " (prefix = " + prefixes[i] + ")");
           }
           if (!dimOrder.equals(newOrder)) {
-            LogTools.println("Adjusted dimension order = " + newOrder);
+            LogTools.println("Adjusted dimension order = " + newOrder +
+              (isCertain ? " (certain)" : " (uncertain)"));
           }
         }
       }
