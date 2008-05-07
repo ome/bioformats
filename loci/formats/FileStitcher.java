@@ -33,7 +33,7 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * Logic to stitch together files with similar names.
- * Assumes that all files have the same dimensions.
+ * Assumes that all files have the same characteristics (e.g., dimensions).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/FileStitcher.java">Trac</a>,
@@ -76,7 +76,7 @@ public class FileStitcher implements IFormatReader {
   private String[] usedFiles;
 
   /** Reader used for each file. */
-  private IFormatReader[][] readers;
+  private DimensionSwapper[][] readers;
 
   /** Blank buffered image, for use when image counts vary between files. */
   private BufferedImage[] blankImage;
@@ -663,7 +663,7 @@ public class FileStitcher implements IFormatReader {
           used[i] = new String[files[i].length][];
           for (int j=0; j<files[i].length; j++) {
             try {
-              readers[i][j].setId(files[i][j]);
+              initReader(i, j);
             }
             catch (FormatException exc) {
               LogTools.trace(exc);
@@ -829,7 +829,7 @@ public class FileStitcher implements IFormatReader {
 
   // -- Internal FormatReader API methods --
 
-  /** Initializes the given file. */
+  /** Initializes the given file or file pattern. */
   protected void initFile(String id) throws FormatException, IOException {
     if (FormatHandler.debug) {
       LogTools.println("calling FileStitcher.initFile(" + id + ")");
@@ -842,16 +842,19 @@ public class FileStitcher implements IFormatReader {
 
     reader.setId(fp.getFiles()[0]);
     if (reader.fileGroupOption(fp.getFiles()[0]) == FormatTools.MUST_GROUP) {
+      // reader subclass is handling file grouping
       noStitch = true;
       return;
     }
-
-    // if this is a multi-series dataset, we need some special logic
 
     AxisGuesser guesser = new AxisGuesser(fp, reader.getDimensionOrder(),
       reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
       reader.isOrderCertain());
 
+    // use the dimension order recommended by the axis guesser
+    reader.swapDimensions(guesser.getAdjustedOrder());
+
+    // if this is a multi-series dataset, we need some special logic
     int seriesCount = reader.getSeriesCount();
     seriesInFile = true;
     if (guesser.getAxisCountS() > 0) {
@@ -863,9 +866,7 @@ public class FileStitcher implements IFormatReader {
       Vector sBlock = new Vector();
 
       for (int i=0; i<axes.length; i++) {
-        if (axes[i] == AxisGuesser.S_AXIS) {
-          sBlock.add(blockPrefixes[i]);
-        }
+        if (axes[i] == AxisGuesser.S_AXIS) sBlock.add(blockPrefixes[i]);
       }
 
       seriesBlocks = (String[]) sBlock.toArray(new String[0]);
@@ -896,19 +897,6 @@ public class FileStitcher implements IFormatReader {
       for (int i=0; i<seriesCount; i++) {
         files[i] = (String[]) fileVector.get(i);
       }
-    }
-
-    // check if multiple Z or multiple T axes were found
-
-    if (!reader.isOrderCertain() && ((guesser.getAxisCountZ() > 0 &&
-      reader.getSizeZ() > 1) || (guesser.getAxisCountT() > 0 &&
-      reader.getSizeT() > 1)))
-    {
-      String order = reader.getDimensionOrder();
-      order = order.replaceAll("Z", "p");
-      order = order.replaceAll("T", "Z");
-      order = order.replaceAll("p", "T");
-      reader.swapDimensions(order);
     }
 
     // verify that file pattern is valid and matches existing files
@@ -947,9 +935,9 @@ public class FileStitcher implements IFormatReader {
     classes.add(r.getClass());
 
     // construct list of readers for all files
-    readers = new IFormatReader[files.length][];
+    readers = new DimensionSwapper[files.length][];
     for (int i=0; i<readers.length; i++) {
-      readers[i] = new IFormatReader[files[i].length];
+      readers[i] = new DimensionSwapper[files[i].length];
     }
 
     readers[0][0] = reader;
@@ -966,7 +954,7 @@ public class FileStitcher implements IFormatReader {
                 {IFormatReader.class}).newInstance(new Object[] {r});
             }
           }
-          readers[i][j] = (IFormatReader) r;
+          readers[i][j] = (DimensionSwapper) r;
         }
         catch (InstantiationException exc) { LogTools.trace(exc); }
         catch (IllegalAccessException exc) { LogTools.trace(exc); }
@@ -1014,7 +1002,7 @@ public class FileStitcher implements IFormatReader {
     if (doNotStitch) {
       // the reader for this file uses its own stitching logic that is probably
       // smarter than FileStitcher
-      readers = new IFormatReader[1][1];
+      readers = new DimensionSwapper[1][1];
       readers[0][0] = reader;
       String f = files[0][0];
       files = new String[1][1];
@@ -1102,8 +1090,7 @@ public class FileStitcher implements IFormatReader {
     int[] count = p.getCount();
 
     try {
-      readers[sno][0].setId(files[sno][0]);
-      readers[sno][0].setSeries(seriesInFile ? getSeries() : 0);
+      initReader(sno, 0);
     }
     catch (IOException e) {
       throw new FormatException(e);
@@ -1226,17 +1213,14 @@ public class FileStitcher implements IFormatReader {
     if (seriesInFile) sno = 0;
 
     // configure the reader, in case we haven't done this one yet
-    readers[sno][fno].setId(files[sno][fno]);
-    readers[sno][fno].setSeries(reader.getSeries());
+    initReader(sno, fno);
 
     int ino;
     if (posZ[0] < readers[sno][fno].getSizeZ() &&
       posC[0] < readers[sno][fno].getSizeC() &&
       posT[0] < readers[sno][fno].getSizeT())
     {
-      if (readers[sno][fno].isRGB()) {
-        posC[0] /= lenC[sno][0];
-      }
+      if (readers[sno][fno].isRGB()) posC[0] /= lenC[sno][0];
       ino = FormatTools.getIndex(readers[sno][fno], posZ[0], posC[0], posT[0]);
     }
     else ino = Integer.MAX_VALUE; // coordinates out of range
@@ -1263,8 +1247,15 @@ public class FileStitcher implements IFormatReader {
     return include;
   }
 
-  private FilePattern getPattern(String[] f, String dir, String block)
+  protected void initReader(int sno, int fno)
+    throws FormatException, IOException
   {
+    readers[sno][fno].setId(files[sno][fno]);
+    readers[sno][fno].setSeries(seriesInFile ? getSeries() : 0);
+    readers[sno][fno].swapDimensions(reader.getDimensionOrder());
+  }
+
+  private FilePattern getPattern(String[] f, String dir, String block) {
     Vector v = new Vector();
     for (int i=0; i<f.length; i++) {
       if (f[i].indexOf(File.separator) != -1) {
