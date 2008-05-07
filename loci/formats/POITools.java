@@ -173,7 +173,7 @@ public class POITools {
     try {
       r.exec(makeVarName("directory") + " = " + makeVarName("root"));
 
-      StringTokenizer path = new StringTokenizer(name, "/");
+      StringTokenizer path = new StringTokenizer(name, "/\\");
       int count = path.countTokens();
       path.nextToken();
       for (int i=1; i<count-1; i++) {
@@ -219,7 +219,7 @@ public class POITools {
           StringBuffer path = new StringBuffer();
           for (int i=0; i<filePath.size(); i++) {
             path.append((String) filePath.get(i));
-            path.append("/");
+            path.append(File.separator);
           }
           path.append((String) r.getVar(makeVarName("entryName")));
           fileList.add(path.toString());
