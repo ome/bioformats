@@ -61,7 +61,7 @@ public class CustomWindow extends StackWindow
   protected Checkbox cBox;
   protected JSpinner cSpin;
   protected Button animate, options, metadata;
-  protected boolean anim = false, die = false;
+  protected boolean anim = false;
   protected boolean allowShow = false;
 
   protected JFrame metaWindow;
@@ -175,11 +175,22 @@ public class CustomWindow extends StackWindow
 
     add(controls, BorderLayout.SOUTH);
 
+    FileInfo fi = imp.getOriginalFileInfo();
+    if (fi.description != null && fi.description.startsWith("<?xml")) {
+      setXML(fi.description);
+    }
+
+    allowShow = true;
+    pack();
+    setVisible(true);
+
     // start up animation thread
     if (frameSelector != null) {
-      new Thread() {
+      // NB: Cannot implement Runnable because one of the superclasses does so
+      // for its SliceSelector thread, and overriding results in a conflict.
+      new Thread("DataBrowser-Animation") {
         public void run() {
-          while (!die) {
+          while (isVisible()) {
             int ms = 200;
             if (anim) {
               int c = imp.getChannel();
@@ -199,15 +210,6 @@ public class CustomWindow extends StackWindow
         }
       }.start();
     }
-
-    FileInfo fi = imp.getOriginalFileInfo();
-    if (fi.description != null && fi.description.startsWith("<?xml")) {
-      setXML(fi.description);
-    }
-
-    allowShow = true;
-    pack();
-    setVisible(true);
   }
 
   // -- CustomWindow API methods --
@@ -267,7 +269,6 @@ public class CustomWindow extends StackWindow
   // -- Window API methods --
 
   public void dispose() {
-    die = true; // terminate animation thread
     super.dispose();
   }
 
