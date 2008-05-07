@@ -54,7 +54,7 @@ public class LociFunctions extends MacroFunctions {
   // -- Constructor --
 
   public LociFunctions() {
-    r = new FileStitcher(new ChannelSeparator(), true);
+    r = new ChannelSeparator(new FileStitcher(true));
     r.setMetadataStore(MetadataTools.createOMEXMLMetadata());
   }
 
