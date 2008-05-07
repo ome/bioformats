@@ -430,6 +430,7 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
+    if (!fileOnly) currentId = null;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -572,10 +573,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatHandler#close() */
-  public void close() throws IOException {
-    currentId = null;
-    for (int i=0; i<readers.length; i++) readers[i].close();
-  }
+  public void close() throws IOException { close(false); }
 
   // -- StatusReporter API methods --
 

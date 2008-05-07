@@ -43,7 +43,15 @@ public class FileStitcher implements IFormatReader {
 
   // -- Fields --
 
-  /** FormatReader to use as a template for constituent readers. */
+  /**
+   * FormatReader to use as a template for constituent readers.
+   *
+   * The constituent readers must be dimension swappers so that the
+   * file stitcher can reorganize the dimension order as needed based on
+   * the result of the axis guessing algorithm.
+   *
+   * @see AxisGuesser#getAdjustedDimensionOrder()
+   */
   private DimensionSwapper reader;
 
   /**
@@ -64,7 +72,7 @@ public class FileStitcher implements IFormatReader {
   /** The matching files. */
   private String[][] files;
 
-  /** Used files list. */
+  /** Used files list. Only initialized in certain cases, upon request. */
   private String[] usedFiles;
 
   /** Reader used for each file. */
@@ -226,18 +234,6 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return reader.isThisType(block);
-  }
-
-  /* @see IFormatReader#setId(String) */
-  public void setId(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-  }
-
-  /* @see IFormatReader#setId(String, boolean) */
-  public void setId(String id, boolean force)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) || force) initFile(id);
   }
 
   /* @see IFormatReader#getImageCount() */
@@ -527,42 +523,26 @@ public class FileStitcher implements IFormatReader {
       }
     }
     if (!fileOnly) {
+      noStitch = false;
       readers = null;
       blankImage = null;
       blankBytes = null;
       currentId = null;
+      fp = null;
+      ag = null;
+      files = null;
+      usedFiles = null;
+      blankThumb = null;
+      blankThumbBytes = null;
+      imagesPerFile = null;
+      sizeZ = sizeC = sizeT = null;
+      lenZ = lenC = lenT = null;
+      core = null;
+      series = 0;
+      seriesBlocks = null;
+      fileVector = seriesNames = null;
+      seriesInFile = false;
     }
-  }
-
-  /* @see IFormatReader#close() */
-  public void close() throws IOException {
-    if (readers == null) reader.close();
-    else {
-      for (int i=0; i<readers.length; i++) {
-        for (int j=0; j<readers[i].length; j++) {
-          readers[i][j].close();
-        }
-      }
-    }
-    noStitch = false;
-    readers = null;
-    blankImage = null;
-    blankBytes = null;
-    currentId = null;
-    fp = null;
-    ag = null;
-    files = null;
-    usedFiles = null;
-    blankThumb = null;
-    blankThumbBytes = null;
-    imagesPerFile = null;
-    sizeZ = sizeC = sizeT = null;
-    lenZ = lenC = lenT = null;
-    core = null;
-    series = 0;
-    seriesBlocks = null;
-    fileVector = seriesNames = null;
-    seriesInFile = false;
   }
 
   /* @see IFormatReader#getSeriesCount() */
@@ -807,6 +787,21 @@ public class FileStitcher implements IFormatReader {
   public String[] getSuffixes() {
     return reader.getSuffixes();
   }
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+  }
+
+  /* @see IFormatHandler#setId(String, boolean) */
+  public void setId(String id, boolean force)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId) || force) initFile(id);
+  }
+
+  /* @see IFormatHandler#close() */
+  public void close() throws IOException { close(false); }
 
   // -- StatusReporter API methods --
 
@@ -1099,9 +1094,6 @@ public class FileStitcher implements IFormatReader {
       computeAxisLengths();
     }
     setSeries(oldSeries);
-
-    // initialize used files list only when requested
-    usedFiles = null;
   }
 
   // -- Helper methods --
