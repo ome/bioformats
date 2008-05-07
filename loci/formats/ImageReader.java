@@ -565,13 +565,6 @@ public class ImageReader implements IFormatReader {
     getReader(id).setId(id);
   }
 
-  /* @see IFormatHandler#setId(String, boolean) */
-  public void setId(String id, boolean force)
-    throws FormatException, IOException
-  {
-    getReader(id).setId(id, force);
-  }
-
   /* @see IFormatHandler#close() */
   public void close() throws IOException { close(false); }
 

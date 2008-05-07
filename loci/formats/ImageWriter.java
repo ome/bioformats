@@ -308,13 +308,6 @@ public class ImageWriter implements IFormatWriter {
     getWriter(id).setId(id);
   }
 
-  /* @see IFormatHandler#setId(String, boolean) */
-  public void setId(String id, boolean force)
-    throws FormatException, IOException
-  {
-    getWriter(id).setId(id, force);
-  }
-
   /* @see IFormatHandler#close() */
   public void close() throws IOException {
     for (int i=0; i<writers.length; i++) writers[i].close();

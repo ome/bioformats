@@ -129,11 +129,6 @@ public abstract class FormatHandler implements IFormatHandler {
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() { return suffixes; }
 
-  /* @see IFormatHandler#setId(String) */
-  public void setId(String id) throws FormatException, IOException {
-    setId(id, false);
-  }
-
   // -- StatusReporter API methods --
 
   /* @see StatusReporter#addStatusListener(StatusListener) */

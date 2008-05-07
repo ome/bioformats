@@ -47,12 +47,6 @@ public interface IFormatHandler extends StatusReporter {
   /** Sets the current file name. */
   void setId(String id) throws FormatException, IOException;
 
-  /**
-   * Sets the current file name.
-   * @param force If set, the handler will be re-initialized no matter what.
-   */
-  void setId(String id, boolean force) throws FormatException, IOException;
-
   /** Closes currently open file(s) and frees allocated memory. */
   void close() throws IOException;
 

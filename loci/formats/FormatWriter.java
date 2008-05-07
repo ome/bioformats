@@ -171,11 +171,9 @@ public abstract class FormatWriter extends FormatHandler
 
   // -- IFormatHandler API methods --
 
-  /* @see IFormatHandler#setId(String, boolean) */
-  public void setId(String id, boolean force)
-    throws FormatException, IOException
-  {
-    if (id.equals(currentId) && !force) return;
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    if (id.equals(currentId)) return;
     close();
     currentId = id;
     initialized = false;

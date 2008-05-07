@@ -353,7 +353,8 @@ public class ND2Reader extends FormatReader {
     super.initFile(id);
 
     if (legacy) {
-      legacyReader.setId(id, true);
+      legacyReader.close();
+      legacyReader.setId(id);
       core = legacyReader.getCoreMetadata();
       metadataStore = legacyReader.getMetadataStore();
       return;

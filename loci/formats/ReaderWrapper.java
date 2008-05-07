@@ -72,12 +72,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader.setId(id);
   }
 
-  public void setId(String id, boolean force)
-    throws FormatException, IOException
-  {
-    reader.setId(id, force);
-  }
-
   public int getImageCount() {
     return reader.getImageCount();
   }

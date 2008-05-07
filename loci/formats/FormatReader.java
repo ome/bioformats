@@ -212,6 +212,12 @@ public abstract class FormatReader extends FormatHandler
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    close();
+    initFile(id);
+  }
+
   /**
    * Checks if a file matches the type of this format reader.
    * Checks filename suffixes against those known for this format.
@@ -624,13 +630,6 @@ public abstract class FormatReader extends FormatHandler
   public boolean isThisType(String name) {
     // if necessary, open the file for further analysis
     return isThisType(name, true);
-  }
-
-  /* @see IFormatHandler#setId(String, boolean) */
-  public void setId(String id, boolean force)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) || force) initFile(id);
   }
 
   /* @see IFormatHandler#close() */

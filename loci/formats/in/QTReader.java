@@ -347,7 +347,7 @@ public class QTReader extends FormatReader {
       if (debug) trace(exc);
       useLegacy = true;
       legacy = createLegacyReader();
-      legacy.setId(id, true);
+      legacy.setId(id);
       core = legacy.getCoreMetadata();
       return;
     }
