@@ -50,7 +50,7 @@ public class FileStitcher implements IFormatReader {
    * file stitcher can reorganize the dimension order as needed based on
    * the result of the axis guessing algorithm.
    *
-   * @see AxisGuesser#getAdjustedDimensionOrder()
+   * @see AxisGuesser#getAdjustedOrder()
    */
   private DimensionSwapper reader;
 
@@ -940,9 +940,12 @@ public class FileStitcher implements IFormatReader {
       readers[i] = new DimensionSwapper[files[i].length];
     }
 
-    readers[0][0] = reader;
     for (int i=0; i<readers.length; i++) {
       for (int j=0; j<readers[i].length; j++) {
+        if (i == 0 && j == 0) {
+          readers[i][j] = reader;
+          continue;
+        }
         // use crazy reflection to instantiate a reader of the proper type
         try {
           r = null;
@@ -970,6 +973,7 @@ public class FileStitcher implements IFormatReader {
     StatusListener[] statusListeners = reader.getStatusListeners();
     for (int i=0; i<readers.length; i++) {
       for (int j=0; j<readers[i].length; j++) {
+        if (i == 0 && j == 0) continue;
         readers[i][j].setNormalized(normalized);
         readers[i][j].setMetadataFiltered(metadataFiltered);
         readers[i][j].setMetadataCollected(metadataCollected);
@@ -977,37 +981,6 @@ public class FileStitcher implements IFormatReader {
           readers[i][j].addStatusListener(statusListeners[k]);
         }
       }
-    }
-
-    reader.setId(files[0][0]);
-    String[] originalUsedFiles = reader.getUsedFiles();
-
-    boolean doNotStitch = true;
-    for (int i=0; i<files.length; i++) {
-      for (int k=0; k<files[i].length; k++) {
-        boolean found = false;
-        for (int j=0; j<originalUsedFiles.length; j++) {
-          if (originalUsedFiles[j].endsWith(files[i][k])) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          doNotStitch = false;
-          break;
-        }
-      }
-    }
-
-    if (doNotStitch) {
-      // the reader for this file uses its own stitching logic that is probably
-      // smarter than FileStitcher
-      readers = new DimensionSwapper[1][1];
-      readers[0][0] = reader;
-      String f = files[0][0];
-      files = new String[1][1];
-      files[0][0] = f;
-      fp = new FilePattern(files[0][0]);
     }
 
     ag = new AxisGuesser[seriesCount];
@@ -1031,8 +1004,8 @@ public class FileStitcher implements IFormatReader {
     for (int i=0; i<seriesCount; i++) {
       if (seriesInFile) rr.setSeries(i);
       else {
+        initReader(i, 0);
         rr = readers[i][0];
-        rr.setId(files[i][0]);
       }
 
       core.sizeX[i] = rr.getSizeX();
