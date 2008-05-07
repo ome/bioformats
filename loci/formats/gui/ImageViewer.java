@@ -46,15 +46,14 @@ import loci.formats.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class ImageViewer extends JFrame
-  implements ActionListener, ChangeListener, MouseMotionListener
+public class ImageViewer extends JFrame implements ActionListener,
+  ChangeListener, KeyListener, MouseMotionListener, Runnable
 {
 
   // -- Constants --
 
   protected static final String TITLE = "Bio-Formats Viewer";
-  protected static final GraphicsConfiguration GC =
-    ImageTools.getDefaultConfiguration();
+  protected static final char ANIMATION_KEY = ' ';
 
   // -- Fields --
 
@@ -73,6 +72,9 @@ public class ImageViewer extends JFrame
   protected IFormatReader in;
   protected BufferedImage[] images;
   protected int sizeZ, sizeT, sizeC;
+
+  protected boolean anim = false;
+  protected int fps = 10;
 
   // -- Constructor --
 
@@ -189,6 +191,14 @@ public class ImageViewer extends JFrame
     fileExit.setActionCommand("exit");
     fileExit.addActionListener(this);
     file.add(fileExit);
+    JMenu options = new JMenu("Options");
+    options.setMnemonic('o');
+    menubar.add(options);
+    JMenuItem optionsFPS = new JMenuItem("Frames per Second...");
+    optionsFPS.setMnemonic('f');
+    optionsFPS.setActionCommand("fps");
+    optionsFPS.addActionListener(this);
+    options.add(optionsFPS);
     JMenu help = new JMenu("Help");
     help.setMnemonic('h');
     menubar.add(help);
@@ -198,9 +208,17 @@ public class ImageViewer extends JFrame
     helpAbout.addActionListener(this);
     help.add(helpAbout);
 
+    // add key listener to focusable components
+    nSlider.addKeyListener(this);
+    zSlider.addKeyListener(this);
+    tSlider.addKeyListener(this);
+    cSlider.addKeyListener(this);
+
     // image I/O engine
     myReader = new ChannelMerger(new FileStitcher());
     myWriter = new ImageWriter();
+
+    // animation thread
   }
 
   /** Opens the given file using the ImageReader. */
@@ -350,6 +368,13 @@ public class ImageViewer extends JFrame
   /** Gets the C value of the currently displayed image. */
   public int getC() { return cSlider.getValue() - 1; }
 
+  // -- Window API methods --
+  public void setVisible(boolean visible) {
+    super.setVisible(visible);
+    // kick off animation thread
+    new Thread(this).start();
+  }
+
   // -- ActionListener API methods --
 
   /** Handles menu commands. */
@@ -394,6 +419,19 @@ public class ImageViewer extends JFrame
       catch (ReflectException exc) { LogTools.trace(exc); }
     }
     else if ("exit".equals(cmd)) dispose();
+    else if ("fps".equals(cmd)) {
+      // HACK - JOptionPane prevents shutdown on dispose
+      setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+      String result = JOptionPane.showInputDialog(this,
+        "Animate using space bar. How many frames per second?", "" + fps);
+      try {
+        fps = Integer.parseInt(result);
+      }
+      catch (NumberFormatException exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
+      }
+    }
     else if ("about".equals(cmd)) {
       // HACK - JOptionPane prevents shutdown on dispose
       setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -414,6 +452,7 @@ public class ImageViewer extends JFrame
   /** Handles slider events. */
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
+    boolean outOfBounds = false;
     if (src == nSlider) {
       // update Z, T and C sliders
       int ndx = getImageIndex();
@@ -439,15 +478,33 @@ public class ImageViewer extends JFrame
       int ndx = in == null ? -1 : in.getIndex(getZ(), getC(), getT());
       if (ndx >= 0) {
         nSlider.removeChangeListener(this);
+        outOfBounds = ndx >= nSlider.getMaximum();
         nSlider.setValue(ndx + 1);
         nSlider.addChangeListener(this);
       }
     }
     updateLabel(-1, -1);
-    BufferedImage image = getImage();
-    if (image != null) icon.setImage(getImage());
-    iconLabel.repaint();
+    BufferedImage image = outOfBounds ? null : getImage();
+    if (image == null) {
+      iconLabel.setIcon(null);
+      iconLabel.setText("No image plane");
+    }
+    else {
+      icon.setImage(image);
+      iconLabel.setIcon(icon);
+      iconLabel.setText(null);
+    }
   }
+
+  // -- KeyListener API methods --
+
+  /** Handles key presses. */
+  public void keyPressed(KeyEvent e) {
+    if (e.getKeyChar() == ANIMATION_KEY) anim = !anim; // toggle animation
+  }
+
+  public void keyReleased(KeyEvent e) { }
+  public void keyTyped(KeyEvent e) { }
 
   // -- MouseMotionListener API methods --
 
@@ -456,6 +513,25 @@ public class ImageViewer extends JFrame
 
   /** Handles cursor probes. */
   public void mouseMoved(MouseEvent e) { updateLabel(e.getX(), e.getY()); }
+
+  // -- Runnable API methods --
+
+  /** Handles animation. */
+  public void run() {
+    while (isVisible()) {
+      if (anim) {
+        int t = tSlider.getValue();
+        t = t % tSlider.getMaximum() + 1;
+        tSlider.setValue(t);
+      }
+      try {
+        Thread.sleep(1000 / fps);
+      }
+      catch (InterruptedException exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
+      }
+    }
+  }
 
   // -- Helper methods --
 
