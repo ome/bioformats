@@ -214,8 +214,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    close();
-    initFile(id);
+    if (!id.equals(currentId)) initFile(id);
   }
 
   /**
