@@ -139,10 +139,10 @@ public final class ImageInfo {
       String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
       String[] s = {
         "To test read a file in " + fmt + " format, run:",
-        "  showinf [-nopix] [-nometa] [-thumbs] [-minmax] ",
+        "  showinf file [-nopix] [-nometa] [-thumbs] [-minmax] ",
         "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
         "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
-        "    [-swap order] [-map id] [-preload] [-version v] file",
+        "    [-swap order] [-map id] [-preload] [-version v] [-crop x,y,w,h]",
         "",
         "      file: the image file to read",
         "    -nopix: read metadata only, not pixels",
