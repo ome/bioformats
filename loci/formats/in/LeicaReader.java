@@ -523,11 +523,11 @@ public class LeicaReader extends FormatReader {
         RandomAccessStream s = new RandomAccessStream(temp);
         s.order(core.littleEndian[0]);
 
-        core.sizeZ[i] = s.readInt();
+        core.imageCount[i] = s.readInt();
         core.sizeX[i] = s.readInt();
         core.sizeY[i] = s.readInt();
 
-        addMeta("Number of images", new Integer(core.sizeZ[i]));
+        addMeta("Number of images", new Integer(core.imageCount[i]));
         addMeta("Image width", new Integer(core.sizeX[i]));
         addMeta("Image height", new Integer(core.sizeY[i]));
         addMeta("Bits per Sample", new Integer(s.readInt()));
@@ -586,6 +586,8 @@ public class LeicaReader extends FormatReader {
             throw new FormatException("Unsupported bytes per pixel (" +
               bpp + ")");
         }
+
+        core.currentOrder[i] = "XY";
 
         resolution = stream.readInt();
         addMeta("Real world resolution", new Integer(resolution));
@@ -686,8 +688,31 @@ public class LeicaReader extends FormatReader {
               break;
           }
 
+          int size = stream.readInt();
+
+          if (dimType.equals("x")) core.sizeX[i] = size;
+          else if (dimType.equals("y")) core.sizeY[i] = size;
+          else if (dimType.indexOf("z") != -1) {
+            core.sizeZ[i] = size;
+            if (core.currentOrder[i].indexOf("Z") == -1) {
+              core.currentOrder[i] += "Z";
+            }
+          }
+          else if (dimType.equals("channel")) {
+            core.sizeC[i] = size;
+            if (core.currentOrder[i].indexOf("C") == -1) {
+              core.currentOrder[i] += "C";
+            }
+          }
+          else {
+            core.sizeT[i] = size;
+            if (core.currentOrder[i].indexOf("T") == -1) {
+              core.currentOrder[i] += "T";
+            }
+          }
+
           addMeta("Dim" + j + " type", dimType);
-          addMeta("Dim" + j + " size", new Integer(stream.readInt()));
+          addMeta("Dim" + j + " size", new Integer(size));
           addMeta("Dim" + j + " distance between sub-dimensions",
             new Integer(stream.readInt()));
 
@@ -811,9 +836,6 @@ public class LeicaReader extends FormatReader {
         addMeta("Number of LUT channels", new Integer(nChannels));
         addMeta("ID of colored dimension", new Integer(stream.readInt()));
 
-        //if (nChannels > 4) nChannels = 3;
-        core.sizeC[i] = nChannels;
-
         for (int j=0; j<nChannels; j++) {
           int value = stream.readInt();
           addMeta("LUT Channel " + j + " version", new Integer(value));
@@ -846,34 +868,37 @@ public class LeicaReader extends FormatReader {
     Arrays.fill(core.metadataComplete, true);
     Arrays.fill(core.interleaved, false);
 
-    // sizeC is null here if the file we opened was a TIFF.
-    // However, the sizeC field will be adjusted anyway by
-    // a later call to initMetadata.
-    if (core.sizeC != null) {
-      int oldSeries = getSeries();
-      for (int i=0; i<core.sizeC.length; i++) {
-        setSeries(i);
-        if (core.sizeC[i] == 0) core.sizeC[i] = 1;
-        core.sizeZ[i] /= core.sizeC[i];
-      }
-      setSeries(oldSeries);
-    }
-
     // the metadata store we're working with
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     for (int i=0; i<numSeries; i++) {
-      if (core.sizeC[i] == 0) core.sizeC[i] = 1;
-      core.sizeT[i]++;
       if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
+      if (core.sizeT[i] == 0) core.sizeT[i] = 1;
+      if (core.sizeC[i] == 0) core.sizeC[i] = 1;
+      if (core.imageCount[i] == 0) core.imageCount[i] = 1;
+      if (core.imageCount[i] == 1 && core.sizeZ[i] > 1) {
+        core.sizeZ[i] = 1;
+      }
+      if (core.imageCount[i] == 1 && core.sizeT[i] > 1) {
+        core.sizeT[i] = 1;
+      }
       tiff[i][0].setId((String) files[i].get(0));
       core.sizeX[i] = tiff[i][0].getSizeX();
       core.sizeY[i] = tiff[i][0].getSizeY();
       core.rgb[i] = tiff[i][0].isRGB();
       core.indexed[i] = tiff[i][0].isIndexed();
       core.sizeC[i] *= tiff[i][0].getSizeC();
-      core.currentOrder[i] = core.rgb[i] ? "XYCZT" : "XYZTC";
+
+      if (core.currentOrder[i].indexOf("C") == -1) {
+        core.currentOrder[i] += "C";
+      }
+      if (core.currentOrder[i].indexOf("Z") == -1) {
+        core.currentOrder[i] += "Z";
+      }
+      if (core.currentOrder[i].indexOf("T") == -1) {
+        core.currentOrder[i] += "T";
+      }
 
       if (i < timestamps.length && timestamps[i] != null) {
         SimpleDateFormat parse =
@@ -892,18 +917,6 @@ public class LeicaReader extends FormatReader {
       store.setImageDescription(description, i);
     }
     MetadataTools.populatePixels(store, this);
-
-    for (int i=0; i<core.sizeC.length; i++) {
-      for (int j=0; j<core.sizeC[i]; j++) {
-        // CTR CHECK
-//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, new Integer(i));
-        // TODO: get channel min/max from metadata
-//        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
-//          getChannelGlobalMaximum(currentId, j), ii);
-      }
-    }
   }
 
   // -- Helper methods --
