@@ -482,6 +482,12 @@ public final class ImageTools {
       if (r.isNormalized()) f = DataTools.normalizeFloats(f);
       return makeImage(f, w, h, r.getRGBChannelCount(), true);
     }
+    else if (pixelType == FormatTools.DOUBLE) {
+      double[] d =
+        (double[]) DataTools.makeDataArray(buf, 8, true, r.isLittleEndian());
+      if (r.isNormalized()) d = DataTools.normalizeDoubles(d);
+      return makeImage(d, w, h, r.getRGBChannelCount(), true);
+    }
 
     boolean signed = pixelType == FormatTools.INT8 ||
       pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;

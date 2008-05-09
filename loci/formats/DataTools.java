@@ -674,6 +674,27 @@ public final class DataTools {
     return rtn;
   }
 
+  /**
+   * Normalize the given double array so that the minimum value maps to 0.0
+   * and the maximum value maps to 1.0.
+   */
+  public static double[] normalizeDoubles(double[] data) {
+    double[] rtn = new double[data.length];
+
+    double min = Double.MAX_VALUE;
+    double max = Double.MIN_VALUE;
+
+    for (int i=0; i<data.length; i++) {
+      if (data[i] < min) min = data[i];
+      if (data[i] > max) max = data[i];
+    }
+
+    for (int i=0; i<rtn.length; i++) {
+      rtn[i] = (data[i] - min) / (max - min);
+    }
+    return rtn;
+  }
+
   // -- Date handling --
 
   /** Converts the given timestamp into an ISO 8601 date. */
