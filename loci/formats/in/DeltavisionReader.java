@@ -292,6 +292,8 @@ public class DeltavisionReader extends FormatReader {
 
     core.sizeC[0] = in.readShort();
     addMeta("Number of wavelengths", new Integer(core.sizeC[0]));
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
     core.sizeZ[0] = core.imageCount[0] / (core.sizeC[0] * core.sizeT[0]);
     addMeta("Number of focal planes", new Integer(core.sizeZ[0]));
 

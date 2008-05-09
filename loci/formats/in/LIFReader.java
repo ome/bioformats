@@ -442,23 +442,16 @@ public class LIFReader extends FormatReader {
         }
         Integer w = new Integer(attributes.getValue("NumberOfElements"));
         int id = Integer.parseInt(attributes.getValue("DimID"));
-        float size = Float.parseFloat(attributes.getValue("Length"));
-        if (size < 0) size *= -1;
-        size *= 1000000;
-        Float pixelSize = new Float(size / w.intValue());
 
         switch (id) {
           case 1:
             widths.add(w);
-            xcal.add(pixelSize);
             break;
           case 2:
             heights.add(w);
-            ycal.add(pixelSize);
             break;
           case 3:
             zs.add(w);
-            zcal.add(pixelSize);
             break;
           case 4:
             ts.add(w);
@@ -524,11 +517,11 @@ public class LIFReader extends FormatReader {
           }
         }
         else if (identifier.startsWith("dblVoxel")) {
-          if (identifier.endsWith("Z") && xcal.size() > zcal.size()) {
-            String size = attributes.getValue("Variant");
-            float cal = Float.parseFloat(size) * 1000000;
-            zcal.add(new Float(cal));
-          }
+          String size = attributes.getValue("Variant");
+          float cal = Float.parseFloat(size) * 1000000;
+          if (identifier.endsWith("X")) xcal.add(new Float(cal));
+          else if (identifier.endsWith("Y")) xcal.add(new Float(cal));
+          else if (identifier.endsWith("Z")) zcal.add(new Float(cal));
         }
       }
       else if (qName.equals("FilterSettingRecord")) {
