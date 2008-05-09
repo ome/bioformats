@@ -48,9 +48,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // 256 KB - please don't change this
   protected static final int MAX_OVERHEAD = 262144;
 
-  /** Maximum number of buffer sizes to keep. */
-  protected static final int MAX_HISTORY = 50;
-
   /** Maximum number of open files. */
   protected static final int MAX_FILES = 100;
 
@@ -66,9 +63,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   /** Number of currently open files. */
   private static int openFiles = 0;
-
-  /** Recent buffer sizes. */
-  private static int[] bufferSizes = new int[MAX_HISTORY];
 
   // -- Fields --
 
@@ -200,7 +194,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);
-        bufferSizes[0] = MAX_OVERHEAD / 2;
         lastValid = 1;
         nextMark = MAX_OVERHEAD;
       }
@@ -525,34 +518,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   // -- Helper methods - I/O --
 
-  /** Naive heuristic for determining a "good" buffer size for the DIS. */
-  protected int determineBuffer() {
-    // first we want the weighted average of previous buffer sizes
-
-    int sum = 0;
-    int div = 0;
-    int ndx = 0;
-
-    while ((ndx < lastValid) && (ndx < MAX_HISTORY)) {
-      int size = bufferSizes[ndx];
-      sum += (size * ((ndx / (MAX_HISTORY / 5)) + 1));
-      div += (ndx / (MAX_HISTORY / 5)) + 1;
-      ndx++;
-    }
-
-    int newSize = sum / div;
-    if (newSize > MAX_OVERHEAD) newSize = MAX_OVERHEAD;
-    if (lastValid < MAX_HISTORY) {
-      bufferSizes[lastValid] = newSize;
-      lastValid++;
-    }
-    else {
-      bufferSizes[0] = newSize;
-    }
-
-    return newSize;
-  }
-
   /**
    * Determine whether it is more efficient to use the DataInputStream or
    * RandomAccessFile for reading (based on the current file pointers).
@@ -561,7 +526,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
    */
   protected int checkEfficiency(int toRead) throws IOException {
     if (Boolean.FALSE.equals(fileCache.get(this))) reopen();
-    int oldBufferSize = bufferSizes[bufferSizes.length - 1];
 
     if (compressed) {
       // can only read from the input stream
@@ -597,6 +561,16 @@ public class RandomAccessStream extends InputStream implements DataInput {
       return DIS;
     }
 
+    if (dis != null && raf != null &&
+      afp + toRead < MAX_OVERHEAD && afp + toRead < length() &&
+      afp + toRead < buf.length)
+    {
+      // this is a really special case that allows us to read directly from
+      // an array when working with the first MAX_OVERHEAD bytes of the file
+      // ** also note that it doesn't change the stream
+      return ARRAY;
+    }
+
     if (dis != null) {
       if (fp < length()) {
         while (fp > (length() - dis.available())) {
@@ -620,16 +594,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       }
     }
 
-    if (dis != null && raf != null &&
-      afp + toRead < MAX_OVERHEAD && afp + toRead < length() &&
-      afp + toRead < buf.length)
-    {
-      // this is a really special case that allows us to read directly from
-      // an array when working with the first MAX_OVERHEAD bytes of the file
-      // ** also note that it doesn't change the stream
-      return ARRAY;
-    }
-    else if (afp >= fp && dis != null) {
+    if (afp >= fp && dis != null) {
       while (fp < afp) {
         while (afp - fp > Integer.MAX_VALUE) {
           fp += dis.skipBytes(Integer.MAX_VALUE);
@@ -637,14 +602,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
         int skip = dis.skipBytes((int) (afp - fp));
         if (skip == 0) break;
         fp += skip;
-      }
-
-      if (lastValid < MAX_HISTORY) {
-        bufferSizes[lastValid] = MAX_OVERHEAD;
-        lastValid++;
-      }
-      else {
-        bufferSizes[0] = MAX_OVERHEAD;
       }
 
       if (fp >= nextMark) {
@@ -656,9 +613,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       return DIS;
     }
     else {
-      if (dis != null && afp >= mark && fp < mark + oldBufferSize) {
-        int newBufferSize = determineBuffer();
-
+      if (dis != null && afp >= mark && fp < mark + MAX_OVERHEAD) {
         boolean valid = true;
 
         try {
@@ -669,8 +624,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
         }
 
         if (valid) {
-          dis.mark(newBufferSize);
-          //fp = mark;
+          dis.mark(MAX_OVERHEAD);
 
           fp = length() - dis.available();
           while (fp < afp) {
@@ -683,9 +637,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
           }
 
           if (fp >= nextMark) {
-            dis.mark(newBufferSize);
+            dis.mark(MAX_OVERHEAD);
           }
-          nextMark = fp + newBufferSize;
+          nextMark = fp + MAX_OVERHEAD;
           mark = fp;
 
           return DIS;

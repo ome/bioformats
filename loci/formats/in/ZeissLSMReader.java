@@ -176,12 +176,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    // check that predictor is set to 1 if anything other
-    // than LZW compression is used
-    if (TiffTools.getCompression(ifds[no]) != TiffTools.LZW) {
-      ifds[no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
-    }
-
     TiffTools.getSamples(ifds[no], in, buf, x, y, w, h);
     return buf;
   }
@@ -193,6 +187,8 @@ public class ZeissLSMReader extends BaseTiffReader {
   protected void initMetadata() {
     if (!thumbnailsRemoved) return;
     Hashtable ifd = ifds[0];
+
+    status("Reading LSM metadata");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -224,33 +220,15 @@ public class ZeissLSMReader extends BaseTiffReader {
       switch (dataType) {
         case 2:
           put("DataType", "12 bit unsigned integer");
-          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 5:
           put("DataType", "32 bit float");
-          core.pixelType[0] = FormatTools.FLOAT;
           break;
         case 0:
           put("DataType", "varying data types");
-          core.pixelType[0] = -1;
           break;
         default:
           put("DataType", "8 bit unsigned integer");
-          core.pixelType[0] = -1;
-      }
-
-      if (core.pixelType[0] == -1) {
-        int[] bps = TiffTools.getBitsPerSample(ifd);
-        switch (bps[0]) {
-          case 16:
-            core.pixelType[0] = FormatTools.UINT16;
-            break;
-          case 32:
-            core.pixelType[0] = FormatTools.FLOAT;
-            break;
-          default:
-            core.pixelType[0] = FormatTools.UINT8;
-        }
       }
 
       put("ThumbnailX", ras.readInt());
@@ -333,8 +311,8 @@ public class ZeissLSMReader extends BaseTiffReader {
           put("SpectralScan", "no spectral scan");
       }
 
-      long type = ras.readInt();
-      switch ((int) type) {
+      int type = ras.readInt();
+      switch (type) {
         case 1:
           put("DataType2", "calculated data");
           break;
@@ -345,9 +323,15 @@ public class ZeissLSMReader extends BaseTiffReader {
           put("DataType2", "original scan data");
       }
 
-      long overlayOffset = ras.readInt();
-      long inputLUTOffset = ras.readInt();
-      long outputLUTOffset = ras.readInt();
+      long[] overlayOffsets = new long[9];
+      String[] overlayKeys = new String[] {"VectorOverlay", "InputLut",
+        "OutputLut", "ROI", "BleachROI", "MeanOfRoisOverlay",
+        "TopoIsolineOverlay", "TopoProfileOverlay", "LinescanOverlay"};
+
+      overlayOffsets[0] = ras.readInt();
+      overlayOffsets[1] = ras.readInt();
+      overlayOffsets[2] = ras.readInt();
+
       long channelColorsOffset = ras.readInt();
 
       put("TimeInterval", ras.readDouble());
@@ -356,8 +340,8 @@ public class ZeissLSMReader extends BaseTiffReader {
       ras.skipBytes(4);
       long timeStampOffset = ras.readInt();
       long eventListOffset = ras.readInt();
-      long roiOffset = ras.readInt();
-      long bleachRoiOffset = ras.readInt();
+      overlayOffsets[3] = ras.readInt();
+      overlayOffsets[4] = ras.readInt();
       ras.skipBytes(4);
 
       put("DisplayAspectX", ras.readDouble());
@@ -365,27 +349,19 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DisplayAspectZ", ras.readDouble());
       put("DisplayAspectTime", ras.readDouble());
 
-      long meanOfRoisOverlayOffset = ras.readInt();
-      long topoIsolineOverlayOffset = ras.readInt();
-      long topoProfileOverlayOffset = ras.readInt();
-      long linescanOverlayOffset = ras.readInt();
+      overlayOffsets[5] = ras.readInt();
+      overlayOffsets[6] = ras.readInt();
+      overlayOffsets[7] = ras.readInt();
+      overlayOffsets[8] = ras.readInt();
+
+      for (int i=0; i<overlayOffsets.length; i++) {
+        parseOverlays(overlayOffsets[i], overlayKeys[i]);
+      }
 
       put("ToolbarFlags", ras.readInt());
       ras.close();
 
       // read referenced structures
-
-      if (overlayOffset != 0) {
-        parseOverlays(overlayOffset, "OffsetVectorOverlay");
-      }
-
-      if (inputLUTOffset != 0) {
-        parseSubBlocks(inputLUTOffset, "OffsetInputLut");
-      }
-
-      if (outputLUTOffset != 0) {
-        parseSubBlocks(outputLUTOffset, "OffsetOutputLut");
-      }
 
       core.indexed[0] = lut != null && getSizeC() == 1;
       if (core.indexed[0]) {
@@ -398,27 +374,19 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DimensionChannels", core.sizeC[0]);
 
       if (channelColorsOffset != 0) {
-        in.seek(channelColorsOffset + 4);
-        int numColors = in.readInt();
-        int numNames = in.readInt();
-
-        long namesOffset = in.readInt();
+        in.seek(channelColorsOffset + 12);
+        int namesOffset = in.readInt();
 
         // read in the intensity value for each color
 
         if (namesOffset > 0) {
-          in.seek(namesOffset + channelColorsOffset);
+          in.skipBytes(namesOffset - 16);
 
-          for (int i=0; i<numNames; i++) {
+          for (int i=0; i<core.sizeC[0]; i++) {
             if (in.getFilePointer() >= in.length() - 1) break;
             // we want to read until we find a null char
-            StringBuffer sb = new StringBuffer();
-            char current = (char) in.read();
-            while (current != 0) {
-              if (current < 128) sb.append(current);
-              current = (char) in.read();
-            }
-            if (sb.length() <= 128) put("ChannelName" + i, sb.toString());
+            String name = in.readCString();
+            if (name.length() <= 128) put("ChannelName" + i, name);
           }
         }
       }
@@ -452,28 +420,6 @@ public class ZeissLSMReader extends BaseTiffReader {
             if (in.getFilePointer() < 0) break;
           }
         }
-      }
-
-      if (roiOffset != 0) parseOverlays(roiOffset, "ROIOffset");
-
-      if (bleachRoiOffset != 0) {
-        parseOverlays(bleachRoiOffset, "BleachROIOffset");
-      }
-
-      if (meanOfRoisOverlayOffset != 0) {
-        parseOverlays(meanOfRoisOverlayOffset, "OffsetMeanOfRoisOverlay");
-      }
-
-      if (topoIsolineOverlayOffset != 0) {
-        parseOverlays(topoIsolineOverlayOffset, "OffsetTopoIsolineOverlay");
-      }
-
-      if (topoProfileOverlayOffset != 0) {
-        parseOverlays(topoProfileOverlayOffset, "OffsetTopoProfileOverlay");
-      }
-
-      if (linescanOverlayOffset != 0) {
-        parseOverlays(linescanOverlayOffset, "OffsetLinescanOverlay");
       }
 
       if (scanInformationOffset != 0) {
@@ -776,7 +722,14 @@ public class ZeissLSMReader extends BaseTiffReader {
       long subFileType = TiffTools.getIFDLongValue(ifds[i],
         TiffTools.NEW_SUBFILE_TYPE, true, 0);
 
-      if (subFileType == 0) newIFDs.add(ifds[i]);
+      if (subFileType == 0) {
+        // check that predictor is set to 1 if anything other
+        // than LZW compression is used
+        if (TiffTools.getCompression(ifds[i]) != TiffTools.LZW) {
+          ifds[i].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
+        }
+        newIFDs.add(ifds[i]);
+      }
     }
 
     // reset numImages and ifds
@@ -803,11 +756,11 @@ public class ZeissLSMReader extends BaseTiffReader {
     put("LineWidth-" + suffix, idata);
     idata = in.readInt();
     put("Measure-" + suffix, idata);
-    in.readDouble();
+    in.skipBytes(8);
     put("ColorRed-" + suffix, in.read());
     put("ColorGreen-" + suffix, in.read());
     put("ColorBlue-" + suffix, in.read());
-    in.read();
+    in.skipBytes(1);
 
     put("Valid-" + suffix, in.readInt());
     put("KnotWidth-" + suffix, in.readInt());
@@ -840,8 +793,11 @@ public class ZeissLSMReader extends BaseTiffReader {
     put("Circle-" + suffix, in.read());
     put("Rectangle-" + suffix, in.read());
     put("Line-" + suffix, in.read());
+    /*
     try {
       int drawingEl = (size - 194) / nde;
+      if (drawingEl <= 0) return;
+      if (DataTools.swap(nde) < nde) nde = DataTools.swap(nde);
       for (int i=0; i<nde; i++) {
         put("DrawingElement" + i + "-" + suffix, in.readString(drawingEl));
       }
@@ -849,92 +805,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     catch (ArithmeticException exc) {
       if (debug) trace(exc);
     }
-  }
-
-  /** Parses subblock-related fields. */
-  protected void parseSubBlocks(long data, String suffix)
-    throws IOException, FormatException
-  {
-    if (data == 0) return;
-
-    in.seek(data);
-
-    in.order(core.littleEndian[0]);
-
-    long size = in.readInt() & 0xffffffff;
-    long numSubBlocks = in.readInt() & 0xffffffff;
-    put("NumSubBlocks-" + suffix, numSubBlocks);
-    long numChannels = in.readInt() & 0xffffffff;
-    put("NumChannels-" + suffix, numChannels);
-    data = in.readInt() & 0xffffffff;
-    put("LutType-" + suffix, data);
-    data = in.readInt() & 0xffffffff;
-    put("Advanced-" + suffix, data);
-    data = in.readInt() & 0xffffffff;
-    put("CurrentChannel-" + suffix, data);
-    in.skipBytes(36);
-
-    if (numSubBlocks > 100) numSubBlocks = 20;
-
-    for (int i=0; i<numSubBlocks; i++) {
-      data = in.readInt() & 0xffffffff;
-      put("Type" + i + "-" + suffix, data);
-      int v = in.readInt();
-      put("Size" + i + "-" + suffix, v);
-
-      switch ((int) data) {
-        case SUBBLOCK_GAMMA:
-          for (int j=0; j<numChannels; j++) {
-            put("GammaChannel" + j + "-" + i + "-" + suffix, in.readDouble());
-          }
-          break;
-        case SUBBLOCK_BRIGHTNESS:
-          for (int j=0; j<numChannels; j++) {
-            put("BrightnessChannel" + j + "-" + i + "-" + suffix,
-              in.readDouble());
-          }
-          break;
-        case SUBBLOCK_CONTRAST:
-          for (int j=0; j<numChannels; j++) {
-            put("ContrastChannel" + j + "-" + i + "-" + suffix,
-              in.readDouble());
-          }
-          break;
-        case SUBBLOCK_RAMP:
-          for (int j=0; j<numChannels; j++) {
-            put("RampStartXChannel" + j + "-" + i + "-" + suffix,
-              in.readDouble());
-            put("RampStartYChannel" + j + "-" + i + "-" + suffix,
-              in.readDouble());
-            put("RampEndXChannel" + j + "-" + i + "-" + suffix,
-              in.readDouble());
-            put("RampEndYChannel" + j + "-" + i + "-" + suffix,
-              in.readDouble());
-            j += 4;
-          }
-          break;
-        case SUBBLOCK_KNOTS:
-          for (int j=0; j<numChannels; j++) {
-            double knotX = -1, knotY = -1;
-            int n = 0;
-            while (knotX < 255) {
-              knotX = in.readDouble();
-              knotY = in.readDouble();
-              addMeta("Channel " + j + " Knot " + n + " X", new Double(knotX));
-              addMeta("Channel " + j + " Knot " + n + " Y", new Double(knotY));
-              n++;
-            }
-          }
-          break;
-        case SUBBLOCK_PALETTE:
-          if (lut == null) {
-            lut = new byte[(int) (8192 * numChannels)];
-            in.read(lut);
-          }
-          else in.skipBytes((int) (8192 * numChannels));
-          break;
-      }
-    }
+    */
   }
 
   /** Construct a metadata key from the given stack. */
