@@ -40,6 +40,18 @@ package loci.formats.meta;
  * any specific storage medium (file, relational database, etc.) should be
  * expected to store into its backing data model.
  *
+ * <p><b>Important note:</b> It is strongly recommended that applications
+ * (e.g., file format readers) using <code>MetadataStore</code> populate
+ * information in a linear order. Specifically, iterating over entities
+ * from "leftmost" index to "rightmost" index is required for certain
+ * <code>MetadataStore</code> implementations such as OMERO's
+ * <code>OMEROMetadataStore</code>. For example, when populating Image, Pixels
+ * and Plane information, an outer loop should iterate across
+ * <code>imageIndex</code>, an inner loop should iterate across
+ * <code>pixelsIndex</code>, and an innermost loop should handle
+ * <code>planeIndex</code>. For an illustration of the ideal traversal order,
+ * see {@link loci.formats.meta.MetadataConverter#convertMetadata}.</p>
+ *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/MetadataStore.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/MetadataStore.java">SVN</a></dd></dl>
