@@ -661,15 +661,17 @@ public class ZeissLSMReader extends BaseTiffReader {
     store.setDimensionsPhysicalSizeY(pixY, 0, 0);
     store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
 
+    float firstStamp = ((Double) timestamps.get(0)).floatValue();
+
     for (int i=0; i<core.imageCount[0]; i++) {
       int[] zct = FormatTools.getZCTCoords(this, i);
       store.setPlaneTheZ(new Integer(zct[0]), 0, 0, i);
       store.setPlaneTheC(new Integer(zct[1]), 0, 0, i);
       store.setPlaneTheT(new Integer(zct[2]), 0, 0, i);
 
-      if (zct[2] + 1 < timestamps.size()) {
+      if (zct[2] < timestamps.size()) {
         float thisStamp = ((Double) timestamps.get(zct[2])).floatValue();
-        store.setPlaneTimingDeltaT(new Float(thisStamp), 0, 0, i);
+        store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp), 0, 0, i);
         float nextStamp = i < core.sizeT[0] - 1 ?
           ((Double) timestamps.get(zct[2] + 1)).floatValue() : thisStamp;
         if (i == core.sizeT[0] - 1 && zct[2] > 0) {
