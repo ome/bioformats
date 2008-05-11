@@ -102,6 +102,7 @@ public class DicomReader extends FormatReader {
   private boolean isJPEG = false;
   private boolean isRLE = false;
   private boolean inverted;
+  private boolean bgr = false;
 
   private String date, time, imageType;
 
@@ -257,6 +258,17 @@ public class DicomReader extends FormatReader {
         in.skipBytes(x * c * bpp);
         in.read(buf, row * w * c * bpp, w * c * bpp);
         in.skipBytes(c * bpp * (core.sizeX[0] - w - x));
+      }
+    }
+
+    if (bgr && core.rgb[0]) {
+      int stride = bpp * getRGBChannelCount();
+      for (int i=0; i<buf.length; i+=stride) {
+        for (int q=0; q<bpp; q++) {
+          byte tmp = buf[i + q];
+          buf[i + q] = buf[i + stride - bpp + q];
+          buf[i + stride - bpp + q] = tmp;
+        }
       }
     }
 
@@ -587,7 +599,8 @@ public class DicomReader extends FormatReader {
     String info = getHeaderInfo(tag, value);
 
     if (info != null && tag != ITEM) {
-      if (info.trim().equals("")) info = oldValue;
+      info = info.trim();
+      if (info.equals("")) info = oldValue;
 
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) key = "" + tag;
@@ -621,6 +634,9 @@ public class DicomReader extends FormatReader {
       else if (key.equals("Content Time")) time = info;
       else if (key.equals("Content Date")) date = info;
       else if (key.equals("Image Type")) imageType = info;
+      else if (key.equals("Transfer Syntax UID")) {
+        if (!bgr) bgr = info.equals("1.2.840.10008.1.2");
+      }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
         addMeta(key, info);
