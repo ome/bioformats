@@ -4,8 +4,10 @@
 
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
-import org.openmicroscopy.xml.OMENode;
-import loci.formats.*;
+import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
+import loci.formats.TiffTools;
+import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
 
@@ -18,14 +20,13 @@ public class MakeLZW {
     reader.setMetadataStore(omexmlMeta);
     TiffWriter writer = new TiffWriter();
     for (int i=0; i<args.length; i++) {
-      String f = args[i];
-      String nf = "lzw-" + f;
-      System.out.print("Converting " + f + " to " + nf);
-      reader.setId(f);
-      writer.setId(nf);
+      String inFile = args[i];
+      String outFile = "lzw-" + inFile;
+      System.out.print("Converting " + inFile + " to " + outFile);
+      reader.setId(inFile);
+      writer.setId(outFile);
       int blocks = reader.getImageCount();
-      // CTR: FIXME: update this to be version-agnostic
-      OMENode ome = (OMENode) omexmlMeta.getRoot();
+      String xml = MetadataTools.getOMEXML((MetadataRetrieve) omexmlMeta);
       for (int b=0; b<blocks; b++) {
         System.out.print(".");
         BufferedImage img = reader.openImage(b);
@@ -33,8 +34,7 @@ public class MakeLZW {
         Hashtable ifd = new Hashtable();
         if (b == 0) {
           // preserve OME-XML block
-          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION,
-            ome.writeOME(false));
+          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
         }
 
         // save with LZW
