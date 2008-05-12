@@ -727,6 +727,10 @@ public class ZeissLSMReader extends BaseTiffReader {
     status("Removing thumbnails");
 
     Vector newIFDs = new Vector();
+    int[] bitsPerSample = TiffTools.getBitsPerSample(ifds[0]);
+    long[] byteCounts = TiffTools.getStripByteCounts(ifds[0]);
+    boolean uncompressed =
+      TiffTools.getCompression(ifds[0]) == TiffTools.UNCOMPRESSED;
     for (int i=0; i<ifds.length; i++) {
       long subFileType = TiffTools.getIFDLongValue(ifds[i],
         TiffTools.NEW_SUBFILE_TYPE, true, 0);
@@ -737,6 +741,12 @@ public class ZeissLSMReader extends BaseTiffReader {
         if (TiffTools.getCompression(ifds[i]) != TiffTools.LZW) {
           ifds[i].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
         }
+        if (i > 0) {
+          ifds[i].put(new Integer(TiffTools.BITS_PER_SAMPLE), bitsPerSample);
+          if (uncompressed) {
+            ifds[i].put(new Integer(TiffTools.STRIP_BYTE_COUNTS), byteCounts);
+          }
+        }
         newIFDs.add(ifds[i]);
       }
     }
@@ -746,8 +756,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     thumbnailsRemoved = true;
 
     initMetadata();
-
-    core.littleEndian[0] = !core.littleEndian[0];
   }
 
   // -- Helper methods --

@@ -1498,6 +1498,7 @@ public final class TiffTools {
 
     // determine which channel the strip belongs to
 
+    if (numStrips < numChannels) numStrips = numChannels;
     int channelNum = strip / (numStrips / numChannels);
 
     BitBuffer bb = new BitBuffer(bytes);
