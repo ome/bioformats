@@ -96,9 +96,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
   /** Number of bytes by which to extend the stream. */
   protected int ext = 0;
 
-  /** Number of valid entries in the buffer size array. */
-  protected int lastValid = 0;
-
   /** Flag indicating this file has been compressed. */
   protected boolean compressed = false;
 
@@ -194,7 +191,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);
-        lastValid = 1;
         nextMark = MAX_OVERHEAD;
       }
     }
@@ -456,19 +452,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   /** Read bytes from the stream into the given array. */
   public void readFully(byte[] array) throws IOException {
-    int status = checkEfficiency(array.length);
-
-    if (status == DIS) {
-      readFully(array, 0, array.length);
-    }
-    else if (status == ARRAY) {
-      System.arraycopy(buf, (int) afp, array, 0, array.length);
-    }
-    else {
-      raf.readFully(array, 0, array.length);
-    }
-    afp += array.length;
-    if (status == DIS) fp += array.length;
+    readFully(array, 0, array.length);
   }
 
   /**
@@ -613,7 +597,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       return DIS;
     }
     else {
-      if (dis != null && afp >= mark && fp < mark + MAX_OVERHEAD) {
+      if (dis != null && afp >= mark && fp < mark) {
         boolean valid = true;
 
         try {

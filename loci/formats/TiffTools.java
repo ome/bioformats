@@ -456,13 +456,14 @@ public final class TiffTools {
       if (count < 0) return null; // invalid data
       Object value = null;
 
+      if (count > threshhold / BYTES_PER_ELEMENT[type]) {
+        long pointer = bigTiff ? in.readLong() :
+          (long) (in.readInt() & 0xffffffffL);
+        in.seek(pointer);
+      }
+
       if (type == BYTE) {
         // 8-bit unsigned integer
-        if (count > threshhold) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Short(in.readByte());
         else {
           byte[] bytes = new byte[count];
@@ -477,11 +478,6 @@ public final class TiffTools {
         // 8-bit byte that contain a 7-bit ASCII code;
         // the last byte must be NUL (binary zero)
         byte[] ascii = new byte[count];
-        if (count > threshhold) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         in.read(ascii);
 
         // count number of null terminators
@@ -510,11 +506,6 @@ public final class TiffTools {
       }
       else if (type == SHORT) {
         // 16-bit (2-byte) unsigned integer
-        if (count > threshhold / 2) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Integer(in.readShort() & 0xffff);
         else {
           int[] shorts = new int[count];
@@ -526,11 +517,6 @@ public final class TiffTools {
       }
       else if (type == LONG) {
         // 32-bit (4-byte) unsigned integer
-        if (count > threshhold / 4) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Long(in.readInt());
         else {
           long[] longs = new long[count];
@@ -539,11 +525,6 @@ public final class TiffTools {
         }
       }
       else if (type == LONG8 || type == SLONG8 || type == IFD8) {
-        if (count > threshhold / 8) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Long(in.readLong());
         else {
           long[] longs = new long[count];
@@ -556,9 +537,6 @@ public final class TiffTools {
         // the second, the denominator
         // Two SLONG's: the first represents the numerator of a fraction,
         // the second the denominator
-        long pointer = bigTiff ? in.readLong() :
-          (long) (in.readInt() & 0xffffffffL);
-        if (count > threshhold / 8) in.seek(pointer);
         if (count == 1) value = new TiffRational(in.readInt(), in.readInt());
         else {
           TiffRational[] rationals = new TiffRational[count];
@@ -572,11 +550,6 @@ public final class TiffTools {
         // SBYTE: An 8-bit signed (twos-complement) integer
         // UNDEFINED: An 8-bit byte that may contain anything,
         // depending on the definition of the field
-        if (count > threshhold) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Byte(in.readByte());
         else {
           byte[] sbytes = new byte[count];
@@ -586,11 +559,6 @@ public final class TiffTools {
       }
       else if (type == SSHORT) {
         // A 16-bit (2-byte) signed (twos-complement) integer
-        if (count > threshhold / 2) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Short(in.readShort());
         else {
           short[] sshorts = new short[count];
@@ -600,11 +568,6 @@ public final class TiffTools {
       }
       else if (type == SLONG) {
         // A 32-bit (4-byte) signed (twos-complement) integer
-        if (count > threshhold / 4) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Integer(in.readInt());
         else {
           int[] slongs = new int[count];
@@ -614,11 +577,6 @@ public final class TiffTools {
       }
       else if (type == FLOAT) {
         // Single precision (4-byte) IEEE format
-        if (count > threshhold / 4) {
-          long pointer = bigTiff ? in.readLong() :
-            (long) (in.readInt() & 0xffffffffL);
-          in.seek(pointer);
-        }
         if (count == 1) value = new Float(in.readFloat());
         else {
           float[] floats = new float[count];
@@ -628,9 +586,6 @@ public final class TiffTools {
       }
       else if (type == DOUBLE) {
         // Double precision (8-byte) IEEE format
-        long pointer = bigTiff ? in.readLong() :
-          (long) (in.readInt() & 0xffffffffL);
-        in.seek(pointer);
         if (count == 1) value = new Double(in.readDouble());
         else {
           double[] doubles = new double[count];
