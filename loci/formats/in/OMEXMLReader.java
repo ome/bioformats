@@ -98,15 +98,16 @@ public class OMEXMLReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(((Long) offsets[series].get(no)).longValue());
+    long offset = ((Long) offsets[series].get(no)).longValue();
+
+    in.seek(offset);
 
     int len = 0;
     if (no < getImageCount() - 1) {
-      len = (int) (((Long) offsets[series].get(no + 1)).longValue() -
-        ((Long) offsets[series].get(no)).longValue());
+      len = (int) (((Long) offsets[series].get(no + 1)).longValue() - offset);
     }
     else {
-      len = (int) (in.length() - ((Long) offsets[series].get(no)).longValue());
+      len = (int) (in.length() - offset);
     }
     String data = in.readString(len);
 
@@ -130,10 +131,8 @@ public class OMEXMLReader extends FormatReader {
 
       ByteArrayInputStream bais = new ByteArrayInputStream(pixels);
       CBZip2InputStream bzip = new CBZip2InputStream(bais);
-      pixels = new byte[core.sizeX[series] * core.sizeY[series] * bpp[series]];
-      for (int i=0; i<pixels.length; i++) {
-        pixels[i] = (byte) bzip.read();
-      }
+      pixels = new byte[core.sizeX[series]*core.sizeY[series]*bpp[series]];
+      bzip.read(pixels, 0, pixels.length);
       tempPixels = null;
       bais.close();
       bais = null;
@@ -154,8 +153,8 @@ public class OMEXMLReader extends FormatReader {
 
     int depth = FormatTools.getBytesPerPixel(core.pixelType[series]);
     for (int row=0; row<h; row++) {
-      int offset = (row + y) * core.sizeX[series] * depth + x * depth;
-      System.arraycopy(pixels, offset, buf, row * w * depth, w * depth);
+      int off = (row + y) * core.sizeX[series] * depth + x * depth;
+      System.arraycopy(pixels, off, buf, row * w * depth, w * depth);
     }
 
     return buf;
@@ -183,28 +182,26 @@ public class OMEXMLReader extends FormatReader {
 
     in.seek(0);
     String s = in.readString((int) in.length());
-    in.seek(0);
+    in.seek(200);
 
     MetadataRetrieve omexmlMeta = (MetadataRetrieve)
       MetadataTools.createOMEXMLMetadata(s);
 
     status("Determining endianness");
 
-    in.skipBytes(200);
-
     int numDatasets = 0;
     Vector endianness = new Vector();
     Vector bigEndianPos = new Vector();
 
-    byte[] buf = new byte[1];
+    byte[] buf = new byte[8192];
+    in.read(buf, 0, 9);
 
     while (in.getFilePointer() < in.length()) {
       // read a block of 8192 characters, looking for the "BigEndian" pattern
-      buf = new byte[8192];
       boolean found = false;
       while (!found) {
         if (in.getFilePointer() < in.length()) {
-          int read = in.read(buf, 9, 8183);
+          int read = in.read(buf, 9, buf.length - 9);
           String test = new String(buf);
 
           int ndx = test.indexOf("BigEndian");
@@ -221,6 +218,7 @@ public class OMEXMLReader extends FormatReader {
           throw new FormatException("Pixel data not found.");
         }
         else found = true;
+        System.arraycopy(buf, buf.length - 9, buf, 0, 9);
       }
     }
 
@@ -237,19 +235,17 @@ public class OMEXMLReader extends FormatReader {
     for (int i=0; i<numDatasets; i++) {
       in.seek(((Long) bigEndianPos.get(i)).longValue());
       boolean found = false;
-      buf = new byte[8192];
       in.read(buf, 0, 14);
 
       while (!found) {
         if (in.getFilePointer() < in.length()) {
-          int numRead = in.read(buf, 14, 8178);
+          int numRead = in.read(buf, 14, buf.length - 14);
 
           String test = new String(buf);
 
           int ndx = test.indexOf("<Bin");
           if (ndx == -1) {
-            byte[] b = buf;
-            System.arraycopy(b, 8177, buf, 0, 14);
+            System.arraycopy(buf, buf.length - 14, buf, 0, 14);
           }
           else {
             while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")) &&
@@ -283,15 +279,13 @@ public class OMEXMLReader extends FormatReader {
         in.read(buf, 0, 14);
         while (!found) {
           if (in.getFilePointer() < in.length()) {
-            in.read(buf, 14, 8178);
+            in.read(buf, 14, buf.length - 14);
 
             String test = new String(buf);
 
             int ndx = test.indexOf("<Image ");
             if (ndx == -1) {
-              byte[] b = buf;
-              System.arraycopy(b, 8177, buf, 0, 14);
-              b = null;
+              System.arraycopy(buf, buf.length - 14, buf, 0, 14);
             }
             else {
               found = true;
