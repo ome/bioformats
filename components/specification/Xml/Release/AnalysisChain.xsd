@@ -2,7 +2,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2003-2007 Open Microscopy Environment
+	# Copyright (C) 2003-2008 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -16,8 +16,8 @@
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <schema xmlns = "http://www.w3.org/2001/XMLSchema"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2007-06"
-	xmlns:AC = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2007-06"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-02"
+	xmlns:AC = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-02"
 	 version = "1"
 	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	 elementFormDefault = "qualified">

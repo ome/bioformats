@@ -2,7 +2,7 @@
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2003-2007 Open Microscopy Environment
+    # Copyright (C) 2003-2008 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -15,15 +15,13 @@
     # Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
-    targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
-    xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
-    xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
+    targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
+    xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-    version="2" 
+    version="1" 
     elementFormDefault="qualified">
-    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd"/>
-    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
+    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd"/>
 
     <xsd:annotation>
         <xsd:documentation>
@@ -388,6 +386,8 @@
         <xsd:annotation>
             <xsd:documentation>
                 The ImageRef element is a reference to a OME:Image element.
+                Note: at present this is only used from SPW. If it is used more 
+                widely in the future it will be moved into the main OME schema.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>

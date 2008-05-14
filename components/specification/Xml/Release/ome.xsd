@@ -2,7 +2,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2002-2007 Open Microscopy Environment
+	# Copyright (C) 2002-2008 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -15,27 +15,29 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2007-06" 
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2007-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" 
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-02" 
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="2" 
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2007-06/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2007-06/CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2007-06/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd"/>
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema June 2007 - Update Version 2 September 2007
+			OME XML Schema February 2008 - Update Version 2 May 2008
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright 2002 - 2007 OME. All rights reserved.
+			Copyright 2002 - 2008 OME. All rights reserved.
 		</xsd:documentation>
 	</xsd:annotation>
 	<xsd:element name="OME">
@@ -62,6 +64,7 @@
 				<xsd:element ref="AML:AnalysisModuleLibrary" minOccurs="0"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xsd:sequence>
+				<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Image">
@@ -91,14 +94,13 @@
 				<xsd:element ref="GroupRef" minOccurs="0"/>
 				<xsd:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="InstrumentRef" minOccurs="0"/>
-				<xsd:element ref="ObjectiveSettingsRef" minOccurs="0"/>
+				<xsd:element ref="ObjectiveRef" minOccurs="0"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0"/>
 				<xsd:element ref="Thumbnail" minOccurs="0"/>
 				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="DisplayOptions" minOccurs="0"/>
 				<xsd:element ref="StageLabel" minOccurs="0"/>
 				<xsd:element ref="Pixels" maxOccurs="unbounded"/>
-				<xsd:element ref="AcquiredPixelsRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
 				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
@@ -108,8 +110,18 @@
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
 			<xsd:attribute name="DefaultPixels" use="required" type="PixelsID">
 				<xsd:annotation>
-					<xsd:documentation>More than one Pixels attribute may be associated with an Image. An Image will however have one "primary" set of Pixels. If a PixelsID is specified with this attribute, then that will be the "primary" pixels for this image. If this attribute
-is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be assumed to be the "primary" set.
+					<xsd:documentation>
+						More than one Pixels element may be associated with an Image. 
+						An Image will however have one "primary" set of Pixels specified with this attribute.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="AcquiredPixels" type="PixelsID">
+				<xsd:annotation>
+					<xsd:documentation>
+						Optional. 
+						More than one Pixels element may be associated with an Image. 
+						This attribute indicates the original acquired pixels.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -154,19 +166,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="PixelType" use="required">
-				<xsd:simpleType>
-					<xsd:restriction base="PixelTypes">
-						<xsd:enumeration value = "int8"/>
-						<xsd:enumeration value = "int16"/>
-						<xsd:enumeration value = "int32"/>
-						<xsd:enumeration value = "uint8"/>
-						<xsd:enumeration value = "uint16"/>
-						<xsd:enumeration value = "uint32"/>
-						<xsd:enumeration value = "float"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
+			<xsd:attribute name="PixelType" use="required" type="PixelTypes"/>
 			<xsd:attribute name="BigEndian" use="required" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>This is true if the pixel data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All pixel data must be written in the same endian order.</xsd:documentation>
@@ -217,23 +217,41 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="WaveIncrement" type="xsd:positiveInteger"/>
 		</xsd:complexType>
 	</xsd:element>
-	
-	<xsd:element name="AcquiredPixelsRef">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="PixelsID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-				
 	<xsd:element name="TiffData">
 		<xsd:annotation>
 			<xsd:documentation>
+				This described the location of the pixel data in a tiff file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UUID" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+							This must be used when the IFDs are located in another file.
+							Note: It is permissible for this to be self referential.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base = "UniversallyUniqueIdentifier">
+								<xsd:attribute name="FileName" type="xsd:string">
+									<xsd:annotation>
+										<xsd:documentation>
+											This can be used when the IFDs are located in another file.
+											The / (forward slash) is used as the path separator.
+											A relative path is recommended. However an absolute path can be specified.
+											Default is to use the file the ome-xml data has been pulled from.
+											Note: It is permissible for this to be self referential. The file image1.tiff
+											may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:extension>
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
 			<xsd:attribute name="IFD" type="xsd:integer" default="0">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -287,6 +305,16 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:sequence>
 				<xsd:element name="PlaneTiming" type="PlaneTiming" minOccurs="0" maxOccurs="1"/>
 				<xsd:element name="StagePosition" type="StagePosition" minOccurs="0" maxOccurs="1"/>
+				<xsd:choice minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							This optional element is a hash of the plane's image data. 
+							It is a choice between all the support hash types.
+							Currently the only method supported is SHA1.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:element name="HashSHA1" type="Hex40"/>
+				</xsd:choice>
 			</xsd:sequence>
 			<xsd:attribute name="TheZ" use="required" type="xsd:integer"/>
 			<xsd:attribute name="TheT" use="required" type="xsd:integer"/>
@@ -442,7 +470,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The optional PinholeAize attribute allows specifying adjustable pin hole diameters for confocal microscopes.
 				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
 				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
-				The Model attribute describes the type of microscopy performed for each channel.  This may be set to:
+				The Mode attribute describes the type of microscopy performed for each channel.  This may be set to:
 				'Wide-field','Wide-field','Laser Scanning Microscopy','Laser Scanning Confocal','Spinning Disk Confocal','Slit Scan Confocal','Multi-Photon Microscopy',
 				'Structured Illumination','Single Molecule Imaging','Total Internal Reflection','Fluorescence-Lifetime','Spectral Imaging',
 				'Fluorescence Correlation Spectroscopy','Near Field Scanning Optical Microscopy','Second Harmonic Generation Imaging'.
@@ -777,7 +805,21 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				A description of the microscope's objective lens.
-				Required elements include the lens numerical aperture, and the magnification, both of which a floating point (real) numbers.
+				Required elements include the lens numerical aperture, 
+				and the magnification, both of which a floating 
+				point (real) numbers.
+				The values are those that are fixed for a particular 
+				objective: either because it has been manufactured to 
+				this specification or the value has been measured on 
+				this particular objective.
+				Correction: This is the type of correction coating applied to this lens.
+				Immersion: This is the types of immersion medium the lens is designed to
+				work with. It is not the same as 'Medium' in ObjectiveRef (a 
+				single type) as here Immersion can have compound values like 'Multi'.
+				LensNA: The numerical aperture of the lens (as a float)
+				NominalMagnification: The specified magnification e.g. x10
+				CalibratedMagnification: The measured magnification e.g. x10.3
+				WorkingDistance: WorkingDistance of the lense. The Units are um.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -798,25 +840,10 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ObjectiveSettings">
-		<xsd:annotation>
-			<xsd:documentation>
-				A description of the user settings on a microscope's objective lens.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="ObjectiveRef"/>
-			</xsd:sequence>
-			<xsd:attribute name="CorrectionCollar" type="xsd:float"/>
-			<xsd:attribute name="Medium" type="Medium"/>
-			<xsd:attribute name="RefractiveIndex" type="xsd:float"/>
-		</xsd:complexType>
-	</xsd:element>
 	<xsd:simpleType name="Medium">
 		<xsd:annotation>
 			<xsd:documentation>
-				A description of a Medium used either for the sample or the lens.
+				A description of a Medium used for the lens.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
@@ -896,36 +923,36 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Correction" type="Correction">
+	<xsd:element name="Correction">
 		<xsd:annotation>
 			<xsd:documentation>The coating applied to the lens</xsd:documentation>
 		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="UV"/>
+				<xsd:enumeration value="PlanApo"/>
+				<xsd:enumeration value="PlanFluor"/>
+				<xsd:enumeration value="SuperFluor"/>
+				<xsd:enumeration value="VioletCorrected"/>
+			</xsd:restriction>
+		</xsd:simpleType>
 	</xsd:element>
-	<xsd:simpleType name="Correction">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="UV"/>
-			<xsd:enumeration value="PlanApo"/>
-			<xsd:enumeration value="PlanFluor"/>
-			<xsd:enumeration value="SuperFluor"/>
-			<xsd:enumeration value="VioletCorrected"/>
-		</xsd:restriction>
-	</xsd:simpleType>	
-	<xsd:element name="Immersion" type="Immersion">
+	<xsd:element name="Immersion">
 		<xsd:annotation>
 			<xsd:documentation>The immersion medium the lens is designed for</xsd:documentation>
 		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="Oil"/>
+				<xsd:enumeration value="Water"/>
+				<xsd:enumeration value="WaterDipping"/>
+				<xsd:enumeration value="Air"/>
+				<xsd:enumeration value="Multi"/>
+				<xsd:enumeration value="Glycerol"/>
+				<xsd:enumeration value="Other"/>
+			</xsd:restriction>
+		</xsd:simpleType>	
 	</xsd:element>
-	<xsd:simpleType name="Immersion">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="Oil"/>
-			<xsd:enumeration value="Water"/>
-			<xsd:enumeration value="WaterDipping"/>
-			<xsd:enumeration value="Air"/>
-			<xsd:enumeration value="Multi"/>
-			<xsd:enumeration value="Glycerol"/>
-			<xsd:enumeration value="Other"/>
-		</xsd:restriction>
-	</xsd:simpleType>	
 	<xsd:element name="WorkingDistance" type="xsd:float">
 		<xsd:annotation>
 			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number. Units are um.</xsd:documentation>
@@ -992,15 +1019,25 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Description">
+	<xsd:element name = "Description">
 		<xsd:annotation>
 			<xsd:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
-				The content model is currently ANY, but this is going to change to String in 
-				the near future. This is no longer the correct place for an XML sub-document
-				- use CustomAttributes instead.
+				The content model is now String.
+				This is no longer the correct place for an XML sub-document
+				Either 
+				- use CustomAttributes instead
+				Or
+				- define your own xml tree outside the OME node and link to the OME objects using references to the IDs
 			</xsd:documentation>
 		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute ref = "xml:lang" default = "en"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Microscope">
 		<xsd:annotation>
@@ -1152,6 +1189,22 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:\S+:\S+)|(\S+:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="UniversallyUniqueIdentifier">
+		<xsd:annotation>
+			<xsd:documentation>
+				This is a unique ID for the file but does not conform to the ID pattern used in the rest of the file.
+				The rest of the IDs are either an full LSID or an internal ID which is a string that is simply unique in this file.
+				As the UniversallyUniqueIdentifier is used from outside this file to identify it having the same ID in another file could cause problems.
+				A UUID is 32 hexadecimal digits, in 5 groups, 8-4-4-4-12, separated by hyphens
+				e.g. urn:uuid:3e450fae-b8f2-4d35-aa54-702168b2487f
+				There are methods to generate these in most modern languages.
+				http://www.ietf.org/rfc/rfc4122.txt
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:anyURI">
+			<xsd:pattern value="(urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="ProjectID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Project:\S+)|(Project:\S+)"/>
@@ -1207,11 +1260,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Objective:\S+)|(Objective:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="ObjectiveSettingsID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ObjectiveSettings:\S+)|(ObjectiveSettings:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="LightSourceID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:LightSource:\S+)|(LightSource:\S+)"/>
@@ -1259,18 +1307,26 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	</xsd:simpleType>
 	<xsd:simpleType name="PixelTypes">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="bit"/>
-			<xsd:enumeration value="int8"/>
-			<xsd:enumeration value="int16"/>
-			<xsd:enumeration value="int32"/>
-			<xsd:enumeration value="uint8"/>
-			<xsd:enumeration value="uint16"/>
-			<xsd:enumeration value="uint32"/>
-			<xsd:enumeration value ="float"/>
-			<xsd:enumeration value ="double"/>
-			<xsd:enumeration value ="complex"/>
-			<xsd:enumeration value ="double-complex"/>
+				<xsd:enumeration value = "int8"/>
+				<xsd:enumeration value = "int16"/>
+				<xsd:enumeration value = "int32"/>
+				<xsd:enumeration value = "uint8"/>
+				<xsd:enumeration value = "uint16"/>
+				<xsd:enumeration value = "uint32"/>
+				<xsd:enumeration value = "float"/>
 		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ExtendedPixelTypes">
+		<xsd:union memberTypes="PixelTypes">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value = "bit"/>
+					<xsd:enumeration value = "double"/>
+					<xsd:enumeration value = "complex"/>
+					<xsd:enumeration value = "double-complex"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
 	</xsd:simpleType>
 	<xsd:simpleType name="ModuleID">
 		<xsd:restriction base="LSID">
@@ -1488,7 +1544,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="Bin:BinaryFile"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
-			<xsd:attribute name="PixelType" use="required" type="PixelTypes"/>
+			<xsd:attribute name="PixelType" use="required" type="ExtendedPixelTypes"/>
 			<xsd:attribute name="OpticalAxisAveraged" use="required" type="xsd:boolean"/>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger"/>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger"/>
@@ -1599,7 +1655,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>
 				Laser types are specified using two attributes - the Type and the lasing medium (Medium).  Type is a string which may be set to:
 				'Excimer','Gas','Metal Vapor','Solid State','Dye','Semiconductor', or 'Free Electron'.  The Medium attribute specifies the actual lasing medium
-				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), whether or not the laser is FrequencyDoubled or Tuneable may be specified.
+				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), whether or not the laser is Tuneable, and any FrequencyMultiplication that may be specified.
 				The Pulse attribute can be set to 'CW' (Continuous Wave),','Single','Q-Switched','Repetitive','Mode-Locked'.
 				The Power attribute specifies the nominal laser power in watts.
 				The Laser element may contain a Pump sub-element which refers to a LightSource used as a laser pump.
@@ -1654,7 +1710,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The Arc element is used to describe various kinds of Arc lamps - Hg, Xe, HgXe.
-				The Power attribute is the lamp's nominal power in watts.
+				The Power of the Arc is now stored in the LightSource.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1667,14 +1723,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Power" type="xsd:float"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Filament">
 		<xsd:annotation>
 			<xsd:documentation>
 				The Filament element is used to describe various kinds of filament bulbs such as Incadescent or Halogen.
-				The Power attribute is the bulb's nominal power in watts.
+				The Power of the Filament is now stored in the LightSource.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1686,7 +1741,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Power" type="xsd:float"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="LightSourceRef">
@@ -1770,6 +1824,19 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="ObjectiveRef">
+		<xsd:annotation>
+			<xsd:documentation> 
+				This holds the setting applied to an objective as well as a
+				reference to the objective. 
+				The ID is the objective used in this case.
+				The CorrectionCollar is it normal an adjustable ring on the 
+				objective. Each has an arbitrary scale on it so the values 
+				is unit-less.
+				The Medium is the actual immersion medium used in this case.
+				The RefractiveIndex is that of the immersion medium. This is
+				a ratio so it also unit-less.
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -1779,15 +1846,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					<xsd:attribute name="RefractiveIndex" type="xsd:float">
 						<xsd:annotation><xsd:documentation>This is unit-less, it is a ratio.</xsd:documentation></xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="ObjectiveSettingsRef">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="ObjectiveSettingsID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
