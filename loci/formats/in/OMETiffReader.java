@@ -148,6 +148,7 @@ public class OMETiffReader extends BaseTiffReader {
         String iid = file.getAbsolutePath();
         String icomment = TiffTools.getComment(iid);
         if (icomment == null || icomment.trim().length() == 0) continue;
+        if (!icomment.trim().startsWith("<?xml")) continue;
         boolean addToList = true;
         if (uuids) {
           currentSeries = -1;
