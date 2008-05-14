@@ -370,6 +370,12 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
       if (core.sizeC[0] == 0) core.sizeC[0] = 1;
 
+      if (core.rgb[0]) {
+        // shuffle C to front of order string
+        core.currentOrder[0] = core.currentOrder[0].replaceAll("C", "");
+        core.currentOrder[0] = core.currentOrder[0].replaceAll("XY", "XYC");
+      }
+
       put("DimensionZ", core.sizeZ[0]);
       put("DimensionChannels", core.sizeC[0]);
 
