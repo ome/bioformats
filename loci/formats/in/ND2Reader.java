@@ -529,7 +529,9 @@ public class ND2Reader extends FormatReader {
 
       if (offsets.length != core.imageCount.length && core.imageCount[0] == 1) {
         core.imageCount[0] = offsets.length;
+        if (core.sizeC[0] == 0) core.sizeC[0] = 1;
         core.sizeT[0] = offsets.length / core.sizeC[0];
+        if (core.sizeT[0] == 0) core.sizeT[0] = 1;
         core.sizeZ[0] = 1;
         long[][] tmpOffsets = offsets;
         offsets = new long[core.imageCount.length][core.imageCount[0]];
@@ -548,7 +550,7 @@ public class ND2Reader extends FormatReader {
         core = new CoreMetadata(offsets.length);
         Arrays.fill(core.sizeX, x);
         Arrays.fill(core.sizeY, y);
-        Arrays.fill(core.sizeC, c);
+        Arrays.fill(core.sizeC, c == 0 ? 1 : c);
         Arrays.fill(core.pixelType, pixelType);
         Arrays.fill(core.rgb, rgb);
         Arrays.fill(core.sizeZ, 1);
@@ -558,6 +560,7 @@ public class ND2Reader extends FormatReader {
             if (offsets[i][q] == 0) invalid++;
           }
           core.sizeT[i] = (offsets[i].length - invalid) / core.sizeC[i];
+          if (core.sizeT[i] == 0) core.sizeT[i] = 1;
           core.imageCount[i] = offsets[i].length - invalid;
         }
       }
@@ -571,9 +574,6 @@ public class ND2Reader extends FormatReader {
         Arrays.fill(core.pixelType, core.pixelType[0]);
       }
 
-      if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
-      if (core.sizeC[0] == 0) Arrays.fill(core.sizeC, 1);
-      if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
       Arrays.fill(core.currentOrder, "XYCZT");
       Arrays.fill(core.rgb, core.sizeC[0] > 1);
 
@@ -610,7 +610,7 @@ public class ND2Reader extends FormatReader {
         store.setImageName("Series " + i, i);
         store.setImageCreationDate(
           DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
-      
+
         if (tsT.size() > 0) {
           setSeries(i);
           for (int n=0; n<core.imageCount[i]; n++) {
@@ -619,7 +619,7 @@ public class ND2Reader extends FormatReader {
             store.setPlaneTheC(new Integer(coords[1]), i, 0, n);
             store.setPlaneTheT(new Integer(coords[2]), i, 0, n);
             float stamp = ((Double) tsT.get(coords[2])).floatValue();
-            store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n); 
+            store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
           }
         }
       }
@@ -653,9 +653,9 @@ public class ND2Reader extends FormatReader {
       length -= 8;
 
       if (box == 0x6a703263) {
-        vs.add(new Long(in.getFilePointer()));
+        vs.add(new Long(pos));
       }
-      if (!lastBoxFound) in.seek(pos + length);
+      if (!lastBoxFound) in.skipBytes(length);
     }
 
     status("Finding XML metadata");
@@ -666,7 +666,7 @@ public class ND2Reader extends FormatReader {
 
     boolean found = false;
     long off = -1;
-    byte[] buf = new byte[2048];
+    byte[] buf = new byte[8192];
     while (!found && in.getFilePointer() < in.length()) {
       int read = 0;
       if (in.getFilePointer() == ((Long) vs.get(vs.size() - 1)).longValue()) {
@@ -704,14 +704,15 @@ public class ND2Reader extends FormatReader {
       sb.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><NIKON>");
 
       while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        token = token.replaceAll("<!--.*-->", "");
-        token = token.replaceAll(".*xml", "").trim();
-        token = token.substring(0, token.lastIndexOf(">") + 1);
+        String token = st.nextToken().trim();
+        if (token.indexOf("<!--") != -1) continue;
         if (token.startsWith("<")) sb.append(token);
       }
+
       sb.append("</NIKON>");
       xml = sb.toString();
+
+      status("Finished assembling XML string");
 
       ND2Handler handler = new ND2Handler();
 
@@ -821,13 +822,10 @@ public class ND2Reader extends FormatReader {
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     int numBands = img.getRaster().getNumBands();
     int c = numBands > 1 ? numBands : core.sizeC[0];
+    if (numBands == 1 && core.imageCount[0] == 1) c = 1;
     Arrays.fill(core.sizeC, c);
     Arrays.fill(core.rgb, numBands > 1);
     Arrays.fill(core.pixelType, ImageTools.getPixelType(img));
-
-    if (!core.rgb[0] && core.imageCount[0] == 1) {
-      Arrays.fill(core.sizeC, 1);
-    }
 
     if (core.rgb[0] && core.imageCount[0] > core.sizeZ[0] * core.sizeT[0]) {
       if (core.sizeZ[0] > 1) core.sizeZ[0] *= core.sizeC[0];
@@ -874,8 +872,6 @@ public class ND2Reader extends FormatReader {
 //          null, null, null, null, null, ii);
 //      }
     }
-
-    String prefix = "MetadataSeq _SEQUENCE_INDEX=\"0\" ";
 
     /*
     // populate DetectorSettings
@@ -1002,21 +998,11 @@ public class ND2Reader extends FormatReader {
       pixelSizeX = Float.parseFloat(value);
       pixelSizeY = pixelSizeX;
     }
-    else if (key.endsWith("dAspect")) {
-      pixelSizeZ = Float.parseFloat(value);
-    }
-    else if (key.endsWith("dGain")) {
-      gain = value;
-    }
-    else if (key.endsWith("dLampVoltage")) {
-      voltage = value;
-    }
-    else if (key.endsWith("dObjectiveMag")) {
-      mag = value;
-    }
-    else if (key.endsWith("dObjectiveNA")) {
-      na = value;
-    }
+    else if (key.endsWith("dAspect")) pixelSizeZ = Float.parseFloat(value);
+    else if (key.endsWith("dGain")) gain = value;
+    else if (key.endsWith("dLampVoltage")) voltage = value;
+    else if (key.endsWith("dObjectiveMag")) mag = value;
+    else if (key.endsWith("dObjectiveNA")) na = value;
     else if (key.endsWith("dTimeMSec")) {
       long v = (long) Double.parseDouble(value);
       if (!ts.contains(new Long(v))) {
@@ -1059,25 +1045,21 @@ public class ND2Reader extends FormatReader {
                 core = new CoreMetadata(numSeries);
                 Arrays.fill(core.sizeX, x);
                 Arrays.fill(core.sizeY, y);
-                Arrays.fill(core.sizeZ, z);
-                Arrays.fill(core.sizeC, c);
-                Arrays.fill(core.sizeT, tSize);
+                Arrays.fill(core.sizeZ, z == 0 ? 1 : z);
+                Arrays.fill(core.sizeC, c == 0 ? 1 : c);
+                Arrays.fill(core.sizeT, tSize == 0 ? 1 : tSize);
               }
             }
             else if (dim.startsWith("T")) {
-              Arrays.fill(core.sizeT, v);
+              Arrays.fill(core.sizeT, v == 0 ? 1 : v);
             }
             else if (dim.startsWith("Z")) {
-              Arrays.fill(core.sizeZ, v);
+              Arrays.fill(core.sizeZ, v == 0 ? 1 : v);
             }
             else {
-              Arrays.fill(core.sizeC, v);
+              Arrays.fill(core.sizeC, v == 0 ? 1 : v);
             }
           }
-
-          if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
-          if (core.sizeC[0] == 0) Arrays.fill(core.sizeC, 1);
-          if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
 
           int count = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
           Arrays.fill(core.imageCount, count);
