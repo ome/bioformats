@@ -73,6 +73,7 @@ public class OMETiffReader extends BaseTiffReader {
   private boolean uuids, lsids, isWiscScan;
   private Hashtable[][] usedIFDs;
   private Hashtable keyMetadata, temporaryKeyMetadata;
+  private String directory;
 
   // -- Constructor --
 
@@ -106,6 +107,10 @@ public class OMETiffReader extends BaseTiffReader {
     tempFileMap = new Vector();
     tempIfdCount = new Vector();
 
+    Location l = new Location(currentId).getAbsoluteFile().getParentFile();
+    directory = l.getAbsolutePath();
+    if (!directory.endsWith(File.separator)) directory += File.separator;
+
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();
       parser.parse(new ByteArrayInputStream(comment.getBytes()), handler);
@@ -129,7 +134,6 @@ public class OMETiffReader extends BaseTiffReader {
 
     // look for additional files in the dataset
     Vector files = new Vector();
-    Location l = new Location(currentId).getAbsoluteFile().getParentFile();
     String[] fileList = new File(currentId).exists() ? l.list() :
       (String[]) Location.getIdMap().keySet().toArray(new String[0]);
 
@@ -212,8 +216,6 @@ public class OMETiffReader extends BaseTiffReader {
         }
       }
     }
-
-    if (!files.contains(currentId)) files.add(currentId);
 
     // parse grouped files
 
@@ -311,6 +313,12 @@ public class OMETiffReader extends BaseTiffReader {
           core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
         }
         else core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
+      }
+
+      if (core.imageCount[i] == core.sizeZ[i] * core.sizeT[i] &&
+        core.sizeC[i] > 1)
+      {
+        core.rgb[i] = true;
       }
     }
   }
@@ -418,7 +426,9 @@ public class OMETiffReader extends BaseTiffReader {
     private int sizeZ, sizeC, sizeT;
     private int imageCount = 0;
     private boolean foundDescription = false, foundDate = false;
+    private boolean foundUUID = false;
     private boolean minimal;
+    private int currentIFD, ifdCount;
 
     public OMETiffHandler(boolean minimal) {
       // flag is true if we just want to scan for metadata, without populating
@@ -469,6 +479,24 @@ public class OMETiffReader extends BaseTiffReader {
       }
       else if (qName.equals("Description")) {
         foundDescription = true;
+      }
+      else if (qName.equals("UUID")) {
+        foundUUID = true;
+
+        if (usedFiles != null && fileMap != null) {
+          String filename = directory + attributes.getValue("FileName");
+          int pos = -1;
+          for (int q=0; q<usedFiles.length; q++) {
+            if (usedFiles[q].equals(filename)) {
+              pos = q;
+              break;
+            }
+          }
+          fileMap[currentSeries][currentIFD] = pos;
+          for (int i=1; i<ifdCount; i++) {
+            fileMap[currentSeries][currentIFD + i] = pos;
+          }
+        }
       }
       else if (qName.equals("Pixels")) {
         if (minimal) return;
@@ -552,19 +580,7 @@ public class OMETiffReader extends BaseTiffReader {
       }
       else if (qName.equals("TiffData")) {
         if (minimal) return;
-        String uuid = attributes.getValue("UUID");
         String ifd = attributes.getValue("IFD");
-        if (uuid != null) {
-          uuids = true;
-          if (planeUUIDs == null) planeUUIDs = new Vector();
-          int ndx = Integer.parseInt(ifd);
-          if (ndx < planeUUIDs.size()) planeUUIDs.setElementAt(uuid, ndx);
-          else {
-            int diff = ndx - planeUUIDs.size();
-            for (int i=0; i<diff; i++) planeUUIDs.add("");
-            planeUUIDs.add(uuid);
-          }
-        }
         String numPlanes = attributes.getValue("NumPlanes");
         String z = attributes.getValue("FirstZ");
         String c = attributes.getValue("FirstC");
@@ -600,6 +616,8 @@ public class OMETiffReader extends BaseTiffReader {
         int idx = FormatTools.getIndex(order, sizeZ, sizeC, sizeT,
           sizeZ * sizeC * sizeT, Integer.parseInt(z), Integer.parseInt(c),
           Integer.parseInt(t));
+         currentIFD = idx;
+         ifdCount = Integer.parseInt(numPlanes);
 
         if (tempIfdMap != null) {
           Vector v = new Vector(sizeZ * sizeC * sizeT);
@@ -618,7 +636,7 @@ public class OMETiffReader extends BaseTiffReader {
           v.setElementAt(new Integer(ifd), idx);
           y.setElementAt(new Integer(0), idx);
 
-          for (int i=1; i<Integer.parseInt(numPlanes); i++) {
+          for (int i=1; i<ifdCount; i++) {
             if (idx + i < v.size()) {
               v.setElementAt(new Integer(Integer.parseInt(ifd) + i), idx + i);
               y.setElementAt(new Integer(0), idx + i);
@@ -646,7 +664,7 @@ public class OMETiffReader extends BaseTiffReader {
         else {
           ifdMap[currentSeries][idx] = Integer.parseInt(ifd);
           fileMap[currentSeries][idx] = currentFile;
-          for (int i=1; i<Integer.parseInt(numPlanes); i++) {
+          for (int i=1; i<ifdCount; i++) {
             if (idx + i < ifdMap[currentSeries].length) {
               ifdMap[currentSeries][idx + i] = ifdMap[currentSeries][idx] + i;
               fileMap[currentSeries][idx + i] = currentFile;
