@@ -752,6 +752,12 @@ public class Importer {
       FilePattern fp = new FilePattern(new Location(file));
       if (fp != null) {
         title = fp.getPattern();
+        if (title == null) {
+          title = file;
+          if (title.indexOf(".") != -1) {
+            title = title.substring(0, title.lastIndexOf("."));
+          }
+        }
         title = title.substring(title.lastIndexOf(File.separator) + 1);
       }
     }
