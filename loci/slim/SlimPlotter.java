@@ -3,12 +3,29 @@
 //
 
 /*
-Coded in 2006-@year@ by Curtis Rueden, with suggestions from
-Long Yan, Steve Trier, Kraig Kumfer, Paolo Provenzano and Tony Collins.
-Permission is granted to use this code for anything.
+SLIM Plotter application and curve fitting library for
+combined spectral lifetime visualization and analysis.
+Copyright (C) 2006-@year@ Curtis Rueden and Eric Kjellman.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.apps.slim;
+// Special thanks to Long Yan, Steve Trier, Kraig Kumfer,
+// Paolo Provenzano and Tony Collins for suggestions and testing.
+
+package loci.slim;
 
 import jaolho.data.lma.LMA;
 import jaolho.data.lma.LMAFunction;
@@ -41,8 +58,10 @@ import visad.util.Util;
  * A tool for visualization of spectral lifetime data.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/apps/slim/SlimPlotter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/apps/slim/SlimPlotter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/SlimPlotter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/slim/SlimPlotter.java">SVN</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class SlimPlotter implements ActionListener, ChangeListener,
   DisplayListener, DocumentListener, Runnable, WindowListener

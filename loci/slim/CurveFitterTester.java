@@ -1,8 +1,41 @@
+//
+// CurveFitterTester.java
+//
+
+/*
+SLIM Plotter application and curve fitting library for
+combined spectral lifetime visualization and analysis.
+Copyright (C) 2006-@year@ Curtis Rueden and Eric Kjellman.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package loci.slim;
 
 import java.io.*;
-import java.util.*;
+import java.util.StringTokenizer;
 
+/**
+ * Test class for curve fitting algorithms.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/CurveFitterTester.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/slim/CurveFitterTester.java">SVN</a></dd></dl>
+ *
+ * @author Eric Kjellman egkjellman at wisc.edu
+ */
 public class CurveFitterTester {
 
   // Read a test file
@@ -42,8 +75,7 @@ public class CurveFitterTester {
   public static void main(String[] args) throws Exception {
     BufferedReader in = new BufferedReader(new FileReader(args[0]));
     int degrees = Integer.parseInt(args[1]);
-    
-    
+
     double[][] data = curveData(in);
     long start = System.currentTimeMillis();
     CurveFitter cf = new GACurveFitter();
@@ -53,8 +85,8 @@ public class CurveFitterTester {
     cf.estimate();
     long duration = System.currentTimeMillis() - start;
     System.out.println("Time: " + duration);
-    System.out.println("Chi Squared Error: " + cf.getChiSquaredError()); 
-    System.out.println("Reduced Chi Squared Error: " + 
+    System.out.println("Chi Squared Error: " + cf.getChiSquaredError());
+    System.out.println("Reduced Chi Squared Error: " +
         cf.getReducedChiSquaredError());
     double[][] curveEst = cf.getCurve();
     for(int i = 0; i < curveEst.length; i++) {
@@ -62,14 +94,14 @@ public class CurveFitterTester {
       System.out.println(curveEst[i][0] + "e ^ -" + curveEst[i][1] +
           "t + " + curveEst[i][2]);
     }
-    int iter = 0; 
+    int iter = 0;
     while(true) {
       cf.iterate();
       duration = System.currentTimeMillis() - start;
       double cse = cf.getReducedChiSquaredError();
       iter++;
       if(iter % 50 == 0) {
-        System.out.println("Reduced Chi Squared Error: " + 
+        System.out.println("Reduced Chi Squared Error: " +
             cse + "  Elapsed: " + duration);
         for(int i = 0; i < curveEst.length; i++) {
           System.out.print("Exponential " + i + ": ");
@@ -78,17 +110,17 @@ public class CurveFitterTester {
         }
       }
       //System.exit(0);
-      
-      //System.out.println("Reduced Chi Squared Error: " + 
+
+      //System.out.println("Reduced Chi Squared Error: " +
       //    cse + "  Elapsed: " + duration);
       //if(cse < 1.0) System.exit(0);
-      /* 
+      /*
       for(int i = 0; i < curveEst.length; i++) {
         System.out.print("Exponential " + i + ": ");
         System.out.println(curveEst[i][0] + "e ^ -" + curveEst[i][1] +
             "t + " + curveEst[i][2]);
       }
-      System.out.println(); 
+      System.out.println();
       */
     }
   }

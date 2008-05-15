@@ -10,7 +10,7 @@ Curtis Rueden, Christopher Peterson and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -62,6 +62,7 @@ public class ImporterOptions implements ItemListener {
   public static final String VIEW_STANDARD = "Standard ImageJ";
   public static final String VIEW_HYPERSTACK = "Hyperstack";
   public static final String VIEW_BROWSER = "Data Browser";
+  public static final String VIEW_VISBIO = "VisBio";
   public static final String VIEW_IMAGE_5D = "Image5D";
   public static final String VIEW_VIEW_5D = "View5D";
 
@@ -79,6 +80,7 @@ public class ImporterOptions implements ItemListener {
   public static final String MERGE_PROJECTION = "Spectral projection";
 
   // class to check for each viewing option
+  private static final String CLASS_VISBIO = "loci.visbio.VisBio";
   private static final String CLASS_IMAGE_5D = "i5d.Image5D";
   private static final String CLASS_VIEW_5D = "View5D_";
 
@@ -223,12 +225,13 @@ public class ImporterOptions implements ItemListener {
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
   public boolean isViewStandard() { return VIEW_STANDARD.equals(stackFormat); }
-  public boolean isViewImage5D() { return VIEW_IMAGE_5D.equals(stackFormat); }
-  public boolean isViewBrowser() { return VIEW_BROWSER.equals(stackFormat); }
-  public boolean isViewView5D() { return VIEW_VIEW_5D.equals(stackFormat); }
   public boolean isViewHyperstack() {
     return VIEW_HYPERSTACK.equals(stackFormat);
   }
+  public boolean isViewBrowser() { return VIEW_BROWSER.equals(stackFormat); }
+  public boolean isViewVisBio() { return VIEW_VISBIO.equals(stackFormat); }
+  public boolean isViewImage5D() { return VIEW_IMAGE_5D.equals(stackFormat); }
+  public boolean isViewView5D() { return VIEW_VIEW_5D.equals(stackFormat); }
 
   public String getLocation() { return location; }
   public String getId() { return id; }
@@ -531,6 +534,7 @@ public class ImporterOptions implements ItemListener {
       stackTypes.add(VIEW_HYPERSTACK);
       stackTypes.add(VIEW_BROWSER);
     }
+    if (Checker.checkClass(CLASS_VISBIO)) stackTypes.add(VIEW_VISBIO);
     if (Checker.checkClass(CLASS_IMAGE_5D)) stackTypes.add(VIEW_IMAGE_5D);
     if (Checker.checkClass(CLASS_VIEW_5D)) stackTypes.add(VIEW_VIEW_5D);
     final String[] stackFormats = new String[stackTypes.size()];
@@ -961,6 +965,8 @@ public class ImporterOptions implements ItemListener {
       else if (s.equals(VIEW_BROWSER)) {
         orderChoice.select(ORDER_XYCZT);
         changed.add(orderChoice);
+      }
+      else if (s.equals(VIEW_VISBIO)) {
       }
       else if (s.equals(VIEW_IMAGE_5D)) {
         mergeBox.setState(false);

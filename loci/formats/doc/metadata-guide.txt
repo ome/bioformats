@@ -29,7 +29,7 @@ relevant to obtaining core metadata values. The second column lists the
 corresponding field of the CoreMetadata class, which encapsulates all of the
 core metadata parameters within a single object.
 
-      IFormatReader method | CoreMetadata parameter 
+      IFormatReader method | CoreMetadata parameter
      ----------------------+------------------------
          getCoreMetadata() | (all)
           getSeriesCount() | imageCount.length (e.g.)
@@ -181,15 +181,15 @@ implementation of these interfaces (e.g., OMEROMetadataStore), as well as
 feed one metadata standard into another with
 MetadataTools.convertMetadata(MetadataRetrieve, MetadataStore).
 
-TODO - Explain DummyMetadata and AggregateMetadataStore.
+TODO - Explain DummyMetadata and AggregateMetadata.
 
 TODO - Explain that there is one implementation per version of the OME-XML
-schema (2004 and 2007-06 right now), and that there is code for autogenerating
-these implementations in the loci.formats.auto package (though understanding
-the autogenerator is certainly "extra credit" and not necessary to use the
-metadata API). loci.formats.ome.OMEXMLMetadata is the abstract superclass of
-all concrete OME-XML metadata classes. OMEXMLMetadata implements both
-MetadataStore and MetadataRetrieve.
+schema (2004, 2007-06 and 2008-02 right now), and that there is code for
+autogenerating these implementations in the loci.formats.auto package (though
+understanding the autogenerator is certainly "extra credit" and not necessary
+to use the metadata API). loci.formats.ome.OMEXMLMetadata is the abstract
+superclass of all concrete OME-XML metadata classes. OMEXMLMetadata implements
+both MetadataStore and MetadataRetrieve.
 
 TODO - Explain how we have isolated all dependencies on the OME Java library
 (in ome-java.jar) into the loci.formats.ome package, and made that package
@@ -247,6 +247,6 @@ MetadataTools methods:
 
   TODO
 
-AggregateMetadataStore methods:
+AggregateMetadata methods:
 
   TODO

@@ -29,7 +29,7 @@ Bio-Formats
     Targets:       style-formats
                    compile-formats
                    jar-formats
-    License:       LGPL
+    License:       GPL
 
 VisBio
     JAR file:      visbio.jar
@@ -138,9 +138,9 @@ JVMLink
 
 Slim Plotter
     JAR file:      SlimPlotter.jar
-    Folders:       loci/apps/slim
+    Folders:       loci/slim
                    some loci/visbio
-    Main class:    loci.apps.slim.SlimPlotter
+    Main class:    loci.slim.SlimPlotter
     Dependencies:  bio-formats.jar
                    lma.jar
                    visad-lite.jar
@@ -148,7 +148,7 @@ Slim Plotter
                    compile-slim
                    jar-slim
                    dist-slim
-    License:       Public domain
+    License:       GPL
 
 OME Metadata Editor
     JAR file:      ome-editor.jar

@@ -145,9 +145,18 @@ type = Java library
 class = loci.formats.IFormatReader
 version = bfVersion
 url = http://www.loci.wisc.edu/ome/formats.html
-license = LGPL
+license = GPL
 notes = LOCI Bio-Formats package for reading and converting
         biological file formats.
+
+[VisBio]
+type = Java library
+class = loci.visbio.VisBio
+version = visbioVersion
+url = http://www.loci.wisc.edu/visbio/
+license = GPL
+notes = LOCI's biological visualization tool designed for easy visualization
+        and analysis of multidimensional image data.
 
 [BUFR Java Decoder]
 type = Java library

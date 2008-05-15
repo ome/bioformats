@@ -10,7 +10,7 @@ Curtis Rueden, Christopher Peterson and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -664,6 +664,21 @@ public class Importer {
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
       nSlices, nFrames);
 
+    if (options.isViewVisBio()) {
+      ReflectedUniverse ru = new ReflectedUniverse();
+      try {
+        ru.exec("import loci.visbio.data.Dataset");
+        //ru.setVar("name", name);
+        //ru.setVar("pattern", pattern);
+        ru.exec("dataset = new Dataset(name, pattern)");
+        // CTR TODO finish VisBio logic
+      }
+      catch (ReflectException exc) {
+        reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem interfacing with VisBio");
+        return;
+      }
+    }
     if (options.isViewImage5D()) {
       ReflectedUniverse ru = new ReflectedUniverse();
       try {
