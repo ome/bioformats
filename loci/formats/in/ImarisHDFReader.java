@@ -88,9 +88,17 @@ public class ImarisHDFReader extends FormatReader {
     super("Bitplane Imaris 5.5 (HDF)", "ims");
     blockCheckLen = 8;
     suffixSufficient = false;
-    // NetCDF prints a fair number of warning messages to stdout - we need to
-    // filter these out so that they don't interfere with omebf.
-    OutputFilter out = new OutputFilter(System.out);
+
+    // HACK - NetCDF prints a fair number of warning messages to stdout
+    // we need to filter these out so that they don't interfere with omebf
+    PrintStream out = new PrintStream(System.out) {
+      public void print(String s) {
+        if (s == null || !s.trim().startsWith("WARN:")) super.print(s);
+      }
+      public void println(String s) {
+        if (s == null || !s.trim().startsWith("WARN:")) super.println(s);
+      }
+    };
     System.setOut(out);
   }
 
