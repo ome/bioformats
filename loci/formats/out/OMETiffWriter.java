@@ -78,21 +78,23 @@ public class OMETiffWriter extends TiffWriter {
       // each Pixels corresponds to one series, in order
 
       // generate UUID and add to OME element
-      // but need a separate UUID for each file's OME element!
-      // now all TiffData elements are identical across all files!
+      // Use Java 1.5 method java.util.UUID.randomUUID() via reflection?
+      // but need a separate UUID for each file's OME element
+      // now all TiffData elements are identical across all files
       // the ONLY change is the UUID of the root OME element
 
-      // can we use a file pattern string as the id in the saveImage method?
       // main challenge is that programmer must still provide TiffData tag
-      // list indicating which IFDs of which files correspond to which planes.
-
-      // should we add TiffData as an entity in metadata store? would that
-      // work well, or at all? give it more thought
-
-      // prepend warning comment
+      // list indicating which IFDs of which files correspond to which planes;
+      // TiffData properties are part of MetadataStore now for this purpose
+      //
+      // if programmer indicates which TiffData blocks map to which files using
+      // UUID with FileName, we have all the information we need to write each
+      // plane to the correct file... assuming planes are fed to saveImage
+      // according to the given dimension order
+      //
+      // finish thinking this through
 
       // insert warning comment
-
       String prefix = xml.substring(0, xml.indexOf(">") + 1);
       String suffix = xml.substring(xml.indexOf(">") + 1);
       xml = prefix + WARNING_COMMENT + suffix;
