@@ -416,6 +416,8 @@ public class ZeissLSMReader extends BaseTiffReader {
         else numEvents = (int) Math.min(numEvents, tmpEvents);
         in.order(!in.isLittleEndian());
 
+        if (numEvents > 65535) numEvents = 0;
+
         for (int i=0; i<numEvents; i++) {
           if (in.getFilePointer() + 16 <= in.length()) {
             int size = in.readInt();

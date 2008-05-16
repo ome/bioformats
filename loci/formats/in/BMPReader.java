@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.codec.BitBuffer;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -107,19 +108,31 @@ public class BMPReader extends FormatReader {
     int rowLength = core.sizeX[0] * (isIndexed() ? 1 : core.sizeC[0]);
     in.seek(global + rowsToSkip * rowLength);
 
+    int planeSize = core.sizeX[0] * core.sizeY[0] * core.sizeC[0];
+    if (bpp >= 8) planeSize *= (bpp / 8);
+    else planeSize /= (8 / bpp);
+    byte[] rawPlane = new byte[planeSize];
+    in.read(rawPlane);
+
+    BitBuffer bb = new BitBuffer(rawPlane);
+
     if ((palette != null && palette[0].length > 0) || core.sizeC[0] == 1) {
       for (int row=h-1; row>=0; row--) {
-        in.skipBytes(x);
-        in.read(buf, row*w, w);
-        in.skipBytes(core.sizeX[0] - w - x);
+        bb.skipBits(x * bpp);
+        for (int i=0; i<w; i++) {
+          buf[row*w + i] = (byte) (bb.getBits(bpp) & 0xff);
+        }
+        bb.skipBits((core.sizeX[0] - w - x) * bpp);
       }
     }
     else {
       int len = core.sizeX[0] * core.sizeC[0];
       for (int row=h-1; row>=y; row--) {
-        in.skipBytes(x * core.sizeC[0]);
-        in.read(buf, row*w*core.sizeC[0], w*core.sizeC[0]);
-        in.skipBytes(core.sizeC[0] * (core.sizeX[0] - w - x));
+        bb.skipBits(x * core.sizeC[0] * bpp);
+        for (int i=0; i<w*core.sizeC[0]; i++) {
+          buf[row*w*core.sizeC[0] + i] = (byte) (bb.getBits(bpp) & 0xff);
+        }
+        bb.skipBits(core.sizeC[0] * (core.sizeX[0] - w - x) * bpp);
       }
       for (int i=0; i<buf.length/core.sizeC[0]; i++) {
         byte tmp = buf[i*core.sizeC[0] + 2];
@@ -169,6 +182,7 @@ public class BMPReader extends FormatReader {
     // get the dimensions
 
     core.sizeX[0] = in.readInt();
+    //while ((core.sizeX[0] % 2) != 0) core.sizeX[0]++;
     core.sizeY[0] = in.readInt();
 
     if (core.sizeX[0] < 1 || core.sizeY[0] < 1) {
@@ -215,8 +229,8 @@ public class BMPReader extends FormatReader {
 
     // read the palette, if it exists
 
-    if (nColors != 0) {
-      palette = new byte[3][nColors];
+    if (nColors != 0 && bpp == 8) {
+      palette = new byte[3][256];
 
       for (int i=0; i<nColors; i++) {
         for (int j=palette.length-1; j>=0; j--) {
@@ -232,25 +246,21 @@ public class BMPReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeC[0] = (palette == null && bpp == 8) ? 1 : 3;
+    core.sizeC[0] = bpp != 24 ? 1 : 3;
     if (bpp == 32) core.sizeC[0] = 4;
     if (bpp > 8) bpp /= core.sizeC[0];
-    while (bpp % 8 != 0) bpp++;
+    //while (bpp % 8 != 0) bpp++;
 
     switch (bpp) {
-      case 8:
-        core.pixelType[0] = FormatTools.UINT8;
-        break;
       case 16:
         core.pixelType[0] = FormatTools.UINT16;
         break;
       case 32:
         core.pixelType[0] = FormatTools.UINT32;
         break;
+      default:
+        core.pixelType[0] = FormatTools.UINT8;
     }
-
-    core.sizeX[0] = (int) ((in.length() - global) /
-      (core.sizeY[0] * (bpp / 8) * (palette != null ? 1 : core.sizeC[0])));
 
     core.rgb[0] = core.sizeC[0] > 1;
     core.littleEndian[0] = true;
@@ -285,13 +295,6 @@ public class BMPReader extends FormatReader {
 
     store.setDimensionsPhysicalSizeX(new Float(correctedX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(correctedY), 0, 0);
-
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//       null, null, null, null, null, null, null, null, null, null, null, null,
-//       null, null, null, null);
-//    }
   }
 
 }
