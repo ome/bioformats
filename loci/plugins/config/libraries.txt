@@ -117,7 +117,7 @@ type = ImageJ plugin
 class = loci.plugins.About
 version = bfVersion
 url = http://www.loci.wisc.edu/ome/formats.html
-license = LGPL
+license = GPL
 notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
         the Bio-Formats Importer, Bio-Formats Exporter, Data Browser,
         Stack Colorizer, Stack Slicer, and OME plugins.
@@ -284,7 +284,7 @@ notes = Used for layout by the Data Browser plugin.
 type = Java library
 class = loci.ome.notes.Notes
 url = http://www.loci.wisc.edu/ome/notes.html
-license = LGPL
+license = GPL
 notes = OME Notes library for flexible organization and presentation
         of OME-XML metadata.
 
