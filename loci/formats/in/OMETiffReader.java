@@ -211,7 +211,9 @@ public class OMETiffReader extends BaseTiffReader {
           temporaryKeyMetadata.clear();
         }
 
-        if (addToList || iid.endsWith(File.separator + currentId)) {
+        if (addToList || iid.endsWith(File.separator + currentId) ||
+          (iid.endsWith(currentId) && currentId.startsWith(File.separator)))
+        {
           files.add(iid);
         }
       }
@@ -513,7 +515,19 @@ public class OMETiffReader extends BaseTiffReader {
         sizeC = Integer.parseInt(attributes.getValue("SizeC"));
         sizeT = Integer.parseInt(attributes.getValue("SizeT"));
         if (tempIfdCount != null) {
-          tempIfdCount.add(new Integer(sizeZ * sizeC * sizeT));
+          int count = sizeZ * sizeC * sizeT;
+          try {
+            if (TiffTools.getPhotometricInterpretation(ifds[0]) ==
+              TiffTools.RGB)
+            {
+              int nFiles = usedFiles == null ? 1 : usedFiles.length;
+              count = (int) Math.min(count, ifds.length * nFiles);
+            }
+          }
+          catch (FormatException e) {
+            if (debug) LogTools.trace(e);
+          }
+          tempIfdCount.add(new Integer(count));
         }
 
         if (sizeZ < 1) sizeZ = 1;
@@ -611,13 +625,27 @@ public class OMETiffReader extends BaseTiffReader {
             }
           }
         }
-        catch (FormatException e) { }
+        catch (FormatException e) {
+          if (debug) LogTools.trace(e);
+        }
 
+        ifdCount = Integer.parseInt(numPlanes);
+        int totalIFDs = ifdCount * (usedFiles == null ? 1 : usedFiles.length);
+        try {
+          if (TiffTools.getPhotometricInterpretation(ifds[0]) == TiffTools.RGB)
+          {
+            // account for RGB planes
+            int div = (sizeZ * sizeC * sizeT) / totalIFDs;
+            if (sizeC / div > 0) sizeC /= div;
+          }
+        }
+        catch (FormatException e) {
+          if (debug)  LogTools.trace(e);
+        }
         int idx = FormatTools.getIndex(order, sizeZ, sizeC, sizeT,
           sizeZ * sizeC * sizeT, Integer.parseInt(z), Integer.parseInt(c),
           Integer.parseInt(t));
-         currentIFD = idx;
-         ifdCount = Integer.parseInt(numPlanes);
+        currentIFD = idx;
 
         if (tempIfdMap != null) {
           Vector v = new Vector(sizeZ * sizeC * sizeT);
