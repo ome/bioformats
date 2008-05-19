@@ -239,6 +239,7 @@ public class BMPReader extends FormatReader {
         in.skipBytes(1);
       }
     }
+    else if (nColors != 0) in.skipBytes(nColors * 4);
 
     global = in.getFilePointer();
 
