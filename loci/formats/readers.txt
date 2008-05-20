@@ -56,6 +56,7 @@ loci.formats.in.LIMReader             # lim
 loci.formats.in.PSDReader             # psd
 loci.formats.in.InCellReader          # xdce
 loci.formats.in.L2DReader             # l2d
+loci.formats.in.FEIReader             # img
 
 # multi-extension messes
 loci.formats.in.NRRDReader            # nrrd, nhdr, pic
