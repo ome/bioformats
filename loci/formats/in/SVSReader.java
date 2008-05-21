@@ -112,45 +112,7 @@ public class SVSReader extends BaseTiffReader {
       core.indexed[s] = p == TiffTools.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
       core.imageCount[s] = 1;
-
-      int bitFormat =
-        TiffTools.getIFDIntValue(ifds[s], TiffTools.SAMPLE_FORMAT);
-      Object bpsObj = TiffTools.getIFDValue(ifds[s], TiffTools.BITS_PER_SAMPLE);
-      int bps = 0;
-      if (bpsObj instanceof int[]) bps = ((int[]) bpsObj)[0];
-      else bps = ((Number) bpsObj).intValue();
-
-      while (bps % 8 != 0) bps++;
-      if (bps == 24 || bps == 48) bps /= 3;
-
-      if (bitFormat == 3) {
-        core.pixelType[s] = FormatTools.FLOAT;
-        core.littleEndian[s] = true;
-      }
-      else if (bitFormat == 2) {
-        switch (bps) {
-          case 16:
-            core.pixelType[s] = FormatTools.INT16;
-            break;
-          case 32:
-            core.pixelType[s] = FormatTools.INT32;
-            break;
-          default:
-            core.pixelType[s] = FormatTools.INT8;
-        }
-      }
-      else {
-        switch (bps) {
-          case 16:
-            core.pixelType[s] = FormatTools.UINT16;
-            break;
-          case 32:
-            core.pixelType[s] = FormatTools.UINT32;
-            break;
-          default:
-            core.pixelType[s] = FormatTools.UINT8;
-        }
-      }
+      core.pixelType[s] = getPixelType(ifds[s]);
     }
     Arrays.fill(core.metadataComplete, true);
     Arrays.fill(core.interleaved, false);

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -215,6 +215,57 @@ public final class MetadataConverter {
         dest.setObjectiveNominalMagnification(src.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
         dest.setObjectiveSerialNumber(src.getObjectiveSerialNumber(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
         dest.setObjectiveWorkingDistance(src.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
+      }
+    }
+    int plateCount = src.getPlateCount();
+    for (int plateIndex=0; plateIndex<plateCount; plateIndex++) {
+      dest.setPlateDescription(src.getPlateDescription(plateIndex), plateIndex);
+      dest.setPlateExternalIdentifier(src.getPlateExternalIdentifier(plateIndex), plateIndex);
+      dest.setPlateID(src.getPlateID(plateIndex), plateIndex);
+      dest.setPlateName(src.getPlateName(plateIndex), plateIndex);
+      dest.setPlateStatus(src.getPlateStatus(plateIndex), plateIndex);
+    }
+    int screenCount = src.getScreenCount();
+    for (int screenIndex=0; screenIndex<screenCount; screenIndex++) {
+      dest.setScreenID(src.getScreenID(screenIndex), screenIndex);
+      dest.setScreenName(src.getScreenName(screenIndex), screenIndex);
+      dest.setScreenProtocolDescription(src.getScreenProtocolDescription(screenIndex), screenIndex);
+      dest.setScreenProtocolIdentifier(src.getScreenProtocolIdentifier(screenIndex), screenIndex);
+      dest.setScreenReagentSetDescription(src.getScreenReagentSetDescription(screenIndex), screenIndex);
+      dest.setScreenType(src.getScreenType(screenIndex), screenIndex);
+      int plateRefCount = src.getPlateRefCount(screenIndex);
+      for (int plateRefIndex=0; plateRefIndex<plateRefCount; plateRefIndex++) {
+        dest.setPlateRefID(src.getPlateRefID(screenIndex, plateRefIndex), screenIndex, plateRefIndex);
+      }
+      int reagentCount = src.getReagentCount(screenIndex);
+      for (int reagentIndex=0; reagentIndex<reagentCount; reagentIndex++) {
+        dest.setReagentDescription(src.getReagentDescription(screenIndex, reagentIndex), screenIndex, reagentIndex);
+        dest.setReagentID(src.getReagentID(screenIndex, reagentIndex), screenIndex, reagentIndex);
+        dest.setReagentName(src.getReagentName(screenIndex, reagentIndex), screenIndex, reagentIndex);
+        dest.setReagentReagentIdentifier(src.getReagentReagentIdentifier(screenIndex, reagentIndex), screenIndex, reagentIndex);
+      }
+      int screenAcquisitionCount = src.getScreenAcquisitionCount(screenIndex);
+      for (int screenAcquisitionIndex=0; screenAcquisitionIndex<screenAcquisitionCount; screenAcquisitionIndex++) {
+        dest.setScreenAcquisitionEndTime(src.getScreenAcquisitionEndTime(screenIndex, screenAcquisitionIndex), screenIndex, screenAcquisitionIndex);
+        dest.setScreenAcquisitionID(src.getScreenAcquisitionID(screenIndex, screenAcquisitionIndex), screenIndex, screenAcquisitionIndex);
+        dest.setScreenAcquisitionStartTime(src.getScreenAcquisitionStartTime(screenIndex, screenAcquisitionIndex), screenIndex, screenAcquisitionIndex);
+      }
+    }
+    int wellCount = src.getWellCount();
+    for (int wellIndex=0; wellIndex<wellCount; wellIndex++) {
+      dest.setWellColumn(src.getWellColumn(wellIndex), wellIndex);
+      dest.setWellExternalDescription(src.getWellExternalDescription(wellIndex), wellIndex);
+      dest.setWellExternalIdentifier(src.getWellExternalIdentifier(wellIndex), wellIndex);
+      dest.setWellID(src.getWellID(wellIndex), wellIndex);
+      dest.setWellRow(src.getWellRow(wellIndex), wellIndex);
+      dest.setWellType(src.getWellType(wellIndex), wellIndex);
+      int wellSampleCount = src.getWellSampleCount(wellIndex);
+      for (int wellSampleIndex=0; wellSampleIndex<wellSampleCount; wellSampleIndex++) {
+        dest.setWellSampleID(src.getWellSampleID(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
+        dest.setWellSampleIndex(src.getWellSampleIndex(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
+        dest.setWellSamplePosX(src.getWellSamplePosX(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
+        dest.setWellSamplePosY(src.getWellSamplePosY(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
+        dest.setWellSampleTimepoint(src.getWellSampleTimepoint(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
       }
     }
   }

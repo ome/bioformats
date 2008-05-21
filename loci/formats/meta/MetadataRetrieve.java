@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -67,9 +67,23 @@ public interface MetadataRetrieve {
 
   int getPlaneCount(int imageIndex, int pixelsIndex);
 
+  int getPlateCount();
+
+  int getPlateRefCount(int screenIndex);
+
   int getROICount(int imageIndex);
 
+  int getReagentCount(int screenIndex);
+
+  int getScreenCount();
+
+  int getScreenAcquisitionCount(int screenIndex);
+
   int getTiffDataCount(int imageIndex, int pixelsIndex);
+
+  int getWellCount();
+
+  int getWellSampleCount(int wellIndex);
 
   // - Entity retrieval -
 
@@ -783,6 +797,47 @@ public interface MetadataRetrieve {
    */
   Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
 
+  // - Plate property retrieval -
+
+  /**
+   * For a particular Plate, gets identifies a plate within a screen.
+   * @param plateIndex index of the Plate
+   */
+  String getPlateDescription(int plateIndex);
+
+  /**
+   * For a particular Plate, gets reference to this plate in an external database.
+   * @param plateIndex index of the Plate
+   */
+  String getPlateExternalIdentifier(int plateIndex);
+
+  /**
+   * For a particular Plate, gets TODO.
+   * @param plateIndex index of the Plate
+   */
+  String getPlateID(int plateIndex);
+
+  /**
+   * For a particular Plate, gets the plate's name.
+   * @param plateIndex index of the Plate
+   */
+  String getPlateName(int plateIndex);
+
+  /**
+   * For a particular Plate, gets current state of the plate with respect to the experiment work-flow.
+   * @param plateIndex index of the Plate
+   */
+  String getPlateStatus(int plateIndex);
+
+  // - PlateRef property retrieval -
+
+  /**
+   * For a particular PlateRef, gets TODO.
+   * @param screenIndex index of the Screen
+   * @param plateRefIndex index of the PlateRef
+   */
+  String getPlateRefID(int screenIndex, int plateRefIndex);
+
   // - ROI property retrieval -
 
   /**
@@ -847,6 +902,97 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    */
   Integer getROIZ1(int imageIndex, int roiIndex);
+
+  // - Reagent property retrieval -
+
+  /**
+   * For a particular Reagent, gets the reagent's description.
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  String getReagentDescription(int screenIndex, int reagentIndex);
+
+  /**
+   * For a particular Reagent, gets TODO.
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  String getReagentID(int screenIndex, int reagentIndex);
+
+  /**
+   * For a particular Reagent, gets the reagent's name.
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  String getReagentName(int screenIndex, int reagentIndex);
+
+  /**
+   * For a particular Reagent, gets reference to this reagent in an external database.
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  String getReagentReagentIdentifier(int screenIndex, int reagentIndex);
+
+  // - Screen property retrieval -
+
+  /**
+   * For a particular Screen, gets TODO.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenID(int screenIndex);
+
+  /**
+   * For a particular Screen, gets the screen's name.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenName(int screenIndex);
+
+  /**
+   * For a particular Screen, gets description of the screen's protocol.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenProtocolDescription(int screenIndex);
+
+  /**
+   * For a particular Screen, gets reference to an externally defined protocol.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenProtocolIdentifier(int screenIndex);
+
+  /**
+   * For a particular Screen, gets description of a set of reagents.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenReagentSetDescription(int screenIndex);
+
+  /**
+   * For a particular Screen, gets human-readable screen type, e.g. RNAi, cDNA.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenType(int screenIndex);
+
+  // - ScreenAcquisition property retrieval -
+
+  /**
+   * For a particular ScreenAcquisition, gets time when the last image was acquired.
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   */
+  String getScreenAcquisitionEndTime(int screenIndex, int screenAcquisitionIndex);
+
+  /**
+   * For a particular ScreenAcquisition, gets TODO.
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   */
+  String getScreenAcquisitionID(int screenIndex, int screenAcquisitionIndex);
+
+  /**
+   * For a particular ScreenAcquisition, gets time when the first image was acquired.
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   */
+  String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex);
 
   // - StageLabel property retrieval -
 
@@ -957,5 +1103,80 @@ public interface MetadataRetrieve {
    * @param tiffDataIndex index of the TiffData
    */
   String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  // - Well property retrieval -
+
+  /**
+   * For a particular Well, gets column index of the well, where top-left is 0.
+   * @param wellIndex index of the Well
+   */
+  Integer getWellColumn(int wellIndex);
+
+  /**
+   * For a particular Well, gets description of the externally defined ID for this plate.
+   * @param wellIndex index of the Well
+   */
+  String getWellExternalDescription(int wellIndex);
+
+  /**
+   * For a particular Well, gets reference to this well in an external database.
+   * @param wellIndex index of the Well
+   */
+  String getWellExternalIdentifier(int wellIndex);
+
+  /**
+   * For a particular Well, gets TODO.
+   * @param wellIndex index of the Well
+   */
+  String getWellID(int wellIndex);
+
+  /**
+   * For a particular Well, gets row index of the well, where top-left is 0.
+   * @param wellIndex index of the Well
+   */
+  Integer getWellRow(int wellIndex);
+
+  /**
+   * For a particular Well, gets human-readable identifier of the screen status, e.g. empty, control.
+   * @param wellIndex index of the Well
+   */
+  String getWellType(int wellIndex);
+
+  // - WellSample property retrieval -
+
+  /**
+   * For a particular WellSample, gets TODO.
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  String getWellSampleID(int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, gets link to the Image element.
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  Integer getWellSampleIndex(int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, gets X position of the image within the well.
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  Float getWellSamplePosX(int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, gets Y position of the image within the well.
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  Float getWellSamplePosY(int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, gets time-point at which the image started to be collected.
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex);
 
 }

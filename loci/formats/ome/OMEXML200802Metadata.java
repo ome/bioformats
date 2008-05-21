@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -157,6 +157,22 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateCount() */
+  public int getPlateCount() {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getPlateNode(i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateRefCount(int) */
+  public int getPlateRefCount(int screenIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getPlateRefNode(screenIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getROICount(int) */
   public int getROICount(int imageIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
@@ -165,10 +181,50 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentCount(int) */
+  public int getReagentCount(int screenIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getReagentNode(screenIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenCount() */
+  public int getScreenCount() {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getScreenNode(i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionCount(int) */
+  public int getScreenAcquisitionCount(int screenIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getScreenAcquisitionNode(screenIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataCount(int, int) */
   public int getTiffDataCount(int imageIndex, int pixelsIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getTiffDataNode(imageIndex, pixelsIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellCount() */
+  public int getWellCount() {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getWellNode(i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleCount(int) */
+  public int getWellSampleCount(int wellIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getWellSampleNode(wellIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -801,6 +857,46 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     return planeTiming == null ? null : planeTiming.getExposureTime();
   }
 
+  // - Plate property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateDescription(int) */
+  public String getPlateDescription(int plateIndex) {
+    PlateNode plate = getPlateNode(plateIndex, false);
+    return plate == null ? null : plate.getDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateExternalIdentifier(int) */
+  public String getPlateExternalIdentifier(int plateIndex) {
+    PlateNode plate = getPlateNode(plateIndex, false);
+    return plate == null ? null : plate.getExternalIdentifier();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateID(int) */
+  public String getPlateID(int plateIndex) {
+    PlateNode plate = getPlateNode(plateIndex, false);
+    return plate == null ? null : plate.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateName(int) */
+  public String getPlateName(int plateIndex) {
+    PlateNode plate = getPlateNode(plateIndex, false);
+    return plate == null ? null : plate.getName();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateStatus(int) */
+  public String getPlateStatus(int plateIndex) {
+    PlateNode plate = getPlateNode(plateIndex, false);
+    return plate == null ? null : plate.getStatus();
+  }
+
+  // - PlateRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateRefID(int, int) */
+  public String getPlateRefID(int screenIndex, int plateRefIndex) {
+    PlateRefNode plateRef = getPlateRefNode(screenIndex, plateRefIndex, false);
+    return plateRef == null ? null : plateRef.getNodeID();
+  }
+
   // - ROI property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getROIID(int, int) */
@@ -855,6 +951,90 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
   public Integer getROIZ1(int imageIndex, int roiIndex) {
     ROINode roi = getROINode(imageIndex, roiIndex, false);
     return roi == null ? null : roi.getZ1();
+  }
+
+  // - Reagent property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentDescription(int, int) */
+  public String getReagentDescription(int screenIndex, int reagentIndex) {
+    ReagentNode reagent = getReagentNode(screenIndex, reagentIndex, false);
+    return reagent == null ? null : reagent.getDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentID(int, int) */
+  public String getReagentID(int screenIndex, int reagentIndex) {
+    ReagentNode reagent = getReagentNode(screenIndex, reagentIndex, false);
+    return reagent == null ? null : reagent.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentName(int, int) */
+  public String getReagentName(int screenIndex, int reagentIndex) {
+    ReagentNode reagent = getReagentNode(screenIndex, reagentIndex, false);
+    return reagent == null ? null : reagent.getName();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentReagentIdentifier(int, int) */
+  public String getReagentReagentIdentifier(int screenIndex, int reagentIndex) {
+    ReagentNode reagent = getReagentNode(screenIndex, reagentIndex, false);
+    return reagent == null ? null : reagent.getReagentIdentifier();
+  }
+
+  // - Screen property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenID(int) */
+  public String getScreenID(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenName(int) */
+  public String getScreenName(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getName();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenProtocolDescription(int) */
+  public String getScreenProtocolDescription(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getProtocolDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenProtocolIdentifier(int) */
+  public String getScreenProtocolIdentifier(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getProtocolIdentifier();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenReagentSetDescription(int) */
+  public String getScreenReagentSetDescription(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getReagentSetDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenType(int) */
+  public String getScreenType(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getType();
+  }
+
+  // - ScreenAcquisition property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionEndTime(int, int) */
+  public String getScreenAcquisitionEndTime(int screenIndex, int screenAcquisitionIndex) {
+    ScreenAcquisitionNode screenAcquisition = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, false);
+    return screenAcquisition == null ? null : screenAcquisition.getEndTime();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionID(int, int) */
+  public String getScreenAcquisitionID(int screenIndex, int screenAcquisitionIndex) {
+    ScreenAcquisitionNode screenAcquisition = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, false);
+    return screenAcquisition == null ? null : screenAcquisition.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionStartTime(int, int) */
+  public String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex) {
+    ScreenAcquisitionNode screenAcquisition = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, false);
+    return screenAcquisition == null ? null : screenAcquisition.getStartTime();
   }
 
   // - StageLabel property retrieval -
@@ -945,6 +1125,76 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
   public String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex) {
     UUIDNode uuid = getUUIDNode(imageIndex, pixelsIndex, tiffDataIndex, false);
     return uuid == null ? null : uuid.getCData();
+  }
+
+  // - Well property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellColumn(int) */
+  public Integer getWellColumn(int wellIndex) {
+    WellNode well = getWellNode(wellIndex, false);
+    return well == null ? null : well.getColumn();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalDescription(int) */
+  public String getWellExternalDescription(int wellIndex) {
+    WellNode well = getWellNode(wellIndex, false);
+    return well == null ? null : well.getExternalDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalIdentifier(int) */
+  public String getWellExternalIdentifier(int wellIndex) {
+    WellNode well = getWellNode(wellIndex, false);
+    return well == null ? null : well.getExternalIdentifier();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellID(int) */
+  public String getWellID(int wellIndex) {
+    WellNode well = getWellNode(wellIndex, false);
+    return well == null ? null : well.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellRow(int) */
+  public Integer getWellRow(int wellIndex) {
+    WellNode well = getWellNode(wellIndex, false);
+    return well == null ? null : well.getRow();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellType(int) */
+  public String getWellType(int wellIndex) {
+    WellNode well = getWellNode(wellIndex, false);
+    return well == null ? null : well.getType();
+  }
+
+  // - WellSample property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleID(int, int) */
+  public String getWellSampleID(int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+    return wellSample == null ? null : wellSample.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleIndex(int, int) */
+  public Integer getWellSampleIndex(int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+    return wellSample == null ? null : wellSample.getIndex();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosX(int, int) */
+  public Float getWellSamplePosX(int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+    return wellSample == null ? null : wellSample.getPosX();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosY(int, int) */
+  public Float getWellSamplePosY(int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+    return wellSample == null ? null : wellSample.getPosY();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleTimepoint(int, int) */
+  public Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+    return wellSample == null ? null : wellSample.getTimepoint();
   }
 
   // -- MetadataStore API methods --
@@ -1691,6 +1941,52 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     planeTimingNode.setExposureTime(exposureTime);
   }
 
+  // - Plate property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPlateDescription(String, int) */
+  public void setPlateDescription(String description, int plateIndex) {
+    if (description == null) return;
+    PlateNode plateNode = getPlateNode(plateIndex, true);
+    plateNode.setDescription(description);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateExternalIdentifier(String, int) */
+  public void setPlateExternalIdentifier(String externalIdentifier, int plateIndex) {
+    if (externalIdentifier == null) return;
+    PlateNode plateNode = getPlateNode(plateIndex, true);
+    plateNode.setExternalIdentifier(externalIdentifier);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateID(String, int) */
+  public void setPlateID(String id, int plateIndex) {
+    if (id == null) return;
+    PlateNode plateNode = getPlateNode(plateIndex, true);
+    plateNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateName(String, int) */
+  public void setPlateName(String name, int plateIndex) {
+    if (name == null) return;
+    PlateNode plateNode = getPlateNode(plateIndex, true);
+    plateNode.setName(name);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateStatus(String, int) */
+  public void setPlateStatus(String status, int plateIndex) {
+    if (status == null) return;
+    PlateNode plateNode = getPlateNode(plateIndex, true);
+    plateNode.setStatus(status);
+  }
+
+  // - PlateRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPlateRefID(String, int, int) */
+  public void setPlateRefID(String id, int screenIndex, int plateRefIndex) {
+    if (id == null) return;
+    PlateRefNode plateRefNode = getPlateRefNode(screenIndex, plateRefIndex, true);
+    plateRefNode.setNodeID(id);
+  }
+
   // - ROI property storage -
 
   /* @see loci.formats.meta.MetadataStore#setROIID(String, int, int) */
@@ -1754,6 +2050,103 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     if (z1 == null) return;
     ROINode roiNode = getROINode(imageIndex, roiIndex, true);
     roiNode.setZ1(z1);
+  }
+
+  // - Reagent property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setReagentDescription(String, int, int) */
+  public void setReagentDescription(String description, int screenIndex, int reagentIndex) {
+    if (description == null) return;
+    ReagentNode reagentNode = getReagentNode(screenIndex, reagentIndex, true);
+    reagentNode.setDescription(description);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setReagentID(String, int, int) */
+  public void setReagentID(String id, int screenIndex, int reagentIndex) {
+    if (id == null) return;
+    ReagentNode reagentNode = getReagentNode(screenIndex, reagentIndex, true);
+    reagentNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setReagentName(String, int, int) */
+  public void setReagentName(String name, int screenIndex, int reagentIndex) {
+    if (name == null) return;
+    ReagentNode reagentNode = getReagentNode(screenIndex, reagentIndex, true);
+    reagentNode.setName(name);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setReagentReagentIdentifier(String, int, int) */
+  public void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex) {
+    if (reagentIdentifier == null) return;
+    ReagentNode reagentNode = getReagentNode(screenIndex, reagentIndex, true);
+    reagentNode.setReagentIdentifier(reagentIdentifier);
+  }
+
+  // - Screen property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setScreenID(String, int) */
+  public void setScreenID(String id, int screenIndex) {
+    if (id == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenName(String, int) */
+  public void setScreenName(String name, int screenIndex) {
+    if (name == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setName(name);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenProtocolDescription(String, int) */
+  public void setScreenProtocolDescription(String protocolDescription, int screenIndex) {
+    if (protocolDescription == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setProtocolDescription(protocolDescription);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenProtocolIdentifier(String, int) */
+  public void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex) {
+    if (protocolIdentifier == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setProtocolIdentifier(protocolIdentifier);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenReagentSetDescription(String, int) */
+  public void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex) {
+    if (reagentSetDescription == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setReagentSetDescription(reagentSetDescription);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenType(String, int) */
+  public void setScreenType(String type, int screenIndex) {
+    if (type == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setType(type);
+  }
+
+  // - ScreenAcquisition property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setScreenAcquisitionEndTime(String, int, int) */
+  public void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex) {
+    if (endTime == null) return;
+    ScreenAcquisitionNode screenAcquisitionNode = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, true);
+    screenAcquisitionNode.setEndTime(endTime);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenAcquisitionID(String, int, int) */
+  public void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex) {
+    if (id == null) return;
+    ScreenAcquisitionNode screenAcquisitionNode = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, true);
+    screenAcquisitionNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenAcquisitionStartTime(String, int, int) */
+  public void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex) {
+    if (startTime == null) return;
+    ScreenAcquisitionNode screenAcquisitionNode = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, true);
+    screenAcquisitionNode.setStartTime(startTime);
   }
 
   // - StageLabel property storage -
@@ -1858,6 +2251,87 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     if (uuid == null) return;
     UUIDNode uuidNode = getUUIDNode(imageIndex, pixelsIndex, tiffDataIndex, true);
     uuidNode.setCData(uuid);
+  }
+
+  // - Well property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setWellColumn(Integer, int) */
+  public void setWellColumn(Integer column, int wellIndex) {
+    if (column == null) return;
+    WellNode wellNode = getWellNode(wellIndex, true);
+    wellNode.setColumn(column);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellExternalDescription(String, int) */
+  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+    if (externalDescription == null) return;
+    WellNode wellNode = getWellNode(wellIndex, true);
+    wellNode.setExternalDescription(externalDescription);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellExternalIdentifier(String, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+    if (externalIdentifier == null) return;
+    WellNode wellNode = getWellNode(wellIndex, true);
+    wellNode.setExternalIdentifier(externalIdentifier);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellID(String, int) */
+  public void setWellID(String id, int wellIndex) {
+    if (id == null) return;
+    WellNode wellNode = getWellNode(wellIndex, true);
+    wellNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellRow(Integer, int) */
+  public void setWellRow(Integer row, int wellIndex) {
+    if (row == null) return;
+    WellNode wellNode = getWellNode(wellIndex, true);
+    wellNode.setRow(row);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellType(String, int) */
+  public void setWellType(String type, int wellIndex) {
+    if (type == null) return;
+    WellNode wellNode = getWellNode(wellIndex, true);
+    wellNode.setType(type);
+  }
+
+  // - WellSample property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleID(String, int, int) */
+  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+    if (id == null) return;
+    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    wellSampleNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleIndex(Integer, int, int) */
+  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
+    if (index == null) return;
+    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    wellSampleNode.setIndex(index);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSamplePosX(Float, int, int) */
+  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
+    if (posX == null) return;
+    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    wellSampleNode.setPosX(posX);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSamplePosY(Float, int, int) */
+  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
+    if (posY == null) return;
+    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    wellSampleNode.setPosY(posY);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleTimepoint(Integer, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
+    if (timepoint == null) return;
+    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    wellSampleNode.setTimepoint(timepoint);
   }
 
   // -- Helper methods --
@@ -2205,6 +2679,91 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     for (int i=count; i<=objectiveIndex; i++) new ObjectiveNode(instrument);
     List list = instrument.getObjectiveList();
     return (ObjectiveNode) list.get(objectiveIndex);
+  }
+
+  // Plate+
+  private PlateNode getPlateNode(int plateIndex, boolean create) {
+    OMENode ome = (OMENode) root;
+    // get Plate+ node
+    int count = ome.getPlateCount();
+    if (!create && count <= plateIndex) return null;
+    for (int i=count; i<=plateIndex; i++) new PlateNode(ome);
+    List list = ome.getPlateList();
+    return (PlateNode) list.get(plateIndex);
+  }
+
+  // Screen+
+  private ScreenNode getScreenNode(int screenIndex, boolean create) {
+    OMENode ome = (OMENode) root;
+    // get Screen+ node
+    int count = ome.getScreenCount();
+    if (!create && count <= screenIndex) return null;
+    for (int i=count; i<=screenIndex; i++) new ScreenNode(ome);
+    List list = ome.getScreenList();
+    return (ScreenNode) list.get(screenIndex);
+  }
+
+  // Screen+/PlateRef+
+  private PlateRefNode getPlateRefNode(int screenIndex, int plateRefIndex, boolean create) {
+    // get Screen+ node
+    ScreenNode screen = getScreenNode(screenIndex, create);
+    if (screen == null) return null;
+    // get PlateRef+ node
+    int count = screen.getPlateRefCount();
+    if (!create && count <= plateRefIndex) return null;
+    for (int i=count; i<=plateRefIndex; i++) new PlateRefNode(screen);
+    List list = screen.getPlateRefList();
+    return (PlateRefNode) list.get(plateRefIndex);
+  }
+
+  // Screen+/Reagent+
+  private ReagentNode getReagentNode(int screenIndex, int reagentIndex, boolean create) {
+    // get Screen+ node
+    ScreenNode screen = getScreenNode(screenIndex, create);
+    if (screen == null) return null;
+    // get Reagent+ node
+    int count = screen.getReagentCount();
+    if (!create && count <= reagentIndex) return null;
+    for (int i=count; i<=reagentIndex; i++) new ReagentNode(screen);
+    List list = screen.getReagentList();
+    return (ReagentNode) list.get(reagentIndex);
+  }
+
+  // Screen+/ScreenAcquisition+
+  private ScreenAcquisitionNode getScreenAcquisitionNode(int screenIndex, int screenAcquisitionIndex, boolean create) {
+    // get Screen+ node
+    ScreenNode screen = getScreenNode(screenIndex, create);
+    if (screen == null) return null;
+    // get ScreenAcquisition+ node
+    int count = screen.getScreenAcquisitionCount();
+    if (!create && count <= screenAcquisitionIndex) return null;
+    for (int i=count; i<=screenAcquisitionIndex; i++) new ScreenAcquisitionNode(screen);
+    List list = screen.getScreenAcquisitionList();
+    return (ScreenAcquisitionNode) list.get(screenAcquisitionIndex);
+  }
+
+  // Well+
+  private WellNode getWellNode(int wellIndex, boolean create) {
+    OMENode ome = (OMENode) root;
+    // get Well+ node
+    int count = ome.getWellCount();
+    if (!create && count <= wellIndex) return null;
+    for (int i=count; i<=wellIndex; i++) new WellNode(ome);
+    List list = ome.getWellList();
+    return (WellNode) list.get(wellIndex);
+  }
+
+  // Well+/WellSample+
+  private WellSampleNode getWellSampleNode(int wellIndex, int wellSampleIndex, boolean create) {
+    // get Well+ node
+    WellNode well = getWellNode(wellIndex, create);
+    if (well == null) return null;
+    // get WellSample+ node
+    int count = well.getWellSampleCount();
+    if (!create && count <= wellSampleIndex) return null;
+    for (int i=count; i<=wellSampleIndex; i++) new WellSampleNode(well);
+    List list = well.getWellSampleList();
+    return (WellSampleNode) list.get(wellSampleIndex);
   }
 
 }

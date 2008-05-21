@@ -587,9 +587,7 @@ public class ND2Reader extends FormatReader {
         }
       }
 
-      if (core.sizeC[0] > 1 &&
-        core.imageCount[0] > core.sizeT[0] * core.sizeZ[0])
-      {
+      if (core.sizeC[0] > 1) {
         if (adjustImageCount) {
           int n = numValidPlanes / core.sizeT.length;
           Arrays.fill(core.sizeT, n == 0 ? 1 : n);

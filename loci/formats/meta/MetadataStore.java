@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -873,6 +873,53 @@ public interface MetadataStore {
    */
   void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
 
+  // - Plate property storage -
+
+  /**
+   * For a particular Plate, sets identifies a plate within a screen.
+   * @param description identifies a plate within a screen
+   * @param plateIndex index of the Plate
+   */
+  void setPlateDescription(String description, int plateIndex);
+
+  /**
+   * For a particular Plate, sets reference to this plate in an external database.
+   * @param externalIdentifier reference to this plate in an external database
+   * @param plateIndex index of the Plate
+   */
+  void setPlateExternalIdentifier(String externalIdentifier, int plateIndex);
+
+  /**
+   * For a particular Plate, sets TODO.
+   * @param id TODO
+   * @param plateIndex index of the Plate
+   */
+  void setPlateID(String id, int plateIndex);
+
+  /**
+   * For a particular Plate, sets the plate's name.
+   * @param name the plate's name
+   * @param plateIndex index of the Plate
+   */
+  void setPlateName(String name, int plateIndex);
+
+  /**
+   * For a particular Plate, sets current state of the plate with respect to the experiment work-flow.
+   * @param status current state of the plate with respect to the experiment work-flow
+   * @param plateIndex index of the Plate
+   */
+  void setPlateStatus(String status, int plateIndex);
+
+  // - PlateRef property storage -
+
+  /**
+   * For a particular PlateRef, sets TODO.
+   * @param id TODO
+   * @param screenIndex index of the Screen
+   * @param plateRefIndex index of the PlateRef
+   */
+  void setPlateRefID(String id, int screenIndex, int plateRefIndex);
+
   // - ROI property storage -
 
   /**
@@ -946,6 +993,110 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    */
   void setROIZ1(Integer z1, int imageIndex, int roiIndex);
+
+  // - Reagent property storage -
+
+  /**
+   * For a particular Reagent, sets the reagent's description.
+   * @param description the reagent's description
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  void setReagentDescription(String description, int screenIndex, int reagentIndex);
+
+  /**
+   * For a particular Reagent, sets TODO.
+   * @param id TODO
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  void setReagentID(String id, int screenIndex, int reagentIndex);
+
+  /**
+   * For a particular Reagent, sets the reagent's name.
+   * @param name the reagent's name
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  void setReagentName(String name, int screenIndex, int reagentIndex);
+
+  /**
+   * For a particular Reagent, sets reference to this reagent in an external database.
+   * @param reagentIdentifier reference to this reagent in an external database
+   * @param screenIndex index of the Screen
+   * @param reagentIndex index of the Reagent
+   */
+  void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex);
+
+  // - Screen property storage -
+
+  /**
+   * For a particular Screen, sets TODO.
+   * @param id TODO
+   * @param screenIndex index of the Screen
+   */
+  void setScreenID(String id, int screenIndex);
+
+  /**
+   * For a particular Screen, sets the screen's name.
+   * @param name the screen's name
+   * @param screenIndex index of the Screen
+   */
+  void setScreenName(String name, int screenIndex);
+
+  /**
+   * For a particular Screen, sets description of the screen's protocol.
+   * @param protocolDescription description of the screen's protocol
+   * @param screenIndex index of the Screen
+   */
+  void setScreenProtocolDescription(String protocolDescription, int screenIndex);
+
+  /**
+   * For a particular Screen, sets reference to an externally defined protocol.
+   * @param protocolIdentifier reference to an externally defined protocol
+   * @param screenIndex index of the Screen
+   */
+  void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex);
+
+  /**
+   * For a particular Screen, sets description of a set of reagents.
+   * @param reagentSetDescription description of a set of reagents
+   * @param screenIndex index of the Screen
+   */
+  void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex);
+
+  /**
+   * For a particular Screen, sets human-readable screen type, e.g. RNAi, cDNA.
+   * @param type human-readable screen type, e.g. RNAi, cDNA
+   * @param screenIndex index of the Screen
+   */
+  void setScreenType(String type, int screenIndex);
+
+  // - ScreenAcquisition property storage -
+
+  /**
+   * For a particular ScreenAcquisition, sets time when the last image was acquired.
+   * @param endTime time when the last image was acquired
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   */
+  void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex);
+
+  /**
+   * For a particular ScreenAcquisition, sets TODO.
+   * @param id TODO
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   */
+  void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex);
+
+  /**
+   * For a particular ScreenAcquisition, sets time when the first image was acquired.
+   * @param startTime time when the first image was acquired
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   */
+  void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex);
 
   // - StageLabel property storage -
 
@@ -1070,5 +1221,91 @@ public interface MetadataStore {
    * @param tiffDataIndex index of the TiffData
    */
   void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  // - Well property storage -
+
+  /**
+   * For a particular Well, sets column index of the well, where top-left is 0.
+   * @param column column index of the well, where top-left is 0
+   * @param wellIndex index of the Well
+   */
+  void setWellColumn(Integer column, int wellIndex);
+
+  /**
+   * For a particular Well, sets description of the externally defined ID for this plate.
+   * @param externalDescription description of the externally defined ID for this plate
+   * @param wellIndex index of the Well
+   */
+  void setWellExternalDescription(String externalDescription, int wellIndex);
+
+  /**
+   * For a particular Well, sets reference to this well in an external database.
+   * @param externalIdentifier reference to this well in an external database
+   * @param wellIndex index of the Well
+   */
+  void setWellExternalIdentifier(String externalIdentifier, int wellIndex);
+
+  /**
+   * For a particular Well, sets TODO.
+   * @param id TODO
+   * @param wellIndex index of the Well
+   */
+  void setWellID(String id, int wellIndex);
+
+  /**
+   * For a particular Well, sets row index of the well, where top-left is 0.
+   * @param row row index of the well, where top-left is 0
+   * @param wellIndex index of the Well
+   */
+  void setWellRow(Integer row, int wellIndex);
+
+  /**
+   * For a particular Well, sets human-readable identifier of the screen status, e.g. empty, control.
+   * @param type human-readable identifier of the screen status, e.g. empty, control
+   * @param wellIndex index of the Well
+   */
+  void setWellType(String type, int wellIndex);
+
+  // - WellSample property storage -
+
+  /**
+   * For a particular WellSample, sets TODO.
+   * @param id TODO
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  void setWellSampleID(String id, int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, sets link to the Image element.
+   * @param index link to the Image element
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, sets X position of the image within the well.
+   * @param posX X position of the image within the well
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, sets Y position of the image within the well.
+   * @param posY Y position of the image within the well
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, sets time-point at which the image started to be collected.
+   * @param timepoint time-point at which the image started to be collected
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex);
 
 }

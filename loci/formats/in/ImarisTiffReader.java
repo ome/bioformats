@@ -103,29 +103,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     core.rgb[0] =
       core.imageCount[0] != core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
 
-    int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.BITS_PER_SAMPLE);
-    int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
-
-    while (bitsPerSample % 8 != 0) bitsPerSample++;
-    if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
-
-    boolean signed = bitFormat == 2;
-
-    if (bitFormat == 3) core.pixelType[0] = FormatTools.FLOAT;
-    else {
-      switch (bitsPerSample) {
-        case 8:
-          core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
-          break;
-        case 16:
-          core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
-          break;
-        case 32:
-          core.pixelType[0] = signed ? FormatTools.INT32: FormatTools.UINT32;
-          break;
-      }
-    }
+    core.pixelType[0] = getPixelType(ifds[0]);
 
     status("Parsing comment");
 

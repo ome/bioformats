@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -155,6 +155,18 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateCount() */
+  public int getPlateCount() {
+    // NB: Plate unsupported for schema version 2003-FC
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateRefCount(int) */
+  public int getPlateRefCount(int screenIndex) {
+    // NB: PlateRef unsupported for schema version 2003-FC
+    return -1;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getROICount(int) */
   public int getROICount(int imageIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
@@ -163,9 +175,39 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentCount(int) */
+  public int getReagentCount(int screenIndex) {
+    // NB: Reagent unsupported for schema version 2003-FC
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenCount() */
+  public int getScreenCount() {
+    // NB: Screen unsupported for schema version 2003-FC
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionCount(int) */
+  public int getScreenAcquisitionCount(int screenIndex) {
+    // NB: ScreenAcquisition unsupported for schema version 2003-FC
+    return -1;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataCount(int, int) */
   public int getTiffDataCount(int imageIndex, int pixelsIndex) {
     // NB: TiffData unsupported for schema version 2003-FC
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellCount() */
+  public int getWellCount() {
+    // NB: Well unsupported for schema version 2003-FC
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleCount(int) */
+  public int getWellSampleCount(int wellIndex) {
+    // NB: WellSample unsupported for schema version 2003-FC
     return -1;
   }
 
@@ -797,6 +839,46 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     return null;
   }
 
+  // - Plate property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateDescription(int) */
+  public String getPlateDescription(int plateIndex) {
+    // NB: Description unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateExternalIdentifier(int) */
+  public String getPlateExternalIdentifier(int plateIndex) {
+    // NB: ExternalIdentifier unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateID(int) */
+  public String getPlateID(int plateIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateName(int) */
+  public String getPlateName(int plateIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateStatus(int) */
+  public String getPlateStatus(int plateIndex) {
+    // NB: Status unsupported for schema version 2003-FC
+    return null;
+  }
+
+  // - PlateRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateRefID(int, int) */
+  public String getPlateRefID(int screenIndex, int plateRefIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+    return null;
+  }
+
   // - ROI property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getROIID(int, int) */
@@ -851,6 +933,90 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public Integer getROIZ1(int imageIndex, int roiIndex) {
     ROINode roi = getROINode(imageIndex, roiIndex, false);
     return roi == null ? null : roi.getZ1();
+  }
+
+  // - Reagent property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentDescription(int, int) */
+  public String getReagentDescription(int screenIndex, int reagentIndex) {
+    // NB: Description unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentID(int, int) */
+  public String getReagentID(int screenIndex, int reagentIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentName(int, int) */
+  public String getReagentName(int screenIndex, int reagentIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getReagentReagentIdentifier(int, int) */
+  public String getReagentReagentIdentifier(int screenIndex, int reagentIndex) {
+    // NB: ReagentIdentifier unsupported for schema version 2003-FC
+    return null;
+  }
+
+  // - Screen property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenID(int) */
+  public String getScreenID(int screenIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenName(int) */
+  public String getScreenName(int screenIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenProtocolDescription(int) */
+  public String getScreenProtocolDescription(int screenIndex) {
+    // NB: ProtocolDescription unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenProtocolIdentifier(int) */
+  public String getScreenProtocolIdentifier(int screenIndex) {
+    // NB: ProtocolIdentifier unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenReagentSetDescription(int) */
+  public String getScreenReagentSetDescription(int screenIndex) {
+    // NB: ReagentSetDescription unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenType(int) */
+  public String getScreenType(int screenIndex) {
+    // NB: Type unsupported for schema version 2003-FC
+    return null;
+  }
+
+  // - ScreenAcquisition property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionEndTime(int, int) */
+  public String getScreenAcquisitionEndTime(int screenIndex, int screenAcquisitionIndex) {
+    // NB: EndTime unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionID(int, int) */
+  public String getScreenAcquisitionID(int screenIndex, int screenAcquisitionIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenAcquisitionStartTime(int, int) */
+  public String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex) {
+    // NB: StartTime unsupported for schema version 2003-FC
+    return null;
   }
 
   // - StageLabel property retrieval -
@@ -940,6 +1106,76 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataUUID(int, int, int) */
   public String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex) {
     // NB: UUID unsupported for schema version 2003-FC
+    return null;
+  }
+
+  // - Well property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellColumn(int) */
+  public Integer getWellColumn(int wellIndex) {
+    // NB: Column unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalDescription(int) */
+  public String getWellExternalDescription(int wellIndex) {
+    // NB: ExternalDescription unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalIdentifier(int) */
+  public String getWellExternalIdentifier(int wellIndex) {
+    // NB: ExternalIdentifier unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellID(int) */
+  public String getWellID(int wellIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellRow(int) */
+  public Integer getWellRow(int wellIndex) {
+    // NB: Row unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellType(int) */
+  public String getWellType(int wellIndex) {
+    // NB: Type unsupported for schema version 2003-FC
+    return null;
+  }
+
+  // - WellSample property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleID(int, int) */
+  public String getWellSampleID(int wellIndex, int wellSampleIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleIndex(int, int) */
+  public Integer getWellSampleIndex(int wellIndex, int wellSampleIndex) {
+    // NB: Index unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosX(int, int) */
+  public Float getWellSamplePosX(int wellIndex, int wellSampleIndex) {
+    // NB: PosX unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosY(int, int) */
+  public Float getWellSamplePosY(int wellIndex, int wellSampleIndex) {
+    // NB: PosY unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleTimepoint(int, int) */
+  public Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex) {
+    // NB: Timepoint unsupported for schema version 2003-FC
     return null;
   }
 
@@ -1669,6 +1905,40 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     // NB: ExposureTime unsupported for schema version 2003-FC
   }
 
+  // - Plate property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPlateDescription(String, int) */
+  public void setPlateDescription(String description, int plateIndex) {
+    // NB: Description unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateExternalIdentifier(String, int) */
+  public void setPlateExternalIdentifier(String externalIdentifier, int plateIndex) {
+    // NB: ExternalIdentifier unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateID(String, int) */
+  public void setPlateID(String id, int plateIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateName(String, int) */
+  public void setPlateName(String name, int plateIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateStatus(String, int) */
+  public void setPlateStatus(String status, int plateIndex) {
+    // NB: Status unsupported for schema version 2003-FC
+  }
+
+  // - PlateRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPlateRefID(String, int, int) */
+  public void setPlateRefID(String id, int screenIndex, int plateRefIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+  }
+
   // - ROI property storage -
 
   /* @see loci.formats.meta.MetadataStore#setROIID(String, int, int) */
@@ -1732,6 +2002,77 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (z1 == null) return;
     ROINode roiNode = getROINode(imageIndex, roiIndex, true);
     roiNode.setZ1(z1);
+  }
+
+  // - Reagent property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setReagentDescription(String, int, int) */
+  public void setReagentDescription(String description, int screenIndex, int reagentIndex) {
+    // NB: Description unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setReagentID(String, int, int) */
+  public void setReagentID(String id, int screenIndex, int reagentIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setReagentName(String, int, int) */
+  public void setReagentName(String name, int screenIndex, int reagentIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setReagentReagentIdentifier(String, int, int) */
+  public void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex) {
+    // NB: ReagentIdentifier unsupported for schema version 2003-FC
+  }
+
+  // - Screen property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setScreenID(String, int) */
+  public void setScreenID(String id, int screenIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenName(String, int) */
+  public void setScreenName(String name, int screenIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenProtocolDescription(String, int) */
+  public void setScreenProtocolDescription(String protocolDescription, int screenIndex) {
+    // NB: ProtocolDescription unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenProtocolIdentifier(String, int) */
+  public void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex) {
+    // NB: ProtocolIdentifier unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenReagentSetDescription(String, int) */
+  public void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex) {
+    // NB: ReagentSetDescription unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenType(String, int) */
+  public void setScreenType(String type, int screenIndex) {
+    // NB: Type unsupported for schema version 2003-FC
+  }
+
+  // - ScreenAcquisition property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setScreenAcquisitionEndTime(String, int, int) */
+  public void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex) {
+    // NB: EndTime unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenAcquisitionID(String, int, int) */
+  public void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenAcquisitionStartTime(String, int, int) */
+  public void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex) {
+    // NB: StartTime unsupported for schema version 2003-FC
   }
 
   // - StageLabel property storage -
@@ -1816,6 +2157,65 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setTiffDataUUID(String, int, int, int) */
   public void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex) {
     // NB: UUID unsupported for schema version 2003-FC
+  }
+
+  // - Well property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setWellColumn(Integer, int) */
+  public void setWellColumn(Integer column, int wellIndex) {
+    // NB: Column unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellExternalDescription(String, int) */
+  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+    // NB: ExternalDescription unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellExternalIdentifier(String, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+    // NB: ExternalIdentifier unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellID(String, int) */
+  public void setWellID(String id, int wellIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellRow(Integer, int) */
+  public void setWellRow(Integer row, int wellIndex) {
+    // NB: Row unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellType(String, int) */
+  public void setWellType(String type, int wellIndex) {
+    // NB: Type unsupported for schema version 2003-FC
+  }
+
+  // - WellSample property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleID(String, int, int) */
+  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+    // NB: ID unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleIndex(Integer, int, int) */
+  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
+    // NB: Index unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSamplePosX(Float, int, int) */
+  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
+    // NB: PosX unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSamplePosY(Float, int, int) */
+  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
+    // NB: PosY unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleTimepoint(Integer, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
+    // NB: Timepoint unsupported for schema version 2003-FC
   }
 
   // -- Helper methods --

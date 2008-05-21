@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -236,6 +236,32 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return -1;
   }
 
+  /* @see MetadataRetrieve#getPlateCount() */
+  public int getPlateCount() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getPlateCount();
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getPlateRefCount(int) */
+  public int getPlateRefCount(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getPlateRefCount(screenIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
   /* @see MetadataRetrieve#getROICount(int) */
   public int getROICount(int imageIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -249,6 +275,45 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return -1;
   }
 
+  /* @see MetadataRetrieve#getReagentCount(int) */
+  public int getReagentCount(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getReagentCount(screenIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getScreenCount() */
+  public int getScreenCount() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getScreenCount();
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getScreenAcquisitionCount(int) */
+  public int getScreenAcquisitionCount(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getScreenAcquisitionCount(screenIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
   /* @see MetadataRetrieve#getTiffDataCount(int, int) */
   public int getTiffDataCount(int imageIndex, int pixelsIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -256,6 +321,32 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getTiffDataCount(imageIndex, pixelsIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getWellCount() */
+  public int getWellCount() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getWellCount();
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getWellSampleCount(int) */
+  public int getWellSampleCount(int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getWellSampleCount(wellIndex);
         if (result >= 0) return result;
       }
     }
@@ -1569,6 +1660,88 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - Plate property retrieval -
+
+  /* @see MetadataRetrieve#getPlateDescription(int) */
+  public String getPlateDescription(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateDescription(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlateExternalIdentifier(int) */
+  public String getPlateExternalIdentifier(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateExternalIdentifier(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlateID(int) */
+  public String getPlateID(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateID(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlateName(int) */
+  public String getPlateName(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateName(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlateStatus(int) */
+  public String getPlateStatus(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateStatus(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - PlateRef property retrieval -
+
+  /* @see MetadataRetrieve#getPlateRefID(int, int) */
+  public String getPlateRefID(int screenIndex, int plateRefIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateRefID(screenIndex, plateRefIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   // - ROI property retrieval -
 
   /* @see MetadataRetrieve#getROIID(int, int) */
@@ -1682,6 +1855,181 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Integer result = retrieve.getROIZ1(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - Reagent property retrieval -
+
+  /* @see MetadataRetrieve#getReagentDescription(int, int) */
+  public String getReagentDescription(int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getReagentDescription(screenIndex, reagentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getReagentID(int, int) */
+  public String getReagentID(int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getReagentID(screenIndex, reagentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getReagentName(int, int) */
+  public String getReagentName(int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getReagentName(screenIndex, reagentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getReagentReagentIdentifier(int, int) */
+  public String getReagentReagentIdentifier(int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getReagentReagentIdentifier(screenIndex, reagentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - Screen property retrieval -
+
+  /* @see MetadataRetrieve#getScreenID(int) */
+  public String getScreenID(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenID(screenIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getScreenName(int) */
+  public String getScreenName(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenName(screenIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getScreenProtocolDescription(int) */
+  public String getScreenProtocolDescription(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenProtocolDescription(screenIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getScreenProtocolIdentifier(int) */
+  public String getScreenProtocolIdentifier(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenProtocolIdentifier(screenIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getScreenReagentSetDescription(int) */
+  public String getScreenReagentSetDescription(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenReagentSetDescription(screenIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getScreenType(int) */
+  public String getScreenType(int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenType(screenIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - ScreenAcquisition property retrieval -
+
+  /* @see MetadataRetrieve#getScreenAcquisitionEndTime(int, int) */
+  public String getScreenAcquisitionEndTime(int screenIndex, int screenAcquisitionIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenAcquisitionEndTime(screenIndex, screenAcquisitionIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getScreenAcquisitionID(int, int) */
+  public String getScreenAcquisitionID(int screenIndex, int screenAcquisitionIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenAcquisitionID(screenIndex, screenAcquisitionIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getScreenAcquisitionStartTime(int, int) */
+  public String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getScreenAcquisitionStartTime(screenIndex, screenAcquisitionIndex);
         if (result != null) return result;
       }
     }
@@ -1870,6 +2218,153 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getTiffDataUUID(imageIndex, pixelsIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - Well property retrieval -
+
+  /* @see MetadataRetrieve#getWellColumn(int) */
+  public Integer getWellColumn(int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getWellColumn(wellIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellExternalDescription(int) */
+  public String getWellExternalDescription(int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getWellExternalDescription(wellIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellExternalIdentifier(int) */
+  public String getWellExternalIdentifier(int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getWellExternalIdentifier(wellIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellID(int) */
+  public String getWellID(int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getWellID(wellIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellRow(int) */
+  public Integer getWellRow(int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getWellRow(wellIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellType(int) */
+  public String getWellType(int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getWellType(wellIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - WellSample property retrieval -
+
+  /* @see MetadataRetrieve#getWellSampleID(int, int) */
+  public String getWellSampleID(int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getWellSampleID(wellIndex, wellSampleIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellSampleIndex(int, int) */
+  public Integer getWellSampleIndex(int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getWellSampleIndex(wellIndex, wellSampleIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellSamplePosX(int, int) */
+  public Float getWellSamplePosX(int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getWellSamplePosX(wellIndex, wellSampleIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellSamplePosY(int, int) */
+  public Float getWellSamplePosY(int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getWellSamplePosY(wellIndex, wellSampleIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getWellSampleTimepoint(int, int) */
+  public Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getWellSampleTimepoint(wellIndex, wellSampleIndex);
         if (result != null) return result;
       }
     }
@@ -3017,6 +3512,76 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
   }
 
+  // - Plate property storage -
+
+  /* @see MetadataStore#setPlateDescription(String, int) */
+  public void setPlateDescription(String description, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateDescription(description, plateIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPlateExternalIdentifier(String, int) */
+  public void setPlateExternalIdentifier(String externalIdentifier, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateExternalIdentifier(externalIdentifier, plateIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPlateID(String, int) */
+  public void setPlateID(String id, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateID(id, plateIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPlateName(String, int) */
+  public void setPlateName(String name, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateName(name, plateIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPlateStatus(String, int) */
+  public void setPlateStatus(String status, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateStatus(status, plateIndex);
+      }
+    }
+  }
+
+  // - PlateRef property storage -
+
+  /* @see MetadataStore#setPlateRefID(String, int, int) */
+  public void setPlateRefID(String id, int screenIndex, int plateRefIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateRefID(id, screenIndex, plateRefIndex);
+      }
+    }
+  }
+
   // - ROI property storage -
 
   /* @see MetadataStore#setROIID(String, int, int) */
@@ -3114,6 +3679,155 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setROIZ1(z1, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  // - Reagent property storage -
+
+  /* @see MetadataStore#setReagentDescription(String, int, int) */
+  public void setReagentDescription(String description, int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setReagentDescription(description, screenIndex, reagentIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setReagentID(String, int, int) */
+  public void setReagentID(String id, int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setReagentID(id, screenIndex, reagentIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setReagentName(String, int, int) */
+  public void setReagentName(String name, int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setReagentName(name, screenIndex, reagentIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setReagentReagentIdentifier(String, int, int) */
+  public void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setReagentReagentIdentifier(reagentIdentifier, screenIndex, reagentIndex);
+      }
+    }
+  }
+
+  // - Screen property storage -
+
+  /* @see MetadataStore#setScreenID(String, int) */
+  public void setScreenID(String id, int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenID(id, screenIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setScreenName(String, int) */
+  public void setScreenName(String name, int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenName(name, screenIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setScreenProtocolDescription(String, int) */
+  public void setScreenProtocolDescription(String protocolDescription, int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenProtocolDescription(protocolDescription, screenIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setScreenProtocolIdentifier(String, int) */
+  public void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenProtocolIdentifier(protocolIdentifier, screenIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setScreenReagentSetDescription(String, int) */
+  public void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenReagentSetDescription(reagentSetDescription, screenIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setScreenType(String, int) */
+  public void setScreenType(String type, int screenIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenType(type, screenIndex);
+      }
+    }
+  }
+
+  // - ScreenAcquisition property storage -
+
+  /* @see MetadataStore#setScreenAcquisitionEndTime(String, int, int) */
+  public void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenAcquisitionEndTime(endTime, screenIndex, screenAcquisitionIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setScreenAcquisitionID(String, int, int) */
+  public void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenAcquisitionID(id, screenIndex, screenAcquisitionIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setScreenAcquisitionStartTime(String, int, int) */
+  public void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setScreenAcquisitionStartTime(startTime, screenIndex, screenAcquisitionIndex);
       }
     }
   }
@@ -3274,6 +3988,131 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setTiffDataUUID(uuid, imageIndex, pixelsIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  // - Well property storage -
+
+  /* @see MetadataStore#setWellColumn(Integer, int) */
+  public void setWellColumn(Integer column, int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellColumn(column, wellIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellExternalDescription(String, int) */
+  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellExternalDescription(externalDescription, wellIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellExternalIdentifier(String, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellExternalIdentifier(externalIdentifier, wellIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellID(String, int) */
+  public void setWellID(String id, int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellID(id, wellIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellRow(Integer, int) */
+  public void setWellRow(Integer row, int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellRow(row, wellIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellType(String, int) */
+  public void setWellType(String type, int wellIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellType(type, wellIndex);
+      }
+    }
+  }
+
+  // - WellSample property storage -
+
+  /* @see MetadataStore#setWellSampleID(String, int, int) */
+  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellSampleID(id, wellIndex, wellSampleIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellSampleIndex(Integer, int, int) */
+  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellSampleIndex(index, wellIndex, wellSampleIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellSamplePosX(Float, int, int) */
+  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellSamplePosX(posX, wellIndex, wellSampleIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellSamplePosY(Float, int, int) */
+  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellSamplePosY(posY, wellIndex, wellSampleIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setWellSampleTimepoint(timepoint, wellIndex, wellSampleIndex);
       }
     }
   }

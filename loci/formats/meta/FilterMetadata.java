@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -649,6 +649,46 @@ public class FilterMetadata implements MetadataStore {
     store.setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex);
   }
 
+  // -- Plate property storage -
+
+  /* @see MetadataStore#setPlateDescription(String, int) */
+  public void setPlateDescription(String description, int plateIndex) {
+    String value = filter ? DataTools.sanitize(description) : description;
+    store.setPlateDescription(value, plateIndex);
+  }
+
+  /* @see MetadataStore#setPlateExternalIdentifier(String, int) */
+  public void setPlateExternalIdentifier(String externalIdentifier, int plateIndex) {
+    String value = filter ? DataTools.sanitize(externalIdentifier) : externalIdentifier;
+    store.setPlateExternalIdentifier(value, plateIndex);
+  }
+
+  /* @see MetadataStore#setPlateID(String, int) */
+  public void setPlateID(String id, int plateIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setPlateID(value, plateIndex);
+  }
+
+  /* @see MetadataStore#setPlateName(String, int) */
+  public void setPlateName(String name, int plateIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setPlateName(value, plateIndex);
+  }
+
+  /* @see MetadataStore#setPlateStatus(String, int) */
+  public void setPlateStatus(String status, int plateIndex) {
+    String value = filter ? DataTools.sanitize(status) : status;
+    store.setPlateStatus(value, plateIndex);
+  }
+
+  // -- PlateRef property storage -
+
+  /* @see MetadataStore#setPlateRefID(String, int, int) */
+  public void setPlateRefID(String id, int screenIndex, int plateRefIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setPlateRefID(value, screenIndex, plateRefIndex);
+  }
+
   // -- ROI property storage -
 
   /* @see MetadataStore#setROIID(String, int, int) */
@@ -695,6 +735,90 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setROIZ1(Integer, int, int) */
   public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
     store.setROIZ1(z1, imageIndex, roiIndex);
+  }
+
+  // -- Reagent property storage -
+
+  /* @see MetadataStore#setReagentDescription(String, int, int) */
+  public void setReagentDescription(String description, int screenIndex, int reagentIndex) {
+    String value = filter ? DataTools.sanitize(description) : description;
+    store.setReagentDescription(value, screenIndex, reagentIndex);
+  }
+
+  /* @see MetadataStore#setReagentID(String, int, int) */
+  public void setReagentID(String id, int screenIndex, int reagentIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setReagentID(value, screenIndex, reagentIndex);
+  }
+
+  /* @see MetadataStore#setReagentName(String, int, int) */
+  public void setReagentName(String name, int screenIndex, int reagentIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setReagentName(value, screenIndex, reagentIndex);
+  }
+
+  /* @see MetadataStore#setReagentReagentIdentifier(String, int, int) */
+  public void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex) {
+    String value = filter ? DataTools.sanitize(reagentIdentifier) : reagentIdentifier;
+    store.setReagentReagentIdentifier(value, screenIndex, reagentIndex);
+  }
+
+  // -- Screen property storage -
+
+  /* @see MetadataStore#setScreenID(String, int) */
+  public void setScreenID(String id, int screenIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setScreenID(value, screenIndex);
+  }
+
+  /* @see MetadataStore#setScreenName(String, int) */
+  public void setScreenName(String name, int screenIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setScreenName(value, screenIndex);
+  }
+
+  /* @see MetadataStore#setScreenProtocolDescription(String, int) */
+  public void setScreenProtocolDescription(String protocolDescription, int screenIndex) {
+    String value = filter ? DataTools.sanitize(protocolDescription) : protocolDescription;
+    store.setScreenProtocolDescription(value, screenIndex);
+  }
+
+  /* @see MetadataStore#setScreenProtocolIdentifier(String, int) */
+  public void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex) {
+    String value = filter ? DataTools.sanitize(protocolIdentifier) : protocolIdentifier;
+    store.setScreenProtocolIdentifier(value, screenIndex);
+  }
+
+  /* @see MetadataStore#setScreenReagentSetDescription(String, int) */
+  public void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex) {
+    String value = filter ? DataTools.sanitize(reagentSetDescription) : reagentSetDescription;
+    store.setScreenReagentSetDescription(value, screenIndex);
+  }
+
+  /* @see MetadataStore#setScreenType(String, int) */
+  public void setScreenType(String type, int screenIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setScreenType(value, screenIndex);
+  }
+
+  // -- ScreenAcquisition property storage -
+
+  /* @see MetadataStore#setScreenAcquisitionEndTime(String, int, int) */
+  public void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex) {
+    String value = filter ? DataTools.sanitize(endTime) : endTime;
+    store.setScreenAcquisitionEndTime(value, screenIndex, screenAcquisitionIndex);
+  }
+
+  /* @see MetadataStore#setScreenAcquisitionID(String, int, int) */
+  public void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setScreenAcquisitionID(value, screenIndex, screenAcquisitionIndex);
+  }
+
+  /* @see MetadataStore#setScreenAcquisitionStartTime(String, int, int) */
+  public void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex) {
+    String value = filter ? DataTools.sanitize(startTime) : startTime;
+    store.setScreenAcquisitionStartTime(value, screenIndex, screenAcquisitionIndex);
   }
 
   // -- StageLabel property storage -
@@ -774,6 +898,70 @@ public class FilterMetadata implements MetadataStore {
   public void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex) {
     String value = filter ? DataTools.sanitize(uuid) : uuid;
     store.setTiffDataUUID(value, imageIndex, pixelsIndex, tiffDataIndex);
+  }
+
+  // -- Well property storage -
+
+  /* @see MetadataStore#setWellColumn(Integer, int) */
+  public void setWellColumn(Integer column, int wellIndex) {
+    store.setWellColumn(column, wellIndex);
+  }
+
+  /* @see MetadataStore#setWellExternalDescription(String, int) */
+  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+    String value = filter ? DataTools.sanitize(externalDescription) : externalDescription;
+    store.setWellExternalDescription(value, wellIndex);
+  }
+
+  /* @see MetadataStore#setWellExternalIdentifier(String, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+    String value = filter ? DataTools.sanitize(externalIdentifier) : externalIdentifier;
+    store.setWellExternalIdentifier(value, wellIndex);
+  }
+
+  /* @see MetadataStore#setWellID(String, int) */
+  public void setWellID(String id, int wellIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setWellID(value, wellIndex);
+  }
+
+  /* @see MetadataStore#setWellRow(Integer, int) */
+  public void setWellRow(Integer row, int wellIndex) {
+    store.setWellRow(row, wellIndex);
+  }
+
+  /* @see MetadataStore#setWellType(String, int) */
+  public void setWellType(String type, int wellIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setWellType(value, wellIndex);
+  }
+
+  // -- WellSample property storage -
+
+  /* @see MetadataStore#setWellSampleID(String, int, int) */
+  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setWellSampleID(value, wellIndex, wellSampleIndex);
+  }
+
+  /* @see MetadataStore#setWellSampleIndex(Integer, int, int) */
+  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
+    store.setWellSampleIndex(index, wellIndex, wellSampleIndex);
+  }
+
+  /* @see MetadataStore#setWellSamplePosX(Float, int, int) */
+  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
+    store.setWellSamplePosX(posX, wellIndex, wellSampleIndex);
+  }
+
+  /* @see MetadataStore#setWellSamplePosY(Float, int, int) */
+  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
+    store.setWellSamplePosY(posY, wellIndex, wellSampleIndex);
+  }
+
+  /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
+    store.setWellSampleTimepoint(timepoint, wellIndex, wellSampleIndex);
   }
 
 }

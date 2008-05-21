@@ -1157,3 +1157,308 @@ description = the e-mail address of the experimenter
 [Experimenter Institution]
 type = String
 description = the institution to which the experimenter belongs
+
+### Entities for ScreenPlateWell ###
+
+## Plate ##
+
+[Plate]
+countable = true
+path = Plate+
+description = identifies a plate within a screen
+
+[Plate 2003FC]
+path = -
+
+[Plate ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+#[Plate ScreenRef]
+#type =
+#description = TODO
+
+#[Plate Well]
+#type = Integer
+#description = TODO
+
+[Plate Name]
+type = String
+description = the plate's name
+
+[Plate Description]
+type = String
+
+[Plate Status]
+type = String
+description = current state of the plate with respect to the experiment work-flow
+
+[Plate ExternalIdentifier]
+type = String
+description = reference to this plate in an external database
+
+## PlateRef ##
+
+[PlateRef]
+countable = true
+path = Screen+/PlateRef+
+description = reference to a Plate element
+
+[PlateRef 2003FC]
+path = -
+
+[PlateRef ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+## Reagent ##
+
+[Reagent]
+countable = true
+path = Screen+/Reagent+
+description = describes a chemical or other physical experimental parameter
+
+[Reagent 2003FC]
+path = -
+
+[Reagent ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Reagent Description]
+type = String
+description = the reagent's description
+
+[Reagent Name]
+type = String
+description = the reagent's name
+
+[Reagent ReagentIdentifier]
+type = String
+description = reference to this reagent in an external database
+
+## ReagentRef ##
+
+#[ReagentRef]
+#countable = true
+#path = Screen+/ReagentRef+
+#description = reference to a Reagent
+
+#[ReagentRef 2003FC]
+#path = -
+
+#[ReagentRef ID]
+#type = String
+#getter = getNodeID
+#setter = setNodeID
+#description = TODO
+
+## Screen ##
+
+[Screen]
+countable = true
+path = Screen+
+description = description of a screen (grouping of plates)
+
+[Screen 2003FC]
+path = -
+
+#[Screen Reagent]
+#type = String
+#description = TODO
+
+#[Screen PlateRef]
+#type = String
+#description = TODO
+
+#[Screen ScreenAcquisition]
+
+[Screen ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Screen Name]
+type = String
+description = the screen's name
+
+[Screen ProtocolIdentifier]
+type = String
+description = reference to an externally defined protocol
+
+[Screen ProtocolDescription]
+type = String
+description = description of the screen's protocol
+
+[Screen ReagentSetDescription]
+type = String
+description = description of a set of reagents
+
+#[Screen ReagentSetidentifier]
+#type = String
+#description = reference to an externally defined set of reagents
+
+[Screen Type]
+type = String
+description = human-readable screen type, e.g. RNAi, cDNA
+
+## ScreenRef ##
+
+#[ScreenRef]
+#countable = true
+#path = Screen+/ScreenRef+
+#description = reference to a Screen element
+
+#[ScreenRef 2003FC]
+#path = -
+
+#[ScreenRef ID]
+#type = String
+#getter = getNodeID
+#setter = setNodeID
+#description = TODO
+
+## ScreenAcquisition ##
+
+[ScreenAcquisition]
+countable = true
+path = Screen+/ScreenAcquisition+
+description = describes an acquisition run for a screen
+
+[ScreenAcquisition 2003FC]
+path = -
+
+#[ScreenAcquisition WellSampleRef]
+
+[ScreenAcquisition ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[ScreenAcquisition EndTime]
+type = String
+description = time when the last image was acquired
+
+[ScreenAcquisition StartTime]
+type = String
+description = time when the first image was acquired
+
+## Well ##
+
+[Well]
+countable = true
+path = Well+
+description = describes a Well (part of a plate)
+
+[Well 2003FC]
+path = -
+
+#[Well WellSample]
+#type = String
+#description = TODO
+
+#[Well ReagentRef]
+#type = String
+#description = TODO
+
+[Well ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Well Column]
+type = Integer
+description = column index of the well, where top-left is 0
+
+[Well ExternalDescription]
+type = String
+description = description of the externally defined ID for this plate
+
+[Well ExternalIdentifier]
+type = String
+description = reference to this well in an external database
+
+[Well Row]
+type = Integer
+description = row index of the well, where top-left is 0
+
+[Well Type]
+type = String
+description = human-readable identifier of the screen status, e.g. empty, control
+
+## WellSample ##
+
+[WellSample]
+countable = true
+path = Well+/WellSample+
+description = individual image within a Well
+
+[WellSample 2003FC]
+path = -
+
+#[WellSample ImageRef]
+#type = String
+#description = TODO
+
+[WellSample ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[WellSample Index]
+type = Integer
+description = link to the Image element
+
+[WellSample PosX]
+type = Float
+description = X position of the image within the well
+
+[WellSample PosY]
+type = Float
+description = Y position of the image within the well
+
+[WellSample Timepoint]
+type = Integer
+description = time-point at which the image started to be collected
+
+## ImageRef ##
+
+#[ImageRef]
+#countable = true
+#path = ImageRef+
+#description = reference to an Image element
+
+#[ImageRef 2003FC]
+#path = -
+
+#[ImageRef ID]
+#type = String
+#getter = getNodeID
+#setter = setNodeID
+#description = TODO
+
+## WellSampleRef ##
+
+#[WellSampleRef]
+#countable = true
+#path = WellSampleRef+
+#description = reference to a WellSample element
+
+#[WellSampleRef 2003FC]
+#path = -
+
+#[WellSampleRef ID]
+#type = String
+#getter = getNodeID
+#setter = setNodeID
+#description = TODO

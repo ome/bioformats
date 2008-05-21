@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Apr 28, 2008 4:19:17 PM CDT
+ * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,13 +104,48 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return -1;
   }
 
+  /* @see MetadataRetrieve#getPlateCount() */
+  public int getPlateCount() {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getPlateRefCount(int) */
+  public int getPlateRefCount(int screenIndex) {
+    return -1;
+  }
+
   /* @see MetadataRetrieve#getROICount(int) */
   public int getROICount(int imageIndex) {
     return -1;
   }
 
+  /* @see MetadataRetrieve#getReagentCount(int) */
+  public int getReagentCount(int screenIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getScreenCount() */
+  public int getScreenCount() {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getScreenAcquisitionCount(int) */
+  public int getScreenAcquisitionCount(int screenIndex) {
+    return -1;
+  }
+
   /* @see MetadataRetrieve#getTiffDataCount(int, int) */
   public int getTiffDataCount(int imageIndex, int pixelsIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getWellCount() */
+  public int getWellCount() {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getWellSampleCount(int) */
+  public int getWellSampleCount(int wellIndex) {
     return -1;
   }
 
@@ -570,6 +605,36 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - Plate property retrieval -
+
+  /* @see MetadataRetrieve#getPlateDescription(int) */
+  public String getPlateDescription(int plateIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlateExternalIdentifier(int) */
+  public String getPlateExternalIdentifier(int plateIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlateID(int) */
+  public String getPlateID(int plateIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlateName(int) */
+  public String getPlateName(int plateIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlateStatus(int) */
+  public String getPlateStatus(int plateIndex) {
+    return null;
+  }
+
+  // - PlateRef property retrieval -
+
+  /* @see MetadataRetrieve#getPlateRefID(int, int) */
+  public String getPlateRefID(int screenIndex, int plateRefIndex) {
+    return null;
+  }
+
   // - ROI property retrieval -
 
   /* @see MetadataRetrieve#getROIID(int, int) */
@@ -606,6 +671,67 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   }
   /* @see MetadataRetrieve#getROIZ1(int, int) */
   public Integer getROIZ1(int imageIndex, int roiIndex) {
+    return null;
+  }
+
+  // - Reagent property retrieval -
+
+  /* @see MetadataRetrieve#getReagentDescription(int, int) */
+  public String getReagentDescription(int screenIndex, int reagentIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getReagentID(int, int) */
+  public String getReagentID(int screenIndex, int reagentIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getReagentName(int, int) */
+  public String getReagentName(int screenIndex, int reagentIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getReagentReagentIdentifier(int, int) */
+  public String getReagentReagentIdentifier(int screenIndex, int reagentIndex) {
+    return null;
+  }
+
+  // - Screen property retrieval -
+
+  /* @see MetadataRetrieve#getScreenID(int) */
+  public String getScreenID(int screenIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getScreenName(int) */
+  public String getScreenName(int screenIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getScreenProtocolDescription(int) */
+  public String getScreenProtocolDescription(int screenIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getScreenProtocolIdentifier(int) */
+  public String getScreenProtocolIdentifier(int screenIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getScreenReagentSetDescription(int) */
+  public String getScreenReagentSetDescription(int screenIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getScreenType(int) */
+  public String getScreenType(int screenIndex) {
+    return null;
+  }
+
+  // - ScreenAcquisition property retrieval -
+
+  /* @see MetadataRetrieve#getScreenAcquisitionEndTime(int, int) */
+  public String getScreenAcquisitionEndTime(int screenIndex, int screenAcquisitionIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getScreenAcquisitionID(int, int) */
+  public String getScreenAcquisitionID(int screenIndex, int screenAcquisitionIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getScreenAcquisitionStartTime(int, int) */
+  public String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex) {
     return null;
   }
 
@@ -671,6 +797,56 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   }
   /* @see MetadataRetrieve#getTiffDataUUID(int, int, int) */
   public String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex) {
+    return null;
+  }
+
+  // - Well property retrieval -
+
+  /* @see MetadataRetrieve#getWellColumn(int) */
+  public Integer getWellColumn(int wellIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellExternalDescription(int) */
+  public String getWellExternalDescription(int wellIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellExternalIdentifier(int) */
+  public String getWellExternalIdentifier(int wellIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellID(int) */
+  public String getWellID(int wellIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellRow(int) */
+  public Integer getWellRow(int wellIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellType(int) */
+  public String getWellType(int wellIndex) {
+    return null;
+  }
+
+  // - WellSample property retrieval -
+
+  /* @see MetadataRetrieve#getWellSampleID(int, int) */
+  public String getWellSampleID(int wellIndex, int wellSampleIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellSampleIndex(int, int) */
+  public Integer getWellSampleIndex(int wellIndex, int wellSampleIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellSamplePosX(int, int) */
+  public Float getWellSamplePosX(int wellIndex, int wellSampleIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellSamplePosY(int, int) */
+  public Float getWellSamplePosY(int wellIndex, int wellSampleIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getWellSampleTimepoint(int, int) */
+  public Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex) {
     return null;
   }
 
@@ -1119,6 +1295,34 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
+  // - Plate property storage -
+
+  /* @see MetadataStore#setPlateDescription(String, int) */
+  public void setPlateDescription(String description, int plateIndex) {
+  }
+
+  /* @see MetadataStore#setPlateExternalIdentifier(String, int) */
+  public void setPlateExternalIdentifier(String externalIdentifier, int plateIndex) {
+  }
+
+  /* @see MetadataStore#setPlateID(String, int) */
+  public void setPlateID(String id, int plateIndex) {
+  }
+
+  /* @see MetadataStore#setPlateName(String, int) */
+  public void setPlateName(String name, int plateIndex) {
+  }
+
+  /* @see MetadataStore#setPlateStatus(String, int) */
+  public void setPlateStatus(String status, int plateIndex) {
+  }
+
+  // - PlateRef property storage -
+
+  /* @see MetadataStore#setPlateRefID(String, int, int) */
+  public void setPlateRefID(String id, int screenIndex, int plateRefIndex) {
+  }
+
   // - ROI property storage -
 
   /* @see MetadataStore#setROIID(String, int, int) */
@@ -1155,6 +1359,64 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setROIZ1(Integer, int, int) */
   public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
+  }
+
+  // - Reagent property storage -
+
+  /* @see MetadataStore#setReagentDescription(String, int, int) */
+  public void setReagentDescription(String description, int screenIndex, int reagentIndex) {
+  }
+
+  /* @see MetadataStore#setReagentID(String, int, int) */
+  public void setReagentID(String id, int screenIndex, int reagentIndex) {
+  }
+
+  /* @see MetadataStore#setReagentName(String, int, int) */
+  public void setReagentName(String name, int screenIndex, int reagentIndex) {
+  }
+
+  /* @see MetadataStore#setReagentReagentIdentifier(String, int, int) */
+  public void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex) {
+  }
+
+  // - Screen property storage -
+
+  /* @see MetadataStore#setScreenID(String, int) */
+  public void setScreenID(String id, int screenIndex) {
+  }
+
+  /* @see MetadataStore#setScreenName(String, int) */
+  public void setScreenName(String name, int screenIndex) {
+  }
+
+  /* @see MetadataStore#setScreenProtocolDescription(String, int) */
+  public void setScreenProtocolDescription(String protocolDescription, int screenIndex) {
+  }
+
+  /* @see MetadataStore#setScreenProtocolIdentifier(String, int) */
+  public void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex) {
+  }
+
+  /* @see MetadataStore#setScreenReagentSetDescription(String, int) */
+  public void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex) {
+  }
+
+  /* @see MetadataStore#setScreenType(String, int) */
+  public void setScreenType(String type, int screenIndex) {
+  }
+
+  // - ScreenAcquisition property storage -
+
+  /* @see MetadataStore#setScreenAcquisitionEndTime(String, int, int) */
+  public void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex) {
+  }
+
+  /* @see MetadataStore#setScreenAcquisitionID(String, int, int) */
+  public void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex) {
+  }
+
+  /* @see MetadataStore#setScreenAcquisitionStartTime(String, int, int) */
+  public void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex) {
   }
 
   // - StageLabel property storage -
@@ -1217,6 +1479,54 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setTiffDataUUID(String, int, int, int) */
   public void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex) {
+  }
+
+  // - Well property storage -
+
+  /* @see MetadataStore#setWellColumn(Integer, int) */
+  public void setWellColumn(Integer column, int wellIndex) {
+  }
+
+  /* @see MetadataStore#setWellExternalDescription(String, int) */
+  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+  }
+
+  /* @see MetadataStore#setWellExternalIdentifier(String, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+  }
+
+  /* @see MetadataStore#setWellID(String, int) */
+  public void setWellID(String id, int wellIndex) {
+  }
+
+  /* @see MetadataStore#setWellRow(Integer, int) */
+  public void setWellRow(Integer row, int wellIndex) {
+  }
+
+  /* @see MetadataStore#setWellType(String, int) */
+  public void setWellType(String type, int wellIndex) {
+  }
+
+  // - WellSample property storage -
+
+  /* @see MetadataStore#setWellSampleID(String, int, int) */
+  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+  }
+
+  /* @see MetadataStore#setWellSampleIndex(Integer, int, int) */
+  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
+  }
+
+  /* @see MetadataStore#setWellSamplePosX(Float, int, int) */
+  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
+  }
+
+  /* @see MetadataStore#setWellSamplePosY(Float, int, int) */
+  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
+  }
+
+  /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
   }
 
 }

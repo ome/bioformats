@@ -566,41 +566,8 @@ public abstract class BaseTiffReader extends FormatReader {
     }
     if (core.sizeC[0] == 1 && !core.indexed[0]) core.rgb[0] = false;
     core.falseColor[0] = false;
-
-    int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
-
-    while (bps % 8 != 0) bps++;
-    if (bps == 24) bps = 32;
-
-    if (bitFormat == 3) {
-      core.pixelType[0] = FormatTools.FLOAT;
-    }
-    else if (bitFormat == 2) {
-      switch (bps) {
-        case 16:
-          core.pixelType[0] = FormatTools.INT16;
-          break;
-        case 32:
-          core.pixelType[0] = FormatTools.INT32;
-          break;
-        default:
-          core.pixelType[0] = FormatTools.INT8;
-      }
-    }
-    else {
-      switch (bps) {
-        case 16:
-          core.pixelType[0] = FormatTools.UINT16;
-          break;
-        case 32:
-          core.pixelType[0] = FormatTools.UINT32;
-          break;
-        default:
-          core.pixelType[0] = FormatTools.UINT8;
-      }
-    }
-
     core.currentOrder[0] = "XYCZT";
+    core.pixelType[0] = getPixelType(ifds[0]);
   }
 
   /**
@@ -797,6 +764,36 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  protected int getPixelType(Hashtable ifd) throws FormatException {
+    int bps = TiffTools.getBitsPerSample(ifd)[0];
+    int bitFormat = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
+
+    while (bps % 8 != 0) bps++;
+    if (bps == 24) bps = 32;
+
+    if (bitFormat == 3) return FormatTools.FLOAT;
+    else if (bitFormat == 2) {
+      switch (bps) {
+        case 16:
+          return FormatTools.INT16;
+        case 32:
+          return FormatTools.INT32;
+        default:
+          return FormatTools.INT8;
+      }
+    }
+    else {
+      switch (bps) {
+        case 16:
+          return FormatTools.UINT16;
+        case 32:
+          return FormatTools.UINT32;
+        default:
+          return FormatTools.UINT8;
+      }
+    }
+  }
 
   private static String getExifTagName(int tag) {
     switch (tag) {
