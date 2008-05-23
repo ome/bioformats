@@ -33,6 +33,18 @@ import java.util.Hashtable;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/CoreMetadata.java">SVN</a></dd></dl>
  */
 public class CoreMetadata {
+  // TODO - Refactor this class to encapsulate core metadata for only one
+  // series at a time, and use an array of CoreMetadata objects in FormatReader
+  // instead. This approach is cleaner than the parallel arrays approach below.
+
+  // We may also want to consider refactoring the FormatReader getter methods
+  // that populate missing CoreMetadata fields on the fly
+  // (getChannelDimLengths, getChannelDimTypes, getThumbSizeX, getThumbSizeY)
+  // to avoid doing so -- one alternate approach would be to have this class
+  // use getter methods instead of public fields.
+
+  // Lastly, we should add javadoc comments to the fields in this class.
+
   public int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
   public int[] thumbSizeX, thumbSizeY;
   public int[] pixelType;
