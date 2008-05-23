@@ -90,13 +90,19 @@ public class NRRDReader extends FormatReader {
     if (dataFile == null) {
       if (encoding.equals("raw")) {
         int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-        int rowLen = core.sizeX[0] * bpp * core.sizeC[0];
+        int pixel = bpp * core.sizeC[0];
+        int rowLen = core.sizeX[0] * pixel;
         in.seek(offset + no * core.sizeY[0] * rowLen + y * rowLen);
 
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bpp * core.sizeC[0]);
-          in.read(buf, row * w * bpp * core.sizeC[0], w * bpp * core.sizeC[0]);
-          in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+        if (core.sizeX[series] == w) {
+          in.read(buf);
+        }
+        else {
+          for (int row=0; row<h; row++) {
+            in.skipBytes(x * pixel);
+            in.read(buf, row * w * pixel, w * pixel);
+            in.skipBytes(pixel * (core.sizeX[0] - w - x));
+          }
         }
 
         return buf;

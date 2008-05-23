@@ -102,16 +102,21 @@ public class LIFReader extends FormatReader {
 
     long offset = ((Long) offsets.get(series)).longValue();
     int bytes = FormatTools.getBytesPerPixel(core.pixelType[series]);
-    in.seek(offset + core.sizeX[series] * core.sizeY[series] * (long) no *
-      bytes * getRGBChannelCount());
+    int bpp = bytes * getRGBChannelCount();
+    in.seek(offset + core.sizeX[series] * core.sizeY[series] * (long) no * bpp);
 
-    in.skipBytes(y * core.sizeX[series] * bytes * getRGBChannelCount());
+    in.skipBytes(y * core.sizeX[series] * bpp);
 
-    int line = w * bytes * getRGBChannelCount();
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * bytes * getRGBChannelCount());
-      in.read(buf, row * line, line);
-      in.skipBytes(bytes * getRGBChannelCount() * (core.sizeX[series] - w - x));
+    int line = w * bpp;
+    if (core.sizeX[series] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bpp);
+        in.read(buf, row * line, line);
+        in.skipBytes(bpp * (core.sizeX[series] - w - x));
+      }
     }
 
     return buf;

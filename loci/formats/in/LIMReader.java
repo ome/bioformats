@@ -65,10 +65,15 @@ public class LIMReader extends FormatReader {
 
     in.seek(0x94b + y * core.sizeX[0] * core.sizeC[0]);
 
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * core.sizeC[0]);
-      in.read(buf, row * w * core.sizeC[0], w * core.sizeC[0]);
-      in.skipBytes(core.sizeC[0] * (core.sizeX[0] - w - x));
+    if (core.sizeX[series] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * core.sizeC[0]);
+        in.read(buf, row * w * core.sizeC[0], w * core.sizeC[0]);
+        in.skipBytes(core.sizeC[0] * (core.sizeX[0] - w - x));
+      }
     }
 
     // swap red and blue channels

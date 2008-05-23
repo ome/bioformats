@@ -102,10 +102,15 @@ public class GatanReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
     in.seek(pixelOffset + y * core.sizeX[0] * bpp);
 
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * bpp);
-      in.read(buf, row * w * bpp, w * bpp);
-      in.skipBytes(bpp * (core.sizeX[0] - w - x));
+    if (core.sizeX[0] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bpp);
+        in.read(buf, row * w * bpp, w * bpp);
+        in.skipBytes(bpp * (core.sizeX[0] - w - x));
+      }
     }
 
     return buf;

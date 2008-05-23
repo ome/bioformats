@@ -83,10 +83,15 @@ public class NAFReader extends FormatReader {
       throw new FormatException("Sorry, compressed data is not supported.");
     }
 
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * bpp);
-      in.read(buf, row * w * bpp, w * bpp);
-      in.skipBytes((core.sizeX[series] - w) * bpp);
+    if (core.sizeX[series] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bpp);
+        in.read(buf, row * w * bpp, w * bpp);
+        in.skipBytes((core.sizeX[series] - w) * bpp);
+      }
     }
 
     return buf;

@@ -86,10 +86,15 @@ public class KhorosReader extends FormatReader {
 
     in.seek(offset + no * bufSize + y * core.sizeX[0] * bytes);
 
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * bytes);
-      in.read(buf, row * w * bytes, w * bytes);
-      in.skipBytes(bytes * (core.sizeX[0] - w - x));
+    if (core.sizeX[0] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bytes);
+        in.read(buf, row * w * bytes, w * bytes);
+        in.skipBytes(bytes * (core.sizeX[0] - w - x));
+      }
     }
 
     return buf;

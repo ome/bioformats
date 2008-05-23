@@ -250,12 +250,16 @@ public class BioRadReader extends FormatReader {
     }
     else {
       in.seek(no * core.sizeX[0] * core.sizeY[0] * bytes + 76);
-
       in.skipBytes(y * core.sizeX[0] * bytes);
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bytes);
-        in.read(buf, row * w * bytes, w * bytes);
-        in.skipBytes(bytes * (core.sizeX[0] - w - x));
+      if (core.sizeX[0] == w) {
+        in.read(buf);
+      }
+      else {
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bytes);
+          in.read(buf, row * w * bytes, w * bytes);
+          in.skipBytes(bytes * (core.sizeX[0] - w - x));
+        }
       }
     }
     return buf;

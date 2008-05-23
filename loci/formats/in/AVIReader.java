@@ -128,14 +128,17 @@ public class AVIReader extends FormatReader {
       byte[] b = new byte[rawSize];
 
       int len = rawSize / core.sizeY[0];
-      for (int row=0; row<core.sizeY[0]; row++) {
-        in.read(b, (core.sizeY[0] - row - 1) * len, len);
-      }
+      in.read(b);
 
       BitBuffer bb = new BitBuffer(b);
+      bb.skipBits(bmpBitsPerPixel * len * (core.sizeY[0] - h - y));
 
-      for (int i=0; i<buf.length; i++) {
-        buf[i] = (byte) bb.getBits(bmpBitsPerPixel);
+      for (int row=h; row>=y; row--) {
+        bb.skipBits(bmpBitsPerPixel * x);
+        for (int col=0; col<len; col++) {
+          buf[(row - y) * len + col] = (byte) bb.getBits(bmpBitsPerPixel);
+        }
+        bb.skipBits(bmpBitsPerPixel * (core.sizeX[0] - w - x));
       }
 
       return buf;
@@ -144,10 +147,14 @@ public class AVIReader extends FormatReader {
     int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
     int scanline = w * (bmpBitsPerPixel / 8);
 
-    for (int i=core.sizeY[0] - 1; i>=0; i--) {
-      in.skipBytes(x * (bmpBitsPerPixel / 8));
-      if (i >= (h + y)|| i < y) in.skipBytes(scanline);
-      else {
+    in.skipBytes(scanline * (core.sizeY[0] - h - y));
+
+    if (core.sizeX[0] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int i=h - 1; i>=0; i--) {
+        in.skipBytes(x * (bmpBitsPerPixel / 8));
         in.read(buf, (i - y)*scanline, scanline);
         if (bmpBitsPerPixel == 24) {
           for (int j=0; j<core.sizeX[0]; j++) {
@@ -156,8 +163,8 @@ public class AVIReader extends FormatReader {
             buf[i*scanline + j*3] = r;
           }
         }
+        in.skipBytes((bmpBitsPerPixel / 8) * (core.sizeX[0] - w - x + pad));
       }
-      in.skipBytes((bmpBitsPerPixel / 8) * (core.sizeX[0] - w - x + pad));
     }
 
     if (bmpBitsPerPixel == 16) {

@@ -88,10 +88,16 @@ public class EPSReader extends FormatReader {
       if (map == null) {
         int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
         in.skipBytes(y * core.sizeX[0] * bpp * core.sizeC[0]);
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bpp * core.sizeC[0]);
-          in.read(buf, row * w * bpp * core.sizeC[0], w * bpp * core.sizeC[0]);
-          in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+        if (core.sizeX[0] == w) {
+          in.read(buf);
+        }
+        else {
+          int nBytes = bpp * core.sizeC[0];
+          for (int row=0; row<h; row++) {
+            in.skipBytes(x * nBytes);
+            in.read(buf, row * w * nBytes, w * nBytes);
+            in.skipBytes(nBytes * (core.sizeX[0] - w - x));
+          }
         }
         return buf;
       }
@@ -116,24 +122,29 @@ public class EPSReader extends FormatReader {
       return buf;
     }
 
-    RandomAccessStream ras = new RandomAccessStream(currentId);
+    in.seek(0);
     for (int line=0; line<=start; line++) {
-      ras.readLine();
+      in.readLine();
     }
 
     int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
     if (binary) {
       // pixels are stored as raw bytes
-      ras.skipBytes(y * core.sizeX[0] * bytes * core.sizeC[0]);
-      for (int row=0; row<h; row++) {
-        ras.skipBytes(x * bytes * core.sizeC[0]);
-        ras.read(buf, row*w*bytes*core.sizeC[0], w * bytes * core.sizeC[0]);
-        ras.skipBytes(bytes * core.sizeC[0] * (core.sizeX[0] - w - h));
+      in.skipBytes(y * core.sizeX[0] * bytes * core.sizeC[0]);
+      if (core.sizeX[0] == w) {
+        in.read(buf);
+      }
+      else {
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bytes * core.sizeC[0]);
+          in.read(buf, row*w*bytes*core.sizeC[0], w * bytes * core.sizeC[0]);
+          in.skipBytes(bytes * core.sizeC[0] * (core.sizeX[0] - w - h));
+        }
       }
     }
     else {
       // pixels are stored as a 2 character hexadecimal value
-      String pix = ras.readString((int) (ras.length() - ras.getFilePointer()));
+      String pix = in.readString((int) (in.length() - in.getFilePointer()));
       pix = pix.replaceAll("\n", "");
       pix = pix.replaceAll("\r", "");
 
@@ -150,7 +161,6 @@ public class EPSReader extends FormatReader {
         ndx += core.sizeC[0] * bytes * (core.sizeX[0] - w - x);
       }
     }
-    ras.close();
     return buf;
   }
 

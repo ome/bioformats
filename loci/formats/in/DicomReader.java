@@ -253,10 +253,16 @@ public class DicomReader extends FormatReader {
 
       int c = isIndexed() ? 1 : core.sizeC[0];
       in.skipBytes(y * c * bpp * core.sizeX[0]);
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * c * bpp);
-        in.read(buf, row * w * c * bpp, w * c * bpp);
-        in.skipBytes(c * bpp * (core.sizeX[0] - w - x));
+
+      if (core.sizeX[0] == w) {
+        in.read(buf);
+      }
+      else {
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * c * bpp);
+          in.read(buf, row * w * c * bpp, w * c * bpp);
+          in.skipBytes(c * bpp * (core.sizeX[0] - w - x));
+        }
       }
     }
 

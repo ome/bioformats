@@ -85,10 +85,15 @@ public class OpenlabRawReader extends FormatReader {
     in.skipBytes(y * core.sizeX[0] * bpp * core.sizeC[0]);
 
     int rowLen = w * bpp * core.sizeC[0];
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * bpp * core.sizeC[0]);
-      in.read(buf, row * rowLen, rowLen);
-      in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+    if (core.sizeX[series] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bpp * core.sizeC[0]);
+        in.read(buf, row * rowLen, rowLen);
+        in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+      }
     }
 
     if (bytesPerPixel == 1) {

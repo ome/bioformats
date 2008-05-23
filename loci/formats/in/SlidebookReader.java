@@ -78,10 +78,15 @@ public class SlidebookReader extends FormatReader {
     long offset = ((Long) pixelOffsets.get(series)).longValue() + plane * no;
     in.seek(offset + y * core.sizeX[series] * 2);
 
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * 2);
-      in.read(buf, row * w * 2, w * 2);
-      in.skipBytes(2 * (core.sizeX[series] - w - x));
+    if (core.sizeX[series] == w) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * 2);
+        in.read(buf, row * w * 2, w * 2);
+        in.skipBytes(2 * (core.sizeX[series] - w - x));
+      }
     }
 
     return buf;

@@ -241,10 +241,15 @@ public class ND2Reader extends FormatReader {
     else {
       // plane is not compressed
       in.skipBytes(y * core.sizeX[series] * pixel);
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * pixel);
-        in.read(buf, row * w * pixel, w * pixel);
-        in.skipBytes(pixel * (core.sizeX[series] - w - x));
+      if (core.sizeX[series] == w) {
+
+      }
+      else {
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * pixel);
+          in.read(buf, row * w * pixel, w * pixel);
+          in.skipBytes(pixel * (core.sizeX[series] - w - x));
+        }
       }
     }
     return buf;

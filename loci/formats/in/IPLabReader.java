@@ -88,10 +88,15 @@ public class IPLabReader extends FormatReader {
     for (int c=0; c<core.sizeC[0]; c++) {
       in.skipBytes(y * core.sizeX[0] * bps);
 
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bps);
-        in.read(buf, c * h * w * bps + row * w * bps, w * bps);
-        in.skipBytes(bps * (core.sizeX[0] - w - x));
+      if (core.sizeX[0] == w) {
+        in.read(buf, c * w * h * bps, w * h * bps);
+      }
+      else {
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bps);
+          in.read(buf, c * h * w * bps + row * w * bps, w * bps);
+          in.skipBytes(bps * (core.sizeX[0] - w - x));
+        }
       }
       in.skipBytes((core.sizeY[0] - h - y) * core.sizeX[0] * bps);
     }

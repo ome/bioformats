@@ -132,10 +132,15 @@ public class OpenlabReader extends FormatReader {
       if (version == 2) {
         in.skipBytes(y * getSizeX() * bpp * getRGBChannelCount());
         int rowLen = w * bpp * getRGBChannelCount();
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bpp * getRGBChannelCount());
-          in.read(buf, row * rowLen, rowLen);
-          in.skipBytes(bpp * getRGBChannelCount() * (getSizeX() - w - x));
+        if (core.sizeX[series] == w) {
+          in.read(buf);
+        }
+        else {
+          for (int row=0; row<h; row++) {
+            in.skipBytes(x * bpp * getRGBChannelCount());
+            in.read(buf, row * rowLen, rowLen);
+            in.skipBytes(bpp * getRGBChannelCount() * (getSizeX() - w - x));
+          }
         }
       }
       else {
