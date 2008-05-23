@@ -92,16 +92,22 @@ public class DeltavisionReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
+
     // read the image plane's pixel data
     int bytesPerPixel = FormatTools.getBytesPerPixel(core.pixelType[0]);
     long offset = HEADER_LENGTH + extSize;
     long bytes = core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
     in.seek(offset + bytes*no + y * core.sizeX[0] * bytesPerPixel);
 
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * bytesPerPixel);
-      in.read(buf, w * bytesPerPixel * (h - row - 1), w * bytesPerPixel);
-      in.skipBytes(bytesPerPixel * (core.sizeX[0] - w - x));
+    if (w == core.sizeX[0]) {
+      in.read(buf);
+    }
+    else {
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bytesPerPixel);
+        in.read(buf, w * bytesPerPixel * (h - row - 1), w * bytesPerPixel);
+        in.skipBytes(bytesPerPixel * (core.sizeX[0] - w - x));
+      }
     }
 
     return buf;
