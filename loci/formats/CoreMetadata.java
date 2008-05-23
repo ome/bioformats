@@ -64,8 +64,8 @@ public class CoreMetadata {
     indexed = new boolean[series];
     falseColor = new boolean[series];
     metadataComplete = new boolean[series];
-    seriesMetadata = new Hashtable[series]; for (int i=0; i<series; i++)
-    seriesMetadata[i] = new Hashtable();
+    seriesMetadata = new Hashtable[series];
+    for (int i=0; i<series; i++) seriesMetadata[i] = new Hashtable();
   }
 
 }
