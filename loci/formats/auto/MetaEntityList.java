@@ -60,9 +60,9 @@ public class MetaEntityList extends EntityList {
 
   public String basePackage() { return value("basePackage"); }
 
-  public String subPackage() { return value("subPackage"); }
-
   public String version() { return value("version"); }
+
+  public boolean spwImport() { return !"false".equals(value("spwImport")); }
 
   // -- MetaEntityList API methods - entities --
 

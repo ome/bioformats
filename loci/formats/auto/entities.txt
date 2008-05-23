@@ -1155,7 +1155,7 @@ description = the e-mail address of the experimenter
 type = String
 description = the institution to which the experimenter belongs
 
-### Entities for ScreenPlateWell ###
+### Entities for high-content screening ###
 
 ## Plate ##
 

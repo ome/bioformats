@@ -31,7 +31,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import $q.basePackage().$q.subPackage().*;
+import ${q.basePackage()}.ome.*;
+#if ($q.spwImport())
+import ${q.basePackage()}.spw.*;
+#end##if spwImport
 import java.util.List;
 import loci.formats.LogTools;
 

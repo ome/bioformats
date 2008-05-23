@@ -25,19 +25,17 @@
 className = OMEXML200802Metadata
 id = OMEXML200802Metadata.java
 basePackage = ome.xml.r200802
-subPackage = ome
 version = 2008-02
 
 [200706]
 className = OMEXML200706Metadata
 id = OMEXML200706Metadata.java
 basePackage = ome.xml.r200706
-subPackage = ome
 version = 2007-06
 
 [2003FC]
 className = OMEXML2003FCMetadata
 id = OMEXML2003FCMetadata.java
 basePackage = ome.xml.r2003fc
-subPackage = ome
 version = 2003-FC
+spwImport = false

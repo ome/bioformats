@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on May 22, 2008 8:17:46 PM GMT
+ * Created by curtis via MetadataAutogen on May 23, 2008 4:44:30 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.ome;
 
 import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 import java.util.List;
 import loci.formats.LogTools;
 
