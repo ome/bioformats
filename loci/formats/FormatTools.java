@@ -478,8 +478,10 @@ public final class FormatTools {
   public static void checkPlaneNumber(IFormatReader r, int no)
     throws FormatException
   {
-    if (no < 0 || no >= r.getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
+    int imageCount = r.getImageCount();
+    if (no < 0 || no >= imageCount) {
+      throw new FormatException("Invalid image number: " + no +
+        " (series=" + r.getSeries() + ", imageCount=" + imageCount + ")");
     }
   }
 
