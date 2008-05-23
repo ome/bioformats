@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
+ * Created by curtis via MetadataAutogen on May 22, 2008 8:17:46 PM GMT
  *
  *-----------------------------------------------------------------------------
  */
@@ -65,6 +65,11 @@ public interface MetadataStore {
   Object getRoot();
 
   void setRoot(Object root);
+
+  // - Entity storage -
+
+  /** Sets the UUID associated with this collection of metadata. */
+  void setUUID(String uuid);
 
   // - Arc property storage -
 

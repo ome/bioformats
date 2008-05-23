@@ -112,6 +112,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 #end##foreach $entity
 
   // - Entity retrieval -
+
+  /* @see MetadataRetrieve#getUUID() */
+  public String getUUID() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getUUID();
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 
@@ -162,6 +175,16 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   public void setRoot(Object root) {
     throw new RuntimeException("Unsupported with AggregateMetadata. " +
       "Use getDelegates() and setRoot().");
+  }
+
+  /* @see MetadataStore#setUUID(String) */
+  public void setUUID(String uuid) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        ((MetadataStore) o).setUUID(uuid);
+      }
+    }
   }
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))

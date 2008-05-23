@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
+ * Created by curtis via MetadataAutogen on May 22, 2008 8:17:46 PM GMT
  *
  *-----------------------------------------------------------------------------
  */
@@ -195,7 +195,9 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataCount(int, int) */
   public int getTiffDataCount(int imageIndex, int pixelsIndex) {
-    // NB: TiffData unsupported for schema version 2003-FC
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getTiffDataNode(imageIndex, pixelsIndex, i, false) == null) return i;
+    }
     return -1;
   }
 
@@ -1075,32 +1077,32 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataFirstC(int, int, int) */
   public Integer getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: FirstC unsupported for schema version 2003-FC
-    return null;
+    TiffDataNode tiffData = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, false);
+    return tiffData == null ? null : tiffData.getFirstC();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataFirstT(int, int, int) */
   public Integer getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: FirstT unsupported for schema version 2003-FC
-    return null;
+    TiffDataNode tiffData = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, false);
+    return tiffData == null ? null : tiffData.getFirstT();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataFirstZ(int, int, int) */
   public Integer getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: FirstZ unsupported for schema version 2003-FC
-    return null;
+    TiffDataNode tiffData = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, false);
+    return tiffData == null ? null : tiffData.getFirstZ();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataIFD(int, int, int) */
   public Integer getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: IFD unsupported for schema version 2003-FC
-    return null;
+    TiffDataNode tiffData = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, false);
+    return tiffData == null ? null : tiffData.getIFD();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataNumPlanes(int, int, int) */
   public Integer getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: NumPlanes unsupported for schema version 2003-FC
-    return null;
+    TiffDataNode tiffData = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, false);
+    return tiffData == null ? null : tiffData.getNumPlanes();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataUUID(int, int, int) */
@@ -2131,27 +2133,37 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setTiffDataFirstC(Integer, int, int, int) */
   public void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: FirstC unsupported for schema version 2003-FC
+    if (firstC == null) return;
+    TiffDataNode tiffDataNode = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, true);
+    tiffDataNode.setFirstC(firstC);
   }
 
   /* @see loci.formats.meta.MetadataStore#setTiffDataFirstT(Integer, int, int, int) */
   public void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: FirstT unsupported for schema version 2003-FC
+    if (firstT == null) return;
+    TiffDataNode tiffDataNode = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, true);
+    tiffDataNode.setFirstT(firstT);
   }
 
   /* @see loci.formats.meta.MetadataStore#setTiffDataFirstZ(Integer, int, int, int) */
   public void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: FirstZ unsupported for schema version 2003-FC
+    if (firstZ == null) return;
+    TiffDataNode tiffDataNode = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, true);
+    tiffDataNode.setFirstZ(firstZ);
   }
 
   /* @see loci.formats.meta.MetadataStore#setTiffDataIFD(Integer, int, int, int) */
   public void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: IFD unsupported for schema version 2003-FC
+    if (ifd == null) return;
+    TiffDataNode tiffDataNode = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, true);
+    tiffDataNode.setIFD(ifd);
   }
 
   /* @see loci.formats.meta.MetadataStore#setTiffDataNumPlanes(Integer, int, int, int) */
   public void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex) {
-    // NB: NumPlanes unsupported for schema version 2003-FC
+    if (numPlanes == null) return;
+    TiffDataNode tiffDataNode = getTiffDataNode(imageIndex, pixelsIndex, tiffDataIndex, true);
+    tiffDataNode.setNumPlanes(numPlanes);
   }
 
   /* @see loci.formats.meta.MetadataStore#setTiffDataUUID(String, int, int, int) */
@@ -2376,6 +2388,19 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=pixelsIndex; i++) new PixelsNode(image);
     List list = image.getPixelsList();
     return (PixelsNode) list.get(pixelsIndex);
+  }
+
+  // Image+/Pixels+/TiffData+
+  private TiffDataNode getTiffDataNode(int imageIndex, int pixelsIndex, int tiffDataIndex, boolean create) {
+    // get Image+/Pixels+ node
+    PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, create);
+    if (pixels == null) return null;
+    // get TiffData+ node
+    int count = pixels.getTiffDataCount();
+    if (!create && count <= tiffDataIndex) return null;
+    for (int i=count; i<=tiffDataIndex; i++) new TiffDataNode(pixels);
+    List list = pixels.getTiffDataList();
+    return (TiffDataNode) list.get(tiffDataIndex);
   }
 
   // Image+/StageLabel

@@ -61,18 +61,25 @@ public class FilterMetadata implements MetadataStore {
 
   // -- MetadataStore API methods --
 
+  /* @see MetadataStore#createRoot() */
   public void createRoot() {
     store.createRoot();
   }
 
+  /* @see MetadataStore#getRoot() */
   public Object getRoot() {
     return store.getRoot();
   }
 
+  /* @see MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
     store.setRoot(root);
   }
 
+  /* @see MetadataStore#setUUID(String) */
+  public void setUUID(String uuid) {
+    store.setUUID(uuid);
+  }
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 

@@ -65,6 +65,11 @@ public interface MetadataStore {
   Object getRoot();
 
   void setRoot(Object root);
+
+  // - Entity storage -
+
+  /** Sets the UUID associated with this collection of metadata. */
+  void setUUID(String uuid);
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
+ * Created by curtis via MetadataAutogen on May 22, 2008 8:17:46 PM GMT
  *
  *-----------------------------------------------------------------------------
  */
@@ -150,6 +150,11 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Entity retrieval -
+
+  /* @see MetadataRetrieve#getUUID() */
+  public String getUUID() {
+    return null;
+  }
 
   // - Arc property retrieval -
 
@@ -852,16 +857,22 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // -- MetadataStore API methods --
 
+  /* @see MetadataStore#createRoot() */
   public void createRoot() {
   }
 
+  /* @see MetadataStore#getRoot() */
   public Object getRoot() {
     return null;
   }
 
+  /* @see MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
   }
 
+  /* @see MetadataStore#setUUID() */
+  public void setUUID(String uuid) {
+  }
 
   // - Arc property storage -
 

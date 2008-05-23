@@ -104,9 +104,6 @@ countable = true
 path = Image+/Pixels+/TiffData+
 description = TODO
 
-[TiffData 2003FC]
-path = -
-
 [TiffData FirstZ]
 type = Integer
 description = TODO

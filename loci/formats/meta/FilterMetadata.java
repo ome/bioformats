@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
+ * Created by curtis via MetadataAutogen on May 22, 2008 8:17:46 PM GMT
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,18 +61,25 @@ public class FilterMetadata implements MetadataStore {
 
   // -- MetadataStore API methods --
 
+  /* @see MetadataStore#createRoot() */
   public void createRoot() {
     store.createRoot();
   }
 
+  /* @see MetadataStore#getRoot() */
   public Object getRoot() {
     return store.getRoot();
   }
 
+  /* @see MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
     store.setRoot(root);
   }
 
+  /* @see MetadataStore#setUUID(String) */
+  public void setUUID(String uuid) {
+    store.setUUID(uuid);
+  }
 
   // -- Arc property storage -
 

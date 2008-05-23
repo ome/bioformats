@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on May 21, 2008 8:47:07 AM PDT
+ * Created by curtis via MetadataAutogen on May 22, 2008 8:17:46 PM GMT
  *
  *-----------------------------------------------------------------------------
  */
@@ -354,6 +354,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Entity retrieval -
+
+  /* @see MetadataRetrieve#getUUID() */
+  public String getUUID() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getUUID();
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   // - Arc property retrieval -
 
@@ -2399,6 +2412,16 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   public void setRoot(Object root) {
     throw new RuntimeException("Unsupported with AggregateMetadata. " +
       "Use getDelegates() and setRoot().");
+  }
+
+  /* @see MetadataStore#setUUID(String) */
+  public void setUUID(String uuid) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        ((MetadataStore) o).setUUID(uuid);
+      }
+    }
   }
 
   // - Arc property storage -

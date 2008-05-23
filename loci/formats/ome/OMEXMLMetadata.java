@@ -69,18 +69,6 @@ public abstract class OMEXMLMetadata
    */
   public abstract String dumpXML();
 
-  /** Sets the UUID for this OME-XML block. */
-  public void setUUID(String uuid) {
-    Element ome = root.getDOMElement();
-    DOMUtil.setAttribute("UUID", uuid, ome);
-  }
-
-  /** Gets the UUID for this OME-XML block. */
-  public String getUUID() {
-    Element ome = root.getDOMElement();
-    return DOMUtil.getAttribute("UUID", ome);
-  }
-
   /** Adds the key/value pair as a new OriginalMetadata node. */
   public void populateOriginalMetadata(String key, String value) {
     if (imageCA == null) {
@@ -123,11 +111,25 @@ public abstract class OMEXMLMetadata
     DOMUtil.setAttribute("Value", value, om);
   }
 
+  // -- MetadataRetrieve API methods --
+
+  /* @see loci.formats.meta.MetadataRetrieve#getUUID() */
+  public String getUUID() {
+    Element ome = root.getDOMElement();
+    return DOMUtil.getAttribute("UUID", ome);
+  }
+
   // -- MetadataStore API methods --
 
-  /* @see loci.formats.MetadataStore#getRoot() */
+  /* @see loci.formats.meta.MetadataStore#getRoot() */
   public Object getRoot() {
     return root;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#setUUID(String) */
+  public void setUUID(String uuid) {
+    Element ome = root.getDOMElement();
+    DOMUtil.setAttribute("UUID", uuid, ome);
   }
 
   // -- Type conversion methods --

@@ -60,6 +60,11 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 #end##foreach $entity
 
   // - Entity retrieval -
+
+  /* @see MetadataRetrieve#getUUID() */
+  public String getUUID() {
+    return null;
+  }
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 
@@ -76,16 +81,22 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // -- MetadataStore API methods --
 
+  /* @see MetadataStore#createRoot() */
   public void createRoot() {
   }
 
+  /* @see MetadataStore#getRoot() */
   public Object getRoot() {
     return null;
   }
 
+  /* @see MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
   }
 
+  /* @see MetadataStore#setUUID() */
+  public void setUUID(String uuid) {
+  }
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 

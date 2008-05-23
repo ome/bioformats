@@ -53,6 +53,9 @@ public interface MetadataRetrieve {
 #end##foreach $entity
 
   // - Entity retrieval -
+
+  /** Gets the UUID associated with this collection of metadata. */
+  String getUUID();
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 
