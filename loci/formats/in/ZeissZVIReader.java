@@ -630,9 +630,10 @@ public class ZeissZVIReader extends FormatReader {
       SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy K:mm:ss a");
       Date d = parse.parse(firstTimestamp, new ParsePosition(0));
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      store.setImageCreationDate(fmt.format(d), 0);
-
-      ms = d.getTime();
+      if (d != null) {
+        store.setImageCreationDate(fmt.format(d), 0);
+        ms = d.getTime();
+      }
     }
 
     for (int plane=0; plane<core.imageCount[0]; plane++) {
@@ -663,7 +664,7 @@ public class ZeissZVIReader extends FormatReader {
         if (!timestamp.startsWith("1")) timestamp = "0" + timestamp;
         SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy K:mm:ss a");
         Date d = parse.parse(timestamp, new ParsePosition(0));
-        timestamp = String.valueOf(d.getTime() - ms);
+        if (d != null) timestamp = String.valueOf(d.getTime() - ms);
       }
       try {
         store.setPlaneTimingDeltaT(new Float(timestamp), 0, 0, plane);
