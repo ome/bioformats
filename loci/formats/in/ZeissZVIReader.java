@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.codec.JPEGCodec;
@@ -70,8 +71,9 @@ public class ZeissZVIReader extends FormatReader {
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
   private String microscopeName;
   private Vector emWave, exWave, channelNames;
-  private Vector whiteValue, blackValue, gammaValue, exposureTime;
+  private Vector whiteValue, blackValue, gammaValue, exposureTime, timestamps;
   private String userName, userCompany, mag, na;
+  private int nextImage = 0;
 
   private int tileWidth, tileHeight;
   private int realWidth, realHeight;
@@ -258,6 +260,7 @@ public class ZeissZVIReader extends FormatReader {
     blackValue = new Vector();
     gammaValue = new Vector();
     exposureTime = new Vector();
+    timestamps = new Vector();
 
     poi = new POITools(Location.getMappedId(id));
 
@@ -538,6 +541,12 @@ public class ZeissZVIReader extends FormatReader {
       if (!s[i].trim().equals("")) exposureTime.add(s[i]);
     }
 
+    s = (String[]) timestamps.toArray(new String[0]);
+    timestamps.clear();
+    for (int i=0; i<s.length; i++) {
+      if (!s[i].trim().equals("")) timestamps.add(s[i]);
+    }
+
     s = (String[]) emWave.toArray(new String[0]);
     emWave.clear();
     for (int i=0; i<s.length; i++) {
@@ -602,6 +611,30 @@ public class ZeissZVIReader extends FormatReader {
 //        gammaVal, null);
     }
 
+    String firstTimestamp = "0.0";
+    long ms = 0;
+    if (timestamps.size() > 0) {
+      firstTimestamp = (String) timestamps.get(0);
+      firstTimestamp = firstTimestamp.trim();
+      int offset = 0;
+      for (int i=0; i<firstTimestamp.length(); i++) {
+        if (!Character.isDigit(firstTimestamp.charAt(i))) {
+          offset = i;
+        }
+        else break;
+      }
+      firstTimestamp = firstTimestamp.substring(offset + 1);
+      if (!firstTimestamp.startsWith("1")) {
+        firstTimestamp = "0" + firstTimestamp;
+      }
+      SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy K:mm:ss a");
+      Date d = parse.parse(firstTimestamp, new ParsePosition(0));
+      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      store.setImageCreationDate(fmt.format(d), 0);
+
+      ms = d.getTime();
+    }
+
     for (int plane=0; plane<core.imageCount[0]; plane++) {
       int[] zct = FormatTools.getZCTCoords(this, plane);
       String exposure =
@@ -614,7 +647,30 @@ public class ZeissZVIReader extends FormatReader {
       store.setPlaneTheC(new Integer(zct[1]), 0, 0, plane);
       store.setPlaneTheT(new Integer(zct[2]), 0, 0, plane);
       store.setPlaneTimingExposureTime(exp, 0, 0, plane);
-      store.setPlaneTimingDeltaT(new Float(0.0), 0, 0, plane);
+
+      String timestamp = "0.0";
+      if (zct[2] < timestamps.size() && zct[2] > 0.0) {
+        timestamp = (String) timestamps.get(zct[2]);
+        timestamp = timestamp.trim();
+        int offset = 0;
+        for (int i=0; i<timestamp.length(); i++) {
+          if (!Character.isDigit(timestamp.charAt(i))) {
+            offset = i;
+          }
+          else break;
+        }
+        timestamp = timestamp.substring(offset + 1);
+        if (!timestamp.startsWith("1")) timestamp = "0" + timestamp;
+        SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy K:mm:ss a");
+        Date d = parse.parse(timestamp, new ParsePosition(0));
+        timestamp = String.valueOf(d.getTime() - ms);
+      }
+      try {
+        store.setPlaneTimingDeltaT(new Float(timestamp), 0, 0, plane);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
     }
 
     // set experimenter data
@@ -901,6 +957,11 @@ public class ZeissZVIReader extends FormatReader {
       else if (key.equals("User company")) userCompany = value;
       else if (key.startsWith("Objective Magnification")) mag = value;
       else if (key.startsWith("Objective N.A.")) na = value;
+      else if (key.equals("Acquisition Date")) {
+        timestamps.add(value);
+        addMeta("Timestamp " + nextImage, value);
+        nextImage++;
+      }
     }
   }
 
