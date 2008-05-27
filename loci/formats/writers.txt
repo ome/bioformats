@@ -30,3 +30,4 @@ loci.formats.out.PNGWriter  # png
 loci.formats.out.AVIWriter  # avi
 loci.formats.out.QTWriter   # mov
 loci.formats.out.EPSWriter  # eps
+loci.formats.out.ICSWriter  # ics
