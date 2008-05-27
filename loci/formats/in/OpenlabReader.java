@@ -352,15 +352,7 @@ public class OpenlabReader extends FormatReader {
         xcal = in.readFloat();
         ycal = in.readFloat();
 
-        float scaling = 1.0f;
-        switch (units) {
-          case 3:
-            scaling = 0.001f;
-            break;
-          case 4:
-            scaling = 100f;
-            break;
-        }
+        float scaling = units == 3 ? 0.001f : 1.0f;
 
         xcal *= scaling;
         ycal *= scaling;
