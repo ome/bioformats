@@ -27,6 +27,7 @@ package loci.formats.out;
 import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
+import java.util.StringTokenizer;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -140,6 +141,38 @@ public class ICSWriter extends FormatWriter {
       for (int i=0; i<sizes[0]/8; i++) {
         out.writeBytes(((sizes[0] / 8) - i) + "\t");
       }
+
+      out.writeBytes("\nparameter\tscale\t1.000000\t");
+      StringTokenizer st = new StringTokenizer(dimOrder.toString(), "\t");
+      StringBuffer units = new StringBuffer();
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken();
+        Number value = null;
+        if (token.equals("x")) {
+          value = meta.getDimensionsPhysicalSizeX(0, 0);
+          units.append("micrometers\t");
+        }
+        else if (token.equals("y")) {
+          value = meta.getDimensionsPhysicalSizeY(0, 0);
+          units.append("micrometers\t");
+        }
+        else if (token.equals("z")) {
+          value = meta.getDimensionsPhysicalSizeZ(0, 0);
+          units.append("micrometers\t");
+        }
+        else if (token.equals("t")) {
+          value = meta.getDimensionsTimeIncrement(0, 0);
+          units.append("seconds\t");
+        }
+        else if (token.equals("ch")) {
+          value = meta.getDimensionsWaveIncrement(0, 0);
+          units.append("nm\t");
+        }
+        if (value == null) out.writeBytes("1.000000\t");
+        else out.writeBytes(value + "\t");
+      }
+
+      out.writeBytes("\nparameter\tunits\tbits\t" + units.toString() + "\n");
       out.writeBytes("\nend\n");
     }
 
