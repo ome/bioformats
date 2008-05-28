@@ -310,6 +310,9 @@ public class OpenlabReader extends FormatReader {
         planes[imagesFound].volumeType = in.readShort();
         in.skipBytes(16);
         planes[imagesFound].planeName = in.readString(128).trim();
+        addMeta("Plane " + imagesFound + " Name",
+          planes[imagesFound].planeName);
+
         in.skipBytes(128);
 
         planes[imagesFound].planeOffset = in.getFilePointer();
