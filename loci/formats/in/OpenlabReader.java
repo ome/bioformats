@@ -170,19 +170,20 @@ public class OpenlabReader extends FormatReader {
     }
     else {
       // PICT plane
-      in.read(b);
+      b = new byte[b.length + 512];
+      in.read(b, 512, b.length - 512);
       Exception exc = null;
       try {
-        BufferedImage img = pict.open(b).getSubimage(x, y, w, h);
-        byte[][] pix = ImageTools.getPixelBytes(img, core.littleEndian[series]);
-        for (int i=0; i<core.sizeC[series]; i++) {
-          System.arraycopy(pix[i], 0, buf, i*pix[i].length, pix[i].length);
-        }
+        Location.mapFile("OPENLAB_PICT", new RABytes(b));
+        pict.setId("OPENLAB_PICT");
+        buf = pict.openBytes(0, x, y, w, h);
+        pict.close();
       }
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
 
       if (exc != null) {
+        if (debug) LogTools.trace(exc);
         in.seek(planes[planeOffsets[series][no]].planeOffset - 298);
 
         if (in.readByte() == 1) in.skipBytes(128);
@@ -193,10 +194,16 @@ public class OpenlabReader extends FormatReader {
         byte[] plane =
           new byte[getSizeX() * getSizeY() * bpp * getRGBChannelCount()];
 
-        while (expectedBlock != totalBlocks) {
-          while (in.readLong() != 0x4956454164627071L) {
+        while (expectedBlock != totalBlocks &&
+          in.getFilePointer() + 32 < in.length())
+        {
+          while (in.readLong() != 0x4956454164627071L &&
+            in.getFilePointer() < in.length())
+          {
             in.seek(in.getFilePointer() - 7);
           }
+
+          if (in.getFilePointer() + 4 >= in.length()) break;
 
           int num = in.readInt();
           if (num != expectedBlock) {
@@ -295,8 +302,14 @@ public class OpenlabReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    while (in.getFilePointer() < in.length()) {
+    while (in.getFilePointer() + 8 < in.length()) {
+      long fp = in.getFilePointer();
       readTagHeader();
+      while (tag < IMAGE_TYPE_1 || tag > 76) {
+        fp--;
+        in.seek(fp);
+        readTagHeader();
+      }
 
       if (tag == IMAGE_TYPE_1 || tag == IMAGE_TYPE_2) {
         // found an image
