@@ -279,6 +279,7 @@ class OMEModelObject(object):
 		self.element = element
 		self.base = element.getBase()
 		self.name = element.getName()
+		self.type = element.getType()
 		self.properties = dict()
 	
 	def addAttribute(self, attribute):
@@ -317,7 +318,7 @@ class OMEModelObject(object):
 		doc="""The name of this node's reference node; None otherwise.""")
 	
 	def __str__(self):
-		return self.__repr__(self)
+		return self.__repr__()
 	
 	def __repr__(self):
 		return '<"%s" OMEModelObject instance at 0x%x>' % (self.name, id(self))
@@ -384,6 +385,9 @@ class OMEModel(object):
 		if e.getMixedExtensionError():
 			logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, e))
 			return
+		if e.getType() != e.getName():
+		    logging.info("Element %s.%s is not a concrete type, skipping." % (parent, e))
+		    return
 		obj = OMEModelObject(e, self)
 		self.addObject(e, obj)
 		self.processAttributes(e)
@@ -411,9 +415,10 @@ class OMEModel(object):
 			for prop in o.properties.values():
 				if prop.type[-3:] == "Ref":
 					shortName = prop.type[:-3]
-					if prop.type not in references:
+					if shortName not in references:
 						references[shortName] = list()
 					references[shortName].append(o.name)
+		logging.debug("Model references: %s" % references)
 
 		for o in self.objects.values():
 			if o.name in references:

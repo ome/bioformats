@@ -227,8 +227,6 @@ class SimpleTypeElement(XschemaElementBase):
     def getName(self): return self.name
     def setBase(self, base): self.base = base
     def getBase(self): return self.base
-    def setSimpleType(self, simpleType): self.simpleType = simpleType
-    def getSimpleType(self): return self.simpleType
     def getAttributeGroups(self): return self.attributeGroups
     def setAttributeGroup(self, attributeGroup): self.attributeGroup = attributeGroup
     def getAttributeGroup(self): return self.attributeGroup
@@ -353,7 +351,7 @@ class XschemaElement(XschemaElementBase):
     def setAnyAttribute(self, anyAttribute): self.anyAttribute = anyAttribute
     def getAnyAttribute(self): return self.anyAttribute
     def setSimpleType(self, simpleType): self.simpleType = simpleType
-    def getSimpleType(self): return self.simpleType
+    def getSimpleType(self): return self.simpleType.getName()
 
     def show(self, outfile, level):
         showLevel(outfile, level)
@@ -422,8 +420,11 @@ class XschemaElement(XschemaElementBase):
             self.complex = 1
             # type_val = ''
         type_val = self.resolve_type_1()
+        logging.debug("Resolving type of %s with initial type %s" % 
+                      (self, type_val))
         if type_val:
             if type_val in ElementDict:
+                logging.debug("Type %s is in ElementDict" % type_val)
                 type_val1 = type_val
                 # The following loop handles the case where an Element's 
                 # reference element has no sub-elements and whose type is
@@ -437,11 +438,16 @@ class XschemaElement(XschemaElementBase):
                 while True:
                     element = ElementDict[type_val1]
                     t = element.resolve_type_1()
-                    # If the type is available in the SimpleTypeDict, we
-                    # know we've gone far enough in the Element hierarchy
-                    # and can return the correct base type.
-                    if t in SimpleTypeDict:
-                        type_val1 = SimpleTypeDict[t].getBase()
+                    logging.debug("Element[%s] %s from ElementDict's type " \
+                                  " resolves to %s" % (i, element, t))
+                    # If the type has a simple type, we know we've gone far 
+                    # enough in the Element hierarchy and can return the 
+                    # correct base type.
+                    if element.simpleType not in (None, 1):
+                        type_val1 = element.simpleType.getBase()
+                        logging.debug(
+                            "Resolving type based on SimpleType %s to %s" % 
+                            (element.simpleType, type_val1))
                         break
                     # If the type name is the same as the previous type name
                     # then we know we've fully resolved the Element hierarchy
@@ -497,6 +503,7 @@ class XschemaElement(XschemaElementBase):
                     type_val = StringType[0]
         else:
             type_val = StringType[0]
+        logging.debug("Resolved type of %s to be %s" % (self, type_val))
         return type_val
 
     def resolve_type_1(self):
@@ -506,7 +513,7 @@ class XschemaElement(XschemaElementBase):
             #type_val = strip_namespace(self.attrs['type'])
             type_val = self.attrs['type']
             if type_val in SimpleTypeDict:
-                self.simpleType = type_val
+                self.simpleType = SimpleTypeDict[type_val]
         elif 'ref' in self.attrs:
             # fix
             type_val = strip_namespace(self.attrs['ref'])
@@ -726,6 +733,8 @@ class XschemaHandler(handler.ContentHandler):
         self.inAttribute = 0
         self.inAttributeGroup = 0
         self.inSimpleType = 0
+        self.inListType = 0
+        self.inUnionType = 0
         # The last attribute we processed.
         self.lastAttribute = None
         # Simple types that exist in the global context and may be used to
@@ -742,9 +751,23 @@ class XschemaHandler(handler.ContentHandler):
     def showError(self, msg):
         print msg
         sys.exit(-1)
+        
+    def findLastXschemaElement(self):
+        """
+        Traverses the current stack of elements to find the first instance
+        of XschemaElement.
+        """
+        element = None
+        reverse = list(self.stack)
+        reverse.reverse()
+        for entry in reverse:
+            if isinstance(entry, XschemaElement):
+                element = entry
+        return element
 
     def startElement(self, name, attrs):
         logging.debug("Start element: %s %s" % (name, repr(attrs.items())))
+        logging.debug("Stack: %s" % self.stack)
 
         if name == SchemaType:
             self.inSchema = 1
@@ -865,7 +888,7 @@ class XschemaHandler(handler.ContentHandler):
             else:
                 stName = None
             # If the parent is an element, mark it as a simpleType.
-            if len(self.stack) > 0:
+            if len(self.stack) > 0 and isinstance(self.stack[-1], XschemaElement):
                 self.stack[-1].setSimpleType(1)
             element = SimpleTypeElement(stName)
             SimpleTypeDict[stName] = element
@@ -875,7 +898,10 @@ class XschemaHandler(handler.ContentHandler):
             # If we are in a simpleType, capture the name of
             #   the restriction base.
             if self.inSimpleType > 0 and 'base' in attrs.keys():
-                self.stack[-1].setBase(attrs['base'])
+                base = attrs['base']
+                parent = self.stack[-1]
+                logging.debug("Setting base '%s' on: %s" % (base, parent))
+                parent.setBase(base)
             self.inRestrictionType = 1
         elif name == EnumerationType:
             if self.inAttribute and attrs.has_key('value'):
@@ -888,13 +914,7 @@ class XschemaHandler(handler.ContentHandler):
                 # been placed on an element and that element will still be
                 # in the stack. We search backwards through the stack to
                 # find the last element.
-                element = None
-                reverse = list(self.stack)
-                reverse.reverse()
-                logging.debug("Found enum, reverse stack: %s" % reverse)
-                for entry in reverse:
-                    if type(entry) == XschemaElement:
-                        element = entry
+                element = self.findLastXschemaElement()
                 if element is None:
                     sys.stderr.write(
                         'Cannot find element to attach enumeration: %s\n' % \
@@ -910,6 +930,7 @@ class XschemaHandler(handler.ContentHandler):
             if attrs.has_key('memberTypes'):
                 for member in attrs['memberTypes'].split(" "):
                     self.stack[-1].unionOf.append(member)
+            self.inUnionType = 1
         elif name == WhiteSpaceType and self.inRestrictionType:
             if attrs.has_key('value'):
                 if attrs.getValue('value') == 'collapse':
@@ -918,7 +939,6 @@ class XschemaHandler(handler.ContentHandler):
             self.inListType = 1
             #ipshell('Parsing simpleType -- Entering ipshell.\nHit Ctrl-D to exit')
             #import pdb; pdb.set_trace()
-        logging.debug("Start element stack: %d" % len(self.stack))
 
     def endElement(self, name):
         logging.debug("End element: %s" % (name))
@@ -931,6 +951,10 @@ class XschemaHandler(handler.ContentHandler):
             simpleType = self.stack.pop()
             if len(self.stack) == 1:
                 self.topLevelSimpleTypes.append(simpleType)
+            elif not self.inAttribute and not self.inListType \
+                 and not self.inRestrictionType and not self.inUnionType:
+                logging.debug("Setting simple type on %s to %s" % (self.stack[-1], simpleType))
+                self.stack[-1].simpleType = simpleType
         elif name == RestrictionType and self.inRestrictionType:
             self.inRestrictionType = 0
         elif name == ElementType or (name == ComplexTypeType and self.stack[-1].complexType):
@@ -979,6 +1003,8 @@ class XschemaHandler(handler.ContentHandler):
             pass
         elif name == ListType:
             self.inListType = 0
+        elif name == UnionType:
+            self.inUnionType = 0
 
     def characters(self, chrs):
         if self.inElement:

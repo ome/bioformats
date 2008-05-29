@@ -55,7 +55,7 @@ Examples:
   %s -n 'xs:' -p ome.xml -o ome/xml schemas/ome.xsd
 
 Report bugs to Chris Allan <callan@blackcat.ca>""" % \
-	(error, cmd, DEFAULT_PACKAGE, NAMESPACE, cmd)
+	(error, cmd, DEFAULT_PACKAGE, DEFAULT_NAMESPACE, cmd)
 	sys.exit(2)
 
 def main():
@@ -103,14 +103,14 @@ def debugMain():
 	"""
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
-	namespace = "xs:"
+	namespace = "xsd:"
 
-	model = parseXmlSchema("tmp/schemas/2003/ome.xsd", namespace)
+	model = parseXmlSchema("tmp/schemas/2008-02/ome.xsd", namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
-		if obj.name == "Image":
-			print " +-- %s(%s)" % (obj.name, obj.base)
+		if obj.name in ["Experimenter"]:
+			print " +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type)
 			for prop in obj.properties.values():
 				print " +---- %s(%s) [%d:%d]" % \
 				    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
