@@ -416,7 +416,18 @@ public class ZeissZVIReader extends FormatReader {
     core.sizeZ[0] = zIndices.size();
     core.sizeT[0] = tIndices.size();
 
-    core.sizeC[0] *= cIndices.size();
+    int min = Integer.MAX_VALUE;
+    int max = Integer.MIN_VALUE;
+    for (int i=0; i<cIndices.size(); i++) {
+      int v = ((Integer) cIndices.get(i)).intValue();
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+
+    int cSize = max - min + 1;
+    if (cSize > cIndices.size()) cSize = cIndices.size() - 1;
+
+    core.sizeC[0] *= cSize;
 
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
       (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
@@ -437,7 +448,7 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       while (tileRows * tileColumns > totalTiles) {
-        core.sizeC[0]--;
+        //if (core.sizeC[0] > 1) core.sizeC[0]--;
         totalTiles =
           offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
         core.imageCount[0] -= core.sizeZ[0] * core.sizeT[0];
