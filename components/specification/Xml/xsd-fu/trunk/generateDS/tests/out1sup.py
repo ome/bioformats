@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Generated Tue Oct  9 11:33:52 2007 by generateDS.py.
+# Generated Mon May 26 14:04:33 2008 by generateDS.py.
 #
 
 import sys
@@ -33,10 +33,20 @@ def showIndent(outfile, level):
         outfile.write('    ')
 
 def quote_xml(inStr):
-    s1 = inStr
+    s1 = (isinstance(inStr, basestring) and inStr or
+          '%s' % inStr)
     s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
+    return s1
+
+def quote_attrib(inStr):
+    s1 = (isinstance(inStr, basestring) and inStr or
+          '%s' % inStr)
+    s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('"', '&quot;')
+    s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
     return s1
 
 def quote_python(inStr):
@@ -141,6 +151,7 @@ class people:
         _MemberSpec('person', 'person', 1),
         ]
     subclass = None
+    superclass = None
     def __init__(self, person=None):
         if person is None:
             self.person = []
@@ -156,15 +167,15 @@ class people:
     def set_person(self, person): self.person = person
     def add_person(self, value): self.person.append(value)
     def insert_person(self, index, value): self.person[index] = value
-    def export(self, outfile, level, name_='people'):
+    def export(self, outfile, level, name_='people', namespace_=''):
         showIndent(outfile, level)
-        outfile.write('<%s>\n' % name_)
-        self.exportChildren(outfile, level + 1, name_)
+        outfile.write('<%s%s>\n' % (namespace_, name_))
+        self.exportChildren(outfile, level + 1, name_, namespace_)
         showIndent(outfile, level)
-        outfile.write('</%s>\n' % name_)
-    def exportAttributes(self, outfile, level, name_='people'):
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='people', namespace_=''):
         pass
-    def exportChildren(self, outfile, level, name_='people'):
+    def exportChildren(self, outfile, level, name_='people', namespace_=''):
         for person_ in self.get_person():
             person_.export(outfile, level)
     def exportLiteral(self, outfile, level, name_='people'):
@@ -200,21 +211,23 @@ class people:
             obj_ = person.factory()
             obj_.build(child_)
             self.person.append(obj_)
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = people._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%s%s%s' % (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if people.superclass != None:
+          people.superclass.walk_and_update(self)
     def walk_and_show(self, depth):
         global counter
         counter += 1
@@ -264,6 +277,7 @@ class person:
         _MemberSpec('hot', 'BasicEmptyType', 0),
         ]
     subclass = None
+    superclass = None
     def __init__(self, id=-1, value='', ratio_attr='', name='', ratio='', imagesize=None, interest=None, category=-1, hot_agent=None, promoter=None, hot=None):
         self.id = id
         self.value = value
@@ -293,8 +307,8 @@ class person:
     def set_name(self, name): self.name = name
     def get_ratio(self): return self.ratio
     def set_ratio(self, ratio): self.ratio = ratio
-    def validate_percent(self, value):
-        # Validate type percent, a restriction on xs:integer.
+    def validate_ratio(self, value):
+        # validate type ratio
         pass
     def get_imagesize(self): return self.imagesize
     def set_imagesize(self, imagesize): self.imagesize = imagesize
@@ -323,31 +337,32 @@ class person:
     def set_ratio_attr(self, ratio_attr): self.ratio_attr = ratio_attr
     def getAnyAttributes_(self): return self.anyAttributes_
     def setAnyAttributes_(self, anyAttributes_): self.anyAttributes_ = anyAttributes_
-    def export(self, outfile, level, name_='person'):
+    def export(self, outfile, level, name_='person', namespace_=''):
         showIndent(outfile, level)
-        outfile.write('<%s' % (name_, ))
-        self.exportAttributes(outfile, level, name_='person')
+        outfile.write('<%s%s' % (namespace_, name_))
+        self.exportAttributes(outfile, level, name_='person', namespace_='')
         outfile.write('>\n')
-        self.exportChildren(outfile, level + 1, name_)
+        self.exportChildren(outfile, level + 1, name_, namespace_)
         showIndent(outfile, level)
-        outfile.write('</%s>\n' % name_)
-    def exportAttributes(self, outfile, level, name_='person'):
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='person', namespace_=''):
         if self.get_id() is not None:
-            outfile.write(' id="%s"' % (self.get_id(), ))
+            outfile.write(' id="%s"' % (quote_attrib(self.get_id()), ))
         if self.get_value() is not None:
-            outfile.write(' value="%s"' % (self.get_value(), ))
+            outfile.write(' value="%s"' % (quote_attrib(self.get_value()), ))
         if self.get_ratio_attr() is not None:
-            outfile.write(' ratio_attr="%s"' % (self.get_ratio_attr(), ))
+            outfile.write(' ratio_attr="%s"' % (quote_attrib(self.get_ratio_attr()), ))
         for name, value in self.anyAttributes_.items():
-            outfile.write(' %s="%s"' % (name, value, ))
-    def exportChildren(self, outfile, level, name_='person'):
+            outfile.write(' %s="%s"' % (name, quote_attrib(value), ))
+    def exportChildren(self, outfile, level, name_='person', namespace_=''):
         if self.get_name() != None :
-            showIndent(outfile, level)
-            outfile.write('<name>%s</name>\n' % quote_xml(self.get_name()))
+            if self.get_name() != "" :
+                showIndent(outfile, level)
+                outfile.write('<name>%s</name>\n' % quote_xml(self.get_name()))
         showIndent(outfile, level)
         outfile.write('<ratio>%s</ratio>\n' % quote_xml(self.get_ratio()))
         if self.imagesize:
-            self.imagesize.export(outfile, level, name_='imagesize')
+            self.imagesize.export(outfile, level, name_='imagesize', namespace_='')
         for interest_ in self.get_interest():
             showIndent(outfile, level)
             outfile.write('<interest>%s</interest>\n' % quote_xml(interest_))
@@ -356,9 +371,9 @@ class person:
         if self.hot_agent:
             self.hot_agent.export(outfile, level)
         for promoter_ in self.get_promoter():
-            promoter_.export(outfile, level, name_='promoter')
+            promoter_.export(outfile, level, name_='promoter', namespace_='')
         if self.hot:
-            self.hot.export(outfile, level, name_='hot')
+            self.hot.export(outfile, level, name_='hot', namespace_='')
     def exportLiteral(self, outfile, level, name_='person'):
         level += 1
         self.exportLiteralAttributes(outfile, level, name_)
@@ -452,7 +467,7 @@ class person:
             for text__content_ in child_.childNodes:
                 ratio_ += text__content_.nodeValue
             self.ratio = ratio_
-            self.validate_percent(self.ratio)    # validate type percent
+            self.validate_ratio(self.ratio)    # validate type ratio
         elif child_.nodeType == Node.ELEMENT_NODE and \
             nodeName_ == 'imagesize':
             obj_ = scale.factory()
@@ -489,21 +504,23 @@ class person:
             obj_ = BasicEmptyType.factory()
             obj_.build(child_)
             self.set_hot(obj_)
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = person._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%s%s%s' % (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if person.superclass != None:
+          person.superclass.walk_and_update(self)
     def walk_and_show(self, depth):
         global counter
         counter += 1
@@ -540,6 +557,7 @@ class scale:
     _member_data_items = [
         ]
     subclass = None
+    superclass = None
     def __init__(self, valueOf_=''):
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
@@ -550,15 +568,15 @@ class scale:
     factory = staticmethod(factory)
     def getValueOf_(self): return self.valueOf_
     def setValueOf_(self, valueOf_): self.valueOf_ = valueOf_
-    def export(self, outfile, level, name_='scale'):
+    def export(self, outfile, level, name_='scale', namespace_=''):
         showIndent(outfile, level)
-        outfile.write('<%s>' % name_)
-        self.exportChildren(outfile, level + 1, name_)
-        outfile.write('</%s>\n' % name_)
-    def exportAttributes(self, outfile, level, name_='scale'):
+        outfile.write('<%s%s>' % (namespace_, name_))
+        self.exportChildren(outfile, level + 1, name_, namespace_)
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='scale', namespace_=''):
         pass
-    def exportChildren(self, outfile, level, name_='scale'):
-        outfile.write(self.valueOf_)
+    def exportChildren(self, outfile, level, name_='scale', namespace_=''):
+        outfile.write(quote_xml(self.valueOf_))
     def exportLiteral(self, outfile, level, name_='scale'):
         level += 1
         self.exportLiteralAttributes(outfile, level, name_)
@@ -580,21 +598,23 @@ class scale:
     def buildChildren(self, child_, nodeName_):
         if child_.nodeType == Node.TEXT_NODE:
             self.valueOf_ += child_.nodeValue
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = scale._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%s%s%s' % (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if scale.superclass != None:
+          scale.superclass.walk_and_update(self)
     def walk_and_show(self, depth):
         global counter
         counter += 1
@@ -631,6 +651,7 @@ class BasicEmptyType:
     _member_data_items = [
         ]
     subclass = None
+    superclass = None
     def __init__(self, valueOf_=''):
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
@@ -641,15 +662,15 @@ class BasicEmptyType:
     factory = staticmethod(factory)
     def getValueOf_(self): return self.valueOf_
     def setValueOf_(self, valueOf_): self.valueOf_ = valueOf_
-    def export(self, outfile, level, name_='BasicEmptyType'):
+    def export(self, outfile, level, name_='BasicEmptyType', namespace_=''):
         showIndent(outfile, level)
-        outfile.write('<%s>' % name_)
-        self.exportChildren(outfile, level + 1, name_)
-        outfile.write('</%s>\n' % name_)
-    def exportAttributes(self, outfile, level, name_='BasicEmptyType'):
+        outfile.write('<%s%s>' % (namespace_, name_))
+        self.exportChildren(outfile, level + 1, name_, namespace_)
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='BasicEmptyType', namespace_=''):
         pass
-    def exportChildren(self, outfile, level, name_='BasicEmptyType'):
-        outfile.write(self.valueOf_)
+    def exportChildren(self, outfile, level, name_='BasicEmptyType', namespace_=''):
+        outfile.write(quote_xml(self.valueOf_))
     def exportLiteral(self, outfile, level, name_='BasicEmptyType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, name_)
@@ -671,21 +692,23 @@ class BasicEmptyType:
     def buildChildren(self, child_, nodeName_):
         if child_.nodeType == Node.TEXT_NODE:
             self.valueOf_ += child_.nodeValue
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = BasicEmptyType._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%s%s%s' % (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if BasicEmptyType.superclass != None:
+          BasicEmptyType.superclass.walk_and_update(self)
     def walk_and_show(self, depth):
         global counter
         counter += 1
@@ -725,6 +748,7 @@ class hot_agent:
         _MemberSpec('priority', 'xs:float', 0),
         ]
     subclass = None
+    superclass = None
     def __init__(self, firstname='', lastname='', priority=0.0):
         self.firstname = firstname
         self.lastname = lastname
@@ -744,19 +768,19 @@ class hot_agent:
     def set_priority(self, priority): self.priority = priority
     def getAnyAttributes_(self): return self.anyAttributes_
     def setAnyAttributes_(self, anyAttributes_): self.anyAttributes_ = anyAttributes_
-    def export(self, outfile, level, name_='hot.agent'):
+    def export(self, outfile, level, name_='hot.agent', namespace_=''):
         showIndent(outfile, level)
-        outfile.write('<%s' % (name_, ))
-        self.exportAttributes(outfile, level, name_='hot.agent')
+        outfile.write('<%s%s' % (namespace_, name_))
+        self.exportAttributes(outfile, level, name_='hot.agent', namespace_='')
         outfile.write('>\n')
-        self.exportChildren(outfile, level + 1, name_)
+        self.exportChildren(outfile, level + 1, name_, namespace_)
         showIndent(outfile, level)
-        outfile.write('</%s>\n' % name_)
-    def exportAttributes(self, outfile, level, name_='hot.agent'):
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='hot.agent', namespace_=''):
         for name, value in self.anyAttributes_.items():
-            outfile.write(' %s="%s"' % (name, value, ))
+            outfile.write(' %s="%s"' % (name, quote_attrib(value), ))
         pass
-    def exportChildren(self, outfile, level, name_='hot.agent'):
+    def exportChildren(self, outfile, level, name_='hot.agent', namespace_=''):
         showIndent(outfile, level)
         outfile.write('<firstname>%s</firstname>\n' % quote_xml(self.get_firstname()))
         showIndent(outfile, level)
@@ -810,21 +834,23 @@ class hot_agent:
                 except ValueError:
                     raise ValueError('requires float (or double) -- %s' % child_.toxml())
                 self.priority = fval_
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = hot_agent._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%s%s%s' % (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if hot_agent.superclass != None:
+          hot_agent.superclass.walk_and_update(self)
     def walk_and_show(self, depth):
         global counter
         counter += 1
@@ -864,6 +890,7 @@ class booster:
         _MemberSpec('client', 'client', 1),
         ]
     subclass = None
+    superclass = None
     def __init__(self, firstname='', lastname='', client=None):
         self.firstname = firstname
         self.lastname = lastname
@@ -885,15 +912,15 @@ class booster:
     def set_client(self, client): self.client = client
     def add_client(self, value): self.client.append(value)
     def insert_client(self, index, value): self.client[index] = value
-    def export(self, outfile, level, name_='booster'):
+    def export(self, outfile, level, name_='booster', namespace_=''):
         showIndent(outfile, level)
-        outfile.write('<%s>\n' % name_)
-        self.exportChildren(outfile, level + 1, name_)
+        outfile.write('<%s%s>\n' % (namespace_, name_))
+        self.exportChildren(outfile, level + 1, name_, namespace_)
         showIndent(outfile, level)
-        outfile.write('</%s>\n' % name_)
-    def exportAttributes(self, outfile, level, name_='booster'):
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='booster', namespace_=''):
         pass
-    def exportChildren(self, outfile, level, name_='booster'):
+    def exportChildren(self, outfile, level, name_='booster', namespace_=''):
         showIndent(outfile, level)
         outfile.write('<firstname>%s</firstname>\n' % quote_xml(self.get_firstname()))
         showIndent(outfile, level)
@@ -949,21 +976,23 @@ class booster:
             obj_ = client.factory()
             obj_.build(child_)
             self.client.append(obj_)
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = booster._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%s%s%s' % (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if booster.superclass != None:
+          booster.superclass.walk_and_update(self)
     def walk_and_show(self, depth):
         global counter
         counter += 1
@@ -1002,6 +1031,7 @@ class client:
         _MemberSpec('refid', 'xs:integer', 0),
         ]
     subclass = None
+    superclass = None
     def __init__(self, fullname='', refid=-1):
         self.fullname = fullname
         self.refid = refid
@@ -1015,15 +1045,15 @@ class client:
     def set_fullname(self, fullname): self.fullname = fullname
     def get_refid(self): return self.refid
     def set_refid(self, refid): self.refid = refid
-    def export(self, outfile, level, name_='client'):
+    def export(self, outfile, level, name_='client', namespace_=''):
         showIndent(outfile, level)
-        outfile.write('<%s>\n' % name_)
-        self.exportChildren(outfile, level + 1, name_)
+        outfile.write('<%s%s>\n' % (namespace_, name_))
+        self.exportChildren(outfile, level + 1, name_, namespace_)
         showIndent(outfile, level)
-        outfile.write('</%s>\n' % name_)
-    def exportAttributes(self, outfile, level, name_='client'):
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='client', namespace_=''):
         pass
-    def exportChildren(self, outfile, level, name_='client'):
+    def exportChildren(self, outfile, level, name_='client', namespace_=''):
         showIndent(outfile, level)
         outfile.write('<fullname>%s</fullname>\n' % quote_xml(self.get_fullname()))
         showIndent(outfile, level)
@@ -1063,21 +1093,23 @@ class client:
                 except ValueError:
                     raise ValueError('requires integer -- %s' % child_.toxml())
                 self.refid = ival_
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = client._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%s%s%s' % (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if client.superclass != None:
+          client.superclass.walk_and_update(self)
     def walk_and_show(self, depth):
         global counter
         counter += 1
@@ -1108,6 +1140,100 @@ class client:
                 if type(obj1) == types.InstanceType:
                     obj1.walk_and_show(depth)
 # end class client
+
+
+class Richtlinie:
+    _member_data_items = [
+        ]
+    subclass = None
+    superclass = None
+    def __init__(self, valueOf_=''):
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if Richtlinie.subclass:
+            return Richtlinie.subclass(*args_, **kwargs_)
+        else:
+            return Richtlinie(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def getValueOf_(self): return self.valueOf_
+    def setValueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def export(self, outfile, level, name_='Richtlinie', namespace_=''):
+        showIndent(outfile, level)
+        outfile.write('<%s%s>' % (namespace_, name_))
+        self.exportChildren(outfile, level + 1, name_, namespace_)
+        outfile.write('</%s%s>\n' % (namespace_, name_))
+    def exportAttributes(self, outfile, level, name_='Richtlinie', namespace_=''):
+        pass
+    def exportChildren(self, outfile, level, name_='Richtlinie', namespace_=''):
+        outfile.write(quote_xml(self.valueOf_))
+    def exportLiteral(self, outfile, level, name_='Richtlinie'):
+        level += 1
+        self.exportLiteralAttributes(outfile, level, name_)
+        self.exportLiteralChildren(outfile, level, name_)
+    def exportLiteralAttributes(self, outfile, level, name_):
+        pass
+    def exportLiteralChildren(self, outfile, level, name_):
+        showIndent(outfile, level)
+        outfile.write('valueOf_ = "%s",\n' % (self.valueOf_,))
+    def build(self, node_):
+        attrs = node_.attributes
+        self.buildAttributes(attrs)
+        self.valueOf_ = ''
+        for child_ in node_.childNodes:
+            nodeName_ = child_.nodeName.split(':')[-1]
+            self.buildChildren(child_, nodeName_)
+    def buildAttributes(self, attrs):
+        pass
+    def buildChildren(self, child_, nodeName_):
+        if child_.nodeType == Node.TEXT_NODE:
+            self.valueOf_ += child_.nodeValue
+    def walk_and_update(self):
+        members = Richtlinie._member_data_items
+        for member in members:
+            obj1 = getattr(self, member.get_name())
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
+                setattr(self, member.get_name(), newvalue)
+            elif member.get_container():
+                for child in obj1:
+                    if type(child) == types.InstanceType:
+                        child.walk_and_update()
+            else:
+                obj1 = getattr(self, member.get_name())
+                if type(obj1) == types.InstanceType:
+                    obj1.walk_and_update()
+        if Richtlinie.superclass != None:
+          Richtlinie.superclass.walk_and_update(self)
+    def walk_and_show(self, depth):
+        global counter
+        counter += 1
+        depth += 1
+        print '%d. class: Richtlinie  depth: %d' % (counter, depth, )
+        members = Richtlinie._member_data_items
+        for member in members:
+            s1 = member.get_name()
+            s2 = member.get_data_type()
+            s3 = '%d' % member.get_container()
+            obj1 = getattr(self, member.get_name())
+            if member.get_container():
+                s4 = '<container>'
+            else:
+                if type(obj1) != types.InstanceType:
+                    s4 = '%s' % obj1
+                else:
+                    s4 = '<instance>'
+            s5 = '%s%s%s  %s' % (s1.ljust(16), s2.ljust(16), s3.rjust(4), s4, )
+            print '   ', s5
+        for member in members:
+            if member.get_container():
+                for child in getattr(self, member.get_name()):
+                    if type(child) == types.InstanceType:
+                        child.walk_and_show(depth)
+            else:
+                obj1 = getattr(self, member.get_name())
+                if type(obj1) == types.InstanceType:
+                    obj1.walk_and_show(depth)
+# end class Richtlinie
 
 
 from xml.sax import handler, make_parser

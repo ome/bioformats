@@ -14,7 +14,7 @@ You can try it out as follows:
 
 1. Generate the super-class file:
 
-       python /generateDS.py -o po.py po.xsd
+       python generateDS.py -o po.py po.xsd
 
 2. Generate the sub-class including the methods described in
    xmlbehavior_po.xml:

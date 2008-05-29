@@ -25,6 +25,8 @@
         <interest>people</interest>
         <interest>cats</interest>
         <interest>dogs</interest>
+        <imagesize>78</imagesize>
+        <imageproperty attrib1="abc &lt;def> ghi">some pretty stuff</imageproperty>
         <category>8</category>
         <promoter>
             <firstname>David</firstname>
@@ -39,7 +41,13 @@
             <lastname>Eddleberry</lastname>
             <client>
                 <fullname>Arnold Applebee</fullname>
-                <refid>10001</refid>
+                <refid>10002</refid>
+            </client>
+        </promoter>
+        <promoter>
+            <client>
+                <fullname>Charlie Chuckles</fullname>
+                <refid>10003</refid>
             </client>
         </promoter>
     </person>

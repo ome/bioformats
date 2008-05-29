@@ -89,21 +89,23 @@ class MethodSpec(object):
 #
 method1 = MethodSpec(name='walk_and_update',
     source='''\
-    def walk_and_update(self, brackets):
+    def walk_and_update(self):
         members = %(class_name)s._member_data_items
         for member in members:
             obj1 = getattr(self, member.get_name())
-            if member.get_data_type() == 'xs:string':
-                newvalue = '%%s%%s%%s' %% (brackets[0], obj1, brackets[1], )
+            if member.get_data_type() == 'xs:date':
+                newvalue = date_calcs.date_from_string(obj1)
                 setattr(self, member.get_name(), newvalue)
             elif member.get_container():
                 for child in obj1:
                     if type(child) == types.InstanceType:
-                        child.walk_and_update(brackets)
+                        child.walk_and_update()
             else:
                 obj1 = getattr(self, member.get_name())
                 if type(obj1) == types.InstanceType:
-                    obj1.walk_and_update(brackets)
+                    obj1.walk_and_update()
+        if %(class_name)s.superclass != None:
+          %(class_name)s.superclass.walk_and_update(self)
 ''',
     # class_names=r'^Employee$|^[a-zA-Z]*Dependent$',
     class_names=r'^.*$',

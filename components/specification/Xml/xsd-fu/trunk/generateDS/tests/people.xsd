@@ -84,6 +84,17 @@
         </xs:complexType>
     </xs:element>
 
+	<xs:element name="Richtlinie" default="Wert 1">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Wert 1"/>
+				<xs:enumeration value="Wert 2"/>
+				<xs:enumeration value="Wert 3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+
+
 </xs:schema>
 
 

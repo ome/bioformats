@@ -15,7 +15,7 @@ Examples:
     python process_includes.py infile.xsd
     python process_includes.py infile.xsd outfile.xsd
     python process_includes.py infile.xsd > outfile.xsd
-    cat infile.py | python process_includes.py > outfile.xsd
+    cat infile.xsd | python process_includes.py > outfile.xsd
 """
 
 #
@@ -26,14 +26,18 @@ import os
 import getopt
 import re
 
+#
+# Try to import lxml first, and if that fails try ElementTree.
+# lxml preserves namespace prefixes, but ElemenTree does not.
+#
 WhichElementTree = ''
 try:
-    from xml.etree import ElementTree as etree
-    WhichElementTree = 'xml.etree'
+    from lxml import etree
+    WhichElementTree = 'lxml'
 except ImportError, e:
     try:
-        from lxml import etree
-        WhichElementTree = 'lxml'
+        from xml.etree import ElementTree as etree
+        WhichElementTree = 'xml.etree'
     except ImportError, e:
         try:
             from elementtree import ElementTree as etree
@@ -62,23 +66,27 @@ NAMESPACE_PAT = re.compile(r'\{.*\}')
 # Functions
 
 
-def process_include(inpath, outpath):
+def process_includes(inpath, outpath):
     if inpath:
-        doc = etree.parse(inpath)
-        root = doc.getroot()
-        process_include_tree(root)
+        infile = open(inpath, 'r')
     else:
-        s1 = sys.stdin.read()
-        root = etree.fromstring(s1)
-        process_include_tree(root)
-        doc = etree.ElementTree(root)
+        infile = sys.stdin
     if outpath:
         outfile = make_file(outpath)
-        if outfile:
-            doc.write(outfile)
-            outfile.close()
     else:
-        doc.write(sys.stdout)
+        outfile = sys.stdout
+    process_include_files(infile, outfile)
+    if inpath:
+        infile.close()
+    if outpath:
+        outfile.close()
+
+
+def process_include_files(infile, outfile):
+    doc = etree.parse(infile)
+    root = doc.getroot()
+    process_include_tree(root)
+    doc.write(outfile)
 
 
 def process_include_tree(root):
@@ -102,6 +110,9 @@ def process_include_tree(root):
                 for child1 in children1:
                     root.insert(idx, child1)
                     idx += 1
+            else:
+                msg = "Can't find include file %s.  Aborting." % (path, )
+                raise IOError(msg)
         else:
             process_include_tree(child)
             idx += 1
@@ -124,7 +135,7 @@ USAGE_TEXT = __doc__
 
 def usage():
     print USAGE_TEXT
-    sys.exit(-1)
+    sys.exit(1)
 
 
 def main():
@@ -151,7 +162,7 @@ def main():
         outpath = None
     else:
         usage()
-    process_include(inpath, outpath)
+    process_includes(inpath, outpath)
 
 
 if __name__ == '__main__':

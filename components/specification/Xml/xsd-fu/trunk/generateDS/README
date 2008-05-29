@@ -140,6 +140,35 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Change history
 --------------
 
+Version 1.13a (05/26/2008):
+  * Added support for generating namespace prefix during export
+    if the XML Schema specifies the targetNamespace.  Thanks to
+    Andre Adrian for implementing this feature. 
+
+Version 1.12b (05/20/2008):
+  * Patches to escape special XML characters (entities) in valueOf
+    and attributes.  Thanks to Darius Powell for this fix.
+
+Version 1.12a (05/06/2008):
+  * Fix to name used to generate validation method.
+  * Embedded process_includes.py functionality into generateDS.py.
+
+Version 1.11d (04/28/2008)
+  * Added support for specifying default values in attributes
+    and elements that are primitive types.
+
+Version 1.11c (03/31/2008)
+  * A fix in enumeration building code.
+
+Version 1.11b (11/19/2007)
+  * Fixed bug that caused an infinite loop when a class has a
+    simple type as a base/super class.
+  * Added additional simple types to the list of recognized simple
+    types.  For a list of simple types, see:
+    http://www.w3.org/TR/xmlschema-0/#SimpleTypeFacets
+  * Added additional Python keywords to list of transformed names.
+    See global variable NameTable.
+
 Version 1.11a (10/11/2007)
   * Various added features contributed by Chris Allan.  For more
     information see:
