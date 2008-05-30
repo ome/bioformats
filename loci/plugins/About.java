@@ -46,15 +46,15 @@ public final class About {
       "<br>" +
       "<br><b>Bio-Formats Importer</b> and <b>Bio-Formats Exporter</b>" +
       "<br>Authors: Melissa Linkert, Curtis Rueden" +
-      "<br>Web site: <i>http://www.loci.wisc.edu/ome/formats.html</i>" +
+      "<br><i>http://www.loci.wisc.edu/ome/formats.html</i>" +
       "<br>" +
       "<br><b>Data Browser</b>" +
       "<br>Authors: Curtis Rueden, Melissa Linkert, Chris Peterson" +
-      "<br>Web site: <i>http://www.loci.wisc.edu/ome/browser.html</i>" +
+      "<br><i>http://www.loci.wisc.edu/ome/browser.html</i>" +
       "<br>" +
       "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
       "<br>Authors: Melissa Linkert, Philip Huettl" +
-      "<br>Web site: <i>http://www.loci.wisc.edu/ome/imagej.html</i>" +
+      "<br><i>http://www.loci.wisc.edu/ome/ome-plugins.html</i>" +
       "<br>" +
       "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
       "<br>Author: Melissa Linkert";
