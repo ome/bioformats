@@ -247,10 +247,14 @@ public class LociFunctions extends MacroFunctions {
     metadataFiltered[0] = r.isMetadataFiltered() ? "true" : "false";
   }
 
-  // -- LociFunction API methods - additional methods --
+  // -- LociFunctions API methods - additional methods --
 
   public void setId(String id) throws FormatException, IOException {
     r.setId(id);
+  }
+
+  public void isThisType(String name, String[] thisType) {
+    thisType[0] = r.isThisType(name) ? "true" : "false";
   }
 
   public void getSeriesName(String[] seriesName) {
