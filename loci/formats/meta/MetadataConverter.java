@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on May 23, 2008 4:44:30 PM CDT
+ * Created by curtis via MetadataAutogen on May 30, 2008 10:37:42 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,7 +52,7 @@ public final class MetadataConverter {
   private MetadataConverter() { }
 
   // -- MetadataConverter API methods --
- 
+
   /**
    * Copies information from a metadata retrieval object
    * (source) into a metadata store (destination).
@@ -60,212 +60,362 @@ public final class MetadataConverter {
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
     int experimenterCount = src.getExperimenterCount();
     for (int experimenterIndex=0; experimenterIndex<experimenterCount; experimenterIndex++) {
-      dest.setExperimenterEmail(src.getExperimenterEmail(experimenterIndex), experimenterIndex);
-      dest.setExperimenterFirstName(src.getExperimenterFirstName(experimenterIndex), experimenterIndex);
-      dest.setExperimenterID(src.getExperimenterID(experimenterIndex), experimenterIndex);
-      dest.setExperimenterInstitution(src.getExperimenterInstitution(experimenterIndex), experimenterIndex);
-      dest.setExperimenterLastName(src.getExperimenterLastName(experimenterIndex), experimenterIndex);
+      String experimenterEmailValue = src.getExperimenterEmail(experimenterIndex);
+      if (experimenterEmailValue != null) dest.setExperimenterEmail(experimenterEmailValue, experimenterIndex);
+      String experimenterFirstNameValue = src.getExperimenterFirstName(experimenterIndex);
+      if (experimenterFirstNameValue != null) dest.setExperimenterFirstName(experimenterFirstNameValue, experimenterIndex);
+      String experimenterIDValue = src.getExperimenterID(experimenterIndex);
+      if (experimenterIDValue != null) dest.setExperimenterID(experimenterIDValue, experimenterIndex);
+      String experimenterInstitutionValue = src.getExperimenterInstitution(experimenterIndex);
+      if (experimenterInstitutionValue != null) dest.setExperimenterInstitution(experimenterInstitutionValue, experimenterIndex);
+      String experimenterLastNameValue = src.getExperimenterLastName(experimenterIndex);
+      if (experimenterLastNameValue != null) dest.setExperimenterLastName(experimenterLastNameValue, experimenterIndex);
     }
     int imageCount = src.getImageCount();
     for (int imageIndex=0; imageIndex<imageCount; imageIndex++) {
-      dest.setImageCreationDate(src.getImageCreationDate(imageIndex), imageIndex);
-      dest.setImageDescription(src.getImageDescription(imageIndex), imageIndex);
-      dest.setImageID(src.getImageID(imageIndex), imageIndex);
-      dest.setImageName(src.getImageName(imageIndex), imageIndex);
-      dest.setDisplayOptionsID(src.getDisplayOptionsID(imageIndex), imageIndex);
-      dest.setDisplayOptionsZoom(src.getDisplayOptionsZoom(imageIndex), imageIndex);
-      dest.setDisplayOptionsProjectionZStart(src.getDisplayOptionsProjectionZStart(imageIndex), imageIndex);
-      dest.setDisplayOptionsProjectionZStop(src.getDisplayOptionsProjectionZStop(imageIndex), imageIndex);
+      String imageCreationDateValue = src.getImageCreationDate(imageIndex);
+      if (imageCreationDateValue != null) dest.setImageCreationDate(imageCreationDateValue, imageIndex);
+      String imageDescriptionValue = src.getImageDescription(imageIndex);
+      if (imageDescriptionValue != null) dest.setImageDescription(imageDescriptionValue, imageIndex);
+      String imageIDValue = src.getImageID(imageIndex);
+      if (imageIDValue != null) dest.setImageID(imageIDValue, imageIndex);
+      String imageNameValue = src.getImageName(imageIndex);
+      if (imageNameValue != null) dest.setImageName(imageNameValue, imageIndex);
+      String displayOptionsIDValue = src.getDisplayOptionsID(imageIndex);
+      if (displayOptionsIDValue != null) dest.setDisplayOptionsID(displayOptionsIDValue, imageIndex);
+      Float displayOptionsZoomValue = src.getDisplayOptionsZoom(imageIndex);
+      if (displayOptionsZoomValue != null) dest.setDisplayOptionsZoom(displayOptionsZoomValue, imageIndex);
+      Integer displayOptionsProjectionZStartValue = src.getDisplayOptionsProjectionZStart(imageIndex);
+      if (displayOptionsProjectionZStartValue != null) dest.setDisplayOptionsProjectionZStart(displayOptionsProjectionZStartValue, imageIndex);
+      Integer displayOptionsProjectionZStopValue = src.getDisplayOptionsProjectionZStop(imageIndex);
+      if (displayOptionsProjectionZStopValue != null) dest.setDisplayOptionsProjectionZStop(displayOptionsProjectionZStopValue, imageIndex);
       int roiCount = src.getROICount(imageIndex);
       for (int roiIndex=0; roiIndex<roiCount; roiIndex++) {
-        dest.setROIID(src.getROIID(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIT0(src.getROIT0(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIT1(src.getROIT1(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIX0(src.getROIX0(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIX1(src.getROIX1(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIY0(src.getROIY0(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIY1(src.getROIY1(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIZ0(src.getROIZ0(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIZ1(src.getROIZ1(imageIndex, roiIndex), imageIndex, roiIndex);
+        String roiidValue = src.getROIID(imageIndex, roiIndex);
+        if (roiidValue != null) dest.setROIID(roiidValue, imageIndex, roiIndex);
+        Integer roiT0Value = src.getROIT0(imageIndex, roiIndex);
+        if (roiT0Value != null) dest.setROIT0(roiT0Value, imageIndex, roiIndex);
+        Integer roiT1Value = src.getROIT1(imageIndex, roiIndex);
+        if (roiT1Value != null) dest.setROIT1(roiT1Value, imageIndex, roiIndex);
+        Integer roiX0Value = src.getROIX0(imageIndex, roiIndex);
+        if (roiX0Value != null) dest.setROIX0(roiX0Value, imageIndex, roiIndex);
+        Integer roiX1Value = src.getROIX1(imageIndex, roiIndex);
+        if (roiX1Value != null) dest.setROIX1(roiX1Value, imageIndex, roiIndex);
+        Integer roiY0Value = src.getROIY0(imageIndex, roiIndex);
+        if (roiY0Value != null) dest.setROIY0(roiY0Value, imageIndex, roiIndex);
+        Integer roiY1Value = src.getROIY1(imageIndex, roiIndex);
+        if (roiY1Value != null) dest.setROIY1(roiY1Value, imageIndex, roiIndex);
+        Integer roiZ0Value = src.getROIZ0(imageIndex, roiIndex);
+        if (roiZ0Value != null) dest.setROIZ0(roiZ0Value, imageIndex, roiIndex);
+        Integer roiZ1Value = src.getROIZ1(imageIndex, roiIndex);
+        if (roiZ1Value != null) dest.setROIZ1(roiZ1Value, imageIndex, roiIndex);
       }
-        dest.setDisplayOptionsTimeTStart(src.getDisplayOptionsTimeTStart(imageIndex), imageIndex);
-        dest.setDisplayOptionsTimeTStop(src.getDisplayOptionsTimeTStop(imageIndex), imageIndex);
-        dest.setImagingEnvironmentAirPressure(src.getImagingEnvironmentAirPressure(imageIndex), imageIndex);
-        dest.setImagingEnvironmentCO2Percent(src.getImagingEnvironmentCO2Percent(imageIndex), imageIndex);
-        dest.setImagingEnvironmentHumidity(src.getImagingEnvironmentHumidity(imageIndex), imageIndex);
-        dest.setImagingEnvironmentTemperature(src.getImagingEnvironmentTemperature(imageIndex), imageIndex);
+        Integer displayOptionsTimeTStartValue = src.getDisplayOptionsTimeTStart(imageIndex);
+        if (displayOptionsTimeTStartValue != null) dest.setDisplayOptionsTimeTStart(displayOptionsTimeTStartValue, imageIndex);
+        Integer displayOptionsTimeTStopValue = src.getDisplayOptionsTimeTStop(imageIndex);
+        if (displayOptionsTimeTStopValue != null) dest.setDisplayOptionsTimeTStop(displayOptionsTimeTStopValue, imageIndex);
+        Float imagingEnvironmentAirPressureValue = src.getImagingEnvironmentAirPressure(imageIndex);
+        if (imagingEnvironmentAirPressureValue != null) dest.setImagingEnvironmentAirPressure(imagingEnvironmentAirPressureValue, imageIndex);
+        Float imagingEnvironmentCO2PercentValue = src.getImagingEnvironmentCO2Percent(imageIndex);
+        if (imagingEnvironmentCO2PercentValue != null) dest.setImagingEnvironmentCO2Percent(imagingEnvironmentCO2PercentValue, imageIndex);
+        Float imagingEnvironmentHumidityValue = src.getImagingEnvironmentHumidity(imageIndex);
+        if (imagingEnvironmentHumidityValue != null) dest.setImagingEnvironmentHumidity(imagingEnvironmentHumidityValue, imageIndex);
+        Float imagingEnvironmentTemperatureValue = src.getImagingEnvironmentTemperature(imageIndex);
+        if (imagingEnvironmentTemperatureValue != null) dest.setImagingEnvironmentTemperature(imagingEnvironmentTemperatureValue, imageIndex);
       int logicalChannelCount = src.getLogicalChannelCount(imageIndex);
       for (int logicalChannelIndex=0; logicalChannelIndex<logicalChannelCount; logicalChannelIndex++) {
-        dest.setLogicalChannelContrastMethod(src.getLogicalChannelContrastMethod(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelEmWave(src.getLogicalChannelEmWave(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelExWave(src.getLogicalChannelExWave(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelFluor(src.getLogicalChannelFluor(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelID(src.getLogicalChannelID(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelIlluminationType(src.getLogicalChannelIlluminationType(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelMode(src.getLogicalChannelMode(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelName(src.getLogicalChannelName(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelNdFilter(src.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelPhotometricInterpretation(src.getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelPinholeSize(src.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelPockelCellSetting(src.getLogicalChannelPockelCellSetting(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-        dest.setLogicalChannelSamplesPerPixel(src.getLogicalChannelSamplesPerPixel(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
+        String logicalChannelContrastMethodValue = src.getLogicalChannelContrastMethod(imageIndex, logicalChannelIndex);
+        if (logicalChannelContrastMethodValue != null) dest.setLogicalChannelContrastMethod(logicalChannelContrastMethodValue, imageIndex, logicalChannelIndex);
+        Integer logicalChannelEmWaveValue = src.getLogicalChannelEmWave(imageIndex, logicalChannelIndex);
+        if (logicalChannelEmWaveValue != null) dest.setLogicalChannelEmWave(logicalChannelEmWaveValue, imageIndex, logicalChannelIndex);
+        Integer logicalChannelExWaveValue = src.getLogicalChannelExWave(imageIndex, logicalChannelIndex);
+        if (logicalChannelExWaveValue != null) dest.setLogicalChannelExWave(logicalChannelExWaveValue, imageIndex, logicalChannelIndex);
+        String logicalChannelFluorValue = src.getLogicalChannelFluor(imageIndex, logicalChannelIndex);
+        if (logicalChannelFluorValue != null) dest.setLogicalChannelFluor(logicalChannelFluorValue, imageIndex, logicalChannelIndex);
+        String logicalChannelIDValue = src.getLogicalChannelID(imageIndex, logicalChannelIndex);
+        if (logicalChannelIDValue != null) dest.setLogicalChannelID(logicalChannelIDValue, imageIndex, logicalChannelIndex);
+        String logicalChannelIlluminationTypeValue = src.getLogicalChannelIlluminationType(imageIndex, logicalChannelIndex);
+        if (logicalChannelIlluminationTypeValue != null) dest.setLogicalChannelIlluminationType(logicalChannelIlluminationTypeValue, imageIndex, logicalChannelIndex);
+        String logicalChannelModeValue = src.getLogicalChannelMode(imageIndex, logicalChannelIndex);
+        if (logicalChannelModeValue != null) dest.setLogicalChannelMode(logicalChannelModeValue, imageIndex, logicalChannelIndex);
+        String logicalChannelNameValue = src.getLogicalChannelName(imageIndex, logicalChannelIndex);
+        if (logicalChannelNameValue != null) dest.setLogicalChannelName(logicalChannelNameValue, imageIndex, logicalChannelIndex);
+        Float logicalChannelNdFilterValue = src.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex);
+        if (logicalChannelNdFilterValue != null) dest.setLogicalChannelNdFilter(logicalChannelNdFilterValue, imageIndex, logicalChannelIndex);
+        String logicalChannelPhotometricInterpretationValue = src.getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex);
+        if (logicalChannelPhotometricInterpretationValue != null) dest.setLogicalChannelPhotometricInterpretation(logicalChannelPhotometricInterpretationValue, imageIndex, logicalChannelIndex);
+        Integer logicalChannelPinholeSizeValue = src.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex);
+        if (logicalChannelPinholeSizeValue != null) dest.setLogicalChannelPinholeSize(logicalChannelPinholeSizeValue, imageIndex, logicalChannelIndex);
+        Integer logicalChannelPockelCellSettingValue = src.getLogicalChannelPockelCellSetting(imageIndex, logicalChannelIndex);
+        if (logicalChannelPockelCellSettingValue != null) dest.setLogicalChannelPockelCellSetting(logicalChannelPockelCellSettingValue, imageIndex, logicalChannelIndex);
+        Integer logicalChannelSamplesPerPixelValue = src.getLogicalChannelSamplesPerPixel(imageIndex, logicalChannelIndex);
+        if (logicalChannelSamplesPerPixelValue != null) dest.setLogicalChannelSamplesPerPixel(logicalChannelSamplesPerPixelValue, imageIndex, logicalChannelIndex);
         int channelComponentCount = src.getChannelComponentCount(imageIndex, logicalChannelIndex);
         for (int channelComponentIndex=0; channelComponentIndex<channelComponentCount; channelComponentIndex++) {
-          dest.setChannelComponentColorDomain(src.getChannelComponentColorDomain(imageIndex, logicalChannelIndex, channelComponentIndex), imageIndex, logicalChannelIndex, channelComponentIndex);
-          dest.setChannelComponentIndex(src.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex), imageIndex, logicalChannelIndex, channelComponentIndex);
+          String channelComponentColorDomainValue = src.getChannelComponentColorDomain(imageIndex, logicalChannelIndex, channelComponentIndex);
+          if (channelComponentColorDomainValue != null) dest.setChannelComponentColorDomain(channelComponentColorDomainValue, imageIndex, logicalChannelIndex, channelComponentIndex);
+          Integer channelComponentIndexValue = src.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex);
+          if (channelComponentIndexValue != null) dest.setChannelComponentIndex(channelComponentIndexValue, imageIndex, logicalChannelIndex, channelComponentIndex);
         }
-          dest.setDetectorSettingsDetector(src.getDetectorSettingsDetector(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-          dest.setDetectorSettingsGain(src.getDetectorSettingsGain(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-          dest.setDetectorSettingsOffset(src.getDetectorSettingsOffset(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-          dest.setLightSourceSettingsAttenuation(src.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-          dest.setLightSourceSettingsLightSource(src.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
-          dest.setLightSourceSettingsWavelength(src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
+          String detectorSettingsDetectorValue = src.getDetectorSettingsDetector(imageIndex, logicalChannelIndex);
+          if (detectorSettingsDetectorValue != null) dest.setDetectorSettingsDetector(detectorSettingsDetectorValue, imageIndex, logicalChannelIndex);
+          Float detectorSettingsGainValue = src.getDetectorSettingsGain(imageIndex, logicalChannelIndex);
+          if (detectorSettingsGainValue != null) dest.setDetectorSettingsGain(detectorSettingsGainValue, imageIndex, logicalChannelIndex);
+          Float detectorSettingsOffsetValue = src.getDetectorSettingsOffset(imageIndex, logicalChannelIndex);
+          if (detectorSettingsOffsetValue != null) dest.setDetectorSettingsOffset(detectorSettingsOffsetValue, imageIndex, logicalChannelIndex);
+          Float lightSourceSettingsAttenuationValue = src.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex);
+          if (lightSourceSettingsAttenuationValue != null) dest.setLightSourceSettingsAttenuation(lightSourceSettingsAttenuationValue, imageIndex, logicalChannelIndex);
+          String lightSourceSettingsLightSourceValue = src.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex);
+          if (lightSourceSettingsLightSourceValue != null) dest.setLightSourceSettingsLightSource(lightSourceSettingsLightSourceValue, imageIndex, logicalChannelIndex);
+          Integer lightSourceSettingsWavelengthValue = src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex);
+          if (lightSourceSettingsWavelengthValue != null) dest.setLightSourceSettingsWavelength(lightSourceSettingsWavelengthValue, imageIndex, logicalChannelIndex);
       }
       int pixelsCount = src.getPixelsCount(imageIndex);
       for (int pixelsIndex=0; pixelsIndex<pixelsCount; pixelsIndex++) {
-        dest.setDimensionsPhysicalSizeX(src.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setDimensionsPhysicalSizeY(src.getDimensionsPhysicalSizeY(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setDimensionsPhysicalSizeZ(src.getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setDimensionsTimeIncrement(src.getDimensionsTimeIncrement(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setDimensionsWaveIncrement(src.getDimensionsWaveIncrement(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setDimensionsWaveStart(src.getDimensionsWaveStart(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsBigEndian(src.getPixelsBigEndian(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsDimensionOrder(src.getPixelsDimensionOrder(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsID(src.getPixelsID(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsPixelType(src.getPixelsPixelType(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsSizeC(src.getPixelsSizeC(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsSizeT(src.getPixelsSizeT(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsSizeX(src.getPixelsSizeX(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsSizeY(src.getPixelsSizeY(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
-        dest.setPixelsSizeZ(src.getPixelsSizeZ(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
+        Float dimensionsPhysicalSizeXValue = src.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex);
+        if (dimensionsPhysicalSizeXValue != null) dest.setDimensionsPhysicalSizeX(dimensionsPhysicalSizeXValue, imageIndex, pixelsIndex);
+        Float dimensionsPhysicalSizeYValue = src.getDimensionsPhysicalSizeY(imageIndex, pixelsIndex);
+        if (dimensionsPhysicalSizeYValue != null) dest.setDimensionsPhysicalSizeY(dimensionsPhysicalSizeYValue, imageIndex, pixelsIndex);
+        Float dimensionsPhysicalSizeZValue = src.getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex);
+        if (dimensionsPhysicalSizeZValue != null) dest.setDimensionsPhysicalSizeZ(dimensionsPhysicalSizeZValue, imageIndex, pixelsIndex);
+        Float dimensionsTimeIncrementValue = src.getDimensionsTimeIncrement(imageIndex, pixelsIndex);
+        if (dimensionsTimeIncrementValue != null) dest.setDimensionsTimeIncrement(dimensionsTimeIncrementValue, imageIndex, pixelsIndex);
+        Integer dimensionsWaveIncrementValue = src.getDimensionsWaveIncrement(imageIndex, pixelsIndex);
+        if (dimensionsWaveIncrementValue != null) dest.setDimensionsWaveIncrement(dimensionsWaveIncrementValue, imageIndex, pixelsIndex);
+        Integer dimensionsWaveStartValue = src.getDimensionsWaveStart(imageIndex, pixelsIndex);
+        if (dimensionsWaveStartValue != null) dest.setDimensionsWaveStart(dimensionsWaveStartValue, imageIndex, pixelsIndex);
+        Boolean pixelsBigEndianValue = src.getPixelsBigEndian(imageIndex, pixelsIndex);
+        if (pixelsBigEndianValue != null) dest.setPixelsBigEndian(pixelsBigEndianValue, imageIndex, pixelsIndex);
+        String pixelsDimensionOrderValue = src.getPixelsDimensionOrder(imageIndex, pixelsIndex);
+        if (pixelsDimensionOrderValue != null) dest.setPixelsDimensionOrder(pixelsDimensionOrderValue, imageIndex, pixelsIndex);
+        String pixelsIDValue = src.getPixelsID(imageIndex, pixelsIndex);
+        if (pixelsIDValue != null) dest.setPixelsID(pixelsIDValue, imageIndex, pixelsIndex);
+        String pixelsPixelTypeValue = src.getPixelsPixelType(imageIndex, pixelsIndex);
+        if (pixelsPixelTypeValue != null) dest.setPixelsPixelType(pixelsPixelTypeValue, imageIndex, pixelsIndex);
+        Integer pixelsSizeCValue = src.getPixelsSizeC(imageIndex, pixelsIndex);
+        if (pixelsSizeCValue != null) dest.setPixelsSizeC(pixelsSizeCValue, imageIndex, pixelsIndex);
+        Integer pixelsSizeTValue = src.getPixelsSizeT(imageIndex, pixelsIndex);
+        if (pixelsSizeTValue != null) dest.setPixelsSizeT(pixelsSizeTValue, imageIndex, pixelsIndex);
+        Integer pixelsSizeXValue = src.getPixelsSizeX(imageIndex, pixelsIndex);
+        if (pixelsSizeXValue != null) dest.setPixelsSizeX(pixelsSizeXValue, imageIndex, pixelsIndex);
+        Integer pixelsSizeYValue = src.getPixelsSizeY(imageIndex, pixelsIndex);
+        if (pixelsSizeYValue != null) dest.setPixelsSizeY(pixelsSizeYValue, imageIndex, pixelsIndex);
+        Integer pixelsSizeZValue = src.getPixelsSizeZ(imageIndex, pixelsIndex);
+        if (pixelsSizeZValue != null) dest.setPixelsSizeZ(pixelsSizeZValue, imageIndex, pixelsIndex);
         int planeCount = src.getPlaneCount(imageIndex, pixelsIndex);
         for (int planeIndex=0; planeIndex<planeCount; planeIndex++) {
-          dest.setPlaneTheC(src.getPlaneTheC(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
-          dest.setPlaneTheT(src.getPlaneTheT(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
-          dest.setPlaneTheZ(src.getPlaneTheZ(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
-          dest.setPlaneTimingDeltaT(src.getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
-          dest.setPlaneTimingExposureTime(src.getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
-          dest.setStagePositionPositionX(src.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
-          dest.setStagePositionPositionY(src.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
-          dest.setStagePositionPositionZ(src.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex), imageIndex, pixelsIndex, planeIndex);
+          Integer planeTheCValue = src.getPlaneTheC(imageIndex, pixelsIndex, planeIndex);
+          if (planeTheCValue != null) dest.setPlaneTheC(planeTheCValue, imageIndex, pixelsIndex, planeIndex);
+          Integer planeTheTValue = src.getPlaneTheT(imageIndex, pixelsIndex, planeIndex);
+          if (planeTheTValue != null) dest.setPlaneTheT(planeTheTValue, imageIndex, pixelsIndex, planeIndex);
+          Integer planeTheZValue = src.getPlaneTheZ(imageIndex, pixelsIndex, planeIndex);
+          if (planeTheZValue != null) dest.setPlaneTheZ(planeTheZValue, imageIndex, pixelsIndex, planeIndex);
+          Float planeTimingDeltaTValue = src.getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex);
+          if (planeTimingDeltaTValue != null) dest.setPlaneTimingDeltaT(planeTimingDeltaTValue, imageIndex, pixelsIndex, planeIndex);
+          Float planeTimingExposureTimeValue = src.getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex);
+          if (planeTimingExposureTimeValue != null) dest.setPlaneTimingExposureTime(planeTimingExposureTimeValue, imageIndex, pixelsIndex, planeIndex);
+          Float stagePositionPositionXValue = src.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex);
+          if (stagePositionPositionXValue != null) dest.setStagePositionPositionX(stagePositionPositionXValue, imageIndex, pixelsIndex, planeIndex);
+          Float stagePositionPositionYValue = src.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex);
+          if (stagePositionPositionYValue != null) dest.setStagePositionPositionY(stagePositionPositionYValue, imageIndex, pixelsIndex, planeIndex);
+          Float stagePositionPositionZValue = src.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex);
+          if (stagePositionPositionZValue != null) dest.setStagePositionPositionZ(stagePositionPositionZValue, imageIndex, pixelsIndex, planeIndex);
         }
         int tiffDataCount = src.getTiffDataCount(imageIndex, pixelsIndex);
         for (int tiffDataIndex=0; tiffDataIndex<tiffDataCount; tiffDataIndex++) {
-          dest.setTiffDataFileName(src.getTiffDataFileName(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
-          dest.setTiffDataFirstC(src.getTiffDataFirstC(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
-          dest.setTiffDataFirstT(src.getTiffDataFirstT(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
-          dest.setTiffDataFirstZ(src.getTiffDataFirstZ(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
-          dest.setTiffDataIFD(src.getTiffDataIFD(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
-          dest.setTiffDataNumPlanes(src.getTiffDataNumPlanes(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
-          dest.setTiffDataUUID(src.getTiffDataUUID(imageIndex, pixelsIndex, tiffDataIndex), imageIndex, pixelsIndex, tiffDataIndex);
+          String tiffDataFileNameValue = src.getTiffDataFileName(imageIndex, pixelsIndex, tiffDataIndex);
+          if (tiffDataFileNameValue != null) dest.setTiffDataFileName(tiffDataFileNameValue, imageIndex, pixelsIndex, tiffDataIndex);
+          Integer tiffDataFirstCValue = src.getTiffDataFirstC(imageIndex, pixelsIndex, tiffDataIndex);
+          if (tiffDataFirstCValue != null) dest.setTiffDataFirstC(tiffDataFirstCValue, imageIndex, pixelsIndex, tiffDataIndex);
+          Integer tiffDataFirstTValue = src.getTiffDataFirstT(imageIndex, pixelsIndex, tiffDataIndex);
+          if (tiffDataFirstTValue != null) dest.setTiffDataFirstT(tiffDataFirstTValue, imageIndex, pixelsIndex, tiffDataIndex);
+          Integer tiffDataFirstZValue = src.getTiffDataFirstZ(imageIndex, pixelsIndex, tiffDataIndex);
+          if (tiffDataFirstZValue != null) dest.setTiffDataFirstZ(tiffDataFirstZValue, imageIndex, pixelsIndex, tiffDataIndex);
+          Integer tiffDataIFDValue = src.getTiffDataIFD(imageIndex, pixelsIndex, tiffDataIndex);
+          if (tiffDataIFDValue != null) dest.setTiffDataIFD(tiffDataIFDValue, imageIndex, pixelsIndex, tiffDataIndex);
+          Integer tiffDataNumPlanesValue = src.getTiffDataNumPlanes(imageIndex, pixelsIndex, tiffDataIndex);
+          if (tiffDataNumPlanesValue != null) dest.setTiffDataNumPlanes(tiffDataNumPlanesValue, imageIndex, pixelsIndex, tiffDataIndex);
+          String tiffDataUUIDValue = src.getTiffDataUUID(imageIndex, pixelsIndex, tiffDataIndex);
+          if (tiffDataUUIDValue != null) dest.setTiffDataUUID(tiffDataUUIDValue, imageIndex, pixelsIndex, tiffDataIndex);
         }
       }
-        dest.setStageLabelName(src.getStageLabelName(imageIndex), imageIndex);
-        dest.setStageLabelX(src.getStageLabelX(imageIndex), imageIndex);
-        dest.setStageLabelY(src.getStageLabelY(imageIndex), imageIndex);
-        dest.setStageLabelZ(src.getStageLabelZ(imageIndex), imageIndex);
+        String stageLabelNameValue = src.getStageLabelName(imageIndex);
+        if (stageLabelNameValue != null) dest.setStageLabelName(stageLabelNameValue, imageIndex);
+        Float stageLabelXValue = src.getStageLabelX(imageIndex);
+        if (stageLabelXValue != null) dest.setStageLabelX(stageLabelXValue, imageIndex);
+        Float stageLabelYValue = src.getStageLabelY(imageIndex);
+        if (stageLabelYValue != null) dest.setStageLabelY(stageLabelYValue, imageIndex);
+        Float stageLabelZValue = src.getStageLabelZ(imageIndex);
+        if (stageLabelZValue != null) dest.setStageLabelZ(stageLabelZValue, imageIndex);
     }
     int instrumentCount = src.getInstrumentCount();
     for (int instrumentIndex=0; instrumentIndex<instrumentCount; instrumentIndex++) {
-      dest.setInstrumentID(src.getInstrumentID(instrumentIndex), instrumentIndex);
+      String instrumentIDValue = src.getInstrumentID(instrumentIndex);
+      if (instrumentIDValue != null) dest.setInstrumentID(instrumentIDValue, instrumentIndex);
       int detectorCount = src.getDetectorCount(instrumentIndex);
       for (int detectorIndex=0; detectorIndex<detectorCount; detectorIndex++) {
-        dest.setDetectorGain(src.getDetectorGain(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
-        dest.setDetectorID(src.getDetectorID(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
-        dest.setDetectorManufacturer(src.getDetectorManufacturer(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
-        dest.setDetectorModel(src.getDetectorModel(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
-        dest.setDetectorOffset(src.getDetectorOffset(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
-        dest.setDetectorSerialNumber(src.getDetectorSerialNumber(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
-        dest.setDetectorType(src.getDetectorType(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
-        dest.setDetectorVoltage(src.getDetectorVoltage(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
+        Float detectorGainValue = src.getDetectorGain(instrumentIndex, detectorIndex);
+        if (detectorGainValue != null) dest.setDetectorGain(detectorGainValue, instrumentIndex, detectorIndex);
+        String detectorIDValue = src.getDetectorID(instrumentIndex, detectorIndex);
+        if (detectorIDValue != null) dest.setDetectorID(detectorIDValue, instrumentIndex, detectorIndex);
+        String detectorManufacturerValue = src.getDetectorManufacturer(instrumentIndex, detectorIndex);
+        if (detectorManufacturerValue != null) dest.setDetectorManufacturer(detectorManufacturerValue, instrumentIndex, detectorIndex);
+        String detectorModelValue = src.getDetectorModel(instrumentIndex, detectorIndex);
+        if (detectorModelValue != null) dest.setDetectorModel(detectorModelValue, instrumentIndex, detectorIndex);
+        Float detectorOffsetValue = src.getDetectorOffset(instrumentIndex, detectorIndex);
+        if (detectorOffsetValue != null) dest.setDetectorOffset(detectorOffsetValue, instrumentIndex, detectorIndex);
+        String detectorSerialNumberValue = src.getDetectorSerialNumber(instrumentIndex, detectorIndex);
+        if (detectorSerialNumberValue != null) dest.setDetectorSerialNumber(detectorSerialNumberValue, instrumentIndex, detectorIndex);
+        String detectorTypeValue = src.getDetectorType(instrumentIndex, detectorIndex);
+        if (detectorTypeValue != null) dest.setDetectorType(detectorTypeValue, instrumentIndex, detectorIndex);
+        Float detectorVoltageValue = src.getDetectorVoltage(instrumentIndex, detectorIndex);
+        if (detectorVoltageValue != null) dest.setDetectorVoltage(detectorVoltageValue, instrumentIndex, detectorIndex);
       }
       int lightSourceCount = src.getLightSourceCount(instrumentIndex);
       for (int lightSourceIndex=0; lightSourceIndex<lightSourceCount; lightSourceIndex++) {
-        dest.setLightSourceID(src.getLightSourceID(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLightSourceManufacturer(src.getLightSourceManufacturer(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLightSourceModel(src.getLightSourceModel(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLightSourcePower(src.getLightSourcePower(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLightSourceSerialNumber(src.getLightSourceSerialNumber(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setArcType(src.getArcType(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setFilamentType(src.getFilamentType(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLaserFrequencyMultiplication(src.getLaserFrequencyMultiplication(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLaserLaserMedium(src.getLaserLaserMedium(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLaserPulse(src.getLaserPulse(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLaserTuneable(src.getLaserTuneable(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLaserType(src.getLaserType(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
-        dest.setLaserWavelength(src.getLaserWavelength(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
+        String lightSourceIDValue = src.getLightSourceID(instrumentIndex, lightSourceIndex);
+        if (lightSourceIDValue != null) dest.setLightSourceID(lightSourceIDValue, instrumentIndex, lightSourceIndex);
+        String lightSourceManufacturerValue = src.getLightSourceManufacturer(instrumentIndex, lightSourceIndex);
+        if (lightSourceManufacturerValue != null) dest.setLightSourceManufacturer(lightSourceManufacturerValue, instrumentIndex, lightSourceIndex);
+        String lightSourceModelValue = src.getLightSourceModel(instrumentIndex, lightSourceIndex);
+        if (lightSourceModelValue != null) dest.setLightSourceModel(lightSourceModelValue, instrumentIndex, lightSourceIndex);
+        Float lightSourcePowerValue = src.getLightSourcePower(instrumentIndex, lightSourceIndex);
+        if (lightSourcePowerValue != null) dest.setLightSourcePower(lightSourcePowerValue, instrumentIndex, lightSourceIndex);
+        String lightSourceSerialNumberValue = src.getLightSourceSerialNumber(instrumentIndex, lightSourceIndex);
+        if (lightSourceSerialNumberValue != null) dest.setLightSourceSerialNumber(lightSourceSerialNumberValue, instrumentIndex, lightSourceIndex);
+        String arcTypeValue = src.getArcType(instrumentIndex, lightSourceIndex);
+        if (arcTypeValue != null) dest.setArcType(arcTypeValue, instrumentIndex, lightSourceIndex);
+        String filamentTypeValue = src.getFilamentType(instrumentIndex, lightSourceIndex);
+        if (filamentTypeValue != null) dest.setFilamentType(filamentTypeValue, instrumentIndex, lightSourceIndex);
+        Integer laserFrequencyMultiplicationValue = src.getLaserFrequencyMultiplication(instrumentIndex, lightSourceIndex);
+        if (laserFrequencyMultiplicationValue != null) dest.setLaserFrequencyMultiplication(laserFrequencyMultiplicationValue, instrumentIndex, lightSourceIndex);
+        String laserLaserMediumValue = src.getLaserLaserMedium(instrumentIndex, lightSourceIndex);
+        if (laserLaserMediumValue != null) dest.setLaserLaserMedium(laserLaserMediumValue, instrumentIndex, lightSourceIndex);
+        String laserPulseValue = src.getLaserPulse(instrumentIndex, lightSourceIndex);
+        if (laserPulseValue != null) dest.setLaserPulse(laserPulseValue, instrumentIndex, lightSourceIndex);
+        Boolean laserTuneableValue = src.getLaserTuneable(instrumentIndex, lightSourceIndex);
+        if (laserTuneableValue != null) dest.setLaserTuneable(laserTuneableValue, instrumentIndex, lightSourceIndex);
+        String laserTypeValue = src.getLaserType(instrumentIndex, lightSourceIndex);
+        if (laserTypeValue != null) dest.setLaserType(laserTypeValue, instrumentIndex, lightSourceIndex);
+        Integer laserWavelengthValue = src.getLaserWavelength(instrumentIndex, lightSourceIndex);
+        if (laserWavelengthValue != null) dest.setLaserWavelength(laserWavelengthValue, instrumentIndex, lightSourceIndex);
       }
       int otfCount = src.getOTFCount(instrumentIndex);
       for (int otfIndex=0; otfIndex<otfCount; otfIndex++) {
-        dest.setOTFID(src.getOTFID(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
-        dest.setOTFOpticalAxisAveraged(src.getOTFOpticalAxisAveraged(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
-        dest.setOTFPixelType(src.getOTFPixelType(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
-        dest.setOTFSizeX(src.getOTFSizeX(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
-        dest.setOTFSizeY(src.getOTFSizeY(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
+        String otfidValue = src.getOTFID(instrumentIndex, otfIndex);
+        if (otfidValue != null) dest.setOTFID(otfidValue, instrumentIndex, otfIndex);
+        Boolean otfOpticalAxisAveragedValue = src.getOTFOpticalAxisAveraged(instrumentIndex, otfIndex);
+        if (otfOpticalAxisAveragedValue != null) dest.setOTFOpticalAxisAveraged(otfOpticalAxisAveragedValue, instrumentIndex, otfIndex);
+        String otfPixelTypeValue = src.getOTFPixelType(instrumentIndex, otfIndex);
+        if (otfPixelTypeValue != null) dest.setOTFPixelType(otfPixelTypeValue, instrumentIndex, otfIndex);
+        Integer otfSizeXValue = src.getOTFSizeX(instrumentIndex, otfIndex);
+        if (otfSizeXValue != null) dest.setOTFSizeX(otfSizeXValue, instrumentIndex, otfIndex);
+        Integer otfSizeYValue = src.getOTFSizeY(instrumentIndex, otfIndex);
+        if (otfSizeYValue != null) dest.setOTFSizeY(otfSizeYValue, instrumentIndex, otfIndex);
       }
       int objectiveCount = src.getObjectiveCount(instrumentIndex);
       for (int objectiveIndex=0; objectiveIndex<objectiveCount; objectiveIndex++) {
-        dest.setObjectiveCalibratedMagnification(src.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveCorrection(src.getObjectiveCorrection(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveID(src.getObjectiveID(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveImmersion(src.getObjectiveImmersion(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveLensNA(src.getObjectiveLensNA(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveManufacturer(src.getObjectiveManufacturer(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveModel(src.getObjectiveModel(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveNominalMagnification(src.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveSerialNumber(src.getObjectiveSerialNumber(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
-        dest.setObjectiveWorkingDistance(src.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
+        Float objectiveCalibratedMagnificationValue = src.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex);
+        if (objectiveCalibratedMagnificationValue != null) dest.setObjectiveCalibratedMagnification(objectiveCalibratedMagnificationValue, instrumentIndex, objectiveIndex);
+        String objectiveCorrectionValue = src.getObjectiveCorrection(instrumentIndex, objectiveIndex);
+        if (objectiveCorrectionValue != null) dest.setObjectiveCorrection(objectiveCorrectionValue, instrumentIndex, objectiveIndex);
+        String objectiveIDValue = src.getObjectiveID(instrumentIndex, objectiveIndex);
+        if (objectiveIDValue != null) dest.setObjectiveID(objectiveIDValue, instrumentIndex, objectiveIndex);
+        String objectiveImmersionValue = src.getObjectiveImmersion(instrumentIndex, objectiveIndex);
+        if (objectiveImmersionValue != null) dest.setObjectiveImmersion(objectiveImmersionValue, instrumentIndex, objectiveIndex);
+        Float objectiveLensNAValue = src.getObjectiveLensNA(instrumentIndex, objectiveIndex);
+        if (objectiveLensNAValue != null) dest.setObjectiveLensNA(objectiveLensNAValue, instrumentIndex, objectiveIndex);
+        String objectiveManufacturerValue = src.getObjectiveManufacturer(instrumentIndex, objectiveIndex);
+        if (objectiveManufacturerValue != null) dest.setObjectiveManufacturer(objectiveManufacturerValue, instrumentIndex, objectiveIndex);
+        String objectiveModelValue = src.getObjectiveModel(instrumentIndex, objectiveIndex);
+        if (objectiveModelValue != null) dest.setObjectiveModel(objectiveModelValue, instrumentIndex, objectiveIndex);
+        Integer objectiveNominalMagnificationValue = src.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex);
+        if (objectiveNominalMagnificationValue != null) dest.setObjectiveNominalMagnification(objectiveNominalMagnificationValue, instrumentIndex, objectiveIndex);
+        String objectiveSerialNumberValue = src.getObjectiveSerialNumber(instrumentIndex, objectiveIndex);
+        if (objectiveSerialNumberValue != null) dest.setObjectiveSerialNumber(objectiveSerialNumberValue, instrumentIndex, objectiveIndex);
+        Float objectiveWorkingDistanceValue = src.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex);
+        if (objectiveWorkingDistanceValue != null) dest.setObjectiveWorkingDistance(objectiveWorkingDistanceValue, instrumentIndex, objectiveIndex);
       }
     }
     int plateCount = src.getPlateCount();
     for (int plateIndex=0; plateIndex<plateCount; plateIndex++) {
-      dest.setPlateDescription(src.getPlateDescription(plateIndex), plateIndex);
-      dest.setPlateExternalIdentifier(src.getPlateExternalIdentifier(plateIndex), plateIndex);
-      dest.setPlateID(src.getPlateID(plateIndex), plateIndex);
-      dest.setPlateName(src.getPlateName(plateIndex), plateIndex);
-      dest.setPlateStatus(src.getPlateStatus(plateIndex), plateIndex);
+      String plateDescriptionValue = src.getPlateDescription(plateIndex);
+      if (plateDescriptionValue != null) dest.setPlateDescription(plateDescriptionValue, plateIndex);
+      String plateExternalIdentifierValue = src.getPlateExternalIdentifier(plateIndex);
+      if (plateExternalIdentifierValue != null) dest.setPlateExternalIdentifier(plateExternalIdentifierValue, plateIndex);
+      String plateIDValue = src.getPlateID(plateIndex);
+      if (plateIDValue != null) dest.setPlateID(plateIDValue, plateIndex);
+      String plateNameValue = src.getPlateName(plateIndex);
+      if (plateNameValue != null) dest.setPlateName(plateNameValue, plateIndex);
+      String plateStatusValue = src.getPlateStatus(plateIndex);
+      if (plateStatusValue != null) dest.setPlateStatus(plateStatusValue, plateIndex);
     }
     int screenCount = src.getScreenCount();
     for (int screenIndex=0; screenIndex<screenCount; screenIndex++) {
-      dest.setScreenID(src.getScreenID(screenIndex), screenIndex);
-      dest.setScreenName(src.getScreenName(screenIndex), screenIndex);
-      dest.setScreenProtocolDescription(src.getScreenProtocolDescription(screenIndex), screenIndex);
-      dest.setScreenProtocolIdentifier(src.getScreenProtocolIdentifier(screenIndex), screenIndex);
-      dest.setScreenReagentSetDescription(src.getScreenReagentSetDescription(screenIndex), screenIndex);
-      dest.setScreenType(src.getScreenType(screenIndex), screenIndex);
+      String screenIDValue = src.getScreenID(screenIndex);
+      if (screenIDValue != null) dest.setScreenID(screenIDValue, screenIndex);
+      String screenNameValue = src.getScreenName(screenIndex);
+      if (screenNameValue != null) dest.setScreenName(screenNameValue, screenIndex);
+      String screenProtocolDescriptionValue = src.getScreenProtocolDescription(screenIndex);
+      if (screenProtocolDescriptionValue != null) dest.setScreenProtocolDescription(screenProtocolDescriptionValue, screenIndex);
+      String screenProtocolIdentifierValue = src.getScreenProtocolIdentifier(screenIndex);
+      if (screenProtocolIdentifierValue != null) dest.setScreenProtocolIdentifier(screenProtocolIdentifierValue, screenIndex);
+      String screenReagentSetDescriptionValue = src.getScreenReagentSetDescription(screenIndex);
+      if (screenReagentSetDescriptionValue != null) dest.setScreenReagentSetDescription(screenReagentSetDescriptionValue, screenIndex);
+      String screenTypeValue = src.getScreenType(screenIndex);
+      if (screenTypeValue != null) dest.setScreenType(screenTypeValue, screenIndex);
       int plateRefCount = src.getPlateRefCount(screenIndex);
       for (int plateRefIndex=0; plateRefIndex<plateRefCount; plateRefIndex++) {
-        dest.setPlateRefID(src.getPlateRefID(screenIndex, plateRefIndex), screenIndex, plateRefIndex);
+        String plateRefIDValue = src.getPlateRefID(screenIndex, plateRefIndex);
+        if (plateRefIDValue != null) dest.setPlateRefID(plateRefIDValue, screenIndex, plateRefIndex);
       }
       int reagentCount = src.getReagentCount(screenIndex);
       for (int reagentIndex=0; reagentIndex<reagentCount; reagentIndex++) {
-        dest.setReagentDescription(src.getReagentDescription(screenIndex, reagentIndex), screenIndex, reagentIndex);
-        dest.setReagentID(src.getReagentID(screenIndex, reagentIndex), screenIndex, reagentIndex);
-        dest.setReagentName(src.getReagentName(screenIndex, reagentIndex), screenIndex, reagentIndex);
-        dest.setReagentReagentIdentifier(src.getReagentReagentIdentifier(screenIndex, reagentIndex), screenIndex, reagentIndex);
+        String reagentDescriptionValue = src.getReagentDescription(screenIndex, reagentIndex);
+        if (reagentDescriptionValue != null) dest.setReagentDescription(reagentDescriptionValue, screenIndex, reagentIndex);
+        String reagentIDValue = src.getReagentID(screenIndex, reagentIndex);
+        if (reagentIDValue != null) dest.setReagentID(reagentIDValue, screenIndex, reagentIndex);
+        String reagentNameValue = src.getReagentName(screenIndex, reagentIndex);
+        if (reagentNameValue != null) dest.setReagentName(reagentNameValue, screenIndex, reagentIndex);
+        String reagentReagentIdentifierValue = src.getReagentReagentIdentifier(screenIndex, reagentIndex);
+        if (reagentReagentIdentifierValue != null) dest.setReagentReagentIdentifier(reagentReagentIdentifierValue, screenIndex, reagentIndex);
       }
       int screenAcquisitionCount = src.getScreenAcquisitionCount(screenIndex);
       for (int screenAcquisitionIndex=0; screenAcquisitionIndex<screenAcquisitionCount; screenAcquisitionIndex++) {
-        dest.setScreenAcquisitionEndTime(src.getScreenAcquisitionEndTime(screenIndex, screenAcquisitionIndex), screenIndex, screenAcquisitionIndex);
-        dest.setScreenAcquisitionID(src.getScreenAcquisitionID(screenIndex, screenAcquisitionIndex), screenIndex, screenAcquisitionIndex);
-        dest.setScreenAcquisitionStartTime(src.getScreenAcquisitionStartTime(screenIndex, screenAcquisitionIndex), screenIndex, screenAcquisitionIndex);
+        String screenAcquisitionEndTimeValue = src.getScreenAcquisitionEndTime(screenIndex, screenAcquisitionIndex);
+        if (screenAcquisitionEndTimeValue != null) dest.setScreenAcquisitionEndTime(screenAcquisitionEndTimeValue, screenIndex, screenAcquisitionIndex);
+        String screenAcquisitionIDValue = src.getScreenAcquisitionID(screenIndex, screenAcquisitionIndex);
+        if (screenAcquisitionIDValue != null) dest.setScreenAcquisitionID(screenAcquisitionIDValue, screenIndex, screenAcquisitionIndex);
+        String screenAcquisitionStartTimeValue = src.getScreenAcquisitionStartTime(screenIndex, screenAcquisitionIndex);
+        if (screenAcquisitionStartTimeValue != null) dest.setScreenAcquisitionStartTime(screenAcquisitionStartTimeValue, screenIndex, screenAcquisitionIndex);
       }
     }
     int wellCount = src.getWellCount();
     for (int wellIndex=0; wellIndex<wellCount; wellIndex++) {
-      dest.setWellColumn(src.getWellColumn(wellIndex), wellIndex);
-      dest.setWellExternalDescription(src.getWellExternalDescription(wellIndex), wellIndex);
-      dest.setWellExternalIdentifier(src.getWellExternalIdentifier(wellIndex), wellIndex);
-      dest.setWellID(src.getWellID(wellIndex), wellIndex);
-      dest.setWellRow(src.getWellRow(wellIndex), wellIndex);
-      dest.setWellType(src.getWellType(wellIndex), wellIndex);
+      Integer wellColumnValue = src.getWellColumn(wellIndex);
+      if (wellColumnValue != null) dest.setWellColumn(wellColumnValue, wellIndex);
+      String wellExternalDescriptionValue = src.getWellExternalDescription(wellIndex);
+      if (wellExternalDescriptionValue != null) dest.setWellExternalDescription(wellExternalDescriptionValue, wellIndex);
+      String wellExternalIdentifierValue = src.getWellExternalIdentifier(wellIndex);
+      if (wellExternalIdentifierValue != null) dest.setWellExternalIdentifier(wellExternalIdentifierValue, wellIndex);
+      String wellIDValue = src.getWellID(wellIndex);
+      if (wellIDValue != null) dest.setWellID(wellIDValue, wellIndex);
+      Integer wellRowValue = src.getWellRow(wellIndex);
+      if (wellRowValue != null) dest.setWellRow(wellRowValue, wellIndex);
+      String wellTypeValue = src.getWellType(wellIndex);
+      if (wellTypeValue != null) dest.setWellType(wellTypeValue, wellIndex);
       int wellSampleCount = src.getWellSampleCount(wellIndex);
       for (int wellSampleIndex=0; wellSampleIndex<wellSampleCount; wellSampleIndex++) {
-        dest.setWellSampleID(src.getWellSampleID(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
-        dest.setWellSampleIndex(src.getWellSampleIndex(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
-        dest.setWellSamplePosX(src.getWellSamplePosX(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
-        dest.setWellSamplePosY(src.getWellSamplePosY(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
-        dest.setWellSampleTimepoint(src.getWellSampleTimepoint(wellIndex, wellSampleIndex), wellIndex, wellSampleIndex);
+        String wellSampleIDValue = src.getWellSampleID(wellIndex, wellSampleIndex);
+        if (wellSampleIDValue != null) dest.setWellSampleID(wellSampleIDValue, wellIndex, wellSampleIndex);
+        Integer wellSampleIndexValue = src.getWellSampleIndex(wellIndex, wellSampleIndex);
+        if (wellSampleIndexValue != null) dest.setWellSampleIndex(wellSampleIndexValue, wellIndex, wellSampleIndex);
+        Float wellSamplePosXValue = src.getWellSamplePosX(wellIndex, wellSampleIndex);
+        if (wellSamplePosXValue != null) dest.setWellSamplePosX(wellSamplePosXValue, wellIndex, wellSampleIndex);
+        Float wellSamplePosYValue = src.getWellSamplePosY(wellIndex, wellSampleIndex);
+        if (wellSamplePosYValue != null) dest.setWellSamplePosY(wellSamplePosYValue, wellIndex, wellSampleIndex);
+        Integer wellSampleTimepointValue = src.getWellSampleTimepoint(wellIndex, wellSampleIndex);
+        if (wellSampleTimepointValue != null) dest.setWellSampleTimepoint(wellSampleTimepointValue, wellIndex, wellSampleIndex);
       }
     }
   }

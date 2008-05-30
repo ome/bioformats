@@ -185,10 +185,15 @@ public class MetadataAutogen {
       // set properties
       Vector<String> props = q.props();
       for (String prop : props) {
+        q.setProperty(prop);
         String methodName = entity + prop;
         String iList = q.varsList();
-        out.println(spaces + "  dest.set" + methodName +
-          "(src.get" + methodName + "(" + iList + "), " + iList + ");");
+        String type = q.defaultType();
+        String var = q.var(methodName) + "Value";
+        out.println(spaces + "  " + type + " " + var + " = " +
+          "src.get" + methodName + "(" + iList + ");");
+        out.println(spaces + "  if (" + var + " != null) " +
+          "dest.set" + methodName + "(" + var + ", " + iList + ");");
       }
     }
 
