@@ -207,13 +207,13 @@ Checkstyle
 Apache Jakarta Commons HttpClient
     JAR file:  commons-httpclient-2.0-rc2.jar
     URL:       http://jakarta.apache.org/commons/httpclient/
-    Notes:     required for OME Java to communicate with OME servers
+    Notes:     required for OME-Java to communicate with OME servers
     License:   Apache
 
 Apache Jakarta Commons Logging
     JAR file:  commons-logging.jar
     URL:       http://jakarta.apache.org/commons/logging/
-    Notes:     used by OME Java
+    Notes:     used by OME-Java
     License:   Apache
 
 JGoodies Forms
@@ -268,7 +268,7 @@ NetCDF
     Notes:     used by Bio-Formats via reflection for HDF support (Imaris 5.5)
     License:   LGPL
 
-OME Java
+OME-Java
     JAR file:  ome-java.jar
     URL:       http://openmicroscopy.org/api/java/
     Notes:     used by VisBio and the OME upload and download plugins for
@@ -332,7 +332,7 @@ VisAD
 Apache XML-RPC
     JAR file:  xmlrpc-1.2-b1.jar
     URL:       http://ws.apache.org/xmlrpc/
-    Notes:     required for OME Java to communicate with OME servers
+    Notes:     required for OME-Java to communicate with OME servers
     License:   Apache
 -->
 
