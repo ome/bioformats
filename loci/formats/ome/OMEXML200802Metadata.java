@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on May 23, 2008 4:44:30 PM CDT
+ * Created by curtis via MetadataAutogen on May 30, 2008 1:36:31 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -716,8 +716,8 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveCorrection(int, int) */
   public String getObjectiveCorrection(int instrumentIndex, int objectiveIndex) {
-    // NB: Correction unsupported for schema version 2008-02
-    return null;
+    ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, false);
+    return objective == null ? null : objective.getCorrection();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveID(int, int) */
@@ -728,8 +728,8 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveImmersion(int, int) */
   public String getObjectiveImmersion(int instrumentIndex, int objectiveIndex) {
-    // NB: Immersion unsupported for schema version 2008-02
-    return null;
+    ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, false);
+    return objective == null ? null : objective.getImmersion();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveLensNA(int, int) */
@@ -1781,7 +1781,9 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveCorrection(String, int, int) */
   public void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex) {
-    // NB: Correction unsupported for schema version 2008-02
+    if (correction == null) return;
+    ObjectiveNode objectiveNode = getObjectiveNode(instrumentIndex, objectiveIndex, true);
+    objectiveNode.setCorrection(correction);
   }
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveID(String, int, int) */
@@ -1793,7 +1795,9 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveImmersion(String, int, int) */
   public void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex) {
-    // NB: Immersion unsupported for schema version 2008-02
+    if (immersion == null) return;
+    ObjectiveNode objectiveNode = getObjectiveNode(instrumentIndex, objectiveIndex, true);
+    objectiveNode.setImmersion(immersion);
   }
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveLensNA(Float, int, int) */
