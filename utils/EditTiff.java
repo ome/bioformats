@@ -18,18 +18,19 @@ public class EditTiff {
     BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
     for (int i=0; i<args.length; i++) {
       String f = args[i];
-      // read first IFD
+      // read comment
       System.out.println("Reading " + f + " ");
-      RandomAccessStream fin = new RandomAccessStream(f);
-      Hashtable ifd = TiffTools.getFirstIFD(fin);
-      fin.close();
-      if (ifd == null) System.out.println("Warning: first IFD is null!");
-      // extract TIFF comment from IFD
-      String ome = TiffTools.getComment(ifd);
+      String comment = TiffTools.getComment(f);
+      // or if you already have the file open for random access, you can use:
+      // RandomAccessStream fin = new RandomAccessStream(f);
+      // Hashtable ifd = TiffTools.getFirstIFD(fin);
+      // String comment = (String)
+      //   TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+      // fin.close();
       System.out.println("[done]");
       // display comment, and prompt for changes
       System.out.println("Comment =");
-      System.out.println(ome);
+      System.out.println(comment);
       System.out.println("Enter new comment (no line breaks):");
       String xml = cin.readLine();
       System.out.print("Saving " + f);
