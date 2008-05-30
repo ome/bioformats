@@ -27,11 +27,9 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.codec.JPEG2000Codec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
@@ -60,81 +58,9 @@ public class ND2Reader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_J2K_MSG =
-    "The JAI Image I/O Tools are required to read ND2 files. Please " +
-    "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats.html";
-
-  private static final String J2K_READER =
-    "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
-
   /** Factory for generating SAX parsers. */
   public static final SAXParserFactory SAX_FACTORY =
     SAXParserFactory.newInstance();
-
-  // -- Static fields --
-
-  private static boolean noJ2k = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
-
-  private static ReflectedUniverse createReflectedUniverse() {
-    // NB: ImageJ does not access the jai_imageio classes with the normal
-    // class loading scheme, and thus the necessary service provider stuff is
-    // not automatically registered. Instead, we register the J2KImageReader
-    // with the IIORegistry manually, merely so that we can obtain a
-    // J2KImageReaderSpi object from the IIORegistry's service provider
-    // lookup function, then use it to construct a J2KImageReader object
-    // directly, which we can use to process ND2 files one plane at a time.
-
-    ReflectedUniverse ru = null;
-    try {
-      // register J2KImageReader with IIORegistry
-      String j2kReaderSpi = J2K_READER + "Spi";
-      Class j2kSpiClass = null;
-      try {
-        j2kSpiClass = Class.forName(j2kReaderSpi);
-      }
-      catch (ClassNotFoundException exc) {
-        if (debug) LogTools.trace(exc);
-        noJ2k = true;
-      }
-      catch (NoClassDefFoundError err) {
-        if (debug) LogTools.trace(err);
-        noJ2k = true;
-      }
-      catch (RuntimeException exc) {
-        // HACK: workaround for bug in Apache Axis2
-        String msg = exc.getMessage();
-        if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-        if (debug) LogTools.trace(exc);
-        noJ2k = true;
-      }
-      IIORegistry registry = IIORegistry.getDefaultInstance();
-      if (j2kSpiClass != null) {
-        Iterator providers = ServiceRegistry.lookupProviders(j2kSpiClass);
-        registry.registerServiceProviders(providers);
-      }
-
-      // obtain J2KImageReaderSpi instance from IIORegistry
-      Object j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
-
-      ru = new ReflectedUniverse();
-
-      // for computing offsets in initFile
-      ru.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
-      ru.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
-      ru.exec("import jj2000.j2k.util.ISRandomAccessIO");
-
-      // for reading pixel data in openImage
-      ru.exec("import " + J2K_READER);
-      ru.setVar("j2kSpi", j2kSpi);
-      ru.exec("j2kReader = new J2KImageReader(j2kSpi)");
-    }
-    catch (Throwable t) {
-      noJ2k = true;
-      if (debug) LogTools.trace(t);
-    }
-    return ru;
-  }
 
   // -- Fields --
 
@@ -202,15 +128,10 @@ public class ND2Reader extends FormatReader {
     int pixel = bpp * getRGBChannelCount();
 
     if (isJPEG) {
-      // plane is compressed using JPEG 2000
-      BufferedImage b = openImage(no, x, y, w, h);
-      byte[][] pixels = ImageTools.getPixelBytes(b, false);
-      for (int i=0; i<getRGBChannelCount(); i++) {
-        byte[] p = ImageTools.splitChannels(pixels[series], i,
-          getRGBChannelCount(), bpp, false, !core.interleaved[series]);
-        System.arraycopy(p, 0, buf, i*p.length, p.length);
-      }
-      pixels = null;
+      in.seek(offsets[series][no]);
+      buf = new JPEG2000Codec().decompress(in, new Boolean[] {
+        new Boolean(core.littleEndian[series]),
+        new Boolean(core.interleaved[series])});
     }
     else if (isLossless) {
       // plane is compressed using ZLIB
@@ -253,52 +174,6 @@ public class ND2Reader extends FormatReader {
       }
     }
     return buf;
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    if (legacy) return openImage(no, x, y, w, h);
-    if (!isJPEG) {
-      return ImageTools.makeImage(openBytes(no, x, y, w, h), core.sizeX[series],
-        core.sizeY[series], getRGBChannelCount(), core.interleaved[series],
-        FormatTools.getBytesPerPixel(core.pixelType[series]),
-        core.littleEndian[series]);
-    }
-
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-
-    in.seek(offsets[series][no]);
-
-    long len = no < core.imageCount[series] - 1 ? offsets[series][no + 1] -
-      offsets[series][no] : in.length() - offsets[series][no];
-
-    byte[] b = new byte[(int) len];
-    in.readFully(b);
-
-    ByteArrayInputStream bis = new ByteArrayInputStream(b);
-    // NB: Even after registering J2KImageReader with
-    // IIORegistry manually, the following still does not work:
-    //BufferedImage img = ImageIO.read(bis);
-    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
-    BufferedImage img = null;
-    try {
-      r.setVar("mciis", mciis);
-      r.exec("j2kReader.setInput(mciis)");
-      r.setVar("zero", 0);
-      r.setVar("param", null);
-      img = (BufferedImage) r.exec("j2kReader.read(zero, param)");
-    }
-    catch (ReflectException exc) {
-      throw new FormatException(exc);
-    }
-    bis.close();
-    mciis.close();
-    b = null;
-
-    return img.getSubimage(x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#setNormalized(boolean) */
@@ -353,7 +228,6 @@ public class ND2Reader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ND2Reader.initFile(" + id + ")");
-    if (noJ2k) throw new FormatException(NO_J2K_MSG);
     super.initFile(id);
 
     if (legacy) {
@@ -646,6 +520,8 @@ public class ND2Reader extends FormatReader {
 
     // assemble offsets to each plane
 
+    int x = 0, y = 0, c = 0, type = 0;
+
     while (!lastBoxFound) {
       pos = in.getFilePointer();
       length = in.readInt();
@@ -657,7 +533,19 @@ public class ND2Reader extends FormatReader {
       if (box == 0x6a703263) {
         vs.add(new Long(pos));
       }
-      if (!lastBoxFound) in.skipBytes(length);
+      else if (box == 0x6a703268) {
+        in.skipBytes(4);
+        String s = in.readString(4);
+        if (s.equals("ihdr")) {
+          y = in.readInt();
+          x = in.readInt();
+          c = in.readShort();
+          type = in.readInt();
+          if (type == 0xf070100) type = FormatTools.UINT16;
+          else type = FormatTools.UINT8;
+        }
+      }
+      if (!lastBoxFound && box != 0x6a703268) in.skipBytes(length);
     }
 
     status("Finding XML metadata");
@@ -723,10 +611,10 @@ public class ND2Reader extends FormatReader {
       byte[] b = xml.getBytes();
       int len = b.length;
       for (int i=0; i<len; i++) {
-        char c = (char) b[i];
-        if (offset == 0 && c == '!') offset = i + 1;
+        char ch = (char) b[i];
+        if (offset == 0 && ch == '!') offset = i + 1;
 
-        if (Character.isISOControl(c) || !Character.isDefined(c)) {
+        if (Character.isISOControl(ch) || !Character.isDefined(ch)) {
           b[i] = (byte) ' ';
         }
       }
@@ -793,41 +681,15 @@ public class ND2Reader extends FormatReader {
 
     in.seek(offsets[0][0]);
 
-    long len = 0 < core.imageCount[0] - 1 ? offsets[0][1] -
-      offsets[0][0] : in.length() - offsets[0][0];
-
-    byte[] b = new byte[(int) len];
-    in.readFully(b);
-
-    ByteArrayInputStream bis = new ByteArrayInputStream(b);
-    // NB: Even after registering J2KImageReader with
-    // IIORegistry manually, the following still does not work:
-    //BufferedImage img = ImageIO.read(bis);
-    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
-    BufferedImage img = null;
-    try {
-      r.setVar("mciis", mciis);
-      r.exec("j2kReader.setInput(mciis)");
-      r.setVar("zero", 0);
-      r.setVar("param", null);
-      img = (BufferedImage) r.exec("j2kReader.read(zero, param)");
-    }
-    catch (ReflectException exc) {
-      throw new FormatException(exc);
-    }
-    bis.close();
-    mciis.close();
-    b = null;
-
-    Arrays.fill(core.sizeX, img.getWidth());
-    Arrays.fill(core.sizeY, img.getHeight());
+    Arrays.fill(core.sizeX, x);
+    Arrays.fill(core.sizeY, y);
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    int numBands = img.getRaster().getNumBands();
-    int c = numBands > 1 ? numBands : core.sizeC[0];
+    int numBands = c;
+    c = numBands > 1 ? numBands : core.sizeC[0];
     if (numBands == 1 && core.imageCount[0] == 1) c = 1;
     Arrays.fill(core.sizeC, c);
     Arrays.fill(core.rgb, numBands > 1);
-    Arrays.fill(core.pixelType, ImageTools.getPixelType(img));
+    Arrays.fill(core.pixelType, type);
 
     if (core.rgb[0] && core.imageCount[0] > core.sizeZ[0] * core.sizeT[0]) {
       if (core.sizeZ[0] > 1) core.sizeZ[0] *= core.sizeC[0];
