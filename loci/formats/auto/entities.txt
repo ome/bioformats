@@ -947,20 +947,12 @@ description = TODO
 type = String
 description = TODO
 
-# TEMP - until r200802 code is fixed
-[Objective Correction 200802]
-path = -
-
 [Objective Correction 2003FC]
 path = -
 
 [Objective Immersion]
 type = String
 description = TODO
-
-# TEMP - until r200802 code is fixed
-[Objective Immersion 200802]
-path = -
 
 [Objective Immersion 2003FC]
 path = -
