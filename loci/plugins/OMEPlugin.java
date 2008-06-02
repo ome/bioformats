@@ -355,6 +355,9 @@ public class OMEPlugin implements PlugIn {
       }
       else {
         gbc.gridy = i;
+        if (thumbs[i] == null) {
+          thumbs[i] = ImageTools.blankImage(64, 64, 1, FormatTools.UINT8);
+        }
         JLabel label = new JLabel(new ImageIcon(thumbs[i]));
         label.setToolTipText(tips[i]);
         p[i].add(label);
