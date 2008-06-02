@@ -129,21 +129,30 @@ public class NikonReader extends BaseTiffReader {
   public boolean isThisType(String name, boolean open) {
     // extension is sufficient as long as it is NEF
     if (checkSuffix(name, NEF_SUFFIX)) return true;
-    return super.isThisType(name, open);
+
+    if (!open) return false;
+    try {
+      RandomAccessStream stream = new RandomAccessStream(name);
+      boolean isThisType = isThisType(stream);
+      stream.close();
+      return isThisType;
+    }
+    catch (IOException e) {
+      if (debug) trace(e);
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     try {
       RandomAccessStream stream = new RandomAccessStream(block);
-      Hashtable ifd = TiffTools.getFirstIFD(stream);
-      return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
+      boolean isThisType = isThisType(stream);
+      stream.close();
+      return isThisType;
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
     }
     return false;
   }
@@ -388,6 +397,11 @@ public class NikonReader extends BaseTiffReader {
         return "Capture Editor Data";
     }
     return "" + tag;
+  }
+
+  private boolean isThisType(RandomAccessStream stream) throws IOException {
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
   }
 
 }

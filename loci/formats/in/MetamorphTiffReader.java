@@ -70,19 +70,31 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!open) return false;
+    try {
+      RandomAccessStream stream = new RandomAccessStream(name);
+      boolean isThisType = isThisType(stream);
+      stream.close();
+      return isThisType;
+    }
+    catch (IOException e) {
+      if (debug) trace(e);
+    }
+    return false;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     try {
       RandomAccessStream stream = new RandomAccessStream(block);
-      String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
+      boolean isThisType = isThisType(stream);
       stream.close();
-      return comment != null && comment.trim().startsWith("<MetaData>");
+      return isThisType;
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
     }
     return false;
   }
@@ -201,6 +213,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
         else if (id.equals("image-name")) imageName = value;
       }
     }
+  }
+
+  // -- Helper methods --
+
+  private boolean isThisType(RandomAccessStream stream) throws IOException {
+    String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
+    return comment != null && comment.trim().startsWith("<MetaData>");
   }
 
 }

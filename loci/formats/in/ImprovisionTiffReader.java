@@ -54,10 +54,11 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!open) return false;
     try {
-      RandomAccessStream stream = new RandomAccessStream(block);
+      RandomAccessStream stream = new RandomAccessStream(name);
       boolean isThisType = isThisType(stream);
       stream.close();
       return isThisType;
@@ -68,12 +69,10 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!open) return false;
-
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
     try {
-      RandomAccessStream stream = new RandomAccessStream(name);
+      RandomAccessStream stream = new RandomAccessStream(block);
       boolean isThisType = isThisType(stream);
       stream.close();
       return isThisType;

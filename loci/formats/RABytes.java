@@ -90,7 +90,7 @@ public class RABytes implements IRandomAccess {
   /* @see IRandomAccess.read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
     if (fp + len > array.length) len = array.length - fp;
-    System.arraycopy(array, fp, b, off, len);
+    if (len > 0) System.arraycopy(array, fp, b, off, len);
     fp += len;
     return len;
   }
