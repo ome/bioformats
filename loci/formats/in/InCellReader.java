@@ -53,7 +53,12 @@ public class InCellReader extends FormatReader {
   // -- Fields --
 
   private Vector tiffs;
-  private TiffReader[] tiffReaders;
+  private TiffReader[][] tiffReaders;
+  private int seriesCount;
+  private Vector emWaves, exWaves;
+  private Vector timings;
+  private int totalImages;
+  private String creationDate;
 
   // -- Constructor --
 
@@ -75,13 +80,13 @@ public class InCellReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[0].get8BitLookupTable();
+    return tiffReaders[series][0].get8BitLookupTable();
   }
 
   /* @see loci.formats.IForamtReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[0].get16BitLookupTable();
+    return tiffReaders[series][0].get16BitLookupTable();
   }
 
   /**
@@ -93,7 +98,9 @@ public class InCellReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
-    return tiffReaders[no].openBytes(0, buf, x, y, w, h);
+    tiffReaders[series][no].setId(
+      (String) tiffs.get(series * tiffReaders[0].length + no));
+    return tiffReaders[series][no].openBytes(0, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -115,10 +122,14 @@ public class InCellReader extends FormatReader {
     tiffs = null;
     if (tiffReaders != null) {
       for (int i=0; i<tiffReaders.length; i++) {
-        tiffReaders[i].close();
+        for (int j=0; j<tiffReaders[i].length; j++) {
+          tiffReaders[i][j].close();
+        }
       }
       tiffReaders = null;
     }
+    seriesCount = 0;
+    totalImages = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -130,10 +141,16 @@ public class InCellReader extends FormatReader {
     in = new RandomAccessStream(id);
 
     tiffs = new Vector();
+    emWaves = new Vector();
+    exWaves = new Vector();
+    timings = new Vector();
 
-    InCellHandler handler = new InCellHandler();
     byte[] b = new byte[(int) in.length()];
     in.read(b);
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    InCellHandler handler = new InCellHandler(store);
 
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();
@@ -146,27 +163,52 @@ public class InCellReader extends FormatReader {
       throw new FormatException(exc);
     }
 
-    tiffReaders = new TiffReader[tiffs.size()];
-    for (int i=0; i<tiffs.size(); i++) {
-      tiffReaders[i] = new TiffReader();
-      tiffReaders[i].setId((String) tiffs.get(i));
+    seriesCount = totalImages / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
+    tiffReaders = new TiffReader[seriesCount][tiffs.size() / seriesCount];
+    for (int i=0; i<tiffReaders.length; i++) {
+      for (int j=0; j<tiffReaders[0].length; j++) {
+        tiffReaders[i][j] = new TiffReader();
+      }
+      tiffReaders[i][0].setId((String) tiffs.get(i * tiffReaders[0].length));
     }
 
-    core.sizeX[0] = tiffReaders[0].getSizeX();
-    core.sizeY[0] = tiffReaders[0].getSizeY();
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-    core.interleaved[0] = tiffReaders[0].isInterleaved();
-    core.indexed[0] = tiffReaders[0].isIndexed();
-    core.rgb[0] = tiffReaders[0].isRGB();
-    core.currentOrder[0] = "XYZCT";
-    core.pixelType[0] = tiffReaders[0].getPixelType();
-    core.littleEndian[0] = tiffReaders[0].isLittleEndian();
+    int z = core.sizeZ[0];
+    int c = core.sizeC[0];
+    int t = core.sizeT[0];
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    core = new CoreMetadata(seriesCount);
+
+    Arrays.fill(core.sizeZ, z);
+    Arrays.fill(core.sizeC, c);
+    Arrays.fill(core.sizeT, t);
+    Arrays.fill(core.imageCount, z * c * t);
+    Arrays.fill(core.currentOrder, "XYZCT");
+
+    int nextTiming = 0;
+    for (int i=0; i<seriesCount; i++) {
+      core.sizeX[i] = tiffReaders[i][0].getSizeX();
+      core.sizeY[i] = tiffReaders[i][0].getSizeY();
+      core.interleaved[i] = tiffReaders[i][0].isInterleaved();
+      core.indexed[i] = tiffReaders[i][0].isIndexed();
+      core.rgb[i] = tiffReaders[i][0].isRGB();
+      core.pixelType[i] = tiffReaders[i][0].getPixelType();
+      core.littleEndian[i] = tiffReaders[i][0].isLittleEndian();
+      store.setImageName("", i);
+      store.setImageCreationDate(creationDate, i);
+      for (int q=0; q<emWaves.size(); q++) {
+        store.setLogicalChannelEmWave((Integer) emWaves.get(q), i, q);
+        store.setLogicalChannelExWave((Integer) exWaves.get(q), i, q);
+      }
+      for (int q=0; q<core.imageCount[i]; q++) {
+        store.setPlaneTimingDeltaT((Float) timings.get(nextTiming++), i, 0, q);
+        int[] coords = FormatTools.getZCTCoords("XYZCT", z, c, t, z * c * t, q);
+        store.setPlaneTheZ(new Integer(coords[0]), i, 0, q);
+        store.setPlaneTheC(new Integer(coords[1]), i, 0, q);
+        store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
+        store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
+      }
+    }
+
     MetadataTools.populatePixels(store, this);
   }
 
@@ -174,26 +216,84 @@ public class InCellReader extends FormatReader {
 
   /** SAX handler for parsing XML. */
   class InCellHandler extends DefaultHandler {
+    private String currentQName;
+    private int nextEmWave = 0;
+    private int nextExWave = 0;
+    private MetadataStore store;
+
+    public InCellHandler(MetadataStore store) {
+      this.store = store;
+    }
+
+    public void characters(char[] ch, int start, int length) {
+      String value = new String(ch, start, length);
+      if (currentQName.equals("UserComment")) {
+        store.setImageDescription(value, 0);
+      }
+    }
+
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
+      currentQName = qName;
       for (int i=0; i<attributes.getLength(); i++) {
         addMeta(qName + " - " + attributes.getQName(i), attributes.getValue(i));
       }
 
-      if (qName.equals("Image")) {
+      if (qName.equals("Images")) {
+        totalImages = Integer.parseInt(attributes.getValue("number"));
+      }
+      else if (qName.equals("Image")) {
         String file = attributes.getValue("filename");
+        String thumb = attributes.getValue("thumbnail");
         Location current = new Location(currentId).getAbsoluteFile();
+
         if (new Location(current.getParentFile(), file).exists()) {
           tiffs.add(
             new Location(current.getParentFile(), file).getAbsolutePath());
         }
         else tiffs.add(file);
+        timings.add(new Float(attributes.getValue("acquisition_time_ms")));
       }
       else if (qName.equals("Identifier")) {
-        core.sizeZ[0] = Integer.parseInt(attributes.getValue("z_index")) + 1;
-        core.sizeC[0] = Integer.parseInt(attributes.getValue("wave_index")) + 1;
-        core.sizeT[0] = Integer.parseInt(attributes.getValue("time_index")) + 1;
+        int z = Integer.parseInt(attributes.getValue("z_index")) + 1;
+        int c = Integer.parseInt(attributes.getValue("wave_index")) + 1;
+        int t = Integer.parseInt(attributes.getValue("time_index")) + 1;
+        core.sizeZ[0] = (int) Math.max(core.sizeZ[0], z);
+        core.sizeC[0] = (int) Math.max(core.sizeC[0], c);
+        core.sizeT[0] = (int) Math.max(core.sizeT[0], t);
+      }
+      else if (qName.equals("Creation")) {
+        String date = attributes.getValue("date"); // yyyy-mm-dd
+        String time = attributes.getValue("time"); // hh:mm:ss
+        creationDate = date + "T" + time;
+      }
+      else if (qName.equals("ObjectiveCalibration")) {
+        store.setObjectiveCalibratedMagnification(
+          new Float(attributes.getValue("magnification")), 0, 0);
+        store.setObjectiveModel(attributes.getValue("objective_name"), 0, 0);
+        store.setObjectiveLensNA(new Float(
+          attributes.getValue("numerical_aperture")), 0, 0);
+      }
+      else if (qName.equals("ExcitationFilter")) {
+        String wave = attributes.getValue("wavelength");
+        if (wave != null) exWaves.add(new Integer(wave));
+      }
+      else if (qName.equals("EmissionFilter")) {
+        String wave = attributes.getValue("wavelength");
+        if (wave != null) emWaves.add(new Integer(wave));
+      }
+      else if (qName.equals("Plate")) {
+        store.setPlateName(attributes.getValue("name"), 0);
+        int rows = Integer.parseInt(attributes.getValue("rows"));
+        int cols = Integer.parseInt(attributes.getValue("columns"));
+
+        for (int r=0; r<rows; r++) {
+          for (int c=0; c<cols; c++) {
+            store.setWellRow(new Integer(r), r*cols + c);
+            store.setWellColumn(new Integer(c), r*cols + c);
+          }
+        }
       }
     }
   }
