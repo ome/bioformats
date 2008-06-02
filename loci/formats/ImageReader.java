@@ -428,7 +428,8 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
+    if (currentId == null) return; // nothing to close
+    getReader().close(fileOnly);
     if (!fileOnly) currentId = null;
   }
 

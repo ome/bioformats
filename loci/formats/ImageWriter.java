@@ -309,7 +309,7 @@ public class ImageWriter implements IFormatWriter {
 
   /* @see IFormatHandler#close() */
   public void close() throws IOException {
-    for (int i=0; i<writers.length; i++) writers[i].close();
+    getWriter().close();
   }
 
   // -- StatusReporter API methods --
