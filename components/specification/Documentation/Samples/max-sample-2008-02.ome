@@ -440,7 +440,7 @@
              Category="Category0" ProgramID="ProgramID0" ModuleName="ModuleName0" ID="Module:a">
             <ome:Description>Description3</ome:Description>
             <am:Declaration>
-                <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName0">
+                <am:FormalInput UserDefined="false" Count="+" Name="Sample" SemanticTypeName="SemanticTypeName0">
                     <am:LookupTable Name="Name109">
                         <am:Entry Value="Value9" Label="Label9"/>
                         <am:Entry Value="Value10" Label="Label10"/>
@@ -449,7 +449,7 @@
                     </am:LookupTable>
                     <ome:Description>Description5</ome:Description>
                 </am:FormalInput>
-                <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName1">
+                <am:FormalOutput IBelongTo="[Region]" Count="+" Name="Sample" SemanticTypeName="SemanticTypeName1">
                     <ome:Description>Description6</ome:Description>
                 </am:FormalOutput>
             </am:Declaration>
@@ -546,7 +546,7 @@
              Category="Category1" ProgramID="ProgramID1" ModuleName="ModuleName1" ID="Module:a">
             <ome:Description>Description7</ome:Description>
             <am:Declaration>
-                <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName2">
+                <am:FormalInput UserDefined="false" Count="+" Name="Sample" SemanticTypeName="SemanticTypeName2">
                     <am:LookupTable Name="Name110">
                         <am:Entry Value="Value12" Label="Label12"/>
                         <am:Entry Value="Value13" Label="Label13"/>
@@ -555,7 +555,7 @@
                     </am:LookupTable>
                     <ome:Description>Description9</ome:Description>
                 </am:FormalInput>
-                <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName3">
+                <am:FormalOutput IBelongTo="[Region]" Count="+" Name="Sample" SemanticTypeName="SemanticTypeName3">
                     <ome:Description>Description10</ome:Description>
                 </am:FormalOutput>
             </am:Declaration>
@@ -652,7 +652,7 @@
              Category="Category2" ProgramID="ProgramID2" ModuleName="ModuleName2" ID="Module:a">
             <ome:Description>Description11</ome:Description>
             <am:Declaration>
-                <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName4">
+                <am:FormalInput UserDefined="false" Count="+" Name="Sample" SemanticTypeName="SemanticTypeName4">
                     <am:LookupTable Name="Name111">
                         <am:Entry Value="Value15" Label="Label15"/>
                         <am:Entry Value="Value16" Label="Label16"/>
@@ -661,7 +661,7 @@
                     </am:LookupTable>
                     <ome:Description>Description13</ome:Description>
                 </am:FormalInput>
-                <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName5">
+                <am:FormalOutput IBelongTo="[Region]" Count="+" Name="Sample" SemanticTypeName="SemanticTypeName5">
                     <ome:Description>Description14</ome:Description>
                 </am:FormalOutput>
             </am:Declaration>
