@@ -382,7 +382,7 @@ public class FluoviewReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
-  protected void initMetadataStore() {
+  protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

@@ -214,7 +214,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
-  protected void initMetadataStore() {
+  protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

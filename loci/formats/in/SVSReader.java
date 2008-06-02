@@ -121,7 +121,7 @@ public class SVSReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
-  protected void initMetadataStore() {
+  protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
     MetadataStore store =

@@ -61,7 +61,6 @@ public class LIFReader extends FormatReader {
   /** Extra dimensions. */
   private int[] extraDimensions;
 
-  private int bpp;
   private Vector xcal;
   private Vector ycal;
   private Vector zcal;
@@ -128,7 +127,6 @@ public class LIFReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     bitsPerPixel = extraDimensions = null;
-    bpp = 0;
     offsets = xcal = ycal = zcal = null;
     containerNames = containerCounts = null;
   }

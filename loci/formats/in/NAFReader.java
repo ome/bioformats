@@ -23,12 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.zip.*;
 import loci.formats.*;
-import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
