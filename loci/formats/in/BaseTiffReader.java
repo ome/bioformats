@@ -579,126 +579,93 @@ public abstract class BaseTiffReader extends FormatReader {
    * method and <b>only</b> in this method. This is especially important for
    * sub-classes that override the getters for pixel set array size, etc.
    */
-  protected void initMetadataStore() {
-    try {
-      // the metadata store we're working with
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-      store.setImageName("", 0);
+  protected void initMetadataStore() throws FormatException {
+    // the metadata store we're working with
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    store.setImageName("", 0);
 
-      // set the pixel values in the metadata store
-      MetadataTools.populatePixels(store, this);
+    // set the pixel values in the metadata store
+    MetadataTools.populatePixels(store, this);
 
-      // populate Experimenter
-      String artist = (String) TiffTools.getIFDValue(ifds[0], TiffTools.ARTIST);
-      if (artist != null) {
-        String firstName = null, lastName = null;
-        int ndx = artist.indexOf(" ");
-        if (ndx < 0) lastName = artist;
-        else {
-          firstName = artist.substring(0, ndx);
-          lastName = artist.substring(ndx + 1);
-        }
-        String email = (String)
-          TiffTools.getIFDValue(ifds[0], TiffTools.HOST_COMPUTER);
-        store.setExperimenterFirstName(firstName, 0);
-        store.setExperimenterLastName(lastName, 0);
-        store.setExperimenterEmail(email, 0);
-      }
-
-      // format the creation date to ISO 8061
-
-      String creationDate = getImageCreationDate();
-      try {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-        Date date = parse.parse(creationDate, new ParsePosition(0));
-        creationDate = sdf.format(date);
-      }
-      catch (NullPointerException e) {
-        try {
-          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-          SimpleDateFormat parse =
-            new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS");
-          Date date = parse.parse(creationDate, new ParsePosition(0));
-          creationDate = sdf.format(date);
-        }
-        catch (NullPointerException exc) {
-          if (debug) trace(exc);
-          creationDate = null;
-        }
-      }
-
-      // populate Image
-
-      store.setImageCreationDate(creationDate, 0);
-      store.setImageDescription(TiffTools.getComment(ifds[0]), 0);
-
-      // CHECK
-      // populate LogicalChannel
-      /*
-      for (int i=0; i<getSizeC(); i++) {
-        try {
-          setLogicalChannel(i);
-        }
-        catch (FormatException exc) {
-          if (debug) trace(exc);
-        }
-        catch (IOException exc) {
-          if (debug) trace(exc);
-        }
-      }
-      */
-
-      // set the X and Y pixel dimensions
-
-      int resolutionUnit = TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.RESOLUTION_UNIT);
-      TiffRational xResolution = TiffTools.getIFDRationalValue(ifds[0],
-        TiffTools.X_RESOLUTION, false);
-      TiffRational yResolution = TiffTools.getIFDRationalValue(ifds[0],
-        TiffTools.Y_RESOLUTION, false);
-      float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
-      float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
-
-      switch (resolutionUnit) {
-        case 2:
-          // resolution is expressed in pixels per inch
-          pixX /= 0.0254;
-          pixY /= 0.0254;
-          break;
-        case 3:
-          // resolution is expressed in pixels per centimeter
-          pixX *= 100;
-          pixY *= 100;
-          break;
-      }
-
-      store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Float(0), 0, 0);
-
-      // populate StageLabel
-      Object x = TiffTools.getIFDValue(ifds[0], TiffTools.X_POSITION);
-      Object y = TiffTools.getIFDValue(ifds[0], TiffTools.Y_POSITION);
-      Float stageX;
-      Float stageY;
-      if (x instanceof TiffRational) {
-        stageX = x == null ? null : new Float(((TiffRational) x).floatValue());
-        stageY = y == null ? null : new Float(((TiffRational) y).floatValue());
-      }
+    // populate Experimenter
+    String artist = (String) TiffTools.getIFDValue(ifds[0], TiffTools.ARTIST);
+    if (artist != null) {
+      String firstName = null, lastName = null;
+      int ndx = artist.indexOf(" ");
+      if (ndx < 0) lastName = artist;
       else {
-        stageX = x == null ? null : new Float((String) x);
-        stageY = y == null ? null : new Float((String) y);
+        firstName = artist.substring(0, ndx);
+        lastName = artist.substring(ndx + 1);
       }
-      // populate Instrument
-      // CTR CHECK
-//      String make = (String) TiffTools.getIFDValue(ifd, TiffTools.MAKE);
-//      String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
-//      store.setInstrumentModel(model, 0);
-//      store.setInstrumentManufacturer(make, 0);
+      String email = (String)
+        TiffTools.getIFDValue(ifds[0], TiffTools.HOST_COMPUTER);
+      store.setExperimenterFirstName(firstName, 0);
+      store.setExperimenterLastName(lastName, 0);
+      store.setExperimenterEmail(email, 0);
     }
-    catch (FormatException exc) { trace(exc); }
+
+    // format the creation date to ISO 8061
+
+    String creationDate = getImageCreationDate();
+    String date = parseDate(creationDate, "yyyy:MM:dd HH:mm:ss");
+    if (date == null) date = parseDate(creationDate, "dd/MM/yyyy HH:mm:ss.SS");
+    if (creationDate != null && date == null && debug) {
+      debug("Warning: unknown creation date format: " + creationDate);
+    }
+    creationDate = date;
+
+    // populate Image
+
+    store.setImageCreationDate(creationDate, 0);
+    store.setImageDescription(TiffTools.getComment(ifds[0]), 0);
+
+    // set the X and Y pixel dimensions
+
+    int resolutionUnit = TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.RESOLUTION_UNIT);
+    TiffRational xResolution = TiffTools.getIFDRationalValue(ifds[0],
+      TiffTools.X_RESOLUTION, false);
+    TiffRational yResolution = TiffTools.getIFDRationalValue(ifds[0],
+      TiffTools.Y_RESOLUTION, false);
+    float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
+    float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
+
+    switch (resolutionUnit) {
+      case 2:
+        // resolution is expressed in pixels per inch
+        pixX /= 0.0254;
+        pixY /= 0.0254;
+        break;
+      case 3:
+        // resolution is expressed in pixels per centimeter
+        pixX *= 100;
+        pixY *= 100;
+        break;
+    }
+
+    store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(0), 0, 0);
+
+    // populate StageLabel
+    Object x = TiffTools.getIFDValue(ifds[0], TiffTools.X_POSITION);
+    Object y = TiffTools.getIFDValue(ifds[0], TiffTools.Y_POSITION);
+    Float stageX;
+    Float stageY;
+    if (x instanceof TiffRational) {
+      stageX = x == null ? null : new Float(((TiffRational) x).floatValue());
+      stageY = y == null ? null : new Float(((TiffRational) y).floatValue());
+    }
+    else {
+      stageX = x == null ? null : new Float((String) x);
+      stageY = y == null ? null : new Float((String) y);
+    }
+    // populate Instrument
+    //String make = (String) TiffTools.getIFDValue(ifd, TiffTools.MAKE);
+    //String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
+    //store.setInstrumentModel(model, 0);
+    //store.setInstrumentManufacturer(make, 0);
   }
 
   /**
@@ -883,6 +850,19 @@ public abstract class BaseTiffReader extends FormatReader {
         return "CFA Pattern";
     }
     return null;
+  }
+
+  private static String parseDate(String date, String format) {
+    if (date == null) return null;
+    try {
+      SimpleDateFormat parse = new SimpleDateFormat(format);
+      Date d = parse.parse(date, new ParsePosition(0));
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      return sdf.format(d);
+    }
+    catch (NullPointerException exc) {
+      return null;
+    }
   }
 
 }
