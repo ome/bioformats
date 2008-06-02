@@ -7,29 +7,27 @@ OME Bio-Formats package for reading and converting biological file formats.
 Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Library General Public License for more details.
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 package loci.formats.in;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
-import loci.formats.meta.MetadataStore;
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * OMETiffReader is the file format reader for
@@ -40,670 +38,308 @@ import org.xml.sax.helpers.DefaultHandler;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/OMETiffReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/OMETiffReader.java">SVN</a></dd></dl>
  */
-public class OMETiffReader extends BaseTiffReader {
-
-  // -- Constants --
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
+public class OMETiffReader extends FormatReader {
 
   // -- Fields --
 
+  /** Mapping from series and plane numbers to files and IFD entries. */
+  protected OMETiffPlane[][] info; // dimensioned [numSeries][numPlanes]
+
   /** List of used files. */
-  private String[] usedFiles;
-
-  /** List of Image IDs. */
-  private Vector imageIDs;
-
-  /** List of Pixels IDs. */
-  private Vector pixelsIDs;
-
-  /** List of TiffData UUIDs. */
-  private Vector planeUUIDs;
-
-  /** List of file UUIDs. */
-  private Vector fileUUIDs;
-
-  private Vector tempIfdMap, tempFileMap, tempIfdCount;
-  private int currentFile, currentSeries, seriesCount;
-  private int[] numIFDs;
-  private int[][] ifdMap, fileMap;
-  private boolean uuids, lsids, isWiscScan;
-  private Hashtable[][] usedIFDs;
-  private Hashtable keyMetadata, temporaryKeyMetadata;
-  private String directory;
+  protected String[] used;
 
   // -- Constructor --
 
+  /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"tif", "tiff"});
-    blockCheckLen = 1048576;
-    suffixSufficient = false;
-  }
-
-  // -- Internal BaseTiffReader API methods --
-
-  /* @see BaseTiffReader#initStandardMetadata() */
-  protected void initStandardMetadata() throws FormatException, IOException {
-    super.initStandardMetadata();
-
-    keyMetadata = new Hashtable();
-    temporaryKeyMetadata = new Hashtable();
-
-    OMETiffHandler handler = new OMETiffHandler(false);
-    String comment = DataTools.sanitizeXML(TiffTools.getComment(ifds[0]));
-
-    currentSeries = -1;
-    seriesCount = 0;
-    imageIDs = null;
-    pixelsIDs = null;
-    planeUUIDs = null;
-    fileUUIDs = null;
-    lsids = true;
-
-    tempIfdMap = new Vector();
-    tempFileMap = new Vector();
-    tempIfdCount = new Vector();
-
-    Location l = new Location(currentId).getAbsoluteFile().getParentFile();
-    directory = l.getAbsolutePath();
-    if (!directory.endsWith(File.separator)) directory += File.separator;
-
-    try {
-      SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(new ByteArrayInputStream(comment.getBytes()), handler);
-    }
-    catch (ParserConfigurationException exc) {
-      throw new FormatException(exc);
-    }
-    catch (SAXException exc) {
-      throw new FormatException(exc);
-    }
-
-    // MAJOR HACK : check for OME-XML in the comment of the second IFD
-    // There is a version of WiscScan which writes OME-XML to every IFD,
-    // but with SizeZ and SizeT equal to 1.
-
-    String s = null;
-    if (ifds.length > 1) {
-      s = TiffTools.getComment(ifds[1]);
-    }
-    isWiscScan = s != null && s.indexOf("ome.xsd") != -1;
-
-    // look for additional files in the dataset
-    Vector files = new Vector();
-    String[] fileList = new File(currentId).exists() ? l.list() :
-      (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-
-    int oldSeriesCount = seriesCount;
-
-    for (int i=0; i<fileList.length; i++) {
-      String check = fileList[i].toLowerCase();
-      if (checkSuffix(fileList[i], TiffReader.TIFF_SUFFIXES)) {
-        status("Checking " + fileList[i]);
-        Location file = new Location(fileList[i]);
-        if (!file.exists()) file = new Location(l, fileList[i]);
-        String iid = file.getAbsolutePath();
-        String icomment = TiffTools.getComment(iid);
-        if (icomment == null || icomment.trim().length() == 0) continue;
-        if (!icomment.trim().startsWith("<?xml")) continue;
-        boolean addToList = true;
-        if (uuids) {
-          currentSeries = -1;
-          seriesCount = 0;
-          handler = new OMETiffHandler(true);
-          try {
-            SAXParser parser = SAX_FACTORY.newSAXParser();
-            parser.parse(
-              new ByteArrayInputStream(icomment.getBytes()), handler);
-          }
-          catch (ParserConfigurationException exc) {
-            throw new FormatException(exc);
-          }
-          catch (SAXException exc) {
-            throw new FormatException(exc);
-          }
-          addToList = planeUUIDs.contains(fileUUIDs.get(fileUUIDs.size() - 1));
-        }
-        // the rest of this logic is a hack for obsolete OME-TIFF files
-        else if (lsids && imageIDs != null) {
-          for (int k=0; k<imageIDs.size(); k++) {
-            if (icomment.indexOf((String) imageIDs.get(k)) == -1) {
-              addToList = false;
-              break;
-            }
-          }
-          if (addToList) {
-            for (int k=0; k<pixelsIDs.size(); k++) {
-              if (icomment.indexOf((String) pixelsIDs.get(k)) == -1) {
-                addToList = false;
-                break;
-              }
-            }
-          }
-        }
-        else {
-          // check key pieces of metadata for consistency
-          currentSeries = -1;
-          seriesCount = 0;
-          handler = new OMETiffHandler(true);
-          try {
-            SAXParser parser = SAX_FACTORY.newSAXParser();
-            parser.parse(
-              new ByteArrayInputStream(icomment.getBytes()), handler);
-          }
-          catch (ParserConfigurationException exc) {
-            throw new FormatException(exc);
-          }
-          catch (SAXException exc) {
-            throw new FormatException(exc);
-          }
-
-          Enumeration keys = keyMetadata.keys();
-          while (keys.hasMoreElements()) {
-            String key = keys.nextElement().toString();
-            if (!keyMetadata.get(key).equals(temporaryKeyMetadata.get(key))) {
-              addToList = false;
-              break;
-            }
-          }
-          temporaryKeyMetadata.clear();
-        }
-
-        if (addToList || iid.endsWith(File.separator + currentId) ||
-          (iid.endsWith(currentId) && currentId.startsWith(File.separator)))
-        {
-          files.add(iid);
-        }
-      }
-    }
-
-    // parse grouped files
-
-    seriesCount = oldSeriesCount;
-
-    ifdMap = new int[seriesCount][];
-    fileMap = new int[seriesCount][];
-    numIFDs = new int[seriesCount];
-
-    for (int i=0; i<seriesCount; i++) {
-      int ii = ((Integer) tempIfdCount.get(i)).intValue();
-      ifdMap[i] = new int[ii];
-      fileMap[i] = new int[ii];
-    }
-
-    // copy temp IFD/file maps
-
-    for (int i=0; i<tempIfdMap.size(); i++) {
-      Vector v = (Vector) tempIfdMap.get(i);
-      int ifdCount = ((Integer) tempIfdCount.get(i)).intValue();
-      for (int j=0; j<ifdCount; j++) {
-        ifdMap[i][j] = ((Integer) v.get(j)).intValue();
-      }
-      numIFDs[i] = ifdCount;
-    }
-
-    for (int i=0; i<tempFileMap.size(); i++) {
-      Vector v = (Vector) tempFileMap.get(i);
-      int ifdCount = ((Integer) tempIfdCount.get(i)).intValue();
-      for (int j=0; j<ifdCount; j++) {
-        fileMap[i][j] = ((Integer) v.get(j)).intValue();
-      }
-    }
-
-    usedFiles = (String[]) files.toArray(new String[0]);
-    usedIFDs = new Hashtable[usedFiles.length][];
-
-    for (int i=0; i<usedFiles.length; i++) {
-      if (usedFiles[i].endsWith(currentId)) {
-        usedIFDs[i] = ifds;
-        continue;
-      }
-      status("Parsing " + usedFiles[i]);
-      currentSeries = -1;
-      tempIfdMap = null;
-      tempFileMap = null;
-      tempIfdCount = null;
-      currentFile = i;
-
-      RandomAccessStream ras = new RandomAccessStream(usedFiles[i]);
-      usedIFDs[i] = TiffTools.getIFDs(ras);
-      ras.close();
-      String c = TiffTools.getComment(usedIFDs[i][0]);
-      handler = new OMETiffHandler(false);
-      try {
-        SAXParser parser = SAX_FACTORY.newSAXParser();
-        parser.parse(new ByteArrayInputStream(c.getBytes()), handler);
-      }
-      catch (ParserConfigurationException exc) {
-        throw new FormatException(exc);
-      }
-      catch (SAXException exc) {
-        throw new FormatException(exc);
-      }
-    }
-
-    for (int i=0; i<getSeriesCount(); i++) {
-      if (numIFDs != null && lsids) {
-        if (numIFDs[i] < core.imageCount[i]) {
-          LogTools.println("Too few IFDs; got " + numIFDs[i] +
-            ", expected " + core.imageCount[i]);
-        }
-        else if (numIFDs[i] > core.imageCount[i]) {
-          LogTools.println("Too many IFDs; got " + numIFDs[i] +
-            ", expected " + core.imageCount[i]);
-        }
-      }
-      else if (core.imageCount[i] > ifdMap[i].length) {
-        core.imageCount[i] = ifds.length;
-        if (core.sizeZ[i] > ifds.length) {
-          core.sizeZ[i] = ifds.length / (core.rgb[i] ? core.sizeC[i] : 1);
-          core.sizeT[i] = 1;
-          if (!core.rgb[i]) core.sizeC[i] = 1;
-        }
-        else if (core.sizeT[i] > ifds.length) {
-          core.sizeT[i] = ifds.length / (core.rgb[i] ? core.sizeC[i] : 1);
-          core.sizeZ[i] = 1;
-          if (!core.rgb[i]) core.sizeC[i] = 1;
-        }
-      }
-      else if (core.imageCount[i] !=
-        core.sizeZ[i] * core.sizeC[i] * core.sizeT[i])
-      {
-        if (!core.rgb[i]) {
-          core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
-        }
-        else core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
-      }
-
-      if (core.imageCount[i] == core.sizeZ[i] * core.sizeT[i] &&
-        core.sizeC[i] > 1)
-      {
-        core.rgb[i] = true;
-      }
-    }
-  }
-
-  /* @see BaseTiffReader#initMetadataStore() */
-  protected void initMetadataStore() {
-    String comment = TiffTools.getComment(ifds[0]);
-    metadata.remove("Comment");
-    MetadataStore store = getMetadataStore();
-    MetadataTools.convertMetadata(comment, store);
+    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
   }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
-  public int fileGroupOption(String id) throws FormatException, IOException {
-    return MUST_GROUP;
-  }
-
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!open && !checkSuffix(name, suffixes)) return false;
-    try {
-      RandomAccessStream s = new RandomAccessStream(name);
-      byte[] buf = new byte[blockCheckLen];
-      s.seek(0);
-      s.read(buf);
-      boolean passFirst = isThisType(buf);
-      s.seek(s.length() - blockCheckLen);
-      s.read(buf);
-      boolean passSecond = isThisType(buf);
-      s.close();
-      return passFirst || passSecond;
-    }
-    catch (IOException e) {
-      if (debug) LogTools.trace(e);
-    }
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    try {
-      RandomAccessStream ras = new RandomAccessStream(block);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) throw new IOException();
+    return TiffTools.isValidHeader(block);
+  }
 
-      String comment = TiffTools.getComment(ifd);
-      return comment != null && comment.indexOf("ome.xsd") >= 0;
-    }
-    catch (IOException e) {
-      if (debug) LogTools.trace(e);
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
-      if (debug) LogTools.trace(e);
-    }
-    return new String(block).indexOf("ome.xsd") != -1;
+  /*
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y,
+    int width, int height) throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
+    IFormatReader r = info[series][no].reader;
+    r.setId(info[series][no].id);
+    return r.openBytes(info[series][no].ifd, buf, x, y, width, height);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
-    return usedFiles;
+    return used;
   }
 
-  /**
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+  // -- Internal FormatReader API methods --
 
-    int ifd = ifdMap[series][no];
-    int fileIndex = fileMap[series][no];
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (debug) debug("OMETiffReader.initFile(" + id + ")");
+    // normalize file name
+    super.initFile(normalizeFilename(null, id));
+    id = currentId;
+    String dir = new File(id).getParent();
 
-    in = new RandomAccessStream(usedFiles[fileIndex]);
-    TiffTools.getSamples(usedIFDs[fileIndex][ifd], in, buf, x, y, w, h);
-    in.close();
-    return buf;
-  }
+    // parse and populate OME-XML metadata
+    RandomAccessStream ras = new RandomAccessStream(id);
+    Hashtable firstIFD = TiffTools.getFirstIFD(ras);
+    ras.close();
+    String xml = TiffTools.getComment(firstIFD);
+    MetadataRetrieve meta = (MetadataRetrieve)
+      MetadataTools.createOMEXMLMetadata(xml);
+    String currentUUID = meta.getUUID();
+    MetadataTools.convertMetadata(meta, metadataStore);
 
-  // -- IFormatHandler API methods --
+    // determine series count from Image and Pixels elements
+    int seriesCount = 0;
+    int imageCount = meta.getImageCount();
+    for (int i=0; i<imageCount; i++) seriesCount += meta.getPixelsCount(i);
+    info = new OMETiffPlane[seriesCount][];
 
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    usedFiles = null;
-    usedIFDs = null;
-    imageIDs = pixelsIDs = planeUUIDs = fileUUIDs = null;
-    tempIfdMap = tempFileMap = tempIfdCount = null;
-    numIFDs = null;
-    ifdMap = fileMap = null;
-    lsids = isWiscScan = false;
-  }
-
-  // -- Helper class --
-
-  /** SAX handler for parsing XML. */
-  private class OMETiffHandler extends DefaultHandler {
-    private String order;
-    private int sizeZ, sizeC, sizeT;
-    private int imageCount = 0;
-    private boolean foundDescription = false, foundDate = false;
-    private boolean foundUUID = false;
-    private boolean minimal;
-    private int currentIFD, ifdCount;
-
-    public OMETiffHandler(boolean minimal) {
-      // flag is true if we just want to scan for metadata, without populating
-      // anything
-      this.minimal = minimal;
-    }
-
-    public void characters(char[] ch, int start, int length) {
-      String key = null;
-      if (foundDescription) {
-        key = "Description " + (imageCount - 1);
-        foundDescription = false;
-      }
-      if (foundDate) {
-        key = "CreationDate " + (imageCount - 1);
-        foundDate = false;
-      }
-      if (key != null) {
-        if (!keyMetadata.containsKey(key)) {
-          keyMetadata.put(key, new String(ch, start, length));
-        }
-        else temporaryKeyMetadata.put(key, new String(ch, start, length));
-      }
-    }
-
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      if (qName.equals("OME")) {
-        String uuid = attributes.getValue("UUID");
-        if (fileUUIDs == null) fileUUIDs = new Vector();
-        fileUUIDs.add(uuid);
-      }
-      else if (qName.equals("Image")) {
-        String id = attributes.getValue("ID");
-        if (!minimal) {
-          if (id.startsWith("urn:lsid:")) {
-            if (imageIDs == null) imageIDs = new Vector();
-            imageIDs.add(id);
-          }
-          else lsids = false;
-        }
-
-        imageCount++;
-      }
-      else if (qName.equals("CreationDate")) {
-        foundDate = true;
-      }
-      else if (qName.equals("Description")) {
-        foundDescription = true;
-      }
-      else if (qName.equals("UUID")) {
-        foundUUID = true;
-
-        if (usedFiles != null && fileMap != null) {
-          String filename = directory + attributes.getValue("FileName");
-          int pos = -1;
-          for (int q=0; q<usedFiles.length; q++) {
-            if (usedFiles[q].equals(filename)) {
-              pos = q;
-              break;
-            }
-          }
-          fileMap[currentSeries][currentIFD] = pos;
-          for (int i=1; i<ifdCount; i++) {
-            fileMap[currentSeries][currentIFD + i] = pos;
-          }
-        }
-      }
-      else if (qName.equals("Pixels")) {
-        if (minimal) return;
-        currentSeries++;
-        String id = attributes.getValue("ID");
-        if (id.startsWith("urn:lsid:")) {
-          if (pixelsIDs == null) pixelsIDs = new Vector();
-          pixelsIDs.add(id);
-        }
-        else lsids = false;
-
-        order = attributes.getValue("DimensionOrder");
-        sizeZ = Integer.parseInt(attributes.getValue("SizeZ"));
-        sizeC = Integer.parseInt(attributes.getValue("SizeC"));
-        sizeT = Integer.parseInt(attributes.getValue("SizeT"));
-        if (tempIfdCount != null) {
-          int count = sizeZ * sizeC * sizeT;
-          try {
-            if (TiffTools.getPhotometricInterpretation(ifds[0]) ==
-              TiffTools.RGB)
-            {
-              int nFiles = usedFiles == null ? 1 : usedFiles.length;
-              count = (int) Math.min(count, ifds.length * nFiles);
-            }
-          }
-          catch (FormatException e) {
-            if (debug) LogTools.trace(e);
-          }
-          tempIfdCount.add(new Integer(count));
-        }
-
-        if (sizeZ < 1) sizeZ = 1;
-        if (sizeC < 1) sizeC = 1;
-        if (sizeT < 1) sizeT = 1;
-
-        if (core.sizeZ.length <= currentSeries) {
-          CoreMetadata tempCore = new CoreMetadata(currentSeries + 1);
-          int ss = core.sizeX.length;
-          System.arraycopy(core.sizeX, 0, tempCore.sizeX, 0, ss);
-          System.arraycopy(core.sizeY, 0, tempCore.sizeY, 0, ss);
-          System.arraycopy(core.sizeZ, 0, tempCore.sizeZ, 0, ss);
-          System.arraycopy(core.sizeC, 0, tempCore.sizeC, 0, ss);
-          System.arraycopy(core.sizeT, 0, tempCore.sizeT, 0, ss);
-          System.arraycopy(core.thumbSizeX, 0, tempCore.thumbSizeX, 0, ss);
-          System.arraycopy(core.thumbSizeY, 0, tempCore.thumbSizeY, 0, ss);
-          System.arraycopy(core.pixelType, 0, tempCore.pixelType, 0, ss);
-          System.arraycopy(core.imageCount, 0, tempCore.imageCount, 0, ss);
-          System.arraycopy(core.currentOrder, 0, tempCore.currentOrder, 0, ss);
-          System.arraycopy(core.orderCertain, 0, tempCore.orderCertain, 0, ss);
-          System.arraycopy(core.rgb, 0, tempCore.rgb, 0, ss);
-          System.arraycopy(core.littleEndian, 0, tempCore.littleEndian, 0, ss);
-          System.arraycopy(core.interleaved, 0, tempCore.interleaved, 0, ss);
-          System.arraycopy(core.indexed, 0, tempCore.indexed, 0, ss);
-          System.arraycopy(core.falseColor, 0, tempCore.falseColor, 0, ss);
-          System.arraycopy(core.metadataComplete, 0,
-            tempCore.metadataComplete, 0, ss);
-          core = tempCore;
-        }
-
-        core.sizeX[currentSeries] =
-          Integer.parseInt(attributes.getValue("SizeX"));
-        core.sizeY[currentSeries] =
-          Integer.parseInt(attributes.getValue("SizeY"));
-        core.sizeZ[currentSeries] = sizeZ;
-        core.sizeC[currentSeries] = sizeC;
-        core.sizeT[currentSeries] = sizeT;
-        core.currentOrder[currentSeries] = order;
-        core.rgb[currentSeries] = isRGB();
-        core.indexed[currentSeries] = isIndexed();
-        core.falseColor[currentSeries] = isFalseColor();
-
-        int sc = core.sizeC[currentSeries];
-        if (core.rgb[currentSeries] && !core.indexed[currentSeries]) {
-          if (sc <= 3) sc = 1;
-          else sc /= 3;
-        }
-        core.imageCount[currentSeries] =
-          core.sizeZ[currentSeries] * sc * core.sizeT[currentSeries];
-        core.pixelType[currentSeries] =
-          FormatTools.pixelTypeFromString(attributes.getValue("PixelType"));
-        if (core.pixelType[currentSeries] == FormatTools.INT8 ||
-          core.pixelType[currentSeries] == FormatTools.INT16 ||
-          core.pixelType[currentSeries] == FormatTools.INT32)
-        {
-          core.pixelType[currentSeries]++;
-        }
-
-        if (isWiscScan) core.sizeT[currentSeries] = core.imageCount[0];
-
-        core.orderCertain[currentSeries] = true;
-
-        seriesCount++;
-      }
-      else if (qName.equals("TiffData")) {
-        if (minimal) return;
-        String ifd = attributes.getValue("IFD");
-        String numPlanes = attributes.getValue("NumPlanes");
-        String z = attributes.getValue("FirstZ");
-        String c = attributes.getValue("FirstC");
-        String t = attributes.getValue("FirstT");
-        if (ifd == null || ifd.equals("")) ifd = "0";
-        if (numPlanes == null || numPlanes.equals("")) {
-          if (usedIFDs != null) numPlanes = "" + usedIFDs[currentSeries].length;
-          else numPlanes = "" + ifds.length;
-        }
-        if (z == null || z.equals("")) z = "0";
-        if (c == null || c.equals("")) c = "0";
-        if (t == null || t.equals("")) t = "0";
-
-        try {
-          if (usedIFDs != null && usedIFDs[currentFile] != null) {
-            int f = Integer.parseInt(ifd);
-            int x = (int) TiffTools.getImageWidth(usedIFDs[currentFile][f]);
-            int y = (int) TiffTools.getImageLength(usedIFDs[currentFile][f]);
-            if (x != core.sizeX[currentSeries]) {
-              LogTools.println("Mismatched width: got " +
-                core.sizeX[currentSeries] + ", expected " + x);
-              core.sizeX[currentSeries] = x;
-            }
-            if (y != core.sizeY[currentSeries]) {
-              LogTools.println("Mismatched height: got " +
-                core.sizeY[currentSeries] + ", expected " + y);
-              core.sizeY[currentSeries] = y;
-            }
-          }
-        }
-        catch (FormatException e) {
-          if (debug) LogTools.trace(e);
-        }
-
-        ifdCount = Integer.parseInt(numPlanes);
-        int totalIFDs = ifdCount * (usedFiles == null ? 1 : usedFiles.length);
-        try {
-          if (TiffTools.getPhotometricInterpretation(ifds[0]) == TiffTools.RGB)
-          {
-            // account for RGB planes
-            int div = (sizeZ * sizeC * sizeT) / totalIFDs;
-            if (sizeC / div > 0) sizeC /= div;
-          }
-        }
-        catch (FormatException e) {
-          if (debug)  LogTools.trace(e);
-        }
-        int idx = FormatTools.getIndex(order, sizeZ, sizeC, sizeT,
-          sizeZ * sizeC * sizeT, Integer.parseInt(z), Integer.parseInt(c),
-          Integer.parseInt(t));
-        currentIFD = idx;
-
-        if (tempIfdMap != null) {
-          Vector v = new Vector(sizeZ * sizeC * sizeT);
-          Vector y = new Vector(sizeZ * sizeC * sizeT);
-          if (tempIfdMap.size() >= seriesCount && tempIfdMap.size() > 0) {
-            v = (Vector) tempIfdMap.get(seriesCount - 1);
-            y = (Vector) tempFileMap.get(seriesCount - 1);
+    // compile list of file/UUID mappings
+    Hashtable files = new Hashtable();
+    boolean needSearch = false;
+    for (int i=0; i<imageCount; i++) {
+      int pixelsCount = meta.getPixelsCount(i);
+      for (int p=0; p<pixelsCount; p++) {
+        int tiffDataCount = meta.getTiffDataCount(i, p);
+        for (int td=0; td<tiffDataCount; td++) {
+          String uuid = meta.getTiffDataUUID(i, p, td);
+          String filename = null;
+          if (uuid == null) {
+            // no UUID means that TiffData element refers to this file
+            uuid = "";
+            filename = id;
           }
           else {
-            for (int i=0; i<sizeZ*sizeC*sizeT; i++) {
-              v.add(new Integer(-1));
-              y.add(new Integer(-1));
-            }
-          }
-
-          v.setElementAt(new Integer(ifd), idx);
-          y.setElementAt(new Integer(0), idx);
-
-          for (int i=1; i<ifdCount; i++) {
-            if (idx + i < v.size()) {
-              v.setElementAt(new Integer(Integer.parseInt(ifd) + i), idx + i);
-              y.setElementAt(new Integer(0), idx + i);
-            }
-            else {
-              int diff = idx + i - v.size();
-              for (int q=0; q<diff; q++) {
-                v.add(new Integer(-1));
-                y.add(new Integer(-1));
+            filename = meta.getTiffDataFileName(i, p, td);
+            if (filename == null) {
+              if (uuid.equals(currentUUID)) {
+                // UUID references this file
+                filename = id;
               }
-              v.add(new Integer(Integer.parseInt(ifd) + i));
-              y.add(new Integer(0));
+              else {
+                // will need to search for this UUID
+                filename = "";
+                needSearch = true;
+              }
             }
+            else filename = normalizeFilename(dir, filename);
           }
-
-          if (tempIfdMap.size() >= seriesCount) {
-            tempIfdMap.setElementAt(v, seriesCount - 1);
-            tempFileMap.setElementAt(y, seriesCount - 1);
-          }
-          else {
-            tempIfdMap.add(v);
-            tempFileMap.add(y);
+          String existing = (String) files.get(uuid);
+          if (existing == null) files.put(uuid, filename);
+          else if (!existing.equals(filename)) {
+            throw new FormatException("Inconsistent UUID filenames");
           }
         }
-        else {
-          ifdMap[currentSeries][idx] = Integer.parseInt(ifd);
-          fileMap[currentSeries][idx] = currentFile;
-          for (int i=1; i<ifdCount; i++) {
-            if (idx + i < ifdMap[currentSeries].length) {
-              ifdMap[currentSeries][idx + i] = ifdMap[currentSeries][idx] + i;
-              fileMap[currentSeries][idx + i] = currentFile;
-            }
-          }
-        }
-      }
-      else if (qName.equals("OriginalMetadata")) {
-        addMeta(attributes.getValue("name"), attributes.getValue("value"));
       }
     }
+
+    // search for missing filenames
+    if (needSearch) {
+      Enumeration en = files.keys();
+      while (en.hasMoreElements()) {
+        String uuid = (String) en.nextElement();
+        String filename = (String) files.get(uuid);
+        if (filename.equals("")) {
+          // TODO search...
+          // should scan only other .ome.tif files
+          // to make this work with OME server may be a little tricky?
+          throw new FormatException("Unmatched UUID: " + uuid);
+        }
+      }
+    }
+
+    // build list of used files
+    Enumeration en = files.keys();
+    int numUUIDs = files.size();
+    HashSet fileSet = new HashSet(); // ensure no duplicate filenames
+    for (int i=0; i<numUUIDs; i++) {
+      String uuid = (String) en.nextElement();
+      String filename = (String) files.get(uuid);
+      fileSet.add(filename);
+    }
+    used = new String[fileSet.size()];
+    Iterator iter = fileSet.iterator();
+    for (int i=0; i<used.length; i++) used[i] = (String) iter.next();
+
+    // HACK - for efficiency, assume all IFDs of all
+    // constituent files have the same samples per pixel
+    int samples = TiffTools.getSamplesPerPixel(firstIFD);
+
+    // process TiffData elements
+    Hashtable readers = new Hashtable();
+    int s = 0;
+    for (int i=0; i<imageCount; i++) {
+      if (debug) {
+        debug("Image[" + i + "] {");
+        debug("  id = " + meta.getImageID(i));
+      }
+      int pixelsCount = meta.getPixelsCount(i);
+      for (int p=0; p<pixelsCount; p++) {
+        if (debug) {
+          debug("  Pixels[" + p + "] {");
+          debug("    id = " + meta.getPixelsID(i, p));
+        }
+        String order = meta.getPixelsDimensionOrder(i, p);
+        int effSizeC = meta.getPixelsSizeC(i, p).intValue() / samples;
+        int sizeT = meta.getPixelsSizeT(i, p).intValue();
+        int sizeZ = meta.getPixelsSizeZ(i, p).intValue();
+        int num = effSizeC * sizeT * sizeZ;
+
+        OMETiffPlane[] planes = new OMETiffPlane[num];
+        for (int no=0; no<num; no++) planes[no] = new OMETiffPlane();
+
+        int tiffDataCount = meta.getTiffDataCount(i, p);
+        for (int td=0; td<tiffDataCount; td++) {
+          if (debug) debug("    TiffData[" + td + "] {");
+          // extract TiffData parameters
+          String filename = meta.getTiffDataFileName(i, p, td);
+          String uuid = meta.getTiffDataUUID(i, p, td);
+          Integer tdIFD = meta.getTiffDataIFD(i, p, td);
+          int ifd = tdIFD == null ? 0 : tdIFD.intValue();
+          Integer numPlanes = meta.getTiffDataNumPlanes(i, p, td);
+          Integer firstC = meta.getTiffDataFirstC(i, p, td);
+          Integer firstT = meta.getTiffDataFirstT(i, p, td);
+          Integer firstZ = meta.getTiffDataFirstZ(i, p, td);
+          int c = firstC == null ? 0 : firstC.intValue();
+          int t = firstT == null ? 0 : firstT.intValue();
+          int z = firstZ == null ? 0 : firstZ.intValue();
+          int index = FormatTools.getIndex(order,
+            sizeZ, effSizeC, sizeT, num, z, c, t);
+          int count = numPlanes == null ? 1 : numPlanes.intValue();
+
+          // get reader object for this filename
+          if (filename == null) {
+            if (uuid == null) filename = id;
+            else filename = (String) files.get(uuid);
+          }
+          else filename = normalizeFilename(dir, filename);
+          IFormatReader r = (IFormatReader) readers.get(filename);
+          if (r == null) {
+            r = new TiffReader();
+            readers.put(filename, r);
+          }
+
+          // populate plane index -> IFD mapping
+          for (int q=0; q<count; q++) {
+            int no = index + q;
+            planes[no].reader = r;
+            planes[no].id = filename;
+            planes[no].ifd = ifd + q;
+            planes[no].certain = true;
+            if (debug) {
+              debug("      Plane[" + no + "]: file=" +
+                planes[no].id + ", IFD=" + planes[no].ifd);
+            }
+          }
+          if (numPlanes == null) {
+            // unknown number of planes; fill down
+            for (int no=index+1; no<num; no++) {
+              if (planes[no].certain) break;
+              planes[no].reader = r;
+              planes[no].id = filename;
+              planes[no].ifd = planes[no - 1].ifd + 1;
+              if (debug) debug("      Plane[" + no + "]: FILLED");
+            }
+          }
+          else {
+            // known number of planes; clear anything subsequently filled
+            for (int no=index+count; no<num; no++) {
+              if (planes[no].certain) break;
+              planes[no].reader = null;
+              planes[no].id = null;
+              planes[no].ifd = -1;
+              if (debug) debug("      Plane[" + no + "]: CLEARED");
+            }
+          }
+          if (debug) debug("    }");
+        }
+
+        // verify that all planes are available
+        if (debug) debug("    --------------------------------");
+        for (int no=0; no<num; no++) {
+          if (debug) {
+            debug("    Plane[" + no + "]: file=" +
+              planes[no].id + ", IFD=" + planes[no].ifd);
+          }
+          if (planes[no].reader == null) {
+            throw new FormatException("Pixels ID '" +
+              meta.getPixelsID(i, p) + "': missing plane #" + no);
+          }
+        }
+        if (debug) debug("  }");
+
+        // populate core metadata
+        info[s] = planes;
+        try {
+          core.sizeX[s] = meta.getPixelsSizeX(i, p).intValue();
+          core.sizeY[s] = meta.getPixelsSizeY(i, p).intValue();
+          core.sizeZ[s] = meta.getPixelsSizeZ(i, p).intValue();
+          core.sizeC[s] = meta.getPixelsSizeC(i, p).intValue();
+          core.sizeT[s] = meta.getPixelsSizeT(i, p).intValue();
+          core.pixelType[s] = FormatTools.pixelTypeFromString(
+            meta.getPixelsPixelType(i, p));
+          core.imageCount[s] = num;
+          core.currentOrder[s] = meta.getPixelsDimensionOrder(i, p);
+          core.orderCertain[s] = true;
+          int photo = TiffTools.getPhotometricInterpretation(firstIFD);
+          core.rgb[s] = samples > 1 || photo == TiffTools.RGB;
+          core.littleEndian[s] = !meta.getPixelsBigEndian(i, p).booleanValue();
+          core.interleaved[s] = false;
+          core.indexed[s] = photo == TiffTools.RGB_PALETTE &&
+            TiffTools.getIFDValue(firstIFD, TiffTools.COLOR_MAP) != null;
+          if (core.indexed[s]) {
+            core.sizeC[0] = 1;
+            core.rgb[0] = false;
+          }
+          core.falseColor[s] = false;
+          core.metadataComplete[s] = true;
+        }
+        catch (NullPointerException exc) {
+          throw new FormatException("Incomplete Pixels metadata", exc);
+        }
+      }
+      if (debug) debug("}");
+    }
+  }
+
+  // -- Helper methods --
+
+  private IFormatReader getReader(int no) throws FormatException, IOException {
+    FormatTools.checkPlaneNumber(this, no);
+    IFormatReader r = info[series][no].reader;
+    r.setId(info[series][no].id);
+    return r;
+  }
+
+  private String normalizeFilename(String dir, String name) {
+     return new File(dir, name).getAbsolutePath();
+  }
+
+  // -- Helper classes --
+
+  /** Structure containing details on where to find a particular image plane. */
+  private class OMETiffPlane {
+    /** Reader to use for accessing this plane. */
+    public IFormatReader reader;
+    /** File containing this plane. */
+    public String id;
+    /** IFD number of this plane. */
+    public int ifd = -1;
+    /** Certainty flag, for dealing with unspecified NumPlanes. */
+    public boolean certain = false;
   }
 
 }
