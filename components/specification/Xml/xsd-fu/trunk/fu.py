@@ -378,15 +378,17 @@ class OMEModel(object):
 		Process an element (a leaf).
 		"""
 		e = element
+		e_name = e.getName()
+		e_type = e.getType()
 		if not e.isExplicitDefine() \
-		   and (e.name not in EXPLICIT_DEFINE_OVERRIDE or not e.topLevel):
+		   and (e_name not in EXPLICIT_DEFINE_OVERRIDE or not e.topLevel):
 			logging.info("Element %s.%s not an explicit define, skipping." % (parent, e))
 			return
 		if e.getMixedExtensionError():
 			logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, e))
 			return
-		if e.getType() != e.getName():
-		    logging.info("Element %s.%s is not a concrete type, skipping." % (parent, e))
+		if e_type != e_name and e_name not in EXPLICIT_DEFINE_OVERRIDE:
+		    logging.info("Element %s.%s is not a concrete type (%s != %s), skipping." % (parent, e, e_type, e_name))
 		    return
 		obj = OMEModelObject(e, self)
 		self.addObject(e, obj)
