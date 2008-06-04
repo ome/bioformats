@@ -70,7 +70,8 @@ public class ZeissZVIReader extends FormatReader {
   private String firstImageTile, secondImageTile;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
   private String microscopeName;
-  private Vector emWave, exWave, channelNames;
+  private Vector emWave, exWave;
+  private Hashtable channelNames;
   private Vector whiteValue, blackValue, gammaValue, exposureTime, timestamps;
   private String userName, userCompany, mag, na;
   private int nextImage = 0;
@@ -255,7 +256,7 @@ public class ZeissZVIReader extends FormatReader {
 
     emWave = new Vector();
     exWave = new Vector();
-    channelNames = new Vector();
+    channelNames = new Hashtable();
     whiteValue = new Vector();
     blackValue = new Vector();
     gammaValue = new Vector();
@@ -416,18 +417,8 @@ public class ZeissZVIReader extends FormatReader {
     core.sizeZ[0] = zIndices.size();
     core.sizeT[0] = tIndices.size();
 
-    int min = Integer.MAX_VALUE;
-    int max = Integer.MIN_VALUE;
-    for (int i=0; i<cIndices.size(); i++) {
-      int v = ((Integer) cIndices.get(i)).intValue();
-      if (v < min) min = v;
-      if (v > max) max = v;
-    }
-
-    int cSize = max - min + 1;
-    if (cSize > cIndices.size()) cSize = cIndices.size() - 1;
-
-    core.sizeC[0] *= cSize;
+    if (channelNames.size() > 0) core.sizeC[0] *= channelNames.size();
+    else core.sizeC[0] *= cIndices.size();
 
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
       (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
@@ -448,7 +439,6 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       while (tileRows * tileColumns > totalTiles) {
-        //if (core.sizeC[0] > 1) core.sizeC[0]--;
         totalTiles =
           offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
         core.imageCount[0] -= core.sizeZ[0] * core.sizeT[0];
@@ -570,11 +560,9 @@ public class ZeissZVIReader extends FormatReader {
       if (!s[i].trim().equals("")) exWave.add(s[i]);
     }
 
-    s = (String[]) channelNames.toArray(new String[0]);
-    channelNames.clear();
-    for (int i=0; i<s.length; i++) {
-      if (!s[i].trim().equals("")) channelNames.add(s[i]);
-    }
+    String[] channelNumbers =
+      (String[]) channelNames.keySet().toArray(new String[0]);
+    Arrays.sort(channelNumbers);
 
     for (int i=0; i<core.sizeC[0]; i++) {
       int idx = i % getEffectiveSizeC();
@@ -593,8 +581,9 @@ public class ZeissZVIReader extends FormatReader {
       if (ex != null && !ex.trim().equals("")) {
         store.setLogicalChannelExWave(new Integer(ex), 0, idx);
       }
-      if (idx < channelNames.size()) {
-        store.setLogicalChannelName((String) channelNames.get(idx), 0, idx);
+      if (idx < channelNumbers.length) {
+        store.setLogicalChannelName(
+          (String) channelNames.get(channelNumbers[idx]), 0, idx);
       }
 
       String black =
@@ -935,8 +924,7 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (key.startsWith("Channel Name")) {
         if (cIndex != -1) {
-          while (cIndex >= channelNames.size()) channelNames.add("");
-          channelNames.setElementAt(value, cIndex);
+          channelNames.put(String.valueOf(cIndex), value);
         }
       }
       else if (key.startsWith("BlackValue")) {

@@ -445,6 +445,7 @@ public class FluoviewReader extends BaseTiffReader {
     Hashtable ifd = TiffTools.getFirstIFD(stream);
     String com = TiffTools.getComment(ifd);
     if (com == null) com = "";
+    if (ifd == null) return false;
     return com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
       ifd.containsKey(new Integer(MMHEADER)) ||
       ifd.containsKey(new Integer(MMSTAMP));
