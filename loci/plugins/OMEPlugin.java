@@ -85,7 +85,7 @@ public class OMEPlugin implements PlugIn {
   private void getInput() {
     String server = Prefs.get("downloader.server", "");
     String user = Prefs.get("downloader.user", "");
-    String port = Prefs.get("downloader.port", "");
+    String port = Prefs.get("downloader.port", "1099");
     String type = Prefs.get("downloader.type", "OME");
     String pass = null;
     if (arg == null || arg.trim().equals("")) {
