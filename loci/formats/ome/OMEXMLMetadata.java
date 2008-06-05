@@ -27,7 +27,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
@@ -44,6 +44,11 @@ import org.w3c.dom.Element;
 public abstract class OMEXMLMetadata
   implements MetadataStore, MetadataRetrieve
 {
+
+  // -- Constants --
+
+  /** Custom attribute for storing original metadata key/value pairs. */
+  private static final String ORIGINAL_METADATA = "OriginalMetadata";
 
   // -- Fields --
 
@@ -70,7 +75,7 @@ public abstract class OMEXMLMetadata
   public abstract String dumpXML();
 
   /** Adds the key/value pair as a new OriginalMetadata node. */
-  public void populateOriginalMetadata(String key, String value) {
+  public void setOriginalMetadata(String key, String value) {
     if (imageCA == null) {
       Element ome = root.getDOMElement();
       Element image = DOMUtil.getChildElement("Image", ome);
@@ -83,14 +88,13 @@ public abstract class OMEXMLMetadata
         imageCA = DOMUtil.createChild(image, "CustomAttributes", true);
       }
     }
-    final String originalMetadata = "OriginalMetadata";
     if (!omCreated) {
       Element std = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");
       DOMUtil.setAttribute("xmlns",
         "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd", std);
       Element st = DOMUtil.createChild(std, "SemanticType");
-      DOMUtil.setAttribute("Name", originalMetadata, st);
+      DOMUtil.setAttribute("Name", ORIGINAL_METADATA, st);
       DOMUtil.setAttribute("AppliesTo", "I", st);
 
       Element nameElement = DOMUtil.createChild(st, "Element");
@@ -105,10 +109,53 @@ public abstract class OMEXMLMetadata
       DOMUtil.setAttribute("DataType", "string", valueElement);
       omCreated = true;
     }
-    Element om = DOMUtil.createChild(imageCA, originalMetadata);
-    DOMUtil.setAttribute("ID", root.makeID(originalMetadata), om);
+    Element om = DOMUtil.createChild(imageCA, ORIGINAL_METADATA);
+    DOMUtil.setAttribute("ID", root.makeID(ORIGINAL_METADATA), om);
     DOMUtil.setAttribute("Name", key, om);
     DOMUtil.setAttribute("Value", value, om);
+  }
+
+  /** Gets the OriginalMetadata value corresponding to the given key. */
+  public String getOriginalMetadataValue(String key) {
+    if (imageCA == null) {
+      Element ome = root.getDOMElement();
+      Element image = DOMUtil.getChildElement("Image", ome);
+      if (image == null) return null;
+      imageCA = DOMUtil.getChildElement("CustomAttributes", image);
+      if (imageCA == null) return null;
+    }
+    NodeList list = imageCA.getChildNodes();
+    int size = list.getLength();
+    for (int i=0; i<size; i++) {
+      Node node = list.item(i);
+      if (!(node instanceof Element)) continue;
+      String nodeName = node.getNodeName();
+      if (!nodeName.equals(ORIGINAL_METADATA)) {
+        // not an OriginalMetadata element
+        continue;
+      }
+      NamedNodeMap attrs = node.getAttributes();
+      int len = attrs.getLength();
+      String value = null;
+      for (int j=0; j<len; j++) {
+        Attr attr = (Attr) attrs.item(i);
+        if (attr == null) continue;
+        String attrName = attr.getName();
+        if ("Name".equals(attrName)) {
+          String name = attr.getValue();
+          if (!key.equals(name)) {
+            // wrong OriginalMetadata element
+            value = null;
+            break;
+          }
+        }
+        else if ("Value".equals(attrName)) {
+          value = attr.getValue();
+        }
+      }
+      if (value != null) return value;
+    }
+    return null;
   }
 
   // -- MetadataRetrieve API methods --

@@ -256,11 +256,33 @@ public final class MetadataTools {
     r.setVar("key", key);
     r.setVar("value", value);
     try {
-      r.exec("omexmlMeta.populateOriginalMetadata(key, value)");
+      r.exec("omexmlMeta.setOriginalMetadata(key, value)");
     }
     catch (ReflectException exc) {
       if (FormatHandler.debug) LogTools.trace(exc);
     }
+  }
+
+  /**
+   * Gets the value for the specified OriginalMetadata key
+   * from the given OME-XML metadata object.
+   * Does nothing unless the given object is an OME-XML metadata object.
+   * @param omexmlMeta An object of type
+   *   {@link loci.formats.ome.OMEXMLMetadata}.
+   * @param key Metadata key whose value is needed.
+   * @return Metadata value corresponding to the specified key.
+   */
+  public static String getOriginalMetadata(Object omexmlMeta, String key) {
+    ReflectedUniverse r = new ReflectedUniverse();
+    r.setVar("omexmlMeta", omexmlMeta);
+    r.setVar("key", key);
+    try {
+      return (String) r.exec("omexmlMeta.getOriginalMetadata(key)");
+    }
+    catch (ReflectException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
+    }
+    return null;
   }
 
   // -- Utility methods -- metadata conversion --
