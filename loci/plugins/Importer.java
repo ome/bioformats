@@ -722,8 +722,10 @@ public class Importer {
             "hyper_stack=" + options.isViewHyperstack() + " ");
           if (colorize) {
             int[] openImages = WindowManager.getIDList();
-            for (int i=0; i<openImages.length; i++) {
-              ImagePlus p = WindowManager.getImage(openImages[i]);
+            int nOpenImages = WindowManager.getImageCount();
+            for (int i=0; i<nOpenImages; i++) {
+              ImagePlus p =
+                WindowManager.getImage(WindowManager.getNthImageID(1));
               String title = p.getTitle();
               if (title.startsWith(imp.getTitle()) &&
                 title.indexOf("C=") != -1)
