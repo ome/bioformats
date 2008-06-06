@@ -74,7 +74,6 @@ public class ZeissZVIReader extends FormatReader {
   private Hashtable channelNames;
   private Vector whiteValue, blackValue, gammaValue, exposureTime, timestamps;
   private String userName, userCompany, mag, na;
-  private int nextImage = 0;
 
   private int tileWidth, tileHeight;
   private int realWidth, realHeight;
@@ -282,8 +281,16 @@ public class ZeissZVIReader extends FormatReader {
       RandomAccessStream s = poi.getDocumentStream(name);
       s.order(true);
 
-      if (dirName.equals("Tags") && isContents) {
-        try { parseTags(s); }
+      if (name.indexOf("Scaling") == -1 && dirName.equals("Tags") &&
+        isContents)
+      {
+        int imageNum = -1;
+        if (name.toUpperCase().indexOf("ITEM") != -1) {
+          String num = name.substring(name.indexOf("(") + 1);
+          num = num.substring(0, num.indexOf(")"));
+          imageNum = Integer.parseInt(num);
+        }
+        try { parseTags(imageNum, s); }
         catch (EOFException e) { }
       }
       else if (isContents && (dirName.equals("Image") ||
@@ -399,7 +406,7 @@ public class ZeissZVIReader extends FormatReader {
         catch (EOFException exc) { }
       }
       else {
-        try { parseTags(s); }
+        try { parseTags(-1, s); }
         catch (IOException e) { }
       }
     }
@@ -611,30 +618,9 @@ public class ZeissZVIReader extends FormatReader {
 //        gammaVal, null);
     }
 
-    String firstTimestamp = "0.0";
-    long ms = 0;
-    if (timestamps.size() > 0) {
-      firstTimestamp = (String) timestamps.get(0);
-      firstTimestamp = firstTimestamp.trim();
-      int offset = 0;
-      for (int i=0; i<firstTimestamp.length(); i++) {
-        if (!Character.isDigit(firstTimestamp.charAt(i))) {
-          offset = i;
-        }
-        else break;
-      }
-      firstTimestamp = firstTimestamp.substring(offset + 1);
-      if (!firstTimestamp.startsWith("1")) {
-        firstTimestamp = "0" + firstTimestamp;
-      }
-      SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy K:mm:ss a");
-      Date d = parse.parse(firstTimestamp, new ParsePosition(0));
-      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      if (d != null) {
-        store.setImageCreationDate(fmt.format(d), 0);
-        ms = d.getTime();
-      }
-    }
+    long firstStamp = Long.parseLong((String) timestamps.get(0));
+    store.setImageCreationDate(DataTools.convertDate((long) (firstStamp / 1600),
+      DataTools.ZVI), 0);
 
     for (int plane=0; plane<core.imageCount[0]; plane++) {
       int[] zct = FormatTools.getZCTCoords(this, plane);
@@ -649,28 +635,10 @@ public class ZeissZVIReader extends FormatReader {
       store.setPlaneTheT(new Integer(zct[2]), 0, 0, plane);
       store.setPlaneTimingExposureTime(exp, 0, 0, plane);
 
-      String timestamp = "0.0";
-      if (zct[2] < timestamps.size() && zct[2] > 0.0) {
-        timestamp = (String) timestamps.get(zct[2]);
-        timestamp = timestamp.trim();
-        int offset = 0;
-        for (int i=0; i<timestamp.length(); i++) {
-          if (!Character.isDigit(timestamp.charAt(i))) {
-            offset = i;
-          }
-          else break;
-        }
-        timestamp = timestamp.substring(offset + 1);
-        if (!timestamp.startsWith("1")) timestamp = "0" + timestamp;
-        SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy K:mm:ss a");
-        Date d = parse.parse(timestamp, new ParsePosition(0));
-        if (d != null) timestamp = String.valueOf(d.getTime() - ms);
-      }
-      try {
-        store.setPlaneTimingDeltaT(new Float(timestamp), 0, 0, plane);
-      }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
+      if (plane < timestamps.size()) {
+        long stamp = Long.parseLong((String) timestamps.get(plane));
+        stamp -= firstStamp;
+        store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
       }
     }
 
@@ -732,13 +700,12 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /** Parse all of the tags in a stream. */
-  private void parseTags(RandomAccessStream s) throws IOException {
-    s.skipBytes(24);
+  private void parseTags(int image, RandomAccessStream s) throws IOException {
+    s.skipBytes(8);
 
     int count = s.readInt();
 
     // limit count to 4096
-    if (count > 4096) count = 4096;
 
     for (int i=0; i<count; i++) {
       if (s.getFilePointer() + 2 >= s.length()) break;
@@ -847,16 +814,29 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (key.equals("ImageTile Index 1")) secondImageTile = value;
       else if (key.startsWith("Scale Factor for X")) {
-        pixelSizeX = Float.parseFloat(value);
+        try {
+          pixelSizeX = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
       }
       else if (key.startsWith("Scale Factor for Y")) {
-        pixelSizeY = Float.parseFloat(value);
+        try {
+          pixelSizeY = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
       }
       else if (key.startsWith("Scale Factor for Z")) {
-        pixelSizeZ = Float.parseFloat(value);
+        try {
+          pixelSizeZ = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
       }
       else if (key.startsWith("Scale Unit for X")) {
-        int v = Integer.parseInt(value);
+        int v = 0;
+        try {
+          v = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
         switch (v) {
           case 72:
             // meters
@@ -873,7 +853,11 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       else if (key.startsWith("Scale Unit for Y")) {
-        int v = Integer.parseInt(value);
+        int v = 0;
+        try {
+          v = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
         switch (v) {
           case 72:
             // meters
@@ -890,7 +874,11 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       else if (key.startsWith("Scale Unit for Z")) {
-        int v = Integer.parseInt(value);
+        int v = 0;
+        try {
+          v = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
         switch (v) {
           case 72:
             // meters
@@ -957,10 +945,18 @@ public class ZeissZVIReader extends FormatReader {
       else if (key.equals("User company")) userCompany = value;
       else if (key.startsWith("Objective Magnification")) mag = value;
       else if (key.startsWith("Objective N.A.")) na = value;
-      else if (key.equals("Acquisition Date")) {
-        timestamps.add(value);
-        addMeta("Timestamp " + nextImage, value);
-        nextImage++;
+      else if (key.startsWith("Acquisition Date")) {
+        if (image >= 0) {
+          if (image < timestamps.size()) timestamps.setElementAt(value, image);
+          else {
+            int diff = image - timestamps.size();
+            for (int q=0; q<diff; q++) {
+              timestamps.add("");
+            }
+            timestamps.add(value);
+          }
+          addMeta("Timestamp " + image, value);
+        }
       }
     }
   }

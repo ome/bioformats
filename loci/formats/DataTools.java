@@ -48,11 +48,13 @@ public final class DataTools {
   public static final int UNIX = 0;  // January 1, 1970
   public static final int COBOL = 1;  // January 1, 1601
   public static final int MICROSOFT = 2; // December 30, 1899
+  public static final int ZVI = 3;
 
   /** Milliseconds until UNIX epoch. */
   public static final long UNIX_EPOCH = 0;
   public static final long COBOL_EPOCH = 11644444800000L;
   public static final long MICROSOFT_EPOCH = 2272060800000L;
+  public static final long ZVI_EPOCH = 2921084975759000L;
 
   // -- Static fields --
 
@@ -712,6 +714,9 @@ public final class DataTools {
         break;
       case MICROSOFT:
         ms -= MICROSOFT_EPOCH;
+        break;
+      case ZVI:
+        ms -= ZVI_EPOCH;
         break;
     }
 
