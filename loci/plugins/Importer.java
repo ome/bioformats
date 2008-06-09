@@ -151,11 +151,8 @@ public class Importer {
       // -- Step 4a: prompt for the file pattern, if necessary --
 
       if (groupFiles) {
-        try {
-          status = options.promptFilePattern();
-          if (!statusOk(status)) return;
-        }
-        catch (NullPointerException e) { }
+        status = options.promptFilePattern();
+        if (!statusOk(status)) return;
         id = options.getId();
         if (id == null) id = currentFile;
       }

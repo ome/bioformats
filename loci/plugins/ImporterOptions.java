@@ -635,6 +635,23 @@ public class ImporterOptions implements ItemListener {
     if (windowless) return STATUS_OK;
 
     id = FilePattern.findPattern(idLoc);
+    if (id == null) {
+      IJ.showMessage("Bio-Formats",
+        "Warning: Bio-Formats was unable to determine a grouping that\n" +
+        "includes the file you chose. The most common reason for this\n" +
+        "situation is that the folder contains extraneous files with " +
+        "similar\n" +
+        "names and numbers that confuse the detection algorithm.\n" +
+        " \n" +
+        "For example, if you have multiple datasets in the same folder\n" +
+        "named series1_z*_c*.tif, series2_z*_c*.tif, etc., Bio-Formats\n" +
+        "may try to group all such files into a single series.\n" +
+        " \n" +
+        "For best results, put each image series's files in their own " +
+        "folder,\n" +
+        "or type in a file pattern manually.\n");
+      id = idLoc.getAbsolutePath();
+    }
 
     // prompt user to confirm file pattern (or grab from macro options)
     GenericDialog gd = new GenericDialog("Bio-Formats File Stitching");
