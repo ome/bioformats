@@ -94,9 +94,6 @@ public abstract class ImageIOReader extends FormatReader {
     return b.getSubimage(x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws IOException { }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
