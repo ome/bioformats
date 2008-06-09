@@ -520,6 +520,8 @@ public class OpenlabReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
+
+    Arrays.fill(core.seriesMetadata, getMetadata());
   }
 
   // -- Helper methods --

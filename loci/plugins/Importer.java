@@ -352,6 +352,8 @@ public class Importer {
 
       // -- Step 4f: read pixel data --
 
+      if (options.isViewNone()) return;
+
       IJ.showStatus("Reading " + currentFile);
 
       for (int i=0; i<seriesCount; i++) {
