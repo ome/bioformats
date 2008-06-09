@@ -655,7 +655,7 @@ public class FV1000Reader extends FormatReader {
     core.littleEndian[0] = true;
     core.interleaved[0] = false;
     core.metadataComplete[0] = true;
-    core.indexed[0] = lut != null;
+    core.indexed[0] = false;
     core.falseColor[0] = false;
 
     // populate MetadataStore
