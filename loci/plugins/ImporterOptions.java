@@ -427,14 +427,24 @@ public class ImporterOptions implements ItemListener {
       {
         // present user with one-time dialog box
         IJ.showMessage("Bio-Formats",
-          "Please note: There is a bug in Java on Mac OS X with the\n" +
+          "One-time warning: There is a bug in Java on Mac OS X with the\n" +
           "native file chooser that crashes ImageJ if you click on a file\n" +
           "in cxd, ipw, oib or zvi format while in column view mode.\n" +
           "You can work around the problem by switching to list view\n" +
-          "(press Command+2) or by checking the \"Use JFileChooser\n" +
-          "to Open/Save\" option in the Edit>Options>Input/Output...\n" +
-          "dialog. This message will not appear again.");
+          "(press Command+2) or by checking the \"Use JFileChooser to\n" +
+          "Open/Save\" option in the Edit>Options>Input/Output... dialog.");
       }
+    }
+    String ijVersion = IJ.getVersion();
+    if (firstTime && (ijVersion == null || ijVersion.compareTo("1.39u") < 0)) {
+      // present user with one-time dialog box
+      if (ijVersion == null) ijVersion = "unknown";
+      IJ.showMessage("Bio-Formats",
+        "One-time warning: Some features of Bio-Formats, such as the\n" +
+        "Data Browser and some color handling options, require ImageJ\n" +
+        "v1.39u or later. Your version is " + ijVersion +
+        "; you will need to upgrade\n" +
+        "if you wish to take advantage of these features.");
     }
     if (id == null) {
       // prompt user for the filename (or grab from macro options)
