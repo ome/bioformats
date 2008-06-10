@@ -26,11 +26,15 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
+import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CBZip2InputStream;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
@@ -49,6 +53,9 @@ public class OMEXMLReader extends FormatReader {
     "The Java OME-XML library is required to read OME-XML files. Please " +
     "obtain ome-java.jar from http://loci.wisc.edu/ome/formats.html";
 
+  private static final SAXParserFactory SAX_FACTORY =
+    SAXParserFactory.newInstance();
+
   // -- Static fields --
 
   private static boolean noOME = false;
@@ -65,14 +72,12 @@ public class OMEXMLReader extends FormatReader {
 
   // -- Fields --
 
-  /** Number of bits per pixel. */
-  protected int[] bpp;
+  // compression value and offset for each BinData element
+  private Vector binDataOffsets;
+  private Vector binDataLengths;
+  private Vector compression;
 
-  /** Offset to each plane's data. */
-  protected Vector[] offsets;
-
-  /** String indicating the compression type. */
-  protected String[] compression;
+  private String omexml;
 
   // -- Constructor --
 
@@ -97,56 +102,83 @@ public class OMEXMLReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    long offset = ((Long) offsets[series].get(no)).longValue();
-
-    in.seek(offset);
-
-    int len = 0;
-    if (no < getImageCount() - 1) {
-      len = (int) (((Long) offsets[series].get(no + 1)).longValue() - offset);
+    int index = no;
+    for (int i=0; i<series; i++) {
+      index += core.imageCount[series];
     }
-    else {
-      len = (int) (in.length() - offset);
+
+    long offset = ((Long) binDataOffsets.get(index)).longValue();
+    long length = ((Long) binDataLengths.get(index)).longValue();
+    String compress = (String) compression.get(index);
+
+    in.seek(offset - 64);
+
+    // offset is approximate, we will need to skip a few bytes
+    boolean foundBinData = false;
+    byte[] check = new byte[8192];
+    int overlap = 14;
+    int n = in.read(check, 0, overlap);
+
+    while (!foundBinData) {
+      n += in.read(check, overlap, check.length - overlap);
+      String checkString = new String(check);
+      if (checkString.indexOf("<Bin") != -1) {
+        int idx = checkString.indexOf("<Bin") + 4;
+        foundBinData = true;
+        in.seek(in.getFilePointer() - n + idx);
+        while (in.read() != '>');
+      }
+      else {
+        System.arraycopy(check, check.length - overlap, check, 0, overlap);
+        n = overlap;
+      }
     }
-    String data = in.readString(len);
+
+    if (length < 0 && index + 1 < binDataOffsets.size()) {
+      length = ((Long) binDataOffsets.get(index + 1)).longValue() - offset;
+    }
+    else if (length < 0) {
+      length = in.length() - offset;
+    }
+
+    String data = in.readString((int) length * 2);
 
     // retrieve the compressed pixel data
 
-    int dataStart = data.indexOf(">") + 1;
-    String pix = data.substring(dataStart);
-    if (pix.indexOf("<") > 0) {
-      pix = pix.substring(0, pix.indexOf("<"));
-    }
-    data = null;
+    int dataEnd = data.indexOf("<");
+    if (dataEnd != -1) data = data.substring(0, dataEnd);
 
     Base64Codec e = new Base64Codec();
-    byte[] pixels = e.base64Decode(pix);
-    pix = null;
+    byte[] pixels = e.base64Decode(data);
+    data = null;
 
-    if (compression[series].equals("bzip2")) {
+    int planeSize =
+      getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
+
+    if (compress.equals("bzip2")) {
       byte[] tempPixels = pixels;
       pixels = new byte[tempPixels.length - 2];
       System.arraycopy(tempPixels, 2, pixels, 0, pixels.length);
 
       ByteArrayInputStream bais = new ByteArrayInputStream(pixels);
       CBZip2InputStream bzip = new CBZip2InputStream(bais);
-      pixels = new byte[core.sizeX[series]*core.sizeY[series]*bpp[series]];
+      pixels = new byte[planeSize];
       bzip.read(pixels, 0, pixels.length);
       tempPixels = null;
       bais.close();
       bais = null;
       bzip = null;
     }
-    else if (compression[series].equals("zlib")) {
+    else if (compress.equals("zlib")) {
       try {
         Inflater decompressor = new Inflater();
         decompressor.setInput(pixels, 0, pixels.length);
-        pixels = new byte[core.sizeX[series]*core.sizeY[series]*bpp[series]];
+        pixels = new byte[planeSize];
         decompressor.inflate(pixels);
         decompressor.end();
       }
       catch (DataFormatException dfe) {
-        throw new FormatException("Error uncompressing zlib data.");
+        throw new FormatException("Error uncompressing zlib data.", dfe);
       }
     }
 
@@ -156,6 +188,8 @@ public class OMEXMLReader extends FormatReader {
       System.arraycopy(pixels, off, buf, row * w * depth, w * depth);
     }
 
+    pixels = null;
+
     return buf;
   }
 
@@ -164,9 +198,9 @@ public class OMEXMLReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    bpp = null;
-    offsets = null;
     compression = null;
+    binDataOffsets = null;
+    binDataLengths = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -179,151 +213,42 @@ public class OMEXMLReader extends FormatReader {
 
     in = new RandomAccessStream(id);
 
-    in.seek(0);
-    String s = in.readString((int) in.length());
-    in.seek(200);
+    binDataOffsets = new Vector();
+    binDataLengths = new Vector();
+    compression = new Vector();
 
-    MetadataRetrieve omexmlMeta = (MetadataRetrieve)
-      MetadataTools.createOMEXMLMetadata(s);
-
-    status("Determining endianness");
-
-    int numDatasets = 0;
-    Vector endianness = new Vector();
-    Vector bigEndianPos = new Vector();
-
-    byte[] buf = new byte[8192];
-    in.read(buf, 0, 9);
-
-    while (in.getFilePointer() < in.length()) {
-      // read a block of 8192 characters, looking for the "BigEndian" pattern
-      boolean found = false;
-      while (!found) {
-        if (in.getFilePointer() < in.length()) {
-          int read = in.read(buf, 9, buf.length - 9);
-          String test = new String(buf);
-
-          int ndx = test.indexOf("BigEndian");
-          if (ndx != -1) {
-            found = true;
-            String endian = test.substring(ndx + 11).trim();
-            if (endian.startsWith("\"")) endian = endian.substring(1);
-            endianness.add(new Boolean(!endian.toLowerCase().startsWith("t")));
-            bigEndianPos.add(new Long(in.getFilePointer() - read - 9 + ndx));
-            numDatasets++;
-          }
-        }
-        else if (numDatasets == 0) {
-          throw new FormatException("Pixel data not found.");
-        }
-        else found = true;
-        System.arraycopy(buf, buf.length - 9, buf, 0, 9);
-      }
+    OMEXMLHandler handler = new OMEXMLHandler();
+    try {
+      SAXParser saxParser = SAX_FACTORY.newSAXParser();
+      saxParser.parse(in, handler);
     }
-
-    offsets = new Vector[numDatasets];
-
-    for (int i=0; i<numDatasets; i++) {
-      offsets[i] = new Vector();
+    catch (ParserConfigurationException exc) {
+      throw new FormatException(exc);
     }
-
-    status("Finding image offsets");
-
-    // look for the first BinData element in each series
-
-    for (int i=0; i<numDatasets; i++) {
-      in.seek(((Long) bigEndianPos.get(i)).longValue());
-      boolean found = false;
-      in.read(buf, 0, 14);
-
-      while (!found) {
-        if (in.getFilePointer() < in.length()) {
-          int numRead = in.read(buf, 14, buf.length - 14);
-
-          String test = new String(buf);
-
-          int ndx = test.indexOf("<Bin");
-          if (ndx == -1) {
-            System.arraycopy(buf, buf.length - 14, buf, 0, 14);
-          }
-          else {
-            while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")) &&
-              (ndx != test.indexOf("<Bin:BinaryFile"))))
-            {
-              ndx = test.indexOf("<Bin", ndx + 1);
-            }
-            found = true;
-            numRead += 14;
-            offsets[i].add(new Long(in.getFilePointer() - (numRead - ndx)));
-          }
-          test = null;
-        }
-        else {
-          throw new FormatException("Pixel data not found");
-        }
-      }
+    catch (SAXException exc) {
+      throw new FormatException(exc);
     }
-
-    in.seek(0);
-
-    for (int i=0; i<numDatasets; i++) {
-      if (i == 0) {
-        buf = new byte[((Long) offsets[i].get(0)).intValue()];
-      }
-      else {
-        // look for the next Image element
-
-        boolean found = false;
-        buf = new byte[8192];
-        in.read(buf, 0, 14);
-        while (!found) {
-          if (in.getFilePointer() < in.length()) {
-            in.read(buf, 14, buf.length - 14);
-
-            String test = new String(buf);
-
-            int ndx = test.indexOf("<Image ");
-            if (ndx == -1) {
-              System.arraycopy(buf, buf.length - 14, buf, 0, 14);
-            }
-            else {
-              found = true;
-              in.seek(in.getFilePointer() - 8192 + ndx);
-            }
-            test = null;
-          }
-          else {
-            throw new FormatException("Pixel data not found");
-          }
-        }
-
-        int bufSize = (int) (((Long) offsets[i].get(0)).longValue() -
-          in.getFilePointer());
-        buf = new byte[bufSize];
-      }
-      in.read(buf);
-    }
-    buf = null;
 
     status("Populating metadata");
 
-    core = new CoreMetadata(numDatasets);
+    MetadataRetrieve omexmlMeta = (MetadataRetrieve)
+      MetadataTools.createOMEXMLMetadata(omexml);
 
-    bpp = new int[numDatasets];
-    compression = new String[numDatasets];
+    int numDatasets = omexmlMeta.getImageCount();
+
+    core = new CoreMetadata(numDatasets);
 
     int oldSeries = getSeries();
 
     for (int i=0; i<numDatasets; i++) {
       setSeries(i);
 
-      core.littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
-
       Integer w = omexmlMeta.getPixelsSizeX(i, 0);
       Integer h = omexmlMeta.getPixelsSizeY(i, 0);
       Integer t = omexmlMeta.getPixelsSizeT(i, 0);
       Integer z = omexmlMeta.getPixelsSizeZ(i, 0);
       Integer c = omexmlMeta.getPixelsSizeC(i, 0);
+      Boolean endian = omexmlMeta.getPixelsBigEndian(i, 0);
       String pixType = omexmlMeta.getPixelsPixelType(i, 0);
       core.currentOrder[i] = omexmlMeta.getPixelsDimensionOrder(i, 0);
       core.sizeX[i] = w.intValue();
@@ -331,6 +256,8 @@ public class OMEXMLReader extends FormatReader {
       core.sizeT[i] = t.intValue();
       core.sizeZ[i] = z.intValue();
       core.sizeC[i] = c.intValue();
+      core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
+      core.littleEndian[i] = endian == null ? false : !endian.booleanValue();
       core.rgb[i] = false;
       core.interleaved[i] = false;
       core.indexed[i] = false;
@@ -339,51 +266,17 @@ public class OMEXMLReader extends FormatReader {
       String type = pixType.toLowerCase();
       boolean signed = type.charAt(0) != 'u';
       if (type.endsWith("16")) {
-        bpp[i] = 2;
         core.pixelType[i] = signed ? FormatTools.INT16 : FormatTools.UINT16;
       }
       else if (type.endsWith("32")) {
-        bpp[i] = 4;
         core.pixelType[i] = signed ? FormatTools.INT32 : FormatTools.UINT32;
       }
       else if (type.equals("float")) {
-        bpp[i] = 4;
         core.pixelType[i] = FormatTools.FLOAT;
       }
       else {
-        bpp[i] = 1;
         core.pixelType[i] = signed ? FormatTools.INT8 : FormatTools.UINT8;
       }
-
-      // calculate the number of raw bytes of pixel data that we are expecting
-      int expected = core.sizeX[i] * core.sizeY[i] * bpp[i];
-
-      // find the compression type and adjust 'expected' accordingly
-      in.seek(((Long) offsets[i].get(0)).longValue());
-      String data = in.readString(256);
-
-      int compressionStart = data.indexOf("Compression") + 13;
-      int compressionEnd = data.indexOf("\"", compressionStart);
-      if (compressionStart != -1 && compressionEnd != -1) {
-        compression[i] = data.substring(compressionStart, compressionEnd);
-      }
-      else compression[i] = "none";
-
-      expected /= 2;
-
-      in.seek(((Long) offsets[i].get(0)).longValue());
-
-      int planes = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
-
-      searchForData(expected, planes);
-      core.imageCount[i] = offsets[i].size();
-      if (core.imageCount[i] < planes) {
-        // hope this doesn't happen too often
-        in.seek(((Long) offsets[i].get(0)).longValue());
-        searchForData(0, planes);
-        core.imageCount[i] = offsets[i].size();
-      }
-      buf = null;
     }
     setSeries(oldSeries);
     Arrays.fill(core.orderCertain, true);
@@ -395,51 +288,90 @@ public class OMEXMLReader extends FormatReader {
     MetadataTools.convertMetadata(omexmlMeta, store);
   }
 
-  // -- Helper methods --
+  // -- Helper class --
 
-  /** Searches for BinData elements, skipping 'safe' bytes in between. */
-  private void searchForData(int safe, int numPlanes) throws IOException {
-    int iteration = 0;
-    boolean found = false;
-    if (offsets[series].size() > 1) {
-      Object zeroth = offsets[series].get(0);
-      offsets[series].clear();
-      offsets[series].add(zeroth);
+  class OMEXMLHandler extends DefaultHandler {
+    private StringBuffer xmlBuffer;
+    private long nextBinDataOffset;
+    private String currentQName;
+    private boolean hadCharData;
+    private int binDataChars;
+
+    public OMEXMLHandler() {
+      xmlBuffer = new StringBuffer();
+      nextBinDataOffset = 0;
     }
 
-    in.skipBytes(1);
-    while (((in.getFilePointer() + safe) < in.length()) &&
-      (offsets[series].size() < numPlanes))
-    {
-      in.skipBytes(safe);
-
-      // look for next BinData element
-      found = false;
-      byte[] buf = new byte[8192];
-      while (!found) {
-        if (in.getFilePointer() < in.length()) {
-          int numRead = in.read(buf, 20, buf.length - 20);
-          String test = new String(buf);
-
-          // datasets with small planes could have multiple sets of pixel data
-          // in this block
-          int ndx = test.indexOf("<Bin");
-          while (ndx != -1) {
-            found = true;
-            if (numRead == buf.length - 20) numRead = buf.length;
-            offsets[series].add(new Long(in.getFilePointer() - numRead + ndx));
-            ndx = test.indexOf("<Bin", ndx+1);
-          }
-          test = null;
-        }
-        else {
-          found = true;
-        }
+    public void characters(char[] ch, int start, int length) {
+      if (currentQName.indexOf("BinData") != -1) {
+        binDataChars += length;
       }
-      buf = null;
-
-      iteration++;
+      nextBinDataOffset += length;
+      hadCharData = true;
     }
+
+    public void endElement(String uri, String localName, String qName) {
+      if (qName.indexOf("BinData") == -1) {
+        xmlBuffer.append("</");
+        xmlBuffer.append(qName);
+        xmlBuffer.append(">");
+      }
+      else {
+        binDataOffsets.add(new Long(nextBinDataOffset - binDataChars));
+      }
+
+      nextBinDataOffset += 2;
+      if (!qName.equals(currentQName) || hadCharData) {
+        nextBinDataOffset += qName.length();
+      }
+    }
+
+    public void ignorableWhitespace(char[] ch, int start, int length) {
+      nextBinDataOffset += length;
+    }
+
+    public void startElement(String ur, String localName, String qName,
+      Attributes attributes)
+    {
+      hadCharData = false;
+      currentQName = qName;
+
+      if (qName.indexOf("BinData") == -1) {
+        xmlBuffer.append("<");
+        xmlBuffer.append(qName);
+        for (int i=0; i<attributes.getLength(); i++) {
+          String key = attributes.getQName(i);
+          String value = attributes.getValue(i);
+          xmlBuffer.append(" ");
+          xmlBuffer.append(key);
+          xmlBuffer.append("=\"");
+          xmlBuffer.append(value);
+          xmlBuffer.append("\"");
+        }
+        xmlBuffer.append(">");
+      }
+      else {
+        String length = attributes.getValue("Length");
+        if (length == null) {
+          binDataLengths.add(new Long(-1));
+        }
+        else binDataLengths.add(new Long(length));
+        String compress = attributes.getValue("Compression");
+        compression.add(compress == null ? "" : compress);
+        binDataChars = 0;
+      }
+
+      nextBinDataOffset += 2 + qName.length() + 4*attributes.getLength();
+      for (int i=0; i<attributes.getLength(); i++) {
+        nextBinDataOffset += attributes.getQName(i).length();
+        nextBinDataOffset += attributes.getValue(i).length();
+      }
+    }
+
+    public void endDocument() {
+      omexml = xmlBuffer.toString();
+    }
+
   }
 
 }
