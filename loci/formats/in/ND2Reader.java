@@ -128,9 +128,10 @@ public class ND2Reader extends FormatReader {
 
     if (isJPEG) {
       in.seek(offsets[series][no]);
-      buf = new JPEG2000Codec().decompress(in, new Boolean[] {
+      byte[] tmp = new JPEG2000Codec().decompress(in, new Boolean[] {
         new Boolean(core.littleEndian[series]),
         new Boolean(core.interleaved[series])});
+      System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
     }
     else if (isLossless) {
       // plane is compressed using ZLIB
