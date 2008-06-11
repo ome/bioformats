@@ -118,6 +118,7 @@ public class OpenlabReader extends FormatReader {
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     in.seek(planes[planeOffsets[series][no]].planeOffset);
     long first = planes[planeOffsets[series][no]].planeOffset;
@@ -175,11 +176,11 @@ public class OpenlabReader extends FormatReader {
       try {
         Location.mapFile("OPENLAB_PICT", new RABytes(b));
         pict.setId("OPENLAB_PICT");
-        buf = pict.openBytes(0, x, y, w, h);
-        pict.close();
+        pict.openBytes(0, buf, x, y, w, h);
       }
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
+      pict.close();
 
       if (exc != null) {
         if (debug) LogTools.trace(exc);
@@ -321,7 +322,9 @@ public class OpenlabReader extends FormatReader {
         in.skipBytes(24);
         planes[imagesFound].volumeType = in.readShort();
         in.skipBytes(16);
-        planes[imagesFound].planeName = in.readString(128).trim();
+        long pointer = in.getFilePointer();
+        planes[imagesFound].planeName = in.readCString().trim();
+        in.skipBytes((int) (128 - in.getFilePointer() + pointer));
         addMeta("Plane " + imagesFound + " Name",
           planes[imagesFound].planeName);
 

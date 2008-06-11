@@ -618,9 +618,16 @@ public class ZeissZVIReader extends FormatReader {
 //        gammaVal, null);
     }
 
-    long firstStamp = Long.parseLong((String) timestamps.get(0));
-    store.setImageCreationDate(DataTools.convertDate((long) (firstStamp / 1600),
-      DataTools.ZVI), 0);
+    long firstStamp = 0;
+    if (timestamps.size() > 0) {
+      firstStamp = Long.parseLong((String) timestamps.get(0));
+      store.setImageCreationDate(DataTools.convertDate(
+        (long) (firstStamp / 1600), DataTools.ZVI), 0);
+    }
+    else {
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    }
 
     for (int plane=0; plane<core.imageCount[0]; plane++) {
       int[] zct = FormatTools.getZCTCoords(this, plane);
