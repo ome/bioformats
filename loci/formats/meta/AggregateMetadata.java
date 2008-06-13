@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on May 23, 2008 4:44:30 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 12, 2008 10:39:37 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -839,6 +839,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getImageID(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getImageInstrumentRef(int) */
+  public Integer getImageInstrumentRef(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getImageInstrumentRef(imageIndex);
         if (result != null) return result;
       }
     }
@@ -2827,6 +2840,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setImageID(id, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setImageInstrumentRef(Integer, int) */
+  public void setImageInstrumentRef(Integer instrumentRef, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setImageInstrumentRef(instrumentRef, imageIndex);
       }
     }
   }

@@ -52,6 +52,10 @@ description = the creation date of the image
 type = String
 description = the full description of the image
 
+[Image InstrumentRef]
+type = Integer
+description = TODO
+
 ## Pixels ##
 
 [Pixels]

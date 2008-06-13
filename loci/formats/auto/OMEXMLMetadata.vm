@@ -108,7 +108,19 @@ public class $q.className() extends OMEXMLMetadata {
     return null;
 #else
     ${last}Node $lastVar = get${last}Node($q.varsList(), false);
+  #if ($prop.endsWith("Ref"))
+    #set ($refName = $prop.replaceAll('Ref', ''))
+    ${refName}Node node = ${lastVar}.get${refName}();
+    OMENode ome = (OMENode) root;
+    List list = ome.get${refName}List();
+    for (int i=0; i<list.size(); i++) {
+      Object o = list.get(i);
+      if (o.equals(node)) return new Integer(i);
+    }
+    return null;
+  #else  
     return $lastVar == null ? null : $q.getter($lastVar);
+  #end
 #end##if "-"
   }
 #end##foreach $prop
@@ -155,7 +167,14 @@ public class $q.className() extends OMEXMLMetadata {
 #else
     if ($varName == null) return;
     ${last}Node ${lastVar}Node = get${last}Node($q.varsList(), true);
+  #if ($prop.endsWith("Ref"))
+    #set ($refName = $prop.replaceAll('Ref', ''))
+    ${refName}Node node = get${refName}Node(${varName}.intValue(), true);
+    ${prop}Node ref = new ${prop}Node(${lastVar}Node);
+    ref.set${refName}Node(node);
+  #else   
     $q.setter("${lastVar}Node", $varName);
+  #end 
 #end##if "-"
   }
 #end##foreach $prop

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on May 30, 2008 10:37:42 AM CDT
+ * Created by melissa via MetadataAutogen on Jun 12, 2008 10:39:37 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,6 +79,8 @@ public final class MetadataConverter {
       if (imageDescriptionValue != null) dest.setImageDescription(imageDescriptionValue, imageIndex);
       String imageIDValue = src.getImageID(imageIndex);
       if (imageIDValue != null) dest.setImageID(imageIDValue, imageIndex);
+      Integer imageInstrumentRefValue = src.getImageInstrumentRef(imageIndex);
+      if (imageInstrumentRefValue != null) dest.setImageInstrumentRef(imageInstrumentRefValue, imageIndex);
       String imageNameValue = src.getImageName(imageIndex);
       if (imageNameValue != null) dest.setImageName(imageNameValue, imageIndex);
       String displayOptionsIDValue = src.getDisplayOptionsID(imageIndex);
