@@ -229,6 +229,10 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException(exc);
     }
 
+    if (binDataOffsets.size() == 0) {
+      throw new FormatException("Pixel data not found");
+    }
+
     status("Populating metadata");
 
     MetadataRetrieve omexmlMeta = (MetadataRetrieve)
@@ -248,6 +252,9 @@ public class OMEXMLReader extends FormatReader {
       Integer t = omexmlMeta.getPixelsSizeT(i, 0);
       Integer z = omexmlMeta.getPixelsSizeZ(i, 0);
       Integer c = omexmlMeta.getPixelsSizeC(i, 0);
+      if (w == null || h == null || t == null || z == null | c == null) {
+        throw new FormatException("Image dimensions not found");
+      }
       Boolean endian = omexmlMeta.getPixelsBigEndian(i, 0);
       String pixType = omexmlMeta.getPixelsPixelType(i, 0);
       core.currentOrder[i] = omexmlMeta.getPixelsDimensionOrder(i, 0);
