@@ -53,7 +53,7 @@ type = String
 description = the full description of the image
 
 [Image InstrumentRef]
-type = Integer
+type = String 
 description = TODO
 
 ## Pixels ##

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 12, 2008 10:39:37 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -349,7 +349,7 @@ public interface MetadataRetrieve {
    * For a particular Image, gets TODO.
    * @param imageIndex index of the Image
    */
-  Integer getImageInstrumentRef(int imageIndex);
+  String getImageInstrumentRef(int imageIndex);
 
   /**
    * For a particular Image, gets the full name of the image.

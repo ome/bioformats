@@ -24,13 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 12, 2008 10:39:37 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
+import ome.xml.OMEXMLNode;
 import ome.xml.r200706.ome.*;
 import ome.xml.r200706.spw.*;
 import java.util.List;
@@ -465,16 +466,11 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     }
 
   /* @see loci.formats.meta.MetadataRetrieve#getImageInstrumentRef(int) */
-  public Integer getImageInstrumentRef(int imageIndex) {
+  public String getImageInstrumentRef(int imageIndex) {
     ImageNode image = getImageNode(imageIndex, false);
       InstrumentNode node = image.getInstrument();
-    OMENode ome = (OMENode) root;
-    List list = ome.getInstrumentList();
-    for (int i=0; i<list.size(); i++) {
-      Object o = list.get(i);
-      if (o.equals(node)) return new Integer(i);
-    }
-    return null;
+    if (node == null) return null;
+    return node.getNodeID();
     }
 
   /* @see loci.formats.meta.MetadataRetrieve#getImageName(int) */
@@ -1503,11 +1499,21 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       imageNode.setNodeID(id);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setImageInstrumentRef(Integer, int) */
-  public void setImageInstrumentRef(Integer instrumentRef, int imageIndex) {
+  /* @see loci.formats.meta.MetadataStore#setImageInstrumentRef(String, int) */
+  public void setImageInstrumentRef(String instrumentRef, int imageIndex) {
     if (instrumentRef == null) return;
     ImageNode imageNode = getImageNode(imageIndex, true);
-      InstrumentNode node = getInstrumentNode(instrumentRef.intValue(), true);
+      OMENode ome = (OMENode) root;
+    List list = ome.getInstrumentList();
+    InstrumentNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(instrumentRef)) node = (InstrumentNode) o;
+    }
+    if (node == null) {
+      node = new InstrumentNode(ome);
+      node.setNodeID(instrumentRef);
+    }
     InstrumentRefNode ref = new InstrumentRefNode(imageNode);
     ref.setInstrumentNode(node);
     }

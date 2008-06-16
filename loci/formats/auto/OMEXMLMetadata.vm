@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
+import ome.xml.OMEXMLNode;
 import ${q.basePackage()}.ome.*;
 #if ($q.spwImport())
 import ${q.basePackage()}.spw.*;
@@ -111,13 +112,8 @@ public class $q.className() extends OMEXMLMetadata {
   #if ($prop.endsWith("Ref"))
     #set ($refName = $prop.replaceAll('Ref', ''))
     ${refName}Node node = ${lastVar}.get${refName}();
-    OMENode ome = (OMENode) root;
-    List list = ome.get${refName}List();
-    for (int i=0; i<list.size(); i++) {
-      Object o = list.get(i);
-      if (o.equals(node)) return new Integer(i);
-    }
-    return null;
+    if (node == null) return null;
+    return node.getNodeID();
   #else  
     return $lastVar == null ? null : $q.getter($lastVar);
   #end
@@ -169,7 +165,17 @@ public class $q.className() extends OMEXMLMetadata {
     ${last}Node ${lastVar}Node = get${last}Node($q.varsList(), true);
   #if ($prop.endsWith("Ref"))
     #set ($refName = $prop.replaceAll('Ref', ''))
-    ${refName}Node node = get${refName}Node(${varName}.intValue(), true);
+    OMENode ome = (OMENode) root;
+    List list = ome.get${refName}List();
+    ${refName}Node node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals($varName)) node = (${refName}Node) o;
+    }
+    if (node == null) {
+      node = new ${refName}Node(ome);
+      node.setNodeID($varName);
+    }
     ${prop}Node ref = new ${prop}Node(${lastVar}Node);
     ref.set${refName}Node(node);
   #else   
