@@ -341,6 +341,7 @@ public class ICSReader extends FormatReader {
 
     core.rgb[0] = layoutOrder.indexOf("ch") >= 0 &&
       layoutOrder.indexOf("ch") < layoutOrder.indexOf("x");
+    core.currentOrder[0] = "XY";
 
     // find axis sizes
 
@@ -360,14 +361,27 @@ public class ICSReader extends FormatReader {
       }
       else if (orderToken.equals("z")) {
         core.sizeZ[0] = Integer.parseInt(imageToken);
+        core.currentOrder[0] += "Z";
       }
       else if (orderToken.equals("ch")) {
         core.sizeC[0] = Integer.parseInt(imageToken);
         if (core.sizeC[0] > 4) core.rgb[0] = false;
+        core.currentOrder[0] += "C";
       }
       else {
         core.sizeT[0] = Integer.parseInt(imageToken);
+        core.currentOrder[0] += "T";
       }
+    }
+
+    if (core.currentOrder[0].indexOf("Z") == -1) {
+      core.currentOrder[0] += "Z";
+    }
+    if (core.currentOrder[0].indexOf("T") == -1) {
+      core.currentOrder[0] += "T";
+    }
+    if (core.currentOrder[0].indexOf("C") == -1) {
+      core.currentOrder[0] += "C";
     }
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
@@ -442,20 +456,6 @@ public class ICSReader extends FormatReader {
 
     // populate Pixels element
 
-    String o = layoutOrder;
-    o = o.trim();
-    o = o.substring(o.indexOf("x")).trim();
-    char[] tempOrder = new char[(o.length() / 2) + 1];
-    int pt = 0;
-    for (int i=0; i<o.length(); i+=2) {
-      tempOrder[pt] = o.charAt(i);
-      pt++;
-    }
-    o = new String(tempOrder).toUpperCase().trim();
-    if (o.indexOf("Z") == -1) o = o + "Z";
-    if (o.indexOf("T") == -1) o = o + "T";
-    if (o.indexOf("C") == -1) o = o + "C";
-
     String fmt = rFormat;
 
     if (bitsPerPixel < 32) core.littleEndian[0] = !core.littleEndian[0];
@@ -481,12 +481,10 @@ public class ICSReader extends FormatReader {
       throw new RuntimeException("Unknown pixel format: " + format);
     }
 
-    core.currentOrder[0] = o.trim();
-
     MetadataTools.populatePixels(store, this);
 
     String pixelSizes = scale;
-    o = layoutOrder;
+    String o = layoutOrder;
     if (pixelSizes != null) {
       StringTokenizer pixelSizeTokens = new StringTokenizer(pixelSizes);
       StringTokenizer axisTokens = new StringTokenizer(o);
