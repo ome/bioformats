@@ -29,7 +29,7 @@ import java.util.*;
 import loci.formats.*;
 import loci.formats.ome.OMEXML2003FCMetadata;
 import ome.xml.DOMUtil;
-import org.openmicroscopy.xml.OMENode;
+import ome.xml.r2003fc.ome.OMENode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -201,19 +201,7 @@ public class OmeisImporter {
 
     // get DOM and Pixels elements for the file's OME-XML metadata
     OMENode ome = (OMENode) omexmlMeta.getRoot();
-    Document omeDoc = null;
-    try {
-      omeDoc = ome.getOMEDocument(false);
-    }
-    catch (javax.xml.transform.TransformerException exc) {
-      throw new FormatException(exc);
-    }
-    catch (org.xml.sax.SAXException exc) {
-      throw new FormatException(exc);
-    }
-    catch (javax.xml.parsers.ParserConfigurationException exc) {
-      throw new FormatException(exc);
-    }
+    Document omeDoc = ome.getDOMElement().getOwnerDocument();
     Vector pix = DOMUtil.findElementList("Pixels", omeDoc);
     if (pix.size() != seriesCount) {
       throw new FormatException("Pixels element count (" +
@@ -342,6 +330,10 @@ public class OmeisImporter {
       pixels.setAttribute("FileSHA1", sha1);
       pixels.setAttribute("ImageServerID", "" + pixelsId);
       pixels.setAttribute("DimensionOrder", "XYZCT"); // ignored anyway
+      String pType = pixels.getAttribute("PixelType");
+      if (pType.startsWith("u")) {
+        pixels.setAttribute("PixelType", pType.replace('u', 'U'));
+      }
       if (DEBUG) log("Pixel attributes injected.");
     }
 
@@ -416,6 +408,7 @@ public class OmeisImporter {
     int bytesPerPixel, boolean isSigned, boolean isFloat) throws OmeisException
   {
     // ./omeis Method=NewPixels Dims=sx,sy,sz,sc,st,Bpp IsSigned=0 IsFloat=0
+
     String[] s;
     try {
       s = omeis("NewPixels", "Dims=" + sizeX + "," + sizeY + "," +
