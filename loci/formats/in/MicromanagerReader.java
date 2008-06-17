@@ -64,10 +64,13 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (name.endsWith(METADATA)) return true;
+    if (name.equals(METADATA) || name.endsWith(File.separator + METADATA)) {
+      return true;
+    }
     if (!open) return false; // not allowed to touch the file system
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    return new Location(parent, METADATA).exists();
+    Location metaFile = new Location(parent, METADATA);
+    return metaFile.exists() && metaFile.length() > 0;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
