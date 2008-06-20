@@ -48,6 +48,8 @@ public class FV1000Reader extends FormatReader {
   public static final String[] OIF_SUFFIX = {"oif"};
   public static final String[] FV1000_SUFFIXES = {"oib", "oif"};
 
+  private static final int NUM_DIMENSIONS = 9;
+
   // -- Fields --
 
   /** Names of every TIFF file to open. */
@@ -68,7 +70,7 @@ public class FV1000Reader extends FormatReader {
   /** File mappings for OIB file. */
   private Hashtable oibMapping;
 
-  private String[] code, size;
+  private String[] code, size, pixelSize;
   private int imageDepth;
   private Vector previewNames;
 
@@ -315,8 +317,9 @@ public class FV1000Reader extends FormatReader {
     String s = oif.readString((int) oif.length());
     oif.close();
 
-    code = new String[9];
-    size = new String[9];
+    code = new String[NUM_DIMENSIONS];
+    size = new String[NUM_DIMENSIONS];
+    pixelSize = new String[NUM_DIMENSIONS];
 
     StringTokenizer st = new StringTokenizer(s, "\r\n");
 
@@ -408,7 +411,8 @@ public class FV1000Reader extends FormatReader {
             Integer.parseInt(prefix.substring(6, prefix.indexOf("P")).trim());
           if (key.equals("AxisCode")) code[ndx] = value;
           else if (key.equals("MaxSize")) size[ndx] = value;
-        }
+	  else if (key.equals("Interval")) pixelSize[ndx] = value;
+	}
         else if ((prefix + key).equals(
           "[Reference Image Parameter] - ImageDepth"))
         {
@@ -567,16 +571,27 @@ public class FV1000Reader extends FormatReader {
 
     status("Populating metadata");
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     // calculate axis sizes
 
     int realChannels = 0;
     for (int i=0; i<9; i++) {
       int ss = Integer.parseInt(size[i]);
+      if (pixelSize[i] == null) pixelSize[i] = "1.0";
+      Float pixel = new Float(pixelSize[i]);
       code[i] = code[i].substring(1, code[i].length() - 1);
       if (code[i].equals("X")) core.sizeX[0] = ss;
       else if (code[i].equals("Y")) core.sizeY[0] = ss;
-      else if (code[i].equals("Z")) core.sizeZ[0] = ss;
-      else if (code[i].equals("T")) core.sizeT[0] = ss;
+      else if (code[i].equals("Z")) {
+        core.sizeZ[0] = ss;
+        store.setDimensionsPhysicalSizeZ(pixel, 0, 0);
+      }
+      else if (code[i].equals("T")) {
+        core.sizeT[0] = ss;
+        store.setDimensionsTimeIncrement(pixel, 0, 0);
+      } 
       else if (ss > 0) {
         if (core.sizeC[0] == 0) core.sizeC[0] = ss;
         else core.sizeC[0] *= ss;
@@ -660,8 +675,6 @@ public class FV1000Reader extends FormatReader {
 
     // populate MetadataStore
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName("Series " + i, i);
       store.setImageCreationDate(
