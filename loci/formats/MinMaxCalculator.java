@@ -26,6 +26,8 @@ package loci.formats;
 import java.awt.image.*;
 import java.io.IOException;
 import java.util.*;
+
+import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -54,6 +56,9 @@ public class MinMaxCalculator extends ReaderWrapper {
   /** Number of planes for which min/max computations have been completed. */
   protected int[] minMaxDone;
 
+  /** Consumer of channel global minima and maxima */
+  protected IMinMaxStore minMaxStore;
+
   // -- Constructors --
 
   /** Constructs a MinMaxCalculator around a new image reader. */
@@ -61,6 +66,24 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   /** Constructs a MinMaxCalculator with the given reader. */
   public MinMaxCalculator(IFormatReader r) { super(r); }
+
+  /**
+   * Sets the active min-max store for the calculator. Whenever a channel's
+   * global minimum and maximum calculation has been completed this store is
+   * notified.
+   * @param store See above.
+   */
+  public void setMinMaxStore(IMinMaxStore store) {
+    minMaxStore = store;
+  }
+
+  /**
+   * Retrieves the current active min-max store for the calculator.
+   * @return See above.
+   */
+  public IMinMaxStore getMinMaxStore() {
+    return minMaxStore;
+  }
 
   // -- MinMaxCalculator API methods --
 
@@ -305,11 +328,9 @@ public class MinMaxCalculator extends ReaderWrapper {
     minMaxDone[series]++;
 
     if (minMaxDone[series] == getImageCount()) {
-      MetadataStore store = getMetadataStore();
       for (int c=0; c<getSizeC(); c++) {
-        // CTR FIXME
-//        store.setChannelGlobalMinMax(c, new Double(chanMin[series][c]),
-//          new Double(chanMax[series][c]), new Integer(getSeries()));
+        minMaxStore.setChannelGlobalMinMax(c, chanMin[series][c],
+          chanMax[series][c], getSeries());
       }
     }
   }
@@ -386,9 +407,8 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (minMaxDone[getSeries()] == getImageCount()) {
       MetadataStore store = getMetadataStore();
       for (int c=0; c<getSizeC(); c++) {
-        // CTR FIXME
-//        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries()][c]),
-//          new Double(chanMax[getSeries()][c]), new Integer(getSeries()));
+        minMaxStore.setChannelGlobalMinMax(c, chanMin[getSeries()][c],
+          chanMax[getSeries()][c], getSeries());
       }
     }
   }
