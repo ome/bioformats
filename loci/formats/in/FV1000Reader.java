@@ -119,6 +119,10 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
+    String name = id.toLowerCase();
+    if (name.endsWith(".oib") || name.endsWith(".oif")) {
+      return FormatTools.CANNOT_GROUP;
+    }
     return FormatTools.MUST_GROUP;
   }
 
