@@ -327,7 +327,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     minMaxDone[series]++;
 
-    if (minMaxDone[series] == getImageCount()) {
+    if (minMaxDone[series] == getImageCount() && minMaxStore != null) {
       for (int c=0; c<getSizeC(); c++) {
         minMaxStore.setChannelGlobalMinMax(c, chanMin[series][c],
           chanMax[series][c], getSeries());
@@ -404,8 +404,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     minMaxDone[series]++;
 
-    if (minMaxDone[getSeries()] == getImageCount()) {
-      MetadataStore store = getMetadataStore();
+    if (minMaxDone[getSeries()] == getImageCount() && minMaxStore != null) {
       for (int c=0; c<getSizeC(); c++) {
         minMaxStore.setChannelGlobalMinMax(c, chanMin[getSeries()][c],
           chanMax[getSeries()][c], getSeries());
