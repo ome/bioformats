@@ -70,8 +70,9 @@ public class MNGReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    buf = ImageTools.getBytes(openImage(no, x, y, w, h), true,
+    byte[] tmp = ImageTools.getBytes(openImage(no, x, y, w, h), true,
       core.sizeC[series]);
+    System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
     return buf;
   }
 

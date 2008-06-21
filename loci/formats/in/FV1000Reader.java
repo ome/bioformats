@@ -146,7 +146,7 @@ public class FV1000Reader extends FormatReader {
     String file = (String) (series == 0 ? tiffs.get(no) : previewNames.get(no));
     RandomAccessStream plane = getFile(file);
     Hashtable[] ifds = TiffTools.getIFDs(plane);
-    buf = TiffTools.getSamples(ifds[0], plane, buf, x, y, w, h);
+    TiffTools.getSamples(ifds[0], plane, buf, x, y, w, h);
     plane.close();
     ifds = null;
     plane = null;
