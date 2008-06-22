@@ -594,6 +594,7 @@ public class FV1000Reader extends FormatReader {
       }
       else if (code[i].equals("T")) {
         core.sizeT[0] = ss;
+        pixel = new Float(pixel.floatValue() / 1000);
         store.setDimensionsTimeIncrement(pixel, 0, 0);
       } 
       else if (ss > 0) {
