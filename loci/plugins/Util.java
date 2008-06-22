@@ -322,7 +322,7 @@ public final class Util {
   public static void applyCalibration(MetadataRetrieve retrieve,
     ImagePlus imp, int series)
   {
-    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
+    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN, tcal = Double.NaN;
 
     Float xf = retrieve.getDimensionsPhysicalSizeX(0, 0);
     if (xf != null) xcal = xf.floatValue();
@@ -330,13 +330,16 @@ public final class Util {
     if (yf != null) ycal = yf.floatValue();
     Float zf = retrieve.getDimensionsPhysicalSizeZ(0, 0);
     if (zf != null) zcal = zf.floatValue();
+    Float tf = retrieve.getDimensionsTimeIncrement(0, 0);
+    if (tf != null) tcal = tf.floatValue();
 
-    if (xcal == xcal || ycal == ycal || zcal == zcal) {
+    if (xcal == xcal || ycal == ycal || zcal == zcal || tcal == tcal) {
       Calibration cal = new Calibration();
       cal.setUnit("micron");
       cal.pixelWidth = xcal;
       cal.pixelHeight = ycal;
       cal.pixelDepth = zcal;
+      cal.frameInterval = tcal;
       imp.setCalibration(cal);
     }
   }
