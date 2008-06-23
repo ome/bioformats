@@ -46,187 +46,181 @@
 #     ImagingEnvironment.Temperature = Partial see ticket #167 for details
 
 [AVIReader]
-Pixels = Yes r657
+Pixels = Yes since r657
 
 [AliconaReader]
-Pixels = Yes
+Pixels = Yes since r1645
 
 [BMPReader]
-Pixels = Yes
+Pixels = Yes since r698
 
 [BioRadReader]
-Pixels = Yes
+Pixels = Yes since r631
 
 [DeltavisionReader]
-Pixels = Yes
+Pixels = Yes since r638
 
 [DicomReader]
-Pixels = Yes
+Pixels = Yes since r920
 
 [EPSReader]
-Pixels = Yes
+Pixels = Yes since r994
 
 [FEIReader]
-Pixels = Yes
+Pixels = Yes since r4057
 
 [FV1000Reader]
-Pixels = Yes
+Pixels = Yes since r871
 
 [FitsReader]
-Pixels = Yes
+Pixels = Yes since r2595
 
 [FlexReader]
-Pixels = Yes
+Pixels = Yes since r2711
 
 [FluoviewReader]
-Pixels = Yes
+Pixels = Yes since r639
 
 [GIFReader]
-Pixels = Yes
+Pixels = Yes since r647
 
 [GatanReader]
-Pixels = Yes
+Pixels = Yes since r646
 
 [GelReader]
-Pixels = Yes
+Pixels = Yes since r879
 
 [ICSReader]
-Pixels = Yes
+Pixels = Yes since r629
 
 [IPLabReader]
-Pixels = Yes
+Pixels = Yes since r609
 
 [IPWReader]
-Pixels = Yes
+Pixels = Yes since r646
 
 [ImarisHDFReader]
-Pixels = Yes
+Pixels = Yes since r3309
 
 [ImarisReader]
-Pixels = Yes
+Pixels = Yes since r879
 
 [ImarisTiffReader]
-Pixels = Yes
+Pixels = Yes since r1712
 
 [ImprovisionTiffReader]
-Pixels = Yes
+Pixels = Yes since r2937
 
 [InCellReader]
-Pixels = Yes
+Pixels = Yes since r3414
 
 [JPEGReader]
-Pixels = Yes
+Pixels = Yes since r647
 
 [KhorosReader]
-Pixels = Yes
+Pixels = Yes since r2831
 
 [L2DReader]
-Pixels = Yes
+Pixels = Yes since r3763
 
 [LIFReader]
-Pixels = Yes
+Pixels = Yes since r867
 
 [LIMReader]
-Pixels = Yes
-
-[LegacyND2Reader]
-Pixels = Yes
-
-[LegacyQTReader]
-Pixels = Yes
+Pixels = Yes since r3198
 
 [LeicaReader]
-Pixels = Yes
+Pixels = Yes since r639
 
 [MNGReader]
-Pixels = Yes
+Pixels = Yes since r1844
 
 [MRCReader]
-Pixels = Yes
+Pixels = Yes since r1806
 
 [MetamorphReader]
-Pixels = Yes
+Pixels = Yes since r639
 
 [MetamorphTiffReader]
-Pixels = Yes
+Pixels = Yes since r3700
 
 [MicromanagerReader]
-Pixels = Yes
+Pixels = Yes since r2384
 
 [NAFReader]
-Pixels = Yes
+Pixels = Yes since r4059
 
 [ND2Reader]
-Pixels = Yes
+Pixels = Yes since r1777
 
 [NRRDReader]
-Pixels = Yes
+Pixels = Yes since r2625
 
 [NikonReader]
-Pixels = Yes
+Pixels = Yes since r869
 
 [OMETiffReader]
-Pixels = Yes
+Pixels = Yes since r2943
 
 [OMEXMLReader]
-Pixels = Yes
+Pixels = Yes since r667
 
 [OpenlabRawReader]
-Pixels = Yes
+Pixels = Yes since r879
 
 [OpenlabReader]
-Pixels = Yes
+Pixels = Yes since r659
 
 [PCIReader]
-Pixels = Yes
+Pixels = Yes since r3148
 
 [PCXReader]
-Pixels = Yes
+Pixels = Yes since r3727
 
 [PGMReader]
-Pixels = Yes
+Pixels = Yes since r2595
 
 [PNGReader]
-Pixels = Yes
+Pixels = Yes since r647
 
 [PSDReader]
-Pixels = Yes
+Pixels = Yes since r3202
 
 [PerkinElmerReader]
-Pixels = Yes
+Pixels = Yes since r639
 
 [PictReader]
-Pixels = Yes
+Pixels = Yes since r764
 
 [PrairieReader]
-Pixels = Yes
+Pixels = Yes since r1996
 
 [QTReader]
-Pixels = Yes
+Pixels = Yes since r658
 
 [SDTReader]
-Pixels = Yes
+Pixels = Yes since r958
 
 [SEQReader]
-Pixels = Yes
+Pixels = Yes since r638
 
 [SVSReader]
-Pixels = Yes
+Pixels = Yes since r3528
 
 [SlidebookReader]
-Pixels = Yes
+Pixels = Yes since r1519
 
 [TCSReader]
-Pixels = Yes
+Pixels = Yes since r2940
 
 [TiffReader]
-Pixels = Yes
+Pixels = Yes since r636
 
 [VisitechReader]
-Pixels = Yes
+Pixels = Yes since r2925
 
 [ZeissLSMReader]
-Pixels = Yes
+Pixels = Yes since r646
 
 [ZeissZVIReader]
-Pixels = Yes
+Pixels = Yes since r656
