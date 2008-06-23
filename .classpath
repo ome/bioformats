@@ -21,8 +21,6 @@
 	<classpathentry kind="lib" path="jar/mdbtools-java.jar"/>
 	<classpathentry kind="lib" path="jar/netcdf-4.0.jar"/>
 	<classpathentry kind="lib" path="jar/ome-java.jar"/>
-	<classpathentry kind="lib" path="jar/omero-client.jar"/>
-	<classpathentry kind="lib" path="jar/omero-common.jar"/>
 	<classpathentry kind="lib" path="jar/poi-loci.jar"/>
 	<classpathentry kind="lib" path="jar/skinlf.jar"/>
 	<classpathentry kind="lib" path="jar/slf4j-jdk14.jar"/>
