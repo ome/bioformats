@@ -71,6 +71,10 @@ public class MetaSupportAutogen {
     MetaSupportList supportList = new MetaSupportList(version);
     context.put("q", supportList);
 
+    // generate master table of metadata properties
+    //VelocityTools.processTemplate(ve, context, "MetaTableWikiPage.vm",
+    //  "doc/meta/SupportedMetadataFields.txt");
+
     // generate metadata property support documentation for each handler
     for (String handler : supportList.handlers()) {
       supportList.setHandler(handler);

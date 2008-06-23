@@ -110,6 +110,7 @@ public class MetaSupportList {
         String prop = st.nextToken();
         propList.add(prop);
       }
+      Collections.sort(propList);
       groups.put(groupName, propList);
     }
 
@@ -173,6 +174,19 @@ public class MetaSupportList {
     }
     catch (ReflectException exc) { }
     return "handler";
+  }
+
+  /** Gets a list of all known groups. */
+  public Vector<String> groups() {
+    Vector<String> groupList = new Vector<String>();
+    for (String group : groups.keySet()) groupList.add(group);
+    Collections.sort(groupList);
+    return groupList;
+  }
+
+  /** Gets the list of properties belonging to the given group. */
+  public Vector<String> groupMembers(String group) {
+    return groups.get(group);
   }
 
   /** Gets all supported properties for the current handler. */
