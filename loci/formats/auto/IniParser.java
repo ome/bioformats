@@ -41,7 +41,7 @@ public class IniParser {
   // -- Constants --
 
   /** Key to use for storing header value (in brackets). */
-  public static final String HEADER_KEY = "name";
+  public static final String HEADER_KEY = "header";
 
   // -- IniParser API methods --
 

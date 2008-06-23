@@ -1,0 +1,232 @@
+#
+# meta-support.txt
+#
+
+# OME Bio-Formats package for reading and converting biological file formats.
+# Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# This file documents the metadata support for each file format that
+# Bio-Formats can handle. Default value for unlisted properties is Missing,
+# indicating that the property cannot be represented in the format, or our
+# knowledge regarding the property regarding this format is incomplete.
+
+# To define the status of a property, use the syntax:
+#
+#     Entity.Property = Status [Comment]
+#
+# "Status" is one of Yes, No, Partial or Missing.
+# There is usually no need to specify Missing status, as it is the default.
+#
+# "Comment" is optional extra text for specifying further details, such as
+# when the status changed. This value can include a revision, a ticket, a
+# datestamp or any other appropriate information.
+#
+# As a shortcut for every property of a given entity, you can write:
+#
+#     Entity [Comment]
+#
+# Examples:
+#
+#     Dimensions = Yes since r2351
+#     Objective.NominalMagnification = Yes added on 2008 Jan 8
+#     ImagingEnvironment.Temperature = Partial see ticket #167 for details
+
+[AVIReader]
+Pixels = Yes r657
+
+[AliconaReader]
+Pixels = Yes
+
+[BMPReader]
+Pixels = Yes
+
+[BioRadReader]
+Pixels = Yes
+
+[DeltavisionReader]
+Pixels = Yes
+
+[DicomReader]
+Pixels = Yes
+
+[EPSReader]
+Pixels = Yes
+
+[FEIReader]
+Pixels = Yes
+
+[FV1000Reader]
+Pixels = Yes
+
+[FitsReader]
+Pixels = Yes
+
+[FlexReader]
+Pixels = Yes
+
+[FluoviewReader]
+Pixels = Yes
+
+[GIFReader]
+Pixels = Yes
+
+[GatanReader]
+Pixels = Yes
+
+[GelReader]
+Pixels = Yes
+
+[ICSReader]
+Pixels = Yes
+
+[IPLabReader]
+Pixels = Yes
+
+[IPWReader]
+Pixels = Yes
+
+[ImarisHDFReader]
+Pixels = Yes
+
+[ImarisReader]
+Pixels = Yes
+
+[ImarisTiffReader]
+Pixels = Yes
+
+[ImprovisionTiffReader]
+Pixels = Yes
+
+[InCellReader]
+Pixels = Yes
+
+[JPEGReader]
+Pixels = Yes
+
+[KhorosReader]
+Pixels = Yes
+
+[L2DReader]
+Pixels = Yes
+
+[LIFReader]
+Pixels = Yes
+
+[LIMReader]
+Pixels = Yes
+
+[LegacyND2Reader]
+Pixels = Yes
+
+[LegacyQTReader]
+Pixels = Yes
+
+[LeicaReader]
+Pixels = Yes
+
+[MNGReader]
+Pixels = Yes
+
+[MRCReader]
+Pixels = Yes
+
+[MetamorphReader]
+Pixels = Yes
+
+[MetamorphTiffReader]
+Pixels = Yes
+
+[MicromanagerReader]
+Pixels = Yes
+
+[NAFReader]
+Pixels = Yes
+
+[ND2Reader]
+Pixels = Yes
+
+[NRRDReader]
+Pixels = Yes
+
+[NikonReader]
+Pixels = Yes
+
+[OMETiffReader]
+Pixels = Yes
+
+[OMEXMLReader]
+Pixels = Yes
+
+[OpenlabRawReader]
+Pixels = Yes
+
+[OpenlabReader]
+Pixels = Yes
+
+[PCIReader]
+Pixels = Yes
+
+[PCXReader]
+Pixels = Yes
+
+[PGMReader]
+Pixels = Yes
+
+[PNGReader]
+Pixels = Yes
+
+[PSDReader]
+Pixels = Yes
+
+[PerkinElmerReader]
+Pixels = Yes
+
+[PictReader]
+Pixels = Yes
+
+[PrairieReader]
+Pixels = Yes
+
+[QTReader]
+Pixels = Yes
+
+[SDTReader]
+Pixels = Yes
+
+[SEQReader]
+Pixels = Yes
+
+[SVSReader]
+Pixels = Yes
+
+[SlidebookReader]
+Pixels = Yes
+
+[TCSReader]
+Pixels = Yes
+
+[TiffReader]
+Pixels = Yes
+
+[VisitechReader]
+Pixels = Yes
+
+[ZeissLSMReader]
+Pixels = Yes
+
+[ZeissZVIReader]
+Pixels = Yes

@@ -34,6 +34,8 @@ import org.apache.velocity.VelocityContext;
  * Automatically generates code for the MetadataStore and MetadataRetrieve
  * interfaces, as well as the implementations for various flavors of OME-XML.
  *
+ * Uses data from the entities.txt and versions.txt files.
+ *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/auto/MetadataAutogen.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/auto/MetadataAutogen.java">SVN</a></dd></dl>
@@ -51,65 +53,38 @@ public class MetadataAutogen {
     File meta = new File("meta");
     if (!meta.exists()) meta.mkdir();
 
-    // initialize Velocity engine; enable loading of templates as resources
-    VelocityEngine ve = new VelocityEngine();
-    Properties p = new Properties();
-    p.setProperty("resource.loader", "class");
-    p.setProperty("class.resource.loader.class",
-      "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-    ve.init(p);
-
-    // populate Velocity context
-    VelocityContext context = new VelocityContext();
-    context.put("user", System.getProperty("user.name"));
-    DateFormat dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM);
-    DateFormat timeFmt = DateFormat.getTimeInstance(DateFormat.LONG);
-    Date date = Calendar.getInstance().getTime();
-    context.put("timestamp", dateFmt.format(date) + " " + timeFmt.format(date));
+    // get Velocity objects
+    VelocityEngine ve = VelocityTools.createEngine();
+    VelocityContext context = VelocityTools.createContext();
 
     // parse entity list
     MetaEntityList entityList = new MetaEntityList();
     context.put("q", entityList);
 
     // generate base metadata classes
-    processTemplate(ve, context,
+    VelocityTools.processTemplate(ve, context,
       "MetadataStore.vm", "meta/MetadataStore.java");
-    processTemplate(ve, context,
+    VelocityTools.processTemplate(ve, context,
       "MetadataRetrieve.vm", "meta/MetadataRetrieve.java");
-    processTemplate(ve, context,
+    VelocityTools.processTemplate(ve, context,
       "DummyMetadata.vm", "meta/DummyMetadata.java");
-    processTemplate(ve, context,
+    VelocityTools.processTemplate(ve, context,
       "FilterMetadata.vm", "meta/FilterMetadata.java");
-    processTemplate(ve, context,
+    VelocityTools.processTemplate(ve, context,
       "AggregateMetadata.vm", "meta/AggregateMetadata.java");
     context.put("convertMetadataBody", generateConvertMetadata(entityList));
-    processTemplate(ve, context,
+    VelocityTools.processTemplate(ve, context,
       "MetadataConverter.vm", "meta/MetadataConverter.java");
 
     // generate version-specific OME-XML metadata implementations
     for (String versionKey : entityList.versions()) {
       entityList.setVersion(versionKey);
-      processTemplate(ve, context, "OMEXMLMetadata.vm",
+      VelocityTools.processTemplate(ve, context, "OMEXMLMetadata.vm",
         "ome/OMEXML" + versionKey + "Metadata.java");
     }
   }
 
   // -- Helper methods --
-
-  private static void processTemplate(VelocityEngine ve,
-    VelocityContext context, String inFile, String outFile)
-    // NB: No choice, as VelocityEngine.getTemplate(String) throws Exception
-    throws Exception
-  {
-    System.out.print("Writing " + outFile + ": ");
-    Template t = ve.getTemplate("loci/formats/auto/" + inFile);
-    StringWriter writer = new StringWriter();
-    t.merge(context, writer);
-    PrintWriter out = new PrintWriter(new FileWriter(outFile));
-    out.print(writer.toString());
-    out.close();
-    System.out.println("done.");
-  }
 
   private static String generateConvertMetadata(final MetaEntityList q) {
     System.out.println("Generating convertMetadata body");
