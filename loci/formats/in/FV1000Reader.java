@@ -232,7 +232,7 @@ public class FV1000Reader extends FormatReader {
     String line = null, key = null, value = null, oifName = null;
 
     if (isOIB) {
-      RandomAccessStream ras = poi.getDocumentStream("Root/OibInfo.txt");
+      RandomAccessStream ras = poi.getDocumentStream("Root Entry/OibInfo.txt");
 
       oibMapping = new Hashtable();
 
@@ -259,9 +259,9 @@ public class FV1000Reader extends FormatReader {
             }
             if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
             if (directoryKey != null) {
-              oibMapping.put(value, "Root/" + directoryKey + "/" + key);
+              oibMapping.put(value, "Root Entry/" + directoryKey + "/" + key);
             }
-            else oibMapping.put(value, "Root/" + key);
+            else oibMapping.put(value, "Root Entry/" + key);
           }
           else if (key.startsWith("Storage")) {
             if (value.indexOf("GST") != -1) {
@@ -682,8 +682,7 @@ public class FV1000Reader extends FormatReader {
 
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName("Series " + i, i);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     MetadataTools.populatePixels(store, this);

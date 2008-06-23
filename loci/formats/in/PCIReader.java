@@ -77,14 +77,24 @@ public class PCIReader extends FormatReader {
     int beginSkip = bpp * x;
     int endSkip = bpp * (core.sizeX[0] - w - x);
 
-    for (int c=0; c<core.sizeC[series]; c++) {
-      s.skipBytes(skip);
-      for (int row=0; row<h; row++) {
-        s.skipBytes(beginSkip);
-        s.read(buf, c * h * rowLen + row * rowLen, rowLen);
-        s.skipBytes(endSkip);
+    if (w == getSizeX() && h == getSizeY() && x == 0 && y == 0) {
+      s.read(buf);
+    }
+    else {
+      for (int c=0; c<core.sizeC[series]; c++) {
+        s.skipBytes(skip);
+        if (beginSkip == 0 && endSkip == 0) {
+          s.read(buf, c * h * rowLen, rowLen * h);
+        }
+        else {
+          for (int row=0; row<h; row++) {
+            s.skipBytes(beginSkip);
+            s.read(buf, c * h * rowLen + row * rowLen, rowLen);
+            s.skipBytes(endSkip);
+          }
+        }
+        s.skipBytes((core.sizeY[series] - h - y) * core.sizeX[series] * bpp);
       }
-      s.skipBytes((core.sizeY[series] - h - y) * core.sizeX[series] * bpp);
     }
 
     s.close();
@@ -122,7 +132,7 @@ public class PCIReader extends FormatReader {
       String name = (String) allFiles.get(i);
       String relativePath =
         name.substring(name.lastIndexOf(File.separator) + 1);
-
+ 
       if (relativePath.equals("Field Count")) {
         byte[] b = poi.getDocumentBytes(name, 4);
         core.imageCount[0] = DataTools.bytesToInt(b, 0, true);
@@ -183,7 +193,7 @@ public class PCIReader extends FormatReader {
       else if (relativePath.indexOf("Image_Depth") != -1) {
         byte[] b = poi.getDocumentBytes(name, 8);
         int bits = (int) (DataTools.bytesToLong(b, 0, false) & 0xff) >> 2;
-        while (bits % 8 != 0) bits++;
+        while (bits % 8 != 0 || bits == 0) bits++;
         switch (bits) {
           case 8:
             core.pixelType[0] = FormatTools.UINT8;
@@ -231,8 +241,7 @@ public class PCIReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.setDefaultCreationDate(store, id, 0);
     MetadataTools.populatePixels(store, this);
     store.setDimensionsPhysicalSizeX(new Float(scaleFactor), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(scaleFactor), 0, 0);

@@ -249,8 +249,7 @@ public class NRRDReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.setDefaultCreationDate(store, id, 0);
     MetadataTools.populatePixels(store, this);
 
     // CTR CHECK

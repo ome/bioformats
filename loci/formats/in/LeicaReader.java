@@ -908,8 +908,7 @@ public class LeicaReader extends FormatReader {
         store.setImageCreationDate(timestamps[i], i);
       }
       else {
-        store.setImageCreationDate(DataTools.convertDate(
-          System.currentTimeMillis(), DataTools.UNIX), i);
+        MetadataTools.setDefaultCreationDate(store, id, i);
       }
 
       store.setImageName((String) seriesNames.get(i), i);

@@ -182,8 +182,7 @@ public class LegacyND2Reader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName("Series " + i, i);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
     }
     MetadataTools.populatePixels(store, this);
     // CTR CHECK

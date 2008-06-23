@@ -527,8 +527,7 @@ public class ZeissZVIReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     if (bpp == 1 || bpp == 3) core.pixelType[0] = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core.pixelType[0] = FormatTools.UINT16;
@@ -625,8 +624,7 @@ public class ZeissZVIReader extends FormatReader {
         (long) (firstStamp / 1600), DataTools.ZVI), 0);
     }
     else {
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
     for (int plane=0; plane<core.imageCount[0]; plane++) {

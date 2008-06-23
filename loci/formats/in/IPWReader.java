@@ -198,8 +198,7 @@ public class IPWReader extends FormatReader {
           store.setImageCreationDate(fmt.format(d), 0);
         }
         else {
-          store.setImageCreationDate(DataTools.convertDate(
-            System.currentTimeMillis(), DataTools.UNIX), 0);
+          MetadataTools.setDefaultCreationDate(store, id, 0);
         }
       }
       else if (relativePath.equals("ImageTIFF")) {

@@ -388,8 +388,7 @@ public class FluoviewReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageDescription(comment, 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     // populate Dimensions
     store.setDimensionsPhysicalSizeX(new Float(voxelX), 0, 0);

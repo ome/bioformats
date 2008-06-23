@@ -281,8 +281,9 @@ public class PrairieReader extends FormatReader {
           Date d = parse.parse(date, new ParsePosition(0));
           SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
           date = fmt.format(d);
+          store.setImageCreationDate(date, 0);
         }
-        store.setImageCreationDate(date, 0);
+        else MetadataTools.setDefaultCreationDate(store, id, 0);
 
         /*
         if (laserPower != null) {

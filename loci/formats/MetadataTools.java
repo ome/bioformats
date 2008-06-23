@@ -240,6 +240,21 @@ public final class MetadataTools {
   }
 
   /**
+   * Sets a default creation date.  If the named file exists, then the creation
+   * date is set to the file's last modification date.  Otherwise, it is set
+   * to the current date.
+   */
+  public static void setDefaultCreationDate(MetadataStore store, String id,
+    int series)
+  {
+    Location file = new Location(id).getAbsoluteFile();
+    long time = System.currentTimeMillis();
+    if (file.exists()) time = file.lastModified();
+    store.setImageCreationDate(DataTools.convertDate(time, DataTools.UNIX),
+      series);
+  }
+
+  /**
    * Adds the specified key/value pair as a new OriginalMetadata node
    * to the given OME-XML metadata object.
    * Does nothing unless the given object is an OME-XML metadata object.

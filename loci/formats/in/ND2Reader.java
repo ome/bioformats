@@ -484,8 +484,7 @@ public class ND2Reader extends FormatReader {
       MetadataTools.populatePixels(store, this);
       for (int i=0; i<core.sizeC.length; i++) {
         store.setImageName("Series " + i, i);
-        store.setImageCreationDate(
-          DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+        MetadataTools.setDefaultCreationDate(store, id, i);
 
         if (tsT.size() > 0) {
           setSeries(i);

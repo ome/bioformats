@@ -218,8 +218,7 @@ public class L2DReader extends FormatReader {
         }
       }
       store.setImageName("", i);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     MetadataTools.populatePixels(store, this);

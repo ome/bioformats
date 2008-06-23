@@ -298,8 +298,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       store.setImageName("", 0);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
       int spectralScan = ras.readShort();
       switch (spectralScan) {

@@ -300,8 +300,7 @@ public class TCSReader extends FormatReader {
 
       for (int i=0; i<x.size(); i++) {
         store.setImageName((String) seriesNames.get(i), i);
-        store.setImageCreationDate(
-          DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+        MetadataTools.setDefaultCreationDate(store, id, i);
       }
 
       MetadataTools.populatePixels(store, this);

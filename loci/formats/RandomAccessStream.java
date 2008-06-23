@@ -44,8 +44,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- Constants --
 
   /** Maximum size of the buffer used by the DataInputStream. */
-  // 256 KB - please don't change this
-  protected static final int MAX_OVERHEAD = 262144;
+  protected static final int MAX_OVERHEAD = 1048576;
 
   /** Maximum number of open files. */
   protected static final int MAX_FILES = 100;

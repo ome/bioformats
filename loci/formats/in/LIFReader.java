@@ -308,8 +308,7 @@ public class LIFReader extends FormatReader {
         seriesName = "Series " + (i + 1);
       }
       store.setImageName(seriesName, i);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
 
       MetadataTools.populatePixels(store, this);
 

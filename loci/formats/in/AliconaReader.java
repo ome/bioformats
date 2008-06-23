@@ -185,8 +185,7 @@ public class AliconaReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageName("", 0);
     MetadataTools.populatePixels(store, this);
 

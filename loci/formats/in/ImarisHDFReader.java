@@ -327,8 +327,7 @@ public class ImarisHDFReader extends FormatReader {
 
     for (int s=0; s<seriesCount; s++) {
       store.setImageName("Resolution Level " + s, s);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), s);
+      MetadataTools.setDefaultCreationDate(store, id, s);
       for (int i=0; i<core.sizeC[s]; i++) {
         String[] params = (String[]) channelParameters.get(i);
 

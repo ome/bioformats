@@ -50,7 +50,9 @@ public class POITools {
   private ReflectedUniverse r;
   private String id;
   private Vector filePath;
-
+  private Vector fileList;
+  private Hashtable fileSizes;
+ 
   // -- Constructor --
 
   public POITools(String id) throws FormatException, IOException {
@@ -75,11 +77,13 @@ public class POITools {
   {
     int availableBytes = getFileSize(name);
     int len = count > availableBytes ? availableBytes : count;
+    setupFile(name);
 
     byte[] buf = new byte[len];
     try {
-      r.setVar(makeVarName("data"), buf);
-      r.exec(makeVarName("dis") + ".read(" + makeVarName("data") + ")");
+      String dataVar = makeVarName("data");
+      r.setVar(dataVar, buf);
+      r.exec(makeVarName("dis") + ".read(" + dataVar + ")");
     }
     catch (ReflectException e) {
       throw new FormatException(e);
@@ -88,25 +92,11 @@ public class POITools {
   }
 
   public int getFileSize(String name) throws FormatException {
-    setupFile(name);
-    try {
-      return ((Integer) r.getVar(makeVarName("numBytes"))).intValue();
-    }
-    catch (ReflectException e) {
-      throw new FormatException(e);
-    }
+    return ((Integer) fileSizes.get(name)).intValue();
   }
 
   public Vector getDocumentList() throws FormatException {
-    Vector list = new Vector();
-    filePath = new Vector();
-    try {
-      parseFile(r.getVar(makeVarName("root")), list);
-    }
-    catch (ReflectException e) {
-      throw new FormatException(e);
-    }
-    return list;
+    return fileList;
   }
 
   public void close() {
@@ -154,23 +144,47 @@ public class POITools {
     s.close();
 
     try {
-      r.setVar(makeVarName("file"), file);
-      r.setVar(makeVarName("size"), size);
+      String fileVar = makeVarName("file");
+      String sizeVar = makeVarName("size");
+      String fsVar = makeVarName("fs");
+      String fisVar = makeVarName("fis");
+      r.setVar(fileVar, file);
+      r.setVar(sizeVar, size);
       r.setVar(makeVarName("littleEndian"), true);
-      r.exec(makeVarName("fis") + " = new RandomAccessStream(" +
-        makeVarName("file") + ")");
-      r.exec(makeVarName("fs") + " = new POIFSFileSystem(" +
-        makeVarName("fis") + ", " + makeVarName("size") + ")");
-      r.exec(makeVarName("root") + " = " + makeVarName("fs") + ".getRoot()");
+      r.exec(fisVar + " = new RandomAccessStream(" + fileVar + ")");
+      r.exec(fsVar + " = new POIFSFileSystem(" + fisVar + ", " + sizeVar + ")");
+      r.exec(makeVarName("root") + " = " + fsVar + ".getRoot()");
     }
     catch (ReflectException e) {
       throw new FormatException(e);
+    }
+ 
+    fileList = new Vector();
+    filePath = new Vector();
+    try {
+      parseFile(r.getVar(makeVarName("root")), fileList);
+    }
+    catch (ReflectException e) {
+      throw new FormatException(e);
+    }
+
+    fileSizes = new Hashtable();
+    for (int i=0; i<fileList.size(); i++) {
+      String name = (String) fileList.get(i);
+      setupFile(name);
+      try {
+        fileSizes.put(name, r.getVar(makeVarName("numBytes")));
+      }
+      catch (ReflectException e) {
+        throw new FormatException(e);
+      }
     }
   }
 
   private void setupFile(String name) throws FormatException {
     try {
-      r.exec(makeVarName("directory") + " = " + makeVarName("root"));
+      String directoryVar = makeVarName("directory");
+      r.exec(directoryVar + " = " + makeVarName("root"));
 
       StringTokenizer path = new StringTokenizer(name, "/\\");
       int count = path.countTokens();
@@ -178,17 +192,19 @@ public class POITools {
       for (int i=1; i<count-1; i++) {
         String dir = path.nextToken();
         r.setVar(makeVarName("dir"), dir);
-        r.exec(makeVarName("directory") + " = " + makeVarName("directory") +
+        r.exec(directoryVar + " = " + directoryVar +
           ".getEntry(" + makeVarName("dir") + ")");
       }
 
-      r.setVar(makeVarName("filename"), path.nextToken());
-      r.exec(makeVarName("file") + " = " + makeVarName("directory") +
-        ".getEntry(" + makeVarName("filename") + ")");
-      r.exec(makeVarName("dis") + " = new DocumentInputStream(" +
-        makeVarName("file") + ", " + makeVarName("fis") + ")");
-      r.exec(makeVarName("numBytes") + " = " + makeVarName("dis") +
-        ".available()");
+      String filenameVar = makeVarName("filename");
+      String fileVar = makeVarName("file");
+      String disVar = makeVarName("dis");
+
+      r.setVar(filenameVar, path.nextToken());
+      r.exec(fileVar + " = " + directoryVar + ".getEntry(" + filenameVar + ")");
+      r.exec(disVar + " = new DocumentInputStream(" +
+        fileVar + ", " + makeVarName("fis") + ")");
+      r.exec(makeVarName("numBytes") + " = " + disVar + ".available()");
     }
     catch (ReflectException e) {
       throw new FormatException(e);
@@ -197,24 +213,23 @@ public class POITools {
 
   private void parseFile(Object root, Vector fileList) throws FormatException {
     try {
-      r.setVar(makeVarName("dir"), root);
-      r.exec(makeVarName("dirName") + " = " + makeVarName("dir") +
-        ".getName()");
-      r.exec(makeVarName("iter") + " = " + makeVarName("dir") +
-        ".getEntries()");
+      String dirVar = makeVarName("dir");
+      r.setVar(dirVar, root);
+      r.exec(makeVarName("dirName") + " = " + dirVar + ".getName()");
+      r.exec(makeVarName("iter") + " = " + dirVar + ".getEntries()");
       filePath.add(r.getVar(makeVarName("dirName")));
       Iterator iter = (Iterator) r.getVar(makeVarName("iter"));
+      String entryVar = makeVarName("entry");
       while (iter.hasNext()) {
-        r.setVar(makeVarName("entry"), iter.next());
-        boolean isInstance = ((Boolean) r.exec(makeVarName("entry") +
+        r.setVar(entryVar, iter.next());
+        boolean isInstance = ((Boolean) r.exec(entryVar +
           ".isDirectoryEntry()")).booleanValue();
-        boolean isDocument = ((Boolean) r.exec(makeVarName("entry") +
+        boolean isDocument = ((Boolean) r.exec(entryVar +
           ".isDocumentEntry()")).booleanValue();
 
-        if (isInstance) parseFile(r.getVar(makeVarName("entry")), fileList);
+        if (isInstance) parseFile(r.getVar(entryVar), fileList);
         else if (isDocument) {
-          r.exec(makeVarName("entryName") + " = " + makeVarName("entry") +
-            ".getName()");
+          r.exec(makeVarName("entryName") + " = " + entryVar + ".getName()");
           StringBuffer path = new StringBuffer();
           for (int i=0; i<filePath.size(); i++) {
             path.append((String) filePath.get(i));

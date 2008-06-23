@@ -261,8 +261,7 @@ public class VisitechReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     for (int i=0; i<numSeries; i++) {
       store.setImageName("Position " + i, i);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
     }
     MetadataTools.populatePixels(store, this);
   }

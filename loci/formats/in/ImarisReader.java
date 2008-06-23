@@ -181,8 +181,7 @@ public class ImarisReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.setDefaultCreationDate(store, id, 0);
     core.pixelType[0] = FormatTools.UINT8;
     MetadataTools.populatePixels(store, this);
 

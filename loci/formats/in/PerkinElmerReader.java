@@ -784,8 +784,9 @@ public class PerkinElmerReader extends FormatReader {
       Date date = parse.parse(finishTime, new ParsePosition(0));
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       finishTime = fmt.format(date);
+      store.setImageCreationDate(finishTime, 0);
     }
-    store.setImageCreationDate(finishTime, 0);
+    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // populate Pixels element
     MetadataTools.populatePixels(store, this);

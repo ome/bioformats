@@ -433,8 +433,7 @@ public class SlidebookReader extends FormatReader {
 
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName(imageNames[i], i);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
       for (int c=0; c<core.sizeC[i]; c++) {
         if (index < channelNames.size()) {
           store.setLogicalChannelName((String) channelNames.get(index++), i, c);

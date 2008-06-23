@@ -156,8 +156,7 @@ public class GelReader extends BaseTiffReader {
       store.setImageCreationDate(sdf.format(date), 0);
     }
     else {
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
     MetadataTools.populatePixels(store, this);

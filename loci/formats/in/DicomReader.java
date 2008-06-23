@@ -581,7 +581,8 @@ public class DicomReader extends FormatReader {
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
-    store.setImageCreationDate(stamp, 0);
+    if (stamp != null) store.setImageCreationDate(stamp, 0);
+    else MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageDescription(imageType, 0);
 
     // CTR CHECK
