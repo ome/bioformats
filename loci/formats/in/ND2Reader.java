@@ -126,12 +126,16 @@ public class ND2Reader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
     int pixel = bpp * getRGBChannelCount();
 
+    long maxFP = no == getImageCount() - 1 ?
+      in.length() : offsets[series][no + 1];
+
     if (isJPEG) {
       in.seek(offsets[series][no]);
-      byte[] tmp = new JPEG2000Codec().decompress(in, new Boolean[] {
+      byte[] tmp = new JPEG2000Codec().decompress(in, new Object[] {
         new Boolean(core.littleEndian[series]),
-        new Boolean(core.interleaved[series])});
+        new Boolean(core.interleaved[series]), new Long(maxFP)});
       System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
+      tmp = null;
     }
     else if (isLossless) {
       // plane is compressed using ZLIB

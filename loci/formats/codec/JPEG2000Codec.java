@@ -138,6 +138,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     throws FormatException
   {
     boolean littleEndian = false, interleaved = false;
+    long maxFP = 0;
     if (options instanceof Boolean) {
       littleEndian = ((Boolean) options).booleanValue();
     }
@@ -145,14 +146,17 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
       Object[] o = (Object[]) options;
       littleEndian = ((Boolean) o[0]).booleanValue();
       interleaved = ((Boolean) o[1]).booleanValue();
+      if (o.length == 3) maxFP = ((Long) o[2]).longValue();
     }
 
     byte[][] single = null, half = null;
     BufferedImage b = null;
     try {
-      byte[] buf = new byte[(int) (in.length() - in.getFilePointer())];
+      if (maxFP == 0) maxFP = in.length();
+      byte[] buf = new byte[(int) (maxFP - in.getFilePointer())];
       in.read(buf);
 
+      /*
       // HACK
       for (int i=0; i<buf.length-1; i++) {
         if (buf[i] == (byte) 0xff && buf[i + 1] == 0x51) {
@@ -164,6 +168,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
           break;
         }
       }
+      */
 
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
       MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
@@ -177,6 +182,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
       bis.close();
       mciis.close();
       buf = null;
+      b = null;
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);
@@ -200,6 +206,8 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
         System.arraycopy(single[i], 0, rtn, i*single[0].length, single[i].length);
       }
     }
+    single = null;
+
     return rtn;
   }
 
