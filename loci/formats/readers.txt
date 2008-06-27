@@ -24,7 +24,7 @@
 # Please do not edit unless you know what you are doing (see reader-guide.txt).
 
 # javax.imageio readers
-loci.formats.in.PNGReader             # png [javax.imageio]
+loci.formats.in.APNGReader            # png [javax.imageio]
 loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
 
 # standalone readers with unique file extensions
@@ -64,6 +64,7 @@ loci.formats.in.NRRDReader            # nrrd, nhdr, pic
 loci.formats.in.ICSReader             # ics, ids
 loci.formats.in.PerkinElmerReader     # rec, ano, csv, htm, tim, zpo, 2, 3, ...
 loci.formats.in.TCSReader             # xml, tif
+loci.formats.in.AriolReader           # xml, jpeg
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
