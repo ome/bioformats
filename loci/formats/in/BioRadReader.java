@@ -380,6 +380,7 @@ public class BioRadReader extends FormatReader {
 
     // read notes
     int noteCount = 0;
+    boolean brokenNotes = false;
     while (notes) {
       // read in note
 
@@ -391,6 +392,12 @@ public class BioRadReader extends FormatReader {
       int x = in.readShort();
       int y = in.readShort();
       String text = in.readString(80);
+
+      if (type < 0 || type >= NOTE_NAMES.length) {
+        notes = false;
+        brokenNotes = true;
+        break;
+      }
 
       // be sure to remove binary data from the note text
       int ndx = text.length();
@@ -606,7 +613,7 @@ public class BioRadReader extends FormatReader {
     lut = new byte[3][3][256];
     boolean eof = false;
     int next = 0;
-    while (!eof && numLuts < 3) {
+    while (!eof && numLuts < 3 && !brokenNotes) {
       if (in.getFilePointer() + lut[numLuts][next].length <= in.length()) {
         in.read(lut[numLuts][next++]);
         if (next == 3) {
@@ -617,6 +624,7 @@ public class BioRadReader extends FormatReader {
       else eof = true;
       if (eof && numLuts == 0) lut = null;
     }
+    if (brokenNotes) lut = null;
 
     if (debug && debugLevel >= 2) {
       debug(numLuts + " color table" + (numLuts == 1 ? "" : "s") + " present.");
