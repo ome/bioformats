@@ -322,15 +322,16 @@ public final class Util {
   public static void applyCalibration(MetadataRetrieve retrieve,
     ImagePlus imp, int series)
   {
-    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN, tcal = Double.NaN;
+    double xcal = Double.NaN, ycal = Double.NaN;
+    double zcal = Double.NaN, tcal = Double.NaN;
 
-    Float xf = retrieve.getDimensionsPhysicalSizeX(0, 0);
+    Float xf = retrieve.getDimensionsPhysicalSizeX(series, 0);
     if (xf != null) xcal = xf.floatValue();
-    Float yf = retrieve.getDimensionsPhysicalSizeY(0, 0);
+    Float yf = retrieve.getDimensionsPhysicalSizeY(series, 0);
     if (yf != null) ycal = yf.floatValue();
-    Float zf = retrieve.getDimensionsPhysicalSizeZ(0, 0);
+    Float zf = retrieve.getDimensionsPhysicalSizeZ(series, 0);
     if (zf != null) zcal = zf.floatValue();
-    Float tf = retrieve.getDimensionsTimeIncrement(0, 0);
+    Float tf = retrieve.getDimensionsTimeIncrement(series, 0);
     if (tf != null) tcal = tf.floatValue();
 
     if (xcal == xcal || ycal == ycal || zcal == zcal || tcal == tcal) {
