@@ -521,7 +521,7 @@ public class LIFReader extends FormatReader {
           String size = attributes.getValue("Variant");
           float cal = Float.parseFloat(size) * 1000000;
           if (identifier.endsWith("X")) xcal.add(new Float(cal));
-          else if (identifier.endsWith("Y")) xcal.add(new Float(cal));
+          else if (identifier.endsWith("Y")) ycal.add(new Float(cal));
           else if (identifier.endsWith("Z")) zcal.add(new Float(cal));
         }
       }
