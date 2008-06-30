@@ -65,15 +65,23 @@ public class OmeisImporter {
   // -- Fields --
 
   /** Reader for handling file formats. */
-  private FileStitcher reader;
+  private IFormatReader reader;
 
   /** Metadata object, for gathering OME-XML metadata. */
   private OMEXMLMetadata omexmlMeta;
 
+  private boolean stitch;
+
   // -- Constructor --
 
   public OmeisImporter() {
-    reader = new FileStitcher(new ChannelSeparator(new ChannelFiller()));
+    this(true);
+  }
+
+  public OmeisImporter(boolean stitchFiles) {
+    stitch = stitchFiles;
+    reader = new ChannelSeparator(new ChannelFiller());
+    if (stitch) reader = new FileStitcher(reader);
     omexmlMeta = new OMEXML2003FCMetadata();
     reader.setOriginalMetadataPopulated(true);
     reader.setMetadataStore(omexmlMeta);
@@ -578,8 +586,7 @@ public class OmeisImporter {
    * thinks it can import those files.
    */
   public static void main(String[] args) {
-    OmeisImporter importer = new OmeisImporter();
-    boolean version = false, test = false;
+    boolean version = false, test = false, stitch = true;
     int[] fileIds = new int[args.length];
 
     // parse command line arguments
@@ -588,6 +595,7 @@ public class OmeisImporter {
       if ("-version".equalsIgnoreCase(args[i])) version = true;
       else if ("-test".equalsIgnoreCase(args[i])) test = true;
       else if ("-http-response".equalsIgnoreCase(args[i])) http = true;
+      else if ("-nostitch".equalsIgnoreCase(args[i])) stitch = false;
       else {
         try {
           int q = Integer.parseInt(args[i]);
@@ -601,6 +609,8 @@ public class OmeisImporter {
     int[] trimIds = new int[num];
     System.arraycopy(fileIds, 0, trimIds, 0, num);
     fileIds = trimIds;
+
+    OmeisImporter importer = new OmeisImporter(stitch);
 
     // process the IDs
     try {
