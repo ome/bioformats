@@ -118,7 +118,7 @@ public class NikonReader extends BaseTiffReader {
 
   /** Constructs a new Nikon reader. */
   public NikonReader() {
-    super("Nikon NEF (TIFF)", new String[] {"nef", "tif", "tiff"});
+    super("Nikon NEF", new String[] {"nef", "tif", "tiff"});
     blockCheckLen = 16384;
     suffixSufficient = false;
   }

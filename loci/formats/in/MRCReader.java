@@ -54,7 +54,7 @@ public class MRCReader extends FormatReader {
 
   /** Constructs a new MRC reader. */
   public MRCReader() {
-    super("Medical Research Council (MRC)", "mrc");
+    super("Medical Research Council", "mrc");
   }
 
   // -- IFormatReader API methods --

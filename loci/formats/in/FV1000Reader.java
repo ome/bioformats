@@ -86,7 +86,7 @@ public class FV1000Reader extends FormatReader {
 
   /** Constructs a new FV1000 reader. */
   public FV1000Reader() {
-    super("Fluoview FV1000", new String[] {"oib", "oif", "pty", "lut"});
+    super("Olympus FV1000", new String[] {"oib", "oif", "pty", "lut"});
     blockCheckLen = 1024;
   }
 

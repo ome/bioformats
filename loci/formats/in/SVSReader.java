@@ -45,7 +45,7 @@ public class SVSReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new SVS reader. */
-  public SVSReader() { super("Aperio SVS TIFF", new String[] {"svs"}); }
+  public SVSReader() { super("Aperio SVS", new String[] {"svs"}); }
 
   // -- IFormatReader API methods --
 

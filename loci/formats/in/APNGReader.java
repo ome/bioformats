@@ -65,7 +65,7 @@ public class APNGReader extends FormatReader {
 
   /** Constructs a new APNGReader. */
   public APNGReader() {
-    super("Animated Portable Network Graphics", "png");
+    super("Animated PNG", "png");
     blockCheckLen = 64;
   }
 

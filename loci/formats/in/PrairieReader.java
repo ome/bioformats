@@ -84,7 +84,7 @@ public class PrairieReader extends FormatReader {
 
   /** Constructs a new Prairie TIFF reader. */
   public PrairieReader() {
-    super("Prairie (TIFF)", new String[] {"tif", "tiff", "cfg", "xml"});
+    super("Prairie TIFF", new String[] {"tif", "tiff", "cfg", "xml"});
     blockCheckLen = 1048608;
   }
 

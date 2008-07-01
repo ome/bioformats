@@ -110,7 +110,7 @@ public class DicomReader extends FormatReader {
   /** Constructs a new DICOM reader. */
   // "Digital Imaging and Communications in Medicine" is nasty long.
   public DicomReader() {
-    super("Digital Img. & Comm. in Med.",
+    super("DICOM",
       new String[] {"dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw"});
     blockCheckLen = 132;
     // FIXME: Would like to enable extensionless DICOM support with
