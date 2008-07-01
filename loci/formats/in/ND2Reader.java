@@ -23,11 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.Point;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.codec.ByteVector;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -167,7 +169,7 @@ public class ND2Reader extends FormatReader {
       // plane is not compressed
       in.skipBytes(y * core.sizeX[series] * pixel);
       if (core.sizeX[series] == w) {
-
+        in.read(buf);
       }
       else {
         for (int row=0; row<h; row++) {
@@ -251,179 +253,176 @@ public class ND2Reader extends FormatReader {
       in.seek(0);
       in.order(true);
 
-      byte[] b = new byte[1024 * 1024];
-      int numValidPlanes = 0;
-      while (in.getFilePointer() < in.length()) {
-        if (in.read() == -38 && in.read() == -50 && in.read() == -66 &&
-          in.read() == 10)
+      // assemble offsets to each block
+
+      Vector imageOffsets = new Vector();
+      Vector imageLengths = new Vector();
+      Vector xmlOffsets = new Vector();
+      Vector xmlLengths = new Vector();
+      Vector customDataOffsets = new Vector();
+      Vector customDataLengths = new Vector();
+
+      while (in.getFilePointer() < in.length() && in.getFilePointer() >= 0) {
+        while (in.read() != -38);
+        in.skipBytes(3);
+
+        int lenOne = in.readInt();
+        int lenTwo = in.readInt();
+        int len = lenOne + lenTwo;
+        in.skipBytes(4);
+
+        String blockType = in.readString(12);
+        long fp = in.getFilePointer() - 12;
+        in.skipBytes(len - 12);
+
+        if (blockType.startsWith("ImageDataSeq")) {
+          imageOffsets.add(new Long(fp));
+          imageLengths.add(new Point(lenOne, lenTwo));
+        }
+        else if (blockType.startsWith("Image")) {
+          xmlOffsets.add(new Long(fp));
+          xmlLengths.add(new Point(lenOne, lenTwo));
+        }
+        else if (blockType.startsWith("CustomData|A")) {
+          customDataOffsets.add(new Long(fp));
+          customDataLengths.add(new Point(lenOne, lenTwo));
+        }
+      }
+
+      // parse XML blocks
+
+      ND2Handler handler = new ND2Handler();
+      ByteVector xml = new ByteVector();
+
+      for (int i=0; i<xmlOffsets.size(); i++) {
+        long offset = ((Long) xmlOffsets.get(i)).longValue();
+        Point p = (Point) xmlLengths.get(i);
+        int length = (int) (p.x + p.y);
+
+        byte[] b = new byte[length];
+        in.seek(offset);
+        in.read(b);
+
+        // strip out invalid characters
+        int off = 0;
+        for (int j=0; j<length; j++) {
+          char c = (char) b[j];
+          if ((off == 0 && c == '!') || c == 0) off = j + 1;
+          if (Character.isISOControl(c) || !Character.isDefined(c)) {
+            b[j] = (byte) ' ';
+          }
+        }
+
+        if (length - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
+          b[off + 2] == 'x' && b[off + 3] == 'm' && b[off + 4] == 'l')
         {
-          // found a data chunk
-          int lenOne = in.readInt();
-          int lenTwo = in.readInt();
-          int len = lenOne + lenTwo;
-          if (len > b.length) {
-            // make sure size at least doubles, for efficiency
-            int size = b.length + b.length;
-            if (size < len) size = len;
-            b = new byte[size];
-          }
-          in.skipBytes(4);
-
-          if (debug) {
-            debug("Reading chunk of size " + len +
-              " at position " + in.getFilePointer());
-          }
-          int n = in.read(b, 0, len);
-          if (n < len) break;
-
-          if (len >= 12 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
-            b[3] == 'g' && b[4] == 'e' && b[5] == 'D' && b[6] == 'a' &&
-            b[7] == 't' && b[8] == 'a' && b[9] == 'S' && b[10] == 'e' &&
-            b[11] == 'q') // b.startsWith("ImageDataSeq")
-          {
-            // found pixel data
-
-            StringBuffer sb = new StringBuffer();
-            int pt = 13;
-            while (b[pt] != '!') {
-              sb.append((char) b[pt]);
-              pt++;
-            }
-            int ndx = Integer.parseInt(sb.toString());
-            if (core.sizeC[0] == 0 && core.sizeX[0] != 0 && core.sizeY[0] != 0)
-            {
-              Arrays.fill(core.sizeC, len / (core.sizeX[0] * core.sizeY[0] *
-                FormatTools.getBytesPerPixel(core.pixelType[0])));
-            }
-            int seriesNdx = ndx / (core.sizeT[0] * core.sizeZ[0]);
-            int plane = ndx % (core.sizeT[0] * core.sizeZ[0]);
-            if (seriesNdx >= offsets.length) {
-              long[][] tmpOffsets = offsets;
-              offsets = new long[seriesNdx + 1][tmpOffsets[0].length];
-              for (int i=0; i<tmpOffsets.length; i++) {
-                System.arraycopy(tmpOffsets[i], 0, offsets[i], 0,
-                  offsets[i].length);
-              }
-            }
-            offsets[seriesNdx][plane] = in.getFilePointer() - lenTwo + 8;
-            numValidPlanes++;
-          }
-          else if (len >= 5 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
-            b[3] == 'g' && b[4] == 'e') // b.startsWith("Image")
-          {
-            // XML metadata
-
-            ND2Handler handler = new ND2Handler();
-
-            // strip out invalid characters
-            int off = 0;
-            for (int i=0; i<len; i++) {
-              char c = (char) b[i];
-              if ((off == 0 && c == '!') || c == 0) off = i + 1;
-
-              if (Character.isISOControl(c) || !Character.isDefined(c)) {
-                b[i] = (byte) ' ';
-              }
-            }
-
-            if (len - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
-              b[off + 2] == 'x' && b[off + 3] == 'm' &&
-              b[off + 4] == 'l') // b.substring(off, off + 5).equals("<?xml")
-            {
-              ByteArrayInputStream s =
-                new ByteArrayInputStream(b, off, len - off);
-
-              try {
-                SAXParser parser = SAX_FACTORY.newSAXParser();
-                parser.parse(s, handler);
-              }
-              catch (ParserConfigurationException exc) {
-                throw new FormatException(exc);
-              }
-              catch (SAXException exc) {
-                throw new FormatException(exc);
-              }
-
-              s.close();
-
-              // adjust SizeT, if necessary
-              long planeSize = core.sizeX[0] * core.sizeY[0] *
-                FormatTools.getBytesPerPixel(core.pixelType[0]) * core.sizeC[0];
-              if (planeSize*core.imageCount[0]*core.imageCount.length >=
-                in.length() && !isLossless)
-              {
-                int approxPlanes = (int) (in.length() / planeSize);
-                core.sizeT[0] = approxPlanes / core.imageCount.length;
-                if (core.sizeT[0] * core.imageCount.length < approxPlanes) {
-                  core.sizeT[0]++;
-                }
-                core.imageCount[0] = core.sizeT[0];
-                core.sizeZ[0] = 1;
-              }
+          boolean endBracketFound = false;
+          while (!endBracketFound) {
+            if (b[off++] == '>') {
+              endBracketFound = true;
             }
           }
-          else if (len >= 12 && b[0] == 'C' && b[1] == 'u' && b[2] == 's' &&
-            b[3] == 't' && b[4] == 'o' && b[5] == 'm' && b[6] == 'D' &&
-            b[7] == 'a' && b[8] == 't' && b[9] == 'a'&&b[10]=='|'&&b[11]=='A')
-            // b.startsWith("CustomData|A")
-          {
-            // the acqtimecache is a undeliniated stream of doubles
-            int off = 0;
-            for (int i=0; i<len; i++) {
-              char c = (char) b[i];
-              if ((off == 0 && c == '!')) off = i + 1;
-            }
-            for (int j = off; j<len; j+=8) {
-              double s = DataTools.bytesToDouble(b, j, 8, true);
-              tsT.add(new Double(s));
-              addMeta("timestamp " + (tsT.size() - 1), String.valueOf(s));
-            }
-          }
-
-          if (core.imageCount[0] > 0 && offsets == null) {
-            if (numSeries == 0) numSeries = 1;
-            offsets = new long[numSeries][core.imageCount[0]];
-            if (numSeries > 1) {
-              int x = core.sizeX[0];
-              int y = core.sizeY[0];
-              int z = core.sizeZ[0];
-              int c = core.sizeC[0];
-              int t = core.sizeT[0];
-              int count = core.imageCount[0];
-              int pixelType = core.pixelType[0];
-              core = new CoreMetadata(numSeries);
-              Arrays.fill(core.sizeX, x);
-              Arrays.fill(core.sizeY, y);
-              Arrays.fill(core.sizeZ, z);
-              Arrays.fill(core.sizeC, c);
-              Arrays.fill(core.sizeT, t);
-              Arrays.fill(core.imageCount, count);
-              Arrays.fill(core.pixelType, pixelType);
-            }
-          }
-
-          if (in.getFilePointer() < in.length() - 1) {
-            if (in.read() != -38) in.skipBytes(15);
-            else in.seek(in.getFilePointer() - 1);
-          }
+          xml.add(b, off, b.length - off);
         }
       }
 
-      if (offsets.length != core.imageCount.length && core.imageCount[0] == 1) {
-        core.imageCount[0] = offsets.length;
-        if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-        core.sizeT[0] = offsets.length / core.sizeC[0];
-        if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+      String xmlString = new String(xml.toByteArray());
+      xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
+        xmlString + "</ND2>";
+
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(xmlString.getBytes(), 0, xmlString.length());
+
+      try {
+        SAXParser parser = SAX_FACTORY.newSAXParser();
+        parser.parse(s, handler);
+      }
+      catch (ParserConfigurationException exc) {
+        throw new FormatException(exc);
+      }
+      catch (SAXException exc) {
+        throw new FormatException(exc);
+      }
+
+      s.close();
+
+      // adjust SizeT, if necessary
+      long planeSize = core.sizeX[0] * core.sizeY[0] *
+        FormatTools.getBytesPerPixel(core.pixelType[0]) * core.sizeC[0];
+      if (planeSize*core.imageCount[0]*core.imageCount.length >=
+        in.length() && !isLossless)
+      {
+        int approxPlanes = (int) (in.length() / planeSize);
+        core.sizeT[0] = approxPlanes / core.imageCount.length;
+        if (core.sizeT[0] * core.imageCount.length < approxPlanes) {
+          core.sizeT[0]++;
+        }
+        core.imageCount[0] = core.sizeT[0];
         core.sizeZ[0] = 1;
-        long[][] tmpOffsets = offsets;
-        offsets = new long[core.imageCount.length][core.imageCount[0]];
-        for (int i=0; i<offsets.length; i++) {
-          for (int j=0; j<offsets[i].length; j++) {
-            offsets[i][j] = tmpOffsets[j][i];
-          }
-        }
       }
-      else if (offsets.length != core.imageCount.length) {
+
+      // read first CustomData block
+
+      if (customDataOffsets.size() > 0) {
+        in.seek(((Long) customDataOffsets.get(0)).longValue());
+        Point p = (Point) customDataLengths.get(0);
+        int len = (int) (p.x + p.y);
+        byte[] b = new byte[len];
+        in.read(b);
+
+        // the acqtimecache is a undeliniated stream of doubles
+        int off = 0;
+        for (int i=0; i<len; i++) {
+          char c = (char) b[i];
+          if ((off == 0 && c == '!')) off = i + 1;
+        }
+        for (int j = off; j<len; j+=8) {
+          double time = DataTools.bytesToDouble(b, j, 8, true);
+          tsT.add(new Double(time));
+          addMeta("timestamp " + (tsT.size() - 1), String.valueOf(time));
+        }
+        b = null;
+      }
+
+      // rearrange image data offsets
+
+      if (numSeries == 0) numSeries = 1;
+
+      offsets = new long[numSeries][core.imageCount[0]];
+
+      if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
+      if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
+
+      for (int i=0; i<imageOffsets.size(); i++) {
+        long offset = ((Long) imageOffsets.get(i)).longValue();
+        Point p = (Point) imageLengths.get(i);
+        int length = (int) (p.x + p.y);
+
+        in.seek(offset);
+        byte[] b = new byte[length];
+        in.read(b);
+
+        StringBuffer sb = new StringBuffer();
+        int pt = 13;
+        while (b[pt] != '!') {
+          sb.append((char) b[pt++]);
+        }
+        int ndx = Integer.parseInt(sb.toString());
+
+        if (core.sizeC[0] == 0) {
+          Arrays.fill(core.sizeC, length / (core.sizeX[0] * core.sizeY[0] *
+            FormatTools.getBytesPerPixel(core.pixelType[0])));
+        }
+
+        int seriesIndex = ndx / (core.sizeT[0] * core.sizeZ[0]);
+        int plane = ndx % (core.sizeT[0] * core.sizeZ[0]);
+
+        offsets[seriesIndex][plane] = offset + p.x + 8;
+
+        b = null;
+      }
+
+      if (offsets.length != core.imageCount.length) {
         int x = core.sizeX[0];
         int y = core.sizeY[0];
         int c = core.sizeC[0];
@@ -472,7 +471,7 @@ public class ND2Reader extends FormatReader {
 
       if (core.sizeC[0] > 1) {
         if (adjustImageCount) {
-          int n = numValidPlanes / core.sizeT.length;
+          int n = imageOffsets.size() / core.sizeT.length;
           Arrays.fill(core.sizeT, n == 0 ? 1 : n);
         }
         Arrays.fill(core.imageCount, core.sizeT[0] * core.sizeZ[0]);
@@ -598,7 +597,9 @@ public class ND2Reader extends FormatReader {
 
       while (st.hasMoreTokens()) {
         String token = st.nextToken().trim();
-        if (token.indexOf("<!--") != -1) continue;
+        if (token.indexOf("<!--") != -1 || token.indexOf("VCAL") != -1) {
+          continue;
+        }
         if (token.startsWith("<")) sb.append(token);
       }
 
@@ -836,6 +837,7 @@ public class ND2Reader extends FormatReader {
       }
       else if (qName.startsWith("TextInfo")) {
         parseKeyAndValue(qName, attributes.getValue("Text"));
+        parseKeyAndValue(qName, attributes.getValue("value"));
       }
       else if (qName.equals("dCompressionParam")) {
         int v = Integer.parseInt(attributes.getValue("value"));
@@ -860,6 +862,7 @@ public class ND2Reader extends FormatReader {
   // -- Helper methods --
 
   private void parseKeyAndValue(String key, String value) {
+    if (key == null || value == null) return;
     addMeta(key, value);
     if (key.endsWith("dCalibration")) {
       pixelSizeX = Float.parseFloat(value);
@@ -888,7 +891,7 @@ public class ND2Reader extends FormatReader {
         core.sizeT[0] = Integer.parseInt(value);
       }
     }
-    else if (key.endsWith("TextInfoItem")) {
+    else if (key.startsWith("TextInfoItem") || key.endsWith("TextInfoItem")) {
       value = value.replaceAll("&#x000d;&#x000a;", "\n");
       StringTokenizer tokens = new StringTokenizer(value, "\n");
       while (tokens.hasMoreTokens()) {
