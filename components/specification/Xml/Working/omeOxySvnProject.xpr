@@ -17,6 +17,7 @@
         <file name="DataHistory.xsd"/>
         <file name="min-sample.xml"/>
         <file name="MLI.xsd"/>
+        <file name="objective-sample.xml"/>
         <file name="ome.xsd"/>
         <file name="sample-updated.ome.xml"/>
         <file name="SPW.xsd"/>

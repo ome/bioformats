@@ -86,7 +86,7 @@
 			</attribute>
 			<attribute name = "AppliesTo" use = "required">
 				<annotation>
-					<documentation>This specifies what this record is an attribute of. The options are Global, Dataset, Image, or Region.
+					<documentation>This specifies what this record is an attribute of. The options are Global, Dataset, Image, or Region (was called Feature hence letter F).
 					</documentation>
 				</annotation>
 				<simpleType>

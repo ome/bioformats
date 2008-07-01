@@ -24,7 +24,7 @@
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	version="1" 
+	version="2" 
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>
@@ -35,7 +35,7 @@
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema February 2008 - Version 1
+			OME XML Schema February 2008 - Update Version 2 May 2008
 			Author:  Ilya G. Goldberg, Andrew J Patterson
 			Copyright 2002 - 2008 OME. All rights reserved.
 		</xsd:documentation>
@@ -94,7 +94,7 @@
 				<xsd:element ref="GroupRef" minOccurs="0"/>
 				<xsd:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="InstrumentRef" minOccurs="0"/>
-				<xsd:element ref="ObjectiveSettingsRef" minOccurs="0"/>
+				<xsd:element ref="ObjectiveRef" minOccurs="0"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0"/>
 				<xsd:element ref="Thumbnail" minOccurs="0"/>
 				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
@@ -805,7 +805,21 @@
 		<xsd:annotation>
 			<xsd:documentation>
 				A description of the microscope's objective lens.
-				Required elements include the lens numerical aperture, and the magnification, both of which a floating point (real) numbers.
+				Required elements include the lens numerical aperture, 
+				and the magnification, both of which a floating 
+				point (real) numbers.
+				The values are those that are fixed for a particular 
+				objective: either because it has been manufactured to 
+				this specification or the value has been measured on 
+				this particular objective.
+				Correction: This is the type of correction coating applied to this lens.
+				Immersion: This is the types of immersion medium the lens is designed to
+				work with. It is not the same as 'Medium' in ObjectiveRef (a 
+				single type) as here Immersion can have compound values like 'Multi'.
+				LensNA: The numerical aperture of the lens (as a float)
+				NominalMagnification: The specified magnification e.g. x10
+				CalibratedMagnification: The measured magnification e.g. x10.3
+				WorkingDistance: WorkingDistance of the lense. The Units are um.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -826,25 +840,10 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ObjectiveSettings">
-		<xsd:annotation>
-			<xsd:documentation>
-				A description of the user settings on a microscope's objective lens.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="ObjectiveRef"/>
-			</xsd:sequence>
-			<xsd:attribute name="CorrectionCollar" type="xsd:float"/>
-			<xsd:attribute name="Medium" type="Medium"/>
-			<xsd:attribute name="RefractiveIndex" type="xsd:float"/>
-		</xsd:complexType>
-	</xsd:element>
 	<xsd:simpleType name="Medium">
 		<xsd:annotation>
 			<xsd:documentation>
-				A description of a Medium used either for the sample or the lens.
+				A description of a Medium used for the lens.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
@@ -1259,11 +1258,6 @@
 	<xsd:simpleType name="ObjectiveID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Objective:\S+)|(Objective:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="ObjectiveSettingsID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ObjectiveSettings:\S+)|(ObjectiveSettings:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="LightSourceID">
@@ -1830,6 +1824,19 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="ObjectiveRef">
+		<xsd:annotation>
+			<xsd:documentation> 
+				This holds the setting applied to an objective as well as a
+				reference to the objective. 
+				The ID is the objective used in this case.
+				The CorrectionCollar is it normal an adjustable ring on the 
+				objective. Each has an arbitrary scale on it so the values 
+				is unit-less.
+				The Medium is the actual immersion medium used in this case.
+				The RefractiveIndex is that of the immersion medium. This is
+				a ratio so it also unit-less.
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -1839,15 +1846,6 @@
 					<xsd:attribute name="RefractiveIndex" type="xsd:float">
 						<xsd:annotation><xsd:documentation>This is unit-less, it is a ratio.</xsd:documentation></xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="ObjectiveSettingsRef">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="ObjectiveSettingsID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

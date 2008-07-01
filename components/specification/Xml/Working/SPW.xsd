@@ -275,7 +275,7 @@
             <xsd:documentation>
                 A Well is a component of the Well/Plate/Screen construct to describe screening applications.
                 A Well has a number of WellSample elements that link to the Images collected in this well.
- 				The ReagentRef links any Reagents that were used in this Well. A well is part of one or more Plates.
+ 				The ReagentRef links any Reagents that were used in this Well. A well is part of only one Plate.
 				The origin for the row and column identifiers is the top left corner of the plate starting at zero.
 				i.e The top left well of a plate is index (0,0)
             </xsd:documentation>
