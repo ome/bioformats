@@ -66,7 +66,7 @@ public class ClassList {
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class base) throws IOException {
-    this(file, base, getClass());
+    this(file, base, null);
   }
 
   /**
@@ -80,6 +80,8 @@ public class ClassList {
     this.base = base;
     classes = new Vector();
     if (file == null) return;
+
+    if (location == null) location = getClass();
 
     // read classes from file
     BufferedReader in = new BufferedReader(new InputStreamReader(
