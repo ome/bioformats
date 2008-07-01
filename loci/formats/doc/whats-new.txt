@@ -1,4 +1,20 @@
-2007 April 17:
+2008 July 1:
+* Fixed bugs in most file format readers
+* Fixed bugs in OME and OMERO download functionality
+* Fixed bugs in OME server-side import
+* Improved metadata storage/retrieval when uploading to and downloading from the OME Perl server
+* Improved Bio-Formats ImageJ macro extensions
+* Major updates to MetadataStore API
+* Updated OME-XML generation to use 2008-02 schema by default
+* Addressed time and memory performance issues in many readers
+* Changed license from LGPL to GPL
+* Added support for the FEI file format
+* Added support for uncompressed Hamamatsu Aquacosmos NAF files
+* Added support for Animated PNG files
+* Added several new options to Bio-Formats ImageJ plugin
+* Added support for writing ICS files
+
+2008 April 17:
 * Fixed bugs in Slidebook, ND2, FV1000 OIB/OIF, Perkin Elmer, TIFF, Prairie,
   Openlab, Zeiss LSM, MNG, Molecular Dynamics GEL, and OME-TIFF
 * Fixed bugs in OME and OMERO download functionality
@@ -13,16 +29,16 @@
 * Added support for writing multi-series OME-TIFF files
 * Added support for writing BigTIFF files
 
-2007 Feb 12:
+2008 Feb 12:
 * Fixed bugs in QuickTime, SimplePCI and DICOM
 * Fixed a bug in channel splitting logic
 
-2007 Feb 8:
+2008 Feb 8:
 * Many critical bugfixes in format readers and ImageJ plugins
 * Newly reborn Data Browser for 5D image visualization
     + some combinations of import options do not work yet
 
-2007 Feb 1:
+2008 Feb 1:
 * Fixed bugs in Zeiss LSM, Metamorph STK, FV1000 OIB/OIF, Leica LEI, TIFF,
   Zeiss ZVI, ICS, Prairie, Openlab LIFF, Gatan, DICOM, QuickTime
 * Fixed bug in OME-TIFF writer
