@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
+ * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -351,6 +351,34 @@ public final class MetadataConverter {
       if (plateNameValue != null) dest.setPlateName(plateNameValue, plateIndex);
       String plateStatusValue = src.getPlateStatus(plateIndex);
       if (plateStatusValue != null) dest.setPlateStatus(plateStatusValue, plateIndex);
+      int wellCount = src.getWellCount(plateIndex);
+      for (int wellIndex=0; wellIndex<wellCount; wellIndex++) {
+        Integer wellColumnValue = src.getWellColumn(plateIndex, wellIndex);
+        if (wellColumnValue != null) dest.setWellColumn(wellColumnValue, plateIndex, wellIndex);
+        String wellExternalDescriptionValue = src.getWellExternalDescription(plateIndex, wellIndex);
+        if (wellExternalDescriptionValue != null) dest.setWellExternalDescription(wellExternalDescriptionValue, plateIndex, wellIndex);
+        String wellExternalIdentifierValue = src.getWellExternalIdentifier(plateIndex, wellIndex);
+        if (wellExternalIdentifierValue != null) dest.setWellExternalIdentifier(wellExternalIdentifierValue, plateIndex, wellIndex);
+        String wellIDValue = src.getWellID(plateIndex, wellIndex);
+        if (wellIDValue != null) dest.setWellID(wellIDValue, plateIndex, wellIndex);
+        Integer wellRowValue = src.getWellRow(plateIndex, wellIndex);
+        if (wellRowValue != null) dest.setWellRow(wellRowValue, plateIndex, wellIndex);
+        String wellTypeValue = src.getWellType(plateIndex, wellIndex);
+        if (wellTypeValue != null) dest.setWellType(wellTypeValue, plateIndex, wellIndex);
+        int wellSampleCount = src.getWellSampleCount(plateIndex, wellIndex);
+        for (int wellSampleIndex=0; wellSampleIndex<wellSampleCount; wellSampleIndex++) {
+          String wellSampleIDValue = src.getWellSampleID(plateIndex, wellIndex, wellSampleIndex);
+          if (wellSampleIDValue != null) dest.setWellSampleID(wellSampleIDValue, plateIndex, wellIndex, wellSampleIndex);
+          Integer wellSampleIndexValue = src.getWellSampleIndex(plateIndex, wellIndex, wellSampleIndex);
+          if (wellSampleIndexValue != null) dest.setWellSampleIndex(wellSampleIndexValue, plateIndex, wellIndex, wellSampleIndex);
+          Float wellSamplePosXValue = src.getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex);
+          if (wellSamplePosXValue != null) dest.setWellSamplePosX(wellSamplePosXValue, plateIndex, wellIndex, wellSampleIndex);
+          Float wellSamplePosYValue = src.getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex);
+          if (wellSamplePosYValue != null) dest.setWellSamplePosY(wellSamplePosYValue, plateIndex, wellIndex, wellSampleIndex);
+          Integer wellSampleTimepointValue = src.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
+          if (wellSampleTimepointValue != null) dest.setWellSampleTimepoint(wellSampleTimepointValue, plateIndex, wellIndex, wellSampleIndex);
+        }
+      }
     }
     int screenCount = src.getScreenCount();
     for (int screenIndex=0; screenIndex<screenCount; screenIndex++) {
@@ -390,34 +418,6 @@ public final class MetadataConverter {
         if (screenAcquisitionIDValue != null) dest.setScreenAcquisitionID(screenAcquisitionIDValue, screenIndex, screenAcquisitionIndex);
         String screenAcquisitionStartTimeValue = src.getScreenAcquisitionStartTime(screenIndex, screenAcquisitionIndex);
         if (screenAcquisitionStartTimeValue != null) dest.setScreenAcquisitionStartTime(screenAcquisitionStartTimeValue, screenIndex, screenAcquisitionIndex);
-      }
-    }
-    int wellCount = src.getWellCount();
-    for (int wellIndex=0; wellIndex<wellCount; wellIndex++) {
-      Integer wellColumnValue = src.getWellColumn(wellIndex);
-      if (wellColumnValue != null) dest.setWellColumn(wellColumnValue, wellIndex);
-      String wellExternalDescriptionValue = src.getWellExternalDescription(wellIndex);
-      if (wellExternalDescriptionValue != null) dest.setWellExternalDescription(wellExternalDescriptionValue, wellIndex);
-      String wellExternalIdentifierValue = src.getWellExternalIdentifier(wellIndex);
-      if (wellExternalIdentifierValue != null) dest.setWellExternalIdentifier(wellExternalIdentifierValue, wellIndex);
-      String wellIDValue = src.getWellID(wellIndex);
-      if (wellIDValue != null) dest.setWellID(wellIDValue, wellIndex);
-      Integer wellRowValue = src.getWellRow(wellIndex);
-      if (wellRowValue != null) dest.setWellRow(wellRowValue, wellIndex);
-      String wellTypeValue = src.getWellType(wellIndex);
-      if (wellTypeValue != null) dest.setWellType(wellTypeValue, wellIndex);
-      int wellSampleCount = src.getWellSampleCount(wellIndex);
-      for (int wellSampleIndex=0; wellSampleIndex<wellSampleCount; wellSampleIndex++) {
-        String wellSampleIDValue = src.getWellSampleID(wellIndex, wellSampleIndex);
-        if (wellSampleIDValue != null) dest.setWellSampleID(wellSampleIDValue, wellIndex, wellSampleIndex);
-        Integer wellSampleIndexValue = src.getWellSampleIndex(wellIndex, wellSampleIndex);
-        if (wellSampleIndexValue != null) dest.setWellSampleIndex(wellSampleIndexValue, wellIndex, wellSampleIndex);
-        Float wellSamplePosXValue = src.getWellSamplePosX(wellIndex, wellSampleIndex);
-        if (wellSamplePosXValue != null) dest.setWellSamplePosX(wellSamplePosXValue, wellIndex, wellSampleIndex);
-        Float wellSamplePosYValue = src.getWellSamplePosY(wellIndex, wellSampleIndex);
-        if (wellSamplePosYValue != null) dest.setWellSamplePosY(wellSamplePosYValue, wellIndex, wellSampleIndex);
-        Integer wellSampleTimepointValue = src.getWellSampleTimepoint(wellIndex, wellSampleIndex);
-        if (wellSampleTimepointValue != null) dest.setWellSampleTimepoint(wellSampleTimepointValue, wellIndex, wellSampleIndex);
       }
     }
   }

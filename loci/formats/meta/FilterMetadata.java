@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
+ * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -915,66 +915,66 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Well property storage -
 
-  /* @see MetadataStore#setWellColumn(Integer, int) */
-  public void setWellColumn(Integer column, int wellIndex) {
-    store.setWellColumn(column, wellIndex);
+  /* @see MetadataStore#setWellColumn(Integer, int, int) */
+  public void setWellColumn(Integer column, int plateIndex, int wellIndex) {
+    store.setWellColumn(column, plateIndex, wellIndex);
   }
 
-  /* @see MetadataStore#setWellExternalDescription(String, int) */
-  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+  /* @see MetadataStore#setWellExternalDescription(String, int, int) */
+  public void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex) {
     String value = filter ? DataTools.sanitize(externalDescription) : externalDescription;
-    store.setWellExternalDescription(value, wellIndex);
+    store.setWellExternalDescription(value, plateIndex, wellIndex);
   }
 
-  /* @see MetadataStore#setWellExternalIdentifier(String, int) */
-  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+  /* @see MetadataStore#setWellExternalIdentifier(String, int, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int plateIndex, int wellIndex) {
     String value = filter ? DataTools.sanitize(externalIdentifier) : externalIdentifier;
-    store.setWellExternalIdentifier(value, wellIndex);
+    store.setWellExternalIdentifier(value, plateIndex, wellIndex);
   }
 
-  /* @see MetadataStore#setWellID(String, int) */
-  public void setWellID(String id, int wellIndex) {
+  /* @see MetadataStore#setWellID(String, int, int) */
+  public void setWellID(String id, int plateIndex, int wellIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
-    store.setWellID(value, wellIndex);
+    store.setWellID(value, plateIndex, wellIndex);
   }
 
-  /* @see MetadataStore#setWellRow(Integer, int) */
-  public void setWellRow(Integer row, int wellIndex) {
-    store.setWellRow(row, wellIndex);
+  /* @see MetadataStore#setWellRow(Integer, int, int) */
+  public void setWellRow(Integer row, int plateIndex, int wellIndex) {
+    store.setWellRow(row, plateIndex, wellIndex);
   }
 
-  /* @see MetadataStore#setWellType(String, int) */
-  public void setWellType(String type, int wellIndex) {
+  /* @see MetadataStore#setWellType(String, int, int) */
+  public void setWellType(String type, int plateIndex, int wellIndex) {
     String value = filter ? DataTools.sanitize(type) : type;
-    store.setWellType(value, wellIndex);
+    store.setWellType(value, plateIndex, wellIndex);
   }
 
   // -- WellSample property storage -
 
-  /* @see MetadataStore#setWellSampleID(String, int, int) */
-  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSampleID(String, int, int, int) */
+  public void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
-    store.setWellSampleID(value, wellIndex, wellSampleIndex);
+    store.setWellSampleID(value, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  /* @see MetadataStore#setWellSampleIndex(Integer, int, int) */
-  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
-    store.setWellSampleIndex(index, wellIndex, wellSampleIndex);
+  /* @see MetadataStore#setWellSampleIndex(Integer, int, int, int) */
+  public void setWellSampleIndex(Integer index, int plateIndex, int wellIndex, int wellSampleIndex) {
+    store.setWellSampleIndex(index, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  /* @see MetadataStore#setWellSamplePosX(Float, int, int) */
-  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
-    store.setWellSamplePosX(posX, wellIndex, wellSampleIndex);
+  /* @see MetadataStore#setWellSamplePosX(Float, int, int, int) */
+  public void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex) {
+    store.setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  /* @see MetadataStore#setWellSamplePosY(Float, int, int) */
-  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
-    store.setWellSamplePosY(posY, wellIndex, wellSampleIndex);
+  /* @see MetadataStore#setWellSamplePosY(Float, int, int, int) */
+  public void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex) {
+    store.setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int) */
-  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
-    store.setWellSampleTimepoint(timepoint, wellIndex, wellSampleIndex);
+  /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex) {
+    store.setWellSampleTimepoint(timepoint, plateIndex, wellIndex, wellSampleIndex);
   }
 
 }

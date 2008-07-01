@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
+ * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,9 +81,9 @@ public interface MetadataRetrieve {
 
   int getTiffDataCount(int imageIndex, int pixelsIndex);
 
-  int getWellCount();
+  int getWellCount(int plateIndex);
 
-  int getWellSampleCount(int wellIndex);
+  int getWellSampleCount(int plateIndex, int wellIndex);
 
   // - Entity retrieval -
 
@@ -1117,75 +1117,86 @@ public interface MetadataRetrieve {
 
   /**
    * For a particular Well, gets column index of the well, where top-left is 0.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  Integer getWellColumn(int wellIndex);
+  Integer getWellColumn(int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, gets description of the externally defined ID for this plate.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  String getWellExternalDescription(int wellIndex);
+  String getWellExternalDescription(int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, gets reference to this well in an external database.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  String getWellExternalIdentifier(int wellIndex);
+  String getWellExternalIdentifier(int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, gets TODO.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  String getWellID(int wellIndex);
+  String getWellID(int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, gets row index of the well, where top-left is 0.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  Integer getWellRow(int wellIndex);
+  Integer getWellRow(int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, gets human-readable identifier of the screen status, e.g. empty, control.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  String getWellType(int wellIndex);
+  String getWellType(int plateIndex, int wellIndex);
 
   // - WellSample property retrieval -
 
   /**
    * For a particular WellSample, gets TODO.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  String getWellSampleID(int wellIndex, int wellSampleIndex);
+  String getWellSampleID(int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, gets link to the Image element.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  Integer getWellSampleIndex(int wellIndex, int wellSampleIndex);
+  Integer getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, gets X position of the image within the well.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  Float getWellSamplePosX(int wellIndex, int wellSampleIndex);
+  Float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, gets Y position of the image within the well.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  Float getWellSamplePosY(int wellIndex, int wellSampleIndex);
+  Float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, gets time-point at which the image started to be collected.
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex);
+  Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
 
 }

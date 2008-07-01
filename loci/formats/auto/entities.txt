@@ -1173,10 +1173,6 @@ description = TODO
 #type =
 #description = TODO
 
-#[Plate Well]
-#type = Integer
-#description = TODO
-
 [Plate Name]
 type = String
 description = the plate's name
@@ -1262,15 +1258,9 @@ description = description of a screen (grouping of plates)
 [Screen 2003FC]
 path = -
 
-#[Screen Reagent]
-#type = String
-#description = TODO
-
 #[Screen PlateRef]
 #type = String
 #description = TODO
-
-#[Screen ScreenAcquisition]
 
 [Screen ID]
 type = String
@@ -1348,15 +1338,11 @@ description = time when the first image was acquired
 
 [Well]
 countable = true
-path = Well+
+path = Plate+/Well+
 description = describes a Well (part of a plate)
 
 [Well 2003FC]
 path = -
-
-#[Well WellSample]
-#type = String
-#description = TODO
 
 #[Well ReagentRef]
 #type = String
@@ -1392,7 +1378,7 @@ description = human-readable identifier of the screen status, e.g. empty, contro
 
 [WellSample]
 countable = true
-path = Well+/WellSample+
+path = Plate+/Well+/WellSample+
 description = individual image within a Well
 
 [WellSample 2003FC]

@@ -220,6 +220,7 @@ public class InCellReader extends FormatReader {
     private int nextEmWave = 0;
     private int nextExWave = 0;
     private MetadataStore store;
+    private int nextPlate = 0;
 
     public InCellHandler(MetadataStore store) {
       this.store = store;
@@ -284,16 +285,17 @@ public class InCellReader extends FormatReader {
         if (wave != null) emWaves.add(new Integer(wave));
       }
       else if (qName.equals("Plate")) {
-        store.setPlateName(attributes.getValue("name"), 0);
+        store.setPlateName(attributes.getValue("name"), nextPlate);
         int rows = Integer.parseInt(attributes.getValue("rows"));
         int cols = Integer.parseInt(attributes.getValue("columns"));
 
         for (int r=0; r<rows; r++) {
           for (int c=0; c<cols; c++) {
-            store.setWellRow(new Integer(r), r*cols + c);
-            store.setWellColumn(new Integer(c), r*cols + c);
+            store.setWellRow(new Integer(r), nextPlate, r*cols + c);
+            store.setWellColumn(new Integer(c), nextPlate, r*cols + c);
           }
         }
+        nextPlate++;
       }
     }
   }

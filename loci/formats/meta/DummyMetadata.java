@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
+ * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -139,13 +139,13 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return -1;
   }
 
-  /* @see MetadataRetrieve#getWellCount() */
-  public int getWellCount() {
+  /* @see MetadataRetrieve#getWellCount(int) */
+  public int getWellCount(int plateIndex) {
     return -1;
   }
 
-  /* @see MetadataRetrieve#getWellSampleCount(int) */
-  public int getWellSampleCount(int wellIndex) {
+  /* @see MetadataRetrieve#getWellSampleCount(int, int) */
+  public int getWellSampleCount(int plateIndex, int wellIndex) {
     return -1;
   }
 
@@ -811,51 +811,51 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Well property retrieval -
 
-  /* @see MetadataRetrieve#getWellColumn(int) */
-  public Integer getWellColumn(int wellIndex) {
+  /* @see MetadataRetrieve#getWellColumn(int, int) */
+  public Integer getWellColumn(int plateIndex, int wellIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellExternalDescription(int) */
-  public String getWellExternalDescription(int wellIndex) {
+  /* @see MetadataRetrieve#getWellExternalDescription(int, int) */
+  public String getWellExternalDescription(int plateIndex, int wellIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellExternalIdentifier(int) */
-  public String getWellExternalIdentifier(int wellIndex) {
+  /* @see MetadataRetrieve#getWellExternalIdentifier(int, int) */
+  public String getWellExternalIdentifier(int plateIndex, int wellIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellID(int) */
-  public String getWellID(int wellIndex) {
+  /* @see MetadataRetrieve#getWellID(int, int) */
+  public String getWellID(int plateIndex, int wellIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellRow(int) */
-  public Integer getWellRow(int wellIndex) {
+  /* @see MetadataRetrieve#getWellRow(int, int) */
+  public Integer getWellRow(int plateIndex, int wellIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellType(int) */
-  public String getWellType(int wellIndex) {
+  /* @see MetadataRetrieve#getWellType(int, int) */
+  public String getWellType(int plateIndex, int wellIndex) {
     return null;
   }
 
   // - WellSample property retrieval -
 
-  /* @see MetadataRetrieve#getWellSampleID(int, int) */
-  public String getWellSampleID(int wellIndex, int wellSampleIndex) {
+  /* @see MetadataRetrieve#getWellSampleID(int, int, int) */
+  public String getWellSampleID(int plateIndex, int wellIndex, int wellSampleIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellSampleIndex(int, int) */
-  public Integer getWellSampleIndex(int wellIndex, int wellSampleIndex) {
+  /* @see MetadataRetrieve#getWellSampleIndex(int, int, int) */
+  public Integer getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellSamplePosX(int, int) */
-  public Float getWellSamplePosX(int wellIndex, int wellSampleIndex) {
+  /* @see MetadataRetrieve#getWellSamplePosX(int, int, int) */
+  public Float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellSamplePosY(int, int) */
-  public Float getWellSamplePosY(int wellIndex, int wellSampleIndex) {
+  /* @see MetadataRetrieve#getWellSamplePosY(int, int, int) */
+  public Float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getWellSampleTimepoint(int, int) */
-  public Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex) {
+  /* @see MetadataRetrieve#getWellSampleTimepoint(int, int, int) */
+  public Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex) {
     return null;
   }
 
@@ -1502,50 +1502,50 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Well property storage -
 
-  /* @see MetadataStore#setWellColumn(Integer, int) */
-  public void setWellColumn(Integer column, int wellIndex) {
+  /* @see MetadataStore#setWellColumn(Integer, int, int) */
+  public void setWellColumn(Integer column, int plateIndex, int wellIndex) {
   }
 
-  /* @see MetadataStore#setWellExternalDescription(String, int) */
-  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+  /* @see MetadataStore#setWellExternalDescription(String, int, int) */
+  public void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex) {
   }
 
-  /* @see MetadataStore#setWellExternalIdentifier(String, int) */
-  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+  /* @see MetadataStore#setWellExternalIdentifier(String, int, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int plateIndex, int wellIndex) {
   }
 
-  /* @see MetadataStore#setWellID(String, int) */
-  public void setWellID(String id, int wellIndex) {
+  /* @see MetadataStore#setWellID(String, int, int) */
+  public void setWellID(String id, int plateIndex, int wellIndex) {
   }
 
-  /* @see MetadataStore#setWellRow(Integer, int) */
-  public void setWellRow(Integer row, int wellIndex) {
+  /* @see MetadataStore#setWellRow(Integer, int, int) */
+  public void setWellRow(Integer row, int plateIndex, int wellIndex) {
   }
 
-  /* @see MetadataStore#setWellType(String, int) */
-  public void setWellType(String type, int wellIndex) {
+  /* @see MetadataStore#setWellType(String, int, int) */
+  public void setWellType(String type, int plateIndex, int wellIndex) {
   }
 
   // - WellSample property storage -
 
-  /* @see MetadataStore#setWellSampleID(String, int, int) */
-  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSampleID(String, int, int, int) */
+  public void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
-  /* @see MetadataStore#setWellSampleIndex(Integer, int, int) */
-  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSampleIndex(Integer, int, int, int) */
+  public void setWellSampleIndex(Integer index, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
-  /* @see MetadataStore#setWellSamplePosX(Float, int, int) */
-  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSamplePosX(Float, int, int, int) */
+  public void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
-  /* @see MetadataStore#setWellSamplePosY(Float, int, int) */
-  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSamplePosY(Float, int, int, int) */
+  public void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
-  /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int) */
-  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
 }

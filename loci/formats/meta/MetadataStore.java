@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
+ * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1239,85 +1239,96 @@ public interface MetadataStore {
   /**
    * For a particular Well, sets column index of the well, where top-left is 0.
    * @param column column index of the well, where top-left is 0
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  void setWellColumn(Integer column, int wellIndex);
+  void setWellColumn(Integer column, int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, sets description of the externally defined ID for this plate.
    * @param externalDescription description of the externally defined ID for this plate
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  void setWellExternalDescription(String externalDescription, int wellIndex);
+  void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, sets reference to this well in an external database.
    * @param externalIdentifier reference to this well in an external database
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  void setWellExternalIdentifier(String externalIdentifier, int wellIndex);
+  void setWellExternalIdentifier(String externalIdentifier, int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, sets TODO.
    * @param id TODO
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  void setWellID(String id, int wellIndex);
+  void setWellID(String id, int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, sets row index of the well, where top-left is 0.
    * @param row row index of the well, where top-left is 0
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  void setWellRow(Integer row, int wellIndex);
+  void setWellRow(Integer row, int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, sets human-readable identifier of the screen status, e.g. empty, control.
    * @param type human-readable identifier of the screen status, e.g. empty, control
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
-  void setWellType(String type, int wellIndex);
+  void setWellType(String type, int plateIndex, int wellIndex);
 
   // - WellSample property storage -
 
   /**
    * For a particular WellSample, sets TODO.
    * @param id TODO
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  void setWellSampleID(String id, int wellIndex, int wellSampleIndex);
+  void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, sets link to the Image element.
    * @param index link to the Image element
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex);
+  void setWellSampleIndex(Integer index, int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, sets X position of the image within the well.
    * @param posX X position of the image within the well
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex);
+  void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, sets Y position of the image within the well.
    * @param posY Y position of the image within the well
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex);
+  void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, sets time-point at which the image started to be collected.
    * @param timepoint time-point at which the image started to be collected
+   * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex);
+  void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
 
 }

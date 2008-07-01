@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 16, 2008 1:24:43 PM PDT
+ * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -215,18 +215,18 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     return -1;
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellCount() */
-  public int getWellCount() {
+  /* @see loci.formats.meta.MetadataRetrieve#getWellCount(int) */
+  public int getWellCount(int plateIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
-      if (getWellNode(i, false) == null) return i;
+      if (getWellNode(plateIndex, i, false) == null) return i;
     }
     return -1;
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleCount(int) */
-  public int getWellSampleCount(int wellIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleCount(int, int) */
+  public int getWellSampleCount(int plateIndex, int wellIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
-      if (getWellSampleNode(wellIndex, i, false) == null) return i;
+      if (getWellSampleNode(plateIndex, wellIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -1139,71 +1139,71 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
 
   // - Well property retrieval -
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellColumn(int) */
-  public Integer getWellColumn(int wellIndex) {
-    WellNode well = getWellNode(wellIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellColumn(int, int) */
+  public Integer getWellColumn(int plateIndex, int wellIndex) {
+    WellNode well = getWellNode(plateIndex, wellIndex, false);
       return well == null ? null : well.getColumn();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalDescription(int) */
-  public String getWellExternalDescription(int wellIndex) {
-    WellNode well = getWellNode(wellIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalDescription(int, int) */
+  public String getWellExternalDescription(int plateIndex, int wellIndex) {
+    WellNode well = getWellNode(plateIndex, wellIndex, false);
       return well == null ? null : well.getExternalDescription();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalIdentifier(int) */
-  public String getWellExternalIdentifier(int wellIndex) {
-    WellNode well = getWellNode(wellIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellExternalIdentifier(int, int) */
+  public String getWellExternalIdentifier(int plateIndex, int wellIndex) {
+    WellNode well = getWellNode(plateIndex, wellIndex, false);
       return well == null ? null : well.getExternalIdentifier();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellID(int) */
-  public String getWellID(int wellIndex) {
-    WellNode well = getWellNode(wellIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellID(int, int) */
+  public String getWellID(int plateIndex, int wellIndex) {
+    WellNode well = getWellNode(plateIndex, wellIndex, false);
       return well == null ? null : well.getNodeID();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellRow(int) */
-  public Integer getWellRow(int wellIndex) {
-    WellNode well = getWellNode(wellIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellRow(int, int) */
+  public Integer getWellRow(int plateIndex, int wellIndex) {
+    WellNode well = getWellNode(plateIndex, wellIndex, false);
       return well == null ? null : well.getRow();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellType(int) */
-  public String getWellType(int wellIndex) {
-    WellNode well = getWellNode(wellIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellType(int, int) */
+  public String getWellType(int plateIndex, int wellIndex) {
+    WellNode well = getWellNode(plateIndex, wellIndex, false);
       return well == null ? null : well.getType();
     }
 
   // - WellSample property retrieval -
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleID(int, int) */
-  public String getWellSampleID(int wellIndex, int wellSampleIndex) {
-    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleID(int, int, int) */
+  public String getWellSampleID(int plateIndex, int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
       return wellSample == null ? null : wellSample.getNodeID();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleIndex(int, int) */
-  public Integer getWellSampleIndex(int wellIndex, int wellSampleIndex) {
-    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleIndex(int, int, int) */
+  public Integer getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
       return wellSample == null ? null : wellSample.getIndex();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosX(int, int) */
-  public Float getWellSamplePosX(int wellIndex, int wellSampleIndex) {
-    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosX(int, int, int) */
+  public Float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
       return wellSample == null ? null : wellSample.getPosX();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosY(int, int) */
-  public Float getWellSamplePosY(int wellIndex, int wellSampleIndex) {
-    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSamplePosY(int, int, int) */
+  public Float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
       return wellSample == null ? null : wellSample.getPosY();
     }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleTimepoint(int, int) */
-  public Integer getWellSampleTimepoint(int wellIndex, int wellSampleIndex) {
-    WellSampleNode wellSample = getWellSampleNode(wellIndex, wellSampleIndex, false);
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleTimepoint(int, int, int) */
+  public Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
       return wellSample == null ? null : wellSample.getTimepoint();
     }
 
@@ -2282,82 +2282,82 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
 
   // - Well property storage -
 
-  /* @see loci.formats.meta.MetadataStore#setWellColumn(Integer, int) */
-  public void setWellColumn(Integer column, int wellIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellColumn(Integer, int, int) */
+  public void setWellColumn(Integer column, int plateIndex, int wellIndex) {
     if (column == null) return;
-    WellNode wellNode = getWellNode(wellIndex, true);
+    WellNode wellNode = getWellNode(plateIndex, wellIndex, true);
       wellNode.setColumn(column);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellExternalDescription(String, int) */
-  public void setWellExternalDescription(String externalDescription, int wellIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellExternalDescription(String, int, int) */
+  public void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex) {
     if (externalDescription == null) return;
-    WellNode wellNode = getWellNode(wellIndex, true);
+    WellNode wellNode = getWellNode(plateIndex, wellIndex, true);
       wellNode.setExternalDescription(externalDescription);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellExternalIdentifier(String, int) */
-  public void setWellExternalIdentifier(String externalIdentifier, int wellIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellExternalIdentifier(String, int, int) */
+  public void setWellExternalIdentifier(String externalIdentifier, int plateIndex, int wellIndex) {
     if (externalIdentifier == null) return;
-    WellNode wellNode = getWellNode(wellIndex, true);
+    WellNode wellNode = getWellNode(plateIndex, wellIndex, true);
       wellNode.setExternalIdentifier(externalIdentifier);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellID(String, int) */
-  public void setWellID(String id, int wellIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellID(String, int, int) */
+  public void setWellID(String id, int plateIndex, int wellIndex) {
     if (id == null) return;
-    WellNode wellNode = getWellNode(wellIndex, true);
+    WellNode wellNode = getWellNode(plateIndex, wellIndex, true);
       wellNode.setNodeID(id);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellRow(Integer, int) */
-  public void setWellRow(Integer row, int wellIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellRow(Integer, int, int) */
+  public void setWellRow(Integer row, int plateIndex, int wellIndex) {
     if (row == null) return;
-    WellNode wellNode = getWellNode(wellIndex, true);
+    WellNode wellNode = getWellNode(plateIndex, wellIndex, true);
       wellNode.setRow(row);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellType(String, int) */
-  public void setWellType(String type, int wellIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellType(String, int, int) */
+  public void setWellType(String type, int plateIndex, int wellIndex) {
     if (type == null) return;
-    WellNode wellNode = getWellNode(wellIndex, true);
+    WellNode wellNode = getWellNode(plateIndex, wellIndex, true);
       wellNode.setType(type);
     }
 
   // - WellSample property storage -
 
-  /* @see loci.formats.meta.MetadataStore#setWellSampleID(String, int, int) */
-  public void setWellSampleID(String id, int wellIndex, int wellSampleIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellSampleID(String, int, int, int) */
+  public void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex) {
     if (id == null) return;
-    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    WellSampleNode wellSampleNode = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, true);
       wellSampleNode.setNodeID(id);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellSampleIndex(Integer, int, int) */
-  public void setWellSampleIndex(Integer index, int wellIndex, int wellSampleIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellSampleIndex(Integer, int, int, int) */
+  public void setWellSampleIndex(Integer index, int plateIndex, int wellIndex, int wellSampleIndex) {
     if (index == null) return;
-    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    WellSampleNode wellSampleNode = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, true);
       wellSampleNode.setIndex(index);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellSamplePosX(Float, int, int) */
-  public void setWellSamplePosX(Float posX, int wellIndex, int wellSampleIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellSamplePosX(Float, int, int, int) */
+  public void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex) {
     if (posX == null) return;
-    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    WellSampleNode wellSampleNode = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, true);
       wellSampleNode.setPosX(posX);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellSamplePosY(Float, int, int) */
-  public void setWellSamplePosY(Float posY, int wellIndex, int wellSampleIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellSamplePosY(Float, int, int, int) */
+  public void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex) {
     if (posY == null) return;
-    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    WellSampleNode wellSampleNode = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, true);
       wellSampleNode.setPosY(posY);
     }
 
-  /* @see loci.formats.meta.MetadataStore#setWellSampleTimepoint(Integer, int, int) */
-  public void setWellSampleTimepoint(Integer timepoint, int wellIndex, int wellSampleIndex) {
+  /* @see loci.formats.meta.MetadataStore#setWellSampleTimepoint(Integer, int, int, int) */
+  public void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex) {
     if (timepoint == null) return;
-    WellSampleNode wellSampleNode = getWellSampleNode(wellIndex, wellSampleIndex, true);
+    WellSampleNode wellSampleNode = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, true);
       wellSampleNode.setTimepoint(timepoint);
     }
 
@@ -2705,6 +2705,32 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     return (PlateNode) list.get(plateIndex);
   }
 
+  // Plate+/Well+
+  private WellNode getWellNode(int plateIndex, int wellIndex, boolean create) {
+    // get Plate+ node
+    PlateNode plate = getPlateNode(plateIndex, create);
+    if (plate == null) return null;
+    // get Well+ node
+    int count = plate.getWellCount();
+    if (!create && count <= wellIndex) return null;
+    for (int i=count; i<=wellIndex; i++) new WellNode(plate);
+    List list = plate.getWellList();
+    return (WellNode) list.get(wellIndex);
+  }
+
+  // Plate+/Well+/WellSample+
+  private WellSampleNode getWellSampleNode(int plateIndex, int wellIndex, int wellSampleIndex, boolean create) {
+    // get Plate+/Well+ node
+    WellNode well = getWellNode(plateIndex, wellIndex, create);
+    if (well == null) return null;
+    // get WellSample+ node
+    int count = well.getWellSampleCount();
+    if (!create && count <= wellSampleIndex) return null;
+    for (int i=count; i<=wellSampleIndex; i++) new WellSampleNode(well);
+    List list = well.getWellSampleList();
+    return (WellSampleNode) list.get(wellSampleIndex);
+  }
+
   // Screen+
   private ScreenNode getScreenNode(int screenIndex, boolean create) {
     OMENode ome = (OMENode) root;
@@ -2753,30 +2779,6 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     for (int i=count; i<=screenAcquisitionIndex; i++) new ScreenAcquisitionNode(screen);
     List list = screen.getScreenAcquisitionList();
     return (ScreenAcquisitionNode) list.get(screenAcquisitionIndex);
-  }
-
-  // Well+
-  private WellNode getWellNode(int wellIndex, boolean create) {
-    OMENode ome = (OMENode) root;
-    // get Well+ node
-    int count = ome.getWellCount();
-    if (!create && count <= wellIndex) return null;
-    for (int i=count; i<=wellIndex; i++) new WellNode(ome);
-    List list = ome.getWellList();
-    return (WellNode) list.get(wellIndex);
-  }
-
-  // Well+/WellSample+
-  private WellSampleNode getWellSampleNode(int wellIndex, int wellSampleIndex, boolean create) {
-    // get Well+ node
-    WellNode well = getWellNode(wellIndex, create);
-    if (well == null) return null;
-    // get WellSample+ node
-    int count = well.getWellSampleCount();
-    if (!create && count <= wellSampleIndex) return null;
-    for (int i=count; i<=wellSampleIndex; i++) new WellSampleNode(well);
-    List list = well.getWellSampleList();
-    return (WellSampleNode) list.get(wellSampleIndex);
   }
 
 }

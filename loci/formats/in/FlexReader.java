@@ -474,8 +474,8 @@ public class FlexReader extends BaseTiffReader {
         int ndx = nextWell - 1;
         addMeta("Well" + ndx + " Row", attributes.getValue("Row"));
         addMeta("Well" + ndx + " Col", attributes.getValue("Col"));
-        store.setWellRow(new Integer(attributes.getValue("Row")), ndx);
-        store.setWellColumn(new Integer(attributes.getValue("Col")), ndx);
+        store.setWellRow(new Integer(attributes.getValue("Row")), 0,ndx);
+        store.setWellColumn(new Integer(attributes.getValue("Col")), 0, ndx);
       }
       else if (qName.equals("Status")) {
         addMeta("Status", attributes.getValue("StatusString"));
