@@ -66,13 +66,24 @@ public class ClassList {
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class base) throws IOException {
+    this(file, base, getClass());
+  }
+
+  /**
+   * Constructs a list of classes from the given configuration file.
+   * @param file Configuration file containing the list of classes.
+   * @param base Base class to which all classes are assignable.
+   * @param location Class indicating which package to search for the file.
+   * @throws IOException if the file cannot be read.
+   */
+  public ClassList(String file, Class base, Class location) throws IOException {
     this.base = base;
     classes = new Vector();
     if (file == null) return;
 
     // read classes from file
     BufferedReader in = new BufferedReader(new InputStreamReader(
-      getClass().getResourceAsStream(file)));
+      location.getResourceAsStream(file)));
     while (true) {
       String line = null;
       line = in.readLine();
