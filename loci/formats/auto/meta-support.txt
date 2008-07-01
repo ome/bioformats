@@ -1,0 +1,226 @@
+#
+# meta-support.txt
+#
+
+# OME Bio-Formats package for reading and converting biological file formats.
+# Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# This file documents the metadata support for each file format that
+# Bio-Formats can handle. Default value for unlisted properties is Missing,
+# indicating that the property cannot be represented in the format, or our
+# knowledge regarding the property regarding this format is incomplete.
+
+# To define the status of a property, use the syntax:
+#
+#     Entity.Property = Status [Comment]
+#
+# "Status" is one of Yes, No, Partial or Missing.
+# There is usually no need to specify Missing status, as it is the default.
+#
+# "Comment" is optional extra text for specifying further details, such as
+# when the status changed. This value can include a revision, a ticket, a
+# datestamp or any other appropriate information.
+#
+# As a shortcut for every property of a given entity, you can write:
+#
+#     Entity [Comment]
+#
+# Examples:
+#
+#     Dimensions = Yes since r2351
+#     Objective.NominalMagnification = Yes added on 2008 Jan 8
+#     ImagingEnvironment.Temperature = Partial see ticket #167 for details
+
+[AVIReader]
+Pixels = Yes since r657
+
+[AliconaReader]
+Pixels = Yes since r1645
+
+[BMPReader]
+Pixels = Yes since r698
+
+[BioRadReader]
+Pixels = Yes since r631
+
+[DeltavisionReader]
+Pixels = Yes since r638
+
+[DicomReader]
+Pixels = Yes since r920
+
+[EPSReader]
+Pixels = Yes since r994
+
+[FEIReader]
+Pixels = Yes since r4057
+
+[FV1000Reader]
+Pixels = Yes since r871
+
+[FitsReader]
+Pixels = Yes since r2595
+
+[FlexReader]
+Pixels = Yes since r2711
+
+[FluoviewReader]
+Pixels = Yes since r639
+
+[GIFReader]
+Pixels = Yes since r647
+
+[GatanReader]
+Pixels = Yes since r646
+
+[GelReader]
+Pixels = Yes since r879
+
+[ICSReader]
+Pixels = Yes since r629
+
+[IPLabReader]
+Pixels = Yes since r609
+
+[IPWReader]
+Pixels = Yes since r646
+
+[ImarisHDFReader]
+Pixels = Yes since r3309
+
+[ImarisReader]
+Pixels = Yes since r879
+
+[ImarisTiffReader]
+Pixels = Yes since r1712
+
+[ImprovisionTiffReader]
+Pixels = Yes since r2937
+
+[InCellReader]
+Pixels = Yes since r3414
+
+[JPEGReader]
+Pixels = Yes since r647
+
+[KhorosReader]
+Pixels = Yes since r2831
+
+[L2DReader]
+Pixels = Yes since r3763
+
+[LIFReader]
+Pixels = Yes since r867
+
+[LIMReader]
+Pixels = Yes since r3198
+
+[LeicaReader]
+Pixels = Yes since r639
+
+[MNGReader]
+Pixels = Yes since r1844
+
+[MRCReader]
+Pixels = Yes since r1806
+
+[MetamorphReader]
+Pixels = Yes since r639
+
+[MetamorphTiffReader]
+Pixels = Yes since r3700
+
+[MicromanagerReader]
+Pixels = Yes since r2384
+
+[NAFReader]
+Pixels = Yes since r4059
+
+[ND2Reader]
+Pixels = Yes since r1777
+
+[NRRDReader]
+Pixels = Yes since r2625
+
+[NikonReader]
+Pixels = Yes since r869
+
+[OMETiffReader]
+Pixels = Yes since r2943
+
+[OMEXMLReader]
+Pixels = Yes since r667
+
+[OpenlabRawReader]
+Pixels = Yes since r879
+
+[OpenlabReader]
+Pixels = Yes since r659
+
+[PCIReader]
+Pixels = Yes since r3148
+
+[PCXReader]
+Pixels = Yes since r3727
+
+[PGMReader]
+Pixels = Yes since r2595
+
+[PNGReader]
+Pixels = Yes since r647
+
+[PSDReader]
+Pixels = Yes since r3202
+
+[PerkinElmerReader]
+Pixels = Yes since r639
+
+[PictReader]
+Pixels = Yes since r764
+
+[PrairieReader]
+Pixels = Yes since r1996
+
+[QTReader]
+Pixels = Yes since r658
+
+[SDTReader]
+Pixels = Yes since r958
+
+[SEQReader]
+Pixels = Yes since r638
+
+[SVSReader]
+Pixels = Yes since r3528
+
+[SlidebookReader]
+Pixels = Yes since r1519
+
+[TCSReader]
+Pixels = Yes since r2940
+
+[TiffReader]
+Pixels = Yes since r636
+
+[VisitechReader]
+Pixels = Yes since r2925
+
+[ZeissLSMReader]
+Pixels = Yes since r646
+
+[ZeissZVIReader]
+Pixels = Yes since r656

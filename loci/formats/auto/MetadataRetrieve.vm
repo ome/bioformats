@@ -1,0 +1,76 @@
+//
+// MetadataRetrieve.java
+//
+
+/*
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by $user via MetadataAutogen on $timestamp
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package loci.formats.meta;
+
+/**
+ * TODO - MetadataRetrieve javadoc.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/MetadataRetrieve.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/MetadataRetrieve.java">SVN</a></dd></dl>
+ *
+ * @author Melissa Linkert linkert at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public interface MetadataRetrieve {
+
+  // - Entity counting -
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+#if ($q.countable())
+
+  int get${entity}Count($q.argsList($q.chop()));
+#end###if countable
+#end##foreach $entity
+
+  // - Entity retrieval -
+
+  /** Gets the UUID associated with this collection of metadata. */
+  String getUUID();
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+
+  // - $entity property retrieval -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
+
+  /**
+   * For a particular $entity, gets $q.doc()
+#foreach ($index in $q.indices())
+   * @param $q.var("${index}Index") index of the $index
+#end##foreach $index
+   */
+  $q.type() get$entity$prop($q.argsList());
+#end
+#end
+
+}
