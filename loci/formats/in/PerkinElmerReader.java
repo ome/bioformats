@@ -444,6 +444,7 @@ public class PerkinElmerReader extends FormatReader {
 
       while (t.hasMoreTokens() && tNum<hashKeys.length) {
         String token = t.nextToken();
+        if (token.equals("um")) tNum = 5;
         while ((tNum == 1 || tNum == 2) && !token.trim().equals("0")) {
           tNum++;
         }
@@ -454,13 +455,28 @@ public class PerkinElmerReader extends FormatReader {
         }
         addMeta(hashKeys[tNum], token);
         if (hashKeys[tNum].equals("Image Width")) {
-          core.sizeX[0] = Integer.parseInt(token);
+          try {
+            core.sizeX[0] = Integer.parseInt(token);
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
         }
         else if (hashKeys[tNum].equals("Image Length")) {
-          core.sizeY[0] = Integer.parseInt(token);
+          try {
+            core.sizeY[0] = Integer.parseInt(token);
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
         }
         else if (hashKeys[tNum].equals("Number of slices")) {
-          core.sizeZ[0] = Integer.parseInt(token);
+          try {
+            core.sizeZ[0] = Integer.parseInt(token);
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
         }
         else if (hashKeys[tNum].equals("Experiment details:")) details = token;
         else if (hashKeys[tNum].equals("Z slice space")) sliceSpace = token;
@@ -714,10 +730,6 @@ public class PerkinElmerReader extends FormatReader {
 
     // parse details to get number of wavelengths and timepoints
 
-    core.sizeC[0] = 1;
-    core.sizeT[0] = 1;
-    core.sizeZ[0] = 1;
-
     if (details != null) {
       t = new StringTokenizer(details);
       int tokenNum = 0;
@@ -762,12 +774,18 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
+    if (core.sizeZ[0] <= 0) core.sizeZ[0] = 1;
+    if (core.sizeC[0] <= 0) core.sizeC[0] = 1;
+
     if (core.sizeT[0] <= 0) {
       core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
     }
     else {
-      core.imageCount[0] = (isTiff ? tiff[0].getEffectiveSizeC() :
-        core.sizeC[0]) * core.sizeZ[0] * core.sizeT[0];
+      core.imageCount[0] = core.sizeC[0] * core.sizeZ[0] * core.sizeT[0];
+      if (core.imageCount[0] > files.length) {
+        core.imageCount[0] = files.length;
+        core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
+      }
     }
 
     // throw away files, if necessary
