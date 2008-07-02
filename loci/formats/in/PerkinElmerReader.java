@@ -343,6 +343,7 @@ public class PerkinElmerReader extends FormatReader {
       for (int j=0; j<extCount; j++) {
         if (extSet.size() == 0) extSet.add(tempFiles[i + j]);
         else {
+          if (tempFiles[i + j] == null) continue;
           String ext =
             tempFiles[i+j].substring(tempFiles[i+j].lastIndexOf(".") + 1);
           int extNum = Integer.parseInt(ext, 16);
@@ -362,7 +363,8 @@ public class PerkinElmerReader extends FormatReader {
         }
       }
 
-      for (int j=0; j<extCount; j++) {
+      int length = (int) Math.min(extCount, extSet.size());
+      for (int j=0; j<length; j++) {
         files[i+j] = (String) extSet.get(j);
       }
     }
@@ -712,17 +714,24 @@ public class PerkinElmerReader extends FormatReader {
 
     // parse details to get number of wavelengths and timepoints
 
-    String wavelengths = "1";
+    core.sizeC[0] = 1;
+    core.sizeT[0] = 1;
+    core.sizeZ[0] = 1;
+
     if (details != null) {
       t = new StringTokenizer(details);
       int tokenNum = 0;
-      boolean foundId = false;
       String prevToken = "";
       while (t.hasMoreTokens()) {
         String token = t.nextToken();
-        foundId = token.equals("Wavelengths");
-        if (foundId) {
-          wavelengths = prevToken;
+        if (token.equals("Wavelengths")) {
+          core.sizeC[0] = Integer.parseInt(prevToken);
+        }
+        else if (token.equals("Frames")) {
+          core.sizeT[0] = Integer.parseInt(prevToken);
+        }
+        else if (token.equals("Slices")) {
+          core.sizeZ[0] = Integer.parseInt(prevToken);
         }
         tokenNum++;
         prevToken = token;
@@ -731,11 +740,6 @@ public class PerkinElmerReader extends FormatReader {
 
     status("Populating metadata");
 
-    if (core.sizeZ[0] <= 0) core.sizeZ[0] = 1;
-
-    core.sizeC[0] = Integer.parseInt(wavelengths);
-
-    core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
     if (isTiff) {
       tiff[0].setId(files[0]);
       core.pixelType[0] = tiff[0].getPixelType();
@@ -756,6 +760,50 @@ public class PerkinElmerReader extends FormatReader {
           core.pixelType[0] = FormatTools.UINT32;
           break;
       }
+    }
+
+    if (core.sizeT[0] <= 0) {
+      core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
+    }
+    else {
+      core.imageCount[0] = (isTiff ? tiff[0].getEffectiveSizeC() :
+        core.sizeC[0]) * core.sizeZ[0] * core.sizeT[0];
+    }
+
+    // throw away files, if necessary
+
+    if (files.length > core.imageCount[0]) {
+      String[] tmpFiles = files;
+      files = new String[core.imageCount[0]];
+
+      Hashtable zSections = new Hashtable();
+      for (int i=0; i<tmpFiles.length; i++) {
+        int underscore = tmpFiles[i].lastIndexOf("_");
+        int dotIndex = tmpFiles[i].lastIndexOf(".");
+        String z = tmpFiles[i].substring(underscore + 1, dotIndex);
+        if (zSections.get(z) == null) zSections.put(z, new Integer(1));
+        else {
+          int count = ((Integer) zSections.get(z)).intValue() + 1;
+          zSections.put(z, new Integer(count));
+        }
+      }
+
+      int nextFile = 0;
+      int oldFile = 0;
+      Arrays.sort(tmpFiles, new PEComparator());
+      String[] keys = (String[]) zSections.keySet().toArray(new String[0]);
+      Arrays.sort(keys);
+      for (int i=0; i<keys.length; i++) {
+        int oldCount = ((Integer) zSections.get(keys[i])).intValue();
+        int nPlanes = (isTiff ? tiff[0].getEffectiveSizeC() : core.sizeC[0]) *
+          core.sizeT[0];
+        int count = (int) Math.min(oldCount, nPlanes);
+        for (int j=0; j<count; j++) {
+          files[nextFile++] = tmpFiles[oldFile++];
+        }
+        if (count < oldCount) oldFile += (oldCount - count);
+      }
+
     }
 
     core.currentOrder[0] = "XYCTZ";
@@ -846,6 +894,47 @@ public class PerkinElmerReader extends FormatReader {
     store.setStageLabelZ(new Float(originZ), 0);
     */
 
+  }
+
+  // -- Helper class --
+
+  class PEComparator implements Comparator {
+    public int compare(Object o1, Object o2) {
+      String s1 = o1.toString();
+      String s2 = o2.toString();
+
+      if (s1.equals(s2)) return 0;
+
+      int underscore1 = s1.lastIndexOf("_");
+      int underscore2 = s2.lastIndexOf("_");
+      int dot1 = s1.lastIndexOf(".");
+      int dot2 = s2.lastIndexOf(".");
+
+      String prefix1 = s1.substring(0, underscore1);
+      String prefix2 = s2.substring(0, underscore2);
+
+      if (!prefix1.equals(prefix2)) return prefix1.compareTo(prefix2);
+
+      int z1 = Integer.parseInt(s1.substring(underscore1 + 1, dot1));
+      int z2 = Integer.parseInt(s2.substring(underscore2 + 1, dot2));
+
+      if (z1 < z2) return -1;
+      if (z2 < z1) return 1;
+
+      try {
+        int ext1 = Integer.parseInt(s1.substring(dot1 + 1), 16);
+        int ext2 = Integer.parseInt(s2.substring(dot2 + 1), 16);
+
+        if (ext1 < ext2) return -1;
+        return 1;
+      }
+      catch (NumberFormatException e) { }
+      return 0;
+    }
+
+    public boolean equals(Object o) {
+      return compare(this, o) == 0;
+    }
   }
 
 }
