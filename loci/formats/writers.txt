@@ -26,7 +26,7 @@
 loci.formats.out.OMETiffWriter # ome.tif, ome.tiff
 loci.formats.out.TiffWriter # tif, tiff
 loci.formats.out.JPEGWriter # jpg, jpeg
-loci.formats.out.PNGWriter  # png
+loci.formats.out.APNGWriter  # png
 loci.formats.out.AVIWriter  # avi
 loci.formats.out.QTWriter   # mov
 loci.formats.out.EPSWriter  # eps

@@ -52,13 +52,6 @@ public class ICSWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
-  public void saveImage(Image image, boolean last)
-    throws FormatException, IOException
-  {
-    saveImage(image, 0, last, last);
-  }
-
   /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
   public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException

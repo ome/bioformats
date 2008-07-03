@@ -70,9 +70,9 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
-  public void saveImage(Image image, boolean last)
-    throws FormatException, IOException
+  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
+  public void saveImage(Image image, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
   {
     BufferedImage img = (cm == null) ?
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);

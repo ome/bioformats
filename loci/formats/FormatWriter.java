@@ -101,11 +101,11 @@ public abstract class FormatWriter extends FormatHandler
     saveImage(img, series, lastInSeries, last);
   }
 
-  /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /* @see IFormatWriter#saveImage(Image, boolean) */
+  public void saveImage(Image image, boolean last)
+    throws FormatException, IOException
   {
-    throw new FormatException("Not implemented yet.");
+    saveImage(image, 0, last, last);
   }
 
   /* @see IFormatWriter#canDoStacks() */
