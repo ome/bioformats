@@ -68,7 +68,6 @@ public abstract class ImageIOReader extends FormatReader {
     byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false, no);
     int bytesPerChannel = w * h;
     if (t.length > bytesPerChannel) {
-      buf = new byte[bytesPerChannel * 3];
       for (int i=0; i<3; i++) {
         System.arraycopy(t, i * bytesPerChannel, buf, i*bytesPerChannel,
           bytesPerChannel);
