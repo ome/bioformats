@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # tiffcomment: a script for extracting the comment
-# (OME-XML block or otherwise) from a TIFF file
+#              (OME-XML block or otherwise) from a TIFF file
 
 # Required JARs: loci_tools.jar
 

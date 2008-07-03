@@ -1,7 +1,7 @@
 @echo off
 
 rem tiffcomment.bat: a batch file for extracting the comment
-rem (OME-XML block or otherwise) from a TIFF file
+rem                  (OME-XML block or otherwise) from a TIFF file
 
 rem Required JARs: loci_tools.jar
 
@@ -13,11 +13,12 @@ rem the LOCI classes in your CLASSPATH, you can set the
 rem LOCI_DEVEL environment variable to use them instead.
 
 set PROG=loci.formats.tools.TiffComment
+set DIR=%~dp0
 
 if "%LOCI_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries
-  if exist loci_tools.jar goto found
-  if exist bio-formats.jar goto found
+  if exist %DIR%loci_tools.jar goto found
+  if exist %DIR%bio-formats.jar goto found
   goto missing
 ) else (
   rem Developer environment variable set; try to launch
@@ -27,7 +28,7 @@ if "%LOCI_DEVEL%" == "" (
 
 :found
 rem Library found; try to launch
-java -mx512m -cp bio-formats.jar;loci_tools.jar %PROG% %*
+java -mx512m -cp %DIR%bio-formats.jar;%DIR%loci_tools.jar %PROG% %*
 goto end
 
 :missing
