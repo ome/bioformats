@@ -60,6 +60,9 @@ public class InCellReader extends FormatReader {
   private int totalImages;
   private String creationDate;
 
+  private int wellRows, wellCols;
+  private Vector rows, cols;
+
   // -- Constructor --
 
   /** Constructs a new InCell 1000 reader. */
@@ -145,6 +148,9 @@ public class InCellReader extends FormatReader {
     exWaves = new Vector();
     timings = new Vector();
 
+    rows = new Vector();
+    cols = new Vector();
+
     byte[] b = new byte[(int) in.length()];
     in.read(b);
 
@@ -207,6 +213,7 @@ public class InCellReader extends FormatReader {
         store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
         store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
       }
+      store.setWellSampleIndex(new Integer(i), 0, i, 0);
     }
 
     MetadataTools.populatePixels(store, this);
@@ -286,16 +293,22 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Plate")) {
         store.setPlateName(attributes.getValue("name"), nextPlate);
-        int rows = Integer.parseInt(attributes.getValue("rows"));
-        int cols = Integer.parseInt(attributes.getValue("columns"));
+        wellRows = Integer.parseInt(attributes.getValue("rows"));
+        wellCols = Integer.parseInt(attributes.getValue("columns"));
 
-        for (int r=0; r<rows; r++) {
-          for (int c=0; c<cols; c++) {
-            store.setWellRow(new Integer(r), nextPlate, r*cols + c);
-            store.setWellColumn(new Integer(c), nextPlate, r*cols + c);
+        for (int r=0; r<wellRows; r++) {
+          for (int c=0; c<wellCols; c++) {
+            store.setWellRow(new Integer(r), nextPlate, r*wellCols + c);
+            store.setWellColumn(new Integer(c), nextPlate, r*wellCols + c);
           }
         }
         nextPlate++;
+      }
+      else if (qName.equals("Row")) {
+        rows.add(new Integer(attributes.getValue("number")));
+      }
+      else if (qName.equals("Column")) {
+        cols.add(new Integer(attributes.getValue("number")));
       }
     }
   }
