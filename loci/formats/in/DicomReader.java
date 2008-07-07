@@ -479,6 +479,21 @@ public class DicomReader extends FormatReader {
     }
     if (core.imageCount[0] == 0) core.imageCount[0] = 1;
 
+    while (bitsPerPixel % 8 != 0) bitsPerPixel++;
+    if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
+
+    switch (bitsPerPixel) {
+      case 8:
+        core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
+        break;
+      case 16:
+        core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
+        break;
+      case 32:
+        core.pixelType[0] = signed ? FormatTools.INT32 : FormatTools.UINT32;
+        break;
+    }
+
     int plane = core.sizeX[0] * core.sizeY[0] *
       (lut == null ? core.sizeC[0] : 1) *
       FormatTools.getBytesPerPixel(core.pixelType[0]);
@@ -548,21 +563,6 @@ public class DicomReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
-
-    while (bitsPerPixel % 8 != 0) bitsPerPixel++;
-    if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
-
-    switch (bitsPerPixel) {
-      case 8:
-        core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
-        break;
-      case 16:
-        core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
-        break;
-      case 32:
-        core.pixelType[0] = signed ? FormatTools.INT32 : FormatTools.UINT32;
-        break;
-    }
 
     // populate OME-XML node
     MetadataTools.populatePixels(store, this);
@@ -775,11 +775,13 @@ public class DicomReader extends FormatReader {
       case UT:
       case QQ:
         // Explicit VR with 16-bit length
-      	if (tag == 0x00283006) {
+        if (tag == 0x00283006) {
     	 	  return DataTools.bytesToInt(b, 2, 2, core.littleEndian[0]);
         }
         int n1 = DataTools.bytesToShort(b, 2, 2, core.littleEndian[0]);
         int n2 = DataTools.bytesToShort(b, 2, 2, !core.littleEndian[0]);
+        if (n1 < 0) return n2;
+        if (n2 < 0) return n1;
         return (int) Math.min(n1, n2);
       default:
         vr = IMPLICIT_VR;
