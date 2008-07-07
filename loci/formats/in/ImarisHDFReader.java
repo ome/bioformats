@@ -38,47 +38,19 @@ import loci.formats.meta.MetadataStore;
  */
 public class ImarisHDFReader extends FormatReader {
 
-  // -- Constants --
-
-  private static final String NO_NETCDF_MSG =
-    "NetCDF is required to read Imaris 5.5 files.  Please obtain " +
-    "the necessary JAR files from http://loci.wisc.edu/ome/formats.html";
-
-  // -- Static fields --
-
-  private static boolean noNetCDF = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
-
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import ucar.ma2.Array");
-      r.exec("import ucar.ma2.ArrayByte");
-      r.exec("import ucar.nc2.Attribute");
-      r.exec("import ucar.nc2.Group");
-      r.exec("import ucar.nc2.NetcdfFile");
-    }
-    catch (ReflectException exc) {
-      noNetCDF = true;
-      if (debug) LogTools.trace(exc);
-    }
-    catch (UnsupportedClassVersionError exc) {
-      noNetCDF = true;
-      if (debug) LogTools.trace(exc);
-    }
-    return r;
-  }
-
   // -- Fields --
 
   private int previousSeries;
   private Object previousImage;
   private int previousImageNumber;
-  private Vector channelParameters;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
   private float minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
+  private NetcdfTools netcdf;
+
+  // channel parameters
+  private Vector emWave, exWave, channelMin, channelMax;
+  private Vector gain, pinhole, channelName, microscopyMode;
 
   // -- Constructor --
 
@@ -87,18 +59,6 @@ public class ImarisHDFReader extends FormatReader {
     super("Bitplane Imaris 5.5 (HDF)", "ims");
     blockCheckLen = 8;
     suffixSufficient = false;
-
-    // HACK - NetCDF prints a fair number of warning messages to stdout
-    // we need to filter these out so that they don't interfere with omebf
-    PrintStream out = new PrintStream(System.out) {
-      public void print(String s) {
-        if (s == null || !s.trim().startsWith("WARN:")) super.print(s);
-      }
-      public void println(String s) {
-        if (s == null || !s.trim().startsWith("WARN:")) super.println(s);
-      }
-    };
-    System.setOut(out);
   }
 
   // -- IFormatReader API methods --
@@ -128,23 +88,8 @@ public class ImarisHDFReader extends FormatReader {
 
     if (zct[1] != oldZCT[1] || zct[2] != oldZCT[2] || series != previousSeries)
     {
-      try {
-        r.exec("ncfile = NetcdfFile.open(currentId)");
-        r.exec("g = ncfile.getRootGroup()");
-        findGroup("DataSet", "g", "g");
-        findGroup("ResolutionLevel_" + series, "g", "g");
-        findGroup("TimePoint_" + zct[2], "g", "g");
-        findGroup("Channel_" + zct[1], "g", "g");
-        r.setVar("name", "Data");
-        r.exec("var = g.findVariable(name)");
-        r.exec("pixelData = var.read()");
-        r.exec("data = pixelData.copyToNDJavaArray()");
-        previousImage = r.getVar("data");
-      }
-      catch (ReflectException exc) {
-        if (debug) LogTools.trace(exc);
-        return null;
-      }
+      previousImage = netcdf.getVariableValue("/DataSet/ResolutionLevel_" +
+        series + "/TimePoint_" + zct[2] + "/Channel_" + zct[1] + "/Data");
     }
     previousImageNumber = no;
 
@@ -190,16 +135,11 @@ public class ImarisHDFReader extends FormatReader {
     previousImageNumber = -1;
     previousImage = null;
     seriesCount = 0;
-    channelParameters = null;
     pixelSizeX = pixelSizeY = pixelSizeZ = 0;
     minX = minY = minZ = maxX = maxY = maxZ = 0;
 
-    try {
-      r.exec("ncfile.close()");
-    }
-    catch (ReflectException e) {
-      if (debug) LogTools.trace(e);
-    }
+    if (netcdf != null) netcdf.close();
+    netcdf = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -208,9 +148,18 @@ public class ImarisHDFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    if (noNetCDF) throw new FormatException(NO_NETCDF_MSG);
+    netcdf = new NetcdfTools(id);
 
     pixelSizeX = pixelSizeY = pixelSizeZ = 1.0f;
+
+    emWave = new Vector();
+    exWave = new Vector();
+    channelMin = new Vector();
+    channelMax = new Vector();
+    gain = new Vector();
+    pinhole = new Vector();
+    channelName = new Vector();
+    microscopyMode = new Vector();
 
     seriesCount = 0;
 
@@ -218,37 +167,78 @@ public class ImarisHDFReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    // initialize the file
-
-    try {
-      r.setVar("currentId", Location.getMappedId(id));
-      r.exec("ncfile = NetcdfFile.open(currentId)");
-      r.exec("root = ncfile.getRootGroup()");
-    }
-    catch (ReflectException exc) {
-      if (debug) LogTools.trace(exc);
-    }
-
-    getValue("root", "ImarisDataSet");
-    getValue("root", "ImarisVersion");
-
     // read all of the metadata key/value pairs
 
-    findGroup("DataSetInfo", "root", "dataSetInfo");
-    findGroup("DataSet", "root", "dataSet");
+    Vector attributes = netcdf.getAttributeList();
+    for (int i=0; i<attributes.size(); i++) {
+      String attr = (String) attributes.get(i);
+      String name = attr.substring(attr.lastIndexOf("/") + 1);
+      String value = netcdf.getAttributeValue(attr);
+      if (value == null) continue;
+      value = value.trim();
 
-    channelParameters = new Vector();
+      if (name.equals("X")) {
+        core.sizeX[0] = Integer.parseInt(value);
+      }
+      else if (name.equals("Y")) {
+        core.sizeY[0] = Integer.parseInt(value);
+      }
+      else if (name.equals("Z")) {
+        core.sizeZ[0] = Integer.parseInt(value);
+      }
+      else if (name.equals("FileTimePoints")) {
+        core.sizeT[0] = Integer.parseInt(value);
+      }
+      else if (name.equals("RecordingEntrySampleSpacing")) {
+        pixelSizeX = Float.parseFloat(value);
+      }
+      else if (name.equals("RecordingEntryLineSpacing")) {
+        pixelSizeY = Float.parseFloat(value);
+      }
+      else if (name.equals("RecordingEntryPlaneSpacing")) {
+        pixelSizeZ = Float.parseFloat(value);
+      }
+      else if (name.equals("ExtMax0")) maxX = Float.parseFloat(value);
+      else if (name.equals("ExtMax1")) maxY = Float.parseFloat(value);
+      else if (name.equals("ExtMax2")) maxZ = Float.parseFloat(value);
+      else if (name.equals("ExtMin0")) minX = Float.parseFloat(value);
+      else if (name.equals("ExtMin1")) minY = Float.parseFloat(value);
+      else if (name.equals("ExtMin2")) minZ = Float.parseFloat(value);
 
-    try {
-      List l = new Vector();
-      l.add(r.getVar("dataSetInfo"));
-      parseGroups(l);
-      l.clear();
-      l.add(r.getVar("dataSet"));
-      parseGroups(l);
-    }
-    catch (ReflectException exc) {
-      if (debug) LogTools.trace(exc);
+      if (attr.startsWith("/DataSet/ResolutionLevel_")) {
+        int slash = attr.indexOf("/", 25);
+        int n = Integer.parseInt(attr.substring(25, slash == -1 ?
+          attr.length() : slash));
+        if (n == seriesCount) seriesCount++;
+      }
+
+      if (attr.startsWith("/DataSetInfo/Channel_")) {
+        if (value.indexOf(" ") != -1) {
+          value = value.substring(value.indexOf(" ") + 1);
+        }
+        if (value.indexOf("-") != -1) {
+          value = value.substring(value.indexOf("-") + 1);
+        }
+        if (value.indexOf(".") != -1) {
+          value = value.substring(0, value.indexOf("."));
+        }
+
+        int underscore = attr.indexOf("_") + 1;
+        int cIndex = Integer.parseInt(attr.substring(underscore,
+          attr.indexOf("/", underscore)));
+        if (cIndex == core.sizeC[0]) core.sizeC[0]++;
+
+        if (name.equals("Gain")) gain.add(value);
+        else if (name.equals("LSMEmissionWavelength")) emWave.add(value);
+        else if (name.equals("LSMExcitationWavelength")) exWave.add(value);
+        else if (name.equals("Max")) channelMax.add(value);
+        else if (name.equals("Min")) channelMin.add(value);
+        else if (name.equals("Pinhole")) pinhole.add(value);
+        else if (name.equals("Name")) channelName.add(value);
+        else if (name.equals("MicroscopyMode")) microscopyMode.add(value);
+      }
+
+      if (value != null) addMeta(name, value);
     }
 
     if (seriesCount > 1) {
@@ -265,12 +255,14 @@ public class ImarisHDFReader extends FormatReader {
       Arrays.fill(core.sizeT, t);
 
       for (int i=1; i<seriesCount; i++) {
-        findGroup("ResolutionLevel_" + i, "dataSet", "g");
-        findGroup("TimePoint_0", "g", "g");
-        findGroup("Channel_0", "g", "g");
-        core.sizeX[i] = Integer.parseInt(getValue("g", "ImageSizeX"));
-        core.sizeY[i] = Integer.parseInt(getValue("g", "ImageSizeY"));
-        core.sizeZ[i] = Integer.parseInt(getValue("g", "ImageSizeZ"));
+        String group =
+          "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
+        core.sizeX[i] =
+          Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeX"));
+        core.sizeY[i] =
+          Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeY"));
+        core.sizeZ[i] =
+          Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeZ"));
         core.imageCount[i] = core.sizeZ[i] * core.sizeC[0] * core.sizeT[0];
       }
     }
@@ -279,30 +271,19 @@ public class ImarisHDFReader extends FormatReader {
     // determine pixel type - this isn't stored in the metadata, so we need
     // to check the pixels themselves
 
-    try {
-      findGroup("ResolutionLevel_0", "dataSet", "g");
-      findGroup("TimePoint_0", "g", "g");
-      findGroup("Channel_0", "g", "g");
-      r.setVar("name", "Data");
-      r.exec("var = g.findVariable(name)");
-      r.exec("pixelData = var.read()");
-      r.exec("data = pixelData.copyToNDJavaArray()");
-      Object pix = r.getVar("data");
-      if (pix instanceof byte[][][]) {
-        Arrays.fill(core.pixelType, FormatTools.UINT8);
-      }
-      else if (pix instanceof short[][][]) {
-        Arrays.fill(core.pixelType, FormatTools.UINT16);
-      }
-      else if (pix instanceof int[][][]) {
-        Arrays.fill(core.pixelType, FormatTools.UINT32);
-      }
-      else if (pix instanceof float[][][]) {
-        Arrays.fill(core.pixelType, FormatTools.FLOAT);
-      }
+    Object pix = netcdf.getVariableValue(
+      "/DataSet/ResolutionLevel_0/TimePoint_0/Channel_0/Data");
+    if (pix instanceof byte[][][]) {
+      Arrays.fill(core.pixelType, FormatTools.UINT8);
     }
-    catch (ReflectException exc) {
-      if (debug) LogTools.trace(exc);
+    else if (pix instanceof short[][][]) {
+      Arrays.fill(core.pixelType, FormatTools.UINT16);
+    }
+    else if (pix instanceof int[][][]) {
+      Arrays.fill(core.pixelType, FormatTools.UINT32);
+    }
+    else if (pix instanceof float[][][]) {
+      Arrays.fill(core.pixelType, FormatTools.FLOAT);
     }
 
     Arrays.fill(core.currentOrder, "XYZCT");
@@ -325,201 +306,83 @@ public class ImarisHDFReader extends FormatReader {
       store.setDimensionsPhysicalSizeZ(new Float(pz), i, 0);
     }
 
+    int cIndex = 0;
     for (int s=0; s<seriesCount; s++) {
       store.setImageName("Resolution Level " + s, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
       for (int i=0; i<core.sizeC[s]; i++) {
-        String[] params = (String[]) channelParameters.get(i);
-
         Float gainValue = null;
-        try { gainValue = new Float(params[0]); }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-        Integer pinholeValue = null, emWaveValue = null, exWaveValue = null;
-        try { pinholeValue = new Integer(params[5]); }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-        try {
-          if (params[1].indexOf("-") != -1) {
-            params[1] = params[1].substring(params[1].indexOf("-") + 1);
+        Integer pinholeValue = null, emWaveValue = null, exWaveValue;
+
+        if (cIndex < gain.size()) {
+          try {
+            gainValue = new Float((String) gain.get(cIndex));
           }
-          emWaveValue = new Integer(params[1]);
-        }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-        try {
-          if (params[2].indexOf("-") != -1) {
-            params[2] = params[2].substring(params[2].indexOf("-") + 1);
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
           }
-          exWaveValue = new Integer(params[2]);
         }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
+        if (cIndex < pinhole.size()) {
+          try {
+            pinholeValue = new Integer((String) pinhole.get(cIndex));
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
+        }
+        if (cIndex < emWave.size()) {
+          try {
+            emWaveValue = new Integer((String) emWave.get(cIndex));
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
+        }
+        if (cIndex < exWave.size()) {
+          try {
+            exWaveValue = new Integer((String) exWave.get(cIndex));
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
+        }
 
         // CHECK
         /*
-        store.setLogicalChannelName(params[6], s, i);
+        store.setLogicalChannelName((String) channelName.get(cIndex), s, i);
         store.setDetectorSettingsGain(gainValue, s, i);
         store.setLogicalChannelPinholeSize(pinholeValue, s, i);
-        store.setLogicalChannelMode(params[7], s, i);
+        store.setLogicalChannelMode((String) microscopyMode.get(cIndex), s, i);
         store.setLogicalChannelEmWave(emWaveValue, s, i);
         store.setLogicalChannelExWave(exWaveValue, s, i);
         */
 
         Double minValue = null, maxValue = null;
-        try { minValue = new Double(params[4]); }
-        catch (NumberFormatException exc) { }
-        catch (NullPointerException exc) { }
-        try { maxValue = new Double(params[3]); }
-        catch (NumberFormatException exc) { }
-        catch (NullPointerException exc) { }
+
+        if (cIndex < channelMin.size()) {
+          try {
+            minValue = new Double((String) channelMin.get(cIndex));
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
+        }
+        if (cIndex < channelMax.size()) {
+          try {
+            maxValue = new Double((String) channelMax.get(cIndex));
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
+        }
 
         // CTR CHECK
 //        if (minValue != null && maxValue != null && maxValue.doubleValue() > 0)
 //        {
 //          store.setChannelGlobalMinMax(i, minValue, maxValue, new Integer(s));
 //        }
+        cIndex++;
       }
-    }
-  }
-
-  // -- Helper methods --
-
-  private String getValue(String group, String name) {
-    try {
-      r.setVar("name", name);
-      r.exec("attribute = " + group + ".findAttribute(name)");
-      if (r.getVar("attribute") == null) return null;
-      r.exec("isString = attribute.isString()");
-      if (!((Boolean) r.getVar("isString")).booleanValue()) return null;
-      r.exec("array = attribute.getValues()");
-      r.exec("s = array.copyTo1DJavaArray()");
-      Object[] s = (Object[]) r.getVar("s");
-      StringBuffer sb = new StringBuffer();
-      for (int i=0; i<s.length; i++) {
-        sb.append((String) s[i]);
-      }
-      String st = sb.toString();
-
-      if (name.equals("X")) {
-        core.sizeX[0] = Integer.parseInt(st.trim());
-      }
-      else if (name.equals("Y")) {
-        core.sizeY[0] = Integer.parseInt(st.trim());
-      }
-      else if (name.equals("Z")) {
-        core.sizeZ[0] = Integer.parseInt(st.trim());
-      }
-      else if (name.equals("FileTimePoints")) {
-        core.sizeT[0] = Integer.parseInt(st.trim());
-      }
-      else if (name.equals("RecordingEntrySampleSpacing")) {
-        pixelSizeX = Float.parseFloat(st.trim());
-      }
-      else if (name.equals("RecordingEntryLineSpacing")) {
-        pixelSizeY = Float.parseFloat(st.trim());
-      }
-      else if (name.equals("RecordingEntryPlaneSpacing")) {
-        pixelSizeZ = Float.parseFloat(st.trim());
-      }
-      else if (name.equals("ExtMax0")) maxX = Float.parseFloat(st.trim());
-      else if (name.equals("ExtMax1")) maxY = Float.parseFloat(st.trim());
-      else if (name.equals("ExtMax2")) maxZ = Float.parseFloat(st.trim());
-      else if (name.equals("ExtMin0")) minX = Float.parseFloat(st.trim());
-      else if (name.equals("ExtMin1")) minY = Float.parseFloat(st.trim());
-      else if (name.equals("ExtMin2")) minZ = Float.parseFloat(st.trim());
-
-      if (st != null) addMeta(name, st);
-      return st;
-    }
-    catch (ReflectException exc) {
-      if (debug) LogTools.trace(exc);
-    }
-    return null;
-  }
-
-  /**
-   * Look for a group of the given name within the given parent group.
-   * Stores the resulting group object in a variable whose name is the
-   * value of 'store'.
-   */
-  private Object findGroup(String name, String parent, String store) {
-    try {
-      r.setVar("name", name);
-      r.exec(store + " = " + parent + ".findGroup(name)");
-      return r.getVar(store);
-    }
-    catch (ReflectException exc) {
-      if (debug) LogTools.trace(exc);
-    }
-    return null;
-  }
-
-  private void parseGroups(List groups) throws ReflectException {
-    for (int i=0; i<groups.size(); i++) {
-      r.setVar("group", groups.get(i));
-      r.exec("groupName = group.getName()");
-      String groupName = (String) r.getVar("groupName");
-      if (debug) LogTools.println("Parsing group: " + groupName);
-
-      if (groupName.startsWith("/DataSet/ResolutionLevel_")) {
-        int slash = groupName.indexOf("/", 25);
-        int n = Integer.parseInt(groupName.substring(25,
-          slash == -1 ? groupName.length() : slash));
-        if (n == seriesCount) seriesCount++;
-      }
-
-      r.exec("attributes = group.getAttributes()");
-      List l = (List) r.getVar("attributes");
-      String[] params = new String[8];
-      for (int j=0; j<l.size(); j++) {
-        r.setVar("attr", l.get(j));
-        r.exec("name = attr.getName()");
-        String name = (String) r.getVar("name");
-        String v = getValue("group", (String) r.getVar("name"));
-        if (groupName.startsWith("/DataSetInfo/Channel_")) {
-          if (name.equals("Gain")) params[0] = v;
-          else if (name.equals("LSMEmissionWavelength")) params[1] = v;
-          else if (name.equals("LSMExcitationWavelength")) params[2] = v;
-          else if (name.equals("Max")) {
-            params[3] = v;
-          }
-          else if (name.equals("Min")) {
-            params[4] = v;
-          }
-          else if (name.equals("Pinhole")) params[5] = v;
-          else if (name.equals("Name")) params[6] = v;
-          else if (name.equals("MicroscopyMode")) params[7] = v;
-        }
-      }
-
-      if (groupName.indexOf("/Channel_") != -1) {
-        int ndx = groupName.indexOf("/Channel_") + 9;
-        int end = groupName.indexOf("/", ndx);
-        if (end == -1) end = groupName.length();
-        int n = Integer.parseInt(groupName.substring(ndx, end));
-        if (n == core.sizeC[0]) {
-          for (int j=0; j<6; j++) {
-            if (params[j] != null) {
-              if (params[j].indexOf(" ") != -1) {
-                params[j] = params[j].substring(params[j].indexOf(" ") + 1);
-              }
-              if (params[j].indexOf("-") != -1) {
-                params[j] = params[j].substring(params[j].indexOf("-") + 1);
-              }
-              if (params[j].indexOf(".") != -1) {
-                params[j] = params[j].substring(0, params[j].indexOf("."));
-              }
-            }
-          }
-
-          channelParameters.add(params);
-          core.sizeC[0]++;
-        }
-      }
-
-      r.exec("groups = group.getGroups()");
-      parseGroups((List) r.getVar("groups"));
     }
   }
 
