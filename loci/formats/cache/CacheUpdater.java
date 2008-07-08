@@ -43,7 +43,7 @@ public class CacheUpdater extends Thread {
   // -- Constructors --
 
   public CacheUpdater(Cache cache) {
-    super("4D-Data-Browser-Cache-Updater");
+    super("Bio-Formats-Cache-Updater");
     setPriority(Thread.MIN_PRIORITY);
     this.cache = cache;
     quit = false;
