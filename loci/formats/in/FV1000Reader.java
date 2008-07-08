@@ -232,7 +232,19 @@ public class FV1000Reader extends FormatReader {
     String line = null, key = null, value = null, oifName = null;
 
     if (isOIB) {
-      RandomAccessStream ras = poi.getDocumentStream("Root Entry/OibInfo.txt");
+      String infoFile = null;
+      Vector list = poi.getDocumentList();
+      for (int i=0; i<list.size(); i++) {
+        String name = (String) list.get(i);
+        if (name.endsWith("OibInfo.txt")) {
+          infoFile = name;
+          break;
+        }
+      }
+      if (infoFile == null) {
+        throw new FormatException("OibInfo.txt not found in " + id);
+      }
+      RandomAccessStream ras = poi.getDocumentStream(infoFile);
 
       oibMapping = new Hashtable();
 
@@ -259,9 +271,10 @@ public class FV1000Reader extends FormatReader {
             }
             if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
             if (directoryKey != null) {
-              oibMapping.put(value, "Root Entry/" + directoryKey + "/" + key);
+              oibMapping.put(value, "Root Entry" + File.separator +
+                directoryKey + File.separator + key);
             }
-            else oibMapping.put(value, "Root Entry/" + key);
+            else oibMapping.put(value, "Root Entry" + File.separator + key);
           }
           else if (key.startsWith("Storage")) {
             if (value.indexOf("GST") != -1) {
@@ -415,8 +428,8 @@ public class FV1000Reader extends FormatReader {
             Integer.parseInt(prefix.substring(6, prefix.indexOf("P")).trim());
           if (key.equals("AxisCode")) code[ndx] = value;
           else if (key.equals("MaxSize")) size[ndx] = value;
-	  else if (key.equals("Interval")) pixelSize[ndx] = value;
-	}
+	        else if (key.equals("Interval")) pixelSize[ndx] = value;
+	      }
         else if ((prefix + key).equals(
           "[Reference Image Parameter] - ImageDepth"))
         {
@@ -584,6 +597,7 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<9; i++) {
       int ss = Integer.parseInt(size[i]);
       if (pixelSize[i] == null) pixelSize[i] = "1.0";
+      pixelSize[i] = pixelSize[i].replaceAll("\"", "");
       Float pixel = new Float(pixelSize[i]);
       code[i] = code[i].substring(1, code[i].length() - 1);
       if (code[i].equals("X")) core.sizeX[0] = ss;
