@@ -45,8 +45,7 @@ public class CacheComponent extends JPanel
 
   // -- Constants --
 
-  protected static final String[] SOURCES =
-    {"Byte arrays", "BufferedImages", "ImageProcessors"};
+  protected static final String[] SOURCES = {"Byte arrays", "BufferedImages"};
   protected static final Class[] SOURCE_VALUES = {
     ByteArraySource.class,
     BufferedImageSource.class
