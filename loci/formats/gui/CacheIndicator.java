@@ -39,32 +39,38 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- Constants --
 
+  private static final int COMPONENT_WIDTH = 5;
   private static final int COMPONENT_HEIGHT = 5;
 
   // -- Fields --
 
-  private Component comp;
-  private int axis;
   private Cache cache;
+  private int axis;
+  private Component comp;
+  private int lPad, rPad;
 
   // -- Constructor --
+
+  /** Creates a new cache indicator for the given cache. */
+  public CacheIndicator(Cache cache, int axis) {
+    this(cache, axis, null, 0, 0);
+  }
 
   /**
    * Creates a new cache indicator. The component was designed to sit directly
    * below an AWT Scrollbar or Swing JScrollBar, but any component can be
    * given, and the indicator will mimic its width (minus padding).
    */
-  public CacheIndicator(Component c) {
-    comp = c;
-    axis = -1;
-    setBackground(Color.WHITE);
-  }
-
-  // -- CacheIndicator API methods --
-
-  public void setAxis(int axis) {
+  public CacheIndicator(Cache cache, int axis,
+    Component comp, int lPad, int rPad)
+  {
+    this.cache = cache;
     this.axis = axis;
-    repaint();
+    this.comp = comp;
+    this.lPad = lPad;
+    this.rPad = rPad;
+    cache.addCacheListener(this);
+    setBackground(Color.WHITE);
   }
 
   // -- JComponent API methods --
@@ -72,15 +78,16 @@ public class CacheIndicator extends JComponent implements CacheListener {
   public void paintComponent(Graphics g) {
 //    super.paintComponent(g);
     g.setColor(Color.BLACK);
-    g.drawRect(0, 0, getWidth() - 1, COMPONENT_HEIGHT - 1);
+    int xStart = lPad, width = getWidth() - lPad - rPad;
+    g.drawRect(xStart, 0, width - 1, COMPONENT_HEIGHT - 1);
 
     int[] lengths = cache.getStrategy().getLengths();
     int cacheLength = axis >= 0 && axis < lengths.length ? lengths[axis] : 0;
 
     if (cacheLength == 0) return;
 
-    int pixelsPerIndex = (getWidth() - 2) / (cacheLength + 1);
-    int remainder = (getWidth() - 2) - (pixelsPerIndex * cacheLength);
+    int pixelsPerIndex = (width - 2) / (cacheLength + 1);
+    int remainder = (width - 2) - (pixelsPerIndex * cacheLength);
 
     try {
       int[] currentPos = null;
@@ -92,7 +99,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
       int[] pos = new int[currentPos.length];
       System.arraycopy(currentPos, 0, pos, 0, pos.length);
 
-      int start = 1;
+      int start = xStart + 1;
       for (int i=0; i<cacheLength; i++) {
         pos[axis] = i;
 
@@ -130,15 +137,18 @@ public class CacheIndicator extends JComponent implements CacheListener {
   // -- Component API methods --
 
   public Dimension getPreferredSize() {
-    return new Dimension(comp.getPreferredSize().width, COMPONENT_HEIGHT);
+    int w = comp == null ? COMPONENT_WIDTH : comp.getPreferredSize().width;
+    return new Dimension(w, COMPONENT_HEIGHT);
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(comp.getMinimumSize().width, COMPONENT_HEIGHT);
+    int w = comp == null ? COMPONENT_WIDTH : comp.getMinimumSize().width;
+    return new Dimension(w, COMPONENT_HEIGHT);
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(comp.getMaximumSize().width, COMPONENT_HEIGHT);
+    int w = comp == null ? Integer.MAX_VALUE : comp.getMaximumSize().width;
+    return new Dimension(w, COMPONENT_HEIGHT);
   }
 
   // -- CacheListener API methods --
