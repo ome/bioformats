@@ -617,7 +617,10 @@ public abstract class BaseTiffReader extends FormatReader {
 
     // populate Image
 
-    store.setImageCreationDate(creationDate, 0);
+    if (creationDate != null) {
+      store.setImageCreationDate(creationDate, 0);
+    }
+    else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     store.setImageDescription(TiffTools.getComment(ifds[0]), 0);
 
     // set the X and Y pixel dimensions
