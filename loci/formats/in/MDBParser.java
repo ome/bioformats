@@ -101,8 +101,9 @@ public final class MDBParser {
 
       int num = ((Integer) r.getVar("mdb.num_catalog")).intValue();
 
+      r.setVar("c", (List) r.getVar("mdb.catalog"));
+
       for (int i=0; i<num; i++) {
-        r.setVar("c", (List) r.getVar("mdb.catalog"));
         r.setVar("i", i);
         r.exec("entry = c.get(i)");
         r.setVar("objType",
@@ -120,8 +121,11 @@ public final class MDBParser {
           try {
             r.exec("Table.mdb_read_columns(table)");
           }
-          catch (ReflectException e) { break; }
-          r.exec("Data.mdb_rewind_table(table)");
+          catch (ReflectException e) {
+            e.printStackTrace();
+            break;
+          }
+          //r.exec("Data.mdb_rewind_table(table)");
 
           r.setVar("numCols",
             ((Integer) r.getVar("table.num_cols")).intValue());
@@ -129,7 +133,6 @@ public final class MDBParser {
           int numCols = ((Integer) r.getVar("numCols")).intValue();
 
           for (int j=0; j<numCols; j++) {
-            r.setVar("j", j);
             r.exec("blah = new Holder()");
             r.setVar("l", j + 1);
             r.exec("Data.mdb_bind_column(table, l, blah)");
@@ -144,7 +147,10 @@ public final class MDBParser {
             r.exec("moreRows = Data.mdb_fetch_row(table)");
             moreRows = ((Boolean) r.getVar("moreRows")).booleanValue();
           }
-          catch (ReflectException e) { moreRows = false; }
+          catch (ReflectException e) {
+            moreRows = false;
+            e.printStackTrace();
+          }
 
           while (moreRows) {
             for (int j=0; j<numCols; j++) {
@@ -159,7 +165,9 @@ public final class MDBParser {
               r.exec("moreRows = Data.mdb_fetch_row(table)");
               moreRows = ((Boolean) r.getVar("moreRows")).booleanValue();
             }
-            catch (ReflectException e) { moreRows = false; }
+            catch (ReflectException e) {
+              moreRows = false;
+            }
           }
 
           // place column of data in the hashtable
