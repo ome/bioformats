@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome-roi-sa.xsd">
+	<ome:Image ID="Image:a" Name="Name92" DefaultPixels="Pixels:b">
+		<ome:CreationDate>2008-03-04T14:17:43.0Z</ome:CreationDate>
+		<ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
+			<bf:BinData Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+		</ome:Pixels>
+		<ome:ROI ID="ROI:1">
+			<ome:Union>
+				<ome:Shape ID="Shape:1">
+					<ome:Channels>
+						<ome:LogicalChannelRef ID="LogicalChannel:1"/>
+						<ome:LogicalChannelRef ID="LogicalChannel:2"/>
+					</ome:Channels>
+					<ome:Point cx="1" cy="2" transform="matrix(1 2 3 4 5 6)"/>
+				</ome:Shape>
+				<ome:Shape ID="Shape:2">
+					<ome:Circle cx="1" cy="2" r="5" transform="matrix(1 2 3 4 5 6)"/>
+				</ome:Shape>
+				<ome:Shape ID="Shape:3">
+					<ome:Ellipse cx="1" cy="2" rx="3" ry="4" transform="matrix(1 2 3 4 5 6)"/>
+				</ome:Shape>
+				<ome:Shape ID="Shape:4" theT="1">
+					<ome:Line x1="1" x2="2" y1="3" y2="4" transform="matrix(1 2 3 4 5 6)"/>
+				</ome:Shape>
+				<ome:Shape ID="Shape:5" theZ="1">
+					<ome:Rect x="1" y="2" width="3" height="4" transform="matrix(1 2 3 4 5 6)"/>
+				</ome:Shape>
+				<ome:Shape ID="Shape:6" theT="1" theZ="1">
+					<ome:Mask x="1" y="2" width="3" height="4" transform="matrix(1 2 3 4 5 6)" >
+						<ome:MaskPixels ExtendedPixelType="bit" BigEndian="true" SizeX="20" SizeY="20">
+							<bf:BinData Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+						</ome:MaskPixels>
+					</ome:Mask>
+				</ome:Shape>
+				<ome:Shape ID="Shape:7">
+					<ome:Polygon points="582.551,70.325 542.271,81.118 512.783,51.631 523.576,11.351 563.856,0.558 593.344,30.045 " transform="matrix(1 2 3 4 5 6)"/>
+				</ome:Shape>
+				<ome:Shape ID="Shape:8">
+					<ome:Polyline points="582.551,70.325 542.271,81.118 512.783,51.631 523.576,11.351 563.856,0.558 593.344,30.045 " transform="matrix(1 2 3 4 5 6)"/>
+				</ome:Shape>
+			</ome:Union>
+		</ome:ROI>
+	</ome:Image>
+</ome:OME>
