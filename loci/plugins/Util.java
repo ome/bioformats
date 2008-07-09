@@ -151,7 +151,7 @@ public final class Util {
     Object pixels = DataTools.makeDataArray(b, bpp, isFloat, isLittle);
 
     IndexColorModel cm = null;
-    IndexedColorModel model = null;
+    Index16ColorModel model = null;
     if (r.isIndexed()) {
       byte[][] byteTable = r.get8BitLookupTable();
       if (byteTable != null) {
@@ -160,7 +160,7 @@ public final class Util {
       }
       //else {
       //  short[][] shortTable = r.get16BitLookupTable();
-      //  model = new IndexedColorModel(16, shortTable[0].length, shortTable);
+      //  model = new Index16ColorModel(16, shortTable[0].length, shortTable);
       //}
     }
 

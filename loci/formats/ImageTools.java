@@ -522,16 +522,17 @@ public final class ImageTools {
       FormatTools.getBytesPerPixel(r.getPixelType()), r.isLittleEndian());
 
     if (r.isIndexed()) {
-      IndexedColorModel model = null;
+      ColorModel model = null;
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
         byte[][] table = r.get8BitLookupTable();
-        model = new IndexedColorModel(8, table[0].length, table);
+        model = new IndexColorModel(8, table[0].length,
+          table[0], table[1], table[2]);
       }
       else if (pixelType == FormatTools.UINT16 ||
         pixelType == FormatTools.INT16)
       {
         short[][] table = r.get16BitLookupTable();
-        model = new IndexedColorModel(16, table[0].length, table);
+        model = new Index16ColorModel(16, table[0].length, table);
       }
       if (model != null) {
         WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
@@ -1802,7 +1803,7 @@ public final class ImageTools {
     }
 
     BufferedImage result = null;
-    if ((source.getColorModel() instanceof IndexedColorModel) ||
+    if ((source.getColorModel() instanceof Index16ColorModel) ||
       (source.getColorModel() instanceof IndexColorModel))
     {
       ColorModel model = source.getColorModel();
@@ -1952,7 +1953,7 @@ public final class ImageTools {
     byte[][] indices = getPixelBytes(img, le);
     if (indices.length > 1) return img;
     if (getPixelType(img) == FormatTools.UINT8) {
-      IndexedColorModel model = (IndexedColorModel) img.getColorModel();
+      IndexColorModel model = (IndexColorModel) img.getColorModel();
       byte[][] b = new byte[3][indices[0].length];
       for (int i=0; i<indices[0].length; i++) {
         b[0][i] = (byte) (model.getRed(indices[0][i] & 0xff) & 0xff);
@@ -1962,7 +1963,7 @@ public final class ImageTools {
       return makeImage(b, img.getWidth(), img.getHeight());
     }
     else if (getPixelType(img) == FormatTools.UINT16) {
-      IndexedColorModel model = (IndexedColorModel) img.getColorModel();
+      Index16ColorModel model = (Index16ColorModel) img.getColorModel();
       short[][] s = new short[3][indices[0].length / 2];
       for (int i=0; i<s[0].length; i++) {
         int ndx = DataTools.bytesToInt(indices[0], i*2, 2, le) & 0xffff;
