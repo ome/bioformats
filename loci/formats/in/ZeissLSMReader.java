@@ -707,7 +707,19 @@ public class ZeissLSMReader extends BaseTiffReader {
           Location file = new Location(dir.getPath(), dirList[i]);
           if (!file.isDirectory()) {
             mdbFilename = file.getAbsolutePath();
-            MDBParser.parseDatabase(mdbFilename, metadata);
+            Vector[] tables = MDBParser.parseDatabase(mdbFilename);
+
+            for (int table=0; table<tables.length; table++) {
+              String[] columnNames = (String[]) tables[table].get(0);
+              for (int row=1; row<tables[table].size(); row++) {
+                String[] tableRow = (String[]) tables[table].get(row);
+                String baseKey = columnNames[0] + " ";
+                for (int col=0; col<tableRow.length; col++) {
+                  addMeta(baseKey + columnNames[col + 1] + " " + row,
+                    tableRow[col]);
+                }
+              }
+            }
           }
         }
         catch (Exception exc) {

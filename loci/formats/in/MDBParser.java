@@ -78,9 +78,7 @@ public final class MDBParser {
   // -- Utility methods --
 
   /** Parses table structure for a specified MDB file. */
-  public static void parseDatabase(String filename, Hashtable h)
-    throws FormatException
-  {
+  public static Vector[] parseDatabase(String filename) throws FormatException {
     if (noMDB) throw new FormatException(NO_MDB_MSG);
 
     try {
@@ -102,7 +100,20 @@ public final class MDBParser {
       int num = ((Integer) r.getVar("mdb.num_catalog")).intValue();
 
       r.setVar("c", (List) r.getVar("mdb.catalog"));
+      int realCount = num;
+      for (int i=0; i<num; i++) {
+        r.setVar("i", i);
+        r.exec("entry = c.get(i)");
+        int objType = ((Integer) r.getVar("entry.object_type")).intValue();
+        int tableType = ((Integer) r.getVar("Constants.MDB_TABLE")).intValue();
+        String objName = (String) r.getVar("entry.object_name");
+        if (objType != tableType || objName.startsWith("MSys")) {
+          realCount--;
+        }
+      }
+      Vector[] rtn = new Vector[realCount];
 
+      int index = 0;
       for (int i=0; i<num; i++) {
         r.setVar("i", i);
         r.exec("entry = c.get(i)");
@@ -117,6 +128,7 @@ public final class MDBParser {
         String objName = (String) r.getVar("objName");
 
         if (isTable && !objName.startsWith("MSys")) {
+          rtn[index++] = new Vector();
           r.exec("table = Table.mdb_read_table(entry)");
           try {
             r.exec("Table.mdb_read_columns(table)");
@@ -139,9 +151,6 @@ public final class MDBParser {
             r.exec("boundValues.add(blah)");
           }
 
-          StringBuffer[] sbs = new StringBuffer[numCols];
-          for (int j=0; j<sbs.length; j++) sbs[j] = new StringBuffer();
-
           boolean moreRows = true;
           try {
             r.exec("moreRows = Data.mdb_fetch_row(table)");
@@ -153,14 +162,15 @@ public final class MDBParser {
           }
 
           while (moreRows) {
+            String[] row = new String[numCols];
             for (int j=0; j<numCols; j++) {
               r.setVar("j", j);
               r.setVar("columns", (List) r.getVar("table.columns"));
               r.exec("col = columns.get(j)");
-              if (sbs[j].length() > 0) sbs[j].append(",");
               r.exec("blah = boundValues.get(j)");
-              sbs[j].append((String) r.getVar("blah.s"));
+              row[j] = (String) r.getVar("blah.s");
             }
+            rtn[index - 1].add(row);
             try {
               r.exec("moreRows = Data.mdb_fetch_row(table)");
               moreRows = ((Boolean) r.getVar("moreRows")).booleanValue();
@@ -174,19 +184,23 @@ public final class MDBParser {
           // key is table name + column name, value is each value in the
           // column, separated by commas
 
-          for (int j=0; j<sbs.length; j++) {
+          String[] columnNames = new String[numCols + 1];
+          columnNames[0] = objName;
+          for (int j=1; j<numCols; j++) {
             r.setVar("j", j);
             r.setVar("columns", (List) r.getVar("table.columns"));
             r.exec("col = columns.get(j)");
-            h.put(objName + " - " + (String) r.getVar("col.name"),
-              sbs[j].toString());
+            columnNames[j] = (String) r.getVar("col.name");
           }
+          rtn[index - 1].insertElementAt(columnNames, 0);
         }
       }
+      return rtn;
     }
     catch (ReflectException exc) {
       LogTools.trace(exc);
     }
+    return null;
   }
 
 }
