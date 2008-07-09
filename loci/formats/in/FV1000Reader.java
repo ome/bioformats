@@ -81,6 +81,7 @@ public class FV1000Reader extends FormatReader {
 
   private short[][][] lut;
   private int lastChannel;
+  private int[] channelIndexes;
 
   // -- Constructor --
 
@@ -141,9 +142,16 @@ public class FV1000Reader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
-    lastChannel = getZCTCoords(no)[1];
+    int[] coords = getZCTCoords(no);
+    coords[1] = channelIndexes[coords[1]];
+    lastChannel = coords[1];
 
-    String file = (String) (series == 0 ? tiffs.get(no) : previewNames.get(no));
+    int planeNum = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
+      getEffectiveSizeC(), getSizeT(), getImageCount(), coords[0],
+      coords[1], coords[2]);
+
+    String file =
+      (String) (series == 0 ? tiffs.get(planeNum) : previewNames.get(planeNum));
     RandomAccessStream plane = getFile(file);
     Hashtable[] ifds = TiffTools.getIFDs(plane);
     TiffTools.getSamples(ifds[0], plane, buf, x, y, w, h);
@@ -342,6 +350,7 @@ public class FV1000Reader extends FormatReader {
 
     previewNames = new Vector();
 
+    Vector channels = new Vector();
     Vector lutNames = new Vector();
     Hashtable filenames = new Hashtable();
     String prefix = "";
@@ -454,6 +463,7 @@ public class FV1000Reader extends FormatReader {
           else if (key.equals("CountingPMTGain")) gains.add(value);
           else if (key.equals("CountingPMTVoltage")) voltages.add(value);
           else if (key.equals("CountingPMTOffset")) offsets.add(value);
+          else if (key.equals("SequentialNumber")) channels.add(value);
         }
       }
       else if (line.length() > 0) {
@@ -461,6 +471,44 @@ public class FV1000Reader extends FormatReader {
           line = line.substring(2, line.length());
         }
         prefix = line + " - ";
+      }
+    }
+
+    channelIndexes = new int[channels.size()];
+    for (int i=0; i<channelIndexes.length; i++) {
+      channelIndexes[i] = Integer.parseInt((String) channels.get(i));
+    }
+
+    // check that no two indexes are equal
+    boolean valid = true;
+    for (int i=0; i<channelIndexes.length; i++) {
+      for (int q=0; q<channelIndexes.length; q++) {
+        if (i != q && channelIndexes[i] == channelIndexes[q]) {
+          valid = false;
+          break;
+        }
+      }
+    }
+
+    // normalize channel indexes to [0, sizeC-1]
+
+    if (valid) {
+      int nextIndex = 0;
+      for (int i=0; i<channelIndexes.length; i++) {
+        int min = Integer.MAX_VALUE;
+        int minIndex = -1;
+        for (int q=0; q<channelIndexes.length; q++) {
+          if (channelIndexes[q] < min && channelIndexes[q] >= nextIndex) {
+            min = channelIndexes[q];
+            minIndex = q;
+          }
+        }
+        channelIndexes[minIndex] = nextIndex++;
+      }
+    }
+    else {
+      for (int i=0; i<channelIndexes.length; i++) {
+        channelIndexes[i] = i;
       }
     }
 
@@ -610,7 +658,7 @@ public class FV1000Reader extends FormatReader {
         core.sizeT[0] = ss;
         pixel = new Float(pixel.floatValue() / 1000);
         store.setDimensionsTimeIncrement(pixel, 0, 0);
-      } 
+      }
       else if (ss > 0) {
         if (core.sizeC[0] == 0) core.sizeC[0] = ss;
         else core.sizeC[0] *= ss;
@@ -685,12 +733,12 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
-    core.rgb[0] = false;
-    core.littleEndian[0] = true;
-    core.interleaved[0] = false;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+    Arrays.fill(core.rgb, false);
+    Arrays.fill(core.littleEndian, true);
+    Arrays.fill(core.interleaved, false);
+    Arrays.fill(core.metadataComplete, true);
+    Arrays.fill(core.indexed, false);
+    Arrays.fill(core.falseColor, false);
 
     // populate MetadataStore
 
