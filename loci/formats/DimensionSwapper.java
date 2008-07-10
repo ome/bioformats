@@ -44,44 +44,6 @@ public class DimensionSwapper extends ReaderWrapper {
   /** Constructs a DimensionSwapper with the given reader. */
   public DimensionSwapper(IFormatReader r) { super(r); }
 
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#getSizeX() */
-  public int getSizeX() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeX[getSeries()];
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeY() */
-  public int getSizeY() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeY[getSeries()];
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeZ() */
-  public int getSizeZ() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeZ[getSeries()];
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeC() */
-  public int getSizeC() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeC[getSeries()];
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeT() */
-  public int getSizeT() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeT[getSeries()];
-  }
-
-  /* @see loci.formats.IFormatReader#getDimensionOrder() */
-  public String getDimensionOrder() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().currentOrder[getSeries()];
-  }
-
   // -- DimensionSwapper API methods --
 
   /**
@@ -150,6 +112,44 @@ public class DimensionSwapper extends ReaderWrapper {
 
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getSizeX() */
+  public int getSizeX() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata().sizeX[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getSizeY() */
+  public int getSizeY() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata().sizeY[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getSizeZ() */
+  public int getSizeZ() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata().sizeZ[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getSizeC() */
+  public int getSizeC() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata().sizeC[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getSizeT() */
+  public int getSizeT() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata().sizeT[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getDimensionOrder() */
+  public String getDimensionOrder() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata().currentOrder[getSeries()];
   }
 
 }
