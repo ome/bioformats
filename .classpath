@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="jar/grib-5.1.03.jar"/>
 	<classpathentry kind="lib" path="jar/ij.jar"/>
 	<classpathentry kind="lib" path="jar/jai_imageio.jar"/>
-	<classpathentry kind="lib" path="jar/jbossall-client.jar"/>
 	<classpathentry kind="lib" path="jar/junit.jar"/>
 	<classpathentry kind="lib" path="jar/lma.jar"/>
 	<classpathentry kind="lib" path="jar/loci-checks.jar"/>
@@ -24,7 +23,6 @@
 	<classpathentry kind="lib" path="jar/poi-loci.jar"/>
 	<classpathentry kind="lib" path="jar/skinlf.jar"/>
 	<classpathentry kind="lib" path="jar/slf4j-jdk14.jar"/>
-	<classpathentry kind="lib" path="jar/spring.jar"/>
 	<classpathentry kind="lib" path="jar/testng-5.7-jdk14.jar"/>
 	<classpathentry kind="lib" path="jar/velocity-dep-1.5.jar"/>
 	<classpathentry kind="lib" path="jar/visad-lite.jar"/>
