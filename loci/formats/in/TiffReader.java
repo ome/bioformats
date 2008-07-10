@@ -42,13 +42,14 @@ public class TiffReader extends BaseTiffReader {
 
   // -- Constants --
 
-  public static final String[] TIFF_SUFFIXES = {"tif", "tiff"};
+  public static final String[] TIFF_SUFFIXES = {"tif", "tiff", "tf2", "tf8", "btf"};
 
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */
   public TiffReader() {
-    super("Tagged Image File Format", new String[] {"tif", "tiff"});
+    super("Tagged Image File Format",
+      new String[] {"tif", "tiff", "tf2", "tf8", "btf"});
   }
 
   // -- Internal TiffReader API methods --
