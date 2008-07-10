@@ -34,7 +34,9 @@ import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import loci.formats.*;
+import loci.formats.ReflectedUniverse;
+import loci.formats.ReflectException;
+import loci.formats.FormatTools;
 
 /**
  * A plugin for merging, colorizing and reordering image stacks.
