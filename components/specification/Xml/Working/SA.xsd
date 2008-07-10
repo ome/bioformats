@@ -1,0 +1,74 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#
+	# Copyright (C) 2003-2008 Open Microscopy Environment
+	#       Massachusetts Institute of Technology,
+	#       National Institutes of Health,
+	#       University of Dundee,
+	#       University of Wisconsin at Madison
+	#
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Written by:  Andrew J Patterson 
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/SA/2008-02"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/SA/2008-02"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-02"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
+	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
+	version = "1"
+	elementFormDefault = "qualified">
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation = "ome-roi-sa.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation = "BinaryFile.xsd"/>
+	<xsd:element name="StructuredAnnotations">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="FileAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="SvgAnnotation" minOccurs="1" maxOccurs="1"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="CommonAnnotation">
+		<xsd:sequence>
+			<xsd:element name="Link" minOccurs="1" maxOccurs="unbounded">
+				<xsd:simpleType>
+					<xsd:restriction base="OME:LSID"/>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="ID" use="required" type="AnnotationID"></xsd:attribute>
+	</xsd:complexType>
+	<xsd:simpleType name="AnnotationID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Annotation:\S+)|(Annotation:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="FileAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:choice>
+						<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
+						<xsd:element name="ExternalFile" minOccurs="1" maxOccurs="1"/>
+					</xsd:choice>
+					<xsd:attribute name="MimeType"/>
+					<xsd:attribute name="FileName"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="SvgAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:attribute name="color"/>
+					<xsd:attribute name="line-width"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -23,6 +23,7 @@
 	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-02" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="2" 
 	elementFormDefault="qualified">
@@ -31,6 +32,7 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-02" schemaLocation="SA.xsd"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	
 	<xsd:annotation>
@@ -61,11 +63,12 @@
 				<xsd:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="STD:SemanticTypeDefinitions" minOccurs="0"/>
-				<xsd:element ref="AML:AnalysisModuleLibrary" minOccurs="0"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
+				<xsd:element ref="STD:SemanticTypeDefinitions" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="AML:AnalysisModuleLibrary" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
-				<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier"/>
+			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Image">

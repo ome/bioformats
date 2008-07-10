@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome-roi-sa.xsd">
-	<ome:Image ID="Image:a" Name="Name92" DefaultPixels="Pixels:b">
+<ome:OME 
+	xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
+	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:sa="http://www.openmicroscopy.org/Schemas/SA/2008-02" 
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome-roi-sa.xsd http://www.openmicroscopy.org/Schemas/SA/2008-02 SA.xsd"
+	>
+	<ome:Image ID="Image:1" Name="Name92" DefaultPixels="Pixels:b">
 		<ome:CreationDate>2008-03-04T14:17:43.0Z</ome:CreationDate>
 		<ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
 			<bf:BinData Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
@@ -42,4 +48,28 @@
 			</ome:Union>
 		</ome:ROI>
 	</ome:Image>
+	<sa:StructuredAnnotations>
+		<sa:FileAnnotation ID="Annotation:1" FileName="file.txt" MimeType="text/plain">
+			<sa:Link>Shape:5</sa:Link>
+			<sa:ExternalFile>roi-sample-annotations/file.txt</sa:ExternalFile>
+		</sa:FileAnnotation>
+		<sa:FileAnnotation ID="Annotation:2" FileName="report.pdf" MimeType="application/pdf">
+			<sa:Link>Image:1</sa:Link>
+			<sa:ExternalFile>roi-sample-annotations/report.pdf</sa:ExternalFile>
+		</sa:FileAnnotation>
+		<sa:SvgAnnotation ID="Annotation:3" color="green" line-width="2">
+			<sa:Link>Shape:5</sa:Link>
+			<sa:Link>Shape:4</sa:Link>
+			<sa:Link>Shape:3</sa:Link>
+			<sa:Link>Shape:2</sa:Link>
+		</sa:SvgAnnotation>
+		<sa:SvgAnnotation ID="Annotation:4" color="red" line-width="3">
+			<sa:Link>Shape:1</sa:Link>
+		</sa:SvgAnnotation>
+		<sa:FileAnnotation ID="Annotation:5" FileName="file2.txt" MimeType="text/plain">
+			<sa:Link>Shape:5</sa:Link>
+			<bf:BinData Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+		</sa:FileAnnotation>
+	</sa:StructuredAnnotations>
 </ome:OME>
+
