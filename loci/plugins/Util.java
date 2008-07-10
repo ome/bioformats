@@ -537,4 +537,43 @@ public final class Util {
     return reader;
   }
 
+  /**
+   * Places the given window at a nice location on screen, either centered
+   * below the ImageJ window if there is one, or else centered on screen.
+   */
+  public static void placeWindow(Window w) {
+    Dimension size = w.getSize();
+
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    ImageJ ij = IJ.getInstance();
+
+    Point p = new Point();
+
+    if (ij == null) {
+      // center config window on screen
+      p.x = (screen.width - size.width) / 2;
+      p.y = (screen.height - size.height) / 2;
+    }
+    else {
+      // place config window below ImageJ window
+      Rectangle ijBounds = ij.getBounds();
+      p.x = ijBounds.x + (ijBounds.width - size.width) / 2;
+      p.y = ijBounds.y + ijBounds.height + 5;
+    }
+
+    // nudge config window away from screen edges
+    final int pad = 10;
+    if (p.x < pad) p.x = pad;
+    else if (p.x + size.width + pad > screen.width) {
+      p.x = screen.width - size.width - pad;
+    }
+    if (p.y < pad) p.y = pad;
+    else if (p.y + size.height + pad > screen.height) {
+      p.y = screen.height - size.height - pad;
+    }
+
+    w.setLocation(p);
+  }
+
 }

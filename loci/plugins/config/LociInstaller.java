@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.config;
 
 import ij.plugin.PlugIn;
+import loci.plugins.Util;
 
 /**
  * An ImageJ plugin for installing and upgrading libraries
@@ -44,7 +45,7 @@ public class LociInstaller implements PlugIn {
   /** Executes the plugin. */
   public void run(String arg) {
     InstallWizard iw = new InstallWizard();
-    LociConfig.placeWindow(iw);
+    Util.placeWindow(iw);
     iw.setVisible(true);
   }
 

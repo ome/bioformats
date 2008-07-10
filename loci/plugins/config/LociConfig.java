@@ -25,10 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
-import ij.IJ;
-import ij.ImageJ;
 import ij.plugin.PlugIn;
-import java.awt.*;
+import loci.plugins.Util;
 
 /**
  * An ImageJ plugin for displaying the LOCI plugins configuration dialog.
@@ -46,49 +44,8 @@ public class LociConfig implements PlugIn {
   /** Executes the plugin. */
   public void run(String arg) {
     ConfigWindow cw = new ConfigWindow();
-    placeWindow(cw);
+    Util.placeWindow(cw);
     cw.setVisible(true);
-  }
-
-  // -- Utility methods --
-
-  /**
-   * Places the given window at a nice location on screen, either centered
-   * below the ImageJ window if there is one, or else centered on screen.
-   */
-  public static void placeWindow(Window w) {
-    Dimension size = w.getSize();
-
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-    ImageJ ij = IJ.getInstance();
-
-    Point p = new Point();
-
-    if (ij == null) {
-      // center config window on screen
-      p.x = (screen.width - size.width) / 2;
-      p.y = (screen.height - size.height) / 2;
-    }
-    else {
-      // place config window below ImageJ window
-      Rectangle ijBounds = ij.getBounds();
-      p.x = ijBounds.x + (ijBounds.width - size.width) / 2;
-      p.y = ijBounds.y + ijBounds.height + 5;
-    }
-
-    // nudge config window away from screen edges
-    final int pad = 10;
-    if (p.x < pad) p.x = pad;
-    else if (p.x + size.width + pad > screen.width) {
-      p.x = screen.width - size.width - pad;
-    }
-    if (p.y < pad) p.y = pad;
-    else if (p.y + size.height + pad > screen.height) {
-      p.y = screen.height - size.height - pad;
-    }
-
-    w.setLocation(p);
   }
 
   // -- Main method --
