@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.Point;
 import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
@@ -61,7 +62,7 @@ public class InCellReader extends FormatReader {
   private String creationDate;
 
   private int wellRows, wellCols;
-  private Vector rows, cols;
+  private Vector wellCoordinates;
 
   // -- Constructor --
 
@@ -133,6 +134,12 @@ public class InCellReader extends FormatReader {
     }
     seriesCount = 0;
     totalImages = 0;
+
+    emWaves = exWaves = null;
+    wellCoordinates = null;
+    timings = null;
+    creationDate = null;
+    wellRows = wellCols = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -148,8 +155,7 @@ public class InCellReader extends FormatReader {
     exWaves = new Vector();
     timings = new Vector();
 
-    rows = new Vector();
-    cols = new Vector();
+    wellCoordinates = new Vector();
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -213,7 +219,9 @@ public class InCellReader extends FormatReader {
         store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
         store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
       }
-      store.setWellSampleIndex(new Integer(i), 0, i, 0);
+      int row = (int) ((Point) wellCoordinates.get(i)).x;
+      int col = (int) ((Point) wellCoordinates.get(i)).y;
+      store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
     }
 
     MetadataTools.populatePixels(store, this);
@@ -228,6 +236,7 @@ public class InCellReader extends FormatReader {
     private int nextExWave = 0;
     private MetadataStore store;
     private int nextPlate = 0;
+    private int currentRow = -1, currentCol = -1;
 
     public InCellHandler(MetadataStore store) {
       this.store = store;
@@ -237,6 +246,13 @@ public class InCellReader extends FormatReader {
       String value = new String(ch, start, length);
       if (currentQName.equals("UserComment")) {
         store.setImageDescription(value, 0);
+      }
+    }
+
+    public void endElement(String uri, String localName, String qName) {
+      if (qName.equals("Image")) {
+        Point p = new Point(currentRow, currentCol);
+        if (!wellCoordinates.contains(p)) wellCoordinates.add(p);
       }
     }
 
@@ -305,10 +321,10 @@ public class InCellReader extends FormatReader {
         nextPlate++;
       }
       else if (qName.equals("Row")) {
-        rows.add(new Integer(attributes.getValue("number")));
+        currentRow = Integer.parseInt(attributes.getValue("number"));
       }
       else if (qName.equals("Column")) {
-        cols.add(new Integer(attributes.getValue("number")));
+        currentCol = Integer.parseInt(attributes.getValue("number"));
       }
     }
   }
