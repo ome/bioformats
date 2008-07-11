@@ -54,20 +54,38 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
 
   // -- Constants --
 
+  /** Name of plugin to use for opening dropped files. */
+  protected static final String OPENER_PLUGIN = "Bio-Formats Importer";
+
+  /** Name of this plugin, ignored when parsing the plugins list. */
+  protected static final String SHORTCUT_PLUGIN =
+    "LOCI Plugins Shortcut Window";
+
+  /** Name of the 'LOCI' submenu. */
+  protected static final String NORMAL_MENU = "Plugins>LOCI";
+
+  /** Name of the 'About Plugins' submenu. */
+  protected static final String HELP_MENU = "Help>About Plugins";
+
   /** Number of pixels for window border. */
   protected static final int BORDER = 10;
 
   // -- Fields --
 
+  /** Index of plugin to use to open dropped files. */
+  protected static int openerIndex;
+
   /** Details for installed LOCI plugins. */
   protected static String[] names, plugins, args;
 
   static {
+    // load list of LOCI plugins
+    int index = -1;
     Vector vNames = new Vector();
     Vector vPlugins = new Vector();
     Vector vArgs = new Vector();
 
-    // read list of plugins from configuration file
+    // read from configuration file
     try {
       URL url = ShortcutPanel.class.getResource("ShortcutPanel.class");
       String path = url.toString();
@@ -80,8 +98,8 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
         if (line == null) break;
 
         // determine plugin type
-        boolean normal = line.startsWith("Plugins>LOCI");
-        boolean help = line.startsWith("Help>About Plugins");
+        boolean normal = line.startsWith(NORMAL_MENU);
+        boolean help = line.startsWith(HELP_MENU);
         if (!normal && !help) continue;
 
         // parse plugin information
@@ -97,9 +115,12 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
         if (help) name = "About " + name.substring(0, name.length() - 3);
         String plugin = line.substring(quote2 + 2, quote3 - 1).trim();
         String arg = line.substring(quote3 + 1, quote4);
-        vNames.add(name);
-        vPlugins.add(plugin);
-        vArgs.add(arg);
+        if (name.equals(OPENER_PLUGIN)) index = vNames.size();
+        if (!name.equals(SHORTCUT_PLUGIN)) {
+          vNames.add(name);
+          vPlugins.add(plugin);
+          vArgs.add(arg);
+        }
       }
       in.close();
     }
@@ -107,6 +128,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
       exc.printStackTrace();
     }
 
+    openerIndex = index;
     names = new String[vNames.size()];
     vNames.copyInto(names);
     plugins = new String[vPlugins.size()];
@@ -117,9 +139,11 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
 
   // -- Constructor --
 
+  /** Constructs a shortcut panel. */
   public ShortcutPanel() {
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
+    setTransferHandler(new ShortcutTransferHandler(this));
     JButton[] b = new JButton[names.length];
     Dimension prefSize = new Dimension(-1, -1);
     Dimension maxSize = new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
@@ -137,8 +161,17 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     }
   }
 
+  // -- ShortcutPanel API methods --
+
+  /** Opens the given file with the Bio-Formats Importer plugin. */
+  public void open(File f) {
+    String arg = args[openerIndex] + "open=[" + f + "] ";
+    IJ.runPlugIn(plugins[openerIndex], arg);
+  }
+
   // -- ActionListener API methods --
 
+  /** Handles button presses. */
   public void actionPerformed(ActionEvent e) {
     JButton b = (JButton) e.getSource();
     String name = b.getText();
