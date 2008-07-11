@@ -60,6 +60,7 @@ public class InCellReader extends FormatReader {
   private Vector timings;
   private int totalImages;
   private String creationDate;
+  private int startRow, startCol;
 
   private int wellRows, wellCols;
   private Vector wellCoordinates;
@@ -196,6 +197,12 @@ public class InCellReader extends FormatReader {
     Arrays.fill(core.imageCount, z * c * t);
     Arrays.fill(core.currentOrder, "XYZCT");
 
+    for (int i=0; i<wellCoordinates.size(); i++) {
+      int row = (int) ((Point) wellCoordinates.get(i)).x - startRow;
+      int col = (int) ((Point) wellCoordinates.get(i)).y - startCol;
+      store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
+    }
+
     int nextTiming = 0;
     for (int i=0; i<seriesCount; i++) {
       core.sizeX[i] = tiffReaders[i][0].getSizeX();
@@ -207,10 +214,6 @@ public class InCellReader extends FormatReader {
       core.littleEndian[i] = tiffReaders[i][0].isLittleEndian();
       store.setImageName("", i);
       store.setImageCreationDate(creationDate, i);
-      for (int q=0; q<emWaves.size(); q++) {
-        store.setLogicalChannelEmWave((Integer) emWaves.get(q), i, q);
-        store.setLogicalChannelExWave((Integer) exWaves.get(q), i, q);
-      }
       for (int q=0; q<core.imageCount[i]; q++) {
         store.setPlaneTimingDeltaT((Float) timings.get(nextTiming++), i, 0, q);
         int[] coords = FormatTools.getZCTCoords("XYZCT", z, c, t, z * c * t, q);
@@ -219,12 +222,16 @@ public class InCellReader extends FormatReader {
         store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
         store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
       }
-      int row = (int) ((Point) wellCoordinates.get(i)).x;
-      int col = (int) ((Point) wellCoordinates.get(i)).y;
-      store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
     }
 
     MetadataTools.populatePixels(store, this);
+
+    for (int i=0; i<seriesCount; i++) {
+      for (int q=0; q<emWaves.size(); q++) {
+        store.setLogicalChannelEmWave((Integer) emWaves.get(q), i, q);
+        store.setLogicalChannelExWave((Integer) exWaves.get(q), i, q);
+      }
+    }
   }
 
   // -- Helper class --
@@ -308,7 +315,7 @@ public class InCellReader extends FormatReader {
         if (wave != null) emWaves.add(new Integer(wave));
       }
       else if (qName.equals("Plate")) {
-        store.setPlateName(attributes.getValue("name"), nextPlate);
+        store.setPlateName(new Location(getCurrentFile()).getName(), nextPlate);
         wellRows = Integer.parseInt(attributes.getValue("rows"));
         wellCols = Integer.parseInt(attributes.getValue("columns"));
 
@@ -325,6 +332,24 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Column")) {
         currentCol = Integer.parseInt(attributes.getValue("number"));
+      }
+      else if (qName.equals("NamingRows")) {
+        String row = attributes.getValue("begin");
+        try {
+          startRow = Integer.parseInt(row);
+        }
+        catch (NumberFormatException e) {
+          startRow = row.charAt(0) - 'A' + 1;
+        }
+      }
+      else if (qName.equals("NamingColumns")) {
+        String col = attributes.getValue("begin");
+        try {
+          startCol = Integer.parseInt(col);
+        }
+        catch (NumberFormatException e) {
+          startCol = col.charAt(0) - 'A' + 1;
+        }
       }
     }
   }
