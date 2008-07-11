@@ -63,23 +63,23 @@ public class Cache implements CacheReporter {
   /** List of cache event listeners. */
   protected Vector listeners;
 
-  /** Whether or not we want to manually update the cache. */
-  protected boolean manualUpdate;
+  /** Whether the cache should automatically update when a parameter changes. */
+  protected boolean autoUpdate;
 
   // -- Constructors --
 
   /** Constructs an object cache with the given cache strategy and source. */
   public Cache(ICacheStrategy strategy, ICacheSource source,
-    boolean manualUpdate) throws CacheException
+    boolean autoUpdate) throws CacheException
   {
     if (strategy == null) throw new CacheException("strategy is null");
     if (source == null) throw new CacheException("source is null");
     this.strategy = strategy;
     this.source = source;
-    this.manualUpdate = manualUpdate;
+    this.autoUpdate = autoUpdate;
     listeners = new Vector();
     reset();
-    recache();
+    if (autoUpdate) recache();
   }
 
   // -- Cache API methods --
@@ -137,7 +137,7 @@ public class Cache implements CacheReporter {
     this.strategy = strategy;
     notifyListeners(new CacheEvent(this, CacheEvent.STRATEGY_CHANGED));
     reset();
-    if (!manualUpdate) recache();
+    if (autoUpdate) recache();
   }
 
   /** Sets the cache's caching source. */
@@ -146,7 +146,7 @@ public class Cache implements CacheReporter {
     this.source = source;
     notifyListeners(new CacheEvent(this, CacheEvent.SOURCE_CHANGED));
     reset();
-    if (!manualUpdate) recache();
+    if (autoUpdate) recache();
   }
 
   /** Sets the current dimensional position. */
@@ -166,7 +166,7 @@ public class Cache implements CacheReporter {
     System.arraycopy(pos, 0, currentPos, 0, pos.length);
     int ndx = FormatTools.positionToRaster(len, pos);
     notifyListeners(new CacheEvent(this, CacheEvent.POSITION_CHANGED, ndx));
-    if (!manualUpdate) recache();
+    if (autoUpdate) recache();
   }
 
   /** Updates the given plane. */

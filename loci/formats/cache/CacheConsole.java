@@ -55,7 +55,7 @@ public final class CacheConsole {
     LogTools.println("Initializing cache");
     final Cache cache = new Cache(
       new CrosshairStrategy(getLengths(reader)),
-      new BufferedImageSource(reader), false);
+      new BufferedImageSource(reader), true);
     CacheListener l = new CacheListener() {
       public void cacheUpdated(CacheEvent e) {
         int type = e.getType();
