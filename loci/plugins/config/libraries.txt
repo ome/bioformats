@@ -216,38 +216,45 @@ url = http://www.slf4j.org/
 license = MIT
 notes = Used by the NetCDF Java library.
 
-[OME Java]
+[OME-Java OME-XML]
 type = Java library
 class = ome.xml.OMEXMLNode
-url = http://openmicroscopy.org/api/java/
+url = http://www.loci.wisc.edu/ome/ome-java.html
+license = LGPL
+notes = Used by Bio-Formats to work with OME-XML.
+
+[OME-Java Remoting]
+type = Java library
+class = org.openmicroscopy.is.ImageServer
+url = http://www.loci.wisc.edu/ome/ome-java.html
 license = LGPL
 notes = Used by the "Download from OME" and "Upload to OME" plugins
-        to connect to OME. Used by Bio-Formats to work with OME-XML.
+        to connect to OME servers.
 
 [Apache Jakarta Commons HttpClient]
 type = Java library
 class = org.apache.commons.httpclient.HttpConnection
 url = http://jakarta.apache.org/commons/httpclient/
 license = Apache
-notes = Required for OME Java to communicate with OME servers.
+notes = Required for OME-Java Remoting to communicate with OME servers.
 
 [Apache Jakarta Commons Logging]
 type = Java library
 class = org.apache.commons.logging.Log
 url = http://jakarta.apache.org/commons/logging/
 license = Apache
-notes = Used by OME Java.
+notes = Used by OME-Java Remoting.
 
 [Apache XML-RPC]
 type = Java library
 class = org.apache.xmlrpc.XmlRpc
 url = http://ws.apache.org/xmlrpc/
 license = Apache
-notes = Required for OME Java to communicate with OME servers
+notes = Required for OME-Java Remoting to communicate with OME servers
 
 [OMERO Common]
 type = Java library
-class = ome.model.core.Image
+class = ome.api.IPixels
 url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
 license = LGPL
 notes = Used by Bio-Formats to connect to OMERO.
@@ -255,6 +262,20 @@ notes = Used by Bio-Formats to connect to OMERO.
 [OMERO Client]
 type = Java library
 class = ome.client.Session
+url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+license = LGPL
+notes = Used by Bio-Formats to connect to OMERO.
+
+[OMERO Data Model]
+type = Java library
+class = ome.model.core.Image
+url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+license = LGPL
+notes = Used by Bio-Formats to connect to OMERO.
+
+[OMERO Importer]
+type = Java library
+class = ome.formats.OMEROMetadataStore
 url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
 license = LGPL
 notes = Used by Bio-Formats to connect to OMERO.
