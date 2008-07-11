@@ -26,9 +26,7 @@ package loci.formats;
 import java.awt.image.*;
 import java.io.IOException;
 import java.util.*;
-
 import loci.formats.meta.IMinMaxStore;
-import loci.formats.meta.MetadataStore;
 
 /**
  * Logic to compute minimum and maximum values for each channel.

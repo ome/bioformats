@@ -437,8 +437,6 @@ public final class FormatTools {
     throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
   }
 
-  // -- Utility methods - metadata
-
   // -- Utility methods - sanity checking
 
   /**
