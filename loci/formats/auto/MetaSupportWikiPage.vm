@@ -36,7 +36,7 @@ $handler:
 #set ($prop = $q.prop($yes))
 #set ($comment = $q.comment($yes))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop &ndash; $comment
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
 #else
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
 #end##if $comment
@@ -55,7 +55,7 @@ but there may be cases where the field is not converted:
 #set ($prop = $q.prop($partial))
 #set ($comment = $q.comment($partial))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop &ndash; $comment
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
 #else
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
 #end##if $comment
@@ -74,7 +74,7 @@ does not support these fields:
 #set ($prop = $q.prop($no))
 #set ($comment = $q.comment($no))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop &ndash; $comment
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
 #else
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
 #end##if $comment
@@ -93,7 +93,7 @@ lack of documentation or sample data.
 #set ($prop = $q.prop($missing))
 #set ($comment = $q.comment($missing))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop &ndash; $comment
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
 #else
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
 #end##if $comment
