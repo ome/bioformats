@@ -45,23 +45,56 @@
 #     Objective.NominalMagnification = Yes added on 2008 Jan 8
 #     ImagingEnvironment.Temperature = Partial see ticket #167 for details
 
+[APNGReader]
+Pixels = Yes since r647
+
 [AVIReader]
 Pixels = Yes since r657
+LogicalChannel = No
 
 [AliconaReader]
 Pixels = Yes since r1645
+Detector.Voltage = No
+Objective.CalibratedMagnification = No
+Objective.WorkingDistance = No
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [BMPReader]
 Pixels = Yes since r698
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+LogicalChannel = No
 
 [BioRadReader]
 Pixels = Yes since r631
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+DetectorSettings = No
+LogicalChannel = No
+DisplayChannel = No
+DisplayOptions = No
+Objective.CalibratedMagnification = No
 
 [DeltavisionReader]
 Pixels = Yes since r638
+Image.Description = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Plane = Yes
+PlaneTiming = Yes
+StagePosition = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.NdFilter = Yes
 
 [DicomReader]
 Pixels = Yes since r920
+Image.CreationDate = Yes
+Image.Description = Yes
+LogicalChannel = No
 
 [EPSReader]
 Pixels = Yes since r994
@@ -71,48 +104,126 @@ Pixels = Yes since r4057
 
 [FV1000Reader]
 Pixels = Yes since r871
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Detector = No
+DetectorSettings = No
 
 [FitsReader]
 Pixels = Yes since r2595
 
 [FlexReader]
 Pixels = Yes since r2711
+Plate.Name = Yes
+Laser.Wavelength = Yes
+Objective.CalibratedMagnification = Yes
+Objective.LensNA = Yes
+Objective.Immersion = Yes
+Image.CreationDate = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.Name = Yes
+Image.Description = Yes
+Well.Row = Yes
+Well.Column = Yes
+Experimenter = Yes
 
 [FluoviewReader]
 Pixels = Yes since r639
+Dimensions = Yes
+LogicalChannel.Name = Yes
+Objective.LensNA = Yes
+Objective.Manufacturer = No
+Objective.CalibratedMagnification = No
+DetectorSettings = No
+DisplayChannel = No
+Detector = No
+Experimenter = Yes
 
 [GIFReader]
 Pixels = Yes since r647
+LogicalChannel = No
 
 [GatanReader]
 Pixels = Yes since r646
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+DisplayChannel = No
+Objective.CalibratedMagnification = No
+Detector.Voltage = No
 
 [GelReader]
 Pixels = Yes since r879
+Image.Description = Yes
+Image.CreationDate = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
 
 [ICSReader]
 Pixels = Yes since r629
+Dimensions = Yes
+LogicalChannel = No
 
 [IPLabReader]
 Pixels = Yes since r609
+Dimensions.PhysicalSizeX = Yes
+Dimensiosn.PhysicalSizeY = Yes
+Image.Description = Yes
+ROI = No
 
 [IPWReader]
 Pixels = Yes since r646
+Image.Description = Yes
+Image.CreationDate = Yes
 
 [ImarisHDFReader]
 Pixels = Yes since r3309
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.Name = Yes
+LogicalChannel = No
+DetectorSettings.Gain = No
 
 [ImarisReader]
 Pixels = Yes since r879
+Dimensions = Yes
+LogicalChannel.PinholeSize = Yes
+DetectorSettings = No
+Objective.CalibratedMagnification = No
 
 [ImarisTiffReader]
 Pixels = Yes since r1712
+Image.Description = Yes
+Image.CreationDate = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+Experimenter = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [ImprovisionTiffReader]
 Pixels = Yes since r2937
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Experimenter = Yes
 
 [InCellReader]
 Pixels = Yes since r3414
+WellSample.Index = Yes
+Image.CreationDate = Yes
+Image.Description = Yes
+Plane = Yes
+PlaneTiming = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
 
 [JPEGReader]
 Pixels = Yes since r647
@@ -125,24 +236,42 @@ Pixels = Yes since r3763
 
 [LIFReader]
 Pixels = Yes since r867
+Image.Name = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
 
 [LIMReader]
 Pixels = Yes since r3198
 
 [LeicaReader]
 Pixels = Yes since r639
+Image = Yes
 
 [MNGReader]
 Pixels = Yes since r1844
+Image.Name = Yes
 
 [MRCReader]
 Pixels = Yes since r1806
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
 
 [MetamorphReader]
 Pixels = Yes since r639
+Experimenter = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [MetamorphTiffReader]
 Pixels = Yes since r3700
+Image.Name = Yes
+Image.CreationDate = Yes
+ImagingEnvironment.Temperature = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
 
 [MicromanagerReader]
 Pixels = Yes since r2384
@@ -152,27 +281,118 @@ Pixels = Yes since r4059
 
 [ND2Reader]
 Pixels = Yes since r1777
+Image.Name = Yes
+Plane = Yes
+PlaneTiming.DeltaT = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+LogicalChannel = No
+DetectorSettings.Gain = No
+Detector.Voltage = No
+Objective.LensNA = No
+Objective.CalibratedMagnification = No
 
 [NRRDReader]
 Pixels = Yes since r2625
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
 
 [NikonReader]
 Pixels = Yes since r869
+Experimenter = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [OMETiffReader]
 Pixels = Yes since r2943
+Image = Yes
+TiffData = Yes
+Dimensions = Yes
+ImagingEnvironment = Yes
+Plane = Yes
+PlaneTiming = Yes
+StagePosition = Yes
+LogicalChannel = Yes
+ChannelComponent = Yes
+DisplayOptions = Yes
+DisplayOptionsProjection = Yes
+DisplayOptionsTime = Yes
+ROI = Yes
+DetectorSettings = Yes
+LightSourceSettings = Yes
+StageLabel = Yes
+Instrument = Yes
+LightSource = Yes
+Laser = Yes
+Filament = Yes
+Arc = Yes
+Detector = Yes
+Objective = Yes
+OTF = Yes
+Experimenter = Yes
+Plate = Yes
+PlateRef = Yes
+Reagent = Yes
+Screen = Yes
+ScreenAcquisition = Yes
+Well = Yes
+WellSample = Yes
 
 [OMEXMLReader]
 Pixels = Yes since r667
+Image = Yes
+TiffData = Yes
+Dimensions = Yes
+ImagingEnvironment = Yes
+Plane = Yes
+PlaneTiming = Yes
+StagePosition = Yes
+LogicalChannel = Yes
+ChannelComponent = Yes
+DisplayOptions = Yes
+DisplayOptionsProjection = Yes
+DisplayOptionsTime = Yes
+ROI = Yes
+DetectorSettings = Yes
+LightSourceSettings = Yes
+StageLabel = Yes
+Instrument = Yes
+LightSource = Yes
+Laser = Yes
+Filament = Yes
+Arc = Yes
+Detector = Yes
+Objective = Yes
+OTF = Yes
+Experimenter = Yes
+Plate = Yes
+PlateRef = Yes
+Reagent = Yes
+Screen = Yes
+ScreenAcquisition = Yes
+Well = Yes
+WellSample = Yes
 
 [OpenlabRawReader]
 Pixels = Yes since r879
+Image.CreationDate = Yes
 
 [OpenlabReader]
 Pixels = Yes since r659
+StagePosition.PositionX = Yes
+StagePosition.PositionY = Yes
+StagePosition.PositionZ = Yes
+DetectorSettings.Gain = No
+DetectorSettings.Offset = No
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [PCIReader]
 Pixels = Yes since r3148
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [PCXReader]
 Pixels = Yes since r3727
@@ -180,20 +400,31 @@ Pixels = Yes since r3727
 [PGMReader]
 Pixels = Yes since r2595
 
-[PNGReader]
-Pixels = Yes since r647
-
 [PSDReader]
 Pixels = Yes since r3202
 
 [PerkinElmerReader]
 Pixels = Yes since r639
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.CreationDate = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+Plane = Yes
+PlaneTiming = Yes
+StagePosition = Yes
+StageLabel = No
 
 [PictReader]
 Pixels = Yes since r764
 
 [PrairieReader]
 Pixels = Yes since r1996
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+DetectorSettings = No
+Image.CreationDate = Yes
+Laser.Power = No
 
 [QTReader]
 Pixels = Yes since r658
@@ -203,24 +434,64 @@ Pixels = Yes since r958
 
 [SEQReader]
 Pixels = Yes since r638
+Experimenter = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [SVSReader]
 Pixels = Yes since r3528
+Image.Name = Yes
+Experimenter = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [SlidebookReader]
 Pixels = Yes since r1519
+Image.Name = Yes
+LogicalChannel.Name = Yes
 
 [TCSReader]
 Pixels = Yes since r2940
+Image.Name = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Experimenter = Yes
 
 [TiffReader]
 Pixels = Yes since r636
+Experimenter = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [VisitechReader]
 Pixels = Yes since r2925
+Image.Name = Yes
 
 [ZeissLSMReader]
 Pixels = Yes since r646
+Experimenter = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Objective.Model = Yes
+Image.Description = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+LogicalChannel = Yes
+Plane = Yes
+PlaneTiming = Yes
 
 [ZeissZVIReader]
 Pixels = Yes since r656
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+LogicalChannel = Yes
+Image.CreationDate = Yes
+Plane = Yes
+PlaneTiming = Yes
+Experimenter.FirstName = Yes
+Experimenter.LastName = Yes
+Experimenter.Institution = Yes
