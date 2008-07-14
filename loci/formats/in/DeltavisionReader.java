@@ -396,28 +396,6 @@ public class DeltavisionReader extends FormatReader {
         new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
       store.setLogicalChannelNdFilter(
         new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
-
-    // CTR CHECK
-//    if (core.sizeC[0] > 0) {
-//      store.setChannelGlobalMinMax(0, new Double(wave1Min.floatValue()),
-//        new Double(wave1Max.floatValue()), null);
-//    }
-//    if (core.sizeC[0] > 1) {
-//      store.setChannelGlobalMinMax(1, new Double(wave2Min.floatValue()),
-//        new Double(wave2Max.floatValue()), null);
-//    }
-//    if (core.sizeC[0] > 2) {
-//      store.setChannelGlobalMinMax(2, new Double(wave3Min.floatValue()),
-//        new Double(wave3Max.floatValue()), null);
-//    }
-//    if (core.sizeC[0] > 3) {
-//      store.setChannelGlobalMinMax(3, new Double(wave4Min.floatValue()),
-//        new Double(wave4Max.floatValue()), null);
-//    }
-//    if (core.sizeC[0] > 4) {
-//      store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()),
-//        new Double(wave5Max.floatValue()), null);
-//    }
     }
   }
 

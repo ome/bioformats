@@ -376,11 +376,6 @@ public class ImarisHDFReader extends FormatReader {
           }
         }
 
-        // CTR CHECK
-//        if (minValue != null && maxValue != null && maxValue.doubleValue() > 0)
-//        {
-//          store.setChannelGlobalMinMax(i, minValue, maxValue, new Integer(s));
-//        }
         cIndex++;
       }
     }

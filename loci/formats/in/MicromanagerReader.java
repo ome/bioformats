@@ -282,9 +282,6 @@ public class MicromanagerReader extends FormatReader {
 //      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
 //        null, null, null, null, null, null, null, null, null, null, null, null,
 //        null, null, null, null);
-      // TODO : retrieve min/max from the metadata
-      //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
-      //  getChannelGlobalMaximum(id, i), null);
     }
   }
 

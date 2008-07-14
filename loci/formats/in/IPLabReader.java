@@ -268,10 +268,6 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationWhite" + i, new Double(white));
 
           // CTR CHECK
-//          store.setChannelGlobalMinMax(i, new Double(min),
-//            new Double(max), null);
-
-          // CTR CHECK
 //          store.setDisplayChannel(new Integer(core.sizeC[0]), new Double(black),
 //            new Double(white), new Float(gamma), null);
         }
