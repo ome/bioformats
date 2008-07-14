@@ -652,7 +652,9 @@ public class FV1000Reader extends FormatReader {
       else if (code[i].equals("Y")) core.sizeY[0] = ss;
       else if (code[i].equals("Z")) {
         core.sizeZ[0] = ss;
-        store.setDimensionsPhysicalSizeZ(pixel, 0, 0);
+        // Z size stored in nm
+        store.setDimensionsPhysicalSizeZ(new Float(pixel.floatValue() * 0.001),
+          0, 0);
       }
       else if (code[i].equals("T")) {
         core.sizeT[0] = ss;

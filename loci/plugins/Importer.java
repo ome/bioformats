@@ -620,7 +620,8 @@ public class Importer {
     throws FormatException, IOException
   {
     if (stack == null) return;
-    ImagePlus imp = new ImagePlus(getTitle(r, file, series), stack);
+    ImagePlus imp = new ImagePlus(getTitle(r, file, series,
+      options.isGroupFiles()), stack);
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
@@ -761,10 +762,12 @@ public class Importer {
   }
 
   /** Get an appropriate stack title, given the file name. */
-  private String getTitle(IFormatReader r, String file, String series) {
+  private String getTitle(IFormatReader r, String file, String series,
+    boolean groupFiles)
+  {
     String[] used = r.getUsedFiles();
     String title = file.substring(file.lastIndexOf(File.separator) + 1);
-    if (used.length > 1) {
+    if (used.length > 1 && groupFiles) {
       FilePattern fp = new FilePattern(new Location(file));
       if (fp != null) {
         title = fp.getPattern();
