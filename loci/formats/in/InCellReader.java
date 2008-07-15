@@ -61,6 +61,7 @@ public class InCellReader extends FormatReader {
   private int totalImages;
   private String creationDate;
   private int startRow, startCol;
+  private int fieldCount, zCount;
 
   private int wellRows, wellCols;
   private Vector wellCoordinates;
@@ -158,8 +159,6 @@ public class InCellReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     InCellHandler handler = new InCellHandler(store);
 
-    status("starting xml parse");
-    long t1 = System.currentTimeMillis(); 
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();
       parser.parse(new ByteArrayInputStream(b), handler);
@@ -170,8 +169,7 @@ public class InCellReader extends FormatReader {
     catch (SAXException exc) {
       throw new FormatException(exc);
     }
-    long t2 = System.currentTimeMillis();
-    status("finished xml parse (" + (t2 - t1) + ")");
+    core.sizeZ[0] = fieldCount * zCount;
 
     seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
@@ -186,12 +184,6 @@ public class InCellReader extends FormatReader {
     Arrays.fill(core.sizeT, t);
     Arrays.fill(core.imageCount, z * c * t);
     Arrays.fill(core.currentOrder, "XYZCT");
-
-    for (int i=0; i<wellCoordinates.size(); i++) {
-      int row = (int) ((Point) wellCoordinates.get(i)).x - startRow;
-      int col = (int) ((Point) wellCoordinates.get(i)).y - startCol;
-      store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
-    }
 
     tiffReader = new MinimalTiffReader();
 
@@ -215,6 +207,10 @@ public class InCellReader extends FormatReader {
         store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
         store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
       }
+
+      int row = (int) ((Point) wellCoordinates.get(i)).x - startRow;
+      int col = (int) ((Point) wellCoordinates.get(i)).y - startCol;
+      store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
     }
 
     MetadataTools.populatePixels(store, this);
@@ -280,10 +276,12 @@ public class InCellReader extends FormatReader {
         timings.add(new Float(attributes.getValue("acquisition_time_ms")));
       }
       else if (qName.equals("Identifier")) {
+        int field = Integer.parseInt(attributes.getValue("field_index")) + 1;
         int z = Integer.parseInt(attributes.getValue("z_index")) + 1;
         int c = Integer.parseInt(attributes.getValue("wave_index")) + 1;
         int t = Integer.parseInt(attributes.getValue("time_index")) + 1;
-        core.sizeZ[0] = (int) Math.max(getSizeZ(), z);
+        fieldCount = (int) Math.max(fieldCount, field);
+        zCount = (int) Math.max(zCount, z);
         core.sizeC[0] = (int) Math.max(getSizeC(), c);
         core.sizeT[0] = (int) Math.max(getSizeT(), t);
       }
