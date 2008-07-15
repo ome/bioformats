@@ -54,7 +54,7 @@ public class InCellReader extends FormatReader {
   // -- Fields --
 
   private Vector tiffs;
-  private TiffReader[][] tiffReaders;
+  private MinimalTiffReader tiffReader;
   private int seriesCount;
   private Vector emWaves, exWaves;
   private Vector timings;
@@ -85,13 +85,13 @@ public class InCellReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[series][0].get8BitLookupTable();
+    return tiffReader.get8BitLookupTable();
   }
 
   /* @see loci.formats.IForamtReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[series][0].get16BitLookupTable();
+    return tiffReader.get16BitLookupTable();
   }
 
   /**
@@ -103,9 +103,8 @@ public class InCellReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
-    tiffReaders[series][no].setId(
-      (String) tiffs.get(series * tiffReaders[0].length + no));
-    return tiffReaders[series][no].openBytes(0, buf, x, y, w, h);
+    tiffReader.setId((String) tiffs.get(series * getImageCount() + no));
+    return tiffReader.openBytes(0, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -125,14 +124,8 @@ public class InCellReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     tiffs = null;
-    if (tiffReaders != null) {
-      for (int i=0; i<tiffReaders.length; i++) {
-        for (int j=0; j<tiffReaders[i].length; j++) {
-          tiffReaders[i][j].close();
-        }
-      }
-      tiffReaders = null;
-    }
+    if (tiffReader != null) tiffReader.close();
+    tiffReader = null;
     seriesCount = 0;
     totalImages = 0;
 
@@ -165,6 +158,8 @@ public class InCellReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     InCellHandler handler = new InCellHandler(store);
 
+    status("starting xml parse");
+    long t1 = System.currentTimeMillis(); 
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();
       parser.parse(new ByteArrayInputStream(b), handler);
@@ -175,19 +170,14 @@ public class InCellReader extends FormatReader {
     catch (SAXException exc) {
       throw new FormatException(exc);
     }
+    long t2 = System.currentTimeMillis();
+    status("finished xml parse (" + (t2 - t1) + ")");
 
-    seriesCount = totalImages / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
-    tiffReaders = new TiffReader[seriesCount][tiffs.size() / seriesCount];
-    for (int i=0; i<tiffReaders.length; i++) {
-      for (int j=0; j<tiffReaders[0].length; j++) {
-        tiffReaders[i][j] = new TiffReader();
-      }
-      tiffReaders[i][0].setId((String) tiffs.get(i * tiffReaders[0].length));
-    }
+    seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
-    int z = core.sizeZ[0];
-    int c = core.sizeC[0];
-    int t = core.sizeT[0];
+    int z = getSizeZ();
+    int c = getSizeC();
+    int t = getSizeT();
 
     core = new CoreMetadata(seriesCount);
 
@@ -203,15 +193,18 @@ public class InCellReader extends FormatReader {
       store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
     }
 
+    tiffReader = new MinimalTiffReader();
+
     int nextTiming = 0;
     for (int i=0; i<seriesCount; i++) {
-      core.sizeX[i] = tiffReaders[i][0].getSizeX();
-      core.sizeY[i] = tiffReaders[i][0].getSizeY();
-      core.interleaved[i] = tiffReaders[i][0].isInterleaved();
-      core.indexed[i] = tiffReaders[i][0].isIndexed();
-      core.rgb[i] = tiffReaders[i][0].isRGB();
-      core.pixelType[i] = tiffReaders[i][0].getPixelType();
-      core.littleEndian[i] = tiffReaders[i][0].isLittleEndian();
+      tiffReader.setId((String) tiffs.get(i * (tiffs.size() / seriesCount)));
+      core.sizeX[i] = tiffReader.getSizeX();
+      core.sizeY[i] = tiffReader.getSizeY();
+      core.interleaved[i] = tiffReader.isInterleaved();
+      core.indexed[i] = tiffReader.isIndexed();
+      core.rgb[i] = tiffReader.isRGB();
+      core.pixelType[i] = tiffReader.getPixelType();
+      core.littleEndian[i] = tiffReader.isLittleEndian();
       store.setImageName("", i);
       store.setImageCreationDate(creationDate, i);
       for (int q=0; q<core.imageCount[i]; q++) {
@@ -290,9 +283,9 @@ public class InCellReader extends FormatReader {
         int z = Integer.parseInt(attributes.getValue("z_index")) + 1;
         int c = Integer.parseInt(attributes.getValue("wave_index")) + 1;
         int t = Integer.parseInt(attributes.getValue("time_index")) + 1;
-        core.sizeZ[0] = (int) Math.max(core.sizeZ[0], z);
-        core.sizeC[0] = (int) Math.max(core.sizeC[0], c);
-        core.sizeT[0] = (int) Math.max(core.sizeT[0], t);
+        core.sizeZ[0] = (int) Math.max(getSizeZ(), z);
+        core.sizeC[0] = (int) Math.max(getSizeC(), c);
+        core.sizeT[0] = (int) Math.max(getSizeT(), t);
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd

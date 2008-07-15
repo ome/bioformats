@@ -71,34 +71,16 @@ public class NAFReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
-    int plane = core.sizeX[series] * core.sizeY[series] * bpp;
-    in.seek(offsets[series] + no * plane);
-    in.skipBytes(core.sizeX[series] * bpp * y);
-
     if (in.getFilePointer() + buf.length > in.length()) {
       throw new FormatException("Sorry, compressed data is not supported.");
     }
 
-    if (core.sizeX[series] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bpp);
-        in.read(buf, row * w * bpp, w * bpp);
-        in.skipBytes((core.sizeX[series] - w) * bpp);
-      }
-    }
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int plane = getSizeX() * getSizeY() * bpp;
+    in.seek(offsets[series] + no * plane);
 
+    DataTools.readPlane(in, x, y, w, h, this, buf);
     return buf;
-  }
-
-  // -- IFormatHandler API Methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
   }
 
   // -- Internal FormatReader API methods --

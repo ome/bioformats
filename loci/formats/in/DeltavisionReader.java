@@ -92,23 +92,11 @@ public class DeltavisionReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-
     // read the image plane's pixel data
-    int bytesPerPixel = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
     long offset = HEADER_LENGTH + extSize;
-    long bytes = core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
-    in.seek(offset + bytes*no + y * core.sizeX[0] * bytesPerPixel);
-
-    if (w == core.sizeX[0]) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bytesPerPixel);
-        in.read(buf, w * bytesPerPixel * (h - row - 1), w * bytesPerPixel);
-        in.skipBytes(bytesPerPixel * (core.sizeX[0] - w - x));
-      }
-    }
+    in.seek(offset + getSizeX() * getSizeY() * bytesPerPixel * no);
+    DataTools.readPlane(in, x, y, w, h, this, buf);
 
     return buf;
   }
@@ -139,7 +127,7 @@ public class DeltavisionReader extends FormatReader {
     in.order(true);
     core.littleEndian[0] = in.readShort() == LITTLE_ENDIAN;
 
-    in.order(core.littleEndian[0]);
+    in.order(isLittleEndian());
     in.seek(8);
 
     core.imageCount[0] = in.readInt();
@@ -151,8 +139,8 @@ public class DeltavisionReader extends FormatReader {
     core.sizeX[0] = in.readInt();
     core.sizeY[0] = in.readInt();
 
-    addMeta("ImageWidth", new Integer(core.sizeX[0]));
-    addMeta("ImageHeight", new Integer(core.sizeY[0]));
+    addMeta("ImageWidth", new Integer(getSizeX()));
+    addMeta("ImageHeight", new Integer(getSizeY()));
     addMeta("NumberOfImages", new Integer(in.readInt()));
     int filePixelType = in.readInt();
     String pixel;
@@ -268,7 +256,7 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Wavelength 5 max. intensity", wave5Max);
 
     core.sizeT[0] = in.readShort();
-    addMeta("Number of timepoints", new Integer(core.sizeT[0]));
+    addMeta("Number of timepoints", new Integer(getSizeT()));
 
     int sequence = in.readShort();
     String imageSequence;
@@ -296,11 +284,11 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Z axis tilt angle", new Float(in.readFloat()));
 
     core.sizeC[0] = in.readShort();
-    addMeta("Number of wavelengths", new Integer(core.sizeC[0]));
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
-    core.sizeZ[0] = core.imageCount[0] / (core.sizeC[0] * core.sizeT[0]);
-    addMeta("Number of focal planes", new Integer(core.sizeZ[0]));
+    addMeta("Number of wavelengths", new Integer(getSizeC()));
+    if (getSizeC() == 0) core.sizeC[0] = 1;
+    if (getSizeT() == 0) core.sizeT[0] = 1;
+    core.sizeZ[0] = getImageCount() / (getSizeC() * getSizeT());
+    addMeta("Number of focal planes", new Integer(getSizeZ()));
 
     core.rgb[0] = false;
     core.interleaved[0] = false;
@@ -342,9 +330,8 @@ public class DeltavisionReader extends FormatReader {
     in.seek(128);
     numIntsPerSection = in.readShort();
     numFloatsPerSection = in.readShort();
-    setOffsetInfo(sequence, core.sizeZ[0], core.sizeC[0], core.sizeT[0]);
-    extHdrFields =
-      new DVExtHdrFields[core.sizeZ[0]][core.sizeC[0]][core.sizeT[0]];
+    setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
+    extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
 
     MetadataTools.populatePixels(store, this);
 
@@ -360,7 +347,7 @@ public class DeltavisionReader extends FormatReader {
     // Extended Header information array for that image
     int p = 0;
     int offset = HEADER_LENGTH + numIntsPerSection * 4;
-    for (int i=0; i<core.imageCount[0]; i++) {
+    for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
       int z = coords[0];
       int w = coords[1];
@@ -390,7 +377,7 @@ public class DeltavisionReader extends FormatReader {
 
     status("Populating metadata");
 
-    for (int w=0; w<core.sizeC[0]; w++) {
+    for (int w=0; w<getSizeC(); w++) {
       store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
       store.setLogicalChannelExWave(
         new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);

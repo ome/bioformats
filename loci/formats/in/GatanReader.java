@@ -99,19 +99,8 @@ public class GatanReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    in.seek(pixelOffset + y * core.sizeX[0] * bpp);
-
-    if (core.sizeX[0] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bpp);
-        in.read(buf, row * w * bpp, w * bpp);
-        in.skipBytes(bpp * (core.sizeX[0] - w - x));
-      }
-    }
+    in.seek(pixelOffset);
+    DataTools.readPlane(in, x, y, w, h, this, buf);
 
     return buf;
   }
@@ -151,7 +140,7 @@ public class GatanReader extends FormatReader {
 
     in.skipBytes(4);
     core.littleEndian[0] = in.readInt() == 1;
-    in.order(!core.littleEndian[0]);
+    in.order(!isLittleEndian());
 
     // TagGroup instance
 
@@ -165,10 +154,10 @@ public class GatanReader extends FormatReader {
 
     core.littleEndian[0] = true;
 
-    if (core.sizeX[0] == 0 || core.sizeY[0] == 0) {
+    if (getSizeX() == 0 || getSizeY() == 0) {
       throw new FormatException("Dimensions information not found");
     }
-    int bytes = numPixelBytes / (core.sizeX[0] * core.sizeY[0]);
+    int bytes = numPixelBytes / (getSizeX() * getSizeY());
 
     switch (bytes) {
       case 1:
@@ -222,7 +211,7 @@ public class GatanReader extends FormatReader {
     store.setDimensionsPhysicalSizeY(pixY, 0, 0);
     store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<getSizeC(); i++) {
       // CTR CHECK
 //      store.setDisplayChannel(new Integer(i), null, null,
 //        new Float(gamma), null);

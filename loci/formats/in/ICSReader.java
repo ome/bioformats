@@ -132,52 +132,40 @@ public class ICSReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int bpp = bitsPerPixel / 8;
-    int len = core.sizeX[0] * core.sizeY[0] * bpp * getRGBChannelCount();
+    int len = getSizeX() * getSizeY() * bpp * getRGBChannelCount();
     int pixel = bpp * getRGBChannelCount();
     int rowLen = w * pixel;
 
     in.seek(offset + no * len);
 
-    if (!core.rgb[0] && core.sizeC[0] > 4) {
+    if (!isRGB() && getSizeC() > 4) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
       if (!gzip && data == null) {
-        data = new byte[len * core.sizeC[0]];
+        data = new byte[len * getSizeC()];
         in.read(data);
       }
 
       for (int row=y; row<h + y; row++) {
         for (int col=x; col<w + x; col++) {
-          System.arraycopy(data, bpp * (no + core.sizeC[0]*
-            (row * core.sizeX[0] + col)), buf, bpp * (row * w + col), bpp);
+          System.arraycopy(data, bpp * (no + getSizeC() *
+            (row * getSizeX() + col)), buf, bpp * (row * w + col), bpp);
+        }
+      }
+    }
+    else if (gzip) {
+      if (x == 0 && getSizeX() == w) {
+        System.arraycopy(data, len * no + y * rowLen, buf, 0, h * rowLen);
+      }
+      else {
+        for (int row=y; row<h + y; row++) {
+          System.arraycopy(data, len * no + row * getSizeX() * pixel +
+            x * pixel, buf, row * rowLen, rowLen);
         }
       }
     }
     else {
-      if (!gzip) in.skipBytes(y * rowLen);
-
-      if (x == 0 && core.sizeX[0] == w) {
-        if (gzip) {
-          System.arraycopy(data, len * no + y * rowLen, buf, 0, h * rowLen);
-        }
-        else {
-          in.read(buf, 0, h * rowLen);
-        }
-      }
-      else {
-        for (int row=y; row<h + y; row++) {
-          if (gzip) {
-            System.arraycopy(data,
-              len*no + row * core.sizeX[0] * pixel + x * pixel, buf,
-              row * rowLen, rowLen);
-          }
-          else {
-            in.skipBytes(x * pixel);
-            in.read(buf, row * rowLen, rowLen);
-            in.skipBytes(pixel * (core.sizeX[0] - w - x));
-          }
-        }
-      }
+      DataTools.readPlane(in, x, y, w, h, this, buf);
     }
 
     if (invertY) {
@@ -365,7 +353,7 @@ public class ICSReader extends FormatReader {
       }
       else if (orderToken.equals("ch")) {
         core.sizeC[0] = Integer.parseInt(imageToken);
-        if (core.sizeC[0] > 4) core.rgb[0] = false;
+        if (getSizeC() > 4) core.rgb[0] = false;
         core.currentOrder[0] += "C";
       }
       else {
@@ -374,25 +362,25 @@ public class ICSReader extends FormatReader {
       }
     }
 
-    if (core.currentOrder[0].indexOf("Z") == -1) {
+    if (getDimensionOrder().indexOf("Z") == -1) {
       core.currentOrder[0] += "Z";
     }
-    if (core.currentOrder[0].indexOf("T") == -1) {
+    if (getDimensionOrder().indexOf("T") == -1) {
       core.currentOrder[0] += "T";
     }
-    if (core.currentOrder[0].indexOf("C") == -1) {
+    if (getDimensionOrder().indexOf("C") == -1) {
       core.currentOrder[0] += "C";
     }
 
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+    if (getSizeZ() == 0) core.sizeZ[0] = 1;
+    if (getSizeC() == 0) core.sizeC[0] = 1;
+    if (getSizeT() == 0) core.sizeT[0] = 1;
 
-    if (core.imageCount[0] == 0) core.imageCount[0] = 1;
-    core.rgb[0] = core.rgb[0] && core.sizeC[0] > 1;
-    core.interleaved[0] = core.rgb[0];
-    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
-    if (!core.rgb[0]) core.imageCount[0] *= core.sizeC[0];
+    if (getImageCount() == 0) core.imageCount[0] = 1;
+    core.rgb[0] = isRGB() && getSizeC() > 1;
+    core.interleaved[0] = isRGB();
+    core.imageCount[0] = getSizeZ() * getSizeT();
+    if (!isRGB()) core.imageCount[0] *= getSizeC();
     core.indexed[0] = false;
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
@@ -419,8 +407,8 @@ public class ICSReader extends FormatReader {
 
     // extra check is because some of our datasets are labeled as 'gzip', and
     // have a valid GZIP header, but are actually uncompressed
-    if (gzip && (((in.length() - in.getFilePointer()) / (core.imageCount[0]) <
-      (core.sizeX[0] * core.sizeY[0] * bitsPerPixel / 8))))
+    if (gzip && (((in.length() - in.getFilePointer()) / (getImageCount()) <
+      (getSizeX() * getSizeY() * bitsPerPixel / 8))))
     {
       data = new byte[(int) (in.length() - in.getFilePointer())];
       status("Decompressing pixel data");
@@ -457,7 +445,7 @@ public class ICSReader extends FormatReader {
 
     String fmt = rFormat;
 
-    if (bitsPerPixel < 32) core.littleEndian[0] = !core.littleEndian[0];
+    if (bitsPerPixel < 32) core.littleEndian[0] = !isLittleEndian();
 
     if (fmt.equals("real")) core.pixelType[0] = FormatTools.FLOAT;
     else if (fmt.equals("integer")) {
@@ -509,17 +497,17 @@ public class ICSReader extends FormatReader {
       store.setDimensionsWaveIncrement(pixC, 0, 0);
     }
 
-    int[] emWave = new int[core.sizeC[0]];
-    int[] exWave = new int[core.sizeC[0]];
+    int[] emWave = new int[getSizeC()];
+    int[] exWave = new int[getSizeC()];
     if (em != null) {
       StringTokenizer emTokens = new StringTokenizer(em);
-      for (int i=0; i<core.sizeC[0]; i++) {
+      for (int i=0; i<getSizeC(); i++) {
         emWave[i] = (int) Float.parseFloat(emTokens.nextToken().trim());
       }
     }
     if (ex != null) {
       StringTokenizer exTokens = new StringTokenizer(ex);
-      for (int i=0; i<core.sizeC[0]; i++) {
+      for (int i=0; i<getSizeC(); i++) {
         exWave[i] = (int) Float.parseFloat(exTokens.nextToken().trim());
       }
     }

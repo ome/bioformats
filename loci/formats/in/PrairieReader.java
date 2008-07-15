@@ -68,7 +68,7 @@ public class PrairieReader extends FormatReader {
   private String[] files;
 
   /** Helper reader for opening images */
-  private TiffReader tiff;
+  private MinimalTiffReader tiff;
 
   /** Names of the associated XML files */
   private String xmlFile, cfgFile;
@@ -204,7 +204,7 @@ public class PrairieReader extends FormatReader {
 
       if (checkSuffix(id, XML_SUFFIX)) {
         super.initFile(id);
-        tiff = new TiffReader();
+        tiff = new MinimalTiffReader();
         xmlFile = id;
         readXML = true;
       }

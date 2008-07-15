@@ -104,11 +104,11 @@ public class BMPReader extends FormatReader {
         " not supported");
     }
 
-    int rowsToSkip = core.sizeY[0] - (h + y);
-    int rowLength = core.sizeX[0] * (isIndexed() ? 1 : core.sizeC[0]);
+    int rowsToSkip = getSizeY() - (h + y);
+    int rowLength = getSizeX() * (isIndexed() ? 1 : getSizeC());
     in.seek(global + rowsToSkip * rowLength);
 
-    int planeSize = core.sizeX[0] * core.sizeY[0] * core.sizeC[0];
+    int planeSize = getSizeX() * getSizeY() * getSizeC();
     if (bpp >= 8) planeSize *= (bpp / 8);
     else planeSize /= (8 / bpp);
     byte[] rawPlane = new byte[planeSize];
@@ -116,28 +116,28 @@ public class BMPReader extends FormatReader {
 
     BitBuffer bb = new BitBuffer(rawPlane);
 
-    if ((palette != null && palette[0].length > 0) || core.sizeC[0] == 1) {
+    if ((palette != null && palette[0].length > 0) || getSizeC() == 1) {
       for (int row=h-1; row>=0; row--) {
         bb.skipBits(x * bpp);
         for (int i=0; i<w; i++) {
           buf[row*w + i] = (byte) (bb.getBits(bpp) & 0xff);
         }
-        bb.skipBits((core.sizeX[0] - w - x) * bpp);
+        bb.skipBits((getSizeX() - w - x) * bpp);
       }
     }
     else {
-      int len = core.sizeX[0] * core.sizeC[0];
+      int len = getSizeX() * getSizeC();
       for (int row=h-1; row>=y; row--) {
-        bb.skipBits(x * core.sizeC[0] * bpp);
-        for (int i=0; i<w*core.sizeC[0]; i++) {
-          buf[row*w*core.sizeC[0] + i] = (byte) (bb.getBits(bpp) & 0xff);
+        bb.skipBits(x * getSizeC() * bpp);
+        for (int i=0; i<w*getSizeC(); i++) {
+          buf[row*w*getSizeC() + i] = (byte) (bb.getBits(bpp) & 0xff);
         }
-        bb.skipBits(core.sizeC[0] * (core.sizeX[0] - w - x) * bpp);
+        bb.skipBits(getSizeC() * (getSizeX() - w - x) * bpp);
       }
-      for (int i=0; i<buf.length/core.sizeC[0]; i++) {
-        byte tmp = buf[i*core.sizeC[0] + 2];
-        buf[i*core.sizeC[0] + 2] = buf[i*core.sizeC[0]];
-        buf[i*core.sizeC[0]] = tmp;
+      for (int i=0; i<buf.length/getSizeC(); i++) {
+        byte tmp = buf[i*getSizeC() + 2];
+        buf[i*getSizeC() + 2] = buf[i*getSizeC()];
+        buf[i*getSizeC()] = tmp;
       }
     }
     return buf;
@@ -185,16 +185,16 @@ public class BMPReader extends FormatReader {
     //while ((core.sizeX[0] % 2) != 0) core.sizeX[0]++;
     core.sizeY[0] = in.readInt();
 
-    if (core.sizeX[0] < 1 || core.sizeY[0] < 1) {
+    if (getSizeX() < 1 || getSizeY() < 1) {
       throw new FormatException("Invalid image dimensions: " +
-        core.sizeX[0] + " x " + core.sizeY[0]);
+        getSizeX() + " x " + getSizeY());
     }
-    addMeta("Image width", "" + core.sizeX[0]);
-    addMeta("Image height", "" + core.sizeY[0]);
+    addMeta("Image width", String.valueOf(getSizeX()));
+    addMeta("Image height", String.valueOf(getSizeY()));
 
-    addMeta("Color planes", "" + in.readShort());
+    addMeta("Color planes", String.valueOf(in.readShort()));
     bpp = in.readShort();
-    addMeta("Bits per pixel", "" + bpp);
+    addMeta("Bits per pixel", String.valueOf(bpp));
 
     compression = in.readInt();
     String comp = "invalid";
@@ -219,8 +219,8 @@ public class BMPReader extends FormatReader {
     in.skipBytes(4);
     float pixelSizeX = (float) in.readInt();
     float pixelSizeY = (float) in.readInt();
-    addMeta("X resolution", "" + pixelSizeX);
-    addMeta("Y resolution", "" + pixelSizeY);
+    addMeta("X resolution", String.valueOf(pixelSizeX));
+    addMeta("Y resolution", String.valueOf(pixelSizeY));
     int nColors = in.readInt();
     if (nColors == 0 && bpp != 32 && bpp != 24) {
       nColors = bpp < 8 ? 1 << bpp : 256;
@@ -249,8 +249,7 @@ public class BMPReader extends FormatReader {
 
     core.sizeC[0] = bpp != 24 ? 1 : 3;
     if (bpp == 32) core.sizeC[0] = 4;
-    if (bpp > 8) bpp /= core.sizeC[0];
-    //while (bpp % 8 != 0) bpp++;
+    if (bpp > 8) bpp /= getSizeC();
 
     switch (bpp) {
       case 16:
@@ -263,7 +262,7 @@ public class BMPReader extends FormatReader {
         core.pixelType[0] = FormatTools.UINT8;
     }
 
-    core.rgb[0] = core.sizeC[0] > 1;
+    core.rgb[0] = getSizeC() > 1;
     core.littleEndian[0] = true;
     core.interleaved[0] = true;
     core.imageCount[0] = 1;
@@ -272,7 +271,7 @@ public class BMPReader extends FormatReader {
     core.currentOrder[0] = "XYCTZ";
     core.metadataComplete[0] = true;
     core.indexed[0] = palette != null;
-    if (core.indexed[0]) {
+    if (isIndexed()) {
       core.sizeC[0] = 1;
       core.rgb[0] = false;
     }

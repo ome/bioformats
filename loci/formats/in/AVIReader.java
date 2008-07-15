@@ -100,11 +100,11 @@ public class AVIReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
     double p = ((double) bmpScanLineSize) / bmpBitsPerPixel;
     int effectiveWidth = (int) (bmpScanLineSize / p);
-    if (effectiveWidth == 0 || effectiveWidth < core.sizeX[0]) {
-      effectiveWidth = core.sizeX[0];
+    if (effectiveWidth == 0 || effectiveWidth < getSizeX()) {
+      effectiveWidth = getSizeX();
     }
 
     long fileOff = ((Long) offsets.get(no)).longValue();
@@ -112,9 +112,9 @@ public class AVIReader extends FormatReader {
 
     if (bmpCompression != 0) {
       byte[] b = uncompress(no, buf);
-      int rowLen = w * bytes * core.sizeC[0];
+      int rowLen = w * bytes * getSizeC();
       for (int row=0; row<h; row++) {
-        System.arraycopy(b, (row + y) * core.sizeX[0] * bytes * core.sizeC[0],
+        System.arraycopy(b, (row + y) * getSizeX() * bytes * getSizeC(),
           buf, row * rowLen, rowLen);
       }
       b = null;
@@ -122,34 +122,34 @@ public class AVIReader extends FormatReader {
     }
 
     if (bmpBitsPerPixel < 8) {
-      int rawSize = bytes * core.sizeY[0] * effectiveWidth * core.sizeC[0];
+      int rawSize = bytes * getSizeY() * effectiveWidth * getSizeC();
       rawSize /= (8 / bmpBitsPerPixel);
 
       byte[] b = new byte[rawSize];
 
-      int len = rawSize / core.sizeY[0];
+      int len = rawSize / getSizeY();
       in.read(b);
 
       BitBuffer bb = new BitBuffer(b);
-      bb.skipBits(bmpBitsPerPixel * len * (core.sizeY[0] - h - y));
+      bb.skipBits(bmpBitsPerPixel * len * (getSizeY() - h - y));
 
       for (int row=h; row>=y; row--) {
         bb.skipBits(bmpBitsPerPixel * x);
         for (int col=0; col<len; col++) {
           buf[(row - y) * len + col] = (byte) bb.getBits(bmpBitsPerPixel);
         }
-        bb.skipBits(bmpBitsPerPixel * (core.sizeX[0] - w - x));
+        bb.skipBits(bmpBitsPerPixel * (getSizeX() - w - x));
       }
 
       return buf;
     }
 
-    int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
-    int scanline = w * (bmpBitsPerPixel / 8);
+    int pad = bmpScanLineSize - getSizeX()*bytes;
+    int scanline = w * bytes;
 
-    in.skipBytes(scanline * (core.sizeY[0] - h - y));
+    in.skipBytes(scanline * (getSizeY() - h - y));
 
-    if (core.sizeX[0] == w) {
+    if (getSizeX() == w) {
       in.read(buf);
     }
     else {
@@ -157,19 +157,19 @@ public class AVIReader extends FormatReader {
         in.skipBytes(x * (bmpBitsPerPixel / 8));
         in.read(buf, (i - y)*scanline, scanline);
         if (bmpBitsPerPixel == 24) {
-          for (int j=0; j<core.sizeX[0]; j++) {
+          for (int j=0; j<getSizeX(); j++) {
             byte r = buf[i*scanline + j*3 + 2];
             buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
             buf[i*scanline + j*3] = r;
           }
         }
-        in.skipBytes((bmpBitsPerPixel / 8) * (core.sizeX[0] - w - x + pad));
+        in.skipBytes(bytes * (getSizeX() - w - x + pad));
       }
     }
 
     if (bmpBitsPerPixel == 16) {
       // channels are separated, need to swap them
-      byte[] r = new byte[core.sizeX[0] * core.sizeY[0] * 2];
+      byte[] r = new byte[getSizeX() * getSizeY() * 2];
       System.arraycopy(buf, 2 * (buf.length / 3), r, 0, r.length);
       System.arraycopy(buf, 0, buf, 2 * (buf.length / 3), r.length);
       System.arraycopy(r, 0, buf, 0, r.length);
@@ -281,7 +281,7 @@ public class AVIReader extends FormatReader {
                 addMeta("Start time", new Integer(in.readInt()));
                 addMeta("Length", new Integer(in.readInt()));
 
-                addMeta("Frame width", new Integer(core.sizeX[0]));
+                addMeta("Frame width", new Integer(getSizeX()));
 
                 if (spos + size <= in.length()) {
                   in.seek(spos + size);
@@ -494,11 +494,11 @@ public class AVIReader extends FormatReader {
     core.rgb[0] = bmpBitsPerPixel > 8 || (bmpCompression != 0);
     core.indexed[0] = false;
     core.sizeZ[0] = 1;
-    core.sizeT[0] = core.imageCount[0];
+    core.sizeT[0] = getImageCount();
     core.littleEndian[0] = true;
     core.interleaved[0] = bmpBitsPerPixel != 16;
-    core.sizeC[0] = core.rgb[0] ? 3 : 1;
-    core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
+    core.sizeC[0] = isRGB() ? 3 : 1;
+    core.currentOrder[0] = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
 
@@ -537,7 +537,7 @@ public class AVIReader extends FormatReader {
     if (bmpCompression == MSRLE) {
       Object[] options = new Object[2];
       options[1] = (lastImageNo == no - 1) ? lastImage : null;
-      options[0] = new int[] {core.sizeX[0], core.sizeY[0]};
+      options[0] = new int[] {getSizeX(), getSizeY()};
       MSRLECodec codec = new MSRLECodec();
       buf = codec.decompress(b, options);
       lastImage = buf;
@@ -546,8 +546,8 @@ public class AVIReader extends FormatReader {
     else if (bmpCompression == MS_VIDEO) {
       Object[] options = new Object[4];
       options[0] = new Integer(bmpBitsPerPixel);
-      options[1] = new Integer(core.sizeX[0]);
-      options[2] = new Integer(core.sizeY[0]);
+      options[1] = new Integer(getSizeX());
+      options[2] = new Integer(getSizeY());
       options[3] = (lastImageNo == no - 1) ? lastImage : null;
 
       MSVideoCodec codec = new MSVideoCodec();
@@ -573,11 +573,11 @@ public class AVIReader extends FormatReader {
     }
     if (lut != null) {
       b = buf;
-      buf = new byte[b.length * core.sizeC[0]];
+      buf = new byte[b.length * getSizeC()];
       for (int i=0; i<b.length; i++) {
-        buf[i*core.sizeC[0]] = lut[0][b[i] & 0xff];
-        buf[i*core.sizeC[0] + 1] = lut[1][b[i] & 0xff];
-        buf[i*core.sizeC[0] + 2] = lut[2][b[i] & 0xff];
+        buf[i*getSizeC()] = lut[0][b[i] & 0xff];
+        buf[i*getSizeC() + 1] = lut[1][b[i] & 0xff];
+        buf[i*getSizeC() + 2] = lut[2][b[i] & 0xff];
       }
     }
     return buf;

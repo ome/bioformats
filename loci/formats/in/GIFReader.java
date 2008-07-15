@@ -152,7 +152,7 @@ public class GIFReader extends FormatReader {
     }
 
     for (int row=0; row<h; row++) {
-      System.arraycopy(b, (row + y) * core.sizeX[0] + x, buf, row*w, w);
+      System.arraycopy(b, (row + y) * getSizeX() + x, buf, row*w, w);
     }
 
     return buf;
@@ -336,7 +336,7 @@ public class GIFReader extends FormatReader {
 
     core.sizeZ[0] = 1;
     core.sizeC[0] = 1;
-    core.sizeT[0] = core.imageCount[0];
+    core.sizeT[0] = getImageCount();
     core.currentOrder[0] = "XYCTZ";
     core.rgb[0] = false;
     core.littleEndian[0] = true;
@@ -486,19 +486,19 @@ public class GIFReader extends FormatReader {
 
   private void setPixels() {
     // expose destination image's pixels as an int array
-    byte[] dest = new byte[core.sizeX[0] * core.sizeY[0]];
+    byte[] dest = new byte[getSizeX() * getSizeY()];
     int lastImage = -1;
 
     // fill in starting image contents based on last image's dispose code
     if (lastDispose > 0) {
       if (lastDispose == 3) { // use image before last
-        int n = core.imageCount[0] - 2;
+        int n = getImageCount() - 2;
         if (n > 0) lastImage = n - 1;
       }
 
       if (lastImage != -1) {
         byte[] prev = (byte[]) images.get(lastImage);
-        System.arraycopy(prev, 0, dest, 0, core.sizeX[0] * core.sizeY[0]);
+        System.arraycopy(prev, 0, dest, 0, getSizeX() * getSizeY());
       }
     }
 
@@ -530,11 +530,11 @@ public class GIFReader extends FormatReader {
         iline += inc;
       }
       line += iy;
-      if (line < core.sizeY[0]) {
-        int k = line * core.sizeX[0];
+      if (line < getSizeY()) {
+        int k = line * getSizeX();
         int dx = k + ix; // start of line in dest
         int dlim = dx + iw; // end of dest line
-        if ((k + core.sizeX[0]) < dlim) dlim = k + core.sizeX[0];
+        if ((k + getSizeX()) < dlim) dlim = k + getSizeX();
         int sx = i * iw; // start of line in source
         while (dx < dlim) {
           // map color and insert in destination

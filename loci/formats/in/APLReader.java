@@ -42,7 +42,7 @@ public class APLReader extends FormatReader {
 
   private String[] tiffFiles;
   private String[] xmlFiles;
-  private TiffReader[] tiffReaders;
+  private MinimalTiffReader[] tiffReaders;
   private Vector used;
 
   // -- Constructor --
@@ -143,7 +143,7 @@ public class APLReader extends FormatReader {
     core = new CoreMetadata(seriesCount);
     tiffFiles = new String[seriesCount];
     xmlFiles = new String[seriesCount];
-    tiffReaders = new TiffReader[seriesCount];
+    tiffReaders = new MinimalTiffReader[seriesCount];
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -186,7 +186,7 @@ public class APLReader extends FormatReader {
       used.add(xmlFiles[i]);
       used.add(tiffFiles[i]);
 
-      tiffReaders[i] = new TiffReader();
+      tiffReaders[i] = new MinimalTiffReader();
       tiffReaders[i].setId(tiffFiles[i]);
 
       // get core metadata from TIFF file

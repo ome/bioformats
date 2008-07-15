@@ -73,19 +73,9 @@ public class MRCReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
-    in.seek(1024 + (no * core.sizeX[0] * core.sizeY[0] * bpp));
 
-    in.skipBytes(y * core.sizeX[0] * bpp);
-    if (core.sizeX[series] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bpp);
-        in.read(buf, row * w * bpp, w * bpp);
-        in.skipBytes(bpp * (core.sizeX[0] - w - x));
-      }
-    }
+    in.seek(1024 + (no * getSizeX() *  getSizeY() * bpp));
+    DataTools.readPlane(in, x, y, w, h, this, buf);
 
     return buf;
   }
@@ -153,7 +143,7 @@ public class MRCReader extends FormatReader {
         break;
     }
 
-    bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    bpp = FormatTools.getBytesPerPixel(getPixelType());
 
     // pixel size = xlen / mx
 
@@ -202,13 +192,13 @@ public class MRCReader extends FormatReader {
     float[] angles = new float[6];
     for (int i=0; i<angles.length; i++) {
       angles[i] = in.readFloat();
-      addMeta("Angle " + (i+1), "" + angles[i]);
+      addMeta("Angle " + (i+1), String.valueOf(angles[i]));
     }
 
     in.skipBytes(24);
 
     int nUsefulLabels = in.readInt();
-    addMeta("Number of useful labels", "" + nUsefulLabels);
+    addMeta("Number of useful labels", String.valueOf(nUsefulLabels));
 
     for (int i=0; i<10; i++) {
       addMeta("Label " + (i+1), in.readString(80));
@@ -220,7 +210,7 @@ public class MRCReader extends FormatReader {
 
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
-    core.imageCount[0] = core.sizeZ[0];
+    core.imageCount[0] = getSizeZ();
     core.rgb[0] = false;
     core.interleaved[0] = true;
     core.indexed[0] = false;
@@ -233,16 +223,13 @@ public class MRCReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
     MetadataTools.populatePixels(store, this);
 
-    Float x = new Float(xlen / mx);
-    Float y = new Float(ylen / my);
-    Float z = new Float(zlen / mz);
-    if (x.floatValue() == Float.POSITIVE_INFINITY) x = new Float(1.0);
-    if (y.floatValue() == Float.POSITIVE_INFINITY) y = new Float(1.0);
-    if (z.floatValue() == Float.POSITIVE_INFINITY) z = new Float(1.0);
+    float x = (xlen / mx) == Float.POSITIVE_INFINITY ? 1f : (xlen / mx);
+    float y = (ylen / my) == Float.POSITIVE_INFINITY ? 1f : (ylen / my);
+    float z = (zlen / mz) == Float.POSITIVE_INFINITY ? 1f : (zlen / mz);
 
-    store.setDimensionsPhysicalSizeX(x, 0, 0);
-    store.setDimensionsPhysicalSizeY(y, 0, 0);
-    store.setDimensionsPhysicalSizeZ(z, 0, 0);
+    store.setDimensionsPhysicalSizeX(new Float(x), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(y), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(z), 0, 0);
   }
 
 }

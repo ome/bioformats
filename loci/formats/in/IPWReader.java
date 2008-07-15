@@ -118,12 +118,7 @@ public class IPWReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("IPWReader.initFile(" + id + ")");
-
-    currentId = id;
-    metadata = new Hashtable();
-    core = new CoreMetadata(1);
-    Arrays.fill(core.orderCertain, true);
-    getMetadataStore().createRoot();
+    super.initFile(id);
 
     in = new RandomAccessStream(id);
     poi = new POITools(Location.getMappedId(currentId));
@@ -233,12 +228,12 @@ public class IPWReader extends FormatReader {
     core.rgb[0] = (TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
 
-    if (!core.rgb[0]) {
+    if (!isRGB()) {
       core.indexed[0] = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.PHOTOMETRIC_INTERPRETATION, false, 1) ==
         TiffTools.RGB_PALETTE;
     }
-    if (core.indexed[0]) {
+    if (isIndexed()) {
       core.sizeC[0] = 1;
       core.rgb[0] = false;
     }
@@ -254,19 +249,17 @@ public class IPWReader extends FormatReader {
     Hashtable h = ifds[0];
     core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
     core.sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-    core.currentOrder[0] = core.rgb[0] ? "XYCTZ" : "XYTCZ";
+    core.currentOrder[0] = isRGB() ? "XYCTZ" : "XYTCZ";
 
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+    if (getSizeZ() == 0) core.sizeZ[0] = 1;
+    if (getSizeC() == 0) core.sizeC[0] = 1;
+    if (getSizeT() == 0) core.sizeT[0] = 1;
 
-    if (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] == 1 &&
-      core.imageCount[0] != 1)
-    {
-      core.sizeZ[0] = core.imageCount[0];
+    if (getSizeZ() * getSizeC() * getSizeT() == 1 && getImageCount() != 1) {
+      core.sizeZ[0] = getImageCount();
     }
 
-    if (core.rgb[0]) core.sizeC[0] *= 3;
+    if (isRGB()) core.sizeC[0] *= 3;
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);

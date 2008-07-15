@@ -41,7 +41,7 @@ import loci.formats.meta.MetadataStore;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public abstract class BaseTiffReader extends FormatReader {
+public abstract class BaseTiffReader extends MinimalTiffReader {
 
   // -- Constants --
 
@@ -89,11 +89,6 @@ public abstract class BaseTiffReader extends FormatReader {
   private static final int SCENE_TYPE = 41729;
   private static final int CFA_PATTERN = 41730;
 
-  // -- Fields --
-
-  /** List of IFDs for the current TIFF. */
-  protected Hashtable[] ifds;
-
   // -- Constructors --
 
   /** Constructs a new BaseTiffReader. */
@@ -102,84 +97,6 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Constructs a new BaseTiffReader. */
   public BaseTiffReader(String name, String[] suffixes) {
     super(name, suffixes);
-  }
-
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return TiffTools.isValidHeader(block);
-  }
-
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    int[] bits = TiffTools.getBitsPerSample(ifds[0]);
-    if (bits[0] <= 8) {
-      int[] colorMap =
-        TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
-      if (colorMap == null) return null;
-
-      byte[][] table = new byte[3][colorMap.length / 3];
-      int next = 0;
-      for (int j=0; j<table.length; j++) {
-        for (int i=0; i<table[0].length; i++) {
-          table[j][i] = (byte) ((colorMap[next++] >> 8) & 0xff);
-        }
-      }
-
-      return table;
-    }
-    return null;
-  }
-
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    int[] bits = TiffTools.getBitsPerSample(ifds[0]);
-    if (bits[0] <= 16 && bits[0] > 8) {
-      int[] colorMap =
-        TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
-      if (colorMap == null || colorMap.length < 65536 * 3) return null;
-      short[][] table = new short[3][colorMap.length / 3];
-      int next = 0;
-      for (int i=0; i<table.length; i++) {
-        for (int j=0; j<table[0].length; j++) {
-          if (core.littleEndian[0]) {
-            table[i][j] = (short) (colorMap[next++] & 0xffff);
-          }
-          else {
-            int n = colorMap[next++];
-            table[i][j] =
-              (short) (((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
-          }
-        }
-      }
-      return table;
-    }
-    return null;
-  }
-
-  /**
-   * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
-   */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int width,
-    int height) throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, width, height);
-
-    TiffTools.getSamples(ifds[no], in, buf, x, y, width, height);
-    return buf;
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    ifds = null;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -555,16 +472,16 @@ public abstract class BaseTiffReader extends FormatReader {
     core.sizeX[0] = (int) TiffTools.getImageWidth(ifds[0]);
     core.sizeY[0] = (int) TiffTools.getImageLength(ifds[0]);
     core.sizeZ[0] = 1;
-    core.sizeC[0] = core.rgb[0] ? samples : 1;
+    core.sizeC[0] = isRGB() ? samples : 1;
     core.sizeT[0] = ifds.length;
     core.metadataComplete[0] = true;
     core.indexed[0] = photo == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
-    if (core.indexed[0]) {
+    if (isIndexed()) {
       core.sizeC[0] = 1;
       core.rgb[0] = false;
     }
-    if (core.sizeC[0] == 1 && !core.indexed[0]) core.rgb[0] = false;
+    if (getSizeC() == 1 && !isIndexed()) core.rgb[0] = false;
     core.falseColor[0] = false;
     core.currentOrder[0] = "XYCZT";
     core.pixelType[0] = getPixelType(ifds[0]);
@@ -719,51 +636,10 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BaseTiffReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
-    in.order(in.readShort() == 0x4949);
-
-    status("Reading IFDs");
-
-    ifds = TiffTools.getIFDs(in);
-    if (ifds == null) throw new FormatException("No IFDs found");
-
-    status("Populating metadata");
-
-    core.imageCount[0] = ifds.length;
     initMetadata();
   }
 
   // -- Helper methods --
-
-  protected int getPixelType(Hashtable ifd) throws FormatException {
-    int bps = TiffTools.getBitsPerSample(ifd)[0];
-    int bitFormat = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
-
-    while (bps % 8 != 0) bps++;
-    if (bps == 24) bps = 32;
-
-    if (bitFormat == 3) return FormatTools.FLOAT;
-    else if (bitFormat == 2) {
-      switch (bps) {
-        case 16:
-          return FormatTools.INT16;
-        case 32:
-          return FormatTools.INT32;
-        default:
-          return FormatTools.INT8;
-      }
-    }
-    else {
-      switch (bps) {
-        case 16:
-          return FormatTools.UINT16;
-        case 32:
-          return FormatTools.UINT32;
-        default:
-          return FormatTools.UINT8;
-      }
-    }
-  }
 
   private static String getExifTagName(int tag) {
     switch (tag) {

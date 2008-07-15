@@ -88,11 +88,11 @@ public class GelReader extends BaseTiffReader {
 
       for (int i=0; i<tmp.length/4; i++) {
         long value = DataTools.bytesToShort(tmp, i*originalBytes,
-          originalBytes, core.littleEndian[0]);
+          originalBytes, isLittleEndian());
         long square = value * value;
         float pixel = square * scale;
         DataTools.unpackBytes(Float.floatToIntBits(pixel), buf, i*4, 4,
-          core.littleEndian[0]);
+          isLittleEndian());
       }
     }
     else super.openBytes(no, buf, x, y, w, h);
@@ -141,8 +141,8 @@ public class GelReader extends BaseTiffReader {
     String units = (String) TiffTools.getIFDValue(ifds[0], MD_FILE_UNITS);
     addMeta("File units", units);
 
-    core.imageCount[series] = ifds.length;
-    core.sizeT[series] = core.imageCount[series];
+    core.imageCount[0] = ifds.length;
+    core.sizeT[0] = getImageCount();
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

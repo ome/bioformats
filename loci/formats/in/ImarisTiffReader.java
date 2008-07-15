@@ -91,18 +91,16 @@ public class ImarisTiffReader extends BaseTiffReader {
     status("Populating metadata");
 
     core.sizeC[0] = ifds.length - 1;
-    core.sizeZ[0] = tmp.size() / core.sizeC[0];
+    core.sizeZ[0] = tmp.size() / getSizeC();
     core.sizeT[0] = 1;
     core.sizeX[0] = (int) TiffTools.getImageWidth(ifds[1]);
     core.sizeY[0] = (int) TiffTools.getImageLength(ifds[1]);
 
     ifds = (Hashtable[]) tmp.toArray(new Hashtable[0]);
-    core.imageCount[0] = core.sizeC[0] * core.sizeZ[0];
+    core.imageCount[0] = getSizeC() * getSizeZ();
     core.currentOrder[0] = "XYZCT";
     core.interleaved[0] = false;
-    core.rgb[0] =
-      core.imageCount[0] != core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-
+    core.rgb[0] = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
     core.pixelType[0] = getPixelType(ifds[0]);
 
     status("Parsing comment");
@@ -128,19 +126,19 @@ public class ImarisTiffReader extends BaseTiffReader {
           store.setImageDescription(value, 0);
         }
         else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
-          if (channelIndexes[1] < core.sizeC[0]) {
+          if (channelIndexes[1] < getSizeC()) {
             store.setLogicalChannelEmWave(new Integer(value), 0,
               channelIndexes[1]++);
           }
         }
         else if (key.equals("LSMExcitationWavelength") && !value.equals("0")) {
-          if (channelIndexes[2] < core.sizeC[0]) {
+          if (channelIndexes[2] < getSizeC()) {
             store.setLogicalChannelExWave(new Integer(value), 0,
               channelIndexes[2]++);
           }
         }
         else if (key.equals("Name") && !currentId.endsWith(value)) {
-          if (channelIndexes[0] < core.sizeC[0]) {
+          if (channelIndexes[0] < getSizeC()) {
             store.setLogicalChannelName(value, 0, channelIndexes[0]++);
           }
         }

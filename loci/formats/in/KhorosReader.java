@@ -81,21 +81,10 @@ public class KhorosReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    int bufSize = core.sizeX[0] * core.sizeY[0] * bytes;
-
-    in.seek(offset + no * bufSize + y * core.sizeX[0] * bytes);
-
-    if (core.sizeX[0] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bytes);
-        in.read(buf, row * w * bytes, w * bytes);
-        in.skipBytes(bytes * (core.sizeX[0] - w - x));
-      }
-    }
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
+    int bufSize = getSizeX() * getSizeY() * bytes;
+    in.seek(offset + no * bufSize);
+    DataTools.readPlane(in, x, y, w, h, this, buf);
 
     return buf;
   }
@@ -128,7 +117,7 @@ public class KhorosReader extends FormatReader {
     core.sizeY[0] = in.readInt();
     in.skipBytes(28);
     core.imageCount[0] = in.readInt();
-    if (core.imageCount[0] == 0) core.imageCount[0] = 1;
+    if (getImageCount() == 0) core.imageCount[0] = 1;
     core.sizeC[0] = in.readInt();
 
     int type = in.readInt();
@@ -183,9 +172,9 @@ public class KhorosReader extends FormatReader {
     else in.skipBytes(440);
     offset = in.getFilePointer();
 
-    core.sizeZ[0] = core.imageCount[0];
+    core.sizeZ[0] = getImageCount();
     core.sizeT[0] = 1;
-    core.rgb[0] = core.sizeC[0] > 1;
+    core.rgb[0] = getSizeC() > 1;
     core.interleaved[0] = false;
     core.littleEndian[0] = dependency == 4 || dependency == 8;
     core.currentOrder[0] = "XYCZT";
@@ -193,7 +182,7 @@ public class KhorosReader extends FormatReader {
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
 
-    if (core.indexed[0]) {
+    if (isIndexed()) {
       core.sizeC[0] = 1;
       core.rgb[0] = false;
     }

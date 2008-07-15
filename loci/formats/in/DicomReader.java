@@ -158,9 +158,8 @@ public class DicomReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    int bytes = core.sizeX[0] * core.sizeY[0] * bpp *
-      (isIndexed() ? 1 : core.sizeC[0]);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int bytes = getSizeX() * getSizeY() * bpp * (isIndexed() ? 1 : getSizeC());
     in.seek(offsets[no]);
 
     if (isRLE) {
@@ -183,17 +182,16 @@ public class DicomReader extends FormatReader {
         }
         for (int i=0; i<plane; i++) {
           for (int j=0; j<bpp; j++) {
-            t[i*bpp + j] =
-              core.littleEndian[0] ? tmp[bpp - j - 1][i] : tmp[j][i];
+            t[i*bpp + j] = isLittleEndian() ? tmp[bpp - j - 1][i] : tmp[j][i];
           }
         }
       }
 
       int rowLen = w * bpp;
-      int srcRowLen = core.sizeX[0] * bpp;
+      int srcRowLen = getSizeX() * bpp;
 
-      int ec = isIndexed() ? 1 : core.sizeC[0];
-      int srcPlane = core.sizeY[0] * srcRowLen;
+      int ec = isIndexed() ? 1 : getSizeC();
+      int srcPlane = getSizeY() * srcRowLen;
 
       for (int c=0; c<ec; c++) {
         for (int row=0; row<h; row++) {
@@ -220,14 +218,14 @@ public class DicomReader extends FormatReader {
       Codec codec = null;
       if (isJPEG) codec = new JPEGCodec();
       else codec = new JPEG2000Codec();
-      b = codec.decompress(b, new Object[] {new Boolean(core.littleEndian[0]),
-        new Boolean(core.interleaved[0])});
+      b = codec.decompress(b, new Object[] {new Boolean(isLittleEndian()),
+        new Boolean(isInterleaved())});
 
       int rowLen = w * bpp;
-      int srcRowLen = core.sizeX[0] * bpp;
+      int srcRowLen = getSizeX() * bpp;
 
-      int ec = isIndexed() ? 1 : core.sizeC[0];
-      int srcPlane = core.sizeY[0] * srcRowLen;
+      int ec = isIndexed() ? 1 : getSizeC();
+      int srcPlane = getSizeY() * srcRowLen;
 
       for (int c=0; c<ec; c++) {
         for (int row=0; row<h; row++) {
@@ -251,22 +249,22 @@ public class DicomReader extends FormatReader {
       }
       else in.seek(in.getFilePointer() - 6);
 
-      int c = isIndexed() ? 1 : core.sizeC[0];
-      in.skipBytes(y * c * bpp * core.sizeX[0]);
+      int c = isIndexed() ? 1 : getSizeC();
+      in.skipBytes(y * c * bpp * getSizeX());
 
-      if (core.sizeX[0] == w) {
+      if (getSizeX() == w) {
         in.read(buf);
       }
       else {
         for (int row=0; row<h; row++) {
           in.skipBytes(x * c * bpp);
           in.read(buf, row * w * c * bpp, w * c * bpp);
-          in.skipBytes(c * bpp * (core.sizeX[0] - w - x));
+          in.skipBytes(c * bpp * (getSizeX() - w - x));
         }
       }
     }
 
-    if (bgr && core.rgb[0]) {
+    if (bgr && isRGB()) {
       int stride = bpp * getRGBChannelCount();
       for (int i=0; i<buf.length; i+=stride) {
         for (int q=0; q<bpp; q++) {
@@ -288,16 +286,9 @@ public class DicomReader extends FormatReader {
       else if (bpp == 2) {
         if (maxPixelValue == -1) maxPixelValue = 65535;
         for (int i=0; i<buf.length; i+=2) {
-          short s = DataTools.bytesToShort(buf, i, 2, core.littleEndian[0]);
+          short s = DataTools.bytesToShort(buf, i, 2, isLittleEndian());
           s = (short) (maxPixelValue - s);
-          if (core.littleEndian[0]) {
-            buf[i + 1] = (byte) (s >> 8);
-            buf[i] = (byte) (s & 0xff);
-          }
-          else {
-            buf[i] = (byte) (s >> 8);
-            buf[i + 1] = (byte) (s & 0xff);
-          }
+          DataTools.unpackShort(s, buf, i, isLittleEndian());
         }
       }
     }
@@ -407,14 +398,14 @@ public class DicomReader extends FormatReader {
           addInfo(tag, config);
           break;
         case ROWS:
-          if (core.sizeY[0] == 0) core.sizeY[0] = in.readShort();
+          if (getSizeY() == 0) core.sizeY[0] = in.readShort();
           else in.skipBytes(2);
-          addInfo(tag, core.sizeY[0]);
+          addInfo(tag, getSizeY());
           break;
         case COLUMNS:
-          if (core.sizeX[0] == 0) core.sizeX[0] = in.readShort();
+          if (getSizeX() == 0) core.sizeX[0] = in.readShort();
           else in.skipBytes(2);
-          addInfo(tag, core.sizeX[0]);
+          addInfo(tag, getSizeX());
           break;
         case PIXEL_SPACING:
           addInfo(tag, in.readString(elementLength));
@@ -477,7 +468,7 @@ public class DicomReader extends FormatReader {
         decodingTags = false;
       }
     }
-    if (core.imageCount[0] == 0) core.imageCount[0] = 1;
+    if (getImageCount() == 0) core.imageCount[0] = 1;
 
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
     if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
@@ -494,16 +485,15 @@ public class DicomReader extends FormatReader {
         break;
     }
 
-    int plane = core.sizeX[0] * core.sizeY[0] *
-      (lut == null ? core.sizeC[0] : 1) *
-      FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int plane = getSizeX() * getSizeY() * (lut == null ? getSizeC() : 1) *
+      FormatTools.getBytesPerPixel(getPixelType());
 
     status("Calculating image offsets");
 
     // calculate the offset to each plane
 
-    offsets = new long[core.imageCount[0]];
-    for (int i=0; i<core.imageCount[0]; i++) {
+    offsets = new long[getImageCount()];
+    for (int i=0; i<getImageCount(); i++) {
       if (isRLE) {
         if (i == 0) in.seek(baseOffset);
         else {
@@ -550,9 +540,9 @@ public class DicomReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeZ[0] = core.imageCount[0];
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    core.rgb[0] = core.sizeC[0] > 1;
+    core.sizeZ[0] = getImageCount();
+    if (getSizeC() == 0) core.sizeC[0] = 1;
+    core.rgb[0] = getSizeC() > 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
     core.metadataComplete[0] = true;
@@ -612,7 +602,7 @@ public class DicomReader extends FormatReader {
       if (key == null) key = "" + tag;
       if (key.equals("Samples per pixel")) {
         core.sizeC[0] = Integer.parseInt(info.trim());
-        if (core.sizeC[0] > 1) core.rgb[0] = true;
+        if (getSizeC() > 1) core.rgb[0] = true;
       }
       else if (key.equals("Photometric Interpretation")) {
         if (info.trim().equals("PALETTE COLOR")) {
@@ -750,7 +740,7 @@ public class DicomReader extends FormatReader {
           return in.readInt();
         }
         vr = IMPLICIT_VR;
-        return DataTools.bytesToInt(b, core.littleEndian[0]);
+        return DataTools.bytesToInt(b, isLittleEndian());
       case AE:
       case AS:
       case AT:
@@ -776,16 +766,16 @@ public class DicomReader extends FormatReader {
       case QQ:
         // Explicit VR with 16-bit length
         if (tag == 0x00283006) {
-    	 	  return DataTools.bytesToInt(b, 2, 2, core.littleEndian[0]);
+    	 	  return DataTools.bytesToInt(b, 2, 2, isLittleEndian());
         }
-        int n1 = DataTools.bytesToShort(b, 2, 2, core.littleEndian[0]);
-        int n2 = DataTools.bytesToShort(b, 2, 2, !core.littleEndian[0]);
+        int n1 = DataTools.bytesToShort(b, 2, 2, isLittleEndian());
+        int n2 = DataTools.bytesToShort(b, 2, 2, !isLittleEndian());
         if (n1 < 0) return n2;
         if (n2 < 0) return n1;
         return (int) Math.min(n1, n2);
       default:
         vr = IMPLICIT_VR;
-        return DataTools.bytesToInt(b, core.littleEndian[0]);
+        return DataTools.bytesToInt(b, isLittleEndian());
     }
   }
 

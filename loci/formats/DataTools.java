@@ -696,6 +696,53 @@ public final class DataTools {
     return rtn;
   }
 
+  public static byte[] readPlane(RandomAccessStream in, int x, int y, int w,
+    int h, IFormatReader r, byte[] buf) throws IOException
+  {
+    int c = r.getSizeC();
+    int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
+    if (x == 0 && y == 0 && w == r.getSizeX() && h == r.getSizeY()) {
+      in.read(buf);
+    }
+    else if (x == 0 && w == r.getSizeX()) {
+      if (r.isInterleaved()) {
+        in.skipBytes(y * w * bpp * c);
+        in.read(buf, 0, h * w * bpp * c);
+      }
+      else {
+        int rowLen = w * bpp;
+        for (int channel=0; channel<c; channel++) {
+          in.skipBytes(y * rowLen);
+          in.read(buf, channel * h * rowLen, h * rowLen);
+          in.skipBytes((r.getSizeY() - y - h) * rowLen);
+        }
+      }
+    }
+    else {
+      if (r.isInterleaved()) {
+        in.skipBytes(y * r.getSizeX() * bpp * c);
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bpp * c);
+          in.read(buf, row * w * bpp * c, w * bpp * c);
+          in.skipBytes(bpp * c * (r.getSizeX() - w - x));
+        }
+      }
+      else {
+        for (int channel=0; channel<c; channel++) {
+          in.skipBytes(y * r.getSizeX() * bpp);
+          for (int row=0; row<h; row++) {
+            in.skipBytes(x * bpp);
+            in.read(buf, channel * w * h * bpp + row * w * bpp, w * bpp);
+            in.skipBytes(bpp * (r.getSizeX() - w - x));
+          }
+          in.skipBytes(r.getSizeX() * bpp * (r.getSizeY() - y - h));
+        }
+      }
+    }
+
+    return buf;
+  }
+
   // -- Date handling --
 
   /** Converts the given timestamp into an ISO 8601 date. */

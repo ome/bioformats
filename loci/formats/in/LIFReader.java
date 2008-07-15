@@ -100,23 +100,10 @@ public class LIFReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     long offset = ((Long) offsets.get(series)).longValue();
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
-    in.seek(offset + core.sizeX[series] * core.sizeY[series] * (long) no * bpp);
-
-    in.skipBytes(y * core.sizeX[series] * bpp);
-
-    int line = w * bpp;
-    if (core.sizeX[series] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bpp);
-        in.read(buf, row * line, line);
-        in.skipBytes(bpp * (core.sizeX[series] - w - x));
-      }
-    }
+    in.seek(offset + getSizeX() * getSizeY() * (long) no * bpp);
+    DataTools.readPlane(in, x, y, w, h, this, buf);
 
     return buf;
   }
@@ -141,7 +128,7 @@ public class LIFReader extends FormatReader {
     offsets = new Vector();
 
     core.littleEndian[0] = true;
-    in.order(core.littleEndian[0]);
+    in.order(isLittleEndian());
 
     xcal = new Vector();
     ycal = new Vector();

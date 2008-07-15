@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
-import java.util.StringTokenizer;
+import java.util.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -46,7 +46,7 @@ public class TillVisionReader extends FormatReader {
 
   /** Constructs a new TillVision reader. */
   public TillVisionReader() {
-    super("TillVision", new String[] {"inf", "pst"});
+    super("TillVision", "vws");
   }
 
   // -- IFormatReader API methods --
@@ -99,25 +99,21 @@ public class TillVisionReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("AliconaReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
 
-    if (id.toLowerCase().endsWith(".inf")) {
-      // find the .pst file
-      String base = new Location(id).getAbsolutePath();
-      base = base.substring(0, base.lastIndexOf(".") + 1);
-      pixelsFile = new RandomAccessStream(base + "pst");
-      pixelsFile.order(true);
-    }
-    else if (id.toLowerCase().endsWith(".pst")) {
-      pixelsFile = new RandomAccessStream(id);
-      pixelsFile.order(true);
+    POITools poi = new POITools(id);
+    Vector documents = poi.getDocumentList();
 
-      // find the .inf file
-      String base = new Location(id).getAbsolutePath();
-      base = base.substring(0, base.lastIndexOf(".") + 1);
-      setId(base + "inf");
-      return;
+    for (int i=0; i<documents.size(); i++) {
+      String name = (String) documents.get(i);
+      System.out.println(name + " (" + poi.getFileSize(name) + ")");
+      byte[] data = poi.getDocumentBytes(name);
+      name = name.replaceAll("/", "-");
+      RandomAccessFile out = new RandomAccessFile(name, "rw");
+      out.write(data);
+      out.close();
     }
+
+    if (true) return;
 
     // read key/value pairs from .inf file
 

@@ -89,36 +89,36 @@ public class FlexReader extends BaseTiffReader {
       byte[] t = new byte[bytes.length];
       System.arraycopy(bytes, 0, t, 0, t.length);
       Arrays.fill(bytes, (byte) 0);
-      int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+      int bpp = FormatTools.getBytesPerPixel(getPixelType());
       for (int i=num-1; i>=0; i--) {
         int q = (int) ((t[i] & 0xff) * factors[no]);
-        DataTools.unpackBytes(q, bytes, i * bpp, bpp, core.littleEndian[0]);
+        DataTools.unpackBytes(q, bytes, i * bpp, bpp, isLittleEndian());
       }
     }
     else {
-      if (core.pixelType[0] == FormatTools.UINT8) {
+      if (getPixelType() == FormatTools.UINT8) {
         int num = bytes.length;
         for (int i=num-1; i>=0; i--) {
           int q = (int) ((bytes[i] & 0xff) * factors[no]);
           bytes[i] = (byte) (q & 0xff);
         }
       }
-      else if (core.pixelType[0] == FormatTools.UINT16) {
+      else if (getPixelType() == FormatTools.UINT16) {
         int num = bytes.length / 2;
         for (int i=num-1; i>=0; i--) {
           int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
-            (int) (DataTools.bytesToInt(bytes, i*2, 2, core.littleEndian[0]) *
+            (int) (DataTools.bytesToInt(bytes, i*2, 2, isLittleEndian()) *
             factors[no]);
-          DataTools.unpackBytes(q, bytes, i * 2, 2, core.littleEndian[0]);
+          DataTools.unpackBytes(q, bytes, i * 2, 2, isLittleEndian());
         }
       }
-      else if (core.pixelType[0] == FormatTools.UINT32) {
+      else if (getPixelType() == FormatTools.UINT32) {
         int num = bytes.length / 4;
         for (int i=num-1; i>=0; i--) {
           int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
             (int) (DataTools.bytesToInt(bytes, i*4, nBytes,
-            core.littleEndian[0]) * factors[no]);
-          DataTools.unpackBytes(q, bytes, i * 4, 4, core.littleEndian[0]);
+            isLittleEndian()) * factors[no]);
+          DataTools.unpackBytes(q, bytes, i * 4, 4, isLittleEndian());
         }
       }
     }
@@ -173,16 +173,16 @@ public class FlexReader extends BaseTiffReader {
     // verify factor count
     int nsize = n.size();
     int fsize = f.size();
-    if (debug && (nsize != fsize || nsize != core.imageCount[0])) {
+    if (debug && (nsize != fsize || nsize != getImageCount())) {
       LogTools.println("Warning: mismatch between image count, " +
-        "names and factors (count=" + core.imageCount[0] +
+        "names and factors (count=" + getImageCount() +
         ", names=" + nsize + ", factors=" + fsize + ")");
     }
     for (int i=0; i<nsize; i++) addMeta("Name " + i, n.get(i));
     for (int i=0; i<fsize; i++) addMeta("Factor " + i, f.get(i));
 
     // parse factor values
-    factors = new double[core.imageCount[0]];
+    factors = new double[getImageCount()];
     int max = 0;
     for (int i=0; i<fsize; i++) {
       String factor = (String) f.get(i);

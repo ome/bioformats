@@ -208,7 +208,7 @@ public class LegacyQTReader extends FormatReader {
       }
       while (time >= 0);
       core.imageCount[0] = v.size();
-      times = new int[core.imageCount[0]];
+      times = new int[getImageCount()];
       for (int i=0; i<times.length; i++) {
         q = (Integer) v.elementAt(i);
         times[i] = q.intValue();
@@ -222,7 +222,7 @@ public class LegacyQTReader extends FormatReader {
       core.sizeY[0] = img.getHeight();
       core.sizeZ[0] = 1;
       core.sizeC[0] = img.getRaster().getNumBands();
-      core.sizeT[0] = core.imageCount[0];
+      core.sizeT[0] = getImageCount();
       core.pixelType[0] = ImageTools.getPixelType(img);
       core.currentOrder[0] = "XYCTZ";
       core.rgb[0] = true;

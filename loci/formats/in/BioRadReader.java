@@ -230,37 +230,20 @@ public class BioRadReader extends FormatReader {
 
     lastChannel = getZCTCoords(no)[1];
 
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
 
     if (picFiles != null) {
       int file = no % picFiles.length;
       RandomAccessStream ras = new RandomAccessStream(picFiles[file]);
-      long offset = (no / picFiles.length) *
-        core.sizeX[0] * core.sizeY[0] * bytes;
+      long offset = (no / picFiles.length) * getSizeX() * getSizeY() * bytes;
       ras.seek(offset + 76);
 
-      ras.skipBytes(y * core.sizeX[0] * bytes);
-      for (int row=0; row<h; row++) {
-        ras.skipBytes(x * bytes);
-        ras.read(buf, row * w * bytes, w * bytes);
-        ras.skipBytes(bytes * (core.sizeX[0] - w - x));
-      }
-
+      DataTools.readPlane(ras, x, y, w, h, this, buf);
       ras.close();
     }
     else {
-      in.seek(no * core.sizeX[0] * core.sizeY[0] * bytes + 76);
-      in.skipBytes(y * core.sizeX[0] * bytes);
-      if (core.sizeX[0] == w) {
-        in.read(buf);
-      }
-      else {
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bytes);
-          in.read(buf, row * w * bytes, w * bytes);
-          in.skipBytes(bytes * (core.sizeX[0] - w - x));
-        }
-      }
+      in.seek(no * getSizeX() * getSizeY() * bytes + 76);
+      DataTools.readPlane(in, x, y, w, h, this, buf);
     }
     return buf;
   }
@@ -335,9 +318,9 @@ public class BioRadReader extends FormatReader {
     }
 
     // populate metadata fields
-    addMeta("nx", new Integer(core.sizeX[0]));
-    addMeta("ny", new Integer(core.sizeY[0]));
-    addMeta("npic", new Integer(core.imageCount[0]));
+    addMeta("nx", new Integer(getSizeX()));
+    addMeta("ny", new Integer(getSizeY()));
+    addMeta("npic", new Integer(getImageCount()));
     addMeta("ramp1_min", new Integer(ramp1min));
     addMeta("ramp1_max", new Integer(ramp1max));
     addMeta("notes", new Boolean(notes));
@@ -354,13 +337,13 @@ public class BioRadReader extends FormatReader {
     addMeta("mag_factor", new Float(magFactor));
 
     // skip image data
-    int imageLen = core.sizeX[0] * core.sizeY[0];
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    in.skipBytes(bpp * core.imageCount[0] * imageLen + 6);
+    int imageLen = getSizeX() * getSizeY();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    in.skipBytes(bpp * getImageCount() * imageLen + 6);
 
     Vector pixelSize = new Vector();
 
-    core.sizeZ[0] = core.imageCount[0];
+    core.sizeZ[0] = getImageCount();
     core.sizeC[0] = 1;
     core.sizeT[0] = 1;
 
@@ -542,7 +525,7 @@ public class BioRadReader extends FormatReader {
                 addMeta(key + " time (X) in seconds", params.get(0));
                 addMeta(key + " time (Y) in seconds", params.get(1));
                 core.sizeZ[0] = 1;
-                core.sizeT[0] = core.imageCount[0];
+                core.sizeT[0] = getImageCount();
                 core.orderCertain[0] = true;
               }
               break;
@@ -691,15 +674,12 @@ public class BioRadReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // populate Pixels
-    in.seek(14);
-    core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT8 :
-      FormatTools.UINT16;
 
     core.currentOrder[0] = "XYCTZ";
 
     if (picFiles.length > 0) {
       core.imageCount[0] = npic * picFiles.length;
-      core.sizeC[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeT[0]);
+      core.sizeC[0] = getImageCount() / (getSizeZ() * getSizeT());
     }
     else picFiles = null;
 
@@ -795,12 +775,12 @@ public class BioRadReader extends FormatReader {
         int z = sizeZ == null ? 1 : Integer.parseInt(sizeZ);
         int c = sizeC == null ? 1 : Integer.parseInt(sizeC);
         int t = sizeT == null ? 1 : Integer.parseInt(sizeT);
-        int count = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+        int count = getSizeZ() * getSizeC() * getSizeT();
         core.sizeZ[0] = z;
         core.sizeC[0] = c;
         core.sizeT[0] = t;
-        if (count >= core.imageCount[0]) core.imageCount[0] = count;
-        else core.sizeC[0] = core.imageCount[0] / count;
+        if (count >= getImageCount()) core.imageCount[0] = count;
+        else core.sizeC[0] = getImageCount() / count;
       }
       else if (qName.equals("Z") || qName.equals("C") || qName.equals("T")) {
         String stamp = attributes.getValue("TimeCompleted");

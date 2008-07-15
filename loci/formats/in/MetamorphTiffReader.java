@@ -148,7 +148,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       }
     }
 
-    core.sizeT[0] = ifds.length / (core.sizeZ[0] * core.sizeC[0]);
+    core.sizeT[0] = ifds.length / (getSizeZ() * getSizeC());
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

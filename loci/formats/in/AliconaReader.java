@@ -71,23 +71,23 @@ public class AliconaReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int pad = (8 - (core.sizeX[0] % 8)) % 8;
+    int pad = (8 - (getSizeX() % 8)) % 8;
 
-    int planeSize = (core.sizeX[0] + pad) * core.sizeY[0];
+    int planeSize = (getSizeX() + pad) * getSizeY();
 
     // 16-bit images are stored in a non-standard format:
     // all of the LSBs are stored together, followed by all of the MSBs
     // so instead of LMLMLM... storage, we have LLLLL...MMMMM...
     for (int i=0; i<numBytes; i++) {
       in.seek(textureOffset + (no * planeSize * (i + 1)));
-      if (core.sizeX[0] == w) {
+      if (getSizeX() == w) {
         in.read(buf, i * w * h, w * h);
       }
       else {
         for (int row=0; row<h; row++) {
           in.skipBytes(x);
           in.read(buf, i * w * h + row * w, w);
-          in.skipBytes(core.sizeX[0] + pad - x - w);
+          in.skipBytes(getSizeX() + pad - x - w);
         }
       }
     }
@@ -168,11 +168,11 @@ public class AliconaReader extends FormatReader {
     status("Populating metadata");
 
     numBytes = (int) (in.length() - textureOffset) /
-      (core.sizeX[0] * core.sizeY[0] * core.imageCount[0]);
+      (getSizeX() * getSizeY() * getImageCount());
 
     core.sizeC[0] = hasC ? 3 : 1;
     core.sizeZ[0] = 1;
-    core.sizeT[0] = core.imageCount[0] / core.sizeC[0];
+    core.sizeT[0] = getImageCount() / getSizeC();
     core.rgb[0] = false;
     core.interleaved[0] = false;
     core.littleEndian[0] = true;

@@ -156,22 +156,7 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, ND_SUFFIX)) {
-      if (currentId != null) {
-        String[] s = getUsedFiles();
-        for (int i=0; i<s.length; i++) {
-          if (id.equals(s[i])) return;
-        }
-      }
-
-      close();
-      currentId = id;
-      metadata = new Hashtable();
-
-      core = new CoreMetadata(1);
-      Arrays.fill(core.orderCertain, true);
-
-      // reinitialize the MetadataStore
-      getMetadataStore().createRoot();
+      super.initFile(id);
 
       // find an associated STK file
       String stkFile = id.substring(0, id.lastIndexOf("."));
@@ -205,11 +190,10 @@ public class MetamorphReader extends BaseTiffReader {
 
       ndFilename = ndfile.getAbsolutePath();
 
-      RandomAccessStream ndStream =
-        new RandomAccessStream(ndfile.getAbsolutePath());
+      RandomAccessStream ndStream = new RandomAccessStream(ndFilename);
       String line = ndStream.readLine().trim();
 
-      int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
+      int zc = getSizeZ(), cc = getSizeC(), tc = getSizeT();
       String z = null, c = null, t = null;
       Vector hasZ = new Vector();
       Vector waveNames = new Vector();
@@ -245,8 +229,7 @@ public class MetamorphReader extends BaseTiffReader {
       int seriesCount = 1;
       for (int i=0; i<cc; i++) {
         boolean hasZ1 = ((Boolean) hasZ.get(i)).booleanValue();
-        boolean hasZ2 =
-          i == 0 ? false : ((Boolean) hasZ.get(i - 1)).booleanValue();
+        boolean hasZ2 = i != 0 && ((Boolean) hasZ.get(i - 1)).booleanValue();
         if (i > 0 && hasZ1 != hasZ2) seriesCount = 2;
       }
 
@@ -281,8 +264,8 @@ public class MetamorphReader extends BaseTiffReader {
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
         for (int j=0; j<cc; j++) {
-          int seriesNdx = seriesCount == 1 ? 0 :
-            (((Boolean) hasZ.get(j)).booleanValue() ? 0 : 1);
+          boolean validZ = ((Boolean) hasZ.get(j)).booleanValue();
+          int seriesNdx = (seriesCount == 1 || validZ) ? 0 : 1;
           stks[seriesNdx][pt[seriesNdx]] = prefix;
           if (waveNames.get(j) != null) {
             stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1) + waveNames.get(j);
@@ -340,17 +323,17 @@ public class MetamorphReader extends BaseTiffReader {
       if (stks.length > 1) {
         CoreMetadata newCore = new CoreMetadata(stks.length);
         for (int i=0; i<stks.length; i++) {
-          newCore.sizeX[i] = core.sizeX[0];
-          newCore.sizeY[i] = core.sizeY[0];
-          newCore.sizeZ[i] = core.sizeZ[0];
-          newCore.sizeC[i] = core.sizeC[0];
-          newCore.sizeT[i] = core.sizeT[0];
-          newCore.pixelType[i] = core.pixelType[0];
-          newCore.imageCount[i] = core.imageCount[0];
-          newCore.currentOrder[i] = core.currentOrder[0];
-          newCore.rgb[i] = core.rgb[0];
-          newCore.littleEndian[i] = core.littleEndian[0];
-          newCore.interleaved[i] = core.interleaved[0];
+          newCore.sizeX[i] = getSizeX();
+          newCore.sizeY[i] = getSizeY();
+          newCore.sizeZ[i] = getSizeZ();
+          newCore.sizeC[i] = getSizeC();
+          newCore.sizeT[i] = getSizeT();
+          newCore.pixelType[i] = getPixelType();
+          newCore.imageCount[i] = getImageCount();
+          newCore.currentOrder[i] = getDimensionOrder();
+          newCore.rgb[i] = isRGB();
+          newCore.littleEndian[i] = isLittleEndian();
+          newCore.interleaved[i] = isInterleaved();
           newCore.orderCertain[i] = true;
         }
         newCore.sizeC[0] = stks[0].length / newCore.sizeT[0];
@@ -396,7 +379,7 @@ public class MetamorphReader extends BaseTiffReader {
           in.readLong() / in.readLong());
       }
 
-      Hashtable[] tempIFDs = new Hashtable[core.imageCount[0]];
+      Hashtable[] tempIFDs = new Hashtable[getImageCount()];
 
       long[] oldOffsets = TiffTools.getIFDLongArray(ifds[0],
           TiffTools.STRIP_OFFSETS, true);
@@ -420,7 +403,7 @@ public class MetamorphReader extends BaseTiffReader {
       int pointer = 0;
 
       Hashtable temp;
-      for(int i=0; i<core.imageCount[0]; i++) {
+      for(int i=0; i<getImageCount(); i++) {
         // copy data from the first IFD
         temp = new Hashtable(ifds[0]);
 
@@ -506,11 +489,11 @@ public class MetamorphReader extends BaseTiffReader {
       else put("Comment", descr);
     }
     try {
-      if (core.sizeZ[0] == 0) {
+      if (getSizeZ() == 0) {
         core.sizeZ[0] =
           TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
       }
-      if (core.sizeT[0] == 0) core.sizeT[0] = getImageCount() / core.sizeZ[0];
+      if (getSizeT() == 0) core.sizeT[0] = getImageCount() / getSizeZ();
     }
     catch (FormatException exc) {
       if (debug) trace(exc);
@@ -530,7 +513,6 @@ public class MetamorphReader extends BaseTiffReader {
    * @throws IOException
    */
   void parseUIC2Tags(long uic2offset) throws IOException {
-
     long saveLoc = in.getFilePointer();
     in.seek(uic2offset);
 
@@ -573,14 +555,14 @@ public class MetamorphReader extends BaseTiffReader {
   private void parseUIC4Tags(long uic4offset) throws IOException {
     long saveLoc = in.getFilePointer();
     in.seek(uic4offset);
-    boolean end=false;
+    boolean end = false;
     short id;
     while (!end) {
       id = in.readShort();
 
       switch (id) {
         case 0:
-          end=true;
+          end = true;
           break;
         case 28:
           readStagePositions();
@@ -600,12 +582,6 @@ public class MetamorphReader extends BaseTiffReader {
         default:
           //unknown tags: do nothing
           break;
-        //28->stagePositions
-        //29->cameraChipOffsets
-        //30->stageLabel
-        //40->AbsoluteZ
-        //41AbsoluteZValid
-        //0->end
       }
     }
     in.seek(saveLoc);
@@ -697,10 +673,10 @@ public class MetamorphReader extends BaseTiffReader {
     int num, denom;
     String thedate, thetime;
     long lastOffset;
-    byte[] toread;
     for (int i=0; i<uic1count; i++) {
       currentID = in.readInt();
       valOrOffset = in.readInt();
+      lastOffset = in.getFilePointer();
 
       switch (currentID) {
         case 1:
@@ -715,39 +691,24 @@ public class MetamorphReader extends BaseTiffReader {
           put("Spatial Calibration", calibration);
           break;
         case 4:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("XCalibration", new TiffRational(num, denom));
+          put("XCalibration", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 5:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("YCalibration", new TiffRational(num, denom));
+          put("YCalibration", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 6:
-          lastOffset = in.getFilePointer();
           in.seek(valOrOffset);
           num = in.readInt();
-          toread = new byte[num];
-          in.read(toread);
-          put("CalibrationUnits", new String(toread));
+          put("CalibrationUnits", in.readString(num));
           in.seek(lastOffset);
           break;
         case 7:
-          lastOffset = in.getFilePointer();
           in.seek(valOrOffset);
           num = in.readInt();
-          toread = new byte[num];
-          in.read(toread);
-          String name = new String(toread);
-          put("Name", name);
-          imageName = name;
+          imageName = in.readString(num);
+          put("Name", imageName);
           in.seek(lastOffset);
           break;
 
@@ -775,20 +736,17 @@ public class MetamorphReader extends BaseTiffReader {
           put("ThreshStateHi", valOrOffset);
           break;
         case 15:
-          int zoom = valOrOffset;
-          put("Zoom", zoom);
+          put("Zoom", valOrOffset);
           break;
         case 16: // oh how we hate you Julian format...
-          lastOffset = in.getFilePointer();
           in.seek(valOrOffset);
           thedate = decodeDate(in.readInt());
           thetime = decodeTime(in.readInt());
-          put("DateTime", thedate + " " + thetime);
           imageCreationDate = thedate + " " + thetime;
+          put("DateTime", imageCreationDate);
           in.seek(lastOffset);
           break;
         case 17:
-          lastOffset = in.getFilePointer();
           in.seek(valOrOffset);
           thedate = decodeDate(in.readInt());
           thetime = decodeTime(in.readInt());
@@ -805,48 +763,28 @@ public class MetamorphReader extends BaseTiffReader {
           put("grayPointCount", valOrOffset);
           break;
         case 21:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("grayX", new TiffRational(num, denom));
+          put("grayX", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 22:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("gray", new TiffRational(num, denom));
+          put("gray", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 23:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("grayMin", new TiffRational(num, denom));
+          put("grayMin", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 24:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("grayMax", new TiffRational(num, denom));
+          put("grayMax", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 25:
-          lastOffset = in.getFilePointer();
           in.seek(valOrOffset);
           num = in.readInt();
-          toread = new byte[num];
-          in.read(toread);
-          put("grayUnitName", new String(toread));
+          put("grayUnitName", in.readString(num));
           in.seek(lastOffset);
           break;
         case 26:
-          lastOffset = in.getFilePointer();
           in.seek(valOrOffset);
           int standardLUT = in.readInt();
           in.seek(lastOffset);
@@ -900,19 +838,11 @@ public class MetamorphReader extends BaseTiffReader {
           put("ImageProperty", valOrOffset);
           break;
         case 38:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("AutoScaleLoInfo", new TiffRational(num, denom));
+          put("AutoScaleLoInfo", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 39:
-          lastOffset = in.getFilePointer();
-          in.seek(valOrOffset);
-          num = in.readInt();
-          denom = in.readInt();
-          put("AutoScaleHiInfo", new TiffRational(num, denom));
+          put("AutoScaleHiInfo", readRational(in, valOrOffset));
           in.seek(lastOffset);
           break;
         case 42:
@@ -928,15 +858,11 @@ public class MetamorphReader extends BaseTiffReader {
           put("GammaBlue", valOrOffset);
           break;
         case 46:
-          lastOffset = in.getFilePointer();
           in.seek(valOrOffset);
-          int xBin, yBin;
-          xBin = in.readInt();
-          yBin = in.readInt();
+          int xBin = in.readInt();
+          int yBin = in.readInt();
           put("CameraBin", new String("(" + xBin + "," + yBin + ")"));
           in.seek(lastOffset);
-          break;
-        default:
           break;
       }
     }
@@ -973,18 +899,16 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Converts a time value in milliseconds into a human-readable string. */
   public static String decodeTime(int millis) {
-    int ms, seconds, minutes, hours;
-
-    ms = millis % 1000;
+    int ms = millis % 1000;
     millis -= ms;
     millis /= 1000;
-    seconds = millis % 60;
+    int seconds = millis % 60;
     millis -= seconds;
     millis /= 60;
-    minutes = millis % 60;
+    int minutes = millis % 60;
     millis -= minutes;
     millis /= 60;
-    hours = millis;
+    int hours = millis;
     return intFormat(hours, 2) + ":" + intFormat(minutes, 2) + ":" +
       intFormat(seconds, 2) + "." + intFormat(ms, 3);
   }
@@ -1008,6 +932,15 @@ public class MetamorphReader extends BaseTiffReader {
    */
   public static String intFormatMax(int myint, int maxint) {
     return intFormat(myint, new Integer(maxint).toString().length());
+  }
+
+  private TiffRational readRational(RandomAccessStream s, long offset)
+    throws IOException
+  {
+    s.seek(offset);
+    int num = s.readInt();
+    int denom = s.readInt();
+    return new TiffRational(num, denom);
   }
 
 }

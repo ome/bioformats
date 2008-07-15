@@ -86,36 +86,24 @@ public class EPSReader extends FormatReader {
 
       int[] map = TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
       if (map == null) {
-        int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-        in.skipBytes(y * core.sizeX[0] * bpp * core.sizeC[0]);
-        if (core.sizeX[0] == w) {
-          in.read(buf);
-        }
-        else {
-          int nBytes = bpp * core.sizeC[0];
-          for (int row=0; row<h; row++) {
-            in.skipBytes(x * nBytes);
-            in.read(buf, row * w * nBytes, w * nBytes);
-            in.skipBytes(nBytes * (core.sizeX[0] - w - x));
-          }
-        }
+        DataTools.readPlane(in, x, y, w, h, this, buf);
         return buf;
       }
 
       byte[] b = new byte[w * h];
-      in.skipBytes(2 * y * core.sizeX[0]);
+      in.skipBytes(2 * y * getSizeX());
       for (int row=0; row<h; row++) {
         in.skipBytes(x * 2);
         for (int col=0; col<w; col++) {
           b[row * w + col] = (byte) (in.readShort() & 0xff);
         }
-        in.skipBytes(2 * (core.sizeX[0] - w - x));
+        in.skipBytes(2 * (getSizeX() - w - x));
       }
 
       for (int i=0; i<b.length; i++) {
         int ndx = b[i] & 0xff;
-        for (int j=0; j<core.sizeC[0]; j++) {
-          buf[i*core.sizeC[0] + j] = (byte) map[ndx + j*256];
+        for (int j=0; j<getSizeC(); j++) {
+          buf[i*getSizeC() + j] = (byte) map[ndx + j*256];
         }
       }
 
@@ -127,20 +115,10 @@ public class EPSReader extends FormatReader {
       in.readLine();
     }
 
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
     if (binary) {
       // pixels are stored as raw bytes
-      in.skipBytes(y * core.sizeX[0] * bytes * core.sizeC[0]);
-      if (core.sizeX[0] == w) {
-        in.read(buf);
-      }
-      else {
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bytes * core.sizeC[0]);
-          in.read(buf, row*w*bytes*core.sizeC[0], w * bytes * core.sizeC[0]);
-          in.skipBytes(bytes * core.sizeC[0] * (core.sizeX[0] - w - h));
-        }
-      }
+      DataTools.readPlane(in, x, y, w, h, this, buf);
     }
     else {
       // pixels are stored as a 2 character hexadecimal value
@@ -148,17 +126,17 @@ public class EPSReader extends FormatReader {
       pix = pix.replaceAll("\n", "");
       pix = pix.replaceAll("\r", "");
 
-      int ndx = core.sizeC[0] * y * bytes * core.sizeX[0];
+      int ndx = getSizeC() * y * bytes * getSizeX();
       int destNdx = 0;
 
       for (int row=0; row<h; row++) {
-        ndx += x * core.sizeC[0] * bytes;
-        for (int col=0; col<w*core.sizeC[0]*bytes; col++) {
+        ndx += x * getSizeC() * bytes;
+        for (int col=0; col<w*getSizeC()*bytes; col++) {
           buf[destNdx++] =
             (byte) Integer.parseInt(pix.substring(2*ndx, 2*(ndx+1)), 16);
           ndx++;
         }
-        ndx += core.sizeC[0] * bytes * (core.sizeX[0] - w - x);
+        ndx += getSizeC() * bytes * (getSizeX() - w - x);
       }
     }
     return buf;
@@ -209,7 +187,7 @@ public class EPSReader extends FormatReader {
       core.sizeC[0] = TiffTools.getSamplesPerPixel(ifds[0]);
       core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
       core.interleaved[0] = true;
-      core.rgb[0] = core.sizeC[0] > 1;
+      core.rgb[0] = getSizeC() > 1;
 
       bps = TiffTools.getBitsPerSample(ifds[0])[0];
       switch (bps) {
@@ -308,13 +286,13 @@ public class EPSReader extends FormatReader {
 
     if (bps == 0) bps = 8;
 
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    if (getSizeC() == 0) core.sizeC[0] = 1;
 
     core.sizeZ[0] = 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
     core.pixelType[0] = FormatTools.UINT8;
-    core.rgb[0] = core.sizeC[0] == 3;
+    core.rgb[0] = getSizeC() == 3;
     core.interleaved[0] = true;
     core.littleEndian[0] = true;
     core.imageCount[0] = 1;

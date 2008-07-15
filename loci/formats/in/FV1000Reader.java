@@ -150,15 +150,12 @@ public class FV1000Reader extends FormatReader {
       getEffectiveSizeC(), getSizeT(), getImageCount(), coords[0],
       coords[1], coords[2]);
 
-    String file =
-      (String) (series == 0 ? tiffs.get(planeNum) : previewNames.get(planeNum));
-    RandomAccessStream plane = getFile(file);
-    Hashtable[] ifds = TiffTools.getIFDs(plane);
-    TiffTools.getSamples(ifds[0], plane, buf, x, y, w, h);
-    plane.close();
-    ifds = null;
-    plane = null;
-    System.gc();
+    MinimalTiffReader reader = new MinimalTiffReader();
+    if (series == 0) reader.setId((String) tiffs.get(planeNum));
+    else reader.setId((String) previewNames.get(planeNum));
+
+    reader.openBytes(0, buf, x, y, w, h);
+    reader.close();
     return buf;
   }
 

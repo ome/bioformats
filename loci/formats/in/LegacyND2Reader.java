@@ -96,30 +96,28 @@ public class LegacyND2Reader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
-    int bpc = FormatTools.getBytesPerPixel(core.pixelType[series]);
-    byte[] b = new byte[core.sizeX[series] * core.sizeY[series] * bpc *
-      getRGBChannelCount()];
+    int bpc = FormatTools.getBytesPerPixel(getPixelType());
+    byte[] b = new byte[getSizeX() * getSizeY() * bpc * getRGBChannelCount()];
 
     getImage(b, getSeries(), zct[0], zct[1], zct[2]);
 
     int pixel = bpc * getRGBChannelCount();
     int rowLen = w * pixel;
     for (int row=0; row<h; row++) {
-      System.arraycopy(b, (row + y) * core.sizeX[series] * pixel + x * pixel,
+      System.arraycopy(b, (row + y) * getSizeX() * pixel + x * pixel,
         buf, row * rowLen, rowLen);
     }
 
-    if (core.rgb[series]) {
-      int bpp = core.sizeC[series] * bpc;
+    if (isRGB()) {
+      int bpp = getSizeC() * bpc;
       int line = w * bpp;
       for (int row=0; row<h; row++) {
         for (int col=0; col<w; col++) {
+          int base = row * line + col * bpp;
           for (int bb=0; bb<bpc; bb++) {
-            byte blue =
-              buf[row*line + col*bpp + bpc*(core.sizeC[series] - 1) + bb];
-            buf[row*line + col*bpp + bpc*(core.sizeC[series] - 1) + bb] =
-              buf[row*line + col*bpp + bb];
-            buf[row*line + col*bpp + bb] = blue;
+            byte blue = buf[base + bpc*(getSizeC() - 1) + bb];
+            buf[base + bpc*(getSizeC() - 1) + bb] = buf[base + bb];
+            buf[base + bb] = blue;
           }
         }
       }

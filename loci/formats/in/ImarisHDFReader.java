@@ -102,14 +102,14 @@ public class ImarisHDFReader extends FormatReader {
         for (int i=0; i<w; i++) {
           DataTools.unpackShort(
             ((short[][][]) previousImage)[zct[0]][row + y][x + i], buf,
-            2 * (row * w + i), !core.littleEndian[0]);
+            2 * (row * w + i), !isLittleEndian());
         }
       }
       else if (previousImage instanceof int[][][]) {
         for (int i=0; i<w; i++) {
           DataTools.unpackBytes(
             ((int[][][]) previousImage)[zct[0]][row + y][x + i], buf,
-            4 * (row * w + i), 4, !core.littleEndian[0]);
+            4 * (row * w + i), 4, !isLittleEndian());
         }
       }
       else if (previousImage instanceof float[][][]) {
@@ -117,7 +117,7 @@ public class ImarisHDFReader extends FormatReader {
         int base = row * w * 4;
         for (int i=0; i<w; i++) {
           int v = Float.floatToIntBits(s[x + i]);
-          DataTools.unpackBytes(v, buf, base + i*4, 4, !core.littleEndian[0]);
+          DataTools.unpackBytes(v, buf, base + i*4, 4, !isLittleEndian());
         }
       }
     }
@@ -226,7 +226,7 @@ public class ImarisHDFReader extends FormatReader {
         int underscore = attr.indexOf("_") + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
-        if (cIndex == core.sizeC[0]) core.sizeC[0]++;
+        if (cIndex == getSizeC()) core.sizeC[0]++;
 
         if (name.equals("Gain")) gain.add(value);
         else if (name.equals("LSMEmissionWavelength")) emWave.add(value);
@@ -263,10 +263,10 @@ public class ImarisHDFReader extends FormatReader {
           Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeY"));
         core.sizeZ[i] =
           Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeZ"));
-        core.imageCount[i] = core.sizeZ[i] * core.sizeC[0] * core.sizeT[0];
+        core.imageCount[i] = core.sizeZ[i] * getSizeC() * getSizeT();
       }
     }
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
 
     // determine pixel type - this isn't stored in the metadata, so we need
     // to check the pixels themselves

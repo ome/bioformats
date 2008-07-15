@@ -115,17 +115,14 @@ public class FluoviewReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
+    if (getSizeY() == TiffTools.getImageLength(ifds[0])) {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    byte[] b = new byte[w * h *
-      getRGBChannelCount() * FormatTools.getBytesPerPixel(core.pixelType[0])];
-    super.openBytes(0, buf, x, y, w, h);
-    System.arraycopy(b, no*b.length, buf, 0, b.length);
+    super.openBytes(0, buf, x, no, w, h);
     return buf;
   }
 
@@ -248,60 +245,60 @@ public class FluoviewReader extends BaseTiffReader {
       if (name.length() == 0) continue;
 
       if (name.equals("x")) {
-        if (core.sizeX[0] == 0) core.sizeX[0] = size;
+        if (getSizeX() == 0) core.sizeX[0] = size;
         voxelX = voxel;
       }
       else if (name.equals("y")) {
-        if (core.sizeY[0] == 0) core.sizeY[0] = size;
+        if (getSizeY() == 0) core.sizeY[0] = size;
         voxelY = voxel;
       }
       else if (name.equals("z") || name.equals("event")) {
         core.sizeZ[0] *= size;
-        if (core.currentOrder[0].indexOf("Z") == -1) {
+        if (getDimensionOrder().indexOf("Z") == -1) {
           core.currentOrder[0] += "Z";
         }
         voxelZ = voxel;
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         core.sizeC[0] *= size;
-        if (core.currentOrder[0].indexOf("C") == -1) {
+        if (getDimensionOrder().indexOf("C") == -1) {
           core.currentOrder[0] += "C";
         }
         voxelC = voxel;
       }
       else {
         core.sizeT[0] *= size;
-        if (core.currentOrder[0].indexOf("T") == -1) {
+        if (getDimensionOrder().indexOf("T") == -1) {
           core.currentOrder[0] += "T";
         }
         voxelT = voxel;
       }
     }
 
-    if (core.currentOrder[0].indexOf("Z") == -1) core.currentOrder[0] += "Z";
-    if (core.currentOrder[0].indexOf("T") == -1) core.currentOrder[0] += "T";
-    if (core.currentOrder[0].indexOf("C") == -1) core.currentOrder[0] += "C";
+    if (getDimensionOrder().indexOf("Z") == -1) core.currentOrder[0] += "Z";
+    if (getDimensionOrder().indexOf("T") == -1) core.currentOrder[0] += "T";
+    if (getDimensionOrder().indexOf("C") == -1) core.currentOrder[0] += "C";
 
     core.imageCount[0] = ifds.length;
-    if (core.sizeZ[0] > ifds.length) core.sizeZ[0] = ifds.length;
-    if (core.sizeT[0] > ifds.length) core.sizeT[0] = ifds.length;
+    if (getSizeZ() > ifds.length) core.sizeZ[0] = ifds.length;
+    if (getSizeT() > ifds.length) core.sizeT[0] = ifds.length;
 
-    if (core.imageCount[0] == 1 && (core.sizeT[0] == core.sizeY[0] ||
-      core.sizeZ[0] == core.sizeY[0]) && (core.sizeT[0] > core.imageCount[0] ||
-      core.sizeZ[0] > core.imageCount[0]))
+    if (getImageCount() == 1 && (getSizeT() == getSizeY() ||
+      getSizeZ() == getSizeY()) && (getSizeT() > getImageCount() ||
+      getSizeZ() > getImageCount()))
     {
       core.sizeY[0] = 1;
-      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * core.sizeC[0];
+      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
     }
 
     // cut up the comment, if necessary
     comment = TiffTools.getComment(ifds[0]);
 
-    gains = new String[core.sizeC[0]];
-    offsets = new String[core.sizeC[0]];
-    voltages = new String[core.sizeC[0]];
-    channelNames = new String[core.sizeC[0]];
-    lensNA = new String[core.sizeC[0]];
+    gains = new String[getSizeC()];
+    offsets = new String[getSizeC()];
+    voltages = new String[getSizeC()];
+    channelNames = new String[getSizeC()];
+    lensNA = new String[getSizeC()];
 
     if (comment != null && comment.startsWith("[")) {
       int start = comment.indexOf("[Acquisition Parameters]");
@@ -399,7 +396,7 @@ public class FluoviewReader extends BaseTiffReader {
       store.setDimensionsWaveIncrement(new Integer((int) voxelC), 0, 0);
     }
 
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<getSizeC(); i++) {
       if (channelNames[i] != null) {
         store.setLogicalChannelName(channelNames[i].trim(), 0, i);
       }

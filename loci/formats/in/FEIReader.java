@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc. 
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -67,10 +67,10 @@ public class FEIReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(1536);
-    byte[] segment = new byte[core.sizeX[0] / 2];
-    int skip = (originalWidth / 2) - (core.sizeX[0] / 2);
+    byte[] segment = new byte[getSizeX() / 2];
+    int skip = (originalWidth / 2) - (getSizeX() / 2);
     // interlace frames - there are four rows of two columns
-    int halfRow = core.sizeX[0] / 2;
+    int halfRow = getSizeX() / 2;
     for (int q=0; q<4; q++) {
       for (int row=q; row<h; row+=4) {
         for (int s=0; s<2; s++) {
@@ -101,11 +101,11 @@ public class FEIReader extends FormatReader {
     core.sizeX[0] = in.readShort();
     core.sizeY[0] = in.readShort();
 
-    originalWidth = core.sizeX[0];
+    originalWidth = getSizeX();
 
     // FEI files can only be 1424x968 or 712x484
 
-    if (1424 < core.sizeX[0]) {
+    if (1424 < getSizeX()) {
       core.sizeX[0] = 1424;
       core.sizeY[0] = 968;
     }

@@ -56,7 +56,7 @@ public class PerkinElmerReader extends FormatReader {
   // -- Fields --
 
   /** Helper reader. */
-  protected TiffReader[] tiff;
+  protected MinimalTiffReader tiff;
 
   /** Tiff files to open. */
   protected String[] files;
@@ -68,6 +68,10 @@ public class PerkinElmerReader extends FormatReader {
   private Vector allFiles;
 
   private String details, sliceSpace;
+
+  private float pixelSizeX = 1f, pixelSizeY = 1f;
+  private String finishTime = null, startTime = null;
+  private float originX = 0f, originY = 0f, originZ = 0f;
 
   // -- Constructor --
 
@@ -134,8 +138,8 @@ public class PerkinElmerReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     if (isTiff) {
-      tiff[no / core.sizeC[0]].setId(files[no / core.sizeC[0]]);
-      return tiff[no / core.sizeC[0]].openBytes(0, buf, x, y, w, h);
+      tiff.setId(files[no / core.sizeC[0]]);
+      return tiff.openBytes(0, buf, x, y, w, h);
     }
 
     FormatTools.checkBufferSize(this, buf.length, w, h);
@@ -165,11 +169,7 @@ public class PerkinElmerReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
-      if (tiff != null) {
-        for (int i=0; i<tiff.length; i++) {
-          if (tiff[i] != null) tiff[i].close(fileOnly);
-        }
-      }
+      if (tiff != null) tiff.close();
     }
     else close();
   }
@@ -179,11 +179,7 @@ public class PerkinElmerReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     currentId = null;
-    if (tiff != null) {
-      for (int i=0; i<tiff.length; i++) {
-        if (tiff[i] != null) tiff[i].close();
-      }
-    }
+    if (tiff != null) tiff.close();
     tiff = null;
     allFiles = null;
     files = null;
@@ -229,10 +225,6 @@ public class PerkinElmerReader extends FormatReader {
       ls = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
       workingDirPath = "";
     }
-
-    float pixelSizeX = 1f, pixelSizeY = 1f;
-    String finishTime = null, startTime = null;
-    float originX = 0f, originY = 0f, originZ = 0f;
 
     status("Searching for all metadata companion files");
 
@@ -398,11 +390,7 @@ public class PerkinElmerReader extends FormatReader {
     byte[] data;
     StringTokenizer t;
 
-    tiff = new TiffReader[core.imageCount[0]];
-    for (int i=0; i<tiff.length; i++) {
-      tiff[i] = new TiffReader();
-      if (i > 0) tiff[i].setMetadataCollected(false);
-    }
+    tiff = new MinimalTiffReader();
 
     // we always parse the .tim and .htm files if they exist, along with
     // either the .csv file or the .zpo file
@@ -453,60 +441,7 @@ public class PerkinElmerReader extends FormatReader {
           try { Integer.parseInt(token); }
           catch (NumberFormatException e) { tNum++; }
         }
-        addMeta(hashKeys[tNum], token);
-        if (hashKeys[tNum].equals("Image Width")) {
-          try {
-            core.sizeX[0] = Integer.parseInt(token);
-          }
-          catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
-          }
-        }
-        else if (hashKeys[tNum].equals("Image Length")) {
-          try {
-            core.sizeY[0] = Integer.parseInt(token);
-          }
-          catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
-          }
-        }
-        else if (hashKeys[tNum].equals("Number of slices")) {
-          try {
-            core.sizeZ[0] = Integer.parseInt(token);
-          }
-          catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
-          }
-        }
-        else if (hashKeys[tNum].equals("Experiment details:")) details = token;
-        else if (hashKeys[tNum].equals("Z slice space")) sliceSpace = token;
-        else if (hashKeys[tNum].equals("Pixel Size X")) {
-          pixelSizeX = Float.parseFloat(token);
-        }
-        else if (hashKeys[tNum].equals("Pixel Size Y")) {
-          pixelSizeY = Float.parseFloat(token);
-        }
-        else if (hashKeys[tNum].equals("Finish Time:")) finishTime = token;
-        else if (hashKeys[tNum].equals("Start Time:")) startTime = token;
-        else if (hashKeys[tNum].equals("Origin X")) {
-          try {
-            originX = Float.parseFloat(token);
-          }
-          catch (NumberFormatException e) { }
-        }
-        else if (hashKeys[tNum].equals("Origin Y")) {
-          try {
-            originY = Float.parseFloat(token);
-          }
-          catch (NumberFormatException e) { }
-        }
-        else if (hashKeys[tNum].equals("Origin Z")) {
-          try {
-            originZ = Float.parseFloat(token);
-          }
-          catch (NumberFormatException e) { }
-        }
-        tNum++;
+        parseKeyValue(hashKeys[tNum++], token);
       }
       read.close();
     }
@@ -522,6 +457,7 @@ public class PerkinElmerReader extends FormatReader {
         "Z slice space"};
       int pt = 0;
       while (t.hasMoreTokens()) {
+        String key = null, value = null;
         if (tNum < 7) { t.nextToken(); }
         else if ((tNum > 7 && tNum < 12) ||
           (tNum > 12 && tNum < 18) || (tNum > 18 && tNum < 22))
@@ -529,65 +465,17 @@ public class PerkinElmerReader extends FormatReader {
           t.nextToken();
         }
         else if (pt < hashKeys.length) {
-          String token = t.nextToken();
-          addMeta(hashKeys[pt], token);
-          if (hashKeys[pt].equals("Image Width")) {
-            core.sizeX[0] = Integer.parseInt(token);
-          }
-          else if (hashKeys[pt].equals("Image Length")) {
-            core.sizeY[0] = Integer.parseInt(token);
-          }
-          else if (hashKeys[pt].equals("Number of slices")) {
-            core.sizeZ[0] = Integer.parseInt(token);
-          }
-          else if (hashKeys[pt].equals("Experiment details:")) details = token;
-          else if (hashKeys[pt].equals("Z slice space")) sliceSpace = token;
-          else if (hashKeys[pt].equals("Pixel Size X")) {
-            pixelSizeX = Float.parseFloat(token);
-          }
-          else if (hashKeys[pt].equals("Pixel Size Y")) {
-            pixelSizeY = Float.parseFloat(token);
-          }
-          else if (hashKeys[pt].equals("Finish Time:")) finishTime = token;
-          else if (hashKeys[pt].equals("Start Time:")) startTime = token;
-          else if (hashKeys[pt].equals("Origin X")) {
-            originX = Float.parseFloat(token);
-          }
-          else if (hashKeys[pt].equals("Origin Y")) {
-            originY = Float.parseFloat(token);
-          }
-          else if (hashKeys[pt].equals("Origin Z")) {
-            originZ = Float.parseFloat(token);
-          }
+          key = hashKeys[pt];
+          value = t.nextToken();
           pt++;
         }
         else {
-          String key = t.nextToken() + t.nextToken();
-          String value = t.nextToken();
-          addMeta(key, value);
-          if (key.equals("Image Width")) {
-            core.sizeX[0] = Integer.parseInt(value);
-          }
-          else if (key.equals("Image Length")) {
-            core.sizeY[0] = Integer.parseInt(value);
-          }
-          else if (key.equals("Number of slices")) {
-            core.sizeZ[0] = Integer.parseInt(value);
-          }
-          else if (key.equals("Experiment details:")) details = value;
-          else if (key.equals("Z slice space")) sliceSpace = value;
-          else if (key.equals("Pixel Size X")) {
-            pixelSizeX = Float.parseFloat(value);
-          }
-          else if (key.equals("Pixel Size Y")) {
-            pixelSizeY = Float.parseFloat(value);
-          }
-          else if (key.equals("Finish Time:")) finishTime = value;
-          else if (key.equals("Start Time:")) startTime = value;
-          else if (key.equals("Origin X")) originX = Float.parseFloat(value);
-          else if (key.equals("Origin Y")) originY = Float.parseFloat(value);
-          else if (key.equals("Origin Z")) originZ = Float.parseFloat(value);
+          key = t.nextToken() + t.nextToken();
+          value = t.nextToken();
         }
+
+        parseKeyValue(key, value);
+
         tNum++;
       }
       read.close();
@@ -687,39 +575,7 @@ public class PerkinElmerReader extends FormatReader {
         else if (!tokens[j].trim().equals("")) {
           tokens[j] = tokens[j].trim();
           tokens[j + 1] = tokens[j + 1].trim();
-          addMeta(tokens[j], tokens[j + 1]);
-          if (tokens[j].equals("Image Width")) {
-            core.sizeX[0] = Integer.parseInt(tokens[j + 1]);
-          }
-          else if (tokens[j].equals("Image Length")) {
-            core.sizeY[0] = Integer.parseInt(tokens[j + 1]);
-          }
-          else if (tokens[j].equals("Number of slices")) {
-            core.sizeZ[0] = Integer.parseInt(tokens[j + 1]);
-          }
-          else if (tokens[j].equals("Experiment details:")) {
-            details = tokens[j + 1];
-          }
-          else if (tokens[j].equals("Z slice space")) {
-            sliceSpace = tokens[j + 1];
-          }
-          else if (tokens[j].equals("Pixel Size X")) {
-            pixelSizeX = Float.parseFloat(tokens[j + 1]);
-          }
-          else if (tokens[j].equals("Pixel Size Y")) {
-            pixelSizeY = Float.parseFloat(tokens[j + 1]);
-          }
-          else if (tokens[j].equals("Finish Time:")) finishTime = tokens[j + 1];
-          else if (tokens[j].equals("Start Time:")) startTime = tokens[j + 1];
-          else if (tokens[j].equals("Origin X")) {
-            originX = Float.parseFloat(tokens[j + 1]);
-          }
-          else if (tokens[j].equals("Origin Y")) {
-            originY = Float.parseFloat(tokens[j + 1]);
-          }
-          else if (tokens[j].equals("Origin Z")) {
-            originZ = Float.parseFloat(tokens[j + 1]);
-          }
+          parseKeyValue(tokens[j], tokens[j + 1]);
         }
       }
       read.close();
@@ -753,8 +609,8 @@ public class PerkinElmerReader extends FormatReader {
     status("Populating metadata");
 
     if (isTiff) {
-      tiff[0].setId(files[0]);
-      core.pixelType[0] = tiff[0].getPixelType();
+      tiff.setId(files[0]);
+      core.pixelType[0] = tiff.getPixelType();
     }
     else {
       RandomAccessStream tmp = new RandomAccessStream(files[0]);
@@ -813,7 +669,7 @@ public class PerkinElmerReader extends FormatReader {
       Arrays.sort(keys);
       for (int i=0; i<keys.length; i++) {
         int oldCount = ((Integer) zSections.get(keys[i])).intValue();
-        int nPlanes = (isTiff ? tiff[0].getEffectiveSizeC() : core.sizeC[0]) *
+        int nPlanes = (isTiff ? tiff.getEffectiveSizeC() : core.sizeC[0]) *
           core.sizeT[0];
         int count = (int) Math.min(oldCount, nPlanes);
         for (int j=0; j<count; j++) {
@@ -826,11 +682,11 @@ public class PerkinElmerReader extends FormatReader {
 
     core.currentOrder[0] = "XYCTZ";
 
-    core.rgb[0] = isTiff ? tiff[0].isRGB() : false;
+    core.rgb[0] = isTiff ? tiff.isRGB() : false;
     core.interleaved[0] = false;
-    core.littleEndian[0] = isTiff ? tiff[0].isLittleEndian() : true;
+    core.littleEndian[0] = isTiff ? tiff.isLittleEndian() : true;
     core.metadataComplete[0] = true;
-    core.indexed[0] = isTiff ? tiff[0].isIndexed() : false;
+    core.indexed[0] = isTiff ? tiff.isIndexed() : false;
     core.falseColor[0] = false;
 
     // Populate metadata store
@@ -912,6 +768,80 @@ public class PerkinElmerReader extends FormatReader {
     store.setStageLabelZ(new Float(originZ), 0);
     */
 
+  }
+
+  // -- Helper methods --
+
+  private void parseKeyValue(String key, String value) {
+    addMeta(key, value);
+    if (key.equals("Image Width")) {
+      try {
+        core.sizeX[0] = Integer.parseInt(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
+    else if (key.equals("Image Length")) {
+      try {
+        core.sizeY[0] = Integer.parseInt(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
+    else if (key.equals("Number of slices")) {
+      try {
+        core.sizeZ[0] = Integer.parseInt(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
+    else if (key.equals("Experiment details:")) details = value;
+    else if (key.equals("Z slice space")) sliceSpace = value;
+    else if (key.equals("Pixel Size X")) {
+      try {
+        pixelSizeX = Float.parseFloat(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
+    else if (key.equals("Pixel Size Y")) {
+      try {
+        pixelSizeY = Float.parseFloat(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
+    else if (key.equals("Finish Time:")) finishTime = value;
+    else if (key.equals("Start Time:")) startTime = value;
+    else if (key.equals("Origin X")) {
+      try {
+        originX = Float.parseFloat(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
+    else if (key.equals("Origin Y")) {
+      try {
+        originY = Float.parseFloat(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
+    else if (key.equals("Origin Z")) {
+      try {
+        originZ = Float.parseFloat(value);
+      }
+      catch (NumberFormatException e) {
+        if (debug) LogTools.trace(e);
+      }
+    }
   }
 
   // -- Helper class --

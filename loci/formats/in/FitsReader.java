@@ -68,14 +68,7 @@ public class FitsReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(2880 * ((((count * 80) - 1) / 2880) + 1));
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    int line = core.sizeX[0] * bytes;
-    in.skipBytes(line * y);
-    for (int row=h-1; row>=0; row--) {
-      in.skipBytes(x * bytes);
-      in.read(buf, row*w*bytes, w*bytes);
-      in.skipBytes(bytes * (core.sizeX[0] - w - x));
-    }
+    DataTools.readPlane(in, x, y, w, h, this, buf);
     return buf;
   }
 
@@ -137,7 +130,7 @@ public class FitsReader extends FormatReader {
 
     core.sizeC[0] = 1;
     core.sizeT[0] = 1;
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
+    if (getSizeZ() == 0) core.sizeZ[0] = 1;
     core.imageCount[0] = core.sizeZ[0];
     core.rgb[0] = false;
     core.littleEndian[0] = false;

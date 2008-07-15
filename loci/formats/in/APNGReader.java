@@ -128,7 +128,7 @@ public class APNGReader extends FormatReader {
       if (!block.type.equals("IDAT") && !block.type.equals("fdAT") &&
         !block.type.equals("acTL") && !block.type.equals("fcTL"))
       {
-        DataTools.unpackBytes(block.length, len, 0, 4, core.littleEndian[0]);
+        DataTools.unpackBytes(block.length, len, 0, 4, isLittleEndian());
         stream.add(len);
         byte[] b = new byte[block.length + 8];
         byte[] typeBytes = block.type.getBytes();
@@ -136,8 +136,8 @@ public class APNGReader extends FormatReader {
         in.seek(block.offset);
         in.read(b, 4, b.length - 8);
         if (block.type.equals("IHDR")) {
-          DataTools.unpackBytes(coords[2], b, 4, 4, core.littleEndian[0]);
-          DataTools.unpackBytes(coords[3], b, 8, 4, core.littleEndian[0]);
+          DataTools.unpackBytes(coords[2], b, 4, 4, isLittleEndian());
+          DataTools.unpackBytes(coords[3], b, 8, 4, isLittleEndian());
         }
         int crc = (int) computeCRC(b, b.length - 4);
         DataTools.unpackBytes(crc, b, b.length - 4, 4, isLittleEndian());
@@ -171,7 +171,7 @@ public class APNGReader extends FormatReader {
     DataInputStream dis = new DataInputStream(new BufferedInputStream(s, 4096));
     BufferedImage b = ImageIO.read(dis);
     dis.close();
-    BufferedImage first = openImage(0, 0, 0, core.sizeX[0], core.sizeY[0]);
+    BufferedImage first = openImage(0, 0, 0, getSizeX(), getSizeY());
 
     // paste current image onto first image
 
@@ -259,7 +259,7 @@ public class APNGReader extends FormatReader {
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();
     core.rgb[0] = img.getRaster().getNumBands() > 1;
-    core.sizeC[0] = core.rgb[0] ? 3 : 1;
+    core.sizeC[0] = isRGB() ? 3 : 1;
     core.pixelType[0] = ImageTools.getPixelType(img);
 
     MetadataStore store =

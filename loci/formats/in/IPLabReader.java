@@ -82,25 +82,10 @@ public class IPLabReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int numPixels = core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * bps;
-    in.seek(numPixels * (no / core.sizeC[0]) + 44);
+    int numPixels = getSizeX() * getSizeY() * getSizeC() * bps;
+    in.seek(numPixels * (no / getSizeC()) + 44);
 
-    for (int c=0; c<core.sizeC[0]; c++) {
-      in.skipBytes(y * core.sizeX[0] * bps);
-
-      if (core.sizeX[0] == w) {
-        in.read(buf, c * w * h * bps, w * h * bps);
-      }
-      else {
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bps);
-          in.read(buf, c * h * w * bps + row * w * bps, w * bps);
-          in.skipBytes(bps * (core.sizeX[0] - w - x));
-        }
-      }
-      in.skipBytes((core.sizeY[0] - h - y) * core.sizeX[0] * bps);
-    }
-
+    DataTools.readPlane(in, x, y, w, h, this, buf);
     return buf;
   }
 
@@ -124,7 +109,7 @@ public class IPLabReader extends FormatReader {
 
     core.littleEndian[0] = in.readString(4).equals("iiii");
 
-    in.order(core.littleEndian[0]);
+    in.order(isLittleEndian());
 
     in.skipBytes(12);
 
@@ -138,13 +123,13 @@ public class IPLabReader extends FormatReader {
     core.sizeT[0] = in.readInt();
     int filePixelType = in.readInt();
 
-    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
+    core.imageCount[0] = getSizeZ() * getSizeT();
 
-    addMeta("Width", new Long(core.sizeX[0]));
-    addMeta("Height", new Long(core.sizeY[0]));
-    addMeta("Channels", new Long(core.sizeC[0]));
-    addMeta("ZDepth", new Long(core.sizeZ[0]));
-    addMeta("TDepth", new Long(core.sizeT[0]));
+    addMeta("Width", new Long(getSizeX()));
+    addMeta("Height", new Long(getSizeY()));
+    addMeta("Channels", new Long(getSizeC()));
+    addMeta("ZDepth", new Long(getSizeZ()));
+    addMeta("TDepth", new Long(getSizeT()));
 
     String ptype;
     switch (filePixelType) {
@@ -184,16 +169,16 @@ public class IPLabReader extends FormatReader {
         ptype = "reserved"; // for values 7-9
     }
 
-    bps = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    bps = FormatTools.getBytesPerPixel(getPixelType());
 
     addMeta("PixelType", ptype);
     in.skipBytes(dataSize);
 
     core.currentOrder[0] = "XY";
-    if (core.sizeC[0] > 1) core.currentOrder[0] += "CZT";
+    if (getSizeC() > 1) core.currentOrder[0] += "CZT";
     else core.currentOrder[0] += "ZTC";
 
-    core.rgb[0] = core.sizeC[0] > 1;
+    core.rgb[0] = getSizeC() > 1;
     core.interleaved[0] = false;
     core.indexed[0] = false;
     core.falseColor[0] = false;
@@ -239,7 +224,7 @@ public class IPLabReader extends FormatReader {
         int size = in.readInt();
         // error checking
 
-        if (size != (44 * core.sizeC[0])) {
+        if (size != (44 * getSizeC())) {
           throw new FormatException("Bad normalization settings");
         }
 
@@ -248,7 +233,7 @@ public class IPLabReader extends FormatReader {
           "saturated sequence", "ROI"
         };
 
-        for (int i=0; i<core.sizeC[0]; i++) {
+        for (int i=0; i<getSizeC(); i++) {
           int source = in.readInt();
 
           String sourceType = (source >= 0 && source < types.length) ?

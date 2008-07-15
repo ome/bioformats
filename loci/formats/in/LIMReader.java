@@ -63,21 +63,11 @@ public class LIMReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(0x94b + y * core.sizeX[0] * core.sizeC[0]);
-
-    if (core.sizeX[series] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * core.sizeC[0]);
-        in.read(buf, row * w * core.sizeC[0], w * core.sizeC[0]);
-        in.skipBytes(core.sizeC[0] * (core.sizeX[0] - w - x));
-      }
-    }
+    in.seek(0x94b);
+    DataTools.readPlane(in, x, y, w, h, this, buf);
 
     // swap red and blue channels
-    if (core.rgb[0]) {
+    if (isRGB()) {
       for (int i=0; i<buf.length/3; i++) {
         byte tmp = buf[i*3];
         buf[i*3] = buf[i*3 + 2];
@@ -105,7 +95,7 @@ public class LIMReader extends FormatReader {
     in = new RandomAccessStream(id);
 
     core.littleEndian[0] = true;
-    in.order(core.littleEndian[0]);
+    in.order(isLittleEndian());
 
     core.sizeX[0] = in.readShort() & 0x7fff;
     core.sizeY[0] = in.readShort();
@@ -142,8 +132,8 @@ public class LIMReader extends FormatReader {
     core.imageCount[0] = 1;
     core.sizeZ[0] = 1;
     core.sizeT[0] = 1;
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    core.rgb[0] = core.sizeC[0] > 1;
+    if (getSizeC() == 0) core.sizeC[0] = 1;
+    core.rgb[0] = getSizeC() > 1;
     core.currentOrder[0] = "XYZCT";
     core.indexed[0] = false;
     core.falseColor[0] = false;

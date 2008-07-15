@@ -46,7 +46,7 @@ public class MicromanagerReader extends FormatReader {
   // -- Fields --
 
   /** Helper reader for TIFF files. */
-  private TiffReader tiffReader;
+  private MinimalTiffReader tiffReader;
 
   /** List of TIFF files to open. */
   private Vector tiffs;
@@ -127,14 +127,14 @@ public class MicromanagerReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    tiffReader = new TiffReader();
+    tiffReader = new MinimalTiffReader();
 
     status("Reading metadata file");
 
     // find metadata.txt
 
-    File file = new File(currentId).getAbsoluteFile();
-    metadataFile =  file.exists() ? new File(file.getParentFile(),
+    Location file = new Location(currentId).getAbsoluteFile();
+    metadataFile = file.exists() ? new Location(file.getParentFile(),
       METADATA).getAbsolutePath() : METADATA;
     in = new RandomAccessStream(metadataFile);
     String parent = file.exists() ?
@@ -194,12 +194,10 @@ public class MicromanagerReader extends FormatReader {
       if (open || (!open && !closed)) {
         int quote = token.indexOf("\"") + 1;
         String key = token.substring(quote, token.indexOf("\"", quote));
+        String value = null;
 
         if (!open && !closed) {
-          String value = token.substring(token.indexOf(":") + 1).trim();
-          value = value.substring(0, value.length() - 1);
-          addMeta(key, value);
-          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
+          value = token.substring(token.indexOf(":") + 1);
         }
         else if (!closed){
           StringBuffer valueBuffer = new StringBuffer();
@@ -208,19 +206,15 @@ public class MicromanagerReader extends FormatReader {
             closed = token.indexOf("]") != -1;
             valueBuffer.append(token);
           }
-          String value = valueBuffer.toString();
-          value.replaceAll("\n", "").trim();
-          value = value.substring(0, value.length() - 1);
-          addMeta(key, value);
-          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
+          value = valueBuffer.toString();
+          value = value.replaceAll("\n", "");
         }
         else {
-          String value =
-            token.substring(token.indexOf("[") + 1, token.indexOf("]")).trim();
-          value = value.substring(0, value.length() - 1);
-          addMeta(key, value);
-          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
+          value = token.substring(token.indexOf("[") + 1, token.indexOf("]"));
         }
+        value = value.trim().substring(0, value.length() - 1);
+        addMeta(key, value);
+        if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
       }
 
       if (token.trim().startsWith("\"FrameKey")) {
@@ -237,12 +231,11 @@ public class MicromanagerReader extends FormatReader {
         token = st.nextToken().trim();
         String key = "", value = "";
         while (!token.startsWith("}")) {
-          key = token.substring(1, token.indexOf(":")).trim();
-          value =
-            token.substring(token.indexOf(":") + 1, token.length() - 1).trim();
+          int colon = token.indexOf(":");
+          key = token.substring(1, colon).trim();
+          value = token.substring(colon + 1, token.length() - 1).trim();
 
           addMeta(key, value);
-
           token = st.nextToken().trim();
         }
       }
@@ -260,7 +253,7 @@ public class MicromanagerReader extends FormatReader {
     if (t != null) {
       core.sizeT[0] = Integer.parseInt(t);
     }
-    else core.sizeT[0] = tiffs.size() / core.sizeC[0];
+    else core.sizeT[0] = tiffs.size() / getSizeC();
 
     core.sizeX[0] = tiffReader.getSizeX();
     core.sizeY[0] = tiffReader.getSizeY();

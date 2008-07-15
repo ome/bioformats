@@ -136,8 +136,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     core.sizeC[0] = Integer.parseInt(tc);
     core.sizeT[0] = Integer.parseInt(tt);
 
-    if (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] < core.imageCount[0]) {
-      core.sizeC[0] = core.imageCount[0];
+    if (getSizeZ() * getSizeC() * getSizeT() < getImageCount()) {
+      core.sizeC[0] = getImageCount();
     }
 
     // parse each of the comments to determine axis ordering
@@ -145,7 +145,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     long[] stamps = new long[ifds.length];
     int[][] coords = new int[ifds.length][3];
 
-    cNames = new String[core.sizeC[0]];
+    cNames = new String[getSizeC()];
 
     for (int i=0; i<ifds.length; i++) {
       comment = TiffTools.getComment(ifds[i]);
@@ -186,7 +186,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       long diff = stamps[i] - stamps[i - 1];
       if (diff > 0) sum += diff;
     }
-    pixelSizeT = (int) (sum / core.sizeT[0]);
+    pixelSizeT = (int) (sum / getSizeT());
 
     // determine dimension order
 
@@ -196,21 +196,21 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       int cDiff = coords[i][1] - coords[i - 1][1];
       int tDiff = coords[i][2] - coords[i - 1][2];
 
-      if (zDiff > 0 && core.currentOrder[0].indexOf("Z") < 0) {
+      if (zDiff > 0 && getDimensionOrder().indexOf("Z") < 0) {
         core.currentOrder[0] += "Z";
       }
-      if (cDiff > 0 && core.currentOrder[0].indexOf("C") < 0) {
+      if (cDiff > 0 && getDimensionOrder().indexOf("C") < 0) {
         core.currentOrder[0] += "C";
       }
-      if (tDiff > 0 && core.currentOrder[0].indexOf("T") < 0) {
+      if (tDiff > 0 && getDimensionOrder().indexOf("T") < 0) {
         core.currentOrder[0] += "T";
       }
       if (core.currentOrder[0].length() == 5) break;
     }
 
-    if (core.currentOrder[0].indexOf("Z") < 0) core.currentOrder[0] += "Z";
-    if (core.currentOrder[0].indexOf("C") < 0) core.currentOrder[0] += "C";
-    if (core.currentOrder[0].indexOf("T") < 0) core.currentOrder[0] += "T";
+    if (getDimensionOrder().indexOf("Z") < 0) core.currentOrder[0] += "Z";
+    if (getDimensionOrder().indexOf("C") < 0) core.currentOrder[0] += "C";
+    if (getDimensionOrder().indexOf("T") < 0) core.currentOrder[0] += "T";
   }
 
   /* @see BaseTiffReader#initMetadataStore() */

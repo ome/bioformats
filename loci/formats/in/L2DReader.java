@@ -46,7 +46,7 @@ public class L2DReader extends FormatReader {
   /** List of all files in the dataset. */
   private Vector used;
 
-  private TiffReader[][] readers;
+  private MinimalTiffReader reader;
 
   // -- Constructor --
 
@@ -72,7 +72,8 @@ public class L2DReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    return readers[series][no].openBytes(0, buf, x, y, w, h);
+    reader.setId((String) tiffs[series].get(no));
+    return reader.openBytes(0, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -92,7 +93,8 @@ public class L2DReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     tiffs = null;
-    readers = null;
+    if (reader != null) reader.close();
+    reader = null;
     used = null;
   }
 
@@ -190,7 +192,7 @@ public class L2DReader extends FormatReader {
       }
     }
 
-    readers = new TiffReader[scans.size()][];
+    reader = new MinimalTiffReader();
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -202,19 +204,16 @@ public class L2DReader extends FormatReader {
       core.sizeZ[i] = 1;
       core.currentOrder[i] = "XYCZT";
 
-      readers[i] = new TiffReader[tiffs[i].size()];
-
       for (int t=0; t<tiffs[i].size(); t++) {
-        readers[i][t] = new TiffReader();
-        readers[i][t].setId((String) tiffs[i].get(t));
+        reader.setId((String) tiffs[i].get(t));
         if (t == 0) {
-          core.sizeX[i] = readers[i][t].getSizeX();
-          core.sizeY[i] = readers[i][t].getSizeY();
-          core.sizeC[i] *= readers[i][t].getSizeC();
-          core.rgb[i] = readers[i][t].isRGB();
-          core.indexed[i] = readers[i][t].isIndexed();
-          core.littleEndian[i] = readers[i][t].isLittleEndian();
-          core.pixelType[i] = readers[i][t].getPixelType();
+          core.sizeX[i] = reader.getSizeX();
+          core.sizeY[i] = reader.getSizeY();
+          core.sizeC[i] *= reader.getSizeC();
+          core.rgb[i] = reader.isRGB();
+          core.indexed[i] = reader.isIndexed();
+          core.littleEndian[i] = reader.isLittleEndian();
+          core.pixelType[i] = reader.getPixelType();
         }
       }
       store.setImageName("", i);

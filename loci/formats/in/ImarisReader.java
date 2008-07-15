@@ -145,30 +145,29 @@ public class ImarisReader extends FormatReader {
 
     status("Calculating image offsets");
 
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0];
-    offsets = new int[core.imageCount[0]];
+    core.imageCount[0] = getSizeZ() * getSizeC();
+    offsets = new int[getImageCount()];
 
-    float[] gains = new float[core.sizeC[0]];
-    float[] detectorOffsets = new float[core.sizeC[0]];
-    float[] pinholes = new float[core.sizeC[0]];
+    float[] gains = new float[getSizeC()];
+    float[] detectorOffsets = new float[getSizeC()];
+    float[] pinholes = new float[getSizeC()];
 
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<getSizeC(); i++) {
       addMeta("Channel #" + i + " Comment", in.readString(128));
       gains[i] = in.readFloat();
       detectorOffsets[i] = in.readFloat();
       pinholes[i] = in.readFloat();
       in.skipBytes(24);
-      int offset = 336 + (164 * core.sizeC[0]) +
-        (i * core.sizeX[0] * core.sizeY[0] * core.sizeZ[0]);
-      for (int j=0; j<core.sizeZ[0]; j++) {
-        offsets[i*core.sizeZ[0] + j] =
-          offset + (j * core.sizeX[0] * core.sizeY[0]);
+      int offset = 336 + (164 * getSizeC()) +
+        (i * getSizeX() * getSizeY() * getSizeZ());
+      for (int j=0; j<getSizeZ(); j++) {
+        offsets[i*getSizeZ() + j] = offset + (j * getSizeX() * getSizeY());
       }
     }
 
     status("Populating metadata");
 
-    core.sizeT[0] = core.imageCount[0] / (core.sizeC[0] * core.sizeZ[0]);
+    core.sizeT[0] = getImageCount() / (getSizeC() * getSizeZ());
     core.currentOrder[0] = "XYZCT";
     core.rgb[0] = false;
     core.interleaved[0] = false;
@@ -192,8 +191,8 @@ public class ImarisReader extends FormatReader {
     store.setDimensionsWaveIncrement(new Integer(1), 0, 0);
 
     // CTR CHECK
-    for (int i=0; i<core.sizeC[0]; i++) {
-      if ((int) pinholes[i] > 0) {
+    for (int i=0; i<getSizeC(); i++) {
+      if (pinholes[i] > 0) {
         store.setLogicalChannelPinholeSize(new Integer((int) pinholes[i]),
           0, i);
       }
