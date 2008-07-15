@@ -182,9 +182,9 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
-    int depth = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    int depth = FormatTools.getBytesPerPixel(getPixelType());
     for (int row=0; row<h; row++) {
-      int off = (row + y) * core.sizeX[series] * depth + x * depth;
+      int off = (row + y) * getSizeX() * depth + x * depth;
       System.arraycopy(pixels, off, buf, row * w * depth, w * depth);
     }
 
@@ -263,7 +263,7 @@ public class OMEXMLReader extends FormatReader {
       core.sizeT[i] = t.intValue();
       core.sizeZ[i] = z.intValue();
       core.sizeC[i] = c.intValue();
-      core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
+      core.imageCount[i] = getSizeZ() * getSizeC() * getSizeT();
       core.littleEndian[i] = endian == null ? false : !endian.booleanValue();
       core.rgb[i] = false;
       core.interleaved[i] = false;

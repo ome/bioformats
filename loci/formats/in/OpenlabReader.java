@@ -120,50 +120,40 @@ public class OpenlabReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    in.seek(planes[planeOffsets[series][no]].planeOffset);
-    long first = planes[planeOffsets[series][no]].planeOffset;
-    long last = no == core.imageCount[series] - 1 ? in.length() :
+    int index = planeOffsets[series][no];
+
+    long first = planes[index].planeOffset;
+    long last = no == getImageCount() - 1 ? in.length() :
       planes[planeOffsets[series][no + 1]].planeOffset;
+    in.seek(first);
     byte[] b = new byte[(int) (last - first)];
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
-    if (!planes[planeOffsets[series][no]].pict) {
+    if (!planes[index].pict) {
       if (version == 2) {
-        in.skipBytes(y * getSizeX() * bpp * getRGBChannelCount());
-        int rowLen = w * bpp * getRGBChannelCount();
-        if (core.sizeX[series] == w) {
-          in.read(buf);
-        }
-        else {
-          for (int row=0; row<h; row++) {
-            in.skipBytes(x * bpp * getRGBChannelCount());
-            in.read(buf, row * rowLen, rowLen);
-            in.skipBytes(bpp * getRGBChannelCount() * (getSizeX() - w - x));
-          }
-        }
+        DataTools.readPlane(in, x, y, w, h, this, buf);
       }
       else {
         in.skipBytes(16);
         in.read(b);
         b = new LZOCodec().decompress(b);
 
-        if (core.sizeX[series] * core.sizeY[series] * 4 <= b.length) {
+        if (getSizeX() * getSizeY() * 4 <= b.length) {
           for (int yy=y; yy<h + y; yy++) {
             for (int xx=x; xx<w + x; xx++) {
-              System.arraycopy(b, (yy*(core.sizeX[series]+4) + xx)*4 + 1, buf,
+              System.arraycopy(b, (yy*(getSizeX()+4) + xx)*4 + 1, buf,
                 ((yy - y)*w + xx - x)*3, 3);
             }
           }
         }
         else {
-          int srcLen = b.length / core.sizeY[series];
-          int destLen = core.sizeX[series] * bpp * getRGBChannelCount();
-          if (srcLen - destLen != 16) srcLen = destLen;
-          destLen = w * bpp * getRGBChannelCount();
+          int src = b.length / getSizeY();
+          int bytes = bpp * getRGBChannelCount();
+          if (src - (getSizeX() * bytes) != 16) src = getSizeX() * bytes;
+          int dest = w * bytes;
           for (int row=0; row<h; row++) {
-            System.arraycopy(b, (row + y)*srcLen + x*bpp*getRGBChannelCount(),
-              buf, row*destLen, destLen);
+            System.arraycopy(b, (row + y)*src + x*bytes, buf, row*dest, dest);
           }
         }
       }
@@ -184,7 +174,7 @@ public class OpenlabReader extends FormatReader {
 
       if (exc != null) {
         if (debug) LogTools.trace(exc);
-        in.seek(planes[planeOffsets[series][no]].planeOffset - 298);
+        in.seek(planes[index].planeOffset - 298);
 
         if (in.readByte() == 1) in.skipBytes(128);
         in.skipBytes(169);
@@ -306,8 +296,7 @@ public class OpenlabReader extends FormatReader {
       long fp = in.getFilePointer();
       readTagHeader();
       while (tag < IMAGE_TYPE_1 || tag > 76) {
-        fp--;
-        in.seek(fp);
+        in.seek(--fp);
         readTagHeader();
       }
 

@@ -138,24 +138,16 @@ public class PerkinElmerReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     if (isTiff) {
-      tiff.setId(files[no / core.sizeC[0]]);
+      tiff.setId(files[no / getSizeC()]);
       return tiff.openBytes(0, buf, x, y, w, h);
     }
 
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    String file = files[no];
-    RandomAccessStream ras = new RandomAccessStream(file);
+    RandomAccessStream ras = new RandomAccessStream(files[no]);
+    ras.seek(6);
 
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    ras.skipBytes(6 + y * core.sizeX[0] * bytes);
-
-    for (int row=0; row<h; row++) {
-      ras.skipBytes(x * bytes);
-      ras.read(buf, row * w * bytes, w * bytes);
-      ras.skipBytes(bytes * (core.sizeX[0] - w - x));
-    }
-
+    DataTools.readPlane(ras, x, y, w, h, this, buf);
     ras.close();
     return buf;
   }
@@ -614,7 +606,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     else {
       RandomAccessStream tmp = new RandomAccessStream(files[0]);
-      int bpp = (int) (tmp.length() - 6) / (core.sizeX[0] * core.sizeY[0]);
+      int bpp = (int) (tmp.length() - 6) / (getSizeX() * getSizeY());
       tmp.close();
       switch (bpp) {
         case 1:
@@ -630,25 +622,25 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    if (core.sizeZ[0] <= 0) core.sizeZ[0] = 1;
-    if (core.sizeC[0] <= 0) core.sizeC[0] = 1;
+    if (getSizeZ() <= 0) core.sizeZ[0] = 1;
+    if (getSizeC() <= 0) core.sizeC[0] = 1;
 
-    if (core.sizeT[0] <= 0) {
-      core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
+    if (getSizeT() <= 0) {
+      core.sizeT[0] = getImageCount() / (getSizeZ() * getSizeC());
     }
     else {
-      core.imageCount[0] = core.sizeC[0] * core.sizeZ[0] * core.sizeT[0];
-      if (core.imageCount[0] > files.length) {
+      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
+      if (getImageCount() > files.length) {
         core.imageCount[0] = files.length;
-        core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
+        core.sizeT[0] = getImageCount() / (getSizeZ() * getSizeC());
       }
     }
 
     // throw away files, if necessary
 
-    if (files.length > core.imageCount[0]) {
+    if (files.length > getImageCount()) {
       String[] tmpFiles = files;
-      files = new String[core.imageCount[0]];
+      files = new String[getImageCount()];
 
       Hashtable zSections = new Hashtable();
       for (int i=0; i<tmpFiles.length; i++) {
@@ -669,8 +661,8 @@ public class PerkinElmerReader extends FormatReader {
       Arrays.sort(keys);
       for (int i=0; i<keys.length; i++) {
         int oldCount = ((Integer) zSections.get(keys[i])).intValue();
-        int nPlanes = (isTiff ? tiff.getEffectiveSizeC() : core.sizeC[0]) *
-          core.sizeT[0];
+        int nPlanes = (isTiff ? tiff.getEffectiveSizeC() : getSizeC()) *
+          getSizeT();
         int count = (int) Math.min(oldCount, nPlanes);
         for (int j=0; j<count; j++) {
           files[nextFile++] = tmpFiles[oldFile++];
@@ -714,7 +706,7 @@ public class PerkinElmerReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     // populate LogicalChannel element
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<getSizeC(); i++) {
       if (i < emWaves.size()) {
         store.setLogicalChannelEmWave((Integer) emWaves.get(i), 0, i);
       }
@@ -737,12 +729,12 @@ public class PerkinElmerReader extends FormatReader {
       end = date.getTime();
     }
     long range = end - start;
-    float msPerPlane = (float) range / core.imageCount[0];
+    float msPerPlane = (float) range / getImageCount();
 
     int plane = 0;
-    for (int zi=0; zi<core.sizeZ[0]; zi++) {
-      for (int ti=0; ti<core.sizeT[0]; ti++) {
-        for (int ci=0; ci<core.sizeC[0]; ci++) {
+    for (int zi=0; zi<getSizeZ(); zi++) {
+      for (int ti=0; ti<getSizeT(); ti++) {
+        for (int ci=0; ci<getSizeC(); ci++) {
           store.setPlaneTheZ(new Integer(zi), 0, 0, plane);
           store.setPlaneTheC(new Integer(ci), 0, 0, plane);
           store.setPlaneTheT(new Integer(ti), 0, 0, plane);

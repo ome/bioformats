@@ -75,11 +75,11 @@ public class VisitechReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
-    int plane = core.sizeX[series] * core.sizeY[series] * bpp;
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int plane = getSizeX() * getSizeY() * bpp;
 
-    int div = core.sizeZ[series] * core.sizeT[series];
-    int fileIndex = (series * core.sizeC[series]) + no / div;
+    int div = getSizeZ() * getSizeT();
+    int fileIndex = (series * getSizeC()) + no / div;
     int planeIndex = no % div;
 
     String file = (String) files.get(fileIndex);
@@ -93,13 +93,7 @@ public class VisitechReader extends FormatReader {
       else s.skipBytes((plane + 164) * planeIndex - 4);
     }
 
-    s.skipBytes(y * core.sizeX[series] * bpp);
-    for (int row=0; row<h; row++) {
-      s.skipBytes(x * bpp);
-      s.read(buf, row * w * bpp, w * bpp);
-      s.skipBytes(bpp * (core.sizeX[series] - w - x));
-    }
-
+    DataTools.readPlane(s, x, y, w, h, this, buf);
     s.close();
     return buf;
   }
@@ -176,7 +170,8 @@ public class VisitechReader extends FormatReader {
               case 32:
                 core.pixelType[0] = FormatTools.UINT32;
                 break;
-              default: core.pixelType[0] = FormatTools.UINT8;
+              default:
+                core.pixelType[0] = FormatTools.UINT8;
             }
           }
           else if (key.equals("Image dimensions")) {
@@ -207,22 +202,22 @@ public class VisitechReader extends FormatReader {
       }
     }
 
-    if (core.sizeT[0] == 0) {
-      core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
-      if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+    if (getSizeT() == 0) {
+      core.sizeT[0] = getImageCount() / (getSizeZ() * getSizeC());
+      if (getSizeT() == 0) core.sizeT[0] = 1;
     }
-    if (core.imageCount[0] == 0) {
-      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    if (getImageCount() == 0) {
+      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
     }
 
     if (numSeries > 1) {
-      int x = core.sizeX[0];
-      int y = core.sizeY[0];
-      int z = core.sizeZ[0];
-      int c = core.sizeC[0] / numSeries;
-      int t = core.sizeT[0];
+      int x = getSizeX();
+      int y = getSizeY();
+      int z = getSizeZ();
+      int c = getSizeC() / numSeries;
+      int t = getSizeT();
       int count = z * c * t;
-      int ptype = core.pixelType[0];
+      int ptype = getPixelType();
       core = new CoreMetadata(numSeries);
       Arrays.fill(core.sizeX, x);
       Arrays.fill(core.sizeY, y);
@@ -249,11 +244,11 @@ public class VisitechReader extends FormatReader {
     String base = currentId.substring(ndx, currentId.lastIndexOf(" "));
 
     File f = new File(currentId).getAbsoluteFile();
+    String file = f.exists() ? f.getParent() + File.separator : "";
 
     if (numSeries == 0) numSeries = 1;
-    for (int i=0; i<core.sizeC[0]*numSeries; i++) {
-      files.add((f.exists() ? f.getParent() + File.separator : "") + base +
-        " " + (i + 1) + ".xys");
+    for (int i=0; i<getSizeC()*numSeries; i++) {
+      files.add(file + base + " " + (i + 1) + ".xys");
     }
     files.add(currentId);
 

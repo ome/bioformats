@@ -108,7 +108,7 @@ public class PictReader extends FormatReader {
       byte[] pix = new byte[(int) (in.length() - in.getFilePointer())];
       in.read(pix);
       byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(
-        qtTools.pictToImage(pix)), core.littleEndian[0]);
+        qtTools.pictToImage(pix)), isLittleEndian());
       for (int i=0; i<b.length; i++) {
         System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
       }
@@ -117,13 +117,13 @@ public class PictReader extends FormatReader {
 
     // combine everything in the strips Vector
 
-    if ((core.sizeY[0]*4 < strips.size()) && (((strips.size() / 3) %
-      core.sizeY[0]) != 0))
+    if ((getSizeY()*4 < strips.size()) && (((strips.size() / 3) %
+      getSizeY()) != 0))
     {
       core.sizeY[0] = strips.size();
     }
 
-    int plane = core.sizeX[0] * core.sizeY[0];
+    int plane = getSizeX() * getSizeY();
 
     if (lookup != null) {
       // 8 bit data
@@ -132,16 +132,16 @@ public class PictReader extends FormatReader {
 
       plane *= 2;
 
-      for (int i=0; i<core.sizeY[0]; i++) {
+      for (int i=0; i<getSizeY(); i++) {
         row = (byte[]) strips.get(i);
 
         for (int j=0; j<row.length; j++) {
-          if (j < core.sizeX[0]) {
+          if (j < getSizeX()) {
             int ndx = row[j];
             if (ndx < 0) ndx += lookup[0].length;
             ndx = ndx % lookup[0].length;
 
-            int outIndex = i*core.sizeX[0]*2 + j*2;
+            int outIndex = i*getSizeX()*2 + j*2;
 
             if (2*plane + outIndex + 2 < buf.length) {
               DataTools.unpackShort(lookup[0][ndx], buf, outIndex, false);
@@ -155,26 +155,24 @@ public class PictReader extends FormatReader {
         }
       }
     }
-    else if (core.sizeY[0]*3 == strips.size() ||
-      core.sizeY[0]*4 == strips.size())
-    {
+    else if (getSizeY()*3 == strips.size() || getSizeY()*4 == strips.size()) {
       // 24 or 32 bit data
 
-      int nc = strips.size() / core.sizeY[0];
+      int nc = strips.size() / getSizeY();
 
-      for (int i=0; i<core.sizeY[0]; i++) {
+      for (int i=0; i<getSizeY(); i++) {
         byte[] c0 = (byte[]) strips.get(i * nc + nc - 3);
         byte[] c1 = (byte[]) strips.get(i * nc + nc - 2);
         byte[] c2 = (byte[]) strips.get(i * nc + nc - 1);
-        int baseOffset = i * core.sizeX[0];
-        System.arraycopy(c0, 0, buf, baseOffset, core.sizeX[0]);
-        System.arraycopy(c1, 0, buf, plane + baseOffset, core.sizeX[0]);
-        System.arraycopy(c2, 0, buf, 2*plane + baseOffset, core.sizeX[0]);
+        int baseOffset = i * getSizeX();
+        System.arraycopy(c0, 0, buf, baseOffset, getSizeX());
+        System.arraycopy(c1, 0, buf, plane + baseOffset, getSizeX());
+        System.arraycopy(c2, 0, buf, 2*plane + baseOffset, getSizeX());
       }
     }
     else {
       // RGB value is packed into a single short: xRRR RRGG GGGB BBBB
-      for (int i=0; i<core.sizeY[0]; i++) {
+      for (int i=0; i<getSizeY(); i++) {
         int[] row = (int[]) strips.get(i);
 
         for (int j=0; j<row.length; j++) {
@@ -279,7 +277,9 @@ public class PictReader extends FormatReader {
   private boolean drivePictDecoder(int opcode)
     throws FormatException, IOException
   {
-    if (debug) debug("drivePictDecoder(" + opcode + ") @ " + in.getFilePointer());
+    if (debug) {
+      debug("drivePictDecoder(" + opcode + ") @ " + in.getFilePointer());
+    }
 
     switch (opcode) {
       case PICT_BITSRGN:  // rowBytes must be < 8
@@ -351,10 +351,10 @@ public class PictReader extends FormatReader {
       // rowBytes doesn't exist, so set it to its logical value
       switch (pixelSize) {
         case 32:
-          rowBytes = core.sizeX[0] * compCount;
+          rowBytes = getSizeX() * compCount;
           break;
         case 16:
-          rowBytes = core.sizeX[0] * 2;
+          rowBytes = getSizeX() * 2;
           break;
         default:
           throw new FormatException("Sorry, vector data not supported.");
@@ -407,17 +407,17 @@ public class PictReader extends FormatReader {
 
     bufSize = rBytes;
 
-    outBufSize = core.sizeX[0];
+    outBufSize = getSizeX();
 
     // allocate buffers
 
     switch (pixelSize) {
       case 32:
-        if (!compressed) uBufI = new int[core.sizeX[0]];
+        if (!compressed) uBufI = new int[getSizeX()];
         else uBuf = new byte[bufSize];
         break;
       case 16:
-        uBufI = new int[core.sizeX[0]];
+        uBufI = new int[getSizeX()];
         break;
       case 8:
         uBuf = new byte[bufSize];
@@ -433,12 +433,12 @@ public class PictReader extends FormatReader {
         debug("Pixel data is uncompressed (pixelSize=" + pixelSize + ").");
       }
       buf = new byte[bufSize];
-      for (int row=0; row<core.sizeY[0]; row++) {
+      for (int row=0; row<getSizeY(); row++) {
         in.read(buf, 0, rBytes);
 
         switch (pixelSize) {
           case 16:
-            for (int i=0; i<core.sizeX[0]; i++) {
+            for (int i=0; i<getSizeX(); i++) {
               uBufI[i] = DataTools.bytesToShort(buf, i*2, 2, false);
             }
             strips.add(uBufI);
@@ -458,7 +458,7 @@ public class PictReader extends FormatReader {
           pixelSize + "; compCount=" + compCount + ").");
       }
       buf = new byte[bufSize + 1 + bufSize / 128];
-      for (int row=0; row<core.sizeY[0]; row++) {
+      for (int row=0; row<getSizeY(); row++) {
         if (rBytes > 250) rawLen = in.readShort();
         else rawLen = in.read();
 
@@ -476,13 +476,13 @@ public class PictReader extends FormatReader {
         in.read(buf, 0, rawLen);
 
         if (pixelSize == 16) {
-          uBufI = new int[core.sizeX[0]];
+          uBufI = new int[getSizeX()];
           unpackBits(buf, uBufI);
           strips.add(uBufI);
         }
         else {
           PackbitsCodec c = new PackbitsCodec();
-          uBuf = c.decompress(buf, new Integer(core.sizeX[0] * 4));
+          uBuf = c.decompress(buf, new Integer(getSizeX() * 4));
         }
 
         if (pixelSize < 8) {
@@ -494,9 +494,9 @@ public class PictReader extends FormatReader {
           byte[] newBuf = null;
 
           for (int q=0; q<compCount; q++) {
-            int offset = q * core.sizeX[0];
-            int len = (int) Math.min(core.sizeX[0], uBuf.length - offset);
-            newBuf = new byte[core.sizeX[0]];
+            int offset = q * getSizeX();
+            int len = (int) Math.min(getSizeX(), uBuf.length - offset);
+            newBuf = new byte[getSizeX()];
             if (offset < uBuf.length) {
               System.arraycopy(uBuf, offset, newBuf, 0, len);
             }

@@ -92,7 +92,8 @@ public class OMETiffReader extends FormatReader {
     String dir = new File(id).getParent();
 
     // parse and populate OME-XML metadata
-    RandomAccessStream ras = new RandomAccessStream(new Location(id).getAbsoluteFile().getAbsolutePath());
+    String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
+    RandomAccessStream ras = new RandomAccessStream(fileName);
     Hashtable firstIFD = TiffTools.getFirstIFD(ras);
     ras.close();
     String xml = TiffTools.getComment(firstIFD);

@@ -130,10 +130,10 @@ public class SDTReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int sizeX = core.sizeX[series];
-    int sizeY = core.sizeY[series];
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
-    boolean little = core.littleEndian[series];
+    int sizeX = getSizeX();
+    int sizeY = getSizeY();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    boolean little = isLittleEndian();
 
     boolean direct = !intensity && x == 0 && y == 0 && w == sizeX && h == sizeY;
     byte[] b = direct ? buf : new byte[sizeY * sizeX * timeBins * bpp];

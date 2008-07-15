@@ -42,28 +42,14 @@ public class TiffReader extends BaseTiffReader {
 
   // -- Constants --
 
-  public static final String[] TIFF_SUFFIXES = {"tif", "tiff", "tf2", "tf8", "btf"};
+  public static final String[] TIFF_SUFFIXES =
+    {"tif", "tiff", "tf2", "tf8", "btf"};
 
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */
   public TiffReader() {
-    super("Tagged Image File Format",
-      new String[] {"tif", "tiff", "tf2", "tf8", "btf"});
-  }
-
-  // -- Internal TiffReader API methods --
-
-  /**
-   * Allows a class which is delegating parsing responsibility to
-   * <code>TiffReader</code> the ability to affect the <code>sizeZ</code> value
-   * that is inserted into the metadata store.
-   * @param zSize the number of optical sections to use when making a call to
-   * {@link loci.formats.meta.MetadataStore#setPixelsSizeZ(Integer, int, int)}.
-   */
-  protected void setSizeZ(int zSize) {
-    if (core.sizeZ == null) core.sizeZ = new int[1];
-    core.sizeZ[0] = zSize;
+    super("Tagged Image File Format", TIFF_SUFFIXES);
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -91,21 +77,23 @@ public class TiffReader extends BaseTiffReader {
       StringTokenizer st = new StringTokenizer(comment, "\n");
       while (st.hasMoreTokens()) {
         String token = st.nextToken();
+        int value = 0;
+        if (token.indexOf("=") != -1) {
+          value = Integer.parseInt(token.substring(token.indexOf("=" + 1)));
+        }
+
         if (token.startsWith("channels=")) {
-          core.sizeC[0] =
-            Integer.parseInt(token.substring(token.indexOf("=") + 1));
+          core.sizeC[0] = value;
         }
         else if (token.startsWith("slices=")) {
-          core.sizeZ[0] =
-            Integer.parseInt(token.substring(token.indexOf("=") + 1));
+          core.sizeZ[0] = value;
         }
         else if (token.startsWith("frames=")) {
-          core.sizeT[0] =
-            Integer.parseInt(token.substring(token.indexOf("=") + 1));
+          core.sizeT[0] = value;
         }
       }
-      if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] == core.sizeC[0]) {
-        core.sizeT[0] = core.imageCount[0];
+      if (getSizeZ() * getSizeT() * getSizeC() == getSizeC()) {
+        core.sizeT[0] = getImageCount();
       }
       core.currentOrder[0] = "XYCZT";
     }

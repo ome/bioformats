@@ -142,7 +142,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (lut == null || core.pixelType[0] != FormatTools.UINT8) return null;
+    if (lut == null || getPixelType() != FormatTools.UINT8) return null;
     byte[][] b = new byte[3][256];
     for (int i=2; i>=3-validChannels; i--) {
       for (int j=0; j<256; j++) {
@@ -155,7 +155,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (lut == null || core.pixelType[0] != FormatTools.UINT16) return null;
+    if (lut == null || getPixelType() != FormatTools.UINT16) return null;
     short[][] s = new short[3][65536];
     for (int i=2; i>=3-validChannels; i--) {
       for (int j=0; j<s[i].length; j++) {
@@ -164,21 +164,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
     return s;
   }
-
-  /**
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
-
-    TiffTools.getSamples(ifds[no], in, buf, x, y, w, h);
-    return buf;
-  }
-
 
   // -- Internal BaseTiffReader API methods --
 
@@ -204,7 +189,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       RandomAccessStream ras = new RandomAccessStream(cz);
-      ras.order(core.littleEndian[0]);
+      ras.order(isLittleEndian());
 
       put("MagicNumber", ras.readInt());
       put("StructureSize", ras.readInt());
@@ -301,13 +286,8 @@ public class ZeissLSMReader extends BaseTiffReader {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
       int spectralScan = ras.readShort();
-      switch (spectralScan) {
-        case 1:
-          put("SpectralScan", "acquired with spectral scan");
-          break;
-        default:
-          put("SpectralScan", "no spectral scan");
-      }
+      if (spectralScan != 1) put("SpectralScan", "no spectral scan");
+      else put("SpectralScan", "acquired with spectral scan");
 
       int type = ras.readInt();
       switch (type) {
@@ -362,20 +342,20 @@ public class ZeissLSMReader extends BaseTiffReader {
       // read referenced structures
 
       core.indexed[0] = lut != null && getSizeC() == 1;
-      if (core.indexed[0]) {
+      if (isIndexed()) {
         core.sizeC[0] = 1;
         core.rgb[0] = false;
       }
-      if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+      if (getSizeC() == 0) core.sizeC[0] = 1;
 
-      if (core.rgb[0]) {
+      if (isRGB()) {
         // shuffle C to front of order string
-        core.currentOrder[0] = core.currentOrder[0].replaceAll("C", "");
-        core.currentOrder[0] = core.currentOrder[0].replaceAll("XY", "XYC");
+        core.currentOrder[0] = getDimensionOrder().replaceAll("C", "");
+        core.currentOrder[0] = getDimensionOrder().replaceAll("XY", "XYC");
       }
 
-      put("DimensionZ", core.sizeZ[0]);
-      put("DimensionChannels", core.sizeC[0]);
+      put("DimensionZ", getSizeZ());
+      put("DimensionChannels", getSizeC());
 
       if (channelColorsOffset != 0) {
         in.seek(channelColorsOffset + 12);
@@ -386,7 +366,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         if (namesOffset > 0) {
           in.skipBytes(namesOffset - 16);
 
-          for (int i=0; i<core.sizeC[0]; i++) {
+          for (int i=0; i<getSizeC(); i++) {
             if (in.getFilePointer() >= in.length() - 1) break;
             // we want to read until we find a null char
             String name = in.readCString();
@@ -398,7 +378,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (timeStampOffset != 0) {
         if ((timeStampOffset % 2) == 1) in.seek(timeStampOffset + 7);
         else in.seek(timeStampOffset - 248);
-        for (int i=0; i<core.sizeT[0]; i++) {
+        for (int i=0; i<getSizeT(); i++) {
           double stamp = in.readDouble();
           put("TimeStamp" + i, stamp);
           timestamps.add(new Double(stamp));
@@ -444,8 +424,10 @@ public class ZeissLSMReader extends BaseTiffReader {
         Object value = null;
 
         boolean done = false;
-        int nextLaserMedium = 0, nextLaserType = 0, nextGain = 0,
-          nextPinhole = 0, nextEmWave = 0, nextExWave = 0, nextChannelName = 0;
+        int nextLaserMedium = 0, nextLaserType = 0, nextGain = 0;
+        int nextPinhole = 0, nextEmWave = 0, nextExWave = 0;
+        int nextChannelName = 0;
+
         while (!done) {
           int entry = in.readInt();
           int blockType = in.readInt();
@@ -590,7 +572,7 @@ public class ZeissLSMReader extends BaseTiffReader {
               break;
             case CHANNEL_ENTRY_PINHOLE_DIAMETER:
               int n = (int) Float.parseFloat(value.toString());
-              if (n > 0 && nextPinhole < core.sizeC[0]) {
+              if (n > 0 && nextPinhole < getSizeC()) {
                 store.setLogicalChannelPinholeSize(new Integer(n), 0,
                   nextPinhole++);
               }
@@ -598,21 +580,21 @@ public class ZeissLSMReader extends BaseTiffReader {
             case CHANNEL_ENTRY_SPI_WAVELENGTH_START:
               n = (int) Float.parseFloat(value.toString());
               store.setLogicalChannelEmWave(new Integer(n), 0,
-                (nextEmWave % core.sizeC[0]));
+                (nextEmWave % getSizeC()));
               nextEmWave++;
               break;
             case CHANNEL_ENTRY_SPI_WAVELENGTH_END:
               n = (int) Float.parseFloat(value.toString());
               store.setLogicalChannelExWave(new Integer(n), 0,
-                (nextExWave % core.sizeC[0]));
+                (nextExWave % getSizeC()));
               nextExWave++;
               break;
             case ILLUM_CHANNEL_WAVELENGTH:
               n = (int) Float.parseFloat(value.toString());
               store.setLogicalChannelEmWave(new Integer(n), 0,
-                (nextEmWave % core.sizeC[0]));
+                (nextEmWave % getSizeC()));
               store.setLogicalChannelExWave(new Integer(n), 0,
-                (nextExWave % core.sizeC[0]));
+                (nextExWave % getSizeC()));
               nextEmWave++;
               nextExWave++;
               break;
@@ -641,24 +623,23 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (debug) trace(exc);
     }
 
-    if (core.indexed[0]) core.rgb[0] = false;
-    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
-      ((core.rgb[0] || core.indexed[0]) ? 1 : core.sizeC[0]);
+    if (isIndexed()) core.rgb[0] = false;
+    core.imageCount[0] = getSizeZ() * getSizeT() * getEffectiveSizeC();
 
-    if (core.imageCount[0] != ifds.length) {
-      int diff = core.imageCount[0] - ifds.length;
+    if (getImageCount() != ifds.length) {
+      int diff = getImageCount() - ifds.length;
       core.imageCount[0] = ifds.length;
-      if (diff % core.sizeZ[0] == 0) {
-        core.sizeT[0] -= (diff / core.sizeZ[0]);
+      if (diff % getSizeZ() == 0) {
+        core.sizeT[0] -= (diff / getSizeZ());
       }
-      else if (diff % core.sizeT[0] == 0) {
-        core.sizeZ[0] -= (diff / core.sizeT[0]);
+      else if (diff % getSizeT() == 0) {
+        core.sizeZ[0] -= (diff / getSizeT());
       }
-      else if (core.sizeZ[0] > 1) {
+      else if (getSizeZ() > 1) {
         core.sizeZ[0] = ifds.length;
         core.sizeT[0] = 1;
       }
-      else if (core.sizeT[0] > 1) {
+      else if (getSizeT() > 1) {
         core.sizeT[0] = ifds.length;
         core.sizeZ[0] = 1;
       }
@@ -677,7 +658,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     float firstStamp =
       timestamps.size() == 0 ? 0f : ((Double) timestamps.get(0)).floatValue();
 
-    for (int i=0; i<core.imageCount[0]; i++) {
+    for (int i=0; i<getImageCount(); i++) {
       int[] zct = FormatTools.getZCTCoords(this, i);
       store.setPlaneTheZ(new Integer(zct[0]), 0, 0, i);
       store.setPlaneTheC(new Integer(zct[1]), 0, 0, i);
@@ -686,9 +667,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (zct[2] < timestamps.size()) {
         float thisStamp = ((Double) timestamps.get(zct[2])).floatValue();
         store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp), 0, 0, i);
-        float nextStamp = i < core.sizeT[0] - 1 ?
+        float nextStamp = i < getSizeT() - 1 ?
           ((Double) timestamps.get(zct[2] + 1)).floatValue() : thisStamp;
-        if (i == core.sizeT[0] - 1 && zct[2] > 0) {
+        if (i == getSizeT() - 1 && zct[2] > 0) {
           thisStamp = ((Double) timestamps.get(zct[2] - 1)).floatValue();
         }
         store.setPlaneTimingExposureTime(new Float(nextStamp - thisStamp),
@@ -767,7 +748,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     thumbnailsRemoved = true;
 
     initMetadata();
-    core.littleEndian[0] = !core.littleEndian[0];
+    core.littleEndian[0] = !isLittleEndian();
   }
 
   // -- Helper methods --

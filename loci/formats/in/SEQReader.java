@@ -80,20 +80,20 @@ public class SEQReader extends BaseTiffReader {
         addMeta("Frame Rate", new Integer(tag2));
       }
 
-      addMeta("Number of images", new Integer(core.sizeZ[0]));
+      addMeta("Number of images", new Integer(getSizeZ()));
     }
 
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+    if (getSizeZ() == 0) core.sizeZ[0] = 1;
+    if (getSizeT() == 0) core.sizeT[0] = 1;
 
-    if (core.sizeZ[0] == 1 && core.sizeT[0] == 1) {
+    if (getSizeZ() == 1 && getSizeT() == 1) {
       core.sizeZ[0] = ifds.length;
     }
 
     // default values
-    addMeta("frames", "" + core.sizeZ[0]);
-    addMeta("channels", "" + super.getSizeC());
-    addMeta("slices", "" + core.sizeT[0]);
+    addMeta("frames", String.valueOf(getSizeZ()));
+    addMeta("channels", String.valueOf(super.getSizeC()));
+    addMeta("slices", String.valueOf(getSizeT()));
 
     // parse the description to get channels, slices and times where applicable
     String descr = TiffTools.getComment(ifds[0]);
@@ -111,12 +111,12 @@ public class SEQReader extends BaseTiffReader {
       }
     }
 
-    if (isRGB() && core.sizeC[0] != 3) core.sizeC[0] *= 3;
+    if (isRGB() && getSizeC() != 3) core.sizeC[0] *= 3;
 
     core.currentOrder[0] = "XY";
 
     int maxNdx = 0, max = 0;
-    int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
+    int[] dims = {getSizeZ(), getSizeC(), getSizeT()};
     String[] axes = {"Z", "C", "T"};
 
     for (int i=0; i<dims.length; i++) {
@@ -129,14 +129,14 @@ public class SEQReader extends BaseTiffReader {
     core.currentOrder[0] += axes[maxNdx];
 
     if (maxNdx != 1) {
-      if (core.sizeC[0] > 1) {
+      if (getSizeC() > 1) {
         core.currentOrder[0] += "C";
         core.currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]);
       }
       else core.currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
     }
     else {
-      if (core.sizeZ[0] > core.sizeT[0]) core.currentOrder[0] += "ZT";
+      if (getSizeZ() > getSizeT()) core.currentOrder[0] += "ZT";
       else core.currentOrder[0] += "TZ";
     }
   }

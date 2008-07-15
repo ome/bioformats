@@ -268,33 +268,33 @@ public class QTReader extends FormatReader {
 
     // determine whether we need to strip out any padding bytes
 
-    int pad = (4 - (core.sizeX[0] % 4)) % 4;
+    int pad = (4 - (getSizeX() % 4)) % 4;
     if (codec.equals("mjpb")) pad = 0;
 
-    int size = core.sizeX[0] * core.sizeY[0];
+    int size = getSizeX() * getSizeY();
     if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
 
     if (pad > 0) {
-      t = new byte[prevPixels.length - core.sizeY[0]*pad];
+      t = new byte[prevPixels.length - getSizeY()*pad];
 
-      for (int row=0; row<core.sizeY[0]; row++) {
-        System.arraycopy(prevPixels, row*(core.sizeX[0]+pad), t,
-          row*core.sizeX[0], core.sizeX[0]);
+      for (int row=0; row<getSizeY(); row++) {
+        System.arraycopy(prevPixels, row*(getSizeX() + pad), t,
+          row*getSizeX(), getSizeX());
       }
     }
 
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    int srcRowLen = core.sizeX[0] * bpp * core.sizeC[0];
-    int destRowLen = w * bpp * core.sizeC[0];
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int srcRowLen = getSizeX() * bpp * getSizeC();
+    int destRowLen = w * bpp * getSizeC();
     for (int row=0; row<h; row++) {
       if (bitsPerPixel == 32) {
         for (int col=0; col<w; col++) {
-          System.arraycopy(t, row*core.sizeX[0]*bpp*4 + (x + col)*bpp*4 + 1,
+          System.arraycopy(t, row*getSizeX()*bpp*4 + (x + col)*bpp*4 + 1,
             buf, row*destRowLen + col*bpp*3, 3);
         }
       }
       else {
-        System.arraycopy(t, row*srcRowLen + x*bpp*core.sizeC[0], buf,
+        System.arraycopy(t, row*srcRowLen + x*bpp*getSizeC(), buf,
           row*destRowLen, destRowLen);
       }
     }
@@ -352,7 +352,7 @@ public class QTReader extends FormatReader {
     }
 
     core.imageCount[0] = offsets.size();
-    if (chunkSizes.size() < core.imageCount[0] && chunkSizes.size() > 0) {
+    if (chunkSizes.size() < getImageCount() && chunkSizes.size() > 0) {
       core.imageCount[0] = chunkSizes.size();
     }
 
@@ -429,9 +429,9 @@ public class QTReader extends FormatReader {
     }
 
     core.rgb[0] = bitsPerPixel < 40;
-    core.sizeC[0] = core.rgb[0] ? 3 : 1;
+    core.sizeC[0] = isRGB() ? 3 : 1;
     core.interleaved[0] = bitsPerPixel == 32;
-    core.sizeT[0] = core.imageCount[0];
+    core.sizeT[0] = getImageCount();
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -507,8 +507,8 @@ public class QTReader extends FormatReader {
           // TODO : adapt to use the value of flip
           flip = matrix[0][0] == 0 && matrix[1][0] != 0;
 
-          if (core.sizeX[0] == 0) core.sizeX[0] = in.readInt();
-          if (core.sizeY[0] == 0) core.sizeY[0] = in.readInt();
+          if (getSizeX() == 0) core.sizeX[0] = in.readInt();
+          if (getSizeY() == 0) core.sizeY[0] = in.readInt();
         }
         else if (atomType.equals("cmov")) {
           in.skipBytes(8);
@@ -547,15 +547,15 @@ public class QTReader extends FormatReader {
           spork = false;
           in.skipBytes(4);
           int numPlanes = in.readInt();
-          if (numPlanes != core.imageCount[0]) {
+          if (numPlanes != getImageCount()) {
             in.seek(in.getFilePointer() - 4);
             int off = in.readInt();
             offsets.add(new Integer(off));
-            for (int i=1; i<core.imageCount[0]; i++) {
+            for (int i=1; i<getImageCount(); i++) {
               if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
                 rawSize = ((Integer) chunkSizes.get(i)).intValue();
               }
-              else i = core.imageCount[0];
+              else i = getImageCount();
               off += rawSize;
               offsets.add(new Integer(off));
             }
@@ -611,7 +611,7 @@ public class QTReader extends FormatReader {
 
           if (rawSize == 0) {
             in.seek(in.getFilePointer() - 4);
-            for (int b=0; b<core.imageCount[0]; b++) {
+            for (int b=0; b<getImageCount(); b++) {
               chunkSizes.add(new Integer(in.readInt()));
             }
           }
@@ -677,28 +677,25 @@ public class QTReader extends FormatReader {
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) {
       Object[] options = new Object[2];
-      options[0] = new int[] {core.sizeX[0], core.sizeY[0],
+      options[0] = new int[] {getSizeX(), getSizeY(),
         bitsPerPixel < 40 ? bitsPerPixel / 8 : (bitsPerPixel - 32) / 8};
       options[1] = canUsePrevious ? prevPixels : null;
       return new QTRLECodec().decompress(pixs, options);
     }
     else if (code.equals("rpza")) {
-      int[] options = new int[2];
-      options[0] = core.sizeX[0];
-      options[1] = core.sizeY[0];
+      int[] options = new int[] {getSizeX(), getSizeY()};
       return new RPZACodec().decompress(pixs, options);
     }
     else if (code.equals("mjpb")) {
       int[] options = new int[4];
-      options[0] = core.sizeX[0];
-      options[1] = core.sizeY[0];
+      options[0] = getSizeX();
+      options[1] = getSizeY();
       options[2] = bitsPerPixel;
       options[3] = interlaced ? 1 : 0;
       return new MJPBCodec().decompress(pixs, options);
     }
     else if (code.equals("jpeg")) {
-      return new JPEGCodec().decompress(pixs,
-        new Boolean(core.littleEndian[0]));
+      return new JPEGCodec().decompress(pixs, new Boolean(isLittleEndian()));
     }
     else throw new FormatException("Unsupported codec : " + code);
   }

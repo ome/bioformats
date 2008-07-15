@@ -69,34 +69,7 @@ public class PCIReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     RandomAccessStream s = poi.getDocumentStream((String) imageFiles.get(no));
-
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
-
-    int rowLen = w * bpp;
-    int skip = y * core.sizeX[series] * bpp;
-    int beginSkip = bpp * x;
-    int endSkip = bpp * (core.sizeX[0] - w - x);
-
-    if (w == getSizeX() && h == getSizeY() && x == 0 && y == 0) {
-      s.read(buf);
-    }
-    else {
-      for (int c=0; c<core.sizeC[series]; c++) {
-        s.skipBytes(skip);
-        if (beginSkip == 0 && endSkip == 0) {
-          s.read(buf, c * h * rowLen, rowLen * h);
-        }
-        else {
-          for (int row=0; row<h; row++) {
-            s.skipBytes(beginSkip);
-            s.read(buf, c * h * rowLen + row * rowLen, rowLen);
-            s.skipBytes(endSkip);
-          }
-        }
-        s.skipBytes((core.sizeY[series] - h - y) * core.sizeX[series] * bpp);
-      }
-    }
-
+    DataTools.readPlane(s, x, y, w, h, this, buf);
     s.close();
 
     return buf;
@@ -132,7 +105,7 @@ public class PCIReader extends FormatReader {
       String name = (String) allFiles.get(i);
       String relativePath =
         name.substring(name.lastIndexOf(File.separator) + 1);
- 
+
       if (relativePath.equals("Field Count")) {
         byte[] b = poi.getDocumentBytes(name, 4);
         core.imageCount[0] = DataTools.bytesToInt(b, 0, true);
@@ -177,16 +150,14 @@ public class PCIReader extends FormatReader {
           imageFiles.add(name);
         }
 
-        if (core.sizeX[0] != 0 && core.sizeY[0] != 0) {
-          core.sizeC[0] = poi.getFileSize(name) /
-            (core.sizeX[0] * core.sizeY[0] *
-            FormatTools.getBytesPerPixel(core.pixelType[0]));
-          if (core.sizeC[0] == 0) {
+        if (getSizeX() != 0 && getSizeY() != 0) {
+          int bpp = FormatTools.getBytesPerPixel(getPixelType());
+          int plane = getSizeX() * getSizeY() * bpp;
+          core.sizeC[0] = poi.getFileSize(name) / plane;
+          if (getSizeC() == 0) {
             core.sizeX[0] /= 16;
             core.sizeY[0] /= 16;
-            core.sizeC[0] = poi.getFileSize(name) /
-              (core.sizeX[0] * core.sizeY[0] *
-              FormatTools.getBytesPerPixel(core.pixelType[0]));
+            core.sizeC[0] = poi.getFileSize(name) / plane;
           }
         }
       }
@@ -208,16 +179,14 @@ public class PCIReader extends FormatReader {
             throw new FormatException("Unsupported bits per pixel : " + bits);
         }
       }
-      else if (relativePath.indexOf("Image_Height") != -1 && core.sizeY[0] == 0)
-      {
+      else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);
         byte val = b[6];
         byte mul = (byte) (val << 2);
         if (mul == 0) mul = 32;
         core.sizeY[0] = mul * 16;
       }
-      else if (relativePath.indexOf("Image_Width") != -1 && core.sizeX[0] == 0)
-      {
+      else if (relativePath.indexOf("Image_Width") != -1 && getSizeX() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);
         byte val = b[6];
         byte mul = (byte) (val << 2);
@@ -226,11 +195,11 @@ public class PCIReader extends FormatReader {
       }
     }
 
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    if (getSizeC() == 0) core.sizeC[0] = 1;
 
-    core.sizeZ[0] = core.imageCount[0];
+    core.sizeZ[0] = getImageCount();
     core.sizeT[0] = 1;
-    core.rgb[0] = core.sizeC[0] > 1;
+    core.rgb[0] = getSizeC() > 1;
     core.interleaved[0] = false;
     core.currentOrder[0] = "XYCZT";
     core.littleEndian[0] = true;

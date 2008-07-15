@@ -78,28 +78,26 @@ public class PSDReader extends FormatReader {
 
     in.seek(offset);
 
-    int plane = core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]);
-    int[][] lens = new int[core.sizeC[0]][core.sizeY[0]];
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int plane = getSizeX() * getSizeY() * bpp;
+    int[][] lens = new int[getSizeC()][getSizeY()];
     boolean compressed = in.readShort() == 1;
-
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
 
     if (compressed) {
       PackbitsCodec codec = new PackbitsCodec();
-      for (int c=0; c<core.sizeC[0]; c++) {
-        for (int row=0; row<core.sizeY[0]; row++) {
+      for (int c=0; c<getSizeC(); c++) {
+        for (int row=0; row<getSizeY(); row++) {
           lens[c][row] = in.readShort();
         }
       }
 
-      for (int c=0; c<core.sizeC[0]; c++) {
-        for (int row=0; row<core.sizeY[0]; row++) {
+      for (int c=0; c<getSizeC(); c++) {
+        for (int row=0; row<getSizeY(); row++) {
           if (row < y || row >= (y + h)) in.skipBytes(lens[c][row]);
           else {
             byte[] b = new byte[lens[c][row]];
             in.read(b);
-            b = codec.decompress(b, new Integer(core.sizeX[0] * bpp));
+            b = codec.decompress(b, new Integer(getSizeX() * bpp));
             System.arraycopy(b, x * bpp, buf,
               c * h * bpp * w + (row - y) * bpp * w, w * bpp);
           }
@@ -107,14 +105,7 @@ public class PSDReader extends FormatReader {
       }
     }
     else {
-      for (int c=0; c<core.sizeC[0]; c++) {
-        in.skipBytes(y * bpp * core.sizeX[0]);
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bpp);
-          in.read(buf, c * h * w * bpp + row * w * bpp, w * bpp);
-          in.skipBytes(bpp * (core.sizeX[0] - w - x));
-        }
-      }
+      DataTools.readPlane(in, x, y, w, h, this, buf);
     }
     return buf;
   }
@@ -150,12 +141,8 @@ public class PSDReader extends FormatReader {
 
     int bits = in.readShort();
     addMeta("Bits per pixel", new Integer(bits));
-    switch (bits) {
-      case 16:
-        core.pixelType[0] = FormatTools.UINT16;
-        break;
-      default: core.pixelType[0] = FormatTools.UINT8;
-    }
+    if (bits == 16) core.pixelType[0] = FormatTools.UINT16;
+    else core.pixelType[0] = FormatTools.UINT8;
 
     int colorMode = in.readShort();
     String modeString = null;
@@ -278,7 +265,7 @@ public class PSDReader extends FormatReader {
     core.sizeZ[0] = 1;
     core.sizeT[0] = 1;
     core.rgb[0] = modeString.equals("RGB");
-    core.imageCount[0] = core.sizeC[0] / (core.rgb[0] ? 3 : 1);
+    core.imageCount[0] = getSizeC() / (isRGB() ? 3 : 1);
     core.indexed[0] = modeString.equals("palette color");
     core.falseColor[0] = false;
     core.currentOrder[0] = "XYCZT";

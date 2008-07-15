@@ -246,7 +246,7 @@ public class PrairieReader extends FormatReader {
 
         core.sizeZ[0] = isZ ? zt : 1;
         core.sizeT[0] = isZ ? 1 : zt;
-        core.sizeC[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeT[0]);
+        core.sizeC[0] = getImageCount() / (getSizeZ() * getSizeT());
         core.currentOrder[0] = "XYC" + (isZ ? "ZT" : "TZ");
         core.pixelType[0] = FormatTools.UINT16;
         core.rgb[0] = false;
@@ -262,7 +262,7 @@ public class PrairieReader extends FormatReader {
         MetadataTools.populatePixels(store, this);
         store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
         store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
-        for (int i=0; i<core.sizeC[0]; i++) {
+        for (int i=0; i<getSizeC(); i++) {
           String gain = (String) gains.get(i);
           String offset = (String) offsets.get(i);
 

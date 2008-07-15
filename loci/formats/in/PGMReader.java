@@ -71,20 +71,7 @@ public class PGMReader extends FormatReader {
 
     in.seek(offset);
     if (rawBits) {
-      int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-      int pixel = bpp * core.sizeC[0];
-      in.skipBytes(pixel * core.sizeX[0] * y);
-
-      if (core.sizeX[series] == w) {
-        in.read(buf);
-      }
-      else {
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * pixel);
-          in.read(buf, row * w * pixel, w * pixel);
-          in.skipBytes(pixel * (core.sizeX[0] - w - x));
-        }
-      }
+      DataTools.readPlane(in, x, y, w, h, this, buf);
     }
     else {
       int pt = 0;
@@ -94,15 +81,12 @@ public class PGMReader extends FormatReader {
         StringTokenizer t = new StringTokenizer(line, " ");
         while (t.hasMoreTokens()) {
           int q = Integer.parseInt(t.nextToken().trim());
-          if (core.pixelType[0] == FormatTools.UINT16) {
-            short s = (short) q;
-            buf[pt] = (byte) ((s & 0xff00) >> 8);
-            buf[pt + 1] = (byte) (s & 0xff);
+          if (getPixelType() == FormatTools.UINT16) {
+            DataTools.unpackShort((short) q, buf, pt, isLittleEndian());
             pt += 2;
           }
           else {
-            buf[pt] = (byte) q;
-            pt++;
+            buf[pt++] = (byte) q;
           }
         }
       }
@@ -152,7 +136,7 @@ public class PGMReader extends FormatReader {
 
     offset = in.getFilePointer();
 
-    core.rgb[0] = core.sizeC[0] == 3;
+    core.rgb[0] = getSizeC() == 3;
     core.currentOrder[0] = "XYCZT";
     core.littleEndian[0] = true;
     core.interleaved[0] = false;

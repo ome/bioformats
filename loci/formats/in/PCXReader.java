@@ -78,7 +78,7 @@ public class PCXReader extends FormatReader {
 
     // PCX uses a simple RLE compression algorithm
 
-    byte[] b = new byte[bytesPerLine * core.sizeY[0] * nColorPlanes];
+    byte[] b = new byte[bytesPerLine * getSizeY() * nColorPlanes];
     int pt = 0;
     while (pt < b.length) {
       int val = in.read() & 0xff;

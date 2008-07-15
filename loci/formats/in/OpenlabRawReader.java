@@ -65,8 +65,7 @@ public class OpenlabRawReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < blockCheckLen) return false;
-    return block[0] == 'O' && block[1] == 'L' &&
-      block[2] == 'R' && block[3] == 'W';
+    return new String(block).startsWith("OLRW");
   }
 
   /**
@@ -79,24 +78,10 @@ public class OpenlabRawReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(offsets[no / core.sizeC[0]] + 288);
+    in.seek(offsets[no / getSizeC()] + 288);
+    DataTools.readPlane(in, x, y, w, h, this, buf);
 
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-    in.skipBytes(y * core.sizeX[0] * bpp * core.sizeC[0]);
-
-    int rowLen = w * bpp * core.sizeC[0];
-    if (core.sizeX[series] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * bpp * core.sizeC[0]);
-        in.read(buf, row * rowLen, rowLen);
-        in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
-      }
-    }
-
-    if (bytesPerPixel == 1) {
+    if (FormatTools.getBytesPerPixel(getPixelType()) == 1) {
       // need to invert the pixels
       for (int i=0; i<buf.length; i++) {
         buf[i] = (byte) (255 - buf[i]);
@@ -136,7 +121,7 @@ public class OpenlabRawReader extends FormatReader {
     addMeta("Version", new Integer(version));
 
     core.imageCount[0] = in.readInt();
-    offsets = new int[core.imageCount[0]];
+    offsets = new int[getImageCount()];
     offsets[0] = 12;
 
     in.skipBytes(8);
@@ -168,21 +153,21 @@ public class OpenlabRawReader extends FormatReader {
     int len = in.read() & 0xff;
     addMeta("Image name", in.readString(len - 1).trim());
 
-    if (core.sizeC[0] <= 1) core.sizeC[0] = 1;
+    if (getSizeC() <= 1) core.sizeC[0] = 1;
     else core.sizeC[0] = 3;
-    addMeta("Width", new Integer(core.sizeX[0]));
-    addMeta("Height", new Integer(core.sizeY[0]));
+    addMeta("Width", new Integer(getSizeX()));
+    addMeta("Height", new Integer(getSizeY()));
     addMeta("Bytes per pixel", new Integer(bytesPerPixel));
 
-    int plane = core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
-    for (int i=1; i<core.imageCount[0]; i++) {
+    int plane = getSizeX() * getSizeY() * bytesPerPixel;
+    for (int i=1; i<getImageCount(); i++) {
       offsets[i] = offsets[i - 1] + 288 + plane;
     }
 
-    core.sizeZ[0] = core.imageCount[0];
+    core.sizeZ[0] = getImageCount();
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
-    core.rgb[0] = core.sizeC[0] > 1;
+    core.rgb[0] = getSizeC() > 1;
     core.interleaved[0] = false;
     core.littleEndian[0] = false;
     core.metadataComplete[0] = true;

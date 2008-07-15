@@ -103,11 +103,10 @@ public class ZeissZVIReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
 
     if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
-      RandomAccessStream s =
-        poi.getDocumentStream((String) imageFiles.get(no));
+      RandomAccessStream s = poi.getDocumentStream((String) imageFiles.get(no));
       s.seek(((Integer) offsets.get(new Integer(no))).intValue());
 
       int len = w * bytes * getRGBChannelCount();
@@ -116,9 +115,9 @@ public class ZeissZVIReader extends FormatReader {
         byte[] t = new byte[(int) (s.length() - s.getFilePointer())];
         s.read(t);
         t = new JPEGCodec().decompress(t, new Object[] {
-          new Boolean(core.littleEndian[0]), new Boolean(core.interleaved[0])});
+          new Boolean(isLittleEndian()), new Boolean(isInterleaved())});
 
-        int row = core.sizeX[0] * bytes * getRGBChannelCount();
+        int row = getSizeX() * bytes * getRGBChannelCount();
 
         for (int yy=0; yy<h; yy++) {
           System.arraycopy(t, (yy + y) * row + x * bytes * getRGBChannelCount(),
@@ -126,13 +125,7 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       else {
-        s.skipBytes(y * core.sizeX[0] * bytes * getRGBChannelCount());
-
-        for (int yy=0; yy<h; yy++) {
-          s.skipBytes(x * bytes * getRGBChannelCount());
-          s.read(buf, yy * len, len);
-          s.skipBytes(bytes * getRGBChannelCount() * (core.sizeX[0] - w - x));
-        }
+        DataTools.readPlane(s, x, y, w, h, this, buf);
       }
       s.close();
     }
@@ -165,8 +158,7 @@ public class ZeissZVIReader extends FormatReader {
               int tileH = rowIndex + tileHeight <= y + h ?
                 tileHeight - tileY : y + h - rowIndex - tileY;
 
-              int count = core.sizeZ[0] * core.sizeT[0];
-              count *= core.sizeC[0];
+              int count = getSizeZ() * getSizeT() * getSizeC();
               int ii = no + (row*tileColumns + col)*count;
               if ((row % 2) == 1) {
                 ii = no + (row*tileColumns + (tileColumns - col - 1))*count;
@@ -179,8 +171,8 @@ public class ZeissZVIReader extends FormatReader {
               s.read(tile);
               if (isJPEG) {
                 tile = new JPEGCodec().decompress(tile,
-                  new Object[] {new Boolean(core.littleEndian[0]),
-                  new Boolean(core.interleaved[0])});
+                  new Object[] {new Boolean(isLittleEndian()),
+                  new Boolean(isInterleaved())});
               }
               s.close();
 
@@ -324,12 +316,12 @@ public class ZeissZVIReader extends FormatReader {
           }
 
           int tw = s.readInt();
-          if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
+          if (getSizeX() == 0 || (tw < getSizeX() && tw > 0)) {
             core.sizeX[0] = tw;
           }
           s.skipBytes(2);
           int th = s.readInt();
-          if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
+          if (getSizeY() == 0 || (th < getSizeY() && th > 0)) {
             core.sizeY[0] = th;
           }
 
@@ -366,15 +358,15 @@ public class ZeissZVIReader extends FormatReader {
 
           s.seek(old + len + 4);
 
-          boolean foundWidth = s.readInt() == core.sizeX[0];
-          boolean foundHeight = s.readInt() == core.sizeY[0];
+          boolean foundWidth = s.readInt() == getSizeX();
+          boolean foundHeight = s.readInt() == getSizeY();
           boolean findFailed = false;
           while ((!foundWidth || !foundHeight) &&
             s.getFilePointer() + 1 < s.length())
           {
             s.seek(s.getFilePointer() - 7);
-            foundWidth = s.readInt() == core.sizeX[0];
-            foundHeight = s.readInt() == core.sizeY[0];
+            foundWidth = s.readInt() == getSizeX();
+            foundHeight = s.readInt() == getSizeY();
           }
           s.seek(s.getFilePointer() - 16);
           findFailed = !foundWidth && !foundHeight;
@@ -413,8 +405,8 @@ public class ZeissZVIReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.rgb[0] = core.sizeC[0] > 1 &&
-      (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] != core.imageCount[0]);
+    core.rgb[0] = getSizeC() > 1 &&
+      (getSizeZ() * getSizeC() * getSizeT() != getImageCount());
     core.littleEndian[0] = true;
     core.interleaved[0] = !isJPEG;
     core.indexed[0] = false;
@@ -427,16 +419,15 @@ public class ZeissZVIReader extends FormatReader {
     if (channelNames.size() > 0) core.sizeC[0] *= channelNames.size();
     else core.sizeC[0] *= cIndices.size();
 
-    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
-      (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
+    core.imageCount[0] = getSizeZ() * getSizeT() *
+      (isRGB() ? getSizeC() / 3 : getSizeC());
 
     if (isTiled) {
       // calculate tile dimensions and number of tiles
-      int totalTiles =
-        offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
+      int totalTiles = offsets.size() / (getSizeZ() * getSizeC() * getSizeT());
 
-      tileRows = (realHeight / core.sizeY[0]) + 1;
-      tileColumns = (realWidth / core.sizeX[0]) + 1;
+      tileRows = (realHeight / getSizeY()) + 1;
+      tileColumns = (realWidth / getSizeX()) + 1;
 
       if (totalTiles <= 1) {
         tileRows = 1;
@@ -446,9 +437,8 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       while (tileRows * tileColumns > totalTiles) {
-        totalTiles =
-          offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
-        core.imageCount[0] -= core.sizeZ[0] * core.sizeT[0];
+        totalTiles = offsets.size() / (getSizeZ() * getSizeC() * getSizeT());
+        core.imageCount[0] -= getSizeZ() * getSizeT();
       }
 
       if (tileRows == 0) tileRows = 1;
@@ -456,8 +446,8 @@ public class ZeissZVIReader extends FormatReader {
 
       if (tileColumns == 1 && tileRows == 1) isTiled = false;
       else {
-        tileWidth = core.sizeX[0];
-        tileHeight = core.sizeY[0];
+        tileWidth = getSizeX();
+        tileHeight = getSizeY();
         core.sizeX[0] = tileWidth * tileColumns;
         core.sizeY[0] = tileHeight * tileRows;
       }
@@ -470,23 +460,23 @@ public class ZeissZVIReader extends FormatReader {
       int deltaZ = zct2[0] - zct1[0];
       int deltaC = zct2[1] - zct1[1];
       int deltaT = zct2[2] - zct1[2];
-      if (deltaZ > 0 && core.currentOrder[0].indexOf("Z") == -1) {
+      if (deltaZ > 0 && getDimensionOrder().indexOf("Z") == -1) {
         core.currentOrder[0] += "Z";
       }
-      if (deltaC > 0 && core.currentOrder[0].indexOf("C") == -1) {
+      if (deltaC > 0 && getDimensionOrder().indexOf("C") == -1) {
         core.currentOrder[0] += "C";
       }
-      if (deltaT > 0 && core.currentOrder[0].indexOf("T") == -1) {
+      if (deltaT > 0 && getDimensionOrder().indexOf("T") == -1) {
         core.currentOrder[0] += "T";
       }
     }
-    if (core.currentOrder[0].indexOf("C") == -1) {
+    if (getDimensionOrder().indexOf("C") == -1) {
       core.currentOrder[0] += "C";
     }
-    if (core.currentOrder[0].indexOf("Z") == -1) {
+    if (getDimensionOrder().indexOf("Z") == -1) {
       core.currentOrder[0] += "Z";
     }
-    if (core.currentOrder[0].indexOf("T") == -1) {
+    if (getDimensionOrder().indexOf("T") == -1) {
       core.currentOrder[0] += "T";
     }
 
@@ -497,14 +487,14 @@ public class ZeissZVIReader extends FormatReader {
     int lastT = tIndices.size() == 0 ? Integer.MAX_VALUE :
       ((Integer) tIndices.get(tIndices.size() - 1)).intValue();
 
-    if ((zIndex > lastZ || tIndex > lastT) && (zIndex == core.sizeC[0] - 1 ||
-      tIndex == core.sizeC[0] - 1 ||
-      (zIndex != 0 && zIndex % core.sizeC[0] == 0) ||
-      (tIndex != 0 && tIndex % core.sizeC[0] == 0)) && zIndex != lastT)
+    if ((zIndex > lastZ || tIndex > lastT) && (zIndex == getSizeC() - 1 ||
+      tIndex == getSizeC() - 1 ||
+      (zIndex != 0 && zIndex % getSizeC() == 0) ||
+      (tIndex != 0 && tIndex % getSizeC() == 0)) && zIndex != lastT)
     {
-      if (zIndex >= core.sizeZ[0] || tIndex >= core.sizeT[0]) {
-        int tmp = core.sizeZ[0];
-        core.sizeZ[0] = core.sizeT[0];
+      if (zIndex >= getSizeZ() || tIndex >= getSizeT()) {
+        int tmp = getSizeZ();
+        core.sizeZ[0] = getSizeT();
         core.sizeT[0] = tmp;
       }
     }
@@ -570,7 +560,7 @@ public class ZeissZVIReader extends FormatReader {
       (String[]) channelNames.keySet().toArray(new String[0]);
     Arrays.sort(channelNumbers);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<getSizeC(); i++) {
       int idx = i % getEffectiveSizeC();
       String em = idx < emWave.size() ? (String) emWave.get(idx) : null;
       String ex = idx < exWave.size() ? (String) exWave.get(idx) : null;
@@ -627,7 +617,7 @@ public class ZeissZVIReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
-    for (int plane=0; plane<core.imageCount[0]; plane++) {
+    for (int plane=0; plane<getImageCount(); plane++) {
       int[] zct = FormatTools.getZCTCoords(this, plane);
       String exposure =
         zct[1] < exposureTime.size() ? (String) exposureTime.get(zct[1]) : null;
@@ -793,7 +783,7 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (key.equals("ImageWidth")) {
         try {
-          if (core.sizeX[0] == 0) Integer.parseInt(value);
+          if (getSizeX() == 0) Integer.parseInt(value);
           if (realWidth == 0 && Integer.parseInt(value) > realWidth) {
             realWidth = Integer.parseInt(value);
           }
@@ -802,7 +792,7 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (key.equals("ImageHeight")) {
         try {
-          if (core.sizeY[0] == 0) core.sizeY[0] = Integer.parseInt(value);
+          if (getSizeY() == 0) core.sizeY[0] = Integer.parseInt(value);
           if (realHeight == 0 || Integer.parseInt(value) > realHeight) {
             realHeight = Integer.parseInt(value);
           }

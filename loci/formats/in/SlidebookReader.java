@@ -73,22 +73,11 @@ public class SlidebookReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int plane = core.sizeX[series] * core.sizeY[series] * 2;
-
+    int plane = getSizeX() * getSizeY() * 2;
     long offset = ((Long) pixelOffsets.get(series)).longValue() + plane * no;
-    in.seek(offset + y * core.sizeX[series] * 2);
+    in.seek(offset);
 
-    if (core.sizeX[series] == w) {
-      in.read(buf);
-    }
-    else {
-      for (int row=0; row<h; row++) {
-        in.skipBytes(x * 2);
-        in.read(buf, row * w * 2, w * 2);
-        in.skipBytes(2 * (core.sizeX[series] - w - x));
-      }
-    }
-
+    DataTools.readPlane(in, x, y, w, h, this, buf);
     return buf;
   }
 
@@ -136,7 +125,7 @@ public class SlidebookReader extends FormatReader {
 
     in.skipBytes(4);
     core.littleEndian[0] = in.read() == 0x49;
-    in.order(core.littleEndian[0]);
+    in.order(isLittleEndian());
 
     metadataOffsets = new Vector();
     pixelOffsets = new Vector();
@@ -295,7 +284,7 @@ public class SlidebookReader extends FormatReader {
           pixelOffsets.removeElementAt(size - 1);
         }
       }
-      boolean little = core.littleEndian[0];
+      boolean little = isLittleEndian();
       core = new CoreMetadata(pixelOffsets.size());
       Arrays.fill(core.littleEndian, little);
     }
@@ -404,26 +393,26 @@ public class SlidebookReader extends FormatReader {
     }
 
     for (int i=0; i<core.sizeX.length; i++) {
+      setSeries(i);
       long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
       boolean x = true;
-      while (core.sizeX[i] * core.sizeY[i] * core.sizeC[i] * core.sizeZ[i] >
-        pixels)
-      {
+      while (getSizeX() * getSizeY() * getSizeC() * getSizeZ() > pixels) {
         if (x) core.sizeX[i] /= 2;
         else core.sizeY[i] /= 2;
         x = !x;
       }
-      if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
+      if (getSizeZ() == 0) core.sizeZ[i] = 1;
       core.sizeT[i] = (int) (pixels /
-        (core.sizeX[i] * core.sizeY[i] * core.sizeZ[i] * core.sizeC[i]));
-      if (core.sizeT[i] == 0) core.sizeT[i] = 1;
-      core.imageCount[i] = core.sizeZ[i] * core.sizeT[i] * core.sizeC[i];
+        (getSizeX() * getSizeY() * getSizeZ() * getSizeC()));
+      if (getSizeT() == 0) core.sizeT[i] = 1;
+      core.imageCount[i] = getSizeZ() * getSizeC() * getSizeT();
       core.pixelType[i] = FormatTools.UINT16;
       core.currentOrder[i] = "XYZTC";
       core.indexed[i] = false;
       core.falseColor[i] = false;
       core.metadataComplete[i] = true;
     }
+    setSeries(0);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

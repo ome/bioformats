@@ -89,22 +89,11 @@ public class NRRDReader extends FormatReader {
     // TODO : add support for additional encoding types
     if (dataFile == null) {
       if (encoding.equals("raw")) {
-        int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-        int pixel = bpp * core.sizeC[0];
-        int rowLen = core.sizeX[0] * pixel;
-        in.seek(offset + no * core.sizeY[0] * rowLen + y * rowLen);
+        int bpp = FormatTools.getBytesPerPixel(getPixelType());
+        int rowLen = getSizeX() * bpp * getSizeC();
+        in.seek(offset + no * getSizeY() * rowLen);
 
-        if (core.sizeX[series] == w) {
-          in.read(buf);
-        }
-        else {
-          for (int row=0; row<h; row++) {
-            in.skipBytes(x * pixel);
-            in.read(buf, row * w * pixel, w * pixel);
-            in.skipBytes(pixel * (core.sizeX[0] - w - x));
-          }
-        }
-
+        DataTools.readPlane(in, x, y, w, h, this, buf);
         return buf;
       }
       else throw new FormatException("Unsupported encoding: " + encoding);
@@ -186,16 +175,16 @@ public class NRRDReader extends FormatReader {
             if (numDimensions >= 3 && i == 0 && size > 1 && size <= 4) {
               core.sizeC[0] = size;
             }
-            else if (i == 0 || (core.sizeC[0] > 1 && i == 1)) {
+            else if (i == 0 || (getSizeC() > 1 && i == 1)) {
               core.sizeX[0] = size;
             }
-            else if (i == 1 || (core.sizeC[0] > 1 && i == 2)) {
+            else if (i == 1 || (getSizeC() > 1 && i == 2)) {
               core.sizeY[0] = size;
             }
-            else if (i == 2 || (core.sizeC[0] > 1 && i == 3)) {
+            else if (i == 2 || (getSizeC() > 1 && i == 3)) {
               core.sizeZ[0] = size;
             }
-            else if (i == 3 || (core.sizeC[0] > 1 && i == 4)) {
+            else if (i == 3 || (getSizeC() > 1 && i == 4)) {
               core.sizeT[0] = size;
             }
           }
@@ -241,9 +230,9 @@ public class NRRDReader extends FormatReader {
       helper.setId(dataFile);
     }
 
-    core.rgb[0] = core.sizeC[0] > 1;
+    core.rgb[0] = getSizeC() > 1;
     core.interleaved[0] = true;
-    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
+    core.imageCount[0] = getSizeZ() * getSizeT();
     core.indexed[0] = false;
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;

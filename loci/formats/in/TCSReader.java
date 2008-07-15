@@ -192,22 +192,10 @@ public class TCSReader extends FormatReader {
 
     if (checkSuffix(id, XML_SUFFIX)) {
       in = new RandomAccessStream(id);
-      xcal = new Vector();
-      ycal = new Vector();
-      zcal = new Vector();
-      seriesNames = new Vector();
-      containerNames = new Vector();
-      containerCounts = new Vector();
-      x = new Vector();
-      y = new Vector();
-      z = new Vector();
-      c = new Vector();
-      t = new Vector();
-      bits = new Vector();
 
       // parse XML metadata
 
-      TCSHandler handler = new TCSHandler();
+      LeicaHandler handler = new LeicaHandler();
       String prefix = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>";
       String suffix = "</LEICA>";
       String xml = prefix + in.readString((int) in.length()) + suffix;
@@ -229,6 +217,20 @@ public class TCSReader extends FormatReader {
       catch (SAXException exc) {
         throw new FormatException(exc);
       }
+
+      xcal = handler.getXCal();
+      ycal = handler.getYCal();
+      zcal = handler.getZCal();
+      seriesNames = handler.getSeriesNames();
+      containerNames = handler.getContainerNames();
+      containerCounts = handler.getContainerCounts();
+      x = handler.getWidths();
+      y = handler.getHeights();
+      z = handler.getZs();
+      c = handler.getChannels();
+      t = handler.getTs();
+      bits = handler.getBits();
+      metadata = handler.getMetadata();
 
       // look for associated TIFF files
 
@@ -288,7 +290,7 @@ public class TCSReader extends FormatReader {
         }
       }
       Arrays.fill(core.currentOrder,
-        core.sizeZ[0] > core.sizeT[0] ? "XYCZT" : "XYCTZ");
+        getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ");
       Arrays.fill(core.metadataComplete, true);
       Arrays.fill(core.rgb, false);
       Arrays.fill(core.interleaved, false);
@@ -355,7 +357,7 @@ public class TCSReader extends FormatReader {
       }
 
       core.sizeT[0] = 0;
-      core.currentOrder[0] = core.rgb[0] ? "XYC" : "XY";
+      core.currentOrder[0] = isRGB() ? "XYC" : "XY";
 
       // determine the axis sizes and ordering
       boolean unique = true;
@@ -368,30 +370,30 @@ public class TCSReader extends FormatReader {
         }
         if (unique) {
           core.sizeT[0]++;
-          if (core.currentOrder[0].indexOf("T") < 0) {
+          if (getDimensionOrder().indexOf("T") < 0) {
             core.currentOrder[0] += "T";
           }
         }
         else if (i > 0) {
-          if ((ch[i] != ch[i - 1]) && core.currentOrder[0].indexOf("C") < 0) {
+          if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf("C") < 0) {
             core.currentOrder[0] += "C";
           }
-          else if (core.currentOrder[0].indexOf("Z") < 0) {
+          else if (getDimensionOrder().indexOf("Z") < 0) {
             core.currentOrder[0] += "Z";
           }
         }
         unique = true;
       }
 
-      if (core.currentOrder[0].indexOf("Z") < 0) core.currentOrder[0] += "Z";
-      if (core.currentOrder[0].indexOf("C") < 0) core.currentOrder[0] += "C";
-      if (core.currentOrder[0].indexOf("T") < 0) core.currentOrder[0] += "T";
+      if (getDimensionOrder().indexOf("Z") < 0) core.currentOrder[0] += "Z";
+      if (getDimensionOrder().indexOf("C") < 0) core.currentOrder[0] += "C";
+      if (getDimensionOrder().indexOf("T") < 0) core.currentOrder[0] += "T";
 
-      if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+      if (getSizeT() == 0) core.sizeT[0] = 1;
       if (channelCount == 0) channelCount = 1;
-      core.sizeZ[0] = ifds.length / (core.sizeT[0] * channelCount);
+      core.sizeZ[0] = ifds.length / (getSizeT() * channelCount);
       core.sizeC[0] *= channelCount;
-      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * channelCount;
+      core.imageCount[0] = getSizeZ() * getSizeT() * channelCount;
 
       // cut up comment
 
@@ -432,225 +434,6 @@ public class TCSReader extends FormatReader {
     }
     if (software == null) software = "";
     return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
-  }
-
-  // -- Helper classes --
-
-  /** SAX handler for parsing XML. */
-  class TCSHandler extends DefaultHandler {
-    private String series = "", fullSeries = "";
-    private int count = 0;
-    private boolean firstElement = true;
-
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      if (qName.equals("Element")) {
-        if (!attributes.getValue("Name").equals("DCROISet") && !firstElement) {
-          series = attributes.getValue("Name");
-          containerNames.add(series);
-          if (fullSeries == null || fullSeries.equals("")) fullSeries = series;
-          else fullSeries = "/" + series;
-        }
-        else if (firstElement) firstElement = false;
-      }
-      else if (qName.equals("Experiment")) {
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(attributes.getQName(i), attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("Image")) {
-        containerNames.remove(series);
-        if (containerCounts.size() < containerNames.size()) {
-          containerCounts.add(new Integer(1));
-        }
-        else if (containerCounts.size() > 0) {
-          int ndx = containerCounts.size() - 1;
-          int n = ((Integer) containerCounts.get(ndx)).intValue();
-          containerCounts.setElementAt(new Integer(n + 1), ndx);
-        }
-        if (fullSeries == null || fullSeries.equals("")) fullSeries = series;
-        seriesNames.add(fullSeries);
-      }
-      else if (qName.equals("ChannelDescription")) {
-        String prefix = "Channel " + count + " - ";
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
-        }
-        count++;
-        if (c.size() > seriesNames.size() - 1) {
-          c.setElementAt(new Integer(count), seriesNames.size() - 1);
-        }
-        else c.add(new Integer(count));
-      }
-      else if (qName.equals("DimensionDescription")) {
-        String prefix = "Dimension " + count + " - ";
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
-        }
-        int len = Integer.parseInt(attributes.getValue("NumberOfElements"));
-        int id = Integer.parseInt(attributes.getValue("DimID"));
-        float size = Float.parseFloat(attributes.getValue("Length"));
-        if (size < 0) size *= -1;
-
-        switch (id) {
-          case 1:
-            x.add(new Integer(len));
-            xcal.add(new Float((size * 1000000) / len));
-            int b = Integer.parseInt(attributes.getValue("BytesInc"));
-            bits.add(new Integer(b * 8));
-            break;
-          case 2:
-            y.add(new Integer(len));
-            ycal.add(new Float((size * 1000000) / len));
-            break;
-          case 3:
-            z.add(new Integer(len));
-            zcal.add(new Float((size * 1000000) / len));
-            break;
-          default:
-            t.add(new Integer(len));
-            break;
-        }
-      }
-      else if (qName.equals("ScannerSettingRecord")) {
-        String key = attributes.getValue("Identifier") + " - " +
-          attributes.getValue("Description");
-        if (fullSeries != null && !fullSeries.equals("")) {
-          key = fullSeries + " - " + key;
-        }
-        addMeta(key, attributes.getValue("Variant"));
-      }
-      else if (qName.equals("FilterSettingRecord")) {
-        String key = attributes.getValue("ObjectName") + " - " +
-          attributes.getValue("Description") + " - " +
-          attributes.getValue("Attribute");
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(key + " - " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("ATLConfocalSettingDefinition")) {
-        if (fullSeries.endsWith("Master sequential setting")) {
-          fullSeries = fullSeries.replaceAll("Master sequential setting",
-            "Sequential Setting 0");
-        }
-
-        if (fullSeries.indexOf("Sequential Setting ") == -1) {
-          if (fullSeries.equals("")) fullSeries = "Master sequential setting";
-          else fullSeries += " - Master sequential setting";
-        }
-        else {
-          int ndx = fullSeries.indexOf("Sequential Setting ") + 19;
-          int n = Integer.parseInt(fullSeries.substring(ndx)) + 1;
-          fullSeries = fullSeries.substring(0, ndx) + String.valueOf(n);
-        }
-        String prefix = "";
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - ";
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("Wheel")) {
-        String prefix = "Wheel " + count + " - ";
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
-        }
-        count++;
-      }
-      else if (qName.equals("WheelName")) {
-        String prefix = "Wheel " + (count - 1) + " - WheelName ";
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        int ndx = 0;
-        while (getMeta(prefix + ndx) != null) ndx++;
-        addMeta(prefix + ndx, attributes.getValue("FilterName"));
-      }
-      else if (qName.equals("MultiBand")) {
-        String prefix = "MultiBand Channel " + attributes.getValue("Channel");
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + " - " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("LaserLineSetting")) {
-        String prefix = "LaserLine " + attributes.getValue("LaserLine");
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + " - " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("Detector")) {
-        String prefix = "Detector Channel " + attributes.getValue("Channel");
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + " - " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("Laser")) {
-        String prefix = "Laser " + attributes.getValue("LaserName");
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + " - " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("TimeStamp")) {
-        long high = Long.parseLong(attributes.getValue("HighInteger"));
-        long low = Long.parseLong(attributes.getValue("LowInteger"));
-
-        high <<= 32;
-        if ((int) low < 0) {
-          low &= 0xffffffffL;
-        }
-        long stamp = high + low;
-        long ms = stamp / 10000;
-
-        String n = String.valueOf(count);
-        while (n.length() < 4) n = "0" + n;
-        addMeta(fullSeries + " - TimeStamp " + n,
-          DataTools.convertDate(ms, DataTools.COBOL));
-        count++;
-      }
-      else if (qName.equals("ChannelScalingInfo")) {
-        String prefix = "ChannelScalingInfo " + count;
-        if (fullSeries != null && !fullSeries.equals("")) {
-          prefix = fullSeries + " - " + prefix;
-        }
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + " - " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
-      }
-      else if (qName.equals("RelTimeStamp")) {
-        addMeta(fullSeries + " RelTimeStamp " + attributes.getValue("Frame"),
-          attributes.getValue("Time"));
-      }
-      else count = 0;
-    }
   }
 
 }
