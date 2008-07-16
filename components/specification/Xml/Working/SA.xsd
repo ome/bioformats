@@ -27,21 +27,29 @@
 	<xsd:element name="StructuredAnnotations">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:element ref="FileAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="SvgAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="FileAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="ListAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="TextAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="LongAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="DoubleAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="BooleanAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="TimestampAnnotation" minOccurs="1" maxOccurs="1"/>
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:complexType name="CommonAnnotation">
 		<xsd:sequence>
-			<xsd:element name="Link" minOccurs="1" maxOccurs="unbounded">
-				<xsd:simpleType>
-					<xsd:restriction base="OME:LSID"/>
-				</xsd:simpleType>
-			</xsd:element>
+			<xsd:element ref="Link" minOccurs="1" maxOccurs="unbounded"/>
 		</xsd:sequence>
 		<xsd:attribute name="ID" use="required" type="AnnotationID"></xsd:attribute>
+		<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
 	</xsd:complexType>
+	<xsd:element name="Link">
+		<xsd:simpleType>
+			<xsd:restriction base="OME:LSID"/>
+		</xsd:simpleType>
+	</xsd:element>
 	<xsd:simpleType name="AnnotationID">
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Annotation:\S+)|(Annotation:\S+)"/>
@@ -51,22 +59,130 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
-					<xsd:choice>
-						<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
-						<xsd:element name="ExternalFile" minOccurs="1" maxOccurs="1"/>
-					</xsd:choice>
-					<xsd:attribute name="MimeType"/>
-					<xsd:attribute name="FileName"/>
+					<xsd:sequence>
+						<xsd:element name="FileName" minOccurs="1" maxOccurs="1"/>
+						<xsd:element name="MimeType" minOccurs="0" maxOccurs="1"/>	
+						<xsd:choice>
+							<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
+							<xsd:element name="ExternalFile" minOccurs="1" maxOccurs="1"/>
+						</xsd:choice>
+					</xsd:sequence>
 				</xsd:extension>
-			</xsd:complexContent>
+			</xsd:complexContent> 
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="SvgAnnotation">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
-					<xsd:attribute name="color"/>
-					<xsd:attribute name="line-width"/>
+					<xsd:attribute name="fill" use="optional" type="xsd:string"/>
+					<xsd:attribute name="fill-opacity" use="optional" type="xsd:string"/>
+					<xsd:attribute name="fill-rule" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke-opacity" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke-width" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke-dashoffset" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke-dasharray" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke-linecap" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke-linejoin" use="optional" type="xsd:string"/>
+					<xsd:attribute name="stroke-miterlimit" use="optional" type="xsd:string"/>
+					<xsd:attribute name="color-interpolation" use="optional" type="xsd:string"/>
+					<xsd:attribute name="color-rendering" use="optional" type="xsd:string"/>
+					<xsd:attribute name="opacity" use="optional" type="xsd:string"/>
+					<xsd:attribute name="marker-end" use="optional" type="xsd:string"/>
+					<xsd:attribute name="font-family" use="optional" type="xsd:string"/>
+					<xsd:attribute name="font-size" use="optional" type="xsd:string"/>
+					<xsd:attribute name="font-adjust" use="optional" type="xsd:string"/>
+					<xsd:attribute name="font-strech" use="optional" type="xsd:string"/>
+					<xsd:attribute name="font-style" use="optional" type="xsd:string"/>
+					<xsd:attribute name="font-variant" use="optional" type="xsd:string"/>
+					<xsd:attribute name="font-weight" use="optional" type="xsd:string"/>
+					<xsd:attribute name="alignment-baseline" use="optional" type="xsd:string"/>
+					<xsd:attribute name="baseline-shift" use="optional" type="xsd:string"/>
+					<xsd:attribute name="direction" use="optional" type="xsd:string"/>
+					<xsd:attribute name="dominant-baseline" use="optional" type="xsd:string"/>
+					<xsd:attribute name="glyph-orientation-horizontal" use="optional" type="xsd:string"/>
+					<xsd:attribute name="glyph-orientation-vertical" use="optional" type="xsd:string"/>
+					<xsd:attribute name="kerning" use="optional" type="xsd:string"/>
+					<xsd:attribute name="letter-spacing" use="optional" type="xsd:string"/>
+					<xsd:attribute name="text-anchor" use="optional" type="xsd:string"/>
+					<xsd:attribute name="text-decoration" use="optional" type="xsd:string"/>
+					<xsd:attribute name="unicode-bidi" use="optional" type="xsd:string"/>
+					<xsd:attribute name="word-spacing" use="optional" type="xsd:string"/>
+					<xsd:attribute name="rotate" use="optional" type="xsd:string"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ListAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:sequence>
+						<xsd:element name="List">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element ref="Link" minOccurs="1" maxOccurs="unbounded"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TextAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:sequence>
+						<xsd:element name="Value" type="xsd:string"/>
+						<xsd:element name="TextType" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LongAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:sequence>
+						<xsd:element name="Value" type="xsd:long"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DoubleAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:sequence>
+						<xsd:element name="Value" type="xsd:double"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="BooleanAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:sequence>
+						<xsd:element name="Value" type="xsd:boolean"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>	
+	<xsd:element name="TimestampAnnotation">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:sequence>
+						<xsd:element name="Value" type="xsd:dateTime"/>
+					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

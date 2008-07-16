@@ -49,7 +49,19 @@
 		</ome:ROI>
 	</ome:Image>
 	<sa:StructuredAnnotations>
-		<sa:SvgAnnotation ID="Annotation:3" Namespace="ome:omero:insight:roi:svg" 
+		<sa:FileAnnotation ID="Annotation:1" Namespace="urn:ome:omero:attachment:file">
+			<sa:Link>Shape:5</sa:Link>
+			<sa:FileName>file.txt</sa:FileName>
+			<sa:MimeType>text/plain</sa:MimeType>
+			<bf:BinData Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+		</sa:FileAnnotation>
+		<sa:FileAnnotation ID="Annotation:2" Namespace="urn:ome:omero:attachment:file">
+			<sa:Link>Image:1</sa:Link>
+			<sa:FileName>report.pdf</sa:FileName>
+			<sa:MimeType>application/pdf</sa:MimeType>
+			<sa:ExternalFile>roi-sample-annotations/report.pdf</sa:ExternalFile>
+		</sa:FileAnnotation>
+		<sa:SvgAnnotation ID="Annotation:3" Namespace="urn:ome:omero:insight:roi:svg" 
 			fill-opacity="0.25098039215686274" fill-rule="evenodd" stroke="#c4c4c4"
 			stroke-dashoffset="0" stroke-linecap="butt" stroke-linejoin="miter"
 			stroke-miterlimit="3" stroke-opacity="0.7686274509803922" stroke-width="1"
@@ -66,6 +78,49 @@
 			>
 			<sa:Link>Shape:1</sa:Link>
 		</sa:SvgAnnotation>
+		<sa:FileAnnotation ID="Annotation:5" Namespace="ome:omero:attachment:origionalfile">
+			<sa:Link>Shape:5</sa:Link>
+			<sa:FileName>origionalfile.dcm</sa:FileName>
+			<sa:MimeType>application/dicom</sa:MimeType>
+			<sa:ExternalFile>roi-sample-annotations/origionalfile.dcm</sa:ExternalFile>
+		</sa:FileAnnotation>
+		<sa:BooleanAnnotation ID="Annotation:6" Namespace="ome:omero:render:noise-filter">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>true</sa:Value>
+		</sa:BooleanAnnotation>
+		<sa:DoubleAnnotation ID="Annotation:7" Namespace="ome:omero:render:gamma">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>4.2</sa:Value>
+		</sa:DoubleAnnotation>
+		<sa:ListAnnotation ID="Annotation:8" Namespace="ome:omero:roi:svg-list">
+			<sa:Link>ROI:1</sa:Link>
+			<sa:List>
+				<sa:Link>Annotation:3</sa:Link>
+				<sa:Link>Annotation:4</sa:Link>
+			</sa:List>
+		</sa:ListAnnotation>
+		<sa:LongAnnotation ID="Annotation:9" Namespace="ome:omero:render:cut-off-min">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>42</sa:Value>
+		</sa:LongAnnotation>
+		<sa:LongAnnotation ID="Annotation:10" Namespace="ome:omero:render:cut-off-max">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>204</sa:Value>
+		</sa:LongAnnotation>
+		<sa:TextAnnotation ID="Annotation:10" Namespace="ome:omero:attachment:url">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>http://www.ome-xml.org/</sa:Value>
+			<sa:TextType>url</sa:TextType>
+		</sa:TextAnnotation>
+		<sa:TimestampAnnotation ID="Annotation:11" Namespace="ome:omero:insight:last-viewed">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>2008-03-04T14:17:43.0Z</sa:Value>
+		</sa:TimestampAnnotation>
+		<sa:TextAnnotation ID="Annotation:12" Namespace="ome:omero:tag:taglist">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>"good image" "jcb paper" "Figure 1"</sa:Value>
+			<sa:TextType>list</sa:TextType>
+		</sa:TextAnnotation>
 	</sa:StructuredAnnotations>
 </ome:OME>
 
