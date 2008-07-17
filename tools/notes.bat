@@ -5,7 +5,7 @@ rem notes.bat: a batch file for launching OME Notes
 rem Required JARs: loci_tools.jar
 
 rem JAR libraries must be in the same directory as this
-rem command line script for the command to function.  
+rem command line script for the command to function.
 
 rem If you are a developer working from source and have
 rem the LOCI classes in your CLASSPATH, you can set the
@@ -16,8 +16,8 @@ set DIR=%~dp0
 
 if "%LOCI_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries
-  if exist %DIR%loci_tools.jar goto found
-  if exist %DIR%bio-formats.jar goto found
+  if exist "%DIR%loci_tools.jar" goto found
+  if exist "%DIR%bio-formats.jar" goto found
   goto missing
 ) else (
   rem Developer environment variable set; try to launch
@@ -27,7 +27,7 @@ if "%LOCI_DEVEL%" == "" (
 
 :found
 rem Library found; try to launch
-java -mx512m -cp %DIR%bio-formats.jar;%DIR%loci_tools.jar %PROG% %*
+java -mx512m -cp "%DIR%bio-formats.jar";"%DIR%loci_tools.jar" %PROG% %*
 goto end
 
 :missing
