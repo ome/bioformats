@@ -72,8 +72,10 @@ public class LegacyQTReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) { return false; }
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    return false;
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)

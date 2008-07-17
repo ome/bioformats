@@ -58,6 +58,9 @@ public interface IFormatReader extends IFormatHandler {
   /** Checks if the given block is a valid header for this file format. */
   boolean isThisType(byte[] block);
 
+  /** Checks if the given stream is a valid stream for this file format. */
+  boolean isThisType(RandomAccessStream stream) throws IOException;
+
   /** Determines the number of images in the current file. */
   int getImageCount();
 

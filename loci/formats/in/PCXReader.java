@@ -59,9 +59,10 @@ public class PCXReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return block.length >= blockCheckLen && block[0] == 10;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.read() == 10;
   }
 
   /**

@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.IOException;
+
 /**
  * A utility class for format reader and writer implementations.
  *
@@ -498,6 +500,14 @@ public final class FormatTools {
       throw new FormatException("Buffer too small (got " + len +
         ", expected " + size + ").");
     }
+  }
+
+  public static boolean validStream(RandomAccessStream stream, int len,
+    boolean littleEndian) throws IOException
+  {
+    stream.seek(0);
+    stream.order(littleEndian);
+    return stream.length() >= len;
   }
 
   // -- Utility methods -- other

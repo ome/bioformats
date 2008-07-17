@@ -55,14 +55,17 @@ public class NRRDReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new NRRD reader. */
-  public NRRDReader() { super("NRRD", new String[] {"nrrd", "nhdr"}); }
+  public NRRDReader() {
+    super("NRRD", new String[] {"nrrd", "nhdr"});
+    blockCheckLen = 4;
+  }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < 4) return false;
-    return new String(block).startsWith("NRRD");
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readString(blockCheckLen).startsWith("NRRD");
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

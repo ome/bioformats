@@ -116,19 +116,11 @@ public class LeicaReader extends FormatReader {
     return lei.exists();
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-    try {
-      RandomAccessStream stream = new RandomAccessStream(block);
-      Hashtable ifd = TiffTools.getFirstIFD(stream);
-      stream.close();
-      return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
-    }
-    catch (IOException e) {
-      if (debug) LogTools.trace(e);
-    }
-    return false;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

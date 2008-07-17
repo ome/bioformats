@@ -102,12 +102,10 @@ public class OpenlabReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-    return block[0] == 0 && block[1] == 0 &&
-      block[2] == -1 && block[3] == -1 && block[4] == 105 &&
-      block[5] == 109 && block[6] == 112 && block[7] == 114;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readLong() == 0xffff696d7072L;
   }
 
   /**

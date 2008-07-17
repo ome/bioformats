@@ -189,15 +189,17 @@ public class BioRadReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, PIC_SUFFIX)) return true;
     String fname = new File(name.toLowerCase()).getName();
-    if (fname.equals("lse.xml") || fname.equals("data.raw")) return true;
-    return false;
+    return fname.equals("lse.xml") || fname.equals("data.raw");
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-    return DataTools.bytesToShort(block, 54, LITTLE_ENDIAN) == PIC_FILE_ID ||
-      new String(block).startsWith("[Input Sources]");
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, LITTLE_ENDIAN)) {
+      return false;
+    }
+    String c = stream.readString(blockCheckLen);
+    stream.seek(54);
+    return stream.readShort() == PIC_FILE_ID || c.startsWith("[Input Sources]");
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

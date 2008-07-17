@@ -80,13 +80,16 @@ public class OMEXMLReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new OME-XML reader. */
-  public OMEXMLReader() { super("OME-XML", "ome"); }
+  public OMEXMLReader() {
+    super("OME-XML", "ome");
+    blockCheckLen = 64;
+  }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    String xml = new String(block);
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    String xml = stream.readString(blockCheckLen);
     return xml.startsWith("<?xml") && xml.indexOf("<OME") >= 0;
   }
 

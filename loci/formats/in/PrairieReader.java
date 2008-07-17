@@ -117,27 +117,18 @@ public class PrairieReader extends FormatReader {
     return hasMetadataFiles && super.isThisType(name, false);
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-
-    String s = new String(block);
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    String s = stream.readString(blockCheckLen);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
 
-    try {
-      RandomAccessStream stream = new RandomAccessStream(block);
-      Hashtable ifd = TiffTools.getFirstIFD(stream);
-      String software = (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
-      stream.close();
-      return software.indexOf("Prairie") != -1 &&
-        ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
-        ifd.containsKey(new Integer(PRAIRIE_TAG_2)) &&
-        ifd.containsKey(new Integer(PRAIRIE_TAG_3));
-    }
-    catch (Exception e) {
-      if (debug) LogTools.trace(e);
-    }
-    return false;
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    String software = (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
+    return software.indexOf("Prairie") != -1 &&
+      ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
+      ifd.containsKey(new Integer(PRAIRIE_TAG_2)) &&
+      ifd.containsKey(new Integer(PRAIRIE_TAG_3));
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

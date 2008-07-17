@@ -89,7 +89,10 @@ public class ND2Reader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
-  public ND2Reader() { super("Nikon ND2", new String[] {"nd2", "jp2"}); }
+  public ND2Reader() {
+    super("Nikon ND2", new String[] {"nd2", "jp2"});
+    blockCheckLen = 8;
+  }
 
   // -- ND2Reader API methods --
 
@@ -103,11 +106,11 @@ public class ND2Reader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < 8) return false;
-    return block[4] == 0x6a && block[5] == 0x50 && block[6] == 0x20 &&
-      block[7] == 0x20;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    stream.seek(4);
+    return stream.readInt() == 0x6a502020;
   }
 
   /**

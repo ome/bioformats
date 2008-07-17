@@ -59,16 +59,17 @@ public class IPLabReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false; // block length too short
-    String s = new String(block, 0, 4);
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    String s = stream.readString(4);
     boolean big = s.equals("iiii");
     boolean little = s.equals("mmmm");
     if (!big && !little) return false;
-    int size = DataTools.bytesToInt(block, 4, 4, little);
+    stream.order(little);
+    int size = stream.readInt();
     if (size != 4) return false; // first block size should be 4
-    int version = DataTools.bytesToInt(block, 8, 4, little);
+    int version = stream.readInt();
     return version >= 0x100e;
   }
 

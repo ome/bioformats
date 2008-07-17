@@ -226,21 +226,57 @@ public final class TiffTools {
   }
 
   /**
+   * Tests the given stream to see if it represents
+   * a TIFF file.
+   */
+  public static boolean isValidHeader(RandomAccessStream stream) {
+    try {
+      return checkHeader(stream) != null;
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+
+  /**
    * Checks the TIFF header.
    * @return true if little-endian,
    *         false if big-endian,
    *         or null if not a TIFF.
    */
   public static Boolean checkHeader(byte[] block) {
-    if (block.length < 4) return null;
+    try {
+      RandomAccessStream s = new RandomAccessStream(block);
+      Boolean result = checkHeader(s);
+      s.close();
+      return result;
+    }
+    catch (IOException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Checks the TIFF header.
+   * @return true if little-endian,
+   *         false if big-endian,
+   *         or null if not a TIFF.
+   */
+  public static Boolean checkHeader(RandomAccessStream stream)
+    throws IOException
+  {
+    if (stream.length() < 4) return null;
 
     // byte order must be II or MM
-    boolean littleEndian = block[0] == LITTLE && block[1] == LITTLE; // II
-    boolean bigEndian = block[0] == BIG && block[1] == BIG; // MM
+    int endianOne = stream.read();
+    int endianTwo = stream.read();
+    boolean littleEndian = endianOne == LITTLE && endianTwo == LITTLE; // II
+    boolean bigEndian = endianOne == BIG && endianTwo == BIG; // MM
     if (!littleEndian && !bigEndian) return null;
 
     // check magic number (42)
-    short magic = DataTools.bytesToShort(block, 2, littleEndian);
+    stream.order(littleEndian);
+    short magic = stream.readShort();
     if (magic != MAGIC_NUMBER && magic != BIG_TIFF_MAGIC_NUMBER) return null;
 
     return new Boolean(littleEndian);
@@ -367,25 +403,6 @@ public final class TiffTools {
       return new TiffIFDEntry(entryTag, entryType, valueCount, valueOffset);
     }
     throw new UnknownTagException();
-  }
-
-  /**
-   * Checks the TIFF header.
-   * @return true if little-endian,
-   *         false if big-endian,
-   *         or null if not a TIFF.
-   */
-  public static Boolean checkHeader(RandomAccessStream in) throws IOException {
-    if (DEBUG) debug("getIFDs: reading IFD entries");
-
-    // start at the beginning of the file
-    in.seek(0);
-
-    byte[] header = new byte[4];
-    in.readFully(header);
-    Boolean b = checkHeader(header);
-    if (b != null) in.order(b.booleanValue());
-    return b;
   }
 
   /**

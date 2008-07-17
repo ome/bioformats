@@ -177,6 +177,14 @@ public class ImageReader implements IFormatReader {
     return false;
   }
 
+  /* @see IFormatReader.isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    for (int i=0; i<readers.length; i++) {
+      if (readers[i].isThisType(stream)) return true;
+    }
+    return false;
+  }
+
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 2);

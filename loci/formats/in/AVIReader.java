@@ -83,11 +83,10 @@ public class AVIReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-    return block[0] == 'R' && block[1] == 'I' &&
-      block[2] == 'F' && block[3] == 'F';
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readString(4).equals("RIFF");
   }
 
   /**

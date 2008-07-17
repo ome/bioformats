@@ -78,9 +78,9 @@ public class MicromanagerReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] b) {
-    return tiffReader.isThisType(b);
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    return tiffReader.isThisType(stream);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */

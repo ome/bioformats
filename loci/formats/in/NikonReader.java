@@ -143,18 +143,11 @@ public class NikonReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    try {
-      RandomAccessStream stream = new RandomAccessStream(block);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      if (debug) trace(e);
-    }
-    return false;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
   }
 
   // -- IFormatHandler API methods --
@@ -397,11 +390,6 @@ public class NikonReader extends BaseTiffReader {
         return "Capture Editor Data";
     }
     return "" + tag;
-  }
-
-  private boolean isThisType(RandomAccessStream stream) throws IOException {
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
-    return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
   }
 
 }

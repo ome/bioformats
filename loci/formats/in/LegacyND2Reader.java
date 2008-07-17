@@ -80,8 +80,8 @@ public class LegacyND2Reader extends FormatReader {
     return libraryFound && super.isThisType(file, open);
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
     return false;
   }
 

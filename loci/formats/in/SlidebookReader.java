@@ -52,15 +52,17 @@ public class SlidebookReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Slidebook reader. */
-  public SlidebookReader() { super("Olympus Slidebook", "sld"); }
+  public SlidebookReader() {
+    super("Olympus Slidebook", "sld");
+    blockCheckLen = 8;
+  }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < 8) return false;
-    return block[0] == 0x6c && block[1] == 0 && block[2] == 0 &&
-      block[3] == 1 && block[4] == 0x49 && block[5] == 0x49 && block[6] == 0;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readLong() == 0x6c000001494900L;
   }
 
   /**

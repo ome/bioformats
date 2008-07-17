@@ -130,10 +130,10 @@ public class DicomReader extends FormatReader {
     return super.isThisType(name, open);
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-    return new String(block, 0, blockCheckLen).indexOf("DICM") >= 0;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readString(blockCheckLen).indexOf("DICM") >= 0;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

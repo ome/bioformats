@@ -85,18 +85,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    try {
-      RandomAccessStream stream = new RandomAccessStream(block);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      if (debug) trace(e);
-    }
-    return false;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
+    return comment != null && comment.trim().startsWith("<MetaData>");
   }
 
   // -- Internal FormatReader API methods --
@@ -213,13 +206,6 @@ public class MetamorphTiffReader extends BaseTiffReader {
         else if (id.equals("image-name")) imageName = value;
       }
     }
-  }
-
-  // -- Helper methods --
-
-  private boolean isThisType(RandomAccessStream stream) throws IOException {
-    String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
-    return comment != null && comment.trim().startsWith("<MetaData>");
   }
 
 }

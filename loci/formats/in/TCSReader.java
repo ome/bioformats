@@ -103,15 +103,23 @@ public class TCSReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    try {
-      return isThisType(new RandomAccessStream(block));
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    // check for Leica TCS IFD directory entries
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+
+    if (ifd == null) return false;
+    String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
+    if (document == null) document = "";
+    Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
+    String software = null;
+    if (s instanceof String) software = (String) s;
+    else if (s instanceof String[]) {
+      String[] ss = (String[]) s;
+      if (ss.length > 0) software = ss[0];
     }
-    catch (IOException e) {
-      if (debug) LogTools.trace(e);
-      return false;
-    }
+    if (software == null) software = "";
+    return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -411,27 +419,6 @@ public class TCSReader extends FormatReader {
       }
       core = tiffReaders[0].getCoreMetadata();
     }
-  }
-
-  // -- Helper methods --
-
-  private boolean isThisType(RandomAccessStream stream) throws IOException {
-    // check for Leica TCS IFD directory entries
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
-    stream.close();
-
-    if (ifd == null) return false;
-    String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
-    if (document == null) document = "";
-    Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
-    String software = null;
-    if (s instanceof String) software = (String) s;
-    else if (s instanceof String[]) {
-      String[] ss = (String[]) s;
-      if (ss.length > 0) software = ss[0];
-    }
-    if (software == null) software = "";
-    return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
   }
 
 }

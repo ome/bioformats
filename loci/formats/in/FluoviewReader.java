@@ -95,18 +95,15 @@ public class FluoviewReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    try {
-      RandomAccessStream stream = new RandomAccessStream(block);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      if (debug) trace(e);
-    }
-    return false;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    String com = TiffTools.getComment(ifd);
+    if (com == null) com = "";
+    if (ifd == null) return false;
+    return com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
+      ifd.containsKey(new Integer(MMHEADER)) ||
+      ifd.containsKey(new Integer(MMSTAMP));
   }
 
   /**
@@ -433,18 +430,6 @@ public class FluoviewReader extends BaseTiffReader {
       store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     }
     */
-  }
-
-  // -- Helper methods --
-
-  private boolean isThisType(RandomAccessStream stream) throws IOException {
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
-    String com = TiffTools.getComment(ifd);
-    if (com == null) com = "";
-    if (ifd == null) return false;
-    return com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
-      ifd.containsKey(new Integer(MMHEADER)) ||
-      ifd.containsKey(new Integer(MMSTAMP));
   }
 
 }

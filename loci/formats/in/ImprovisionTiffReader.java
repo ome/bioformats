@@ -69,18 +69,11 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    try {
-      RandomAccessStream stream = new RandomAccessStream(block);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      if (debug) trace(e);
-    }
-    return false;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    String comment = TiffTools.getComment(ifd);
+    return comment != null && comment.indexOf("Improvision") != -1;
   }
 
   // -- IFormatHandler API methods --
@@ -227,15 +220,6 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
     store.setDimensionsTimeIncrement(new Float(pixelSizeT / 1000000.0), 0, 0);
-  }
-
-  // -- Helper methods --
-
-  private boolean isThisType(RandomAccessStream stream) throws IOException {
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
-    String comment = TiffTools.getComment(ifd);
-    if (comment == null) return false;
-    return comment.indexOf("Improvision") != -1;
   }
 
 }

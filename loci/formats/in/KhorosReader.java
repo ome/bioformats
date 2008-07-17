@@ -52,9 +52,10 @@ public class KhorosReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return block[0] == (byte) 0xab && block[1] == 1;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readShort() == 0xab01;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

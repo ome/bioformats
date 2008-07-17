@@ -51,13 +51,17 @@ public class PSDReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new PSD reader. */
-  public PSDReader() { super("Adobe Photoshop", "psd"); }
+  public PSDReader() {
+    super("Adobe Photoshop", "psd");
+    blockCheckLen = 4;
+  }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return new String(block).startsWith("8BPS");
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readString(blockCheckLen).startsWith("8BPS");
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

@@ -112,7 +112,10 @@ public class QTReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new QuickTime reader. */
-  public QTReader() { super("QuickTime", "mov"); }
+  public QTReader() {
+    super("QuickTime", "mov");
+    blockCheckLen = 64;
+  }
 
   // -- QTReader API methods --
 
@@ -126,30 +129,27 @@ public class QTReader extends FormatReader {
     if (super.isThisType(name, open)) return true; // check extension
 
     if (open) {
-      byte[] b;
       try {
-        in = new RandomAccessStream(name);
-        long len = in.length();
-        if (len > 16) len = 16;
-        b = new byte[(int) len];
-        in.readFully(b);
-        in.close();
+        RandomAccessStream s = new RandomAccessStream(name);
+        boolean isThisType = isThisType(s);
+        s.close();
+        return isThisType;
       }
-      catch (IOException exc) {
-        if (debug) trace(exc);
+      catch (IOException e) {
+        if (debug) LogTools.trace(e);
         return false;
       }
-      return isThisType(b);
     }
     else { // not allowed to check the file contents
       return name.indexOf(".") < 0; // file appears to have no extension
     }
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
     // use a crappy hack for now
-    String s = new String(block);
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    String s = stream.readString(blockCheckLen);
     for (int i=0; i<CONTAINER_TYPES.length; i++) {
       if (s.indexOf(CONTAINER_TYPES[i]) >= 0) return true;
     }

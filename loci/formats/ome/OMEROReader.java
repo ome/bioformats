@@ -82,8 +82,8 @@ public class OMEROReader extends FormatReader {
     return st.countTokens() == 5;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
     return false;
   }
 

@@ -67,6 +67,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isThisType(block);
   }
 
+  public boolean isThisType(RandomAccessStream stream) throws IOException{
+    return reader.isThisType(stream);
+  }
+
   public void setId(String id) throws FormatException, IOException {
     reader.setId(id);
   }

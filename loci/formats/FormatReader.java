@@ -146,12 +146,9 @@ public abstract class FormatReader extends FormatHandler
   protected boolean checkBytes(String name, int maxLen) {
     try {
       RandomAccessStream ras = new RandomAccessStream(name);
-      long len = ras.length();
-      if (len > maxLen) len = maxLen;
-      byte[] buf = new byte[(int) len];
-      ras.readFully(buf);
+      boolean isThisType = isThisType(ras);
       ras.close();
-      return isThisType(buf);
+      return isThisType;
     }
     catch (IOException exc) {
       if (debug) trace(exc);
@@ -244,6 +241,20 @@ public abstract class FormatReader extends FormatHandler
     // suffix matching was inconclusive; we need to analyze the file contents
     if (!open || blockCheckLen == 0) return false;
     return checkBytes(name, blockCheckLen);
+  }
+
+  /* @see IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    try {
+      RandomAccessStream stream = new RandomAccessStream(block);
+      boolean isThisType = isThisType(stream);
+      stream.close();
+      return isThisType;
+    }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
+    return false;
   }
 
   /* @see IFormatReader#getImageCount() */

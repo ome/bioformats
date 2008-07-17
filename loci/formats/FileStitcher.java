@@ -235,6 +235,11 @@ public class FileStitcher implements IFormatReader {
     return reader.isThisType(block);
   }
 
+  /* @see IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    return reader.isThisType(stream);
+  }
+
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 2);

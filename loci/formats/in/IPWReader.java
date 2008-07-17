@@ -54,10 +54,10 @@ public class IPWReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return block[0] == 0xd0 && block[1] == 0xcf &&
-      block[2] == 0x11 && block[3] == 0xe0;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readInt() == 0xd0cf11e0;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

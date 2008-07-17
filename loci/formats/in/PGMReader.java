@@ -50,13 +50,17 @@ public class PGMReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new PGMReader. */
-  public PGMReader() { super("Portable Gray Map", "pgm"); }
+  public PGMReader() {
+    super("Portable Gray Map", "pgm");
+    blockCheckLen = 1;
+  }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return block[0] == 'P';
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.read() == 'P';
   }
 
   /**

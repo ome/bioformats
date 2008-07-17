@@ -110,10 +110,10 @@ public class FV1000Reader extends FormatReader {
     return oif.exists() && !oif.isDirectory();
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-    String s = DataTools.stripString(new String(block));
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    String s = DataTools.stripString(stream.readString(blockCheckLen));
     return s.indexOf("FileInformation") != -1 ||
       s.indexOf("Acquisition Parameters") != -1;
   }

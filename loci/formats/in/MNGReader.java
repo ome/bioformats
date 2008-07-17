@@ -56,12 +56,10 @@ public class MNGReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < 8) return false;
-    return block[0] == 0x8a && block[1] == 0x4d && block[2] == 0x4e &&
-      block[3] == 0x47 && block[4] == 0x0d && block[5] == 0x0a &&
-      block[6] == 0x1a && block[7] == 0x0a;
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
+  public boolean isThisType(RandomAccessStream stream) throws IOException {
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    return stream.readLong() == 0x8a4d4e470d0a1a0aL;
   }
 
   /**
