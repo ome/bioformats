@@ -71,28 +71,29 @@ public final class Util {
    * @param r Format reader to use for reading the data.
    * @param no Position of image plane.
    */
-  public static ImageProcessor openProcessor(IFormatReader r, int no)
+  public static ImageProcessor[] openProcessors(IFormatReader r, int no)
     throws FormatException, IOException
   {
-    return openProcessor(r, no, null);
+    return openProcessors(r, no, null);
   }
 
   /**
-   * Creates an ImageJ image processor object using the given format reader
-   * for the image plane at the given position.
+   * Returns an array of ImageProcessors that represent the given slice.
+   * There is one ImageProcessor per RGB channel, i.e.
+   * length of returned array == r.getRGBChannelCount().
    *
    * @param r Format reader to use for reading the data.
    * @param no Position of image plane.
    * @param crop Image cropping specifications, or null if no cropping
    *   is to be done.
    */
-  public static ImageProcessor openProcessor(IFormatReader r, int no,
+  public static ImageProcessor[] openProcessors(IFormatReader r, int no,
     Rectangle crop) throws FormatException, IOException
   {
     // read byte array
     byte[] b = null;
     boolean first = true;
-    boolean doCrop = crop != null;
+    if (crop == null) crop = new Rectangle(0, 0, r.getSizeX(), r.getSizeY());
     while (true) {
       // read LuraWave license code, if available
       String code = Prefs.get(LuraWaveCodec.LICENSE_PROPERTY, null);
@@ -100,10 +101,7 @@ public final class Util {
         System.setProperty(LuraWaveCodec.LICENSE_PROPERTY, code);
       }
       try {
-        if (doCrop) {
-          b = r.openBytes(no, crop.x, crop.y, crop.width, crop.height);
-        }
-        else b = r.openBytes(no);
+        b = r.openBytes(no, crop.x, crop.y, crop.width, crop.height);
         break;
       }
       catch (FormatException exc) {
@@ -125,11 +123,12 @@ public final class Util {
       }
     }
 
-    int w = doCrop ? crop.width : r.getSizeX();
-    int h = doCrop ? crop.height : r.getSizeY();
+    int w = crop.width;
+    int h = crop.height;
     int c = r.getRGBChannelCount();
     int type = r.getPixelType();
     int bpp = FormatTools.getBytesPerPixel(type);
+    boolean interleave = r.isInterleaved();
 
     boolean isSigned = type == FormatTools.INT8 ||
       type == FormatTools.INT16 || type == FormatTools.INT32;
@@ -138,9 +137,8 @@ public final class Util {
       // HACK - byte array dimensions are incorrect - image is probably
       // a different size, but we have no way of knowing what size;
       // so open this plane as a BufferedImage to find out
-      BufferedImage bi = doCrop ?
-        r.openImage(no, crop.x, crop.y, crop.width, crop.height) :
-        r.openImage(no);
+      BufferedImage bi =
+        r.openImage(no, crop.x, crop.y, crop.width, crop.height);
       b = ImageTools.padImage(b, r.isInterleaved(), c,
         bi.getWidth() * bpp, w, h);
     }
@@ -148,7 +146,6 @@ public final class Util {
     // convert byte array to appropriate primitive array type
     boolean isFloat = type == FormatTools.FLOAT || type == FormatTools.DOUBLE;
     boolean isLittle = r.isLittleEndian();
-    Object pixels = DataTools.makeDataArray(b, bpp, isFloat, isLittle);
 
     IndexColorModel cm = null;
     Index16ColorModel model = null;
@@ -158,94 +155,69 @@ public final class Util {
         cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],
           byteTable[1], byteTable[2]);
       }
-      //else {
-      //  short[][] shortTable = r.get16BitLookupTable();
-      //  model = new Index16ColorModel(16, shortTable[0].length, shortTable);
-      //}
     }
 
-    // construct image processor
-    ImageProcessor ip = null;
-    if (pixels instanceof byte[]) {
-      byte[] q = (byte[]) pixels;
-      if (q.length > w * h) {
-        byte[] tmp = q;
-        q = new byte[w * h];
-        System.arraycopy(tmp, 0, q, 0, q.length);
-      }
-
-      if (isSigned) q = DataTools.makeSigned(q);
-
-      ip = new ByteProcessor(w, h, q, null);
-      if (cm != null) ip.setColorModel(cm);
-    }
-    else if (pixels instanceof short[]) {
-      short[] q = (short[]) pixels;
-      if (q.length > w * h) {
-        short[] tmp = q;
-        q = new short[w * h];
-        System.arraycopy(tmp, 0, q, 0, q.length);
-      }
-
-      if (isSigned) q = DataTools.makeSigned(q);
-
-      ip = new ShortProcessor(w, h, q, model);
-    }
-    else if (pixels instanceof int[]) {
-      int[] q = (int[]) pixels;
-      if (q.length > w * h) {
-        int[] tmp = q;
-        q = new int[w * h];
-        System.arraycopy(tmp, 0, q, 0, q.length);
-      }
-
-      if (isSigned) q = DataTools.makeSigned(q);
-
-      ip = new FloatProcessor(w, h, q);
-    }
-    else if (pixels instanceof float[]) {
-      float[] q = (float[]) pixels;
-      if (q.length > w * h) {
-        float[] tmp = q;
-        q = new float[w * h];
-        System.arraycopy(tmp, 0, q, 0, q.length);
-      }
-      if (c == 1) {
-        // single channel -- use normal float processor
-        ip = new FloatProcessor(w, h, q, null);
-      }
-      else {
-        // multiple channels -- convert floats to color processor
-        float[][] pix = new float[c][w * h];
-        if (!r.isInterleaved()) {
-          for (int i=0; i<q.length; i+=c) {
-            for (int j=0; j<c; j++) pix[j][i / c] = q[i + j];
-          }
+    // construct image processors
+    ImageProcessor[] ip = new ImageProcessor[c];
+    for (int i=0; i<c; i++) {
+      byte[] channel =
+        ImageTools.splitChannels(b, i, c, bpp, false, interleave);
+      Object pixels = DataTools.makeDataArray(channel, bpp, isFloat, isLittle);
+      if (pixels instanceof byte[]) {
+        byte[] q = (byte[]) pixels;
+        if (q.length > w * h) {
+          byte[] tmp = q;
+          q = new byte[w * h];
+          System.arraycopy(tmp, 0, q, 0, q.length);
         }
-        else {
-          for (int i=0; i<c; i++) {
-            System.arraycopy(q, i * pix[i].length, pix[i], 0, pix[i].length);
-          }
-        }
-        byte[][] bytes = new byte[c][w * h];
-        for (int i=0; i<c; i++) {
-          ip = new FloatProcessor(w, h, pix[i], null);
-          ip = ip.convertToByte(true);
-          bytes[i] = (byte[]) ip.getPixels();
-        }
-        ip = new ColorProcessor(w, h);
-        ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
-          pix.length >= 3 ? bytes[2] : new byte[w * h]);
+
+        if (isSigned) q = DataTools.makeSigned(q);
+
+        ip[i] = new ByteProcessor(w, h, q, null);
+        if (cm != null) ip[i].setColorModel(cm);
       }
-    }
-    else if (pixels instanceof double[]) {
-      double[] q = (double[]) pixels;
-      if (q.length > w * h) {
-        double[] tmp = q;
-        q = new double[w * h];
-        System.arraycopy(tmp, 0, q, 0, q.length);
+      else if (pixels instanceof short[]) {
+        short[] q = (short[]) pixels;
+        if (q.length > w * h) {
+          short[] tmp = q;
+          q = new short[w * h];
+          System.arraycopy(tmp, 0, q, 0, q.length);
+        }
+
+        if (isSigned) q = DataTools.makeSigned(q);
+
+        ip[i] = new ShortProcessor(w, h, q, model);
       }
-      ip = new FloatProcessor(w, h, q);
+      else if (pixels instanceof int[]) {
+        int[] q = (int[]) pixels;
+        if (q.length > w * h) {
+          int[] tmp = q;
+          q = new int[w * h];
+          System.arraycopy(tmp, 0, q, 0, q.length);
+        }
+
+        if (isSigned) q = DataTools.makeSigned(q);
+
+        ip[i] = new FloatProcessor(w, h, q);
+      }
+      else if (pixels instanceof float[]) {
+        float[] q = (float[]) pixels;
+        if (q.length > w * h) {
+          float[] tmp = q;
+          q = new float[w * h];
+          System.arraycopy(tmp, 0, q, 0, q.length);
+        }
+        ip[i] = new FloatProcessor(w, h, q, null);
+      }
+      else if (pixels instanceof double[]) {
+        double[] q = (double[]) pixels;
+        if (q.length > w * h) {
+          double[] tmp = q;
+          q = new double[w * h];
+          System.arraycopy(tmp, 0, q, 0, q.length);
+        }
+        ip[i] = new FloatProcessor(w, h, q);
+      }
     }
 
     return ip;
@@ -256,7 +228,15 @@ public final class Util {
    * RGB ImagePlus.
    */
   public static ImagePlus makeRGB(ImageProcessor[] p) {
-    if (p.length == 1) return new ImagePlus("", p[0]);
+    return makeRGB("", p);
+  }
+
+  /**
+   * Converts the given array of ImageProcessors into a single-slice
+   * RGB ImagePlus.
+   */
+  public static ImagePlus makeRGB(String title, ImageProcessor[] p) {
+    if (p.length == 1) return new ImagePlus(title, p[0]);
 
     // check that all processors are of the same type and size
     boolean sameType = true;
@@ -293,7 +273,7 @@ public final class Util {
       }
       cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
         new byte[width * height]);
-      imp = new ImagePlus("", cp);
+      imp = new ImagePlus(title, cp);
     }
     else if (p.length <= 7 && Util.checkVersion("1.39l", COMPOSITE_MSG)) {
       ImageStack tmpStack = new ImageStack(width, height);
@@ -303,7 +283,7 @@ public final class Util {
       try {
         ReflectedUniverse r = new ReflectedUniverse();
         r.exec("import ij.CompositeImage");
-        ImagePlus ii = new ImagePlus("", tmpStack);
+        ImagePlus ii = new ImagePlus(title, tmpStack);
         r.setVar("ii", ii);
         r.exec("imp = new CompositeImage(ii, CompositeImage.COMPOSITE)");
         imp = (ImagePlus) r.getVar("imp");

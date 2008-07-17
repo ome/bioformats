@@ -56,7 +56,7 @@ public class ImageProcessorSource extends CacheSource {
   public Object getObject(int index) throws CacheException {
     ImageProcessor ip = null;
     try {
-      ip = Util.openProcessor(reader, index);
+      ip = Util.openProcessors(reader, index)[0];
     }
     catch (FormatException exc) {
       throw new CacheException(exc);

@@ -75,13 +75,13 @@ public class CustomStack extends VirtualStack {
   public synchronized ImageProcessor getProcessor(int n) {
     try {
       int index = FormatTools.getReorderedIndex(reader, stackOrder, n - 1);
-      if (merge <= 1) return Util.openProcessor(reader, index);
+      if (merge <= 1) return Util.openProcessors(reader, index)[0];
       else {
         ImageProcessor[] p = new ImageProcessor[merge];
         int[] zct = FormatTools.getZCTCoords(reader, index * merge);
         for (int q=0; q<merge; q++) {
-          p[q] = Util.openProcessor(reader, FormatTools.getIndex(reader,
-            zct[0], zct[1] + q, zct[2]));
+          p[q] = Util.openProcessors(reader, FormatTools.getIndex(reader,
+            zct[0], zct[1] + q, zct[2]))[0];
         }
         return Util.makeRGB(p).getProcessor();
       }

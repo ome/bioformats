@@ -31,7 +31,7 @@ public class Read_Image implements PlugIn {
       ImageStack stack = new ImageStack(width, height);
       for (int i=0; i<num; i++) {
         IJ.showStatus("Reading image plane #" + (i + 1) + "/" + num);
-        ImageProcessor ip = Util.openProcessor(r, i);
+        ImageProcessor ip = Util.openProcessors(r, i)[0];
         stack.addSlice("" + (i + 1), ip);
       }
       IJ.showStatus("Constructing image");

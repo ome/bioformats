@@ -25,13 +25,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins;
 
-import java.awt.TextField;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ColorProcessor;
 import ij.io.FileInfo;
+import java.awt.TextField;
 import java.util.HashSet;
+import loci.formats.DataTools;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
@@ -168,10 +169,7 @@ public class LociUploader implements PlugIn {
           short[] s = (short[]) pix;
           toUpload = new byte[s.length * 2];
           for (int j=0; j<s.length; j++) {
-            toUpload[j*2] = little ? (byte) (s[j] & 0xff) :
-              (byte) ((s[j] >>> 8) & 0xff);
-            toUpload[j*2 + 1] = little ? (byte) ((s[j] >>> 8) & 0xff):
-              (byte) (s[j] & 0xff);
+            DataTools.unpackShort(s[j], toUpload, j * 2, little);
           }
         }
         else if (pix instanceof int[]) {
@@ -190,14 +188,7 @@ public class LociUploader implements PlugIn {
             int[] p = (int[]) pix;
             toUpload = new byte[4 * p.length];
             for (int j=0; j<p.length; j++) {
-              toUpload[j*4] = little ? (byte) (p[j] & 0xff) :
-                (byte) ((p[j] >> 24) & 0xff);
-              toUpload[j*4 + 1] = little ? (byte) ((p[j] >> 8) & 0xff) :
-                (byte) ((p[j] >> 16) & 0xff);
-              toUpload[j*4 + 2] = little ? (byte) ((p[j] >> 16) & 0xff) :
-                (byte) ((p[j] >> 8) & 0xff);
-              toUpload[j*4 + 3] = little ? (byte) ((p[j] >> 24) & 0xff) :
-                (byte) (p[j] & 0xff);
+              DataTools.unpackBytes(p[j], toUpload, j * 4, 4, little);
             }
           }
         }
@@ -206,14 +197,7 @@ public class LociUploader implements PlugIn {
           toUpload = new byte[f.length * 4];
           for (int j=0; j<f.length; j++) {
             int k = Float.floatToIntBits(f[j]);
-            toUpload[j*4] = little ? (byte) (k & 0xff) :
-              (byte) ((k >> 24) & 0xff);
-            toUpload[j*4 + 1] = little ? (byte) ((k >> 8) & 0xff) :
-              (byte) ((k >> 16) & 0xff);
-            toUpload[j*4 + 2] = little ? (byte) ((k >> 16) & 0xff) :
-              (byte) ((k >> 8) & 0xff);
-            toUpload[j*4 + 3] = little ? (byte) ((k >> 24) & 0xff) :
-              (byte) (k & 0xff);
+            DataTools.unpackBytes(k, toUpload, j * 4, 4, little);
           }
         }
 

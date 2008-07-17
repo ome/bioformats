@@ -470,7 +470,7 @@ public class Importer {
               new int[][] {zCount, cCount, tCount});
 
             // get image processor for jth plane
-            ImageProcessor ip = Util.openProcessor(r, ndx, cropOptions[i]);
+            ImageProcessor ip = Util.openProcessors(r, ndx, cropOptions[i])[0];
             if (ip == null) {
               plugin.canceled = true;
               return;

@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -129,8 +128,8 @@ public class LociFunctions extends MacroFunctions {
   public void openImage(String title, Double no)
     throws FormatException, IOException
   {
-    ImageProcessor ip = Util.openProcessor(r, no.intValue());
-    new ImagePlus(title, ip).show();
+    ImageProcessor[] ip = Util.openProcessors(r, no.intValue());
+    Util.makeRGB(title, ip).show();
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
@@ -138,8 +137,8 @@ public class LociFunctions extends MacroFunctions {
   {
     Rectangle crop = new Rectangle(x.intValue(), y.intValue(),
       width.intValue(), height.intValue());
-    ImageProcessor ip = Util.openProcessor(r, no.intValue(), crop);
-    new ImagePlus(title, ip).show();
+    ImageProcessor[] ip = Util.openProcessors(r, no.intValue(), crop);
+    Util.makeRGB(title, ip).show();
   }
 
   public void close() throws IOException { r.close(); }
