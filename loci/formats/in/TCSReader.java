@@ -31,9 +31,7 @@ import loci.formats.*;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their

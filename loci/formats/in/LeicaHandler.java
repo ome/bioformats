@@ -26,7 +26,6 @@ package loci.formats.in;
 import java.util.*;
 import loci.formats.*;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -230,6 +229,7 @@ public class LeicaHandler extends DefaultHandler {
           break;
         case 4:
           ts.add(new Integer(len));
+          break;
         default:
           extras *= len;
       }

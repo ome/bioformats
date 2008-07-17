@@ -26,7 +26,6 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
-import java.util.zip.*;
 import loci.formats.*;
 import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
@@ -520,17 +519,7 @@ public class QTReader extends FormatReader {
             byte[] b = new byte[(int) (atomSize - 12)];
             in.read(b);
 
-            Inflater inf = new Inflater();
-            inf.setInput(b, 0, b.length);
-            byte[] output = new byte[uncompressedSize];
-            try {
-              inf.inflate(output);
-            }
-            catch (DataFormatException exc) {
-              if (debug) trace(exc);
-              throw new FormatException("Compressed header not supported.");
-            }
-            inf.end();
+            byte[] output = new ZlibCodec().decompress(b, null);
 
             RandomAccessStream oldIn = in;
             in = new RandomAccessStream(output);

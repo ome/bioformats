@@ -25,11 +25,9 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
-import loci.formats.codec.Base64Codec;
-import loci.formats.codec.CBZip2InputStream;
+import loci.formats.codec.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
@@ -170,16 +168,7 @@ public class OMEXMLReader extends FormatReader {
       bzip = null;
     }
     else if (compress.equals("zlib")) {
-      try {
-        Inflater decompressor = new Inflater();
-        decompressor.setInput(pixels, 0, pixels.length);
-        pixels = new byte[planeSize];
-        decompressor.inflate(pixels);
-        decompressor.end();
-      }
-      catch (DataFormatException dfe) {
-        throw new FormatException("Error uncompressing zlib data.", dfe);
-      }
+      pixels = new ZlibCodec().decompress(pixels, null);
     }
 
     int depth = FormatTools.getBytesPerPixel(getPixelType());

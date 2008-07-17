@@ -26,11 +26,9 @@ package loci.formats.in;
 import java.awt.Point;
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
-import loci.formats.codec.ByteVector;
-import loci.formats.codec.JPEG2000Codec;
+import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
@@ -146,13 +144,7 @@ public class ND2Reader extends FormatReader {
 
       int effectiveX = getSizeX();
       if ((getSizeX() % 2) != 0) effectiveX++;
-      byte[] t = new byte[effectiveX * getSizeY() * pixel];
-
-      Inflater decompresser = new Inflater();
-      decompresser.setInput(b);
-      try { decompresser.inflate(t); }
-      catch (DataFormatException e) { throw new FormatException(e); }
-      decompresser.end();
+      byte[] t = new ZlibCodec().decompress(b, null);
 
       for (int row=0; row<h; row++) {
         System.arraycopy(t, (row + y) * effectiveX * pixel + x * pixel,

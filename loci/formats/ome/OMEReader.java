@@ -203,7 +203,7 @@ public class OMEReader extends FormatReader {
         FormatTools.pixelTypeFromString((String) r.getVar("pixelType"));
       core.currentOrder[0] = "XYZCT";
 
-      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
       core.rgb[0] = false;
 
       r.exec("thumbX = thumb.getWidth()");
@@ -269,13 +269,19 @@ public class OMEReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length);
     int[] indices = getZCTCoords(no);
 
-    r.setVar("zIndex", indices[0]);
-    r.setVar("cIndex", indices[1]);
-    r.setVar("tIndex", indices[2]);
+    r.setVar("z", indices[0]);
+    r.setVar("c", indices[1]);
+    r.setVar("t", indices[2]);
     r.setVar("bigEndian", false);
+
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+
     try {
-      r.exec("buf = pf.getPlane(pixels, zIndex, cIndex, tIndex, bigEndian)");
-      buf = (byte[]) r.getVar("buf");
+      byte[] b = (byte[]) r.exec("pf.getPlane(pixels, z, c, t, bigEndian)");
+      for (int row=0; row<h; row++) {
+        System.arraycopy(b, (row + y) * getSizeX() * bpp + x * bpp, buf,
+          row * w * bpp, w * bpp);
+      }
     }
     catch (ReflectException e) {
       throw new FormatException(e);

@@ -69,13 +69,6 @@ public class OMEROReader extends FormatReader {
     return r;
   }
 
-  // -- Fields --
-
-  private String username;
-  private String password;
-  private String serverName;
-  private String port;
-
   // -- Constructor --
 
   /** Constructs a new OMERO reader. */
@@ -109,22 +102,17 @@ public class OMEROReader extends FormatReader {
       r.setVar("z", new Integer(zct[0]));
       r.setVar("c", new Integer(zct[1]));
       r.setVar("t", new Integer(zct[2]));
-      r.exec("plane = raw.getPlane(z, c, t)");
-      int len = core.sizeX[0] * core.sizeY[0] *
-        FormatTools.getBytesPerPixel(core.pixelType[0]);
-      System.arraycopy((byte[]) r.getVar("plane"), 0, buf, 0, len);
+      byte[] b = (byte[]) r.exec("raw.getPlane(z, c, t)");
+      int bpp = FormatTools.getBytesPerPixel(getPixelType());
+      for (int row=0; row<h; row++) {
+        System.arraycopy(b, (row + y) * getSizeX() * bpp, buf, row * w * bpp,
+          w * bpp);
+      }
     }
     catch (ReflectException e) {
       throw new FormatException(e);
     }
     return buf;
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
   }
 
   // -- Internal FormatReader API methods --
@@ -169,47 +157,37 @@ public class OMEROReader extends FormatReader {
       r.exec("results = query.findByQuery(q, params)");
       r.exec("pix = new PixelsData(results)");
 
-      r.exec("ptype = pix.getPixelType()");
-      r.exec("x = pix.getSizeX()");
-      r.exec("y = pix.getSizeY()");
-      r.exec("z = pix.getSizeZ()");
-      r.exec("c = pix.getSizeC()");
-      r.exec("t = pix.getSizeT()");
+      core.sizeX[0] = ((Integer) r.exec("pix.getSizeX()")).intValue();
+      core.sizeY[0] = ((Integer) r.exec("pix.getSizeY()")).intValue();
+      core.sizeZ[0] = ((Integer) r.exec("pix.getSizeZ()")).intValue();
+      core.sizeC[0] = ((Integer) r.exec("pix.getSizeC()")).intValue();
+      core.sizeT[0] = ((Integer) r.exec("pix.getSizeT()")).intValue();
+      core.pixelType[0] =
+        FormatTools.pixelTypeFromString((String) r.exec("pix.getPixelType()"));
 
-      core.sizeX[0] = ((Integer) r.getVar("x")).intValue();
-      core.sizeY[0] = ((Integer) r.getVar("y")).intValue();
-      core.sizeZ[0] = ((Integer) r.getVar("z")).intValue();
-      core.sizeC[0] = ((Integer) r.getVar("c")).intValue();
-      core.sizeT[0] = ((Integer) r.getVar("t")).intValue();
       core.rgb[0] = false;
       core.littleEndian[0] = false;
       core.currentOrder[0] = "XYZCT";
-      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-      core.pixelType[0] =
-        FormatTools.pixelTypeFromString((String) r.getVar("ptype"));
+      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
 
-      r.exec("px = pix.getPixelSizeX()");
-      r.exec("py = pix.getPixelSizeY()");
-      r.exec("pz = pix.getPixelSizeZ()");
-      double px = ((Double) r.getVar("px")).doubleValue();
-      double py = ((Double) r.getVar("py")).doubleValue();
-      double pz = ((Double) r.getVar("pz")).doubleValue();
+      float px = ((Double) r.exec("pix.getPixelSizeX()")).floatValue();
+      float py = ((Double) r.exec("pix.getPixelSizeY()")).floatValue();
+      float pz = ((Double) r.exec("pix.getPixelSizeZ()")).floatValue();
 
       r.exec("image = pix.getImage()");
-      r.exec("name = image.getName()");
       r.exec("description = image.getDescription()");
 
-      String name = (String) r.getVar("name");
-      String description = (String) r.getVar("description");
+      String name = (String) r.exec("image.getName()");
+      String description = (String) r.exec("image.getDescription()");
 
       MetadataStore store = getMetadataStore();
       store.setImageName(name, 0);
       store.setImageDescription(description, 0);
       MetadataTools.populatePixels(store, this);
 
-      store.setDimensionsPhysicalSizeX(new Float((float) px), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Float((float) py), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Float((float) pz), 0, 0);
+      store.setDimensionsPhysicalSizeX(new Float(px), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Float(py), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Float(pz), 0, 0);
       // CTR CHECK
 //      for (int i=0; i<core.sizeC[0]; i++) {
 //        store.setLogicalChannel(i, null, null, null, null, null, null, null,

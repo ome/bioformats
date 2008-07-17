@@ -1,5 +1,5 @@
 //
-// AdobeDeflateCodec.java
+// ZlibCodec.java
 //
 
 /*
@@ -30,19 +30,19 @@ import java.util.zip.InflaterInputStream;
 import loci.formats.FormatException;
 
 /**
- * This class implements Adobe Deflate decompression. Compression is not yet
+ * This class implements ZLIB decompression. Compression is not yet
  * implemented.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/AdobeDeflateCodec.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/AdobeDeflateCodec.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/ZlibCodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/ZlibCodec.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class AdobeDeflateCodec extends BaseCodec implements Codec {
+public class ZlibCodec extends BaseCodec implements Codec {
 
   /**
-   * Compresses a block of Adobe Deflate data. Currently not supported.
+   * Compresses a block of ZLIB data. Currently not supported.
    *
    * @param data the data to be compressed
    * @param x length of the x dimension of the image data, if appropriate
@@ -56,11 +56,10 @@ public class AdobeDeflateCodec extends BaseCodec implements Codec {
       int[] dims, Object options) throws FormatException
   {
     // TODO: Add compression support.
-    throw new FormatException("Adobe Deflate Compression not currently " +
-                               "supported");
+    throw new FormatException("ZLIB Compression not currently supported");
   }
 
-  /** Decodes an Adobe Deflate (Zip) compressed image strip.
+  /** Decodes an ZLIB compressed image strip.
    *
    * @param input the data to be decompressed
    * @return The decompressed data
@@ -86,7 +85,7 @@ public class AdobeDeflateCodec extends BaseCodec implements Codec {
     }
     catch (IOException e) {
       throw new FormatException("Error uncompressing " +
-        "Adobe Deflate (ZLIB) compressed image strip.", e);
+        "ZLIB compressed image strip.", e);
     }
   }
 

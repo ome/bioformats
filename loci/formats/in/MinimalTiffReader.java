@@ -24,11 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.*;
 import java.util.*;
 import loci.formats.*;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
 
 /**
  * MinimalTiffReader is the superclass for file format readers compatible with

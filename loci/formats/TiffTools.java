@@ -1744,7 +1744,7 @@ public final class TiffTools {
       return new PackbitsCodec().decompress(input, new Integer(size));
     }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      return new AdobeDeflateCodec().decompress(input);
+      return new ZlibCodec().decompress(input);
     }
     else if (compression == THUNDERSCAN) {
       throw new FormatException("Sorry, " +

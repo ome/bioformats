@@ -130,7 +130,7 @@ public class FV1000Reader extends FormatReader {
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    return lut[lastChannel];
+    return lut == null ? null : lut[lastChannel];
   }
 
   /**
@@ -143,6 +143,8 @@ public class FV1000Reader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
 
     int[] coords = getZCTCoords(no);
+    /* debug */ System.out.println("mapping channel " + coords[1] + " to " +
+      channelIndexes[coords[1]]);
     coords[1] = channelIndexes[coords[1]];
     lastChannel = coords[1];
 
@@ -477,36 +479,32 @@ public class FV1000Reader extends FormatReader {
     }
 
     // check that no two indexes are equal
-    boolean valid = true;
     for (int i=0; i<channelIndexes.length; i++) {
       for (int q=0; q<channelIndexes.length; q++) {
         if (i != q && channelIndexes[i] == channelIndexes[q]) {
-          valid = false;
-          break;
+          for (int n=0; n<channelIndexes.length; n++) {
+            if (channelIndexes[n] > channelIndexes[q]) {
+              channelIndexes[q] = channelIndexes[n];
+            }
+          }
+          channelIndexes[q]++;
         }
       }
     }
 
     // normalize channel indexes to [0, sizeC-1]
 
-    if (valid) {
-      int nextIndex = 0;
-      for (int i=0; i<channelIndexes.length; i++) {
-        int min = Integer.MAX_VALUE;
-        int minIndex = -1;
-        for (int q=0; q<channelIndexes.length; q++) {
-          if (channelIndexes[q] < min && channelIndexes[q] >= nextIndex) {
-            min = channelIndexes[q];
-            minIndex = q;
-          }
+    int nextIndex = 0;
+    for (int i=0; i<channelIndexes.length; i++) {
+      int min = Integer.MAX_VALUE;
+      int minIndex = -1;
+      for (int q=0; q<channelIndexes.length; q++) {
+        if (channelIndexes[q] < min && channelIndexes[q] >= nextIndex) {
+          min = channelIndexes[q];
+          minIndex = q;
         }
-        channelIndexes[minIndex] = nextIndex++;
       }
-    }
-    else {
-      for (int i=0; i<channelIndexes.length; i++) {
-        channelIndexes[i] = i;
-      }
+      channelIndexes[minIndex] = nextIndex++;
     }
 
     int reference = ((String) filenames.get(new Integer(0))).length();
@@ -705,8 +703,8 @@ public class FV1000Reader extends FormatReader {
 
     // set up thumbnail file mapping
 
-    RandomAccessStream thumb = getFile(thumbId);
-    if (thumb != null) {
+    try {
+      RandomAccessStream thumb = getFile(thumbId);
       byte[] b = new byte[(int) thumb.length()];
       thumb.read(b);
       thumb.close();
@@ -715,6 +713,9 @@ public class FV1000Reader extends FormatReader {
       Arrays.fill(core.thumbSizeX, thumbReader.getSizeX());
       Arrays.fill(core.thumbSizeY, thumbReader.getSizeY());
     }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
 
     // initialize lookup table
 
@@ -722,13 +723,20 @@ public class FV1000Reader extends FormatReader {
     byte[] buffer = new byte[65536 * 4];
     int count = (int) Math.min(core.sizeC[0], lutNames.size());
     for (int c=0; c<count; c++) {
-      RandomAccessStream stream = getFile((String) lutNames.get(c));
-      stream.seek(stream.length() - 65536 * 4);
-      stream.read(buffer);
-      for (int q=0; q<buffer.length; q+=4) {
-        lut[c][0][q / 4] = buffer[q + 1];
-        lut[c][1][q / 4] = buffer[q + 2];
-        lut[c][2][q / 4] = buffer[q + 3];
+      try {
+        RandomAccessStream stream = getFile((String) lutNames.get(c));
+        stream.seek(stream.length() - 65536 * 4);
+        stream.read(buffer);
+        for (int q=0; q<buffer.length; q+=4) {
+          lut[c][0][q / 4] = buffer[q + 1];
+          lut[c][1][q / 4] = buffer[q + 2];
+          lut[c][2][q / 4] = buffer[q + 3];
+        }
+      }
+      catch (IOException e) {
+        if (debug) LogTools.trace(e);
+        lut = null;
+        break;
       }
     }
 
