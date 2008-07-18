@@ -143,8 +143,6 @@ public class FV1000Reader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
 
     int[] coords = getZCTCoords(no);
-    /* debug */ System.out.println("mapping channel " + coords[1] + " to " +
-      channelIndexes[coords[1]]);
     coords[1] = channelIndexes[coords[1]];
     lastChannel = coords[1];
 
@@ -152,12 +150,12 @@ public class FV1000Reader extends FormatReader {
       getEffectiveSizeC(), getSizeT(), getImageCount(), coords[0],
       coords[1], coords[2]);
 
-    MinimalTiffReader reader = new MinimalTiffReader();
-    if (series == 0) reader.setId((String) tiffs.get(planeNum));
-    else reader.setId((String) previewNames.get(planeNum));
-
-    reader.openBytes(0, buf, x, y, w, h);
-    reader.close();
+    String file =
+      (String) (series == 0 ? tiffs.get(planeNum) : previewNames.get(planeNum));
+    RandomAccessStream plane = getFile(file);
+    TiffTools.getSamples(TiffTools.getFirstIFD(plane), plane, buf, x, y, w, h);
+    plane.close();
+    plane = null;
     return buf;
   }
 
