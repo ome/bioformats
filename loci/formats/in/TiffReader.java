@@ -79,7 +79,12 @@ public class TiffReader extends BaseTiffReader {
         String token = st.nextToken();
         int value = 0;
         if (token.indexOf("=") != -1) {
-          value = Integer.parseInt(token.substring(token.indexOf("=" + 1)));
+          try {
+            value = Integer.parseInt(token.substring(token.indexOf("=" + 1)));
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
         }
 
         if (token.startsWith("channels=")) {

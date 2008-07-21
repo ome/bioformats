@@ -268,6 +268,7 @@ public final class TiffTools {
     if (stream.length() < 4) return null;
 
     // byte order must be II or MM
+    stream.seek(0);
     int endianOne = stream.read();
     int endianTwo = stream.read();
     boolean littleEndian = endianOne == LITTLE && endianTwo == LITTLE; // II
