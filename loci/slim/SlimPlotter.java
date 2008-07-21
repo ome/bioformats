@@ -49,7 +49,6 @@ import loci.visbio.util.BreakawayPanel;
 import loci.visbio.util.ColorUtil;
 import loci.visbio.util.OutputConsole;
 import visad.*;
-import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.*;
 import visad.util.ColorMapWidget;
 import visad.util.Util;
@@ -64,7 +63,7 @@ import visad.util.Util;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class SlimPlotter implements ActionListener, ChangeListener,
-  DisplayListener, DocumentListener, Runnable, WindowListener
+  DocumentListener, Runnable, WindowListener
 {
 
   // -- Constants --
@@ -125,15 +124,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private int maxPeak;
   private int[] maxIntensity;
 
-  // ROI parameters
-  private float[][] roiGrid;
-  private boolean[][] roiMask;
-  private UnionSet curveSet;
-  private Irregular2DSet roiSet;
-  private DataReferenceImpl roiRef;
-  private int roiX, roiY;
-  private int roiCount;
-  private double roiPercent;
   private float maxVal;
   private float tauMin, tauMax;
 
@@ -154,10 +144,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private JCheckBox peaksBox, fwhmBox, cutBox;
 
   // GUI components for intensity pane
-  private JSlider cSlider;
-  private JLabel minLabel, maxLabel;
-  private JSlider minSlider, maxSlider;
-  private JCheckBox cToggle;
+  private IntensityPane intensityPane;
 
   // GUI components for decay pane
   private JLabel decayLabel;
@@ -195,9 +182,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   //private ScalarMap vMapFit;
   private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
   private DataReferenceImpl decayRef, fwhmRef, fitRef, resRef;
-  private DisplayImpl iPlot, decayPlot;
-  private ScalarMap intensityMap;
-  private AnimationControl ac;
+  private DisplayImpl decayPlot;
 
   // -- Constructor --
 
@@ -351,8 +336,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       paramDialog.setVisible(true);
       if (cVisible == null) System.exit(0); // dialog canceled (closed with X)
       maxWave = minWave + (channels - 1) * waveStep;
-      roiCount = width * height;
-      roiPercent = 100;
 
       // pop up progress monitor
       setProgress(progress, 1); // estimate: 0.1%
@@ -405,68 +388,15 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // plot intensity data in 2D display
       progress.setNote("Building displays");
-      iPlot = new DisplayImplJ3D("intensity", new TwoDDisplayRendererJ3D());
-      iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
-        {{MouseHelper.DIRECT, MouseHelper.NONE}, // L, shift-L
-         {MouseHelper.NONE, MouseHelper.NONE}}, // ctrl-L, ctrl-shift-L
-        {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, // M, shift-M
-         {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}}, // ctrl-M, ctrl-shift-M
-        {{MouseHelper.ROTATE, MouseHelper.ZOOM}, // R, shift-R
-         {MouseHelper.TRANSLATE, MouseHelper.NONE}}, // ctrl-R, ctrl-shift-R
-      });
-      iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
-      iPlot.addDisplayListener(this);
+
       setProgress(progress, 720); // estimate: 72%
       if (progress.isCanceled()) System.exit(0);
 
-      iPlot.addMap(new ScalarMap(xType, Display.XAxis));
-      iPlot.addMap(new ScalarMap(yType, Display.YAxis));
-      intensityMap = new ScalarMap(vType, Display.RGB);
-      iPlot.addMap(intensityMap);
-      iPlot.addMap(new ScalarMap(cType, Display.Animation));
-      DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
-      iPlot.addReference(intensityRef);
       setProgress(progress, 730); // estimate: 73%
       if (progress.isCanceled()) System.exit(0);
 
-      // set up curve manipulation renderer in 2D display
-      roiGrid = new float[2][width * height];
-      roiMask = new boolean[height][width];
-      for (int h=0; h<height; h++) {
-        for (int w=0; w<width; w++) {
-          int ndx = h * width + w;
-          roiGrid[0][ndx] = w;
-          roiGrid[1][ndx] = h;
-          roiMask[h][w] = true;
-        }
-      }
-      final DataReferenceImpl curveRef = new DataReferenceImpl("curve");
-      UnionSet dummyCurve = new UnionSet(new Gridded2DSet[] {
-        new Gridded2DSet(xy, new float[][] {{0}, {0}}, 1)
-      });
-      curveRef.setData(dummyCurve);
-      CurveManipulationRendererJ3D curve =
-        new CurveManipulationRendererJ3D(0, 0, true);
-      iPlot.addReferences(curve, curveRef);
-      CellImpl cell = new CellImpl() {
-        public void doAction() throws VisADException, RemoteException {
-          // save latest drawn curve
-          curveSet = (UnionSet) curveRef.getData();
-        }
-      };
-      cell.addReference(curveRef);
-      roiRef = new DataReferenceImpl("roi");
-      roiRef.setData(new Real(0)); // dummy
-      iPlot.addReference(roiRef, new ConstantMap[] {
-        new ConstantMap(0, Display.Blue),
-        new ConstantMap(0.1, Display.Alpha)
-      });
       setProgress(progress, 740); // estimate: 74%
       if (progress.isCanceled()) System.exit(0);
-
-      ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
-      iPlot.getProjectionControl().setMatrix(
-        iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
 
       setProgress(progress, 750); // estimate: 75%
       if (progress.isCanceled()) System.exit(0);
@@ -664,26 +594,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       JPanel masterPane = new JPanel();
       masterPane.setLayout(new BorderLayout());
       masterWindow.setContentPane(masterPane);
-      JPanel intensityPane = new JPanel();
-      intensityPane.setLayout(new BoxLayout(intensityPane, BoxLayout.Y_AXIS));
-      JPanel iPlotPane = new JPanel() {
-        private int height = 380;
-        public Dimension getMinimumSize() {
-          Dimension min = super.getMinimumSize();
-          return new Dimension(min.width, height);
-        }
-        public Dimension getPreferredSize() {
-          Dimension pref = super.getPreferredSize();
-          return new Dimension(pref.width, height);
-        }
-        public Dimension getMaximumSize() {
-          Dimension max = super.getMaximumSize();
-          return new Dimension(max.width, height);
-        }
-      };
-      iPlotPane.setLayout(new BorderLayout());
-      iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
-      intensityPane.add(iPlotPane);
+
+      intensityPane = new IntensityPane(this, field,
+        width, height, channels, max, maxChan, cVisible,
+        xType, yType, vType, cType);
 
       MenuBar menubar = new MenuBar();
       masterWindow.setMenuBar(menubar);
@@ -702,74 +616,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       menuViewLoadProj = new MenuItem("Restore projection from clipboard");
       menuViewLoadProj.addActionListener(this);
       menuView.add(menuViewLoadProj);
-
-      setProgress(progress, 970); // estimate: 97%
-      if (progress.isCanceled()) System.exit(0);
-
-      JPanel sliderPane = new JPanel();
-      sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
-      intensityPane.add(sliderPane);
-      cSlider = new JSlider(1, channels, 1);
-      cSlider.setToolTipText(
-        "Selects the channel to display in the 2D intensity plot above");
-      cSlider.setSnapToTicks(true);
-      cSlider.setMajorTickSpacing(channels / 4);
-      cSlider.setMinorTickSpacing(1);
-      cSlider.setPaintTicks(true);
-      cSlider.addChangeListener(this);
-      cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
-      cSlider.setEnabled(channels > 1);
-      sliderPane.add(cSlider);
-      cToggle = new JCheckBox("", true);
-      cToggle.setToolTipText(
-        "Toggles the selected channel's visibility in the 3D data plot");
-      cToggle.addActionListener(this);
-      cToggle.setEnabled(channels > 1);
-      sliderPane.add(cToggle);
-
-      JPanel minMaxPane = new JPanel();
-      minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.X_AXIS));
-      intensityPane.add(minMaxPane);
-
-      JPanel minPane = new JPanel();
-      minPane.setLayout(new BoxLayout(minPane, BoxLayout.Y_AXIS));
-      minMaxPane.add(minPane);
-      minLabel = new JLabel("min=0");
-      minLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-      minPane.add(minLabel);
-      minSlider = new JSlider(0, max, 0);
-      minSlider.setToolTipText("<html>" +
-        "Adjusts intensity plot's minimum color value.<br>" +
-        "Anything less than this value appears black.</html>");
-      minSlider.setMajorTickSpacing(max);
-      int minor = max / 16;
-      if (minor < 1) minor = 1;
-      minSlider.setMinorTickSpacing(minor);
-      minSlider.setPaintTicks(true);
-      minSlider.addChangeListener(this);
-      minSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
-      minPane.add(minSlider);
-
-      JPanel maxPane = new JPanel();
-      maxPane.setLayout(new BoxLayout(maxPane, BoxLayout.Y_AXIS));
-      minMaxPane.add(maxPane);
-      maxLabel = new JLabel("max=" + max);
-      maxLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-      maxPane.add(maxLabel);
-      maxSlider = new JSlider(0, max, max);
-      maxSlider.setToolTipText("<html>" +
-        "Adjusts intensity plot's maximum color value.<br>" +
-        "Anything greater than this value appears white.</html>");
-      maxSlider.setMajorTickSpacing(max);
-      maxSlider.setMinorTickSpacing(minor);
-      maxSlider.setPaintTicks(true);
-      maxSlider.addChangeListener(this);
-      maxSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
-      maxPane.add(maxSlider);
-
-      intensityRef.setData(field);
-      ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
-      cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
 
       setProgress(progress, 980); // estimate: 98%
       if (progress.isCanceled()) System.exit(0);
@@ -1038,7 +884,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
     try { Thread.sleep(200); }
     catch (InterruptedException exc) { exc.printStackTrace(); }
-    cSlider.setValue(maxChan + 1);
   }
 
   // -- SlimPlotter methods --
@@ -1070,19 +915,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
       }
     }.start();
-  }
-
-  /** Handles cursor updates. */
-  public void doCursor(double[] cursor, boolean rescale, boolean refit) {
-    double[] domain = cursorToDomain(iPlot, cursor);
-    roiX = (int) Math.round(domain[0]);
-    roiY = (int) Math.round(domain[1]);
-    if (roiX < 0) roiX = 0;
-    if (roiX >= width) roiX = width - 1;
-    if (roiY < 0) roiY = 0;
-    if (roiY >= height) roiY = height - 1;
-    roiCount = 1;
-    plotData(true, rescale, refit);
   }
 
   /** Sets the currently selected range component's color widget table. */
@@ -1120,12 +952,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         catch (VisADException exc) { }
         catch (RemoteException exc) { }
       }
-    }
-    else if (src == cToggle) {
-      // toggle visibility of this channel
-      int c = cSlider.getValue() - 1;
-      cVisible[c] = !cVisible[c];
-      plotData(true, true, false);
     }
     else if (src == cOverride) {
       boolean manual = cOverride.isSelected();
@@ -1224,8 +1050,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // write currently displayed binned data to file
       try {
         PrintWriter out = new PrintWriter(new FileWriter(file));
-        out.println(timeBins + " x " + channels + " (count=" + roiCount +
-          ", percent=" + roiPercent + ", maxVal=" + maxVal + ")");
+        out.println(timeBins + " x " + channels +
+          " (count=" + intensityPane.getROICount() +
+          ", percent=" + intensityPane.getROIPercent() +
+          ", maxVal=" + maxVal + ")");
         for (int c=0; c<channels; c++) {
           for (int t=0; t<timeBins; t++) {
             if (t > 0) out.print("\t");
@@ -1272,99 +1100,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   /** Handles slider changes. */
   public void stateChanged(ChangeEvent e) {
-    Object src = e.getSource();
-    if (src == cSlider) {
-      int c = cSlider.getValue() - 1;
-      try { ac.setCurrent(c); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-      cToggle.removeActionListener(this);
-      cToggle.setSelected(cVisible[c]);
-      cToggle.addActionListener(this);
-    }
-    else if (src == minSlider) {
-      int min = minSlider.getValue();
-      int max = maxSlider.getMaximum();
-      maxSlider.setMajorTickSpacing(max - min);
-      int minor = (max - min) / 16;
-      if (minor < 1) minor = 1;
-      maxSlider.setMinorTickSpacing(minor);
-      maxSlider.setMinimum(min);
-      minLabel.setText("min=" + min);
-      rescaleMinMax();
-    }
-    else if (src == maxSlider) {
-      int max = maxSlider.getValue();
-      minSlider.setMajorTickSpacing(max);
-      int minor = max / 16;
-      if (minor < 1) minor = 1;
-      minSlider.setMinorTickSpacing(minor);
-      minSlider.setMaximum(max);
-      maxLabel.setText("max=" + max);
-      rescaleMinMax();
-    }
-    else if (src == numCurves) plotData(true, false, true);
-  }
-
-  // -- DisplayListener methods --
-
-  private boolean drag = false;
-
-  public void displayChanged(DisplayEvent e) {
-    int id = e.getId();
-    if (id == DisplayEvent.MOUSE_PRESSED_CENTER) {
-      drag = true;
-      decayPlot.getDisplayRenderer();
-      doCursor(iPlot.getDisplayRenderer().getCursor(), false, false);
-    }
-    else if (id == DisplayEvent.MOUSE_RELEASED_CENTER) {
-      drag = false;
-      doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
-    }
-    else if (id == DisplayEvent.MOUSE_RELEASED_LEFT) {
-      // done drawing curve
-      try {
-        roiSet = DelaunayCustom.fillCheck(curveSet, false);
-        if (roiSet == null) {
-          roiRef.setData(new Real(0));
-          doCursor(pixelToCursor(iPlot, e.getX(), e.getY()), true, true);
-          iPlot.reAutoScale();
-        }
-        else {
-          roiRef.setData(roiSet);
-          int[] tri = roiSet.valueToTri(roiGrid);
-          roiX = roiY = 0;
-          roiCount = 0;
-          for (int h=0; h<height; h++) {
-            for (int w=0; w<width; w++) {
-              int ndx = h * width + w;
-              roiMask[h][w] = tri[ndx] >= 0;
-              if (roiMask[h][w]) {
-                roiX = w;
-                roiY = h;
-                roiCount++;
-              }
-            }
-          }
-          roiPercent = 100000 * roiCount / (width * height) / 1000.0;
-          plotData(true, true, true);
-        }
-      }
-      catch (VisADException exc) {
-        String msg = exc.getMessage();
-        if ("path self intersects".equals(msg)) {
-          JOptionPane.showMessageDialog(iPlot.getComponent(),
-            "Please draw a curve that does not intersect itself.",
-            "Slim Plotter", JOptionPane.ERROR_MESSAGE);
-        }
-        else exc.printStackTrace();
-      }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
-    else if (id == DisplayEvent.MOUSE_DRAGGED) {
-      if (!drag) return; // not a center mouse drag
-      doCursor(iPlot.getDisplayRenderer().getCursor(), false, false);
-    }
+    plotData(true, false, true);
   }
 
   // -- DocumentListener methods --
@@ -1419,8 +1155,13 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         for (int t=0; t<timeBins; t++) {
           int ndx = timeBins * cc + t;
           int sum = 0;
-          if (roiCount == 1) sum = values[c][roiY][roiX][t];
+          if (intensityPane.getROICount() == 1) {
+            int roiX = intensityPane.getROIX();
+            int roiY = intensityPane.getROIY();
+            sum = values[c][roiY][roiX][t];
+          }
           else {
+            boolean[][] roiMask = intensityPane.getROIMask();
             for (int h=0; h<height; h++) {
               for (int w=0; w<width; w++) {
                 if (roiMask[h][w]) sum += values[c][h][w][t];
@@ -1450,8 +1191,13 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           int[] sums = new int[timeBins];
           int sumTotal = 0;
           for (int t=0; t<timeBins; t++) {
-            if (roiCount == 1) sums[t] = values[c][roiY][roiX][t];
+            if (intensityPane.getROICount() == 1) {
+              int roiX = intensityPane.getROIX();
+              int roiY = intensityPane.getROIY();
+              sums[t] = values[c][roiY][roiX][t];
+            }
             else {
+              boolean[][] roiMask = intensityPane.getROIMask();
               for (int h=0; h<height; h++) {
                 for (int w=0; w<width; w++) {
                   if (roiMask[h][w]) sums[t] += values[c][h][w][t];
@@ -1589,7 +1335,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       }
       StringBuffer sb = new StringBuffer();
       sb.append("Decay curve for ");
-      if (roiCount == 1) {
+      if (intensityPane.getROICount() == 1) {
+        int roiX = intensityPane.getROIX();
+        int roiY = intensityPane.getROIY();
         sb.append("(");
         sb.append(roiX);
         sb.append(", ");
@@ -1597,9 +1345,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         sb.append(")");
       }
       else {
-        sb.append(roiCount);
+        sb.append(intensityPane.getROICount());
         sb.append(" pixels (");
-        sb.append(roiPercent);
+        sb.append(intensityPane.getROIPercent());
         sb.append("%)");
       }
       if (tauMin == tauMin && tauMax == tauMax) {
@@ -1900,78 +1648,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     }
   }
 
-  private void rescaleMinMax() {
-    int min = minSlider.getValue();
-    int max = maxSlider.getValue();
-    try { intensityMap.setRange(min, max); }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-  }
-
   // -- Utility methods --
-
-  /** Converts the given pixel coordinates to cursor coordinates. */
-  public static double[] pixelToCursor(DisplayImpl d, int x, int y) {
-    if (d == null) return null;
-    MouseBehavior mb = d.getDisplayRenderer().getMouseBehavior();
-    VisADRay ray = mb.findRay(x, y);
-    return ray.position;
-  }
-
-  /** Converts the given cursor coordinates to domain coordinates. */
-  public static double[] cursorToDomain(DisplayImpl d, double[] cursor) {
-    return cursorToDomain(d, null, cursor);
-  }
-
-  /** Converts the given cursor coordinates to domain coordinates. */
-  public static double[] cursorToDomain(DisplayImpl d,
-    RealType[] types, double[] cursor)
-  {
-    if (d == null) return null;
-
-    // locate x, y and z mappings
-    Vector maps = d.getMapVector();
-    int numMaps = maps.size();
-    ScalarMap mapX = null, mapY = null, mapZ = null;
-    for (int i=0; i<numMaps; i++) {
-      if (mapX != null && mapY != null && mapZ != null) break;
-      ScalarMap map = (ScalarMap) maps.elementAt(i);
-      if (types == null) {
-        DisplayRealType drt = map.getDisplayScalar();
-        if (drt.equals(Display.XAxis)) mapX = map;
-        else if (drt.equals(Display.YAxis)) mapY = map;
-        else if (drt.equals(Display.ZAxis)) mapZ = map;
-      }
-      else {
-        ScalarType st = map.getScalar();
-        if (st.equals(types[0])) mapX = map;
-        if (st.equals(types[1])) mapY = map;
-        if (st.equals(types[2])) mapZ = map;
-      }
-    }
-
-    // adjust for scale
-    double[] scaleOffset = new double[2];
-    double[] dummy = new double[2];
-    double[] values = new double[3];
-    if (mapX == null) values[0] = Double.NaN;
-    else {
-      mapX.getScale(scaleOffset, dummy, dummy);
-      values[0] = (cursor[0] - scaleOffset[1]) / scaleOffset[0];
-    }
-    if (mapY == null) values[1] = Double.NaN;
-    else {
-      mapY.getScale(scaleOffset, dummy, dummy);
-      values[1] = (cursor[1] - scaleOffset[1]) / scaleOffset[0];
-    }
-    if (mapZ == null) values[2] = Double.NaN;
-    else {
-      mapZ.getScale(scaleOffset, dummy, dummy);
-      values[2] = (cursor[2] - scaleOffset[1]) / scaleOffset[0];
-    }
-
-    return values;
-  }
 
   public static JTextField addRow(JPanel p,
     String label, double value, String unit)

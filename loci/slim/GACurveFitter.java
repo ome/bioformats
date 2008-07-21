@@ -208,9 +208,9 @@ public class GACurveFitter implements CurveFitter {
   }
 
   /**
-   * Returns a reference to the data array
+   * Returns a reference to the data array.
    * Does not create a copy.
-   **/ 
+   */
   public int[] getData() {
     return curveData;
   }
