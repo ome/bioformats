@@ -35,8 +35,7 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.*;
 import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.DisplayImplJ3D;
@@ -52,7 +51,7 @@ import visad.java3d.TwoDDisplayRendererJ3D;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class IntensityPane extends JPanel
-  implements ActionListener, ChangeListener, DisplayListener
+  implements ActionListener, ChangeListener, DisplayListener, DocumentListener
 {
 
   // -- Fields --
@@ -68,18 +67,18 @@ public class IntensityPane extends JPanel
 
   // ROI parameters
   private float[][] roiGrid;
-  private boolean[][] roiMask;
   private UnionSet curveSet;
   private Irregular2DSet roiSet;
   private DataReferenceImpl roiRef;
-  private int roiX, roiY;
+
   private int roiCount;
   private double roiPercent;
+  private int roiX, roiY;
+  private boolean[][] roiMask;
 
   // GUI components for intensity pane
   private JSlider cSlider;
-  private JLabel minLabel, maxLabel;
-  private JSlider minSlider, maxSlider;
+  private JTextField minField, maxField;
   private JCheckBox cToggle;
 
   // -- Constructor --
@@ -157,6 +156,10 @@ public class IntensityPane extends JPanel
     iPlot.getProjectionControl().setMatrix(
       iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
 
+    intensityRef.setData(field);
+    ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
+    cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
+
     // lay out components
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     JPanel iPlotPane = new JPanel() {
@@ -181,6 +184,41 @@ public class IntensityPane extends JPanel
     JPanel sliderPane = new JPanel();
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
     add(sliderPane);
+
+    JPanel minMaxPane = new JPanel();
+    minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.Y_AXIS));
+    minMaxPane.setBorder(new EmptyBorder(3, 3, 3, 3));
+    sliderPane.add(minMaxPane);
+
+    JPanel minPane = new JPanel();
+    minPane.setLayout(new BoxLayout(minPane, BoxLayout.X_AXIS));
+    minMaxPane.add(minPane);
+    JLabel minLabel = new JLabel("Min");
+    minLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
+    minPane.add(minLabel);
+    minField = new JTextField("0", 4);
+    minField.setMaximumSize(minField.getPreferredSize());
+    minField.setToolTipText("<html>" +
+      "Adjusts intensity plot's minimum color value.<br>" +
+      "Anything less than this value appears black.</html>");
+    minField.getDocument().addDocumentListener(this);
+    minPane.add(minField);
+
+    JPanel maxPane = new JPanel();
+    maxPane.setLayout(new BoxLayout(maxPane, BoxLayout.X_AXIS));
+    minMaxPane.add(maxPane);
+    JLabel maxLabel = new JLabel("Max");
+    maxLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
+    minLabel.setPreferredSize(maxLabel.getPreferredSize());
+    maxPane.add(maxLabel);
+    maxField = new JTextField("" + max, 4);
+    maxField.setMaximumSize(maxField.getPreferredSize());
+    maxField.setToolTipText("<html>" +
+      "Adjusts intensity plot's maximum color value.<br>" +
+      "Anything greater than this value appears white.</html>");
+    maxField.getDocument().addDocumentListener(this);
+    maxPane.add(maxField);
+
     cSlider = new JSlider(1, channels, 1);
     cSlider.setToolTipText(
       "Selects the channel to display in the 2D intensity plot above");
@@ -199,6 +237,9 @@ public class IntensityPane extends JPanel
     cToggle.setEnabled(channels > 1);
     sliderPane.add(cToggle);
 
+    cSlider.setValue(maxChan + 1);
+    rescaleMinMax();
+    /*
     JPanel minMaxPane = new JPanel();
     minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.X_AXIS));
     add(minMaxPane);
@@ -229,21 +270,13 @@ public class IntensityPane extends JPanel
     maxLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     maxPane.add(maxLabel);
     maxSlider = new JSlider(0, max, max);
-    maxSlider.setToolTipText("<html>" +
-      "Adjusts intensity plot's maximum color value.<br>" +
-      "Anything greater than this value appears white.</html>");
     maxSlider.setMajorTickSpacing(max);
     maxSlider.setMinorTickSpacing(minor);
     maxSlider.setPaintTicks(true);
     maxSlider.addChangeListener(this);
     maxSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
     maxPane.add(maxSlider);
-
-    intensityRef.setData(field);
-    ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
-    cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
-
-    cSlider.setValue(maxChan + 1);
+    */
   }
 
   // -- IntensityPane methods --
@@ -277,27 +310,6 @@ public class IntensityPane extends JPanel
       cToggle.removeActionListener(this);
       cToggle.setSelected(cVisible[c]);
       cToggle.addActionListener(this);
-    }
-    else if (src == minSlider) {
-      int min = minSlider.getValue();
-      int max = maxSlider.getMaximum();
-      maxSlider.setMajorTickSpacing(max - min);
-      int minor = (max - min) / 16;
-      if (minor < 1) minor = 1;
-      maxSlider.setMinorTickSpacing(minor);
-      maxSlider.setMinimum(min);
-      minLabel.setText("min=" + min);
-      rescaleMinMax();
-    }
-    else if (src == maxSlider) {
-      int max = maxSlider.getValue();
-      minSlider.setMajorTickSpacing(max);
-      int minor = max / 16;
-      if (minor < 1) minor = 1;
-      minSlider.setMinorTickSpacing(minor);
-      minSlider.setMaximum(max);
-      maxLabel.setText("max=" + max);
-      rescaleMinMax();
     }
   }
 
@@ -361,6 +373,12 @@ public class IntensityPane extends JPanel
     }
   }
 
+  // -- DocumentListener methods --
+
+  public void changedUpdate(DocumentEvent e) { rescaleMinMax(); }
+  public void insertUpdate(DocumentEvent e) { rescaleMinMax(); }
+  public void removeUpdate(DocumentEvent e) { rescaleMinMax(); }
+
   // -- Helper methods --
 
   /** Handles cursor updates. */
@@ -377,9 +395,12 @@ public class IntensityPane extends JPanel
   }
 
   private void rescaleMinMax() {
-    int min = minSlider.getValue();
-    int max = maxSlider.getValue();
-    try { intensityMap.setRange(min, max); }
+    try {
+      int min = Integer.parseInt(minField.getText());
+      int max = Integer.parseInt(maxField.getText());
+      intensityMap.setRange(min, max);
+    }
+    catch (NumberFormatException exc) { }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
   }

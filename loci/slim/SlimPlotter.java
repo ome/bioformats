@@ -35,7 +35,8 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -119,6 +120,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private int channels, timeBins;
   private float timeRange;
   private int minWave, waveStep, maxWave;
+  private int numExp;
   private boolean adjustPeaks, computeFWHMs, cutEnd;
   private boolean[] cVisible;
   private int maxPeak;
@@ -140,7 +142,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // GUI components for parameter dialog box
   private JDialog paramDialog;
-  private JTextField wField, hField, tField, cField, trField, wlField, sField;
+  private JTextField wField, hField, tField, cField;
+  private JTextField trField, wlField, sField;
+  private JTextField fitField;
   private JCheckBox peaksBox, fwhmBox, cutBox;
 
   // GUI components for intensity pane
@@ -160,7 +164,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private JRadioButton fitSurface, fitLines;
   private JRadioButton resSurface, resLines;
   private JRadioButton colorHeight, colorTau;
-  private JSpinner numCurves;
   private JCheckBox showData, showScale;
   private JCheckBox showBox, showLine;
   private JCheckBox showFit, showResiduals;
@@ -283,7 +286,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       JPanel paramPane = new JPanel();
       paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
       paramDialog.setContentPane(paramPane);
-      paramPane.setLayout(new GridLayout(12, 3));
+      paramPane.setLayout(new GridLayout(13, 3));
       wField = addRow(paramPane, "Image width", width, "pixels");
       hField = addRow(paramPane, "Image height", height, "pixels");
       tField = addRow(paramPane, "Time bins", timeBins, "");
@@ -291,6 +294,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       trField = addRow(paramPane, "Time range", timeRange, "nanoseconds");
       wlField = addRow(paramPane, "Starting wavelength", minWave, "nanometers");
       sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
+      fitField = addRow(paramPane, "Exponential fit", 1, "components");
       JButton ok = new JButton("OK");
       paramDialog.getRootPane().setDefaultButton(ok);
       ok.addActionListener(this);
@@ -759,11 +763,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "Exports the selected ROI's raw data to a text file");
       exportData.addActionListener(this);
 
-      numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 2, 1));
-      numCurves.setToolTipText("Number of components in exponential fit");
-      numCurves.setMaximumSize(numCurves.getPreferredSize());
-      numCurves.addChangeListener(this);
-
       setProgress(progress, 990); // estimate: 99%
       if (progress.isCanceled()) System.exit(0);
 
@@ -819,8 +818,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       miscRow3.setLayout(new BoxLayout(miscRow3, BoxLayout.X_AXIS));
       miscRow3.add(scalePanel);
       miscRow3.add(Box.createHorizontalStrut(5));
-//      miscRow3.add(numCurves);
-//      miscRow3.add(Box.createHorizontalStrut(5));
       miscRow3.add(exportData);
 
       JPanel miscPanel = new JPanel();
@@ -1086,6 +1083,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         timeRange = parse(trField.getText(), timeRange);
         minWave = parse(wlField.getText(), minWave);
         waveStep = parse(sField.getText(), waveStep);
+        numExp = parse(fitField.getText(), numExp);
         adjustPeaks = peaksBox.isSelected();
         computeFWHMs = fwhmBox.isSelected();
         cutEnd = cutBox.isSelected();
@@ -1108,6 +1106,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   public void changedUpdate(DocumentEvent e) { documentUpdate(e); }
   public void insertUpdate(DocumentEvent e) { documentUpdate(e); }
   public void removeUpdate(DocumentEvent e) { documentUpdate(e); }
+
+  private void documentUpdate(DocumentEvent e) {
+    Document doc = e.getDocument();
+    if (doc == zScaleValue.getDocument()) updateZAxis();
+    else updateColorScale(); // cMinValue or cMaxValue
+  }
 
   // -- Runnable methods --
 
@@ -1243,7 +1247,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // curve fitting
       double[][] fitResults = null;
-      int numExp = ((Integer) numCurves.getValue()).intValue();
       if (adjustPeaks && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
         progress.setNote("Fitting curves");
@@ -1601,12 +1604,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
-  }
-
-  private void documentUpdate(DocumentEvent e) {
-    Document doc = e.getDocument();
-    if (doc == zScaleValue.getDocument()) updateZAxis();
-    else updateColorScale(); // cMinValue or cMaxValue
   }
 
   private void updateZAxis() {
