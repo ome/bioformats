@@ -58,9 +58,9 @@ public class CurveCollection {
    * @throws IllegalArgumentException
    *  if numRows or numCols is not a power of two or numRows != numCols
    */
-  public CurveCollection(CurveFitter[][] cf) {
-    int numRows = cf.length;
-    int numCols = cf[0].length;
+  public CurveCollection(CurveFitter[][] curveFitters) {
+    int numRows = curveFitters.length;
+    int numCols = curveFitters[0].length;
     if (numRows != numCols) {
       throw new IllegalArgumentException("Row and column counts do not match");
     }
@@ -70,11 +70,30 @@ public class CurveCollection {
       throw new IllegalArgumentException("Row count is not a power of two");
     }
     curves = new CurveFitter[depth + 1][][];
-    curves[0] = cf;
+    curves[0] = curveFitters;
 
     // compute subsamplings
-    for (int i=1; i<=depth; i++) {
-      curves[i] = null;//TODO
+    int res = numRows;
+    for (int d=1; d<=depth; d++) {
+      res /= 2;
+      curves[d] = new CurveFitter[res][res];
+      for (int y=0; y<res; y++) {
+        for (int x=0; x<res; x++) {
+          CurveFitter cf = new GACurveFitter();
+          /*
+          int[] data0 = curves[d-1][2*y][2*x].getData();
+          int[] data1 = curves[d-1][2*y][2*x+1].getData();
+          int[] data2 = curves[d-1][2*y+1][2*x].getData();
+          int[] data3 = curves[d-1][2*y+1][2*x+1].getData();
+          int[] data = new int[data0.length];
+          for (int i=0; i<data.length; i++) {
+            data[i] = data0[i] + data1[i] + data2[i] + data3[i];
+          }
+          cf.setData(data);
+          */
+          curves[d][y][x] = cf;
+        }
+      }
     }
   }
 
