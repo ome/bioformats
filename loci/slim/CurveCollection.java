@@ -80,7 +80,6 @@ public class CurveCollection {
       for (int y=0; y<res; y++) {
         for (int x=0; x<res; x++) {
           CurveFitter cf = new GACurveFitter();
-          /*
           int[] data0 = curves[d-1][2*y][2*x].getData();
           int[] data1 = curves[d-1][2*y][2*x+1].getData();
           int[] data2 = curves[d-1][2*y+1][2*x].getData();
@@ -90,7 +89,6 @@ public class CurveCollection {
             data[i] = data0[i] + data1[i] + data2[i] + data3[i];
           }
           cf.setData(data);
-          */
           curves[d][y][x] = cf;
         }
       }

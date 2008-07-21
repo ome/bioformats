@@ -39,7 +39,7 @@ public class GACurveFitter implements CurveFitter {
 
   // -- Fields --
 
-  protected double[][] curveData;
+  protected int[] curveData;
   protected double[][] curveEstimate;
   protected int degrees;
   protected double[][][] geneticData;
@@ -176,7 +176,7 @@ public class GACurveFitter implements CurveFitter {
     double[] expected = getEstimates(curveData, curveEstimate);
     for (int i = 0; i < curveData.length; i++) {
       if (expected[i] > 0) {
-        double observed = curveData[i][1];
+        double observed = (double) curveData[i];
         double term = (observed - expected[i]);
         // (o-e)^2
         term *= term;
@@ -201,15 +201,18 @@ public class GACurveFitter implements CurveFitter {
 
   /**
    * Sets the data to be used to generate curve estimates.
-   * The array is expected to be of size [datapoints][2].
-   * [][0] contains a time value, [][1] contains the data value.
+   * The array is expected to be of size datapoints
    **/
-  public void setData(double[][] data) throws IllegalArgumentException {
-    if (data[0].length != 2) {
-      throw new IllegalArgumentException(
-          "Wrong number of elements per datapoint.");
-    }
+  public void setData(int[] data) throws IllegalArgumentException {
     curveData = data;
+  }
+
+  /**
+   * Returns a reference to the data array
+   * Does not create a copy.
+   **/ 
+  public int[] getData() {
+    return curveData;
   }
 
   /**
@@ -227,6 +230,7 @@ public class GACurveFitter implements CurveFitter {
   }
 
   // Initializes the curve fitter with a starting curve estimate.
+  // 7/21 EK - Changed to use 1d data rows.
   public void estimate() {
     if (degrees >= 1) {
       // TODO: Estimate c, factor it in below.
@@ -245,26 +249,27 @@ public class GACurveFitter implements CurveFitter {
       double num = 0.0;
       double den = 0.0;
       for (int i = 1; i < curveData.length; i++) {
-        if (curveData[i][1] > guessC && curveData[i-1][1] > guessC) {
-          double time = curveData[i][0] - curveData[i-1][0];
+        if (curveData[i] > guessC && curveData[i-1] > guessC) {
+          //double time = curveData[i][0] - curveData[i-1][0];
+          double time = 1.0d;
           double factor =
-            (curveData[i][1] - guessC) / (curveData[i-1][1] - guessC);
-          double guess = (1.0 / time) * -Math.log(factor);
-          num += (guess * (curveData[i][1] - guessC));
-          den += curveData[i][1] - guessC;
+            (curveData[i] - guessC) / (curveData[i-1] - guessC);
+          double guess = 1.0 * -Math.log(factor);
+          num += (guess * (curveData[i] - guessC));
+          den += curveData[i] - guessC;
         }
       }
       double exp = num/den;
       num = 0.0;
       den = 0.0;
       for (int i = 0; i < curveData.length; i++) {
-        if (curveData[i][1] > guessC) {
+        if (curveData[i] > guessC) {
           // calculate e^-bt based on our exponent estimate
-          double value = Math.pow(Math.E, -curveData[i][0] * exp);
+          double value = Math.pow(Math.E, -i * exp);
           // estimate a
-          double guessA = curveData[i][1] / value;
-          num += guessA * (curveData[i][1] - guessC);
-          den += curveData[i][1] - guessC;
+          double guessA = curveData[i] / value;
+          num += guessA * (curveData[i] - guessC);
+          den += curveData[i] - guessC;
         }
       }
       double mult = num/den;
@@ -282,34 +287,39 @@ public class GACurveFitter implements CurveFitter {
       double high = 0.0d;
       double low = Double.MAX_VALUE;
       for (int i = 3; i < curveData.length; i++) {
-        if (curveData[i][1] > guessC && curveData[i-3][1] > guessC + 10) {
-          double time = curveData[i][0] - curveData[i-3][0];
+        if (curveData[i] > guessC && curveData[i-3] > guessC + 10) {
+          //double time = curveData[i][0] - curveData[i-3][0];
+          double time = 3.0d;
           double factor =
-            (curveData[i][1] - guessC) / (curveData[i-3][1] - guessC);
-          double guess = (1.0 / time) * -Math.log(factor);
+            (curveData[i] - guessC) / (curveData[i-3] - guessC);
+          double guess = (1.0 / 3.0) * -Math.log(factor);
           if (guess > high) high = guess;
           if (guess < low) low = guess;
         }
       }
+      /*
       if (10.0 > low) low = 10.0;
       if (20.0 > high) high = 20.0;
+      */
       curveEstimate[0][1] = high;
       curveEstimate[1][1] = low;
 
       double highA = 0.0d;
       double lowA = Double.MAX_VALUE;
       for (int i = 0; i < curveData.length; i++) {
-        if (curveData[i][1] > guessC + 10) {
+        if (curveData[i] > guessC + 10) {
           // calculate e^-bt based on our exponent estimate
-          double value = Math.pow(Math.E, -curveData[i][0] * low);
+          double value = Math.pow(Math.E, -i * low);
           // estimate a
-          double guessA = curveData[i][1] / value;
+          double guessA = curveData[i] / value;
           if (guessA > highA) highA = guessA;
           if (guessA < lowA) lowA = guessA;
         }
       }
+      /*
       if (10.0 > lowA) lowA = 10.0;
       if (20.0 > highA) highA = 20.0;
+      */
       curveEstimate[0][0] = highA - lowA;
       curveEstimate[1][0] = lowA;
       // It seems like the low estimates are pretty good, usually.
@@ -323,8 +333,8 @@ public class GACurveFitter implements CurveFitter {
       double[] lowData = getEstimates(curveData, lowEst);
       double[][] lowValues = new double[curveData.length][2];
       for (int i = 0; i < lowValues.length; i++) {
-        lowValues[i][0] = curveData[i][0];
-        lowValues[i][1] = curveData[i][1] - lowData[i];
+        lowValues[i][0] = i;
+        lowValues[i][1] = curveData[i] - lowData[i];
       }
 
       // now, treat lowValues as a single exponent.
@@ -400,13 +410,13 @@ public class GACurveFitter implements CurveFitter {
 
   // -- Helper methods --
 
-  private double[] getEstimates(double[][] data, double[][] estimate) {
+  private double[] getEstimates(int[] data, double[][] estimate) {
     double[] toreturn = new double[data.length];
     for (int i = 0; i < toreturn.length; i++) {
       double value = 0;
       for (int j = 0; j < estimate.length; j++) {
         // e^-bt
-        double term = Math.pow(Math.E, -estimate[j][1] * data[i][0]);
+        double term = Math.pow(Math.E, -estimate[j][1] * i);
         // ae^-bt
         term *= estimate[j][0];
         // ae^-bt + c
@@ -429,7 +439,7 @@ public class GACurveFitter implements CurveFitter {
     double[] expected = getEstimates(curveData, estCurve);
     for (int i = 0; i < curveData.length; i++) {
       if (expected[i] > 0) {
-        double observed = curveData[i][1];
+        double observed = curveData[i];
         double term = (observed - expected[i]);
         // (o-e)^2
         term *= term;

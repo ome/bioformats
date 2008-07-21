@@ -39,7 +39,7 @@ import java.util.StringTokenizer;
 public class CurveFitterTester {
 
   // Read a test file
-  public static double[][] curveData(BufferedReader in) throws IOException {
+  public static int[] curveData(BufferedReader in) throws IOException {
     in.readLine();
     in.readLine();
     StringTokenizer st = new StringTokenizer(in.readLine());
@@ -61,12 +61,12 @@ public class CurveFitterTester {
       in.readLine();
     }
     in.readLine();
-    double[][] data = new double[datapoints][2];
+    int[] data = new int[datapoints];
     for(int i = 0; i < datapoints; i++) {
       st = new StringTokenizer(in.readLine());
       st.nextToken();
-      data[i][1] = Integer.parseInt(st.nextToken());
-      data[i][0] = timeinc * (i + 1);
+      data[i] = Integer.parseInt(st.nextToken());
+      //data[i][0] = timeinc * (i + 1);
       //System.out.println(i + ": " + data[i][1]);
     }
     return data;
@@ -76,7 +76,7 @@ public class CurveFitterTester {
     BufferedReader in = new BufferedReader(new FileReader(args[0]));
     int degrees = Integer.parseInt(args[1]);
 
-    double[][] data = curveData(in);
+    int[] data = curveData(in);
     long start = System.currentTimeMillis();
     CurveFitter cf = new GACurveFitter();
     // TODO: Change this to test all of the test data.

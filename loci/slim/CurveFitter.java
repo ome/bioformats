@@ -52,12 +52,18 @@ interface CurveFitter {
 
   /**
    * Sets the data to be used to generate curve estimates.
-   * The array is expected to be of size [datapoints][2].
-   * [][0] contains a time value, [][1] contains the data value.
-   * TODO: Do I actually need the time values, or can I hardcode?
+   * Single dimension of data... time values are index, since
+   * we can assume that the datapoints are evenly spaced.
    **/
-  void setData(double[][] data);
+  void setData(int[] data);
 
+  /**
+   * Sets the data to be used to generate curve estimates.
+   * Single dimension of data... time values are index, since
+   * we can assume that the datapoints are evenly spaced.
+   **/
+  int[] getData();
+  
   // TODO: Set time domain?
 
   /**
