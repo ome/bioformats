@@ -33,7 +33,7 @@ package loci.slim;
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
-interface CurveFitter {
+public interface CurveFitter {
 
   /**
    * iterate() runs through one iteration of whatever curve fitting

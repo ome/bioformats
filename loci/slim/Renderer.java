@@ -1,3 +1,5 @@
+package loci.slim;
+
 import loci.slim.CurveCollection;
 
 public abstract class Renderer implements Runnable {
@@ -14,6 +16,7 @@ public abstract class Renderer implements Runnable {
   protected int currProgress;
   protected int maxProgress;
   protected CurveCollection curveData;
+  protected int numExponentials;
   
   public abstract void run();
 
@@ -69,5 +72,15 @@ public abstract class Renderer implements Runnable {
   public double getMaxRCSE() {
     return maxRCSE;
   }
+  
+  public abstract double[][] getImage();
+  
+  public void setComponentCount(int degrees) {
+    numExponentials = degrees;
+  }
 
+  public abstract int getImageX();
+
+  public abstract int getImageY();
+  
 }
