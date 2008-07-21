@@ -1293,12 +1293,39 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
         equation.append("c");
         log("Computing fit parameters: " + equation.toString());
+        int[] data = new int[num];
         for (int c=0, cc=0; c<channels; c++) {
           if (!cVisible[c]) {
             fitResults[c] = null;
             continue;
           }
           log("\tChannel #" + (c + 1) + ":");
+
+          /*
+          // CTR - BEGIN NOR CODE
+          GACurveFitter fitter = new GACurveFitter();
+          for (int i=0; i<num; i++) {
+            data[i] = (int) samps[timeBins * cc + maxPeak + i];
+          }
+          fitter.setDegrees(numExp);
+          fitter.setData(data);
+          fitter.estimate();
+          for (int i=0; i<1500; i++) fitter.iterate();
+          double[][] results = fitter.getCurve();
+          log("\t\tchi2=" + fitter.getReducedChiSquaredError());
+          for (int i=0; i<numExp; i++) {
+            int e = 3 * i;
+            log("\t\ta" + (i + 1) + "=" +
+              (100 * results[i][e] / maxVals[cc]) + "%");
+            tau[c][i] = binsToPico((float) (1 / results[i][e + 1]));
+            log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
+            log("\t\tc=" + results[i][e + 2]);
+          }
+          fitResults[c] = fitter.getCurve()[0];
+          // CTR - END LMA CODE
+          */
+
+          // CTR - BEGIN LMA CODE
           System.arraycopy(samps, timeBins * cc + maxPeak, yVals, 0, num);
           LMA lma = null;
           for (int i=0; i<numExp; i++) {
@@ -1323,6 +1350,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           log("\t\tc=" + lma.parameters[2 * numExp]);
           fitResults[c] = lma.parameters;
+          // CTR - END LMA CODE
+
           setProgress(progress, ++p);
           cc++;
         }
