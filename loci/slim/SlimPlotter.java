@@ -1314,15 +1314,20 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           double[][] results = fitter.getCurve();
           log("\t\tchi2=" + fitter.getReducedChiSquaredError());
           for (int i=0; i<numExp; i++) {
-            int e = 3 * i;
             log("\t\ta" + (i + 1) + "=" +
-              (100 * results[i][e] / maxVals[cc]) + "%");
-            tau[c][i] = binsToPico((float) (1 / results[i][e + 1]));
+              (100 * results[i][0] / maxVals[cc]) + "%");
+            tau[c][i] = binsToPico((float) (1 / results[i][1]));
             log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
-            log("\t\tc=" + results[i][e + 2]);
+            log("\t\tc=" + results[i][2]);
           }
-          fitResults[c] = fitter.getCurve()[0];
-          // CTR - END LMA CODE
+          fitResults[c] = new double[2 * numExp + 1];
+          for (int i=0; i<numExp; i++) {
+            int e = 2 * i;
+            fitResults[c][e] = results[i][0];
+            fitResults[c][e + 1] = results[i][1];
+          }
+          fitResults[c][2 * numExp] = results[0][2];
+          // CTR - END NOR CODE
           */
 
           // CTR - BEGIN LMA CODE
