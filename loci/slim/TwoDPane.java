@@ -1,5 +1,5 @@
 //
-// IntensityPane.java
+// TwoDPane.java
 //
 
 /*
@@ -45,12 +45,12 @@ import visad.java3d.TwoDDisplayRendererJ3D;
  * Slim Plotter's 2D intensity pane.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/IntensityPane.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/slim/IntensityPane.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/TwoDPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/slim/TwoDPane.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class IntensityPane extends JPanel
+public class TwoDPane extends JPanel
   implements ActionListener, ChangeListener, DisplayListener, DocumentListener
 {
 
@@ -77,15 +77,16 @@ public class IntensityPane extends JPanel
   private boolean[][] roiMask;
 
   // GUI components for intensity pane
+  private JRadioButton intensityMode, lifetimeMode, spectraMode;
   private JSlider cSlider;
   private JTextField minField, maxField;
   private JCheckBox cToggle;
 
   // -- Constructor --
 
-  public IntensityPane(SlimPlotter slim, FieldImpl field,
+  public TwoDPane(SlimPlotter slim, FieldImpl field,
     int width, int height, int channels,
-    int max, int maxChan, boolean[] cVisible,
+    int globalMax, int maxChan, boolean[] cVisible,
     RealType xType, RealType yType, RealType vType, RealType cType)
     throws VisADException, RemoteException
   {
@@ -181,6 +182,10 @@ public class IntensityPane extends JPanel
     iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
     add(iPlotPane);
 
+    JPanel viewModePane = new JPanel();
+    viewModePane.setLayout(new BoxLayout(viewModePane, BoxLayout.X_AXIS));
+    add(viewModePane);
+
     JPanel sliderPane = new JPanel();
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
     add(sliderPane);
@@ -211,7 +216,7 @@ public class IntensityPane extends JPanel
     maxLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
     minLabel.setPreferredSize(maxLabel.getPreferredSize());
     maxPane.add(maxLabel);
-    maxField = new JTextField("" + max, 4);
+    maxField = new JTextField("" + globalMax, 4);
     maxField.setMaximumSize(maxField.getPreferredSize());
     maxField.setToolTipText("<html>" +
       "Adjusts intensity plot's maximum color value.<br>" +
@@ -237,49 +242,29 @@ public class IntensityPane extends JPanel
     cToggle.setEnabled(channels > 1);
     sliderPane.add(cToggle);
 
-    cSlider.setValue(maxChan + 1);
     rescaleMinMax();
-    /*
-    JPanel minMaxPane = new JPanel();
-    minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.X_AXIS));
-    add(minMaxPane);
 
-    JPanel minPane = new JPanel();
-    minPane.setLayout(new BoxLayout(minPane, BoxLayout.Y_AXIS));
-    minMaxPane.add(minPane);
-    minLabel = new JLabel("min=0");
-    minLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-    minPane.add(minLabel);
-    minSlider = new JSlider(0, max, 0);
-    minSlider.setToolTipText("<html>" +
-      "Adjusts intensity plot's minimum color value.<br>" +
-      "Anything less than this value appears black.</html>");
-    minSlider.setMajorTickSpacing(max);
-    int minor = max / 16;
-    if (minor < 1) minor = 1;
-    minSlider.setMinorTickSpacing(minor);
-    minSlider.setPaintTicks(true);
-    minSlider.addChangeListener(this);
-    minSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
-    minPane.add(minSlider);
+    viewModePane.add(new JLabel("View mode:"));
+    intensityMode = new JRadioButton("Intensity", true);
+    lifetimeMode = new JRadioButton("Lifetime");
+    spectraMode = new JRadioButton("Spectra");
+    spectraMode.setEnabled(false);
+    ButtonGroup group = new ButtonGroup();
+    group.add(intensityMode);
+    group.add(lifetimeMode);
+    group.add(spectraMode);
+    intensityMode.addActionListener(this);
+    lifetimeMode.addActionListener(this);
+    spectraMode.addActionListener(this);
+    viewModePane.add(Box.createHorizontalStrut(5));
+    viewModePane.add(intensityMode);
+    viewModePane.add(lifetimeMode);
+    viewModePane.add(spectraMode);
 
-    JPanel maxPane = new JPanel();
-    maxPane.setLayout(new BoxLayout(maxPane, BoxLayout.Y_AXIS));
-    minMaxPane.add(maxPane);
-    maxLabel = new JLabel("max=" + max);
-    maxLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-    maxPane.add(maxLabel);
-    maxSlider = new JSlider(0, max, max);
-    maxSlider.setMajorTickSpacing(max);
-    maxSlider.setMinorTickSpacing(minor);
-    maxSlider.setPaintTicks(true);
-    maxSlider.addChangeListener(this);
-    maxSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
-    maxPane.add(maxSlider);
-    */
+    cSlider.setValue(maxChan + 1);
   }
 
-  // -- IntensityPane methods --
+  // -- TwoDPane methods --
 
   public int getROICount() { return roiCount; }
   public double getROIPercent() { return roiPercent; }
@@ -291,10 +276,23 @@ public class IntensityPane extends JPanel
 
   /** Handles checkbox presses. */
   public void actionPerformed(ActionEvent e) {
-    // toggle visibility of this channel
-    int c = cSlider.getValue() - 1;
-    cVisible[c] = !cVisible[c];
-    slim.plotData(true, true, false);
+    Object src = e.getSource();
+    if (src == cToggle) {
+      // toggle visibility of this channel
+      int c = cSlider.getValue() - 1;
+      cVisible[c] = !cVisible[c];
+      slim.plotData(true, true, false);
+    }
+    else if (src == intensityMode) {
+      // TODO
+    }
+    else if (src == lifetimeMode) {
+      // TODO
+    }
+    else if (src == spectraMode) {
+      // TODO - spectral projection
+      // https://skyking.microscopy.wisc.edu/trac/java/ticket/86
+    }
   }
 
   // -- ChangeListener methods --
