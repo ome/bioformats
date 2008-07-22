@@ -210,7 +210,7 @@ public class GACurveFitter implements CurveFitter {
    * Sets the data to be used to generate curve estimates.
    * The array is expected to be of size datapoints
    **/
-  public void setData(int[] data) throws IllegalArgumentException {
+  public void setData(int[] data) {
     curveData = data;
   }
 
@@ -421,7 +421,7 @@ public class GACurveFitter implements CurveFitter {
    * curve is already known.
    * See getCurve for information about the array to pass.
    **/
-  public void setCurve(double[][] curve) throws IllegalArgumentException {
+  public void setCurve(double[][] curve) {
     if (curve.length != degrees) {
       throw new IllegalArgumentException("Incorrect number of degrees.");
     }

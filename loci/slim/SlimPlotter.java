@@ -27,9 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.slim;
 
-import jaolho.data.lma.LMA;
-import jaolho.data.lma.LMAFunction;
-import jaolho.data.lma.implementations.JAMAMatrix;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -122,6 +119,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private int minWave, waveStep, maxWave;
   private int numExp;
   private boolean adjustPeaks, computeFWHMs, cutEnd;
+  private boolean useLMA;
   private boolean[] cVisible;
   private int maxPeak;
   private int[] maxIntensity;
@@ -145,6 +143,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private JTextField wField, hField, tField, cField;
   private JTextField trField, wlField, sField;
   private JTextField fitField;
+  private JRadioButton gaChoice, lmChoice;
   private JCheckBox peaksBox, fwhmBox, cutBox;
 
   // GUI components for intensity pane
@@ -191,9 +190,15 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   public SlimPlotter(String[] args) throws Exception {
     console = new OutputConsole("Log");
-    System.setErr(new ConsoleStream(new PrintStream(console)));
     console.getTextArea().setColumns(54);
     console.getTextArea().setRows(10);
+
+    PrintStream err = new PrintStream(console);
+
+    // HACK - suppress hard-coded exception dumps
+    err = LMCurveFitter.filter(err);
+
+    System.setErr(err);
 
     // progress estimate:
     // * Reading data - 70%
@@ -286,7 +291,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       JPanel paramPane = new JPanel();
       paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
       paramDialog.setContentPane(paramPane);
-      paramPane.setLayout(new GridLayout(13, 3));
+      paramPane.setLayout(new GridLayout(12, 3));
       wField = addRow(paramPane, "Image width", width, "pixels");
       hField = addRow(paramPane, "Image height", height, "pixels");
       tField = addRow(paramPane, "Time bins", timeBins, "");
@@ -299,6 +304,15 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       paramDialog.getRootPane().setDefaultButton(ok);
       ok.addActionListener(this);
       // row 8
+      paramPane.add(new JLabel("Fit algorithm"));
+      lmChoice = new JRadioButton("Levenberg-Marquardt");
+      gaChoice = new JRadioButton("Genetic", true);
+      ButtonGroup group = new ButtonGroup();
+      group.add(lmChoice);
+      group.add(gaChoice);
+      paramPane.add(lmChoice);
+      paramPane.add(gaChoice);
+      // row 9, column 1
       peaksBox = new JCheckBox("Align peaks", true);
       peaksBox.setToolTipText("<html>Computes the peak of each spectral " +
         "channel, and aligns those peaks <br>to match by adjusting the " +
@@ -307,29 +321,23 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "response time between channels. This option must<br>be enabled to " +
         "perform exponential curve fitting.</html>");
       paramPane.add(peaksBox);
-      paramPane.add(new JLabel());
-      paramPane.add(new JLabel());
-      // row 9
+      // row 9, column 2
       fwhmBox = new JCheckBox("Compute FWHMs", false);
       fwhmBox.setToolTipText(
         "<html>Computes the full width half max at each channel.</html>");
       paramPane.add(fwhmBox);
-      paramPane.add(new JLabel());
-      paramPane.add(new JLabel());
-      // row 10
+      // row 9, column 3
       cutBox = new JCheckBox("Cut 1.5ns from fit", true);
       cutBox.setToolTipText("<html>When performing exponential curve " +
         "fitting, excludes the last 1.5 ns<br>from the computation. This " +
         "option is useful because the end of the <br>the lifetime histogram " +
         "sometimes drops off unexpectedly, skewing<br>the fit results.</html>");
       paramPane.add(cutBox);
+      // row 10
+      paramPane.add(new JLabel());
       paramPane.add(new JLabel());
       paramPane.add(new JLabel());
       // row 11
-      paramPane.add(new JLabel());
-      paramPane.add(new JLabel());
-      paramPane.add(new JLabel());
-      // row 12
       paramPane.add(new JLabel());
       paramPane.add(ok);
       paramDialog.pack();
@@ -1084,6 +1092,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         minWave = parse(wlField.getText(), minWave);
         waveStep = parse(sField.getText(), waveStep);
         numExp = parse(fitField.getText(), numExp);
+        useLMA = lmChoice.isSelected();
         adjustPeaks = peaksBox.isSelected();
         computeFWHMs = fwhmBox.isSelected();
         cutEnd = cutBox.isSelected();
@@ -1253,20 +1262,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         fitResults = new double[channels][];
         tau = new float[channels][numExp];
         for (int c=0; c<channels; c++) Arrays.fill(tau[c], Float.NaN);
-        ExpFunction func = new ExpFunction(numExp);
-        float[] params = new float[2 * numExp + 1];
-        if (numExp == 1) {
-          //params[0] = maxVal;
-          params[1] = picoToBins(1000);
-          params[2] = 0;
-        }
-        else if (numExp == 2) {
-          //params[0] = maxVal / 2;
-          params[1] = picoToBins(800);
-          //params[2] = maxVal / 2;
-          params[3] = picoToBins(2000);
-          params[4] = 0;
-        }
         int num = timeBins - maxPeak;
 
         // HACK - cut off last 1500 ps from lifetime histogram,
@@ -1276,11 +1271,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           if (num > cutBins + 5) num -= cutBins;
         }
 
-        float[] xVals = new float[num];
-        for (int i=0; i<num; i++) xVals[i] = i;
-        float[] yVals = new float[num];
-        float[] weights = new float[num];
-        Arrays.fill(weights, 1); // no weighting
         StringBuffer equation = new StringBuffer();
         equation.append("y(t) = ");
         for (int i=0; i<numExp; i++) {
@@ -1301,16 +1291,16 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           log("\tChannel #" + (c + 1) + ":");
 
-          /*
-          // CTR - BEGIN NOR CODE
-          GACurveFitter fitter = new GACurveFitter();
+          CurveFitter fitter;
+          if (useLMA) fitter = new LMCurveFitter();
+          else fitter = new GACurveFitter();
           for (int i=0; i<num; i++) {
             data[i] = (int) samps[timeBins * cc + maxPeak + i];
           }
           fitter.setDegrees(numExp);
           fitter.setData(data);
           fitter.estimate();
-          for (int i=0; i<1500; i++) fitter.iterate();
+          for (int i=0; i<100; i++) fitter.iterate();
           double[][] results = fitter.getCurve();
           log("\t\tchi2=" + fitter.getReducedChiSquaredError());
           for (int i=0; i<numExp; i++) {
@@ -1318,8 +1308,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
               (100 * results[i][0] / maxVals[cc]) + "%");
             tau[c][i] = binsToPico((float) (1 / results[i][1]));
             log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
-            log("\t\tc=" + results[i][2]);
           }
+          log("\t\tc=" + results[0][2]);
           fitResults[c] = new double[2 * numExp + 1];
           for (int i=0; i<numExp; i++) {
             int e = 2 * i;
@@ -1327,35 +1317,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             fitResults[c][e + 1] = results[i][1];
           }
           fitResults[c][2 * numExp] = results[0][2];
-          // CTR - END NOR CODE
-          */
-
-          // CTR - BEGIN LMA CODE
-          System.arraycopy(samps, timeBins * cc + maxPeak, yVals, 0, num);
-          LMA lma = null;
-          for (int i=0; i<numExp; i++) {
-            int e = 2 * i;
-            params[e] = maxVals[cc] / numExp;
-          }
-          lma = new LMA(func, params, new float[][] {xVals, yVals},
-            weights, new JAMAMatrix(params.length, params.length));
-          lma.fit();
-          log("\t\titerations=" + lma.iterationCount);
-          // normalize chi2 by the channel's peak value
-          if (maxVals[cc] != 0) lma.chi2 /= maxVals[cc];
-          // scale chi2 by degrees of freedom
-          lma.chi2 /= num - params.length;
-          log("\t\tchi2=" + lma.chi2);
-          for (int i=0; i<numExp; i++) {
-            int e = 2 * i;
-            log("\t\ta" + (i + 1) + "=" +
-              (100 * lma.parameters[e] / maxVals[cc]) + "%");
-            tau[c][i] = binsToPico((float) (1 / lma.parameters[e + 1]));
-            log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
-          }
-          log("\t\tc=" + lma.parameters[2 * numExp]);
-          fitResults[c] = lma.parameters;
-          // CTR - END LMA CODE
 
           setProgress(progress, ++p);
           cc++;
@@ -1712,67 +1673,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   }
 
   // -- Helper classes --
-
-  /**
-   * A summed exponential function of the form:
-   * y(t) = a1*e^(-b1*t) + ... + an*e^(-bn*t) + c.
-   */
-  public class ExpFunction extends LMAFunction {
-    /** Number of exponentials to fit. */
-    private int numExp = 1;
-
-    /** Constructs a function with the given number of summed exponentials. */
-    public ExpFunction(int num) { numExp = num; }
-
-    public double getY(double x, double[] a) {
-      double sum = 0;
-      for (int i=0; i<numExp; i++) {
-        int e = 2 * i;
-        sum += a[e] * Math.exp(-a[e + 1] * x);
-      }
-      sum += a[2 * numExp];
-      return sum;
-    }
-
-    public double getPartialDerivate(double x, double[] a, int parameterIndex) {
-      if (parameterIndex == 2 * numExp) return 1; // c
-      int e = parameterIndex / 2;
-      int off = parameterIndex % 2;
-      switch (off) {
-        case 0:
-          return Math.exp(-a[e + 1] * x); // a
-        case 1:
-          return -a[e] * x * Math.exp(-a[e + 1] * x); // b
-      }
-      throw new RuntimeException("No such parameter index: " +
-        parameterIndex);
-    }
-  }
-
-  /**
-   * HACK - OutputStream extension for filtering out hardcoded
-   * RuntimeException.printStackTrace() exceptions within LMA library.
-   */
-  public class ConsoleStream extends PrintStream {
-    private boolean ignore;
-
-    public ConsoleStream(OutputStream out) {
-      super(out);
-    }
-
-    public void println(String s) {
-      if (s.equals("java.lang.RuntimeException: Matrix is singular.")) {
-        ignore = true;
-      }
-      else if (ignore && !s.startsWith("\tat ")) ignore = false;
-      if (!ignore) super.println(s);
-    }
-
-    public void println(Object o) {
-      String s = o.toString();
-      println(s);
-    }
-  }
 
   /**
    * Helper class for clipboard interaction, stolen from
