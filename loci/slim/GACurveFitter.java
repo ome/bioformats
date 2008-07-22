@@ -241,12 +241,11 @@ public class GACurveFitter implements CurveFitter {
   public void estimate() {
     if (degrees >= 1) {
       // TODO: Estimate c, factor it in below.
-      
+
       double guessC = Double.MAX_VALUE;
       for (int i = 0; i < curveData.length; i++) {
         if (curveData[i] < guessC) guessC = curveData[i];
       }
-      
 
       //double guessC = 0.0d;
 
@@ -274,7 +273,7 @@ public class GACurveFitter implements CurveFitter {
       // Hacky... we would like to do this over the entire curve length,
       // but the actual data is far too noisy to do this. Instead, we'll just
       // do it for the first 5, which have the most data.
-      //for (int i = 0; i < curveData.length; i++) {
+      //for (int i = 0; i < curveData.length; i++)
       for(int i = 0; i < 5; i++) {
         if (curveData[i] > guessC) {
           // calculate e^-bt based on our exponent estimate
@@ -290,6 +289,10 @@ public class GACurveFitter implements CurveFitter {
       curveEstimate[0][0] = mult;
       curveEstimate[0][1] = exp;
       curveEstimate[0][2] = guessC;
+
+      // Fix bug where the estimate occasionally produces negative
+      // tau values. If this happens, we'll sort it out in iteration.
+      if (curveEstimate[0][1] <= 0) curveEstimate[0][1] = 1000;
     }
     if (degrees == 2) {
       double guessC = Double.MAX_VALUE;
@@ -323,7 +326,7 @@ public class GACurveFitter implements CurveFitter {
 
       double highA = 0.0d;
       double lowA = Double.MAX_VALUE;
-      //for (int i = 0; i < curveData.length; i++) {
+      //for (int i = 0; i < curveData.length; i++)
       for(int i = 0; i < 5; i++) {
         if (curveData[i] > guessC + 10) {
           // calculate e^-bt based on our exponent estimate
@@ -371,7 +374,7 @@ public class GACurveFitter implements CurveFitter {
       double exp = num/den;
       num = 0.0;
       den = 0.0;
-      //for (int i = 0; i < lowValues.length; i++) {
+      //for (int i = 0; i < lowValues.length; i++)
       for(int i = 0; i < 5; i++) {
         if (lowValues[i][1] > guessC) {
           // calculate e^-bt based on our exponent estimate
@@ -398,8 +401,6 @@ public class GACurveFitter implements CurveFitter {
       // tau values. If this happens, we'll sort it out in iteration.
       if(curveEstimate[0][1] <= 0) curveEstimate[0][1] = 2000;
       if(curveEstimate[1][1] <= 0) curveEstimate[1][1] = 800;
-      
-
     }
 
     // To update currentRCSE.
