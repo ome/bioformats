@@ -107,7 +107,8 @@ public class LMCurveFitter implements CurveFitter {
 
   /** HACK - performs the actual fit. */
   public void estimate() {
-    final float[] guess = {5, 10};
+    int num = data.length;
+    final float[] guess = {num / 10, num / 5};
     float[] params = new float[2 * numExp + 1];
     for (int i=0; i<numExp; i++) {
       int e = 2 * i;
