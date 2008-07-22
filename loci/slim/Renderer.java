@@ -31,7 +31,7 @@ package loci.slim;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/Renderer.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/slim/Renderer.java">SVN</a></dd></dl>
  *
- * @author Eric Kjellman egkjellma at wisc.edu
+ * @author Eric Kjellman egkjellman at wisc.edu
  */
 public abstract class Renderer implements Runnable {
 

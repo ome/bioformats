@@ -1,4 +1,3 @@
-// TODO: Tau cannot be negative. >_<
 //
 // GACurveFitter.java
 //
