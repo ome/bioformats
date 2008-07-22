@@ -48,6 +48,8 @@ public class GACurveFitter implements CurveFitter {
   protected double currentRCSE;
   protected int stallGenerations;
 
+  private static final boolean DEBUG = false;
+  
   // -- Constructor --
 
   public GACurveFitter() {
@@ -170,13 +172,13 @@ public class GACurveFitter implements CurveFitter {
       }
     }
     for(int q = 0; q < curveEstimate.length; q++) {
-      System.out.println("c" + q + ": " + curveEstimate[q][2]);
+      if(DEBUG) System.out.println("c" + q + ": " + curveEstimate[q][2]);
     }
   }
 
   // Returns the Chi Squared Error of the current curve estimate
   public double getChiSquaredError() {
-    System.out.println("**********");
+    if(DEBUG) System.out.println("**********");
     double total = 0.0d;
     double[] expected = getEstimates(curveData, curveEstimate);
     for (int i = 0; i < curveData.length; i++) {
@@ -187,7 +189,7 @@ public class GACurveFitter implements CurveFitter {
         term *= term;
         // (o-e)^2 / e
         term /= expected[i];
-        System.out.println("Obs: " + observed +
+        if(DEBUG) System.out.println("Obs: " + observed +
           " Expect: " + expected[i] + " Term: " + term);
         total += term;
       }
@@ -260,13 +262,13 @@ public class GACurveFitter implements CurveFitter {
           double factor =
             (curveData[i] - guessC) / (curveData[i-1] - guessC);
           double guess = 1.0 * -Math.log(factor);
-          System.out.println("Guess: " + guess + "   Factor: " + factor);
+          if(DEBUG) System.out.println("Guess: " + guess + "   Factor: " + factor);
           num += (guess * (curveData[i] - guessC));
           den += curveData[i] - guessC;
         }
       }
       double exp = num/den;
-      System.out.println("Final exp guess: " + exp);
+      if(DEBUG) System.out.println("Final exp guess: " + exp);
       num = 0.0;
       den = 0.0;
       // Hacky... we would like to do this over the entire curve length,
@@ -281,7 +283,7 @@ public class GACurveFitter implements CurveFitter {
           double guessA = (curveData[i] - guessC) / value;
           num += guessA * (curveData[i] - guessC);
           den += curveData[i] - guessC;
-          System.out.println("Data: " + curveData[i] + " Value: " + value + " guessA: " + guessA);
+          if(DEBUG) System.out.println("Data: " + curveData[i] + " Value: " + value + " guessA: " + guessA);
         }
       }
       double mult = num/den;
