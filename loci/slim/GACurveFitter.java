@@ -1,3 +1,4 @@
+// TODO: Tau cannot be negative. >_<
 //
 // GACurveFitter.java
 //
@@ -168,10 +169,14 @@ public class GACurveFitter implements CurveFitter {
         }
       }
     }
+    for(int q = 0; q < curveEstimate.length; q++) {
+      System.out.println("c" + q + ": " + curveEstimate[q][2]);
+    }
   }
 
   // Returns the Chi Squared Error of the current curve estimate
   public double getChiSquaredError() {
+    System.out.println("**********");
     double total = 0.0d;
     double[] expected = getEstimates(curveData, curveEstimate);
     for (int i = 0; i < curveData.length; i++) {
@@ -182,8 +187,8 @@ public class GACurveFitter implements CurveFitter {
         term *= term;
         // (o-e)^2 / e
         term /= expected[i];
-        //System.out.println("Obs: " + observed +
-        //  " Expect: " + expected[i] + " Term: " + term);
+        System.out.println("Obs: " + observed +
+          " Expect: " + expected[i] + " Term: " + term);
         total += term;
       }
     }
@@ -234,14 +239,14 @@ public class GACurveFitter implements CurveFitter {
   public void estimate() {
     if (degrees >= 1) {
       // TODO: Estimate c, factor it in below.
-      /*
+      
       double guessC = Double.MAX_VALUE;
       for (int i = 0; i < curveData.length; i++) {
-        if (curveData[i][1] < guessC) guessC = curveData[i][1];
+        if (curveData[i] < guessC) guessC = curveData[i];
       }
-      */
+      
 
-      double guessC = 0.0d;
+      //double guessC = 0.0d;
 
       // First, get a guess for the exponent.
       // The exponent should be "constant", but we'd also like to weight
@@ -255,21 +260,28 @@ public class GACurveFitter implements CurveFitter {
           double factor =
             (curveData[i] - guessC) / (curveData[i-1] - guessC);
           double guess = 1.0 * -Math.log(factor);
+          System.out.println("Guess: " + guess + "   Factor: " + factor);
           num += (guess * (curveData[i] - guessC));
           den += curveData[i] - guessC;
         }
       }
       double exp = num/den;
+      System.out.println("Final exp guess: " + exp);
       num = 0.0;
       den = 0.0;
-      for (int i = 0; i < curveData.length; i++) {
+      // Hacky... we would like to do this over the entire curve length,
+      // but the actual data is far too noisy to do this. Instead, we'll just
+      // do it for the first 5, which have the most data.
+      //for (int i = 0; i < curveData.length; i++) {
+      for(int i = 0; i < 5; i++) {
         if (curveData[i] > guessC) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -i * exp);
           // estimate a
-          double guessA = curveData[i] / value;
+          double guessA = (curveData[i] - guessC) / value;
           num += guessA * (curveData[i] - guessC);
           den += curveData[i] - guessC;
+          System.out.println("Data: " + curveData[i] + " Value: " + value + " guessA: " + guessA);
         }
       }
       double mult = num/den;
@@ -278,9 +290,12 @@ public class GACurveFitter implements CurveFitter {
       curveEstimate[0][2] = guessC;
     }
     if (degrees == 2) {
-      double guessC = 0.0d;
+      double guessC = Double.MAX_VALUE;
+      for(int i = 0; i < curveData.length; i++) {
+        if(curveData[i] < guessC) guessC = curveData[i];
+      }
       curveEstimate[0][2] = guessC;
-      curveEstimate[1][2] = guessC;
+      curveEstimate[1][2] = 0;
 
       // First, get a guess for the exponents.
       // To stabilize for error, do guesses over spans of 3 timepoints.
@@ -306,7 +321,8 @@ public class GACurveFitter implements CurveFitter {
 
       double highA = 0.0d;
       double lowA = Double.MAX_VALUE;
-      for (int i = 0; i < curveData.length; i++) {
+      //for (int i = 0; i < curveData.length; i++) {
+      for(int i = 0; i < 5; i++) {
         if (curveData[i] > guessC + 10) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -i * low);
@@ -353,7 +369,8 @@ public class GACurveFitter implements CurveFitter {
       double exp = num/den;
       num = 0.0;
       den = 0.0;
-      for (int i = 0; i < lowValues.length; i++) {
+      //for (int i = 0; i < lowValues.length; i++) {
+      for(int i = 0; i < 5; i++) {
         if (lowValues[i][1] > guessC) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -lowValues[i][0] * exp);
@@ -374,6 +391,12 @@ public class GACurveFitter implements CurveFitter {
       // and 5 are below, or something similar.
       // For now, however, this produces reasonably good estimates, good
       // enough to start the GA process.
+
+      // Fix bug where the estimate occasionally produces negative
+      // tau values. If this happens, we'll sort it out in iteration.
+      if(curveEstimate[0][1] <= 0) curveEstimate[0][1] = 2000;
+      if(curveEstimate[1][1] <= 0) curveEstimate[1][1] = 800;
+      
 
     }
 
