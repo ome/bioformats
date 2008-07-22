@@ -42,7 +42,7 @@ import visad.java3d.DisplayImplJ3D;
 import visad.java3d.TwoDDisplayRendererJ3D;
 
 /**
- * Slim Plotter's 2D intensity pane.
+ * Slim Plotter's 2D image pane.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/TwoDPane.java">Trac</a>,
@@ -58,12 +58,23 @@ public class TwoDPane extends JPanel
 
   private SlimPlotter slim;
   private DisplayImpl iPlot;
-  private ScalarMap intensityMap;
+  private ScalarMap imageMap;
+  private DataReferenceImpl imageRef;
   private AnimationControl ac;
 
   // data parameters
-  private int width, height;
+  private int[][][][] data;
+  private int channels, width, height, timeBins;
   private boolean[] cVisible;
+  private SlimTypes types;
+
+  // intensity parameters
+  private FieldImpl intensityField;
+  private int intensityMin, intensityMax;
+
+  // lifetime parameters
+  private FieldImpl lifetimeField;
+  private int lifetimeMin, lifetimeMax;
 
   // ROI parameters
   private float[][] roiGrid;
@@ -84,22 +95,25 @@ public class TwoDPane extends JPanel
 
   // -- Constructor --
 
-  public TwoDPane(SlimPlotter slim, FieldImpl field,
-    int width, int height, int channels,
-    int globalMax, int maxChan, boolean[] cVisible,
-    RealType xType, RealType yType, RealType vType, RealType cType)
+  public TwoDPane(SlimPlotter slim, int[][][][] data,
+    boolean[] cVisible, SlimTypes types)
     throws VisADException, RemoteException
   {
     this.slim = slim;
-    this.width = width;
-    this.height = height;
+    this.data = data;
     this.cVisible = cVisible;
+    this.types = types;
+
+    channels = data.length;
+    width = data[0].length;
+    height = data[0][0].length;
+    timeBins = data[0][0][0].length;
 
     roiCount = width * height;
     roiPercent = 100;
 
-    // plot intensity data
-    iPlot = new DisplayImplJ3D("intensity", new TwoDDisplayRendererJ3D());
+    // create 2D display
+    iPlot = new DisplayImplJ3D("image", new TwoDDisplayRendererJ3D());
     iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
       {{MouseHelper.DIRECT, MouseHelper.NONE}, // L, shift-L
        {MouseHelper.NONE, MouseHelper.NONE}}, // ctrl-L, ctrl-shift-L
@@ -111,13 +125,13 @@ public class TwoDPane extends JPanel
     iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
     iPlot.addDisplayListener(this);
 
-    iPlot.addMap(new ScalarMap(xType, Display.XAxis));
-    iPlot.addMap(new ScalarMap(yType, Display.YAxis));
-    intensityMap = new ScalarMap(vType, Display.RGB);
-    iPlot.addMap(intensityMap);
-    iPlot.addMap(new ScalarMap(cType, Display.Animation));
-    DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
-    iPlot.addReference(intensityRef);
+    iPlot.addMap(new ScalarMap(types.xType, Display.XAxis));
+    iPlot.addMap(new ScalarMap(types.yType, Display.YAxis));
+    imageMap = new ScalarMap(types.vType, Display.RGB);
+    iPlot.addMap(imageMap);
+    iPlot.addMap(new ScalarMap(types.cType, Display.Animation));
+    imageRef = new DataReferenceImpl("image");
+    iPlot.addReference(imageRef);
 
     // set up curve manipulation renderer
     roiGrid = new float[2][width * height];
@@ -131,9 +145,9 @@ public class TwoDPane extends JPanel
       }
     }
     final DataReferenceImpl curveRef = new DataReferenceImpl("curve");
-    RealTupleType xy = new RealTupleType(xType, yType);
+    RealTupleType xy = new RealTupleType(types.xType, types.yType);
     UnionSet dummyCurve = new UnionSet(new Gridded2DSet[] {
-      new Gridded2DSet(xy, new float[][] {{0}, {0}}, 1)
+      new Gridded2DSet(types.xy, new float[][] {{0}, {0}}, 1)
     });
     curveRef.setData(dummyCurve);
     CurveManipulationRendererJ3D curve =
@@ -156,10 +170,6 @@ public class TwoDPane extends JPanel
     ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
     iPlot.getProjectionControl().setMatrix(
       iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
-
-    intensityRef.setData(field);
-    ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
-    cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
 
     // lay out components
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -201,10 +211,10 @@ public class TwoDPane extends JPanel
     JLabel minLabel = new JLabel("Min");
     minLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
     minPane.add(minLabel);
-    minField = new JTextField("0", 4);
+    minField = new JTextField(4);
     minField.setMaximumSize(minField.getPreferredSize());
     minField.setToolTipText("<html>" +
-      "Adjusts intensity plot's minimum color value.<br>" +
+      "Adjusts image plot's minimum color value.<br>" +
       "Anything less than this value appears black.</html>");
     minField.getDocument().addDocumentListener(this);
     minPane.add(minField);
@@ -216,17 +226,17 @@ public class TwoDPane extends JPanel
     maxLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
     minLabel.setPreferredSize(maxLabel.getPreferredSize());
     maxPane.add(maxLabel);
-    maxField = new JTextField("" + globalMax, 4);
+    maxField = new JTextField(4);
     maxField.setMaximumSize(maxField.getPreferredSize());
     maxField.setToolTipText("<html>" +
-      "Adjusts intensity plot's maximum color value.<br>" +
+      "Adjusts image plot's maximum color value.<br>" +
       "Anything greater than this value appears white.</html>");
     maxField.getDocument().addDocumentListener(this);
     maxPane.add(maxField);
 
     cSlider = new JSlider(1, channels, 1);
     cSlider.setToolTipText(
-      "Selects the channel to display in the 2D intensity plot above");
+      "Selects the channel to display in the 2D image plot above");
     cSlider.setSnapToTicks(true);
     cSlider.setMajorTickSpacing(channels / 4);
     cSlider.setMinorTickSpacing(1);
@@ -241,8 +251,6 @@ public class TwoDPane extends JPanel
     cToggle.addActionListener(this);
     cToggle.setEnabled(channels > 1);
     sliderPane.add(cToggle);
-
-    rescaleMinMax();
 
     viewModePane.add(new JLabel("View mode:"));
     intensityMode = new JRadioButton("Intensity", true);
@@ -260,6 +268,8 @@ public class TwoDPane extends JPanel
     viewModePane.add(intensityMode);
     viewModePane.add(lifetimeMode);
     viewModePane.add(spectraMode);
+
+    int maxChan = doIntensity();
 
     cSlider.setValue(maxChan + 1);
   }
@@ -283,16 +293,9 @@ public class TwoDPane extends JPanel
       cVisible[c] = !cVisible[c];
       slim.plotData(true, true, false);
     }
-    else if (src == intensityMode) {
-      // TODO
-    }
-    else if (src == lifetimeMode) {
-      // TODO
-    }
-    else if (src == spectraMode) {
-      // TODO - spectral projection
-      // https://skyking.microscopy.wisc.edu/trac/java/ticket/86
-    }
+    else if (src == intensityMode) doIntensity();
+    else if (src == lifetimeMode) doLifetime();
+    else if (src == spectraMode) doSpectra();
   }
 
   // -- ChangeListener methods --
@@ -392,15 +395,101 @@ public class TwoDPane extends JPanel
     slim.plotData(true, rescale, refit);
   }
 
+  private void resetMinMax(int min, int max) {
+    minField.getDocument().removeDocumentListener(this);
+    maxField.getDocument().removeDocumentListener(this);
+    minField.setText("" + min);
+    maxField.setText("" + max);
+    minField.getDocument().addDocumentListener(this);
+    maxField.getDocument().addDocumentListener(this);
+    rescaleMinMax();
+  }
+
   private void rescaleMinMax() {
     try {
       int min = Integer.parseInt(minField.getText());
       int max = Integer.parseInt(maxField.getText());
-      intensityMap.setRange(min, max);
+      imageMap.setRange(min, max);
     }
     catch (NumberFormatException exc) { }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
+  private int doIntensity() {
+    int maxChan = 0;
+    try {
+      if (intensityField == null) {
+        intensityField = new FieldImpl(types.cxyvFunc, types.cSet);
+        intensityMin = intensityMax = 0;
+        maxChan = 0;
+        for (int c=0; c<channels; c++) {
+          float[][] samples = new float[1][width * height];
+          for (int h=0; h<height; h++) {
+            for (int w=0; w<width; w++) {
+              int sum = 0;
+              for (int t=0; t<timeBins; t++) sum += data[c][h][w][t];
+              if (sum > intensityMax) {
+                intensityMax = sum;
+                maxChan = c;
+              }
+              samples[0][width * h + w] = sum;
+            }
+          }
+          FlatField ff = new FlatField(types.xyvFunc, types.xySet);
+          ff.setSamples(samples, false);
+          intensityField.setSample(c, ff);
+        }
+      }
+      imageRef.setData(intensityField);
+
+      // reset to grayscale color map
+      ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
+      cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
+
+      resetMinMax(intensityMin, intensityMax);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return maxChan;
+  }
+
+  private void doLifetime() {
+    try {
+      if (lifetimeField == null) {
+        lifetimeField = new FieldImpl(types.cxyvFunc, types.cSet);
+        lifetimeMin = lifetimeMax = 0;
+        for (int c=0; c<channels; c++) {
+          float[][] samples = new float[1][width * height];
+          for (int h=0; h<height; h++) {
+            for (int w=0; w<width; w++) {
+              // TODO
+              float val = 100 * (float) (Math.cos(w/10.0) * Math.sin(h/10.0));
+              samples[0][width * h + w] = val;
+              if (val < lifetimeMin) lifetimeMin = (int) Math.floor(val);
+              if (val > lifetimeMax) lifetimeMax = (int) Math.ceil(val);
+            }
+          }
+          FlatField ff = new FlatField(types.xyvFunc, types.xySet);
+          ff.setSamples(samples, false);
+          lifetimeField.setSample(c, ff);
+        }
+      }
+      imageRef.setData(lifetimeField);
+
+      // reset to HSV color map
+      ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
+      cc.setTable(ColorControl.initTableHSV(new float[3][256]));
+
+      resetMinMax(lifetimeMin, lifetimeMax);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
+  private void doSpectra() {
+    // TODO
+    // https://skyking.microscopy.wisc.edu/trac/java/ticket/86
   }
 
   // -- Utility methods --

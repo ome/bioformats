@@ -176,10 +176,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private OutputConsole console;
 
   // VisAD objects
-  private Unit[] bcUnits;
-  private RealType bType, cType;
-  private RealTupleType bc, bv, bcv;
-  private FunctionType bcvFunc, bcvFuncFit, bcvFuncRes;
+  private SlimTypes types;
   private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapRes;
   //private ScalarMap vMapFit;
   private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
@@ -310,52 +307,24 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // create types
       progress.setNote("Creating types");
-      RealType xType = RealType.getRealType("element");
-      RealType yType = RealType.getRealType("line");
-      ScaledUnit ns = new ScaledUnit(1e-9, SI.second, "ns");
-      ScaledUnit nm = new ScaledUnit(1e-9, SI.meter, "nm");
-      bcUnits = new Unit[] {ns, nm};
-      bType = RealType.getRealType("bin", ns);
-      cType = RealType.getRealType("channel", nm);
-      RealType vType = RealType.getRealType("count");
-      RealTupleType xy = new RealTupleType(xType, yType);
-      FunctionType xyvFunc = new FunctionType(xy, vType);
-      Integer2DSet xySet = new Integer2DSet(xy, width, height);
-      FunctionType cxyvFunc = new FunctionType(cType, xyvFunc);
-      Linear1DSet cSet = new Linear1DSet(cType,
-        minWave, maxWave, channels, null, new Unit[] {nm}, null);
-      bc = new RealTupleType(bType, cType);
-      bv = new RealTupleType(bType, vType);
-      bcv = new RealTupleType(bType, cType, vType);
-      RealType vType2 = RealType.getRealType("value");
-      RealTupleType vv = new RealTupleType(vType, vType2);
-      bcvFunc = new FunctionType(bc, vv);
-      RealType vTypeFit = RealType.getRealType("value_fit");
-      bcvFuncFit = new FunctionType(bc, vTypeFit);
-      RealType vTypeRes = RealType.getRealType("value_res");
-      bcvFuncRes = new FunctionType(bc, vTypeRes);
+      types = new SlimTypes(width, height, channels, minWave, maxWave);
       setProgress(progress, 710); // estimate: 71%
 
       // plot intensity data in 2D display
       progress.setNote("Building displays");
 
-      setProgress(progress, 720); // estimate: 72%
-      setProgress(progress, 730); // estimate: 73%
-      setProgress(progress, 740); // estimate: 74%
-      setProgress(progress, 750); // estimate: 75%
-
       // plot decay curves in 3D display
       decayPlot = channels > 1 ? new DisplayImplJ3D("decay") :
         new DisplayImplJ3D("decay", new TwoDDisplayRendererJ3D());
-      ScalarMap xMap = new ScalarMap(bType, Display.XAxis);
-      ScalarMap yMap = new ScalarMap(cType, Display.YAxis);
+      ScalarMap xMap = new ScalarMap(types.bType, Display.XAxis);
+      ScalarMap yMap = new ScalarMap(types.cType, Display.YAxis);
       DisplayRealType heightAxis = channels > 1 ? Display.ZAxis : Display.YAxis;
-      zMap = new ScalarMap(vType, heightAxis);
-      zMapFit = new ScalarMap(vTypeFit, heightAxis);
-      zMapRes = new ScalarMap(vTypeRes, heightAxis);
-      vMap = new ScalarMap(vType2, Display.RGB);
-      //vMapFit = new ScalarMap(vTypeFit, Display.RGB);
-      vMapRes = new ScalarMap(vTypeRes, Display.RGB);
+      zMap = new ScalarMap(types.vType, heightAxis);
+      zMapFit = new ScalarMap(types.vTypeFit, heightAxis);
+      zMapRes = new ScalarMap(types.vTypeRes, heightAxis);
+      vMap = new ScalarMap(types.vType2, Display.RGB);
+      //vMapFit = new ScalarMap(types.vTypeFit, Display.RGB);
+      vMapRes = new ScalarMap(types.vTypeRes, Display.RGB);
       decayPlot.addMap(xMap);
       if (channels > 1) decayPlot.addMap(yMap);
       decayPlot.addMap(zMap);
@@ -364,7 +333,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayPlot.addMap(vMap);
       //decayPlot.addMap(vMapFit);
       decayPlot.addMap(vMapRes);
-      setProgress(progress, 760); // estimate: 76%
+      setProgress(progress, 720); // estimate: 72%
 
       decayRend = new DefaultRendererJ3D();
       decayRef = new DataReferenceImpl("decay");
@@ -396,7 +365,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         decayPlot.addReferences(resRend, resRef);
         resRend.toggle(false);
       }
-      setProgress(progress, 770); // estimate: 77%
+      setProgress(progress, 750); // estimate: 75%
 
       xMap.setRange(0, timeRange);
       yMap.setRange(minWave, maxWave);
@@ -429,7 +398,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       progress.setNote("Constructing images");
       values = new int[channels][height][width][timeBins];
       float[][][] pix = new float[channels][1][width * height];
-      FieldImpl field = new FieldImpl(cxyvFunc, cSet);
+      FieldImpl field = new FieldImpl(types.cxyvFunc, types.cSet);
       maxIntensity = new int[channels];
       for (int c=0; c<channels; c++) {
         int oc = timeBins * width * height * c;
@@ -450,7 +419,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           setProgress(progress, 780 + 140 *
             (height * c + h + 1) / (channels * height)); // estimate: 78% -> 92%
         }
-        FlatField ff = new FlatField(xyvFunc, xySet);
+        FlatField ff = new FlatField(types.xyvFunc, types.xySet);
         ff.setSamples(pix[c], false);
         field.setSample(c, ff);
       }
@@ -515,7 +484,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         lineRend = new DefaultRendererJ3D();
         DataReferenceImpl peakRef = new DataReferenceImpl("peaks");
         float peakTime = (float) (maxPeak * timeRange / (timeBins - 1));
-        peakRef.setData(new Gridded2DSet(bc,
+        peakRef.setData(new Gridded2DSet(types.bc,
           new float[][] {{peakTime, peakTime}, {minWave, maxWave}}, 2));
         decayPlot.addReferences(lineRend, peakRef, new ConstantMap[] {
           new ConstantMap(-1, Display.ZAxis),
@@ -532,9 +501,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       masterPane.setLayout(new BorderLayout());
       masterWindow.setContentPane(masterPane);
 
-      twoDPane = new TwoDPane(this, field,
-        width, height, channels, globalMax, maxChan, cVisible,
-        xType, yType, vType, cType);
+      twoDPane = new TwoDPane(this, values, cVisible, types);
 
       MenuBar menubar = new MenuBar();
       masterWindow.setMenuBar(menubar);
@@ -1299,8 +1266,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           cc++;
         }
-        Gridded2DSet bcSet = new Gridded2DSet(bc, bcGrid,
-          timeBins, numChanVis, null, bcUnits, null, false);
+        Gridded2DSet bcSet = new Gridded2DSet(types.bc, bcGrid,
+          timeBins, numChanVis, null, types.bcUnits, null, false);
 
         // compile color values for 3D surface plot
         float[] colors = new float[numChanVis * timeBins];
@@ -1349,7 +1316,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             samps[i] = linearToLog(samps[i]);
           }
         }
-        FlatField ff = new FlatField(bcvFunc, bcSet);
+        FlatField ff = new FlatField(types.bcvFunc, bcSet);
         ff.setSamples(new float[][] {samps, colors}, false);
         decayRef.setData(doDataLines ? makeLines(ff) : ff);
 
@@ -1367,10 +1334,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
               }
             }
             if (channels > 1) {
-              fwhmSets[c] = new Gridded3DSet(bcv, fwhmLines[c], 2);
+              fwhmSets[c] = new Gridded3DSet(types.bcv, fwhmLines[c], 2);
             }
             else {
-              fwhmSets[c] = new Gridded2DSet(bv,
+              fwhmSets[c] = new Gridded2DSet(types.bv,
                 new float[][] {fwhmLines[c][0], fwhmLines[c][2]}, 2);
             }
           }
@@ -1386,7 +1353,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
               fitSamps[i] = linearToLog(fitSamps[i]);
             }
           }
-          FlatField fit = new FlatField(bcvFuncFit, bcSet);
+          FlatField fit = new FlatField(types.bcvFuncFit, bcSet);
           fit.setSamples(new float[][] {fitSamps}, false);
           fitRef.setData(doFitLines ? makeLines(fit) : fit);
         }
@@ -1400,7 +1367,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
               residuals[i] = linearToLog(residuals[i]);
             }
           }
-          FlatField res = new FlatField(bcvFuncRes, bcSet);
+          FlatField res = new FlatField(types.bcvFuncRes, bcSet);
           res.setSamples(new float[][] {residuals}, false);
           resRef.setData(doResLines ? makeLines(res) : res);
         }
@@ -1562,8 +1529,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // HACK - horrible conversion from aligned Gridded2DSet to ProductSet
       // probably could eliminate this by writing cleaner logic to convert
       // from 2D surface to 1D lines...
-      Linear1DSet timeSet = new Linear1DSet(bType, 0,
-        timeRange, timeBins, null, new Unit[] {bcUnits[0]}, null);
+      Linear1DSet timeSet = new Linear1DSet(types.bType, 0,
+        timeRange, timeBins, null, new Unit[] {types.bcUnits[0]}, null);
       int numChanVis = 0;
       for (int c=0; c<channels; c++) {
         if (cVisible[c]) numChanVis++;
@@ -1574,15 +1541,15 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         cGrid[0][cc++] = channels > 1 ?
           c * (maxWave - minWave) / (channels - 1) + minWave : 0;
       }
-      Gridded1DSet waveSet = new Gridded1DSet(cType,
-        cGrid, numChanVis, null, new Unit[] {bcUnits[1]}, null, false);
+      Gridded1DSet waveSet = new Gridded1DSet(types.cType,
+        cGrid, numChanVis, null, new Unit[] {types.bcUnits[1]}, null, false);
       ProductSet prodSet = new ProductSet(new SampledSet[] {timeSet, waveSet});
       float[][] samples = surface.getFloats(false);
       FunctionType ffType = (FunctionType) surface.getType();
       surface = new FlatField(ffType, prodSet);
       surface.setSamples(samples, false);
 
-      return (FieldImpl) surface.domainFactor(cType);
+      return (FieldImpl) surface.domainFactor(types.cType);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
