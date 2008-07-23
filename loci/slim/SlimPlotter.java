@@ -122,7 +122,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private boolean useLMA;
   private boolean[] cVisible;
   private int maxPeak;
-  private int[] maxIntensity;
 
   private float maxVal;
   private float tauMin, tauMax;
@@ -209,7 +208,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     progress.setMillisToPopup(0);
     progress.setMillisToDecideToPopup(0);
 
-    int maxChan = -1;
     try {
       // check for required libraries
       try {
@@ -397,40 +395,20 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // convert byte data to unsigned shorts
       progress.setNote("Constructing images");
       values = new int[channels][height][width][timeBins];
-      float[][][] pix = new float[channels][1][width * height];
-      FieldImpl field = new FieldImpl(types.cxyvFunc, types.cSet);
-      maxIntensity = new int[channels];
       for (int c=0; c<channels; c++) {
         int oc = timeBins * width * height * c;
         for (int h=0; h<height; h++) {
           int oh = timeBins * width * h;
           for (int w=0; w<width; w++) {
             int ow = timeBins * w;
-            int sum = 0;
             for (int t=0; t<timeBins; t++) {
               int ndx = 2 * (oc + oh + ow + t);
               int val = DataTools.bytesToInt(data, ndx, 2, true);
               values[c][h][w][t] = val;
-              sum += val;
             }
-            if (sum > maxIntensity[c]) maxIntensity[c] = sum;
-            pix[c][0][width * h + w] = sum;
           }
           setProgress(progress, 780 + 140 *
             (height * c + h + 1) / (channels * height)); // estimate: 78% -> 92%
-        }
-        FlatField ff = new FlatField(types.xyvFunc, types.xySet);
-        ff.setSamples(pix[c], false);
-        field.setSample(c, ff);
-      }
-
-      // compute channel with brightest intensity
-      maxChan = 0;
-      int globalMax = 0;
-      for (int c=0; c<channels; c++) {
-        if (maxIntensity[c] > globalMax) {
-          globalMax = maxIntensity[c];
-          maxChan = c;
         }
       }
 
