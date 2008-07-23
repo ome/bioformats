@@ -678,29 +678,35 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       scalePanel.add(zOverride);
       scalePanel.add(zScaleValue);
 
+      JPanel scaleTogglePanel = makeRadioPanel("Scale", linear, log);
+      JPanel colorsTogglePanel =
+        makeRadioPanel("Colors", colorHeight, colorTau);
+      JPanel projectionTogglePanel =
+        makeRadioPanel("Projection", perspective, parallel);
+      JPanel dataTogglePanel = makeRadioPanel("Data", dataSurface, dataLines);
+      JPanel fitTogglePanel = makeRadioPanel("Fit", fitSurface, fitLines);
+      JPanel residualsTogglePanel =
+        makeRadioPanel("Residuals", resSurface, resLines);
+
       JPanel miscRow1 = new JPanel();
-      miscRow1.setLayout(new BoxLayout(miscRow1, BoxLayout.X_AXIS));
-      miscRow1.add(makeRadioPanel("Scale", linear, log));
-      miscRow1.add(makeRadioPanel("Projection", perspective, parallel));
-      miscRow1.add(makeRadioPanel("Data", dataSurface, dataLines));
+      miscRow1.setLayout(new GridLayout(2, 3));
+      miscRow1.add(scaleTogglePanel);
+      miscRow1.add(projectionTogglePanel);
+      miscRow1.add(colorsTogglePanel);
+      miscRow1.add(dataTogglePanel);
+      miscRow1.add(fitTogglePanel);
+      miscRow1.add(residualsTogglePanel);
 
       JPanel miscRow2 = new JPanel();
       miscRow2.setLayout(new BoxLayout(miscRow2, BoxLayout.X_AXIS));
-      miscRow2.add(makeRadioPanel("Fit", fitSurface, fitLines));
-      miscRow2.add(makeRadioPanel("Residuals", resSurface, resLines));
-      miscRow2.add(makeRadioPanel("Colors", colorHeight, colorTau));
-
-      JPanel miscRow3 = new JPanel();
-      miscRow3.setLayout(new BoxLayout(miscRow3, BoxLayout.X_AXIS));
-      miscRow3.add(scalePanel);
-      miscRow3.add(Box.createHorizontalStrut(5));
-      miscRow3.add(exportData);
+      miscRow2.add(scalePanel);
+      miscRow2.add(Box.createHorizontalStrut(5));
+      miscRow2.add(exportData);
 
       JPanel miscPanel = new JPanel();
       miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
       miscPanel.add(miscRow1);
       miscPanel.add(miscRow2);
-      miscPanel.add(miscRow3);
 
       JPanel options = new JPanel();
       options.setBorder(new EmptyBorder(8, 5, 8, 5));

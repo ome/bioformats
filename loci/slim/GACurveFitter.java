@@ -202,7 +202,7 @@ public class GACurveFitter implements CurveFitter {
     double[] expected = getEstimates(curveData, curveEstimate);
     for (int i = firstindex; i < curveData.length && i <= lastindex; i++) {
       if (expected[i] > 0) {
-        double observed = (double) curveData[i];
+        int observed = curveData[i];
         double term = (observed - expected[i]);
         // (o-e)^2
         term *= term;
