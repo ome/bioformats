@@ -27,8 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.slim;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
@@ -53,6 +52,10 @@ import visad.java3d.TwoDDisplayRendererJ3D;
 public class TwoDPane extends JPanel
   implements ActionListener, ChangeListener, DisplayListener, DocumentListener
 {
+
+  // -- Constants --
+
+  private static final Color INVALID_COLOR = Color.red.brighter();
 
   // -- Fields --
 
@@ -93,6 +96,7 @@ public class TwoDPane extends JPanel
   private JRadioButton projectionMode, emissionMode;
   private JSlider cSlider;
   private JTextField minField, maxField;
+  private Color validColor = null;
   private JCheckBox cToggle;
 
   // -- Constructor --
@@ -265,6 +269,8 @@ public class TwoDPane extends JPanel
     maxField.getDocument().addDocumentListener(this);
     maxPane.add(maxField);
 
+    validColor = minField.getBackground();
+
     cSlider = new JSlider(1, channels, 1);
     cSlider.setToolTipText(
       "Selects the channel to display in the 2D image plot above");
@@ -421,14 +427,31 @@ public class TwoDPane extends JPanel
   }
 
   private void rescaleMinMax() {
+    int min = 0, max = 0;
+    boolean validRange = true;
     try {
-      int min = Integer.parseInt(minField.getText());
-      int max = Integer.parseInt(maxField.getText());
-      imageMap.setRange(min, max);
+      min = Integer.parseInt(minField.getText());
+      minField.setBackground(validColor);
     }
-    catch (NumberFormatException exc) { }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
+    catch (NumberFormatException exc) {
+      validRange = false;
+      minField.setBackground(INVALID_COLOR);
+    }
+    try {
+      max = Integer.parseInt(maxField.getText());
+      maxField.setBackground(validColor);
+    }
+    catch (NumberFormatException exc) {
+      validRange = false;
+      maxField.setBackground(INVALID_COLOR);
+    }
+    if (validRange) {
+      try {
+        imageMap.setRange(min, max);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
   }
 
   private int doIntensity() {
@@ -440,15 +463,15 @@ public class TwoDPane extends JPanel
         maxChan = 0;
         for (int c=0; c<channels; c++) {
           float[][] samples = new float[1][width * height];
-          for (int h=0; h<height; h++) {
-            for (int w=0; w<width; w++) {
+          for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
               int sum = 0;
-              for (int t=0; t<timeBins; t++) sum += data[c][h][w][t];
+              for (int t=0; t<timeBins; t++) sum += data[c][y][x][t];
               if (sum > intensityMax) {
                 intensityMax = sum;
                 maxChan = c;
               }
-              samples[0][width * h + w] = sum;
+              samples[0][width * y + x] = sum;
             }
           }
           FlatField ff = new FlatField(types.xyvFunc, types.xySet);

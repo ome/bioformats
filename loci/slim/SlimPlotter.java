@@ -291,7 +291,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // read pixel data
       progress.setNote("Reading data");
       DataInputStream fin = new DataInputStream(new FileInputStream(file));
-      fin.skipBytes(info.dataBlockOffs); // skip to data
+      fin.skipBytes(info.dataBlockOffs + 22); // skip to data
       byte[] data = new byte[2 * channels * height * width * timeBins];
       int blockSize = 65536;
       for (int off=0; off<data.length; off+=blockSize) {
