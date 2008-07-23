@@ -67,11 +67,7 @@ public class TwoDPane extends JPanel
   private AnimationControl ac;
 
   // data parameters
-  private int[][][][] data;
-  private int channels, width, height, timeBins;
-  private int numExp;
-  private Class curveFitterClass;
-  private boolean[] cVisible;
+  private SlimData data;
   private SlimTypes types;
 
   // intensity parameters
@@ -95,6 +91,7 @@ public class TwoDPane extends JPanel
 
   // GUI components for image pane
   private JProgressBar progress;
+  private JButton startStopButton;
   private JRadioButton intensityMode, lifetimeMode;
   private JRadioButton projectionMode, emissionMode;
   private JSlider cSlider;
@@ -109,24 +106,14 @@ public class TwoDPane extends JPanel
 
   // -- Constructor --
 
-  public TwoDPane(SlimPlotter slim, int[][][][] data, int numExp,
-    Class curveFitterClass, boolean[] cVisible, SlimTypes types)
+  public TwoDPane(SlimPlotter slim, SlimData data, SlimTypes types)
     throws VisADException, RemoteException
   {
     this.slim = slim;
     this.data = data;
-    this.cVisible = cVisible;
     this.types = types;
 
-    channels = data.length;
-    width = data[0].length;
-    height = data[0][0].length;
-    timeBins = data[0][0][0].length;
-
-    this.numExp = numExp;
-    this.curveFitterClass = curveFitterClass;
-
-    roiCount = width * height;
+    roiCount = data.width * data.height;
     roiPercent = 100;
 
     // create 2D display
@@ -151,11 +138,11 @@ public class TwoDPane extends JPanel
     iPlot.addReference(imageRef);
 
     // set up curve manipulation renderer
-    roiGrid = new float[2][width * height];
-    roiMask = new boolean[height][width];
-    for (int y=0; y<height; y++) {
-      for (int x=0; x<width; x++) {
-        int ndx = y * width + x;
+    roiGrid = new float[2][data.width * data.height];
+    roiMask = new boolean[data.height][data.width];
+    for (int y=0; y<data.height; y++) {
+      for (int x=0; x<data.width; x++) {
+        int ndx = y * data.width + x;
         roiGrid[0][ndx] = x;
         roiGrid[1][ndx] = y;
         roiMask[y][x] = true;
@@ -211,7 +198,15 @@ public class TwoDPane extends JPanel
 
     progress = new JProgressBar();
     progress.setStringPainted(true);
-    add(progress);
+
+    startStopButton = new JButton("Start");
+    startStopButton.addActionListener(this);
+
+    JPanel progressPanel = new JPanel();
+    progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.X_AXIS));
+    progressPanel.add(progress);
+    progressPanel.add(startStopButton);
+    add(progressPanel);
 
     JPanel viewModePane = new JPanel();
     viewModePane.setLayout(new BoxLayout(viewModePane, BoxLayout.X_AXIS));
@@ -283,22 +278,22 @@ public class TwoDPane extends JPanel
 
     validColor = minField.getBackground();
 
-    cSlider = new JSlider(1, channels, 1);
+    cSlider = new JSlider(1, data.channels, 1);
     cSlider.setToolTipText(
       "Selects the channel to display in the 2D image plot above");
     cSlider.setSnapToTicks(true);
-    cSlider.setMajorTickSpacing(channels / 4);
+    cSlider.setMajorTickSpacing(data.channels / 4);
     cSlider.setMinorTickSpacing(1);
     cSlider.setPaintTicks(true);
     cSlider.addChangeListener(this);
     cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
-    cSlider.setEnabled(channels > 1);
+    cSlider.setEnabled(data.channels > 1);
     sliderPane.add(cSlider);
     cToggle = new JCheckBox("", true);
     cToggle.setToolTipText(
       "Toggles the selected channel's visibility in the 3D data plot");
     cToggle.addActionListener(this);
-    cToggle.setEnabled(channels > 1);
+    cToggle.setEnabled(data.channels > 1);
     sliderPane.add(cToggle);
 
     int maxChan = doIntensity();
@@ -306,19 +301,18 @@ public class TwoDPane extends JPanel
     cSlider.setValue(maxChan + 1);
 
     // set up lifetime curve fitting threads for per-pixel lifetime analysis
-    curveRenderers = new Renderer[channels];
-    curveThreads = new Thread[channels];
-    for (int c=0; c<channels; c++) {
-      CurveCollection cc = new CurveCollection(data[c],
-        curveFitterClass, BIN_RADIUS);
-      curveRenderers[c] = new BurnInRenderer(cc);
-      curveRenderers[c].setComponentCount(numExp);
+    curveRenderers = new Renderer[data.channels];
+    curveThreads = new Thread[data.channels];
+    for (int c=0; c<data.channels; c++) {
+      curveRenderers[c] = new BurnInRenderer(data.curves[c]);
+      curveRenderers[c].setComponentCount(data.numExp);
+      curveRenderers[c].setMaxIterations(100);
       curveThreads[c] = new Thread(curveRenderers[c], "Lifetime-" + c);
       curveThreads[c].setPriority(Thread.MIN_PRIORITY);
     }
     int delay = 100; // TODO - make this a UI option (FPS)
     lifetimeRefresh = new Timer(delay, this);
-    for (int c=0; c<channels; c++) curveThreads[c].start();
+    for (int c=0; c<data.channels; c++) curveThreads[c].start();
     lifetimeRefresh.start();
   }
 
@@ -335,10 +329,21 @@ public class TwoDPane extends JPanel
   /** Handles checkbox presses. */
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == cToggle) {
+    if (src == startStopButton) {
+      // TODO
+      if (startStopButton.getText().equals("Start")) {
+        // begin lifetime computation
+        startStopButton.setText("Stop");
+      }
+      else {
+        // terminate lifetime computation
+        startStopButton.setText("Start");
+      }
+    }
+    else if (src == cToggle) {
       // toggle visibility of this channel
       int c = cSlider.getValue() - 1;
-      cVisible[c] = !cVisible[c];
+      data.cVisible[c] = !data.cVisible[c];
       slim.plotData(true, true, false);
     }
     else if (src == intensityMode) doIntensity();
@@ -346,15 +351,19 @@ public class TwoDPane extends JPanel
     else if (src == projectionMode) doSpectralProjection();
     else if (src == emissionMode) doEmissionSpectrum();
     else {
-      // timer event - update lifetime display
+      // timer event - update progress bar and lifetime display
       int c = cSlider.getValue() - 1;
-      // update progress bar
-      progress.setMaximum(curveRenderers[c].getMaxProgress());
-      progress.setValue(curveRenderers[c].getCurrentProgress());
-      progress.setString(
-        "Iteration " + curveRenderers[c].getCurrentIterations() +
-        "/" + curveRenderers[c].getTotalIterations() + "; " +
-        curveRenderers[c].getSubsampleLevel() + " steps until total burn-in");
+
+      int curProg = curveRenderers[c].getCurrentProgress();
+      int maxProg = curveRenderers[c].getMaxProgress();
+      int curIter = curveRenderers[c].getCurrentIterations();
+      int maxIter = curveRenderers[c].getMaxIterations();
+      int subLevel = curveRenderers[c].getSubsampleLevel();
+      progress.setMaximum(maxProg);
+      progress.setValue(curProg);
+      progress.setString(curProg == maxProg ?
+        "Iteration " + curIter + "/" + maxIter :
+        "Estimating; " + subLevel + " steps until total burn-in");
 
       if (lifetimeMode.isSelected()) {
         // update VisAD display
@@ -381,7 +390,7 @@ public class TwoDPane extends JPanel
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
       cToggle.removeActionListener(this);
-      cToggle.setSelected(cVisible[c]);
+      cToggle.setSelected(data.cVisible[c]);
       cToggle.addActionListener(this);
     }
   }
@@ -414,9 +423,9 @@ public class TwoDPane extends JPanel
           int[] tri = roiSet.valueToTri(roiGrid);
           roiX = roiY = 0;
           roiCount = 0;
-          for (int y=0; y<height; y++) {
-            for (int x=0; x<width; x++) {
-              int ndx = y * width + x;
+          for (int y=0; y<data.height; y++) {
+            for (int x=0; x<data.width; x++) {
+              int ndx = y * data.width + x;
               roiMask[y][x] = tri[ndx] >= 0;
               if (roiMask[y][x]) {
                 roiX = x;
@@ -425,7 +434,7 @@ public class TwoDPane extends JPanel
               }
             }
           }
-          roiPercent = 100000 * roiCount / (width * height) / 1000.0;
+          roiPercent = 100000 * roiCount / (data.width * data.height) / 1000.0;
           slim.plotData(true, true, true);
         }
       }
@@ -460,9 +469,9 @@ public class TwoDPane extends JPanel
     roiX = (int) Math.round(domain[0]);
     roiY = (int) Math.round(domain[1]);
     if (roiX < 0) roiX = 0;
-    if (roiX >= width) roiX = width - 1;
+    if (roiX >= data.width) roiX = data.width - 1;
     if (roiY < 0) roiY = 0;
-    if (roiY >= height) roiY = height - 1;
+    if (roiY >= data.height) roiY = data.height - 1;
     roiCount = 1;
     slim.plotData(true, rescale, refit);
   }
@@ -512,17 +521,17 @@ public class TwoDPane extends JPanel
         intensityField = new FieldImpl(types.cxyvFunc, types.cSet);
         intensityMin = intensityMax = 0;
         maxChan = 0;
-        for (int c=0; c<channels; c++) {
-          float[][] samples = new float[1][width * height];
-          for (int y=0; y<height; y++) {
-            for (int x=0; x<width; x++) {
+        for (int c=0; c<data.channels; c++) {
+          float[][] samples = new float[1][data.width * data.height];
+          for (int y=0; y<data.height; y++) {
+            for (int x=0; x<data.width; x++) {
               int sum = 0;
-              for (int t=0; t<timeBins; t++) sum += data[c][y][x][t];
+              for (int t=0; t<data.timeBins; t++) sum += data.data[c][y][x][t];
               if (sum > intensityMax) {
                 intensityMax = sum;
                 maxChan = c;
               }
-              samples[0][width * y + x] = sum;
+              samples[0][data.width * y + x] = sum;
             }
           }
           FlatField ff = new FlatField(types.xyvFunc, types.xySet);
@@ -550,13 +559,13 @@ public class TwoDPane extends JPanel
       if (lifetimeField == null) {
         lifetimeField = new FieldImpl(types.cxyvFunc, types.cSet);
         lifetimeMin = lifetimeMax = 0;
-        for (int c=0; c<channels; c++) {
-          float[][] samples = new float[1][width * height];
-          for (int h=0; h<height; h++) {
-            for (int w=0; w<width; w++) {
+        for (int c=0; c<data.channels; c++) {
+          float[][] samples = new float[1][data.width * data.height];
+          for (int h=0; h<data.height; h++) {
+            for (int w=0; w<data.width; w++) {
               // TODO
               float val = 100 * (float) (Math.cos(w/10.0) * Math.sin(h/10.0));
-              samples[0][width * h + w] = val;
+              samples[0][data.width * h + w] = val;
               if (val < lifetimeMin) lifetimeMin = (int) Math.floor(val);
               if (val > lifetimeMax) lifetimeMax = (int) Math.ceil(val);
             }

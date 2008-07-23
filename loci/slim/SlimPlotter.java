@@ -39,9 +39,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.text.Document;
-import loci.formats.in.SDTInfo;
-import loci.formats.in.SDTReader;
-import loci.formats.DataTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.util.BreakawayPanel;
 import loci.visbio.util.ColorUtil;
@@ -106,22 +103,11 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Fields --
 
-  /** Actual data values, dimensioned [channel][row][column][bin]. */
-  private int[][][][] values;
+  /** Master data structure containing raw and derived SLIM data. */
+  private SlimData data;
 
   /** Current binned data values, dimensioned [channels * timeBins]. */
   private float[] samps;
-
-  // data parameters
-  private int width, height;
-  private int channels, timeBins;
-  private float timeRange;
-  private int minWave, waveStep, maxWave;
-  private int numExp;
-  private boolean adjustPeaks, computeFWHMs, cutEnd;
-  private boolean useLMA;
-  private boolean[] cVisible;
-  private int maxPeak;
 
   private float maxVal;
   private float tauMin, tauMax;
@@ -136,14 +122,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private MenuItem menuFileExit;
   private MenuItem menuViewSaveProj;
   private MenuItem menuViewLoadProj;
-
-  // GUI components for parameter dialog box
-  private JDialog paramDialog;
-  private JTextField wField, hField, tField, cField;
-  private JTextField trField, wlField, sField;
-  private JTextField fitField;
-  private JRadioButton gaChoice, lmChoice;
-  private JCheckBox peaksBox, fwhmBox, cutBox;
 
   // GUI components for 2D pane
   private TwoDPane twoDPane;
@@ -197,12 +175,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     System.setErr(err);
 
     // progress estimate:
-    // * Reading data - 70%
+    // * Reading and processing data - 90%
     // * Creating types - 1%
-    // * Building displays - 7%
-    // * Constructing images - 14%
-    // * Adjusting peaks - 4%
-    // * Creating plots - 4%
+    // * Building displays - 6%
+    // * Creating plots - 3%
     ProgressMonitor progress = new ProgressMonitor(null,
       "Launching Slim Plotter", "Initializing", 0, 1000);
     progress.setMillisToPopup(0);
@@ -267,56 +243,28 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         System.exit(2);
       }
 
-      // read SDT file header
-      SDTReader reader = new SDTReader();
-      reader.setId(file.getPath());
-      width = reader.getSizeX();
-      height = reader.getSizeY();
-      timeBins = reader.getTimeBinCount();
-      channels = reader.getChannelCount();
-      SDTInfo info = reader.getInfo();
-      reader.close();
-      timeRange = 12.5f;
-      minWave = 400;
-      waveStep = 10;
-
-      // show dialog confirming data parameters
-      showParamDialog();
-      if (cVisible == null) System.exit(0); // dialog canceled (closed with X)
-      maxWave = minWave + (channels - 1) * waveStep;
-
       // pop up progress monitor
       setProgress(progress, 1); // estimate: 0.1%
 
-      // read pixel data
-      progress.setNote("Reading data");
-      DataInputStream fin = new DataInputStream(new FileInputStream(file));
-      fin.skipBytes(info.dataBlockOffs + 22); // skip to data
-      byte[] data = new byte[2 * channels * height * width * timeBins];
-      int blockSize = 65536;
-      for (int off=0; off<data.length; off+=blockSize) {
-        int len = data.length - off;
-        if (len > blockSize) len = blockSize;
-        fin.readFully(data, off, len);
-        setProgress(progress, (int) (700L *
-          (off + blockSize) / data.length)); // estimate: 0% -> 70%
-      }
-      fin.close();
+      // read data
+      data = new SlimData(file.getPath(), progress);
 
       // create types
       progress.setNote("Creating types");
-      types = new SlimTypes(width, height, channels, minWave, maxWave);
-      setProgress(progress, 710); // estimate: 71%
+      types = new SlimTypes(data.width, data.height,
+        data.channels, data.minWave, data.maxWave);
+      setProgress(progress, 910); // estimate: 91%
 
       // plot intensity data in 2D display
       progress.setNote("Building displays");
 
       // plot decay curves in 3D display
-      decayPlot = channels > 1 ? new DisplayImplJ3D("decay") :
+      decayPlot = data.channels > 1 ? new DisplayImplJ3D("decay") :
         new DisplayImplJ3D("decay", new TwoDDisplayRendererJ3D());
       ScalarMap xMap = new ScalarMap(types.bType, Display.XAxis);
       ScalarMap yMap = new ScalarMap(types.cType, Display.YAxis);
-      DisplayRealType heightAxis = channels > 1 ? Display.ZAxis : Display.YAxis;
+      DisplayRealType heightAxis = data.channels > 1 ?
+        Display.ZAxis : Display.YAxis;
       zMap = new ScalarMap(types.vType, heightAxis);
       zMapFit = new ScalarMap(types.vTypeFit, heightAxis);
       zMapRes = new ScalarMap(types.vTypeRes, heightAxis);
@@ -324,20 +272,20 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       //vMapFit = new ScalarMap(types.vTypeFit, Display.RGB);
       vMapRes = new ScalarMap(types.vTypeRes, Display.RGB);
       decayPlot.addMap(xMap);
-      if (channels > 1) decayPlot.addMap(yMap);
+      if (data.channels > 1) decayPlot.addMap(yMap);
       decayPlot.addMap(zMap);
       decayPlot.addMap(zMapFit);
       decayPlot.addMap(zMapRes);
       decayPlot.addMap(vMap);
       //decayPlot.addMap(vMapFit);
       decayPlot.addMap(vMapRes);
-      setProgress(progress, 720); // estimate: 72%
+      setProgress(progress, 950); // estimate: 95%
 
       decayRend = new DefaultRendererJ3D();
       decayRef = new DataReferenceImpl("decay");
       decayPlot.addReferences(decayRend, decayRef);
 
-      if (computeFWHMs) {
+      if (data.computeFWHMs) {
         // add reference for full width half maxes
         fwhmRend = new DefaultRendererJ3D();
         fwhmRef = new DataReferenceImpl("fwhm");
@@ -348,7 +296,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         });
       }
 
-      if (adjustPeaks) {
+      if (data.adjustPeaks) {
         // add references for curve fitting
         fitRend = new DefaultRendererJ3D();
         fitRef = new DataReferenceImpl("fit");
@@ -363,10 +311,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         decayPlot.addReferences(resRend, resRef);
         resRend.toggle(false);
       }
-      setProgress(progress, 750); // estimate: 75%
+      setProgress(progress, 960); // estimate: 96%
 
-      xMap.setRange(0, timeRange);
-      yMap.setRange(minWave, maxWave);
+      xMap.setRange(0, data.timeRange);
+      yMap.setRange(data.minWave, data.maxWave);
       AxisScale xScale = xMap.getAxisScale();
       Font font = Font.decode("serif 24");
       xScale.setFont(font);
@@ -387,89 +335,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       gmc.setScaleEnable(true);
       gmc.setTextureEnable(false);
       ProjectionControl pc = decayPlot.getProjectionControl();
-      pc.setMatrix(channels > 1 ? MATRIX_3D : MATRIX_2D);
+      pc.setMatrix(data.channels > 1 ? MATRIX_3D : MATRIX_2D);
       pc.setAspectCartesian(
         new double[] {2, 1, 1});
-      setProgress(progress, 780); // estimate: 78%
-
-      // convert byte data to unsigned shorts
-      progress.setNote("Constructing images");
-      values = new int[channels][height][width][timeBins];
-      for (int c=0; c<channels; c++) {
-        int oc = timeBins * width * height * c;
-        for (int h=0; h<height; h++) {
-          int oh = timeBins * width * h;
-          for (int w=0; w<width; w++) {
-            int ow = timeBins * w;
-            for (int t=0; t<timeBins; t++) {
-              int ndx = 2 * (oc + oh + ow + t);
-              int val = DataTools.bytesToInt(data, ndx, 2, true);
-              values[c][h][w][t] = val;
-            }
-          }
-          setProgress(progress, 780 + 140 *
-            (height * c + h + 1) / (channels * height)); // estimate: 78% -> 92%
-        }
-      }
-
-      // adjust peaks
-      if (adjustPeaks) {
-        progress.setNote("Adjusting peaks");
-        int[] peaks = new int[channels];
-        for (int c=0; c<channels; c++) {
-          int[] sum = new int[timeBins];
-          for (int h=0; h<height; h++) {
-            for (int w=0; w<width; w++) {
-              for (int t=0; t<timeBins; t++) sum[t] += values[c][h][w][t];
-            }
-          }
-          int peak = 0, ndx = 0;
-          for (int t=0; t<timeBins; t++) {
-            if (peak <= sum[t]) {
-              peak = sum[t];
-              ndx = t;
-            }
-            else if (t > timeBins / 3) break; // HACK - too early to give up
-          }
-          peaks[c] = ndx;
-          setProgress(progress, 920 + 20 *
-            (c + 1) / channels); // estimate: 92% -> 94%
-        }
-        maxPeak = 0;
-        for (int c=0; c<channels; c++) {
-          if (maxPeak < peaks[c]) maxPeak = peaks[c];
-        }
-        log("Aligning peaks to tmax = " + maxPeak);
-        for (int c=0; c<channels; c++) {
-          int shift = maxPeak - peaks[c];
-          if (shift > 0) {
-            for (int h=0; h<height; h++) {
-              for (int w=0; w<width; w++) {
-                for (int t=timeBins-1; t>=shift; t--) {
-                  values[c][h][w][t] = values[c][h][w][t - shift];
-                }
-                for (int t=shift-1; t>=0; t--) values[c][h][w][t] = 0;
-              }
-            }
-            log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
-              " (shifting by " + shift + ")");
-          }
-          setProgress(progress, 940 + 20 *
-            (c + 1) / channels); // estimate: 94% -> 96%
-        }
-
-        // add yellow line to indicate adjusted peak position
-        lineRend = new DefaultRendererJ3D();
-        DataReferenceImpl peakRef = new DataReferenceImpl("peaks");
-        float peakTime = (float) (maxPeak * timeRange / (timeBins - 1));
-        peakRef.setData(new Gridded2DSet(types.bc,
-          new float[][] {{peakTime, peakTime}, {minWave, maxWave}}, 2));
-        decayPlot.addReferences(lineRend, peakRef, new ConstantMap[] {
-          new ConstantMap(-1, Display.ZAxis),
-          new ConstantMap(0, Display.Blue),
-          //new ConstantMap(2, Display.LineWidth)
-        });
-      }
+      setProgress(progress, 970); // estimate: 97%
 
       // construct 2D pane
       progress.setNote("Creating plots");
@@ -479,8 +348,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       masterPane.setLayout(new BorderLayout());
       masterWindow.setContentPane(masterPane);
 
-      twoDPane = new TwoDPane(this, values, numExp,
-        useLMA ? LMCurveFitter.class : GACurveFitter.class, cVisible, types);
+      twoDPane = new TwoDPane(this, data, types);
 
       MenuBar menubar = new MenuBar();
       masterWindow.setMenuBar(menubar);
@@ -567,23 +435,23 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       showBox = new JCheckBox("Box", true);
       showBox.setToolTipText("Toggles visibility of bounding box");
       showBox.addActionListener(this);
-      showLine = new JCheckBox("Line", adjustPeaks);
+      showLine = new JCheckBox("Line", data.adjustPeaks);
       showLine.setToolTipText(
         "Toggles visibility of aligned peaks indicator line");
-      showLine.setEnabled(adjustPeaks);
+      showLine.setEnabled(data.adjustPeaks);
       showLine.addActionListener(this);
       showFit = new JCheckBox("Fit", false);
       showFit.setToolTipText("Toggles visibility of fitted curves");
-      showFit.setEnabled(adjustPeaks);
+      showFit.setEnabled(data.adjustPeaks);
       showFit.addActionListener(this);
       showResiduals = new JCheckBox("Residuals", false);
       showResiduals.setToolTipText(
         "Toggles visibility of fitted curve residuals");
-      showResiduals.setEnabled(adjustPeaks);
+      showResiduals.setEnabled(data.adjustPeaks);
       showResiduals.addActionListener(this);
-      showFWHMs = new JCheckBox("FWHMs", computeFWHMs);
+      showFWHMs = new JCheckBox("FWHMs", data.computeFWHMs);
       showFWHMs.setToolTipText("Toggles visibility of full width half maxes");
-      showFWHMs.setEnabled(computeFWHMs);
+      showFWHMs.setEnabled(data.computeFWHMs);
       showFWHMs.addActionListener(this);
 
       linear = new JRadioButton("Linear", true);
@@ -593,39 +461,39 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       perspective = new JRadioButton("Perspective", true);
       perspective.setToolTipText(
         "Displays 3D plot with a perspective projection");
-      perspective.setEnabled(channels > 1);
+      perspective.setEnabled(data.channels > 1);
       parallel = new JRadioButton("Parallel", false);
       parallel.setToolTipText(
         "Displays 3D plot with a parallel (orthographic) projection");
-      parallel.setEnabled(channels > 1);
-      dataSurface = new JRadioButton("Surface", channels > 1);
+      parallel.setEnabled(data.channels > 1);
+      dataSurface = new JRadioButton("Surface", data.channels > 1);
       dataSurface.setToolTipText("Displays raw data as a 2D surface");
-      dataSurface.setEnabled(channels > 1);
-      dataLines = new JRadioButton("Lines", channels == 1);
+      dataSurface.setEnabled(data.channels > 1);
+      dataLines = new JRadioButton("Lines", data.channels == 1);
       dataLines.setToolTipText("Displays raw data as a series of lines");
-      dataLines.setEnabled(channels > 1);
+      dataLines.setEnabled(data.channels > 1);
       fitSurface = new JRadioButton("Surface", false);
       fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
-      fitSurface.setEnabled(adjustPeaks && channels > 1);
+      fitSurface.setEnabled(data.adjustPeaks && data.channels > 1);
       fitLines = new JRadioButton("Lines", true);
       fitLines.setToolTipText("Displays fitted curves as a series of lines");
-      fitLines.setEnabled(adjustPeaks && channels > 1);
+      fitLines.setEnabled(data.adjustPeaks && data.channels > 1);
       resSurface = new JRadioButton("Surface", false);
       resSurface.setToolTipText(
         "Displays fitted curve residuals as a 2D surface");
-      resSurface.setEnabled(adjustPeaks && channels > 1);
+      resSurface.setEnabled(data.adjustPeaks && data.channels > 1);
       resLines = new JRadioButton("Lines", true);
       resLines.setToolTipText(
         "Displays fitted curve residuals as a series of lines");
-      resLines.setEnabled(adjustPeaks && channels > 1);
+      resLines.setEnabled(data.adjustPeaks && data.channels > 1);
       colorHeight = new JRadioButton("Counts", true);
       colorHeight.setToolTipText(
         "Colorizes data according to the height (histogram count)");
-      colorHeight.setEnabled(adjustPeaks && channels > 1);
+      colorHeight.setEnabled(data.adjustPeaks && data.channels > 1);
       colorTau = new JRadioButton("Lifetimes", false);
       colorTau.setToolTipText(
         "Colorizes data according to aggregate lifetime value");
-      colorTau.setEnabled(adjustPeaks && channels > 1);
+      colorTau.setEnabled(data.adjustPeaks && data.channels > 1);
 
       zOverride = new JCheckBox("", false);
       zOverride.setToolTipText(
@@ -804,14 +672,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     colorWidget.setTableView(table);
   }
 
-  /** Logs the given output to the appropriate location. */
-  public void log(String msg) {
-    final String message = msg;
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() { System.err.println(message); }
-    });
-  }
-
   // -- ActionListener methods --
 
   /** Handles checkbox and button presses. */
@@ -929,14 +789,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // write currently displayed binned data to file
       try {
         PrintWriter out = new PrintWriter(new FileWriter(file));
-        out.println(timeBins + " x " + channels +
+        out.println(data.timeBins + " x " + data.channels +
           " (count=" + twoDPane.getROICount() +
           ", percent=" + twoDPane.getROIPercent() +
           ", maxVal=" + maxVal + ")");
-        for (int c=0; c<channels; c++) {
-          for (int t=0; t<timeBins; t++) {
+        for (int c=0; c<data.channels; c++) {
+          for (int t=0; t<data.timeBins; t++) {
             if (t > 0) out.print("\t");
-            float s = samps[timeBins * c + t];
+            float s = samps[data.timeBins * c + t];
             int is = (int) s;
             if (is == s) out.print(is);
             else out.print(s);
@@ -956,23 +816,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       if (cmd != null && cmd.startsWith("lut")) {
         // apply the chosen LUT preset
         setWidgetTable(LUTS[Integer.parseInt(cmd.substring(3))]);
-      }
-      else { // OK button
-        width = parse(wField.getText(), width);
-        height = parse(hField.getText(), height);
-        timeBins = parse(tField.getText(), timeBins);
-        channels = parse(cField.getText(), channels);
-        timeRange = parse(trField.getText(), timeRange);
-        minWave = parse(wlField.getText(), minWave);
-        waveStep = parse(sField.getText(), waveStep);
-        numExp = parse(fitField.getText(), numExp);
-        useLMA = lmChoice.isSelected();
-        adjustPeaks = peaksBox.isSelected();
-        computeFWHMs = fwhmBox.isSelected();
-        cutEnd = cutBox.isSelected();
-        cVisible = new boolean[channels];
-        Arrays.fill(cVisible, true);
-        paramDialog.setVisible(false);
       }
     }
   }
@@ -1005,7 +848,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     if (doRecalc) {
       ProgressMonitor progress = new ProgressMonitor(null, "Plotting data",
         "Calculating sums", 0,
-        channels * timeBins + (doRefit ? channels : 0) + 1);
+        data.channels * data.timeBins + (doRefit ? data.channels : 0) + 1);
       progress.setMillisToPopup(100);
       progress.setMillisToDecideToPopup(50);
       int p = 0;
@@ -1031,27 +874,27 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // calculate samples
       int numChanVis = 0;
-      for (int c=0; c<channels; c++) {
-        if (cVisible[c]) numChanVis++;
+      for (int c=0; c<data.channels; c++) {
+        if (data.cVisible[c]) numChanVis++;
       }
-      samps = new float[numChanVis * timeBins];
+      samps = new float[numChanVis * data.timeBins];
       maxVal = 0;
       float[] maxVals = new float[numChanVis];
-      for (int c=0, cc=0; c<channels; c++) {
-        if (!cVisible[c]) continue;
-        for (int t=0; t<timeBins; t++) {
-          int ndx = timeBins * cc + t;
+      for (int c=0, cc=0; c<data.channels; c++) {
+        if (!data.cVisible[c]) continue;
+        for (int t=0; t<data.timeBins; t++) {
+          int ndx = data.timeBins * cc + t;
           int sum = 0;
           if (twoDPane.getROICount() == 1) {
             int roiX = twoDPane.getROIX();
             int roiY = twoDPane.getROIY();
-            sum = values[c][roiY][roiX][t];
+            sum = data.data[c][roiY][roiX][t];
           }
           else {
             boolean[][] roiMask = twoDPane.getROIMask();
-            for (int h=0; h<height; h++) {
-              for (int w=0; w<width; w++) {
-                if (roiMask[h][w]) sum += values[c][h][w][t];
+            for (int y=0; y<data.height; y++) {
+              for (int x=0; x<data.width; x++) {
+                if (roiMask[y][x]) sum += data.data[c][y][x][t];
               }
             }
           }
@@ -1068,58 +911,59 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // full width half maxes
       float[][][] fwhmLines = null;
-      if (computeFWHMs) {
+      if (data.computeFWHMs) {
         log("Calculating full width half maxes");
-        fwhmLines = new float[channels][3][2];
+        fwhmLines = new float[data.channels][3][2];
         int grandTotal = 0;
-        for (int c=0, cc=0; c<channels; c++) {
-          if (!cVisible[c]) continue;
+        for (int c=0, cc=0; c<data.channels; c++) {
+          if (!data.cVisible[c]) continue;
           // sum across all pixels
-          int[] sums = new int[timeBins];
+          int[] sums = new int[data.timeBins];
           int sumTotal = 0;
-          for (int t=0; t<timeBins; t++) {
+          for (int t=0; t<data.timeBins; t++) {
             if (twoDPane.getROICount() == 1) {
               int roiX = twoDPane.getROIX();
               int roiY = twoDPane.getROIY();
-              sums[t] = values[c][roiY][roiX][t];
+              sums[t] = data.data[c][roiY][roiX][t];
             }
             else {
               boolean[][] roiMask = twoDPane.getROIMask();
-              for (int h=0; h<height; h++) {
-                for (int w=0; w<width; w++) {
-                  if (roiMask[h][w]) sums[t] += values[c][h][w][t];
+              for (int y=0; y<data.height; y++) {
+                for (int x=0; x<data.width; x++) {
+                  if (roiMask[y][x]) sums[t] += data.data[c][y][x][t];
                 }
               }
             }
             sumTotal += sums[t];
           }
           int maxSum = 0;
-          for (int t=0; t<timeBins; t++) if (sums[t] > maxSum) maxSum = sums[t];
+          for (int t=0; t<data.timeBins; t++) if (sums[t] > maxSum) maxSum = sums[t];
           grandTotal += sumTotal;
           // find full width half max
           float half = maxSum / 2f;
           float fwhm1 = Float.NaN, fwhm2 = Float.NaN;
-          for (int t=0; t<timeBins-1; t++) {
+          for (int t=0; t<data.timeBins-1; t++) {
             if (sums[t] <= half && sums[t + 1] >= half) { // upslope
               float q = (half - sums[t]) / (sums[t + 1] - sums[t]);
-              fwhm1 = timeRange * (t + q) / (timeBins - 1); // binsToNano
+              fwhm1 = data.timeRange * (t + q) / (data.timeBins - 1); // binsToNano
             }
             else if (sums[t] >= half && sums[t + 1] <= half) { // downslope
               float q = (half - sums[t + 1]) / (sums[t] - sums[t + 1]);
-              fwhm2 = timeRange * (t + 1 - q) / (timeBins - 1); // binsToNano
+              fwhm2 = data.timeRange * (t + 1 - q) / (data.timeBins - 1); // binsToNano
             }
             if (fwhm1 == fwhm1 && fwhm2 == fwhm2) break;
           }
           fwhmLines[c][0][0] = fwhm1;
           fwhmLines[c][0][1] = fwhm2;
-          fwhmLines[c][1][0] = fwhmLines[c][1][1] = minWave + c * waveStep;
+          fwhmLines[c][1][0] = fwhmLines[c][1][1] =
+            data.minWave + c * data.waveStep;
           fwhmLines[c][2][0] = fwhmLines[c][2][1] = half;
           String s = "#" + (c + 1);
           while (s.length() < 3) s = " " + s;
           float h1 = 1000 * fwhm1, h2 = 1000 * fwhm2;
           log("\tChannel " + s + ": fwhm = " + (h2 - h1) + " ps");
           log("\t             counts = " + sumTotal);
-          log("\t             peak = " + sums[maxPeak]);
+          log("\t             peak = " + sums[data.maxPeak]);
           log("\t             center = " + ((h1 + h2) / 2) + " ps");
           log("\t             range = [" + h1 + ", " + h2 + "] ps");
           if (plotCanceled) break;
@@ -1130,24 +974,24 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // curve fitting
       double[][] fitResults = null;
-      if (adjustPeaks && doRefit) {
+      if (data.adjustPeaks && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
         progress.setNote("Fitting curves");
-        fitResults = new double[channels][];
-        tau = new float[channels][numExp];
-        for (int c=0; c<channels; c++) Arrays.fill(tau[c], Float.NaN);
-        int num = timeBins - maxPeak;
+        fitResults = new double[data.channels][];
+        tau = new float[data.channels][data.numExp];
+        for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
+        int num = data.timeBins - data.maxPeak;
 
         // HACK - cut off last 1500 ps from lifetime histogram,
         // to improve accuracy of fit.
-        if (cutEnd) {
+        if (data.cutEnd) {
           int cutBins = (int) picoToBins(1500);
           if (num > cutBins + 5) num -= cutBins;
         }
 
         StringBuffer equation = new StringBuffer();
         equation.append("y(t) = ");
-        for (int i=0; i<numExp; i++) {
+        for (int i=0; i<data.numExp; i++) {
           equation.append("a");
           equation.append(i + 1);
           equation.append(" * e^(-t/");
@@ -1157,40 +1001,39 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
         equation.append("c");
         log("Computing fit parameters: " + equation.toString());
-        int[] data = new int[num];
-        for (int c=0, cc=0; c<channels; c++) {
-          if (!cVisible[c]) {
+        int[] curveData = new int[num];
+        for (int c=0, cc=0; c<data.channels; c++) {
+          if (!data.cVisible[c]) {
             fitResults[c] = null;
             continue;
           }
           log("\tChannel #" + (c + 1) + ":");
 
-          CurveFitter fitter;
-          if (useLMA) fitter = new LMCurveFitter();
-          else fitter = new GACurveFitter();
+          CurveFitter fitter =
+            CurveCollection.newCurveFitter(data.curveFitterClass);
           for (int i=0; i<num; i++) {
-            data[i] = (int) samps[timeBins * cc + maxPeak + i];
+            curveData[i] = (int) samps[data.timeBins * cc + data.maxPeak + i];
           }
-          fitter.setComponentCount(numExp);
-          fitter.setData(data);
+          fitter.setComponentCount(data.numExp);
+          fitter.setData(curveData);
           fitter.estimate();
           for (int i=0; i<100; i++) fitter.iterate();
           double[][] results = fitter.getCurve();
           log("\t\tchi2=" + fitter.getReducedChiSquaredError());
-          for (int i=0; i<numExp; i++) {
+          for (int i=0; i<data.numExp; i++) {
             log("\t\ta" + (i + 1) + "=" +
               (100 * results[i][0] / maxVals[cc]) + "%");
             tau[c][i] = binsToPico((float) (1 / results[i][1]));
             log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
           }
           log("\t\tc=" + results[0][2]);
-          fitResults[c] = new double[2 * numExp + 1];
-          for (int i=0; i<numExp; i++) {
+          fitResults[c] = new double[2 * data.numExp + 1];
+          for (int i=0; i<data.numExp; i++) {
             int e = 2 * i;
             fitResults[c][e] = results[i][0];
             fitResults[c][e + 1] = results[i][1];
           }
-          fitResults[c][2 * numExp] = results[0][2];
+          fitResults[c][2 * data.numExp] = results[0][2];
 
           setProgress(progress, ++p, false);
           cc++;
@@ -1240,26 +1083,25 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       try {
         // construct domain set for 3D surface plots
-        float[][] bcGrid = new float[2][timeBins * numChanVis];
-        for (int c=0, cc=0; c<channels; c++) {
-          if (!cVisible[c]) continue;
-          for (int t=0; t<timeBins; t++) {
-            int ndx = timeBins * cc + t;
-            bcGrid[0][ndx] = timeBins > 1 ? t * timeRange / (timeBins - 1) : 0;
-            bcGrid[1][ndx] = channels > 1 ?
-              c * (maxWave - minWave) / (channels - 1) + minWave : 0;
+        float[][] bcGrid = new float[2][data.timeBins * numChanVis];
+        for (int c=0, cc=0; c<data.channels; c++) {
+          if (!data.cVisible[c]) continue;
+          for (int t=0; t<data.timeBins; t++) {
+            int ndx = data.timeBins * cc + t;
+            bcGrid[0][ndx] = data.timeBins > 1 ? t * data.timeRange / (data.timeBins - 1) : 0;
+            bcGrid[1][ndx] = data.channels > 1 ? c * (data.maxWave - data.minWave) / (data.channels - 1) + data.minWave : 0;
           }
           cc++;
         }
         Gridded2DSet bcSet = new Gridded2DSet(types.bc, bcGrid,
-          timeBins, numChanVis, null, types.bcUnits, null, false);
+          data.timeBins, numChanVis, null, types.bcUnits, null, false);
 
         // compile color values for 3D surface plot
-        float[] colors = new float[numChanVis * timeBins];
-        for (int c=0, cc=0; c<channels; c++) {
-          if (!cVisible[c]) continue;
-          for (int t=0; t<timeBins; t++) {
-            int ndx = timeBins * cc + t;
+        float[] colors = new float[numChanVis * data.timeBins];
+        for (int c=0, cc=0; c<data.channels; c++) {
+          if (!data.cVisible[c]) continue;
+          for (int t=0; t<data.timeBins; t++) {
+            int ndx = data.timeBins * cc + t;
             colors[ndx] = doTauColors ?
               (tau == null ? Float.NaN : tau[c][0]) : samps[ndx];
           }
@@ -1269,22 +1111,22 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         float[] fitSamps = null, residuals = null;
         if (fitResults != null) {
           // compute finite sampling matching fitted exponentials
-          fitSamps = new float[numChanVis * timeBins];
-          residuals = new float[numChanVis * timeBins];
-          for (int c=0, cc=0; c<channels; c++) {
-            if (!cVisible[c]) continue;
+          fitSamps = new float[numChanVis * data.timeBins];
+          residuals = new float[numChanVis * data.timeBins];
+          for (int c=0, cc=0; c<data.channels; c++) {
+            if (!data.cVisible[c]) continue;
             double[] q = fitResults[c];
-            for (int t=0; t<timeBins; t++) {
-              int ndx = timeBins * cc + t;
-              int et = t - maxPeak; // adjust for peak alignment
+            for (int t=0; t<data.timeBins; t++) {
+              int ndx = data.timeBins * cc + t;
+              int et = t - data.maxPeak; // adjust for peak alignment
               if (et < 0) fitSamps[ndx] = residuals[ndx] = 0;
               else {
                 float sum = 0;
-                for (int i=0; i<numExp; i++) {
+                for (int i=0; i<data.numExp; i++) {
                   int e = 2 * i;
                   sum += (float) (q[e] * Math.exp(-q[e + 1] * et));
                 }
-                sum += (float) q[2 * numExp];
+                sum += (float) q[2 * data.numExp];
                 fitSamps[ndx] = sum;
                 residuals[ndx] = samps[ndx] - fitSamps[ndx];
               }
@@ -1307,8 +1149,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
         if (fwhmLines != null) {
           // construct "FWHMs" plot
-          SampledSet[] fwhmSets = new SampledSet[channels];
-          for (int c=0; c<channels; c++) {
+          SampledSet[] fwhmSets = new SampledSet[data.channels];
+          for (int c=0; c<data.channels; c++) {
             if (doLog) {
               // convert samples to log values for plotting
               // this is done AFTER any computations involving samples (above)
@@ -1318,7 +1160,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
                 }
               }
             }
-            if (channels > 1) {
+            if (data.channels > 1) {
               fwhmSets[c] = new Gridded3DSet(types.bcv, fwhmLines[c], 2);
             }
             else {
@@ -1412,80 +1254,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Helper methods --
 
-  private void showParamDialog() {
-    paramDialog = new JDialog((Frame) null, "Slim Plotter", true);
-    JPanel paramPane = new JPanel();
-    paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-    paramDialog.setContentPane(paramPane);
-    paramPane.setLayout(new GridLayout(13, 3));
-    wField = addRow(paramPane, "Image width", width, "pixels");
-    hField = addRow(paramPane, "Image height", height, "pixels");
-    tField = addRow(paramPane, "Time bins", timeBins, "");
-    cField = addRow(paramPane, "Channel count", channels, "");
-    trField = addRow(paramPane, "Time range", timeRange, "nanoseconds");
-    wlField = addRow(paramPane, "Starting wavelength", minWave, "nanometers");
-    sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
-    fitField = addRow(paramPane, "Exponential fit", 1, "components");
-    JButton ok = new JButton("OK");
-    paramDialog.getRootPane().setDefaultButton(ok);
-    ok.addActionListener(this);
-    // row 8
-    paramPane.add(new JLabel("Fit algorithm"));
-    lmChoice = new JRadioButton("Levenberg-Marquardt");
-    gaChoice = new JRadioButton("Genetic", true);
-    ButtonGroup group = new ButtonGroup();
-    group.add(lmChoice);
-    group.add(gaChoice);
-    paramPane.add(lmChoice);
-    paramPane.add(gaChoice);
-    // row 9
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    // row 10, column 1
-    peaksBox = new JCheckBox("Align peaks", true);
-    peaksBox.setToolTipText("<html>Computes the peak of each spectral " +
-      "channel, and aligns those peaks <br>to match by adjusting the " +
-      "lifetime histograms. This option corrects<br>for skew across " +
-      "channels caused by the multispectral detector's<br>variable system " +
-      "response time between channels. This option must<br>be enabled to " +
-      "perform exponential curve fitting.</html>");
-    paramPane.add(peaksBox);
-    // row 10, column 2
-    fwhmBox = new JCheckBox("Compute FWHMs", false);
-    fwhmBox.setToolTipText(
-      "<html>Computes the full width half max at each channel.</html>");
-    paramPane.add(fwhmBox);
-    // row 10, column 3
-    cutBox = new JCheckBox("Cut 1.5ns from fit", true);
-    cutBox.setToolTipText("<html>When performing exponential curve " +
-      "fitting, excludes the last 1.5 ns<br>from the computation. This " +
-      "option is useful because the end of the <br>the lifetime histogram " +
-      "sometimes drops off unexpectedly, skewing<br>the fit results.</html>");
-    paramPane.add(cutBox);
-    // row 11
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    // row 12
-    paramPane.add(new JLabel());
-    paramPane.add(ok);
-    paramDialog.pack();
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension ps = paramDialog.getSize();
-    paramDialog.setLocation((screenSize.width - ps.width) / 2,
-      (screenSize.height - ps.height) / 2);
-    paramDialog.setVisible(true);
-  }
-
   /** Converts value in picoseconds to histogram bins. */
   private float picoToBins(float pico) {
-    return (timeBins - 1) * pico / timeRange / 1000;
+    return (data.timeBins - 1) * pico / data.timeRange / 1000;
   }
 
   /** Converts value in histogram bins to picoseconds. */
   private float binsToPico(float bins) {
-    return 1000 * timeRange * bins / (timeBins - 1);
+    return 1000 * data.timeRange * bins / (data.timeBins - 1);
   }
 
   /** Converts linear value to logarithm value. */
@@ -1515,16 +1291,16 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // probably could eliminate this by writing cleaner logic to convert
       // from 2D surface to 1D lines...
       Linear1DSet timeSet = new Linear1DSet(types.bType, 0,
-        timeRange, timeBins, null, new Unit[] {types.bcUnits[0]}, null);
+        data.timeRange, data.timeBins, null, new Unit[] {types.bcUnits[0]}, null);
       int numChanVis = 0;
-      for (int c=0; c<channels; c++) {
-        if (cVisible[c]) numChanVis++;
+      for (int c=0; c<data.channels; c++) {
+        if (data.cVisible[c]) numChanVis++;
       }
       float[][] cGrid = new float[1][numChanVis];
-      for (int c=0, cc=0; c<channels; c++) {
-        if (!cVisible[c]) continue;
-        cGrid[0][cc++] = channels > 1 ?
-          c * (maxWave - minWave) / (channels - 1) + minWave : 0;
+      for (int c=0, cc=0; c<data.channels; c++) {
+        if (!data.cVisible[c]) continue;
+        cGrid[0][cc++] = data.channels > 1 ?
+          c * (data.maxWave - data.minWave) / (data.channels - 1) + data.minWave : 0;
       }
       Gridded1DSet waveSet = new Gridded1DSet(types.cType,
         cGrid, numChanVis, null, new Unit[] {types.bcUnits[1]}, null, false);
@@ -1582,40 +1358,29 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Utility methods --
 
-  public static JTextField addRow(JPanel p,
-    String label, double value, String unit)
+  public static void setProgress(ProgressMonitor progress, int p) {
+    setProgress(progress, p, true);
+  }
+
+  public static void setProgress(ProgressMonitor progress,
+    int base, int inc, double frac)
   {
-    p.add(new JLabel(label));
-    JTextField textField = new JTextField(value == (int) value ?
-      ("" + (int) value) : ("" + value), 8);
-    JPanel textFieldPane = new JPanel();
-    textFieldPane.setLayout(new BorderLayout());
-    textFieldPane.add(textField, BorderLayout.CENTER);
-    textFieldPane.setBorder(new EmptyBorder(2, 3, 2, 3));
-    p.add(textFieldPane);
-    p.add(new JLabel(unit));
-    return textField;
+    setProgress(progress, (int) (base + (long) inc * frac));
   }
 
-  public static int parse(String s, int last) {
-    try { return Integer.parseInt(s); }
-    catch (NumberFormatException exc) { return last; }
-  }
-
-  public static float parse(String s, float last) {
-    try { return Float.parseFloat(s); }
-    catch (NumberFormatException exc) { return last; }
-  }
-
-  private static void setProgress(ProgressMonitor progress, int p) {
-    setProgress(progress, p, false);
-  }
-
-  private static void setProgress(ProgressMonitor progress,
+  public static void setProgress(ProgressMonitor progress,
     int p, boolean quitOnCancel)
   {
     progress.setProgress(p);
     if (quitOnCancel && progress.isCanceled()) System.exit(0);
+  }
+
+  /** Logs the given output to the appropriate location. */
+  public static void log(String msg) {
+    final String message = msg;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() { System.err.println(message); }
+    });
   }
 
   // -- Helper classes --
