@@ -51,9 +51,27 @@ public class CurveCollection {
   // -- Constructor --
 
   /**
+   * Creates an object to manage a collection of curves for the given data.
+   *
+   * @param data Data array dimensioned [numRows][numCols][timeBins].
+   * @param curveFitterClass Class representing the type of curve fitters
+   *   to use (e.g., loci.slim.GACurveFitter or loci.slim.LMCurveFitter).
+   * @param binRadius Radius of neighboring pixels to bin,
+   *   to improve signal-to-noise ratio.
+   *
+   * @throws IllegalArgumentException
+   *  if numRows or numCols is not a power of two or numRows != numCols
+   */
+  public CurveCollection(int[][][] data,
+    Class curveFitterClass, int binRadius)
+  {
+    this(makeCurveFitters(data, curveFitterClass, binRadius));
+  }
+
+  /**
    * Creates an object to manage the given collection of curves.
    *
-   * @param cf Array of curve fitters dimensioned [numRows][numCols].
+   * @param curveFitters Array of curve fitters dimensioned [numRows][numCols].
    *
    * @throws IllegalArgumentException
    *  if numRows or numCols is not a power of two or numRows != numCols
@@ -79,7 +97,7 @@ public class CurveCollection {
       curves[d] = new CurveFitter[res][res];
       for (int y=0; y<res; y++) {
         for (int x=0; x<res; x++) {
-          CurveFitter cf = new GACurveFitter();
+          CurveFitter cf = newCurveFitter(curves.getClass());
           int[] data0 = curves[d-1][2*y][2*x].getData();
           int[] data1 = curves[d-1][2*y][2*x+1].getData();
           int[] data2 = curves[d-1][2*y+1][2*x].getData();
@@ -122,5 +140,57 @@ public class CurveCollection {
    * 128 x 128, 64 x 64, 32 x 32, 16 x 16, 8 x 8, 4 x 4, 2 x 2 and 1 x 1.
    */
   public int getSubsamplingDepth() { return curves.length - 1; }
+
+  // -- Utility methods --
+
+  /** Creates a list of curve fitters using the given data as a source. */
+  public static CurveFitter[][] makeCurveFitters(int[][][] data,
+    Class curveFitterClass, int binRadius)
+  {
+    int numRows = data.length;
+    int numCols = data.length;
+    int timeBins = data.length;
+
+    if (binRadius > 0) {
+      // we need to bin neighboring pixels; make a copy of the data (*sigh*)
+      int[][][] binnedData = new int[numRows][numCols][timeBins];
+      for (int y=0; y<numRows; y++) {
+        for (int x=0; x<numCols; x++) {
+          for (int b=0; b<timeBins; b++) {
+            int sum = 0;
+            for (int dy=y-binRadius; dy<=y+binRadius; dy++) {
+              if (dy < 0) continue;
+              if (dy >= numRows) break;
+              for (int dx=x-binRadius; dx<=x+binRadius; dx++) {
+                if (dx < 0) continue;
+                if (dx >= numCols) break;
+                sum += data[dy][dx][b];
+              }
+            }
+            binnedData[y][x][b] = sum;
+          }
+        }
+      }
+      data = binnedData;
+    }
+
+    CurveFitter[][] curveFitters = new CurveFitter[numRows][numCols];
+    for (int y=0; y<numRows; y++) {
+      for (int x=0; x<numCols; x++) {
+        curveFitters[y][x] = newCurveFitter(curveFitterClass);
+        curveFitters[y][x].setData(data[y][x]);
+      }
+    }
+    return curveFitters;
+  }
+
+  public static CurveFitter newCurveFitter(Class c) {
+    try {
+      return (CurveFitter) c.newInstance();
+    }
+    catch (InstantiationException exc) { exc.printStackTrace(); }
+    catch (IllegalAccessException exc) { exc.printStackTrace(); }
+    return null;
+  }
 
 }
