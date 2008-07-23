@@ -356,14 +356,24 @@ public class TwoDPane extends JPanel
 
       int curProg = curveRenderers[c].getCurrentProgress();
       int maxProg = curveRenderers[c].getMaxProgress();
-      int curIter = curveRenderers[c].getCurrentIterations();
-      int maxIter = curveRenderers[c].getMaxIterations();
-      int subLevel = curveRenderers[c].getSubsampleLevel();
       progress.setMaximum(maxProg);
       progress.setValue(curProg);
-      progress.setString(curProg == maxProg ?
-        "Iteration " + curIter + "/" + maxIter :
-        "Estimating; " + subLevel + " steps until total burn-in");
+      if (curProg == maxProg) {
+        int totalIter = curveRenderers[c].getTotalIterations();
+        progress.setString("Improving image: iteration #" + totalIter);
+      }
+      else {
+        int subLevel = curveRenderers[c].getSubsampleLevel();
+        if (subLevel < 0) {
+          int curIter = curveRenderers[c].getCurrentIterations();
+          int maxIter = curveRenderers[c].getMaxIterations();
+          progress.setString("Iteration " + curIter + "/" + maxIter);
+        }
+        else {
+          progress.setString("Estimating; " + (subLevel + 1) +
+            " step" + (subLevel > 0 ? "s" : "") + " until total burn-in");
+        }
+      }
 
       if (lifetimeMode.isSelected()) {
         // update VisAD display
@@ -487,10 +497,10 @@ public class TwoDPane extends JPanel
   }
 
   private void rescaleMinMax() {
-    int min = 0, max = 0;
+    double min = 0, max = 0;
     boolean validRange = true;
     try {
-      min = Integer.parseInt(minField.getText());
+      min = Double.parseDouble(minField.getText());
       minField.setBackground(validColor);
     }
     catch (NumberFormatException exc) {
@@ -498,7 +508,7 @@ public class TwoDPane extends JPanel
       minField.setBackground(INVALID_COLOR);
     }
     try {
-      max = Integer.parseInt(maxField.getText());
+      max = Double.parseDouble(maxField.getText());
       maxField.setBackground(validColor);
     }
     catch (NumberFormatException exc) {
