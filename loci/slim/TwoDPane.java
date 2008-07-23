@@ -62,7 +62,7 @@ public class TwoDPane extends JPanel
   private static final int RATE = 100; // TODO - make this a UI option
 
   /** Lifetime image is redrawn every SKIPth frame. */
-  private static final int SKIP = 3;
+  private static final int SKIP = 2;
 
   // -- Fields --
 
@@ -378,9 +378,8 @@ public class TwoDPane extends JPanel
       else {
         int subLevel = curveRenderers[c].getSubsampleLevel();
         if (subLevel < 0) {
-          int curIter = curveRenderers[c].getCurrentIterations();
-          int maxIter = curveRenderers[c].getMaxIterations();
-          progress.setString("Iteration " + curIter + "/" + maxIter);
+          double percent = (10000 * curProg / maxProg) / 100.0;
+          progress.setString("Iterating: " + percent + "%");
         }
         else {
           progress.setString("Estimating; " + (subLevel + 1) +
@@ -499,7 +498,7 @@ public class TwoDPane extends JPanel
     slim.plotData(true, rescale, refit);
   }
 
-  private void resetMinMax(int min, int max) {
+  private void resetMinMax(double min, double max) {
     minField.getDocument().removeDocumentListener(this);
     maxField.getDocument().removeDocumentListener(this);
     minField.setText("" + min);
@@ -604,7 +603,8 @@ public class TwoDPane extends JPanel
       ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
       cc.setTable(ColorControl.initTableVis5D(new float[3][256]));
 
-      resetMinMax(lifetimeMin, lifetimeMax);
+      //resetMinMax(lifetimeMin, lifetimeMax);
+      resetMinMax(0, 0.035);//TEMP
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }

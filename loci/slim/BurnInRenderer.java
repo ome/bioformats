@@ -151,7 +151,6 @@ public class BurnInRenderer extends Renderer {
         for(; currentY < maxDim || !alive; currentY++) {
           currentIterations = 0;
           currProgress = (currentX * maxDim) + currentY;
-          System.out.println(currProgress + "/" + maxProgress);
           while(currentIterations < maxIterations) {
             //System.out.println("x: " + currentX + " y: " + currentY + " iter: " + currentIterations);
             currentIterations++;
