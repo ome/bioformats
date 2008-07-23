@@ -204,5 +204,9 @@ public class LMCurveFitter implements CurveFitter {
     }
   }
 
+  // TODO: Dummy methods to implement CurveFitter
+  public void setFirst(int index) {}
 
+  public void setLast(int index) {}
+  
 }

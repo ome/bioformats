@@ -46,8 +46,20 @@ public class GACurveFitter implements CurveFitter {
   protected double[] fitness;
   protected double currentRCSE;
   protected int stallGenerations;
+  protected int firstindex;
+  protected int lastindex;
+  private double mutationFactor;
 
   private static final boolean DEBUG = false;
+  
+  private static final int STALL_GENERATIONS = 5;
+  private static final double STALLED_FACTOR = 2.0d;
+  private static final double MUTATION_CHANCE = .25d;
+  private static final int SPECIMENS = 25;
+  // Must be 0 < x < 1
+  private static final double INITIAL_MUTATION_FACTOR = .5; 
+  // Must be 0 < x < 1
+  private static final double MUTATION_FACTOR_REDUCTION = .9;
   
   // -- Constructor --
 
@@ -59,6 +71,7 @@ public class GACurveFitter implements CurveFitter {
     fitness = null;
     currentRCSE = Double.MAX_VALUE;
     stallGenerations = 0;
+    mutationFactor = INITIAL_MUTATION_FACTOR;
   }
 
   // -- CurveFitter API methods --
@@ -77,7 +90,7 @@ public class GACurveFitter implements CurveFitter {
     if (currentRCSE == Double.MAX_VALUE) estimate();
 
     // TODO: Move these out, reuse them. Synchronized?
-    double[][][] newGeneration = new double[25][degrees][3];
+    double[][][] newGeneration = new double[SPECIMENS][degrees][3];
     Random r = new Random();
 
     // First make the new generation.
@@ -85,12 +98,13 @@ public class GACurveFitter implements CurveFitter {
     // the current estimate is.
     // Additionally, if we haven't improved for a number of generations,
     // shake things up.
-    if (geneticData == null || fitness == null || stallGenerations > 10) {
+    if (geneticData == null || fitness == null || stallGenerations > STALL_GENERATIONS) {
       stallGenerations = 0;
+      mutationFactor *= MUTATION_FACTOR_REDUCTION;
       for (int i = 1; i < newGeneration.length; i++) {
         for (int j = 0; j < degrees; j++) {
           for (int k = 0; k < 3; k++) {
-            double factor = r.nextDouble() * 2.0d;
+            double factor = r.nextDouble() * STALLED_FACTOR;
             newGeneration[i][j][k] = curveEstimate[j][k] * factor;
           }
         }
@@ -136,8 +150,9 @@ public class GACurveFitter implements CurveFitter {
         for (int j = 0; j < degrees; j++) {
           for (int k = 0; k < 3; k++) {
             // mutate, if necessary
-            if (r.nextDouble() < .25) {
-              newGeneration[i][j][k] *= (.9 + r.nextDouble() * .2);
+            if (r.nextDouble() < MUTATION_CHANCE) {
+              newGeneration[i][j][k] *= 
+                ((1.0 - mutationFactor) + r.nextDouble() * (2.0 * mutationFactor));
             }
           }
         }
@@ -485,6 +500,14 @@ public class GACurveFitter implements CurveFitter {
       return getChiSquaredError(estCurve) / (datapoints - df);
     }
     return Double.MAX_VALUE;
+  }
+
+  public void setFirst(int index) {
+    firstindex = index;
+  }
+
+  public void setLast(int index) {
+    lastindex = index;
   }
 
 }

@@ -95,4 +95,7 @@ public interface CurveFitter {
    **/
   void setCurve(double[][] curve);
 
+  void setFirst(int firstindex);
+
+  void setLast(int lastindex);
 }
