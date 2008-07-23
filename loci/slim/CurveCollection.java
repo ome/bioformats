@@ -77,6 +77,7 @@ public class CurveCollection {
    *  if numRows or numCols is not a power of two or numRows != numCols
    */
   public CurveCollection(CurveFitter[][] curveFitters) {
+    Class curveFitterClass = curveFitters[0][0].getClass();
     int numRows = curveFitters.length;
     int numCols = curveFitters[0].length;
     if (numRows != numCols) {
@@ -97,7 +98,7 @@ public class CurveCollection {
       curves[d] = new CurveFitter[res][res];
       for (int y=0; y<res; y++) {
         for (int x=0; x<res; x++) {
-          CurveFitter cf = newCurveFitter(curves.getClass());
+          CurveFitter cf = newCurveFitter(curveFitterClass);
           int[] data0 = curves[d-1][2*y][2*x].getData();
           int[] data1 = curves[d-1][2*y][2*x+1].getData();
           int[] data2 = curves[d-1][2*y+1][2*x].getData();
@@ -146,12 +147,9 @@ public class CurveCollection {
    * Currently, more than 2 is not supported.
    */
   public void setComponentCount(int numExp) {
-    int depth = curves.length;
-    int numRows = curves[0].length;
-    int numCols = curves[0][0].length;
-    for (int d=0; d<depth; d++) {
-      for (int y=0; y<numRows; y++) {
-        for (int x=0; x<numCols; x++) {
+    for (int d=0; d<curves.length; d++) {
+      for (int y=0; y<curves[d].length; y++) {
+        for (int x=0; x<curves[d][y].length; x++) {
           curves[d][y][x].setComponentCount(numExp);
         }
       }
@@ -205,8 +203,8 @@ public class CurveCollection {
     try {
       return (CurveFitter) c.newInstance();
     }
-    catch (InstantiationException exc) { exc.printStackTrace(); }
-    catch (IllegalAccessException exc) { exc.printStackTrace(); }
+    catch (InstantiationException exc) { exc.printStackTrace(System.out); }
+    catch (IllegalAccessException exc) { exc.printStackTrace(System.out); }
     return null;
   }
 

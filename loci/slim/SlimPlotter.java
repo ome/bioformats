@@ -479,7 +479,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       masterPane.setLayout(new BorderLayout());
       masterWindow.setContentPane(masterPane);
 
-      twoDPane = new TwoDPane(this, values, cVisible, types);
+      twoDPane = new TwoDPane(this, values, numExp,
+        useLMA ? LMCurveFitter.class : GACurveFitter.class, cVisible, types);
 
       MenuBar menubar = new MenuBar();
       masterWindow.setMenuBar(menubar);

@@ -56,7 +56,6 @@ public class BurnInRenderer extends Renderer {
     currProgress = 0;
     maxDim = 1 << subsampleLevel; // 2^subsampleLevel
     maxProgress = 2 * maxDim * maxDim - 1;
-    image = new double[1][maxDim*maxDim];
     alive = false;
     maxIterations = Integer.MAX_VALUE;
     maxRCSE = 1.0d;
@@ -64,6 +63,7 @@ public class BurnInRenderer extends Renderer {
     numExponentials = 1;
     estimated = false;
     improving = false;
+    setComponentCount(1);
   }
 
   public void setComponentCount(int numExp) {
@@ -73,6 +73,7 @@ public class BurnInRenderer extends Renderer {
   }
 
   public void run() {
+    alive = true;
     // initial pass - estimates
     while(subsampleLevel >= 0 && alive && !estimated) {
       currentCurves = curveData.getCurves(subsampleLevel);

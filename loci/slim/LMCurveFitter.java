@@ -45,11 +45,7 @@ public class LMCurveFitter extends CurveFitter {
 
   protected ExpFunction func;
   protected int numExponentials = 1;
-  protected double[][] curve;
-  protected double chi2;
 
-  // histogram data
-  protected int[] data;
   protected int maxVal;
   protected float[] xVals, yVals, weights;
 
@@ -68,30 +64,22 @@ public class LMCurveFitter extends CurveFitter {
   /** HACK - does nothing. */
   public void iterate() { }
 
-  /** Gets raw chi squared error. */
-  public double getChiSquaredError() { return chi2; }
-
-  /** Gets chi squared error scaled by degrees of freedom. */
-  public double getReducedChiSquaredError() {
-    return chi2 / (data.length - 2 * numExponentials - 1);
-  }
-
   public void setData(int[] data) {
-    this.data = data;
-    int num = data.length;
+    curveData = data;
+    int num = curveData.length;
     xVals = new float[num];
     yVals = new float[num];
     weights = new float[num];
     maxVal = 0;
     for (int i=0; i<num; i++) {
-      if (data[i] > maxVal) maxVal = data[i];
+      if (curveData[i] > maxVal) maxVal = curveData[i];
       xVals[i] = i;
-      yVals[i] = data[i];
+      yVals[i] = curveData[i];
       weights[i] = 1; // no weighting
     }
   }
 
-  public int[] getData() { return data; }
+  public int[] getData() { return curveData; }
 
   /** Sets the number of components in the fit. Must be 1 or 2. */
   public void setComponentCount(int numExp) {
@@ -107,7 +95,7 @@ public class LMCurveFitter extends CurveFitter {
 
   /** HACK - performs the actual fit. */
   public void estimate() {
-    int num = data.length;
+    int num = curveData.length;
     final float[] guess = {num / 10, num / 5};
     float[] params = new float[2 * numExponentials + 1];
     for (int i=0; i<numExponentials; i++) {
@@ -120,25 +108,21 @@ public class LMCurveFitter extends CurveFitter {
     lma.fit();
     //log("\t\titerations=" + lma.iterationCount);
 
-    // compute chi2
-    chi2 = lma.chi2;
-    //if (maxVal != 0) chi2 /= maxVal; // normalize chi2 by the peak value (?)
-
     // store parameters into curve array
-    curve = new double[numExponentials][3];
+    curveEstimate = new double[numExponentials][3];
     for (int i=0; i<numExponentials; i++) {
       int e = 2 * i;
-      curve[i][0] = lma.parameters[e]; // a
-      curve[i][1] = lma.parameters[e + 1]; // b
+      curveEstimate[i][0] = lma.parameters[e]; // a
+      curveEstimate[i][1] = lma.parameters[e + 1]; // b
     }
-    curve[0][2] = lma.parameters[2 * numExponentials]; // c
+    curveEstimate[0][2] = lma.parameters[2 * numExponentials]; // c
   }
 
   /** Gets the fit results. */
-  public double[][] getCurve() { return curve; }
+  public double[][] getCurve() { return curveEstimate; }
 
   /** Sets the fit results. */
-  public void setCurve(double[][] curve) { this.curve = curve; }
+  public void setCurve(double[][] curve) { curveEstimate = curve; }
 
   // -- Helper classes --
 

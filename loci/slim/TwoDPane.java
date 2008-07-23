@@ -55,6 +55,7 @@ public class TwoDPane extends JPanel
 
   // -- Constants --
 
+  private static final int BIN_RADIUS = 3; // TODO - make this a UI option
   private static final Color INVALID_COLOR = Color.red.brighter();
 
   // -- Fields --
@@ -68,6 +69,8 @@ public class TwoDPane extends JPanel
   // data parameters
   private int[][][][] data;
   private int channels, width, height, timeBins;
+  private int numExp;
+  private Class curveFitterClass;
   private boolean[] cVisible;
   private SlimTypes types;
 
@@ -99,10 +102,15 @@ public class TwoDPane extends JPanel
   private Color validColor = null;
   private JCheckBox cToggle;
 
+  // parameters for multithreaded lifetime computation
+  private Renderer[] curveRenderers;
+  private Thread[] curveThreads;
+  private Timer lifetimeRefresh;
+
   // -- Constructor --
 
-  public TwoDPane(SlimPlotter slim, int[][][][] data,
-    boolean[] cVisible, SlimTypes types)
+  public TwoDPane(SlimPlotter slim, int[][][][] data, int numExp,
+    Class curveFitterClass, boolean[] cVisible, SlimTypes types)
     throws VisADException, RemoteException
   {
     this.slim = slim;
@@ -114,6 +122,9 @@ public class TwoDPane extends JPanel
     width = data[0].length;
     height = data[0][0].length;
     timeBins = data[0][0][0].length;
+
+    this.numExp = numExp;
+    this.curveFitterClass = curveFitterClass;
 
     roiCount = width * height;
     roiPercent = 100;
@@ -142,12 +153,12 @@ public class TwoDPane extends JPanel
     // set up curve manipulation renderer
     roiGrid = new float[2][width * height];
     roiMask = new boolean[height][width];
-    for (int h=0; h<height; h++) {
-      for (int w=0; w<width; w++) {
-        int ndx = h * width + w;
-        roiGrid[0][ndx] = w;
-        roiGrid[1][ndx] = h;
-        roiMask[h][w] = true;
+    for (int y=0; y<height; y++) {
+      for (int x=0; x<width; x++) {
+        int ndx = y * width + x;
+        roiGrid[0][ndx] = x;
+        roiGrid[1][ndx] = y;
+        roiMask[y][x] = true;
       }
     }
     final DataReferenceImpl curveRef = new DataReferenceImpl("curve");
@@ -199,6 +210,7 @@ public class TwoDPane extends JPanel
     add(iPlotPane);
 
     progress = new JProgressBar();
+    progress.setStringPainted(true);
     add(progress);
 
     JPanel viewModePane = new JPanel();
@@ -292,6 +304,22 @@ public class TwoDPane extends JPanel
     int maxChan = doIntensity();
 
     cSlider.setValue(maxChan + 1);
+
+    // set up lifetime curve fitting threads for per-pixel lifetime analysis
+    curveRenderers = new Renderer[channels];
+    curveThreads = new Thread[channels];
+    for (int c=0; c<channels; c++) {
+      CurveCollection cc = new CurveCollection(data[c],
+        curveFitterClass, BIN_RADIUS);
+      curveRenderers[c] = new BurnInRenderer(cc);
+      curveRenderers[c].setComponentCount(numExp);
+      curveThreads[c] = new Thread(curveRenderers[c], "Lifetime-" + c);
+      curveThreads[c].setPriority(Thread.MIN_PRIORITY);
+    }
+    int delay = 100; // TODO - make this a UI option (FPS)
+    lifetimeRefresh = new Timer(delay, this);
+    for (int c=0; c<channels; c++) curveThreads[c].start();
+    lifetimeRefresh.start();
   }
 
   // -- TwoDPane methods --
@@ -317,6 +345,29 @@ public class TwoDPane extends JPanel
     else if (src == lifetimeMode) doLifetime();
     else if (src == projectionMode) doSpectralProjection();
     else if (src == emissionMode) doEmissionSpectrum();
+    else {
+      // timer event - update lifetime display
+      int c = cSlider.getValue() - 1;
+      // update progress bar
+      progress.setMaximum(curveRenderers[c].getMaxProgress());
+      progress.setValue(curveRenderers[c].getCurrentProgress());
+      progress.setString(
+        "Iteration " + curveRenderers[c].getCurrentIterations() +
+        "/" + curveRenderers[c].getTotalIterations() + "; " +
+        curveRenderers[c].getSubsampleLevel() + " steps until total burn-in");
+
+      if (lifetimeMode.isSelected()) {
+        // update VisAD display
+        double[][] lifetimeImage = curveRenderers[c].getImage();
+        try {
+          FlatField ff = (FlatField) lifetimeField.getSample(c);
+          ff.setSamples(lifetimeImage);
+          imageRef.setData(lifetimeField);
+        }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (RemoteException exc) { exc.printStackTrace(); }
+      }
+    }
   }
 
   // -- ChangeListener methods --
@@ -363,13 +414,13 @@ public class TwoDPane extends JPanel
           int[] tri = roiSet.valueToTri(roiGrid);
           roiX = roiY = 0;
           roiCount = 0;
-          for (int h=0; h<height; h++) {
-            for (int w=0; w<width; w++) {
-              int ndx = h * width + w;
-              roiMask[h][w] = tri[ndx] >= 0;
-              if (roiMask[h][w]) {
-                roiX = w;
-                roiY = h;
+          for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+              int ndx = y * width + x;
+              roiMask[y][x] = tri[ndx] >= 0;
+              if (roiMask[y][x]) {
+                roiX = x;
+                roiY = y;
                 roiCount++;
               }
             }

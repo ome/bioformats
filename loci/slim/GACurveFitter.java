@@ -47,16 +47,16 @@ public class GACurveFitter extends CurveFitter {
   private double mutationFactor;
 
   private static final boolean DEBUG = false;
-  
+
   private static final int STALL_GENERATIONS = 5;
   private static final double STALLED_FACTOR = 2.0d;
   private static final double MUTATION_CHANCE = .25d;
   private static final int SPECIMENS = 25;
   // Must be 0 < x < 1
-  private static final double INITIAL_MUTATION_FACTOR = .5; 
+  private static final double INITIAL_MUTATION_FACTOR = .5;
   // Must be 0 < x < 1
   private static final double MUTATION_FACTOR_REDUCTION = .9;
-  
+
   // -- Constructor --
 
   public GACurveFitter() {
@@ -74,7 +74,7 @@ public class GACurveFitter extends CurveFitter {
     mutationFactor = INITIAL_MUTATION_FACTOR;
   }
 
-  
+
   // -- CurveFitter API methods --
 
   // TODO: The set methods do not create internal copies of the passed
@@ -152,7 +152,7 @@ public class GACurveFitter extends CurveFitter {
           for (int k = 0; k < 3; k++) {
             // mutate, if necessary
             if (r.nextDouble() < MUTATION_CHANCE) {
-              newGeneration[i][j][k] *= 
+              newGeneration[i][j][k] *=
                 ((1.0 - mutationFactor) + r.nextDouble() * (2.0 * mutationFactor));
             }
           }
