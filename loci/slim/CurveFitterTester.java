@@ -74,13 +74,13 @@ public class CurveFitterTester {
 
   public static void main(String[] args) throws Exception {
     BufferedReader in = new BufferedReader(new FileReader(args[0]));
-    int degrees = Integer.parseInt(args[1]);
+    int numExp = Integer.parseInt(args[1]);
 
     int[] data = curveData(in);
     long start = System.currentTimeMillis();
     CurveFitter cf = new GACurveFitter();
     // TODO: Change this to test all of the test data.
-    cf.setDegrees(degrees);
+    cf.setComponentCount(numExp);
     cf.setData(data);
     cf.estimate();
     long duration = System.currentTimeMillis() - start;

@@ -41,7 +41,7 @@ public class GACurveFitter implements CurveFitter {
 
   protected int[] curveData;
   protected double[][] curveEstimate;
-  protected int degrees;
+  protected int numExponentials;
   protected double[][][] geneticData;
   protected double[] fitness;
   protected double currentRCSE;
@@ -65,8 +65,8 @@ public class GACurveFitter implements CurveFitter {
 
   public GACurveFitter() {
     curveData = null;
-    degrees = 1;
-    curveEstimate = new double[degrees][3];
+    numExponentials = 1;
+    curveEstimate = new double[numExponentials][3];
     geneticData = null;
     fitness = null;
     currentRCSE = Double.MAX_VALUE;
@@ -90,7 +90,7 @@ public class GACurveFitter implements CurveFitter {
     if (currentRCSE == Double.MAX_VALUE) estimate();
 
     // TODO: Move these out, reuse them. Synchronized?
-    double[][][] newGeneration = new double[SPECIMENS][degrees][3];
+    double[][][] newGeneration = new double[SPECIMENS][numExponentials][3];
     Random r = new Random();
 
     // First make the new generation.
@@ -102,14 +102,14 @@ public class GACurveFitter implements CurveFitter {
       stallGenerations = 0;
       mutationFactor *= MUTATION_FACTOR_REDUCTION;
       for (int i = 1; i < newGeneration.length; i++) {
-        for (int j = 0; j < degrees; j++) {
+        for (int j = 0; j < numExponentials; j++) {
           for (int k = 0; k < 3; k++) {
             double factor = r.nextDouble() * STALLED_FACTOR;
             newGeneration[i][j][k] = curveEstimate[j][k] * factor;
           }
         }
       }
-      for (int j = 0; j < degrees; j++) {
+      for (int j = 0; j < numExponentials; j++) {
         for (int k = 0; k < 3; k++) {
           newGeneration[0][j][k] = curveEstimate[j][k];
         }
@@ -138,7 +138,7 @@ public class GACurveFitter implements CurveFitter {
           }
         }
         double minfluence = r.nextDouble();
-        for (int j = 0; j < degrees; j++) {
+        for (int j = 0; j < numExponentials; j++) {
           for (int k = 0; k < 3; k++) {
             newGeneration[q][j][k] =
               geneticData[mother][j][k] * minfluence +
@@ -147,7 +147,7 @@ public class GACurveFitter implements CurveFitter {
         }
       }
       for (int i = 0; i < newGeneration.length; i++) {
-        for (int j = 0; j < degrees; j++) {
+        for (int j = 0; j < numExponentials; j++) {
           for (int k = 0; k < 3; k++) {
             // mutate, if necessary
             if (r.nextDouble() < MUTATION_CHANCE) {
@@ -179,7 +179,7 @@ public class GACurveFitter implements CurveFitter {
     if (best < currentRCSE) {
       stallGenerations = 0;
       currentRCSE = best;
-      for (int j = 0; j < degrees; j++) {
+      for (int j = 0; j < numExponentials; j++) {
         for (int k = 0; k < 3; k++) {
           curveEstimate[j][k] = geneticData[bestindex][j][k];
         }
@@ -212,7 +212,7 @@ public class GACurveFitter implements CurveFitter {
   }
 
   public double getReducedChiSquaredError() {
-    int df = 1 + (degrees * 2);
+    int df = 1 + (numExponentials * 2);
     int datapoints = curveData.length;
     if (datapoints - df > 0) {
       return getChiSquaredError() / (datapoints - df);
@@ -240,20 +240,19 @@ public class GACurveFitter implements CurveFitter {
    * Sets how many exponentials are expected to be fitted.
    * Currently, more than 2 is not supported.
    **/
-  public void setDegrees(int deg) {
-    degrees = deg;
-    curveEstimate = new double[deg][3];
+  public void setComponentCount(int numExp) {
+    numExponentials = numExp;
+    curveEstimate = new double[numExponentials][3];
   }
 
-  // Returns the number of exponentials to be fitted.
-  public int getDegrees() {
-    return degrees;
+  public int getComponentCount() {
+    return numExponentials;
   }
 
   // Initializes the curve fitter with a starting curve estimate.
   // 7/21 EK - Changed to use 1d data rows.
   public void estimate() {
-    if (degrees >= 1) {
+    if (numExponentials >= 1) {
       // TODO: Estimate c, factor it in below.
 
       double guessC = Double.MAX_VALUE;
@@ -308,7 +307,7 @@ public class GACurveFitter implements CurveFitter {
       // tau values. If this happens, we'll sort it out in iteration.
       if (curveEstimate[0][1] <= 0) curveEstimate[0][1] = 1000;
     }
-    if (degrees == 2) {
+    if (numExponentials == 2) {
       double guessC = Double.MAX_VALUE;
       for(int i = 0; i < curveData.length; i++) {
         if(curveData[i] < guessC) guessC = curveData[i];
@@ -437,8 +436,8 @@ public class GACurveFitter implements CurveFitter {
    * See getCurve for information about the array to pass.
    **/
   public void setCurve(double[][] curve) {
-    if (curve.length != degrees) {
-      throw new IllegalArgumentException("Incorrect number of degrees.");
+    if (curve.length != numExponentials) {
+      throw new IllegalArgumentException("Incorrect number of exponentials.");
     }
     if (curve[0].length != 3) {
       throw new IllegalArgumentException(
@@ -494,7 +493,7 @@ public class GACurveFitter implements CurveFitter {
   }
 
   private double getReducedChiSquaredError(double[][] estCurve) {
-    int df = 1 + (degrees * 2);
+    int df = 1 + (numExponentials * 2);
     int datapoints = curveData.length;
     if (datapoints - df > 0) {
       return getChiSquaredError(estCurve) / (datapoints - df);

@@ -36,7 +36,6 @@ package loci.slim;
 public abstract class Renderer implements Runnable {
 
   protected boolean alive;
-  protected boolean ready;
   protected int maxIterations;
   protected double maxRCSE;
   protected int totalIterations;
@@ -105,8 +104,8 @@ public abstract class Renderer implements Runnable {
 
   public abstract double[][] getImage();
 
-  public void setComponentCount(int degrees) {
-    numExponentials = degrees;
+  public void setComponentCount(int numExp) {
+    numExponentials = numExp;
   }
 
   public abstract int getImageX();

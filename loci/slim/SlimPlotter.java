@@ -1164,7 +1164,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           for (int i=0; i<num; i++) {
             data[i] = (int) samps[timeBins * cc + maxPeak + i];
           }
-          fitter.setDegrees(numExp);
+          fitter.setComponentCount(numExp);
           fitter.setData(data);
           fitter.estimate();
           for (int i=0; i<100; i++) fitter.iterate();

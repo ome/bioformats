@@ -29,6 +29,7 @@ import loci.slim.CurveCollection;
 import loci.slim.CurveFitter;
 
 /**
+ * TODO
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/BurnInRenderer.java">Trac</a>,
@@ -41,7 +42,7 @@ public class BurnInRenderer extends Renderer {
   protected CurveFitter[][] currentCurves = null;
   protected int currentDim;
   protected double[][] image;
-  protected int maxdim;
+  protected int maxDim;
   private boolean estimated;
   private boolean improving;
 
@@ -53,12 +54,10 @@ public class BurnInRenderer extends Renderer {
     totalIterations = 0;
     currentIterations = 0;
     currProgress = 0;
-    //maxdim = Math.pow(2, subsampleLevel);
-    maxdim = 1 << subsampleLevel;
-    maxProgress = 2 * maxdim * maxdim - 1;
-    image = new double[1][maxdim*maxdim];
+    maxDim = 1 << subsampleLevel; // 2^subsampleLevel
+    maxProgress = 2 * maxDim * maxDim - 1;
+    image = new double[1][maxDim*maxDim];
     alive = false;
-    ready = true;
     maxIterations = Integer.MAX_VALUE;
     maxRCSE = 1.0d;
     currentDim = 1;
@@ -67,8 +66,10 @@ public class BurnInRenderer extends Renderer {
     improving = false;
   }
 
-  public void setComponentCount(int degrees) {
-    image = new double[degrees][maxdim*maxdim];
+  public void setComponentCount(int numExp) {
+    numExponentials = numExp;
+    image = new double[numExponentials][maxDim*maxDim];
+    curveData.setComponentCount(numExponentials);
   }
 
   public void run() {
@@ -77,7 +78,6 @@ public class BurnInRenderer extends Renderer {
       currentCurves = curveData.getCurves(subsampleLevel);
       while(currentY < currentDim && alive) {
         while(currentX < currentDim && alive) {
-          currentCurves[currentY][currentX].setDegrees(numExponentials);
           currentCurves[currentY][currentX].estimate();
           double[][] curve = currentCurves[currentY][currentX].getCurve();
           double[] exponentials = new double[numExponentials];
@@ -85,11 +85,11 @@ public class BurnInRenderer extends Renderer {
             exponentials[i] = curve[i][1];
           }
           Arrays.sort(exponentials);
-          int pixelsize = maxdim / currentDim;
+          int pixelsize = maxDim / currentDim;
           for(int x = 0; x < pixelsize; x++) {
             for(int y = 0; y < pixelsize; y++) {
               for(int c = 0; c < numExponentials; c++) {
-                image[numExponentials-c-1][((currentY * pixelsize + y) * maxdim) +
+                image[numExponentials-c-1][((currentY * pixelsize + y) * maxDim) +
                                            (currentX * pixelsize + x)] = exponentials[c];
               }
             }
@@ -130,11 +130,11 @@ public class BurnInRenderer extends Renderer {
               exponentials[i] = curve[i][1];
             }
             Arrays.sort(exponentials);
-            int pixelsize = maxdim / currentDim;
+            int pixelsize = maxDim / currentDim;
             for(int x = 0; x < pixelsize; x++) {
               for(int y = 0; y < pixelsize; y++) {
                 for(int c = 0; c < numExponentials; c++) {
-                  image[numExponentials-c-1][((currentY * pixelsize + y) * maxdim) +
+                  image[numExponentials-c-1][((currentY * pixelsize + y) * maxDim) +
                     (currentX * pixelsize + x)] = exponentials[c];
                 }
               }
@@ -151,8 +151,8 @@ public class BurnInRenderer extends Renderer {
       int worstx = -1;
       int worsty = -1;
       double worstval = 0;
-      for(int x = 0; x < maxdim; x++) {
-        for(int y = 0; y < maxdim; y++) {
+      for(int x = 0; x < maxDim; x++) {
+        for(int y = 0; y < maxDim; y++) {
           if(currentCurves[y][x].getReducedChiSquaredError() > worstval) {
             worstval = currentCurves[y][x].getReducedChiSquaredError();
             worstx = x;
@@ -171,11 +171,11 @@ public class BurnInRenderer extends Renderer {
   }
 
   public int getImageX() {
-    return (currentX * (maxdim/currentDim)) + ((maxdim/currentDim) / 2);
+    return (currentX * (maxDim/currentDim)) + ((maxDim/currentDim) / 2);
   }
 
   public int getImageY() {
-    return (currentY * (maxdim/currentDim)) + ((maxdim/currentDim) / 2);
+    return (currentY * (maxDim/currentDim)) + ((maxDim/currentDim) / 2);
   }
 
 }

@@ -48,7 +48,7 @@ public class CurveCollection {
   /** Curve fit data, dimensioned [maxDepth][numRows][numCols]. */
   protected CurveFitter[][][] curves;
 
-  // -- Constructor --
+  // -- Constructors --
 
   /**
    * Creates an object to manage a collection of curves for the given data.
@@ -141,6 +141,23 @@ public class CurveCollection {
    */
   public int getSubsamplingDepth() { return curves.length - 1; }
 
+  /**
+   * Sets how many exponentials are expected to be fitted.
+   * Currently, more than 2 is not supported.
+   */
+  public void setComponentCount(int numExp) {
+    int depth = curves.length;
+    int numRows = curves[0].length;
+    int numCols = curves[0][0].length;
+    for (int d=0; d<depth; d++) {
+      for (int y=0; y<numRows; y++) {
+        for (int x=0; x<numCols; x++) {
+          curves[d][y][x].setComponentCount(numExp);
+        }
+      }
+    }
+  }
+
   // -- Utility methods --
 
   /** Creates a list of curve fitters using the given data as a source. */
@@ -148,15 +165,15 @@ public class CurveCollection {
     Class curveFitterClass, int binRadius)
   {
     int numRows = data.length;
-    int numCols = data.length;
-    int timeBins = data.length;
+    int numCols = data[0].length;
+    int timeBins = data[0][0].length;
 
     if (binRadius > 0) {
       // we need to bin neighboring pixels; make a copy of the data (*sigh*)
       int[][][] binnedData = new int[numRows][numCols][timeBins];
       for (int y=0; y<numRows; y++) {
         for (int x=0; x<numCols; x++) {
-          for (int b=0; b<timeBins; b++) {
+          for (int t=0; t<timeBins; t++) {
             int sum = 0;
             for (int dy=y-binRadius; dy<=y+binRadius; dy++) {
               if (dy < 0) continue;
@@ -164,10 +181,10 @@ public class CurveCollection {
               for (int dx=x-binRadius; dx<=x+binRadius; dx++) {
                 if (dx < 0) continue;
                 if (dx >= numCols) break;
-                sum += data[dy][dx][b];
+                sum += data[dy][dx][t];
               }
             }
-            binnedData[y][x][b] = sum;
+            binnedData[y][x][t] = sum;
           }
         }
       }

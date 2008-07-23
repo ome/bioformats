@@ -44,7 +44,7 @@ public class LMCurveFitter implements CurveFitter {
   // -- Fields --
 
   protected ExpFunction func;
-  protected int numExp = 1;
+  protected int numExponentials = 1;
   protected double[][] curve;
   protected double chi2;
 
@@ -55,7 +55,7 @@ public class LMCurveFitter implements CurveFitter {
 
   // -- Constructor --
 
-  public LMCurveFitter() { setDegrees(1); }
+  public LMCurveFitter() { setComponentCount(1); }
 
   // -- LMCurveFitter API methods --
 
@@ -73,7 +73,7 @@ public class LMCurveFitter implements CurveFitter {
 
   /** Gets chi squared error scaled by degrees of freedom. */
   public double getReducedChiSquaredError() {
-    return chi2 / (data.length - 2 * numExp - 1);
+    return chi2 / (data.length - 2 * numExponentials - 1);
   }
 
   public void setData(int[] data) {
@@ -94,25 +94,25 @@ public class LMCurveFitter implements CurveFitter {
   public int[] getData() { return data; }
 
   /** Sets the number of components in the fit. Must be 1 or 2. */
-  public void setDegrees(int deg) {
-    if (deg < 1 || deg > 2) {
+  public void setComponentCount(int numExp) {
+    if (numExp < 1 || numExp > 2) {
       throw new IllegalArgumentException("Number of degrees must be 1 or 2");
     }
-    numExp = deg;
-    func = new ExpFunction(numExp);
+    numExponentials = numExp;
+    func = new ExpFunction(numExponentials);
   }
 
   /** Gets the number of components in the fit. */
-  public int getDegrees() { return numExp; }
+  public int getComponentCount() { return numExponentials; }
 
   /** HACK - performs the actual fit. */
   public void estimate() {
     int num = data.length;
     final float[] guess = {num / 10, num / 5};
-    float[] params = new float[2 * numExp + 1];
-    for (int i=0; i<numExp; i++) {
+    float[] params = new float[2 * numExponentials + 1];
+    for (int i=0; i<numExponentials; i++) {
       int e = 2 * i;
-      params[e] = maxVal / numExp;
+      params[e] = maxVal / numExponentials;
       params[e + 1] = guess[i]; // ?
     }
     LMA lma = new LMA(func, params, new float[][] {xVals, yVals},
@@ -125,13 +125,13 @@ public class LMCurveFitter implements CurveFitter {
     //if (maxVal != 0) chi2 /= maxVal; // normalize chi2 by the peak value (?)
 
     // store parameters into curve array
-    curve = new double[numExp][3];
-    for (int i=0; i<numExp; i++) {
+    curve = new double[numExponentials][3];
+    for (int i=0; i<numExponentials; i++) {
       int e = 2 * i;
       curve[i][0] = lma.parameters[e]; // a
       curve[i][1] = lma.parameters[e + 1]; // b
     }
-    curve[0][2] = lma.parameters[2 * numExp]; // c
+    curve[0][2] = lma.parameters[2 * numExponentials]; // c
   }
 
   /** Gets the fit results. */
