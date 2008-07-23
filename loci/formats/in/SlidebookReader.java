@@ -295,6 +295,10 @@ public class SlidebookReader extends FormatReader {
 
     // determine total number of pixel bytes
 
+    float pixelSize = 1f;
+    String objective = null;
+    Vector pixelSizeZ = new Vector();
+
     long pixelBytes = 0;
     for (int i=0; i<pixelLengths.size(); i++) {
       pixelBytes += ((Long) pixelLengths.get(i)).longValue();
@@ -323,7 +327,10 @@ public class SlidebookReader extends FormatReader {
         char n = (char) in.readShort();
         if (n == 'i') {
           iCount++;
-          in.skipBytes(78);
+          in.skipBytes(94);
+          pixelSizeZ.add(new Float(in.readFloat()));
+          in.seek(in.getFilePointer() - 20);
+
           int start = 0;
           for (int j=start; j<pixelOffsets.size(); j++) {
             long length = ((Long) pixelLengths.get(j)).longValue();
@@ -391,6 +398,13 @@ public class SlidebookReader extends FormatReader {
             channelNames.add(in.readCString().trim());
           }
         }
+        else if (n == 'd') {
+          // objective info and pixel size X/Y
+          in.skipBytes(6);
+          objective = in.readCString();
+          in.skipBytes(126);
+          pixelSize = in.readFloat();
+        }
       }
     }
 
@@ -422,8 +436,20 @@ public class SlidebookReader extends FormatReader {
 
     int index = 0;
 
+    store.setObjectiveModel(objective, 0, 0);
+
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName(imageNames[i], i);
+      store.setDimensionsPhysicalSizeX(new Float(pixelSize), i, 0);
+      store.setDimensionsPhysicalSizeY(new Float(pixelSize), i, 0);
+      int idx = 0;
+      for (int q=0; q<i; q++) {
+        idx += core.sizeC[q];
+      }
+
+      if (idx < pixelSizeZ.size()) {
+        store.setDimensionsPhysicalSizeZ((Float) pixelSizeZ.get(idx), i, 0);
+      }
       MetadataTools.setDefaultCreationDate(store, id, i);
       for (int c=0; c<core.sizeC[i]; c++) {
         if (index < channelNames.size()) {
