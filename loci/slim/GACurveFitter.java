@@ -39,15 +39,11 @@ public class GACurveFitter extends CurveFitter {
 
   // -- Fields --
 
-  protected int[] curveData;
-  protected double[][] curveEstimate;
   protected int components;
   protected double[][][] geneticData;
   protected double[] fitness;
   protected double currentRCSE;
   protected int stallGenerations;
-  protected int firstindex;
-  protected int lastindex;
   private double mutationFactor;
 
   private static final boolean DEBUG = false;
