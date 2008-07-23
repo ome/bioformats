@@ -33,47 +33,121 @@ package loci.slim;
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
-public interface CurveFitter {
+public abstract class CurveFitter {
+
+  protected int[] curveData;
+  protected double[][] curveEstimate;
+  protected int firstindex;
+  protected int lastindex;
 
   /**
    * iterate() runs through one iteration of whatever curve fitting
    * technique this curve fitter uses. This will generally update the
    * information returned by getCurve and getChiSquaredError.
    */
-  void iterate();
+  public abstract void iterate();
 
   /** Returns the Chi Squared Error of the current curve estimate. */
-  double getChiSquaredError();
+  public double getChiSquaredError() {
+    double total = 0.0d;
+    double[] expected = getEstimates(curveData, curveEstimate);
+    for (int i = firstindex; i < curveData.length && i <= lastindex; i++) {
+      if (expected[i] > 0) { 
+        double observed = (double) curveData[i];
+        double term = (observed - expected[i]);
+        // (o-e)^2
+        term *= term;
+        // (o-e)^2 / e
+        term /= expected[i];
+        total += term;
+      } 
+    } 
+    return total;
+  } 
+
+  public double getChiSquaredError(double[][] estCurve) {
+    double total = 0.0d;
+    double[] expected = getEstimates(curveData, estCurve);
+    for (int i = firstindex; i < curveData.length && i <= lastindex; i++) {
+      if (expected[i] > 0) {
+        double observed = curveData[i];
+        double term = (observed - expected[i]);
+        // (o-e)^2
+        term *= term;
+        // (o-e)^2 / e
+        term /= expected[i];
+        //System.out.println("Obs: " + observed +
+        //  " Expect: " + expected[i] + " Term: " + term);
+        total += term;
+      }
+    }
+    return total;
+  }
 
   /**
    * Returns the Reduced Chi Squared Error of the current curve estimate
    * This is based on the number of datapoints in data and the number
    * of exponentials in setComponentCount.
    */
-  double getReducedChiSquaredError();
+  public double getReducedChiSquaredError() {
+    int df = 1 + (curveEstimate.length * 2);
+    int datapoints = curveData.length;
+    if (datapoints - df > 0) {
+      return getChiSquaredError() / (datapoints - df);
+    } 
+    return Double.MAX_VALUE;
+  } 
+  
+  public double getReducedChiSquaredError(double[][] estCurve) {
+    int df = 1 + (estCurve.length * 2);
+    int datapoints = curveData.length;
+    if (datapoints - df > 0) {
+      return getChiSquaredError(estCurve) / (datapoints - df);
+    }
+    return Double.MAX_VALUE;
+  }
+
+  public double[] getEstimates(int[] data, double[][] estimate) {
+    double[] toreturn = new double[data.length];
+    for (int i = 0; i < toreturn.length; i++) {
+      double value = 0;
+      for (int j = 0; j < estimate.length; j++) {
+        // e^-bt
+        double term = Math.pow(Math.E, -estimate[j][1] * i);
+        // ae^-bt
+        term *= estimate[j][0];
+        // ae^-bt + c
+        term += estimate[j][2];
+        value += term;
+      }
+      toreturn[i] = value;
+    }
+    return toreturn;
+  }
+
 
   /**
    * Sets the data to be used to generate curve estimates.
    * Single dimension of data... time values are index, since
    * we can assume that the datapoints are evenly spaced.
    */
-  void setData(int[] data);
+  public abstract void setData(int[] data);
 
   /**
    * Sets the data to be used to generate curve estimates.
    * Single dimension of data... time values are index, since
    * we can assume that the datapoints are evenly spaced.
    */
-  int[] getData();
+  public abstract int[] getData();
 
   /** Sets how many exponentials are expected to be fitted. */
-  void setComponentCount(int numExp);
+  public abstract void setComponentCount(int numExp);
 
   /** Returns the number of exponentials to be fitted. */
-  int getComponentCount();
+  public abstract int getComponentCount();
 
   /** Initializes the curve fitter with a starting curve estimate. */
-  void estimate();
+  public abstract void estimate();
 
   /**
    * Returns the current curve estimate.
@@ -82,16 +156,16 @@ public interface CurveFitter {
    * [][0] is a, [1] is b, [2] is c.
    * TODO: Make multiple exponentials a class, to remove multi-c stupidity
    */
-  double[][] getCurve();
+  public abstract double[][] getCurve();
 
   /**
    * Sets the current curve estimate, useful if information about the
    * curve is already known.
    * See getCurve for information about the array to pass.
    */
-  void setCurve(double[][] curve);
+  public abstract void setCurve(double[][] curve);
 
-  void setFirst(int firstindex);
+  public abstract void setFirst(int firstindex);
 
-  void setLast(int lastindex);
+  public abstract void setLast(int lastindex);
 }

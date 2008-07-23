@@ -39,7 +39,7 @@ import java.io.PrintStream;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class LMCurveFitter implements CurveFitter {
+public class LMCurveFitter extends CurveFitter {
 
   // -- Fields --
 
