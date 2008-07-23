@@ -26,13 +26,11 @@ package loci.formats.in;
 import java.awt.Point;
 import java.io.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -54,12 +52,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/ND2Reader.java">SVN</a></dd></dl>
  */
 public class ND2Reader extends FormatReader {
-
-  // -- Constants --
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   // -- Fields --
 
@@ -270,7 +262,7 @@ public class ND2Reader extends FormatReader {
 
       // parse XML blocks
 
-      ND2Handler handler = new ND2Handler();
+      DefaultHandler handler = new ND2Handler();
       ByteVector xml = new ByteVector();
 
       for (int i=0; i<xmlOffsets.size(); i++) {
@@ -308,22 +300,7 @@ public class ND2Reader extends FormatReader {
       String xmlString = new String(xml.toByteArray());
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
-
-      ByteArrayInputStream s =
-        new ByteArrayInputStream(xmlString.getBytes(), 0, xmlString.length());
-
-      try {
-        SAXParser parser = SAX_FACTORY.newSAXParser();
-        parser.parse(s, handler);
-      }
-      catch (ParserConfigurationException exc) {
-        throw new FormatException(exc);
-      }
-      catch (SAXException exc) {
-        throw new FormatException(exc);
-      }
-
-      s.close();
+      DataTools.parseXML(xmlString, handler);
 
       // adjust SizeT, if necessary
       long planeSize = getSizeX() * getSizeY() *
@@ -586,7 +563,7 @@ public class ND2Reader extends FormatReader {
 
       status("Finished assembling XML string");
 
-      ND2Handler handler = new ND2Handler();
+      DefaultHandler handler = new ND2Handler();
 
       // strip out invalid characters
       int offset = 0;
@@ -600,22 +577,7 @@ public class ND2Reader extends FormatReader {
           b[i] = (byte) ' ';
         }
       }
-
-      ByteArrayInputStream s =
-        new ByteArrayInputStream(b, offset, len - offset);
-
-      try {
-        SAXParser parser = SAX_FACTORY.newSAXParser();
-        parser.parse(s, handler);
-      }
-      catch (ParserConfigurationException exc) {
-        throw new FormatException(exc);
-      }
-      catch (SAXException exc) {
-        throw new FormatException(exc);
-      }
-
-      s.close();
+      DataTools.parseXML(new String(b, offset, len - offset), handler);
       xml = null;
     }
 

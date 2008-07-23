@@ -25,13 +25,11 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.codec.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -50,9 +48,6 @@ public class OMEXMLReader extends FormatReader {
   private static final String NO_OME_JAVA_MSG =
     "The Java OME-XML library is required to read OME-XML files. Please " +
     "obtain ome-java.jar from http://loci.wisc.edu/ome/formats.html";
-
-  private static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   // -- Static fields --
 
@@ -209,17 +204,8 @@ public class OMEXMLReader extends FormatReader {
     binDataLengths = new Vector();
     compression = new Vector();
 
-    OMEXMLHandler handler = new OMEXMLHandler();
-    try {
-      SAXParser saxParser = SAX_FACTORY.newSAXParser();
-      saxParser.parse(in, handler);
-    }
-    catch (ParserConfigurationException exc) {
-      throw new FormatException(exc);
-    }
-    catch (SAXException exc) {
-      throw new FormatException(exc);
-    }
+    DefaultHandler handler = new OMEXMLHandler();
+    DataTools.parseXML(in.readString((int) in.length()), handler);
 
     if (binDataOffsets.size() == 0) {
       throw new FormatException("Pixel data not found");

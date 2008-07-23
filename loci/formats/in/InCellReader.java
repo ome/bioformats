@@ -26,12 +26,10 @@ package loci.formats.in;
 import java.awt.Point;
 import java.io.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -44,12 +42,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class InCellReader extends FormatReader {
-
-  // -- Constants --
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   // -- Fields --
 
@@ -157,18 +149,9 @@ public class InCellReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    InCellHandler handler = new InCellHandler(store);
+    DefaultHandler handler = new InCellHandler(store);
+    DataTools.parseXML(b, handler);
 
-    try {
-      SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(new ByteArrayInputStream(b), handler);
-    }
-    catch (ParserConfigurationException exc) {
-      throw new FormatException(exc);
-    }
-    catch (SAXException exc) {
-      throw new FormatException(exc);
-    }
     core.sizeZ[0] = fieldCount * zCount;
 
     seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());

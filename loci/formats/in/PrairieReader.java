@@ -26,12 +26,10 @@ package loci.formats.in;
 import java.io.*;
 import java.text.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -57,10 +55,6 @@ public class PrairieReader extends FormatReader {
   private static final int PRAIRIE_TAG_1 = 33628;
   private static final int PRAIRIE_TAG_2 = 33629;
   private static final int PRAIRIE_TAG_3 = 33630;
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   // -- Fields --
 
@@ -214,17 +208,8 @@ public class PrairieReader extends FormatReader {
       is.read(b);
       is.close();
 
-      PrairieHandler handler = new PrairieHandler();
-      try {
-        SAXParser parser = SAX_FACTORY.newSAXParser();
-        parser.parse(new ByteArrayInputStream(b), handler);
-      }
-      catch (ParserConfigurationException exc) {
-        throw new FormatException(exc);
-      }
-      catch (SAXException exc) {
-        throw new FormatException(exc);
-      }
+      DefaultHandler handler = new PrairieHandler();
+      DataTools.parseXML(b, handler);
 
       if (checkSuffix(id, XML_SUFFIX)) {
         files = new String[f.size()];

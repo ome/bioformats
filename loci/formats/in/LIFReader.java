@@ -25,11 +25,9 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-import org.xml.sax.SAXException;
 
 /**
  * LIFReader is the file format reader for Leica LIF files.
@@ -41,12 +39,6 @@ import org.xml.sax.SAXException;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class LIFReader extends FormatReader {
-
-  // -- Constants --
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   // -- Fields --
 
@@ -187,17 +179,7 @@ public class LIFReader extends FormatReader {
       "</LEICA>";
 
     xml = DataTools.sanitizeXML(xml);
-
-    try {
-      SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(new ByteArrayInputStream(xml.getBytes()), handler);
-    }
-    catch (ParserConfigurationException exc) {
-      throw new FormatException(exc);
-    }
-    catch (SAXException exc) {
-      throw new FormatException(exc);
-    }
+    DataTools.parseXML(xml, handler);
 
     Vector widths = handler.getWidths();
     Vector heights = handler.getHeights();

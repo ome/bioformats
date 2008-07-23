@@ -27,6 +27,10 @@ import java.io.*;
 import java.text.*;
 import java.util.Date;
 import java.util.Hashtable;
+import javax.xml.parsers.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A utility class with convenience methods for
@@ -55,6 +59,10 @@ public final class DataTools {
   public static final long COBOL_EPOCH = 11644444800000L;
   public static final long MICROSOFT_EPOCH = 2272060800000L;
   public static final long ZVI_EPOCH = 2921084975759000L;
+
+  /** Factory for generating SAX parsers. */
+  public static final SAXParserFactory SAX_FACTORY =
+    SAXParserFactory.newInstance();
 
   // -- Static fields --
 
@@ -741,6 +749,27 @@ public final class DataTools {
     }
 
     return buf;
+  }
+
+  public static void parseXML(String xml, DefaultHandler handler)
+    throws FormatException, IOException
+  {
+    parseXML(xml.getBytes(), handler);
+  }
+
+  public static void parseXML(byte[] xml, DefaultHandler handler)
+    throws FormatException, IOException
+  {
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(new ByteArrayInputStream(xml), handler);
+    }
+    catch (ParserConfigurationException exc) {
+      throw new FormatException(exc);
+    }
+    catch (SAXException exc) {
+      throw new FormatException(exc);
+    }
   }
 
   // -- Date handling --

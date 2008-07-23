@@ -26,12 +26,10 @@ package loci.formats.in;
 import java.io.*;
 import java.text.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-import org.xml.sax.SAXException;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -46,10 +44,6 @@ import org.xml.sax.SAXException;
 public class TCSReader extends FormatReader {
 
   // -- Constants --
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   public static final String[] XML_SUFFIX = {"xml"};
 
@@ -213,16 +207,7 @@ public class TCSReader extends FormatReader {
         }
       }
 
-      try {
-        SAXParser parser = SAX_FACTORY.newSAXParser();
-        parser.parse(new ByteArrayInputStream(xml.getBytes()), handler);
-      }
-      catch (ParserConfigurationException exc) {
-        throw new FormatException(exc);
-      }
-      catch (SAXException exc) {
-        throw new FormatException(exc);
-      }
+      DataTools.parseXML(xml, handler);
 
       xcal = handler.getXCal();
       ycal = handler.getYCal();

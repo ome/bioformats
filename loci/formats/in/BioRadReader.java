@@ -25,12 +25,10 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -47,10 +45,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class BioRadReader extends FormatReader {
 
   // -- Constants --
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   /** Numerical ID of a valid Bio-Rad PIC file. */
   private static final int PIC_FILE_ID = 12345;
@@ -635,17 +629,8 @@ public class BioRadReader extends FormatReader {
         raw.read(xml);
         raw.close();
 
-        BioRadHandler handler = new BioRadHandler();
-        try {
-          SAXParser parser = SAX_FACTORY.newSAXParser();
-          parser.parse(new ByteArrayInputStream(xml), handler);
-        }
-        catch (SAXException e) {
-          if (debug) LogTools.trace(e);
-        }
-        catch (ParserConfigurationException e) {
-          if (debug) LogTools.trace(e);
-        }
+        DefaultHandler handler = new BioRadHandler();
+        DataTools.parseXML(xml, handler);
 
         for (int q=0; q<list.length; q++) {
           if (checkSuffix(list[q], PIC_SUFFIX)) {

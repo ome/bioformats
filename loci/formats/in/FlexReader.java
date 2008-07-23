@@ -27,11 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.*;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -50,10 +48,6 @@ public class FlexReader extends BaseTiffReader {
 
   /** Custom IFD entry for Flex XML. */
   protected static final int FLEX = 65200;
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   // -- Fields --
 
@@ -158,17 +152,8 @@ public class FlexReader extends BaseTiffReader {
 
     Vector n = new Vector();
     Vector f = new Vector();
-    FlexHandler handler = new FlexHandler(n, f, store);
-    try {
-      SAXParser saxParser = SAX_FACTORY.newSAXParser();
-      saxParser.parse(new ByteArrayInputStream(c), handler);
-    }
-    catch (ParserConfigurationException exc) {
-      throw new FormatException(exc);
-    }
-    catch (SAXException exc) {
-      throw new FormatException(exc);
-    }
+    DefaultHandler handler = new FlexHandler(n, f, store);
+    DataTools.parseXML(c, handler);
 
     // verify factor count
     int nsize = n.size();

@@ -26,12 +26,10 @@ package loci.formats.in;
 import java.io.*;
 import java.text.*;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -41,14 +39,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/MetamorphTiffReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/MetamorphTiffReader.java">SVN</a></dd></dl>
+ *
+ * @author Melissa Linkert linkert at wisc.edu
+ * @author Thomas Caswell tac42 at cornell.edu
  */
 public class MetamorphTiffReader extends BaseTiffReader {
-
-  // -- Constants --
-
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
 
   // -- Fields --
 
@@ -107,19 +102,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     // parse XML comment
 
-    MetamorphHandler handler = new MetamorphHandler();
-    try {
-      SAXParser parser = SAX_FACTORY.newSAXParser();
-      for (int i=0; i<comments.length; i++) {
-        comments[i] = TiffTools.getComment(ifds[i]);
-        parser.parse(new ByteArrayInputStream(comments[i].getBytes()), handler);
-      }
-    }
-    catch (SAXException e) {
-      if (debug) LogTools.trace(e);
-    }
-    catch (ParserConfigurationException e) {
-      if (debug) LogTools.trace(e);
+    DefaultHandler handler = new MetamorphHandler();
+    for (int i=0; i<comments.length; i++) {
+      comments[i] = TiffTools.getComment(ifds[i]);
+      DataTools.parseXML(comments[i], handler);
     }
 
     core.sizeC[0] = core.sizeZ[0] = 0;
@@ -172,19 +158,38 @@ public class MetamorphTiffReader extends BaseTiffReader {
       if (id != null && value != null) {
         if (id.equals("Description")) {
           metadata.remove("Comment");
-          String k = null, v = null;
-          int colon = value.indexOf(":");
-          while (colon != -1) {
-            k = value.substring(0, colon);
-            int space = value.lastIndexOf(" ", value.indexOf(":", colon + 1));
-            if (space == -1) space = value.length();
-            v = value.substring(colon + 1, space);
-            addMeta(k, v);
-            value = value.substring(space).trim();
-            colon = value.indexOf(":");
 
-            if (k.equals("Temperature")) {
-              temperature = Float.parseFloat(v.trim());
+          String k = null, v = null;
+
+          if (value.indexOf("&#13;&#10;") != -1) {
+            StringTokenizer tokens = new StringTokenizer(value, "&#130;&#10;");
+            while (tokens.hasMoreTokens()) {
+              String line = tokens.nextToken();
+              int colon = line.indexOf(":");
+              if (colon != -1) {
+                k = line.substring(0, colon).trim();
+                v = line.substring(colon + 1).trim();
+                addMeta(k, v);
+                if (k.equals("Temperature")) {
+                  temperature = Float.parseFloat(v.trim());
+                }
+              }
+            }
+          }
+          else {
+            int colon = value.indexOf(":");
+            while (colon != -1) {
+              k = value.substring(0, colon);
+              int space = value.lastIndexOf(" ", value.indexOf(":", colon + 1));
+              if (space == -1) space = value.length();
+              v = value.substring(colon + 1, space);
+              addMeta(k, v);
+              value = value.substring(space).trim();
+              colon = value.indexOf(":");
+
+              if (k.equals("Temperature")) {
+                temperature = Float.parseFloat(v.trim());
+              }
             }
           }
         }
