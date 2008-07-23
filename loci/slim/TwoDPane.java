@@ -89,7 +89,8 @@ public class TwoDPane extends JPanel
 
   // GUI components for image pane
   private JProgressBar progress;
-  private JRadioButton intensityMode, lifetimeMode, spectraMode;
+  private JRadioButton intensityMode, lifetimeMode;
+  private JRadioButton projectionMode, emissionMode;
   private JSlider cSlider;
   private JTextField minField, maxField;
   private JCheckBox cToggle;
@@ -203,19 +204,28 @@ public class TwoDPane extends JPanel
     viewModePane.add(new JLabel("View mode:"));
     intensityMode = new JRadioButton("Intensity", true);
     lifetimeMode = new JRadioButton("Lifetime");
-    spectraMode = new JRadioButton("Spectra");
-    spectraMode.setEnabled(false);
+    emissionMode = new JRadioButton("Emission");
+    emissionMode.setToolTipText("<html>" +
+      "Displays an emission spectrum of the data.</html>");
+    emissionMode.setEnabled(false);
+    projectionMode = new JRadioButton("Projection");
+    projectionMode.setToolTipText("<html>" +
+      "Displays a \"spectral projection\" of the data.</html>");
+    projectionMode.setEnabled(false);
     ButtonGroup group = new ButtonGroup();
     group.add(intensityMode);
     group.add(lifetimeMode);
-    group.add(spectraMode);
+    group.add(projectionMode);
+    group.add(emissionMode);
     intensityMode.addActionListener(this);
     lifetimeMode.addActionListener(this);
-    spectraMode.addActionListener(this);
+    projectionMode.addActionListener(this);
+    emissionMode.addActionListener(this);
     viewModePane.add(Box.createHorizontalStrut(5));
     viewModePane.add(intensityMode);
     viewModePane.add(lifetimeMode);
-    viewModePane.add(spectraMode);
+    viewModePane.add(projectionMode);
+    viewModePane.add(emissionMode);
 
     JPanel sliderPane = new JPanel();
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
@@ -299,7 +309,8 @@ public class TwoDPane extends JPanel
     }
     else if (src == intensityMode) doIntensity();
     else if (src == lifetimeMode) doLifetime();
-    else if (src == spectraMode) doSpectra();
+    else if (src == projectionMode) doSpectralProjection();
+    else if (src == emissionMode) doEmissionSpectrum();
   }
 
   // -- ChangeListener methods --
@@ -459,6 +470,8 @@ public class TwoDPane extends JPanel
   }
 
   private void doLifetime() {
+    // TODO
+    // https://skyking.microscopy.wisc.edu/trac/java/ticket/130
     try {
       if (lifetimeField == null) {
         lifetimeField = new FieldImpl(types.cxyvFunc, types.cSet);
@@ -491,9 +504,14 @@ public class TwoDPane extends JPanel
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
-  private void doSpectra() {
+  private void doSpectralProjection() {
     // TODO
     // https://skyking.microscopy.wisc.edu/trac/java/ticket/86
+  }
+
+  private void doEmissionSpectrum() {
+    // TODO
+    // https://skyking.microscopy.wisc.edu/trac/java/ticket/164
   }
 
   // -- Utility methods --
