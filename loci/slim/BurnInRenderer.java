@@ -55,7 +55,13 @@ public class BurnInRenderer extends Renderer {
     currentIterations = 0;
     currProgress = 0;
     maxDim = 1 << subsampleLevel; // 2^subsampleLevel
-    maxProgress = 2 * maxDim * maxDim - 1;
+    //maxProgress = 2 * maxDim * maxDim - 1;
+    maxProgress = 0;
+    int thislevel = 1;
+    for(int i = subsampleLevel; i >= 0; i--) {
+      maxProgress += thislevel;
+      thislevel *= 4;
+    }
     alive = false;
     maxIterations = 1000;
     maxRCSE = 0.0d;
@@ -77,9 +83,9 @@ public class BurnInRenderer extends Renderer {
     // initial pass - estimates
     while(subsampleLevel >= 0 && alive && !estimated) {
       currentCurves = curveData.getCurves(subsampleLevel);
-      while(currentY < currentDim || !alive) {
-        while(currentX < currentDim || !alive) {
-          System.out.println("ssl: " + subsampleLevel + " x: " + currentX + " y: " + currentY);
+      while(currentY < currentDim && alive) {
+        while(currentX < currentDim && alive) {
+          //System.out.println("ssl: " + subsampleLevel + " x: " + currentX + " y: " + currentY);
           // HACKY CRAP: GET RID OF THIS IN FINAL VERSION OR SUFFER
           int[] cdata = currentCurves[currentY][currentX].getData();
           int maxValue = 0;
@@ -91,14 +97,14 @@ public class BurnInRenderer extends Renderer {
             }
           }
           currentCurves[currentY][currentX].setFirst(maxIndex);
-          System.out.println("Set first to " + maxIndex);
+          //System.out.println("Set first to " + maxIndex);
           // END HACKY CRAP
           currentCurves[currentY][currentX].estimate();
           double[][] curve = currentCurves[currentY][currentX].getCurve();
           double[] exponentials = new double[numExponentials];
           for(int i = 0; i < numExponentials; i++) {
             exponentials[i] = curve[i][1];
-            System.out.println("b" + i + ": " + exponentials[i]);
+            //System.out.println("b" + i + ": " + exponentials[i]);
           }
           Arrays.sort(exponentials);
           
@@ -135,7 +141,7 @@ public class BurnInRenderer extends Renderer {
     // initial pass - iterations
     while(alive && !improving) {
       if(!estimated) {
-        System.out.println("Set estimated");
+        //System.out.println("Set estimated");
         estimated = true;
         currentX = 0;
         currentY = 0;
@@ -144,7 +150,7 @@ public class BurnInRenderer extends Renderer {
         for(; currentY < maxDim || !alive; currentY++) {
           currentIterations = 0;
           while(currentIterations < maxIterations) {
-            System.out.println("x: " + currentX + " y: " + currentY + " iter: " + currentIterations);
+            //System.out.println("x: " + currentX + " y: " + currentY + " iter: " + currentIterations);
             currentIterations++;
             double currRCSE = currentCurves[currentY][currentX].getReducedChiSquaredError();
             currentCurves[currentY][currentX].iterate();
@@ -169,7 +175,7 @@ public class BurnInRenderer extends Renderer {
       improving = true;
     }
     // continuing improvement
-    System.out.println("Got to continuing");
+    //System.out.println("Got to continuing");
     while(alive) {
       improving = true;
       currProgress = maxProgress;
