@@ -87,7 +87,8 @@ public class TwoDPane extends JPanel
   private int roiX, roiY;
   private boolean[][] roiMask;
 
-  // GUI components for intensity pane
+  // GUI components for image pane
+  private JProgressBar progress;
   private JRadioButton intensityMode, lifetimeMode, spectraMode;
   private JSlider cSlider;
   private JTextField minField, maxField;
@@ -192,9 +193,29 @@ public class TwoDPane extends JPanel
     iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
     add(iPlotPane);
 
+    progress = new JProgressBar();
+    add(progress);
+
     JPanel viewModePane = new JPanel();
     viewModePane.setLayout(new BoxLayout(viewModePane, BoxLayout.X_AXIS));
     add(viewModePane);
+
+    viewModePane.add(new JLabel("View mode:"));
+    intensityMode = new JRadioButton("Intensity", true);
+    lifetimeMode = new JRadioButton("Lifetime");
+    spectraMode = new JRadioButton("Spectra");
+    spectraMode.setEnabled(false);
+    ButtonGroup group = new ButtonGroup();
+    group.add(intensityMode);
+    group.add(lifetimeMode);
+    group.add(spectraMode);
+    intensityMode.addActionListener(this);
+    lifetimeMode.addActionListener(this);
+    spectraMode.addActionListener(this);
+    viewModePane.add(Box.createHorizontalStrut(5));
+    viewModePane.add(intensityMode);
+    viewModePane.add(lifetimeMode);
+    viewModePane.add(spectraMode);
 
     JPanel sliderPane = new JPanel();
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
@@ -251,23 +272,6 @@ public class TwoDPane extends JPanel
     cToggle.addActionListener(this);
     cToggle.setEnabled(channels > 1);
     sliderPane.add(cToggle);
-
-    viewModePane.add(new JLabel("View mode:"));
-    intensityMode = new JRadioButton("Intensity", true);
-    lifetimeMode = new JRadioButton("Lifetime");
-    spectraMode = new JRadioButton("Spectra");
-    spectraMode.setEnabled(false);
-    ButtonGroup group = new ButtonGroup();
-    group.add(intensityMode);
-    group.add(lifetimeMode);
-    group.add(spectraMode);
-    intensityMode.addActionListener(this);
-    lifetimeMode.addActionListener(this);
-    spectraMode.addActionListener(this);
-    viewModePane.add(Box.createHorizontalStrut(5));
-    viewModePane.add(intensityMode);
-    viewModePane.add(lifetimeMode);
-    viewModePane.add(spectraMode);
 
     int maxChan = doIntensity();
 
