@@ -47,7 +47,6 @@ public class GACurveFitter extends CurveFitter {
   private double mutationFactor;
 
   private static final boolean DEBUG = false;
-
   private static final int STALL_GENERATIONS = 5;
   private static final double STALLED_FACTOR = 2.0d;
   private static final double MUTATION_CHANCE = .25d;
@@ -225,6 +224,13 @@ public class GACurveFitter extends CurveFitter {
 
   // Initializes the curve fitter with a starting curve estimate.
   public void estimate() {
+    /*
+    System.out.println("****** DATA ******");
+    for(int i = 0; i < curveData.length; i++) {
+      System.out.println("i: " + i + "  data: " + curveData[i]);
+    }
+    try { Thread.sleep(1000); } catch(Exception e) {}
+    */
     if (components >= 1) {
       // TODO: Estimate c, factor it in below.
 
@@ -279,6 +285,7 @@ public class GACurveFitter extends CurveFitter {
 
       // Fix bug where the estimate occasionally produces negative
       // tau values. If this happens, we'll sort it out in iteration.
+      System.out.println("Exp: " + exp);
       if (curveEstimate[0][1] <= 0) curveEstimate[0][1] = 1000;
     }
     if (components == 2) {
