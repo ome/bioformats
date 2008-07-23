@@ -767,6 +767,7 @@ public class PerkinElmerReader extends FormatReader {
   // -- Helper methods --
 
   private void parseKeyValue(String key, String value) {
+    if (key == null || value == null) return;
     addMeta(key, value);
     if (key.equals("Image Width")) {
       try {
