@@ -58,6 +58,12 @@ public class TwoDPane extends JPanel
   private static final int BIN_RADIUS = 3; // TODO - make this a UI option
   private static final Color INVALID_COLOR = Color.red.brighter();
 
+  /** Progress bar is updated every RATE milliseconds. */
+  private static final int RATE = 100; // TODO - make this a UI option
+
+  /** Lifetime image is redrawn every SKIPth frame. */
+  private static final int SKIP = 3;
+
   // -- Fields --
 
   private SlimPlotter slim;
@@ -103,6 +109,8 @@ public class TwoDPane extends JPanel
   private Renderer[] curveRenderers;
   private Thread[] curveThreads;
   private Timer lifetimeRefresh;
+  private boolean lifetimeActive;
+  private int frame; // internal frame counter
 
   // -- Constructor --
 
@@ -300,19 +308,16 @@ public class TwoDPane extends JPanel
 
     cSlider.setValue(maxChan + 1);
 
-    // set up lifetime curve fitting threads for per-pixel lifetime analysis
+    // set up lifetime curve fitting renderers for per-pixel lifetime analysis
     curveRenderers = new Renderer[data.channels];
     curveThreads = new Thread[data.channels];
     for (int c=0; c<data.channels; c++) {
       curveRenderers[c] = new BurnInRenderer(data.curves[c]);
       curveRenderers[c].setComponentCount(data.numExp);
       curveRenderers[c].setMaxIterations(100);
-      curveThreads[c] = new Thread(curveRenderers[c], "Lifetime-" + c);
-      curveThreads[c].setPriority(Thread.MIN_PRIORITY);
     }
-    int delay = 100; // TODO - make this a UI option (FPS)
+    int delay = RATE;
     lifetimeRefresh = new Timer(delay, this);
-    for (int c=0; c<data.channels; c++) curveThreads[c].start();
     lifetimeRefresh.start();
   }
 
@@ -330,14 +335,20 @@ public class TwoDPane extends JPanel
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == startStopButton) {
-      // TODO
-      if (startStopButton.getText().equals("Start")) {
+      lifetimeActive = !lifetimeActive;
+      if (lifetimeActive) {
         // begin lifetime computation
         startStopButton.setText("Stop");
+        for (int c=0; c<data.channels; c++) {
+          curveThreads[c] = new Thread(curveRenderers[c], "Lifetime-" + c);
+          curveThreads[c].setPriority(Thread.MIN_PRIORITY);
+        }
+        for (int c=0; c<data.channels; c++) curveThreads[c].start();
       }
       else {
         // terminate lifetime computation
         startStopButton.setText("Start");
+        for (int c=0; c<data.channels; c++) curveRenderers[c].stop();
       }
     }
     else if (src == cToggle) {
@@ -352,12 +363,14 @@ public class TwoDPane extends JPanel
     else if (src == emissionMode) doEmissionSpectrum();
     else {
       // timer event - update progress bar and lifetime display
+      if (!lifetimeActive) return;
+      frame++;
       int c = cSlider.getValue() - 1;
 
       int curProg = curveRenderers[c].getCurrentProgress();
       int maxProg = curveRenderers[c].getMaxProgress();
+      progress.setValue(curProg <= maxProg ? curProg : 0);
       progress.setMaximum(maxProg);
-      progress.setValue(curProg);
       if (curProg == maxProg) {
         int totalIter = curveRenderers[c].getTotalIterations();
         progress.setString("Improving image: iteration #" + totalIter);
@@ -375,7 +388,7 @@ public class TwoDPane extends JPanel
         }
       }
 
-      if (lifetimeMode.isSelected()) {
+      if (frame % SKIP == 0 && lifetimeMode.isSelected()) {
         // update VisAD display
         double[][] lifetimeImage = curveRenderers[c].getImage();
         try {
@@ -587,9 +600,9 @@ public class TwoDPane extends JPanel
       }
       imageRef.setData(lifetimeField);
 
-      // reset to HSV color map
+      // reset to RGB color map
       ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
-      cc.setTable(ColorControl.initTableHSV(new float[3][256]));
+      cc.setTable(ColorControl.initTableVis5D(new float[3][256]));
 
       resetMinMax(lifetimeMin, lifetimeMax);
     }

@@ -285,7 +285,6 @@ public class GACurveFitter extends CurveFitter {
 
       // Fix bug where the estimate occasionally produces negative
       // tau values. If this happens, we'll sort it out in iteration.
-      System.out.println("Exp: " + exp);
       if (curveEstimate[0][1] <= 0) curveEstimate[0][1] = 1000;
     }
     if (components == 2) {
