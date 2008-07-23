@@ -44,6 +44,7 @@ public class PCIReader extends FormatReader {
 
   private Vector imageFiles;
   private POITools poi;
+  private Vector timestamps;
 
   // -- Constructor --
 
@@ -72,6 +73,9 @@ public class PCIReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     RandomAccessStream s = poi.getDocumentStream((String) imageFiles.get(no));
+    int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+      FormatTools.getBytesPerPixel(getPixelType());
+    s.skipBytes((int) (s.length() - planeSize));
     DataTools.readPlane(s, x, y, w, h, this, buf);
     s.close();
 
@@ -84,6 +88,7 @@ public class PCIReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     imageFiles = null;
+    timestamps = null;
     if (poi != null) poi.close();
     poi = null;
   }
@@ -97,6 +102,7 @@ public class PCIReader extends FormatReader {
     super.initFile(id);
 
     imageFiles = new Vector();
+    timestamps = new Vector();
 
     poi = new POITools(Location.getMappedId(currentId));
 
@@ -139,9 +145,11 @@ public class PCIReader extends FormatReader {
           }
         }
       }
-      else if (relativePath.startsWith("Bitmap")) {
+      else if (relativePath.startsWith("Bitmap") || relativePath.equals("Data"))
+      {
         String parent = name.substring(0, name.lastIndexOf(File.separator));
         int space = parent.lastIndexOf(" ") + 1;
+        if (space >= parent.length()) continue;
         int num = Integer.parseInt(parent.substring(space,
           parent.indexOf(File.separator, space))) - 1;
         if (num < imageFiles.size()) imageFiles.setElementAt(name, num);
@@ -166,7 +174,8 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Image_Depth") != -1) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        int bits = (int) (DataTools.bytesToLong(b, 0, false) & 0xff) >> 2;
+        int bits =
+          (int) Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
         while (bits % 8 != 0 || bits == 0) bits++;
         switch (bits) {
           case 8:
@@ -178,33 +187,43 @@ public class PCIReader extends FormatReader {
           case 32:
             core.pixelType[0] = FormatTools.UINT32;
             break;
+          case 48:
+            core.pixelType[0] = FormatTools.UINT16;
+            break;
           default:
             throw new FormatException("Unsupported bits per pixel : " + bits);
         }
       }
       else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        byte val = b[6];
-        byte mul = (byte) (val << 2);
-        if (mul == 0) mul = 32;
-        core.sizeY[0] = mul * 16;
+        core.sizeY[0] =
+          (int) Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
       }
       else if (relativePath.indexOf("Image_Width") != -1 && getSizeX() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        byte val = b[6];
-        byte mul = (byte) (val << 2);
-        if (mul == 0) mul = 32;
-        core.sizeX[0] = mul * 16;
+        core.sizeX[0] =
+          (int) Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
+      }
+      else if (relativePath.indexOf("Time_From_Start") != -1) {
+        byte[] b = poi.getDocumentBytes(name, 8);
+        double v = Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
+        if (!timestamps.contains(new Double(v))) timestamps.add(new Double(v));
       }
     }
 
     if (getSizeC() == 0) core.sizeC[0] = 1;
 
-    core.sizeZ[0] = getImageCount();
-    core.sizeT[0] = 1;
+    if (timestamps.size() > 0) {
+      core.sizeZ[0] = getImageCount() / timestamps.size();
+      core.sizeT[0] = timestamps.size();
+    }
+    if (timestamps.size() == 0 || getSizeZ() * getSizeT() != getImageCount()) {
+      core.sizeZ[0] = getImageCount();
+      core.sizeT[0] = 1;
+    }
     core.rgb[0] = getSizeC() > 1;
     core.interleaved[0] = false;
-    core.currentOrder[0] = "XYCZT";
+    core.currentOrder[0] = "XYCTZ";
     core.littleEndian[0] = true;
     core.indexed[0] = false;
     core.falseColor[0] = false;
