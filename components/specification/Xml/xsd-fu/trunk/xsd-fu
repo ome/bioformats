@@ -117,7 +117,45 @@ def debugMain():
 			print "\n"
 			print template.generate(fu=fu, klass=obj).render()
 
+def docGenMain():
+	"""
+	Documentation main() that does not parse the command line and spits
+	generated wiki formatted docs to STDOUT.
+	Added by Andrew Patterson (July 2008) to generate content for 
+	the ArityOfSchema page on http://ome-xml.org
+	"""
+	outputDirectory = None
+	package = DEFAULT_PACKAGE
+	namespace = "xsd:"
+	
+	for theSchemas in [
+	["OME","../../Working/ome-roi-sa.xsd"], 
+	["SPW","../../Working/SPW.xsd"],
+	["CA","../../Working/CA.xsd"],
+	["CLI","../../Working/CLI.xsd"],
+	["AnalysisChain","../../Working/AnalysisChain.xsd"],
+	["AnalysisModule","../../Working/AnalysisModule.xsd"],
+	["BinaryFile","../../Working/BinaryFile.xsd"],
+	["DataHistory","../../Working/DataHistory.xsd"],
+	["MLI","../../Working/MLI.xsd"],
+	["SA","../../Working/SA.xsd"],
+	["STD","../../Working/STD.xsd"]
+	]:
+		prefix = theSchemas[0] + ":"
+		model = parseXmlSchema(theSchemas[1], namespace)
+		fu = TemplateInfo(outputDirectory, package)
+		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
+		print " == `%s` ==" % (prefix)
+		for obj in model.objects.values():
+			print " === %s%s ===" % (prefix, obj.name)
+			print " * %s%s(base = `%s`, type = `%s`)" % (prefix, obj.name, obj.base, obj.type)
+			for prop in obj.properties.values():
+				print "   * %s%s:%s( `%s` ) ![%d:%d]" % \
+				    (prefix, obj.name, prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
+			print "\n"
+
 if __name__ == '__main__':
 #	debugMain()
+#	docGenMain()
 	main()
 
