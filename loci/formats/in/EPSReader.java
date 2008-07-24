@@ -110,6 +110,10 @@ public class EPSReader extends FormatReader {
       return buf;
     }
 
+    if (start == 0) {
+      throw new FormatException("Vector data not supported.");
+    }
+
     in.seek(0);
     for (int line=0; line<=start; line++) {
       in.readLine();
@@ -219,7 +223,7 @@ public class EPSReader extends FormatReader {
 
     line = in.readLine().trim();
 
-    while (line != null) {
+    while (line != null && !line.equals("%%EOF")) {
       if (line.endsWith(image)) {
         if (!line.startsWith(image)) {
           if (line.indexOf("colorimage") != -1) core.sizeC[0] = 3;
@@ -242,10 +246,10 @@ public class EPSReader extends FormatReader {
         if (line.startsWith("%%BoundingBox:")) {
           line = line.substring(14);
           StringTokenizer t = new StringTokenizer(line, " ");
-          int originX = Integer.parseInt(t.nextToken());
-          int originY = Integer.parseInt(t.nextToken());
-          core.sizeX[0] = Integer.parseInt(t.nextToken()) - originX;
-          core.sizeY[0] = Integer.parseInt(t.nextToken()) - originY;
+          int originX = Integer.parseInt(t.nextToken().trim());
+          int originY = Integer.parseInt(t.nextToken().trim());
+          core.sizeX[0] = Integer.parseInt(t.nextToken().trim()) - originX;
+          core.sizeY[0] = Integer.parseInt(t.nextToken().trim()) - originY;
 
           addMeta("X-coordinate of origin", new Integer(originX));
           addMeta("Y-coordinate of origin", new Integer(originY));
@@ -279,7 +283,7 @@ public class EPSReader extends FormatReader {
         }
       }
       lineNum++;
-      line = in.readLine();
+      line = in.readLine().trim();
     }
 
     status("Populating metadata");
