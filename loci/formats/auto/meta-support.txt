@@ -45,6 +45,12 @@
 #     Objective.NominalMagnification = Yes added on 2008 Jan 8
 #     ImagingEnvironment.Temperature = Partial see ticket #167 for details
 
+[APLReader]
+Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.Name = Yes
+
 [APNGReader]
 Pixels = Yes since r647
 
@@ -247,6 +253,10 @@ Pixels = Yes since r3198
 [LeicaReader]
 Pixels = Yes since r639
 Image = Yes
+
+[MINCReader]
+Pixels = Yes
+Image.Description = Yes
 
 [MNGReader]
 Pixels = Yes since r1844
@@ -463,6 +473,9 @@ Pixels = Yes since r636
 Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
+
+[TillVisionReader]
+Pixels = Yes
 
 [VisitechReader]
 Pixels = Yes since r2925
