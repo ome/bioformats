@@ -457,7 +457,10 @@ public class FilePattern {
     // https://skyking.microscopy.wisc.edu/trac/java/ticket/19
     String first = pat.substring(dir.length());
     first = first.replaceAll("<([0-9]+)-[0-9]+(:[0-9]+)?>", "$1");
-    if (!name.equals(first)) return findPattern(first, dir, nameList);
+    if (!name.equals(first)) {
+      String pattern = findPattern(first, dir, nameList);
+      if (pattern != null) return pattern;
+    }
 
     return pat;
   }
