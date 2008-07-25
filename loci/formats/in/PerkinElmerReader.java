@@ -640,9 +640,12 @@ public class PerkinElmerReader extends FormatReader {
 
     // throw away files, if necessary
 
-    if (files.length > getImageCount()) {
+    int calcCount = getSizeZ() * getEffectiveSizeC() * getSizeT();
+    if (files.length > getImageCount() || getImageCount() != calcCount) {
+      status("Removing extraneous files");
       String[] tmpFiles = files;
-      files = new String[getImageCount()];
+      int imageCount = (int) Math.min(getImageCount(), calcCount);
+      files = new String[imageCount];
 
       Hashtable zSections = new Hashtable();
       for (int i=0; i<tmpFiles.length; i++) {
@@ -663,15 +666,15 @@ public class PerkinElmerReader extends FormatReader {
       Arrays.sort(keys);
       for (int i=0; i<keys.length; i++) {
         int oldCount = ((Integer) zSections.get(keys[i])).intValue();
-        int nPlanes = (isTiff ? tiff.getEffectiveSizeC() : getSizeC()) *
-          getSizeT();
+        int nPlanes =
+          (isTiff ? tiff.getEffectiveSizeC() : getSizeC()) * getSizeT();
         int count = (int) Math.min(oldCount, nPlanes);
         for (int j=0; j<count; j++) {
           files[nextFile++] = tmpFiles[oldFile++];
         }
         if (count < oldCount) oldFile += (oldCount - count);
       }
-
+      core.imageCount[0] = getSizeZ() * getEffectiveSizeC() * getSizeT();
     }
 
     core.currentOrder[0] = "XYCTZ";
