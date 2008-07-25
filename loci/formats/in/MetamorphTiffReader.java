@@ -41,7 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/MetamorphTiffReader.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
- * @author Thomas Caswell tac42 at cornell.edu
+ * @author Thomas Caswell tcaswell at uchicago.edu
  */
 public class MetamorphTiffReader extends BaseTiffReader {
 
@@ -53,6 +53,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   private int zpPointer, wavePointer;
   private float temperature;
   private String date, imageName;
+  private Vector timestamps;
 
   // -- Constructor --
 
@@ -94,6 +95,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     if (debug) debug("MetamorphTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
+    timestamps = new Vector();
+
     String[] comments = new String[ifds.length];
     zPositions = new float[ifds.length];
     wavelengths = new int[ifds.length];
@@ -108,35 +111,57 @@ public class MetamorphTiffReader extends BaseTiffReader {
       DataTools.parseXML(comments[i], handler);
     }
 
-    core.sizeC[0] = core.sizeZ[0] = 0;
+    core.sizeC[0] = 0;
 
     // calculate axis sizes
 
-    Vector uniqueZ = new Vector();
     Vector uniqueC = new Vector();
     for (int i=0; i<zPositions.length; i++) {
-      Float z = new Float(zPositions[i]);
       Integer c = new Integer(wavelengths[i]);
-      if (!uniqueZ.contains(z)) {
-        uniqueZ.add(z);
-        core.sizeZ[0]++;
-      }
       if (!uniqueC.contains(c)) {
         uniqueC.add(c);
         core.sizeC[0]++;
       }
     }
 
-    core.sizeT[0] = ifds.length / (getSizeZ() * getSizeC());
+    core.sizeT[0] = timestamps.size();
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+    core.sizeZ[0] = ifds.length / (getSizeT() * getSizeC());
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName(imageName, 0);
     store.setImageDescription("", 0);
 
-    SimpleDateFormat parse = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SS");
+    SimpleDateFormat parse = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
     Date d = parse.parse(date, new ParsePosition(0));
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    SimpleDateFormat tsfmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+    Date td;
+    for (int i=0; i<timestamps.size(); i++) {
+      td = parse.parse((String) timestamps.get(i), new ParsePosition(0));
+      addMeta("timestamp " + i, tsfmt.format(td));
+    }
+
+    long startDate = 0;
+    if (timestamps.size() > 0) {
+      startDate =
+        parse.parse((String) timestamps.get(0), new ParsePosition(0)).getTime();
+    }
+
+    for (int i=0; i<getImageCount(); i++) {
+      int[] coords = getZCTCoords(i);
+      store.setPlaneTheZ(new Integer(coords[0]), 0, 0, i);
+      store.setPlaneTheC(new Integer(coords[1]), 0, 0, i);
+      store.setPlaneTheT(new Integer(coords[2]), 0, 0, i);
+      if (coords[2] < timestamps.size()) {
+        String stamp = (String) timestamps.get(coords[2]);
+        long ms = parse.parse(stamp, new ParsePosition(0)).getTime();
+        store.setPlaneTimingDeltaT(new Float(ms - startDate), 0, 0, i);
+        store.setPlaneTimingExposureTime(new Float(0), 0, 0, i);
+      }
+    }
 
     store.setImageCreationDate(fmt.format(d), 0);
     MetadataTools.populatePixels(store, this);
@@ -207,7 +232,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
         else if (id.equals("wavelength")) {
           wavelengths[wavePointer++] = Integer.parseInt(value);
         }
-        else if (id.equals("acquisition-time-local")) date = value;
+        else if (id.equals("acquisition-time-local")) {
+          date = value;
+          timestamps.add(date);
+        }
         else if (id.equals("image-name")) imageName = value;
       }
     }

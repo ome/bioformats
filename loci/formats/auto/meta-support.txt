@@ -282,6 +282,8 @@ ImagingEnvironment.Temperature = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Experimenter = Yes
+Plane = Yes since r4254
+PlaneTiming = Yes since r4254
 
 [MicromanagerReader]
 Pixels = Yes since r2384
