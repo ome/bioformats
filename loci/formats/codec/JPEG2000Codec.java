@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
@@ -151,24 +152,12 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
     byte[][] single = null, half = null;
     BufferedImage b = null;
+    Exception exception = null;
+    long fp = in.getFilePointer();
     try {
       if (maxFP == 0) maxFP = in.length();
-      byte[] buf = new byte[(int) (maxFP - in.getFilePointer())];
+      byte[] buf = new byte[(int) (maxFP - fp)];
       in.read(buf);
-
-      /*
-      // HACK
-      for (int i=0; i<buf.length-1; i++) {
-        if (buf[i] == (byte) 0xff && buf[i + 1] == 0x51) {
-          int ch = DataTools.bytesToInt(buf, i + 38, 2, false);
-          for (int c=0; c<ch; c++) {
-            buf[i + 41 + c*3] = (byte) 1;
-          }
-
-          break;
-        }
-      }
-      */
 
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
       MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
@@ -185,10 +174,48 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
       b = null;
     }
     catch (ReflectException exc) {
-      throw new FormatException(exc);
+      exception = exc;
     }
     catch (IOException exc) {
-      throw new FormatException(exc);
+      exception = exc;
+    }
+
+    if (exception != null) {
+      // decoding may have failed if this is a more exotic flavor of JP2K
+      // we will now try to use JMagick (Java wrappers for ImageMagick)
+
+      try {
+        in.seek(fp);
+        if (maxFP == 0) maxFP = in.length();
+        byte[] buf = new byte[(int) (maxFP - fp)];
+        in.read(buf);
+
+        // modified from code contributed by Toby Cornish
+        ReflectedUniverse jmagick = new ReflectedUniverse();
+        jmagick.exec("import magick.util.MagickCanvas");
+        jmagick.exec("import magick.MagickImage");
+        jmagick.exec("import magick.ColorspaceType");
+        jmagick.exec("import magick.MagickProducer");
+        jmagick.exec("import magick.ImageInfo");
+
+        jmagick.setVar("buf", buf);
+        jmagick.exec("info = new ImageInfo()");
+        jmagick.exec("image = new MagickImage(info, buf)");
+        jmagick.exec("image.transformRgbImage(ColorspaceType.YCbCrColorspace)");
+        jmagick.exec("canvas = new MagickCanvas()");
+        jmagick.exec("producer = new MagickProducer(image)");
+        Image img = (Image) jmagick.exec("canvas.createImage(producer)");
+        b = ImageTools.makeBuffered(img);
+        // don't use getPixelBytes, because JMagick always gives us
+        // 32 bits per channel
+        single = ImageTools.getBytes(b);
+      }
+      catch (ReflectException exc) {
+        throw new FormatException(exc);
+      }
+      catch (IOException exc) {
+        throw new FormatException(exc);
+      }
     }
 
     if (single.length == 1) return single[0];

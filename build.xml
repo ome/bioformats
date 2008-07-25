@@ -25,6 +25,7 @@ Bio-Formats
                    spring.jar (reflected)
                    jbossall-client.jar (reflected)
                    poi-loci.jar (reflected)
+                   jmagick.jar (reflected)
                    slf4j-jdk14.jar (reflected)
     Targets:       style-formats
                    compile-formats
@@ -54,6 +55,7 @@ VisBio
                    spring.jar (bio-formats.jar)
                    jbossall-client.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
+                   jmagick.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    visad-lite.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -92,6 +94,7 @@ LOCI Plugins for ImageJ
                    spring.jar (bio-formats.jar)
                    jbossall-client.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
+                   jmagick.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-plugins
@@ -119,6 +122,7 @@ OME Notes
                    spring.jar (bio-formats.jar)
                    jbossall-client.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
+                   jmagick.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-notes
@@ -167,6 +171,7 @@ OME Metadata Editor
                    netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
+                   jmagick.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-editor
@@ -334,6 +339,12 @@ Apache XML-RPC
     URL:       http://ws.apache.org/xmlrpc/
     Notes:     required for OME-Java to communicate with OME servers
     License:   Apache
+
+JMagick
+    JAR file:  jmagick.jar
+    URL:       http://www.jmagick.org
+    Notes:     required for JPEG-2000 support in Aperio SVS
+    License:   LGPL
 -->
 
 <project name="LOCI Software" default="jars" basedir=".">
