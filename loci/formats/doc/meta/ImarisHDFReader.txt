@@ -10,7 +10,7 @@ physical width of the image in microns) in a format-independent way.
 
 Of the 151 fields documented below:
   * The file format itself supports 27 of them (17%).
-  * Of those, Bio-Formats fully or partially converts 13 (48%).
+  * Of those, Bio-Formats fully or partially converts 14 (51%).
 
 == Supported fields ==
 These fields are fully supported by the
@@ -19,6 +19,7 @@ Bio-Formats Bitplane Imaris 5.5 (HDF) format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Image Image]: Name
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: BigEndian - since r3309
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: DimensionOrder - since r3309
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: ID - since r3309
@@ -28,7 +29,7 @@ Bio-Formats Bitplane Imaris 5.5 (HDF) format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeX - since r3309
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeY - since r3309
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r3309
-=== Total supported: 13 ===
+=== Total supported: 14 ===
 
 == Unsupported fields ==
 For one reason or another, the
@@ -47,8 +48,7 @@ does not support these fields:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PhotometricInterpretation
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PinholeSize
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PockelCellSetting
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
-=== Total unsupported: 14 ===
+=== Total unsupported: 13 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the Bitplane Imaris 5.5 (HDF)

@@ -9,12 +9,13 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 151 fields documented below:
-  * The file format itself supports 22 of them (14%).
-  * Of those, Bio-Formats fully or partially converts 9 (40%).
+  * The file format itself supports 10 of them (6%).
+  * Of those, Bio-Formats fully or partially converts 10 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
 Bio-Formats Audio Video Interleave format reader:
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: BigEndian - since r657
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: DimensionOrder - since r657
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: ID - since r657
@@ -24,26 +25,7 @@ Bio-Formats Audio Video Interleave format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeX - since r657
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeY - since r657
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r657
-=== Total supported: 9 ===
-
-== Unsupported fields ==
-For one reason or another, the
-Bio-Formats Audio Video Interleave format reader
-does not support these fields:
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: ContrastMethod
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: EmWave
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: ExWave
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: Fluor
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: ID
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: IlluminationType
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: Mode
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: NdFilter
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PhotometricInterpretation
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PinholeSize
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PockelCellSetting
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
-=== Total unsupported: 13 ===
+=== Total supported: 10 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the Audio Video Interleave
@@ -105,6 +87,18 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LightSourceRef LightSourceSettings]: Attenuation
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LightSourceRef LightSourceSettings]: LightSource
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LightSourceRef LightSourceSettings]: Wavelength
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: ContrastMethod
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: EmWave
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: ExWave
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: Fluor
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: IlluminationType
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: Mode
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: NdFilter
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PhotometricInterpretation
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PinholeSize
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PockelCellSetting
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: OpticalAxisAveraged
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: PixelType
@@ -178,4 +172,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: PosX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: PosY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: Timepoint
-=== Total unknown or missing: 129 ===
+=== Total unknown or missing: 141 ===

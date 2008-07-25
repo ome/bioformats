@@ -9,12 +9,13 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 151 fields documented below:
-  * The file format itself supports 9 of them (5%).
-  * Of those, Bio-Formats fully or partially converts 9 (100%).
+  * The file format itself supports 10 of them (6%).
+  * Of those, Bio-Formats fully or partially converts 10 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
 Bio-Formats Laboratory Imaging format reader:
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: BigEndian - since r3198
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: DimensionOrder - since r3198
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: ID - since r3198
@@ -24,7 +25,7 @@ Bio-Formats Laboratory Imaging format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeX - since r3198
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeY - since r3198
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r3198
-=== Total supported: 9 ===
+=== Total supported: 10 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the Laboratory Imaging
@@ -98,7 +99,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PhotometricInterpretation
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PinholeSize
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PockelCellSetting
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: OpticalAxisAveraged
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: PixelType
@@ -172,4 +172,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: PosX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: PosY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: Timepoint
-=== Total unknown or missing: 142 ===
+=== Total unknown or missing: 141 ===
