@@ -304,14 +304,14 @@ public class Importer {
         IJ.showStatus("Populating metadata");
 
         // display standard metadata in a table in its own window
-        Hashtable meta = new Hashtable();
-        if (seriesCount == 1) meta = r.getMetadata();
+        Hashtable meta = r.getMetadata();
+        //if (seriesCount == 1) meta = r.getMetadata();
         meta.put(idType, currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(i);
-          meta.putAll(r.getCoreMetadata().seriesMetadata[i]);
+          //meta.putAll(r.getCoreMetadata().seriesMetadata[i]);
 
           String s = retrieve.getImageName(i);
           if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
