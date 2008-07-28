@@ -258,8 +258,6 @@ public class LIFReader extends FormatReader {
       store.setImageName(seriesName, i);
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
 
-      MetadataTools.populatePixels(store, this);
-
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
       Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
       Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
@@ -283,6 +281,7 @@ public class LIFReader extends FormatReader {
         }
       }
     }
+    MetadataTools.populatePixels(store, this);
   }
 
 }
