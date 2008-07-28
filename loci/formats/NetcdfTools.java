@@ -258,10 +258,8 @@ public class NetcdfTools {
       r.setVar("g", r.getVar("root"));
       return;
     }
-    String dir = name.substring(0, name.lastIndexOf("/"));
-    String attr = name.substring(name.lastIndexOf("/") + 1);
 
-    StringTokenizer tokens = new StringTokenizer(dir, "/");
+    StringTokenizer tokens = new StringTokenizer(name, "/");
     String parent = null;
     while (tokens.hasMoreTokens()) {
       String token = tokens.nextToken();
