@@ -124,6 +124,9 @@ public class MetaSupportList {
 
   // -- MetaSupportList API methods --
 
+  /** Gets the list of entities associated with the data structure. */
+  public MetaEntityList entityList() { return entityList; }
+
   /** Gets the version of OME-XML to which entities should be linked. */
   public String version() { return version; }
 
@@ -131,6 +134,7 @@ public class MetaSupportList {
   public Vector<String> handlers() {
     Vector<String> handlers = new Vector<String>();
     for (String handler : supported.keySet()) handlers.add(handler);
+    Collections.sort(handlers);
     return handlers;
   }
 
@@ -201,6 +205,28 @@ public class MetaSupportList {
   /** Gets all inapplicable properties for the current handler. */
   public Vector<String> missing() { return getSupportValue(MISSING); }
 
+  /** Gets the number of handlers that support the given property. */
+  public int yesHandlerCount(String entity, String prop) {
+    return getHandlerCount(entity, prop, YES);
+  }
+
+  /** Gets the number of handlers that do not support the given property. */
+  public int noHandlerCount(String entity, String prop) {
+    return getHandlerCount(entity, prop, NO);
+  }
+
+  /** Gets the number of handlers that partially support the given property. */
+  public int partialHandlerCount(String entity, String prop) {
+    return getHandlerCount(entity, prop, PARTIAL);
+  }
+
+  /**
+   * Gets the number of handlers for which the given property is inapplicable.
+   */
+  public int missingHandlerCount(String entity, String prop) {
+    return getHandlerCount(entity, prop, MISSING);
+  }
+
   /** Extracts entity from a string of the form "Entity.Property comment". */
   public String entity(String s) {
     int dot = s.indexOf(".");
@@ -229,6 +255,7 @@ public class MetaSupportList {
 
   // -- Helper methods --
 
+  /** Gets properties with the given support value for the current handler. */
   protected Vector<String> getSupportValue(String supportValue) {
     Vector<String> props = new Vector<String>();
 
@@ -289,6 +316,52 @@ public class MetaSupportList {
     }
     Collections.sort(props);
     return props;
+  }
+
+  /**
+   * Gets the number of handlers that match the
+   * given support value for the specified property.
+   */
+  protected int getHandlerCount(String entity,
+    String prop, String supportValue)
+  {
+    // properties are listed with the convention "Entity.Property"
+    String fqProp = entity + "." + prop;
+    boolean missing = MISSING.equals(supportValue);
+    int handlerCount = 0;
+    for (String handler : supported.keySet()) {
+      Hashtable<String, String> supportProps = supported.get(handler);
+      String propSupportValue = supportProps.get(fqProp);
+      if (propSupportValue != null) {
+        int space = propSupportValue.indexOf(" ");
+        if (space >= 0) propSupportValue = propSupportValue.substring(0, space);
+        if (propSupportValue.equals(supportValue)) {
+          // specific property matches desired support value
+          handlerCount++;
+          continue;
+        }
+      }
+      // check if the entity is set to this support value;
+      // if so, this is a shortcut for all properties of that entity
+      String entitySupportValue = supportProps.get(entity);
+      if (entitySupportValue != null) {
+        int space = entitySupportValue.indexOf(" ");
+        if (space >= 0) {
+          entitySupportValue = entitySupportValue.substring(0, space);
+        }
+        if (entitySupportValue.equals(supportValue)) {
+          // parent entity matches desired support value
+          handlerCount++;
+          continue;
+        }
+      }
+      // check if property is missing and we are looking for missing entries
+      if (propSupportValue == null && entitySupportValue == null && missing) {
+        handlerCount++;
+        continue;
+      }
+    }
+    return handlerCount;
   }
 
 }
