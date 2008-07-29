@@ -133,6 +133,9 @@ public class Importer {
     boolean cropOnImport = options.doCrop();
     boolean swapDimensions = options.isSwapDimensions();
 
+    // save options as new defaults
+    options.savePreferences();
+
     // -- Step 4: analyze and read from data source --
 
     // 'id' contains the user's password if we are opening from OME/OMERO
@@ -595,7 +598,6 @@ public class Importer {
       // -- Step 5: finish up --
 
       plugin.success = true;
-      options.savePreferences();
     }
     catch (FormatException exc) {
       reportException(exc, quiet,
