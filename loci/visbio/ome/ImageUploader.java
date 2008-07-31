@@ -30,7 +30,7 @@ import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
-import loci.formats.ome.OMEWriter;
+import loci.ome.io.OMEWriter;
 
 /**
  * ImageUploader is a helper class for uploading VisBio datasets

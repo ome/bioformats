@@ -28,7 +28,6 @@ import java.text.*;
 import java.util.Date;
 import java.util.Hashtable;
 import javax.xml.parsers.*;
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 

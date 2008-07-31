@@ -4,9 +4,9 @@
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
-Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden, Christopher Peterson and Philip Huettl.
+Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+Data Browser, Stack Colorizer and Stack Slicer. Copyright (C) 2005-@year@
+Melissa Linkert, Curtis Rueden and Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,8 +34,6 @@ import java.util.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
-import loci.formats.ome.OMEReader;
-import loci.formats.ome.OMEROReader;
 
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
@@ -70,7 +68,6 @@ public class Importer {
 
   /** Executes the plugin. */
   public void run(String arg) {
-
     // -- Step 1: parse core options --
 
     ImporterOptions options = new ImporterOptions();
@@ -108,9 +105,35 @@ public class Importer {
         return;
       }
     }
-    else if (options.isOMERO()) r = new OMEROReader();
-    else { // options.isOME
-      r = new OMEReader();
+    else if (options.isOMERO()) {
+      // NB: avoid dependencies on optional loci.ome.io package
+      try {
+        ReflectedUniverse ru = new ReflectedUniverse();
+        ru.exec("import loci.ome.io.OMEROReader");
+        r = (IFormatReader) ru.exec("new OMEROReader()");
+      }
+      catch (ReflectException exc) {
+        reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem constructing the OMERO I/O engine");
+        return;
+      }
+    }
+    else if (options.isOME()) {
+      // NB: avoid dependencies on optional loci.ome.io package
+      try {
+        ReflectedUniverse ru = new ReflectedUniverse();
+        ru.exec("import loci.ome.io.OMEReader");
+        r = (IFormatReader) ru.exec("new OMEReader()");
+      }
+      catch (ReflectException exc) {
+        reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem constructing the OME I/O engine");
+        return;
+      }
+    }
+    else {
+      reportException(null, options.isQuiet(),
+        "Sorry, there has been an internal error: unknown data source");
     }
     MetadataStore store = MetadataTools.createOMEXMLMetadata();
     MetadataRetrieve retrieve = (MetadataRetrieve) store;
@@ -426,20 +449,20 @@ public class Importer {
           boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
           boolean needComposite = doMerge && (cSize > 3 || eight);
           int merge = (needComposite || !doMerge) ? 1 : cSize;
-          // NB: CustomStack extends VirtualStack, which only exists in
+          // NB: BFVirtualStack extends VirtualStack, which only exists in
           // ImageJ v1.39+. We avoid referencing it directly to keep the
           // class loader happy for earlier versions of ImageJ.
           try {
             ReflectedUniverse ru = new ReflectedUniverse();
-            ru.exec("import loci.plugins.CustomStack");
-            ru.setVar("w", w);
-            ru.setVar("h", h);
+            ru.exec("import loci.plugins.BFVirtualStack");
+            //ru.setVar("w", w);
+            //ru.setVar("h", h);
             ru.setVar("id", id);
             ru.setVar("r", r);
-            ru.setVar("stackOrder", stackOrder);
-            ru.setVar("merge", merge);
-            stackB = (ImageStack) ru.exec("stackB = " +
-              "new CustomStack(w, h, null, id, r, stackOrder, merge)");
+            //ru.setVar("stackOrder", stackOrder);
+            //ru.setVar("merge", merge);
+            stackB = (ImageStack) ru.exec(
+              "stackB = new BFVirtualStack(id, r)");
             for (int j=0; j<num[i]; j++) {
               String label = constructSliceLabel(j, r,
                 retrieve, i, new int[][] {zCount, cCount, tCount});
@@ -622,8 +645,8 @@ public class Importer {
     throws FormatException, IOException
   {
     if (stack == null) return;
-    ImagePlus imp = new ImagePlus(getTitle(r, file, series,
-      options.isGroupFiles()), stack);
+    String title = getTitle(r, file, series, options.isGroupFiles());
+    ImagePlus imp = new ImagePlus(title, stack);
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
@@ -715,7 +738,7 @@ public class Importer {
       }
 
       if (!concatenate) {
-        if (options.isViewBrowser()) new CustomWindow(imp);
+        if (options.isViewBrowser()) new DataBrowser(imp);
         else imp.show();
         if (splitC || splitZ || splitT) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
@@ -860,11 +883,13 @@ public class Importer {
   private void reportException(Throwable t, boolean quiet, String msg) {
     IJ.showStatus("");
     if (!quiet) {
-      ByteArrayOutputStream buf = new ByteArrayOutputStream();
-      t.printStackTrace(new PrintStream(buf));
-      String s = new String(buf.toByteArray());
-      StringTokenizer st = new StringTokenizer(s, "\n\r");
-      while (st.hasMoreTokens()) IJ.write(st.nextToken());
+      if (t != null) {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        t.printStackTrace(new PrintStream(buf));
+        String s = new String(buf.toByteArray());
+        StringTokenizer st = new StringTokenizer(s, "\n\r");
+        while (st.hasMoreTokens()) IJ.write(st.nextToken());
+      }
       IJ.error("Bio-Formats Importer", msg);
     }
   }

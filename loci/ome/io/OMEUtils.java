@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+OME database I/O package for communicating with OME and OMERO servers.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,20 +21,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.ome;
+package loci.ome.io;
 
 import java.awt.image.BufferedImage;
 import java.sql.Timestamp;
 import java.util.*;
 import loci.formats.*;
-import loci.formats.ome.OMECredentials;
 
 /**
  * Utility methods for retrieving data from an OME database.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEUtils.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEUtils.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/io/OMEUtils.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/io/OMEUtils.java">SVN</a></dd></dl>
  */
 public class OMEUtils {
 
@@ -96,53 +95,6 @@ public class OMEUtils {
   private static boolean omeroPixelsInitialized = false;
 
   // -- Utils API methods --
-
-  /**
-   * Get credentials from a string.
-   */
-  public static OMECredentials parseCredentials(String s) {
-    if (s == null || s.trim().equals("")) return null;
-
-    OMECredentials credentials = new OMECredentials();
-
-    if (s.indexOf("\n") != -1) {
-      StringTokenizer st = new StringTokenizer(s, "\n");
-      String token = null;
-      while (st.hasMoreTokens()) {
-        token = st.nextToken();
-        String key = token.substring(0, token.indexOf("=")).trim();
-        String value = token.substring(token.indexOf("=") + 1).trim();
-        if (key.equals("server")) credentials.server = value;
-        else if (key.equals("username")) credentials.username = value;
-        else if (key.equals("port")) credentials.port = value;
-        else if (key.equals("password")) credentials.password = value;
-        else if (key.equals("id")) credentials.imageID = Long.parseLong(value);
-      }
-    }
-    else {
-      credentials.server = s.substring(0, s.lastIndexOf("?"));
-
-      int first = credentials.server.indexOf(":");
-      int last = credentials.server.lastIndexOf(":");
-      if (credentials.server.indexOf("http://") == -1) {
-        first = 0;
-        if (last < 0) last = 0;
-      }
-      if (first != last) {
-        credentials.port = credentials.server.substring(last + 1);
-        credentials.server = credentials.server.substring(0, last);
-      }
-
-      int ndx = s.indexOf("&");
-      credentials.username = s.substring(s.lastIndexOf("?") + 6, ndx);
-      int end = s.indexOf("&", ndx + 1);
-      if (end == -1) end = s.length();
-      credentials.password = s.substring(ndx + 10, end);
-      ndx = s.indexOf("&", ndx + 1);
-      if (ndx > 0) credentials.imageID = Long.parseLong(s.substring(ndx + 4));
-    }
-    return credentials;
-  }
 
   /** Login to an OME/OMERO server. */
   public static void login(OMECredentials credentials) throws ReflectException
@@ -206,11 +158,14 @@ public class OMEUtils {
   public static String[] getAllExperimenters(boolean isOMERO)
     throws ReflectException
   {
+    List exps = null;
     if (isOMERO) {
       String[] rtn = new String[1];
       r.exec("uid = eventContext.getCurrentUserId()");
-      r.exec("e = admin.getExperimenter(uid)");
-      rtn[0] = r.exec("e.getLastName()") + ", " + r.exec("e.getFirstName()");
+      r.exec("exp = admin.getExperimenter(uid)");
+      r.exec("fname = exp.getFirstName()");
+      r.exec("lname = exp.getLastName()");
+      rtn[0] = r.getVar("lname") + ", " + r.getVar("fname");
       return rtn;
     }
 
@@ -224,12 +179,16 @@ public class OMEUtils {
     r.exec("c.addWantedField(OME_LAST_NAME)");
 
     r.setVar("exp", "Experimenter");
-    List exps = (List) r.exec("df.retrieveList(exp, c)");
+    r.exec("exps = df.retrieveList(exp, c)");
 
+    exps = (List) r.getVar("exps");
     String[] rtn = new String[exps.size()];
     for (int i=0; i<exps.size(); i++) {
-      r.setVar("e", exps.get(i));
-      rtn[i] = r.exec("e.getLastName()") + ", " + r.exec("e.getFirstName()");
+      r.setVar("exp", exps.get(i));
+      if (isOMERO) r.exec("exp = new ExperimenterData(exp)");
+      r.exec("fname = exp.getFirstName()");
+      r.exec("lname = exp.getLastName()");
+      rtn[i] = r.getVar("lname") + ", " + r.getVar("fname");
     }
     return rtn;
   }
@@ -251,12 +210,14 @@ public class OMEUtils {
         create = null, pid = null;
       if (isOMERO) {
         r.exec("pix = new PixelsData(obj)");
-        pid = r.exec("obj.getId()").toString();
+        r.exec("v = obj.getId()");
+        pid = r.getVar("v").toString();
         r.exec("img = pix.getImage()");
-        iname = (String) r.exec("img.getName()");
+        r.exec("imageName = img.getName()");
+        iname = (String) r.getVar("imageName");
         r.exec("owner = pix.getOwner()");
-        fname = (String) r.exec("owner.getFirstName()");
-        lname = (String) r.exec("owner.getLastName()");
+        r.exec("fname = owner.getFirstName()");
+        r.exec("lname = owner.getLastName()");
 
         try {
           r.exec("created = img.getInserted()");
@@ -265,15 +226,22 @@ public class OMEUtils {
         catch (Exception e) {
           create = null;
         }
+
+        fname = (String) r.getVar("fname");
+        lname = (String) r.getVar("lname");
       }
       else {
         r.exec("created = obj.getCreated()");
         create = (String) r.getVar("created");
-        pid = r.exec("obj.getID()").toString();
-        iname = (String) r.exec("obj.getName()");
+        r.exec("id = obj.getID()");
+        pid = r.getVar("id").toString();
+        r.exec("imageName = obj.getName()");
+        iname = (String) r.getVar("imageName");
         r.exec("owner = obj.getOwner()");
-        fname = (String) r.exec("owner.getFirstName()");
-        lname = (String) r.exec("owner.getLastName()");
+        r.exec("fname = owner.getFirstName()");
+        r.exec("lname = owner.getLastName()");
+        fname = (String) r.getVar("fname");
+        lname = (String) r.getVar("lname");
       }
 
       if ((firstName == null || firstName.equals(fname)) &&
@@ -344,7 +312,8 @@ public class OMEUtils {
         r.exec("obj = results.get(i)");
         r.exec("obj = new PixelsData(obj)");
         r.exec("image = obj.getImage()");
-        rtn[i] = (String) r.exec("image.getName()");
+        r.exec("name = image.getName()");
+        rtn[i] = (String) r.getVar("name");
       }
       return rtn;
     }
@@ -355,7 +324,8 @@ public class OMEUtils {
     for (int i=0; i<len; i++) {
       r.setVar("i", i);
       r.exec("omeImage = l.get(i)");
-      rtn[i] = (String) r.exec("omeImage.getName()");
+      r.exec("v = omeImage.getName()");
+      rtn[i] = (String) r.getVar("v");
     }
     return rtn;
   }
@@ -373,7 +343,8 @@ public class OMEUtils {
         r.exec("obj = results.get(i)");
         r.exec("obj = new PixelsData(obj)");
         r.exec("image = obj.getImage()");
-        rtn[i] = (String) r.exec("image.getDescription()");
+        r.exec("name = image.getDescription()");
+        rtn[i] = (String) r.getVar("name");
       }
       return rtn;
     }
@@ -384,7 +355,8 @@ public class OMEUtils {
     for (int i=0; i<len; i++) {
       r.setVar("i", i);
       r.exec("omeImage = l.get(i)");
-      rtn[i] = (String) r.exec("omeImage.getDescription()");
+      r.exec("v = omeImage.getDescription()");
+      rtn[i] = (String) r.getVar("v");
     }
     return rtn;
   }
@@ -401,7 +373,8 @@ public class OMEUtils {
         r.exec("obj = new PixelsData(obj)");
         r.exec("image = obj.getImage()");
         try {
-          rtn[i] = ((Timestamp) r.exec("image.getInserted()")).toString();
+          r.exec("name = image.getInserted()");
+          rtn[i] = ((Timestamp) r.getVar("name")).toString();
         }
         catch (Exception e) {
           rtn[i] = new Timestamp(System.currentTimeMillis()).toString();
@@ -416,7 +389,8 @@ public class OMEUtils {
     for (int i=0; i<len; i++) {
       r.setVar("i", i);
       r.exec("omeImage = l.get(i)");
-      rtn[i] = (String) r.exec("omeImage.getCreated()");
+      r.exec("v = omeImage.getCreated()");
+      rtn[i] = (String) r.getVar("v");
     }
     return rtn;
   }
@@ -437,9 +411,12 @@ public class OMEUtils {
       r.exec("omeImage = l.get(i)");
       r.exec("omePix = omeImage.getDefaultPixels()");
       try {
-        rtn[i] = (BufferedImage) r.exec("pf.getThumbnail(omePix)");
+        r.exec("v = pf.getThumbnail(omePix)");
+        rtn[i] = (BufferedImage) r.getVar("v");
       }
-      catch (ReflectException e) { }
+      catch (ReflectException e) {
+        rtn[i] = null;
+      }
     }
     return rtn;
   }
@@ -454,7 +431,8 @@ public class OMEUtils {
     for (int i=0; i<len; i++) {
       r.setVar("i", i);
       r.exec("omeImage = l.get(i)");
-      rtn[i] = ((Integer) r.exec("omeImage.getID()")).intValue();
+      r.exec("v = omeImage.getID()");
+      rtn[i] = ((Integer) r.getVar("v")).intValue();
     }
     return rtn;
   }
@@ -485,7 +463,8 @@ public class OMEUtils {
       r.exec("omeImage = l.get(i)");
       r.exec("omePix = omeImage.getDefaultPixels()");
       try {
-        rtn[i] = ((Integer) r.exec("omePix." + func + "()")).intValue();
+        r.exec("v = omePix." + func + "()");
+        rtn[i] = ((Integer) r.getVar("v")).intValue();
       }
       catch (ReflectException e) {
         rtn[i] = -1;
@@ -505,7 +484,8 @@ public class OMEUtils {
       r.exec("omeImage = l.get(i)");
       r.exec("omePix = omeImage.getDefaultPixels()");
       try {
-        rtn[i] = (String) r.exec("omePix." + func + "()");
+        r.exec("v = omePix." + func + "()");
+        rtn[i] = (String) r.getVar("v");
       }
       catch (ReflectException e) {
         rtn[i] = "";
@@ -570,17 +550,20 @@ public class OMEUtils {
       "left outer join fetch p.channels " +
       "left outer join fetch p.image");
     r.exec("params = new Parameters(filter)");
-    List results = (List) r.exec("results = query.findAllByQuery(q, params)");
+    r.exec("results = query.findAllByQuery(q, params)");
 
+    List results = (List) r.getVar("results");
     long uid = ((Long) r.getVar("uid")).longValue();
     for (int i=0; i<results.size(); i++) {
       r.setVar("i", i);
       r.exec("obj = results.get(i)");
       r.exec("obj = new PixelsData(obj)");
       r.exec("owner = obj.getOwner()");
-      long testId = ((Long) r.exec("owner.getId()")).longValue();
+      r.exec("id = owner.getId()");
+      long testId = ((Long) r.getVar("id")).longValue();
       if (testId != uid) {
-        results.remove(i--);
+        results.remove(i);
+        i--;
       }
     }
     r.exec("len = results.size()");
@@ -595,7 +578,8 @@ public class OMEUtils {
       r.setVar("i", i);
       r.exec("obj = results.get(i)");
       r.exec("obj = new PixelsData(obj)");
-      rtn[i] = ((Integer) r.exec("obj." + func + "()")).intValue();
+      r.exec("v = obj." + func + "()");
+      rtn[i] = ((Integer) r.getVar("v")).intValue();
     }
     return rtn;
   }
@@ -608,13 +592,13 @@ public class OMEUtils {
       r.setVar("i", i);
       r.exec("obj = results.get(i)");
       r.exec("obj = new PixelsData(obj)");
-      rtn[i] = ((Long) r.exec("obj." + func + "()")).longValue();
+      r.exec("v = obj." + func + "()");
+      rtn[i] = ((Long) r.getVar("v")).longValue();
     }
     return rtn;
   }
 
-  private static String[] getStringValues(String func) throws ReflectException
-  {
+  private static String[] getStringValues(String func) throws ReflectException {
     getAllPixels();
     int len = ((Integer) r.getVar("len")).intValue();
     String[] rtn = new String[len];
@@ -622,7 +606,8 @@ public class OMEUtils {
       r.setVar("i", i);
       r.exec("obj = results.get(i)");
       r.exec("obj = new PixelsData(obj)");
-      rtn[i] = (String) r.exec("obj." + func + "()");
+      r.exec("v = obj." + func + "()");
+      rtn[i] = (String) r.getVar("v");
     }
     return rtn;
   }

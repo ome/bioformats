@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+OME database I/O package for communicating with OME and OMERO servers.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.ome;
+package loci.ome.io;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -40,16 +40,18 @@ import loci.formats.meta.MetadataStore;
  * where [server] is the URL of the OME data server (not the image server).
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEReader.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/io/OMEReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/io/OMEReader.java">SVN</a></dd></dl>
  */
 public class OMEReader extends FormatReader {
 
   // -- Constants --
 
   /** Message to display if OME-Java is not found. */
-  private static final String NO_OME_JAVA = "OME-Java not found.  Please " +
-    "download ome-java.jar from http://www.loci.wisc.edu/ome/formats.html";
+  private static final String NO_OME_JAVA =
+    "OME-Java not found. " +
+    "Please download OME-Java from " +
+    "http://www.loci.wisc.edu/ome/ome-java.html";
 
   // -- Fields --
 
@@ -99,7 +101,7 @@ public class OMEReader extends FormatReader {
 
     if (!hasOMEJava) throw new FormatException(NO_OME_JAVA);
 
-    credentials = OMEUtils.parseCredentials(id);
+    credentials = new OMECredentials(id);
     id = String.valueOf(credentials.imageID);
 
     super.initFile(id);
@@ -203,7 +205,7 @@ public class OMEReader extends FormatReader {
         FormatTools.pixelTypeFromString((String) r.getVar("pixelType"));
       core.currentOrder[0] = "XYZCT";
 
-      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
+      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
       core.rgb[0] = false;
 
       r.exec("thumbX = thumb.getWidth()");
@@ -243,12 +245,6 @@ public class OMEReader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null);
-//    }
   }
 
   // -- IFormatReader API methods --
@@ -269,19 +265,13 @@ public class OMEReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length);
     int[] indices = getZCTCoords(no);
 
-    r.setVar("z", indices[0]);
-    r.setVar("c", indices[1]);
-    r.setVar("t", indices[2]);
+    r.setVar("zIndex", indices[0]);
+    r.setVar("cIndex", indices[1]);
+    r.setVar("tIndex", indices[2]);
     r.setVar("bigEndian", false);
-
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-
     try {
-      byte[] b = (byte[]) r.exec("pf.getPlane(pixels, z, c, t, bigEndian)");
-      for (int row=0; row<h; row++) {
-        System.arraycopy(b, (row + y) * getSizeX() * bpp + x * bpp, buf,
-          row * w * bpp, w * bpp);
-      }
+      r.exec("buf = pf.getPlane(pixels, zIndex, cIndex, tIndex, bigEndian)");
+      buf = (byte[]) r.getVar("buf");
     }
     catch (ReflectException e) {
       throw new FormatException(e);

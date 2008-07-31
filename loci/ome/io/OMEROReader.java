@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+OME database I/O package for communicating with OME and OMERO servers.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.ome;
+package loci.ome.io;
 
 import java.io.IOException;
 import java.util.*;
@@ -29,7 +29,7 @@ import loci.formats.*;
 import loci.formats.meta.MetadataStore;
 
 /**
- * OMEROReader is the file format reader for downloading images from an
+ * OMEROReader is a file format reader for downloading images from an
  * OMERO database.
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -40,9 +40,11 @@ public class OMEROReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_OMERO_MSG = "OMERO client libraries not " +
-    "found.  Please install omero-common.jar and omero-client.jar from " +
-    "http://www.loci.wisc.edu/ome/formats.html";
+  private static final String NO_OMERO_MSG =
+    "OMERO client libraries not found. " +
+    "Please install the OMERO-client, OMERO-common, OMERO-importer and " +
+    "OMERO-model libraries from " +
+    "https://skyking.microscopy.wisc.edu/svn/java/trunk/jar/";
 
   // -- Static fields --
 
@@ -69,6 +71,13 @@ public class OMEROReader extends FormatReader {
     return r;
   }
 
+  // -- Fields --
+
+  private String username;
+  private String password;
+  private String serverName;
+  private String port;
+
   // -- Constructor --
 
   /** Constructs a new OMERO reader. */
@@ -84,7 +93,7 @@ public class OMEROReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
-    return false;
+    return true;
   }
 
   /**
@@ -102,17 +111,22 @@ public class OMEROReader extends FormatReader {
       r.setVar("z", new Integer(zct[0]));
       r.setVar("c", new Integer(zct[1]));
       r.setVar("t", new Integer(zct[2]));
-      byte[] b = (byte[]) r.exec("raw.getPlane(z, c, t)");
-      int bpp = FormatTools.getBytesPerPixel(getPixelType());
-      for (int row=0; row<h; row++) {
-        System.arraycopy(b, (row + y) * getSizeX() * bpp, buf, row * w * bpp,
-          w * bpp);
-      }
+      r.exec("plane = raw.getPlane(z, c, t)");
+      int len = core.sizeX[0] * core.sizeY[0] *
+        FormatTools.getBytesPerPixel(core.pixelType[0]);
+      System.arraycopy((byte[]) r.getVar("plane"), 0, buf, 0, len);
     }
     catch (ReflectException e) {
       throw new FormatException(e);
     }
     return buf;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
   }
 
   // -- Internal FormatReader API methods --
@@ -121,7 +135,7 @@ public class OMEROReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OMEROReader.initFile(" + id + ")");
 
-    OMECredentials cred = OMEUtils.parseCredentials(id);
+    OMECredentials cred = new OMECredentials(id);
     id = String.valueOf(cred.imageID);
     super.initFile(id);
 
@@ -157,46 +171,51 @@ public class OMEROReader extends FormatReader {
       r.exec("results = query.findByQuery(q, params)");
       r.exec("pix = new PixelsData(results)");
 
-      core.sizeX[0] = ((Integer) r.exec("pix.getSizeX()")).intValue();
-      core.sizeY[0] = ((Integer) r.exec("pix.getSizeY()")).intValue();
-      core.sizeZ[0] = ((Integer) r.exec("pix.getSizeZ()")).intValue();
-      core.sizeC[0] = ((Integer) r.exec("pix.getSizeC()")).intValue();
-      core.sizeT[0] = ((Integer) r.exec("pix.getSizeT()")).intValue();
-      core.pixelType[0] =
-        FormatTools.pixelTypeFromString((String) r.exec("pix.getPixelType()"));
+      r.exec("ptype = pix.getPixelType()");
+      r.exec("x = pix.getSizeX()");
+      r.exec("y = pix.getSizeY()");
+      r.exec("z = pix.getSizeZ()");
+      r.exec("c = pix.getSizeC()");
+      r.exec("t = pix.getSizeT()");
 
+      core.sizeX[0] = ((Integer) r.getVar("x")).intValue();
+      core.sizeY[0] = ((Integer) r.getVar("y")).intValue();
+      core.sizeZ[0] = ((Integer) r.getVar("z")).intValue();
+      core.sizeC[0] = ((Integer) r.getVar("c")).intValue();
+      core.sizeT[0] = ((Integer) r.getVar("t")).intValue();
       core.rgb[0] = false;
       core.littleEndian[0] = false;
       core.currentOrder[0] = "XYZCT";
-      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
+      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+      core.pixelType[0] =
+        FormatTools.pixelTypeFromString((String) r.getVar("ptype"));
 
-      float px = ((Double) r.exec("pix.getPixelSizeX()")).floatValue();
-      float py = ((Double) r.exec("pix.getPixelSizeY()")).floatValue();
-      float pz = ((Double) r.exec("pix.getPixelSizeZ()")).floatValue();
+      r.exec("px = pix.getPixelSizeX()");
+      r.exec("py = pix.getPixelSizeY()");
+      r.exec("pz = pix.getPixelSizeZ()");
+      double px = ((Double) r.getVar("px")).doubleValue();
+      double py = ((Double) r.getVar("py")).doubleValue();
+      double pz = ((Double) r.getVar("pz")).doubleValue();
 
       r.exec("image = pix.getImage()");
+      r.exec("name = image.getName()");
       r.exec("description = image.getDescription()");
 
-      String name = (String) r.exec("image.getName()");
-      String description = (String) r.exec("image.getDescription()");
+      String name = (String) r.getVar("name");
+      String description = (String) r.getVar("description");
 
       MetadataStore store = getMetadataStore();
       store.setImageName(name, 0);
       store.setImageDescription(description, 0);
       MetadataTools.populatePixels(store, this);
 
-      store.setDimensionsPhysicalSizeX(new Float(px), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Float(py), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Float(pz), 0, 0);
-      // CTR CHECK
-//      for (int i=0; i<core.sizeC[0]; i++) {
-//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null);
-//      }
+      store.setDimensionsPhysicalSizeX(new Float((float) px), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Float((float) py), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Float((float) pz), 0, 0);
     }
     catch (ReflectException e) {
       throw new FormatException(e);
     }
   }
+
 }

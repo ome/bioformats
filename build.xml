@@ -13,23 +13,72 @@ Bio-Formats
     Folders:       loci/formats
                    loci/formats/* (except auto)
     Main class:    loci.formats.ImageViewer
-    Dependencies:  bufr-1.1.00.jar (reflected)
+    Project deps:  (None)
+    External deps: bufr-1.1.00.jar (reflected)
                    clibwrapper_jiio.jar (reflected)
                    grib-5.1.03.jar (reflected)
                    jai_imageio.jar (reflected)
                    mdbtools-java.jar (reflected)
                    netcdf-4.0.jar (reflected)
                    ome-java.jar (reflected, except in loci/formats/ome)
-                   omero-client.jar (reflected)
-                   omero-common.jar (reflected)
-                   spring.jar (reflected)
-                   jbossall-client.jar (reflected)
                    poi-loci.jar (reflected)
-                   jmagick.jar (reflected)
                    slf4j-jdk14.jar (reflected)
     Targets:       style-formats
                    compile-formats
                    jar-formats
+    License:       GPL
+
+LOCI Plugins for ImageJ
+    JAR file:      loci_plugins.jar
+    Folders:       loci/plugins
+                   loci/plugins/config
+    Main class:    loci.plugins.About
+    IJ plugins:    loci.plugins.Colorizer
+                   loci.plugins.LociExporter
+                   loci.plugins.LociFunctions
+                   loci.plugins.LociImporter
+                   loci.plugins.LociUploader
+                   loci.plugins.ShortcutPanel
+                   loci.plugins.Slicer
+                   loci.plugins.config.LociConfig
+    Project deps:  Bio-Formats
+    External deps: forms-1.0.4.jar
+    Targets:       style-loci-plugins
+                   compile-loci-plugins
+                   jar-loci-plugins
+    License:       GPL
+
+OME I/O
+    JAR file:      ome-io.jar
+    Folders:       loci/ome/io
+    Main class:    loci.ome.io.OMEWriter
+    Project deps:  Bio-Formats
+    External deps: commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   omero-client-3.0-Beta3.jar (reflected)
+                   omero-common-3.0-Beta3.jar (reflected)
+                   omero-importer-3.0-Beta3.jar (reflected)
+                   omero-model-psql-3.0-Beta3.jar (reflected)
+                   spring-2.5.jar (reflected)
+                   jbossall-client-4.2.1.GA.jar (reflected)
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       style-omeio
+                   compile-omeio
+                   jar-omeio
+    License:       GPL
+
+OME Plugins for ImageJ
+    JAR file:      ome_plugins.jar
+    Folders:       loci/plugins/ome
+    Main class:    loci.plugins.ome.About
+    IJ plugins:    loci.plugins.LociImporter
+                   loci.plugins.ome.LociUploader
+    Project deps:  LOCI Plugins for ImageJ
+                   OME I/O
+    External deps: (None)
+    Targets:       style-ome-plugins
+                   compile-ome-plugins
+                   jar-ome-plugins
     License:       GPL
 
 VisBio
@@ -37,28 +86,12 @@ VisBio
     Folders:       loci/visbio
                    loci/visbio/*
     Main class:    loci.visbio.VisBio
-    Dependencies:  bio-formats.jar
-                   bufr-1.1.00.jar (bio-formats.jar)
-                   clibwrapper_jiio.jar (bio-formats.jar)
-                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
-                   commons-logging.jar (ome-java.jar)
-                   forms-1.0.4.jar
-                   grib-5.1.03.jar (bio-formats.jar)
+    Project deps:  Bio-Formats
+                   OME I/O
+    External deps: forms-1.0.4.jar
                    ij.jar
-                   jai_imageio.jar (bio-formats.jar)
                    looks-1.2.2.jar
-                   mdbtools-java.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
-                   ome-java.jar
-                   omero-client.jar (bio-formats.jar)
-                   omero-common.jar (bio-formats.jar)
-                   spring.jar (bio-formats.jar)
-                   jbossall-client.jar (bio-formats.jar)
-                   poi-loci.jar (bio-formats.jar)
-                   jmagick.jar (bio-formats.jar)
-                   slf4j-jdk14.jar (bio-formats.jar)
                    visad-lite.jar
-                   xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-visbio
                    compile-visbio
                    jar-visbio
@@ -67,86 +100,13 @@ VisBio
                    dist-visbio
     License:       GPL
 
-LOCI Plugins for ImageJ
-    JAR file:      loci_plugins.jar
-    Folders:       loci/plugins
-                   loci/ome/upload
-                   loci/ome/util
-    Main class:    loci.plugins.About
-    IJ plugins:    loci.plugins.Colorizer
-                   loci.plugins.LociExporter
-                   loci.plugins.LociFunctions
-                   loci.plugins.LociImporter
-                   loci.plugins.LociUploader
-                   loci.plugins.Slicer
-    Dependencies:  bio-formats.jar
-                   bufr-1.1.00.jar (bio-formats.jar)
-                   clibwrapper_jiio.jar (bio-formats.jar)
-                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
-                   commons-logging.jar (ome-java.jar)
-                   grib-5.1.03.jar (bio-formats.jar)
-                   jai_imageio.jar (bio-formats.jar)
-                   mdbtools-java.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
-                   ome-java.jar (bio-formats.jar)
-                   omero-client.jar (bio-formats.jar)
-                   omero-common.jar (bio-formats.jar)
-                   spring.jar (bio-formats.jar)
-                   jbossall-client.jar (bio-formats.jar)
-                   poi-loci.jar (bio-formats.jar)
-                   jmagick.jar (bio-formats.jar)
-                   slf4j-jdk14.jar (bio-formats.jar)
-                   xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       style-plugins
-                   compile-plugins
-                   jar-plugins
-    License:       LGPL
-
-OME Notes
-    JAR file:      ome-notes.jar
-    Folder:        loci/ome/notes
-    Main class:    loci.ome.notes.Notes
-    Dependencies:  bio-formats.jar
-                   bufr-1.1.00.jar (bio-formats.jar)
-                   clibwrapper_jiio.jar (bio-formats.jar)
-                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
-                   commons-logging.jar (ome-java.jar)
-                   forms-1.0.4.jar
-                   grib-5.1.03.jar (bio-formats.jar)
-                   jai_imageio.jar (bio-formats.jar)
-                   mdbtools-java.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
-                   ome-java.jar
-                   omero-client.jar (bio-formats.jar)
-                   omero-common.jar (bio-formats.jar)
-                   spring.jar (bio-formats.jar)
-                   jbossall-client.jar (bio-formats.jar)
-                   poi-loci.jar (bio-formats.jar)
-                   jmagick.jar (bio-formats.jar)
-                   slf4j-jdk14.jar (bio-formats.jar)
-                   xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       style-notes
-                   compile-notes
-                   jar-notes
-    License:       LGPL
-
-JVMLink
-    JAR file:      jvmlink.jar
-    Folder:        loci/jvmlink
-    Main class:    loci.jvmlink.JVMLinkServer
-    Dependencies:  bio-formats.jar
-    Targets:       style-jvmlink
-                   compile-jvmlink
-                   jar-jvmlink
-    License:       BSD
-
 Slim Plotter
     JAR file:      SlimPlotter.jar
     Folders:       loci/slim
                    some loci/visbio
     Main class:    loci.slim.SlimPlotter
-    Dependencies:  bio-formats.jar
-                   lma.jar
+    Project deps:  Bio-Formats
+    External deps: lma.jar
                    visad-lite.jar
     Targets:       style-slim
                    compile-slim
@@ -154,40 +114,55 @@ Slim Plotter
                    dist-slim
     License:       GPL
 
+LOCI Checkstyle checks
+    JAR file:      loci-checks.jar
+    Folders:       loci/checks
+    Main class:    loci.checks.About
+    Project deps:  (None)
+    External deps: checkstyle-all-4.2.jar
+    Targets:       style-checks
+                   compile-checks
+                   jar-checks
+    License:       Public domain
+
+===============================================================================
+The following projects are considered "legacy" but still supported:
+
+JVMLink
+    JAR file:      jvmlink.jar
+    Folder:        loci/jvmlink
+                   some loci/formats
+    Main class:    loci.jvmlink.JVMLinkServer
+    Project deps:  (None)
+    External deps: (None)
+    Targets:       style-jvmlink
+                   compile-jvmlink
+                   jar-jvmlink
+    License:       BSD
+
+OME Notes
+    JAR file:      ome-notes.jar
+    Folder:        loci/ome/notes
+    Main class:    loci.ome.notes.Notes
+    Project deps:  Bio-Formats
+    External deps: forms-1.0.4.jar
+    Targets:       style-ome-notes
+                   compile-ome-notes
+                   jar-ome-notes
+    License:       LGPL
+
 OME Metadata Editor
     JAR file:      ome-editor.jar
     Folders:       loci/ome/editor
                    loci/ome/viewer
     Main class:    loci.ome.editor.MetadataEditor
-    Dependencies:  bio-formats.jar
-                   bufr-1.1.00.jar (bio-formats.jar)
-                   clibwrapper_jiio.jar (bio-formats.jar)
-                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
-                   commons-logging.jar (ome-java.jar)
-                   forms-1.0.4.jar
-                   grib-5.1.03.jar (bio-formats.jar)
-                   jai_imageio.jar (bio-formats.jar)
-                   mdbtools-java.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
-                   ome-java.jar
-                   poi-loci.jar (bio-formats.jar)
-                   jmagick.jar (bio-formats.jar)
-                   slf4j-jdk14.jar (bio-formats.jar)
-                   xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       style-editor
-                   compile-editor
-                   jar-editor
+    Project deps:  Bio-Formats
+    External deps: forms-1.0.4.jar
+                   looks-1.2.2.jar
+    Targets:       style-ome-editor
+                   compile-ome-editor
+                   jar-ome-editor
     License:       LGPL
-
-LOCI Checkstyle checks
-    JAR file:      loci-checks.jar
-    Folders:       loci/checks
-    Main class:    loci.checks.About
-    Dependencies:  checkstyle-all-4.2.jar
-    Targets:       style-checks
-                   compile-checks
-                   jar-checks
-    License:       Public domain
 
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
@@ -224,13 +199,13 @@ Apache Jakarta Commons Logging
 JGoodies Forms
     JAR file:  forms-1.0.4.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
-    Notes:     used for layout by VisBio, 4D Data Browser and OME Notes
+    Notes:     used for layout by VisBio, Data Browser and OME Notes
     License:   BSD
 
 ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
-    Notes:     used by LOCI plugins for ImageJ;
+    Notes:     used by LOCI plugins for ImageJ and OME plugins for ImageJ;
                bundled with VisBio to achieve ImageJ interconnectivity
     License:   Public domain
 
@@ -241,11 +216,24 @@ Java Advanced Imaging Image I/O Tools
                (ND2, JP2) and lossless JPEG decompression (DICOM)
     License:   BSD
 
+JMagick
+    JAR file:  jmagick.jar
+    URL:       http://www.jmagick.org
+    Notes:     required for JPEG-2000 support in Aperio SVS
+    License:   LGPL
+
 JUnit
     JAR file:  junit.jar
     URL:       http://www.junit.org/
     Notes:     unit testing framework used for a few VisBio unit tests
     License:   Common Public License
+
+L-M Fit
+    JAR file:  lma.jar
+    URL:       http://users.utu.fi/jaolho/
+    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
+               used by Slim Plotter
+    License:   LGPL
 
 JGoodies Looks
     JAR file:  looks-1.2.2.jar
@@ -260,13 +248,6 @@ MDB Tools (Java port)
     Notes:     used by Bio-Formats for Zeiss LSM metadata in MDB database files
     License:   LGPL
 
-L-M Fit
-    JAR file:  lma.jar
-    URL:       http://users.utu.fi/jaolho/
-    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
-               used by Slim Plotter
-    License:   LGPL
-
 NetCDF
     JAR files: netcdf-4.0.jar, bufr-1.1.00.jar, grib-5.1.03.jar, slf4j-jdk14.jar
     URL:       http://www.unidata.ucar.edu/software/netcdf-java/
@@ -276,33 +257,44 @@ NetCDF
 OME-Java
     JAR file:  ome-java.jar
     URL:       http://openmicroscopy.org/api/java/
-    Notes:     used by VisBio and the OME upload and download plugins for
-               ImageJ to connect to OME;
-               used by Bio-Formats and OME Notes to work with OME-XML
-    License:   LGPL
-
-OMERO Common
-    JAR file:  omero-common.jar
-    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
-    Notes:     used by VisBio and Bio-Formats to connect to OMERO
+    Notes:     used by Bio-Formats and OME Metadata Editor to work with OME-XML;
+               used by OME I/O to connect to OME
     License:   LGPL
 
 OMERO Client
-    JAR file:  omero-client.jar
+    JAR file:  omero-client-3.0-Beta3.jar
     URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
-    Notes:     used by VisBio and Bio-Formats to connect to OMERO
-    License:   LGPL
+    Notes:     used by OME I/O to connect to OMERO
+    License:   GPL
+
+OMERO Common
+    JAR file:  omero-common-3.0-Beta3.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by OME I/O to connect to OMERO
+    License:   GPL
+
+OMERO Importer
+    JAR file:  omero-importer-3.0-Beta3.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by OME I/O to connect to OMERO
+    License:   GPL
+
+OMERO Model PostgreSQL
+    JAR file:  omero-model-psql-3.0-Beta3.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by OME I/O to connect to OMERO
+    License:   GPL
 
 Spring
-    JAR file:  spring.jar
+    JAR file:  spring-2.5.jar
     URL:       http://springframework.org
-    Notes:     used by VisBio and Bio-Formats to connect to OMERO
+    Notes:     used by OME I/O to connect to OMERO
     License:   Apache
 
 JBoss
-    JAR file:  jbossall-client.jar
+    JAR file:  jbossall-client-4.2.1.GA.jar
     URL:       http://jboss.org
-    Notes:     used by VisBio and Bio-Formats to connect to OMERO
+    Notes:     used by OME I/O to connect to OMERO
     License:   LGPL
 
 Apache Jakarta POI
@@ -339,12 +331,6 @@ Apache XML-RPC
     URL:       http://ws.apache.org/xmlrpc/
     Notes:     required for OME-Java to communicate with OME servers
     License:   Apache
-
-JMagick
-    JAR file:  jmagick.jar
-    URL:       http://www.jmagick.org
-    Notes:     required for JPEG-2000 support in Aperio SVS
-    License:   LGPL
 -->
 
 <project name="LOCI Software" default="jars" basedir=".">
@@ -397,8 +383,10 @@ JMagick
   </target>
 
   <target name="style"
-    depends="style-formats, style-visbio, style-plugins, style-notes,
-      style-editor, style-slim, style-checks"
+    depends="style-formats, style-loci-plugins,
+      style-ome-io, style-ome-plugins,
+      style-visbio, style-slim, style-checks,
+      style-jvmlink, style-ome-notes, style-ome-editor"
     description="check source code style for LOCI software packages"/>
 
 <!--
@@ -410,25 +398,28 @@ JMagick
   </target>
 -->
   <target name="compile"
-    depends="compile-formats, compile-visbio, compile-plugins, compile-notes,
-      compile-jvmlink, compile-slim, compile-editor, compile-tests,
-      compile-checks"
+    depends="compile-formats, compile-loci-plugins,
+      compile-ome-io, compile-ome-plugins,
+      compile-visbio, compile-slim, compile-checks, compile-tests,
+      compile-jvmlink, compile-ome-notes, compile-ome-editor"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-formats, jar-visbio, jar-plugins, jar-notes,
-      jar-jvmlink, jar-slim, jar-editor, jar-checks"
+    depends="jar-formats, jar-loci-plugins,
+      jar-ome-io, jar-ome-plugins,
+      jar-visbio, jar-slim, jar-checks,
+      jar-jvmlink, jar-ome-notes, jar-ome-editor"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="tools" depends="jars"
     description="create JAR file encompassing several LOCI tools">
-    <for list="${tools.libraries}" param="jar" delimiter=" " trim="true">
+    <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
         <available file="${jar.dir}/@{jar}" property="@{jar}.present"/>
         <if>
           <equals arg1="${@{jar}.present}" arg2="true" />
           <then>
-            <unjar src="${jar.dir}/@{jar}" dest="${tools.dir}">
+            <unjar src="${jar.dir}/@{jar}" dest="${loci-tools.dir}">
               <patternset>
                 <exclude name="META-INF/**"/>
               </patternset>
@@ -437,12 +428,37 @@ JMagick
         </if>
       </sequential>
     </for>
-    <jar jarfile="${jar.dir}/${tools.jar}" basedir="${tools.dir}">
+    <jar jarfile="${jar.dir}/${loci-tools.jar}" basedir="${loci-tools.dir}">
       <manifest>
-        <attribute name="Main-Class" value="${tools.main}"/>
+        <attribute name="Main-Class" value="${loci-tools.main}"/>
       </manifest>
     </jar>
-    <delete dir="${tools.dir}"/>
+    <delete dir="${loci-tools.dir}"/>
+  </target>
+
+  <target name="tools-ome" depends="jars"
+    description="create JAR file encompassing several OME tools">
+    <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <available file="${jar.dir}/@{jar}" property="@{jar}.present"/>
+        <if>
+          <equals arg1="${@{jar}.present}" arg2="true" />
+          <then>
+            <unjar src="${jar.dir}/@{jar}" dest="${ome-tools.dir}">
+              <patternset>
+                <exclude name="META-INF/**"/>
+              </patternset>
+            </unjar>
+          </then>
+        </if>
+      </sequential>
+    </for>
+    <jar jarfile="${jar.dir}/${ome-tools.jar}" basedir="${ome-tools.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${ome-tools.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${ome-tools.dir}"/>
   </target>
 
   <target name="docs" depends="copy-source"
@@ -575,45 +591,10 @@ JMagick
 
   <!-- Internal build targets -->
 
-  <target name="copy-resources-formats">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${formats.resources}"/>
-    </copy>
-  </target>
-
-  <target name="copy-resources-visbio">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${visbio.resources}"/>
-    </copy>
-  </target>
-
-  <target name="copy-resources-plugins">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${plugins.resources}"/>
-    </copy>
-  </target>
-
-  <target name="copy-resources-notes">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${notes.resources}"/>
-    </copy>
-  </target>
-
-  <target name="copy-resources-editor">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${editor.resources}"/>
-    </copy>
-  </target>
-
-  <target name="copy-resources-checks">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${checks.resources}"/>
-    </copy>
-  </target>
-
-  <target name="copy-source" depends="init, copy-resources-formats,
-    copy-resources-visbio, copy-resources-plugins, copy-resources-notes,
-		copy-resources-editor, copy-resources-checks">
+  <target name="copy-source" depends="init,
+    copy-resources-formats, copy-resources-loci-plugins,
+    copy-resources-visbio, copy-resources-checks,
+    copy-resources-ome-notes, copy-resources-ome-editor">
     <!-- copy binary files without filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="loci/**"
@@ -638,7 +619,13 @@ JMagick
 
   <!-- Bio-Formats -->
 
-  <target name="style-formats" depends="copy-source, jar-checks"
+  <target name="copy-resources-formats">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${formats.resources}"/>
+    </copy>
+  </target>
+
+  <target name="style-formats" depends="copy-source"
     description="check source code style for Bio-Formats">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${formats.source}"/>
@@ -649,7 +636,7 @@ JMagick
     description="compile classes for Bio-Formats">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${formats.source}" excludes="${formats.exclude}"
+      includes="${formats.source}" excludes="${formats.source-exclude}"
       classpath="${ext.jars}"
       debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
@@ -666,16 +653,128 @@ JMagick
     </jar>
   </target>
 
+  <!-- LOCI Plugins for ImageJ -->
+
+  <target name="copy-resources-loci-plugins">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${loci-plugins.resources}"/>
+    </copy>
+  </target>
+
+  <target name="style-loci-plugins" depends="copy-source"
+    description="check source code style for LOCI Plugins for ImageJ">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${loci-plugins.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-loci-plugins" depends="copy-source, compile-formats"
+    description="compile classes for LOCI Plugins for ImageJ">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${loci-plugins.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-loci-plugins"
+    depends="compile-loci-plugins, copy-jars, jar-formats"
+    description="generate JAR file for LOCI Plugins for ImageJ">
+    <jar jarfile="${jar.dir}/${loci-plugins.jar}"
+      basedir="${src.dir}/${loci-plugins.extra-root}"
+      includes="${loci-plugins.extra-files}">
+      <manifest>
+        <attribute name="Main-Class" value="${loci-plugins.main}"/>
+      </manifest>
+    </jar>
+    <jar jarfile="${jar.dir}/${loci-plugins.jar}" basedir="${classes.dir}"
+      includes="${loci-plugins.files}" update="true">
+    </jar>
+  </target>
+
+  <!-- OME I/O -->
+
+  <target name="style-ome-io" depends="copy-source"
+    description="check source code style for OME I/O">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${ome-io.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-ome-io" depends="copy-source, compile-formats"
+    description="compile classes for OME I/O">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${ome-io.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-ome-io" depends="compile-ome-io, copy-jars, jar-formats"
+    description="generate JAR file for OME I/O">
+    <jar jarfile="${jar.dir}/${ome-io.jar}" basedir="${classes.dir}"
+      includes="${ome-io.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${ome-io.main}"/>
+        <!--<attribute name="Class-Path" value="${ome-io.classpath}"/>-->
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- OME Plugins for ImageJ -->
+
+  <target name="copy-resources-ome-plugins">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${ome-plugins.resources}"/>
+    </copy>
+  </target>
+
+  <target name="style-ome-plugins" depends="copy-source"
+    description="check source code style for OME Plugins for ImageJ">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${ome-plugins.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-ome-plugins"
+    depends="copy-source, compile-loci-plugins, compile-ome-io"
+    description="compile classes for OME Plugins for ImageJ">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${ome-plugins.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-ome-plugins"
+    depends="compile-ome-plugins, copy-jars, jar-loci-plugins, jar-ome-io"
+    description="generate JAR file for OME Plugins for ImageJ">
+    <jar jarfile="${jar.dir}/${ome-plugins.jar}"
+      basedir="${src.dir}/${ome-plugins.extra-root}"
+      includes="${ome-plugins.extra-files}">
+      <manifest>
+        <attribute name="Main-Class" value="${ome-plugins.main}"/>
+      </manifest>
+    </jar>
+    <jar jarfile="${jar.dir}/${ome-plugins.jar}" basedir="${classes.dir}"
+      includes="${ome-plugins.files}" update="true">
+    </jar>
+  </target>
+
   <!-- VisBio -->
 
-  <target name="style-visbio" depends="copy-source, jar-checks"
+  <target name="copy-resources-visbio">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${visbio.resources}"/>
+    </copy>
+  </target>
+
+  <target name="style-visbio" depends="copy-source"
     description="check source code style for VisBio">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${visbio.source}"/>
     </checkstyle>
   </target>
 
-  <target name="compile-visbio" depends="copy-source"
+  <target name="compile-visbio"
+    depends="copy-source, compile-formats, compile-ome-io"
     description="compile classes for VisBio">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
@@ -683,7 +782,8 @@ JMagick
       debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
-  <target name="jar-visbio" depends="compile-visbio, copy-jars, jar-formats"
+  <target name="jar-visbio"
+    depends="compile-visbio, copy-jars, jar-formats, jar-ome-io"
     description="generate JAR file for VisBio">
     <jar jarfile="${jar.dir}/${visbio.jar}" basedir="${classes.dir}"
       includes="${visbio.files}">
@@ -772,10 +872,8 @@ JMagick
       todir="${visbio.macosx-dir}/VisBio/VisBio.app/Contents/Resources/Java">
       <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
     </copy>
-<!--
-    <tar destfile="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"
-      basedir="${visbio.macosx-dir}" compression="gzip"/>
--->
+    <!--<tar destfile="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"
+      basedir="${visbio.macosx-dir}" compression="gzip"/>-->
     <!-- HACK - tar does not preserve permissions; use exec instead -->
     <echo>Building tar: visbio${visbio.version}_macosx.tar.gz</echo>
     <exec executable="tar">
@@ -804,11 +902,9 @@ JMagick
       <fileset dir="${visbio.linux-dir}/visbio${visbio.version}"
         includes="${visbio.linux-exec}"/>
     </chmod>
-<!--
-    <untar src="dist/jre-linux.tar.gz"
+    <!--<untar src="dist/jre-linux.tar.gz"
       dest="${visbio.linux-dir}/visbio${visbio.version}"
-      overwrite="false" compression="gzip"/>
--->
+      overwrite="false" compression="gzip"/>-->
     <!-- HACK - untar does not restore permissions; use exec instead -->
     <echo>Expanding: jre-linux.tar.gz</echo>
     <exec executable="tar">
@@ -817,10 +913,8 @@ JMagick
       <arg value="-C"/>
       <arg value="${visbio.linux-dir}/visbio${visbio.version}"/>
     </exec>
-<!--
-    <tar destfile="${dist.dir}/visbio${visbio.version}_linux.tar.gz"
-      basedir="${visbio.linux-dir}" compression="gzip"/>
--->
+    <!--<tar destfile="${dist.dir}/visbio${visbio.version}_linux.tar.gz"
+      basedir="${visbio.linux-dir}" compression="gzip"/>-->
     <!-- HACK - tar does not preserve permissions; use exec instead -->
     <echo>Building tar: visbio${visbio.version}_linux.tar.gz</echo>
     <exec executable="tar">
@@ -849,10 +943,8 @@ JMagick
       <fileset dir="${visbio.nojre-dir}/visbio${visbio.version}"
         includes="${visbio.linux-exec}"/>
     </chmod>
-<!--
-    <tar destfile="${dist.dir}/visbio${visbio.version}.tar.gz"
-      basedir="${visbio.nojre-dir}" compression="gzip"/>
--->
+    <!--<tar destfile="${dist.dir}/visbio${visbio.version}.tar.gz"
+      basedir="${visbio.nojre-dir}" compression="gzip"/>-->
     <!-- HACK - tar does not preserve permissions; use exec instead -->
     <echo>Building tar: visbio${visbio.version}.tar.gz</echo>
     <exec executable="tar">
@@ -864,106 +956,16 @@ JMagick
     </exec>
   </target>
 
-  <!-- LOCI Plugins for ImageJ -->
-
-  <target name="style-plugins" depends="copy-source, jar-checks"
-    description="check source code style for LOCI Plugins for ImageJ">
-    <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${plugins.source}"/>
-    </checkstyle>
-  </target>
-
-  <target name="compile-plugins" depends="copy-source"
-    description="compile classes for LOCI Plugins for ImageJ">
-    <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${plugins.source}" classpath="${ext.jars}"
-      debug="true" deprecation="true" source="1.4" target="1.4"/>
-  </target>
-
-  <target name="jar-plugins" depends="compile-plugins, copy-jars, jar-formats"
-    description="generate JAR file for LOCI Plugins for ImageJ">
-    <jar jarfile="${jar.dir}/${plugins.jar}" basedir="${src.dir}/loci/plugins"
-      includes="plugins.config IJ_Props.txt">
-      <manifest>
-        <attribute name="Main-Class" value="${plugins.main}"/>
-      </manifest>
-    </jar>
-    <jar jarfile="${jar.dir}/${plugins.jar}" basedir="${classes.dir}"
-      includes="${plugins.files}"
-      excludes="loci/plugins/plugins.config loci/plugins/IJ_Props.txt"
-      update="true">
-    </jar>
-  </target>
-
-  <!-- OME Notes -->
-
-  <target name="style-notes" depends="copy-source, jar-checks"
-    description="check source code style for OME Notes">
-    <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${notes.source}"/>
-    </checkstyle>
-  </target>
-
-  <target name="compile-notes" depends="copy-source"
-    description="compile classes for OME Notes">
-    <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${notes.source}" classpath="${ext.jars}"
-      debug="true" deprecation="true" source="1.4" target="1.4"/>
-  </target>
-
-  <target name="jar-notes"
-    depends="compile-notes, copy-jars, jar-formats"
-    description="generate JAR file for OME Notes">
-    <jar jarfile="${jar.dir}/${notes.jar}" basedir="${classes.dir}"
-      includes="${notes.files}">
-      <manifest>
-        <attribute name="Main-Class" value="${notes.main}"/>
-        <attribute name="Class-Path" value="${notes.classpath}"/>
-      </manifest>
-    </jar>
-  </target>
-
-  <!-- JVMLink -->
-
-  <target name="style-jvmlink" depends="copy-source, jar-checks"
-    description="check source code style for JVMLink">
-    <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${jvmlink.source}"/>
-    </checkstyle>
-  </target>
-
-  <target name="compile-jvmlink" depends="copy-source"
-    description="compile classes for JVMLink">
-    <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${jvmlink.source}" classpath="${ext.jars}"
-      debug="true" deprecation="true" source="1.4" target="1.4"/>
-  </target>
-
-  <target name="jar-jvmlink"
-    depends="compile-formats, compile-jvmlink, copy-jars"
-    description="generate JAR file for JVMLink">
-    <jar jarfile="${jar.dir}/${jvmlink.jar}" basedir="${classes.dir}"
-      includes="${jvmlink.files}">
-      <manifest>
-        <attribute name="Main-Class" value="${jvmlink.main}"/>
-        <!--<attribute name="Class-Path" value="${jvmlink.classpath}"/>-->
-      </manifest>
-    </jar>
-  </target>
-
   <!-- Slim Plotter -->
 
-  <target name="style-slim" depends="copy-source, jar-checks"
+  <target name="style-slim" depends="copy-source"
     description="check source code style for Slim Plotter">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${slim.source}"/>
     </checkstyle>
   </target>
 
-  <target name="compile-slim" depends="copy-source"
+  <target name="compile-slim" depends="copy-source, compile-formats"
     description="compile classes for Slim Plotter">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
@@ -971,7 +973,7 @@ JMagick
       debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
-  <target name="jar-slim" depends="compile-slim, copy-jars"
+  <target name="jar-slim" depends="compile-slim, copy-jars, jar-formats"
     description="generate JAR file for Slim Plotter">
     <jar jarfile="${jar.dir}/${slim.jar}" basedir="${classes.dir}"
       includes="${slim.files}">
@@ -993,9 +995,7 @@ JMagick
     <chmod perm="+x">
       <fileset dir="${slim.dist-dir}" includes="${slim.exec}"/>
     </chmod>
-<!--
-    <zip destfile="${dist.dir}/slim.zip" basedir="${dist.dir}/slim"/>
--->
+    <!--<zip destfile="${dist.dir}/slim.zip" basedir="${dist.dir}/slim"/>-->
     <!-- HACK - zip does not preserve permissions; use exec instead -->
     <exec executable="zip" dir="${dist.dir}/slim">
       <arg value="-r9"/>
@@ -1004,55 +1004,15 @@ JMagick
     </exec>
   </target>
 
-  <!-- OME Metadata Editor -->
-
-  <target name="style-editor" depends="copy-source, jar-checks"
-    description="check source code style for OME Metadata Editor">
-    <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${editor.source}"/>
-    </checkstyle>
-  </target>
-
-  <target name="compile-editor" depends="copy-source"
-    description="compile classes for OME Metadata Editor">
-    <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${editor.source}" classpath="${ext.jars}"
-      debug="true" deprecation="true" source="1.4" target="1.4"/>
-  </target>
-
-  <target name="jar-editor"
-    depends="compile-editor, copy-jars, jar-formats"
-    description="generate JAR file for OME Metadata Editor">
-    <jar jarfile="${jar.dir}/${editor.jar}" basedir="${classes.dir}"
-      includes="${editor.files}">
-      <manifest>
-        <attribute name="Main-Class" value="${editor.main}"/>
-        <attribute name="Class-Path" value="${editor.classpath}"/>
-      </manifest>
-    </jar>
-  </target>
-
-  <!-- Automated tests -->
-
-  <target name="style-tests" depends="copy-source, jar-checks"
-    description="check source code style for testing framework">
-    <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${tests.source}"/>
-    </checkstyle>
-  </target>
-
-  <target name="compile-tests" depends="copy-source"
-    description="compile classes for testing framework">
-    <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${tests.source}" classpath="${ext.jars}"
-      debug="true" deprecation="true" source="1.4" target="1.4"/>
-  </target>
-
   <!-- LOCI Checkstyle checks -->
 
-  <target name="style-checks" depends="copy-source, jar-checks"
+  <target name="copy-resources-checks">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${checks.resources}"/>
+    </copy>
+  </target>
+
+  <target name="style-checks" depends="copy-source"
     description="check source code style for LOCI Checkstyle checks">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${checks.source}"/>
@@ -1078,25 +1038,120 @@ JMagick
     </jar>
   </target>
 
-  <!-- ImageJ -->
+  <!-- Automated tests -->
 
-  <target name="ij-jws" depends="tools"
-    description="create JAR file encompassing ImageJ plus LOCI plugins">
-    <for list="${ij-jws.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${jar.dir}/@{jar}" dest="${ij-jws.dir}">
-          <patternset>
-            <exclude name="META-INF/**"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${jar.dir}/${ij-jws.jar}" basedir="${ij-jws.dir}">
+  <target name="style-tests" depends="copy-source"
+    description="check source code style for testing framework">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${tests.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-tests" depends="copy-source"
+    description="compile classes for testing framework">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${tests.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <!-- JVMLink -->
+
+  <target name="style-jvmlink" depends="copy-source"
+    description="check source code style for JVMLink">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${jvmlink.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-jvmlink" depends="copy-source, compile-formats"
+    description="compile classes for JVMLink">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${jvmlink.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-jvmlink"
+    depends="compile-jvmlink, copy-jars"
+    description="generate JAR file for JVMLink">
+    <jar jarfile="${jar.dir}/${jvmlink.jar}" basedir="${classes.dir}"
+      includes="${jvmlink.files}">
       <manifest>
-        <attribute name="Main-Class" value="${ij-jws.main}"/>
+        <attribute name="Main-Class" value="${jvmlink.main}"/>
+        <!--<attribute name="Class-Path" value="${jvmlink.classpath}"/>-->
       </manifest>
     </jar>
-    <delete dir="${ij-jws.dir}"/>
+  </target>
+
+  <!-- OME Notes -->
+
+  <target name="copy-resources-ome-notes">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${ome-notes.resources}"/>
+    </copy>
+  </target>
+
+  <target name="style-ome-notes" depends="copy-source"
+    description="check source code style for OME Notes">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${ome-notes.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-ome-notes" depends="copy-source, compile-formats"
+    description="compile classes for OME Notes">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${ome-notes.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-ome-notes"
+    depends="compile-ome-notes, copy-jars, jar-formats"
+    description="generate JAR file for OME Notes">
+    <jar jarfile="${jar.dir}/${ome-notes.jar}" basedir="${classes.dir}"
+      includes="${ome-notes.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${ome-notes.main}"/>
+        <attribute name="Class-Path" value="${ome-notes.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- OME Metadata Editor -->
+
+  <target name="copy-resources-ome-editor">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${ome-editor.resources}"/>
+    </copy>
+  </target>
+
+  <target name="style-ome-editor" depends="copy-source"
+    description="check source code style for OME Metadata Editor">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${ome-editor.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-ome-editor" depends="copy-source, compile-formats"
+    description="compile classes for OME Metadata Editor">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${ome-editor.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-ome-editor"
+    depends="compile-ome-editor, copy-jars, jar-formats"
+    description="generate JAR file for OME Metadata Editor">
+    <jar jarfile="${jar.dir}/${ome-editor.jar}" basedir="${classes.dir}"
+      includes="${ome-editor.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${ome-editor.main}"/>
+        <attribute name="Class-Path" value="${ome-editor.classpath}"/>
+      </manifest>
+    </jar>
   </target>
 
 </project>

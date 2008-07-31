@@ -29,16 +29,14 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Vector;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import loci.formats.*;
-import loci.formats.ome.OMECredentials;
-import loci.formats.ome.OMEReader;
-import loci.formats.ome.OMEUtils;
+import loci.ome.io.OMECredentials;
+import loci.ome.io.OMEReader;
+import loci.ome.io.OMEUtils;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
@@ -223,10 +221,7 @@ public class OMEImage extends ImageTransform {
       // get image ID to download
       if (imageId < 0) {
         try {
-          OMECredentials cred = new OMECredentials();
-          cred.username = user;
-          cred.server = server;
-          cred.password = password;
+          OMECredentials cred = new OMECredentials(user, server, password);
           OMEUtils.login(cred);
 
           // TODO : find a better way of handling multiple IDs

@@ -23,18 +23,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import loci.formats.meta.MetadataStore;
 
 /**
- * Handles swapping the dimension order of a file. This class is useful for
- * reassigning ZCT sizes (rather than shuffling the planar order around as
- * {@link FormatTools#getReorderedIndex(IFormatReader, String, int)} does).
+ * Handles swapping the dimension order of an image series. This class is
+ * useful for both reassigning ZCT sizes (the input dimension order), and
+ * shuffling around the resultant planar order (the output dimension order).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DimensionSwapper.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/DimensionSwapper.java">SVN</a></dd></dl>
  */
 public class DimensionSwapper extends ReaderWrapper {
+
+  // -- Fields --
+
+  /** The output dimension order for the image series. */
+  protected String outputOrder;
 
   // -- Constructors --
 
@@ -47,10 +54,14 @@ public class DimensionSwapper extends ReaderWrapper {
   // -- DimensionSwapper API methods --
 
   /**
-   * Swaps the dimensions according to the given dimension order.  If the given
-   * order is identical to the file's native order, then nothing happens.
-   * Note that this method will throw an exception if X and Y do not appear in
-   * positions 0 and 1 (although X and Y can be reversed).
+   * Sets the input dimension order according to the given string (e.g.,
+   * "XYZCT"). This string indicates the planar rasterization order from the
+   * source, overriding the detected order. It may result in the dimensional
+   * axis sizes changing.
+   *
+   * If the given order is identical to the file's native order, then
+   * nothing happens. Note that this method will throw an exception if X and Y
+   * do not appear in positions 0 and 1 (although X and Y can be reversed).
    */
   public void swapDimensions(String order) {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -114,6 +125,24 @@ public class DimensionSwapper extends ReaderWrapper {
     MetadataTools.populatePixels(store, this);
   }
 
+  /**
+   * Sets the output dimension order according to the given string (e.g.,
+   * "XYZCT"). This string indicates the final planar rasterization
+   * order&mdash;i.e., the mapping from 1D plane number to 3D (Z, C, T) tuple.
+   * Changing it will not affect the Z, C or T sizes but will alter the order
+   * in which planes are returned when iterating.
+   *
+   * This method is useful when your application requires a particular output
+   * dimension order; e.g., ImageJ virtual stacks must be in XYCZT order.
+   */
+  public void setOutputOrder(String outputOrder) {
+    this.outputOrder = outputOrder;
+  }
+
+  public String getOutputOrder() {
+    return outputOrder;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getSizeX() */
@@ -150,6 +179,65 @@ public class DimensionSwapper extends ReaderWrapper {
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return getCoreMetadata().currentOrder[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return super.openBytes(reorder(no));
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int width, int height)
+    throws FormatException, IOException
+  {
+    return super.openBytes(reorder(no), x, y, width, height);
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return super.openBytes(reorder(no), buf);
+  }
+
+  /*
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y,
+    int width, int height) throws FormatException, IOException
+  {
+    return super.openBytes(reorder(no));
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return super.openImage(reorder(no));
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int width, int height)
+    throws FormatException, IOException
+  {
+    return super.openImage(reorder(no), x, y, width, height);
+  }
+
+  /* @see loci.formats.IFormatReader#openThumbImage(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    return super.openThumbBytes(reorder(no));
+  }
+
+  /* @see loci.formats.IFormatReader#openThumbImage(int) */
+  public BufferedImage openThumbImage(int no)
+    throws FormatException, IOException
+  {
+    return super.openThumbImage(reorder(no));
+  }
+
+  // -- Helper methods --
+
+  protected int reorder(int no) throws FormatException {
+    if (outputOrder == null) return no;
+    return FormatTools.getReorderedIndex(reader, outputOrder, no);
   }
 
 }

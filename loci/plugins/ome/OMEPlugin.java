@@ -3,10 +3,9 @@
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
-Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden, Christopher Peterson and Philip Huettl.
+OME Plugins for ImageJ: a collection of ImageJ plugins
+including the Download from OME and Upload to OME plugins.
+Copyright (C) 2005-@year@ Melissa Linkert, Philip Huettl and Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.ome;
 
 import ij.*;
 import ij.gui.GenericDialog;
@@ -33,10 +32,12 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import loci.plugins.Checker;
+import loci.plugins.Util;
 import loci.formats.*;
-import loci.formats.ome.OMECredentials;
-import loci.formats.ome.OMEROReader;
-import loci.formats.ome.OMEUtils;
+import loci.ome.io.OMECredentials;
+import loci.ome.io.OMEROReader;
+import loci.ome.io.OMEUtils;
 
 /**
  * OMEPlugin is the ImageJ Plugin that allows image import and exports from
@@ -129,11 +130,8 @@ public class OMEPlugin implements PlugIn {
       server = "http://" + formatServerName(server) + "/shoola/";
     }
 
-    cred = new OMECredentials();
-    cred.server = server;
+    cred = new OMECredentials(server, user, pass);
     cred.port = port;
-    cred.username = user;
-    cred.password = pass;
     cred.isOMERO = type.equals("OMERO");
     if (IJ.debugMode) IJ.log("Attempting to log in to " + server + ":" + port);
     try {

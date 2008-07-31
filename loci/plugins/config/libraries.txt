@@ -116,11 +116,21 @@ notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
 type = ImageJ plugin
 class = loci.plugins.About
 version = bfVersion
-url = http://www.loci.wisc.edu/ome/formats.html
+url = http://www.loci.wisc.edu/ome/formats-imagej.html
 license = GPL
 notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
-        the Bio-Formats Importer, Bio-Formats Exporter, Data Browser,
-        Stack Colorizer, Stack Slicer, and OME plugins.
+        the Bio-Formats Importer, Bio-Formats Exporter,
+        Bio-Formats Macro Extensions, Data Browser,
+        Stack Colorizer and Stack Slicer.
+
+[OME plugins]
+type = ImageJ plugin
+class = loci.plugins.ome.About
+version = omeVersion
+url = http://www.loci.wisc.edu/ome/ome-plugins.html
+license = GPL
+notes = OME Plugins for ImageJ: a collection of ImageJ plugins including
+        the Download from OME and Upload to OME plugins.
 
 [Image5D]
 type = ImageJ plugin
@@ -149,6 +159,14 @@ license = GPL
 notes = LOCI Bio-Formats package for reading and converting
         biological file formats.
 
+[OME I/O]
+type = Java library
+class = loci.ome.io.OMEUtils
+version = omeVersion
+url = http://www.loci.wisc.edu/ome/ome-java.html
+license = GPL
+notes = OME database I/O package for communicating with OME and OMERO servers.
+
 [VisBio]
 type = Java library
 class = loci.visbio.VisBio
@@ -171,6 +189,13 @@ class = com.sun.medialib.codec.jiio.Constants
 url = https://jai-imageio.dev.java.net/
 license = BSD
 notes = Java wrapper for JAI Image I/O Tools native codecs.
+
+[JMagick]
+type = Java library
+class = magick.ImageMagick
+url = http://sourceforge.net/projects/jmagick/
+license = LGPL
+notes = Java wrapper for ImageMagick API.
 
 [GRIB Java Decoder]
 type = Java library

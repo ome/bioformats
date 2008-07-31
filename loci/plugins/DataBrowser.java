@@ -1,12 +1,12 @@
 //
-// CustomWindow.java
+// DataBrowser.java
 //
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
-Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden, Christopher Peterson and Philip Huettl.
+Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+Data Browser, Stack Colorizer and Stack Slicer. Copyright (C) 2005-@year@
+Melissa Linkert, Curtis Rueden and Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,13 +32,15 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import ij.io.FileInfo;
-//import loci.formats.gui.CacheIndicator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.xml.parsers.*;
+import loci.formats.cache.Cache;
+import loci.formats.gui.CacheIndicator;
 import loci.formats.gui.XMLCellRenderer;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -48,10 +50,10 @@ import org.xml.sax.SAXException;
  * virtual stack caching options, metadata, and general beautification.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/CustomWindow.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/CustomWindow.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/DataBrowser.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/DataBrowser.java">SVN</a></dd></dl>
  */
-public class CustomWindow extends StackWindow
+public class DataBrowser extends StackWindow
   implements ActionListener, ChangeListener, ItemListener
 {
 
@@ -69,11 +71,11 @@ public class CustomWindow extends StackWindow
 
   // -- Constructors --
 
-  public CustomWindow(ImagePlus imp) {
+  public DataBrowser(ImagePlus imp) {
     this(imp, null);
   }
 
-  public CustomWindow(final ImagePlus imp, ImageCanvas ic) {
+  public DataBrowser(final ImagePlus imp, ImageCanvas ic) {
     super(imp, ic);
 
     // build metadata window
@@ -113,13 +115,8 @@ public class CustomWindow extends StackWindow
     Scrollbar tSlider = frameSelector == null ?
       makeDummySlider() : frameSelector;
 
-    //CacheIndicator zCache = new CacheIndicator(zSlider);
     Panel zPanel = makeHeavyPanel(zSlider);
-    //zPanel.add(zCache, BorderLayout.SOUTH);
-
-    //CacheIndicator tCache = new CacheIndicator(tSlider);
     Panel tPanel = makeHeavyPanel(tSlider);
-    //tPanel.add(tCache, BorderLayout.SOUTH);
 
     fpsSpin = new JSpinner(new SpinnerNumberModel(10, 1, 99, 1));
     fpsSpin.setToolTipText("Animation rate in frames per second");
@@ -128,6 +125,16 @@ public class CustomWindow extends StackWindow
     fpsPanel.setLayout(new BorderLayout());
     fpsPanel.add(fpsSpin, BorderLayout.CENTER);
     fpsPanel.add(fpsLabel, BorderLayout.EAST);
+
+    ImageStack stack = imp.getStack();
+    if (stack instanceof BFVirtualStack) {
+      BFVirtualStack bfvs = (BFVirtualStack) stack;
+      Cache cache = bfvs.getCache();
+      CacheIndicator zCache = new CacheIndicator(cache, 0, zSlider, 10, 20);
+      zPanel.add(zCache, BorderLayout.SOUTH);
+      CacheIndicator tCache = new CacheIndicator(cache, 1, tSlider, 10, 20);
+      tPanel.add(tCache, BorderLayout.SOUTH);
+    }
 
     animate = new Button("Animate");
     animate.addActionListener(this);
@@ -212,7 +219,7 @@ public class CustomWindow extends StackWindow
     }
   }
 
-  // -- CustomWindow API methods --
+  // -- DataBrowser API methods --
 
   /**
    * Sets XML block associated with this window. This information will be

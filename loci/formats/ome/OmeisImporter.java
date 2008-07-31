@@ -27,7 +27,6 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import loci.formats.*;
-import loci.formats.ome.OMEXML2003FCMetadata;
 import ome.xml.DOMUtil;
 import ome.xml.r2003fc.ome.OMENode;
 import org.w3c.dom.Document;

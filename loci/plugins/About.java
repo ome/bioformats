@@ -4,9 +4,9 @@
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
-Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden, Christopher Peterson and Philip Huettl.
+Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+Data Browser, Stack Colorizer and Stack Slicer. Copyright (C) 2005-@year@
+Melissa Linkert, Curtis Rueden and Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ package loci.plugins;
 import javax.swing.JOptionPane;
 
 /**
- * Displays a small information dialog about this package.
+ * Displays a small information dialog about the LOCI Plugins package.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/About.java">Trac</a>,
@@ -46,15 +46,11 @@ public final class About {
       "<br>" +
       "<br><b>Bio-Formats Importer</b> and <b>Bio-Formats Exporter</b>" +
       "<br>Authors: Melissa Linkert, Curtis Rueden" +
-      "<br><i>http://www.loci.wisc.edu/ome/formats.html</i>" +
+      "<br><i>http://www.loci.wisc.edu/ome/formats-imagej.html</i>" +
       "<br>" +
       "<br><b>Data Browser</b>" +
       "<br>Authors: Curtis Rueden, Melissa Linkert, Chris Peterson" +
       "<br><i>http://www.loci.wisc.edu/ome/browser.html</i>" +
-      "<br>" +
-      "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
-      "<br>Authors: Melissa Linkert, Philip Huettl" +
-      "<br><i>http://www.loci.wisc.edu/ome/ome-plugins.html</i>" +
       "<br>" +
       "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
       "<br>Author: Melissa Linkert";

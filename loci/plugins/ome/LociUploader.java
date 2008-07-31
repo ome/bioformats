@@ -3,10 +3,9 @@
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
-Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden, Christopher Peterson and Philip Huettl.
+OME Plugins for ImageJ: a collection of ImageJ plugins
+including the Download from OME and Upload to OME plugins.
+Copyright (C) 2005-@year@ Melissa Linkert, Philip Huettl and Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.ome;
 
 import ij.*;
 import ij.gui.GenericDialog;
@@ -32,12 +31,13 @@ import ij.process.ColorProcessor;
 import ij.io.FileInfo;
 import java.awt.TextField;
 import java.util.HashSet;
+import loci.plugins.Checker;
 import loci.formats.DataTools;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
-import loci.formats.ome.OMEWriter;
+import loci.ome.io.OMEWriter;
 
 /**
  * ImageJ plugin for uploading images to an OME server.
