@@ -90,4 +90,5 @@ for s = 1:numSeries
     end
     fprintf('\n');
 end
+r.close();
 toc
