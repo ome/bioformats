@@ -30,21 +30,27 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package loci.apps.flow;
 
 public class Particle {
-		int area;
-		int num;
-		int totalIntensity;
-		int sliceNum;
+	private	int pixelArea;
+	private	int micronArea;
+	private	int num;
+	private	int totalIntensity;
+	private	int sliceNum;
+	private	double pixelMicronSquared;
 		
 	public Particle(int a, int i) {
-		area = a;
+		pixelArea = a;
 		totalIntensity = i;
 	}
 	
+	public void setPixelsPerMicron(double ppm) {
+		pixelMicronSquared = ppm;
+		micronArea = (int) Math.round(pixelArea/pixelMicronSquared);
+	}
+	
 	public void print() {
-		System.out.println("Particle "+num+" on slice "+sliceNum+" with area "+area+" and total intensity "+totalIntensity);
+		System.out.println("Particle "+num+" on slice "+sliceNum+" with area (in pixels) "+pixelArea+" and total intensity "+totalIntensity);
 	}
 
 	public int getNum() {
@@ -63,8 +69,12 @@ public class Particle {
 		this.sliceNum = sliceNum;
 	}
 
-	public int getArea() {
-		return area;
+	public int getPixelArea() {
+		return pixelArea;
+	}
+
+	public int getMicronArea() {
+		return micronArea;
 	}
 
 	public int getIntensity() {
@@ -72,7 +82,7 @@ public class Particle {
 	}
 
 	public int getMeanIntensity() {
-		if (area==0) return 0; 
-		else return totalIntensity/area;
-	}
+		if (pixelArea==0) return 0; 
+		else return totalIntensity/micronArea;
+	}	
 }

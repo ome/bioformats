@@ -30,7 +30,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package loci.apps.flow;
+
+// TODO: make sure the pixels/micron thing is consistent
 
 import ij.*;
 import ij.gui.ImageWindow;
@@ -78,6 +79,12 @@ public class JVMLinkFlowCytometry {
 	
 	private static final int MIN_INTENSITY = 0;
 	private static final int MAX_INTENSITY = 255;
+	
+	private static final int INTENSITY_AXIS = 0;
+	private static final int AREA_AXIS = 1;
+	
+	private static final int PIXELS = 0;
+	private static final int MICRONS = 1;
 
 	private static ImageJ ij;
 	private static ImagePlus imp;
@@ -119,7 +126,7 @@ public class JVMLinkFlowCytometry {
 	private static int resolutionWidth = 0;
 	private static int resolutionHeight = 0;
 	private static int minX=0, maxX=0, minY=0, maxY=0;
-	private static int intensityThreshold=30, areaThreshold=100;
+	private static int intensityThreshold=30, areaThresholdInPixels=100, areaUnit=0;
 	private static boolean showParticles=false;
 	
 	private static Vector<Integer> sliceBegin, sliceEnd;
@@ -256,7 +263,7 @@ public class JVMLinkFlowCytometry {
 						int slideNum = ((Scrollbar) imp.getWindow().getComponent(1)).getValue();
 						//for the detected particles window
 						if (showParticles) {
-							d = new Detector(resolutionWidth, intensityThreshold, areaThreshold);
+							d = new Detector(resolutionWidth, intensityThreshold, areaThresholdInPixels);
 							d.findParticles(stack.getProcessor(slideNum));
 							d.crunchArray();
 							Detector.displayImage(d.getFloodArray());
@@ -346,8 +353,16 @@ public class JVMLinkFlowCytometry {
 	public static void setMinY(int val) { minY = val; }
 	public static void setMaxY(int val) { maxY = val; }
 	public static void setIntensityThreshold(int val) { intensityThreshold = val; }
-	public static void setAreaThreshold(int val) { areaThreshold = val; }
-	public static void setPixelMicronSquared(double val) { pixelMicronSquared = val; }
+	public static void setAreaThreshold(int val) { 
+		if (areaUnit == PIXELS) {
+			areaThresholdInPixels = val;
+		}
+		else if (areaUnit == MICRONS) {
+			areaThresholdInPixels = (int) Math.round(val*pixelMicronSquared);			
+		}
+	}
+	public static void setAreaUnits(int val) { areaUnit = val; }
+	public static void setPixelMicronSquared(double val) { pixelMicronSquared = val*val; }
 	public static void reprocessAll() {
 		particles = new Vector<Particle>();
 		slices = new Vector<Slice>();
@@ -402,7 +417,7 @@ public class JVMLinkFlowCytometry {
 	public static void newestProcessFrame(int sliceNum) {
 		sliceNum = sliceNum+2;
 		imp.unlock();
-		d = new Detector(resolutionWidth, intensityThreshold, areaThreshold);
+		d = new Detector(resolutionWidth, intensityThreshold, areaThresholdInPixels);
 		d.findParticles(stack.getProcessor(sliceNum));
 		Vector<Particle> thisParticles = d.crunchArray();
 		if (showParticles) {
@@ -420,10 +435,12 @@ public class JVMLinkFlowCytometry {
 			Particle thisParticle = thisParticles.get(i);
 			thisParticle.setNum(nParticles++);
 			thisParticle.setSliceNum(nSlices);
+			thisParticle.setPixelsPerMicron(pixelMicronSquared);
 			particles.add(thisParticle);
+		
 			//thisParticle.print();
 			
-			int thisArea = thisParticle.getArea();
+			int thisArea = thisParticle.getMicronArea();
 			int thisIntensity = thisParticle.getIntensity();
 			if (thisArea > maxArea) maxArea = thisArea;
 			if (thisArea < minArea) minArea = thisArea;
@@ -493,8 +510,8 @@ public class JVMLinkFlowCytometry {
 		if (minX !=0) return minX;
 		else {
 			switch(xAxis) {
-				case 1: return (minArea/pixelMicronSquared - 0.05*areaRange);
-				case 0: return MIN_INTENSITY; 
+				case AREA_AXIS: return (minArea/pixelMicronSquared - 0.05*areaRange);
+				case INTENSITY_AXIS: return MIN_INTENSITY; 
 				default: return (minArea/pixelMicronSquared - 0.05*areaRange);
 			}
 		}
@@ -506,8 +523,8 @@ public class JVMLinkFlowCytometry {
 		if (maxX !=0) return maxX;
 		else {
 			switch(xAxis) {
-				case 1: return (maxArea/pixelMicronSquared+0.05*areaRange);
-				case 0: return MAX_INTENSITY;
+				case AREA_AXIS: return (maxArea/pixelMicronSquared+0.05*areaRange);
+				case INTENSITY_AXIS: return MAX_INTENSITY;
 				default: return (maxArea/pixelMicronSquared+0.05*areaRange);
 			}
 		}
@@ -519,8 +536,8 @@ public class JVMLinkFlowCytometry {
 		if (minY !=0) return minY;
 		else {
 			switch(yAxis) {
-				case 1: return (minArea/pixelMicronSquared - 0.05*areaRange);
-				case 0: return MIN_INTENSITY; 
+				case AREA_AXIS: return (minArea/pixelMicronSquared - 0.05*areaRange);
+				case INTENSITY_AXIS: return MIN_INTENSITY; 
 				default: return (minArea/pixelMicronSquared - 0.05*areaRange);
 			}
 		}
@@ -532,8 +549,8 @@ public class JVMLinkFlowCytometry {
 		if (maxY !=0) return maxY;
 		else {
 			switch(yAxis) {
-				case 1: return (maxArea/pixelMicronSquared+0.05*areaRange);
-				case 0: return MAX_INTENSITY;
+				case AREA_AXIS: return (maxArea/pixelMicronSquared+0.05*areaRange);
+				case INTENSITY_AXIS: return MAX_INTENSITY;
 				default: return (maxArea/pixelMicronSquared+0.05*areaRange);
 			}
 		}
@@ -581,12 +598,12 @@ public class JVMLinkFlowCytometry {
 
 		for (int i=beginIndex; i<=endIndex; i++) {
 			switch(xAxis) {
-				case 0: xArray[i-beginIndex] = particles.get(i).totalIntensity/particles.get(i).area; break;
-				case 1: xArray[i-beginIndex] = particles.get(i).area/pixelMicronSquared; break;
+				case 0: xArray[i-beginIndex] = particles.get(i).getMeanIntensity(); break;
+				case 1: xArray[i-beginIndex] = particles.get(i).getMicronArea(); break;
 			}
 			switch(yAxis) {
-				case 0: yArray[i-beginIndex] = particles.get(i).totalIntensity/particles.get(i).area; break;
-				case 1: yArray[i-beginIndex] = particles.get(i).area/pixelMicronSquared; break;
+				case 0: yArray[i-beginIndex] = particles.get(i).getMeanIntensity(); break;
+				case 1: yArray[i-beginIndex] = particles.get(i).getMicronArea(); break;
 			}
 		}
 		//for (int i=beginIndex; i<=endIndex; i++) System.out.println("Now plotting "+Double.toString(xArray[i-beginIndex]) + " " + Double.toString(yArray[i-beginIndex]));
@@ -681,6 +698,9 @@ public class JVMLinkFlowCytometry {
 		ImageStack stack = imp.getStack();
 		int size = imp.getWidth();
 		
+		double PixelsPerMicron = Double.valueOf(IJ.getString("Please enter the pixels/micron value for this analysis", "0.1"));
+		pixelMicronSquared = PixelsPerMicron*PixelsPerMicron;
+		
 		init(size, size, 1);
 		showParticles(true);
 		for (int i=1; i<=stack.getSize(); i++) {
@@ -692,10 +712,10 @@ public class JVMLinkFlowCytometry {
 		}
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(filename+".values"));
-		bw.write("Area\t\tIntensity"); bw.newLine(); bw.newLine();
+		bw.write("Area (micron^2)\t\t(pixel^2)\t\tIntensity\t\tFrame"); bw.newLine(); bw.newLine();
 		System.out.println("Particles size is "+particles.size());
 		for (int i=0; i<particles.size(); i++) {
-			bw.write(particles.get(i).getArea()+"\t\t"+particles.get(i).getMeanIntensity()); bw.newLine();
+			bw.write(particles.get(i).getMicronArea()+"\t\t"+particles.get(i).getPixelArea()+"\t\t"+particles.get(i).getMeanIntensity()+"\t\t"+(particles.get(i).getSliceNum()-2)); bw.newLine();
 		}
 		bw.flush();
 		bw.close();

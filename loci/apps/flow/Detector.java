@@ -30,7 +30,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package loci.apps.flow;
 
 import ij.*;
 import ij.process.*;
@@ -106,8 +105,18 @@ public class Detector {
 				totalIntensity[floodArray[i][j]-2] += (imageData[i*size+j] & 0xff);
 			}
 		}
+		
+		boolean[] edgeParticle = new boolean[numRegions];
+		for (int i=0; i<size; i++) {
+			if (floodArray[0][i] > 1) edgeParticle[floodArray[0][i]-2] = true;
+			if (floodArray[i][0] > 1) edgeParticle[floodArray[i][0]-2] = true;
+			if (floodArray[size-1][i] > 1) edgeParticle[floodArray[size-1][i]-2] = true;
+			if (floodArray[i][size-1] > 1) edgeParticle[floodArray[i][size-1]-2] = true;
+		}
+		
+		
 		for (int i=0; i<numRegions; i++) {
-			if (area[i] < areaThreshold) continue;
+			if (area[i] < areaThreshold || edgeParticle[i]) continue;
 			retval.add(new Particle(area[i], totalIntensity[i]));
 			//System.out.println("Region "+i+": Area "+area[i]+"  Intensity "+totalIntensity[i]);
 		}
