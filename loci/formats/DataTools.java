@@ -756,6 +756,21 @@ public final class DataTools {
     parseXML(xml.getBytes(), handler);
   }
 
+  public static void parseXML(RandomAccessStream stream, DefaultHandler handler)
+    throws FormatException, IOException
+  {
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(stream, handler);
+    }
+    catch (ParserConfigurationException exc) {
+      throw new FormatException(exc);
+    }
+    catch (SAXException exc) {
+      throw new FormatException(exc);
+    }
+  }
+
   public static void parseXML(byte[] xml, DefaultHandler handler)
     throws FormatException, IOException
   {

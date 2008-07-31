@@ -95,7 +95,8 @@ public class DeltavisionReader extends FormatReader {
     // read the image plane's pixel data
     int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
     long offset = HEADER_LENGTH + extSize;
-    in.seek(offset + getSizeX() * getSizeY() * bytesPerPixel * no);
+    long planeOffset = (long) getSizeX() * getSizeY() * bytesPerPixel * no;
+    in.seek(offset + planeOffset);
     DataTools.readPlane(in, x, y, w, h, this, buf);
 
     return buf;

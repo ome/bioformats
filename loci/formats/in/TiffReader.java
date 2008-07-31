@@ -78,9 +78,10 @@ public class TiffReader extends BaseTiffReader {
       while (st.hasMoreTokens()) {
         String token = st.nextToken();
         int value = 0;
-        if (token.indexOf("=") != -1) {
+        int eq = token.indexOf("=");
+        if (eq != -1 && eq + 1 < token.length()) {
           try {
-            value = Integer.parseInt(token.substring(token.indexOf("=" + 1)));
+            value = Integer.parseInt(token.substring(eq + 1));
           }
           catch (NumberFormatException e) {
             if (debug) LogTools.trace(e);

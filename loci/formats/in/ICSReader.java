@@ -502,13 +502,17 @@ public class ICSReader extends FormatReader {
     if (em != null) {
       StringTokenizer emTokens = new StringTokenizer(em);
       for (int i=0; i<getSizeC(); i++) {
-        emWave[i] = (int) Float.parseFloat(emTokens.nextToken().trim());
+        if (emTokens.hasMoreTokens()) {
+          emWave[i] = (int) Float.parseFloat(emTokens.nextToken().trim());
+        }
       }
     }
     if (ex != null) {
       StringTokenizer exTokens = new StringTokenizer(ex);
       for (int i=0; i<getSizeC(); i++) {
-        exWave[i] = (int) Float.parseFloat(exTokens.nextToken().trim());
+        if (exTokens.hasMoreTokens()) {
+          exWave[i] = (int) Float.parseFloat(exTokens.nextToken().trim());
+        }
       }
     }
   }

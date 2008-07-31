@@ -151,7 +151,11 @@ public class QTReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     String s = stream.readString(blockCheckLen);
     for (int i=0; i<CONTAINER_TYPES.length; i++) {
-      if (s.indexOf(CONTAINER_TYPES[i]) >= 0) return true;
+      if (s.indexOf(CONTAINER_TYPES[i]) >= 0 &&
+        !CONTAINER_TYPES[i].equals("imag"))
+      {
+        return true;
+      }
     }
     return s.indexOf("wide") >= 0 ||
       s.indexOf("mdat") >= 0 || s.indexOf("ftypqt") >= 0;

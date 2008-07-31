@@ -161,10 +161,19 @@ public class OpenlabReader extends FormatReader {
       b = new byte[b.length + 512];
       in.read(b, 512, b.length - 512);
       Exception exc = null;
+      byte[] tmpBuf =
+        new byte[buf.length * (getRGBChannelCount() == 3 ? 1 : 3)];
       try {
         Location.mapFile("OPENLAB_PICT", new RABytes(b));
         pict.setId("OPENLAB_PICT");
-        pict.openBytes(0, buf, x, y, w, h);
+        pict.openBytes(0, tmpBuf, x, y, w, h);
+        if (getRGBChannelCount() == 1) {
+          byte[] splitBuf = ImageTools.splitChannels(tmpBuf, 0, 3,
+            FormatTools.getBytesPerPixel(getPixelType()), false,
+            !pict.isInterleaved());
+          System.arraycopy(splitBuf, 0, buf, 0, splitBuf.length);
+        }
+        else System.arraycopy(tmpBuf, 0, buf, 0, tmpBuf.length);
       }
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }

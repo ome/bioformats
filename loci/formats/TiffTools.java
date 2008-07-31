@@ -93,7 +93,6 @@ public final class TiffTools {
     -1, // invalid type
     -1, // invalid type
     -1, // invalid type
-    -1, // invalid type
     8, // LONG8
     8, // SLONG8
     8 // IFD8

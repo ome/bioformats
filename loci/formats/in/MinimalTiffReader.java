@@ -144,7 +144,8 @@ public class MinimalTiffReader extends FormatReader {
     if (debug) debug("BaseTiffReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
-    in.order(in.readShort() == 0x4949);
+    boolean little = in.readShort() == 0x4949;
+    in.order(little);
 
     status("Reading IFDs");
 

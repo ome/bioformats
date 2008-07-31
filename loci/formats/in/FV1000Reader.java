@@ -311,7 +311,19 @@ public class FV1000Reader extends FormatReader {
         if (!tmp.exists()) {
           oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
           tmp = new Location(oifFile);
-          if (!tmp.exists()) throw new FormatException("OIF file not found");
+          if (!tmp.exists()) {
+            // check in parent directory
+            if (parent.endsWith(File.separator)) {
+              parent = parent.substring(0, parent.length() - 1);
+            }
+            String dir = parent.substring(parent.lastIndexOf(File.separator));
+            tmp = new Location(parent);
+            parent = tmp.getParent();
+            oifFile = parent + dir.substring(0, dir.lastIndexOf("."));
+            if (!new Location(oifFile).exists()) {
+              throw new FormatException("OIF file not found");
+            }
+          }
           currentId = oifFile;
         }
         else currentId = oifFile;
@@ -622,7 +634,17 @@ public class FV1000Reader extends FormatReader {
           dir.list();
         for (int i=0; i<list.length; i++) {
           if (mappedOIF) usedFiles.add(list[i]);
-          else usedFiles.add(new Location(tiffPath, list[i]).getAbsolutePath());
+          else {
+            String p = new Location(tiffPath, list[i]).getAbsolutePath();
+            String check = p.toLowerCase();
+            if (!check.endsWith(".tif") && !check.endsWith(".pty") &&
+              !check.endsWith(".roi") && !check.endsWith(".lut") &&
+              !check.endsWith(".bmp"))
+            {
+              continue;
+            }
+            usedFiles.add(p);
+          }
         }
       }
     }

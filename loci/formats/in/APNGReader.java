@@ -89,7 +89,7 @@ public class APNGReader extends FormatReader {
     byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false, no);
     int bytesPerChannel = w * h;
     if (t.length > bytesPerChannel) {
-      buf = new byte[bytesPerChannel * 3];
+      buf = new byte[bytesPerChannel * getRGBChannelCount()];
       for (int i=0; i<3; i++) {
         System.arraycopy(t, i * bytesPerChannel, buf, i * bytesPerChannel,
           bytesPerChannel);
@@ -259,7 +259,7 @@ public class APNGReader extends FormatReader {
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();
     core.rgb[0] = img.getRaster().getNumBands() > 1;
-    core.sizeC[0] = isRGB() ? 3 : 1;
+    core.sizeC[0] = img.getRaster().getNumBands();
     core.pixelType[0] = ImageTools.getPixelType(img);
 
     MetadataStore store =

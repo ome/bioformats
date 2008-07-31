@@ -108,7 +108,12 @@ public class BMPReader extends FormatReader {
     int rowLength = getSizeX() * (isIndexed() ? 1 : getSizeC());
     in.seek(global + rowsToSkip * rowLength);
 
-    int planeSize = getSizeX() * getSizeY() * getSizeC();
+    int pad = getSizeX() % 2;
+    int planeSize = (getSizeX() + pad) * getSizeY() * getSizeC();
+    if (planeSize + in.getFilePointer() > in.length()) {
+      pad = 0;
+      planeSize = getSizeX() * getSizeY() * getSizeC();
+    }
     if (bpp >= 8) planeSize *= (bpp / 8);
     else planeSize /= (8 / bpp);
     byte[] rawPlane = new byte[planeSize];
@@ -122,7 +127,7 @@ public class BMPReader extends FormatReader {
         for (int i=0; i<w; i++) {
           buf[row*w + i] = (byte) (bb.getBits(bpp) & 0xff);
         }
-        bb.skipBits((getSizeX() - w - x) * bpp);
+        if (row > 0) bb.skipBits((getSizeX() - w - x + pad) * bpp);
       }
     }
     else {
@@ -132,7 +137,7 @@ public class BMPReader extends FormatReader {
         for (int i=0; i<w*getSizeC(); i++) {
           buf[row*w*getSizeC() + i] = (byte) (bb.getBits(bpp) & 0xff);
         }
-        bb.skipBits(getSizeC() * (getSizeX() - w - x) * bpp);
+        bb.skipBits(getSizeC() * (getSizeX() - w - x + pad) * bpp);
       }
       for (int i=0; i<buf.length/getSizeC(); i++) {
         byte tmp = buf[i*getSizeC() + 2];

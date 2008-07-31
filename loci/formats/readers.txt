@@ -43,7 +43,6 @@ loci.formats.in.OpenlabRawReader      # raw
 loci.formats.in.OMEXMLReader          # ome
 loci.formats.in.LIFReader             # lif
 loci.formats.in.AVIReader             # avi
-loci.formats.in.QTReader              # mov
 loci.formats.in.PictReader            # pict, pct
 loci.formats.in.SDTReader             # sdt
 loci.formats.in.EPSReader             # eps, epsi
@@ -59,6 +58,7 @@ loci.formats.in.L2DReader             # l2d
 loci.formats.in.FEIReader             # img
 loci.formats.in.NAFReader             # naf
 loci.formats.in.MINCReader            # mnc
+loci.formats.in.QTReader              # mov
 
 # multi-extension messes
 loci.formats.in.APLReader             # apl, mtb, tnb

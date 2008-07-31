@@ -205,7 +205,7 @@ public class OMEXMLReader extends FormatReader {
     compression = new Vector();
 
     DefaultHandler handler = new OMEXMLHandler();
-    DataTools.parseXML(in.readString((int) in.length()), handler);
+    DataTools.parseXML(in, handler);
 
     if (binDataOffsets.size() == 0) {
       throw new FormatException("Pixel data not found");

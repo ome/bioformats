@@ -111,6 +111,8 @@ public class FileStitcher implements IFormatReader {
 
   private boolean noStitch;
 
+  private MetadataStore store;
+
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
@@ -303,25 +305,27 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isIndexed() */
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.isIndexed();
+    return noStitch ? reader.isIndexed() : core.indexed[getSeries()];
   }
 
   /* @see IFormatReader#isFalseColor() */
   public boolean isFalseColor() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.isFalseColor();
+    return noStitch ? reader.isFalseColor() : core.falseColor[getSeries()];
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    return reader.get8BitLookupTable();
+    return noStitch ? reader.get8BitLookupTable() :
+      readers[seriesInFile ? 0 : getSeries()][0].get8BitLookupTable();
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    return reader.get16BitLookupTable();
+    return noStitch ? reader.get16BitLookupTable() :
+      readers[seriesInFile ? 0 : getSeries()][0].get16BitLookupTable();
   }
 
   /* @see IFormatReader#getChannelDimLengths() */
@@ -340,19 +344,22 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.getThumbSizeX();
+    return noStitch ? reader.getThumbSizeX() :
+      readers[seriesInFile ? 0 : getSeries()][0].getThumbSizeX();
   }
 
   /* @see IFormatReader#getThumbSizeY() */
   public int getThumbSizeY() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.getThumbSizeY();
+    return noStitch ? reader.getThumbSizeY() :
+      readers[seriesInFile ? 0 : getSeries()][0].getThumbSizeY();
   }
 
   /* @see IFormatReader#isLittleEndian() */
   public boolean isLittleEndian() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.isLittleEndian();
+    return noStitch ? reader.isLittleEndian() :
+      readers[seriesInFile ? 0 : getSeries()][0].isLittleEndian();
   }
 
   /* @see IFormatReader#getDimensionOrder() */
@@ -371,13 +378,15 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isInterleaved() */
   public boolean isInterleaved() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.isInterleaved();
+    return noStitch ? reader.isInterleaved() :
+      readers[seriesInFile ? 0 : getSeries()][0].isInterleaved();
   }
 
   /* @see IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 2);
-    return reader.isInterleaved(subC);
+    return noStitch ? reader.isInterleaved(subC) :
+      readers[seriesInFile ? 0 : getSeries()][0].isInterleaved(subC);
   }
 
   /* @see IFormatReader#openImage(int) */
@@ -546,6 +555,7 @@ public class FileStitcher implements IFormatReader {
       seriesBlocks = null;
       fileVector = seriesNames = null;
       seriesInFile = false;
+      store = null;
     }
   }
 
@@ -754,13 +764,13 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getMetadataStore() */
   public MetadataStore getMetadataStore() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.getMetadataStore();
+    return store;
   }
 
   /* @see IFormatReader#getMetadataStoreRoot() */
   public Object getMetadataStoreRoot() {
     FormatTools.assertId(currentId, true, 2);
-    return reader.getMetadataStoreRoot();
+    return store.getRoot();
   }
 
   /* @see IFormatReader#getUnderlyingReaders() */
@@ -1145,13 +1155,13 @@ public class FileStitcher implements IFormatReader {
     }
 
     // populate metadata store
-    MetadataStore s = reader.getMetadataStore();
+    store = reader.getMetadataStore();
     for (int i=0; i<core.sizeX.length; i++) {
       if (seriesNames != null) {
-        s.setImageName((String) seriesNames.get(i), i);
+        store.setImageName((String) seriesNames.get(i), i);
       }
     }
-    MetadataTools.populatePixels(s, this);
+    MetadataTools.populatePixels(store, this);
   }
 
   /**
@@ -1234,6 +1244,7 @@ public class FileStitcher implements IFormatReader {
     readers[sno][fno].setId(files[sno][fno]);
     readers[sno][fno].setSeries(seriesInFile ? getSeries() : 0);
     readers[sno][fno].swapDimensions(reader.getDimensionOrder());
+    if (getSizeC() > 0) MetadataTools.populatePixels(store, this);
   }
 
   private FilePattern getPattern(String[] f, String dir, String block) {

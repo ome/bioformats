@@ -143,13 +143,21 @@ public class AVIReader extends FormatReader {
       return buf;
     }
 
-    int pad = bmpScanLineSize - getSizeX()*bytes;
-    int scanline = w * bytes;
+    int pad = (bmpScanLineSize / getRGBChannelCount()) - getSizeX()*bytes;
+    int scanline = w * bytes * (isInterleaved() ? getRGBChannelCount() : 1);
 
-    in.skipBytes(scanline * (getSizeY() - h - y));
+    in.skipBytes((getSizeX() + pad) * bytes * (getSizeY() - h - y));
 
-    if (getSizeX() == w) {
+    if (getSizeX() == w && pad == 0) {
       in.read(buf);
+      // swap channels
+      if (bmpBitsPerPixel == 24) {
+        for (int i=0; i<buf.length / getRGBChannelCount(); i++) {
+          byte r = buf[i * getRGBChannelCount() + 2];
+          buf[i * getRGBChannelCount() + 2] = buf[i * getRGBChannelCount()];
+          buf[i * getRGBChannelCount()] = r;
+        }
+      }
     }
     else {
       for (int i=h - 1; i>=0; i--) {
@@ -162,7 +170,8 @@ public class AVIReader extends FormatReader {
             buf[i*scanline + j*3] = r;
           }
         }
-        in.skipBytes(bytes * (getSizeX() - w - x + pad));
+        in.skipBytes(bytes * (getSizeX() - w - x + pad) *
+          (isInterleaved() ? getRGBChannelCount() : 1));
       }
     }
 

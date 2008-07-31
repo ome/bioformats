@@ -180,16 +180,28 @@ public class MetamorphTiffReader extends BaseTiffReader {
     {
       String id = attributes.getValue("id");
       String value = attributes.getValue("value");
+      String delim = "&#13;&#10;";
       if (id != null && value != null) {
         if (id.equals("Description")) {
           metadata.remove("Comment");
 
           String k = null, v = null;
 
-          if (value.indexOf("&#13;&#10;") != -1) {
-            StringTokenizer tokens = new StringTokenizer(value, "&#130;&#10;");
-            while (tokens.hasMoreTokens()) {
-              String line = tokens.nextToken();
+          if (value.indexOf(delim) != -1) {
+            int currentIndex = -delim.length();
+            while (currentIndex != -1) {
+              currentIndex += delim.length();
+              int nextIndex = value.indexOf(delim, currentIndex);
+
+              String line = null;
+              if (nextIndex == -1) {
+                line = value.substring(currentIndex, value.length());
+              }
+              else {
+                line = value.substring(currentIndex, nextIndex);
+              }
+              currentIndex = nextIndex;
+
               int colon = line.indexOf(":");
               if (colon != -1) {
                 k = line.substring(0, colon).trim();

@@ -309,6 +309,7 @@ public class LeicaHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("ATLConfocalSettingDefinition")) {
+      if (fullSeries == null) fullSeries = "";
       if (fullSeries.endsWith(" - Master sequential setting")) {
         fullSeries = fullSeries.replaceAll("Master sequential setting",
           "Sequential Setting 0");
@@ -320,8 +321,13 @@ public class LeicaHandler extends DefaultHandler {
       }
       else {
         int ndx = fullSeries.indexOf("Sequential Setting ") + 19;
-        int n = Integer.parseInt(fullSeries.substring(ndx)) + 1;
-        fullSeries = fullSeries.substring(0, ndx) + String.valueOf(n);
+        try {
+          int n = Integer.parseInt(fullSeries.substring(ndx)) + 1;
+          fullSeries = fullSeries.substring(0, ndx) + String.valueOf(n);
+        }
+        catch (NumberFormatException exc) {
+          fullSeries = fullSeries.substring(0, fullSeries.indexOf("-")).trim();
+        }
       }
 
       for (int i=0; i<attributes.getLength(); i++) {
