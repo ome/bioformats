@@ -64,8 +64,29 @@ public class ImageViewer extends JFrame implements ActionListener,
   protected JLabel probeLabel;
   protected JMenuItem fileSave;
 
+  /** Current format reader. */
   protected IFormatReader myReader;
-  protected ImageWriter myWriter;
+
+  /** Current format writer. */
+  protected IFormatWriter myWriter;
+
+  /** Reader for files on disk. */
+  protected IFormatReader fileReader;
+
+  /** Reader for OME servers. */
+  protected IFormatReader omeReader;
+
+  /** Reader for OMERO servers. */
+  protected IFormatReader omeroReader;
+
+  /** Writer for files on disk. */
+  protected IFormatWriter fileWriter;
+
+  /** Writer for OME servers. */
+  protected IFormatWriter omeWriter;
+
+  /** Writer for OMERO servers. */
+  protected IFormatWriter omeroWriter;
 
   protected String filename;
   protected IFormatReader in;
@@ -155,6 +176,7 @@ public class ImageViewer extends JFrame implements ActionListener,
     // menu bar
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
+
     JMenu file = new JMenu("File");
     file.setMnemonic('f');
     menubar.add(file);
@@ -190,14 +212,32 @@ public class ImageViewer extends JFrame implements ActionListener,
     fileExit.setActionCommand("exit");
     fileExit.addActionListener(this);
     file.add(fileExit);
+
+    JMenu ome = new JMenu("OME");
+    ome.setMnemonic('o');
+    menubar.add(ome);
+    JMenuItem omeDownload = new JMenuItem("Download from OMERO...");
+    omeDownload.setMnemonic('d');
+    omeDownload.setActionCommand("download");
+    omeDownload.addActionListener(this);
+    omeDownload.setEnabled(false);
+    ome.add(omeDownload);
+    JMenuItem omeUpload = new JMenuItem("Upload to OMERO...");
+    omeUpload.setMnemonic('u');
+    omeUpload.setActionCommand("upload");
+    omeUpload.addActionListener(this);
+    omeUpload.setEnabled(false);
+    ome.add(omeUpload);
+
     JMenu options = new JMenu("Options");
-    options.setMnemonic('o');
+    options.setMnemonic('p');
     menubar.add(options);
     JMenuItem optionsFPS = new JMenuItem("Frames per Second...");
     optionsFPS.setMnemonic('f');
     optionsFPS.setActionCommand("fps");
     optionsFPS.addActionListener(this);
     options.add(optionsFPS);
+
     JMenu help = new JMenu("Help");
     help.setMnemonic('h');
     menubar.add(help);
@@ -214,18 +254,37 @@ public class ImageViewer extends JFrame implements ActionListener,
     cSlider.addKeyListener(this);
 
     // image I/O engine
-    myReader = new ChannelMerger(new FileStitcher());
-    myWriter = new ImageWriter();
+    myReader = fileReader = new ChannelMerger(new FileStitcher());
+    myWriter = fileWriter = new ImageWriter();
 
-    // animation thread
+    // NB: avoid dependencies on optional loci.ome.io package
+    ReflectedUniverse r = new ReflectedUniverse();
+
+    // OME server I/O engine
+    try {
+      r.exec("import loci.ome.io.OMEReader");
+      r.exec("import loci.ome.io.OMEWriter");
+      omeReader = (IFormatReader) r.exec("new OMEReader()");
+      omeWriter = (IFormatWriter) r.exec("new OMEWriter()");
+    }
+    catch (ReflectException exc) { LogTools.trace(exc); }
+
+    // OMERO server I/O engine
+    try {
+      r.exec("import loci.ome.io.OMEROReader");
+      r.exec("import loci.ome.io.OMEROWriter");
+      omeroReader = (IFormatReader) r.exec("new OMEROReader()");
+      omeroWriter = (IFormatWriter) r.exec("new OMEROWriter()");
+    }
+    catch (ReflectException exc) { LogTools.trace(exc); }
   }
 
-  /** Opens the given file using the ImageReader. */
+  /** Opens the given data source using the current format reader. */
   public void open(String id) {
     wait(true);
     try {
-      Location f = new Location(id);
-      id = f.getAbsolutePath();
+      //Location f = new Location(id);
+      //id = f.getAbsolutePath();
       myReader.setId(id);
       int num = myReader.getImageCount();
       ProgressMonitor progress = new ProgressMonitor(this,
@@ -257,7 +316,10 @@ public class ImageViewer extends JFrame implements ActionListener,
     wait(false);
   }
 
-  /** Saves the current images to the given file using the ImageWriter. */
+  /**
+   * Saves the current images to the given destination
+   * using the current format writer.
+   */
   public void save(String id) {
     if (images == null) return;
     wait(true);
@@ -281,6 +343,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         myWriter.saveImage(getImage(), true);
         progress.setProgress(1);
       }
+      myWriter.close();
     }
     catch (FormatException exc) { LogTools.trace(exc); }
     catch (IOException exc) { LogTools.trace(exc); }
@@ -386,11 +449,7 @@ public class ImageViewer extends JFrame implements ActionListener,
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
         final File file = chooser.getSelectedFile();
-        if (file != null) {
-          new Thread("ImageViewer-Opener") {
-            public void run() { open(file.getAbsolutePath()); }
-          }.start();
-        }
+        if (file != null) open(file.getAbsolutePath(), fileReader);
       }
     }
     else if ("save".equals(cmd)) {
@@ -400,11 +459,7 @@ public class ImageViewer extends JFrame implements ActionListener,
       int rval = chooser.showSaveDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
         final File file = chooser.getSelectedFile();
-        if (file != null) {
-          new Thread("ImageViewer-Saver") {
-            public void run() { save(file.getPath()); }
-          }.start();
-        }
+        if (file != null) save(file.getAbsolutePath(), fileWriter);
       }
     }
     else if ("view".equals(cmd)) {
@@ -418,6 +473,30 @@ public class ImageViewer extends JFrame implements ActionListener,
       catch (ReflectException exc) { LogTools.trace(exc); }
     }
     else if ("exit".equals(cmd)) dispose();
+    else if ("download".equals(cmd)) {
+      // HACK - JOptionPane prevents shutdown on dispose
+      setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+      // TODO - use loci.visbio.ome.OMELoginPane instead,
+      // after updating it and repackaging it to loci.ome.io.gui
+
+      String id = JOptionPane.showInputDialog(this,
+        "Enter OMERO connection string:",
+        "localhost?port=1099&user=omero&password=omero&id=1");
+      open(id, omeroReader);
+    }
+    else if ("upload".equals(cmd)) {
+      // HACK - JOptionPane prevents shutdown on dispose
+      setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+      // TODO - use loci.visbio.ome.OMELoginPane instead,
+      // after updating it and repackaging it to loci.ome.io.gui
+
+      String id = JOptionPane.showInputDialog(this,
+        "Enter OMERO connection string:",
+        "localhost?port=1099&user=omero&password=omero");
+      open(id, omeroReader);
+    }
     else if ("fps".equals(cmd)) {
       // HACK - JOptionPane prevents shutdown on dispose
       setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -606,6 +685,40 @@ public class ImageViewer extends JFrame implements ActionListener,
   /** Toggles wait cursor. */
   protected void wait(boolean wait) {
     setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null);
+  }
+
+  /**
+   * Opens the given data source using the specified reader
+   * in a separate thread.
+   */
+  protected void open(final String id, final IFormatReader r) {
+    new Thread("ImageViewer-Opener") {
+      public void run() {
+        try {
+          myReader.close();
+        }
+        catch (IOException exc) { LogTools.trace(exc); }
+        myReader = r;
+        open(id);
+      }
+    }.start();
+  }
+
+  /**
+   * Opens the given data source using the specified reader
+   * in a separate thread.
+   */
+  protected void save(final String id, final IFormatWriter w) {
+    new Thread("ImageViewer-Saver") {
+      public void run() {
+        try {
+          myWriter.close();
+        }
+        catch (IOException exc) { LogTools.trace(exc); }
+        myWriter = w;
+        save(id);
+      }
+    }.start();
   }
 
   // -- Main method --
