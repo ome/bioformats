@@ -3,7 +3,7 @@
 //
 
 /*
-Particle class to store information for each detected particle while 
+Particle class to store information for each detected particle while
 running flow cytometry.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
@@ -30,6 +30,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+package loci.apps.flow;
 
 public class Particle {
 	private	int pixelArea;
@@ -38,17 +39,17 @@ public class Particle {
 	private	int totalIntensity;
 	private	int sliceNum;
 	private	double pixelMicronSquared;
-		
+
 	public Particle(int a, int i) {
 		pixelArea = a;
 		totalIntensity = i;
 	}
-	
+
 	public void setPixelsPerMicron(double ppm) {
 		pixelMicronSquared = ppm;
 		micronArea = (int) Math.round(pixelArea/pixelMicronSquared);
 	}
-	
+
 	public void print() {
 		System.out.println("Particle "+num+" on slice "+sliceNum+" with area (in pixels) "+pixelArea+" and total intensity "+totalIntensity);
 	}
@@ -82,7 +83,7 @@ public class Particle {
 	}
 
 	public int getMeanIntensity() {
-		if (pixelArea==0) return 0; 
+		if (pixelArea==0) return 0;
 		else return totalIntensity/micronArea;
-	}	
+	}
 }
