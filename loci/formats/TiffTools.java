@@ -2033,42 +2033,62 @@ public final class TiffTools {
       throw new FormatException("Invalid TIFF header");
     }
     boolean little = header[0] == LITTLE && header[1] == LITTLE; // II
-    long offset = 4; // offset to the IFD
-    int num = 0; // number of directory entries
+    boolean bigTiff = header[2] == 0x2b || header[3] == 0x2b;
+    long offset = bigTiff ? 8 : 4; // offset to the IFD
+    long num = 0; // number of directory entries
+
+    int baseOffset = bigTiff ? 8 : 2;
+    int bytesPerEntry = bigTiff ? BIG_TIFF_BYTES_PER_ENTRY : BYTES_PER_ENTRY;
+
+    raf.seek(offset);
 
     // skip to the correct IFD
     for (int i=0; i<=ifd; i++) {
-      offset = DataTools.read4UnsignedBytes(raf, little);
+      offset = bigTiff ? DataTools.read8SignedBytes(raf, little) :
+        DataTools.read4UnsignedBytes(raf, little);
       if (offset <= 0) {
         throw new FormatException("No such IFD (" + ifd + " of " + i + ")");
       }
       raf.seek(offset);
-      num = DataTools.read2UnsignedBytes(raf, little);
-      if (i < ifd) raf.seek(offset + 2 + BYTES_PER_ENTRY * num);
+      num = bigTiff ? DataTools.read8SignedBytes(raf, little) :
+        DataTools.read2UnsignedBytes(raf, little);
+      if (i < ifd) raf.seek(offset + baseOffset + bytesPerEntry * num);
     }
 
     // search directory entries for proper tag
     for (int i=0; i<num; i++) {
       int oldTag = DataTools.read2UnsignedBytes(raf, little);
       int oldType = DataTools.read2UnsignedBytes(raf, little);
-      int oldCount = DataTools.read4SignedBytes(raf, little);
-      int oldOffset = DataTools.read4SignedBytes(raf, little);
+      int oldCount =
+        bigTiff ? (int) (DataTools.read8SignedBytes(raf, little) & 0xffffffff) :
+        DataTools.read4SignedBytes(raf, little);
+      long oldOffset = bigTiff ? DataTools.read8SignedBytes(raf, little) :
+        DataTools.read4SignedBytes(raf, little);
       if (oldTag == tag) {
         // write new value to buffers
-        ByteArrayOutputStream ifdBuf = new ByteArrayOutputStream(14);
+        ByteArrayOutputStream ifdBuf = new ByteArrayOutputStream(bytesPerEntry);
         DataOutputStream ifdOut = new DataOutputStream(ifdBuf);
         ByteArrayOutputStream extraBuf = new ByteArrayOutputStream();
         DataOutputStream extraOut = new DataOutputStream(extraBuf);
         writeIFDValue(ifdOut, extraBuf, extraOut, oldOffset, tag, value,
-          header[2] == 0x2b);
+          bigTiff);
         byte[] bytes = ifdBuf.toByteArray();
         byte[] extra = extraBuf.toByteArray();
 
         // extract new directory entry parameters
         int newTag = DataTools.bytesToInt(bytes, 0, 2, false);
         int newType = DataTools.bytesToInt(bytes, 2, 2, false);
-        int newCount = DataTools.bytesToInt(bytes, 4, false);
-        int newOffset = DataTools.bytesToInt(bytes, 8, false);
+        int newCount;
+        long newOffset;
+        if (bigTiff) {
+          newCount =
+            (int) (DataTools.bytesToLong(bytes, 4, false) & 0xffffffff);
+          newOffset = DataTools.bytesToLong(bytes, 12, false);
+        }
+        else {
+          newCount = DataTools.bytesToInt(bytes, 4, false);
+          newOffset = DataTools.bytesToInt(bytes, 8, false);
+        }
         boolean terminate = false;
         if (DEBUG) {
           debug("overwriteIFDValue:\n\told: (tag=" + oldTag + "; type=" +
@@ -2098,15 +2118,17 @@ public final class TiffTools {
         }
         else {
           // old entry was elsewhere; append to EOF, orphaning old entry
-          newOffset = (int) raf.length();
+          newOffset = raf.length();
           if (DEBUG) debug("overwriteIFDValue: old entry will be orphaned");
         }
 
         // overwrite old entry
-        raf.seek(raf.getFilePointer() - 10); // jump back
+        raf.seek(raf.getFilePointer() - (bigTiff ? 18 : 10)); // jump back
         DataTools.writeShort(raf, newType, little);
-        DataTools.writeInt(raf, newCount, little);
-        DataTools.writeInt(raf, newOffset, little);
+        if (bigTiff) DataTools.writeLong(raf, newCount, little);
+        else DataTools.writeInt(raf, newCount, little);
+        if (bigTiff) DataTools.writeLong(raf, newOffset, little);
+        else DataTools.writeInt(raf, (int) newOffset, little);
         if (extra.length > 0) {
           raf.seek(newOffset);
           raf.write(extra);
