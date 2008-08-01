@@ -624,7 +624,8 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
 
     if (isIndexed()) core.rgb[0] = false;
-    core.imageCount[0] = getSizeZ() * getSizeT() * getEffectiveSizeC();
+    if (getEffectiveSizeC() == 0) core.imageCount[0] = getSizeZ() * getSizeT();
+    else core.imageCount[0] = getSizeZ() * getSizeT() * getEffectiveSizeC();
 
     if (getImageCount() != ifds.length) {
       int diff = getImageCount() - ifds.length;
@@ -644,6 +645,9 @@ public class ZeissLSMReader extends BaseTiffReader {
         core.sizeZ[0] = 1;
       }
     }
+
+    if (getSizeZ() == 0) core.sizeZ[0] = getImageCount();
+    if (getSizeT() == 0) core.sizeT[0] = getImageCount() / getSizeZ();
 
     MetadataTools.populatePixels(store, this);
 
