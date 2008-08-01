@@ -79,8 +79,6 @@ public class GACurveFitter extends CurveFitter {
   // TODO: The set methods do not create internal copies of the passed
   //       arrays. Should they?
 
-  // TODO: Change hardcoded values to consts
-
   /**
    * iterate() runs through one iteration of whatever curve fitting
    * technique this curve fitter uses. This will generally update the
@@ -282,11 +280,8 @@ public class GACurveFitter extends CurveFitter {
       curveEstimate[0][0] = mult;
       curveEstimate[0][1] = exp;
       curveEstimate[0][2] = guessC;
-
-      // Fix bug where the estimate occasionally produces negative
-      // tau values. If this happens, we'll sort it out in iteration.
-      if (curveEstimate[0][1] <= 0) curveEstimate[0][1] = 1000;
     }
+    
     if (components == 2) {
       double guessC = Double.MAX_VALUE;
       //for(int i = 0; i < curveData.length; i++) {
@@ -311,10 +306,6 @@ public class GACurveFitter extends CurveFitter {
           if (guess < low) low = guess;
         }
       }
-      /*
-      if (10.0 > low) low = 10.0;
-      if (20.0 > high) high = 20.0;
-      */
       curveEstimate[0][1] = high;
       curveEstimate[1][1] = low;
 
@@ -384,20 +375,89 @@ public class GACurveFitter extends CurveFitter {
       curveEstimate[0][0] = mult;
       curveEstimate[0][1] = exp;
       curveEstimate[0][2] = guessC;
-      // TODO: It may be possible to tweak the estimate further by adjusting
-      // the values of a to more accurately account for actual values, instead
-      // of this estimation. One method would be using binary search to
-      // "weave" the curve in the first 10 data points, such that 5 are above
-      // and 5 are below, or something similar.
-      // For now, however, this produces reasonably good estimates, good
-      // enough to start the GA process.
-
-      // Fix bug where the estimate occasionally produces negative
-      // tau values. If this happens, we'll sort it out in iteration.
-      if(curveEstimate[0][1] <= 0) curveEstimate[0][1] = 2000;
-      if(curveEstimate[1][1] <= 0) curveEstimate[1][1] = 800;
     }
 
+    // Sometimes, if the curve looks strange, we'll get a negative estimate
+    // This will really have to be fixed in iteration, but until then we want
+    // to get a "reasonable" positive estimate.
+    // We'll take the high point of the curve, and then the farthest away
+    // low point of the curve, and naively fit a single exponential to those
+    // two points. In the case of a multiple exponential curve, we'll split the
+    // a factor unevenly among the two, and then sort it out in iteration.
+    // This is all very "last ditch effort" estimation.
+    boolean doNegativeEstimation = false;
+    for(int i = 0; i < curveEstimate.length; i++) {
+      if(curveEstimate[i][1] < 0) {
+        doNegativeEstimation = true;
+        //System.out.println("Negative factor " + curveEstimate[i][1] + " found.");
+      }
+    }
+    if(doNegativeEstimation) {
+      // Find highest point in the curve
+      int maxIndex = -1;
+      int maxData = -1;
+      for(int i = firstindex; i < lastindex && i < curveData.length; i++) {
+        if(curveData[i] > maxData) {
+          maxIndex = i; 
+          maxData = curveData[i];
+        }
+      }
+      int minIndex = -1; 
+      int minData = Integer.MAX_VALUE;
+      for(int i = maxIndex; i < lastindex && i < curveData.length; i++) {
+        if(curveData[i] <= minData) {
+          minIndex = i;
+          minData = curveData[i];
+        }
+      }
+      //System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
+      // If we have valid min and max data, perform the "estimate"
+      // TODO: THERE IS A MATH ERROR FIX IT.
+      double expguess = -1;
+      if(maxData != -1 && minData != -1) {
+        //double time = curveData[i][0] - curveData[i-1][0];
+        double time = (double) minIndex - maxIndex;
+        double factor = (curveData[maxIndex] - minData) / 0.001d;
+        expguess = time * -Math.log(factor);
+      }
+      /*
+      double num = 0.0;
+      double den = 0.0;
+      // Hacky... we would like to do this over the entire curve length,
+      // but the actual data is far too noisy to do this. Instead, we'll just
+      // do it for the first 5, which have the most data.
+      //for (int i = 0; i < curveData.length; i++)
+      for(int i = maxIndex; i < 5 + maxIndex && i < curveData.length; i++) {
+        if (curveData[i] > minData) {
+          // calculate e^-bt based on our exponent estimate
+          double value = Math.pow(Math.E, -(i - maxIndex) * expguess);
+          // estimate a
+          double guessA = (curveData[i] - minData) / value;
+          num += guessA * (curveData[i] - minData);
+          den += curveData[i] - minData;
+          //System.out.println("Data: " + curveData[i] + " Value: " + value + " guessA: " + guessA);
+        }
+      }
+      double mult = num/den;
+      */
+      if(expguess < 0) {
+        // If the guess is still somehow negative (example, ascending curve), punt;
+        expguess = 1;
+      }
+      //System.out.println("Estimating: " + expguess);
+      if(components == 1) {
+        curveEstimate[0][0] = maxData;
+        curveEstimate[0][1] = expguess;
+        curveEstimate[0][2] = minData;
+      } else {
+        // 2 components
+        curveEstimate[0][0] = maxData * .8;
+        curveEstimate[0][1] = expguess;
+        curveEstimate[1][0] = maxData * .2;
+        curveEstimate[1][1] = expguess;
+        curveEstimate[0][2] = minData;
+      }
+    } 
     // To update currentRCSE.
     currentRCSE = getReducedChiSquaredError();
   }
