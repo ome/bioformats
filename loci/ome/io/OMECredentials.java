@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.io;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.StringTokenizer;
 
 /**
@@ -51,47 +53,55 @@ public class OMECredentials {
     this.password = password;
   }
 
-  /** Get credentials from a string. */
+  /**
+   * Get credentials from a string. The following two formats are recognized:
+   * <code>ip.address?port=54321&username=login&password=secret&id=12345</code>
+   * or:
+   * <pre>
+   * server=ip.address
+   * port=54321
+   * user=login
+   * password=secret
+   * id=12345
+   * </pre>
+   * Strings are assumed to be encoded with the HTML form encoding scheme,
+   * and will be decoded accordingly.
+   */
   public OMECredentials(String s) {
-    if (s == null || s.trim().equals("")) {
-      throw new IllegalArgumentException("Invalid credentials string");
+    final String invalidMsg = "Invalid credentials string";
+    if (s == null) {
+      throw new IllegalArgumentException(invalidMsg);
     }
 
-    if (s.indexOf("\n") != -1) {
-      StringTokenizer st = new StringTokenizer(s, "\n");
-      String token = null;
-      while (st.hasMoreTokens()) {
-        token = st.nextToken();
-        String key = token.substring(0, token.indexOf("=")).trim();
-        String value = token.substring(token.indexOf("=") + 1).trim();
-        if (key.equals("server")) server = value;
-        else if (key.equals("username")) username = value;
-        else if (key.equals("port")) port = value;
-        else if (key.equals("password")) password = value;
-        else if (key.equals("id")) imageID = Long.parseLong(value);
-      }
-    }
-    else {
-      server = s.substring(0, s.lastIndexOf("?"));
+    String split = s.indexOf("\n") < 0 ? "?&" : "\n";
+    StringTokenizer st = new StringTokenizer(s, split);
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
 
-      int first = server.indexOf(":");
-      int last = server.lastIndexOf(":");
-      if (server.indexOf("http://") == -1) {
-        first = 0;
-        if (last < 0) last = 0;
+      int equals = token.indexOf("=");
+      String key = equals < 0 ? "server" : token.substring(0, equals);
+      String value = token.substring(equals + 1);
+
+      try {
+        key = URLDecoder.decode(key, "UTF-8").trim();
+        value = URLDecoder.decode(value, "UTF-8").trim();
       }
-      if (first != last) {
-        port = server.substring(last + 1);
-        server = server.substring(0, last);
+      catch (UnsupportedEncodingException exc) {
+        throw new IllegalArgumentException(invalidMsg, exc);
       }
 
-      int ndx = s.indexOf("&");
-      username = s.substring(s.lastIndexOf("?") + 6, ndx);
-      int end = s.indexOf("&", ndx + 1);
-      if (end == -1) end = s.length();
-      password = s.substring(ndx + 10, end);
-      ndx = s.indexOf("&", ndx + 1);
-      if (ndx > 0) imageID = Long.parseLong(s.substring(ndx + 4));
+      if (key.equals("server")) server = value;
+      else if (key.equals("username")) username = value;
+      else if (key.equals("port")) port = value;
+      else if (key.equals("password")) password = value;
+      else if (key.equals("id")) {
+        try {
+          imageID = Long.parseLong(value);
+        }
+        catch (NumberFormatException exc) {
+          throw new IllegalArgumentException(invalidMsg, exc);
+        }
+      }
     }
   }
 
