@@ -2206,7 +2206,7 @@ public final class TiffTools {
     }
 
     // create pixel output buffers
-    int stripSize = 8192;
+    int stripSize = Math.max(8192, width * bytesPerPixel * values.length);
     int rowsPerStrip = stripSize / (width * bytesPerPixel * values.length);
     int stripsPerImage = (height + rowsPerStrip - 1) / rowsPerStrip;
     int[] bps = (int[]) getIFDValue(ifd, BITS_PER_SAMPLE, true, int[].class);
