@@ -45,7 +45,7 @@ public class MetamorphReader extends BaseTiffReader {
   // -- Constants --
 
   public static final String[] ND_SUFFIX = {"nd"};
-  public static final String[] STK_SUFFIX = {"stk"};
+  public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
   // IFD tag numbers of important fields
   private static final int METAMORPH_ID = 33628;
@@ -156,8 +156,6 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, ND_SUFFIX)) {
-      super.initFile(id);
-
       // find an associated STK file
       String stkFile = id.substring(0, id.lastIndexOf("."));
       if (stkFile.indexOf(File.separator) != -1) {
