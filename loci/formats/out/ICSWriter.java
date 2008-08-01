@@ -44,7 +44,6 @@ public class ICSWriter extends FormatWriter {
   // -- Fields --
 
   private RandomAccessFile out;
-  private boolean initialized = false;
 
   // -- Constructor --
 

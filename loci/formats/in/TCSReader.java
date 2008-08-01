@@ -299,12 +299,6 @@ public class TCSReader extends FormatReader {
       MetadataTools.populatePixels(store, this);
 
       for (int i=0; i<x.size(); i++) {
-        // CTR CHECK
-//        for (int cc=0; cc<core.sizeC[i]; cc++) {
-//          store.setLogicalChannel(cc, null, null, null, null, null, null, null,
-//            null, null, null, null, null, null, null, null,
-//            null, null, null, null, null, null, null, null, new Integer(i));
-//        }
         store.setDimensionsPhysicalSizeX((Float) xcal.get(i), i, 0);
         store.setDimensionsPhysicalSizeY((Float) ycal.get(i), i, 0);
         store.setDimensionsPhysicalSizeZ((Float) zcal.get(i), i, 0);

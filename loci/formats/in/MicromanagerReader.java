@@ -275,12 +275,6 @@ public class MicromanagerReader extends FormatReader {
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
     MetadataTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      // CTR CHECK
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-    }
   }
 
 }

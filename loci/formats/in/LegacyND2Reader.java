@@ -183,14 +183,6 @@ public class LegacyND2Reader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeX.length; i++) {
-//      for (int j=0; j<core.sizeC[i]; j++) {
-//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, new Integer(i));
-//      }
-//    }
   }
 
   // -- Native methods --

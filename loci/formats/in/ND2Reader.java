@@ -672,12 +672,6 @@ public class ND2Reader extends FormatReader {
       store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
       store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
-      // CTR CHECK
-//      for (int j=0; j<core.sizeC[0]; j++) {
-//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, ii);
-//      }
     }
 
     /*

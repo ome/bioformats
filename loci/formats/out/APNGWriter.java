@@ -47,7 +47,6 @@ public class APNGWriter extends FormatWriter {
   // -- Fields --
 
   private RandomAccessFile out;
-  private boolean initialized;
   private int numFrames = 0;
   private long numFramesPointer = 0;
   private int nextSequenceNumber;

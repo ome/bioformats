@@ -578,13 +578,6 @@ public class DicomReader extends FormatReader {
     // CTR CHECK
 //    store.setInstrumentManufacturer((String) getMeta("Manufacturer"), 0);
 //    store.setInstrumentModel((String) getMeta("Manufacturer's Model Name"), 0);
-
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//       null, null, null, null, null, null, null, null, null, null, null, null,
-//       null, null, null, null);
-//    }
   }
 
   // -- Helper methods --

@@ -255,14 +255,14 @@ public class ImarisHDFReader extends FormatReader {
       Arrays.fill(core.sizeT, t);
 
       for (int i=1; i<seriesCount; i++) {
-        String group =
+        String groupPath =
           "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
         core.sizeX[i] =
-          Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeX"));
+          Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeX"));
         core.sizeY[i] =
-          Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeY"));
+          Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeY"));
         core.sizeZ[i] =
-          Integer.parseInt(netcdf.getAttributeValue(group + "/ImageSizeZ"));
+          Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeZ"));
         core.imageCount[i] = core.sizeZ[i] * getSizeC() * getSizeT();
       }
     }
