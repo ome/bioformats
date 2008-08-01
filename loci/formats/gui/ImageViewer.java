@@ -102,6 +102,39 @@ public class ImageViewer extends JFrame implements ActionListener,
   public ImageViewer() {
     super(TITLE);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+    // image I/O engine
+    myReader = fileReader = new ChannelMerger(new FileStitcher());
+    myWriter = fileWriter = new ImageWriter();
+
+    // NB: avoid dependencies on optional loci.ome.io package
+    ReflectedUniverse r = new ReflectedUniverse();
+
+    // OME server I/O engine
+    try {
+      r.exec("import loci.ome.io.OMEReader");
+      omeReader = (IFormatReader) r.exec("new OMEReader()");
+    }
+    catch (ReflectException exc) { LogTools.trace(exc); }
+    try {
+      r.exec("import loci.ome.io.OMEWriter");
+      omeWriter = (IFormatWriter) r.exec("new OMEWriter()");
+    }
+    catch (ReflectException exc) { LogTools.trace(exc); }
+
+    // OMERO server I/O engine
+    try {
+      r.exec("import loci.ome.io.OMEROReader");
+      omeroReader = (IFormatReader) r.exec("new OMEROReader()");
+    }
+    catch (ReflectException exc) { LogTools.trace(exc); }
+    try {
+      r.exec("import loci.ome.io.OMEROWriter");
+      omeroWriter = (IFormatWriter) r.exec("new OMEROWriter()");
+    }
+    catch (ReflectException exc) { LogTools.trace(exc); }
+
+    // content pane
     pane = new JPanel();
     pane.setLayout(new BorderLayout());
     setContentPane(pane);
@@ -220,13 +253,13 @@ public class ImageViewer extends JFrame implements ActionListener,
     omeDownload.setMnemonic('d');
     omeDownload.setActionCommand("download");
     omeDownload.addActionListener(this);
-    omeDownload.setEnabled(false);
+    omeDownload.setEnabled(omeroReader != null);
     ome.add(omeDownload);
     JMenuItem omeUpload = new JMenuItem("Upload to OMERO...");
     omeUpload.setMnemonic('u');
     omeUpload.setActionCommand("upload");
     omeUpload.addActionListener(this);
-    omeUpload.setEnabled(false);
+    omeUpload.setEnabled(omeroWriter != null);
     ome.add(omeUpload);
 
     JMenu options = new JMenu("Options");
@@ -252,31 +285,6 @@ public class ImageViewer extends JFrame implements ActionListener,
     zSlider.addKeyListener(this);
     tSlider.addKeyListener(this);
     cSlider.addKeyListener(this);
-
-    // image I/O engine
-    myReader = fileReader = new ChannelMerger(new FileStitcher());
-    myWriter = fileWriter = new ImageWriter();
-
-    // NB: avoid dependencies on optional loci.ome.io package
-    ReflectedUniverse r = new ReflectedUniverse();
-
-    // OME server I/O engine
-    try {
-      r.exec("import loci.ome.io.OMEReader");
-      r.exec("import loci.ome.io.OMEWriter");
-      omeReader = (IFormatReader) r.exec("new OMEReader()");
-      omeWriter = (IFormatWriter) r.exec("new OMEWriter()");
-    }
-    catch (ReflectException exc) { LogTools.trace(exc); }
-
-    // OMERO server I/O engine
-    try {
-      r.exec("import loci.ome.io.OMEROReader");
-      r.exec("import loci.ome.io.OMEROWriter");
-      omeroReader = (IFormatReader) r.exec("new OMEROReader()");
-      omeroWriter = (IFormatWriter) r.exec("new OMEROWriter()");
-    }
-    catch (ReflectException exc) { LogTools.trace(exc); }
   }
 
   /** Opens the given data source using the current format reader. */
@@ -495,7 +503,7 @@ public class ImageViewer extends JFrame implements ActionListener,
       String id = JOptionPane.showInputDialog(this,
         "Enter OMERO connection string:",
         "localhost?port=1099&user=omero&password=omero");
-      open(id, omeroReader);
+      save(id, omeroWriter);
     }
     else if ("fps".equals(cmd)) {
       // HACK - JOptionPane prevents shutdown on dispose
