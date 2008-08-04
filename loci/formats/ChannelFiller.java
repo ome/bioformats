@@ -116,10 +116,10 @@ public class ChannelFiller extends ReaderWrapper {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (reader.isIndexed() && !reader.isFalseColor()) {
+    if (reader.isIndexed() && reader.isFalseColor()) {
+      byte[] pix = reader.openBytes(no, x, y, w, h);
       if (getPixelType() == FormatTools.UINT8) {
-        byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(),
-          reader.openBytes(no, x, y, w, h));
+        byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(), pix);
         if (isInterleaved()) {
           int pt = 0;
           for (int i=0; i<b[0].length; i++) {
@@ -137,7 +137,7 @@ public class ChannelFiller extends ReaderWrapper {
       }
       else {
         short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
-          reader.openBytes(no, x, y, w, h), isLittleEndian());
+          pix, isLittleEndian());
 
         if (isInterleaved()) {
           int pt = 0;
