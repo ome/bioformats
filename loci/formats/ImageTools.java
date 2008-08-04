@@ -688,6 +688,7 @@ public final class ImageTools {
    */
   public static byte[][] getPixelBytes(BufferedImage img, boolean little) {
     Object pixels = getPixels(img);
+    int imageType = img.getType();
 
     if (pixels instanceof byte[][]) {
       return (byte[][]) pixels;
@@ -711,22 +712,42 @@ public final class ImageTools {
       return b;
     }
     else if (pixels instanceof int[][]) {
+      byte[][] b = null;
       int[][] in = (int[][]) pixels;
-      byte[][] b = new byte[in.length][in[0].length * 4];
-      for (int i=0; i<b.length; i++) {
-        for (int j=0; j<in[0].length; j++) {
-          int v = in[i][j];
-          if (little) {
-            b[i][j*4] = (byte) (v & 0xff);
-            b[i][j*4+1] = (byte) ((v >> 8) & 0xff);
-            b[i][j*4+2] = (byte) ((v >> 16) & 0xff);
-            b[i][j*4+3] = (byte) ((v >> 24) & 0xff);
+
+      if (imageType == BufferedImage.TYPE_INT_RGB ||
+        imageType == BufferedImage.TYPE_INT_BGR ||
+        imageType == BufferedImage.TYPE_INT_ARGB)
+      {
+        b = new byte[in.length][in[0].length];
+        for (int c=0; c<in.length; c++) {
+          for (int i=0; i<in[0].length; i++) {
+            if (imageType != BufferedImage.TYPE_INT_BGR) {
+              b[c][i] = (byte) (in[c][i] & 0xff);
+            }
+            else {
+              b[in.length - c - 1][i] = (byte) (in[c][i] & 0xff);
+            }
           }
-          else {
-            b[i][j*4] = (byte) ((v >> 24) & 0xff);
-            b[i][j*4+1] = (byte) ((v >> 16) & 0xff);
-            b[i][j*4+2] = (byte) ((v >> 8) & 0xff);
-            b[i][j*4+3] = (byte) (v & 0xff);
+        }
+      }
+      else {
+        b = new byte[in.length][in[0].length * 4];
+        for (int i=0; i<b.length; i++) {
+          for (int j=0; j<in[0].length; j++) {
+            int v = in[i][j];
+            if (little) {
+              b[i][j*4] = (byte) (v & 0xff); b[i][j*4+1] =
+                (byte) ((v >> 8) & 0xff);
+              b[i][j*4+2] = (byte) ((v >> 16) & 0xff);
+              b[i][j*4+3] = (byte) ((v >> 24) & 0xff);
+            }
+            else {
+              b[i][j*4] = (byte) ((v >> 24) & 0xff);
+              b[i][j*4+1] = (byte) ((v >> 16) & 0xff);
+              b[i][j*4+2] = (byte) ((v >> 8) & 0xff);
+              b[i][j*4+3] = (byte) (v & 0xff);
+            }
           }
         }
       }
@@ -776,6 +797,7 @@ public final class ImageTools {
    */
   public static int getPixelType(BufferedImage image) {
     int type = image.getRaster().getDataBuffer().getDataType();
+    int imageType = image.getType();
     switch (type) {
       case DataBuffer.TYPE_BYTE:
         return FormatTools.UINT8;
@@ -784,10 +806,21 @@ public final class ImageTools {
       case DataBuffer.TYPE_FLOAT:
         return FormatTools.FLOAT;
       case DataBuffer.TYPE_INT:
+        if (imageType == BufferedImage.TYPE_INT_RGB ||
+          imageType == BufferedImage.TYPE_INT_BGR ||
+          imageType == BufferedImage.TYPE_INT_ARGB)
+        {
+          return FormatTools.UINT8;
+        }
         return FormatTools.INT32;
       case DataBuffer.TYPE_SHORT:
         return FormatTools.INT16;
       case DataBuffer.TYPE_USHORT:
+        if (imageType == BufferedImage.TYPE_USHORT_555_RGB ||
+          imageType == BufferedImage.TYPE_USHORT_565_RGB)
+        {
+          return FormatTools.UINT8;
+        }
         return FormatTools.UINT16;
       default:
         return -1;
