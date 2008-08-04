@@ -112,6 +112,7 @@ public class FileStitcher implements IFormatReader {
   private boolean noStitch;
 
   private MetadataStore store;
+  private String[] originalOrder;
 
   // -- Constructors --
 
@@ -1062,6 +1063,8 @@ public class FileStitcher implements IFormatReader {
       computeAxisLengths();
     }
     setSeries(oldSeries);
+    originalOrder = new String[seriesCount];
+    System.arraycopy(core.currentOrder, 0, originalOrder, 0, seriesCount);
   }
 
   // -- Helper methods --
@@ -1181,6 +1184,29 @@ public class FileStitcher implements IFormatReader {
     int[] posZ = FormatTools.rasterToPosition(lenZ[sno], zct[0]);
     int[] posC = FormatTools.rasterToPosition(lenC[sno], zct[1]);
     int[] posT = FormatTools.rasterToPosition(lenT[sno], zct[2]);
+
+    int[] tmpZ = new int[posZ.length];
+    System.arraycopy(posZ, 0, tmpZ, 0, tmpZ.length);
+    int[] tmpC = new int[posC.length];
+    System.arraycopy(posC, 0, tmpC, 0, tmpC.length);
+    int[] tmpT = new int[posT.length];
+    System.arraycopy(posT, 0, tmpT, 0, tmpT.length);
+
+    for (int i=0; i<3; i++) {
+      char originalAxis = originalOrder[sno].charAt(i + 2);
+      char newAxis = getDimensionOrder().charAt(i + 2);
+
+      if (newAxis != originalAxis) {
+        int src = -1;
+        if (originalAxis == 'Z') src = tmpZ[tmpZ.length - 1];
+        else if (originalAxis == 'C') src = tmpC[tmpC.length - 1];
+        else if (originalAxis == 'T') src = tmpT[tmpT.length - 1];
+
+        if (newAxis == 'Z') posZ[posZ.length - 1] = src;
+        else if (newAxis == 'C') posC[posC.length - 1] = src;
+        else if (newAxis == 'T') posT[posT.length - 1] = src;
+      }
+    }
 
     // convert Z, C and T position lists into file index and image index
     int[] pos = new int[axes.length];
