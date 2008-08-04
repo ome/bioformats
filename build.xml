@@ -23,6 +23,7 @@ Bio-Formats
                    ome-java.jar (reflected, except in loci/formats/ome)
                    poi-loci.jar (reflected)
                    slf4j-jdk14.jar (reflected)
+                   jmagick.jar (reflected)
     Targets:       style-formats
                    compile-formats
                    jar-formats
