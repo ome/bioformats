@@ -82,6 +82,7 @@ public class LeicaReader extends FormatReader {
   private String leiFilename;
 
   private Vector seriesNames;
+  private int lastPlane = 0;
 
   // -- Constructor --
 
@@ -126,14 +127,14 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    tiff.setId((String) files[series].get(0));
+    tiff.setId((String) files[series].get(lastPlane));
     return tiff.get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    tiff.setId((String) files[series].get(0));
+    tiff.setId((String) files[series].get(lastPlane));
     return tiff.get16BitLookupTable();
   }
 
@@ -150,6 +151,7 @@ public class LeicaReader extends FormatReader {
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
+    lastPlane = no;
     tiff.setId((String) files[series].get(no));
     return tiff.openBytes(0, buf, x, y, w, h);
   }
@@ -180,6 +182,7 @@ public class LeicaReader extends FormatReader {
       tiff = null;
       seriesNames = null;
       numSeries = 0;
+      lastPlane = 0;
     }
   }
 
