@@ -25,6 +25,8 @@ package loci.formats.codec;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import loci.formats.FormatException;
@@ -55,23 +57,17 @@ public class ZlibCodec extends BaseCodec implements Codec {
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
   {
-    try {
-      Deflater deflater = new Deflater();
-      deflater.setInput(data);
-      DeflaterOutputStream out =
-        new DeflaterOutputStream(new PipedOutputStream(), deflater);
-      byte[] buf = new byte[8192]; 
-     ByteVector bytes = new ByteVector();
-      while (true) {
-        int r = out.read(buf, 0, buf.length);
-        if (r == -1) break; // eof
-        bytes.add(buf, 0, r);
-      }
-      return bytes.toByteArray();
+    Deflater deflater = new Deflater();
+    deflater.setInput(data);
+    deflater.finish();
+    byte[] buf = new byte[8192];
+    ByteVector bytes = new ByteVector();
+    while (true) {
+      int r = deflater.deflate(buf, 0, buf.length);
+      if (r == -1) break; // eof
+      bytes.add(buf, 0, r);
     }
-    catch (IOException e) {
-      throw new FormatException("Error compressing ZLIB image", e);
-    } 
+    return bytes.toByteArray();
   }
 
   /** Decodes an ZLIB compressed image strip.

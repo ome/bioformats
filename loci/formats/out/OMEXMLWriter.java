@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.codec.Base64Codec;
+import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataRetrieve;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -90,7 +91,7 @@ public class OMEXMLWriter extends FormatWriter {
       byte[] encodedPix = new Base64Codec().compress(pix[i], 0, 0, null, null);
 
       if (compression.equals("zlib")) {
-        encodedPix = new ZlibCodec().compress(endcodedPix, 0, 0, null, null);
+        encodedPix = new ZlibCodec().compress(encodedPix, 0, 0, null, null);
       }
 
       StringBuffer plane = new StringBuffer("\n<Bin:BinData Length=\"");
