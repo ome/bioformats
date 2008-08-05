@@ -23,6 +23,7 @@
 # available to Bio-Formats, and the order in which they should be used.
 # Please do not edit unless you know what you are doing.
 
+loci.formats.out.OMEXMLWriter	# ome
 loci.formats.out.OMETiffWriter # ome.tif, ome.tiff
 loci.formats.out.TiffWriter # tif, tiff
 loci.formats.out.JPEGWriter # jpg, jpeg

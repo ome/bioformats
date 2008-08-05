@@ -55,8 +55,23 @@ public class ZlibCodec extends BaseCodec implements Codec {
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
   {
-    // TODO: Add compression support.
-    throw new FormatException("ZLIB Compression not currently supported");
+    try {
+      Deflater deflater = new Deflater();
+      deflater.setInput(data);
+      DeflaterOutputStream out =
+        new DeflaterOutputStream(new PipedOutputStream(), deflater);
+      byte[] buf = new byte[8192]; 
+     ByteVector bytes = new ByteVector();
+      while (true) {
+        int r = out.read(buf, 0, buf.length);
+        if (r == -1) break; // eof
+        bytes.add(buf, 0, r);
+      }
+      return bytes.toByteArray();
+    }
+    catch (IOException e) {
+      throw new FormatException("Error compressing ZLIB image", e);
+    } 
   }
 
   /** Decodes an ZLIB compressed image strip.
