@@ -410,43 +410,40 @@ public class GACurveFitter extends CurveFitter {
           minData = curveData[i];
         }
       }
-      //System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
+      System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
       // If we have valid min and max data, perform the "estimate"
-      // TODO: THERE IS A MATH ERROR FIX IT.
       double expguess = -1;
+      
+      // ae^-b(t0)+c = x
+      // ae^-b(t1)+c = y.
+      // if t0 = 0, and c is minData, then a = x - minData. (e^0 = 1)
+      // Then, (x-min)e^-b(t1) = y
+      // e^-b(t1) = y / (x-min)
+      // ln e^-b(t1) = ln (y / (x - min))
+      // -b(t1) = ln (y / (x - min))
+      // -b = (ln (y / (x - min)) / t1)
+      // b = -(ln (y / (x - min)) / t1)
+      // and c = minData
+      
       if(maxData != -1 && minData != -1) {
-        //double time = curveData[i][0] - curveData[i-1][0];
-        double time = (double) minIndex - maxIndex;
-        double factor = (curveData[maxIndex] - minData) / 0.001d;
-        expguess = time * -Math.log(factor);
+        double a = maxData - minData;
+        // min value for many trouble cases is 0, which is problematic.
+        // As an estimate, if minData is 0, we'll scan back to see how far it
+        // until data, and use that distance as an estimate.
+        double y = 0;
+        int newmin = minIndex;
+        while(curveData[newmin] == minData) newmin--;
+        y = 1.0 / (minIndex - newmin);
+        expguess = -(Math.log(y / (maxData - minData)) / (minIndex - maxIndex));
       }
-      /*
-      double num = 0.0;
-      double den = 0.0;
-      // Hacky... we would like to do this over the entire curve length,
-      // but the actual data is far too noisy to do this. Instead, we'll just
-      // do it for the first 5, which have the most data.
-      //for (int i = 0; i < curveData.length; i++)
-      for(int i = maxIndex; i < 5 + maxIndex && i < curveData.length; i++) {
-        if (curveData[i] > minData) {
-          // calculate e^-bt based on our exponent estimate
-          double value = Math.pow(Math.E, -(i - maxIndex) * expguess);
-          // estimate a
-          double guessA = (curveData[i] - minData) / value;
-          num += guessA * (curveData[i] - minData);
-          den += curveData[i] - minData;
-          //System.out.println("Data: " + curveData[i] + " Value: " + value + " guessA: " + guessA);
-        }
-      }
-      double mult = num/den;
-      */
       if(expguess < 0) {
         // If the guess is still somehow negative (example, ascending curve), punt;
         expguess = 1;
       }
-      //System.out.println("Estimating: " + expguess);
+      System.out.println("Estimating: " + expguess);
+      System.out.println("maxData: " + maxData + "  firstindex: " + firstindex + "  data: " + curveData[firstindex]);
       if(components == 1) {
-        curveEstimate[0][0] = maxData;
+        curveEstimate[0][0] = maxData - minData;
         curveEstimate[0][1] = expguess;
         curveEstimate[0][2] = minData;
       } else {
