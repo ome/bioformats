@@ -60,7 +60,7 @@ public class OMEXMLWriter extends FormatWriter {
   public void close() throws IOException {
     if (out != null) out.close();
     out = null;
-    xmlFragments = null;   
+    xmlFragments = null;
   }
 
   // -- IFormatWriter API methods --
@@ -72,9 +72,9 @@ public class OMEXMLWriter extends FormatWriter {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     if (!initialized) {
       out = new RandomAccessFile(currentId, "rw");
-    
+
       String xml = MetadataTools.getOMEXML(retrieve);
-   
+
       xmlFragments = new Vector();
       currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
       DataTools.parseXML(xml, new OMEHandler());
@@ -105,9 +105,8 @@ public class OMEXMLWriter extends FormatWriter {
       plane.append(new String(encodedPix));
       plane.append("</Bin:BinData>");
       out.writeBytes(plane.toString());
-      nWritten++;
     }
- 
+
     if (lastInSeries) {
       out.writeBytes((String) xmlFragments.get(series + 1));
     }
@@ -139,11 +138,11 @@ public class OMEXMLWriter extends FormatWriter {
       if (qName.equals("Pixels")) {
         xmlFragments.add(currentFragment);
         currentFragment = "";
-      } 
+      }
     }
 
     public void endElement(String uri, String localName, String qName) {
-      currentFragment += "</" + qName + ">";   
+      currentFragment += "</" + qName + ">";
     }
 
   }
