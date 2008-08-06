@@ -106,10 +106,10 @@ public class BFVirtualStack extends VirtualStack {
       exc.printStackTrace();
     }
 
-/*
     // cache missed
     try {
-      return Util.openProcessor(reader, n);
+      // CTR TODO - fix this
+      return Util.openProcessors(reader, n)[0];
 //      int index = FormatTools.getReorderedIndex(reader, stackOrder, n - 1);
 //      if (merge <= 1) return Util.openProcessor(reader, index);
 //      else {
@@ -128,7 +128,6 @@ public class BFVirtualStack extends VirtualStack {
     catch (IOException exc) {
       exc.printStackTrace();
     }
-*/
     return null;
   }
 

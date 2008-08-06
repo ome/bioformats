@@ -719,11 +719,13 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getIndex(int, int, int) */
   public int getIndex(int z, int c, int t) {
+    FormatTools.assertId(currentId, true, 2);
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
   public int[] getZCTCoords(int index) {
+    FormatTools.assertId(currentId, true, 2);
     return FormatTools.getZCTCoords(this, index);
   }
 

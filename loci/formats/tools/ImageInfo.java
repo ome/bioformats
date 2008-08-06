@@ -73,7 +73,7 @@ public final class ImageInfo {
     int end = Integer.MAX_VALUE;
     int series = 0;
     int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
-    String swapOrder = null;
+    String swapOrder = null, shuffleOrder = null;
     String map = null;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
@@ -121,6 +121,9 @@ public final class ImageInfo {
           else if (args[i].equals("-swap")) {
             swapOrder = args[++i].toUpperCase();
           }
+          else if (args[i].equals("-shuffle")) {
+            shuffleOrder = args[++i].toUpperCase();
+          }
           else if (args[i].equals("-map")) map = args[++i];
           else LogTools.println("Ignoring unknown command flag: " + args[i]);
         }
@@ -141,7 +144,8 @@ public final class ImageInfo {
         "  showinf file [-nopix] [-nometa] [-thumbs] [-minmax] ",
         "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
         "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
-        "    [-swap order] [-map id] [-preload] [-version v] [-crop x,y,w,h]",
+        "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
+        "    [-version v] [-crop x,y,w,h]",
         "",
         "      file: the image file to read",
         "    -nopix: read metadata only, not pixels",
@@ -158,7 +162,8 @@ public final class ImageInfo {
         "    -debug: turn on debugging output",
         "    -range: specify range of planes to read (inclusive)",
         "   -series: specify which image series to read",
-        "     -swap: override the default dimension order",
+        "     -swap: override the default input dimension order",
+        "  -shuffle: override the default output dimension order",
         "      -map: specify file on disk to which name should be mapped",
         "  -preload: pre-read entire file into a buffer; significantly",
         "            reduces the time required to read the images, but",
@@ -214,7 +219,9 @@ public final class ImageInfo {
     MinMaxCalculator minMaxCalc = null;
     if (minmax) reader = minMaxCalc = new MinMaxCalculator(reader);
     DimensionSwapper dimSwapper = null;
-    if (swapOrder != null) reader = dimSwapper = new DimensionSwapper(reader);
+    if (swapOrder != null || shuffleOrder != null) {
+      reader = dimSwapper = new DimensionSwapper(reader);
+    }
 
     StatusEchoer status = new StatusEchoer();
     reader.addStatusListener(status);
@@ -229,6 +236,7 @@ public final class ImageInfo {
     float sec1 = (e1 - s1) / 1000f;
     LogTools.println("Initialization took " + sec1 + "s");
     if (swapOrder != null) dimSwapper.swapDimensions(swapOrder);
+    if (shuffleOrder != null) dimSwapper.setOutputOrder(shuffleOrder);
 
     if (!normalize && reader.getPixelType() == FormatTools.FLOAT) {
       LogTools.println("Warning: Java does not support " +
