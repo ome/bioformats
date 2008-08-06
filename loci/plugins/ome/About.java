@@ -24,7 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.ome;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import ij.plugin.PlugIn;
+import loci.ome.io.OMEReader;
 
 /**
  * Displays a small information dialog about the OME Plugins package.
@@ -33,9 +36,15 @@ import javax.swing.JOptionPane;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/ome/About.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/ome/About.java">SVN</a></dd></dl>
  */
-public final class About {
+public final class About implements PlugIn {
 
-  private About() { }
+  // -- Runnable API methods --
+
+  public void run(String arg) {
+    about();
+  }
+
+  // -- Static utility methods --
 
   public static void about() {
     String msg = "<html>" +
@@ -46,9 +55,13 @@ public final class About {
       "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
       "<br>Authors: Melissa Linkert, Philip Huettl" +
       "<br><i>http://www.loci.wisc.edu/ome/ome-plugins.html</i>";
-    JOptionPane.showMessageDialog(null,
-      msg, "OME Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
+    ImageIcon omeLogo = new ImageIcon(
+      OMEReader.class.getResource("ome-logo.png"));
+    JOptionPane.showMessageDialog(null, msg, "OME Plugins for ImageJ",
+      JOptionPane.INFORMATION_MESSAGE, omeLogo);
   }
+
+  // -- Main method --
 
   public static void main(String[] args) {
     about();

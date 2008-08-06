@@ -595,6 +595,7 @@ Apache XML-RPC
 
   <target name="copy-source" depends="init,
     copy-resources-formats, copy-resources-loci-plugins,
+    copy-resources-ome-io,
     copy-resources-visbio, copy-resources-checks,
     copy-resources-ome-notes, copy-resources-ome-editor">
     <!-- copy binary files without filtering -->
@@ -686,6 +687,7 @@ Apache XML-RPC
       includes="${loci-plugins.extra-files}">
       <manifest>
         <attribute name="Main-Class" value="${loci-plugins.main}"/>
+        <attribute name="Class-Path" value="${loci-plugins.classpath}"/>
       </manifest>
     </jar>
     <jar jarfile="${jar.dir}/${loci-plugins.jar}" basedir="${classes.dir}"
@@ -694,6 +696,12 @@ Apache XML-RPC
   </target>
 
   <!-- OME I/O -->
+
+  <target name="copy-resources-ome-io">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${ome-io.resources}"/>
+    </copy>
+  </target>
 
   <target name="style-ome-io" depends="copy-source"
     description="check source code style for OME I/O">
@@ -716,7 +724,7 @@ Apache XML-RPC
       includes="${ome-io.files}">
       <manifest>
         <attribute name="Main-Class" value="${ome-io.main}"/>
-        <!--<attribute name="Class-Path" value="${ome-io.classpath}"/>-->
+        <attribute name="Class-Path" value="${ome-io.classpath}"/>
       </manifest>
     </jar>
   </target>
@@ -753,6 +761,7 @@ Apache XML-RPC
       includes="${ome-plugins.extra-files}">
       <manifest>
         <attribute name="Main-Class" value="${ome-plugins.main}"/>
+        <attribute name="Class-Path" value="${ome-plugins.classpath}"/>
       </manifest>
     </jar>
     <jar jarfile="${jar.dir}/${ome-plugins.jar}" basedir="${classes.dir}"

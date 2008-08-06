@@ -25,7 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import ij.plugin.PlugIn;
+import loci.formats.IFormatHandler;
 
 /**
  * Displays a small information dialog about the LOCI Plugins package.
@@ -34,9 +37,15 @@ import javax.swing.JOptionPane;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/About.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/About.java">SVN</a></dd></dl>
  */
-public final class About {
+public final class About implements PlugIn {
 
-  private About() { }
+  // -- PlugIn API methods --
+
+  public void run(String arg) {
+    about();
+  }
+
+  // -- Static utility methods --
 
   public static void about() {
     String msg = "<html>" +
@@ -54,9 +63,13 @@ public final class About {
       "<br>" +
       "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
       "<br>Author: Melissa Linkert";
-    JOptionPane.showMessageDialog(null,
-      msg, "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
+    ImageIcon bioFormatsLogo = new ImageIcon(
+      IFormatHandler.class.getResource("bio-formats-logo.png"));
+    JOptionPane.showMessageDialog(null, msg, "LOCI Plugins for ImageJ",
+      JOptionPane.INFORMATION_MESSAGE, bioFormatsLogo);
   }
+
+  // -- Main method --
 
   public static void main(String[] args) {
     about();
