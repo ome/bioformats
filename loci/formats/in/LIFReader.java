@@ -195,6 +195,7 @@ public class LIFReader extends FormatReader {
     Vector xcal = handler.getXCal();
     Vector ycal = handler.getYCal();
     Vector zcal = handler.getZCal();
+    Vector bits = handler.getBits();
 
     numDatasets = widths.size();
 
@@ -229,12 +230,15 @@ public class LIFReader extends FormatReader {
         extraDimensions[i] = 1;
       }
 
+      int nBits = ((Integer) bits.get(i)).intValue();
+
       core.metadataComplete[i] = true;
       core.littleEndian[i] = true;
-      core.rgb[i] = false;
-      core.interleaved[i] = false;
+      core.rgb[i] =
+        nBits == (bitsPerPixel[i] * core.sizeC[i]) && core.sizeC[i] > 1;
+      core.interleaved[i] = core.rgb[i];
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
-      core.imageCount[i] *= core.sizeC[i];
+      if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
       core.indexed[i] = false;
       core.falseColor[i] = false;
 

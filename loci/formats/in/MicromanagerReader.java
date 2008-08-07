@@ -217,7 +217,8 @@ public class MicromanagerReader extends FormatReader {
         else {
           value = token.substring(token.indexOf("[") + 1, token.indexOf("]"));
         }
-        value = value.trim().substring(0, value.length() - 1);
+        value = value.trim();
+        value = value.substring(0, value.length() - 1);
         addMeta(key, value);
         if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
       }

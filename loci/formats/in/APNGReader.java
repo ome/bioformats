@@ -252,7 +252,7 @@ public class APNGReader extends FormatReader {
     core.sizeT[0] = core.imageCount[0];
 
     core.currentOrder[0] = "XYCTZ";
-    core.interleaved[0] = true;
+    core.interleaved[0] = false;
 
     BufferedImage img =
       ImageIO.read(new DataInputStream(new RandomAccessStream(currentId)));

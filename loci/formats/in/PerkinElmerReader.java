@@ -197,7 +197,7 @@ public class PerkinElmerReader extends FormatReader {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       String[] ls = parent.list();
       for (int i=0; i<ls.length; i++) {
-        if (checkSuffix(ls[i], HTM_SUFFIX)) {
+        if (checkSuffix(ls[i], HTM_SUFFIX) && !ls[i].startsWith(".")) {
           id = new Location(parent.getAbsolutePath(), ls[i]).getAbsolutePath();
           break;
         }
@@ -219,6 +219,20 @@ public class PerkinElmerReader extends FormatReader {
       ls = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
       workingDirPath = "";
     }
+
+    // remove files that start with '.'
+
+    Vector v = new Vector();
+    for (int i=0; i<ls.length; i++) {
+      String file = ls[i];
+      if (file.indexOf(File.separator) != -1) {
+        file = file.substring(file.lastIndexOf(File.separator) + 1);
+      }
+      if (!file.startsWith(".")) {
+        v.add(ls[i]);
+      }
+    }
+    ls = (String[]) v.toArray(new String[0]);
 
     status("Searching for all metadata companion files");
 

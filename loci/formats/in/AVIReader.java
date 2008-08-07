@@ -149,7 +149,10 @@ public class AVIReader extends FormatReader {
     in.skipBytes((getSizeX() + pad) * bytes * (getSizeY() - h - y));
 
     if (getSizeX() == w && pad == 0) {
-      in.read(buf);
+      for (int row=0; row<getSizeY(); row++) {
+        in.read(buf, (getSizeY() - row - 1) * scanline, scanline);
+      }
+
       // swap channels
       if (bmpBitsPerPixel == 24) {
         for (int i=0; i<buf.length / getRGBChannelCount(); i++) {

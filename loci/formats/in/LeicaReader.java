@@ -592,6 +592,7 @@ public class LeicaReader extends FormatReader {
         for (int j=0; j<length; j++) {
           int dimId = stream.readInt();
           String dimType = (String) dimensionNames.get(new Integer(dimId));
+          if (dimType == null) dimType = "";
 
           int size = stream.readInt();
 

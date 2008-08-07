@@ -143,8 +143,10 @@ public class FV1000Reader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
 
     int[] coords = getZCTCoords(no);
-    coords[1] = channelIndexes[coords[1]];
-    lastChannel = coords[1];
+    if (coords[1] < channelIndexes.length) {
+      coords[1] = channelIndexes[coords[1]];
+      lastChannel = coords[1];
+    }
 
     int planeNum = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
       getEffectiveSizeC(), getSizeT(), getImageCount(), coords[0],
@@ -160,6 +162,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#openThumbImage(int) */
+  /*
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
@@ -174,6 +177,7 @@ public class FV1000Reader extends FormatReader {
     thumbReader.setId("thumbnail.bmp");
     return thumbReader.openImage(0);
   }
+  */
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {

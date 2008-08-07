@@ -767,13 +767,13 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getMetadataStore() */
   public MetadataStore getMetadataStore() {
     FormatTools.assertId(currentId, true, 2);
-    return store;
+    return noStitch ? reader.getMetadataStore() : store;
   }
 
   /* @see IFormatReader#getMetadataStoreRoot() */
   public Object getMetadataStoreRoot() {
     FormatTools.assertId(currentId, true, 2);
-    return store.getRoot();
+    return noStitch ? reader.getMetadataStoreRoot() : store.getRoot();
   }
 
   /* @see IFormatReader#getUnderlyingReaders() */
