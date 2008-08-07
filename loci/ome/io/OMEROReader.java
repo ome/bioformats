@@ -32,7 +32,7 @@ import ome.api.IPixels;
 import ome.api.IQuery;
 import ome.api.RawPixelsStore;
 import ome.model.IObject;
-import ome.model.core.Pixels;
+//import ome.model.core.Pixels;
 import ome.parameters.Parameters;
 import ome.system.EventContext;
 import ome.system.Login;
@@ -118,9 +118,9 @@ public class OMEROReader extends FormatReader {
 
     int[] zct = FormatTools.getZCTCoords(this, no);
 
-    z = new Integer(zct[0]);
-    c = new Integer(zct[1]);
-    t = new Integer(zct[2]);
+    z = zct[0];
+    c = zct[1];
+    t = zct[2];
     byte[] plane = raw.getPlane(z, c, t);
     int len = core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]);
@@ -154,18 +154,18 @@ public class OMEROReader extends FormatReader {
     Long idObj = new Long(cred.imageID);
 
     login = new Login("allison","omero");
-	server = new Server("http://localhost");
-	sf = new ServiceFactory( login);
+    server = new Server("http://localhost");
+    sf = new ServiceFactory( login);
 
-	IAdmin admin = sf.getAdminService();
+    IAdmin admin = sf.getAdminService();
     EventContext ec = admin.getEventContext();
-	idObj = ec.getCurrentUserId();
+    idObj = ec.getCurrentUserId();
 
-	params = new Parameters().addId(idObj);
+    params = new Parameters().addId(idObj);
 
     query = sf.getQueryService();
     raw = sf.createRawPixelsStore();
-    raw.setPixelsId((long)idObj);
+    raw.setPixelsId(idObj.longValue());
     String q = ( "select p from Pixels as p " +
       "left outer join fetch p.pixelsType as pt " +
       "left outer join fetch p.channels as c " +
@@ -180,8 +180,22 @@ public class OMEROReader extends FormatReader {
     params = new Parameters();
     params.addId(idObj);
 
-    Pixels results = query.findByQuery(q, params);
-    PixelsData pix = new PixelsData(results);
+    // NB - Need to reflect references to ome.model.core.Pixels,
+    // because J2SE cannot it properly.
+    //Pixels results = query.findByQuery(q, params);
+    //PixelsData pix = new PixelsData(results);
+    ReflectedUniverse r = new ReflectedUniverse();
+    PixelsData pix = null;
+    try {
+      r.exec("import ome.model.core.Pixels");
+      r.setVar("q", q);
+      r.setVar("params", params);
+      r.exec("results = query.findByQuery(q, params)");
+      pix = (PixelsData) r.exec("new PixelsData(results)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
 
     String ptype = pix.getPixelType();
     x = pix.getSizeX();
@@ -190,11 +204,11 @@ public class OMEROReader extends FormatReader {
     c = pix.getSizeC();
     t = pix.getSizeT();
 
-    core.sizeX[0] = ((Integer) x).intValue();
-    core.sizeY[0] = ((Integer) y).intValue();
-    core.sizeZ[0] = ((Integer) z).intValue();
-    core.sizeC[0] = ((Integer) c).intValue();
-    core.sizeT[0] = ((Integer) t).intValue();
+    core.sizeX[0] = x;
+    core.sizeY[0] = y;
+    core.sizeZ[0] = z;
+    core.sizeC[0] = c;
+    core.sizeT[0] = t;
     core.rgb[0] = false;
     core.littleEndian[0] = false;
     core.currentOrder[0] = "XYZCT";
@@ -216,10 +230,9 @@ public class OMEROReader extends FormatReader {
     store.setImageDescription(description, 0);
     MetadataTools.populatePixels(store, this);
 
-    store.setDimensionsPhysicalSizeX(new Float((float) px), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float((float) py), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float((float) pz), 0, 0);
-
+    store.setDimensionsPhysicalSizeX(new Float(px), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(py), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(pz), 0, 0);
   }
 
 }

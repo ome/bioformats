@@ -45,8 +45,8 @@ import ome.api.IUpdate;
 import ome.api.RawPixelsStore;
 import ome.formats.OMEROMetadataStore;
 import ome.formats.importer.OMEROWrapper;
-import ome.model.core.Pixels;
-import ome.model.meta.Experimenter;
+//import ome.model.core.Pixels;
+//import ome.model.meta.Experimenter;
 import ome.system.Login;
 import ome.system.Server;
 import ome.system.ServiceFactory;
@@ -62,383 +62,378 @@ import org.apache.commons.logging.LogFactory;
  */
 public class OMEROWriter extends FormatWriter {
 
-    // -- Constants --
+  // -- Constants --
 
-    private static final String NO_OMERO_MSG = "OMERO client libraries not " +
-      "found.  Please install omero-common.jar and omero-client.jar from " +
-      "http://www.loci.wisc.edu/ome/formats.html";
+  private static final String NO_OMERO_MSG =
+    "OMERO client libraries not found. " +
+    "Please install the OMERO-client, OMERO-common, OMERO-importer and " +
+    "OMERO-model libraries from " +
+    "https://skyking.microscopy.wisc.edu/svn/java/trunk/jar/";
 
-    // -- Static fields --
+  // -- Static fields --
 
-    private static boolean noOMERO = false;
+  private static boolean noOMERO = false;
 
-    // -- Fields --
+  // -- Fields --
 
-    private static String username;
-    private static String password;
-    private static String serverName;
-    private static String port;
+  private static String username;
+  private static String password;
+  private static String serverName;
+  private static String port;
 
-    private static String imageName;
+  private static String imageName;
 
-      /** OMERO raw pixels service */
-      private static RawPixelsStore pservice;
+  /** OMERO raw pixels service */
+  private static RawPixelsStore pservice;
 
-      /** OMERO query service */
-      private static IQuery         iQuery;
+  /** OMERO query service */
+  private static IQuery iQuery;
 
-      /** OMERO update service */
-      private static IUpdate        iUpdate;
+  /** OMERO update service */
+  private static IUpdate iUpdate;
 
-      private static Experimenter    exp;
+  //private static Experimenter exp;
 
-      private static Log  log    = (Log) LogFactory.getLog(OMEROWriter.class);
+  private static Log log = (Log) LogFactory.getLog(OMEROWriter.class);
 
-      /** OMERO service factory; all other services are retrieved from here. */
-      private static ServiceFactory sf;
-      private static OMEROMetadataStore store;
+  /** OMERO service factory; all other services are retrieved from here. */
+  private static ServiceFactory sf;
+  private static OMEROMetadataStore store;
 
-      private OMEROWrapper reader;
+  private OMEROWrapper reader;
 
-      /** Flag indicating the current session is valid. */
-      private boolean validLogin = false;
+  /** Flag indicating the current session is valid. */
+  private boolean validLogin = false;
 
-    /** Authentication credentials. */
-    private OMECredentials credentials;
+  /** Authentication credentials. */
+  private OMECredentials credentials;
 
-    /** Image server. */
-    private String omeis;
+  /** Image server. */
+  private String omeis;
 
-    private MetadataRetrieve metadata;
+  private MetadataRetrieve metadata;
 
-    // -- Constructor --
+  // -- Constructor --
 
-    /** Constructs a new OMERO writer. */
-    public OMEROWriter() { super("OMERO", "*"); }
+  /** Constructs a new OMERO writer. */
+  public OMEROWriter() { super("OMERO", "*"); }
 
-    // -- Internal OMEWriter API methods --
+  // -- Internal OMEWriter API methods --
+
+/** Fires a status update event. */
+  protected void status(String message) {
+    status(new StatusEvent(message));
+  }
 
   /** Fires a status update event. */
-    protected void status(String message) {
-      status(new StatusEvent(message));
+  protected void status(int progress, int maximum, String message) {
+    status(new StatusEvent(progress, maximum, message));
+  }
+
+  /** Fires a status update event. */
+  protected void status(StatusEvent e) {
+    StatusListener[] l = getStatusListeners();
+    for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
+  }
+
+  public void saveImage(Image image, boolean last)
+    throws FormatException, IOException
+  {
+    saveImage(image, 0, last, last);
+  }
+
+  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
+  public void saveImage(Image image, int series, boolean lastInSeries,
+    boolean last)
+    throws FormatException, IOException
+  {
+
+    byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),true);
+
+    //!metadata.getBigEndian(series).booleanValue());
+    for (int i=0; i<b.length; i++) {
+      saveBytes(b[i], series, lastInSeries && (i == b.length - 1),
+        last && (i == b.length - 1));
     }
+  }
 
-    /** Fires a status update event. */
-    protected void status(int progress, int maximum, String message) {
-      status(new StatusEvent(progress, maximum, message));
-    }
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
+     boolean last) throws FormatException, IOException
+  {
+    /*
+    if (!validLogin) {
+     // parse the ID string to get the server, user name and password
 
-    /** Fires a status update event. */
-    protected void status(StatusEvent e) {
-      StatusListener[] l = getStatusListeners();
-      for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
-    }
-
-    public void saveImage(Image image, boolean last)
-        throws FormatException, IOException
-        {
-
-          saveImage(image, 0, last, last);
+      serverName = currentId.substring(0, currentId.lastIndexOf("?"));
+      int ndx = currentId.indexOf("&");
+      if (currentId.indexOf("user") != -1) {
+        username = currentId.substring(currentId.lastIndexOf("?") + 6, ndx);
+          password = currentId.substring(ndx + 10);
         }
-
-        /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-        public void saveImage(Image image, int series, boolean lastInSeries,
-          boolean last)
-          throws FormatException, IOException
-        {
-
-          byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),true);
-
-              //!metadata.getBigEndian(series).booleanValue());
-          for (int i=0; i<b.length; i++) {
-            saveBytes(b[i], series, lastInSeries && (i == b.length - 1),
-             last && (i == b.length - 1));
-          }
-        }
-
-      public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
-         boolean last)
-         throws FormatException, IOException
-            {
-        /*
-              if (!validLogin) {
-               // parse the ID string to get the server, user name and password
-
-                serverName = currentId.substring(0, currentId.lastIndexOf("?"));
-                int ndx = currentId.indexOf("&");
-                if (currentId.indexOf("user") != -1) {
-                  username = currentId.substring(currentId.lastIndexOf("?") + 6, ndx);
-                    password = currentId.substring(ndx + 10);
-                  }
-                else {
-                  throw new FormatException("Invalid ID - must be of the form " +
-                      "<server>?user=<username>&password=<password>");
-                }
-              }
-              login();
-
-            //credentials.imageID = -1;
-            MetadataTools.convertMetadata(metadata, store);
-          ArrayList<Pixels> pixList = ((ArrayList<Pixels>) store.getRoot());
-          Pixels p = pixList.get(0);
-
-          //todo fix this, null pointer error
-          //p.getImage().setName(imageName);
-          //ArrayList<Pixels> pixId = ((ArrayList<Pixels>) store.saveToDB());
-          //store.addPixelsToDataset(arg0, arg1)
-
-              long timestampIn;
-              long timestampOut;
-              long timestampDiff;
-              long timeInSeconds;
-              long hours, minutes, seconds;
-              Date date = null;
-
-            // record initial timestamp and record total running time for the import
-              timestampIn = System.currentTimeMillis();
-              date = new Date(timestampIn);
-              SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-              String myDate = formatter.format(date);
-
-             int i = 1;
-            // int bytesPerPixel = getBytesPerPixel(reader.getPixelType());
-           //  byte[] arrayBuf = new byte[store.* sizeY * bytesPerPixel];
-            reader.setSeries(series);
-
-         List<Image> imageList = (List<Image>) store.getRoot();
-           ArrayList<ome.model.core.Pixels> pixelsList = (ArrayList<Pixels>) store.saveToDB();
-
-              for (Image image : imageList)
-              {
-                 // store.addImageToDataset(image, dataset);
-              }
-
-            close();
-      */
-
-      }
-
-    //methods done so far:
-
-    public static void login() throws FormatException
-      {
-
-          if (username == null) throw new NullPointerException("username cannot be null");
-          if (password == null) throw new NullPointerException("password cannot be null");
-          if (port == null) throw new NullPointerException("port cannot be null");
-          if (serverName == null) throw new NullPointerException("server cannot be null");
-
-           try {
-        tryLogin();
-      } catch (Exception e) {
-        // TODO Auto-generated catch block
-        //e.printStackTrace();
-      }
-                         // notifyObservers(connectionStatus);
-      }
-
-      /**
-       * @return
-       * @throws Exception
-       */
-      private static boolean tryLogin() throws Exception
-      {
-//         Attempt to log in
-        if(!isValidLogin())
-        {
-          return false;
-        }
-          try
-          {
-              Server server = new Server(serverName, Integer.parseInt(port));
-              Login login = new Login(username, password);
-              // Instantiate our service factory
-              sf = new ServiceFactory(server, login);
-              store = new OMEROMetadataStore(sf);
-
-          } catch (Throwable t)
-          {
-            System.out.println(t.toString());
-              return false;
-          }
-          System.out.println("login worked!");
-          return true;
-
-      }
-
-      //create setId method??
-        //calls trylogin() ??
-
-      public OMEROMetadataStore getMetadataStore()
-      {
-          return store;
-      }
-
-    /* @see loci.formats.IFormatHandler#close() */
-    public void close() throws IOException {
-     // TODO
-    }
-
-    public void setMetadata(MetadataRetrieve meta) {
-        metadata = meta;}
-
-    public boolean canDoStacks() { return true; }
-
-    // -- StatusReporter API methods --
-
-    /* @see loci.formats.StatusReporter#addStatusListener(StatusListener) */
-    public void addStatusListener(StatusListener l) {
-      synchronized (statusListeners) {
-        if (!statusListeners.contains(l)) statusListeners.add(l);
+      else {
+        throw new FormatException("Invalid ID - must be of the form " +
+            "<server>?user=<username>&password=<password>");
       }
     }
+    login();
 
-    /* @see loci.formats.StatusReporter#removeStatusListener(StatusListener) */
-    public void removeStatusListener(StatusListener l) {
-      synchronized (statusListeners) {
-        statusListeners.remove(l);
-      }
+    //credentials.imageID = -1;
+    MetadataTools.convertMetadata(metadata, store);
+    ArrayList<Pixels> pixList = ((ArrayList<Pixels>) store.getRoot());
+    Pixels p = pixList.get(0);
+
+    //todo fix this, null pointer error
+    //p.getImage().setName(imageName);
+    //ArrayList<Pixels> pixId = ((ArrayList<Pixels>) store.saveToDB());
+    //store.addPixelsToDataset(arg0, arg1)
+
+    long timestampIn;
+    long timestampOut;
+    long timestampDiff;
+    long timeInSeconds;
+    long hours, minutes, seconds;
+    Date date = null;
+
+    // record initial timestamp and record total running time for the import
+    timestampIn = System.currentTimeMillis();
+    date = new Date(timestampIn);
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    String myDate = formatter.format(date);
+
+    int i = 1;
+    //int bytesPerPixel = getBytesPerPixel(reader.getPixelType());
+    //byte[] arrayBuf = new byte[store.* sizeY * bytesPerPixel];
+    reader.setSeries(series);
+
+    List<Image> imageList = (List<Image>) store.getRoot();
+    ArrayList<ome.model.core.Pixels> pixelsList =
+      (ArrayList<Pixels>) store.saveToDB();
+
+    for (Image image : imageList) {
+      // store.addImageToDataset(image, dataset);
     }
 
-    /* @see loci.formats.StatusReporter#getStatusListeners() */
-    public StatusListener[] getStatusListeners() {
-      synchronized (statusListeners) {
-        StatusListener[] l = new StatusListener[statusListeners.size()];
-        statusListeners.copyInto(l);
-        return l;
-      }
+    close();
+    */
+  }
+
+  //methods done so far:
+
+  public static void login() throws FormatException {
+    if (username == null) {
+      throw new NullPointerException("username cannot be null");
+    }
+    if (password == null) {
+      throw new NullPointerException("password cannot be null");
+    }
+    if (port == null) throw new NullPointerException("port cannot be null");
+    if (serverName == null) {
+      throw new NullPointerException("server cannot be null");
     }
 
-      private static boolean isValidLogin() throws Exception
-      {
-        System.out.println(username+ password+serverName+ port);
-          try
+     try {
+      tryLogin();
+    }
+    catch (Exception e) {
+      // TODO Auto-generated catch block
+      //e.printStackTrace();
+    }
+    // notifyObservers(connectionStatus);
+  }
+
+  /**
+   * @return
+   * @throws Exception
+   */
+  private static boolean tryLogin() throws Exception {
+    // attempt to log in
+    if(!isValidLogin()) return false;
+    try {
+      Server server = new Server(serverName, Integer.parseInt(port));
+      Login login = new Login(username, password);
+      // Instantiate our service factory
+      sf = new ServiceFactory(server, login);
+      store = new OMEROMetadataStore(sf);
+    }
+    catch (Throwable t) {
+      System.out.println(t.toString());
+      return false;
+    }
+    System.out.println("login worked!");
+    return true;
+  }
+
+  //create setId method??
+  //calls trylogin() ??
+
+  public OMEROMetadataStore getMetadataStore() {
+    return store;
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+   // TODO
+  }
+
+  public void setMetadata(MetadataRetrieve meta) {
+    metadata = meta;
+  }
+
+  public boolean canDoStacks() { return true; }
+
+  // -- StatusReporter API methods --
+
+  /* @see loci.formats.StatusReporter#addStatusListener(StatusListener) */
+  public void addStatusListener(StatusListener l) {
+    synchronized (statusListeners) {
+      if (!statusListeners.contains(l)) statusListeners.add(l);
+    }
+  }
+
+  /* @see loci.formats.StatusReporter#removeStatusListener(StatusListener) */
+  public void removeStatusListener(StatusListener l) {
+    synchronized (statusListeners) {
+      statusListeners.remove(l);
+    }
+  }
+
+  /* @see loci.formats.StatusReporter#getStatusListeners() */
+  public StatusListener[] getStatusListeners() {
+    synchronized (statusListeners) {
+      StatusListener[] l = new StatusListener[statusListeners.size()];
+      statusListeners.copyInto(l);
+      return l;
+    }
+  }
+
+  private static boolean isValidLogin() throws Exception {
+    System.out.println(username+ password+serverName+ port);
+    try {
+      store = new OMEROMetadataStore(username, password, serverName, port);
+      store.getProjects();
+    }
+    //catch (EJBAccessException e)
+    catch (Exception e) {
+      return false;
+    }
+    return true;
+  }
+
+  public static void main(String[] args) throws Exception {
+    // org.apache.log4j.BasicConfigurator.configure();
+    username="allison";
+    password="omero";
+    serverName="localhost";
+    port="1099";
+
+    String id=null;
+
+    // parse command-line arguments
+    boolean doUsage = false;
+    if (args.length == 0) doUsage = true;
+    for (int i=0; i<args.length; i++) {
+      if (args[i].startsWith("-")) {
+        // argument is a command line flag
+        String param = args[i];
+        try {
+          if (param.equalsIgnoreCase("-s")) serverName = args[++i];
+          else if (param.equalsIgnoreCase("-a")) port = args[++i];
+          else if (param.equalsIgnoreCase("-u")) username = args[++i];
+          else if (param.equalsIgnoreCase("-p")) password = args[++i];
+          else if (param.equalsIgnoreCase("-h") ||
+            param.equalsIgnoreCase("-?"))
           {
-              store = new OMEROMetadataStore(username, password, serverName, port);
-              store.getProjects();
-
-          //} catch (EJBAccessException e)
-          } catch (Exception e)
-          {
-              return false;
-          }
-
-          return true;
-      }
-
-   public static void main(String[] args) throws Exception {
-     // org.apache.log4j.BasicConfigurator.configure();
-        username="allison";
-        password="omero";
-        serverName="localhost";
-        port="1099";
-
-        String id=null;
-
-        // parse command-line arguments
-        boolean doUsage = false;
-        if (args.length == 0) doUsage = true;
-        for (int i=0; i<args.length; i++) {
-          if (args[i].startsWith("-")) {
-            // argument is a command line flag
-            String param = args[i];
-            try {
-              if (param.equalsIgnoreCase("-s")) serverName = args[++i];
-              else if (param.equalsIgnoreCase("-a")) port = args[++i];
-              else if (param.equalsIgnoreCase("-u")) username = args[++i];
-              else if (param.equalsIgnoreCase("-p")) password = args[++i];
-              else if (param.equalsIgnoreCase("-h") || param.equalsIgnoreCase("-?"))
-              {
-                doUsage = true;
-              }
-              else {
-                LogTools.println("Error: unknown flag: "+ param);
-                LogTools.println();
-                doUsage = true;
-                break;
-              }
-            }
-            catch (ArrayIndexOutOfBoundsException exc) {
-              if (i == args.length - 1) {
-                LogTools.println("Error: flag " + param +
-                  " must be followed by a parameter value.");
-                LogTools.println();
-                doUsage = true;
-                break;
-              }
-              else throw exc;
-            }
+            doUsage = true;
           }
           else {
-            if (id == null) id = args[i];
-            else {
-              LogTools.println("Error: unknown argument: " + args[i]);
-              LogTools.println();
-            }
+            LogTools.println("Error: unknown flag: "+ param);
+            LogTools.println();
+            doUsage = true;
+            break;
           }
         }
-
-        if (id == null) doUsage = true;
-        if (doUsage) {
-          LogTools.println("Usage: omero [-s server.address] " +
-            "[-a port] [-u username] [-p password] filename");
+        catch (ArrayIndexOutOfBoundsException exc) {
+          if (i == args.length - 1) {
+            LogTools.println("Error: flag " + param +
+              " must be followed by a parameter value.");
+            LogTools.println();
+            doUsage = true;
+            break;
+          }
+          else throw exc;
+        }
+      }
+      else {
+        if (id == null) id = args[i];
+        else {
+          LogTools.println("Error: unknown argument: " + args[i]);
           LogTools.println();
-          System.exit(1);
         }
+      }
+    }
 
-//     ask for information if necessary
-        BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
-        if (serverName == null) {
-          LogTools.print("Server name? ");
-          try { serverName = cin.readLine(); }
-          catch (IOException exc) { }
-        }
-        if (port == null) {
-            LogTools.print("Port? ");
-            try { port = cin.readLine(); }
-            catch (IOException exc) { }
-          }
-        if (username == null) {
-          LogTools.print("Username? ");
-          try { username = cin.readLine(); }
-          catch (IOException exc) { }
-        }
-        if (password == null) {
-          LogTools.print("Password? ");
-          try { password = cin.readLine(); }
-          catch (IOException exc) { }
-        }
-        if (serverName == null || username == null || password == null || port == null ) {
-          LogTools.println("Error: could not obtain server login information");
-          System.exit(2);
-        }
-        LogTools.println("Using server " + serverName + " as user " + username);
+    if (id == null) doUsage = true;
+    if (doUsage) {
+      LogTools.println("Usage: omero [-s server.address] " +
+        "[-a port] [-u username] [-p password] filename");
+      LogTools.println();
+      System.exit(1);
+    }
 
-      //create image uploader
+    // ask for information if necessary
+    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
+    if (serverName == null) {
+      LogTools.print("Server name? ");
+      try { serverName = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+    if (port == null) {
+        LogTools.print("Port? ");
+        try { port = cin.readLine(); }
+        catch (IOException exc) { }
+      }
+    if (username == null) {
+      LogTools.print("Username? ");
+      try { username = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+    if (password == null) {
+      LogTools.print("Password? ");
+      try { password = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+    if (serverName == null || username == null ||
+      password == null || port == null)
+    {
+      LogTools.println("Error: could not obtain server login information");
+      System.exit(2);
+    }
+    LogTools.println("Using server " + serverName + " as user " + username);
 
-      OMEROWriter uploader = new OMEROWriter();
-      uploader.addStatusListener(new StatusListener() {
+    //create image uploader
+
+    OMEROWriter uploader = new OMEROWriter();
+    uploader.addStatusListener(new StatusListener() {
       public void statusUpdated(StatusEvent e) {
-       LogTools.println(e.getStatusMessage());
-       }
-      });
+        LogTools.println(e.getStatusMessage());
+      }
+    });
 
-      uploader.setId(serverName + "?user=" + username + "&password=" + password);
+    uploader.setId(serverName +
+      "?user=" + username + "&password=" + password);
 
-      FileStitcher reader = new FileStitcher();
-      //reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
-      //reader.setMetadataStore(new OMEXMLMetadata());
+    FileStitcher reader = new FileStitcher();
+    //reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+    //reader.setMetadataStore(new OMEXMLMetadata());
 
-      reader.setId(id);
-      //reader.setMetadataStore(store);
-      uploader.setMetadata((MetadataRetrieve) reader.getMetadataStore());
-      for (int i=0; i<reader.getImageCount(); i++) {
+    reader.setId(id);
+    //reader.setMetadataStore(store);
+    uploader.setMetadata((MetadataRetrieve) reader.getMetadataStore());
+    for (int i=0; i<reader.getImageCount(); i++) {
+      uploader.saveImage(reader.openImage(i), i == reader.getImageCount()-1);
+    }
+    reader.close();
+    uploader.close();
+  }
 
-          uploader.saveImage(reader.openImage(i), i == reader.getImageCount()-1 );
-
-        }
-        reader.close();
-        uploader.close();
-
- }
 }
