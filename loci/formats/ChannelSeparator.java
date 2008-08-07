@@ -70,7 +70,7 @@ public class ChannelSeparator extends ReaderWrapper {
   public int getImageCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return (reader.isRGB() && !reader.isIndexed()) ?
-      (getSizeC() / reader.getEffectiveSizeC()) * reader.getImageCount() :
+      reader.getRGBChannelCount() * reader.getImageCount() :
       reader.getImageCount();
   }
 

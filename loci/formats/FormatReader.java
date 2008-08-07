@@ -341,18 +341,14 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.cLengths[series] == null) {
-      core.cLengths[series] = new int[] {core.sizeC[series]};
-    }
+    if (core.cLengths[series] == null) return new int[] {core.sizeC[series]};
     return core.cLengths[series];
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.cTypes[series] == null) {
-      core.cTypes[series] = new String[] {FormatTools.CHANNEL};
-    }
+    if (core.cTypes[series] == null) return new String[] {FormatTools.CHANNEL};
     return core.cTypes[series];
   }
 
@@ -362,9 +358,10 @@ public abstract class FormatReader extends FormatHandler
     if (core.thumbSizeX[series] == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
-      core.thumbSizeX[series] =
+      int thumbSizeX =
         sx > sy ? THUMBNAIL_DIMENSION : sx * THUMBNAIL_DIMENSION / sy;
-      if (core.thumbSizeX[series] == 0) core.thumbSizeX[series] = 1;
+      if (thumbSizeX == 0) thumbSizeX = 1;
+      return thumbSizeX;
     }
     return core.thumbSizeX[series];
   }
@@ -375,9 +372,10 @@ public abstract class FormatReader extends FormatHandler
     if (core.thumbSizeY[series] == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
-      core.thumbSizeY[series] =
+      int thumbSizeY =
         sy > sx ? THUMBNAIL_DIMENSION : sy * THUMBNAIL_DIMENSION / sx;
-      if (core.thumbSizeY[series] == 0) core.thumbSizeY[series] = 1;
+      if (thumbSizeY == 0) thumbSizeY = 1;
+      return thumbSizeY;
     }
     return core.thumbSizeY[series];
   }

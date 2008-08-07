@@ -105,6 +105,11 @@ public class DimensionSwapper extends ReaderWrapper {
     int oldC = oldOrder.indexOf("C");
     int oldT = oldOrder.indexOf("T");
 
+    if (oldC != newC && getRGBChannelCount() > 1) {
+      throw new IllegalArgumentException(
+        "Cannot swap C dimension when RGB channel count > 1");
+    }
+
     dims[oldX] = getSizeX();
     dims[oldY] = getSizeY();
     dims[oldZ] = getSizeZ();
@@ -120,6 +125,12 @@ public class DimensionSwapper extends ReaderWrapper {
     core.sizeC[series] = dims[newC];
     core.sizeT[series] = dims[newT];
     core.currentOrder[series] = order;
+
+    if (oldC != newC) {
+      // C was overridden; clear the sub-C dimensional metadata
+      core.cLengths[series] = null;
+      core.cTypes[series] = null;
+    }
 
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);

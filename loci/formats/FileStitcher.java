@@ -331,15 +331,18 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 1);
-    return noStitch ? reader.getChannelDimLengths() :
-      core.cLengths[getSeries()];
+    FormatTools.assertId(currentId, true, 2);
+    if (noStitch) return reader.getChannelDimLengths();
+    if (core.cLengths[series] == null) return new int[] {core.sizeC[series]};
+    return core.cLengths[series];
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 1);
-    return noStitch ? reader.getChannelDimTypes() : core.cTypes[getSeries()];
+    FormatTools.assertId(currentId, true, 2);
+    if (noStitch) return reader.getChannelDimTypes();
+    if (core.cTypes[series] == null) return new String[] {FormatTools.CHANNEL};
+    return core.cTypes[series];
   }
 
   /* @see IFormatReader#getThumbSizeX() */
