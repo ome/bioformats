@@ -25,8 +25,24 @@ package loci.ome.io;
 
 import java.io.IOException;
 import java.util.*;
+
+import ome.api.IAdmin;
+import ome.model.IObject;
+import ome.model.core.Pixels;
+import ome.parameters.Parameters;
+import ome.system.EventContext;
+import ome.system.Login;
+import ome.system.Server;
+import ome.system.ServiceFactory;
 import loci.formats.*;
 import loci.formats.meta.MetadataStore;
+
+//new imports
+import ome.api.IPixels;
+import ome.api.IQuery;
+import ome.api.RawPixelsStore;
+import pojos.ImageData;
+import pojos.PixelsData;
 
 /**
  * OMEROReader is a file format reader for downloading images from an
@@ -49,27 +65,7 @@ public class OMEROReader extends FormatReader {
   // -- Static fields --
 
   private static boolean noOMERO = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
 
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import ome.api.IQuery");
-      r.exec("import ome.api.RawPixelsStore");
-      r.exec("import ome.parameters.Parameters");
-      r.exec("import ome.system.Login");
-      r.exec("import ome.system.Server");
-      r.exec("import ome.system.ServiceFactory");
-      r.exec("import pojos.ImageData");
-      r.exec("import pojos.PixelsData");
-    }
-    catch (ReflectException e) {
-      noOMERO = true;
-      if (debug) LogTools.trace(e);
-    }
-    return r;
-  }
 
   // -- Fields --
 
@@ -77,6 +73,24 @@ public class OMEROReader extends FormatReader {
   private String password;
   private String serverName;
   private String port;
+  
+  private static ServiceFactory sf;
+  private static Login login;
+  private static Server server;
+  private static long id;
+  private static Parameters params;
+  
+  private int x;
+  private int y;
+  private int z;
+  private int c;
+  private int t;
+ 
+  /** OMERO query service */
+  private static IQuery         query;
+  /** OMERO raw pixels service */
+  private static RawPixelsStore raw;
+
 
   // -- Constructor --
 
@@ -99,28 +113,28 @@ public class OMEROReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+  
+  public byte[] openBytes(int no, byte[] buf, int x1, int y1, int w1, int h1)
+  throws FormatException, IOException
+{
+  FormatTools.assertId(currentId, true, 1);
+  FormatTools.checkPlaneNumber(this, no);
+  FormatTools.checkBufferSize(this, buf.length);
 
-    int[] zct = FormatTools.getZCTCoords(this, no);
-    try {
-      r.setVar("z", new Integer(zct[0]));
-      r.setVar("c", new Integer(zct[1]));
-      r.setVar("t", new Integer(zct[2]));
-      r.exec("plane = raw.getPlane(z, c, t)");
-      int len = core.sizeX[0] * core.sizeY[0] *
-        FormatTools.getBytesPerPixel(core.pixelType[0]);
-      System.arraycopy((byte[]) r.getVar("plane"), 0, buf, 0, len);
-    }
-    catch (ReflectException e) {
-      throw new FormatException(e);
-    }
-    return buf;
-  }
+  int[] zct = FormatTools.getZCTCoords(this, no);
+  
+    z = new Integer(zct[0]);
+    c = new Integer(zct[1]);
+    t = new Integer(zct[2]);
+    byte[] plane = raw.getPlane(z, c, t);
+    int len = core.sizeX[0] * core.sizeY[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0]);
+    System.arraycopy((byte[]) plane, 0, buf, 0, len);
+
+  return buf;
+}
+  
+  
 
   // -- IFormatHandler API methods --
 
@@ -140,82 +154,83 @@ public class OMEROReader extends FormatReader {
     super.initFile(id);
 
     cred.isOMERO = true;
+    
+    username = cred.username;
+    password = cred.password;
+    port = cred.port;
+    Long idObj = new Long(cred.imageID);
+    
+    login = new Login("allison","omero");
+	server = new Server("http://localhost");
+	sf = new ServiceFactory( login);
 
-    try {
-      r.setVar("user", cred.username);
-      r.setVar("pass", cred.password);
-      r.setVar("port", Integer.parseInt(cred.port));
-      r.setVar("sname", cred.server);
-      r.setVar("id", cred.imageID);
-      r.setVar("idObj", new Long(cred.imageID));
+	IAdmin admin = sf.getAdminService();
+    EventContext ec = admin.getEventContext();
+	idObj = ec.getCurrentUserId();
 
-      r.exec("login = new Login(user, pass)");
-      r.exec("server = new Server(sname, port)");
-      r.exec("sf = new ServiceFactory(server, login)");
-      r.exec("query = sf.getQueryService()");
-      r.exec("raw = sf.createRawPixelsStore()");
-      r.exec("raw.setPixelsId(id)");
-      r.setVar("q", "select p from Pixels as p " +
-        "left outer join fetch p.pixelsType as pt " +
-        "left outer join fetch p.channels as c " +
-        "left outer join fetch p.pixelsDimensions " +
-        "left outer join fetch p.image " +
-        "left outer join fetch c.colorComponent " +
-        "left outer join fetch c.logicalChannel as lc " +
-        "left outer join fetch c.statsInfo " +
-        "left outer join fetch lc.photometricInterpretation " +
-        "where p.id = :id");
+	params = new Parameters().addId(idObj);
+	
+    query = sf.getQueryService();
+    raw = sf.createRawPixelsStore();
+    raw.setPixelsId((long)idObj);
+    String q = ( "select p from Pixels as p " +
+      "left outer join fetch p.pixelsType as pt " +
+      "left outer join fetch p.channels as c " +
+      "left outer join fetch p.pixelsDimensions " +
+      "left outer join fetch p.image " +
+      "left outer join fetch c.colorComponent " +
+      "left outer join fetch c.logicalChannel as lc " +
+      "left outer join fetch c.statsInfo " +
+      "left outer join fetch lc.photometricInterpretation " +
+      "where p.id = :id");
 
-      r.exec("params = new Parameters()");
-      r.exec("params.addId(idObj)");
-      r.exec("results = query.findByQuery(q, params)");
-      r.exec("pix = new PixelsData(results)");
+    params = new Parameters();
+    params.addId(idObj);
+    
 
-      r.exec("ptype = pix.getPixelType()");
-      r.exec("x = pix.getSizeX()");
-      r.exec("y = pix.getSizeY()");
-      r.exec("z = pix.getSizeZ()");
-      r.exec("c = pix.getSizeC()");
-      r.exec("t = pix.getSizeT()");
+    Pixels results = query.findByQuery(q, params);
+    PixelsData pix = new PixelsData(results);
+  
 
-      core.sizeX[0] = ((Integer) r.getVar("x")).intValue();
-      core.sizeY[0] = ((Integer) r.getVar("y")).intValue();
-      core.sizeZ[0] = ((Integer) r.getVar("z")).intValue();
-      core.sizeC[0] = ((Integer) r.getVar("c")).intValue();
-      core.sizeT[0] = ((Integer) r.getVar("t")).intValue();
-      core.rgb[0] = false;
-      core.littleEndian[0] = false;
-      core.currentOrder[0] = "XYZCT";
-      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-      core.pixelType[0] =
-        FormatTools.pixelTypeFromString((String) r.getVar("ptype"));
+    String ptype = pix.getPixelType();
+    x = pix.getSizeX();
+    y = pix.getSizeY();
+    z = pix.getSizeZ();
+    c = pix.getSizeC();
+    t = pix.getSizeT();
 
-      r.exec("px = pix.getPixelSizeX()");
-      r.exec("py = pix.getPixelSizeY()");
-      r.exec("pz = pix.getPixelSizeZ()");
-      double px = ((Double) r.getVar("px")).doubleValue();
-      double py = ((Double) r.getVar("py")).doubleValue();
-      double pz = ((Double) r.getVar("pz")).doubleValue();
+    core.sizeX[0] = ((Integer) x).intValue();
+    core.sizeY[0] = ((Integer) y).intValue();
+    core.sizeZ[0] = ((Integer) z).intValue();
+    core.sizeC[0] = ((Integer) c).intValue();
+    core.sizeT[0] = ((Integer) t).intValue();
+    core.rgb[0] = false;
+    core.littleEndian[0] = false;
+    core.currentOrder[0] = "XYZCT";
+    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    core.pixelType[0] =
+      FormatTools.pixelTypeFromString((String) ptype);
 
-      r.exec("image = pix.getImage()");
-      r.exec("name = image.getName()");
-      r.exec("description = image.getDescription()");
+    double px = pix.getPixelSizeX();
+    double py = pix.getPixelSizeY();
+    double pz = pix.getPixelSizeZ();
 
-      String name = (String) r.getVar("name");
-      String description = (String) r.getVar("description");
 
-      MetadataStore store = getMetadataStore();
-      store.setImageName(name, 0);
-      store.setImageDescription(description, 0);
-      MetadataTools.populatePixels(store, this);
+    ImageData image = pix.getImage();
+    
 
-      store.setDimensionsPhysicalSizeX(new Float((float) px), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Float((float) py), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Float((float) pz), 0, 0);
-    }
-    catch (ReflectException e) {
-      throw new FormatException(e);
-    }
+    String name = image.getName();
+    String description = image.getDescription();
+
+    MetadataStore store = getMetadataStore();
+    store.setImageName(name, 0);
+    store.setImageDescription(description, 0);
+    MetadataTools.populatePixels(store, this);
+
+    store.setDimensionsPhysicalSizeX(new Float((float) px), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float((float) py), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float((float) pz), 0, 0);
+
   }
 
 }
