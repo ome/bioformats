@@ -490,7 +490,7 @@ public class ImageViewer extends JFrame implements ActionListener,
 
       String id = JOptionPane.showInputDialog(this,
         "Enter OMERO connection string:",
-        "localhost?port=1099&user=omero&password=omero&id=1");
+        "localhost?port=1099&username=omero&password=omero&id=1");
       open(id, omeroReader);
     }
     else if ("upload".equals(cmd)) {
@@ -502,7 +502,7 @@ public class ImageViewer extends JFrame implements ActionListener,
 
       String id = JOptionPane.showInputDialog(this,
         "Enter OMERO connection string:",
-        "localhost?port=1099&user=omero&password=omero");
+        "localhost?port=1099&username=omero&password=omero");
       save(id, omeroWriter);
     }
     else if ("fps".equals(cmd)) {
