@@ -281,30 +281,7 @@ public class OMEROWriter extends FormatWriter {
 
   public boolean canDoStacks() { return true; }
 
-  // -- StatusReporter API methods --
-
-  /* @see loci.formats.StatusReporter#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    synchronized (statusListeners) {
-      if (!statusListeners.contains(l)) statusListeners.add(l);
-    }
-  }
-
-  /* @see loci.formats.StatusReporter#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    synchronized (statusListeners) {
-      statusListeners.remove(l);
-    }
-  }
-
-  /* @see loci.formats.StatusReporter#getStatusListeners() */
-  public StatusListener[] getStatusListeners() {
-    synchronized (statusListeners) {
-      StatusListener[] l = new StatusListener[statusListeners.size()];
-      statusListeners.copyInto(l);
-      return l;
-    }
-  }
+  // -- Helper methods --
 
   private static boolean isValidLogin() throws Exception {
     System.out.println(username+ password+serverName+ port);
@@ -318,6 +295,8 @@ public class OMEROWriter extends FormatWriter {
     }
     return true;
   }
+
+  // -- Main method --
 
   public static void main(String[] args) throws Exception {
     // org.apache.log4j.BasicConfigurator.configure();
