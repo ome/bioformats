@@ -25,8 +25,12 @@ package loci.ome.io;
 
 import java.io.IOException;
 import java.util.*;
-
+import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 import ome.api.IAdmin;
+import ome.api.IPixels;
+import ome.api.IQuery;
+import ome.api.RawPixelsStore;
 import ome.model.IObject;
 import ome.model.core.Pixels;
 import ome.parameters.Parameters;
@@ -34,13 +38,6 @@ import ome.system.EventContext;
 import ome.system.Login;
 import ome.system.Server;
 import ome.system.ServiceFactory;
-import loci.formats.*;
-import loci.formats.meta.MetadataStore;
-
-//new imports
-import ome.api.IPixels;
-import ome.api.IQuery;
-import ome.api.RawPixelsStore;
 import pojos.ImageData;
 import pojos.PixelsData;
 
@@ -66,31 +63,30 @@ public class OMEROReader extends FormatReader {
 
   private static boolean noOMERO = false;
 
-
   // -- Fields --
 
   private String username;
   private String password;
   private String serverName;
   private String port;
-  
+
   private static ServiceFactory sf;
   private static Login login;
   private static Server server;
   private static long id;
   private static Parameters params;
-  
+
   private int x;
   private int y;
   private int z;
   private int c;
   private int t;
- 
+
   /** OMERO query service */
-  private static IQuery         query;
+  private static IQuery query;
+
   /** OMERO raw pixels service */
   private static RawPixelsStore raw;
-
 
   // -- Constructor --
 
@@ -110,19 +106,18 @@ public class OMEROReader extends FormatReader {
     return true;
   }
 
-  /**
+  /*
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
-  
   public byte[] openBytes(int no, byte[] buf, int x1, int y1, int w1, int h1)
-  throws FormatException, IOException
-{
-  FormatTools.assertId(currentId, true, 1);
-  FormatTools.checkPlaneNumber(this, no);
-  FormatTools.checkBufferSize(this, buf.length);
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
-  int[] zct = FormatTools.getZCTCoords(this, no);
-  
+    int[] zct = FormatTools.getZCTCoords(this, no);
+
     z = new Integer(zct[0]);
     c = new Integer(zct[1]);
     t = new Integer(zct[2]);
@@ -131,10 +126,8 @@ public class OMEROReader extends FormatReader {
       FormatTools.getBytesPerPixel(core.pixelType[0]);
     System.arraycopy((byte[]) plane, 0, buf, 0, len);
 
-  return buf;
-}
-  
-  
+    return buf;
+  }
 
   // -- IFormatHandler API methods --
 
@@ -154,12 +147,12 @@ public class OMEROReader extends FormatReader {
     super.initFile(id);
 
     cred.isOMERO = true;
-    
+
     username = cred.username;
     password = cred.password;
     port = cred.port;
     Long idObj = new Long(cred.imageID);
-    
+
     login = new Login("allison","omero");
 	server = new Server("http://localhost");
 	sf = new ServiceFactory( login);
@@ -169,7 +162,7 @@ public class OMEROReader extends FormatReader {
 	idObj = ec.getCurrentUserId();
 
 	params = new Parameters().addId(idObj);
-	
+
     query = sf.getQueryService();
     raw = sf.createRawPixelsStore();
     raw.setPixelsId((long)idObj);
@@ -186,11 +179,9 @@ public class OMEROReader extends FormatReader {
 
     params = new Parameters();
     params.addId(idObj);
-    
 
     Pixels results = query.findByQuery(q, params);
     PixelsData pix = new PixelsData(results);
-  
 
     String ptype = pix.getPixelType();
     x = pix.getSizeX();
@@ -215,9 +206,7 @@ public class OMEROReader extends FormatReader {
     double py = pix.getPixelSizeY();
     double pz = pix.getPixelSizeZ();
 
-
     ImageData image = pix.getImage();
-    
 
     String name = image.getName();
     String description = image.getDescription();
