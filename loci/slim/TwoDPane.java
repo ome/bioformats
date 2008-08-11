@@ -394,6 +394,10 @@ public class TwoDPane extends JPanel
       if (frame % SKIP == 0 && lifetimeMode.isSelected()) {
         // update VisAD display
         double[][] lifetimeImage = curveRenderers[c].getImage();
+        if (lifetimeImage.length > 1) {
+          // TEMP - only visualize first component of multi-component fit
+          lifetimeImage = new double[][] {lifetimeImage[0]};
+        }
         try {
           FlatField ff = (FlatField) lifetimeField.getSample(c);
           ff.setSamples(lifetimeImage);
