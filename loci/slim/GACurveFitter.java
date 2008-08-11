@@ -410,7 +410,7 @@ public class GACurveFitter extends CurveFitter {
           minData = curveData[i];
         }
       }
-      System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
+      //System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
       // If we have valid min and max data, perform the "estimate"
       double expguess = -1;
       
@@ -440,8 +440,8 @@ public class GACurveFitter extends CurveFitter {
         // If the guess is still somehow negative (example, ascending curve), punt;
         expguess = 1;
       }
-      System.out.println("Estimating: " + expguess);
-      System.out.println("maxData: " + maxData + "  firstindex: " + firstindex + "  data: " + curveData[firstindex]);
+      //System.out.println("Estimating: " + expguess);
+      //System.out.println("maxData: " + maxData + "  firstindex: " + firstindex + "  data: " + curveData[firstindex]);
       if(components == 1) {
         curveEstimate[0][0] = maxData - minData;
         curveEstimate[0][1] = expguess;

@@ -112,4 +112,5 @@ public abstract class Renderer implements Runnable {
 
   public abstract int getImageY();
 
+  public abstract double getWorstRCSE();
 }

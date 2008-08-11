@@ -45,6 +45,8 @@ public class BurnInRenderer extends Renderer {
   protected int maxDim;
   private boolean estimated;
   private boolean improving;
+  private double[][] rcsecache;
+  private double worstRCSE;
 
   public BurnInRenderer(CurveCollection cc) {
     super(cc);
@@ -70,6 +72,7 @@ public class BurnInRenderer extends Renderer {
     estimated = false;
     improving = false;
     setComponentCount(1);
+    rcsecache = new double[maxDim][maxDim];
   }
 
   public void setComponentCount(int numExp) {
@@ -100,6 +103,7 @@ public class BurnInRenderer extends Renderer {
           //System.out.println("Set first to " + maxIndex);
           // END HACKY CRAP
           currentCurves[currentY][currentX].estimate();
+          //currentCurves[currentY][currentX].iterate();
           double[][] curve = currentCurves[currentY][currentX].getCurve();
           double[] exponentials = new double[numExponentials];
           for(int i = 0; i < numExponentials; i++) {
@@ -147,8 +151,8 @@ public class BurnInRenderer extends Renderer {
         currentY = 0;
         maxProgress = maxDim * maxDim;
       }
-      for(; currentX < maxDim || !alive; currentX++) {
-        for(; currentY < maxDim || !alive; currentY++) {
+      for(; currentX < maxDim; currentX++) {
+        for(; currentY < maxDim; currentY++) {
           currentIterations = 0;
           currProgress = (currentX * maxDim) + currentY;
           while(currentIterations < maxIterations) {
@@ -156,8 +160,10 @@ public class BurnInRenderer extends Renderer {
             currentIterations++;
             double currRCSE = currentCurves[currentY][currentX].getReducedChiSquaredError();
             currentCurves[currentY][currentX].iterate();
-            if(currentCurves[currentY][currentX].getReducedChiSquaredError() < currRCSE) {
-              if(currentCurves[currentY][currentX].getReducedChiSquaredError() < maxRCSE) {
+            double newRCSE = currentCurves[currentY][currentX].getReducedChiSquaredError();
+            rcsecache[currentY][currentX] = newRCSE;
+            if(newRCSE < currRCSE) {
+              if(newRCSE < maxRCSE) {
                 currentIterations = maxIterations;
               }
               
@@ -171,6 +177,7 @@ public class BurnInRenderer extends Renderer {
                 image[numExponentials-c-1][currentY * maxDim + currentX] = exponentials[c];
               }
             }
+            if(!alive) return;
           }
         }
         currentY = 0;
@@ -188,16 +195,20 @@ public class BurnInRenderer extends Renderer {
       double worstval = 0;
       for(int x = 0; x < maxDim; x++) {
         for(int y = 0; y < maxDim; y++) {
-          if(currentCurves[y][x].getReducedChiSquaredError() > worstval) {
-            worstval = currentCurves[y][x].getReducedChiSquaredError();
+          if(rcsecache[y][x] > worstval) {
+            worstval = rcsecache[y][x];
             worstx = x;
             worsty = y;
           }
         }
       }
+      worstRCSE = worstval;
       currentX = worstx;
       currentY = worsty;
       currentCurves[currentY][currentX].iterate();
+      totalIterations++;
+      rcsecache[currentY][currentX] = currentCurves[currentY][currentX].getReducedChiSquaredError();
+      //System.out.println("x: " + currentX + "  y: " + currentY + "   RCSE: " + currentCurves[currentY][currentX].getReducedChiSquaredError());
     }
   }
 
@@ -211,6 +222,10 @@ public class BurnInRenderer extends Renderer {
 
   public int getImageY() {
     return (currentY * (maxDim/currentDim)) + ((maxDim/currentDim) / 2);
+  }
+
+  public double getWorstRCSE() {
+    return worstRCSE;
   }
 
 }

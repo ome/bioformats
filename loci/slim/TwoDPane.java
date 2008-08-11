@@ -314,7 +314,8 @@ public class TwoDPane extends JPanel
     for (int c=0; c<data.channels; c++) {
       curveRenderers[c] = new BurnInRenderer(data.curves[c]);
       curveRenderers[c].setComponentCount(data.numExp);
-      curveRenderers[c].setMaxIterations(100);
+      curveRenderers[c].setMaxIterations(10); /* TEMP */
+      
     }
     int delay = RATE;
     lifetimeRefresh = new Timer(delay, this);
@@ -373,7 +374,10 @@ public class TwoDPane extends JPanel
       progress.setMaximum(maxProg);
       if (curProg == maxProg) {
         int totalIter = curveRenderers[c].getTotalIterations();
-        progress.setString("Improving image: iteration #" + totalIter);
+        double wRCSE = curveRenderers[c].getWorstRCSE();
+        wRCSE = ((int) (wRCSE * 100)) / 100.0;
+        progress.setString("Improving image: iter. #" + totalIter +
+             " Worst RCSE: " + wRCSE);
       }
       else {
         int subLevel = curveRenderers[c].getSubsampleLevel();
