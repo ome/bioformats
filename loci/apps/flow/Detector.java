@@ -1,22 +1,22 @@
 //
-// Detector.java
+//Detector.java
 //
 
 /*
-Utility class for doing particle detection in flow cytometry.
-
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the UW-Madison LOCI nor the names of its
-    contributors may be used to endorse or promote products derived from
-    this software without specific prior written permission.
+* Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+* Neither the name of the UW-Madison LOCI nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE UW-MADISON LOCI ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -38,7 +38,9 @@ import ij.process.*;
 import java.awt.image.IndexColorModel;
 import java.util.Vector;
 
+
 public class Detector {
+	
 
 	private static IndexColorModel theCM = makeCM();
     private static IndexColorModel makeCM() {
@@ -47,8 +49,8 @@ public class Detector {
 		byte[] b = new byte[256];
 
 		for(int ii=0 ; ii<256 ; ii++)
-		r[ii] = g[ii] = b[ii] = (byte)ii;
-
+		r[ii] = g[ii] = b[ii] = (byte)ii;		
+		
 		return new IndexColorModel(8, 256, r,g,b);
     }
 
@@ -56,12 +58,12 @@ public class Detector {
 	private int size = 512;
 	private int intensityThreshold = 30;
 	private int areaThreshold = 100;
-
+	
 	private int numRegions;
 	private int[][] floodArray;
-
+	
 	private byte[] imageData;
-
+	
 	public void setIntensityThreshold(int t) { intensityThreshold = t; }
 	public void setAreaThreshold(int t) { areaThreshold = t; }
 
@@ -69,29 +71,33 @@ public class Detector {
 		impParticles = new ImagePlus("Particles", new ByteProcessor(x, y));
 		impParticles.hide();
 	}
-
+	
 	public static void main(String[] args) {
 		Detector d = new Detector(512, 30, 100);
 		Detector.impParticles = new ImagePlus("Particles", new ByteProcessor(d.size,d.size));
+		
 
+		
 		Detector.imp3 = IJ.openImage("particles.tiff");
 		Detector.imp3.show();
 		IJ.run("Despeckle");
 		//IJ.run("Haar wavelet filter", "k1=3 k2=3 k3=3 std=1.6");
-
+		
+		
+		
 		d.findParticles((ByteProcessor) Detector.imp3.getProcessor());
 		d.crunchArray();
 		displayImage(d.floodArray);
 	}
-
+	
 	public Detector(int s, int intensT, int areaT) {
 		size = s;
 		intensityThreshold = intensT;
 		areaThreshold = areaT;
 	}
-
+	
 	public Vector<Particle> crunchArray() {
-
+		
 		Vector<Particle> retval = new Vector<Particle>();
 		int[] area = new int[numRegions], totalIntensity = new int[numRegions];
 		for (int i=0; i<size; i++) {
@@ -101,7 +107,7 @@ public class Detector {
 				totalIntensity[floodArray[i][j]-2] += (imageData[i*size+j] & 0xff);
 			}
 		}
-
+		
 		boolean[] edgeParticle = new boolean[numRegions];
 		for (int i=0; i<size; i++) {
 			if (floodArray[0][i] > 1) edgeParticle[floodArray[0][i]-2] = true;
@@ -109,7 +115,8 @@ public class Detector {
 			if (floodArray[size-1][i] > 1) edgeParticle[floodArray[size-1][i]-2] = true;
 			if (floodArray[i][size-1] > 1) edgeParticle[floodArray[i][size-1]-2] = true;
 		}
-
+		
+		
 		for (int i=0; i<numRegions; i++) {
 			if (area[i] < areaThreshold || edgeParticle[i]) continue;
 			retval.add(new Particle(area[i], totalIntensity[i]));
@@ -131,11 +138,11 @@ public class Detector {
 
 		//Heuristic 1
 		for (int i=0; i<50; i++) markPixels(floodArray);
-
+		
 		// Find the particle regions.
 		numRegions = fillParticles(floodArray);
 	}
-
+	
 	public static void displayImage(int[][] arr) {
 		byte[] particleArray = new byte[arr.length*arr[0].length];
 		for (int i=0; i<arr.length; i++) {
@@ -146,7 +153,7 @@ public class Detector {
 		impParticles.setProcessor("particles", new ByteProcessor(arr.length, arr[0].length, particleArray, theCM));
 		impParticles.show();
 	}
-
+	
 	private int fillParticles(int[][] floodArray) {
 		int num = 2;
 		for (int i=0; i<size; i++) {
@@ -167,7 +174,7 @@ public class Detector {
 			if ((imageData[i] & 0xff) > intensityThreshold) floodArray[i/size][i%size] = 1;
 		}
 	}
-
+	
 	private void markPixels(int[][] arr) {
 		int m=size-1;
 		for (int i=0; i<size; i++) {
@@ -182,7 +189,7 @@ public class Detector {
 					if (i<m && j>1 && arr[i+1][j-1]==1) {bottom++; left++;}
 					if (i<m &&        arr[i+1][j]  ==1) {bottom++;}
 					if (i<m && j<m && arr[i+1][j+1]==1) {bottom++; right++;}
-
+					
 					int binTop = top>0 ? 1 : 0;
 					int binBottom = bottom>0 ? 1 : 0;
 					int binLeft = left>0 ? 1 : 0;
@@ -197,7 +204,7 @@ public class Detector {
 	private void heuristicFloodFill(int[][] array, int i, int j, int num) {
 		array[i][j] = num;
 		int m=size-1;
-
+		
 		int iter=j-1, left=j, right=j;
 		while (iter>0 && array[i][iter]==1) {
 			array[i][iter--] = num;
@@ -208,10 +215,10 @@ public class Detector {
 			array[i][iter++] = num;
 		}
 		right=iter;
-
+		
 		if (left<0) left=0;
 		if (right>m) right=m;
-
+		
 		for (int k=left; k<=right; k++) {
 			if (i>1 && array[i-1][k] == 1) heuristicFloodFill(array, i-1, k, num);
 			if (i<m && array[i+1][k] == 1) heuristicFloodFill(array, i+1, k, num);

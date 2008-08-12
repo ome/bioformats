@@ -1,22 +1,22 @@
 //
-// Particle.java
+//Particle.java
 //
 
 /*
-Particle class to store information for each detected particle while
-running flow cytometry.
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the UW-Madison LOCI nor the names of its
-    contributors may be used to endorse or promote products derived from
-    this software without specific prior written permission.
+* Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+* Neither the name of the UW-Madison LOCI nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE UW-MADISON LOCI ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -39,17 +39,18 @@ public class Particle {
 	private	int totalIntensity;
 	private	int sliceNum;
 	private	double pixelMicronSquared;
-
+		
 	public Particle(int a, int i) {
 		pixelArea = a;
 		totalIntensity = i;
 	}
-
+	
 	public void setPixelsPerMicron(double ppm) {
 		pixelMicronSquared = ppm;
 		micronArea = (int) Math.round(pixelArea/pixelMicronSquared);
+		System.out.println("pixelMicronSquared is "+ppm);
 	}
-
+	
 	public void print() {
 		System.out.println("Particle "+num+" on slice "+sliceNum+" with area (in pixels) "+pixelArea+" and total intensity "+totalIntensity);
 	}
@@ -83,7 +84,7 @@ public class Particle {
 	}
 
 	public int getMeanIntensity() {
-		if (pixelArea==0) return 0;
-		else return totalIntensity/micronArea;
-	}
+		if (pixelArea==0) return 0; 
+		else return totalIntensity/pixelArea;
+	}	
 }
