@@ -245,6 +245,13 @@ public final class ImageInfo {
         "to avoid receiving a cryptic exception.");
     }
 
+    if (reader.isRGB() && reader.getRGBChannelCount() > 4) {
+      LogTools.println("Warning: Java does not support " +
+        "merging more than 4 channels.");
+      LogTools.println("Please use the '-separate' option " +
+        "to avoid receiving a cryptic exception.");
+    }
+
     // read basic metadata
     LogTools.println();
     LogTools.println("Reading core metadata");
