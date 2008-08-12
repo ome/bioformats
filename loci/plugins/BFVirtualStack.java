@@ -97,7 +97,7 @@ public class BFVirtualStack extends VirtualStack {
 
   public synchronized ImageProcessor getProcessor(int n) {
     // check cache first
-    int[] pos = reader.getZCTCoords(n);
+    int[] pos = reader.getZCTCoords(n - 1);
     try {
       ImageProcessor ip = (ImageProcessor) cache.getObject(pos);
       if (ip != null) return ip;
@@ -109,7 +109,7 @@ public class BFVirtualStack extends VirtualStack {
     // cache missed
     try {
       // CTR TODO - fix this
-      return Util.openProcessors(reader, n)[0];
+      return Util.openProcessors(reader, n - 1)[0];
 //      int index = FormatTools.getReorderedIndex(reader, stackOrder, n - 1);
 //      if (merge <= 1) return Util.openProcessor(reader, index);
 //      else {
