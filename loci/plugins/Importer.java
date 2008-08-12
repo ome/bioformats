@@ -640,13 +640,21 @@ public class Importer {
    */
   private void showStack(ImageStack stack, String file, String series,
     MetadataRetrieve retrieve, int cCount, int zCount, int tCount,
-    int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
+    int sizeZ, int sizeC, int sizeT, FileInfo fi, final IFormatReader r,
     ImporterOptions options, String metadata)
     throws FormatException, IOException
   {
     if (stack == null) return;
     String title = getTitle(r, file, series, options.isGroupFiles());
-    ImagePlus imp = new ImagePlus(title, stack);
+    ImagePlus imp = new ImagePlus(title, stack) {
+      public void close() {
+        super.close();
+        try {
+          r.close();
+        }
+        catch (IOException e) { }
+      }
+    };
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
@@ -673,6 +681,17 @@ public class Importer {
     boolean splitC = options.isSplitChannels();
     boolean splitZ = options.isSplitFocalPlanes();
     boolean splitT = options.isSplitTimepoints();
+
+    int z = r.getSizeZ();
+    int c = r.getSizeC();
+    int t = r.getSizeT();
+    try {
+      if (!options.isVirtual()) r.close();
+    }
+    catch (IOException exc) {
+      reportException(exc, options.isQuiet(),
+        "Sorry, there was a problem closing the file");
+    }
 
     if (!concatenate && mergeChannels) imp.show();
 
@@ -710,9 +729,9 @@ public class Importer {
         ru.exec("import i5d.Image5D");
         ru.setVar("title", imp.getTitle());
         ru.setVar("stack", imp.getStack());
-        ru.setVar("sizeC", r.getSizeC());
-        ru.setVar("sizeZ", r.getSizeZ());
-        ru.setVar("sizeT", r.getSizeT());
+        ru.setVar("sizeC", c);
+        ru.setVar("sizeZ", z);
+        ru.setVar("sizeT", t);
         ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
         ru.setVar("cal", imp.getCalibration());
         ru.setVar("fi", imp.getOriginalFileInfo());
@@ -832,7 +851,9 @@ public class Importer {
         else sb.append("; ");
         int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
         for (int i=0; i<subC.length; i++) {
-          if (!subCTypes[i].equals(FormatTools.CHANNEL)) sb.append(subCTypes[i]);
+          if (!subCTypes[i].equals(FormatTools.CHANNEL)) {
+            sb.append(subCTypes[i]);
+          }
           else sb.append("ch");
           sb.append(":");
           sb.append(subCPos[i] + 1);
