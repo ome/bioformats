@@ -30,7 +30,7 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-02" schemaLocation="SA.xsd"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
@@ -43,7 +43,7 @@
 			Copyright 2002 - 2008 OME. All rights reserved.
 		</xsd:documentation>
 	</xsd:annotation>
-	<xsd:element name="OME">
+	<xsd:element name="OME"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The OME element is a container for all information objects acessible by OME.  These information objects include descriptions of the imaging experiments
@@ -68,10 +68,10 @@
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
-			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier"/>
+			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Image">
+	<xsd:element name="Image"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				This element describes the actual image and its meta-data.
@@ -91,22 +91,22 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="CreationDate"/>
-				<xsd:element ref="ExperimenterRef" minOccurs="0"/>
-				<xsd:element ref="Description" minOccurs="0"/>
-				<xsd:element ref="ExperimentRef" minOccurs="0"/>
-				<xsd:element ref="GroupRef" minOccurs="0"/>
+				<xsd:element ref="CreationDate" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="Description" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ExperimentRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="InstrumentRef" minOccurs="0"/>
-				<xsd:element ref="ObjectiveRef" minOccurs="0"/>
-				<xsd:element ref="ImagingEnvironment" minOccurs="0"/>
-				<xsd:element ref="Thumbnail" minOccurs="0"/>
+				<xsd:element ref="InstrumentRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ObjectiveRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="Thumbnail" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="DisplayOptions" minOccurs="0"/>
-				<xsd:element ref="StageLabel" minOccurs="0"/>
-				<xsd:element ref="Pixels" maxOccurs="unbounded"/>
+				<xsd:element ref="DisplayOptions" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="unbounded"/>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
+				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="MicrobeamManipulation" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -120,7 +120,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="AcquiredPixels" type="PixelsID">
+			<xsd:attribute name="AcquiredPixels" use="optional" type="PixelsID">
 				<xsd:annotation>
 					<xsd:documentation>
 						Optional. 
@@ -131,7 +131,7 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="CreationDate" type="xsd:dateTime">
+	<xsd:element name="CreationDate" type="xsd:dateTime"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The creation date of the Image - when the Image was acquired.
@@ -139,7 +139,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Pixels">
+	<xsd:element name="Pixels"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The Image will be unreadable if any of the required Pixel attributes are missing.
@@ -151,9 +151,9 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element ref="Bin:BinData"/>
-					<xsd:element ref="TiffData"/>
+				<xsd:choice minOccurs="1" maxOccurs="unbounded">
+					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -201,27 +201,27 @@
 					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeX" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeY" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeZ" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeZ" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TimeIncrement" type="xsd:float"/>
-			<xsd:attribute name="WaveStart" type="xsd:positiveInteger"/>
-			<xsd:attribute name="WaveIncrement" type="xsd:positiveInteger"/>
+			<xsd:attribute name="TimeIncrement" use="optional" type="xsd:float"/>
+			<xsd:attribute name="WaveStart" use="optional" type="xsd:positiveInteger"/>
+			<xsd:attribute name="WaveIncrement" use="optional" type="xsd:positiveInteger"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="TiffData">
+	<xsd:element name="TiffData"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				This described the location of the pixel data in a tiff file.
@@ -229,7 +229,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="UUID" minOccurs="0">
+				<xsd:element name="UUID" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
 							This must be used when the IFDs are located in another file.
@@ -239,7 +239,7 @@
 					<xsd:complexType>
 						<xsd:simpleContent>
 							<xsd:extension base = "UniversallyUniqueIdentifier">
-								<xsd:attribute name="FileName" type="xsd:string">
+								<xsd:attribute name="FileName" use="optional" type="xsd:string">
 									<xsd:annotation>
 										<xsd:documentation>
 											This can be used when the IFDs are located in another file.
@@ -256,7 +256,7 @@
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
-			<xsd:attribute name="IFD" type="xsd:integer" default="0">
+			<xsd:attribute name="IFD" type="xsd:integer" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
@@ -264,7 +264,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FirstZ" type="xsd:integer" default="0">
+			<xsd:attribute name="FirstZ" type="xsd:integer" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
@@ -272,7 +272,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FirstT" type="xsd:integer" default="0">
+			<xsd:attribute name="FirstT" type="xsd:integer" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the T position of the image plane at the specified IFD. Indexed from 0.
@@ -280,7 +280,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FirstC" type="xsd:integer" default="0">
+			<xsd:attribute name="FirstC" type="xsd:integer" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
@@ -288,7 +288,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="NumPlanes" type="xsd:integer">
+			<xsd:attribute name="NumPlanes" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
@@ -300,7 +300,7 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Plane">
+	<xsd:element name="Plane"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 			</xsd:documentation>
@@ -317,7 +317,7 @@
 							Currently the only method supported is SHA1.
 						</xsd:documentation>
 					</xsd:annotation>
-					<xsd:element name="HashSHA1" type="Hex40"/>
+					<xsd:element name="HashSHA1" type="Hex40" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 			</xsd:sequence>
 			<xsd:attribute name="TheZ" use="required" type="xsd:integer"/>
@@ -354,7 +354,7 @@
 		<xsd:attribute name="PositionZ" use="required" type="xsd:float"/>
 	</xsd:complexType>
 	
-	<xsd:element name="Experiment">
+	<xsd:element name="Experiment"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				This element describes the type of experiment.  The required Type attribute must contain one or more entries from the following list:
@@ -367,8 +367,8 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Description" minOccurs="0"/>
-				<xsd:element ref="ExperimenterRef">
+				<xsd:element ref="Description" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
 						This is a link to the Experimenter who conducted the experiment - ajp
@@ -406,7 +406,7 @@
 			<xsd:attribute name="ID" use="required" type="ExperimentID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ExperimentRef">
+	<xsd:element name="ExperimentRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -416,7 +416,7 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="MicrobeamManipulation">
+	<xsd:element name="MicrobeamManipulation"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				Defines a microbeam operation type and the region of the image it was applied to.
@@ -451,7 +451,7 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="MicrobeamManipulationRef">
+	<xsd:element name="MicrobeamManipulationRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -460,7 +460,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>	
-	<xsd:element name="LogicalChannel">
+	<xsd:element name="LogicalChannel"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				There must be one per channel in the Image, even for a single-plane image.  In OME, Channels (e.g. 'FITC', 'Texas Red', etc) are specified as Logical Channels,
@@ -471,7 +471,7 @@
 				The total number of ChannelComponents for a set of pixels must equal SizeC.
 				The SamplesPerPixel attribute is the number of channel components in the logical channel.
 				The IlluminationType attribute is a string enumeration which may be set to 'Transmitted', 'Epifluorescence', 'Oblique', or 'NonLinear'.
-				The optional PinholeAize attribute allows specifying adjustable pin hole diameters for confocal microscopes.
+				The optional PinholeSize attribute allows specifying adjustable pin hole diameters for confocal microscopes.
 				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
 				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
 				The Mode attribute describes the type of microscopy performed for each channel.  This may be set to:
@@ -488,11 +488,11 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="LightSourceRef" minOccurs="0"/>
-				<xsd:element ref="OTFRef" minOccurs="0"/>
-				<xsd:element ref="DetectorRef" minOccurs="0"/>
-				<xsd:element ref="FilterSetRef" minOccurs="0"/>
-				<xsd:element ref="ChannelComponent" maxOccurs="unbounded"/>
+				<xsd:element ref="LightSourceRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OTFRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="DetectorRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ChannelComponent" minOccurs="1" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
@@ -513,8 +513,8 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="PinholeSize" type="xsd:positiveInteger"/>
-			<xsd:attribute name="PhotometricInterpretation" default="Monochrome">
+			<xsd:attribute name="PinholeSize" use="optional" type="xsd:float"/>
+			<xsd:attribute name="PhotometricInterpretation" default="Monochrome" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						To Do - Add more documentation - ajp
@@ -532,7 +532,7 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Mode">
+			<xsd:attribute name="Mode" use="optional">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="WideField"/>
@@ -553,7 +553,7 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="ContrastMethod">
+			<xsd:attribute name="ContrastMethod" use="optional">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Brightfield"/>
@@ -574,7 +574,7 @@
 			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="LogicalChannelRef">
+	<xsd:element name="LogicalChannelRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -583,10 +583,10 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="DisplayOptions">
+	<xsd:element name="DisplayOptions"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				There is optionally one of these per Image.
+				There is optionally one of these per Image. They provide support for the Origionam OME Perl server.
 				This specifies mapping of image channel components to RGB or greyscale colorspace with one byte per pixel per RGB channel.
 				RedChannel, GreenChannel, BlueChannel, and GreyChannel specify the scaling of pixel values to 8-bit colorspace values.
 				Display indicates to display the image as Greyscale or RGB.
@@ -595,18 +595,20 @@
 				The Time element restricts the range of timepoints displayed.
 				The range of timepoints to display is specified by the TStart and TStop attributes.
 				The MIME type of the desired video format is specified by Movie's MIMEtype attribute.
-				The ROI element describes a 3-D region of interest.  It is up to the viewer to either display the ROI only,
-				or to simply mark it somehow.
+				The ROI element originally describes a 3-D region of interest. It now use the new ROI 
+				model. It is up to the loader to convert the new ROI structure to the old format if 
+				it is required.  It is up to the viewer to either display the ROI only, or to simply
+				mark it somehow.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="RedChannel"/>
-				<xsd:element ref="GreenChannel"/>
-				<xsd:element ref="BlueChannel"/>
-				<xsd:element ref="GreyChannel"/>
-				<xsd:element ref="Projection" minOccurs="0"/>
-				<xsd:element ref="Time" minOccurs="0"/>
+				<xsd:element ref="RedChannel" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="GreenChannel" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="BlueChannel" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="GreyChannel" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="Projection" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="Time" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="Zoom" use="optional" type="xsd:float"/>
@@ -624,7 +626,7 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="RedChannel" type="ChannelSpecType">
+	<xsd:element name="RedChannel" type="ChannelSpecType"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for the red channel of an RGB image.
@@ -633,7 +635,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="GreenChannel" type="ChannelSpecType">
+	<xsd:element name="GreenChannel" type="ChannelSpecType"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for the green channel of an RGB image.
@@ -642,7 +644,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="BlueChannel" type="ChannelSpecType">
+	<xsd:element name="BlueChannel" type="ChannelSpecType"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for the blue channel of an RGB image.
@@ -651,7 +653,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="GreyChannel">
+	<xsd:element name="GreyChannel"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for a greyscale image.
@@ -676,7 +678,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Projection">
+	<xsd:element name="Projection"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The presence of this element indicates the user wants to view the Image as a maximum intensity projection.
@@ -689,7 +691,7 @@
 			<xsd:attribute name="ZStop" use="optional" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Time">
+	<xsd:element name="Time"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The time range the user is interested in the initial viewer display.  A range of timepoints indicates a movie
@@ -704,7 +706,7 @@
 			<xsd:attribute name="TStop" use="optional" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Instrument">
+	<xsd:element name="Instrument"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				This element describes the instrument used to capture the Image.
@@ -724,7 +726,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Microscope"/>
+				<xsd:element ref="Microscope" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LightSource" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
@@ -736,7 +738,7 @@
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="StageLabel">
+	<xsd:element name="StageLabel"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The StageLabel is used to specify a name and position for a stage position in the microscope's reference frame.
@@ -749,7 +751,7 @@
 			<xsd:attribute name="Z" use="optional" type="xsd:float"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Experimenter">
+	<xsd:element name="Experimenter"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				This element describes a person who performed an imaging experiment.
@@ -760,7 +762,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:choice>
+				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
 							At lease one of (FirstName, LastName, Email, OMEName)
@@ -776,7 +778,7 @@
 					<xsd:sequence>
 						<xsd:element ref="LastName" minOccurs="1" maxOccurs="1"/>
 						<xsd:element ref="Email" minOccurs="0" maxOccurs="1"/>
-						<xsd:element ref="Institution" minOccurs="0"/>
+						<xsd:element ref="Institution" minOccurs="0" maxOccurs="1"/>
 						<xsd:element ref="OMEName" minOccurs="0" maxOccurs="1"/>
 					</xsd:sequence>
 					<xsd:sequence>
@@ -794,27 +796,27 @@
 			<xsd:attribute name="ID" use="required" type="ExperimenterID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="OMEName" type="xsd:string">
+	<xsd:element name="OMEName" type="xsd:string"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense).</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="FirstName" type="xsd:string">
+	<xsd:element name="FirstName" type="xsd:string"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>First name, optionally containing a middle initial.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="LastName" type="xsd:string">
+	<xsd:element name="LastName" type="xsd:string"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>A person's last or surname.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Email" type="xsd:string">
+	<xsd:element name="Email" type="xsd:string"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>A person's  email address.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Objective">
+	<xsd:element name="Objective"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				A description of the microscope's objective lens.
@@ -840,12 +842,12 @@
 				<xsd:extension base="ManufactSpec">
 					<xsd:sequence>
 						<xsd:sequence>
-							<xsd:element ref="Correction"/>
-							<xsd:element ref="Immersion"/>
-							<xsd:element ref="LensNA"/>
-							<xsd:element ref="NominalMagnification"/>
-							<xsd:element ref="CalibratedMagnification"/>
-							<xsd:element ref="WorkingDistance"/>
+							<xsd:element ref="Correction" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="Immersion" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="LensNA" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="NominalMagnification" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="CalibratedMagnification" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="WorkingDistance" minOccurs="1" maxOccurs="1"/>
 						</xsd:sequence>
 					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="ObjectiveID"/>
@@ -853,7 +855,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:simpleType name="Medium">
+	<xsd:simpleType name="Medium"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				A description of a Medium used for the lens.
@@ -867,7 +869,7 @@
 		</xsd:restriction>
 	</xsd:simpleType>	
 	
-	<xsd:element name="Filter">
+	<xsd:element name="Filter"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				A filter is either an excitation or emission filters.
@@ -883,9 +885,9 @@
 			<xsd:complexContent>
 				<xsd:extension base="FilterSpec">
 				<xsd:sequence>
-					<xsd:element ref="TransmittanceRange" maxOccurs="1"/>
+					<xsd:element ref="TransmittanceRange" minOccurs="1" maxOccurs="1"/>
 				</xsd:sequence>
-					<xsd:attribute name="Type">
+					<xsd:attribute name="Type" use="optional">
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
 								<xsd:enumeration value="LongPass"/>
@@ -895,7 +897,7 @@
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
-					<xsd:attribute name="FilterWheel" type="xsd:string" >
+					<xsd:attribute name="FilterWheel" use="optional" type="xsd:string" >
 					<xsd:annotation>
 						<xsd:documentation>
 							A filter 'wheel' in OME can refer to any arrangement of filters in a filter holder of any shape. It could, for example, be a filter slider.
@@ -907,7 +909,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="TransmittanceRange">
+	<xsd:element name="TransmittanceRange"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				CutIn Units: nm,
@@ -920,23 +922,23 @@
 		<xsd:complexType>
 			<xsd:attribute name="CutIn" use="required" type="xsd:integer" />
 			<xsd:attribute name="CutOut" use="required" type="xsd:integer" />
-			<xsd:attribute name="CutInTolerance" type="xsd:integer" />
-			<xsd:attribute name="CutOutTolerance" type="xsd:integer" />
+			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" />
+			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" />
 			<xsd:attribute name="Transmittance" use="required" type="xsd:integer" />
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="NominalMagnification" type="xsd:integer">
+	<xsd:element name="NominalMagnification" type="xsd:integer"> <!-- top level definition -->
 			<xsd:annotation>
 			<xsd:documentation>The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="CalibratedMagnification" type="xsd:float">
+	<xsd:element name="CalibratedMagnification" type="xsd:float"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Correction">
+	<xsd:element name="Correction"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The coating applied to the lens</xsd:documentation>
 		</xsd:annotation>
@@ -950,7 +952,7 @@
 			</xsd:restriction>
 		</xsd:simpleType>
 	</xsd:element>
-	<xsd:element name="Immersion">
+	<xsd:element name="Immersion"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The immersion medium the lens is designed for</xsd:documentation>
 		</xsd:annotation>
@@ -966,32 +968,32 @@
 			</xsd:restriction>
 		</xsd:simpleType>	
 	</xsd:element>
-	<xsd:element name="WorkingDistance" type="xsd:float">
+	<xsd:element name="WorkingDistance" type="xsd:float"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number. Units are um.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="LensNA" type="xsd:float">
+	<xsd:element name="LensNA" type="xsd:float"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The numerical aperture of the lens expressed as a floating point (real) number.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="FilterSet">
+	<xsd:element name="FilterSet"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>Filter set manufacturer specification</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="FilterSpec">
-					<xsd:attribute name="ExFilterRef" type="FilterID" />
-					<xsd:attribute name="DichroicRef" type="DichroicID"/>
-					<xsd:attribute name="EmFilterRef" type="FilterID"/>
+					<xsd:attribute name="ExFilterRef" use="optional" type="FilterID" />
+					<xsd:attribute name="DichroicRef" use="optional" type="DichroicID"/>
+					<xsd:attribute name="EmFilterRef" use="optional" type="FilterID"/>
 					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Detector">
+	<xsd:element name="Detector"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The type of detector used to capture the image.
@@ -1004,11 +1006,11 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufactSpec">
-					<xsd:attribute name="Gain" type="xsd:float"/>
-					<xsd:attribute name="Voltage" type="xsd:float"/>
-					<xsd:attribute name="Offset" type="xsd:float"/>
-					<xsd:attribute name="Zoom" type="xsd:float"/>
-					<xsd:attribute name="AmplificationGain" type="xsd:float"/>
+					<xsd:attribute name="Gain" use="optional" type="xsd:float"/>
+					<xsd:attribute name="Voltage" use="optional" type="xsd:float"/>
+					<xsd:attribute name="Offset" use="optional" type="xsd:float"/>
+					<xsd:attribute name="Zoom" use="optional" type="xsd:float"/>
+					<xsd:attribute name="AmplificationGain" use="optional" type="xsd:float"/>
 					<xsd:attribute name="ID" use="required" type="DetectorID"/>
 					<xsd:attribute name="Type" use="required">
 						<xsd:simpleType>
@@ -1032,7 +1034,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name = "Description">
+	<xsd:element name = "Description"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
@@ -1047,12 +1049,12 @@
 		<xsd:complexType>
 			<xsd:simpleContent>
 				<xsd:extension base = "xsd:string">
-					<xsd:attribute ref = "xml:lang" default = "en"/>
+					<xsd:attribute ref = "xml:lang" default = "en" use="optional"/>
 				</xsd:extension>
 			</xsd:simpleContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Microscope">
+	<xsd:element name="Microscope"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The microscope's manufacturer specification.</xsd:documentation>
 		</xsd:annotation>
@@ -1076,9 +1078,9 @@
 	<xsd:complexType name="ManufactSpec">
 		<xsd:attribute name="Manufacturer" use="required" type="xsd:string"/>
 		<xsd:attribute name="Model" use="required" type="xsd:string"/>
-		<xsd:attribute name="SerialNumber" type="xsd:string"/>
+		<xsd:attribute name="SerialNumber" use="optional" type="xsd:string"/>
 	</xsd:complexType>
-	<xsd:element name="Thumbnail">
+	<xsd:element name="Thumbnail"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The thumbnail may be an external URI reference specified by the href attribute, or it may contain an SVG sub-document
@@ -1090,11 +1092,11 @@
 			<xsd:sequence>
 				<xsd:any namespace="http://www.w3.org/2000/svg" processContents="strict" minOccurs="0"/>
 			</xsd:sequence>
-			<xsd:attribute name="href" type="xsd:anyURI"/>
+			<xsd:attribute name="href" use="optional" type="xsd:anyURI"/>
 			<xsd:attribute name="MIMEtype" use="required" type="MIMEtype"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Project">
+	<xsd:element name="Project"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The Project ID and Name attributes are required.
@@ -1105,9 +1107,9 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Description" minOccurs="0"/>
-				<xsd:element ref="ExperimenterRef"/>
-				<xsd:element ref="GroupRef" minOccurs="0"/>
+				<xsd:element ref="Description" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
 			<xsd:attribute name="ID" use="required" type="ProjectID"/>
@@ -1351,7 +1353,7 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:element name="ProjectRef">
+	<xsd:element name="ProjectRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				There may be one or more of these in a Dataset.
@@ -1366,7 +1368,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ExperimenterRef">
+	<xsd:element name="ExperimenterRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				This empty element has a required Experimenter ID and an optional DocumentID attribute which refers to one of the Experimenters defined within OME.
@@ -1380,7 +1382,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Group">
+	<xsd:element name="Group"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The Group ID and Name attributes are required.
@@ -1390,14 +1392,14 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Leader" minOccurs="0"/>
-				<xsd:element ref="Contact" minOccurs="0"/>
+				<xsd:element ref="Leader" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="Contact" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
-			<xsd:attribute name="Name" type="xsd:string"/>
+			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="ID" use="required" type="GroupID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Leader">
+	<xsd:element name="Leader"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				Contact information for a Group leader specified using a reference to an Experimenter element defined elsewhere in the document.
@@ -1411,7 +1413,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Contact">
+	<xsd:element name="Contact"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The Contact element describes the contact person for a group of experimenters - typically a project leader or lab manager.
@@ -1426,7 +1428,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="GroupRef">
+	<xsd:element name="GroupRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>This empty element has a reference (the Group ID attribute) to a Group defined within OME.</xsd:documentation>
 		</xsd:annotation>
@@ -1438,7 +1440,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="InstrumentRef">
+	<xsd:element name="InstrumentRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				This empty element can be used (via the required Instrument ID attribute) to refer to an Instrument defined within OME.
@@ -1452,7 +1454,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Institution" type="xsd:string">
+	<xsd:element name="Institution" type="xsd:string"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The organizing structure that people belong to other than groups.  A university, or company, etc.
@@ -1462,7 +1464,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Dichroic">
+	<xsd:element name="Dichroic"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The dichromatic beamsplitter or dichroic mirror used for this filter combination.</xsd:documentation>
 		</xsd:annotation>
@@ -1474,7 +1476,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ROI">
+	<xsd:element name="ROI"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				A four dimensional 'Region of Interest'.  The Z and T coordinates are optional.
@@ -1497,7 +1499,7 @@
 			<xsd:attribute name="ID" use="required" type="ROIID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Shape">
+	<xsd:element name="Shape"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="Channels" minOccurs="0" maxOccurs="1">
@@ -1524,46 +1526,46 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:complexType name="BasicSvgShape">
-		<xsd:attribute name="transform"/>
+		<xsd:attribute name="transform" use="optional"/>
 	</xsd:complexType>
-	<xsd:element name="Rect">
+	<xsd:element name="Rect"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="x" type="xsd:string"/>
-					<xsd:attribute name="y" type="xsd:string"/>
-					<xsd:attribute name="width" type="xsd:string"/>
-					<xsd:attribute name="height" type="xsd:string"/>
+					<xsd:attribute name="x" use="optional" type="xsd:string"/>
+					<xsd:attribute name="y" use="optional" type="xsd:string"/>
+					<xsd:attribute name="width" use="optional" type="xsd:string"/>
+					<xsd:attribute name="height" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Mask">
+	<xsd:element name="Mask"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
 					<xsd:sequence>
-						<xsd:element ref="MaskPixels"></xsd:element>
+						<xsd:element ref="MaskPixels" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
-					<xsd:attribute name="x" type="xsd:string"/>
-					<xsd:attribute name="y" type="xsd:string"/>
-					<xsd:attribute name="width" type="xsd:string"/>
-					<xsd:attribute name="height" type="xsd:string"/>
+					<xsd:attribute name="x" use="optional" type="xsd:string"/>
+					<xsd:attribute name="y" use="optional" type="xsd:string"/>
+					<xsd:attribute name="width" use="optional" type="xsd:string"/>
+					<xsd:attribute name="height" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="MaskPixels">
+	<xsd:element name="MaskPixels"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element ref="Bin:BinData"/>
-					<xsd:element ref="TiffData"/>
+				<xsd:choice minOccurs="1" maxOccurs="unbounded">
+					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 			</xsd:sequence>
 				<xsd:attribute name="ExtendedPixelType" use="required" type="ExtendedPixelTypes"/>
@@ -1585,77 +1587,77 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Circle">
+	<xsd:element name="Circle"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="cx" type="xsd:string"/>
-					<xsd:attribute name="cy" type="xsd:string"/>
-					<xsd:attribute name="r" type="xsd:string"/>
+					<xsd:attribute name="cx" use="optional" type="xsd:string"/>
+					<xsd:attribute name="cy" use="optional" type="xsd:string"/>
+					<xsd:attribute name="r" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Point">
+	<xsd:element name="Point"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="cx" type="xsd:string"/>
-					<xsd:attribute name="cy" type="xsd:string"/>
-					<xsd:attribute name="r" type="xsd:string"/>
+					<xsd:attribute name="cx" use="optional" type="xsd:string"/>
+					<xsd:attribute name="cy" use="optional" type="xsd:string"/>
+					<xsd:attribute name="r" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Ellipse">
+	<xsd:element name="Ellipse"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="cx" type="xsd:string"/>
-					<xsd:attribute name="cy" type="xsd:string"/>
-					<xsd:attribute name="rx" type="xsd:string"/>
-					<xsd:attribute name="ry" type="xsd:string"/>
+					<xsd:attribute name="cx" use="optional" type="xsd:string"/>
+					<xsd:attribute name="cy" use="optional" type="xsd:string"/>
+					<xsd:attribute name="rx" use="optional" type="xsd:string"/>
+					<xsd:attribute name="ry" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Line">
+	<xsd:element name="Line"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="x1" type="xsd:string"/>
-					<xsd:attribute name="y1" type="xsd:string"/>
-					<xsd:attribute name="x2" type="xsd:string"/>
-					<xsd:attribute name="y2" type="xsd:string"/>
+					<xsd:attribute name="x1" use="optional" type="xsd:string"/>
+					<xsd:attribute name="y1" use="optional" type="xsd:string"/>
+					<xsd:attribute name="x2" use="optional" type="xsd:string"/>
+					<xsd:attribute name="y2" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Polyline">
+	<xsd:element name="Polyline"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="points" type="xsd:string"/>
+					<xsd:attribute name="points" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Polygon">
+	<xsd:element name="Polygon"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="points" type="xsd:string"/>
+					<xsd:attribute name="points" use="optional" type="xsd:string"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="ROIRef">
+	<xsd:element name="ROIRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -1674,13 +1676,13 @@
 		</xsd:annotation>
 		<xsd:attribute name="Manufacturer" use="required" type="xsd:string"/>
 		<xsd:attribute name="Model" use="required" type="xsd:string"/>
-		<xsd:attribute name="LotNumber" type="xsd:string"/>
+		<xsd:attribute name="LotNumber" use="optional" type="xsd:string"/>
 	</xsd:complexType>
-	<xsd:element name="LightSource">
+	<xsd:element name="LightSource"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The lightsource for the instrument.  An instrument may have several light sources.
-				The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament' or 'Arc'.
+				The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
 				Each of the light source types has its own Type attribute to further differentiate the light source
 				(eg, Nd-YAG for Laser or Hg for Arc).
 				A LightSource ID must be specified for each light source,
@@ -1692,18 +1694,19 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufactSpec">
-					<xsd:choice>
-						<xsd:element ref="Laser"/>
-						<xsd:element ref="Filament"/>
-						<xsd:element ref="Arc"/>
+					<xsd:choice minOccurs="1" maxOccurs="1">
+						<xsd:element ref="Laser" minOccurs="1" maxOccurs="1"/>
+						<xsd:element ref="Filament" minOccurs="1" maxOccurs="1"/>
+						<xsd:element ref="Arc" minOccurs="1" maxOccurs="1"/>
+						<xsd:element ref="LightEmittingDiode" minOccurs="1" maxOccurs="1"/>
 					</xsd:choice>
 					<xsd:attribute name="ID" use="required" type="LightSourceID"/>
-					<xsd:attribute name="Power" type="xsd:float"/>
+					<xsd:attribute name="Power" use="optional" type="xsd:float"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="OTF">
+	<xsd:element name="OTF"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The optical transfer function. FilterSetRef refers to the set of filters used in computing the OTF.
@@ -1716,9 +1719,9 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="ObjectiveRef"/>
-				<xsd:element ref="FilterSetRef" minOccurs="0"/>
-				<xsd:element ref="Bin:BinaryFile"/>
+				<xsd:element ref="ObjectiveRef" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="Bin:BinaryFile" minOccurs="1" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
 			<xsd:attribute name="PixelType" use="required" type="ExtendedPixelTypes"/>
@@ -1727,7 +1730,7 @@
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Dataset">
+	<xsd:element name="Dataset"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				An element specifying a collection of images that are always processed together.
@@ -1742,18 +1745,18 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Description" minOccurs="0"/>
-				<xsd:element ref="ExperimenterRef" minOccurs="0"/>
-				<xsd:element ref="GroupRef" minOccurs="0"/>
+				<xsd:element ref="Description" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ProjectRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
+				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
 			<xsd:attribute name="ID" use="required" type="DatasetID"/>
-			<xsd:attribute name="Locked" default="false" type="xsd:boolean"/>
+			<xsd:attribute name="Locked" default="false" use="optional" type="xsd:boolean"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="DatasetRef">
+	<xsd:element name="DatasetRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The DatasetRef element refers to a Dataset by specifying the Dataset ID attribute.
@@ -1769,18 +1772,18 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ImagingEnvironment">
+	<xsd:element name="ImagingEnvironment"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The Temperature is in Celsius, AirPressure is in millibars, Humidity and CO2Percent are percent-fractions from 0.0 to 1.0.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="Temperature" type="xsd:float"/>
-			<xsd:attribute name="AirPressure" type="xsd:float"/>
-			<xsd:attribute name="Humidity" type="PercentFraction"/>
-			<xsd:attribute name="CO2Percent" type="PercentFraction"/>
+			<xsd:attribute name="Temperature" use="optional" type="xsd:float"/>
+			<xsd:attribute name="AirPressure" use="optional" type="xsd:float"/>
+			<xsd:attribute name="Humidity" use="optional" type="PercentFraction"/>
+			<xsd:attribute name="CO2Percent" use="optional" type="PercentFraction"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ChannelComponent">
+	<xsd:element name="ChannelComponent"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				Logical Channels are composed of ChannelComponents.  The Index attribute is an index into the channel dimension of the 5-D pixel array.
@@ -1790,7 +1793,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="Pixels" use="required" type="PixelsID"/>
-			<xsd:attribute name="ColorDomain" type="xsd:string">
+			<xsd:attribute name="ColorDomain" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						Specifies which component of Photometric Interpretation to map a channel component to. i.e. w/ RGB this could be 'R', 'G', 'B'
@@ -1806,14 +1809,14 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Region">
+	<xsd:element name="Region"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
+				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="Tag" use="required" type="xsd:string"/>
-			<xsd:attribute name="Name" type="xsd:string"/>
+			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="ID" use="required" type="RegionID"/>
 		</xsd:complexType>
 	</xsd:element>
@@ -1827,7 +1830,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:complexType>
-	<xsd:element name="Laser">
+	<xsd:element name="Laser"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				Laser types are specified using two attributes - the Type and the lasing medium (Medium).  Type is a string which may be set to:
@@ -1843,7 +1846,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Pump" minOccurs="0"/>
+				<xsd:element ref="Pump" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="Type" use="required">
 				<xsd:simpleType>
@@ -1859,10 +1862,10 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="LaserMedium" use="required" type="LaserMedia"/>
-			<xsd:attribute name="Wavelength" type="xsd:positiveInteger"/>
-			<xsd:attribute name="FrequencyMultiplication" type="xsd:positiveInteger"/>
-			<xsd:attribute name="Tuneable" type="xsd:boolean"/>
-			<xsd:attribute name="Pulse">
+			<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger"/>
+			<xsd:attribute name="FrequencyMultiplication" use="optional" type="xsd:positiveInteger"/>
+			<xsd:attribute name="Tuneable" use="optional" type="xsd:boolean"/>
+			<xsd:attribute name="Pulse" use="optional">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="CW"/>
@@ -1873,8 +1876,8 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="PockelCell" type="xsd:boolean"/>
-			<xsd:attribute name="RepetitionRate" type="xsd:boolean">
+			<xsd:attribute name="PockelCell" use="optional" type="xsd:boolean"/>
+			<xsd:attribute name="RepetitionRate" use="optional" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>The is the rate in Hz at which the laser pulses if the Pulse type is 'Repetitive'
 					</xsd:documentation>
@@ -1883,7 +1886,7 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Arc">
+	<xsd:element name="Arc"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The Arc element is used to describe various kinds of Arc lamps - Hg, Xe, HgXe.
@@ -1902,7 +1905,7 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Filament">
+	<xsd:element name="Filament"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The Filament element is used to describe various kinds of filament bulbs such as Incadescent or Halogen.
@@ -1920,18 +1923,26 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="LightSourceRef">
+	<xsd:element name="LightEmittingDiode"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				The LightEmittingDiode element is used to describe
+				various kinds of LED lamps.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="LightSourceRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
 					<xsd:attribute name="ID" use="required" type="LightSourceID"/>
-					<xsd:attribute name="Attenuation" type="PercentFraction"/>
-					<xsd:attribute name="Wavelength" type="xsd:positiveInteger"/>
+					<xsd:attribute name="Attenuation" use="optional" type="PercentFraction"/>
+					<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="FilterSetRef">
+	<xsd:element name="FilterSetRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -1940,7 +1951,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="OTFRef">
+	<xsd:element name="OTFRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
@@ -1949,7 +1960,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="DetectorRef">
+	<xsd:element name="DetectorRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				Added Voltage - ajp
@@ -1960,13 +1971,13 @@
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
 					<xsd:attribute name="ID" use="required" type="DetectorID"/>
-					<xsd:attribute name="Offset" type="xsd:float"/>
-					<xsd:attribute name="Gain" type="xsd:float"/>
-					<xsd:attribute name="Voltage" type="xsd:float"/>
-					<xsd:attribute name="ReadOutRate" type="xsd:float">
+					<xsd:attribute name="Offset" use="optional" type="xsd:float"/>
+					<xsd:attribute name="Gain" use="optional" type="xsd:float"/>
+					<xsd:attribute name="Voltage" use="optional" type="xsd:float"/>
+					<xsd:attribute name="ReadOutRate" use="optional" type="xsd:float">
 						<xsd:annotation><xsd:documentation>The speed at which the detector can count pixels. Units of ReadOutRate is MHz. This is the bytes per second that can be read from the detector (like a baud rate). </xsd:documentation></xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="Binning" type="Binning">
+					<xsd:attribute name="Binning" use="optional" type="Binning">
 						<xsd:annotation><xsd:documentation>Represents the number of pixels that are combined to form larger pixels.</xsd:documentation></xsd:annotation>
 					</xsd:attribute>
 				</xsd:extension>
@@ -1986,7 +1997,7 @@
 			<xsd:enumeration value="8x8"/>
 		</xsd:restriction>
 	</xsd:simpleType>	
-	<xsd:element name="Pump">
+	<xsd:element name="Pump"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The Pump element is a reference to a LightSource.  It is used within the Laser element to specify the light source for the laser's pump (if any).
@@ -2000,7 +2011,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ObjectiveRef">
+	<xsd:element name="ObjectiveRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation> 
 				This holds the setting applied to an objective as well as a
@@ -2018,9 +2029,9 @@
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
 					<xsd:attribute name="ID" use="required" type="ObjectiveID"/>
-					<xsd:attribute name="CorrectionCollar" type="xsd:float"/>
-					<xsd:attribute name="Medium" type="Medium"/>
-					<xsd:attribute name="RefractiveIndex" type="xsd:float">
+					<xsd:attribute name="CorrectionCollar" use="optional" type="xsd:float"/>
+					<xsd:attribute name="Medium" use="optional" type="Medium"/>
+					<xsd:attribute name="RefractiveIndex" use="optional" type="xsd:float">
 						<xsd:annotation><xsd:documentation>This is unit-less, it is a ratio.</xsd:documentation></xsd:annotation>
 					</xsd:attribute>
 				</xsd:extension>
@@ -2051,7 +2062,7 @@ The valid range for white level is greater than the black level and within the d
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="Gamma" type="xsd:float"/>
-		<xsd:attribute name="isOn" type="xsd:boolean"/>
+		<xsd:attribute name="Gamma" use="optional" type="xsd:float"/>
+		<xsd:attribute name="isOn" use="optional" type="xsd:boolean"/>
 	</xsd:complexType>
 </xsd:schema>
