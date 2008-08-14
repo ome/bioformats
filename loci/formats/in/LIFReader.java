@@ -78,8 +78,39 @@ public class LIFReader extends FormatReader {
     long offset = ((Long) offsets.get(series)).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
+
+    long nextOffset = series + 1 < offsets.size() ?
+      ((Long) offsets.get(series + 1)).longValue() : in.length();
+    int bytesToSkip =
+      (int) (nextOffset - offset - bpp * getSizeX() * getSizeY());
+    bytesToSkip /= getSizeY();
+    if ((getSizeX() % 2) == 0) bytesToSkip = 0;
+
     in.seek(offset + getSizeX() * getSizeY() * (long) no * bpp);
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    in.skipBytes(bytesToSkip * getSizeY() * no);
+
+    if (bytesToSkip == 0) {
+      DataTools.readPlane(in, x, y, w, h, this, buf);
+    }
+    else {
+      in.skipBytes(y * getSizeX() * bpp + y * bytesToSkip);
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bpp);
+        in.read(buf, row * w * bpp, w * bpp);
+        in.skipBytes(bpp * (getSizeX() - w - x) + bytesToSkip);
+      }
+    }
+
+    // color planes are stored in BGR order
+    if (getRGBChannelCount() == 3) {
+      for (int i=0; i<buf.length; i+=bpp) {
+        for (int b=0; b<bytes; b++) {
+          byte tmp = buf[i + b];
+          buf[i + b] = buf[i + bytes*2];
+          buf[i + bytes*2] = tmp;
+        }
+      }
+    }
 
     return buf;
   }
