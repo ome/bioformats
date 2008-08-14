@@ -620,6 +620,14 @@ public class Importer {
 
       // -- Step 5: finish up --
 
+      try {
+        if (!options.isVirtual()) r.close();
+      }
+      catch (IOException exc) {
+        reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem closing the file");
+      }
+
       plugin.success = true;
     }
     catch (FormatException exc) {
@@ -641,7 +649,7 @@ public class Importer {
   private void showStack(ImageStack stack, String file, String series,
     MetadataRetrieve retrieve, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, final IFormatReader r,
-    ImporterOptions options, String metadata)
+    final ImporterOptions options, String metadata)
     throws FormatException, IOException
   {
     if (stack == null) return;
@@ -649,10 +657,12 @@ public class Importer {
     ImagePlus imp = new ImagePlus(title, stack) {
       public void close() {
         super.close();
-        try {
-          r.close();
+        if (options.isVirtual()) {
+          try {
+            r.close();
+          }
+          catch (IOException e) { }
         }
-        catch (IOException e) { }
       }
     };
     imp.setProperty("Info", metadata);
@@ -685,13 +695,6 @@ public class Importer {
     int z = r.getSizeZ();
     int c = r.getSizeC();
     int t = r.getSizeT();
-    try {
-      if (!options.isVirtual()) r.close();
-    }
-    catch (IOException exc) {
-      reportException(exc, options.isQuiet(),
-        "Sorry, there was a problem closing the file");
-    }
 
     if (!concatenate && mergeChannels) imp.show();
 
