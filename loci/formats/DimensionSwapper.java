@@ -40,8 +40,8 @@ public class DimensionSwapper extends ReaderWrapper {
 
   // -- Fields --
 
-  /** The output dimension order for the image series. */
-  protected String outputOrder;
+  /** The input dimension order for the image series. */
+  protected String inputOrder;
 
   // -- Constructors --
 
@@ -124,7 +124,8 @@ public class DimensionSwapper extends ReaderWrapper {
     core.sizeZ[series] = dims[newZ];
     core.sizeC[series] = dims[newC];
     core.sizeT[series] = dims[newT];
-    core.currentOrder[series] = order;
+    //core.currentOrder[series] = order;
+    inputOrder = order;
 
     if (oldC != newC) {
       // C was overridden; clear the sub-C dimensional metadata
@@ -147,11 +148,13 @@ public class DimensionSwapper extends ReaderWrapper {
    * dimension order; e.g., ImageJ virtual stacks must be in XYCZT order.
    */
   public void setOutputOrder(String outputOrder) {
-    this.outputOrder = outputOrder;
+    //this.outputOrder = outputOrder;
+    if (inputOrder == null) inputOrder = getDimensionOrder();
+    getCoreMetadata().currentOrder[getSeries()] = outputOrder;
   }
 
   public String getOutputOrder() {
-    return outputOrder;
+    return getDimensionOrder();
   }
 
   // -- IFormatReader API methods --
@@ -244,35 +247,12 @@ public class DimensionSwapper extends ReaderWrapper {
     return super.openThumbImage(reorder(no));
   }
 
-  /* @see loci.formats.IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t) {
-    if (outputOrder == null) return super.getIndex(z, c, t);
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    int zSize = getSizeZ();
-    int cSize = getEffectiveSizeC();
-    int tSize = getSizeT();
-    int num = getImageCount();
-    return FormatTools.getIndex(outputOrder,
-      zSize, cSize, tSize, num, z, c, t);
-  }
-
-  /* @see loci.formats.IFormatReader#getZCTCoords(int) */
-  public int[] getZCTCoords(int index) {
-    if (outputOrder == null) return super.getZCTCoords(index);
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    int zSize = reader.getSizeZ();
-    int cSize = reader.getEffectiveSizeC();
-    int tSize = reader.getSizeT();
-    int num = reader.getImageCount();
-    return FormatTools.getZCTCoords(outputOrder,
-      zSize, cSize, tSize, num, index);
-  }
-
   // -- Helper methods --
 
   protected int reorder(int no) throws FormatException {
-    if (outputOrder == null) return no;
-    return FormatTools.getReorderedIndex(reader, outputOrder, no);
+    if (inputOrder == null) return no;
+    return FormatTools.getReorderedIndex(inputOrder, getDimensionOrder(),
+      getSizeZ(), getSizeC(), getSizeT(), getImageCount(), no);
   }
 
 }
