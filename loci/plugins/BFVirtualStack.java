@@ -28,6 +28,7 @@ package loci.plugins;
 import ij.*;
 import ij.process.ImageProcessor;
 import java.io.IOException;
+import java.util.Vector;
 import loci.formats.*;
 import loci.formats.cache.*;
 
@@ -49,6 +50,10 @@ public class BFVirtualStack extends VirtualStack {
   protected Cache cache;
 //  protected String stackOrder;
 //  protected int merge;
+
+  private Vector[] methodStacks;
+  private int currentSlice = -1;
+  private RecordedImageProcessor currentProcessor;
 
   // -- Static utility methods --
 
@@ -83,6 +88,10 @@ public class BFVirtualStack extends VirtualStack {
     int[] len = new int[] {r.getSizeZ(), r.getEffectiveSizeC(), r.getSizeT()};
     cache = new Cache(new CrosshairStrategy(len),
       new ImageProcessorSource(this), false);
+    methodStacks = new Vector[r.getImageCount()];
+    for (int i=0; i<methodStacks.length; i++) {
+      methodStacks[i] = new Vector();
+    }
   }
 
   // -- BFVirtualStack API methods --
@@ -93,14 +102,30 @@ public class BFVirtualStack extends VirtualStack {
 
   public Cache getCache() { return cache; }
 
+  public RecordedImageProcessor getRecordedProcessor() {
+    return currentProcessor;
+  }
+
+  public Vector getMethodStack() {
+    if (currentSlice >= 0) return methodStacks[currentSlice];
+    return null;
+  }
+
   // -- VirtualStack API methods --
 
   public synchronized ImageProcessor getProcessor(int n) {
     // check cache first
+    if (currentSlice >= 0 && currentProcessor != null) {
+      Vector currentStack = currentProcessor.getMethodStack();
+      if (currentStack.size() > 1) {
+        methodStacks[currentSlice].addAll(currentStack);
+      }
+    }
     int[] pos = reader.getZCTCoords(n - 1);
+    ImageProcessor ip = null;
+
     try {
-      ImageProcessor ip = (ImageProcessor) cache.getObject(pos);
-      if (ip != null) return ip;
+      ip = (ImageProcessor) cache.getObject(pos);
     }
     catch (CacheException exc) {
       exc.printStackTrace();
@@ -109,7 +134,9 @@ public class BFVirtualStack extends VirtualStack {
     // cache missed
     try {
       // CTR TODO - fix this
-      return Util.openProcessors(reader, n - 1)[0];
+      if (ip == null) {
+        ip = Util.openProcessors(reader, n - 1)[0];
+      }
 //      int index = FormatTools.getReorderedIndex(reader, stackOrder, n - 1);
 //      if (merge <= 1) return Util.openProcessor(reader, index);
 //      else {
@@ -128,6 +155,13 @@ public class BFVirtualStack extends VirtualStack {
     catch (IOException exc) {
       exc.printStackTrace();
     }
+
+    if (ip != null) {
+      currentSlice = n - 1;
+      currentProcessor = new RecordedImageProcessor(ip, currentSlice);
+      return currentProcessor;
+    }
+
     return null;
   }
 

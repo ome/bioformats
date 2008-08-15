@@ -654,17 +654,13 @@ public class Importer {
   {
     if (stack == null) return;
     String title = getTitle(r, file, series, options.isGroupFiles());
-    ImagePlus imp = new ImagePlus(title, stack) {
-      public void close() {
-        super.close();
-        if (options.isVirtual()) {
-          try {
-            r.close();
-          }
-          catch (IOException e) { }
-        }
-      }
-    };
+    ImagePlus imp = null;
+    if (options.isVirtual()) {
+      imp = new VirtualImagePlus(title, stack);
+      ((VirtualImagePlus) imp).setReader(r);
+    }
+    else imp = new ImagePlus(title, stack);
+
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
