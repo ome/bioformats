@@ -1227,7 +1227,22 @@ public final class TiffTools {
 
     if (photoInterp == CFA_ARRAY) {
       if (colorMap == null) {
-        colorMap = getIFDIntArray(ifd, 37398, true);
+        colorMap = getIFDIntArray(ifd, TiffTools.COLOR_MAP, false);
+        if (colorMap == null) {
+          colorMap = new int[4];
+          if (littleEndian) {
+            colorMap[0] = 2;
+            colorMap[1] = 0;
+            colorMap[2] = 2;
+            colorMap[3] = 0;
+          }
+          else {
+            colorMap[0] = 0;
+            colorMap[1] = 2;
+            colorMap[2] = 0;
+            colorMap[3] = 2;
+          }
+        }
       }
       int[] tempMap = new int[colorMap.length + 2];
       System.arraycopy(colorMap, 0, tempMap, 0, colorMap.length);

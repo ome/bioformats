@@ -142,8 +142,10 @@ public class ND2Reader extends FormatReader {
       byte[] t = new ZlibCodec().decompress(b, null);
 
       for (int row=0; row<h; row++) {
-        System.arraycopy(t, (row + y) * effectiveX * pixel + x * pixel,
-          buf, row * w * pixel, w * pixel);
+        int offset = (row + y) * effectiveX * pixel + x * pixel;
+        if (offset < t.length) {
+          System.arraycopy(t, offset, buf, row * w * pixel, w * pixel);
+        }
       }
     }
     else {
@@ -377,6 +379,16 @@ public class ND2Reader extends FormatReader {
         b = null;
       }
 
+      Vector tmpOffsets = new Vector();
+      for (int i=0; i<offsets.length; i++) {
+        if (offsets[i][0] > 0) tmpOffsets.add(offsets[i]);
+      }
+
+      offsets = new long[tmpOffsets.size()][];
+      for (int i=0; i<tmpOffsets.size(); i++) {
+        offsets[i] = (long[]) tmpOffsets.get(i);
+      }
+
       if (offsets.length != core.imageCount.length) {
         int x = getSizeX();
         int y = getSizeY();
@@ -436,6 +448,11 @@ public class ND2Reader extends FormatReader {
       Arrays.fill(core.indexed, false);
       Arrays.fill(core.falseColor, false);
       Arrays.fill(core.metadataComplete, true);
+
+      for (int i=0; i<core.imageCount.length; i++) {
+        core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
+        if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
+      }
 
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());

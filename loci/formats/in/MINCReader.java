@@ -67,8 +67,13 @@ public class MINCReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    for (int row=y; row<y+h; row++) {
-      System.arraycopy(pixelData[no][row], x, buf, (h - row + y - 1) * w, w);
+    if (no < pixelData.length) {
+      for (int row=y; row<y+h; row++) {
+        if (row < pixelData[no].length && x + w <= pixelData[no][row].length) {
+          System.arraycopy(pixelData[no][row], x, buf,
+            (h - row + y - 1) * w, w);
+        }
+      }
     }
 
     return buf;

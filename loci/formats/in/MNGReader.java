@@ -185,6 +185,7 @@ public class MNGReader extends FormatReader {
       long offset = ((Long) offsets[0].get(i)).longValue();
       in.seek(offset);
       long end = ((Long) lengths[0].get(i)).longValue();
+      if (end < offset) continue;
       byte[] b = new byte[(int) (end - offset + 8)];
       in.read(b, 8, b.length - 8);
       b[0] = (byte) 0x89;
@@ -215,6 +216,11 @@ public class MNGReader extends FormatReader {
     }
 
     String[] keys = (String[]) seriesOffsets.keySet().toArray(new String[0]);
+
+    if (keys.length == 0) {
+      throw new FormatException("Pixel data not found.");
+    }
+
     core = new CoreMetadata(keys.length);
     offsets = new Vector[keys.length];
     lengths = new Vector[keys.length];

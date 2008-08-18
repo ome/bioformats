@@ -27,6 +27,7 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.*;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -343,6 +344,13 @@ public class MetamorphReader extends BaseTiffReader {
         core = newCore;
       }
     }
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    for (int i=0; i<core.imageCount.length; i++) {
+      MetadataTools.setDefaultCreationDate(store, id, i);
+      store.setImageName("", i);
+    }
+    MetadataTools.populatePixels(store, this);
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -379,16 +387,13 @@ public class MetamorphReader extends BaseTiffReader {
 
       Hashtable[] tempIFDs = new Hashtable[getImageCount()];
 
-      long[] oldOffsets = TiffTools.getIFDLongArray(ifds[0],
-          TiffTools.STRIP_OFFSETS, true);
+      long[] oldOffsets = TiffTools.getStripOffsets(ifds[0]);
+      long[] stripByteCounts = TiffTools.getStripByteCounts(ifds[0]);
+      int rowsPerStrip = (int) TiffTools.getRowsPerStrip(ifds[0])[0];
+      int stripsPerImage = getSizeY() / rowsPerStrip;
+      if (stripsPerImage * rowsPerStrip != getSizeY()) stripsPerImage++;
 
-      long[] stripByteCounts = TiffTools.getIFDLongArray(ifds[0],
-          TiffTools.STRIP_BYTE_COUNTS, true);
-
-      int stripsPerImage = oldOffsets.length;
-
-      int check = TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.PHOTOMETRIC_INTERPRETATION);
+      int check = TiffTools.getPhotometricInterpretation(ifds[0]);
       if (check == TiffTools.RGB_PALETTE) {
         TiffTools.putIFDValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
           TiffTools.BLACK_IS_ZERO);
@@ -401,23 +406,35 @@ public class MetamorphReader extends BaseTiffReader {
       int pointer = 0;
 
       Hashtable temp;
-      for(int i=0; i<getImageCount(); i++) {
+      for (int i=0; i<getImageCount(); i++) {
         // copy data from the first IFD
         temp = new Hashtable(ifds[0]);
 
         // now we need a StripOffsets entry - the original IFD doesn't have this
 
-        long planeOffset = i*(oldOffsets[stripsPerImage - 1] +
-            stripByteCounts[stripsPerImage - 1] - oldOffsets[0]);
-
-        long[] newOffsets = new long[oldOffsets.length];
-        newOffsets[0] = planeOffset + oldOffsets[0];
-
-        for(int j=1; j<newOffsets.length; j++) {
-          newOffsets[j] = newOffsets[j-1] + stripByteCounts[0];
+        long[] newOffsets = new long[stripsPerImage];
+        if (stripsPerImage * i < oldOffsets.length) {
+          System.arraycopy(oldOffsets, stripsPerImage * i, newOffsets, 0,
+            stripsPerImage);
+        }
+        else {
+          for (int q=0; q<stripsPerImage; q++) {
+            newOffsets[q] =
+              oldOffsets[stripsPerImage - 1] + q*stripByteCounts[0];
+          }
         }
 
         temp.put(new Integer(TiffTools.STRIP_OFFSETS), newOffsets);
+
+        long[] newByteCounts = new long[stripsPerImage];
+        if (stripsPerImage * i < stripByteCounts.length) {
+          System.arraycopy(stripByteCounts, stripsPerImage * i, newByteCounts,
+            0, stripsPerImage);
+        }
+        else {
+          Arrays.fill(newByteCounts, stripByteCounts[0]);
+        }
+        temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), newByteCounts);
 
         tempIFDs[pointer] = temp;
         pointer++;

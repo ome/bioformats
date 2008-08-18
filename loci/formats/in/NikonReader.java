@@ -273,7 +273,7 @@ public class NikonReader extends BaseTiffReader {
     core.imageCount[0] = 1;
 
     if (cfaPattern != null) {
-      realImage.put(new Integer(TiffTools.COLOR_MAP), (int[]) cfaPattern);
+      ifds[0].put(new Integer(TiffTools.COLOR_MAP), (int[]) cfaPattern);
     }
   }
 

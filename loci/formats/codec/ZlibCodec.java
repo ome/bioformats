@@ -25,15 +25,13 @@ package loci.formats.codec;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import loci.formats.FormatException;
 
 /**
- * This class implements ZLIB decompression. Compression is not yet
- * implemented.
+ * This class implements ZLIB decompression.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/ZlibCodec.java">Trac</a>,
@@ -44,7 +42,7 @@ import loci.formats.FormatException;
 public class ZlibCodec extends BaseCodec implements Codec {
 
   /**
-   * Compresses a block of ZLIB data. Currently not supported.
+   * Compresses a block of ZLIB data.
    *
    * @param data the data to be compressed
    * @param x length of the x dimension of the image data, if appropriate
@@ -80,24 +78,27 @@ public class ZlibCodec extends BaseCodec implements Codec {
   public byte[] decompress(byte[] input, Object options)
     throws FormatException
   {
-    try {
-      Inflater inf = new Inflater(false);
-      inf.setInput(input);
-      InflaterInputStream i =
-        new InflaterInputStream(new PipedInputStream(), inf);
-      ByteVector bytes = new ByteVector();
-      byte[] buf = new byte[8192];
-      while (true) {
+    Inflater inf = new Inflater(false);
+    inf.setInput(input);
+    InflaterInputStream i =
+      new InflaterInputStream(new PipedInputStream(), inf);
+    ByteVector bytes = new ByteVector();
+    byte[] buf = new byte[8192];
+    while (true) {
+      try {
         int r = i.read(buf, 0, buf.length);
-        if (r == -1) break; // eof
+        if (r <= 0) break; // eof
         bytes.add(buf, 0, r);
       }
-      return bytes.toByteArray();
+      catch (IOException e) {
+        if (bytes.size() == 0) {
+          throw new FormatException("Error uncompressing " +
+            "ZLIB compressed image strip.", e);
+        }
+        else break;
+      }
     }
-    catch (IOException e) {
-      throw new FormatException("Error uncompressing " +
-        "ZLIB compressed image strip.", e);
-    }
+    return bytes.toByteArray();
   }
 
 }

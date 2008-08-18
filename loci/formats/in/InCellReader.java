@@ -127,6 +127,8 @@ public class InCellReader extends FormatReader {
     timings = null;
     creationDate = null;
     wellRows = wellCols = 0;
+    startRow = startCol = 0;
+    fieldCount = zCount = 0;
   }
 
   // -- Internal FormatReader API methods --

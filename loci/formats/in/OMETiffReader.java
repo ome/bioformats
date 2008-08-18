@@ -81,6 +81,11 @@ public class OMETiffReader extends FormatReader {
     return used;
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption() */
+  public int fileGroupOption(String id) {
+    return FormatTools.MUST_GROUP;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
