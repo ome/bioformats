@@ -67,7 +67,7 @@ import loci.formats.FormatException;
  *
  * @author Mikhail Kovtun mikhail.kovtun at duke.edu
  */
-public class LZWCodec {
+public class LZWCodec extends BaseCodec {
 
   /**
    * Size of hash table. Must be greater 3837 (the number of possible codes).
