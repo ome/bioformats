@@ -23,169 +23,375 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.util.Arrays;
 import loci.formats.FormatException;
 
 /**
- * Implements basic LZW compression and decompression, as outlined in the
- * TIFF 6.0 Specification at
- * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61).
+ * This is an optimized LZW codec.
+ * Most of the code is inlined, and specifics of LZW usage
+ * (known size of decompressor output; possible lengths of LZW codes; specified
+ * values for <code>CLEAR</code> and <code>END_OF_INFORMATION</code> codes)
+ * are taken in account.
+ * <p>
+ * Estimating the worst-case size of compressor output:
+ * <ul>
+ * <li> The worst case means that there is no compression at all, and every
+ *      input byte generates code to output.
+ * <li> This means that the LZW table will be full (and reset) after reading
+ *      each portion of 4096-256-2-1=3837 bytes of input
+ *      (first 256 codes are preallocated, 2 codes are used for CLEAR and
+ *      END_OF_IFORMATION, 1 code is lost due to original bug in TIFF library
+ *      that now is a feature).
+ * <li> Each full portion of 3837 byte will produce in output:
+ * <ul>
+ * <li> 9 bits for CLEAR code;
+ * <li> 9*253 + 10*512 + 11*1024 + 12*2048 = 43237 bits for character codes.
+ * </ul>
+ * <li> Let n=3837, m=(number of bytes in the last incomplete portion),
+ *      N=(number of bytes in compressed complete portion with CLEAR code),
+ *      M=(number of bytes in compressed last incomplete portion).
+ *      We have inequalities:
+ * <ul>
+ * <li> N <= 1.41 * n
+ * <li> M <= 1.41 * m
+ * <li> The last incomplete portion should also include CLEAR and
+ *      END_OF_INFORMATION codes; they occupy less than 3 bytes.
+ * </ul>
+ * Thus, we can claim than the number of bytes in compressed output never
+ * exceeds 1.41*(number of input bytes)+3.
+ * <p>
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/LZWCodec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/LZWCodec.java">SVN</a></dd></dl>
  *
- * @author Eric Kjellman egkjellman at wisc.edu
- * @author Curtis Rueden ctrueden at wisc.edu
- * @author Wayne Rasband wsr at nih.gov
+ * @author Mikhail Kovtun mikhail.kovtun at duke.edu
  */
-public class LZWCodec extends BaseCodec implements Codec {
-
-  // LZW compression codes
-  protected static final int CLEAR_CODE = 256;
-  protected static final int EOI_CODE = 257;
+public class LZWCodec {
 
   /**
-   * Compresses a block of data using LZW compression. If input is null or of
-   * 0 length, simply returns input.
-   *
-   * @param input the data to be compressed
-   * @param x ignored for LZW.
-   * @param y ignored for LZW.
-   * @param dims ignored for LZW.
-   * @param options ignored for LZW.
-   * @return The compressed data
+   * Size of hash table. Must be greater 3837 (the number of possible codes).
+   * Bigger size reduces number of rehashing steps --
+   * at expence of initialization time.
    */
-  public byte[] compress(byte[] input, int x, int y, int[] dims,
-    Object options) throws FormatException
+  private static final int HASH_SIZE = 7349;
+
+  /** Rehashing step. HASH_SIZE and HASH_STEP shoulg be coprime. */
+  private static final int HASH_STEP = 257;
+
+  private static final int CLEAR_CODE = 256;
+  private static final int EOI_CODE = 257;
+  private static final int FIRST_CODE = 258;
+
+  /** Masks for writing bits in compressor. */
+  private static final int[] COMPR_MASKS =
+    {0xff, 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01};
+
+  /** Masks for reading bits in decompressor. */
+  private static final int[] DECOMPR_MASKS =
+    {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f};
+
+  /**
+   * Compress sequence of bytes.
+   * <p>
+   * Compresses the input sequence of bytes according to LZW algorithm.
+   * <p>
+   * @param input
+   *          The sequence of bytes to be compressed.
+   * @return  Result of compression.
+   */
+  public byte[] compress(byte[] input, int x, int y, int[] dims, Object options)
+    throws FormatException
   {
     if (input == null || input.length == 0) return input;
 
-    // initialize symbol table
-    LZWTreeNode symbols = new LZWTreeNode(-1);
-    symbols.initialize();
-    int nextCode = 258;
-    int numBits = 9;
+    // Output buffer (see class comments for justification of size).
+    byte[] output = new byte[(input.length * 141) / 100 + 3];
 
-    BitWriter out = new BitWriter();
-    out.write(CLEAR_CODE, numBits);
-    ByteVector omega = new ByteVector();
-    for (int i=0; i<input.length; i++) {
-      byte k = input[i];
-      LZWTreeNode omegaNode = symbols.nodeFromString(omega);
-      LZWTreeNode omegaKNode = omegaNode.getChild(k);
-      if (omegaKNode != null) {
-        // omega+k is in the symbol table
-        omega.add(k);
-      }
-      else {
-        out.write(omegaNode.getCode(), numBits);
-        omega.add(k);
-        symbols.addTableEntry(omega, nextCode++);
-        omega.clear();
-        omega.add(k);
-        if (nextCode == 512) numBits = 10;
-        else if (nextCode == 1024) numBits = 11;
-        else if (nextCode == 2048) numBits = 12;
-        else if (nextCode == 4096) {
-          out.write(CLEAR_CODE, numBits);
-          symbols.initialize();
-          nextCode = 258;
-          numBits = 9;
+    // Current size of output buffer (and position to write next byte).
+    int outSize = 0;
+    // The output always starts with CLEAR code
+    output[outSize++] = (byte) (CLEAR_CODE >> 1);
+    // Last incomplete byte to be written to output (bits shifted to the right).
+    // Always contains at least 1 bit, and may contain 8 bits.
+    int currOutByte = CLEAR_CODE & 0x01;
+    // Number of unused bits in currOutByte (from 0 to 7).
+    int freeBits = 7;
+
+    // Hash table.
+    // Keys in the table are pairs (code,byte) and values are codes.
+    // Pair (code,byte) is represented as ( (code<<8) | byte ).
+    // Unused table entries have key=-1.
+    int[] htKeys   = new int[HASH_SIZE];
+    int[] htValues = new int[HASH_SIZE];
+    // Initialize hash table: mark all entries as unused
+    Arrays.fill(htKeys, -1);
+
+    // Next code to be used by compressor.
+    int nextCode = FIRST_CODE;
+    // Number of bits to be used to output code. Ranges from 9 to 12.
+    int currCodeLength = 9;
+
+    // The first byte of input is handled specially.
+    int tiffK = input[0] & 0xff;
+    int tiffOmega = tiffK;
+
+    // Main loop.
+    for (int currInPos=1; currInPos<input.length; currInPos++) {
+      tiffK = input[currInPos] & 0xff;
+      int hashKey = (tiffOmega << 8) | tiffK;
+      int hashCode = hashKey % HASH_SIZE;
+      do {
+        if (htKeys[hashCode] == hashKey) {
+          // Omega+K in the table
+          tiffOmega = htValues[hashCode];
+          break;
         }
+        else if (htKeys[hashCode] < 0) {
+          // Omega+K not in the table
+          // 1) add new entry to hash table
+          htKeys[hashCode] = hashKey;
+          htValues[hashCode] = nextCode++;
+          // 2) output last code
+          int shift = currCodeLength - freeBits;
+          output[outSize++] =
+            (byte) ((currOutByte << freeBits) | (tiffOmega >> shift));
+          if (shift > 8) {
+            output[outSize++] = (byte) (tiffOmega >> (shift - 8));
+            shift -= 8;
+          }
+          freeBits = 8 - shift;
+          currOutByte = tiffOmega & COMPR_MASKS[freeBits];
+          // 3) omega = K
+          tiffOmega = tiffK;
+          break;
+        }
+        else {
+          // we have to rehash
+          hashCode = (hashCode + HASH_STEP) % HASH_SIZE;
+        };
+      } while (true);
+
+      switch (nextCode) {
+        case 512:
+          currCodeLength = 10;
+          break;
+        case 1024:
+          currCodeLength = 11;
+          break;
+        case 2048:
+          currCodeLength = 12;
+          break;
+        case 4096:  // write CLEAR code and reinitialize hash table
+         int shift = currCodeLength - freeBits;
+         output[outSize++] =
+           (byte) ((currOutByte << freeBits) | (CLEAR_CODE >> shift));
+         if (shift > 8) {
+           output[outSize++] = (byte) (CLEAR_CODE >> (shift - 8));
+           shift -= 8;
+         }
+         freeBits = 8 - shift;
+         currOutByte = CLEAR_CODE & COMPR_MASKS[freeBits];
+         Arrays.fill(htKeys, -1);
+         nextCode = FIRST_CODE;
+         currCodeLength = 9;
+         break;
       }
     }
-    out.write(symbols.codeFromString(omega), numBits);
-    out.write(EOI_CODE, numBits);
 
-    return out.toByteArray();
+    // End of input:
+    // 1) write code from tiff_Omega
+    {
+      int shift = currCodeLength - freeBits;
+      output[outSize++] =
+        (byte) ((currOutByte << freeBits) | (tiffOmega >> shift));
+      if (shift > 8) {
+        output[outSize++] = (byte) (tiffOmega >> (shift - 8));
+        shift -= 8;
+      }
+      freeBits = 8 - shift;
+      currOutByte = tiffOmega & COMPR_MASKS[freeBits];
+    }
+    // 2) write END_OF_INFORMATION code
+    //    -- we write the last incomplete byte here as well
+    // !!! We have to increase length of code if needed !!!
+    switch (nextCode) {
+      case 511:
+        currCodeLength = 10;
+        break;
+      case 1023:
+        currCodeLength = 11;
+        break;
+      case 2047:
+        currCodeLength = 12;
+        break;
+    }
+
+    {
+      int shift = currCodeLength - freeBits;
+      output[outSize++] =
+        (byte) ((currOutByte << freeBits) | (EOI_CODE >> shift));
+      if (shift > 8) {
+        output[outSize++] = (byte) (EOI_CODE >> (shift - 8));
+        shift -= 8;
+      }
+      freeBits = 8 - shift;
+      currOutByte = EOI_CODE & COMPR_MASKS[freeBits];
+      output[outSize++] = (byte) (currOutByte << freeBits);
+    }
+
+    byte[] result = new byte[outSize];
+    System.arraycopy(output, 0, result, 0, outSize);
+    return result;
   }
 
   /**
-   * Decodes an LZW-compressed data block.
-   *
-   * @param input the data to be decompressed
-   * @return The decompressed data
-   * @throws FormatException If input is not an LZW-compressed data block.
+   * Decompresses the input sequence of bytes according to LZW algorithm.
+   * @param input The sequence of bytes to be decompressed.
+   * @param options Decompression options.  In this case, an Integer indicating
+   *   the maximum number of bytes to be decompressed.
+   * @return Result of decompression.
+   * @throws FormatException if input is not LZW-compressed data.
    */
   public byte[] decompress(byte[] input, Object options) throws FormatException
   {
     if (input == null || input.length == 0) return input;
+    if (options == null) {
+      throw new FormatException("Options must be the maximum number of " +
+        "decompressed bytes.");
+    }
 
-    int maxLength = -1;
-    if (options != null) maxLength = ((Integer) options).intValue();
+    int outSize = ((Integer) options).intValue();
 
-    byte[][] symbolTable = new byte[4096][1];
-    int bitsToRead = 9;
-    int nextSymbol = 258;
-    int code;
-    int oldCode = -1;
-    ByteVector out = new ByteVector(8192);
-    BitBuffer bb = new BitBuffer(input);
-    byte[] byteBuffer1 = new byte[16];
-    byte[] byteBuffer2 = new byte[16];
+    // Output buffer
+    byte[] output = new byte[outSize];
+    // Position in output buffer to write next byte to
+    int currOutPos = 0;
 
-    while (true) {
-      code = bb.getBits(bitsToRead);
-      if (code == EOI_CODE || code == -1) break;
-      if (code == CLEAR_CODE) {
-        // initialize symbol table
-        for (int i = 0; i < 256; i++) symbolTable[i][0] = (byte) i;
-        nextSymbol = 258;
-        bitsToRead = 9;
-        code = bb.getBits(bitsToRead);
-        if (code == EOI_CODE || code == -1) break;
-        out.add(symbolTable[code]);
-        if (out.size() >= maxLength && maxLength != -1) break;
-        oldCode = code;
+    // Table mapping codes to strings.
+    // Its structure is based on the fact that a string for a code has form:
+    // (string for another code) + (new byte).
+    // Thus, at index 'code': first array contains 'another code', second array
+    // contains 'new byte', and third array contains length of the string.
+    // The length is needed to make retrieving the string faster.
+    int[] anotherCodes = new int[4096];
+    byte[] newBytes = new byte[4096];
+    int[] lengths = new int[4096];
+    // We need to initialize only firt 256 entries in the table
+    for (int i=0; i<256; i++) {
+      newBytes[i] = (byte) i;
+      lengths[i] = 1;
+    }
+
+    // Length of the code to be read from input
+    int currCodeLength = 9;
+    // Next code to be added to the table
+    int nextCode = FIRST_CODE;
+
+    // Variables to handle reading bit stream:
+    // Position in 'input' to read next byte from
+    int currInPos = 0;
+    // Byte from 'input[curr_in_pos-1]' -- only 'bits_read' bits on the right
+    // are non-zero
+    int currRead = 0;
+    // Number of bits in 'curr_read' that were not consumed yet
+    int bitsRead = 0;
+
+    // Current code being processed by decompressor.
+    int currCode;
+    // Previous code processed by decompressor.
+    int oldCode = 0;   // without initializer, Java reports error later
+
+    do {
+      // read next code
+      {
+        int bitsLeft = currCodeLength - bitsRead;
+        if (bitsLeft > 8) {
+          currRead = (currRead << 8) | (input[currInPos++] & 0xff);
+          bitsLeft -= 8;
+        }
+        bitsRead = 8 - bitsLeft;
+        int nextByte = input[currInPos++] & 0xff;
+        currCode = (currRead << bitsLeft) | (nextByte >> bitsRead);
+        currRead = nextByte & DECOMPR_MASKS[bitsRead];
+      }
+
+      if (currCode == EOI_CODE) break;
+
+      if (currCode == CLEAR_CODE) {
+        // initialize table -- nothing to do
+        nextCode = FIRST_CODE;
+        currCodeLength = 9;
+        // read next code
+        {
+          int bitsLeft = currCodeLength - bitsRead;
+          if (bitsLeft > 8) {
+            currRead = (currRead << 8) | (input[currInPos++] & 0xff);
+            bitsLeft -= 8;
+          }
+          bitsRead = 8 - bitsLeft;
+
+          int nextByte = input[currInPos++] & 0xff;
+          currCode = (currRead << bitsLeft) | (nextByte >> bitsRead);
+          currRead = nextByte & DECOMPR_MASKS[bitsRead];
+        }
+        if (currCode == EOI_CODE) break;
+          // write string[curr_code] to output
+          // -- but here we are sure that string consists of a single byte
+          output[currOutPos++] = newBytes[currCode];
+          oldCode = currCode;
+      }
+      else if (currCode < nextCode) {
+        // Code is already in the table
+        // 1) Write strin[curr_code] to output
+        int outLength = lengths[currCode];
+        int i = currOutPos + outLength;
+        int tablePos = currCode;
+        while (i > currOutPos) {
+          output[--i] = newBytes[tablePos];
+          tablePos = anotherCodes[tablePos];
+        }
+        currOutPos += outLength;
+        // 2) Add string[old_code]+firstByte(string[curr_code]) to the table
+        anotherCodes[nextCode] = oldCode;
+        newBytes[nextCode] = output[i];
+        lengths[nextCode] = lengths[oldCode] + 1;
+        oldCode = currCode;
+        nextCode++;
       }
       else {
-        if (code < nextSymbol) {
-          // code is in table
-          out.add(symbolTable[code]);
-          if (out.size() >= maxLength && maxLength != -1) break;
-          // add string to table
-          ByteVector symbol = new ByteVector(byteBuffer1);
-          try {
-            symbol.add(symbolTable[oldCode]);
-          }
-          catch (ArrayIndexOutOfBoundsException a) {
-            throw new FormatException("Sorry, old LZW codes not supported");
-          }
-          symbol.add(symbolTable[code][0]);
-          symbolTable[nextSymbol] = symbol.toByteArray(); //**
-          oldCode = code;
-          nextSymbol++;
+        // Special case: code is not in the table
+        // 1) Write string[old_code] to output
+        int outLength = lengths[oldCode];
+        int i = currOutPos + outLength;
+        int tablePos = oldCode;
+        while (i > currOutPos) {
+          output[--i] = newBytes[tablePos];
+          tablePos = anotherCodes[tablePos];
         }
-        else {
-          // out of table
-          ByteVector symbol = new ByteVector(byteBuffer2);
-          symbol.add(symbolTable[oldCode]);
-          symbol.add(symbolTable[oldCode][0]);
-          byte[] outString = symbol.toByteArray();
-          out.add(outString);
-          if (out.size() >= maxLength && maxLength != -1) break;
-          symbolTable[nextSymbol] = outString; //**
-          oldCode = code;
-          nextSymbol++;
-        }
-        if (nextSymbol == 511) bitsToRead = 10;
-        if (nextSymbol == 1023) bitsToRead = 11;
-        if (nextSymbol == 2047) bitsToRead = 12;
+        currOutPos += outLength;
+        // 2) Write firstByte(string[old_code]) to output
+        output[currOutPos++] = output[i];
+        // 3) Add string[old_code]+firstByte(string[old_code]) to the table
+        anotherCodes[nextCode] = oldCode;
+        newBytes[nextCode] = output[i];
+        lengths[nextCode] = outLength + 1;
+        oldCode = currCode;
+        nextCode++;
       }
-    }
-    return out.toByteArray();
+      // Increase length of code if needed
+      switch (nextCode) {
+        case 511:
+          currCodeLength = 10;
+          break;
+        case 1023:
+          currCodeLength = 11;
+          break;
+        case 2047:
+          currCodeLength = 12;
+          break;
+      }
+    } while(true);
+    return output;
   }
-
-  /**
-   * Main testing method.
-   *
-   * @param args ignored
-   * @throws FormatException Can only occur if there is a bug in the
-   *                         compress method.
-   */
-  public static void main(String[] args) throws FormatException {
-    LZWCodec c = new LZWCodec();
-    c.test();
-  }
-
 }
