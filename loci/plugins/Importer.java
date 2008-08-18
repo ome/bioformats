@@ -561,59 +561,59 @@ public class Importer {
           IJ.showStatus("Bio-Formats: " + elapsed + " seconds (" +
             average + " ms per plane)");
         }
+      }
 
-        if (concatenate) {
-          Vector widths = new Vector();
-          Vector heights = new Vector();
-          Vector types = new Vector();
-          Vector newImps = new Vector();
+      if (concatenate) {
+        Vector widths = new Vector();
+        Vector heights = new Vector();
+        Vector types = new Vector();
+        Vector newImps = new Vector();
 
-          for (int j=0; j<imps.size(); j++) {
-            ImagePlus imp = (ImagePlus) imps.get(j);
-            int wj = imp.getWidth();
-            int hj = imp.getHeight();
-            int tj = imp.getBitDepth();
-            boolean append = false;
-            for (int k=0; k<widths.size(); k++) {
-              int wk = ((Integer) widths.get(k)).intValue();
-              int hk = ((Integer) heights.get(k)).intValue();
-              int tk = ((Integer) types.get(k)).intValue();
+        for (int j=0; j<imps.size(); j++) {
+          ImagePlus imp = (ImagePlus) imps.get(j);
+          int wj = imp.getWidth();
+          int hj = imp.getHeight();
+          int tj = imp.getBitDepth();
+          boolean append = false;
+          for (int k=0; k<widths.size(); k++) {
+            int wk = ((Integer) widths.get(k)).intValue();
+            int hk = ((Integer) heights.get(k)).intValue();
+            int tk = ((Integer) types.get(k)).intValue();
 
-              if (wj == wk && hj == hk && tj == tk) {
-                ImagePlus oldImp = (ImagePlus) newImps.get(k);
-                ImageStack is = oldImp.getStack();
-                ImageStack newStack = imp.getStack();
-                for (int s=0; s<newStack.getSize(); s++) {
-                  is.addSlice(newStack.getSliceLabel(s + 1),
-                    newStack.getProcessor(s + 1));
-                }
-                oldImp.setStack(oldImp.getTitle(), is);
-                newImps.setElementAt(oldImp, k);
-                append = true;
-                k = widths.size();
+            if (wj == wk && hj == hk && tj == tk) {
+              ImagePlus oldImp = (ImagePlus) newImps.get(k);
+              ImageStack is = oldImp.getStack();
+              ImageStack newStack = imp.getStack();
+              for (int s=0; s<newStack.getSize(); s++) {
+                is.addSlice(newStack.getSliceLabel(s + 1),
+                  newStack.getProcessor(s + 1));
               }
-            }
-            if (!append) {
-              widths.add(new Integer(wj));
-              heights.add(new Integer(hj));
-              types.add(new Integer(tj));
-              newImps.add(imp);
+              oldImp.setStack(oldImp.getTitle(), is);
+              newImps.setElementAt(oldImp, k);
+              append = true;
+              k = widths.size();
             }
           }
+          if (!append) {
+            widths.add(new Integer(wj));
+            heights.add(new Integer(hj));
+            types.add(new Integer(tj));
+            newImps.add(imp);
+          }
+        }
 
-          boolean splitC = options.isSplitChannels();
-          boolean splitZ = options.isSplitFocalPlanes();
-          boolean splitT = options.isSplitTimepoints();
+        boolean splitC = options.isSplitChannels();
+        boolean splitZ = options.isSplitFocalPlanes();
+        boolean splitT = options.isSplitTimepoints();
 
-          for (int j=0; j<newImps.size(); j++) {
-            ImagePlus imp = (ImagePlus) newImps.get(j);
-            imp.show();
-            if (splitC || splitZ || splitT) {
-              IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-                " slice_c=" + splitC + " slice_t=" + splitT +
-                " stack_order=" + stackOrder + " keep_original=false " +
-                "hyper_stack=" + options.isViewHyperstack() + " ");
-            }
+        for (int j=0; j<newImps.size(); j++) {
+          ImagePlus imp = (ImagePlus) newImps.get(j);
+          imp.show();
+          if (splitC || splitZ || splitT) {
+            IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
+              " slice_c=" + splitC + " slice_t=" + splitT +
+              " stack_order=" + stackOrder + " keep_original=false " +
+              "hyper_stack=" + options.isViewHyperstack() + " ");
           }
         }
       }
