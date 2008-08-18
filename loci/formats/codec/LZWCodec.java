@@ -27,8 +27,8 @@ import java.util.Arrays;
 import loci.formats.FormatException;
 
 /**
- * This is an optimized LZW codec.
- * Most of the code is inlined, and specifics of LZW usage
+ * This is an optimized LZW codec for use with TIFF files.
+ * Most of the code is inlined, and specifics of TIFF usage of LZW
  * (known size of decompressor output; possible lengths of LZW codes; specified
  * values for <code>CLEAR</code> and <code>END_OF_INFORMATION</code> codes)
  * are taken in account.
@@ -94,7 +94,8 @@ public class LZWCodec extends BaseCodec {
   /**
    * Compress sequence of bytes.
    * <p>
-   * Compresses the input sequence of bytes according to LZW algorithm.
+   * Compresses the input sequence of bytes according to LZW algorithm, as
+   * defined in the TIFF specification.
    * <p>
    * @param input
    *          The sequence of bytes to be compressed.
@@ -132,6 +133,7 @@ public class LZWCodec extends BaseCodec {
     // Number of bits to be used to output code. Ranges from 9 to 12.
     int currCodeLength = 9;
 
+    // Names of these variables are taken from TIFF specification.
     // The first byte of input is handled specially.
     int tiffK = input[0] & 0xff;
     int tiffOmega = tiffK;
@@ -246,7 +248,8 @@ public class LZWCodec extends BaseCodec {
   }
 
   /**
-   * Decompresses the input sequence of bytes according to LZW algorithm.
+   * Decompresses the input sequence of bytes according to LZW algorithm, as
+   * defined in the TIFF specification.
    * @param input The sequence of bytes to be decompressed.
    * @param options Decompression options.  In this case, an Integer indicating
    *   the maximum number of bytes to be decompressed.
@@ -302,26 +305,8 @@ public class LZWCodec extends BaseCodec {
     // Previous code processed by decompressor.
     int oldCode = 0;   // without initializer, Java reports error later
 
-    do {
-      // read next code
-      {
-        int bitsLeft = currCodeLength - bitsRead;
-        if (bitsLeft > 8) {
-          currRead = (currRead << 8) | (input[currInPos++] & 0xff);
-          bitsLeft -= 8;
-        }
-        bitsRead = 8 - bitsLeft;
-        int nextByte = input[currInPos++] & 0xff;
-        currCode = (currRead << bitsLeft) | (nextByte >> bitsRead);
-        currRead = nextByte & DECOMPR_MASKS[bitsRead];
-      }
-
-      if (currCode == EOI_CODE) break;
-
-      if (currCode == CLEAR_CODE) {
-        // initialize table -- nothing to do
-        nextCode = FIRST_CODE;
-        currCodeLength = 9;
+    try {
+      do {
         // read next code
         {
           int bitsLeft = currCodeLength - bitsRead;
@@ -330,68 +315,91 @@ public class LZWCodec extends BaseCodec {
             bitsLeft -= 8;
           }
           bitsRead = 8 - bitsLeft;
-
           int nextByte = input[currInPos++] & 0xff;
           currCode = (currRead << bitsLeft) | (nextByte >> bitsRead);
           currRead = nextByte & DECOMPR_MASKS[bitsRead];
         }
+
         if (currCode == EOI_CODE) break;
-          // write string[curr_code] to output
-          // -- but here we are sure that string consists of a single byte
-          output[currOutPos++] = newBytes[currCode];
+
+        if (currCode == CLEAR_CODE) {
+          // initialize table -- nothing to do
+          nextCode = FIRST_CODE;
+          currCodeLength = 9;
+          // read next code
+          {
+            int bitsLeft = currCodeLength - bitsRead;
+            if (bitsLeft > 8) {
+              currRead = (currRead << 8) | (input[currInPos++] & 0xff);
+              bitsLeft -= 8;
+            }
+            bitsRead = 8 - bitsLeft;
+
+            int nextByte = input[currInPos++] & 0xff;
+            currCode = (currRead << bitsLeft) | (nextByte >> bitsRead);
+            currRead = nextByte & DECOMPR_MASKS[bitsRead];
+          }
+          if (currCode == EOI_CODE) break;
+            // write string[curr_code] to output
+            // -- but here we are sure that string consists of a single byte
+            output[currOutPos++] = newBytes[currCode];
+            oldCode = currCode;
+        }
+        else if (currCode < nextCode) {
+          // Code is already in the table
+          // 1) Write strin[curr_code] to output
+          int outLength = lengths[currCode];
+          int i = currOutPos + outLength;
+          int tablePos = currCode;
+          while (i > currOutPos) {
+            output[--i] = newBytes[tablePos];
+            tablePos = anotherCodes[tablePos];
+          }
+          currOutPos += outLength;
+          // 2) Add string[old_code]+firstByte(string[curr_code]) to the table
+          anotherCodes[nextCode] = oldCode;
+          newBytes[nextCode] = output[i];
+          lengths[nextCode] = lengths[oldCode] + 1;
           oldCode = currCode;
-      }
-      else if (currCode < nextCode) {
-        // Code is already in the table
-        // 1) Write strin[curr_code] to output
-        int outLength = lengths[currCode];
-        int i = currOutPos + outLength;
-        int tablePos = currCode;
-        while (i > currOutPos) {
-          output[--i] = newBytes[tablePos];
-          tablePos = anotherCodes[tablePos];
+          nextCode++;
         }
-        currOutPos += outLength;
-        // 2) Add string[old_code]+firstByte(string[curr_code]) to the table
-        anotherCodes[nextCode] = oldCode;
-        newBytes[nextCode] = output[i];
-        lengths[nextCode] = lengths[oldCode] + 1;
-        oldCode = currCode;
-        nextCode++;
-      }
-      else {
-        // Special case: code is not in the table
-        // 1) Write string[old_code] to output
-        int outLength = lengths[oldCode];
-        int i = currOutPos + outLength;
-        int tablePos = oldCode;
-        while (i > currOutPos) {
-          output[--i] = newBytes[tablePos];
-          tablePos = anotherCodes[tablePos];
+        else {
+          // Special case: code is not in the table
+          // 1) Write string[old_code] to output
+          int outLength = lengths[oldCode];
+          int i = currOutPos + outLength;
+          int tablePos = oldCode;
+          while (i > currOutPos) {
+            output[--i] = newBytes[tablePos];
+            tablePos = anotherCodes[tablePos];
+          }
+          currOutPos += outLength;
+          // 2) Write firstByte(string[old_code]) to output
+          output[currOutPos++] = output[i];
+          // 3) Add string[old_code]+firstByte(string[old_code]) to the table
+          anotherCodes[nextCode] = oldCode;
+          newBytes[nextCode] = output[i];
+          lengths[nextCode] = outLength + 1;
+          oldCode = currCode;
+          nextCode++;
         }
-        currOutPos += outLength;
-        // 2) Write firstByte(string[old_code]) to output
-        output[currOutPos++] = output[i];
-        // 3) Add string[old_code]+firstByte(string[old_code]) to the table
-        anotherCodes[nextCode] = oldCode;
-        newBytes[nextCode] = output[i];
-        lengths[nextCode] = outLength + 1;
-        oldCode = currCode;
-        nextCode++;
-      }
-      // Increase length of code if needed
-      switch (nextCode) {
-        case 511:
-          currCodeLength = 10;
-          break;
-        case 1023:
-          currCodeLength = 11;
-          break;
-        case 2047:
-          currCodeLength = 12;
-          break;
-      }
-    } while(true);
+        // Increase length of code if needed
+        switch (nextCode) {
+          case 511:
+            currCodeLength = 10;
+            break;
+          case 1023:
+            currCodeLength = 11;
+            break;
+          case 2047:
+            currCodeLength = 12;
+            break;
+        }
+      } while(true);
+    }
+    catch (ArrayIndexOutOfBoundsException e) {
+      throw new FormatException("Invalid LZW data", e);
+    }
     return output;
   }
 }
