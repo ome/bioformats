@@ -77,6 +77,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   public void paintComponent(Graphics g) {
 //    super.paintComponent(g);
+
     g.setColor(Color.BLACK);
     int xStart = lPad, width = getWidth() - lPad - rPad;
     g.drawRect(xStart, 0, width - 1, COMPONENT_HEIGHT - 1);
@@ -86,7 +87,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
     if (cacheLength == 0) return;
 
-    int pixelsPerIndex = (width - 2) / (cacheLength + 1);
+    int pixelsPerIndex = (width - 2) / cacheLength;
     int remainder = (width - 2) - (pixelsPerIndex * cacheLength);
 
     try {

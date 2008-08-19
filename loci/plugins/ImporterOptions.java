@@ -991,7 +991,9 @@ public class ImporterOptions implements ItemListener {
       }
       else if (s.equals(VIEW_BROWSER)) {
         orderChoice.select(ORDER_XYCZT);
+        virtualBox.setState(true);
         changed.add(orderChoice);
+        changed.add(virtualBox);
       }
       else if (s.equals(VIEW_VISBIO)) {
       }
@@ -1009,8 +1011,8 @@ public class ImporterOptions implements ItemListener {
     else if (src == orderChoice) {
       String s = orderChoice.getSelectedItem();
       String item = stackChoice.getSelectedItem();
-      if (!s.equals(ORDER_XYCZT) &&
-        (item.equals(VIEW_HYPERSTACK) || item.equals(VIEW_BROWSER)))
+      if (!s.equals(ORDER_XYCZT) && (item.equals(VIEW_HYPERSTACK) ||
+        item.equals(VIEW_BROWSER)))
       {
         stackChoice.select(VIEW_STANDARD);
         changed.add(stackChoice);

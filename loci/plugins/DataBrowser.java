@@ -53,15 +53,11 @@ import org.xml.sax.SAXException;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/DataBrowser.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/DataBrowser.java">SVN</a></dd></dl>
  */
-public class DataBrowser extends StackWindow
-  implements ActionListener, ChangeListener, ItemListener
-{
+public class DataBrowser extends StackWindow implements ActionListener {
 
   // -- Fields --
 
   protected JSpinner fpsSpin;
-  protected Checkbox cBox;
-  protected JSpinner cSpin;
   protected Button animate, options, metadata;
   protected boolean anim = false;
   protected boolean allowShow = false;
@@ -114,9 +110,12 @@ public class DataBrowser extends StackWindow
       makeDummySlider() : sliceSelector;
     Scrollbar tSlider = frameSelector == null ?
       makeDummySlider() : frameSelector;
+    Scrollbar cSlider = channelSelector == null ?
+      makeDummySlider() : channelSelector;
 
     Panel zPanel = makeHeavyPanel(zSlider);
     Panel tPanel = makeHeavyPanel(tSlider);
+    Panel cPanel = makeHeavyPanel(cSlider);
 
     fpsSpin = new JSpinner(new SpinnerNumberModel(10, 1, 99, 1));
     fpsSpin.setToolTipText("Animation rate in frames per second");
@@ -130,10 +129,12 @@ public class DataBrowser extends StackWindow
     if (stack instanceof BFVirtualStack) {
       BFVirtualStack bfvs = (BFVirtualStack) stack;
       Cache cache = bfvs.getCache();
-      CacheIndicator zCache = new CacheIndicator(cache, 0, zSlider, 10, 20);
+      CacheIndicator zCache = new CacheIndicator(cache, 1, zSlider, 10, 20);
       zPanel.add(zCache, BorderLayout.SOUTH);
-      CacheIndicator tCache = new CacheIndicator(cache, 1, tSlider, 10, 20);
+      CacheIndicator tCache = new CacheIndicator(cache, 2, tSlider, 10, 20);
       tPanel.add(tCache, BorderLayout.SOUTH);
+      CacheIndicator cCache = new CacheIndicator(cache, 0, cSlider, 10, 20);
+      cPanel.add(cCache, BorderLayout.SOUTH);
     }
 
     animate = new Button("Animate");
@@ -142,20 +143,6 @@ public class DataBrowser extends StackWindow
       fpsSpin.setEnabled(false);
       fpsLabel.setEnabled(false);
       animate.setEnabled(false);
-    }
-
-    int sizeC = channelSelector == null ? 1 : channelSelector.getMaximum() - 1;
-    Component cComp;
-    if (sizeC < 3) {
-      cBox = new Checkbox("Transmitted", sizeC == 2);
-      cBox.addItemListener(this);
-      if (sizeC != 2) cBox.setEnabled(false);
-      cComp = cBox;
-    }
-    else {
-      cSpin = new JSpinner(new SpinnerNumberModel(1, 1, sizeC, 1));
-      cSpin.addChangeListener(this);
-      cComp = makeHeavyPanel(cSpin);
     }
 
     options = new Button("Options");
@@ -176,7 +163,7 @@ public class DataBrowser extends StackWindow
     controls.add(animate, cc.xy(8, 4));
 
     controls.add(cLabel, cc.xy(2, 6));
-    controls.add(cComp, cc.xy(4, 6));
+    controls.add(cPanel, cc.xy(4, 6));
     controls.add(options, cc.xy(6, 6));
     controls.add(metadata, cc.xy(8, 6));
 
@@ -314,30 +301,6 @@ public class DataBrowser extends StackWindow
     }
     // NB: Do not eat superclass events. Om nom nom nom. :-)
     else super.actionPerformed(e);
-  }
-
-  // -- ChangeListener API methods --
-
-  public void stateChanged(ChangeEvent e) {
-    Object src = e.getSource();
-    if (src == cSpin) {
-      int c = ((Number) cSpin.getValue()).intValue();
-      int z = imp.getSlice();
-      int t = imp.getFrame();
-      setPosition(c, z, t);
-    }
-  }
-
-  // -- ItemListener API methods --
-
-  public void itemStateChanged(ItemEvent e) {
-    Object src = e.getSource();
-    if (src == cBox) {
-      int c = cBox.getState() ? 1 : 2;
-      int z = imp.getSlice();
-      int t = imp.getFrame();
-      setPosition(c, z, t);
-    }
   }
 
   // -- Helper methods --

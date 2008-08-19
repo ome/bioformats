@@ -431,11 +431,13 @@ public class Importer {
         if (options.isViewView5D()) {
           stackOrder = ImporterOptions.ORDER_XYZCT;
         }
-        if (options.isViewImage5D() ||
-          options.isViewHyperstack() || options.isViewBrowser())
+        if (options.isViewImage5D() || options.isViewHyperstack() ||
+          options.isViewBrowser())
         {
           stackOrder = ImporterOptions.ORDER_XYCZT;
         }
+
+        ((DimensionSwapper) r).setOutputOrder(stackOrder);
 
         store.setPixelsDimensionOrder(stackOrder, i, 0);
 
@@ -461,8 +463,7 @@ public class Importer {
             ru.setVar("r", r);
             //ru.setVar("stackOrder", stackOrder);
             //ru.setVar("merge", merge);
-            stackB = (ImageStack) ru.exec(
-              "stackB = new BFVirtualStack(id, r)");
+            stackB = (ImageStack) ru.exec("stackB = new BFVirtualStack(id, r)");
             for (int j=0; j<num[i]; j++) {
               String label = constructSliceLabel(j, r,
                 retrieve, i, new int[][] {zCount, cCount, tCount});
@@ -490,7 +491,8 @@ public class Importer {
             }
             IJ.showProgress((double) q++ / total);
 
-            int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
+            int ndx = j;
+            //int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
 
             String label = constructSliceLabel(ndx, r, retrieve, i,
               new int[][] {zCount, cCount, tCount});
@@ -694,14 +696,16 @@ public class Importer {
 
     if (!concatenate && mergeChannels) imp.show();
 
-    if (mergeChannels && options.isWindowless()) {
-      IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-        " merge=true merge_option=[" + options.getMergeOption() + "] " +
-        "hyper_stack=" + options.isViewHyperstack() + " ");
-    }
-    else if (mergeChannels) {
-      IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-        " merge=true hyper_stack=" + options.isViewHyperstack() + " ");
+    if (!options.isViewBrowser()) {
+      if (mergeChannels && options.isWindowless()) {
+        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+          " merge=true merge_option=[" + options.getMergeOption() + "] " +
+          "hyper_stack=" + options.isViewHyperstack() + " ");
+      }
+      else if (mergeChannels) {
+        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+          " merge=true hyper_stack=" + options.isViewHyperstack() + " ");
+      }
     }
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
@@ -758,7 +762,7 @@ public class Importer {
       if (!concatenate) {
         if (options.isViewBrowser()) new DataBrowser(imp);
         else imp.show();
-        if (splitC || splitZ || splitT) {
+        if ((splitC || splitZ || splitT) && !options.isViewBrowser()) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
             " slice_c=" + splitC + " slice_t=" + splitT +
             " stack_order=" + stackOrder + " keep_original=false " +
@@ -784,7 +788,7 @@ public class Importer {
             }
           }
         }
-        else if (colorize) {
+        else if (colorize && !options.isViewBrowser()) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
             " merge=false colorize=true ndx=0 hyper_stack=" +
             options.isViewHyperstack() + " ");

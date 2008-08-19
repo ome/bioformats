@@ -27,11 +27,14 @@ package loci.plugins;
 
 import ij.ImageStack;
 import ij.process.ImageProcessor;
+import java.io.IOException;
+import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 import loci.formats.cache.CacheException;
 import loci.formats.cache.ICacheSource;
 
 /**
- * Retrieves ImageJ image processors from an ImagePlus object.
+ * Retrieves ImageJ image processors from an image reader.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/ImageProcessorSource.java">Trac</a>,
@@ -41,25 +44,24 @@ public class ImageProcessorSource implements ICacheSource {
 
   // -- Fields --
 
-  /** ImageStack object from which to draw ImageProcessors. */
-  protected ImageStack stack;
+  /** Image reader from which to draw ImageProcessors. */
+  protected IFormatReader reader;
 
   // -- Constructors --
 
-  public ImageProcessorSource(ImageStack stack) throws CacheException {
-    this.stack = stack;
+  public ImageProcessorSource(IFormatReader reader) throws CacheException {
+    this.reader = reader;
   }
 
   // -- ICacheSource API methods --
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
-  public int getObjectCount() { return stack.getSize(); }
+  public int getObjectCount() { return reader.getImageCount(); }
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
   public Object getObject(int index) throws CacheException {
-    //return new ImageProcessor[] {stack.getProcessor(index)};
+    // assumes that channels are separated
     ImageProcessor ip = null;
-    /*
     try {
       ip = Util.openProcessors(reader, index)[0];
     }
@@ -69,7 +71,6 @@ public class ImageProcessorSource implements ICacheSource {
     catch (IOException exc) {
       throw new CacheException(exc);
     }
-    */
     return ip;
   }
 
