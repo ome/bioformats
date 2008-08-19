@@ -155,6 +155,13 @@ public class OpenlabReader extends FormatReader {
           }
         }
       }
+      if (planes[index].volumeType == MAC_256_GREYS ||
+        planes[index].volumeType == MAC_256_COLORS)
+      {
+        for (int i=0; i<buf.length; i++) {
+          buf[i] = (byte) (~buf[i] & 0xff);
+        }
+      }
     }
     else {
       // PICT plane
@@ -293,11 +300,10 @@ public class OpenlabReader extends FormatReader {
 
     int imagesFound = 0;
 
-    Vector firstSeriesOffsets = new Vector();
-    Vector secondSeriesOffsets = new Vector();
-
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
+    Vector representativePlanes = new Vector();
 
     while (in.getFilePointer() + 8 < in.length()) {
       long fp = in.getFilePointer();
@@ -344,19 +350,27 @@ public class OpenlabReader extends FormatReader {
           planes[imagesFound].height = in.readInt();
         }
 
-        // check if this image belongs to a new series
-        if (!planes[imagesFound].planeName.equals("Original Image")) {
-          if (planes[imagesFound].width == planes[0].width &&
-            planes[imagesFound].height == planes[0].height &&
-            (planes[imagesFound].volumeType == planes[0].volumeType ||
+        for (int i=0; i<representativePlanes.size(); i++) {
+          PlaneInfo p = (PlaneInfo) representativePlanes.get(i);
+          if (planes[imagesFound].width == p.width &&
+            planes[imagesFound].height == p.height &&
+            (planes[imagesFound].volumeType == p.volumeType ||
             (planes[imagesFound].volumeType >= DEEP_GREY_9 &&
-            planes[0].volumeType >= DEEP_GREY_9)))
+            p.volumeType >= DEEP_GREY_9)))
           {
-            firstSeriesOffsets.add(new Integer(imagesFound));
+            planes[imagesFound].series = i;
+            break;
           }
-          else secondSeriesOffsets.add(new Integer(imagesFound));
-          imagesFound++;
         }
+
+        if (planes[imagesFound].series == -1 &&
+          !planes[imagesFound].planeName.equals("Original Image"))
+        {
+          planes[imagesFound].series = representativePlanes.size();
+          representativePlanes.add(planes[imagesFound]);
+        }
+
+        imagesFound++;
       }
       else if (tag == CALIBRATION) {
         in.skipBytes(4);
@@ -434,22 +448,20 @@ public class OpenlabReader extends FormatReader {
       in.seek(nextTag);
     }
 
-    int nSeries = secondSeriesOffsets.size() > 0 ? 2 : 1;
+    int nSeries = representativePlanes.size();
     planeOffsets = new int[nSeries][];
+    Vector tmpOffsets = new Vector();
     for (int i=0; i<nSeries; i++) {
-      if (i == 0) {
-        planeOffsets[i] = new int[firstSeriesOffsets.size()];
-        for (int n=0; n<planeOffsets[i].length; n++) {
-          planeOffsets[i][n] = ((Integer) firstSeriesOffsets.get(n)).intValue();
+      for (int q=0; q<planes.length; q++) {
+        if (planes[q] != null && planes[q].series == i) {
+          tmpOffsets.add(new Integer(q));
         }
       }
-      else {
-        planeOffsets[i] = new int[secondSeriesOffsets.size()];
-        for (int n=0; n<planeOffsets[i].length; n++) {
-          planeOffsets[i][n] =
-            ((Integer) secondSeriesOffsets.get(n)).intValue();
-        }
+      planeOffsets[i] = new int[tmpOffsets.size()];
+      for (int q=0; q<planeOffsets[i].length; q++) {
+        planeOffsets[i][q] = ((Integer) tmpOffsets.get(q)).intValue();
       }
+      tmpOffsets.clear();
     }
 
     // populate core metadata
@@ -465,6 +477,7 @@ public class OpenlabReader extends FormatReader {
         case MAC_1_BIT:
         case MAC_4_GREYS:
         case MAC_256_GREYS:
+        case MAC_256_COLORS:
           core.pixelType[i] = FormatTools.UINT8;
           if (core.imageCount[i] > 1 && (core.sizeX[i] * core.sizeY[i] <
             (planes[planeOffsets[i][1]].planeOffset -
@@ -477,7 +490,6 @@ public class OpenlabReader extends FormatReader {
           core.interleaved[i] = false;
           break;
         case MAC_16_COLORS:
-        case MAC_256_COLORS:
         case MAC_16_BIT_COLOR:
         case MAC_24_BIT_COLOR:
           core.pixelType[i] = FormatTools.UINT8;
@@ -550,6 +562,7 @@ public class OpenlabReader extends FormatReader {
     protected int volumeType;
     protected int width;
     protected int height;
+    protected int series = -1;
   }
 
 }
