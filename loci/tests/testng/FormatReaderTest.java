@@ -472,8 +472,18 @@ public class FormatReaderTest {
         }
 
         boolean passIndexed = config.isIndexed() == reader.isIndexed();
+        if (!passIndexed) {
+          msg = "Indexed: was " + reader.isIndexed() + ", expected " +
+            config.isIndexed();
+        }
+
         boolean passFalseColor =
           config.isFalseColor() == reader.isFalseColor();
+
+        if (!passFalseColor) {
+          msg = "FalseColor: was " + reader.isFalseColor() + ", expected " +
+            config.isFalseColor();
+        }
 
         success = passX && passY && passZ && passC && passT && passDim &&
           passInt && passRGB && passTX && passTY && passType && passLE &&

@@ -91,6 +91,9 @@ public class OpenlabReader extends FormatReader {
   private String fmt = "";
   private int[][] planeOffsets;
 
+  private Vector luts;
+  private int lastPlane;
+
   // -- Constructor --
 
   /** Constructs a new OpenlabReader. */
@@ -108,6 +111,13 @@ public class OpenlabReader extends FormatReader {
     return stream.readLong() == 0xffff696d7072L;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    Object lut = luts.get(planeOffsets[series][lastPlane]);
+    if (lut == null) return null;
+    return lut instanceof byte[][] ? (byte[][]) lut : null;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -117,6 +127,8 @@ public class OpenlabReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
+
+    lastPlane = no;
 
     int index = planeOffsets[series][no];
 
@@ -256,6 +268,8 @@ public class OpenlabReader extends FormatReader {
     super.close();
     if (pict != null) pict.close();
     planes = null;
+    luts = null;
+    lastPlane = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -265,6 +279,8 @@ public class OpenlabReader extends FormatReader {
     if (debug) debug("OpenlabReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
+
+    luts = new Vector();
 
     status("Verifying Openlab LIFF format");
 
@@ -370,6 +386,21 @@ public class OpenlabReader extends FormatReader {
           representativePlanes.add(planes[imagesFound]);
         }
 
+        // read the LUT, if present
+
+        if (planes[imagesFound].volumeType == MAC_256_COLORS) {
+          in.seek(nextTag - (257 * 8));
+          byte[][] lut = new byte[3][256];
+          for (int i=0; i<256; i++) {
+            in.skipBytes(2);
+            lut[0][255 - i] = (byte) (in.readShort() >> 8);
+            lut[1][255 - i] = (byte) (in.readShort() >> 8);
+            lut[2][255 - i] = (byte) (in.readShort() >> 8);
+          }
+          luts.add(lut);
+        }
+        else luts.add(null);
+
         imagesFound++;
       }
       else if (tag == CALIBRATION) {
@@ -468,6 +499,8 @@ public class OpenlabReader extends FormatReader {
 
     core = new CoreMetadata(nSeries);
 
+    Arrays.fill(core.indexed, false);
+
     for (int i=0; i<nSeries; i++) {
       core.sizeX[i] = planes[planeOffsets[i][0]].width;
       core.sizeY[i] = planes[planeOffsets[i][0]].height;
@@ -477,7 +510,6 @@ public class OpenlabReader extends FormatReader {
         case MAC_1_BIT:
         case MAC_4_GREYS:
         case MAC_256_GREYS:
-        case MAC_256_COLORS:
           core.pixelType[i] = FormatTools.UINT8;
           if (core.imageCount[i] > 1 && (core.sizeX[i] * core.sizeY[i] <
             (planes[planeOffsets[i][1]].planeOffset -
@@ -488,6 +520,13 @@ public class OpenlabReader extends FormatReader {
           core.rgb[i] = false;
           core.sizeC[i] = 1;
           core.interleaved[i] = false;
+          break;
+        case MAC_256_COLORS:
+          core.pixelType[i] = FormatTools.UINT8;
+          core.rgb[i] = false;
+          core.sizeC[i] = 1;
+          core.interleaved[i] = false;
+          core.indexed[i] = true;
           break;
         case MAC_16_COLORS:
         case MAC_16_BIT_COLOR:
@@ -521,7 +560,6 @@ public class OpenlabReader extends FormatReader {
     }
     Arrays.fill(core.currentOrder, "XYCZT");
     Arrays.fill(core.littleEndian, false);
-    Arrays.fill(core.indexed, false);
     Arrays.fill(core.falseColor, false);
     Arrays.fill(core.metadataComplete, true);
 

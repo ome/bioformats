@@ -1047,6 +1047,8 @@ public class FileStitcher implements IFormatReader {
       core.littleEndian[i] = rr.isLittleEndian();
       core.interleaved[i] = rr.isInterleaved();
       core.seriesMetadata[i] = rr.getMetadata();
+      core.indexed[i] = rr.isIndexed();
+      core.falseColor[i] = rr.isFalseColor();
       sizeZ[i] = rr.getSizeZ();
       sizeC[i] = rr.getSizeC();
       sizeT[i] = rr.getSizeT();
