@@ -471,12 +471,13 @@ public class FormatReaderTest {
           msg = "little-endian: was " + actualLE + ", expected " + expectedLE;
         }
 
-        //boolean passIndexed = config.isIndexed() == reader.isIndexed();
-        //boolean passFalseColor =
-        //  config.isFalseColor() == reader.isFalseColor();
+        boolean passIndexed = config.isIndexed() == reader.isIndexed();
+        boolean passFalseColor =
+          config.isFalseColor() == reader.isFalseColor();
 
         success = passX && passY && passZ && passC && passT && passDim &&
-          passInt && passRGB && passTX && passTY && passType && passLE;
+          passInt && passRGB && passTX && passTY && passType && passLE &&
+          passIndexed && passFalseColor;
       }
     }
     catch (Throwable t) {

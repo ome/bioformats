@@ -237,6 +237,14 @@ public class ConfigurationTree {
     return toBoolean(getSeriesValue("little"));
   }
 
+  public boolean isIndexed() {
+    return toBoolean(getSeriesValue("indexed"));
+  }
+
+  public boolean isFalseColor() {
+    return toBoolean(getSeriesValue("falseColor"));
+  }
+
   public String getMD5() { return getSeriesValue("md5"); }
 
   public float getTimePerPlane() {
