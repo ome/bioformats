@@ -63,6 +63,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
   protected boolean allowShow = false;
 
   protected JFrame metaWindow;
+  //protected BrowserOptionsWindow optionsWindow;
   protected String xml;
 
   // -- Constructors --
@@ -135,6 +136,10 @@ public class DataBrowser extends StackWindow implements ActionListener {
       tPanel.add(tCache, BorderLayout.SOUTH);
       CacheIndicator cCache = new CacheIndicator(cache, 0, cSlider, 10, 20);
       cPanel.add(cCache, BorderLayout.SOUTH);
+
+      // build options window
+      //optionsWindow =
+      //  new BrowserOptionsWindow("Options - " + getTitle(), cache);
     }
 
     animate = new Button("Animate");
@@ -147,7 +152,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
 
     options = new Button("Options");
     options.addActionListener(this);
-    options.setEnabled(false);
+    //options.setEnabled(optionsWindow != null);
     metadata = new Button("Metadata");
     metadata.addActionListener(this);
     metadata.setEnabled(false);
@@ -287,6 +292,15 @@ public class DataBrowser extends StackWindow implements ActionListener {
       anim = !anim;
     }
     else if (src == options) {
+      // center window and show
+      /*
+      Rectangle r = getBounds();
+      Dimension w = optionsWindow.getSize();
+      int x = (int) Math.min(5, r.x + (r.width - w.width) / 2);
+      int y = (int) Math.min(5, r.y + (r.height - w.height) / 2);
+      optionsWindow.setLocation(x, y);
+      optionsWindow.setVisible(true);
+      */
     }
     else if (src == metadata) {
       // center window and show

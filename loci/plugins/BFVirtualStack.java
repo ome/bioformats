@@ -27,6 +27,7 @@ package loci.plugins;
 
 import ij.*;
 import ij.process.ImageProcessor;
+import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import java.util.Vector;
 import loci.formats.*;
@@ -48,12 +49,13 @@ public class BFVirtualStack extends VirtualStack {
   protected IFormatReader reader;
   protected String id;
   protected Cache cache;
-//  protected String stackOrder;
-//  protected int merge;
 
   private Vector[] methodStacks;
   private int currentSlice = -1;
   private RecordedImageProcessor currentProcessor;
+
+  private boolean colorize;
+  private boolean merge;
 
   // -- Static utility methods --
 
@@ -73,26 +75,20 @@ public class BFVirtualStack extends VirtualStack {
 
   // -- Constructor --
 
-//  public BFVirtualStack(int w, int h, ColorModel cm, String path,
-//    IFormatReader r, String stackOrder, int merge)
-  public BFVirtualStack(String path, IFormatReader r)
-    throws FormatException, IOException, CacheException
+  public BFVirtualStack(String path, IFormatReader r, boolean colorize,
+    boolean merge) throws FormatException, IOException, CacheException
   {
     super(getWidth(r, path), getHeight(r, path), null, path);
     reader = r;
     id = path;
-//    this.stackOrder = stackOrder;
-//    this.merge = merge;
+
+    this.colorize = colorize;
+    this.merge = merge;
 
     // set up cache
     int[] len = new int[] {r.getEffectiveSizeC(), r.getSizeZ(), r.getSizeT()};
     CacheStrategy strategy = new CrosshairStrategy(len);
 
-    // set default ranges
-
-    strategy.setRange((int) Math.min(r.getSizeZ(), 1), 0);
-    strategy.setRange((int) Math.min(r.getSizeC(), 1), 1);
-    strategy.setRange((int) Math.min(r.getSizeT(), 1), 2);
     cache = new Cache(strategy, new ImageProcessorSource(r), true);
 
     methodStacks = new Vector[r.getImageCount()];
@@ -129,14 +125,12 @@ public class BFVirtualStack extends VirtualStack {
       }
     }
     int[] pos = reader.getZCTCoords(n - 1);
-    int z = pos[0];
-    pos[0] = pos[1];
-    pos[1] = z;
+    int[] cachePos = new int[] {pos[1], pos[0], pos[2]};
     ImageProcessor ip = null;
 
     try {
-      ip = (ImageProcessor) cache.getObject(pos);
-      cache.setCurrentPos(pos);
+      ip = (ImageProcessor) cache.getObject(cachePos);
+      cache.setCurrentPos(cachePos);
     }
     catch (CacheException exc) {
       exc.printStackTrace();
@@ -153,6 +147,28 @@ public class BFVirtualStack extends VirtualStack {
     }
     catch (IOException exc) {
       exc.printStackTrace();
+    }
+
+    if (colorize) {
+      // apply color table, if necessary
+      byte[] lut = new byte[256];
+      byte[] blank = new byte[256];
+      for (int i=0; i<lut.length; i++) {
+        lut[i] = (byte) i;
+        blank[i] = (byte) 0;
+      }
+
+      IndexColorModel model = null;
+      if (pos[1] < 3) {
+        model = new IndexColorModel(8, 256, pos[1] == 0 ? lut : blank,
+          pos[1] == 1 ? lut : blank, pos[1] == 2 ? lut : blank);
+      }
+      else model = new IndexColorModel(8, 256, lut, lut, lut);
+
+      if (ip != null) ip.setColorModel(model);
+    }
+    else if (merge) {
+      // TODO
     }
 
     if (ip != null) {

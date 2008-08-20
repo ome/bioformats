@@ -457,13 +457,12 @@ public class Importer {
           try {
             ReflectedUniverse ru = new ReflectedUniverse();
             ru.exec("import loci.plugins.BFVirtualStack");
-            //ru.setVar("w", w);
-            //ru.setVar("h", h);
             ru.setVar("id", id);
             ru.setVar("r", r);
-            //ru.setVar("stackOrder", stackOrder);
-            //ru.setVar("merge", merge);
-            stackB = (ImageStack) ru.exec("stackB = new BFVirtualStack(id, r)");
+            ru.setVar("colorize", colorize);
+            ru.setVar("merge", doMerge);
+            stackB = (ImageStack)
+              ru.exec("stackB = new BFVirtualStack(id, r, colorize, merge)");
             for (int j=0; j<num[i]; j++) {
               String label = constructSliceLabel(j, r,
                 retrieve, i, new int[][] {zCount, cCount, tCount});
@@ -696,7 +695,7 @@ public class Importer {
 
     if (!concatenate && mergeChannels) imp.show();
 
-    if (!options.isViewBrowser()) {
+    if (!options.isVirtual()) {
       if (mergeChannels && options.isWindowless()) {
         IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
           " merge=true merge_option=[" + options.getMergeOption() + "] " +
@@ -762,7 +761,7 @@ public class Importer {
       if (!concatenate) {
         if (options.isViewBrowser()) new DataBrowser(imp);
         else imp.show();
-        if ((splitC || splitZ || splitT) && !options.isViewBrowser()) {
+        if ((splitC || splitZ || splitT) && !options.isVirtual()) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
             " slice_c=" + splitC + " slice_t=" + splitT +
             " stack_order=" + stackOrder + " keep_original=false " +
@@ -788,7 +787,7 @@ public class Importer {
             }
           }
         }
-        else if (colorize && !options.isViewBrowser()) {
+        else if (colorize && !options.isVirtual()) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
             " merge=false colorize=true ndx=0 hyper_stack=" +
             options.isViewHyperstack() + " ");
