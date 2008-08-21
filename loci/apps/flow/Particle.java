@@ -39,20 +39,36 @@ public class Particle {
 	private	int totalIntensity;
 	private	int sliceNum;
 	private	double pixelMicronSquared;
+	private int centroid_x;
+	private int centroid_y;
+	private int size_x;
+	private int size_y;
+	private boolean active;
 		
 	public Particle(int a, int i) {
 		pixelArea = a;
 		totalIntensity = i;
+		active = true;
 	}
 	
+	public Particle(int a, int i, int minx, int maxx, int miny, int maxy) {
+		pixelArea = a;
+		totalIntensity = i;
+		size_x = maxx - minx;
+		centroid_x = (maxx+minx)/2;
+		size_y = maxy - miny;
+		centroid_y = (maxy+miny)/2;
+		active = true;
+	}
+
 	public void setPixelsPerMicron(double ppm) {
 		pixelMicronSquared = ppm;
 		micronArea = (int) Math.round(pixelArea/pixelMicronSquared);
-		System.out.println("pixelMicronSquared is "+ppm);
+		//System.out.println("pixelMicronSquared is "+ppm);
 	}
 	
 	public void print() {
-		System.out.println("Particle "+num+" on slice "+sliceNum+" with area (in pixels) "+pixelArea+" and total intensity "+totalIntensity);
+		System.out.println((active?"Active":"Inactive")+": Particle "+num+" on slice "+sliceNum+" with area (in pixels) "+pixelArea+" and total intensity "+totalIntensity);
 	}
 
 	public int getNum() {
@@ -86,5 +102,29 @@ public class Particle {
 	public int getMeanIntensity() {
 		if (pixelArea==0) return 0; 
 		else return totalIntensity/pixelArea;
-	}	
+	}
+
+	public int getCentroidY() {
+		return centroid_y;
+	}
+
+	public int getSizeY() {
+		return size_y;
+	}
+	
+	public int getCentroidX() {
+		return centroid_x;
+	}
+
+	public int getSizeX() {
+		return size_x;
+	}
+
+	public void deactivate() {
+		active = false;
+	}
+	
+	public boolean getStatus() {
+		return active;
+	}
 }

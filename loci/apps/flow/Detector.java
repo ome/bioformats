@@ -97,14 +97,23 @@ public class Detector {
 	}
 	
 	public Vector<Particle> crunchArray() {
-		
 		Vector<Particle> retval = new Vector<Particle>();
-		int[] area = new int[numRegions], totalIntensity = new int[numRegions];
+		int[] area = new int[numRegions], totalIntensity = new int[numRegions],
+		      minY = new int[numRegions], maxY = new int[numRegions],
+		      minX = new int[numRegions], maxX = new int[numRegions];
+		
+		for (int i=0; i<numRegions; i++) { minY[i] = 2*size; minX[i] = 2*size;}
+		
 		for (int i=0; i<size; i++) {
 			for (int j=0; j<size; j++) {
 				if (floodArray[i][j] < 2) continue;
 				area[floodArray[i][j]-2]++;
 				totalIntensity[floodArray[i][j]-2] += (imageData[i*size+j] & 0xff);
+				
+				if (i < minY[floodArray[i][j]-2]) minY[floodArray[i][j]-2] = i; 
+				if (i > maxY[floodArray[i][j]-2]) maxY[floodArray[i][j]-2] = i; 
+				if (j < minX[floodArray[i][j]-2]) minX[floodArray[i][j]-2] = j; 
+				if (j > maxX[floodArray[i][j]-2]) maxX[floodArray[i][j]-2] = j; 
 			}
 		}
 		
@@ -119,7 +128,7 @@ public class Detector {
 		
 		for (int i=0; i<numRegions; i++) {
 			if (area[i] < areaThreshold || edgeParticle[i]) continue;
-			retval.add(new Particle(area[i], totalIntensity[i]));
+			retval.add(new Particle(area[i], totalIntensity[i], minX[i], maxX[i], minY[i], maxY[i]));
 			//System.out.println("Region "+i+": Area "+area[i]+"  Intensity "+totalIntensity[i]);
 		}
 		return retval;
