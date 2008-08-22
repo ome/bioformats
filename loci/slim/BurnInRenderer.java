@@ -104,6 +104,11 @@ public class BurnInRenderer extends Renderer {
           // END HACKY CRAP
           currentCurves[currentY][currentX].estimate();
           //currentCurves[currentY][currentX].iterate();
+          // This only really matters for the last subsampleLevel
+          if(subsampleLevel == 0) {
+            double newRCSE = currentCurves[currentY][currentX].getReducedChiSquaredError();
+            rcsecache[currentY][currentX] = newRCSE;
+          }
           double[][] curve = currentCurves[currentY][currentX].getCurve();
           double[] exponentials = new double[numExponentials];
           for(int i = 0; i < numExponentials; i++) {
@@ -143,6 +148,7 @@ public class BurnInRenderer extends Renderer {
       }
     }
     // initial pass - iterations
+    maxIterations = 1; // TEMP?
     while(alive && !improving) {
       if(!estimated) {
         //System.out.println("Set estimated");
@@ -208,6 +214,18 @@ public class BurnInRenderer extends Renderer {
       currentCurves[currentY][currentX].iterate();
       totalIterations++;
       rcsecache[currentY][currentX] = currentCurves[currentY][currentX].getReducedChiSquaredError();
+      if(rcsecache[currentY][currentX] < worstRCSE) {
+        double[][] curve = currentCurves[currentY][currentX].getCurve();
+        double[] exponentials = new double[numExponentials];
+        for(int i = 0; i < numExponentials; i++) {
+          exponentials[i] = curve[i][1];
+        }
+        Arrays.sort(exponentials);
+        for(int c = 0; c < numExponentials; c++) {
+          image[numExponentials-c-1][currentY * maxDim + currentX] = exponentials[c];
+          //image[numExponentials-c-1][currentY * maxDim + currentX] = 1;
+        }
+      }
       //System.out.println("x: " + currentX + "  y: " + currentY + "   RCSE: " + currentCurves[currentY][currentX].getReducedChiSquaredError());
     }
   }

@@ -47,14 +47,14 @@ public class GACurveFitter extends CurveFitter {
   private double mutationFactor;
 
   private static final boolean DEBUG = false;
-  private static final int STALL_GENERATIONS = 5;
+  private static final int STALL_GENERATIONS = 3;
   private static final double STALLED_FACTOR = 2.0d;
   private static final double MUTATION_CHANCE = .25d;
   private static final int SPECIMENS = 25;
   // Must be 0 < x < 1
   private static final double INITIAL_MUTATION_FACTOR = .5;
   // Must be 0 < x < 1
-  private static final double MUTATION_FACTOR_REDUCTION = .9;
+  private static final double MUTATION_FACTOR_REDUCTION = .99;
 
   // -- Constructor --
 
@@ -183,9 +183,12 @@ public class GACurveFitter extends CurveFitter {
         }
       }
     }
-    for(int q = 0; q < curveEstimate.length; q++) {
-      if(DEBUG) System.out.println("c" + q + ": " + curveEstimate[q][2]);
+    /*
+    System.out.println("RCSE: " + currentRCSE);
+    for(int j = 0; j < components; j++) {
+      System.out.println("a: " + curveEstimate[j][0] + " b: " + curveEstimate[j][1] + " c: " + curveEstimate[j][2]);
     }
+    */
   }
 
   /**
@@ -227,8 +230,8 @@ public class GACurveFitter extends CurveFitter {
     for(int i = 0; i < curveData.length; i++) {
       System.out.println("i: " + i + "  data: " + curveData[i]);
     }
-    try { Thread.sleep(1000); } catch(Exception e) {}
     */
+    //try { Thread.sleep(1000); } catch(Exception e) {}
     if (components >= 1) {
       // TODO: Estimate c, factor it in below.
 
@@ -461,12 +464,25 @@ public class GACurveFitter extends CurveFitter {
 
   /**
    * Returns the current curve estimate.
-   * Return size is expected to be [numExponentials][3]
+   * Return size is expected to be [components][3]
    * For each exponential of the form ae^-bt+c,
    * [][0] is a, [1] is b, [2] is c.
    **/
   public double[][] getCurve() {
-    return curveEstimate;
+    if(components == 1) return curveEstimate;
+    // Otherwise, it's 2 exponential, and we want it in ascending order
+    if(components == 2) {
+      if(curveEstimate[0][1] > curveEstimate[1][1]) {
+        double[][] toreturn = new double[components][3];
+        toreturn[0] = curveEstimate[1];
+        toreturn[1] = curveEstimate[0];
+        return toreturn;
+      } else {
+        return curveEstimate;
+      }
+    }
+    return null;
+    
   }
 
   /**

@@ -1017,7 +1017,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           fitter.setComponentCount(data.numExp);
           fitter.setData(curveData);
           fitter.estimate();
-          for (int i=0; i<100; i++) fitter.iterate();
+          for (int i=0; i<250; i++) fitter.iterate();
           double[][] results = fitter.getCurve();
           log("\t\tchi2=" + fitter.getReducedChiSquaredError());
           for (int i=0; i<data.numExp; i++) {
