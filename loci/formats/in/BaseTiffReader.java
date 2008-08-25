@@ -506,7 +506,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     MetadataTools.populatePixels(store, this);
 
     // populate Experimenter
-    String artist = (String) TiffTools.getIFDValue(ifds[0], TiffTools.ARTIST);
+    String artist = null;
+    Object o = TiffTools.getIFDValue(ifds[0], TiffTools.ARTIST);
+    if (o instanceof String) artist = (String) o;
+    else if (o instanceof String[]) {
+      String[] s = (String[]) o;
+      for (int i=0; i<s.length; i++) {
+        artist += s[i];
+        if (i < s.length - 1) artist += "\n";
+      }
+    }
     if (artist != null) {
       String firstName = null, lastName = null;
       int ndx = artist.indexOf(" ");
