@@ -815,8 +815,8 @@ public class JVMLinkFlowCytometry {
 		pixelMicronSquared = PixelsPerMicron*PixelsPerMicron;
 		
 		// Close the other open windows
-		frame.dispose();
-		imp.close();
+		if (frame != null) frame.dispose();
+		if (imp != null) imp.close();
 		
 		init(size, size, PixelsPerMicron);
 		showParticles(true);
