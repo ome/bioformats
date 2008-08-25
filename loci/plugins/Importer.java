@@ -461,8 +461,9 @@ public class Importer {
             ru.setVar("r", r);
             ru.setVar("colorize", colorize);
             ru.setVar("merge", doMerge);
-            stackB = (ImageStack)
-              ru.exec("stackB = new BFVirtualStack(id, r, colorize, merge)");
+            ru.setVar("record", options.isRecord());
+            stackB = (ImageStack) ru.exec("stackB = new BFVirtualStack(id, " +
+              "r, colorize, merge, record)");
 
             if (doMerge) {
               cCount[i] = 1;

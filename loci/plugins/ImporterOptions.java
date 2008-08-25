@@ -108,6 +108,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_RANGE = "bioformats.specifyRanges";
   public static final String PREF_AUTOSCALE = "bioformats.autoscale";
   public static final String PREF_VIRTUAL = "bioformats.virtual";
+  public static final String PREF_RECORD = "bioformats.record";
   public static final String PREF_ALL_SERIES = "bioformats.openAllSeries";
 
   public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
@@ -136,6 +137,7 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_RANGE = "Specify_range for each series";
   public static final String LABEL_AUTOSCALE = "Autoscale images";
   public static final String LABEL_VIRTUAL = "Use_virtual_stack";
+  public static final String LABEL_RECORD = "Record_modifications_to_virtual_stack";
   public static final String LABEL_ALL_SERIES = "Open_all_series";
   public static final String LABEL_SWAP = "Swap_dimensions";
 
@@ -162,6 +164,7 @@ public class ImporterOptions implements ItemListener {
   private Checkbox autoscaleBox;
   private Choice mergeChoice;
   private Checkbox virtualBox;
+  private Checkbox recordBox;
   private Checkbox allSeriesBox;
   private Checkbox cropBox;
   private Checkbox swapBox;
@@ -183,6 +186,7 @@ public class ImporterOptions implements ItemListener {
   private boolean specifyRanges;
   private boolean autoscale;
   private boolean virtual;
+  private boolean record;
   private boolean openAllSeries;
   private boolean swapDimensions;
 
@@ -219,6 +223,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isWindowless() { return windowless; }
   public String getMergeOption() { return mergeOption; }
   public boolean isVirtual() { return virtual; }
+  public boolean isRecord() { return record; }
   public boolean openAllSeries() { return openAllSeries; }
   public boolean doCrop() { return crop; }
   public boolean isSwapDimensions() { return swapDimensions; }
@@ -263,6 +268,7 @@ public class ImporterOptions implements ItemListener {
   public void setAutoscale(boolean b) { autoscale = b; }
   public void setWindowless(boolean b) { windowless = b; }
   public void setVirtual(boolean b) { virtual = b; }
+  public void setRecord(boolean b) { record = b; }
   public void setOpenAllSeries(boolean b) { openAllSeries = b; }
   public void setCrop(boolean b) { crop = b; }
   public void setSwapDimensions(boolean b) { swapDimensions = b; }
@@ -283,6 +289,7 @@ public class ImporterOptions implements ItemListener {
     specifyRanges = Prefs.get(PREF_RANGE, false);
     autoscale = Prefs.get(PREF_AUTOSCALE, true);
     virtual = Prefs.get(PREF_VIRTUAL, false);
+    record = Prefs.get(PREF_RECORD, true);
     openAllSeries = Prefs.get(PREF_ALL_SERIES, false);
     swapDimensions = Prefs.get(PREF_SWAP, false);
 
@@ -310,6 +317,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_RANGE, specifyRanges);
     Prefs.set(PREF_AUTOSCALE, autoscale);
     Prefs.set(PREF_VIRTUAL, virtual);
+    Prefs.set(PREF_RECORD, record);
     Prefs.set(PREF_ALL_SERIES, openAllSeries);
     Prefs.set(PREF_SWAP, swapDimensions);
 
@@ -360,6 +368,7 @@ public class ImporterOptions implements ItemListener {
       specifyRanges = getMacroValue(arg, LABEL_RANGE, specifyRanges);
       autoscale = getMacroValue(arg, LABEL_AUTOSCALE, autoscale);
       virtual = getMacroValue(arg, LABEL_VIRTUAL, virtual);
+      record = getMacroValue(arg, LABEL_RECORD, record);
       openAllSeries = getMacroValue(arg, LABEL_ALL_SERIES, openAllSeries);
       swapDimensions = getMacroValue(arg, LABEL_SWAP, swapDimensions);
 
@@ -571,6 +580,7 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_RANGE, specifyRanges);
     gd.addCheckbox(LABEL_AUTOSCALE, autoscale);
     gd.addCheckbox(LABEL_VIRTUAL, virtual);
+    gd.addCheckbox(LABEL_RECORD, record);
     gd.addCheckbox(LABEL_ALL_SERIES, openAllSeries);
     gd.addCheckbox(LABEL_SWAP, swapDimensions);
 
@@ -597,8 +607,9 @@ public class ImporterOptions implements ItemListener {
       rangeBox = (Checkbox) boxes.get(9);
       autoscaleBox = (Checkbox) boxes.get(10);
       virtualBox = (Checkbox) boxes.get(11);
-      allSeriesBox = (Checkbox) boxes.get(12);
-      swapBox = (Checkbox) boxes.get(13);
+      recordBox = (Checkbox) boxes.get(12);
+      allSeriesBox = (Checkbox) boxes.get(13);
+      swapBox = (Checkbox) boxes.get(14);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -621,6 +632,7 @@ public class ImporterOptions implements ItemListener {
     specifyRanges = gd.getNextBoolean();
     autoscale = gd.getNextBoolean();
     virtual = gd.getNextBoolean();
+    record = gd.getNextBoolean();
     openAllSeries = gd.getNextBoolean();
     swapDimensions = gd.getNextBoolean();
 
@@ -1085,6 +1097,10 @@ public class ImporterOptions implements ItemListener {
       if (virtualBox.getState()) {
         autoscaleBox.setState(false);
         changed.add(autoscaleBox);
+      }
+      else {
+        recordBox.setState(false);
+        changed.add(recordBox);
       }
     }
     if (changed.size() > 0) flash(changed);

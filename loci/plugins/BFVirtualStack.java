@@ -56,6 +56,7 @@ public class BFVirtualStack extends VirtualStack {
 
   private boolean colorize;
   private boolean merge;
+  private boolean record;
 
   // -- Static utility methods --
 
@@ -76,7 +77,8 @@ public class BFVirtualStack extends VirtualStack {
   // -- Constructor --
 
   public BFVirtualStack(String path, IFormatReader r, boolean colorize,
-    boolean merge) throws FormatException, IOException, CacheException
+    boolean merge, boolean record)
+    throws FormatException, IOException, CacheException
   {
     super(getWidth(r, path), getHeight(r, path), null, path);
     reader = r;
@@ -84,6 +86,7 @@ public class BFVirtualStack extends VirtualStack {
 
     this.colorize = colorize;
     this.merge = merge;
+    this.record = record;
 
     // set up cache
     int[] len = new int[] {r.getEffectiveSizeC(), r.getSizeZ(), r.getSizeT()};
@@ -197,12 +200,14 @@ public class BFVirtualStack extends VirtualStack {
       }
       currentProcessor = new RecordedImageProcessor(ip, currentSlice, pos[1],
         otherChannels);
+      currentProcessor.setDoRecording(record);
       return currentProcessor;
     }
 
     if (ip != null) {
       currentSlice = n - 1;
       currentProcessor = new RecordedImageProcessor(ip, currentSlice);
+      currentProcessor.setDoRecording(record);
       return currentProcessor;
     }
 
