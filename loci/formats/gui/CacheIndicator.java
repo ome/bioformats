@@ -155,9 +155,11 @@ public class CacheIndicator extends JComponent implements CacheListener {
   // -- CacheListener API methods --
 
   public void cacheUpdated(CacheEvent e) {
-    this.cache = (Cache) e.getSource();
+    if (e.getSource() instanceof Cache) this.cache = (Cache) e.getSource();
     int type = e.getType();
-    if (type == CacheEvent.OBJECT_LOADED || type == CacheEvent.OBJECT_DROPPED) {
+    if (type == CacheEvent.OBJECT_LOADED || type == CacheEvent.OBJECT_DROPPED ||
+      !(e.getSource() instanceof Cache))
+    {
       // cache has changed; update GUI
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
