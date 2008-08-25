@@ -992,8 +992,14 @@ public class ImporterOptions implements ItemListener {
       else if (s.equals(VIEW_BROWSER)) {
         orderChoice.select(ORDER_XYCZT);
         virtualBox.setState(true);
+        splitCBox.setState(false);
+        splitZBox.setState(false);
+        splitTBox.setState(false);
         changed.add(orderChoice);
         changed.add(virtualBox);
+        changed.add(splitCBox);
+        changed.add(splitZBox);
+        changed.add(splitTBox);
       }
       else if (s.equals(VIEW_VISBIO)) {
       }

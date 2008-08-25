@@ -23,6 +23,9 @@ public class RecordedImageProcessor extends ImageProcessor {
   private Vector methodStack;
   private int sliceNumber;
 
+  private int channelNumber;
+  private ImageProcessor[] otherChannels;
+
   // -- Constructor --
 
   public RecordedImageProcessor(ImageProcessor proc, int num) {
@@ -30,6 +33,17 @@ public class RecordedImageProcessor extends ImageProcessor {
     methodStack = new Vector();
     doRecording = true;
     sliceNumber = num;
+  }
+
+  public RecordedImageProcessor(ImageProcessor proc, int num, int channelNum,
+    ImageProcessor[] otherChannels)
+  {
+    this.proc = proc;
+    methodStack = new Vector();
+    doRecording = true;
+    sliceNumber = num;
+    this.channelNumber = channelNum;
+    this.otherChannels = otherChannels;
   }
 
   // -- RecordedImageProcessor API methods --
@@ -127,8 +141,118 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public Image createImage() {
-    //record("createImage", null, (Class) null);
-    return proc.createImage();
+    if (otherChannels == null) return proc.createImage();
+    // merge channels - adapted from CompositeImage
+
+    int size = proc.getWidth() * proc.getHeight();
+    int[] rgbPixels = new int[size];
+
+    for (int i=0; i<otherChannels.length+1; i++) {
+      ImageProcessor activeProcessor = null;
+      if (i == channelNumber) {
+        activeProcessor = proc;
+      }
+      else {
+        if (i < channelNumber) activeProcessor = otherChannels[i];
+        else activeProcessor = otherChannels[i - 1];
+      }
+
+      IndexColorModel cm = (IndexColorModel) activeProcessor.getColorModel();
+      int mapSize = cm.getMapSize();
+      int[] reds = new int[mapSize];
+      int[] greens = new int[mapSize];
+      int[] blues = new int[mapSize];
+
+      byte[] tmp = new byte[mapSize];
+      cm.getReds(tmp);
+      for (int q=0; q<mapSize; q++) {
+        reds[q] = (tmp[q] & 0xff) << 16;
+      }
+      cm.getGreens(tmp);
+      for (int q=0; q<mapSize; q++) {
+        greens[q] = (tmp[q] & 0xff) << 8;
+      }
+      cm.getBlues(tmp);
+      for (int q=0; q<mapSize; q++) {
+        blues[q] = tmp[q] & 0xff;
+      }
+
+      byte[] pixels = new byte[size];
+      double min = activeProcessor.getMin();
+      double max = activeProcessor.getMax();
+      double scale = 256.0 / (max - min + 1);
+
+      if (activeProcessor instanceof ByteProcessor) {
+        pixels = (byte[]) activeProcessor.getPixels();
+      }
+      else if (activeProcessor instanceof ShortProcessor) {
+        short[] s = (short[]) activeProcessor.getPixels();
+        for (int q=0; q<size; q++) {
+          int value = (int) ((s[q] & 0xffff) - min);
+          if (value < 0) value = 0;
+          value = (int) (value * scale + 0.5);
+          if (value > 255) value = 255;
+          pixels[q] = (byte) value;
+        }
+      }
+      else if (activeProcessor instanceof FloatProcessor) {
+        float[] f = (float[]) activeProcessor.getPixels();
+        for (int q=0; q<size; q++) {
+          float value = (float) (f[q] - min);
+          if (value < 0) value = 0f;
+          int ivalue = (int) (value * scale);
+          if (ivalue > 255) ivalue = 255;
+          pixels[q] = (byte) ivalue;
+        }
+      }
+
+      switch (i) {
+        case 0:
+          for (int q=0; q<size; q++) {
+            rgbPixels[q] = (rgbPixels[q] & 0xff00ffff) | reds[pixels[q] & 0xff];
+          }
+          break;
+        case 1:
+          for (int q=0; q<size; q++) {
+            rgbPixels[q] =
+              (rgbPixels[q] & 0xffff00ff) | greens[pixels[q] & 0xff];
+          }
+          break;
+        case 2:
+          for (int q=0; q<size; q++) {
+            rgbPixels[q] =
+              (rgbPixels[q] & 0xffffff00) | blues[pixels[q] & 0xff];
+          }
+          break;
+        case 3:
+          for (int q=0; q<size; q++) {
+            int red = reds[pixels[q] & 0xff];
+            int green = greens[pixels[q] & 0xff];
+            int blue = blues[pixels[q] & 0xff];
+            rgbPixels[q] = red | green | blue;
+          }
+          break;
+        default:
+          for (int q=0; q<size; q++) {
+            int pixel = rgbPixels[q];
+            int red = (pixel & 0xff0000) + reds[pixels[q] & 0xff];
+            int green = (pixel & 0x00ff00) + greens[pixels[q] & 0xff];
+            int blue = (pixel & 0xff) + blues[pixels[q] & 0xff];
+            if (red > 16711680) red = 16711680;
+            if (green > 65280) green = 65280;
+            if (blue > 255) blue = 255;
+            rgbPixels[q] = red | green | blue;
+          }
+      }
+
+    }
+
+    DirectColorModel rgb = new DirectColorModel(32, 0xff0000, 0xff00, 0xff);
+    MemoryImageSource src = new MemoryImageSource(proc.getWidth(),
+      proc.getHeight(), rgb, rgbPixels, 0, proc.getWidth());
+    src.setAnimated(true);
+    src.setFullBufferUpdates(true);
+    return Toolkit.getDefaultToolkit().createImage(src);
   }
 
   public ImageProcessor createProcessor(int width, int height) {

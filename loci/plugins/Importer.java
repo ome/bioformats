@@ -463,11 +463,24 @@ public class Importer {
             ru.setVar("merge", doMerge);
             stackB = (ImageStack)
               ru.exec("stackB = new BFVirtualStack(id, r, colorize, merge)");
-            for (int j=0; j<num[i]; j++) {
-              String label = constructSliceLabel(j, r,
-                retrieve, i, new int[][] {zCount, cCount, tCount});
-              ru.setVar("label", label);
-              ru.exec("stackB.addSlice(label)");
+
+            if (doMerge) {
+              cCount[i] = 1;
+              for (int j=0; j<num[i]; j++) {
+                int[] pos = r.getZCTCoords(j);
+                if (pos[1] > 0) continue;
+                String label = constructSliceLabel(
+                  new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]), r,
+                  retrieve, i, new int[][] {zCount, cCount, tCount});
+              }
+            }
+            else {
+              for (int j=0; j<num[i]; j++) {
+                String label = constructSliceLabel(j, r,
+                  retrieve, i, new int[][] {zCount, cCount, tCount});
+                ru.setVar("label", label);
+                ru.exec("stackB.addSlice(label)");
+              }
             }
           }
           catch (ReflectException exc) {

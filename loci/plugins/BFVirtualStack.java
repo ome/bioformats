@@ -125,6 +125,7 @@ public class BFVirtualStack extends VirtualStack {
       }
     }
     int[] pos = reader.getZCTCoords(n - 1);
+    if (merge) pos = new ChannelMerger(reader).getZCTCoords(n - 1);
     int[] cachePos = new int[] {pos[1], pos[0], pos[2]};
     ImageProcessor ip = null;
 
@@ -139,7 +140,8 @@ public class BFVirtualStack extends VirtualStack {
     // cache missed
     try {
       if (ip == null) {
-        ip = Util.openProcessors(reader, n - 1)[0];
+        ip = Util.openProcessors(reader,
+          reader.getIndex(pos[0], pos[1], pos[2]))[0];
       }
     }
     catch (FormatException exc) {
@@ -168,7 +170,34 @@ public class BFVirtualStack extends VirtualStack {
       if (ip != null) ip.setColorModel(model);
     }
     else if (merge) {
-      // TODO
+      currentSlice = n - 1;
+      ImageProcessor[] otherChannels =
+        new ImageProcessor[reader.getSizeC() - 1];
+      for (int i=0; i<otherChannels.length; i++) {
+        int channel = i >= pos[1] ? i + 1 : i;
+        try {
+          cachePos[0] = channel;
+          otherChannels[i] = (ImageProcessor) cache.getObject(cachePos);
+        }
+        catch (CacheException exc) {
+          exc.printStackTrace();
+        }
+        if (otherChannels[i] == null) {
+          try {
+            int index = reader.getIndex(pos[0], channel, pos[2]);
+            otherChannels[i] = Util.openProcessors(reader, index)[0];
+          }
+          catch (FormatException exc) {
+            exc.printStackTrace();
+          }
+          catch (IOException exc) {
+            exc.printStackTrace();
+          }
+        }
+      }
+      currentProcessor = new RecordedImageProcessor(ip, currentSlice, pos[1],
+        otherChannels);
+      return currentProcessor;
     }
 
     if (ip != null) {
@@ -189,7 +218,7 @@ public class BFVirtualStack extends VirtualStack {
   }
 
   public int getSize() {
-//    return reader.getImageCount() / merge;
+    if (merge) return new ChannelMerger(reader).getImageCount();
     return reader.getImageCount();
   }
 
