@@ -27,5 +27,12 @@
 	<classpathentry kind="lib" path="jar/velocity-dep-1.5.jar"/>
 	<classpathentry kind="lib" path="jar/visad-lite.jar"/>
 	<classpathentry kind="lib" path="jar/xmlrpc-1.2-b1.jar"/>
+	<classpathentry kind="lib" path="jar/jbossall-client-4.2.1.GA.jar"/>
+	<classpathentry kind="lib" path="jar/jmagick.jar"/>
+	<classpathentry kind="lib" path="jar/omero-client-3.0-Beta3.jar"/>
+	<classpathentry kind="lib" path="jar/omero-common-3.0-Beta3.jar"/>
+	<classpathentry kind="lib" path="jar/omero-importer-3.0-Beta3.jar"/>
+	<classpathentry kind="lib" path="jar/omero-model-psql-3.0-Beta3.jar"/>
+	<classpathentry kind="lib" path="jar/spring-2.5.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
