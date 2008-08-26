@@ -862,7 +862,7 @@ public final class ImageTools {
   //}
 
   /** Get the bytes from an image, merging the channels as necessary. */
-  public static byte[] getBytes(BufferedImage img, boolean separated, int c) {
+  public static byte[] getBytes(BufferedImage img, boolean separated) {
     byte[][] p = getBytes(img);
     if (separated || p.length == 1) return p[0];
     else {

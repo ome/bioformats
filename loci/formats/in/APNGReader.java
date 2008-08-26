@@ -86,15 +86,8 @@ public class APNGReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false, no);
-    int bytesPerChannel = w * h;
-    if (t.length > bytesPerChannel) {
-      buf = new byte[bytesPerChannel * getRGBChannelCount()];
-      for (int i=0; i<3; i++) {
-        System.arraycopy(t, i * bytesPerChannel, buf, i * bytesPerChannel,
-          bytesPerChannel);
-      }
-    }
+    byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false);
+    System.arraycopy(t, 0, buf, 0, buf.length);
 
     return buf;
   }

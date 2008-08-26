@@ -67,15 +67,8 @@ public abstract class ImageIOReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false, no);
-    int bytesPerChannel = w * h;
-    if (t.length > bytesPerChannel) {
-      for (int i=0; i<3; i++) {
-        System.arraycopy(t, i * bytesPerChannel, buf, i*bytesPerChannel,
-          bytesPerChannel);
-      }
-    }
-    else System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
+    byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false);
+    System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
     return buf;
   }
 
