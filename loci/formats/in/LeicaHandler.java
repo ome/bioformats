@@ -48,6 +48,7 @@ public class LeicaHandler extends DefaultHandler {
   private Vector extraDims, channels, widths, heights, zs, ts, bps;
   private Vector seriesNames, containerNames, containerCounts;
   private Vector xcal, ycal, zcal, bits;
+  private Vector lutNames;
 
   private int numDatasets;
   private Hashtable metadata;
@@ -71,6 +72,7 @@ public class LeicaHandler extends DefaultHandler {
     ycal = new Vector();
     zcal = new Vector();
     bits = new Vector();
+    lutNames = new Vector();
   }
 
   // -- LeicaHandler API methods --
@@ -106,6 +108,8 @@ public class LeicaHandler extends DefaultHandler {
   public Vector getZCal() { return zcal; }
 
   public Vector getBits() { return bits; }
+
+  public Vector getLutNames() { return lutNames; }
 
   // -- DefaultHandler API methods --
 
@@ -203,6 +207,7 @@ public class LeicaHandler extends DefaultHandler {
       if (numChannels == 1) {
         bps.add(new Integer(attributes.getValue("Resolution")));
       }
+      lutNames.add(attributes.getValue("LUTName"));
     }
     else if (qName.equals("DimensionDescription")) {
       String prefix = "Dimension " + count + " - ";
@@ -233,6 +238,7 @@ public class LeicaHandler extends DefaultHandler {
         default:
           extras *= len;
       }
+      count++;
     }
     else if (qName.equals("ScannerSettingRecord")) {
       String identifier = attributes.getValue("Identifier");

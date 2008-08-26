@@ -40,6 +40,26 @@ import loci.formats.meta.MetadataStore;
  */
 public class LIFReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final Hashtable CHANNEL_PRIORITIES = createChannelPriorities();
+
+  private static Hashtable createChannelPriorities() {
+    Hashtable h = new Hashtable();
+
+    h.put("red", new Integer(0));
+    h.put("green", new Integer(1));
+    h.put("blue", new Integer(2));
+    h.put("cyan", new Integer(3));
+    h.put("magenta", new Integer(4));
+    h.put("yellow", new Integer(5));
+    h.put("black", new Integer(6));
+    h.put("gray", new Integer(7));
+    h.put("", new Integer(8));
+
+    return h;
+  }
+
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
@@ -52,6 +72,8 @@ public class LIFReader extends FormatReader {
   private int[] extraDimensions;
 
   private int numDatasets;
+
+  private int[][] channelMap;
 
   // -- Constructor --
 
@@ -74,6 +96,12 @@ public class LIFReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
+
+    if (!isRGB()) {
+      int[] pos = getZCTCoords(no);
+      pos[1] = indexOf(pos[1], channelMap[series]);
+      no = getIndex(pos[0], pos[1], pos[2]);
+    }
 
     long offset = ((Long) offsets.get(series)).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
@@ -227,11 +255,50 @@ public class LIFReader extends FormatReader {
     Vector ycal = handler.getYCal();
     Vector zcal = handler.getZCal();
     Vector bits = handler.getBits();
+    Vector lutNames = handler.getLutNames();
 
     numDatasets = widths.size();
 
     bitsPerPixel = new int[numDatasets];
     extraDimensions = new int[numDatasets];
+
+    // set up mapping to rearrange channels
+    // for instance, the green channel may be #0, and the red channel may be #1
+    channelMap = new int[numDatasets][];
+    int nextLut = 0;
+    for (int i=0; i<channelMap.length; i++) {
+      channelMap[i] = new int[((Integer) channels.get(i)).intValue()];
+
+      String[] luts = new String[channelMap[i].length];
+      for (int q=0; q<luts.length; q++) {
+        luts[q] = ((String) lutNames.get(nextLut++)).toLowerCase();
+      }
+
+      for (int q=0; q<channelMap[i].length; q++) {
+        channelMap[i][q] =
+          ((Integer) CHANNEL_PRIORITIES.get(luts[q])).intValue();
+      }
+
+      int[] sorted = new int[channelMap[i].length];
+      Arrays.fill(sorted, -1);
+
+      for (int q=0; q<sorted.length; q++) {
+        int min = Integer.MAX_VALUE;
+        int minIndex = -1;
+        for (int n=0; n<channelMap[i].length; n++) {
+          if (channelMap[i][n] < min && !containsValue(sorted, n)) {
+            min = channelMap[i][n];
+            minIndex = n;
+          }
+        }
+
+        sorted[q] = minIndex;
+      }
+
+      for (int q=0; q<channelMap[i].length; q++) {
+        channelMap[i][sorted[q]] = q;
+      }
+    }
 
     // Populate metadata store
 
@@ -317,6 +384,17 @@ public class LIFReader extends FormatReader {
       }
     }
     MetadataTools.populatePixels(store, this);
+  }
+
+  private boolean containsValue(int[] array, int value) {
+    return indexOf(value, array) != -1;
+  }
+
+  private int indexOf(int value, int[] array) {
+    for (int i=0; i<array.length; i++) {
+      if (array[i] == value) return i;
+    }
+    return -1;
   }
 
 }
