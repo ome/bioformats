@@ -110,6 +110,7 @@ public abstract class CacheStrategy
       case FORWARD_ORDER:
         return value;
       case BACKWARD_ORDER:
+        if (value == 0) return 0;
         return lengths[axis] - value;
       default:
         throw new IllegalStateException("unknown order: " + order[axis]);
