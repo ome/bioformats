@@ -175,9 +175,9 @@ public class IPLabReader extends FormatReader {
     addMeta("PixelType", ptype);
     in.skipBytes(dataSize);
 
-    core[0].currentOrder = "XY";
-    if (getSizeC() > 1) core[0].currentOrder += "CZT";
-    else core[0].currentOrder += "ZTC";
+    core[0].inputOrder = "XY";
+    if (getSizeC() > 1) core[0].inputOrder += "CZT";
+    else core[0].inputOrder += "ZTC";
 
     core[0].rgb = getSizeC() > 1;
     core[0].interleaved = false;

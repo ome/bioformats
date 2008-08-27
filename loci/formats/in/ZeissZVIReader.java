@@ -455,7 +455,7 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
-    core[0].currentOrder = "XY";
+    core[0].inputOrder = "XY";
     for (int i=0; i<coordinates.size()-1; i++) {
       int[] zct1 = (int[]) coordinates.get(new Integer(i));
       int[] zct2 = (int[]) coordinates.get(new Integer(i + 1));
@@ -463,23 +463,23 @@ public class ZeissZVIReader extends FormatReader {
       int deltaC = zct2[1] - zct1[1];
       int deltaT = zct2[2] - zct1[2];
       if (deltaZ > 0 && getDimensionOrder().indexOf("Z") == -1) {
-        core[0].currentOrder += "Z";
+        core[0].inputOrder += "Z";
       }
       if (deltaC > 0 && getDimensionOrder().indexOf("C") == -1) {
-        core[0].currentOrder += "C";
+        core[0].inputOrder += "C";
       }
       if (deltaT > 0 && getDimensionOrder().indexOf("T") == -1) {
-        core[0].currentOrder += "T";
+        core[0].inputOrder += "T";
       }
     }
     if (getDimensionOrder().indexOf("C") == -1) {
-      core[0].currentOrder += "C";
+      core[0].inputOrder += "C";
     }
     if (getDimensionOrder().indexOf("Z") == -1) {
-      core[0].currentOrder += "Z";
+      core[0].inputOrder += "Z";
     }
     if (getDimensionOrder().indexOf("T") == -1) {
-      core[0].currentOrder += "T";
+      core[0].inputOrder += "T";
     }
 
     // rearrange axis sizes, if necessary

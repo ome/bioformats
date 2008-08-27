@@ -237,7 +237,7 @@ public class OMEXMLReader extends FormatReader {
       }
       Boolean endian = omexmlMeta.getPixelsBigEndian(i, 0);
       String pixType = omexmlMeta.getPixelsPixelType(i, 0);
-      core[i].currentOrder = omexmlMeta.getPixelsDimensionOrder(i, 0);
+      core[i].inputOrder = omexmlMeta.getPixelsDimensionOrder(i, 0);
       core[i].sizeX = w.intValue();
       core[i].sizeY = h.intValue();
       core[i].sizeT = t.intValue();

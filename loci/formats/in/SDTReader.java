@@ -203,7 +203,7 @@ public class SDTReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeC = intensity ? channels : timeBins * channels;
     core[0].sizeT = 1;
-    core[0].currentOrder = "XYZTC";
+    core[0].inputOrder = "XYZTC";
     core[0].pixelType = FormatTools.UINT16;
     core[0].rgb = !intensity;
     core[0].littleEndian = true;

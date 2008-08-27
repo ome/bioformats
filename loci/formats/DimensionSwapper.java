@@ -38,11 +38,6 @@ import loci.formats.meta.MetadataStore;
  */
 public class DimensionSwapper extends ReaderWrapper {
 
-  // -- Fields --
-
-  /** The input dimension order for the image series. */
-  protected String inputOrder;
-
   // -- Constructors --
 
   /** Constructs a DimensionSwapper around a new image reader. */
@@ -125,7 +120,10 @@ public class DimensionSwapper extends ReaderWrapper {
     core[series].sizeC = dims[newC];
     core[series].sizeT = dims[newT];
     //core.currentOrder[series] = order;
-    inputOrder = order;
+    if (core[series].outputOrder == null) {
+      core[series].outputOrder = core[series].inputOrder;
+    }
+    core[series].inputOrder = order;
 
     if (oldC != newC) {
       // C was overridden; clear the sub-C dimensional metadata
@@ -148,13 +146,8 @@ public class DimensionSwapper extends ReaderWrapper {
    * dimension order; e.g., ImageJ virtual stacks must be in XYCZT order.
    */
   public void setOutputOrder(String outputOrder) {
-    //this.outputOrder = outputOrder;
-    if (inputOrder == null) inputOrder = getDimensionOrder();
-    getCoreMetadata()[getSeries()].currentOrder = outputOrder;
-  }
-
-  public String getOutputOrder() {
-    return getDimensionOrder();
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    getCoreMetadata()[getSeries()].outputOrder = outputOrder;
   }
 
   // -- IFormatReader API methods --
@@ -192,7 +185,15 @@ public class DimensionSwapper extends ReaderWrapper {
   /* @see loci.formats.IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata()[getSeries()].currentOrder;
+    String output = getCoreMetadata()[getSeries()].outputOrder;
+    if (output != null) return output;
+    return getInputOrder();
+  }
+
+  /* @see loci.formats.IFormatReader#getInputOrder() */
+  public String getInputOrder() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata()[getSeries()].inputOrder;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -250,9 +251,9 @@ public class DimensionSwapper extends ReaderWrapper {
   // -- Helper methods --
 
   protected int reorder(int no) throws FormatException {
-    if (inputOrder == null) return no;
-    return FormatTools.getReorderedIndex(inputOrder, getDimensionOrder(),
-      getSizeZ(), getSizeC(), getSizeT(), getImageCount(), no);
+    if (getInputOrder() == null) return no;
+    return FormatTools.getReorderedIndex(getInputOrder(), getDimensionOrder(),
+      getSizeZ(), getEffectiveSizeC(), getSizeT(), getImageCount(), no);
   }
 
 }

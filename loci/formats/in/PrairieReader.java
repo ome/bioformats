@@ -223,7 +223,7 @@ public class PrairieReader extends FormatReader {
         core[0].sizeZ = isZ ? zt : 1;
         core[0].sizeT = isZ ? 1 : zt;
         core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
-        core[0].currentOrder = "XYC" + (isZ ? "ZT" : "TZ");
+        core[0].inputOrder = "XYC" + (isZ ? "ZT" : "TZ");
         core[0].pixelType = FormatTools.UINT16;
         core[0].rgb = false;
         core[0].interleaved = false;

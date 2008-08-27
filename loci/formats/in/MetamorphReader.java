@@ -317,7 +317,7 @@ public class MetamorphReader extends BaseTiffReader {
       core[0].sizeC = cc;
       core[0].sizeT = tc;
       core[0].imageCount = zc * tc * cc;
-      core[0].currentOrder = "XYZCT";
+      core[0].inputOrder = "XYZCT";
 
       if (stks.length > 1) {
         CoreMetadata[] newCore = new CoreMetadata[stks.length];
@@ -330,7 +330,7 @@ public class MetamorphReader extends BaseTiffReader {
           newCore[i].sizeT = getSizeT();
           newCore[i].pixelType = getPixelType();
           newCore[i].imageCount = getImageCount();
-          newCore[i].currentOrder = getDimensionOrder();
+          newCore[i].inputOrder = getDimensionOrder();
           newCore[i].rgb = isRGB();
           newCore[i].littleEndian = isLittleEndian();
           newCore[i].interleaved = isInterleaved();

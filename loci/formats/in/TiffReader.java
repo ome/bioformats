@@ -101,7 +101,7 @@ public class TiffReader extends BaseTiffReader {
       if (getSizeZ() * getSizeT() * getSizeC() == getSizeC()) {
         core[0].sizeT = getImageCount();
       }
-      core[0].currentOrder = "XYCZT";
+      core[0].inputOrder = "XYCZT";
     }
 
     // check for MetaMorph-style TIFF comment

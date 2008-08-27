@@ -137,7 +137,7 @@ public class NAFReader extends FormatReader {
           break;
       }
 
-      core[i].currentOrder = "XYCZT";
+      core[i].inputOrder = "XYCZT";
       core[i].rgb = false;
 
       in.skipBytes(4);

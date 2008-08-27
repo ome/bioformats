@@ -272,7 +272,7 @@ public class PSDReader extends FormatReader {
     core[0].imageCount = getSizeC() / (isRGB() ? 3 : 1);
     core[0].indexed = modeString.equals("palette color");
     core[0].falseColor = false;
-    core[0].currentOrder = "XYCZT";
+    core[0].inputOrder = "XYCZT";
     core[0].interleaved = false;
     core[0].metadataComplete = true;
 

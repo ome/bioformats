@@ -426,7 +426,7 @@ public class SlidebookReader extends FormatReader {
       if (getSizeT() == 0) core[i].sizeT = 1;
       core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
       core[i].pixelType = FormatTools.UINT16;
-      core[i].currentOrder = "XYZTC";
+      core[i].inputOrder = "XYZTC";
       core[i].indexed = false;
       core[i].falseColor = false;
       core[i].metadataComplete = true;

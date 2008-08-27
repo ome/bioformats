@@ -98,7 +98,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     ifds = (Hashtable[]) tmp.toArray(new Hashtable[0]);
     core[0].imageCount = getSizeC() * getSizeZ();
-    core[0].currentOrder = "XYZCT";
+    core[0].inputOrder = "XYZCT";
     core[0].interleaved = false;
     core[0].rgb = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
     core[0].pixelType = getPixelType(ifds[0]);

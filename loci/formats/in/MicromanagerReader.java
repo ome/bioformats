@@ -263,7 +263,7 @@ public class MicromanagerReader extends FormatReader {
 
     core[0].sizeX = tiffReader.getSizeX();
     core[0].sizeY = tiffReader.getSizeY();
-    core[0].currentOrder = "XYZCT";
+    core[0].inputOrder = "XYZCT";
     core[0].pixelType = tiffReader.getPixelType();
     core[0].rgb = tiffReader.isRGB();
     core[0].interleaved = false;

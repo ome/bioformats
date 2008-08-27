@@ -115,7 +115,7 @@ public class SVSReader extends BaseTiffReader {
       core[s].metadataComplete = true;
       core[s].interleaved = false;
       core[s].falseColor = false;
-      core[s].currentOrder = "XYCZT";
+      core[s].inputOrder = "XYCZT";
     }
   }
 

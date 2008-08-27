@@ -586,7 +586,7 @@ public class LeicaReader extends FormatReader {
               bpp + ")");
         }
 
-        core[i].currentOrder = "XY";
+        core[i].inputOrder = "XY";
 
         resolution = stream.readInt();
         addMeta("Real world resolution", new Integer(resolution));
@@ -609,20 +609,20 @@ public class LeicaReader extends FormatReader {
           else if (dimType.equals("y")) core[i].sizeY = size;
           else if (dimType.indexOf("z") != -1) {
             core[i].sizeZ = size;
-            if (core[i].currentOrder.indexOf("Z") == -1) {
-              core[i].currentOrder += "Z";
+            if (core[i].inputOrder.indexOf("Z") == -1) {
+              core[i].inputOrder += "Z";
             }
           }
           else if (dimType.equals("channel")) {
             core[i].sizeC = size;
-            if (core[i].currentOrder.indexOf("C") == -1) {
-              core[i].currentOrder += "C";
+            if (core[i].inputOrder.indexOf("C") == -1) {
+              core[i].inputOrder += "C";
             }
           }
           else {
             core[i].sizeT = size;
-            if (core[i].currentOrder.indexOf("T") == -1) {
-              core[i].currentOrder += "T";
+            if (core[i].inputOrder.indexOf("T") == -1) {
+              core[i].inputOrder += "T";
             }
           }
 
@@ -795,14 +795,14 @@ public class LeicaReader extends FormatReader {
       core[i].indexed = tiff.isIndexed();
       core[i].sizeC *= tiff.getSizeC();
 
-      if (core[i].currentOrder.indexOf("C") == -1) {
-        core[i].currentOrder += "C";
+      if (core[i].inputOrder.indexOf("C") == -1) {
+        core[i].inputOrder += "C";
       }
-      if (core[i].currentOrder.indexOf("Z") == -1) {
-        core[i].currentOrder += "Z";
+      if (core[i].inputOrder.indexOf("Z") == -1) {
+        core[i].inputOrder += "Z";
       }
-      if (core[i].currentOrder.indexOf("T") == -1) {
-        core[i].currentOrder += "T";
+      if (core[i].inputOrder.indexOf("T") == -1) {
+        core[i].inputOrder += "T";
       }
 
       if (i < timestamps.length && timestamps[i] != null) {

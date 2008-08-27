@@ -104,6 +104,8 @@ public class FileStitcher implements IFormatReader {
   /** Current series number. */
   private int series;
 
+  private String[] originalOrder;
+
   private String[] seriesBlocks;
   private Vector fileVector;
   private Vector seriesNames;
@@ -112,7 +114,6 @@ public class FileStitcher implements IFormatReader {
   private boolean noStitch;
 
   private MetadataStore store;
-  private String[] originalOrder;
 
   // -- Constructors --
 
@@ -373,8 +374,17 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getDimensionOrder() :
-      core[getSeries()].currentOrder;
+    if (noStitch) return reader.getDimensionOrder();
+    if (core[getSeries()].outputOrder != null) {
+      return core[getSeries()].outputOrder;
+    }
+    return getInputOrder();
+  }
+
+  /* @see IFormatReader#getInputOrder() */
+  public String getInputOrder() {
+    FormatTools.assertId(currentId, true, 2);
+    return noStitch ? reader.getInputOrder() : core[getSeries()].inputOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */
@@ -564,6 +574,7 @@ public class FileStitcher implements IFormatReader {
       fileVector = seriesNames = null;
       seriesInFile = false;
       store = null;
+      originalOrder = null;
     }
   }
 
@@ -733,7 +744,8 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getZCTCoords(int) */
   public int[] getZCTCoords(int index) {
     FormatTools.assertId(currentId, true, 2);
-    return FormatTools.getZCTCoords(this, index);
+    return FormatTools.getZCTCoords(getInputOrder(), getSizeZ(),
+      getEffectiveSizeC(), getSizeT(), getImageCount(), index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */
@@ -1021,6 +1033,8 @@ public class FileStitcher implements IFormatReader {
     lenC = new int[seriesCount][];
     lenT = new int[seriesCount][];
 
+    originalOrder = new String[seriesCount];
+
     // analyze first file; assume each file has the same parameters
     core = new CoreMetadata[seriesCount];
     int oldSeries = reader.getSeries();
@@ -1047,7 +1061,8 @@ public class FileStitcher implements IFormatReader {
       core[i].thumbSizeY = rr.getThumbSizeY();
       // NB: core.cLengths[i] populated in computeAxisLengths below
       // NB: core.cTypes[i] populated in computeAxisLengths below
-      core[i].currentOrder = rr.getDimensionOrder();
+      core[i].inputOrder = rr.getDimensionOrder();
+      originalOrder[i] = rr.getDimensionOrder();
       // NB: core.orderCertain[i] populated below
       core[i].rgb = rr.isRGB();
       core[i].littleEndian = rr.isLittleEndian();
@@ -1064,22 +1079,18 @@ public class FileStitcher implements IFormatReader {
 
     // guess at dimensions corresponding to file numbering
     for (int i=0; i<seriesCount; i++) {
-      ag[i] = new AxisGuesser(fp, core[i].currentOrder,
+      ag[i] = new AxisGuesser(fp, core[i].inputOrder,
         sizeZ[i], sizeT[i], sizeC[i], certain[i]);
     }
 
     // order may need to be adjusted
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
-      core[i].currentOrder = ag[i].getAdjustedOrder();
+      core[i].inputOrder = ag[i].getAdjustedOrder();
       core[i].orderCertain = ag[i].isCertain();
       computeAxisLengths();
     }
     setSeries(oldSeries);
-    originalOrder = new String[seriesCount];
-    for (int i=0; i<seriesCount; i++) {
-      originalOrder[i] = core[i].currentOrder;
-    }
   }
 
   // -- Helper methods --
@@ -1208,8 +1219,8 @@ public class FileStitcher implements IFormatReader {
     System.arraycopy(posT, 0, tmpT, 0, tmpT.length);
 
     for (int i=0; i<3; i++) {
-      char originalAxis = originalOrder[sno].charAt(i + 2);
-      char newAxis = getDimensionOrder().charAt(i + 2);
+      char originalAxis = getInputOrder().charAt(i + 2);
+      char newAxis = originalOrder[sno].charAt(i + 2);
 
       if (newAxis != originalAxis) {
         int src = -1;

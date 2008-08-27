@@ -203,7 +203,7 @@ public class L2DReader extends FormatReader {
       core[i].sizeC = tiffs[i].size();
       core[i].sizeT = 1;
       core[i].sizeZ = 1;
-      core[i].currentOrder = "XYCZT";
+      core[i].inputOrder = "XYCZT";
 
       for (int t=0; t<tiffs[i].size(); t++) {
         reader.setId((String) tiffs[i].get(t));

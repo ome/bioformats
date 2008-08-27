@@ -169,7 +169,7 @@ public class InCellReader extends FormatReader {
       core[i].sizeC = c;
       core[i].sizeT = t;
       core[i].imageCount = z * c * t;
-      core[i].currentOrder = "XYZCT";
+      core[i].inputOrder = "XYZCT";
     }
 
     tiffReader = new MinimalTiffReader();

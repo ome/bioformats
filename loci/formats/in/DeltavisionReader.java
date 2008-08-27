@@ -277,7 +277,7 @@ public class DeltavisionReader extends FormatReader {
       default:
         imageSequence = "ZTW";
     }
-    core[0].currentOrder = "XY" + imageSequence.replaceAll("W", "C");
+    core[0].inputOrder = "XY" + imageSequence.replaceAll("W", "C");
     addMeta("Image sequence", imageSequence);
 
     addMeta("X axis tilt angle", new Float(in.readFloat()));

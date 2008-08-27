@@ -161,7 +161,7 @@ public class TillVisionReader extends FormatReader {
     core[0].imageCount = core[0].sizeZ * core[0].sizeC * core[0].sizeT;
     core[0].rgb = false;
     core[0].littleEndian = true;
-    core[0].currentOrder = "XYCZT";
+    core[0].inputOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

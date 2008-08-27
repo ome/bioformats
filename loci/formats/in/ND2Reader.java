@@ -438,7 +438,7 @@ public class ND2Reader extends FormatReader {
       }
 
       for (int i=0; i<core.length; i++) {
-        core[i].currentOrder = "XYCZT";
+        core[i].inputOrder = "XYCZT";
         core[i].rgb = getSizeC() > 1;
         core[i].littleEndian = true;
         core[i].interleaved = true;
@@ -652,7 +652,7 @@ public class ND2Reader extends FormatReader {
       core[i].sizeZ = getSizeZ();
       core[i].sizeT = getSizeT();
       core[i].imageCount = getImageCount();
-      core[i].currentOrder = "XYCZT";
+      core[i].inputOrder = "XYCZT";
       core[i].sizeX = x;
       core[i].sizeY = y;
       core[i].interleaved = false;

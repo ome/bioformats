@@ -281,7 +281,7 @@ public class TCSReader extends FormatReader {
           if (div >= core[i].sizeZ) core[i].sizeZ /= div;
           else if (div >= core[i].sizeT) core[i].sizeT /= div;
         }
-        core[i].currentOrder = getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ";
+        core[i].inputOrder = getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ";
         core[i].metadataComplete = true;
         core[i].rgb = false;
         core[i].interleaved = false;
@@ -343,7 +343,7 @@ public class TCSReader extends FormatReader {
       }
 
       core[0].sizeT = 0;
-      core[0].currentOrder = isRGB() ? "XYC" : "XY";
+      core[0].inputOrder = isRGB() ? "XYC" : "XY";
 
       // determine the axis sizes and ordering
       boolean unique = true;
@@ -357,23 +357,23 @@ public class TCSReader extends FormatReader {
         if (unique) {
           core[0].sizeT++;
           if (getDimensionOrder().indexOf("T") < 0) {
-            core[0].currentOrder += "T";
+            core[0].inputOrder += "T";
           }
         }
         else if (i > 0) {
           if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf("C") < 0) {
-            core[0].currentOrder += "C";
+            core[0].inputOrder += "C";
           }
           else if (getDimensionOrder().indexOf("Z") < 0) {
-            core[0].currentOrder += "Z";
+            core[0].inputOrder += "Z";
           }
         }
         unique = true;
       }
 
-      if (getDimensionOrder().indexOf("Z") < 0) core[0].currentOrder += "Z";
-      if (getDimensionOrder().indexOf("C") < 0) core[0].currentOrder += "C";
-      if (getDimensionOrder().indexOf("T") < 0) core[0].currentOrder += "T";
+      if (getDimensionOrder().indexOf("Z") < 0) core[0].inputOrder += "Z";
+      if (getDimensionOrder().indexOf("C") < 0) core[0].inputOrder += "C";
+      if (getDimensionOrder().indexOf("T") < 0) core[0].inputOrder += "T";
 
       if (getSizeT() == 0) core[0].sizeT = 1;
       if (channelCount == 0) channelCount = 1;

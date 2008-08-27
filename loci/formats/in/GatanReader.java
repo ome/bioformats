@@ -176,7 +176,7 @@ public class GatanReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
     core[0].sizeT = 1;
-    core[0].currentOrder = "XYZTC";
+    core[0].inputOrder = "XYZTC";
     core[0].imageCount = 1;
     core[0].rgb = false;
     core[0].interleaved = false;

@@ -49,7 +49,7 @@ public class CoreMetadata {
   public int imageCount;
   public int[] cLengths;
   public String[] cTypes;
-  public String currentOrder;
+  public String outputOrder, inputOrder;
   public boolean orderCertain, rgb, littleEndian, interleaved;
   public boolean indexed, falseColor, metadataComplete;
   public Hashtable seriesMetadata;

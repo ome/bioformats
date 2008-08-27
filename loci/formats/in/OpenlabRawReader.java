@@ -166,7 +166,7 @@ public class OpenlabRawReader extends FormatReader {
 
     core[0].sizeZ = getImageCount();
     core[0].sizeT = 1;
-    core[0].currentOrder = "XYZTC";
+    core[0].inputOrder = "XYZTC";
     core[0].rgb = getSizeC() > 1;
     core[0].interleaved = false;
     core[0].littleEndian = false;

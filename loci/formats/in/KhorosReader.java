@@ -178,7 +178,7 @@ public class KhorosReader extends FormatReader {
     core[0].rgb = getSizeC() > 1;
     core[0].interleaved = false;
     core[0].littleEndian = dependency == 4 || dependency == 8;
-    core[0].currentOrder = "XYCZT";
+    core[0].inputOrder = "XYCZT";
     core[0].indexed = lut != null;
     core[0].falseColor = false;
     core[0].metadataComplete = true;

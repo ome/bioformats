@@ -226,7 +226,7 @@ public class LegacyQTReader extends FormatReader {
       core[0].sizeC = img.getRaster().getNumBands();
       core[0].sizeT = getImageCount();
       core[0].pixelType = ImageTools.getPixelType(img);
-      core[0].currentOrder = "XYCTZ";
+      core[0].inputOrder = "XYCTZ";
       core[0].rgb = true;
       core[0].interleaved = false;
       core[0].littleEndian = false;

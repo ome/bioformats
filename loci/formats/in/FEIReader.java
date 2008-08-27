@@ -126,7 +126,7 @@ public class FEIReader extends FormatReader {
     core[0].rgb = false;
     core[0].indexed = false;
     core[0].interleaved = false;
-    core[0].currentOrder = "XYCZT";
+    core[0].inputOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

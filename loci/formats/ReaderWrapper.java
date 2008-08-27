@@ -155,6 +155,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getDimensionOrder();
   }
 
+  public String getInputOrder() {
+    return reader.getInputOrder();
+  }
+
   public boolean isOrderCertain() {
     return reader.isOrderCertain();
   }

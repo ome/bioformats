@@ -483,7 +483,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
     core[0].falseColor = false;
-    core[0].currentOrder = "XYCZT";
+    core[0].inputOrder = "XYCZT";
     core[0].pixelType = getPixelType(ifds[0]);
   }
 

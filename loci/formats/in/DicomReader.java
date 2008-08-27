@@ -544,7 +544,7 @@ public class DicomReader extends FormatReader {
     if (getSizeC() == 0) core[0].sizeC = 1;
     core[0].rgb = getSizeC() > 1;
     core[0].sizeT = 1;
-    core[0].currentOrder = "XYCZT";
+    core[0].inputOrder = "XYCZT";
     core[0].metadataComplete = true;
     core[0].falseColor = false;
     if (isRLE) core[0].interleaved = false;

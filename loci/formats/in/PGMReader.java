@@ -141,7 +141,7 @@ public class PGMReader extends FormatReader {
     offset = in.getFilePointer();
 
     core[0].rgb = getSizeC() == 3;
-    core[0].currentOrder = "XYCZT";
+    core[0].inputOrder = "XYCZT";
     core[0].littleEndian = true;
     core[0].interleaved = false;
     core[0].sizeZ = 1;

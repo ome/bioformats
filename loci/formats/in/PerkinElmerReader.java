@@ -691,7 +691,7 @@ public class PerkinElmerReader extends FormatReader {
       core[0].imageCount = getSizeZ() * getEffectiveSizeC() * getSizeT();
     }
 
-    core[0].currentOrder = "XYCTZ";
+    core[0].inputOrder = "XYCTZ";
 
     core[0].rgb = isTiff ? tiff.isRGB() : false;
     core[0].interleaved = false;

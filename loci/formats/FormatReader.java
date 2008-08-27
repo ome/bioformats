@@ -390,7 +390,15 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].currentOrder;
+    // by default, the input order and output order are the same
+    if (core[series].outputOrder != null) return core[series].outputOrder;
+    return getInputOrder();
+  }
+
+  /* @see IFormatReader#getInputOrder() */
+  public String getInputOrder() {
+    FormatTools.assertId(currentId, true, 1);
+    return core[series].inputOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */

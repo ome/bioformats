@@ -209,7 +209,7 @@ public class MRCReader extends FormatReader {
     status("Populating metadata");
 
     core[0].sizeT = 1;
-    core[0].currentOrder = "XYZTC";
+    core[0].inputOrder = "XYZTC";
     core[0].imageCount = getSizeZ();
     core[0].rgb = false;
     core[0].interleaved = true;

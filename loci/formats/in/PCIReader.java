@@ -223,7 +223,7 @@ public class PCIReader extends FormatReader {
     }
     core[0].rgb = getSizeC() > 1;
     core[0].interleaved = false;
-    core[0].currentOrder = "XYCTZ";
+    core[0].inputOrder = "XYCTZ";
     core[0].littleEndian = true;
     core[0].indexed = false;
     core[0].falseColor = false;
