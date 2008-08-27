@@ -286,15 +286,15 @@ public class BioRadReader extends FormatReader {
 
     // read header
 
-    core.sizeX[0] = in.readShort();
-    core.sizeY[0] = in.readShort();
+    core[0].sizeX = in.readShort();
+    core[0].sizeY = in.readShort();
     int npic = in.readShort();
-    core.imageCount[0] = npic;
+    core[0].imageCount = npic;
 
     int ramp1min = in.readShort();
     int ramp1max = in.readShort();
     boolean notes = in.readInt() != 0;
-    core.pixelType[0] =
+    core[0].pixelType =
       in.readShort() == 0 ? FormatTools.UINT16 : FormatTools.UINT8;
     int imageNumber = in.readShort();
     String name = in.readString(32);
@@ -339,15 +339,15 @@ public class BioRadReader extends FormatReader {
 
     Vector pixelSize = new Vector();
 
-    core.sizeZ[0] = getImageCount();
-    core.sizeC[0] = 1;
-    core.sizeT[0] = 1;
+    core[0].sizeZ = getImageCount();
+    core[0].sizeC = 1;
+    core[0].sizeT = 1;
 
-    core.orderCertain[0] = false;
-    core.rgb[0] = false;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = LITTLE_ENDIAN;
-    core.metadataComplete[0] = true;
+    core[0].orderCertain = false;
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].littleEndian = LITTLE_ENDIAN;
+    core[0].metadataComplete = true;
 
     status("Reading notes");
 
@@ -520,9 +520,9 @@ public class BioRadReader extends FormatReader {
               if (text.indexOf("AXIS_4") != -1) {
                 addMeta(key + " time (X) in seconds", params.get(0));
                 addMeta(key + " time (Y) in seconds", params.get(1));
-                core.sizeZ[0] = 1;
-                core.sizeT[0] = getImageCount();
-                core.orderCertain[0] = true;
+                core[0].sizeZ = 1;
+                core[0].sizeT = getImageCount();
+                core[0].orderCertain = true;
               }
               break;
             case 3:
@@ -649,8 +649,8 @@ public class BioRadReader extends FormatReader {
 
     picFiles = (String[]) pics.toArray(new String[0]);
 
-    core.indexed[0] = lut != null;
-    core.falseColor[0] = true;
+    core[0].indexed = lut != null;
+    core[0].falseColor = true;
 
     // Populate the metadata store
 
@@ -662,11 +662,11 @@ public class BioRadReader extends FormatReader {
 
     // populate Pixels
 
-    core.currentOrder[0] = "XYCTZ";
+    core[0].currentOrder = "XYCTZ";
 
     if (picFiles.length > 0) {
-      core.imageCount[0] = npic * picFiles.length;
-      core.sizeC[0] = getImageCount() / (getSizeZ() * getSizeT());
+      core[0].imageCount = npic * picFiles.length;
+      core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
     }
     else picFiles = null;
 
@@ -683,7 +683,7 @@ public class BioRadReader extends FormatReader {
     store.setDimensionsPhysicalSizeZ(pixelSizeZ, 0, 0);
 
     /*
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<core[0].sizeC; i++) {
       String gain = i == 0 ? gain1 : i == 1 ? gain2 : gain3;
       String offset = i == 0 ? offset1 : i == 1 ? gain2 : gain3;
       Integer ii = new Integer(i);
@@ -702,14 +702,14 @@ public class BioRadReader extends FormatReader {
     }
     // CTR FIXME
 //    store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-//      new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] >= 2),
-//      new Boolean(core.sizeC[0] >= 3), Boolean.FALSE, null,
+//      new Boolean(core[0].sizeC > 1), new Boolean(core[0].sizeC >= 2),
+//      new Boolean(core[0].sizeC >= 3), Boolean.FALSE, null,
 //      zstart == null ? null :
 //      new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
 //      null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
-//      null, null, core.sizeC[0] > 1 ? new Integer(0) : null,
-//      core.sizeC[0] > 1 ? new Integer(1) : null,
-//      core.sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
+//      null, null, core[0].sizeC > 1 ? new Integer(0) : null,
+//      core[0].sizeC > 1 ? new Integer(1) : null,
+//      core[0].sizeC > 1 ? new Integer(2) : null, new Integer(0));
 
     for (int i=0; i<3; i++) {
       String exc = i == 0 ? ex1 : i == 1 ? ex2 : ex3;
@@ -763,11 +763,11 @@ public class BioRadReader extends FormatReader {
         int c = sizeC == null ? 1 : Integer.parseInt(sizeC);
         int t = sizeT == null ? 1 : Integer.parseInt(sizeT);
         int count = getSizeZ() * getSizeC() * getSizeT();
-        core.sizeZ[0] = z;
-        core.sizeC[0] = c;
-        core.sizeT[0] = t;
-        if (count >= getImageCount()) core.imageCount[0] = count;
-        else core.sizeC[0] = getImageCount() / count;
+        core[0].sizeZ = z;
+        core[0].sizeC = c;
+        core[0].sizeT = t;
+        if (count >= getImageCount()) core[0].imageCount = count;
+        else core[0].sizeC = getImageCount() / count;
       }
       else if (qName.equals("Z") || qName.equals("C") || qName.equals("T")) {
         String stamp = attributes.getValue("TimeCompleted");

@@ -465,26 +465,26 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
 
     int samples = TiffTools.getSamplesPerPixel(ifd);
-    core.rgb[0] = samples > 1 || photo == TiffTools.RGB;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
+    core[0].rgb = samples > 1 || photo == TiffTools.RGB;
+    core[0].interleaved = false;
+    core[0].littleEndian = TiffTools.isLittleEndian(ifds[0]);
 
-    core.sizeX[0] = (int) TiffTools.getImageWidth(ifds[0]);
-    core.sizeY[0] = (int) TiffTools.getImageLength(ifds[0]);
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = isRGB() ? samples : 1;
-    core.sizeT[0] = ifds.length;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = photo == TiffTools.RGB_PALETTE &&
+    core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
+    core[0].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+    core[0].sizeZ = 1;
+    core[0].sizeC = isRGB() ? samples : 1;
+    core[0].sizeT = ifds.length;
+    core[0].metadataComplete = true;
+    core[0].indexed = photo == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
     if (isIndexed()) {
-      core.sizeC[0] = 1;
-      core.rgb[0] = false;
+      core[0].sizeC = 1;
+      core[0].rgb = false;
     }
-    if (getSizeC() == 1 && !isIndexed()) core.rgb[0] = false;
-    core.falseColor[0] = false;
-    core.currentOrder[0] = "XYCZT";
-    core.pixelType[0] = getPixelType(ifds[0]);
+    if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
+    core[0].falseColor = false;
+    core[0].currentOrder = "XYCZT";
+    core[0].pixelType = getPixelType(ifds[0]);
   }
 
   /**

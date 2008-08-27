@@ -196,9 +196,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DimensionX", ras.readInt());
       put("DimensionY", ras.readInt());
 
-      core.sizeZ[0] = ras.readInt();
+      core[0].sizeZ = ras.readInt();
       ras.skipBytes(4);
-      core.sizeT[0] = ras.readInt();
+      core[0].sizeT = ras.readInt();
 
       int dataType = ras.readInt();
       switch (dataType) {
@@ -235,51 +235,51 @@ public class ZeissLSMReader extends BaseTiffReader {
       switch (scanType) {
         case 0:
           put("ScanType", "x-y-z scan");
-          core.currentOrder[0] = "XYZCT";
+          core[0].currentOrder = "XYZCT";
           break;
         case 1:
           put("ScanType", "z scan (x-z plane)");
-          core.currentOrder[0] = "XYZCT";
+          core[0].currentOrder = "XYZCT";
           break;
         case 2:
           put("ScanType", "line scan");
-          core.currentOrder[0] = "XYZCT";
+          core[0].currentOrder = "XYZCT";
           break;
         case 3:
           put("ScanType", "time series x-y");
-          core.currentOrder[0] = "XYTCZ";
+          core[0].currentOrder = "XYTCZ";
           break;
         case 4:
           put("ScanType", "time series x-z");
-          core.currentOrder[0] = "XYZTC";
+          core[0].currentOrder = "XYZTC";
           break;
         case 5:
           put("ScanType", "time series 'Mean of ROIs'");
-          core.currentOrder[0] = "XYTCZ";
+          core[0].currentOrder = "XYTCZ";
           break;
         case 6:
           put("ScanType", "time series x-y-z");
-          core.currentOrder[0] = "XYZTC";
+          core[0].currentOrder = "XYZTC";
           break;
         case 7:
           put("ScanType", "spline scan");
-          core.currentOrder[0] = "XYCTZ";
+          core[0].currentOrder = "XYCTZ";
           break;
         case 8:
           put("ScanType", "spline scan x-z");
-          core.currentOrder[0] = "XYCZT";
+          core[0].currentOrder = "XYCZT";
           break;
         case 9:
           put("ScanType", "time series spline plane x-z");
-          core.currentOrder[0] = "XYTCZ";
+          core[0].currentOrder = "XYTCZ";
           break;
         case 10:
           put("ScanType", "point mode");
-          core.currentOrder[0] = "XYZCT";
+          core[0].currentOrder = "XYZCT";
           break;
         default:
           put("ScanType", "x-y-z scan");
-          core.currentOrder[0] = "XYZCT";
+          core[0].currentOrder = "XYZCT";
       }
 
       store.setImageName("", 0);
@@ -341,17 +341,17 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       // read referenced structures
 
-      core.indexed[0] = lut != null && getSizeC() == 1;
+      core[0].indexed = lut != null && getSizeC() == 1;
       if (isIndexed()) {
-        core.sizeC[0] = 1;
-        core.rgb[0] = false;
+        core[0].sizeC = 1;
+        core[0].rgb = false;
       }
-      if (getSizeC() == 0) core.sizeC[0] = 1;
+      if (getSizeC() == 0) core[0].sizeC = 1;
 
       if (isRGB()) {
         // shuffle C to front of order string
-        core.currentOrder[0] = getDimensionOrder().replaceAll("C", "");
-        core.currentOrder[0] = getDimensionOrder().replaceAll("XY", "XYC");
+        core[0].currentOrder = getDimensionOrder().replaceAll("C", "");
+        core[0].currentOrder = getDimensionOrder().replaceAll("XY", "XYC");
       }
 
       put("DimensionZ", getSizeZ());
@@ -623,31 +623,31 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (debug) trace(exc);
     }
 
-    if (isIndexed()) core.rgb[0] = false;
-    if (getEffectiveSizeC() == 0) core.imageCount[0] = getSizeZ() * getSizeT();
-    else core.imageCount[0] = getSizeZ() * getSizeT() * getEffectiveSizeC();
+    if (isIndexed()) core[0].rgb = false;
+    if (getEffectiveSizeC() == 0) core[0].imageCount = getSizeZ() * getSizeT();
+    else core[0].imageCount = getSizeZ() * getSizeT() * getEffectiveSizeC();
 
     if (getImageCount() != ifds.length) {
       int diff = getImageCount() - ifds.length;
-      core.imageCount[0] = ifds.length;
+      core[0].imageCount = ifds.length;
       if (diff % getSizeZ() == 0) {
-        core.sizeT[0] -= (diff / getSizeZ());
+        core[0].sizeT -= (diff / getSizeZ());
       }
       else if (diff % getSizeT() == 0) {
-        core.sizeZ[0] -= (diff / getSizeT());
+        core[0].sizeZ -= (diff / getSizeT());
       }
       else if (getSizeZ() > 1) {
-        core.sizeZ[0] = ifds.length;
-        core.sizeT[0] = 1;
+        core[0].sizeZ = ifds.length;
+        core[0].sizeT = 1;
       }
       else if (getSizeT() > 1) {
-        core.sizeT[0] = ifds.length;
-        core.sizeZ[0] = 1;
+        core[0].sizeT = ifds.length;
+        core[0].sizeZ = 1;
       }
     }
 
-    if (getSizeZ() == 0) core.sizeZ[0] = getImageCount();
-    if (getSizeT() == 0) core.sizeT[0] = getImageCount() / getSizeZ();
+    if (getSizeZ() == 0) core[0].sizeZ = getImageCount();
+    if (getSizeT() == 0) core[0].sizeT = getImageCount() / getSizeZ();
 
     MetadataTools.populatePixels(store, this);
 
@@ -752,7 +752,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     thumbnailsRemoved = true;
 
     initMetadata();
-    core.littleEndian[0] = !isLittleEndian();
+    core[0].littleEndian = !isLittleEndian();
   }
 
   // -- Helper methods --

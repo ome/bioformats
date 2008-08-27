@@ -318,7 +318,7 @@ public class DicomReader extends FormatReader {
     in = new RandomAccessStream(id);
     in.order(true);
 
-    core.littleEndian[0] = true;
+    core[0].littleEndian = true;
     location = 0;
     isJPEG = false;
     isRLE = false;
@@ -384,7 +384,7 @@ public class DicomReader extends FormatReader {
           s = in.readString(elementLength);
           addInfo(tag, s);
           double frames = Double.parseDouble(s);
-          if (frames > 1.0) core.imageCount[0] = (int) frames;
+          if (frames > 1.0) core[0].imageCount = (int) frames;
           break;
         case SAMPLES_PER_PIXEL:
           addInfo(tag, in.readShort());
@@ -394,16 +394,16 @@ public class DicomReader extends FormatReader {
           break;
         case PLANAR_CONFIGURATION:
           int config = in.readShort();
-          core.interleaved[0] = config == 0;
+          core[0].interleaved = config == 0;
           addInfo(tag, config);
           break;
         case ROWS:
-          if (getSizeY() == 0) core.sizeY[0] = in.readShort();
+          if (getSizeY() == 0) core[0].sizeY = in.readShort();
           else in.skipBytes(2);
           addInfo(tag, getSizeY());
           break;
         case COLUMNS:
-          if (getSizeX() == 0) core.sizeX[0] = in.readShort();
+          if (getSizeX() == 0) core[0].sizeX = in.readShort();
           else in.skipBytes(2);
           addInfo(tag, getSizeX());
           break;
@@ -468,20 +468,20 @@ public class DicomReader extends FormatReader {
         decodingTags = false;
       }
     }
-    if (getImageCount() == 0) core.imageCount[0] = 1;
+    if (getImageCount() == 0) core[0].imageCount = 1;
 
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
     if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
 
     switch (bitsPerPixel) {
       case 8:
-        core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
+        core[0].pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
         break;
       case 16:
-        core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
+        core[0].pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
         break;
       case 32:
-        core.pixelType[0] = signed ? FormatTools.INT32 : FormatTools.UINT32;
+        core[0].pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
         break;
     }
 
@@ -540,14 +540,14 @@ public class DicomReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeZ[0] = getImageCount();
-    if (getSizeC() == 0) core.sizeC[0] = 1;
-    core.rgb[0] = getSizeC() > 1;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYCZT";
-    core.metadataComplete[0] = true;
-    core.falseColor[0] = false;
-    if (isRLE) core.interleaved[0] = false;
+    core[0].sizeZ = getImageCount();
+    if (getSizeC() == 0) core[0].sizeC = 1;
+    core[0].rgb = getSizeC() > 1;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYCZT";
+    core[0].metadataComplete = true;
+    core[0].falseColor = false;
+    if (isRLE) core[0].interleaved = false;
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -594,14 +594,14 @@ public class DicomReader extends FormatReader {
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) key = "" + tag;
       if (key.equals("Samples per pixel")) {
-        core.sizeC[0] = Integer.parseInt(info.trim());
-        if (getSizeC() > 1) core.rgb[0] = true;
+        core[0].sizeC = Integer.parseInt(info.trim());
+        if (getSizeC() > 1) core[0].rgb = true;
       }
       else if (key.equals("Photometric Interpretation")) {
         if (info.trim().equals("PALETTE COLOR")) {
-          core.indexed[0] = true;
-          core.sizeC[0] = 1;
-          core.rgb[0] = false;
+          core[0].indexed = true;
+          core[0].sizeC = 1;
+          core[0].rgb = false;
           lut = new byte[3][];
         }
         else if (info.trim().startsWith("MONOCHROME")) {
@@ -775,7 +775,7 @@ public class DicomReader extends FormatReader {
   private int getNextTag() throws IOException {
     int groupWord = in.readShort();
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
-      core.littleEndian[0] = false;
+      core[0].littleEndian = false;
       groupWord = 0x0008;
       in.order(false);
     }

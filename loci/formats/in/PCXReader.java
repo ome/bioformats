@@ -124,7 +124,7 @@ public class PCXReader extends FormatReader {
 
     status("Reading file header");
 
-    core.littleEndian[0] = true;
+    core[0].littleEndian = true;
     in.order(true);
     in.seek(1);
     int version = in.read();
@@ -135,8 +135,8 @@ public class PCXReader extends FormatReader {
     int xMax = in.readShort();
     int yMax = in.readShort();
 
-    core.sizeX[0] = xMax - xMin;
-    core.sizeY[0] = yMax - yMin;
+    core[0].sizeX = xMax - xMin;
+    core[0].sizeY = yMax - yMin;
 
     int vertDPI = in.readShort();
     int horizDPI = version == 5 ? in.readShort() : 1;
@@ -149,13 +149,13 @@ public class PCXReader extends FormatReader {
 
     offset = in.getFilePointer() + 58;
 
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = 1;
-    core.sizeC[0] = 1;
-    core.rgb[0] = false;
-    core.imageCount[0] = 1;
-    core.pixelType[0] = FormatTools.UINT8;
-    core.currentOrder[0] = "XYCZT";
+    core[0].sizeZ = 1;
+    core[0].sizeT = 1;
+    core[0].sizeC = 1;
+    core[0].rgb = false;
+    core[0].imageCount = 1;
+    core[0].pixelType = FormatTools.UINT8;
+    core[0].currentOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

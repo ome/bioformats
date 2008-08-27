@@ -220,33 +220,34 @@ public class MNGReader extends FormatReader {
       throw new FormatException("Pixel data not found.");
     }
 
-    core = new CoreMetadata(keys.length);
+    core = new CoreMetadata[keys.length];
+
     offsets = new Vector[keys.length];
     lengths = new Vector[keys.length];
     for (int i=0; i<keys.length; i++) {
+      core[i] = new CoreMetadata();
       StringTokenizer st = new StringTokenizer(keys[i], "-");
-      core.sizeX[i] = Integer.parseInt(st.nextToken());
-      core.sizeY[i] = Integer.parseInt(st.nextToken());
-      core.sizeC[i] = Integer.parseInt(st.nextToken());
-      core.pixelType[i] = Integer.parseInt(st.nextToken());
-      core.rgb[i] = core.sizeC[i] > 1;
+      core[i].sizeX = Integer.parseInt(st.nextToken());
+      core[i].sizeY = Integer.parseInt(st.nextToken());
+      core[i].sizeC = Integer.parseInt(st.nextToken());
+      core[i].pixelType = Integer.parseInt(st.nextToken());
+      core[i].rgb = core[i].sizeC > 1;
       offsets[i] = (Vector) seriesOffsets.get(keys[i]);
-      core.imageCount[i] = offsets[i].size();
-      core.sizeT[i] = core.imageCount[i];
+      core[i].imageCount = offsets[i].size();
+      core[i].sizeT = core[i].imageCount;
       lengths[i] = (Vector) seriesLengths.get(keys[i]);
+      core[i].sizeZ = 1;
+      core[i].currentOrder = "XYCZT";
+      core[i].interleaved = false;
+      core[i].metadataComplete = true;
+      core[i].indexed = false;
+      core[i].littleEndian = false;
+      core[i].falseColor = false;
     }
-
-    Arrays.fill(core.sizeZ, 1);
-    Arrays.fill(core.currentOrder, "XYCZT");
-    Arrays.fill(core.interleaved, false);
-    Arrays.fill(core.metadataComplete, true);
-    Arrays.fill(core.indexed, false);
-    Arrays.fill(core.littleEndian, false);
-    Arrays.fill(core.falseColor, false);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    for (int i=0; i<core.sizeX.length; i++) {
+    for (int i=0; i<core.length; i++) {
       store.setImageName("Series " + i, i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }

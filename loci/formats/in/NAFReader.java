@@ -109,35 +109,36 @@ public class NAFReader extends FormatReader {
     else fp--;
 
     offsets = new long[seriesCount];
-    core = new CoreMetadata(seriesCount);
-    Arrays.fill(core.littleEndian, little);
+    core = new CoreMetadata[seriesCount];
     for (int i=0; i<seriesCount; i++) {
       in.seek(fp + i*256);
-      core.sizeX[i] = in.readInt();
-      core.sizeY[i] = in.readInt();
+      core[i] = new CoreMetadata();
+      core[i].littleEndian = little;
+      core[i].sizeX = in.readInt();
+      core[i].sizeY = in.readInt();
       int numBits = in.readInt();
-      core.sizeC[i] = in.readInt();
-      core.sizeZ[i] = in.readInt();
-      core.sizeT[i] = in.readInt();
+      core[i].sizeC = in.readInt();
+      core[i].sizeZ = in.readInt();
+      core[i].sizeT = in.readInt();
 
-      core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
+      core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
       switch (numBits) {
         case 8:
-          core.pixelType[i] = FormatTools.UINT8;
+          core[i].pixelType = FormatTools.UINT8;
           break;
         case 16:
-          core.pixelType[i] = FormatTools.UINT16;
+          core[i].pixelType = FormatTools.UINT16;
           break;
         case 32:
-          core.pixelType[i] = FormatTools.UINT32;
+          core[i].pixelType = FormatTools.UINT32;
           break;
         case 64:
-          core.pixelType[i] = FormatTools.DOUBLE;
+          core[i].pixelType = FormatTools.DOUBLE;
           break;
       }
 
-      core.currentOrder[i] = "XYCZT";
-      core.rgb[i] = false;
+      core[i].currentOrder = "XYCZT";
+      core[i].rgb = false;
 
       in.skipBytes(4);
 
@@ -156,9 +157,9 @@ public class NAFReader extends FormatReader {
         }
       }
       else {
-        offsets[i] = offsets[i - 1] + core.sizeX[i - 1] * core.sizeY[i - 1] *
-          core.imageCount[i - 1] *
-          FormatTools.getBytesPerPixel(core.pixelType[i - 1]);
+        offsets[i] = offsets[i - 1] + core[i - 1].sizeX * core[i - 1].sizeY *
+          core[i - 1].imageCount *
+          FormatTools.getBytesPerPixel(core[i - 1].pixelType);
       }
       offsets[i] += 352;
       in.seek(offsets[i]);
@@ -187,7 +188,7 @@ public class NAFReader extends FormatReader {
       if (found) offsets[i] += 16063;
       if (i == offsets.length - 1 && !compressed && i > 0) {
         offsets[i] = (int) (in.length() -
-          (core.sizeX[i] * core.sizeY[i] * core.imageCount[i] * (numBits / 8)));
+          (core[i].sizeX * core[i].sizeY * core[i].imageCount * (numBits / 8)));
       }
     }
 

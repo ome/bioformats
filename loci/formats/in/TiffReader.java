@@ -61,7 +61,7 @@ public class TiffReader extends BaseTiffReader {
 
     status("Checking comment style");
 
-    if (ifds.length > 1) core.orderCertain[0] = false;
+    if (ifds.length > 1) core[0].orderCertain = false;
 
     // check for ImageJ-style TIFF comment
     boolean ij = comment != null && comment.startsWith("ImageJ=");
@@ -70,8 +70,8 @@ public class TiffReader extends BaseTiffReader {
       put("ImageJ", nl < 0 ? comment.substring(7) : comment.substring(7, nl));
       metadata.remove("Comment");
 
-      core.sizeZ[0] = 1;
-      core.sizeT[0] = 1;
+      core[0].sizeZ = 1;
+      core[0].sizeT = 1;
 
       // parse ZCT sizes
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -89,19 +89,19 @@ public class TiffReader extends BaseTiffReader {
         }
 
         if (token.startsWith("channels=")) {
-          core.sizeC[0] = value;
+          core[0].sizeC = value;
         }
         else if (token.startsWith("slices=")) {
-          core.sizeZ[0] = value;
+          core[0].sizeZ = value;
         }
         else if (token.startsWith("frames=")) {
-          core.sizeT[0] = value;
+          core[0].sizeT = value;
         }
       }
       if (getSizeZ() * getSizeT() * getSizeC() == getSizeC()) {
-        core.sizeT[0] = getImageCount();
+        core[0].sizeT = getImageCount();
       }
-      core.currentOrder[0] = "XYCZT";
+      core[0].currentOrder = "XYCZT";
     }
 
     // check for MetaMorph-style TIFF comment

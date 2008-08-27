@@ -149,10 +149,10 @@ public class AliconaReader extends FormatReader {
       in.skipBytes(2);
 
       if (key.equals("TagCount")) count += Integer.parseInt(value);
-      else if (key.equals("Rows")) core.sizeY[0] = Integer.parseInt(value);
-      else if (key.equals("Cols")) core.sizeX[0] = Integer.parseInt(value);
+      else if (key.equals("Rows")) core[0].sizeY = Integer.parseInt(value);
+      else if (key.equals("Cols")) core[0].sizeX = Integer.parseInt(value);
       else if (key.equals("NumberOfPlanes")) {
-        core.imageCount[0] = Integer.parseInt(value);
+        core[0].imageCount = Integer.parseInt(value);
       }
       else if (key.equals("TextureImageOffset")) {
         textureOffset = Integer.parseInt(value);
@@ -170,18 +170,18 @@ public class AliconaReader extends FormatReader {
     numBytes = (int) (in.length() - textureOffset) /
       (getSizeX() * getSizeY() * getImageCount());
 
-    core.sizeC[0] = hasC ? 3 : 1;
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = getImageCount() / getSizeC();
-    core.rgb[0] = false;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = true;
+    core[0].sizeC = hasC ? 3 : 1;
+    core[0].sizeZ = 1;
+    core[0].sizeT = getImageCount() / getSizeC();
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].littleEndian = true;
 
-    core.pixelType[0] = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
-    core.currentOrder[0] = "XYCTZ";
-    core.metadataComplete[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+    core[0].pixelType = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
+    core[0].currentOrder = "XYCTZ";
+    core[0].metadataComplete = true;
+    core[0].indexed = false;
+    core[0].falseColor = false;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

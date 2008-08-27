@@ -128,12 +128,12 @@ public class NRRDReader extends FormatReader {
 
     int numDimensions = 0;
 
-    core.sizeX[0] = 1;
-    core.sizeY[0] = 1;
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = 1;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYCZT";
+    core[0].sizeX = 1;
+    core[0].sizeY = 1;
+    core[0].sizeZ = 1;
+    core[0].sizeC = 1;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -150,20 +150,20 @@ public class NRRDReader extends FormatReader {
 
         if (key.equals("type")) {
           if (v.indexOf("char") != -1 || v.indexOf("8") != -1) {
-            core.pixelType[0] = FormatTools.UINT8;
+            core[0].pixelType = FormatTools.UINT8;
           }
           else if (v.indexOf("short") != -1 || v.indexOf("16") != -1) {
-            core.pixelType[0] = FormatTools.UINT16;
+            core[0].pixelType = FormatTools.UINT16;
           }
           else if (v.equals("int") || v.equals("signed int") ||
             v.equals("int32") || v.equals("int32_t") || v.equals("uint") ||
             v.equals("unsigned int") || v.equals("uint32") ||
             v.equals("uint32_t"))
           {
-            core.pixelType[0] = FormatTools.UINT32;
+            core[0].pixelType = FormatTools.UINT32;
           }
-          else if (v.equals("float")) core.pixelType[0] = FormatTools.FLOAT;
-          else if (v.equals("double")) core.pixelType[0] = FormatTools.DOUBLE;
+          else if (v.equals("float")) core[0].pixelType = FormatTools.FLOAT;
+          else if (v.equals("double")) core[0].pixelType = FormatTools.DOUBLE;
           else throw new FormatException("Unsupported data type: " + v);
         }
         else if (key.equals("dimension")) {
@@ -176,19 +176,19 @@ public class NRRDReader extends FormatReader {
             int size = Integer.parseInt(t);
 
             if (numDimensions >= 3 && i == 0 && size > 1 && size <= 4) {
-              core.sizeC[0] = size;
+              core[0].sizeC = size;
             }
             else if (i == 0 || (getSizeC() > 1 && i == 1)) {
-              core.sizeX[0] = size;
+              core[0].sizeX = size;
             }
             else if (i == 1 || (getSizeC() > 1 && i == 2)) {
-              core.sizeY[0] = size;
+              core[0].sizeY = size;
             }
             else if (i == 2 || (getSizeC() > 1 && i == 3)) {
-              core.sizeZ[0] = size;
+              core[0].sizeZ = size;
             }
             else if (i == 3 || (getSizeC() > 1 && i == 4)) {
-              core.sizeT[0] = size;
+              core[0].sizeT = size;
             }
           }
         }
@@ -197,7 +197,7 @@ public class NRRDReader extends FormatReader {
         }
         else if (key.equals("encoding")) encoding = v;
         else if (key.equals("endian")) {
-          core.littleEndian[0] = v.equals("little");
+          core[0].littleEndian = v.equals("little");
         }
         else if (key.equals("spacings")) {
           StringTokenizer tokens = new StringTokenizer(v, " ");
@@ -233,12 +233,12 @@ public class NRRDReader extends FormatReader {
       helper.setId(dataFile);
     }
 
-    core.rgb[0] = getSizeC() > 1;
-    core.interleaved[0] = true;
-    core.imageCount[0] = getSizeZ() * getSizeT();
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].rgb = getSizeC() > 1;
+    core[0].interleaved = true;
+    core[0].imageCount = getSizeZ() * getSizeT();
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);

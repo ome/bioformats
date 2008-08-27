@@ -126,19 +126,19 @@ public class DeltavisionReader extends FormatReader {
     // read in the image header data
     in.seek(96);
     in.order(true);
-    core.littleEndian[0] = in.readShort() == LITTLE_ENDIAN;
+    core[0].littleEndian = in.readShort() == LITTLE_ENDIAN;
 
     in.order(isLittleEndian());
     in.seek(8);
 
-    core.imageCount[0] = in.readInt();
+    core[0].imageCount = in.readInt();
 
     in.seek(92);
     extSize = in.readInt();
 
     in.seek(0);
-    core.sizeX[0] = in.readInt();
-    core.sizeY[0] = in.readInt();
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
 
     addMeta("ImageWidth", new Integer(getSizeX()));
     addMeta("ImageHeight", new Integer(getSizeY()));
@@ -149,31 +149,31 @@ public class DeltavisionReader extends FormatReader {
     switch (filePixelType) {
       case 0:
         pixel = "8 bit unsigned integer";
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
         break;
       case 1:
         pixel = "16 bit signed integer";
-        core.pixelType[0] = FormatTools.INT16;
+        core[0].pixelType = FormatTools.INT16;
         break;
       case 2:
         pixel = "32 bit floating point";
-        core.pixelType[0] = FormatTools.FLOAT;
+        core[0].pixelType = FormatTools.FLOAT;
         break;
       case 3:
         pixel = "16 bit complex";
-        core.pixelType[0] = FormatTools.INT16;
+        core[0].pixelType = FormatTools.INT16;
         break;
       case 4:
         pixel = "64 bit complex";
-        core.pixelType[0] = FormatTools.FLOAT;
+        core[0].pixelType = FormatTools.FLOAT;
         break;
       case 6:
         pixel = "16 bit unsigned integer";
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       default:
         pixel = "unknown";
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
     }
 
     addMeta("PixelType", pixel);
@@ -256,7 +256,7 @@ public class DeltavisionReader extends FormatReader {
     Float wave5Max = new Float(in.readFloat());
     addMeta("Wavelength 5 max. intensity", wave5Max);
 
-    core.sizeT[0] = in.readShort();
+    core[0].sizeT = in.readShort();
     addMeta("Number of timepoints", new Integer(getSizeT()));
 
     int sequence = in.readShort();
@@ -277,25 +277,25 @@ public class DeltavisionReader extends FormatReader {
       default:
         imageSequence = "ZTW";
     }
-    core.currentOrder[0] = "XY" + imageSequence.replaceAll("W", "C");
+    core[0].currentOrder = "XY" + imageSequence.replaceAll("W", "C");
     addMeta("Image sequence", imageSequence);
 
     addMeta("X axis tilt angle", new Float(in.readFloat()));
     addMeta("Y axis tilt angle", new Float(in.readFloat()));
     addMeta("Z axis tilt angle", new Float(in.readFloat()));
 
-    core.sizeC[0] = in.readShort();
+    core[0].sizeC = in.readShort();
     addMeta("Number of wavelengths", new Integer(getSizeC()));
-    if (getSizeC() == 0) core.sizeC[0] = 1;
-    if (getSizeT() == 0) core.sizeT[0] = 1;
-    core.sizeZ[0] = getImageCount() / (getSizeC() * getSizeT());
+    if (getSizeC() == 0) core[0].sizeC = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
+    core[0].sizeZ = getImageCount() / (getSizeC() * getSizeT());
     addMeta("Number of focal planes", new Integer(getSizeZ()));
 
-    core.rgb[0] = false;
-    core.interleaved[0] = false;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].metadataComplete = true;
+    core[0].indexed = false;
+    core[0].falseColor = false;
 
     short[] waves = new short[5];
     for (int i=0; i<waves.length; i++) waves[i] = in.readShort();

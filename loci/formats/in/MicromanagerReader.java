@@ -220,7 +220,7 @@ public class MicromanagerReader extends FormatReader {
         value = value.trim();
         value = value.substring(0, value.length() - 1);
         addMeta(key, value);
-        if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
+        if (key.equals("Channels")) core[0].sizeC = Integer.parseInt(value);
       }
 
       if (token.trim().startsWith("\"FrameKey")) {
@@ -251,27 +251,27 @@ public class MicromanagerReader extends FormatReader {
 
     String z = (String) metadata.get("Slices");
     if (z != null) {
-      core.sizeZ[0] = Integer.parseInt(z);
+      core[0].sizeZ = Integer.parseInt(z);
     }
-    else core.sizeZ[0] = 1;
+    else core[0].sizeZ = 1;
 
     String t = (String) metadata.get("Frames");
     if (t != null) {
-      core.sizeT[0] = Integer.parseInt(t);
+      core[0].sizeT = Integer.parseInt(t);
     }
-    else core.sizeT[0] = tiffs.size() / getSizeC();
+    else core[0].sizeT = tiffs.size() / getSizeC();
 
-    core.sizeX[0] = tiffReader.getSizeX();
-    core.sizeY[0] = tiffReader.getSizeY();
-    core.currentOrder[0] = "XYZCT";
-    core.pixelType[0] = tiffReader.getPixelType();
-    core.rgb[0] = tiffReader.isRGB();
-    core.interleaved[0] = false;
-    core.littleEndian[0] = tiffReader.isLittleEndian();
-    core.imageCount[0] = tiffs.size();
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].sizeX = tiffReader.getSizeX();
+    core[0].sizeY = tiffReader.getSizeY();
+    core[0].currentOrder = "XYZCT";
+    core[0].pixelType = tiffReader.getPixelType();
+    core[0].rgb = tiffReader.isRGB();
+    core[0].interleaved = false;
+    core[0].littleEndian = tiffReader.isLittleEndian();
+    core[0].imageCount = tiffs.size();
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);

@@ -132,25 +132,25 @@ public class TillVisionReader extends FormatReader {
 
       addMeta(key, value);
 
-      if (key.equals("Width")) core.sizeX[0] = Integer.parseInt(value);
-      else if (key.equals("Height")) core.sizeY[0] = Integer.parseInt(value);
-      else if (key.equals("Bands")) core.sizeC[0] = Integer.parseInt(value);
-      else if (key.equals("Slices")) core.sizeZ[0] = Integer.parseInt(value);
-      else if (key.equals("Frames")) core.sizeT[0] = Integer.parseInt(value);
+      if (key.equals("Width")) core[0].sizeX = Integer.parseInt(value);
+      else if (key.equals("Height")) core[0].sizeY = Integer.parseInt(value);
+      else if (key.equals("Bands")) core[0].sizeC = Integer.parseInt(value);
+      else if (key.equals("Slices")) core[0].sizeZ = Integer.parseInt(value);
+      else if (key.equals("Frames")) core[0].sizeT = Integer.parseInt(value);
       else if (key.equals("Datatype")) {
         int type = Integer.parseInt(value);
         switch (type) {
           case 1:
-            core.pixelType[0] = FormatTools.INT8;
+            core[0].pixelType = FormatTools.INT8;
             break;
           case 2:
-            core.pixelType[0] = FormatTools.UINT8;
+            core[0].pixelType = FormatTools.UINT8;
             break;
           case 3:
-            core.pixelType[0] = FormatTools.INT16;
+            core[0].pixelType = FormatTools.INT16;
             break;
           case 4:
-            core.pixelType[0] = FormatTools.UINT16;
+            core[0].pixelType = FormatTools.UINT16;
             break;
           default:
             throw new FormatException("Unsupported data type: " + type);
@@ -158,10 +158,10 @@ public class TillVisionReader extends FormatReader {
       }
     }
 
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-    core.rgb[0] = false;
-    core.littleEndian[0] = true;
-    core.currentOrder[0] = "XYCZT";
+    core[0].imageCount = core[0].sizeZ * core[0].sizeC * core[0].sizeT;
+    core[0].rgb = false;
+    core[0].littleEndian = true;
+    core[0].currentOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

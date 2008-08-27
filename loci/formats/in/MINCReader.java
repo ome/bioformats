@@ -118,17 +118,17 @@ public class MINCReader extends FormatReader {
 
     pixelData = (byte[][][]) netcdf.getVariableValue("/image");
 
-    core.sizeX[0] = netcdf.getDimension("/zspace");
-    core.sizeY[0] = netcdf.getDimension("/yspace");
-    core.sizeZ[0] = netcdf.getDimension("/xspace");
+    core[0].sizeX = netcdf.getDimension("/zspace");
+    core[0].sizeY = netcdf.getDimension("/yspace");
+    core[0].sizeZ = netcdf.getDimension("/xspace");
 
-    core.sizeT[0] = 1;
-    core.sizeC[0] = 1;
-    core.imageCount[0] = core.sizeZ[0];
-    core.rgb[0] = false;
-    core.indexed[0] = false;
-    core.currentOrder[0] = "XYZCT";
-    core.pixelType[0] = FormatTools.UINT8;
+    core[0].sizeT = 1;
+    core[0].sizeC = 1;
+    core[0].imageCount = core[0].sizeZ;
+    core[0].rgb = false;
+    core[0].indexed = false;
+    core[0].currentOrder = "XYZCT";
+    core[0].pixelType = FormatTools.UINT8;
 
     addMeta("Comment", netcdf.getAttributeValue("/history"));
 

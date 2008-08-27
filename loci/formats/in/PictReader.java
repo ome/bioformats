@@ -123,7 +123,7 @@ public class PictReader extends FormatReader {
     if ((getSizeY()*4 < strips.size()) && (((strips.size() / 3) %
       getSizeY()) != 0))
     {
-      core.sizeY[0] = strips.size();
+      core[0].sizeY = strips.size();
     }
 
     int plane = getSizeX() * getSizeY();
@@ -206,22 +206,22 @@ public class PictReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.littleEndian[0] = false;
+    core[0].littleEndian = false;
 
     in.seek(518);
 
-    core.sizeY[0] = in.readShort();
-    core.sizeX[0] = in.readShort();
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = 3;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYCZT";
-    core.rgb[0] = true;
-    core.imageCount[0] = 1;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
-    core.interleaved[0] = false;
+    core[0].sizeY = in.readShort();
+    core[0].sizeX = in.readShort();
+    core[0].sizeZ = 1;
+    core[0].sizeC = 3;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYCZT";
+    core[0].rgb = true;
+    core[0].imageCount = 1;
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
+    core[0].interleaved = false;
 
     strips = new Vector();
     rowBytes = 0;
@@ -264,7 +264,7 @@ public class PictReader extends FormatReader {
     }
     while (drivePictDecoder(opcode));
 
-    core.pixelType[0] = lookup != null ? FormatTools.UINT16 : FormatTools.UINT8;
+    core[0].pixelType = lookup != null ? FormatTools.UINT16 : FormatTools.UINT8;
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -325,8 +325,8 @@ public class PictReader extends FormatReader {
     int brY = in.readShort();
     int brX = in.readShort();
 
-    core.sizeX[0] = brX - tlX;
-    core.sizeY[0] = brY - tlY;
+    core[0].sizeX = brX - tlX;
+    core[0].sizeY = brY - tlY;
 
     in.skipBytes(18);
   }

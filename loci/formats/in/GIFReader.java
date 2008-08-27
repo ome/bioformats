@@ -194,8 +194,8 @@ public class GIFReader extends FormatReader {
 
     status("Reading dimensions");
 
-    core.sizeX[0] = in.readShort();
-    core.sizeY[0] = in.readShort();
+    core[0].sizeX = in.readShort();
+    core[0].sizeY = in.readShort();
 
     int packed = in.read() & 0xff;
     gctFlag = (packed & 0x80) != 0;
@@ -279,7 +279,7 @@ public class GIFReader extends FormatReader {
           do { check = readBlock(); }
           while (blockSize > 0 && check != -1);
 
-          core.imageCount[0]++;
+          core[0].imageCount++;
 
           if (transparency) act[transIndex] = save;
 
@@ -334,16 +334,16 @@ public class GIFReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = 1;
-    core.sizeT[0] = getImageCount();
-    core.currentOrder[0] = "XYCTZ";
-    core.rgb[0] = false;
-    core.littleEndian[0] = true;
-    core.interleaved[0] = true;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = true;
-    core.falseColor[0] = false;
+    core[0].sizeZ = 1;
+    core[0].sizeC = 1;
+    core[0].sizeT = getImageCount();
+    core[0].currentOrder = "XYCTZ";
+    core[0].rgb = false;
+    core[0].littleEndian = true;
+    core[0].interleaved = true;
+    core[0].metadataComplete = true;
+    core[0].indexed = true;
+    core[0].falseColor = false;
 
     // populate metadata store
 
@@ -351,7 +351,7 @@ public class GIFReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    core.pixelType[0] = FormatTools.UINT8;
+    core[0].pixelType = FormatTools.UINT8;
     MetadataTools.populatePixels(store, this);
   }
 

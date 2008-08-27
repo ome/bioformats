@@ -229,9 +229,9 @@ public class FluoviewReader extends BaseTiffReader {
 
     // calculate the dimension order and axis sizes
 
-    core.sizeZ[0] = core.sizeC[0] = core.sizeT[0] = 1;
-    core.currentOrder[0] = "XY";
-    core.metadataComplete[0] = true;
+    core[0].sizeZ = core[0].sizeC = core[0].sizeT = 1;
+    core[0].currentOrder = "XY";
+    core[0].metadataComplete = true;
 
     for (int i=0; i<10; i++) {
       String name = names[i];
@@ -242,50 +242,50 @@ public class FluoviewReader extends BaseTiffReader {
       if (name.length() == 0) continue;
 
       if (name.equals("x")) {
-        if (getSizeX() == 0) core.sizeX[0] = size;
+        if (getSizeX() == 0) core[0].sizeX = size;
         voxelX = voxel;
       }
       else if (name.equals("y")) {
-        if (getSizeY() == 0) core.sizeY[0] = size;
+        if (getSizeY() == 0) core[0].sizeY = size;
         voxelY = voxel;
       }
       else if (name.equals("z") || name.equals("event")) {
-        core.sizeZ[0] *= size;
+        core[0].sizeZ *= size;
         if (getDimensionOrder().indexOf("Z") == -1) {
-          core.currentOrder[0] += "Z";
+          core[0].currentOrder += "Z";
         }
         voxelZ = voxel;
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
-        core.sizeC[0] *= size;
+        core[0].sizeC *= size;
         if (getDimensionOrder().indexOf("C") == -1) {
-          core.currentOrder[0] += "C";
+          core[0].currentOrder += "C";
         }
         voxelC = voxel;
       }
       else {
-        core.sizeT[0] *= size;
+        core[0].sizeT *= size;
         if (getDimensionOrder().indexOf("T") == -1) {
-          core.currentOrder[0] += "T";
+          core[0].currentOrder += "T";
         }
         voxelT = voxel;
       }
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) core.currentOrder[0] += "Z";
-    if (getDimensionOrder().indexOf("T") == -1) core.currentOrder[0] += "T";
-    if (getDimensionOrder().indexOf("C") == -1) core.currentOrder[0] += "C";
+    if (getDimensionOrder().indexOf("Z") == -1) core[0].currentOrder += "Z";
+    if (getDimensionOrder().indexOf("T") == -1) core[0].currentOrder += "T";
+    if (getDimensionOrder().indexOf("C") == -1) core[0].currentOrder += "C";
 
-    core.imageCount[0] = ifds.length;
-    if (getSizeZ() > ifds.length) core.sizeZ[0] = ifds.length;
-    if (getSizeT() > ifds.length) core.sizeT[0] = ifds.length;
+    core[0].imageCount = ifds.length;
+    if (getSizeZ() > ifds.length) core[0].sizeZ = ifds.length;
+    if (getSizeT() > ifds.length) core[0].sizeT = ifds.length;
 
     if (getImageCount() == 1 && (getSizeT() == getSizeY() ||
       getSizeZ() == getSizeY()) && (getSizeT() > getImageCount() ||
       getSizeZ() > getImageCount()))
     {
-      core.sizeY[0] = 1;
-      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
+      core[0].sizeY = 1;
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     }
 
     // cut up the comment, if necessary
@@ -409,7 +409,7 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     /*
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<core[0].sizeC; i++) {
       // CTR CHECK
 //      store.setDisplayChannel(new Integer(i), null, null,
 //        gamma == null ? null : new Float(gamma.floatValue()), null);

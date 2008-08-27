@@ -76,12 +76,6 @@ public class OMEROReader extends FormatReader {
   private static long id;
   private static Parameters params;
 
-  private int x;
-  private int y;
-  private int z;
-  private int c;
-  private int t;
-
   /** OMERO query service */
   private static IQuery query;
 
@@ -118,12 +112,9 @@ public class OMEROReader extends FormatReader {
 
     int[] zct = FormatTools.getZCTCoords(this, no);
 
-    z = zct[0];
-    c = zct[1];
-    t = zct[2];
-    byte[] plane = raw.getPlane(z, c, t);
-    int len = core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]);
+    byte[] plane = raw.getPlane(zct[0], zct[1], zct[2]);
+    int len = getSizeX() * getSizeY() *
+      FormatTools.getBytesPerPixel(getPixelType());
     System.arraycopy((byte[]) plane, 0, buf, 0, len);
 
     return buf;
@@ -198,23 +189,17 @@ public class OMEROReader extends FormatReader {
     }
 
     String ptype = pix.getPixelType();
-    x = pix.getSizeX();
-    y = pix.getSizeY();
-    z = pix.getSizeZ();
-    c = pix.getSizeC();
-    t = pix.getSizeT();
 
-    core.sizeX[0] = x;
-    core.sizeY[0] = y;
-    core.sizeZ[0] = z;
-    core.sizeC[0] = c;
-    core.sizeT[0] = t;
-    core.rgb[0] = false;
-    core.littleEndian[0] = false;
-    core.currentOrder[0] = "XYZCT";
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-    core.pixelType[0] =
-      FormatTools.pixelTypeFromString((String) ptype);
+    core[0].sizeX = pix.getSizeX();
+    core[0].sizeY = pix.getSizeY();
+    core[0].sizeZ = pix.getSizeZ();
+    core[0].sizeC = pix.getSizeC();
+    core[0].sizeT = pix.getSizeT();
+    core[0].rgb = false;
+    core[0].littleEndian = false;
+    core[0].currentOrder = "XYZCT";
+    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    core[0].pixelType = FormatTools.pixelTypeFromString((String) ptype);
 
     double px = pix.getPixelSizeX();
     double py = pix.getPixelSizeY();

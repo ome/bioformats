@@ -102,44 +102,44 @@ public class MRCReader extends FormatReader {
     // check endianness
 
     in.seek(213);
-    core.littleEndian[0] = in.read() == 68;
+    core[0].littleEndian = in.read() == 68;
 
     // read dimension information from 1024 byte header
 
     in.seek(0);
-    in.order(core.littleEndian[0]);
+    in.order(core[0].littleEndian);
 
-    core.sizeX[0] = in.readInt();
-    core.sizeY[0] = in.readInt();
-    core.sizeZ[0] = in.readInt();
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
+    core[0].sizeZ = in.readInt();
 
-    core.sizeC[0] = 1;
+    core[0].sizeC = 1;
 
     int mode = in.readInt();
     switch (mode) {
       case 0:
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
         break;
       case 1:
-        core.pixelType[0] = FormatTools.INT16;
+        core[0].pixelType = FormatTools.INT16;
         break;
       case 6:
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       case 2:
         isFloat = true;
-        core.pixelType[0] = FormatTools.FLOAT;
+        core[0].pixelType = FormatTools.FLOAT;
         break;
       case 3:
-        core.pixelType[0] = FormatTools.UINT32;
+        core[0].pixelType = FormatTools.UINT32;
         break;
       case 4:
         isFloat = true;
-        core.pixelType[0] = FormatTools.DOUBLE;
+        core[0].pixelType = FormatTools.DOUBLE;
         break;
       case 16:
-        core.sizeC[0] = 3;
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].sizeC = 3;
+        core[0].pixelType = FormatTools.UINT16;
         break;
     }
 
@@ -208,14 +208,14 @@ public class MRCReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYZTC";
-    core.imageCount[0] = getSizeZ();
-    core.rgb[0] = false;
-    core.interleaved[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYZTC";
+    core[0].imageCount = getSizeZ();
+    core[0].rgb = false;
+    core[0].interleaved = true;
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

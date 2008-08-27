@@ -140,7 +140,7 @@ public class TCSReader extends FormatReader {
 
     int n = no;
     for (int i=0; i<series; i++) {
-      n += core.imageCount[i];
+      n += core[i].imageCount;
     }
 
     if (tiffReaders.length == 1) {
@@ -249,44 +249,45 @@ public class TCSReader extends FormatReader {
         tiffReaders[i].setId((String) tiffs.get(i));
       }
 
-      core = new CoreMetadata(x.size());
+      core = new CoreMetadata[x.size()];
+
       for (int i=0; i<x.size(); i++) {
-        core.sizeX[i] = ((Integer) x.get(i)).intValue();
-        core.sizeY[i] = ((Integer) y.get(i)).intValue();
-        if (z.size() > 0) core.sizeZ[i] = ((Integer) z.get(i)).intValue();
-        else core.sizeZ[i] = 1;
-        if (c.size() > 0) core.sizeC[i] = ((Integer) c.get(i)).intValue();
-        else core.sizeC[i] = 1;
-        if (t.size() > 0) core.sizeT[i] = ((Integer) t.get(i)).intValue();
-        else core.sizeT[i] = 1;
-        core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
+        core[i] = new CoreMetadata();
+        core[i].sizeX = ((Integer) x.get(i)).intValue();
+        core[i].sizeY = ((Integer) y.get(i)).intValue();
+        if (z.size() > 0) core[i].sizeZ = ((Integer) z.get(i)).intValue();
+        else core[i].sizeZ = 1;
+        if (c.size() > 0) core[i].sizeC = ((Integer) c.get(i)).intValue();
+        else core[i].sizeC = 1;
+        if (t.size() > 0) core[i].sizeT = ((Integer) t.get(i)).intValue();
+        else core[i].sizeT = 1;
+        core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
         int bpp = ((Integer) bits.get(i)).intValue();
         while (bpp % 8 != 0) bpp++;
         switch (bpp) {
           case 8:
-            core.pixelType[i] = FormatTools.UINT8;
+            core[i].pixelType = FormatTools.UINT8;
             break;
           case 16:
-            core.pixelType[i] = FormatTools.UINT16;
+            core[i].pixelType = FormatTools.UINT16;
             break;
           case 32:
-            core.pixelType[i] = FormatTools.FLOAT;
+            core[i].pixelType = FormatTools.FLOAT;
             break;
         }
-        if (tiffs.size() < core.imageCount[i]) {
-          int div = core.imageCount[i] / core.sizeC[i];
-          core.imageCount[i] = tiffs.size();
-          if (div >= core.sizeZ[i]) core.sizeZ[i] /= div;
-          else if (div >= core.sizeT[i]) core.sizeT[i] /= div;
+        if (tiffs.size() < core[i].imageCount) {
+          int div = core[i].imageCount / core[i].sizeC;
+          core[i].imageCount = tiffs.size();
+          if (div >= core[i].sizeZ) core[i].sizeZ /= div;
+          else if (div >= core[i].sizeT) core[i].sizeT /= div;
         }
+        core[i].currentOrder = getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ";
+        core[i].metadataComplete = true;
+        core[i].rgb = false;
+        core[i].interleaved = false;
+        core[i].indexed = tiffReaders[0].isIndexed();
+        core[i].falseColor = true;
       }
-      Arrays.fill(core.currentOrder,
-        getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ");
-      Arrays.fill(core.metadataComplete, true);
-      Arrays.fill(core.rgb, false);
-      Arrays.fill(core.interleaved, false);
-      Arrays.fill(core.indexed, tiffReaders[0].isIndexed());
-      Arrays.fill(core.falseColor, true);
 
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -341,8 +342,8 @@ public class TCSReader extends FormatReader {
         stamp[i] = fmt.parse(date, new ParsePosition(0)).getTime();
       }
 
-      core.sizeT[0] = 0;
-      core.currentOrder[0] = isRGB() ? "XYC" : "XY";
+      core[0].sizeT = 0;
+      core[0].currentOrder = isRGB() ? "XYC" : "XY";
 
       // determine the axis sizes and ordering
       boolean unique = true;
@@ -354,31 +355,31 @@ public class TCSReader extends FormatReader {
           }
         }
         if (unique) {
-          core.sizeT[0]++;
+          core[0].sizeT++;
           if (getDimensionOrder().indexOf("T") < 0) {
-            core.currentOrder[0] += "T";
+            core[0].currentOrder += "T";
           }
         }
         else if (i > 0) {
           if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf("C") < 0) {
-            core.currentOrder[0] += "C";
+            core[0].currentOrder += "C";
           }
           else if (getDimensionOrder().indexOf("Z") < 0) {
-            core.currentOrder[0] += "Z";
+            core[0].currentOrder += "Z";
           }
         }
         unique = true;
       }
 
-      if (getDimensionOrder().indexOf("Z") < 0) core.currentOrder[0] += "Z";
-      if (getDimensionOrder().indexOf("C") < 0) core.currentOrder[0] += "C";
-      if (getDimensionOrder().indexOf("T") < 0) core.currentOrder[0] += "T";
+      if (getDimensionOrder().indexOf("Z") < 0) core[0].currentOrder += "Z";
+      if (getDimensionOrder().indexOf("C") < 0) core[0].currentOrder += "C";
+      if (getDimensionOrder().indexOf("T") < 0) core[0].currentOrder += "T";
 
-      if (getSizeT() == 0) core.sizeT[0] = 1;
+      if (getSizeT() == 0) core[0].sizeT = 1;
       if (channelCount == 0) channelCount = 1;
-      core.sizeZ[0] = ifds.length / (getSizeT() * channelCount);
-      core.sizeC[0] *= channelCount;
-      core.imageCount[0] = getSizeZ() * getSizeT() * channelCount;
+      core[0].sizeZ = ifds.length / (getSizeT() * channelCount);
+      core[0].sizeC *= channelCount;
+      core[0].imageCount = getSizeZ() * getSizeT() * channelCount;
 
       // cut up comment
 

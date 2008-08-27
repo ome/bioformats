@@ -178,16 +178,16 @@ public class ImarisHDFReader extends FormatReader {
       value = value.trim();
 
       if (name.equals("X")) {
-        core.sizeX[0] = Integer.parseInt(value);
+        core[0].sizeX = Integer.parseInt(value);
       }
       else if (name.equals("Y")) {
-        core.sizeY[0] = Integer.parseInt(value);
+        core[0].sizeY = Integer.parseInt(value);
       }
       else if (name.equals("Z")) {
-        core.sizeZ[0] = Integer.parseInt(value);
+        core[0].sizeZ = Integer.parseInt(value);
       }
       else if (name.equals("FileTimePoints")) {
-        core.sizeT[0] = Integer.parseInt(value);
+        core[0].sizeT = Integer.parseInt(value);
       }
       else if (name.equals("RecordingEntrySampleSpacing")) {
         pixelSizeX = Float.parseFloat(value);
@@ -226,7 +226,7 @@ public class ImarisHDFReader extends FormatReader {
         int underscore = attr.indexOf("_") + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
-        if (cIndex == getSizeC()) core.sizeC[0]++;
+        if (cIndex == getSizeC()) core[0].sizeC++;
 
         if (name.equals("Gain")) gain.add(value);
         else if (name.equals("LSMEmissionWavelength")) emWave.add(value);
@@ -242,65 +242,59 @@ public class ImarisHDFReader extends FormatReader {
     }
 
     if (seriesCount > 1) {
-      int x = core.sizeX[0];
-      int y = core.sizeY[0];
-      int z = core.sizeZ[0];
-      int c = core.sizeC[0];
-      int t = core.sizeT[0];
-      core = new CoreMetadata(seriesCount);
-      Arrays.fill(core.sizeX, x);
-      Arrays.fill(core.sizeY, y);
-      Arrays.fill(core.sizeZ, z);
-      Arrays.fill(core.sizeC, c);
-      Arrays.fill(core.sizeT, t);
+      CoreMetadata oldCore = core[0];
+      core = new CoreMetadata[seriesCount];
+      core[0] = oldCore;
+      for (int i=1; i<seriesCount; i++) {
+        core[i] = new CoreMetadata();
+      }
 
       for (int i=1; i<seriesCount; i++) {
         String groupPath =
           "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
-        core.sizeX[i] =
+        core[i].sizeX =
           Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeX"));
-        core.sizeY[i] =
+        core[i].sizeY =
           Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeY"));
-        core.sizeZ[i] =
+        core[i].sizeZ =
           Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeZ"));
-        core.imageCount[i] = core.sizeZ[i] * getSizeC() * getSizeT();
+        core[i].imageCount = core[i].sizeZ * getSizeC() * getSizeT();
+        core[i].sizeC = getSizeC();
+        core[i].sizeT = getSizeT();
       }
     }
-    core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
+    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
 
     // determine pixel type - this isn't stored in the metadata, so we need
     // to check the pixels themselves
 
+    int type = -1;
+
     Object pix = netcdf.getVariableValue(
       "/DataSet/ResolutionLevel_0/TimePoint_0/Channel_0/Data");
-    if (pix instanceof byte[][][]) {
-      Arrays.fill(core.pixelType, FormatTools.UINT8);
-    }
-    else if (pix instanceof short[][][]) {
-      Arrays.fill(core.pixelType, FormatTools.UINT16);
-    }
-    else if (pix instanceof int[][][]) {
-      Arrays.fill(core.pixelType, FormatTools.UINT32);
-    }
-    else if (pix instanceof float[][][]) {
-      Arrays.fill(core.pixelType, FormatTools.FLOAT);
-    }
+    if (pix instanceof byte[][][]) type = FormatTools.UINT8;
+    else if (pix instanceof short[][][]) type = FormatTools.UINT16;
+    else if (pix instanceof int[][][]) type = FormatTools.UINT32;
+    else if (pix instanceof float[][][]) type = FormatTools.FLOAT;
 
-    Arrays.fill(core.currentOrder, "XYZCT");
-    Arrays.fill(core.rgb, false);
-    Arrays.fill(core.thumbSizeX, 128);
-    Arrays.fill(core.thumbSizeY, 128);
-    Arrays.fill(core.orderCertain, true);
-    Arrays.fill(core.littleEndian, true);
-    Arrays.fill(core.interleaved, false);
-    Arrays.fill(core.indexed, false);
+    for (int i=0; i<core.length; i++) {
+      core[i].pixelType = type;
+      core[i].currentOrder = "XYZCT";
+      core[i].rgb = false;
+      core[i].thumbSizeX = 128;
+      core[i].thumbSizeY = 128;
+      core[i].orderCertain = true;
+      core[i].littleEndian = true;
+      core[i].interleaved = false;
+      core[i].indexed = false;
+    }
 
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<seriesCount; i++) {
       float px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
-      if (px == 1) px = (maxX - minX) / core.sizeX[i];
-      if (py == 1) py = (maxY - minY) / core.sizeY[i];
-      if (pz == 1) pz = (maxZ - minZ) / core.sizeZ[i];
+      if (px == 1) px = (maxX - minX) / core[i].sizeX;
+      if (py == 1) py = (maxY - minY) / core[i].sizeY;
+      if (pz == 1) pz = (maxZ - minZ) / core[i].sizeZ;
       store.setDimensionsPhysicalSizeX(new Float(px), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(py), i, 0);
       store.setDimensionsPhysicalSizeZ(new Float(pz), i, 0);
@@ -310,7 +304,7 @@ public class ImarisHDFReader extends FormatReader {
     for (int s=0; s<seriesCount; s++) {
       store.setImageName("Resolution Level " + s, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
-      for (int i=0; i<core.sizeC[s]; i++) {
+      for (int i=0; i<core[s].sizeC; i++) {
         Float gainValue = null;
         Integer pinholeValue = null, emWaveValue = null, exWaveValue;
 

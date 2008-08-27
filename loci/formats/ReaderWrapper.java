@@ -287,7 +287,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMetadata();
   }
 
-  public CoreMetadata getCoreMetadata() {
+  public CoreMetadata[] getCoreMetadata() {
     return reader.getCoreMetadata();
   }
 

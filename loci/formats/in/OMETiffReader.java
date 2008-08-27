@@ -290,28 +290,28 @@ public class OMETiffReader extends FormatReader {
         // populate core metadata
         info[s] = planes;
         try {
-          core.sizeX[s] = meta.getPixelsSizeX(i, p).intValue();
-          core.sizeY[s] = meta.getPixelsSizeY(i, p).intValue();
-          core.sizeZ[s] = meta.getPixelsSizeZ(i, p).intValue();
-          core.sizeC[s] = meta.getPixelsSizeC(i, p).intValue();
-          core.sizeT[s] = meta.getPixelsSizeT(i, p).intValue();
-          core.pixelType[s] = FormatTools.pixelTypeFromString(
+          core[s].sizeX = meta.getPixelsSizeX(i, p).intValue();
+          core[s].sizeY = meta.getPixelsSizeY(i, p).intValue();
+          core[s].sizeZ = meta.getPixelsSizeZ(i, p).intValue();
+          core[s].sizeC = meta.getPixelsSizeC(i, p).intValue();
+          core[s].sizeT = meta.getPixelsSizeT(i, p).intValue();
+          core[s].pixelType = FormatTools.pixelTypeFromString(
             meta.getPixelsPixelType(i, p));
-          core.imageCount[s] = num;
-          core.currentOrder[s] = meta.getPixelsDimensionOrder(i, p);
-          core.orderCertain[s] = true;
+          core[s].imageCount = num;
+          core[s].currentOrder = meta.getPixelsDimensionOrder(i, p);
+          core[s].orderCertain = true;
           int photo = TiffTools.getPhotometricInterpretation(firstIFD);
-          core.rgb[s] = samples > 1 || photo == TiffTools.RGB;
-          core.littleEndian[s] = !meta.getPixelsBigEndian(i, p).booleanValue();
-          core.interleaved[s] = false;
-          core.indexed[s] = photo == TiffTools.RGB_PALETTE &&
+          core[s].rgb = samples > 1 || photo == TiffTools.RGB;
+          core[s].littleEndian = !meta.getPixelsBigEndian(i, p).booleanValue();
+          core[s].interleaved = false;
+          core[s].indexed = photo == TiffTools.RGB_PALETTE &&
             TiffTools.getIFDValue(firstIFD, TiffTools.COLOR_MAP) != null;
-          if (core.indexed[s]) {
-            core.sizeC[0] = 1;
-            core.rgb[0] = false;
+          if (core[s].indexed) {
+            core[0].sizeC = 1;
+            core[0].rgb = false;
           }
-          core.falseColor[s] = false;
-          core.metadataComplete[s] = true;
+          core[s].falseColor = false;
+          core[s].metadataComplete = true;
         }
         catch (NullPointerException exc) {
           throw new FormatException("Incomplete Pixels metadata", exc);

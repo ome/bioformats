@@ -155,9 +155,10 @@ public class L2DReader extends FormatReader {
 
     tiffs = new Vector[scans.size()];
 
-    core = new CoreMetadata(scans.size());
+    core = new CoreMetadata[scans.size()];
 
     for (int i=0; i<scans.size(); i++) {
+      core[i] = new CoreMetadata();
       tiffs[i] = new Vector();
       String scanName = (String) scans.get(i);
       Location scanDir = new Location(parent, scanName);
@@ -198,22 +199,22 @@ public class L2DReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     for (int i=0; i<scans.size(); i++) {
-      core.imageCount[i] = tiffs[i].size();
-      core.sizeC[i] = tiffs[i].size();
-      core.sizeT[i] = 1;
-      core.sizeZ[i] = 1;
-      core.currentOrder[i] = "XYCZT";
+      core[i].imageCount = tiffs[i].size();
+      core[i].sizeC = tiffs[i].size();
+      core[i].sizeT = 1;
+      core[i].sizeZ = 1;
+      core[i].currentOrder = "XYCZT";
 
       for (int t=0; t<tiffs[i].size(); t++) {
         reader.setId((String) tiffs[i].get(t));
         if (t == 0) {
-          core.sizeX[i] = reader.getSizeX();
-          core.sizeY[i] = reader.getSizeY();
-          core.sizeC[i] *= reader.getSizeC();
-          core.rgb[i] = reader.isRGB();
-          core.indexed[i] = reader.isIndexed();
-          core.littleEndian[i] = reader.isLittleEndian();
-          core.pixelType[i] = reader.getPixelType();
+          core[i].sizeX = reader.getSizeX();
+          core[i].sizeY = reader.getSizeY();
+          core[i].sizeC *= reader.getSizeC();
+          core[i].rgb = reader.isRGB();
+          core[i].indexed = reader.isIndexed();
+          core[i].littleEndian = reader.isLittleEndian();
+          core[i].pixelType = reader.getPixelType();
         }
       }
       store.setImageName("", i);

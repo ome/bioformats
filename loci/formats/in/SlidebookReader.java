@@ -126,7 +126,7 @@ public class SlidebookReader extends FormatReader {
     // metadata blocks of a specific type.
 
     in.skipBytes(4);
-    core.littleEndian[0] = in.read() == 0x49;
+    core[0].littleEndian = in.read() == 0x49;
     in.order(isLittleEndian());
 
     metadataOffsets = new Vector();
@@ -287,8 +287,11 @@ public class SlidebookReader extends FormatReader {
         }
       }
       boolean little = isLittleEndian();
-      core = new CoreMetadata(pixelOffsets.size());
-      Arrays.fill(core.littleEndian, little);
+      core = new CoreMetadata[pixelOffsets.size()];
+      for (int i=0; i<core.length; i++) {
+        core[i] = new CoreMetadata();
+        core[i].littleEndian = little;
+      }
     }
 
     status("Determining dimensions");
@@ -304,7 +307,7 @@ public class SlidebookReader extends FormatReader {
       pixelBytes += ((Long) pixelLengths.get(i)).longValue();
     }
 
-    String[] imageNames = new String[core.sizeX.length];
+    String[] imageNames = new String[core.length];
     Vector channelNames = new Vector();
     int nextName = 0;
 
@@ -340,21 +343,21 @@ public class SlidebookReader extends FormatReader {
             if (in.getFilePointer() >= (length + offset) &&
               in.getFilePointer() < end)
             {
-              if (core.sizeX[j - start] == 0) {
-                core.sizeX[j - start] = in.readShort();
-                core.sizeY[j - start] = in.readShort();
+              if (core[j - start].sizeX == 0) {
+                core[j - start].sizeX = in.readShort();
+                core[j - start].sizeY = in.readShort();
                 int checkX = in.readShort();
                 int checkY = in.readShort();
                 int div = in.readShort();
-                core.sizeX[j - start] /= div;
+                core[j - start].sizeX /= div;
                 div = in.readShort();
-                core.sizeY[j - start] /= div;
+                core[j - start].sizeY /= div;
               }
               if (prevSeries != j - start) {
                 iCount = 1;
               }
               prevSeries = j - start;
-              core.sizeC[j - start] = iCount;
+              core[j - start].sizeC = iCount;
               break;
             }
           }
@@ -374,7 +377,7 @@ public class SlidebookReader extends FormatReader {
                 uCount = 1;
               }
               prevSeriesU = j - start;
-              core.sizeZ[j - start] = uCount;
+              core[j - start].sizeZ = uCount;
               break;
             }
           }
@@ -408,25 +411,25 @@ public class SlidebookReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<core.sizeX.length; i++) {
+    for (int i=0; i<core.length; i++) {
       setSeries(i);
       long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
       boolean x = true;
       while (getSizeX() * getSizeY() * getSizeC() * getSizeZ() > pixels) {
-        if (x) core.sizeX[i] /= 2;
-        else core.sizeY[i] /= 2;
+        if (x) core[i].sizeX /= 2;
+        else core[i].sizeY /= 2;
         x = !x;
       }
-      if (getSizeZ() == 0) core.sizeZ[i] = 1;
-      core.sizeT[i] = (int) (pixels /
+      if (getSizeZ() == 0) core[i].sizeZ = 1;
+      core[i].sizeT = (int) (pixels /
         (getSizeX() * getSizeY() * getSizeZ() * getSizeC()));
-      if (getSizeT() == 0) core.sizeT[i] = 1;
-      core.imageCount[i] = getSizeZ() * getSizeC() * getSizeT();
-      core.pixelType[i] = FormatTools.UINT16;
-      core.currentOrder[i] = "XYZTC";
-      core.indexed[i] = false;
-      core.falseColor[i] = false;
-      core.metadataComplete[i] = true;
+      if (getSizeT() == 0) core[i].sizeT = 1;
+      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      core[i].pixelType = FormatTools.UINT16;
+      core[i].currentOrder = "XYZTC";
+      core[i].indexed = false;
+      core[i].falseColor = false;
+      core[i].metadataComplete = true;
     }
     setSeries(0);
 
@@ -438,20 +441,20 @@ public class SlidebookReader extends FormatReader {
 
     store.setObjectiveModel(objective, 0, 0);
 
-    for (int i=0; i<core.sizeX.length; i++) {
+    for (int i=0; i<core.length; i++) {
       store.setImageName(imageNames[i], i);
       store.setDimensionsPhysicalSizeX(new Float(pixelSize), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSize), i, 0);
       int idx = 0;
       for (int q=0; q<i; q++) {
-        idx += core.sizeC[q];
+        idx += core[q].sizeC;
       }
 
       if (idx < pixelSizeZ.size()) {
         store.setDimensionsPhysicalSizeZ((Float) pixelSizeZ.get(idx), i, 0);
       }
       MetadataTools.setDefaultCreationDate(store, id, i);
-      for (int c=0; c<core.sizeC[i]; c++) {
+      for (int c=0; c<core[i].sizeC; c++) {
         if (index < channelNames.size()) {
           store.setLogicalChannelName((String) channelNames.get(index++), i, c);
           addMeta(imageNames[i] + " channel " + c, channelNames.get(index - 1));

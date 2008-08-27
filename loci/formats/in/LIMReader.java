@@ -94,31 +94,31 @@ public class LIMReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
-    core.littleEndian[0] = true;
+    core[0].littleEndian = true;
     in.order(isLittleEndian());
 
-    core.sizeX[0] = in.readShort() & 0x7fff;
-    core.sizeY[0] = in.readShort();
+    core[0].sizeX = in.readShort() & 0x7fff;
+    core[0].sizeY = in.readShort();
     int bits = in.readShort();
 
     while (bits % 8 != 0) bits++;
     switch (bits) {
       case 8:
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
         break;
       case 16:
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       case 24:
-        core.pixelType[0] = FormatTools.UINT8;
-        core.sizeC[0] = 3;
+        core[0].pixelType = FormatTools.UINT8;
+        core[0].sizeC = 3;
         break;
       case 32:
-        core.pixelType[0] = FormatTools.UINT32;
+        core[0].pixelType = FormatTools.UINT32;
         break;
       case 48:
-        core.pixelType[0] = FormatTools.UINT16;
-        core.sizeC[0] = 3;
+        core[0].pixelType = FormatTools.UINT16;
+        core[0].sizeC = 3;
         break;
       default:
         throw new FormatException("Unsupported bits per pixel : " + bits);
@@ -129,16 +129,16 @@ public class LIMReader extends FormatReader {
       throw new FormatException("Compressed LIM files not supported.");
     }
 
-    core.imageCount[0] = 1;
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = 1;
-    if (getSizeC() == 0) core.sizeC[0] = 1;
-    core.rgb[0] = getSizeC() > 1;
-    core.currentOrder[0] = "XYZCT";
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.interleaved[0] = true;
-    core.metadataComplete[0] = true;
+    core[0].imageCount = 1;
+    core[0].sizeZ = 1;
+    core[0].sizeT = 1;
+    if (getSizeC() == 0) core[0].sizeC = 1;
+    core[0].rgb = getSizeC() > 1;
+    core[0].currentOrder = "XYZCT";
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].interleaved = true;
+    core[0].metadataComplete = true;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

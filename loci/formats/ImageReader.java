@@ -429,7 +429,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#getCoreMetadata() */
-  public CoreMetadata getCoreMetadata() {
+  public CoreMetadata[] getCoreMetadata() {
     FormatTools.assertId(currentId, true, 2);
     return getReader().getCoreMetadata();
   }

@@ -209,7 +209,7 @@ public class LegacyQTReader extends FormatReader {
         time = q.intValue();
       }
       while (time >= 0);
-      core.imageCount[0] = v.size();
+      core[0].imageCount = v.size();
       times = new int[getImageCount()];
       for (int i=0; i<times.length; i++) {
         q = (Integer) v.elementAt(i);
@@ -220,18 +220,18 @@ public class LegacyQTReader extends FormatReader {
 
       BufferedImage img = ImageTools.makeBuffered(image);
 
-      core.sizeX[0] = img.getWidth();
-      core.sizeY[0] = img.getHeight();
-      core.sizeZ[0] = 1;
-      core.sizeC[0] = img.getRaster().getNumBands();
-      core.sizeT[0] = getImageCount();
-      core.pixelType[0] = ImageTools.getPixelType(img);
-      core.currentOrder[0] = "XYCTZ";
-      core.rgb[0] = true;
-      core.interleaved[0] = false;
-      core.littleEndian[0] = false;
-      core.indexed[0] = false;
-      core.falseColor[0] = false;
+      core[0].sizeX = img.getWidth();
+      core[0].sizeY = img.getHeight();
+      core[0].sizeZ = 1;
+      core[0].sizeC = img.getRaster().getNumBands();
+      core[0].sizeT = getImageCount();
+      core[0].pixelType = ImageTools.getPixelType(img);
+      core[0].currentOrder = "XYCTZ";
+      core[0].rgb = true;
+      core[0].interleaved = false;
+      core[0].littleEndian = false;
+      core[0].indexed = false;
+      core[0].falseColor = false;
 
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());

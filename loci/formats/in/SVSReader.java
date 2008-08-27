@@ -94,30 +94,29 @@ public class SVSReader extends BaseTiffReader {
 
     // repopulate core metadata
 
-    core = new CoreMetadata(ifds.length);
+    core = new CoreMetadata[ifds.length];
 
     for (int s=0; s<ifds.length; s++) {
-      int p =
-        TiffTools.getIFDIntValue(ifds[s], TiffTools.PHOTOMETRIC_INTERPRETATION);
-      int samples =
-        TiffTools.getIFDIntValue(ifds[s], TiffTools.SAMPLES_PER_PIXEL);
-      core.rgb[s] = samples > 1 || p == TiffTools.RGB;
+      core[s] = new CoreMetadata();
+      int p = TiffTools.getPhotometricInterpretation(ifds[s]);
+      int samples = TiffTools.getSamplesPerPixel(ifds[s]);
+      core[s].rgb = samples > 1 || p == TiffTools.RGB;
 
-      core.sizeX[s] = TiffTools.getIFDIntValue(ifds[s], TiffTools.IMAGE_WIDTH);
-      core.sizeY[s] = TiffTools.getIFDIntValue(ifds[s], TiffTools.IMAGE_LENGTH);
-      core.sizeZ[s] = 1;
-      core.sizeT[s] = 1;
-      core.sizeC[s] = core.rgb[s] ? samples : 1;
-      core.littleEndian[s] = TiffTools.isLittleEndian(ifds[s]);
-      core.indexed[s] = p == TiffTools.RGB_PALETTE &&
+      core[s].sizeX = (int) TiffTools.getImageWidth(ifds[s]);
+      core[s].sizeY = (int) TiffTools.getImageLength(ifds[s]);
+      core[s].sizeZ = 1;
+      core[s].sizeT = 1;
+      core[s].sizeC = core[s].rgb ? samples : 1;
+      core[s].littleEndian = TiffTools.isLittleEndian(ifds[s]);
+      core[s].indexed = p == TiffTools.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core.imageCount[s] = 1;
-      core.pixelType[s] = getPixelType(ifds[s]);
+      core[s].imageCount = 1;
+      core[s].pixelType = getPixelType(ifds[s]);
+      core[s].metadataComplete = true;
+      core[s].interleaved = false;
+      core[s].falseColor = false;
+      core[s].currentOrder = "XYCZT";
     }
-    Arrays.fill(core.metadataComplete, true);
-    Arrays.fill(core.interleaved, false);
-    Arrays.fill(core.falseColor, false);
-    Arrays.fill(core.currentOrder, "XYCZT");
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -127,7 +126,7 @@ public class SVSReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    for (int i=0; i<core.sizeX.length; i++) {
+    for (int i=0; i<core.length; i++) {
       store.setImageName("Series " + i, i);
     }
   }

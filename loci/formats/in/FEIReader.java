@@ -99,34 +99,34 @@ public class FEIReader extends FormatReader {
 
     in.seek(0x51a);
     in.order(true);
-    core.sizeX[0] = in.readShort();
-    core.sizeY[0] = in.readShort();
+    core[0].sizeX = in.readShort();
+    core[0].sizeY = in.readShort();
 
     originalWidth = getSizeX();
 
     // FEI files can only be 1424x968 or 712x484
 
     if (1424 < getSizeX()) {
-      core.sizeX[0] = 1424;
-      core.sizeY[0] = 968;
+      core[0].sizeX = 1424;
+      core[0].sizeY = 968;
     }
     else {
-      core.sizeX[0] = 712;
-      core.sizeY[0] = 484;
+      core[0].sizeX = 712;
+      core[0].sizeY = 484;
     }
 
     // always one grayscale plane per file
 
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = 1;
-    core.sizeT[0] = 1;
-    core.imageCount[0] = 1;
-    core.littleEndian[0] = true;
-    core.pixelType[0] = FormatTools.UINT8;
-    core.rgb[0] = false;
-    core.indexed[0] = false;
-    core.interleaved[0] = false;
-    core.currentOrder[0] = "XYCZT";
+    core[0].sizeZ = 1;
+    core[0].sizeC = 1;
+    core[0].sizeT = 1;
+    core[0].imageCount = 1;
+    core[0].littleEndian = true;
+    core[0].pixelType = FormatTools.UINT8;
+    core[0].rgb = false;
+    core[0].indexed = false;
+    core[0].interleaved = false;
+    core[0].currentOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

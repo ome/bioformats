@@ -180,7 +180,7 @@ public class PrairieReader extends FormatReader {
     if (debug) debug("PrairieReader.initFile(" + id + ")");
 
     if (metadata == null) metadata = new Hashtable();
-    if (core == null) core = new CoreMetadata(1);
+    if (core == null) core = new CoreMetadata[] {new CoreMetadata()};
 
     if (checkSuffix(id, PRAIRIE_SUFFIXES)) {
       // we have been given the XML file that lists TIFF files (best case)
@@ -220,16 +220,16 @@ public class PrairieReader extends FormatReader {
 
         if (zt == 0) zt = 1;
 
-        core.sizeZ[0] = isZ ? zt : 1;
-        core.sizeT[0] = isZ ? 1 : zt;
-        core.sizeC[0] = getImageCount() / (getSizeZ() * getSizeT());
-        core.currentOrder[0] = "XYC" + (isZ ? "ZT" : "TZ");
-        core.pixelType[0] = FormatTools.UINT16;
-        core.rgb[0] = false;
-        core.interleaved[0] = false;
-        core.littleEndian[0] = tiff.isLittleEndian();
-        core.indexed[0] = tiff.isIndexed();
-        core.falseColor[0] = false;
+        core[0].sizeZ = isZ ? zt : 1;
+        core[0].sizeT = isZ ? 1 : zt;
+        core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
+        core[0].currentOrder = "XYC" + (isZ ? "ZT" : "TZ");
+        core[0].pixelType = FormatTools.UINT16;
+        core[0].rgb = false;
+        core[0].interleaved = false;
+        core[0].littleEndian = tiff.isLittleEndian();
+        core[0].indexed = tiff.isIndexed();
+        core[0].falseColor = false;
 
         MetadataStore store =
           new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -272,8 +272,8 @@ public class PrairieReader extends FormatReader {
         String zoom = (String) getMeta("opticalZoom");
         if (zoom != null) {
           store.setDisplayOptions(new Float(zoom),
-            new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] > 1),
-            new Boolean(core.sizeC[0] > 2), Boolean.FALSE,
+            new Boolean(core[0].sizeC > 1), new Boolean(core[0].sizeC > 1),
+            new Boolean(core[0].sizeC > 2), Boolean.FALSE,
             null, null, null, null, null, null, null, null, null, null, null);
         }
         */
@@ -331,7 +331,7 @@ public class PrairieReader extends FormatReader {
         isZ = attributes.getValue("type").equals("ZSeries");
       }
       else if (qName.equals("File")) {
-        core.imageCount[0]++;
+        core[0].imageCount++;
         File current = new File(currentId).getAbsoluteFile();
         String dir = "";
         if (current.exists()) {
@@ -346,10 +346,10 @@ public class PrairieReader extends FormatReader {
         addMeta(key, value);
 
         if (key.equals("pixelsPerLine")) {
-          core.sizeX[0] = Integer.parseInt(value);
+          core[0].sizeX = Integer.parseInt(value);
         }
         else if (key.equals("linesPerFrame")) {
-          core.sizeY[0] = Integer.parseInt(value);
+          core[0].sizeY = Integer.parseInt(value);
         }
         else if (key.equals("micronsPerPixel_XAxis")) {
           pixelSizeX = Float.parseFloat(value);

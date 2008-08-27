@@ -497,44 +497,44 @@ public class OpenlabReader extends FormatReader {
 
     // populate core metadata
 
-    core = new CoreMetadata(nSeries);
-
-    Arrays.fill(core.indexed, false);
+    core = new CoreMetadata[nSeries];
 
     for (int i=0; i<nSeries; i++) {
-      core.sizeX[i] = planes[planeOffsets[i][0]].width;
-      core.sizeY[i] = planes[planeOffsets[i][0]].height;
-      core.imageCount[i] = planeOffsets[i].length;
+      core[i] = new CoreMetadata();
+      core[i].indexed = false;
+      core[i].sizeX = planes[planeOffsets[i][0]].width;
+      core[i].sizeY = planes[planeOffsets[i][0]].height;
+      core[i].imageCount = planeOffsets[i].length;
 
       switch (planes[planeOffsets[i][0]].volumeType) {
         case MAC_1_BIT:
         case MAC_4_GREYS:
         case MAC_256_GREYS:
-          core.pixelType[i] = FormatTools.UINT8;
-          if (core.imageCount[i] > 1 && (core.sizeX[i] * core.sizeY[i] <
+          core[i].pixelType = FormatTools.UINT8;
+          if (core[i].imageCount > 1 && (core[i].sizeX * core[i].sizeY <
             (planes[planeOffsets[i][1]].planeOffset -
             planes[planeOffsets[i][0]].planeOffset)))
           {
-            core.pixelType[i] = FormatTools.UINT16;
+            core[i].pixelType = FormatTools.UINT16;
           }
-          core.rgb[i] = false;
-          core.sizeC[i] = 1;
-          core.interleaved[i] = false;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
           break;
         case MAC_256_COLORS:
-          core.pixelType[i] = FormatTools.UINT8;
-          core.rgb[i] = false;
-          core.sizeC[i] = 1;
-          core.interleaved[i] = false;
-          core.indexed[i] = true;
+          core[i].pixelType = FormatTools.UINT8;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          core[i].indexed = true;
           break;
         case MAC_16_COLORS:
         case MAC_16_BIT_COLOR:
         case MAC_24_BIT_COLOR:
-          core.pixelType[i] = FormatTools.UINT8;
-          core.rgb[i] = true;
-          core.sizeC[i] = 3;
-          core.interleaved[i] = version == 5;
+          core[i].pixelType = FormatTools.UINT8;
+          core[i].rgb = true;
+          core[i].sizeC = 3;
+          core[i].interleaved = version == 5;
           break;
         case MAC_16_GREYS:
         case DEEP_GREY_9:
@@ -545,23 +545,24 @@ public class OpenlabReader extends FormatReader {
         case DEEP_GREY_14:
         case DEEP_GREY_15:
         case DEEP_GREY_16:
-          core.pixelType[i] = FormatTools.UINT16;
-          core.rgb[i] = false;
-          core.sizeC[i] = 1;
-          core.interleaved[i] = false;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
           break;
         default:
           throw new FormatException("Unsupported plane type: " +
             planes[planeOffsets[i][0]].volumeType);
       }
 
-      core.sizeT[i] = 1;
-      core.sizeZ[i] = core.imageCount[i];
+      core[i].sizeT = 1;
+      core[i].sizeZ = core[i].imageCount;
+      core[i].currentOrder = "XYCZT";
+      core[i].littleEndian = false;
+      core[i].falseColor = false;
+      core[i].metadataComplete = true;
+      core[i].seriesMetadata = getMetadata();
     }
-    Arrays.fill(core.currentOrder, "XYCZT");
-    Arrays.fill(core.littleEndian, false);
-    Arrays.fill(core.falseColor, false);
-    Arrays.fill(core.metadataComplete, true);
 
     // populate MetadataStore
 
@@ -569,8 +570,6 @@ public class OpenlabReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
-
-    Arrays.fill(core.seriesMetadata, getMetadata());
   }
 
   // -- Helper methods --

@@ -354,23 +354,23 @@ public class QTReader extends FormatReader {
       return;
     }
 
-    core.imageCount[0] = offsets.size();
+    core[0].imageCount = offsets.size();
     if (chunkSizes.size() < getImageCount() && chunkSizes.size() > 0) {
-      core.imageCount[0] = chunkSizes.size();
+      core[0].imageCount = chunkSizes.size();
     }
 
     status("Populating metadata");
 
     int bytesPerPixel = (bitsPerPixel / 8) % 4;
-    core.pixelType[0] =
+    core[0].pixelType =
       bytesPerPixel == 2 ?  FormatTools.UINT16 : FormatTools.UINT8;
 
-    core.sizeZ[0] = 1;
-    core.currentOrder[0] = "XYCZT";
-    core.littleEndian[0] = false;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+    core[0].sizeZ = 1;
+    core[0].currentOrder = "XYCZT";
+    core[0].littleEndian = false;
+    core[0].metadataComplete = true;
+    core[0].indexed = false;
+    core[0].falseColor = false;
 
     // this handles the case where the data and resource forks have been
     // separated
@@ -395,7 +395,7 @@ public class QTReader extends FormatReader {
 
         stripHeader();
         parse(0, 0, in.length());
-        core.imageCount[0] = offsets.size();
+        core[0].imageCount = offsets.size();
       }
       else {
         if (debug) debug("\tAbsent: " + f);
@@ -408,7 +408,7 @@ public class QTReader extends FormatReader {
           in = new RandomAccessStream(f.getAbsolutePath());
           stripHeader();
           parse(0, in.getFilePointer(), in.length());
-          core.imageCount[0] = offsets.size();
+          core[0].imageCount = offsets.size();
         }
         else {
           if (debug) debug("\tAbsent: " + f);
@@ -419,7 +419,7 @@ public class QTReader extends FormatReader {
             in = new RandomAccessStream(f.getAbsolutePath());
             stripHeader();
             parse(0, in.getFilePointer(), in.length());
-            core.imageCount[0] = offsets.size();
+            core[0].imageCount = offsets.size();
           }
           else {
             if (debug) debug("\tAbsent: " + f);
@@ -431,10 +431,10 @@ public class QTReader extends FormatReader {
       }
     }
 
-    core.rgb[0] = bitsPerPixel < 40;
-    core.sizeC[0] = isRGB() ? 3 : 1;
-    core.interleaved[0] = bitsPerPixel == 32;
-    core.sizeT[0] = getImageCount();
+    core[0].rgb = bitsPerPixel < 40;
+    core[0].sizeC = isRGB() ? 3 : 1;
+    core[0].interleaved = bitsPerPixel == 32;
+    core[0].sizeT = getImageCount();
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -510,8 +510,8 @@ public class QTReader extends FormatReader {
           // TODO : adapt to use the value of flip
           flip = matrix[0][0] == 0 && matrix[1][0] != 0;
 
-          if (getSizeX() == 0) core.sizeX[0] = in.readInt();
-          if (getSizeY() == 0) core.sizeY[0] = in.readInt();
+          if (getSizeX() == 0) core[0].sizeX = in.readInt();
+          if (getSizeY() == 0) core[0].sizeY = in.readInt();
         }
         else if (atomType.equals("cmov")) {
           in.skipBytes(8);
@@ -600,7 +600,7 @@ public class QTReader extends FormatReader {
           // found the number of planes
           in.skipBytes(4);
           rawSize = in.readInt();
-          core.imageCount[0] = in.readInt();
+          core[0].imageCount = in.readInt();
 
           if (rawSize == 0) {
             in.seek(in.getFilePointer() - 4);

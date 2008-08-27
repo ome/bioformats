@@ -327,9 +327,9 @@ public class ICSReader extends FormatReader {
     StringTokenizer t1 = new StringTokenizer(layoutSizes);
     StringTokenizer t2 = new StringTokenizer(layoutOrder);
 
-    core.rgb[0] = layoutOrder.indexOf("ch") >= 0 &&
+    core[0].rgb = layoutOrder.indexOf("ch") >= 0 &&
       layoutOrder.indexOf("ch") < layoutOrder.indexOf("x");
-    core.currentOrder[0] = "XY";
+    core[0].currentOrder = "XY";
 
     // find axis sizes
 
@@ -342,57 +342,57 @@ public class ICSReader extends FormatReader {
         bitsPerPixel = Integer.parseInt(imageToken);
       }
       else if (orderToken.equals("x")) {
-        core.sizeX[0] = Integer.parseInt(imageToken);
+        core[0].sizeX = Integer.parseInt(imageToken);
       }
       else if (orderToken.equals("y")) {
-        core.sizeY[0] = Integer.parseInt(imageToken);
+        core[0].sizeY = Integer.parseInt(imageToken);
       }
       else if (orderToken.equals("z")) {
-        core.sizeZ[0] = Integer.parseInt(imageToken);
-        core.currentOrder[0] += "Z";
+        core[0].sizeZ = Integer.parseInt(imageToken);
+        core[0].currentOrder += "Z";
       }
       else if (orderToken.equals("ch")) {
-        core.sizeC[0] = Integer.parseInt(imageToken);
-        if (getSizeC() > 4) core.rgb[0] = false;
-        core.currentOrder[0] += "C";
+        core[0].sizeC = Integer.parseInt(imageToken);
+        if (getSizeC() > 4) core[0].rgb = false;
+        core[0].currentOrder += "C";
       }
       else {
-        core.sizeT[0] = Integer.parseInt(imageToken);
-        core.currentOrder[0] += "T";
+        core[0].sizeT = Integer.parseInt(imageToken);
+        core[0].currentOrder += "T";
       }
     }
 
     if (getDimensionOrder().indexOf("Z") == -1) {
-      core.currentOrder[0] += "Z";
+      core[0].currentOrder += "Z";
     }
     if (getDimensionOrder().indexOf("T") == -1) {
-      core.currentOrder[0] += "T";
+      core[0].currentOrder += "T";
     }
     if (getDimensionOrder().indexOf("C") == -1) {
-      core.currentOrder[0] += "C";
+      core[0].currentOrder += "C";
     }
 
-    if (getSizeZ() == 0) core.sizeZ[0] = 1;
-    if (getSizeC() == 0) core.sizeC[0] = 1;
-    if (getSizeT() == 0) core.sizeT[0] = 1;
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeC() == 0) core[0].sizeC = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
 
-    if (getImageCount() == 0) core.imageCount[0] = 1;
-    core.rgb[0] = isRGB() && getSizeC() > 1;
-    core.interleaved[0] = isRGB();
-    core.imageCount[0] = getSizeZ() * getSizeT();
-    if (!isRGB()) core.imageCount[0] *= getSizeC();
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    if (getImageCount() == 0) core[0].imageCount = 1;
+    core[0].rgb = isRGB() && getSizeC() > 1;
+    core[0].interleaved = isRGB();
+    core[0].imageCount = getSizeZ() * getSizeT();
+    if (!isRGB()) core[0].imageCount *= getSizeC();
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     String endian = byteOrder;
-    core.littleEndian[0] = true;
+    core[0].littleEndian = true;
 
     if (endian != null) {
       StringTokenizer endianness = new StringTokenizer(endian);
       String firstByte = endianness.nextToken();
       int first = Integer.parseInt(firstByte);
-      core.littleEndian[0] = rFormat.equals("real") ? first == 1 : first != 1;
+      core[0].littleEndian = rFormat.equals("real") ? first == 1 : first != 1;
     }
 
     String test = compression;
@@ -445,22 +445,22 @@ public class ICSReader extends FormatReader {
 
     String fmt = rFormat;
 
-    if (bitsPerPixel < 32) core.littleEndian[0] = !isLittleEndian();
+    if (bitsPerPixel < 32) core[0].littleEndian = !isLittleEndian();
 
-    if (fmt.equals("real")) core.pixelType[0] = FormatTools.FLOAT;
+    if (fmt.equals("real")) core[0].pixelType = FormatTools.FLOAT;
     else if (fmt.equals("integer")) {
       while (bitsPerPixel % 8 != 0) bitsPerPixel++;
       if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
 
       switch (bitsPerPixel) {
         case 8:
-          core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
+          core[0].pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
           break;
         case 16:
-          core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
+          core[0].pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
           break;
         case 32:
-          core.pixelType[0] = signed ? FormatTools.INT32 : FormatTools.UINT32;
+          core[0].pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
           break;
       }
     }

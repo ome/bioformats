@@ -120,36 +120,36 @@ public class PGMReader extends FormatReader {
     boolean isBlackAndWhite = false;
 
     rawBits = magic.equals("P4") || magic.equals("P5") || magic.equals("P6");
-    core.sizeC[0] = (magic.equals("P3") || magic.equals("P6")) ? 3 : 1;
+    core[0].sizeC = (magic.equals("P3") || magic.equals("P6")) ? 3 : 1;
     isBlackAndWhite = magic.equals("P1") || magic.equals("P4");
 
     String line = in.readLine().trim();
     while (line.startsWith("#") || line.length() == 0) line = in.readLine();
 
     line = line.replaceAll("[^0-9]", " ");
-    core.sizeX[0] =
+    core[0].sizeX =
       Integer.parseInt(line.substring(0, line.indexOf(" ")).trim());
-    core.sizeY[0] =
+    core[0].sizeY =
       Integer.parseInt(line.substring(line.indexOf(" ") + 1).trim());
 
     if (!isBlackAndWhite) {
       int max = Integer.parseInt(in.readLine().trim());
-      if (max > 255) core.pixelType[0] = FormatTools.UINT16;
-      else core.pixelType[0] = FormatTools.UINT8;
+      if (max > 255) core[0].pixelType = FormatTools.UINT16;
+      else core[0].pixelType = FormatTools.UINT8;
     }
 
     offset = in.getFilePointer();
 
-    core.rgb[0] = getSizeC() == 3;
-    core.currentOrder[0] = "XYCZT";
-    core.littleEndian[0] = true;
-    core.interleaved[0] = false;
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = 1;
-    core.imageCount[0] = 1;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].rgb = getSizeC() == 3;
+    core[0].currentOrder = "XYCZT";
+    core[0].littleEndian = true;
+    core[0].interleaved = false;
+    core[0].sizeZ = 1;
+    core[0].sizeT = 1;
+    core[0].imageCount = 1;
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

@@ -158,30 +158,30 @@ public class VisitechReader extends FormatReader {
           value = token.substring(ndx + 1).trim();
 
           if (key.equals("Number of steps")) {
-            core.sizeZ[0] = Integer.parseInt(value);
+            core[0].sizeZ = Integer.parseInt(value);
           }
           else if (key.equals("Image bit depth")) {
             int bits = Integer.parseInt(value);
             while ((bits % 8) != 0) bits++;
             switch (bits) {
               case 16:
-                core.pixelType[0] = FormatTools.UINT16;
+                core[0].pixelType = FormatTools.UINT16;
                 break;
               case 32:
-                core.pixelType[0] = FormatTools.UINT32;
+                core[0].pixelType = FormatTools.UINT32;
                 break;
               default:
-                core.pixelType[0] = FormatTools.UINT8;
+                core[0].pixelType = FormatTools.UINT8;
             }
           }
           else if (key.equals("Image dimensions")) {
             int n = value.indexOf(",");
-            core.sizeX[0] = Integer.parseInt(value.substring(1, n).trim());
-            core.sizeY[0] = Integer.parseInt(value.substring(n + 1,
+            core[0].sizeX = Integer.parseInt(value.substring(1, n).trim());
+            core[0].sizeY = Integer.parseInt(value.substring(n + 1,
               value.length() - 1).trim());
           }
           else if (key.startsWith("Channel Selection")) {
-            core.sizeC[0]++;
+            core[0].sizeC++;
           }
           else if (key.startsWith("Microscope XY")) {
             numSeries++;
@@ -190,24 +190,24 @@ public class VisitechReader extends FormatReader {
         }
 
         if (token.indexOf("pixels") != -1) {
-          core.sizeC[0]++;
-          core.imageCount[0] +=
+          core[0].sizeC++;
+          core[0].imageCount +=
             Integer.parseInt(token.substring(0, token.indexOf(" ")));
         }
         else if (token.startsWith("Time Series")) {
           int idx = token.indexOf(";") + 1;
           String ss = token.substring(idx, token.indexOf(" ", idx)).trim();
-          core.sizeT[0] = Integer.parseInt(ss);
+          core[0].sizeT = Integer.parseInt(ss);
         }
       }
     }
 
     if (getSizeT() == 0) {
-      core.sizeT[0] = getImageCount() / (getSizeZ() * getSizeC());
-      if (getSizeT() == 0) core.sizeT[0] = 1;
+      core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+      if (getSizeT() == 0) core[0].sizeT = 1;
     }
     if (getImageCount() == 0) {
-      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     }
 
     if (numSeries > 1) {
@@ -218,23 +218,27 @@ public class VisitechReader extends FormatReader {
       int t = getSizeT();
       int count = z * c * t;
       int ptype = getPixelType();
-      core = new CoreMetadata(numSeries);
-      Arrays.fill(core.sizeX, x);
-      Arrays.fill(core.sizeY, y);
-      Arrays.fill(core.sizeZ, z);
-      Arrays.fill(core.sizeC, c);
-      Arrays.fill(core.sizeT, t);
-      Arrays.fill(core.imageCount, count);
-      Arrays.fill(core.pixelType, ptype);
+      core = new CoreMetadata[numSeries];
+      for (int i=0; i<numSeries; i++) {
+        core[i].sizeX = x;
+        core[i].sizeY = y;
+        core[i].sizeZ = z;
+        core[i].sizeC = c;
+        core[i].sizeT = t;
+        core[i].imageCount = count;
+        core[i].pixelType = ptype;
+      }
     }
 
-    Arrays.fill(core.rgb, false);
-    Arrays.fill(core.currentOrder, "XYZTC");
-    Arrays.fill(core.interleaved, false);
-    Arrays.fill(core.littleEndian, true);
-    Arrays.fill(core.indexed, false);
-    Arrays.fill(core.falseColor, false);
-    Arrays.fill(core.metadataComplete, true);
+    for (int i=0; i<core.length; i++) {
+      core[i].rgb = false;
+      core[i].currentOrder = "XYZTC";
+      core[i].interleaved = false;
+      core[i].littleEndian = true;
+      core[i].indexed = false;
+      core[i].falseColor = false;
+      core[i].metadataComplete = true;
+    }
 
     // find pixels files - we think there is one channel per file
 

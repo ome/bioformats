@@ -170,12 +170,12 @@ public class IPWReader extends FormatReader {
             }
             else data = token.trim();
             addMeta(label, data);
-            if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data);
+            if (label.equals("frames")) core[0].sizeZ = Integer.parseInt(data);
             else if (label.equals("slices")) {
-              core.sizeT[0] = Integer.parseInt(data);
+              core[0].sizeT = Integer.parseInt(data);
             }
             else if (label.equals("channels")) {
-              core.sizeC[0] = Integer.parseInt(data);
+              core[0].sizeC = Integer.parseInt(data);
             }
             else if (label.equals("Timestamp")) timestamp = data;
           }
@@ -214,7 +214,7 @@ public class IPWReader extends FormatReader {
           }
           imageFiles.add(name);
         }
-        core.imageCount[0]++;
+        core[0].imageCount++;
       }
     }
 
@@ -225,20 +225,18 @@ public class IPWReader extends FormatReader {
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     stream.close();
 
-    core.rgb[0] = (TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
+    core[0].rgb = TiffTools.getSamplesPerPixel(ifds[0]) > 1;
 
     if (!isRGB()) {
-      core.indexed[0] = TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.PHOTOMETRIC_INTERPRETATION, false, 1) ==
+      core[0].indexed = TiffTools.getPhotometricInterpretation(ifds[0]) ==
         TiffTools.RGB_PALETTE;
     }
     if (isIndexed()) {
-      core.sizeC[0] = 1;
-      core.rgb[0] = false;
+      core[0].sizeC = 1;
+      core[0].rgb = false;
     }
 
-    core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
+    core[0].littleEndian = TiffTools.isLittleEndian(ifds[0]);
 
     // retrieve axis sizes
 
@@ -247,19 +245,19 @@ public class IPWReader extends FormatReader {
     addMeta("frames", new Integer(getImageCount()));
 
     Hashtable h = ifds[0];
-    core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
-    core.sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-    core.currentOrder[0] = isRGB() ? "XYCTZ" : "XYTCZ";
+    core[0].sizeX = (int) TiffTools.getImageWidth(h);
+    core[0].sizeY = (int) TiffTools.getImageLength(h);
+    core[0].currentOrder = isRGB() ? "XYCTZ" : "XYTCZ";
 
-    if (getSizeZ() == 0) core.sizeZ[0] = 1;
-    if (getSizeC() == 0) core.sizeC[0] = 1;
-    if (getSizeT() == 0) core.sizeT[0] = 1;
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeC() == 0) core[0].sizeC = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
 
     if (getSizeZ() * getSizeC() * getSizeT() == 1 && getImageCount() != 1) {
-      core.sizeZ[0] = getImageCount();
+      core[0].sizeZ = getImageCount();
     }
 
-    if (isRGB()) core.sizeC[0] *= 3;
+    if (isRGB()) core[0].sizeC *= 3;
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);
@@ -268,32 +266,32 @@ public class IPWReader extends FormatReader {
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
-    core.pixelType[0] = FormatTools.UINT8;
+    core[0].pixelType = FormatTools.UINT8;
 
-    if (bitFormat == 3) core.pixelType[0] = FormatTools.FLOAT;
+    if (bitFormat == 3) core[0].pixelType = FormatTools.FLOAT;
     else if (bitFormat == 2) {
       switch (bitsPerSample) {
         case 8:
-          core.pixelType[0] = FormatTools.INT8;
+          core[0].pixelType = FormatTools.INT8;
           break;
         case 16:
-          core.pixelType[0] = FormatTools.INT16;
+          core[0].pixelType = FormatTools.INT16;
           break;
         case 32:
-          core.pixelType[0] = FormatTools.INT32;
+          core[0].pixelType = FormatTools.INT32;
           break;
       }
     }
     else {
       switch (bitsPerSample) {
         case 8:
-          core.pixelType[0] = FormatTools.UINT8;
+          core[0].pixelType = FormatTools.UINT8;
           break;
         case 16:
-          core.pixelType[0] = FormatTools.UINT16;
+          core[0].pixelType = FormatTools.UINT16;
           break;
         case 32:
-          core.pixelType[0] = FormatTools.UINT32;
+          core[0].pixelType = FormatTools.UINT32;
           break;
       }
     }

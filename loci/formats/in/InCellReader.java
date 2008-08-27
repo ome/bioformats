@@ -154,7 +154,7 @@ public class InCellReader extends FormatReader {
     DefaultHandler handler = new InCellHandler(store);
     DataTools.parseXML(b, handler);
 
-    core.sizeZ[0] = fieldCount * zCount;
+    core[0].sizeZ = fieldCount * zCount;
 
     seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
@@ -162,29 +162,31 @@ public class InCellReader extends FormatReader {
     int c = getSizeC();
     int t = getSizeT();
 
-    core = new CoreMetadata(seriesCount);
-
-    Arrays.fill(core.sizeZ, z);
-    Arrays.fill(core.sizeC, c);
-    Arrays.fill(core.sizeT, t);
-    Arrays.fill(core.imageCount, z * c * t);
-    Arrays.fill(core.currentOrder, "XYZCT");
+    core = new CoreMetadata[seriesCount];
+    for (int i=0; i<seriesCount; i++) {
+      core[i] = new CoreMetadata();
+      core[i].sizeZ = z;
+      core[i].sizeC = c;
+      core[i].sizeT = t;
+      core[i].imageCount = z * c * t;
+      core[i].currentOrder = "XYZCT";
+    }
 
     tiffReader = new MinimalTiffReader();
 
     int nextTiming = 0;
     for (int i=0; i<seriesCount; i++) {
       tiffReader.setId((String) tiffs.get(i * (tiffs.size() / seriesCount)));
-      core.sizeX[i] = tiffReader.getSizeX();
-      core.sizeY[i] = tiffReader.getSizeY();
-      core.interleaved[i] = tiffReader.isInterleaved();
-      core.indexed[i] = tiffReader.isIndexed();
-      core.rgb[i] = tiffReader.isRGB();
-      core.pixelType[i] = tiffReader.getPixelType();
-      core.littleEndian[i] = tiffReader.isLittleEndian();
+      core[i].sizeX = tiffReader.getSizeX();
+      core[i].sizeY = tiffReader.getSizeY();
+      core[i].interleaved = tiffReader.isInterleaved();
+      core[i].indexed = tiffReader.isIndexed();
+      core[i].rgb = tiffReader.isRGB();
+      core[i].pixelType = tiffReader.getPixelType();
+      core[i].littleEndian = tiffReader.isLittleEndian();
       store.setImageName("", i);
       store.setImageCreationDate(creationDate, i);
-      for (int q=0; q<core.imageCount[i]; q++) {
+      for (int q=0; q<core[i].imageCount; q++) {
         store.setPlaneTimingDeltaT((Float) timings.get(nextTiming++), i, 0, q);
         int[] coords = FormatTools.getZCTCoords("XYZCT", z, c, t, z * c * t, q);
         store.setPlaneTheZ(new Integer(coords[0]), i, 0, q);
@@ -267,8 +269,8 @@ public class InCellReader extends FormatReader {
         int t = Integer.parseInt(attributes.getValue("time_index")) + 1;
         fieldCount = (int) Math.max(fieldCount, field);
         zCount = (int) Math.max(zCount, z);
-        core.sizeC[0] = (int) Math.max(getSizeC(), c);
-        core.sizeT[0] = (int) Math.max(getSizeT(), t);
+        core[0].sizeC = (int) Math.max(getSizeC(), c);
+        core[0].sizeT = (int) Math.max(getSizeT(), t);
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd

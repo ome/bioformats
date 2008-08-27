@@ -114,31 +114,39 @@ public class FitsReader extends FormatReader {
       if (key.equals("BITPIX")) {
         int bits = Integer.parseInt(value);
         switch (bits) {
-          case 8: core.pixelType[0] = FormatTools.UINT8; break;
-          case 16: core.pixelType[0] = FormatTools.INT16; break;
-          case 32: core.pixelType[0] = FormatTools.INT32; break;
-          case -32: core.pixelType[0] = FormatTools.FLOAT; break;
+          case 8:
+            core[0].pixelType = FormatTools.UINT8;
+            break;
+          case 16:
+            core[0].pixelType = FormatTools.INT16;
+            break;
+          case 32:
+            core[0].pixelType = FormatTools.INT32;
+            break;
+          case -32:
+            core[0].pixelType = FormatTools.FLOAT;
+            break;
           default: throw new FormatException("Unsupported pixel type: " + bits);
         }
       }
-      else if (key.equals("NAXIS1")) core.sizeX[0] = Integer.parseInt(value);
-      else if (key.equals("NAXIS2")) core.sizeY[0] = Integer.parseInt(value);
-      else if (key.equals("NAXIS3")) core.sizeZ[0] = Integer.parseInt(value);
+      else if (key.equals("NAXIS1")) core[0].sizeX = Integer.parseInt(value);
+      else if (key.equals("NAXIS2")) core[0].sizeY = Integer.parseInt(value);
+      else if (key.equals("NAXIS3")) core[0].sizeZ = Integer.parseInt(value);
 
       addMeta(key, value);
     }
 
-    core.sizeC[0] = 1;
-    core.sizeT[0] = 1;
-    if (getSizeZ() == 0) core.sizeZ[0] = 1;
-    core.imageCount[0] = core.sizeZ[0];
-    core.rgb[0] = false;
-    core.littleEndian[0] = false;
-    core.interleaved[0] = false;
-    core.currentOrder[0] = "XYZCT";
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].sizeC = 1;
+    core[0].sizeT = 1;
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    core[0].imageCount = core[0].sizeZ;
+    core[0].rgb = false;
+    core[0].littleEndian = false;
+    core[0].interleaved = false;
+    core[0].currentOrder = "XYZCT";
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

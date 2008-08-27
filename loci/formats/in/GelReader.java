@@ -117,7 +117,7 @@ public class GelReader extends BaseTiffReader {
     super.initMetadata();
 
     long fmt = TiffTools.getIFDLongValue(ifds[0], MD_FILETAG, true, LINEAR);
-    if (fmt == SQUARE_ROOT) core.pixelType[0] = FormatTools.FLOAT;
+    if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
     addMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
 
     TiffRational scale =
@@ -141,8 +141,8 @@ public class GelReader extends BaseTiffReader {
     String units = (String) TiffTools.getIFDValue(ifds[0], MD_FILE_UNITS);
     addMeta("File units", units);
 
-    core.imageCount[0] = ifds.length;
-    core.sizeT[0] = getImageCount();
+    core[0].imageCount = ifds.length;
+    core[0].sizeT = getImageCount();
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

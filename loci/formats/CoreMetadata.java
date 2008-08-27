@@ -33,10 +33,8 @@ import java.util.Hashtable;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/CoreMetadata.java">SVN</a></dd></dl>
  */
 public class CoreMetadata {
-  // TODO - Refactor this class to encapsulate core metadata for only one
-  // series at a time, and use an array of CoreMetadata objects in FormatReader
-  // instead. This approach is cleaner than the parallel arrays approach below.
-
+  // TODO
+  //
   // We may also want to consider refactoring the FormatReader getter methods
   // that populate missing CoreMetadata fields on the fly
   // (getChannelDimLengths, getChannelDimTypes, getThumbSizeX, getThumbSizeY)
@@ -45,39 +43,19 @@ public class CoreMetadata {
 
   // Lastly, we should add javadoc comments to the fields in this class.
 
-  public int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
-  public int[] thumbSizeX, thumbSizeY;
-  public int[] pixelType;
-  public int[] imageCount;
-  public int[][] cLengths;
-  public String[][] cTypes;
-  public String[] currentOrder;
-  public boolean[] orderCertain, rgb, littleEndian, interleaved;
-  public boolean[] indexed, falseColor, metadataComplete;
-  public Hashtable[] seriesMetadata;
+  public int sizeX, sizeY, sizeZ, sizeC, sizeT;
+  public int thumbSizeX, thumbSizeY;
+  public int pixelType;
+  public int imageCount;
+  public int[] cLengths;
+  public String[] cTypes;
+  public String currentOrder;
+  public boolean orderCertain, rgb, littleEndian, interleaved;
+  public boolean indexed, falseColor, metadataComplete;
+  public Hashtable seriesMetadata;
 
-  public CoreMetadata(int series) {
-    sizeX = new int[series];
-    sizeY = new int[series];
-    sizeZ = new int[series];
-    sizeC = new int[series];
-    sizeT = new int[series];
-    thumbSizeX = new int[series];
-    thumbSizeY = new int[series];
-    pixelType = new int[series];
-    imageCount = new int[series];
-    cLengths = new int[series][];
-    cTypes = new String[series][];
-    currentOrder = new String[series];
-    orderCertain = new boolean[series];
-    rgb = new boolean[series];
-    littleEndian = new boolean[series];
-    interleaved = new boolean[series];
-    indexed = new boolean[series];
-    falseColor = new boolean[series];
-    metadataComplete = new boolean[series];
-    seriesMetadata = new Hashtable[series];
-    for (int i=0; i<series; i++) seriesMetadata[i] = new Hashtable();
+  public CoreMetadata() {
+    seriesMetadata = new Hashtable();
   }
 
 }

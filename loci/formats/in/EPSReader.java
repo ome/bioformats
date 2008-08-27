@@ -184,27 +184,32 @@ public class EPSReader extends FormatReader {
       in = new RandomAccessStream(b);
       ifds = TiffTools.getIFDs(in);
 
-      core.sizeX[0] = (int) TiffTools.getImageWidth(ifds[0]);
-      core.sizeY[0] = (int) TiffTools.getImageLength(ifds[0]);
-      core.sizeZ[0] = 1;
-      core.sizeT[0] = 1;
-      core.sizeC[0] = TiffTools.getSamplesPerPixel(ifds[0]);
-      core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
-      core.interleaved[0] = true;
-      core.rgb[0] = getSizeC() > 1;
+      core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
+      core[0].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+      core[0].sizeZ = 1;
+      core[0].sizeT = 1;
+      core[0].sizeC = TiffTools.getSamplesPerPixel(ifds[0]);
+      core[0].littleEndian = TiffTools.isLittleEndian(ifds[0]);
+      core[0].interleaved = true;
+      core[0].rgb = getSizeC() > 1;
 
       bps = TiffTools.getBitsPerSample(ifds[0])[0];
       switch (bps) {
-        case 16: core.pixelType[0] = FormatTools.UINT16; break;
-        case 32: core.pixelType[0] = FormatTools.UINT32; break;
-        default: core.pixelType[0] = FormatTools.UINT8;
+        case 16:
+          core[0].pixelType = FormatTools.UINT16;
+          break;
+        case 32:
+          core[0].pixelType = FormatTools.UINT32;
+          break;
+        default:
+          core[0].pixelType = FormatTools.UINT8;
       }
 
-      core.imageCount[0] = 1;
-      core.currentOrder[0] = "XYCZT";
-      core.metadataComplete[0] = true;
-      core.indexed[0] = false;
-      core.falseColor[0] = false;
+      core[0].imageCount = 1;
+      core[0].currentOrder = "XYCZT";
+      core[0].metadataComplete = true;
+      core[0].indexed = false;
+      core[0].falseColor = false;
 
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -226,16 +231,16 @@ public class EPSReader extends FormatReader {
     while (line != null && !line.equals("%%EOF")) {
       if (line.endsWith(image)) {
         if (!line.startsWith(image)) {
-          if (line.indexOf("colorimage") != -1) core.sizeC[0] = 3;
+          if (line.indexOf("colorimage") != -1) core[0].sizeC = 3;
           StringTokenizer t = new StringTokenizer(line, " ");
           try {
-            core.sizeX[0] = Integer.parseInt(t.nextToken());
-            core.sizeY[0] = Integer.parseInt(t.nextToken());
+            core[0].sizeX = Integer.parseInt(t.nextToken());
+            core[0].sizeY = Integer.parseInt(t.nextToken());
             bps = Integer.parseInt(t.nextToken());
           }
           catch (NumberFormatException exc) {
             if (debug) trace(exc);
-            core.sizeC[0] = Integer.parseInt(t.nextToken());
+            core[0].sizeC = Integer.parseInt(t.nextToken());
           }
         }
 
@@ -248,8 +253,8 @@ public class EPSReader extends FormatReader {
           StringTokenizer t = new StringTokenizer(line, " ");
           int originX = Integer.parseInt(t.nextToken().trim());
           int originY = Integer.parseInt(t.nextToken().trim());
-          core.sizeX[0] = Integer.parseInt(t.nextToken().trim()) - originX;
-          core.sizeY[0] = Integer.parseInt(t.nextToken().trim()) - originY;
+          core[0].sizeX = Integer.parseInt(t.nextToken().trim()) - originX;
+          core[0].sizeY = Integer.parseInt(t.nextToken().trim()) - originY;
 
           addMeta("X-coordinate of origin", new Integer(originX));
           addMeta("Y-coordinate of origin", new Integer(originY));
@@ -271,10 +276,10 @@ public class EPSReader extends FormatReader {
       else if (line.startsWith("%ImageData:")) {
         line = line.substring(11);
         StringTokenizer t = new StringTokenizer(line, " ");
-        core.sizeX[0] = Integer.parseInt(t.nextToken());
-        core.sizeY[0] = Integer.parseInt(t.nextToken());
+        core[0].sizeX = Integer.parseInt(t.nextToken());
+        core[0].sizeY = Integer.parseInt(t.nextToken());
         bps = Integer.parseInt(t.nextToken());
-        core.sizeC[0] = Integer.parseInt(t.nextToken());
+        core[0].sizeC = Integer.parseInt(t.nextToken());
         while (t.hasMoreTokens()) {
           image = t.nextToken().trim();
           if (image.length() > 1) {
@@ -290,16 +295,16 @@ public class EPSReader extends FormatReader {
 
     if (bps == 0) bps = 8;
 
-    if (getSizeC() == 0) core.sizeC[0] = 1;
+    if (getSizeC() == 0) core[0].sizeC = 1;
 
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYCZT";
-    core.pixelType[0] = FormatTools.UINT8;
-    core.rgb[0] = getSizeC() == 3;
-    core.interleaved[0] = true;
-    core.littleEndian[0] = true;
-    core.imageCount[0] = 1;
+    core[0].sizeZ = 1;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYCZT";
+    core[0].pixelType = FormatTools.UINT8;
+    core[0].rgb = getSizeC() == 3;
+    core[0].interleaved = true;
+    core[0].littleEndian = true;
+    core[0].imageCount = 1;
 
     // Populate metadata store
 

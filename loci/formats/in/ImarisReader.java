@@ -83,12 +83,12 @@ public class ImarisReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(offsets[no] + core.sizeX[0] * (core.sizeY[0] - y - h));
+    in.seek(offsets[no] + getSizeX() * (getSizeY() - y - h));
 
     for (int row=h-1; row>=0; row--) {
       in.skipBytes(x);
       in.read(buf, row*w, w);
-      in.skipBytes(core.sizeX[0] - w - x);
+      in.skipBytes(getSizeX() - w - x);
     }
     return buf;
   }
@@ -125,13 +125,13 @@ public class ImarisReader extends FormatReader {
 
     addMeta("Image name", in.readString(128));
 
-    core.sizeX[0] = in.readShort();
-    core.sizeY[0] = in.readShort();
-    core.sizeZ[0] = in.readShort();
+    core[0].sizeX = in.readShort();
+    core[0].sizeY = in.readShort();
+    core[0].sizeZ = in.readShort();
 
     in.skipBytes(2);
 
-    core.sizeC[0] = in.readInt();
+    core[0].sizeC = in.readInt();
     in.skipBytes(2);
 
     addMeta("Original date", in.readString(32));
@@ -147,7 +147,7 @@ public class ImarisReader extends FormatReader {
 
     status("Calculating image offsets");
 
-    core.imageCount[0] = getSizeZ() * getSizeC();
+    core[0].imageCount = getSizeZ() * getSizeC();
     offsets = new int[getImageCount()];
 
     float[] gains = new float[getSizeC()];
@@ -169,21 +169,21 @@ public class ImarisReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeT[0] = getImageCount() / (getSizeC() * getSizeZ());
-    core.currentOrder[0] = "XYZCT";
-    core.rgb[0] = false;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = IS_LITTLE;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].sizeT = getImageCount() / (getSizeC() * getSizeZ());
+    core[0].currentOrder = "XYZCT";
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].littleEndian = IS_LITTLE;
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    core.pixelType[0] = FormatTools.UINT8;
+    core[0].pixelType = FormatTools.UINT8;
     MetadataTools.populatePixels(store, this);
 
     store.setDimensionsPhysicalSizeX(new Float(dx), 0, 0);

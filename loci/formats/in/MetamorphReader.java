@@ -127,8 +127,8 @@ public class MetamorphReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
 
-    int[] coords = FormatTools.getZCTCoords(this, no % core.sizeZ[series]);
-    int ndx = no / core.sizeZ[series];
+    int[] coords = FormatTools.getZCTCoords(this, no % getSizeZ());
+    int ndx = no / getSizeZ();
     String file = stks[series][ndx];
 
     // the original file is a .nd file, so we need to construct a new reader
@@ -313,40 +313,41 @@ public class MetamorphReader extends BaseTiffReader {
         }
       }
 
-      core.sizeZ[0] = zc;
-      core.sizeC[0] = cc;
-      core.sizeT[0] = tc;
-      core.imageCount[0] = zc * tc * cc;
-      core.currentOrder[0] = "XYZCT";
+      core[0].sizeZ = zc;
+      core[0].sizeC = cc;
+      core[0].sizeT = tc;
+      core[0].imageCount = zc * tc * cc;
+      core[0].currentOrder = "XYZCT";
 
       if (stks.length > 1) {
-        CoreMetadata newCore = new CoreMetadata(stks.length);
+        CoreMetadata[] newCore = new CoreMetadata[stks.length];
         for (int i=0; i<stks.length; i++) {
-          newCore.sizeX[i] = getSizeX();
-          newCore.sizeY[i] = getSizeY();
-          newCore.sizeZ[i] = getSizeZ();
-          newCore.sizeC[i] = getSizeC();
-          newCore.sizeT[i] = getSizeT();
-          newCore.pixelType[i] = getPixelType();
-          newCore.imageCount[i] = getImageCount();
-          newCore.currentOrder[i] = getDimensionOrder();
-          newCore.rgb[i] = isRGB();
-          newCore.littleEndian[i] = isLittleEndian();
-          newCore.interleaved[i] = isInterleaved();
-          newCore.orderCertain[i] = true;
+          newCore[i] = new CoreMetadata();
+          newCore[i].sizeX = getSizeX();
+          newCore[i].sizeY = getSizeY();
+          newCore[i].sizeZ = getSizeZ();
+          newCore[i].sizeC = getSizeC();
+          newCore[i].sizeT = getSizeT();
+          newCore[i].pixelType = getPixelType();
+          newCore[i].imageCount = getImageCount();
+          newCore[i].currentOrder = getDimensionOrder();
+          newCore[i].rgb = isRGB();
+          newCore[i].littleEndian = isLittleEndian();
+          newCore[i].interleaved = isInterleaved();
+          newCore[i].orderCertain = true;
         }
-        newCore.sizeC[0] = stks[0].length / newCore.sizeT[0];
-        newCore.sizeC[1] = stks[1].length / newCore.sizeT[1];
-        newCore.sizeZ[1] = 1;
-        newCore.imageCount[0] =
-          newCore.sizeC[0] * newCore.sizeT[0] * newCore.sizeZ[0];
-        newCore.imageCount[1] = newCore.sizeC[1] * newCore.sizeT[1];
+        newCore[0].sizeC = stks[0].length / newCore[0].sizeT;
+        newCore[1].sizeC = stks[1].length / newCore[1].sizeT;
+        newCore[1].sizeZ = 1;
+        newCore[0].imageCount =
+          newCore[0].sizeC * newCore[0].sizeT * newCore[0].sizeZ;
+        newCore[1].imageCount = newCore[1].sizeC * newCore[1].sizeT;
         core = newCore;
       }
     }
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    for (int i=0; i<core.imageCount.length; i++) {
+    for (int i=0; i<core.length; i++) {
       MetadataTools.setDefaultCreationDate(store, id, i);
       store.setImageName("", i);
     }
@@ -376,7 +377,7 @@ public class MetamorphReader extends BaseTiffReader {
       // copy ifds into a new array of Hashtables that will accommodate the
       // additional image planes
       long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
-      core.imageCount[0] = uic2.length;
+      core[0].imageCount = uic2.length;
 
       long[] uic3 = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
       for (int i=0; i<uic3.length; i++) {
@@ -505,10 +506,10 @@ public class MetamorphReader extends BaseTiffReader {
     }
     try {
       if (getSizeZ() == 0) {
-        core.sizeZ[0] =
+        core[0].sizeZ =
           TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
       }
-      if (getSizeT() == 0) core.sizeT[0] = getImageCount() / getSizeZ();
+      if (getSizeT() == 0) core[0].sizeT = getImageCount() / getSizeZ();
     }
     catch (FormatException exc) {
       if (debug) trace(exc);

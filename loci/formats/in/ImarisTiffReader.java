@@ -90,18 +90,18 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     status("Populating metadata");
 
-    core.sizeC[0] = ifds.length - 1;
-    core.sizeZ[0] = tmp.size() / getSizeC();
-    core.sizeT[0] = 1;
-    core.sizeX[0] = (int) TiffTools.getImageWidth(ifds[1]);
-    core.sizeY[0] = (int) TiffTools.getImageLength(ifds[1]);
+    core[0].sizeC = ifds.length - 1;
+    core[0].sizeZ = tmp.size() / getSizeC();
+    core[0].sizeT = 1;
+    core[0].sizeX = (int) TiffTools.getImageWidth(ifds[1]);
+    core[0].sizeY = (int) TiffTools.getImageLength(ifds[1]);
 
     ifds = (Hashtable[]) tmp.toArray(new Hashtable[0]);
-    core.imageCount[0] = getSizeC() * getSizeZ();
-    core.currentOrder[0] = "XYZCT";
-    core.interleaved[0] = false;
-    core.rgb[0] = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
-    core.pixelType[0] = getPixelType(ifds[0]);
+    core[0].imageCount = getSizeC() * getSizeZ();
+    core[0].currentOrder = "XYZCT";
+    core[0].interleaved = false;
+    core[0].rgb = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
+    core[0].pixelType = getPixelType(ifds[0]);
 
     status("Parsing comment");
 

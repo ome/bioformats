@@ -108,7 +108,7 @@ public class IPLabReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.littleEndian[0] = in.readString(4).equals("iiii");
+    core[0].littleEndian = in.readString(4).equals("iiii");
 
     in.order(isLittleEndian());
 
@@ -117,14 +117,14 @@ public class IPLabReader extends FormatReader {
     // read axis sizes from header
 
     dataSize = in.readInt() - 28;
-    core.sizeX[0] = in.readInt();
-    core.sizeY[0] = in.readInt();
-    core.sizeC[0] = in.readInt();
-    core.sizeZ[0] = in.readInt();
-    core.sizeT[0] = in.readInt();
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
+    core[0].sizeC = in.readInt();
+    core[0].sizeZ = in.readInt();
+    core[0].sizeT = in.readInt();
     int filePixelType = in.readInt();
 
-    core.imageCount[0] = getSizeZ() * getSizeT();
+    core[0].imageCount = getSizeZ() * getSizeT();
 
     addMeta("Width", new Long(getSizeX()));
     addMeta("Height", new Long(getSizeY()));
@@ -136,35 +136,35 @@ public class IPLabReader extends FormatReader {
     switch (filePixelType) {
       case 0:
         ptype = "8 bit unsigned";
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
         break;
       case 1:
         ptype = "16 bit signed short";
-        core.pixelType[0] = FormatTools.INT16;
+        core[0].pixelType = FormatTools.INT16;
         break;
       case 2:
         ptype = "16 bit unsigned short";
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       case 3:
         ptype = "32 bit signed long";
-        core.pixelType[0] = FormatTools.INT32;
+        core[0].pixelType = FormatTools.INT32;
         break;
       case 4:
         ptype = "32 bit single-precision float";
-        core.pixelType[0] = FormatTools.FLOAT;
+        core[0].pixelType = FormatTools.FLOAT;
         break;
       case 5:
         ptype = "Color24";
-        core.pixelType[0] = FormatTools.UINT32;
+        core[0].pixelType = FormatTools.UINT32;
         break;
       case 6:
         ptype = "Color48";
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       case 10:
         ptype = "64 bit double-precision float";
-        core.pixelType[0] = FormatTools.DOUBLE;
+        core[0].pixelType = FormatTools.DOUBLE;
         break;
       default:
         ptype = "reserved"; // for values 7-9
@@ -175,15 +175,15 @@ public class IPLabReader extends FormatReader {
     addMeta("PixelType", ptype);
     in.skipBytes(dataSize);
 
-    core.currentOrder[0] = "XY";
-    if (getSizeC() > 1) core.currentOrder[0] += "CZT";
-    else core.currentOrder[0] += "ZTC";
+    core[0].currentOrder = "XY";
+    if (getSizeC() > 1) core[0].currentOrder += "CZT";
+    else core[0].currentOrder += "ZTC";
 
-    core.rgb[0] = getSizeC() > 1;
-    core.interleaved[0] = false;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].rgb = getSizeC() > 1;
+    core[0].interleaved = false;
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -254,7 +254,7 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationWhite" + i, new Double(white));
 
           // CTR CHECK
-//          store.setDisplayChannel(new Integer(core.sizeC[0]), new Double(black),
+//          store.setDisplayChannel(new Integer(core[0].sizeC), new Double(black),
 //            new Double(white), new Float(gamma), null);
         }
       }

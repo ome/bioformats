@@ -159,7 +159,7 @@ public class LIFReader extends FormatReader {
     in = new RandomAccessStream(id);
     offsets = new Vector();
 
-    core.littleEndian[0] = true;
+    core[0].littleEndian = true;
     in.order(isLittleEndian());
 
     // read the header
@@ -308,48 +308,49 @@ public class LIFReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    core = new CoreMetadata(numDatasets);
-    Arrays.fill(core.orderCertain, true);
-    Arrays.fill(core.currentOrder, "XYCZT");
+    core = new CoreMetadata[numDatasets];
 
     for (int i=0; i<numDatasets; i++) {
-      core.sizeX[i] = ((Integer) widths.get(i)).intValue();
-      core.sizeY[i] = ((Integer) heights.get(i)).intValue();
-      core.sizeZ[i] = ((Integer) zs.get(i)).intValue();
-      core.sizeC[i] = ((Integer) channels.get(i)).intValue();
-      core.sizeT[i] = ((Integer) ts.get(i)).intValue();
+      core[i] = new CoreMetadata();
+      core[i].orderCertain = true;
+      core[i].currentOrder = "XYCZT";
+      core[i].sizeX = ((Integer) widths.get(i)).intValue();
+      core[i].sizeY = ((Integer) heights.get(i)).intValue();
+      core[i].sizeZ = ((Integer) zs.get(i)).intValue();
+      core[i].sizeC = ((Integer) channels.get(i)).intValue();
+      core[i].sizeT = ((Integer) ts.get(i)).intValue();
 
       bitsPerPixel[i] = ((Integer) bps.get(i)).intValue();
       extraDimensions[i] = ((Integer) extraDims.get(i)).intValue();
 
       if (extraDimensions[i] > 1) {
-        if (core.sizeZ[i] == 1) core.sizeZ[i] = extraDimensions[i];
-        else core.sizeT[i] *= extraDimensions[i];
+        if (core[i].sizeZ == 1) core[i].sizeZ = extraDimensions[i];
+        else core[i].sizeT *= extraDimensions[i];
         extraDimensions[i] = 1;
       }
 
       int nBits = ((Integer) bits.get(i)).intValue();
 
-      core.metadataComplete[i] = true;
-      core.littleEndian[i] = true;
-      core.rgb[i] =
-        nBits == (bitsPerPixel[i] * core.sizeC[i]) && core.sizeC[i] > 1;
-      core.interleaved[i] = core.rgb[i];
-      core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
-      if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
-      core.indexed[i] = false;
-      core.falseColor[i] = false;
+      core[i].metadataComplete = true;
+      core[i].littleEndian = true;
+      core[i].rgb =
+        nBits == (bitsPerPixel[i] * core[i].sizeC) && core[i].sizeC > 1;
+      core[i].interleaved = core[i].rgb;
+      core[i].imageCount = core[i].sizeZ * core[i].sizeT;
+      if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
+      core[i].indexed = false;
+      core[i].falseColor = false;
 
       while (bitsPerPixel[i] % 8 != 0) bitsPerPixel[i]++;
       switch (bitsPerPixel[i]) {
         case 8:
-          core.pixelType[i] = FormatTools.UINT8;
+          core[i].pixelType = FormatTools.UINT8;
           break;
         case 16:
-          core.pixelType[i] = FormatTools.UINT16;
+          core[i].pixelType = FormatTools.UINT16;
           break;
         case 32:
-          core.pixelType[i] = FormatTools.FLOAT;
+          core[i].pixelType = FormatTools.FLOAT;
           break;
       }
 
@@ -371,15 +372,15 @@ public class LIFReader extends FormatReader {
       // CTR CHECK
 //      String zoom = (String) getMeta(seriesName + " - dblZoom");
 //      store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-//        new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
-//        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null,
+//        new Boolean(core[i].sizeC > 1), new Boolean(core[i].sizeC > 1),
+//        new Boolean(core[i].sizeC > 2), new Boolean(isRGB()), null,
 //        null, null, null, null, ii, null, null, null, null, null);
 
       Enumeration keys = metadata.keys();
       while (keys.hasMoreElements()) {
         String k = (String) keys.nextElement();
         if (k.startsWith((String) seriesNames.get(i) + " ")) {
-          core.seriesMetadata[i].put(k, metadata.get(k));
+          core[i].seriesMetadata.put(k, metadata.get(k));
         }
       }
     }

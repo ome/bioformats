@@ -140,7 +140,10 @@ public class APLReader extends FormatReader {
 
     int seriesCount = (rows.size() - 1) / 3;
 
-    core = new CoreMetadata(seriesCount);
+    core = new CoreMetadata[seriesCount];
+    for (int i=0; i<seriesCount; i++) {
+      core[i] = new CoreMetadata();
+    }
     tiffFiles = new String[seriesCount];
     xmlFiles = new String[seriesCount];
     tiffReaders = new MinimalTiffReader[seriesCount];
@@ -155,9 +158,9 @@ public class APLReader extends FormatReader {
       String[] row2 = (String[]) rows.get(i * 3 + 2);
       String[] row3 = (String[]) rows.get(i * 3 + 3);
 
-      core.sizeZ[i] = Integer.parseInt(row3[frames]);
-      core.sizeT[i] = 1;
-      core.currentOrder[i] = "XYCZT";
+      core[i].sizeZ = Integer.parseInt(row3[frames]);
+      core[i].sizeT = 1;
+      core[i].currentOrder = "XYCZT";
 
       xmlFiles[i] = row2[path];
       tiffFiles[i] = row3[path];
@@ -192,15 +195,15 @@ public class APLReader extends FormatReader {
 
       // get core metadata from TIFF file
 
-      core.sizeX[i] = tiffReaders[i].getSizeX();
-      core.sizeY[i] = tiffReaders[i].getSizeY();
-      core.sizeC[i] = tiffReaders[i].getSizeC();
-      core.rgb[i] = tiffReaders[i].isRGB();
-      core.pixelType[i] = tiffReaders[i].getPixelType();
-      core.littleEndian[i] = tiffReaders[i].isLittleEndian();
-      core.indexed[i] = tiffReaders[i].isIndexed();
-      core.falseColor[i] = tiffReaders[i].isFalseColor();
-      core.imageCount[i] = core.sizeZ[i] * (core.rgb[i] ? 1 : core.sizeC[i]);
+      core[i].sizeX = tiffReaders[i].getSizeX();
+      core[i].sizeY = tiffReaders[i].getSizeY();
+      core[i].sizeC = tiffReaders[i].getSizeC();
+      core[i].rgb = tiffReaders[i].isRGB();
+      core[i].pixelType = tiffReaders[i].getPixelType();
+      core[i].littleEndian = tiffReaders[i].isLittleEndian();
+      core[i].indexed = tiffReaders[i].isIndexed();
+      core[i].falseColor = tiffReaders[i].isFalseColor();
+      core[i].imageCount = core[i].sizeZ * (core[i].rgb ? 1 : core[i].sizeC);
 
       // calculate physical X and Y sizes
 
@@ -209,8 +212,8 @@ public class APLReader extends FormatReader {
 
       String units = row3[calibrationUnit];
 
-      float px = realWidth / core.sizeX[i];
-      float py = realHeight / core.sizeY[i];
+      float px = realWidth / core[i].sizeX;
+      float py = realHeight / core[i].sizeY;
 
       if (units.equals("mm")) {
         px *= 1000;

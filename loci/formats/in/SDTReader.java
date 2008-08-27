@@ -198,19 +198,19 @@ public class SDTReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeX[0] = info.width;
-    core.sizeY[0] = info.height;
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = intensity ? channels : timeBins * channels;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYZTC";
-    core.pixelType[0] = FormatTools.UINT16;
-    core.rgb[0] = !intensity;
-    core.littleEndian[0] = true;
-    core.imageCount[0] = channels;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].sizeX = info.width;
+    core[0].sizeY = info.height;
+    core[0].sizeZ = 1;
+    core[0].sizeC = intensity ? channels : timeBins * channels;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYZTC";
+    core[0].pixelType = FormatTools.UINT16;
+    core[0].rgb = !intensity;
+    core[0].littleEndian = true;
+    core[0].imageCount = channels;
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

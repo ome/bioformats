@@ -336,7 +336,7 @@ public interface IFormatReader extends IFormatHandler {
   Hashtable getMetadata();
 
   /** Obtains the core metadata values for the current file. */
-  CoreMetadata getCoreMetadata();
+  CoreMetadata[] getCoreMetadata();
 
   /**
    * Specifies whether ugly metadata (entries with unprintable characters,

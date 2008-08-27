@@ -28,8 +28,7 @@ import java.util.*;
 import loci.formats.*;
 
 /**
- * NikonReader is the file format reader for
- * Nikon NEF (TIFF) files.
+ * NikonReader is the file format reader for Nikon NEF (TIFF) files.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/NikonReader.java">Trac</a>,
@@ -104,6 +103,9 @@ public class NikonReader extends BaseTiffReader {
   private static final int HUE = 146;
   private static final int CAPTURE_EDITOR_DATA = 3585;
 
+  // Custom IFD tags
+  private static final int SUB_IFD = 330;
+
   // -- Fields --
 
   /** Offset to the Nikon Maker Note. */
@@ -165,23 +167,41 @@ public class NikonReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    // look for the TIFF_EPS_STANDARD tag
-    // it should contain version information
+    // reset image dimensions
+    // the actual image data is stored in IFDs referenced by the SubIFD tag
+    // in the 'real' IFD
 
-    try {
-      short[] version = (short[])
-        TiffTools.getIFDValue(original, TIFF_EPS_STANDARD);
-      String v = "";
-      for (int i=0; i<version.length; i++) v += version[i];
-      addMeta("Version", v);
-    }
-    catch (NullPointerException e) { }
+    Hashtable realIFD = ifds[0];
+    long[] subIFDOffsets = TiffTools.getIFDLongArray(realIFD, SUB_IFD, false);
 
-    core.littleEndian[0] = true;
-    try {
-      core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
+    if (subIFDOffsets != null) {
+      Vector tmpIFDs = new Vector();
+
+      for (int i=0; i<subIFDOffsets.length; i++) {
+        Hashtable ifd = TiffTools.getIFD(in, i, subIFDOffsets[i]);
+        if (TiffTools.getIFDIntValue(ifd, TiffTools.NEW_SUBFILE_TYPE) == 0) {
+          tmpIFDs.add(ifd);
+        }
+      }
+
+      ifds = (Hashtable[]) tmpIFDs.toArray(new Hashtable[0]);
+
+      core[0].imageCount = ifds.length;
+
+      int photo = TiffTools.getPhotometricInterpretation(ifds[0]);
+      int samples = TiffTools.getSamplesPerPixel(ifds[0]);
+      core[0].rgb = samples > 1 || photo == TiffTools.RGB ||
+        photo == TiffTools.CFA_ARRAY;
+      if (photo == TiffTools.CFA_ARRAY) samples = 3;
+
+      core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
+      core[0].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+      core[0].sizeZ = 1;
+      core[0].sizeC = isRGB() ? samples : 1;
+      core[0].sizeT = ifds.length;
+      core[0].pixelType = getPixelType(ifds[0]);
+      core[0].indexed = false;
     }
-    catch (FormatException f) { }
 
     // now look for the EXIF IFD pointer
 
@@ -270,7 +290,7 @@ public class NikonReader extends BaseTiffReader {
 
     original = ifds[0];
     ifds[0] = realImage;
-    core.imageCount[0] = 1;
+    core[0].imageCount = 1;
 
     if (cfaPattern != null) {
       ifds[0].put(new Integer(TiffTools.COLOR_MAP), (int[]) cfaPattern);

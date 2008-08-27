@@ -125,12 +125,12 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     if (tc == null) tc = "1";
     if (tt == null) tt = "1";
 
-    core.sizeZ[0] = Integer.parseInt(tz);
-    core.sizeC[0] = Integer.parseInt(tc);
-    core.sizeT[0] = Integer.parseInt(tt);
+    core[0].sizeZ = Integer.parseInt(tz);
+    core[0].sizeC = Integer.parseInt(tc);
+    core[0].sizeT = Integer.parseInt(tt);
 
     if (getSizeZ() * getSizeC() * getSizeT() < getImageCount()) {
-      core.sizeC[0] = getImageCount();
+      core[0].sizeC = getImageCount();
     }
 
     // parse each of the comments to determine axis ordering
@@ -183,27 +183,27 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
     // determine dimension order
 
-    core.currentOrder[0] = "XY";
+    core[0].currentOrder = "XY";
     for (int i=1; i<coords.length; i++) {
       int zDiff = coords[i][0] - coords[i - 1][0];
       int cDiff = coords[i][1] - coords[i - 1][1];
       int tDiff = coords[i][2] - coords[i - 1][2];
 
       if (zDiff > 0 && getDimensionOrder().indexOf("Z") < 0) {
-        core.currentOrder[0] += "Z";
+        core[0].currentOrder += "Z";
       }
       if (cDiff > 0 && getDimensionOrder().indexOf("C") < 0) {
-        core.currentOrder[0] += "C";
+        core[0].currentOrder += "C";
       }
       if (tDiff > 0 && getDimensionOrder().indexOf("T") < 0) {
-        core.currentOrder[0] += "T";
+        core[0].currentOrder += "T";
       }
-      if (core.currentOrder[0].length() == 5) break;
+      if (core[0].currentOrder.length() == 5) break;
     }
 
-    if (getDimensionOrder().indexOf("Z") < 0) core.currentOrder[0] += "Z";
-    if (getDimensionOrder().indexOf("C") < 0) core.currentOrder[0] += "C";
-    if (getDimensionOrder().indexOf("T") < 0) core.currentOrder[0] += "T";
+    if (getDimensionOrder().indexOf("Z") < 0) core[0].currentOrder += "Z";
+    if (getDimensionOrder().indexOf("C") < 0) core[0].currentOrder += "C";
+    if (getDimensionOrder().indexOf("T") < 0) core[0].currentOrder += "T";
   }
 
   /* @see BaseTiffReader#initMetadataStore() */

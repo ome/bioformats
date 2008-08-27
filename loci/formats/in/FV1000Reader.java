@@ -545,34 +545,36 @@ public class FV1000Reader extends FormatReader {
       previewNames = v;
       if (previewNames.size() > 0) {
         String previewName = (String) previewNames.get(0);
-        core = new CoreMetadata(2);
+        core = new CoreMetadata[2];
+        core[0] = new CoreMetadata();
+        core[1] = new CoreMetadata();
         Hashtable[] ifds = TiffTools.getIFDs(getFile(previewName));
-        core.imageCount[1] = ifds.length * previewNames.size();
-        core.sizeX[1] = (int) TiffTools.getImageWidth(ifds[0]);
-        core.sizeY[1] = (int) TiffTools.getImageLength(ifds[0]);
-        core.sizeZ[1] = 1;
-        core.sizeT[1] = 1;
-        core.sizeC[1] = core.imageCount[1];
-        core.rgb[1] = false;
+        core[1].imageCount = ifds.length * previewNames.size();
+        core[1].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
+        core[1].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+        core[1].sizeZ = 1;
+        core[1].sizeT = 1;
+        core[1].sizeC = core[1].imageCount;
+        core[1].rgb = false;
         int bits = TiffTools.getBitsPerSample(ifds[0])[0];
         while ((bits % 8) != 0) bits++;
         switch (bits) {
           case 8:
-            core.pixelType[1] = FormatTools.UINT8;
+            core[1].pixelType = FormatTools.UINT8;
             break;
           case 16:
-            core.pixelType[1] = FormatTools.UINT16;
+            core[1].pixelType = FormatTools.UINT16;
             break;
           case 32:
-            core.pixelType[1] = FormatTools.UINT32;
+            core[1].pixelType = FormatTools.UINT32;
         }
-        core.currentOrder[1] = "XYCZT";
-        core.indexed[1] = false;
+        core[1].currentOrder = "XYCZT";
+        core[1].indexed = false;
       }
     }
 
-    core.imageCount[0] = filenames.size();
-    tiffs = new Vector(core.imageCount[0]);
+    core[0].imageCount = filenames.size();
+    tiffs = new Vector(core[0].imageCount);
 
     thumbReader = new BMPReader();
     thumbId = thumbId.replaceAll("pty", "bmp");
@@ -585,7 +587,7 @@ public class FV1000Reader extends FormatReader {
 
     String tiffPath = null;
 
-    for (int i=0, ii=0; ii<core.imageCount[0]; i++, ii++) {
+    for (int i=0, ii=0; ii<core[0].imageCount; i++, ii++) {
       String file = (String) filenames.get(new Integer(i));
       while (file == null) file = (String) filenames.get(new Integer(++i));
       file = sanitizeFile(file, (isOIB || mappedOIF) ? "" : path);
@@ -667,56 +669,56 @@ public class FV1000Reader extends FormatReader {
       pixelSize[i] = pixelSize[i].replaceAll("\"", "");
       Float pixel = new Float(pixelSize[i]);
       code[i] = code[i].substring(1, code[i].length() - 1);
-      if (code[i].equals("X")) core.sizeX[0] = ss;
-      else if (code[i].equals("Y")) core.sizeY[0] = ss;
+      if (code[i].equals("X")) core[0].sizeX = ss;
+      else if (code[i].equals("Y")) core[0].sizeY = ss;
       else if (code[i].equals("Z")) {
-        core.sizeZ[0] = ss;
+        core[0].sizeZ = ss;
         // Z size stored in nm
         store.setDimensionsPhysicalSizeZ(new Float(pixel.floatValue() * 0.001),
           0, 0);
       }
       else if (code[i].equals("T")) {
-        core.sizeT[0] = ss;
+        core[0].sizeT = ss;
         pixel = new Float(pixel.floatValue() / 1000);
         store.setDimensionsTimeIncrement(pixel, 0, 0);
       }
       else if (ss > 0) {
-        if (core.sizeC[0] == 0) core.sizeC[0] = ss;
-        else core.sizeC[0] *= ss;
+        if (core[0].sizeC == 0) core[0].sizeC = ss;
+        else core[0].sizeC *= ss;
         if (code[i].equals("C")) realChannels = ss;
       }
     }
 
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+    if (core[0].sizeZ == 0) core[0].sizeZ = 1;
+    if (core[0].sizeC == 0) core[0].sizeC = 1;
+    if (core[0].sizeT == 0) core[0].sizeT = 1;
 
-    if (core.imageCount[0] == core.sizeC[0]) {
-      core.sizeZ[0] = 1;
-      core.sizeT[0] = 1;
+    if (core[0].imageCount == core[0].sizeC) {
+      core[0].sizeZ = 1;
+      core[0].sizeT = 1;
     }
 
-    if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] > core.imageCount[0]) {
+    if (core[0].sizeZ * core[0].sizeT * core[0].sizeC > core[0].imageCount) {
       int diff =
-        (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]) - core.imageCount[0];
+        (core[0].sizeZ * core[0].sizeC * core[0].sizeT) - core[0].imageCount;
       if (diff == previewNames.size()) {
-        if (core.sizeT[0] > 1 && core.sizeZ[0] == 1) core.sizeT[0] -= diff;
-        else if (core.sizeZ[0] > 1 && core.sizeT[0] == 1) core.sizeZ[0] -= diff;
+        if (core[0].sizeT > 1 && core[0].sizeZ == 1) core[0].sizeT -= diff;
+        else if (core[0].sizeZ > 1 && core[0].sizeT == 1) core[0].sizeZ -= diff;
       }
-      else core.imageCount[0] += diff;
+      else core[0].imageCount += diff;
     }
 
-    core.currentOrder[0] = "XYCZT";
+    core[0].currentOrder = "XYCZT";
 
     switch (imageDepth) {
       case 1:
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
         break;
       case 2:
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       case 4:
-        core.pixelType[0] = FormatTools.UINT32;
+        core[0].pixelType = FormatTools.UINT32;
         break;
       default:
         throw new RuntimeException("Unsupported pixel depth: " + imageDepth);
@@ -734,8 +736,10 @@ public class FV1000Reader extends FormatReader {
       thumb.close();
       Location.mapFile("thumbnail.bmp", new RABytes(b));
       thumbReader.setId("thumbnail.bmp");
-      Arrays.fill(core.thumbSizeX, thumbReader.getSizeX());
-      Arrays.fill(core.thumbSizeY, thumbReader.getSizeY());
+      for (int i=0; i<core.length; i++) {
+        core[i].thumbSizeX = thumbReader.getSizeX();
+        core[i].thumbSizeY = thumbReader.getSizeY();
+      }
     }
     catch (IOException e) {
       if (debug) LogTools.trace(e);
@@ -743,9 +747,9 @@ public class FV1000Reader extends FormatReader {
 
     // initialize lookup table
 
-    lut = new short[core.sizeC[0]][3][65536];
+    lut = new short[core[0].sizeC][3][65536];
     byte[] buffer = new byte[65536 * 4];
-    int count = (int) Math.min(core.sizeC[0], lutNames.size());
+    int count = (int) Math.min(core[0].sizeC, lutNames.size());
     for (int c=0; c<count; c++) {
       try {
         RandomAccessStream stream = getFile((String) lutNames.get(c));
@@ -764,16 +768,18 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
-    Arrays.fill(core.rgb, false);
-    Arrays.fill(core.littleEndian, true);
-    Arrays.fill(core.interleaved, false);
-    Arrays.fill(core.metadataComplete, true);
-    Arrays.fill(core.indexed, false);
-    Arrays.fill(core.falseColor, false);
+    for (int i=0; i<core.length; i++) {
+      core[i].rgb = false;
+      core[i].littleEndian = true;
+      core[i].interleaved = false;
+      core[i].metadataComplete = true;
+      core[i].indexed = false;
+      core[i].falseColor = false;
+    }
 
     // populate MetadataStore
 
-    for (int i=0; i<core.sizeX.length; i++) {
+    for (int i=0; i<core.length; i++) {
       store.setImageName("Series " + i, i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
@@ -787,7 +793,7 @@ public class FV1000Reader extends FormatReader {
       store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     }
 
-    for (int i=0; i<core.sizeC[0]; i++) {
+    for (int i=0; i<core[0].sizeC; i++) {
       String name = i < channelNames.size() ? (String) channelNames.get(i) : "";
       String emWave = i < emWaves.size() ? (String) emWaves.get(i) : "";
       String exWave = i < exWaves.size() ? (String) exWaves.get(i) : "";

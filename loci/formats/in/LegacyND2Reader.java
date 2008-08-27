@@ -135,42 +135,43 @@ public class LegacyND2Reader extends FormatReader {
     try {
       openFile(id);
       int numSeries = getNumSeries();
-      core = new CoreMetadata(numSeries);
+      core = new CoreMetadata[numSeries];
 
       for (int i=0; i<numSeries; i++) {
-        core.sizeX[i] = getWidth(i);
-        if (core.sizeX[i] % 2 != 0) core.sizeX[i]++;
-        core.sizeY[i] = getHeight(i);
-        core.sizeZ[i] = getZSlices(i);
-        core.sizeT[i] = getTFrames(i);
-        core.sizeC[i] = getChannels(i);
+        core[i] = new CoreMetadata();
+        core[i].sizeX = getWidth(i);
+        if (core[i].sizeX % 2 != 0) core[i].sizeX++;
+        core[i].sizeY = getHeight(i);
+        core[i].sizeZ = getZSlices(i);
+        core[i].sizeT = getTFrames(i);
+        core[i].sizeC = getChannels(i);
         int bytes = getBytesPerPixel(i);
         if (bytes % 3 == 0) {
-          core.sizeC[i] *= 3;
+          core[i].sizeC *= 3;
           bytes /= 3;
-          core.rgb[i] = true;
+          core[i].rgb = true;
         }
-        else core.rgb[i] = false;
+        else core[i].rgb = false;
 
         switch (bytes) {
           case 1:
-            core.pixelType[i] = FormatTools.UINT8;
+            core[i].pixelType = FormatTools.UINT8;
             break;
           case 2:
-            core.pixelType[i] = FormatTools.UINT16;
+            core[i].pixelType = FormatTools.UINT16;
             break;
           case 4:
-            core.pixelType[i] = FormatTools.FLOAT;
+            core[i].pixelType = FormatTools.FLOAT;
             break;
         }
-        core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
-        if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
+        core[i].imageCount = core[i].sizeZ * core[i].sizeT;
+        if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
+        core[i].interleaved = true;
+        core[i].littleEndian = true;
+        core[i].currentOrder = "XYCZT";
+        core[i].indexed = false;
+        core[i].falseColor = false;
       }
-      Arrays.fill(core.interleaved, true);
-      Arrays.fill(core.littleEndian, true);
-      Arrays.fill(core.currentOrder, "XYCZT");
-      Arrays.fill(core.indexed, false);
-      Arrays.fill(core.falseColor, false);
     }
     catch (Exception e) {
       throw new FormatException(NO_NIKON_MSG, e);
@@ -178,7 +179,7 @@ public class LegacyND2Reader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    for (int i=0; i<core.sizeX.length; i++) {
+    for (int i=0; i<core.length; i++) {
       store.setImageName("Series " + i, i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }

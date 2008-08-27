@@ -111,7 +111,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       DataTools.parseXML(comments[i], handler);
     }
 
-    core.sizeC[0] = 0;
+    core[0].sizeC = 0;
 
     // calculate axis sizes
 
@@ -120,13 +120,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
       Integer c = new Integer(wavelengths[i]);
       if (!uniqueC.contains(c)) {
         uniqueC.add(c);
-        core.sizeC[0]++;
+        core[0].sizeC++;
       }
     }
 
-    core.sizeT[0] = timestamps.size();
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
-    core.sizeZ[0] = ifds.length / (getSizeT() * getSizeC());
+    core[0].sizeT = timestamps.size();
+    if (core[0].sizeT == 0) core[0].sizeT = 1;
+    core[0].sizeZ = ifds.length / (getSizeT() * getSizeC());
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

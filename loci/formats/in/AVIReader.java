@@ -284,7 +284,7 @@ public class AVIReader extends FormatReader {
                 addMeta("Initial frames", new Integer(in.readInt()));
 
                 in.skipBytes(8);
-                core.sizeX[0] = in.readInt();
+                core[0].sizeX = in.readInt();
 
                 addMeta("Frame height", new Integer(in.readInt()));
                 addMeta("Scale factor", new Integer(in.readInt()));
@@ -333,7 +333,7 @@ public class AVIReader extends FormatReader {
 
                 in.skipBytes(4);
                 bmpWidth = in.readInt();
-                core.sizeY[0] = in.readInt();
+                core[0].sizeY = in.readInt();
                 in.skipBytes(2);
                 bmpBitsPerPixel = in.readShort();
                 bmpCompression = in.readInt();
@@ -500,29 +500,29 @@ public class AVIReader extends FormatReader {
     }
     status("Populating metadata");
 
-    core.imageCount[0] = offsets.size();
+    core[0].imageCount = offsets.size();
 
-    core.rgb[0] = bmpBitsPerPixel > 8 || (bmpCompression != 0);
-    core.indexed[0] = false;
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = getImageCount();
-    core.littleEndian[0] = true;
-    core.interleaved[0] = bmpBitsPerPixel != 16;
-    core.sizeC[0] = isRGB() ? 3 : 1;
-    core.currentOrder[0] = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0);
+    core[0].indexed = false;
+    core[0].sizeZ = 1;
+    core[0].sizeT = getImageCount();
+    core[0].littleEndian = true;
+    core[0].interleaved = bmpBitsPerPixel != 16;
+    core[0].sizeC = isRGB() ? 3 : 1;
+    core[0].currentOrder = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
-    if (bmpBitsPerPixel <= 8) core.pixelType[0] = FormatTools.UINT8;
-    else if (bmpBitsPerPixel == 16) core.pixelType[0] = FormatTools.UINT16;
-    else if (bmpBitsPerPixel == 32) core.pixelType[0] = FormatTools.UINT32;
-    else if (bmpBitsPerPixel == 24) core.pixelType[0] = FormatTools.UINT8;
+    if (bmpBitsPerPixel <= 8) core[0].pixelType = FormatTools.UINT8;
+    else if (bmpBitsPerPixel == 16) core[0].pixelType = FormatTools.UINT16;
+    else if (bmpBitsPerPixel == 32) core[0].pixelType = FormatTools.UINT32;
+    else if (bmpBitsPerPixel == 24) core[0].pixelType = FormatTools.UINT8;
     else {
       throw new FormatException(
           "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
     }
 
-    if (bmpCompression != 0) core.pixelType[0] = FormatTools.UINT8;
+    if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -568,7 +568,7 @@ public class AVIReader extends FormatReader {
       CinepakCodec codec = new CinepakCodec();
       buf = codec.decompress(b, options);
       lastImage = buf;
-      if (no == core.imageCount[0] - 1) lastImage = null;
+      if (no == core[0].imageCount - 1) lastImage = null;
       return buf;
     }
     */

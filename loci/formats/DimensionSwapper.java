@@ -117,20 +117,20 @@ public class DimensionSwapper extends ReaderWrapper {
     dims[oldT] = getSizeT();
 
     int series = getSeries();
-    CoreMetadata core = getCoreMetadata();
+    CoreMetadata[] core = getCoreMetadata();
 
-    core.sizeX[series] = dims[newX];
-    core.sizeY[series] = dims[newY];
-    core.sizeZ[series] = dims[newZ];
-    core.sizeC[series] = dims[newC];
-    core.sizeT[series] = dims[newT];
+    core[series].sizeX = dims[newX];
+    core[series].sizeY = dims[newY];
+    core[series].sizeZ = dims[newZ];
+    core[series].sizeC = dims[newC];
+    core[series].sizeT = dims[newT];
     //core.currentOrder[series] = order;
     inputOrder = order;
 
     if (oldC != newC) {
       // C was overridden; clear the sub-C dimensional metadata
-      core.cLengths[series] = null;
-      core.cTypes[series] = null;
+      core[series].cLengths = null;
+      core[series].cTypes = null;
     }
 
     MetadataStore store = getMetadataStore();
@@ -150,7 +150,7 @@ public class DimensionSwapper extends ReaderWrapper {
   public void setOutputOrder(String outputOrder) {
     //this.outputOrder = outputOrder;
     if (inputOrder == null) inputOrder = getDimensionOrder();
-    getCoreMetadata().currentOrder[getSeries()] = outputOrder;
+    getCoreMetadata()[getSeries()].currentOrder = outputOrder;
   }
 
   public String getOutputOrder() {
@@ -162,37 +162,37 @@ public class DimensionSwapper extends ReaderWrapper {
   /* @see loci.formats.IFormatReader#getSizeX() */
   public int getSizeX() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeX[getSeries()];
+    return getCoreMetadata()[getSeries()].sizeX;
   }
 
   /* @see loci.formats.IFormatReader#getSizeY() */
   public int getSizeY() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeY[getSeries()];
+    return getCoreMetadata()[getSeries()].sizeY;
   }
 
   /* @see loci.formats.IFormatReader#getSizeZ() */
   public int getSizeZ() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeZ[getSeries()];
+    return getCoreMetadata()[getSeries()].sizeZ;
   }
 
   /* @see loci.formats.IFormatReader#getSizeC() */
   public int getSizeC() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeC[getSeries()];
+    return getCoreMetadata()[getSeries()].sizeC;
   }
 
   /* @see loci.formats.IFormatReader#getSizeT() */
   public int getSizeT() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().sizeT[getSeries()];
+    return getCoreMetadata()[getSeries()].sizeT;
   }
 
   /* @see loci.formats.IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata().currentOrder[getSeries()];
+    return getCoreMetadata()[getSeries()].currentOrder;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */

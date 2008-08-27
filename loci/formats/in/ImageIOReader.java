@@ -96,25 +96,25 @@ public abstract class ImageIOReader extends FormatReader {
     super.initFile(id);
 
     status("Populating metadata");
-    core.imageCount[0] = 1;
+    core[0].imageCount = 1;
     BufferedImage img =
       ImageIO.read(new DataInputStream(new RandomAccessStream(currentId)));
 
-    core.sizeX[0] = img.getWidth();
-    core.sizeY[0] = img.getHeight();
+    core[0].sizeX = img.getWidth();
+    core[0].sizeY = img.getHeight();
 
-    core.rgb[0] = img.getRaster().getNumBands() > 1;
+    core[0].rgb = img.getRaster().getNumBands() > 1;
 
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = isRGB() ? 3 : 1;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYCZT";
-    core.pixelType[0] = ImageTools.getPixelType(img);
-    core.interleaved[0] = false;
-    core.littleEndian[0] = false;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+    core[0].sizeZ = 1;
+    core[0].sizeC = isRGB() ? 3 : 1;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYCZT";
+    core[0].pixelType = ImageTools.getPixelType(img);
+    core[0].interleaved = false;
+    core[0].littleEndian = false;
+    core[0].metadataComplete = true;
+    core[0].indexed = false;
+    core[0].falseColor = false;
 
     // populate the metadata store
     MetadataStore store =

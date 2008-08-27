@@ -189,30 +189,22 @@ public class OMEReader extends FormatReader {
 
       r.exec("thumb = pf.getThumbnail(pixels)");
 
-      r.exec("sizeX = pixels.getSizeX()");
-      r.exec("sizeY = pixels.getSizeY()");
-      r.exec("sizeZ = pixels.getSizeZ()");
-      r.exec("sizeC = pixels.getSizeC()");
-      r.exec("sizeT = pixels.getSizeT()");
-      r.exec("pixelType = pixels.getPixelType()");
+      core[0].sizeX = ((Integer) r.exec("pixels.getSizeX()")).intValue();
+      core[0].sizeY = ((Integer) r.exec("pixels.getSizeY()")).intValue();
+      core[0].sizeZ = ((Integer) r.exec("pixels.getSizeZ()")).intValue();
+      core[0].sizeC = ((Integer) r.exec("pixels.getSizeC()")).intValue();
+      core[0].sizeT = ((Integer) r.exec("pixels.getSizeT()")).intValue();
 
-      core.sizeX[0] = ((Integer) r.getVar("sizeX")).intValue();
-      core.sizeY[0] = ((Integer) r.getVar("sizeY")).intValue();
-      core.sizeZ[0] = ((Integer) r.getVar("sizeZ")).intValue();
-      core.sizeC[0] = ((Integer) r.getVar("sizeC")).intValue();
-      core.sizeT[0] = ((Integer) r.getVar("sizeT")).intValue();
-      core.pixelType[0] =
-        FormatTools.pixelTypeFromString((String) r.getVar("pixelType"));
-      core.currentOrder[0] = "XYZCT";
+      String type = (String) r.exec("pixels.getPixelType()");
 
-      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-      core.rgb[0] = false;
+      core[0].pixelType = FormatTools.pixelTypeFromString(type);
+      core[0].currentOrder = "XYZCT";
 
-      r.exec("thumbX = thumb.getWidth()");
-      r.exec("thumbY = thumb.getHeight()");
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      core[0].rgb = false;
 
-      core.thumbSizeX[0] = ((Integer) r.getVar("thumbX")).intValue();
-      core.thumbSizeY[0] = ((Integer) r.getVar("thumbY")).intValue();
+      core[0].thumbSizeX = ((Integer) r.exec("thumb.getWidth()")).intValue();
+      core[0].thumbSizeY = ((Integer) r.exec("thumb.getHeight()")).intValue();
 
       // grab original metadata
 
@@ -240,8 +232,8 @@ public class OMEReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    core.littleEndian[0] = true;
-    core.interleaved[0] = false;
+    core[0].littleEndian = true;
+    core[0].interleaved = false;
 
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);

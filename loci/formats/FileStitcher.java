@@ -99,7 +99,7 @@ public class FileStitcher implements IFormatReader {
   private int[][] lenZ, lenC, lenT;
 
   /** Core metadata. */
-  private CoreMetadata core;
+  private CoreMetadata[] core;
 
   /** Current series number. */
   private int series;
@@ -246,49 +246,49 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getImageCount() : core.imageCount[getSeries()];
+    return noStitch ? reader.getImageCount() : core[getSeries()].imageCount;
   }
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.isRGB() : core.rgb[getSeries()];
+    return noStitch ? reader.isRGB() : core[getSeries()].rgb;
   }
 
   /* @see IFormatReader#getSizeX() */
   public int getSizeX() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getSizeX() : core.sizeX[getSeries()];
+    return noStitch ? reader.getSizeX() : core[getSeries()].sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
   public int getSizeY() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getSizeY() : core.sizeY[getSeries()];
+    return noStitch ? reader.getSizeY() : core[getSeries()].sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
   public int getSizeZ() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getSizeZ() : core.sizeZ[getSeries()];
+    return noStitch ? reader.getSizeZ() : core[getSeries()].sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getSizeC() : core.sizeC[getSeries()];
+    return noStitch ? reader.getSizeC() : core[getSeries()].sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
   public int getSizeT() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getSizeT() : core.sizeT[getSeries()];
+    return noStitch ? reader.getSizeT() : core[getSeries()].sizeT;
   }
 
   /* @see IFormatReader#getPixelType() */
   public int getPixelType() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getPixelType() : core.pixelType[getSeries()];
+    return noStitch ? reader.getPixelType() : core[getSeries()].pixelType;
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
@@ -306,13 +306,13 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isIndexed() */
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.isIndexed() : core.indexed[getSeries()];
+    return noStitch ? reader.isIndexed() : core[getSeries()].indexed;
   }
 
   /* @see IFormatReader#isFalseColor() */
   public boolean isFalseColor() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.isFalseColor() : core.falseColor[getSeries()];
+    return noStitch ? reader.isFalseColor() : core[getSeries()].falseColor;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
@@ -333,16 +333,20 @@ public class FileStitcher implements IFormatReader {
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 2);
     if (noStitch) return reader.getChannelDimLengths();
-    if (core.cLengths[series] == null) return new int[] {core.sizeC[series]};
-    return core.cLengths[series];
+    if (core[getSeries()].cLengths == null) {
+      return new int[] {core[getSeries()].sizeC};
+    }
+    return core[getSeries()].cLengths;
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
     FormatTools.assertId(currentId, true, 2);
     if (noStitch) return reader.getChannelDimTypes();
-    if (core.cTypes[series] == null) return new String[] {FormatTools.CHANNEL};
-    return core.cTypes[series];
+    if (core[getSeries()].cTypes == null) {
+      return new String[] {FormatTools.CHANNEL};
+    }
+    return core[getSeries()].cTypes;
   }
 
   /* @see IFormatReader#getThumbSizeX() */
@@ -370,13 +374,13 @@ public class FileStitcher implements IFormatReader {
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 2);
     return noStitch ? reader.getDimensionOrder() :
-      core.currentOrder[getSeries()];
+      core[getSeries()].currentOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.isOrderCertain() : core.orderCertain[getSeries()];
+    return noStitch ? reader.isOrderCertain() : core[getSeries()].orderCertain;
   }
 
   /* @see IFormatReader#isInterleaved() */
@@ -566,7 +570,7 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 2);
-    return noStitch ? reader.getSeriesCount() : core.sizeX.length;
+    return noStitch ? reader.getSeriesCount() : core.length;
   }
 
   /* @see IFormatReader#setSeries(int) */
@@ -745,7 +749,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getCoreMetadata() */
-  public CoreMetadata getCoreMetadata() {
+  public CoreMetadata[] getCoreMetadata() {
     FormatTools.assertId(currentId, true, 2);
     return noStitch ? reader.getCoreMetadata() : core;
   }
@@ -1018,7 +1022,7 @@ public class FileStitcher implements IFormatReader {
     lenT = new int[seriesCount][];
 
     // analyze first file; assume each file has the same parameters
-    core = new CoreMetadata(seriesCount);
+    core = new CoreMetadata[seriesCount];
     int oldSeries = reader.getSeries();
     IFormatReader rr = reader;
     for (int i=0; i<seriesCount; i++) {
@@ -1028,27 +1032,29 @@ public class FileStitcher implements IFormatReader {
         rr = readers[i][0];
       }
 
-      core.sizeX[i] = rr.getSizeX();
-      core.sizeY[i] = rr.getSizeY();
+      core[i] = new CoreMetadata();
+
+      core[i].sizeX = rr.getSizeX();
+      core[i].sizeY = rr.getSizeY();
       // NB: core.sizeZ populated in computeAxisLengths below
       // NB: core.sizeC populated in computeAxisLengths below
       // NB: core.sizeT populated in computeAxisLengths below
-      core.pixelType[i] = rr.getPixelType();
+      core[i].pixelType = rr.getPixelType();
       imagesPerFile[i] = rr.getImageCount();
-      core.imageCount[i] =
+      core[i].imageCount =
         imagesPerFile[i] * files[seriesInFile ? 0 : i].length;
-      core.thumbSizeX[i] = rr.getThumbSizeX();
-      core.thumbSizeY[i] = rr.getThumbSizeY();
+      core[i].thumbSizeX = rr.getThumbSizeX();
+      core[i].thumbSizeY = rr.getThumbSizeY();
       // NB: core.cLengths[i] populated in computeAxisLengths below
       // NB: core.cTypes[i] populated in computeAxisLengths below
-      core.currentOrder[i] = rr.getDimensionOrder();
+      core[i].currentOrder = rr.getDimensionOrder();
       // NB: core.orderCertain[i] populated below
-      core.rgb[i] = rr.isRGB();
-      core.littleEndian[i] = rr.isLittleEndian();
-      core.interleaved[i] = rr.isInterleaved();
-      core.seriesMetadata[i] = rr.getMetadata();
-      core.indexed[i] = rr.isIndexed();
-      core.falseColor[i] = rr.isFalseColor();
+      core[i].rgb = rr.isRGB();
+      core[i].littleEndian = rr.isLittleEndian();
+      core[i].interleaved = rr.isInterleaved();
+      core[i].seriesMetadata = rr.getMetadata();
+      core[i].indexed = rr.isIndexed();
+      core[i].falseColor = rr.isFalseColor();
       sizeZ[i] = rr.getSizeZ();
       sizeC[i] = rr.getSizeC();
       sizeT[i] = rr.getSizeT();
@@ -1058,20 +1064,22 @@ public class FileStitcher implements IFormatReader {
 
     // guess at dimensions corresponding to file numbering
     for (int i=0; i<seriesCount; i++) {
-      ag[i] = new AxisGuesser(fp, core.currentOrder[i],
+      ag[i] = new AxisGuesser(fp, core[i].currentOrder,
         sizeZ[i], sizeT[i], sizeC[i], certain[i]);
     }
 
     // order may need to be adjusted
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
-      core.currentOrder[i] = ag[i].getAdjustedOrder();
-      core.orderCertain[i] = ag[i].isCertain();
+      core[i].currentOrder = ag[i].getAdjustedOrder();
+      core[i].orderCertain = ag[i].isCertain();
       computeAxisLengths();
     }
     setSeries(oldSeries);
     originalOrder = new String[seriesCount];
-    System.arraycopy(core.currentOrder, 0, originalOrder, 0, seriesCount);
+    for (int i=0; i<seriesCount; i++) {
+      originalOrder[i] = core[i].currentOrder;
+    }
   }
 
   // -- Helper methods --
@@ -1102,9 +1110,9 @@ public class FileStitcher implements IFormatReader {
     int numC = ag[sno].getAxisCountC();
     int numT = ag[sno].getAxisCountT();
 
-    core.sizeZ[sno] = sizeZ[sno];
-    core.sizeC[sno] = sizeC[sno];
-    core.sizeT[sno] = sizeT[sno];
+    core[sno].sizeZ = sizeZ[sno];
+    core[sno].sizeC = sizeC[sno];
+    core[sno].sizeT = sizeT[sno];
     lenZ[sno] = new int[numZ + 1];
     lenC[sno] = new int[numC + 1];
     lenT[sno] = new int[numT + 1];
@@ -1115,15 +1123,15 @@ public class FileStitcher implements IFormatReader {
     for (int i=0, z=1, c=1, t=1; i<count.length; i++) {
       switch (axes[i]) {
         case AxisGuesser.Z_AXIS:
-          core.sizeZ[sno] *= count[i];
+          core[sno].sizeZ *= count[i];
           lenZ[sno][z++] = count[i];
           break;
         case AxisGuesser.C_AXIS:
-          core.sizeC[sno] *= count[i];
+          core[sno].sizeC *= count[i];
           lenC[sno][c++] = count[i];
           break;
         case AxisGuesser.T_AXIS:
-          core.sizeT[sno] *= count[i];
+          core[sno].sizeT *= count[i];
           lenT[sno][t++] = count[i];
           break;
         case AxisGuesser.S_AXIS:
@@ -1144,29 +1152,29 @@ public class FileStitcher implements IFormatReader {
       if (lenC[sno][i] > 1) cCount++;
     }
     if (cCount == 0) {
-      core.cLengths[sno] = new int[] {1};
-      core.cTypes[sno] = new String[] {FormatTools.CHANNEL};
+      core[sno].cLengths = new int[] {1};
+      core[sno].cTypes = new String[] {FormatTools.CHANNEL};
     }
     else {
-      core.cLengths[sno] = new int[cCount];
-      core.cTypes[sno] = new String[cCount];
+      core[sno].cLengths = new int[cCount];
+      core[sno].cTypes = new String[cCount];
     }
     int c = 0;
     for (int i=0; i<cLengths.length; i++) {
       if (cLengths[i] == 1) continue;
-      core.cLengths[sno][c] = cLengths[i];
-      core.cTypes[sno][c] = cTypes[i];
+      core[sno].cLengths[c] = cLengths[i];
+      core[sno].cTypes[c] = cTypes[i];
       c++;
     }
     for (int i=1; i<lenC[sno].length; i++) {
       if (lenC[sno][i] == 1) continue;
-      core.cLengths[sno][c] = lenC[sno][i];
-      core.cTypes[sno][c] = FormatTools.CHANNEL;
+      core[sno].cLengths[c] = lenC[sno][i];
+      core[sno].cTypes[c] = FormatTools.CHANNEL;
     }
 
     // populate metadata store
     store = reader.getMetadataStore();
-    for (int i=0; i<core.sizeX.length; i++) {
+    for (int i=0; i<core.length; i++) {
       if (seriesNames != null) {
         store.setImageName((String) seriesNames.get(i), i);
       }

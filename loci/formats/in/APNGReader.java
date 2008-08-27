@@ -222,7 +222,7 @@ public class APNGReader extends FormatReader {
 
       if (type.equals("acTL")) {
         // APNG-specific chunk
-        core.imageCount[0] = in.readInt();
+        core[0].imageCount = in.readInt();
         int loop = in.readInt();
         addMeta("Loop count", String.valueOf(loop));
       }
@@ -240,20 +240,20 @@ public class APNGReader extends FormatReader {
       in.skipBytes(4); // skip the CRC
     }
 
-    if (core.imageCount[0] == 0) core.imageCount[0] = 1;
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = core.imageCount[0];
+    if (core[0].imageCount == 0) core[0].imageCount = 1;
+    core[0].sizeZ = 1;
+    core[0].sizeT = getImageCount();
 
-    core.currentOrder[0] = "XYCTZ";
-    core.interleaved[0] = false;
+    core[0].currentOrder = "XYCTZ";
+    core[0].interleaved = false;
 
     BufferedImage img =
       ImageIO.read(new DataInputStream(new RandomAccessStream(currentId)));
-    core.sizeX[0] = img.getWidth();
-    core.sizeY[0] = img.getHeight();
-    core.rgb[0] = img.getRaster().getNumBands() > 1;
-    core.sizeC[0] = img.getRaster().getNumBands();
-    core.pixelType[0] = ImageTools.getPixelType(img);
+    core[0].sizeX = img.getWidth();
+    core[0].sizeY = img.getHeight();
+    core[0].rgb = img.getRaster().getNumBands() > 1;
+    core[0].sizeC = img.getRaster().getNumBands();
+    core[0].pixelType = ImageTools.getPixelType(img);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

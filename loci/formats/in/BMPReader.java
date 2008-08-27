@@ -186,9 +186,8 @@ public class BMPReader extends FormatReader {
 
     // get the dimensions
 
-    core.sizeX[0] = in.readInt();
-    //while ((core.sizeX[0] % 2) != 0) core.sizeX[0]++;
-    core.sizeY[0] = in.readInt();
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
 
     if (getSizeX() < 1 || getSizeY() < 1) {
       throw new FormatException("Invalid image dimensions: " +
@@ -252,39 +251,38 @@ public class BMPReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeC[0] = bpp != 24 ? 1 : 3;
-    if (bpp == 32) core.sizeC[0] = 4;
+    core[0].sizeC = bpp != 24 ? 1 : 3;
+    if (bpp == 32) core[0].sizeC = 4;
     if (bpp > 8) bpp /= getSizeC();
 
     switch (bpp) {
       case 16:
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       case 32:
-        core.pixelType[0] = FormatTools.UINT32;
+        core[0].pixelType = FormatTools.UINT32;
         break;
       default:
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
     }
 
-    core.rgb[0] = getSizeC() > 1;
-    core.littleEndian[0] = true;
-    core.interleaved[0] = true;
-    core.imageCount[0] = 1;
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYCTZ";
-    core.metadataComplete[0] = true;
-    core.indexed[0] = palette != null;
+    core[0].rgb = getSizeC() > 1;
+    core[0].littleEndian = true;
+    core[0].interleaved = true;
+    core[0].imageCount = 1;
+    core[0].sizeZ = 1;
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYCTZ";
+    core[0].metadataComplete = true;
+    core[0].indexed = palette != null;
     if (isIndexed()) {
-      core.sizeC[0] = 1;
-      core.rgb[0] = false;
+      core[0].sizeC = 1;
+      core[0].rgb = false;
     }
-    core.falseColor[0] = false;
+    core[0].falseColor = false;
 
     // Populate metadata store.
 
-    // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);

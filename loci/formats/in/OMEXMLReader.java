@@ -100,7 +100,7 @@ public class OMEXMLReader extends FormatReader {
 
     int index = no;
     for (int i=0; i<series; i++) {
-      index += core.imageCount[series];
+      index += core[i].imageCount;
     }
 
     long offset = ((Long) binDataOffsets.get(index)).longValue();
@@ -218,12 +218,14 @@ public class OMEXMLReader extends FormatReader {
 
     int numDatasets = omexmlMeta.getImageCount();
 
-    core = new CoreMetadata(numDatasets);
+    core = new CoreMetadata[numDatasets];
 
     int oldSeries = getSeries();
 
     for (int i=0; i<numDatasets; i++) {
       setSeries(i);
+
+      core[i] = new CoreMetadata();
 
       Integer w = omexmlMeta.getPixelsSizeX(i, 0);
       Integer h = omexmlMeta.getPixelsSizeY(i, 0);
@@ -235,36 +237,36 @@ public class OMEXMLReader extends FormatReader {
       }
       Boolean endian = omexmlMeta.getPixelsBigEndian(i, 0);
       String pixType = omexmlMeta.getPixelsPixelType(i, 0);
-      core.currentOrder[i] = omexmlMeta.getPixelsDimensionOrder(i, 0);
-      core.sizeX[i] = w.intValue();
-      core.sizeY[i] = h.intValue();
-      core.sizeT[i] = t.intValue();
-      core.sizeZ[i] = z.intValue();
-      core.sizeC[i] = c.intValue();
-      core.imageCount[i] = getSizeZ() * getSizeC() * getSizeT();
-      core.littleEndian[i] = endian == null ? false : !endian.booleanValue();
-      core.rgb[i] = false;
-      core.interleaved[i] = false;
-      core.indexed[i] = false;
-      core.falseColor[i] = false;
+      core[i].currentOrder = omexmlMeta.getPixelsDimensionOrder(i, 0);
+      core[i].sizeX = w.intValue();
+      core[i].sizeY = h.intValue();
+      core[i].sizeT = t.intValue();
+      core[i].sizeZ = z.intValue();
+      core[i].sizeC = c.intValue();
+      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      core[i].littleEndian = endian == null ? false : !endian.booleanValue();
+      core[i].rgb = false;
+      core[i].interleaved = false;
+      core[i].indexed = false;
+      core[i].falseColor = false;
 
       String type = pixType.toLowerCase();
       boolean signed = type.charAt(0) != 'u';
       if (type.endsWith("16")) {
-        core.pixelType[i] = signed ? FormatTools.INT16 : FormatTools.UINT16;
+        core[i].pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
       }
       else if (type.endsWith("32")) {
-        core.pixelType[i] = signed ? FormatTools.INT32 : FormatTools.UINT32;
+        core[i].pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
       }
       else if (type.equals("float")) {
-        core.pixelType[i] = FormatTools.FLOAT;
+        core[i].pixelType = FormatTools.FLOAT;
       }
       else {
-        core.pixelType[i] = signed ? FormatTools.INT8 : FormatTools.UINT8;
+        core[i].pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
       }
+      core[i].orderCertain = true;
     }
     setSeries(oldSeries);
-    Arrays.fill(core.orderCertain, true);
 
     // populate assigned metadata store with the
     // contents of the internal OME-XML metadata object

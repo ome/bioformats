@@ -133,7 +133,7 @@ public class FlexReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    Arrays.fill(core.orderCertain, false);
+    core[0].orderCertain = false;
 
     // parse factors from XML
     String xml = (String) TiffTools.getIFDValue(ifds[0],
@@ -185,8 +185,8 @@ public class FlexReader extends BaseTiffReader {
     Arrays.fill(factors, fsize, factors.length, 1);
 
     // determine pixel type
-    if (factors[max] > 256) core.pixelType[0] = FormatTools.UINT32;
-    else if (factors[max] > 1) core.pixelType[0] = FormatTools.UINT16;
+    if (factors[max] > 256) core[0].pixelType = FormatTools.UINT32;
+    else if (factors[max] > 1) core[0].pixelType = FormatTools.UINT16;
   }
 
   // -- Helper classes --

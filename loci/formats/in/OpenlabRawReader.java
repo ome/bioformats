@@ -120,15 +120,15 @@ public class OpenlabRawReader extends FormatReader {
     int version = in.readInt();
     addMeta("Version", new Integer(version));
 
-    core.imageCount[0] = in.readInt();
+    core[0].imageCount = in.readInt();
     offsets = new int[getImageCount()];
     offsets[0] = 12;
 
     in.skipBytes(8);
-    core.sizeX[0] = in.readInt();
-    core.sizeY[0] = in.readInt();
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
     in.skipBytes(1);
-    core.sizeC[0] = in.read();
+    core[0].sizeC = in.read();
     bytesPerPixel = in.read();
     in.skipBytes(1);
 
@@ -153,8 +153,8 @@ public class OpenlabRawReader extends FormatReader {
     int len = in.read() & 0xff;
     addMeta("Image name", in.readString(len - 1).trim());
 
-    if (getSizeC() <= 1) core.sizeC[0] = 1;
-    else core.sizeC[0] = 3;
+    if (getSizeC() <= 1) core[0].sizeC = 1;
+    else core[0].sizeC = 3;
     addMeta("Width", new Integer(getSizeX()));
     addMeta("Height", new Integer(getSizeY()));
     addMeta("Bytes per pixel", new Integer(bytesPerPixel));
@@ -164,15 +164,15 @@ public class OpenlabRawReader extends FormatReader {
       offsets[i] = offsets[i - 1] + 288 + plane;
     }
 
-    core.sizeZ[0] = getImageCount();
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYZTC";
-    core.rgb[0] = getSizeC() > 1;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = false;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+    core[0].sizeZ = getImageCount();
+    core[0].sizeT = 1;
+    core[0].currentOrder = "XYZTC";
+    core[0].rgb = getSizeC() > 1;
+    core[0].interleaved = false;
+    core[0].littleEndian = false;
+    core[0].metadataComplete = true;
+    core[0].indexed = false;
+    core[0].falseColor = false;
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -182,13 +182,13 @@ public class OpenlabRawReader extends FormatReader {
     switch (bytesPerPixel) {
       case 1:
       case 3:
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
         break;
       case 2:
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       default:
-        core.pixelType[0] = FormatTools.FLOAT;
+        core[0].pixelType = FormatTools.FLOAT;
     }
 
     store.setImageCreationDate(stamp, 0);

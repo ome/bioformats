@@ -129,7 +129,7 @@ public class PSDReader extends FormatReader {
     if (debug) debug("PSDReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
-    core.littleEndian[0] = false;
+    core[0].littleEndian = false;
 
     if (!in.readString(4).equals("8BPS")) {
       throw new FormatException("Not a valid Photoshop file.");
@@ -139,14 +139,14 @@ public class PSDReader extends FormatReader {
     addMeta("Version", new Integer(version));
 
     in.skipBytes(6); // reserved, set to 0
-    core.sizeC[0] = in.readShort();
-    core.sizeY[0] = in.readInt();
-    core.sizeX[0] = in.readInt();
+    core[0].sizeC = in.readShort();
+    core[0].sizeY = in.readInt();
+    core[0].sizeX = in.readInt();
 
     int bits = in.readShort();
     addMeta("Bits per pixel", new Integer(bits));
-    if (bits == 16) core.pixelType[0] = FormatTools.UINT16;
-    else core.pixelType[0] = FormatTools.UINT8;
+    if (bits == 16) core[0].pixelType = FormatTools.UINT16;
+    else core[0].pixelType = FormatTools.UINT8;
 
     int colorMode = in.readShort();
     String modeString = null;
@@ -266,15 +266,15 @@ public class PSDReader extends FormatReader {
 
     offset = in.getFilePointer() - 4;
 
-    core.sizeZ[0] = 1;
-    core.sizeT[0] = 1;
-    core.rgb[0] = modeString.equals("RGB");
-    core.imageCount[0] = getSizeC() / (isRGB() ? 3 : 1);
-    core.indexed[0] = modeString.equals("palette color");
-    core.falseColor[0] = false;
-    core.currentOrder[0] = "XYCZT";
-    core.interleaved[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].sizeZ = 1;
+    core[0].sizeT = 1;
+    core[0].rgb = modeString.equals("RGB");
+    core[0].imageCount = getSizeC() / (isRGB() ? 3 : 1);
+    core[0].indexed = modeString.equals("palette color");
+    core[0].falseColor = false;
+    core[0].currentOrder = "XYCZT";
+    core[0].interleaved = false;
+    core[0].metadataComplete = true;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

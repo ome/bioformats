@@ -393,7 +393,7 @@ public class PerkinElmerReader extends FormatReader {
       Arrays.sort(files, c);
     }
 
-    core.imageCount[0] = files.length;
+    core[0].imageCount = files.length;
     RandomAccessStream read;
     byte[] data;
     StringTokenizer t;
@@ -601,13 +601,13 @@ public class PerkinElmerReader extends FormatReader {
       while (t.hasMoreTokens()) {
         String token = t.nextToken();
         if (token.equals("Wavelengths")) {
-          core.sizeC[0] = Integer.parseInt(prevToken);
+          core[0].sizeC = Integer.parseInt(prevToken);
         }
         else if (token.equals("Frames")) {
-          core.sizeT[0] = Integer.parseInt(prevToken);
+          core[0].sizeT = Integer.parseInt(prevToken);
         }
         else if (token.equals("Slices")) {
-          core.sizeZ[0] = Integer.parseInt(prevToken);
+          core[0].sizeZ = Integer.parseInt(prevToken);
         }
         tokenNum++;
         prevToken = token;
@@ -618,7 +618,7 @@ public class PerkinElmerReader extends FormatReader {
 
     if (isTiff) {
       tiff.setId(files[0]);
-      core.pixelType[0] = tiff.getPixelType();
+      core[0].pixelType = tiff.getPixelType();
     }
     else {
       RandomAccessStream tmp = new RandomAccessStream(files[0]);
@@ -627,28 +627,28 @@ public class PerkinElmerReader extends FormatReader {
       switch (bpp) {
         case 1:
         case 3:
-          core.pixelType[0] = FormatTools.UINT8;
+          core[0].pixelType = FormatTools.UINT8;
           break;
         case 2:
-          core.pixelType[0] = FormatTools.UINT16;
+          core[0].pixelType = FormatTools.UINT16;
           break;
         case 4:
-          core.pixelType[0] = FormatTools.UINT32;
+          core[0].pixelType = FormatTools.UINT32;
           break;
       }
     }
 
-    if (getSizeZ() <= 0) core.sizeZ[0] = 1;
-    if (getSizeC() <= 0) core.sizeC[0] = 1;
+    if (getSizeZ() <= 0) core[0].sizeZ = 1;
+    if (getSizeC() <= 0) core[0].sizeC = 1;
 
     if (getSizeT() <= 0) {
-      core.sizeT[0] = getImageCount() / (getSizeZ() * getSizeC());
+      core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
     }
     else {
-      core.imageCount[0] = getSizeZ() * getSizeC() * getSizeT();
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
       if (getImageCount() > files.length) {
-        core.imageCount[0] = files.length;
-        core.sizeT[0] = getImageCount() / (getSizeZ() * getSizeC());
+        core[0].imageCount = files.length;
+        core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
       }
     }
 
@@ -688,17 +688,17 @@ public class PerkinElmerReader extends FormatReader {
         }
         if (count < oldCount) oldFile += (oldCount - count);
       }
-      core.imageCount[0] = getSizeZ() * getEffectiveSizeC() * getSizeT();
+      core[0].imageCount = getSizeZ() * getEffectiveSizeC() * getSizeT();
     }
 
-    core.currentOrder[0] = "XYCTZ";
+    core[0].currentOrder = "XYCTZ";
 
-    core.rgb[0] = isTiff ? tiff.isRGB() : false;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = isTiff ? tiff.isLittleEndian() : true;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = isTiff ? tiff.isIndexed() : false;
-    core.falseColor[0] = false;
+    core[0].rgb = isTiff ? tiff.isRGB() : false;
+    core[0].interleaved = false;
+    core[0].littleEndian = isTiff ? tiff.isLittleEndian() : true;
+    core[0].metadataComplete = true;
+    core[0].indexed = isTiff ? tiff.isIndexed() : false;
+    core[0].falseColor = false;
 
     // Populate metadata store
 
@@ -786,73 +786,38 @@ public class PerkinElmerReader extends FormatReader {
   private void parseKeyValue(String key, String value) {
     if (key == null || value == null) return;
     addMeta(key, value);
-    if (key.equals("Image Width")) {
-      try {
-        core.sizeX[0] = Integer.parseInt(value);
+    try {
+      if (key.equals("Image Width")) {
+        core[0].sizeX = Integer.parseInt(value);
       }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
+      else if (key.equals("Image Length")) {
+        core[0].sizeY = Integer.parseInt(value);
       }
-    }
-    else if (key.equals("Image Length")) {
-      try {
-        core.sizeY[0] = Integer.parseInt(value);
+      else if (key.equals("Number of slices")) {
+        core[0].sizeZ = Integer.parseInt(value);
       }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
-      }
-    }
-    else if (key.equals("Number of slices")) {
-      try {
-        core.sizeZ[0] = Integer.parseInt(value);
-      }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
-      }
-    }
-    else if (key.equals("Experiment details:")) details = value;
-    else if (key.equals("Z slice space")) sliceSpace = value;
-    else if (key.equals("Pixel Size X")) {
-      try {
+      else if (key.equals("Experiment details:")) details = value;
+      else if (key.equals("Z slice space")) sliceSpace = value;
+      else if (key.equals("Pixel Size X")) {
         pixelSizeX = Float.parseFloat(value);
       }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
-      }
-    }
-    else if (key.equals("Pixel Size Y")) {
-      try {
+      else if (key.equals("Pixel Size Y")) {
         pixelSizeY = Float.parseFloat(value);
       }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
-      }
-    }
-    else if (key.equals("Finish Time:")) finishTime = value;
-    else if (key.equals("Start Time:")) startTime = value;
-    else if (key.equals("Origin X")) {
-      try {
+      else if (key.equals("Finish Time:")) finishTime = value;
+      else if (key.equals("Start Time:")) startTime = value;
+      else if (key.equals("Origin X")) {
         originX = Float.parseFloat(value);
       }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
-      }
-    }
-    else if (key.equals("Origin Y")) {
-      try {
+      else if (key.equals("Origin Y")) {
         originY = Float.parseFloat(value);
       }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
-      }
-    }
-    else if (key.equals("Origin Z")) {
-      try {
+      else if (key.equals("Origin Z")) {
         originZ = Float.parseFloat(value);
       }
-      catch (NumberFormatException e) {
-        if (debug) LogTools.trace(e);
-      }
+    }
+    catch (NumberFormatException exc) {
+      if (debug) LogTools.trace(exc);
     }
   }
 

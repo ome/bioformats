@@ -114,33 +114,33 @@ public class KhorosReader extends FormatReader {
 
     in.order(dependency == 4 || dependency == 8);
 
-    core.sizeX[0] = in.readInt();
-    core.sizeY[0] = in.readInt();
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
     in.skipBytes(28);
-    core.imageCount[0] = in.readInt();
-    if (getImageCount() == 0) core.imageCount[0] = 1;
-    core.sizeC[0] = in.readInt();
+    core[0].imageCount = in.readInt();
+    if (getImageCount() == 0) core[0].imageCount = 1;
+    core[0].sizeC = in.readInt();
 
     int type = in.readInt();
 
     switch (type) {
       case 0:
-        core.pixelType[0] = FormatTools.INT8;
+        core[0].pixelType = FormatTools.INT8;
         break;
       case 1:
-        core.pixelType[0] = FormatTools.UINT8;
+        core[0].pixelType = FormatTools.UINT8;
         break;
       case 2:
-        core.pixelType[0] = FormatTools.UINT16;
+        core[0].pixelType = FormatTools.UINT16;
         break;
       case 4:
-        core.pixelType[0] = FormatTools.INT32;
+        core[0].pixelType = FormatTools.INT32;
         break;
       case 5:
-        core.pixelType[0] = FormatTools.FLOAT;
+        core[0].pixelType = FormatTools.FLOAT;
         break;
       case 9:
-        core.pixelType[0] = FormatTools.DOUBLE;
+        core[0].pixelType = FormatTools.DOUBLE;
         break;
       default: throw new FormatException("Unsupported pixel type : " + type);
     }
@@ -150,7 +150,7 @@ public class KhorosReader extends FormatReader {
     in.skipBytes(12);
     int c = in.readInt();
     if (c > 1) {
-      core.sizeC[0] = c;
+      core[0].sizeC = c;
       int n = in.readInt();
       lut = new byte[n * c];
       in.skipBytes(436);
@@ -173,19 +173,19 @@ public class KhorosReader extends FormatReader {
     else in.skipBytes(440);
     offset = in.getFilePointer();
 
-    core.sizeZ[0] = getImageCount();
-    core.sizeT[0] = 1;
-    core.rgb[0] = getSizeC() > 1;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = dependency == 4 || dependency == 8;
-    core.currentOrder[0] = "XYCZT";
-    core.indexed[0] = lut != null;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+    core[0].sizeZ = getImageCount();
+    core[0].sizeT = 1;
+    core[0].rgb = getSizeC() > 1;
+    core[0].interleaved = false;
+    core[0].littleEndian = dependency == 4 || dependency == 8;
+    core[0].currentOrder = "XYCZT";
+    core[0].indexed = lut != null;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
 
     if (isIndexed()) {
-      core.sizeC[0] = 1;
-      core.rgb[0] = false;
+      core[0].sizeC = 1;
+      core[0].rgb = false;
     }
 
     MetadataStore store =
