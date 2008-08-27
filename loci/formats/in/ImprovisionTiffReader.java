@@ -126,7 +126,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     if (tt == null) tt = "1";
 
     core[0].sizeZ = Integer.parseInt(tz);
-    core[0].sizeC = Integer.parseInt(tc);
+    if (!isRGB()) core[0].sizeC = Integer.parseInt(tc);
     core[0].sizeT = Integer.parseInt(tt);
 
     if (getSizeZ() * getSizeC() * getSizeT() < getImageCount()) {

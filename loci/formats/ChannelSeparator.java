@@ -133,7 +133,7 @@ public class ChannelSeparator extends ReaderWrapper {
       }
 
       byte[] n = ImageTools.splitChannels(lastImage, channel, c,
-        FormatTools.getBytesPerPixel(getPixelType()), false, !isInterleaved());
+        FormatTools.getBytesPerPixel(getPixelType()), false, isInterleaved());
       System.arraycopy(n, 0, buf, 0, n.length);
       return buf;
     }

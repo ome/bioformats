@@ -977,7 +977,7 @@ public final class ImageTools {
 
     if (reverse) index = c - index - 1;
 
-    if (interleaved) {
+    if (!interleaved) {
       System.arraycopy(array, rtn.length * index, rtn, 0, rtn.length);
     }
     else {
