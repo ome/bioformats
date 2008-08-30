@@ -509,7 +509,7 @@ public class AVIReader extends FormatReader {
     core[0].littleEndian = true;
     core[0].interleaved = bmpBitsPerPixel != 16;
     core[0].sizeC = isRGB() ? 3 : 1;
-    core[0].inputOrder = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
+    core[0].dimensionOrder = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 

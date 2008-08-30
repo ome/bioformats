@@ -198,7 +198,7 @@ public class OMEReader extends FormatReader {
       String type = (String) r.exec("pixels.getPixelType()");
 
       core[0].pixelType = FormatTools.pixelTypeFromString(type);
-      core[0].inputOrder = "XYZCT";
+      core[0].dimensionOrder = "XYZCT";
 
       core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
       core[0].rgb = false;

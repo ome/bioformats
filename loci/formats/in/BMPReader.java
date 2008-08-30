@@ -272,7 +272,7 @@ public class BMPReader extends FormatReader {
     core[0].imageCount = 1;
     core[0].sizeZ = 1;
     core[0].sizeT = 1;
-    core[0].inputOrder = "XYCTZ";
+    core[0].dimensionOrder = "XYCTZ";
     core[0].metadataComplete = true;
     core[0].indexed = palette != null;
     if (isIndexed()) {

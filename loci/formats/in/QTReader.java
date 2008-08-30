@@ -366,7 +366,7 @@ public class QTReader extends FormatReader {
       bytesPerPixel == 2 ?  FormatTools.UINT16 : FormatTools.UINT8;
 
     core[0].sizeZ = 1;
-    core[0].inputOrder = "XYCZT";
+    core[0].dimensionOrder = "XYCZT";
     core[0].littleEndian = false;
     core[0].metadataComplete = true;
     core[0].indexed = false;

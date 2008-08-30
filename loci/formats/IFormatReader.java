@@ -166,22 +166,6 @@ public interface IFormatReader extends IFormatHandler {
   String getDimensionOrder();
 
   /**
-   * Gets a five-character string representing the
-   * dimension order within the file.  Valid orders are:<ul>
-   *   <li>XYCTZ</li>
-   *   <li>XYCZT</li>
-   *   <li>XYTCZ</li>
-   *   <li>XYTZC</li>
-   *   <li>XYZCT</li>
-   *   <li>XYZTC</li>
-   * </ul>
-   * In cases where the channels are interleaved (e.g., CXYTZ), C will be
-   * the first dimension after X and Y (e.g., XYCTZ) and the
-   * {@link #isInterleaved()} method will return true.
-   */
-  String getInputOrder();
-
-  /**
    * Gets whether the dimension order and sizes are known, or merely guesses.
    */
   boolean isOrderCertain();

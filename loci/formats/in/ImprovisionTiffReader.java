@@ -183,27 +183,27 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
     // determine dimension order
 
-    core[0].inputOrder = "XY";
+    core[0].dimensionOrder = "XY";
     for (int i=1; i<coords.length; i++) {
       int zDiff = coords[i][0] - coords[i - 1][0];
       int cDiff = coords[i][1] - coords[i - 1][1];
       int tDiff = coords[i][2] - coords[i - 1][2];
 
       if (zDiff > 0 && getDimensionOrder().indexOf("Z") < 0) {
-        core[0].inputOrder += "Z";
+        core[0].dimensionOrder += "Z";
       }
       if (cDiff > 0 && getDimensionOrder().indexOf("C") < 0) {
-        core[0].inputOrder += "C";
+        core[0].dimensionOrder += "C";
       }
       if (tDiff > 0 && getDimensionOrder().indexOf("T") < 0) {
-        core[0].inputOrder += "T";
+        core[0].dimensionOrder += "T";
       }
-      if (core[0].inputOrder.length() == 5) break;
+      if (core[0].dimensionOrder.length() == 5) break;
     }
 
-    if (getDimensionOrder().indexOf("Z") < 0) core[0].inputOrder += "Z";
-    if (getDimensionOrder().indexOf("C") < 0) core[0].inputOrder += "C";
-    if (getDimensionOrder().indexOf("T") < 0) core[0].inputOrder += "T";
+    if (getDimensionOrder().indexOf("Z") < 0) core[0].dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("C") < 0) core[0].dimensionOrder += "C";
+    if (getDimensionOrder().indexOf("T") < 0) core[0].dimensionOrder += "T";
   }
 
   /* @see BaseTiffReader#initMetadataStore() */

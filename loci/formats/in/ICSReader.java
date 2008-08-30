@@ -329,7 +329,7 @@ public class ICSReader extends FormatReader {
 
     core[0].rgb = layoutOrder.indexOf("ch") >= 0 &&
       layoutOrder.indexOf("ch") < layoutOrder.indexOf("x");
-    core[0].inputOrder = "XY";
+    core[0].dimensionOrder = "XY";
 
     // find axis sizes
 
@@ -349,27 +349,27 @@ public class ICSReader extends FormatReader {
       }
       else if (orderToken.equals("z")) {
         core[0].sizeZ = Integer.parseInt(imageToken);
-        core[0].inputOrder += "Z";
+        core[0].dimensionOrder += "Z";
       }
       else if (orderToken.equals("ch")) {
         core[0].sizeC = Integer.parseInt(imageToken);
         if (getSizeC() > 4) core[0].rgb = false;
-        core[0].inputOrder += "C";
+        core[0].dimensionOrder += "C";
       }
       else {
         core[0].sizeT = Integer.parseInt(imageToken);
-        core[0].inputOrder += "T";
+        core[0].dimensionOrder += "T";
       }
     }
 
     if (getDimensionOrder().indexOf("Z") == -1) {
-      core[0].inputOrder += "Z";
+      core[0].dimensionOrder += "Z";
     }
     if (getDimensionOrder().indexOf("T") == -1) {
-      core[0].inputOrder += "T";
+      core[0].dimensionOrder += "T";
     }
     if (getDimensionOrder().indexOf("C") == -1) {
-      core[0].inputOrder += "C";
+      core[0].dimensionOrder += "C";
     }
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;

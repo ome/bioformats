@@ -244,7 +244,7 @@ public class APNGReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeT = getImageCount();
 
-    core[0].inputOrder = "XYCTZ";
+    core[0].dimensionOrder = "XYCTZ";
     core[0].interleaved = false;
 
     BufferedImage img =

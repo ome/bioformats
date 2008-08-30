@@ -1,3 +1,15 @@
+2008 August 30:
+* Fixed bugs in many file format readers
+* Fixed several bugs with swapping dimensions
+* Added support for Olympus CellR/APL files
+* Added support for MINC MRI files
+* Added support for Aperio SVS files compressed with JPEG 2000
+* Added support for writing OME-XML files
+* Added support for writing APNG files
+* Added faster LZW codec
+* Added drag and drop support to ImageJ shortcut window
+* Re-integrated caching into the data browser plugin
+
 2008 July 1:
 * Fixed bugs in most file format readers
 * Fixed bugs in OME and OMERO download functionality

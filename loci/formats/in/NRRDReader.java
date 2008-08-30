@@ -133,7 +133,7 @@ public class NRRDReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
     core[0].sizeT = 1;
-    core[0].inputOrder = "XYCZT";
+    core[0].dimensionOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

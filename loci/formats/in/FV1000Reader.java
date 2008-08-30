@@ -568,7 +568,7 @@ public class FV1000Reader extends FormatReader {
           case 32:
             core[1].pixelType = FormatTools.UINT32;
         }
-        core[1].inputOrder = "XYCZT";
+        core[1].dimensionOrder = "XYCZT";
         core[1].indexed = false;
       }
     }
@@ -708,7 +708,7 @@ public class FV1000Reader extends FormatReader {
       else core[0].imageCount += diff;
     }
 
-    core[0].inputOrder = "XYCZT";
+    core[0].dimensionOrder = "XYCZT";
 
     switch (imageDepth) {
       case 1:

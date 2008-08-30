@@ -279,7 +279,7 @@ public class ImarisHDFReader extends FormatReader {
 
     for (int i=0; i<core.length; i++) {
       core[i].pixelType = type;
-      core[i].inputOrder = "XYZCT";
+      core[i].dimensionOrder = "XYZCT";
       core[i].rgb = false;
       core[i].thumbSizeX = 128;
       core[i].thumbSizeY = 128;

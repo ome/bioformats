@@ -170,7 +170,7 @@ public class ImarisReader extends FormatReader {
     status("Populating metadata");
 
     core[0].sizeT = getImageCount() / (getSizeC() * getSizeZ());
-    core[0].inputOrder = "XYZCT";
+    core[0].dimensionOrder = "XYZCT";
     core[0].rgb = false;
     core[0].interleaved = false;
     core[0].littleEndian = IS_LITTLE;

@@ -197,7 +197,7 @@ public class OMEROReader extends FormatReader {
     core[0].sizeT = pix.getSizeT();
     core[0].rgb = false;
     core[0].littleEndian = false;
-    core[0].inputOrder = "XYZCT";
+    core[0].dimensionOrder = "XYZCT";
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     core[0].pixelType = FormatTools.pixelTypeFromString((String) ptype);
 

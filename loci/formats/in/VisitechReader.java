@@ -232,7 +232,7 @@ public class VisitechReader extends FormatReader {
 
     for (int i=0; i<core.length; i++) {
       core[i].rgb = false;
-      core[i].inputOrder = "XYZTC";
+      core[i].dimensionOrder = "XYZTC";
       core[i].interleaved = false;
       core[i].littleEndian = true;
       core[i].indexed = false;

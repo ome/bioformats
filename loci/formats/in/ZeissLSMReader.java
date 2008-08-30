@@ -235,51 +235,51 @@ public class ZeissLSMReader extends BaseTiffReader {
       switch (scanType) {
         case 0:
           put("ScanType", "x-y-z scan");
-          core[0].inputOrder = "XYZCT";
+          core[0].dimensionOrder = "XYZCT";
           break;
         case 1:
           put("ScanType", "z scan (x-z plane)");
-          core[0].inputOrder = "XYZCT";
+          core[0].dimensionOrder = "XYZCT";
           break;
         case 2:
           put("ScanType", "line scan");
-          core[0].inputOrder = "XYZCT";
+          core[0].dimensionOrder = "XYZCT";
           break;
         case 3:
           put("ScanType", "time series x-y");
-          core[0].inputOrder = "XYTCZ";
+          core[0].dimensionOrder = "XYTCZ";
           break;
         case 4:
           put("ScanType", "time series x-z");
-          core[0].inputOrder = "XYZTC";
+          core[0].dimensionOrder = "XYZTC";
           break;
         case 5:
           put("ScanType", "time series 'Mean of ROIs'");
-          core[0].inputOrder = "XYTCZ";
+          core[0].dimensionOrder = "XYTCZ";
           break;
         case 6:
           put("ScanType", "time series x-y-z");
-          core[0].inputOrder = "XYZTC";
+          core[0].dimensionOrder = "XYZTC";
           break;
         case 7:
           put("ScanType", "spline scan");
-          core[0].inputOrder = "XYCTZ";
+          core[0].dimensionOrder = "XYCTZ";
           break;
         case 8:
           put("ScanType", "spline scan x-z");
-          core[0].inputOrder = "XYCZT";
+          core[0].dimensionOrder = "XYCZT";
           break;
         case 9:
           put("ScanType", "time series spline plane x-z");
-          core[0].inputOrder = "XYTCZ";
+          core[0].dimensionOrder = "XYTCZ";
           break;
         case 10:
           put("ScanType", "point mode");
-          core[0].inputOrder = "XYZCT";
+          core[0].dimensionOrder = "XYZCT";
           break;
         default:
           put("ScanType", "x-y-z scan");
-          core[0].inputOrder = "XYZCT";
+          core[0].dimensionOrder = "XYZCT";
       }
 
       store.setImageName("", 0);
@@ -350,8 +350,8 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       if (isRGB()) {
         // shuffle C to front of order string
-        core[0].inputOrder = getDimensionOrder().replaceAll("C", "");
-        core[0].inputOrder = getDimensionOrder().replaceAll("XY", "XYC");
+        core[0].dimensionOrder = getDimensionOrder().replaceAll("C", "");
+        core[0].dimensionOrder = getDimensionOrder().replaceAll("XY", "XYC");
       }
 
       put("DimensionZ", getSizeZ());

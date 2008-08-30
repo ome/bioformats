@@ -46,6 +46,8 @@ public class DimensionSwapper extends ReaderWrapper {
   /** Constructs a DimensionSwapper with the given reader. */
   public DimensionSwapper(IFormatReader r) { super(r); }
 
+  private String[] outputOrder;
+
   // -- DimensionSwapper API methods --
 
   /**
@@ -120,10 +122,10 @@ public class DimensionSwapper extends ReaderWrapper {
     core[series].sizeC = dims[newC];
     core[series].sizeT = dims[newT];
     //core.currentOrder[series] = order;
-    if (core[series].outputOrder == null) {
-      core[series].outputOrder = core[series].inputOrder;
+    if (outputOrder[series] == null) {
+      outputOrder[series] = core[series].dimensionOrder;
     }
-    core[series].inputOrder = order;
+    core[series].dimensionOrder = order;
 
     if (oldC != newC) {
       // C was overridden; clear the sub-C dimensional metadata
@@ -147,10 +149,21 @@ public class DimensionSwapper extends ReaderWrapper {
    */
   public void setOutputOrder(String outputOrder) {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    getCoreMetadata()[getSeries()].outputOrder = outputOrder;
+    this.outputOrder[getSeries()] = outputOrder;
+  }
+
+  public String getInputOrder() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata()[getSeries()].dimensionOrder;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+    outputOrder = new String[getSeriesCount()];
+  }
 
   /* @see loci.formats.IFormatReader#getSizeX() */
   public int getSizeX() {
@@ -185,15 +198,8 @@ public class DimensionSwapper extends ReaderWrapper {
   /* @see loci.formats.IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    String output = getCoreMetadata()[getSeries()].outputOrder;
-    if (output != null) return output;
+    if (outputOrder[getSeries()] != null) return outputOrder[getSeries()];
     return getInputOrder();
-  }
-
-  /* @see loci.formats.IFormatReader#getInputOrder() */
-  public String getInputOrder() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata()[getSeries()].inputOrder;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -246,6 +252,11 @@ public class DimensionSwapper extends ReaderWrapper {
     throws FormatException, IOException
   {
     return super.openThumbImage(reorder(no));
+  }
+
+  /* @see loci.formats.IFormatReader#getZCTCoords(int) */
+  public int[] getZCTCoords(int no) {
+    return FormatTools.getZCTCoords(this, no);
   }
 
   // -- Helper methods --

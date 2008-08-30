@@ -155,7 +155,7 @@ public class PCXReader extends FormatReader {
     core[0].rgb = false;
     core[0].imageCount = 1;
     core[0].pixelType = FormatTools.UINT8;
-    core[0].inputOrder = "XYCZT";
+    core[0].dimensionOrder = "XYCZT";
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

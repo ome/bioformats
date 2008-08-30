@@ -160,7 +160,7 @@ public class APLReader extends FormatReader {
 
       core[i].sizeZ = Integer.parseInt(row3[frames]);
       core[i].sizeT = 1;
-      core[i].inputOrder = "XYCZT";
+      core[i].dimensionOrder = "XYCZT";
 
       xmlFiles[i] = row2[path];
       tiffFiles[i] = row3[path];

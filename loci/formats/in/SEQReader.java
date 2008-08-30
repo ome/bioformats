@@ -113,7 +113,7 @@ public class SEQReader extends BaseTiffReader {
 
     if (isRGB() && getSizeC() != 3) core[0].sizeC *= 3;
 
-    core[0].inputOrder = "XY";
+    core[0].dimensionOrder = "XY";
 
     int maxNdx = 0, max = 0;
     int[] dims = {getSizeZ(), getSizeC(), getSizeT()};
@@ -126,18 +126,18 @@ public class SEQReader extends BaseTiffReader {
       }
     }
 
-    core[0].inputOrder += axes[maxNdx];
+    core[0].dimensionOrder += axes[maxNdx];
 
     if (maxNdx != 1) {
       if (getSizeC() > 1) {
-        core[0].inputOrder += "C";
-        core[0].inputOrder += (maxNdx == 0 ? axes[2] : axes[0]);
+        core[0].dimensionOrder += "C";
+        core[0].dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]);
       }
-      else core[0].inputOrder += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
+      else core[0].dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
     }
     else {
-      if (getSizeZ() > getSizeT()) core[0].inputOrder += "ZT";
-      else core[0].inputOrder += "TZ";
+      if (getSizeZ() > getSizeT()) core[0].dimensionOrder += "ZT";
+      else core[0].dimensionOrder += "TZ";
     }
   }
 

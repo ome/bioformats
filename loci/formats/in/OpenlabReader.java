@@ -557,7 +557,7 @@ public class OpenlabReader extends FormatReader {
 
       core[i].sizeT = 1;
       core[i].sizeZ = core[i].imageCount;
-      core[i].inputOrder = "XYCZT";
+      core[i].dimensionOrder = "XYCZT";
       core[i].littleEndian = false;
       core[i].falseColor = false;
       core[i].metadataComplete = true;

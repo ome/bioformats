@@ -237,7 +237,7 @@ public class MNGReader extends FormatReader {
       core[i].sizeT = core[i].imageCount;
       lengths[i] = (Vector) seriesLengths.get(keys[i]);
       core[i].sizeZ = 1;
-      core[i].inputOrder = "XYCZT";
+      core[i].dimensionOrder = "XYCZT";
       core[i].interleaved = false;
       core[i].metadataComplete = true;
       core[i].indexed = false;

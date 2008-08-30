@@ -134,7 +134,7 @@ public class LIMReader extends FormatReader {
     core[0].sizeT = 1;
     if (getSizeC() == 0) core[0].sizeC = 1;
     core[0].rgb = getSizeC() > 1;
-    core[0].inputOrder = "XYZCT";
+    core[0].dimensionOrder = "XYZCT";
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].interleaved = true;

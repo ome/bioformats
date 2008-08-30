@@ -313,7 +313,7 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<numDatasets; i++) {
       core[i] = new CoreMetadata();
       core[i].orderCertain = true;
-      core[i].inputOrder = "XYCZT";
+      core[i].dimensionOrder = "XYCZT";
       core[i].sizeX = ((Integer) widths.get(i)).intValue();
       core[i].sizeY = ((Integer) heights.get(i)).intValue();
       core[i].sizeZ = ((Integer) zs.get(i)).intValue();

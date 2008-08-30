@@ -168,7 +168,7 @@ public class LegacyND2Reader extends FormatReader {
         if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
         core[i].interleaved = true;
         core[i].littleEndian = true;
-        core[i].inputOrder = "XYCZT";
+        core[i].dimensionOrder = "XYCZT";
         core[i].indexed = false;
         core[i].falseColor = false;
       }

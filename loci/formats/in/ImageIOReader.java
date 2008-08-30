@@ -108,7 +108,7 @@ public abstract class ImageIOReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeC = isRGB() ? 3 : 1;
     core[0].sizeT = 1;
-    core[0].inputOrder = "XYCZT";
+    core[0].dimensionOrder = "XYCZT";
     core[0].pixelType = ImageTools.getPixelType(img);
     core[0].interleaved = false;
     core[0].littleEndian = false;

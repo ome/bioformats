@@ -662,7 +662,7 @@ public class BioRadReader extends FormatReader {
 
     // populate Pixels
 
-    core[0].inputOrder = "XYCTZ";
+    core[0].dimensionOrder = "XYCTZ";
 
     if (picFiles.length > 0) {
       core[0].imageCount = npic * picFiles.length;

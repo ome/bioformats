@@ -298,7 +298,7 @@ public class OMETiffReader extends FormatReader {
           core[s].pixelType = FormatTools.pixelTypeFromString(
             meta.getPixelsPixelType(i, p));
           core[s].imageCount = num;
-          core[s].inputOrder = meta.getPixelsDimensionOrder(i, p);
+          core[s].dimensionOrder = meta.getPixelsDimensionOrder(i, p);
           core[s].orderCertain = true;
           int photo = TiffTools.getPhotometricInterpretation(firstIFD);
           core[s].rgb = samples > 1 || photo == TiffTools.RGB;

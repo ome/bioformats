@@ -215,7 +215,7 @@ public class PictReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeC = 3;
     core[0].sizeT = 1;
-    core[0].inputOrder = "XYCZT";
+    core[0].dimensionOrder = "XYCZT";
     core[0].rgb = true;
     core[0].imageCount = 1;
     core[0].indexed = false;

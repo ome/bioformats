@@ -337,7 +337,7 @@ public class GIFReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
     core[0].sizeT = getImageCount();
-    core[0].inputOrder = "XYCTZ";
+    core[0].dimensionOrder = "XYCTZ";
     core[0].rgb = false;
     core[0].littleEndian = true;
     core[0].interleaved = true;

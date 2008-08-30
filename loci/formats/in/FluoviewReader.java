@@ -230,7 +230,7 @@ public class FluoviewReader extends BaseTiffReader {
     // calculate the dimension order and axis sizes
 
     core[0].sizeZ = core[0].sizeC = core[0].sizeT = 1;
-    core[0].inputOrder = "XY";
+    core[0].dimensionOrder = "XY";
     core[0].metadataComplete = true;
 
     for (int i=0; i<10; i++) {
@@ -252,29 +252,29 @@ public class FluoviewReader extends BaseTiffReader {
       else if (name.equals("z") || name.equals("event")) {
         core[0].sizeZ *= size;
         if (getDimensionOrder().indexOf("Z") == -1) {
-          core[0].inputOrder += "Z";
+          core[0].dimensionOrder += "Z";
         }
         voxelZ = voxel;
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         core[0].sizeC *= size;
         if (getDimensionOrder().indexOf("C") == -1) {
-          core[0].inputOrder += "C";
+          core[0].dimensionOrder += "C";
         }
         voxelC = voxel;
       }
       else {
         core[0].sizeT *= size;
         if (getDimensionOrder().indexOf("T") == -1) {
-          core[0].inputOrder += "T";
+          core[0].dimensionOrder += "T";
         }
         voxelT = voxel;
       }
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) core[0].inputOrder += "Z";
-    if (getDimensionOrder().indexOf("T") == -1) core[0].inputOrder += "T";
-    if (getDimensionOrder().indexOf("C") == -1) core[0].inputOrder += "C";
+    if (getDimensionOrder().indexOf("Z") == -1) core[0].dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("T") == -1) core[0].dimensionOrder += "T";
+    if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
 
     core[0].imageCount = ifds.length;
     if (getSizeZ() > ifds.length) core[0].sizeZ = ifds.length;

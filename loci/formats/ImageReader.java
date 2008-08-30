@@ -305,12 +305,6 @@ public class ImageReader implements IFormatReader {
     return getReader().getDimensionOrder();
   }
 
-  /* @see IFormatReader#getInputOrder() */
-  public String getInputOrder() {
-    FormatTools.assertId(currentId, true, 2);
-    return getReader().getInputOrder();
-  }
-
   /* @see IFormatReader#isOrderCertain() */
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 2);
