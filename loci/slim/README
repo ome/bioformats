@@ -1,0 +1,29 @@
+Implementing a new CurveFitter:
+
+The basic idea behind implementing a new curve fitter is simple. The caller of
+your curve fitter will set, via the setData(int[] data) method, a set of data
+meant to give y values for a curve over time. The x (or t) values for the curve
+are assumed to be equidistant.
+
+The caller should then call the estimate() function. This function is meant
+to quickly give a (probably bad) estimate of the curve. estimate() should
+set the curveEstimate array. curveData has 2 dimensions, first component, 
+and the second is always size 3, for a, b, and c. Curves are assumed to fit to
+a function ae^-bt + c. There may be multiple a and b for multicomponent fit
+(ie: a1e^-b1t + a2e^-b2t + c). So, for example, curveData[0][0] will contain
+a1.
+
+Once estimate has been called, the caller will repeatedly call iterate().
+iterate() should, in some way, attempt to improve the quality of the 
+curveEstimate array. This will be called until the curve estimate is of
+sufficient quality (generally when the chi squared error is low enough). 
+
+In order to implement a curve fitter, you must implement iterate() and
+estimate(), as outlined above, and the appropriate accessor methods as
+outlined in the CurveFitter abstract class. estimate() and iterate() are the
+tricky methods, everything else should be self-explanatory.
+
+If you have any questions or concerns, please feel free to contact me at
+ekjellman at gmail dot com.
+
+Good luck in implementing new and interesting curve fitters!
