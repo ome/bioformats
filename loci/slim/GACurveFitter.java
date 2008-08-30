@@ -76,9 +76,6 @@ public class GACurveFitter extends CurveFitter {
 
   // -- CurveFitter API methods --
 
-  // TODO: The set methods do not create internal copies of the passed
-  //       arrays. Should they?
-
   /**
    * iterate() runs through one iteration of whatever curve fitting
    * technique this curve fitter uses. This will generally update the
@@ -87,7 +84,6 @@ public class GACurveFitter extends CurveFitter {
   public void iterate() {
     if (currentRCSE == Double.MAX_VALUE) estimate();
 
-    // TODO: Move these out, reuse them. Synchronized?
     double[][][] newGeneration = new double[SPECIMENS][components][3];
     Random r = new Random();
 
@@ -136,6 +132,7 @@ public class GACurveFitter extends CurveFitter {
           }
         }
         double minfluence = r.nextDouble();
+        // Combine the mother and father in random percentages
         for (int j = 0; j < components; j++) {
           for (int k = 0; k < 3; k++) {
             newGeneration[q][j][k] =
@@ -183,12 +180,6 @@ public class GACurveFitter extends CurveFitter {
         }
       }
     }
-    /*
-    System.out.println("RCSE: " + currentRCSE);
-    for(int j = 0; j < components; j++) {
-      System.out.println("a: " + curveEstimate[j][0] + " b: " + curveEstimate[j][1] + " c: " + curveEstimate[j][2]);
-    }
-    */
   }
 
   /**
@@ -225,32 +216,22 @@ public class GACurveFitter extends CurveFitter {
 
   // Initializes the curve fitter with a starting curve estimate.
   public void estimate() {
-    /*
-    System.out.println("****** DATA ******");
-    for(int i = 0; i < curveData.length; i++) {
-      System.out.println("i: " + i + "  data: " + curveData[i]);
-    }
-    */
-    //try { Thread.sleep(1000); } catch(Exception e) {}
+    // For single component, we're just going to take guesses along the
+    // curve as to what the exponent is, and use that for our estimate.
     if (components >= 1) {
-      // TODO: Estimate c, factor it in below.
-
+      // Guess that c is the minimum data value.
       double guessC = Double.MAX_VALUE;
       for (int i = firstindex; i < curveData.length && i < lastindex; i++) {
         if (curveData[i] < guessC) guessC = curveData[i];
       }
-
-      //double guessC = 0.0d;
 
       // First, get a guess for the exponent.
       // The exponent should be "constant", but we'd also like to weight
       // the area at the beginning of the curve more heavily.
       double num = 0.0;
       double den = 0.0;
-      //for (int i = 1; i < curveData.length; i++) {
       for (int i = firstindex + 1; i < curveData.length && i < lastindex; i++) {
         if (curveData[i] > guessC && curveData[i-1] > guessC) {
-          //double time = curveData[i][0] - curveData[i-1][0];
           double time = 1.0d;
           double factor =
             (curveData[i] - guessC) / (curveData[i-1] - guessC);
@@ -286,8 +267,11 @@ public class GACurveFitter extends CurveFitter {
     }
     
     if (components == 2) {
+      // For 2 components, we're going to guess what the first exponent is
+      // based on the front end of the curve, which is usually the higher
+      // exponential. Then, we'll subtract that out, and get a guess for
+      // the second.
       double guessC = Double.MAX_VALUE;
-      //for(int i = 0; i < curveData.length; i++) {
       for (int i = firstindex; i < curveData.length && i < lastindex; i++) {
         if(curveData[i] < guessC) guessC = curveData[i];
       }
@@ -300,7 +284,6 @@ public class GACurveFitter extends CurveFitter {
       double low = Double.MAX_VALUE;
       for (int i = firstindex + 3; i < lastindex && i < curveData.length; i++) {
         if (curveData[i] > guessC && curveData[i-3] > guessC + 10) {
-          //double time = curveData[i][0] - curveData[i-3][0];
           double time = 3.0d;
           double factor =
             (curveData[i] - guessC) / (curveData[i-3] - guessC);
@@ -324,10 +307,6 @@ public class GACurveFitter extends CurveFitter {
           if (guessA < lowA) lowA = guessA;
         }
       }
-      /*
-      if (10.0 > lowA) lowA = 10.0;
-      if (20.0 > highA) highA = 20.0;
-      */
       curveEstimate[0][0] = highA - lowA;
       curveEstimate[1][0] = lowA;
       // It seems like the low estimates are pretty good, usually.
@@ -392,7 +371,6 @@ public class GACurveFitter extends CurveFitter {
     for(int i = 0; i < curveEstimate.length; i++) {
       if(curveEstimate[i][1] < 0) {
         doNegativeEstimation = true;
-        //System.out.println("Negative factor " + curveEstimate[i][1] + " found.");
       }
     }
     if(doNegativeEstimation) {
@@ -413,7 +391,6 @@ public class GACurveFitter extends CurveFitter {
           minData = curveData[i];
         }
       }
-      //System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
       // If we have valid min and max data, perform the "estimate"
       double expguess = -1;
       
@@ -443,8 +420,6 @@ public class GACurveFitter extends CurveFitter {
         // If the guess is still somehow negative (example, ascending curve), punt;
         expguess = 1;
       }
-      //System.out.println("Estimating: " + expguess);
-      //System.out.println("maxData: " + maxData + "  firstindex: " + firstindex + "  data: " + curveData[firstindex]);
       if(components == 1) {
         curveEstimate[0][0] = maxData - minData;
         curveEstimate[0][1] = expguess;
@@ -502,10 +477,12 @@ public class GACurveFitter extends CurveFitter {
     currentRCSE = getReducedChiSquaredError();
   }
 
+  // Set the beginning of the curve
   public void setFirst(int index) {
     firstindex = index;
   }
 
+  // Set the end of the curve
   public void setLast(int index) {
     lastindex = index;
   }

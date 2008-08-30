@@ -43,7 +43,8 @@ public abstract class CurveFitter {
   /**
    * iterate() runs through one iteration of whatever curve fitting
    * technique this curve fitter uses. This will generally update the
-   * information returned by getCurve and getChiSquaredError.
+   * information returned by getCurve and getChiSquaredError. 
+   * Specifically, it will usually update curveEstimate.
    */
   public abstract void iterate();
 
@@ -65,6 +66,7 @@ public abstract class CurveFitter {
     return total;
   } 
 
+  /** Returns the Chi Squared Error of a given curve estimate */
   public double getChiSquaredError(double[][] estCurve) {
     double total = 0.0d;
     double[] expected = getEstimates(curveData, estCurve);
@@ -98,6 +100,9 @@ public abstract class CurveFitter {
     return Double.MAX_VALUE;
   } 
   
+  /** Returns the Reduced Chi Squared Error of a given curve estimate
+   *  See getReducedChiSquaredError() for details.
+   */
   public double getReducedChiSquaredError(double[][] estCurve) {
     int df = 1 + (estCurve.length * 2);
     int datapoints = curveData.length;
@@ -107,6 +112,7 @@ public abstract class CurveFitter {
     return Double.MAX_VALUE;
   }
 
+  /** Returns expected values for a given curve estimate. */
   public double[] getEstimates(int[] data, double[][] estimate) {
     double[] toreturn = new double[data.length];
     for (int i = 0; i < toreturn.length; i++) {
@@ -154,7 +160,6 @@ public abstract class CurveFitter {
    * Return size is expected to be [numExponentials][3]
    * For each exponential of the form ae^-bt+c,
    * [][0] is a, [1] is b, [2] is c.
-   * TODO: Make multiple exponentials a class, to remove multi-c stupidity
    */
   public abstract double[][] getCurve();
 
@@ -165,7 +170,9 @@ public abstract class CurveFitter {
    */
   public abstract void setCurve(double[][] curve);
 
+  /** Set the first index of the data that is the actual curve */
   public abstract void setFirst(int firstindex);
 
+  /** Set the last index of the data that is the actual curve */
   public abstract void setLast(int lastindex);
 }

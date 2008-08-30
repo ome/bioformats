@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.slim;
 
 /**
- * TODO
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/Renderer.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/slim/Renderer.java">SVN</a></dd></dl>
@@ -48,16 +46,29 @@ public abstract class Renderer implements Runnable {
   protected CurveCollection curveData;
   protected int numExponentials;
 
+  /**
+   * The renderer's run method should use the curve collection and somehow
+   * continually update the image array returned by getImage()
+   * The method for this is left to the sub class. The idea is that the
+   * image should get better the longer it is run, so some sort of iterative
+   * approach is best.
+   * The run method should set alive to true at the beginning, and run until
+   * stop is called (and alive is set to false)
+   **/
   public abstract void run();
 
+  /** Called to stop the run() method. */
   public void stop() {
     alive = false;
   }
 
+  /** Constructor. Get the curve collection to generate the image from */
   public Renderer(CurveCollection cc) {
     curveData = cc;
   }
 
+  // Accessor methods
+  
   public int getCurrentIterations() {
     return currentIterations;
   }
@@ -102,15 +113,19 @@ public abstract class Renderer implements Runnable {
     return maxRCSE;
   }
 
+  /** Return the current rendered image */
   public abstract double[][] getImage();
 
   public void setComponentCount(int numExp) {
     numExponentials = numExp;
   }
 
+  /** Get the X coordinate currently being improved */
   public abstract int getImageX();
 
+  /** Get the Y coordinate currently being improved */
   public abstract int getImageY();
 
+  /** Get the current worst RCSE for any curve in the collection */
   public abstract double getWorstRCSE();
 }
