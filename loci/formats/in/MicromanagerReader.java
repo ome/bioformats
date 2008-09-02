@@ -53,6 +53,9 @@ public class MicromanagerReader extends FormatReader {
 
   private String metadataFile;
 
+  private String base;
+  private String[] channels;
+
   // -- Constructor --
 
   /** Constructs a new Micromanager reader. */
@@ -105,7 +108,9 @@ public class MicromanagerReader extends FormatReader {
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    tiffReader.setId((String) tiffs.get(no));
+    int[] coords = getZCTCoords(no);
+    tiffReader.setId(base + coords[0] + "_" + channels[coords[1]] + "_" +
+      coords[2] + ".tif");
     return tiffReader.openBytes(0, buf, x, y, w, h);
   }
 
@@ -165,6 +170,10 @@ public class MicromanagerReader extends FormatReader {
       pos++;
     }
 
+    base = (String) tiffs.get(0);
+    base = base.substring(0, base.indexOf("_",
+      base.lastIndexOf(File.separator)) + 1);
+
     // now parse the rest of the metadata
 
     // metadata.txt looks something like this:
@@ -221,6 +230,14 @@ public class MicromanagerReader extends FormatReader {
         value = value.substring(0, value.length() - 1);
         addMeta(key, value);
         if (key.equals("Channels")) core[0].sizeC = Integer.parseInt(value);
+        else if (key.equals("ChNames")) {
+          StringTokenizer t = new StringTokenizer(value, ",");
+          int nTokens = t.countTokens();
+          channels = new String[nTokens];
+          for (int q=0; q<nTokens; q++) {
+            channels[q] = t.nextToken().replaceAll("\"", "").trim();
+          }
+        }
       }
 
       if (token.trim().startsWith("\"FrameKey")) {
