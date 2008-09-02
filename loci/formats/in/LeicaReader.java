@@ -58,9 +58,27 @@ public class LeicaReader extends FormatReader {
   private static final int EXPERIMENT = 60;
   private static final int LUTDESC = 70;
 
+  private static final Hashtable CHANNEL_PRIORITIES = createChannelPriorities();
+
+  private static Hashtable createChannelPriorities() {
+    Hashtable h = new Hashtable();
+
+    h.put("red", new Integer(0));
+    h.put("green", new Integer(1));
+    h.put("blue", new Integer(2));
+    h.put("cyan", new Integer(3));
+    h.put("magenta", new Integer(4));
+    h.put("yellow", new Integer(5));
+    h.put("black", new Integer(6));
+    h.put("gray", new Integer(7));
+    h.put("", new Integer(8));
+
+    return h;
+  }
+
   // -- Static fields --
 
-  private Hashtable dimensionNames = makeDimensionTable();
+  private static Hashtable dimensionNames = makeDimensionTable();
 
   // -- Fields --
 
@@ -83,6 +101,8 @@ public class LeicaReader extends FormatReader {
 
   private Vector seriesNames;
   private int lastPlane = 0;
+
+  private int[][] channelMap;
 
   // -- Constructor --
 
@@ -151,6 +171,13 @@ public class LeicaReader extends FormatReader {
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
+
+    if (!isRGB()) {
+      int[] pos = getZCTCoords(no);
+      pos[1] = indexOf(pos[1], channelMap[series]);
+      no = getIndex(pos[0], pos[1], pos[2]);
+    }
+
     lastPlane = no;
     tiff.setId((String) files[series].get(no));
     return tiff.openBytes(0, buf, x, y, w, h);
@@ -183,6 +210,7 @@ public class LeicaReader extends FormatReader {
       seriesNames = null;
       numSeries = 0;
       lastPlane = 0;
+      channelMap = null;
     }
   }
 
@@ -308,6 +336,7 @@ public class LeicaReader extends FormatReader {
     for (int i=0; i<numSeries; i++) {
       core[i] = new CoreMetadata();
     }
+    channelMap = new int[numSeries][];
 
     files = new Vector[numSeries];
 
@@ -475,6 +504,13 @@ public class LeicaReader extends FormatReader {
       while (!valid[index]) index++;
       core[i].imageCount = count[index];
       files[i] = tempFiles[index];
+      Object[] sorted = files[i].toArray();
+      Arrays.sort(sorted);
+      files[i].clear();
+      for (int q=0; q<sorted.length; q++) {
+        files[i].add(sorted[q]);
+      }
+
       headerIFDs[i] = tempIFDs[index];
       index++;
     }
@@ -744,9 +780,12 @@ public class LeicaReader extends FormatReader {
         addMeta("Number of LUT channels", new Integer(nChannels));
         addMeta("ID of colored dimension", new Integer(stream.readInt()));
 
+        channelMap[i] = new int[nChannels];
+        String[] luts = new String[nChannels];
+
         for (int j=0; j<nChannels; j++) {
           int value = stream.readInt();
-          String prefix = "LUT Channel " + j;
+          String prefix = "Series " + i + " LUT Channel " + j;
           addMeta(prefix + " version", new Integer(value));
 
           int invert = stream.read();
@@ -760,10 +799,38 @@ public class LeicaReader extends FormatReader {
           addMeta(prefix + " filename", getString(stream, length));
           length = stream.readInt();
 
-          addMeta(prefix + " name", getString(stream, length));
+          luts[j] = getString(stream, length);
+          addMeta(prefix + " name", luts[j]);
+          luts[j] = luts[j].toLowerCase();
           stream.skipBytes(8);
         }
         stream.close();
+
+        // finish setting up channel mapping
+        for (int q=0; q<channelMap[i].length; q++) {
+          if (!CHANNEL_PRIORITIES.containsKey(luts[q])) luts[q] = "";
+          channelMap[i][q] =
+            ((Integer) CHANNEL_PRIORITIES.get(luts[q])).intValue();
+        }
+
+        int[] sorted = new int[channelMap[i].length];
+        Arrays.fill(sorted, -1);
+
+        for (int q=0; q<sorted.length; q++) {
+          int min = Integer.MAX_VALUE;
+          int minIndex = -1;
+          for (int n=0; n<channelMap[i].length; n++) {
+            if (channelMap[i][n] < min && !containsValue(sorted, n)) {
+              min = channelMap[i][n];
+              minIndex = n;
+            }
+          }
+          sorted[q] = minIndex;
+        }
+
+        for (int q=0; q<channelMap[i].length; q++) {
+          channelMap[i][sorted[q]] = q;
+        }
       }
 
       core[i].orderCertain = true;
@@ -841,6 +908,17 @@ public class LeicaReader extends FormatReader {
     throws IOException
   {
     return DataTools.stripString(stream.readString(len));
+  }
+
+  private boolean containsValue(int[] array, int value) {
+    return indexOf(value, array) != -1;
+  }
+
+  private int indexOf(int value, int[] array) {
+    for (int i=0; i<array.length; i++) {
+      if (array[i] == value) return i;
+    }
+    return -1;
   }
 
   private static Hashtable makeDimensionTable() {
