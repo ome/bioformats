@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -43,6 +44,11 @@ public class DeltavisionReader extends FormatReader {
 
   private static final short LITTLE_ENDIAN = -16224;
   private static final int HEADER_LENGTH = 1024;
+
+  private static final String[] IMAGE_TYPES = new String[] {
+    "normal", "Tilt-series", "Stereo tilt-series", "Averaged images",
+    "Averaged stereo pairs"
+  };
 
   // -- Fields --
 
@@ -129,21 +135,16 @@ public class DeltavisionReader extends FormatReader {
     core[0].littleEndian = in.readShort() == LITTLE_ENDIAN;
 
     in.order(isLittleEndian());
-    in.seek(8);
-
-    core[0].imageCount = in.readInt();
-
-    in.seek(92);
-    extSize = in.readInt();
-
     in.seek(0);
+
     core[0].sizeX = in.readInt();
     core[0].sizeY = in.readInt();
+    core[0].imageCount = in.readInt();
+    int filePixelType = in.readInt();
 
     addMeta("ImageWidth", new Integer(getSizeX()));
     addMeta("ImageHeight", new Integer(getSizeY()));
-    addMeta("NumberOfImages", new Integer(in.readInt()));
-    int filePixelType = in.readInt();
+    addMeta("NumberOfImages", new Integer(getImageCount()));
     String pixel;
 
     switch (filePixelType) {
@@ -197,64 +198,37 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Column axis sequence", new Integer(in.readInt()));
     addMeta("Row axis sequence", new Integer(in.readInt()));
     addMeta("Section axis sequence", new Integer(in.readInt()));
-    Float wave1Min = new Float(in.readFloat());
-    addMeta("Wavelength 1 min. intensity", wave1Min);
-    Float wave1Max = new Float(in.readFloat());
-    addMeta("Wavelength 1 max. intensity", wave1Max);
+    addMeta("Wavelength 1 min. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 1 max. intensity", new Float(in.readFloat()));
     addMeta("Wavelength 1 mean intensity", new Float(in.readFloat()));
     addMeta("Space group number", new Integer(in.readInt()));
 
-    in.seek(132);
+    extSize = in.readInt();
+
+    in.seek(128);
+    numIntsPerSection = in.readShort();
+    numFloatsPerSection = in.readShort();
+
     addMeta("Number of Sub-resolution sets", new Integer(in.readShort()));
     addMeta("Z axis reduction quotient", new Integer(in.readShort()));
-    Float wave2Min = new Float(in.readFloat());
-    addMeta("Wavelength 2 min. intensity", wave2Min);
-    Float wave2Max = new Float(in.readFloat());
-    addMeta("Wavelength 2 max. intensity", wave2Max);
-
-    Float wave3Min = new Float(in.readFloat());
-    addMeta("Wavelength 3 min. intensity", wave3Min);
-
-    Float wave3Max = new Float(in.readFloat());
-    addMeta("Wavelength 3 max. intensity", wave3Max);
-
-    Float wave4Min = new Float(in.readFloat());
-    addMeta("Wavelength 4 min. intensity", wave4Min);
-
-    Float wave4Max = new Float(in.readFloat());
-    addMeta("Wavelength 4 max. intensity", wave4Max);
+    addMeta("Wavelength 2 min. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 2 max. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 3 min. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 3 max. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 4 min. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 4 max. intensity", new Float(in.readFloat()));
 
     int type = in.readShort();
-    String imageType;
-    switch (type) {
-      case 0:
-        imageType = "normal";
-        break;
-      case 1:
-        imageType = "Tilt-series";
-        break;
-      case 2:
-        imageType = "Stereo tilt-series";
-        break;
-      case 3:
-        imageType = "Averaged images";
-        break;
-      case 4:
-        imageType = "Averaged stereo pairs";
-        break;
-      default:
-        imageType = "unknown";
-    }
+    String imageType =
+      type < IMAGE_TYPES.length ? IMAGE_TYPES[type] : "unknown";
 
     addMeta("Image Type", imageType);
-    addMeta("Lens ID Number", new Integer(in.readShort()));
+    int lensID = in.readShort();
+    addMeta("Lens ID Number", new Integer(lensID));
 
     in.seek(172);
-    Float wave5Min = new Float(in.readFloat());
-    addMeta("Wavelength 5 min. intensity", wave5Min);
-
-    Float wave5Max = new Float(in.readFloat());
-    addMeta("Wavelength 5 max. intensity", wave5Max);
+    addMeta("Wavelength 5 min. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 5 max. intensity", new Float(in.readFloat()));
 
     core[0].sizeT = in.readShort();
     addMeta("Number of timepoints", new Integer(getSizeT()));
@@ -298,13 +272,11 @@ public class DeltavisionReader extends FormatReader {
     core[0].falseColor = false;
 
     short[] waves = new short[5];
-    for (int i=0; i<waves.length; i++) waves[i] = in.readShort();
+    for (int i=0; i<waves.length; i++) {
+      waves[i] = in.readShort();
+      addMeta("Wavelength " + (i + 1) + " (in nm)", new Integer(waves[i]));
+    }
 
-    addMeta("Wavelength 1 (in nm)", new Integer(waves[0]));
-    addMeta("Wavelength 2 (in nm)", new Integer(waves[1]));
-    addMeta("Wavelength 3 (in nm)", new Integer(waves[2]));
-    addMeta("Wavelength 4 (in nm)", new Integer(waves[3]));
-    addMeta("Wavelength 5 (in nm)", new Integer(waves[4]));
     addMeta("X origin (in um)", new Float(in.readFloat()));
     addMeta("Y origin (in um)", new Float(in.readFloat()));
     addMeta("Z origin (in um)", new Float(in.readFloat()));
@@ -314,8 +286,9 @@ public class DeltavisionReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
+    store.setObjectiveID(String.valueOf(lensID), 0, 0);
 
-    in.seek(224);
+    in.skipBytes(4);
 
     String title = null;
     for (int i=1; i<=10; i++) {
@@ -328,9 +301,6 @@ public class DeltavisionReader extends FormatReader {
 
     status("Reading extended header");
 
-    in.seek(128);
-    numIntsPerSection = in.readShort();
-    numFloatsPerSection = in.readShort();
     setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
     extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
 
@@ -346,7 +316,6 @@ public class DeltavisionReader extends FormatReader {
 
     // Run through every image and fill in the
     // Extended Header information array for that image
-    int p = 0;
     int offset = HEADER_LENGTH + numIntsPerSection * 4;
     for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
@@ -357,34 +326,35 @@ public class DeltavisionReader extends FormatReader {
       extHdrFields[z][w][t] = new DVExtHdrFields(in);
 
       // plane timing
-      store.setPlaneTheZ(new Integer(z), 0, 0, p);
-      store.setPlaneTheC(new Integer(w), 0, 0, p);
-      store.setPlaneTheT(new Integer(t), 0, 0, p);
+      store.setPlaneTheZ(new Integer(z), 0, 0, i);
+      store.setPlaneTheC(new Integer(w), 0, 0, i);
+      store.setPlaneTheT(new Integer(t), 0, 0, i);
       store.setPlaneTimingDeltaT(
-        new Float(extHdrFields[z][w][t].getTimeStampSeconds()), 0, 0, p);
+        new Float(extHdrFields[z][w][t].getTimeStampSeconds()), 0, 0, i);
       store.setPlaneTimingExposureTime(
-        new Float(extHdrFields[z][w][t].getExpTime()), 0, 0, p);
+        new Float(extHdrFields[z][w][t].getExpTime()), 0, 0, i);
 
       // stage position
       store.setStagePositionPositionX(
-        new Float(extHdrFields[z][w][t].getStageXCoord()), 0, 0, p);
+        new Float(extHdrFields[z][w][t].getStageXCoord()), 0, 0, i);
       store.setStagePositionPositionY(
-        new Float(extHdrFields[z][w][t].getStageYCoord()), 0, 0, p);
+        new Float(extHdrFields[z][w][t].getStageYCoord()), 0, 0, i);
       store.setStagePositionPositionZ(
-        new Float(extHdrFields[z][w][t].getStageZCoord()), 0, 0, p);
+        new Float(extHdrFields[z][w][t].getStageZCoord()), 0, 0, i);
 
-      p++;
+      if (z == 0 && t == 0) {
+        store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
+        store.setLogicalChannelExWave(
+          new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
+        store.setLogicalChannelNdFilter(
+          new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
+      }
     }
 
     status("Populating metadata");
 
-    for (int w=0; w<getSizeC(); w++) {
-      store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
-      store.setLogicalChannelExWave(
-        new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
-      store.setLogicalChannelNdFilter(
-        new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
-    }
+    // if matching log file exists, extract key/value pairs from it
+    parseLogFile(store);
   }
 
   // -- Helper methods --
@@ -425,8 +395,6 @@ public class DeltavisionReader extends FormatReader {
     }
   }
 
-  // -- DeltavisionReader API methods --
-
   /**
    * Given any specific Z, W, and T of a plane, determine the totalOffset from
    * the start of the extended header.
@@ -434,20 +402,110 @@ public class DeltavisionReader extends FormatReader {
    * @param currentW
    * @param currentT
    */
-  public int getTotalOffset(int currentZ, int currentW, int currentT) {
+  private int getTotalOffset(int currentZ, int currentW, int currentT) {
     return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
   }
 
-  /**
-   * This method returns the a plane number from when given a Z, W
-   * and T offsets.
-   * @param currentZ
-   * @param currentW
-   * @param currentT
-   */
-  public int getPlaneNumber(int currentZ, int currentW, int currentT) {
-    int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
-    return getTotalOffset(currentZ, currentW, currentT) / smallOffset;
+  /** Extract metadata from associated log file, if it exists. */
+  private void parseLogFile(MetadataStore store) throws IOException {
+    // see if log file exists
+    String logFile = getCurrentFile() + ".log";
+    if (!new Location(logFile).exists()) return;
+
+    RandomAccessStream s = new RandomAccessStream(logFile);
+
+    String line, key, value = "", prefix = "";
+
+    int currentImage = 0;
+
+    while (s.getFilePointer() < s.length() - 1) {
+      line = s.readLine().trim();
+      int colon = line.indexOf(":");
+      if (colon != -1) {
+        if (line.startsWith("Created")) {
+          key = "Created";
+          value = line.substring(7).trim();
+        }
+        else {
+          key = line.substring(0, colon).trim();
+          value = line.substring(colon + 1).trim();
+        }
+        if (value.equals("") && !key.equals("")) prefix = key;
+        addMeta(prefix + " " + key, value);
+
+        // Objective properties
+        if (key.equals("Objective")) {
+          // assume first word is the manufacturer's name
+          String manufacturer = value.substring(0, value.indexOf(" "));
+          String model = value.substring(value.indexOf(" ") + 1);
+
+          store.setObjectiveManufacturer(manufacturer, 0, 0);
+          store.setObjectiveModel(model, 0, 0);
+        }
+        else if (key.equals("Lens ID")) {
+          store.setObjectiveID(value, 0, 0);
+        }
+        //else if (key.equals("Aux Magn")) { }
+        // Image properties
+        else if (key.equals("Pixel Size")) {
+          StringTokenizer t = new StringTokenizer(value, " ");
+          Float x = new Float(t.nextToken().trim());
+          Float y = new Float(t.nextToken().trim());
+          Float z = new Float(t.nextToken().trim());
+
+          store.setDimensionsPhysicalSizeX(x, 0, 0);
+          store.setDimensionsPhysicalSizeY(y, 0, 0);
+          store.setDimensionsPhysicalSizeZ(z, 0, 0);
+        }
+        // Camera properties
+        else if (key.equals("Type")) {
+          store.setDetectorModel(value, 0, 0);
+        }
+        else if (key.equals("Gain")) {
+          value = value.replaceAll("X", "");
+          store.setDetectorGain(new Float(value), 0, 0);
+        }
+        //else if (key.equals("Speed")) { }
+        //else if (key.equals("Temp Setting")) { }
+        // Plane properties
+        //else if (key.equals("Time")) { }
+        else if (key.equals("Time Point")) {
+          Float time = new Float(value.substring(0, value.indexOf(" ")));
+          store.setPlaneTimingDeltaT(time, 0, 0, currentImage);
+        }
+        //else if (key.equals("Intensity")) { }
+        else if (key.equals("Exposure time")) {
+          Float time = new Float(value.substring(0, value.indexOf(" ")));
+          store.setPlaneTimingExposureTime(time, 0, 0, currentImage);
+        }
+        //else if (key.equals("EX filter")) { }
+        //else if (key.equals("EM filter")) { }
+        else if (key.equals("ND filter")) {
+          try {
+            Float nd = new Float(value);
+            int cIndex = getZCTCoords(currentImage)[1];
+            store.setLogicalChannelNdFilter(nd, 0, cIndex);
+          }
+          catch (NumberFormatException exc) { }
+        }
+        else if (key.equals("Stage coordinates")) {
+          value = value.substring(1, value.length() - 1);
+          StringTokenizer t = new StringTokenizer(value, ",");
+          Float x = new Float(t.nextToken().trim());
+          Float y = new Float(t.nextToken().trim());
+          Float z = new Float(t.nextToken().trim());
+
+          store.setStagePositionPositionX(x, 0, 0, currentImage);
+          store.setStagePositionPositionY(y, 0, 0, currentImage);
+          store.setStagePositionPositionZ(z, 0, 0, currentImage);
+
+          currentImage++;
+        }
+      }
+      else if (line.startsWith("Image")) prefix = line;
+    }
+
+    s.close();
   }
 
   // -- Helper classes --
