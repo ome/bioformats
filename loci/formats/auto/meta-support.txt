@@ -100,6 +100,12 @@ LogicalChannel.EmWave = Yes
 LogicalChannel.ExWave = Yes
 LogicalChannel.NdFilter = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Objective.ID = Yes
+Objective.Manufacturer = Yes
+Objective.Model = Yes
+StagePosition = Yes
+Detector.Model = Yes
+Detector.Gain = Yes
 
 [DicomReader]
 Pixels = Yes since r920

@@ -9,12 +9,14 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 151 fields documented below:
-  * The file format itself supports 25 of them (16%).
-  * Of those, Bio-Formats fully or partially converts 25 (100%).
+  * The file format itself supports 30 of them (19%).
+  * Of those, Bio-Formats fully or partially converts 30 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
 Bio-Formats Deltavision format reader:
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Gain
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeZ
@@ -23,6 +25,9 @@ Bio-Formats Deltavision format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: ExWave
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: NdFilter
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Manufacturer
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: BigEndian - since r638
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: DimensionOrder - since r638
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Pixels]: ID - since r638
@@ -40,7 +45,7 @@ Bio-Formats Deltavision format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_StagePosition StagePosition]: PositionX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_StagePosition StagePosition]: PositionY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_StagePosition StagePosition]: PositionZ
-=== Total supported: 25 ===
+=== Total supported: 30 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the Deltavision
@@ -49,10 +54,8 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Arc Arc]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_ChannelComponent ChannelComponent]: ColorDomain
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Gain
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Manufacturer
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Offset
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: SerialNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Type
@@ -114,11 +117,8 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: SizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: CalibratedMagnification
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Correction
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Immersion
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: LensNA
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Manufacturer
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: NominalMagnification
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: SerialNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: WorkingDistance
@@ -172,4 +172,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: PosX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: PosY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_WellSample WellSample]: Timepoint
-=== Total unknown or missing: 126 ===
+=== Total unknown or missing: 121 ===
