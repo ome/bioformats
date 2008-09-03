@@ -28,6 +28,7 @@ import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * A utility class with convenience methods for manipulating images.
@@ -121,6 +122,7 @@ public final class ImageTools {
     int w, int h, int c, boolean interleaved)
   {
     if (c == 1) return makeImage(data, w, h);
+    if (c > 2) return makeRGBImage(data, c, w, h, interleaved);
     int dataType = DataBuffer.TYPE_BYTE;
     DataBuffer buffer = new DataBufferByte(data, c * w * h);
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
@@ -217,6 +219,7 @@ public final class ImageTools {
    * @param h Height of image plane.
    */
   public static BufferedImage makeImage(byte[][] data, int w, int h) {
+    if (data.length > 2) return makeRGBImage(data, w, h);
     int dataType = DataBuffer.TYPE_BYTE;
     DataBuffer buffer = new DataBufferByte(data, data[0].length);
     return constructImage(data.length, dataType, w, h, false, true, buffer);
@@ -405,6 +408,42 @@ public final class ImageTools {
     return null;
   }
 
+  public static BufferedImage makeRGBImage(byte[] data, int c, int w, int h,
+    boolean interleaved)
+  {
+    int[] buf = new int[data.length / c];
+    int nBits = (c - 1) * 8;
+
+    for (int i=0; i<buf.length; i++) {
+      for (int q=0; q<c; q++) {
+        if (interleaved) {
+          buf[i] |= ((data[i*c + q] & 0xff) << (nBits - q*8));
+        }
+        else {
+          buf[i] |= ((data[q*buf.length + i] & 0xff) << (nBits - q*8));
+        }
+      }
+    }
+
+    DataBuffer buffer = new DataBufferInt(buf, buf.length);
+    return constructImage(c, DataBuffer.TYPE_INT, w, h, false, false, buffer);
+  }
+
+  public static BufferedImage makeRGBImage(byte[][] data, int w, int h) {
+    int[] buf = new int[data[0].length];
+    int nBits = (data.length - 1) * 8;
+
+    for (int i=0; i<buf.length; i++) {
+      for (int q=0; q<data.length; q++) {
+        buf[i] |= ((data[q][i] & 0xff) << (nBits - q*8));
+      }
+    }
+
+    DataBuffer buffer = new DataBufferInt(buf, buf.length);
+    return constructImage(data.length, DataBuffer.TYPE_INT, w, h, false,
+      false, buffer);
+  }
+
   // -- Image construction - miscellaneous --
 
   /**
@@ -450,7 +489,15 @@ public final class ImageTools {
     if (colorModel == null) return null;
 
     SampleModel model;
-    if (banded) model = new BandedSampleModel(type, w, h, c);
+    if (c > 2 && type == DataBuffer.TYPE_INT && buffer.getNumBanks() == 1) {
+      int[] bitMasks = new int[c];
+      for (int i=0; i<c; i++) {
+        bitMasks[i] = 0xff << ((c - i - 1) * 8);
+      }
+      model =
+        new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, w, h, bitMasks);
+    }
+    else if (banded) model = new BandedSampleModel(type, w, h, c);
     else if (interleaved) {
       int[] bandOffsets = new int[c];
       for (int i=0; i<c; i++) bandOffsets[i] = i;
@@ -464,7 +511,39 @@ public final class ImageTools {
     }
 
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
-    return new BufferedImage(colorModel, raster, false, null);
+
+    BufferedImage b = null;
+
+    if (c == 1 && type == DataBuffer.TYPE_BYTE) {
+      if (colorModel instanceof IndexColorModel) {
+        b = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_INDEXED);
+      }
+      else {
+        b = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
+      }
+      b.setData(raster);
+    }
+    else if (c == 1 && type == DataBuffer.TYPE_USHORT) {
+      if (!(colorModel instanceof IndexColorModel)) {
+        b = new BufferedImage(w, h, BufferedImage.TYPE_USHORT_GRAY);
+        b.setData(raster);
+      }
+    }
+    else if (c > 2 && type == DataBuffer.TYPE_INT && buffer.getNumBanks() == 1)
+    {
+      if (c == 3) {
+        b = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+      }
+      else if (c == 4) {
+        b = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+      }
+
+      if (b != null) b.setData(raster);
+    }
+
+    if (b == null) b = new BufferedImage(colorModel, raster, false, null);
+
+    return b;
   }
 
   /**
