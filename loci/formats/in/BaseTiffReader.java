@@ -618,7 +618,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   protected void put(String key, int value) {
     if (value == -1) return; // indicates missing value
-    addMeta(key, new Integer(value));
+    addMeta(key, value);
   }
 
   protected void put(String key, boolean value) {

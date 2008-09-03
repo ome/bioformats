@@ -142,9 +142,9 @@ public class DeltavisionReader extends FormatReader {
     core[0].imageCount = in.readInt();
     int filePixelType = in.readInt();
 
-    addMeta("ImageWidth", new Integer(getSizeX()));
-    addMeta("ImageHeight", new Integer(getSizeY()));
-    addMeta("NumberOfImages", new Integer(getImageCount()));
+    addMeta("ImageWidth", getSizeX());
+    addMeta("ImageHeight", getSizeY());
+    addMeta("NumberOfImages", getImageCount());
     String pixel;
 
     switch (filePixelType) {
@@ -178,30 +178,30 @@ public class DeltavisionReader extends FormatReader {
     }
 
     addMeta("PixelType", pixel);
-    addMeta("Sub-image starting point (X)", new Integer(in.readInt()));
-    addMeta("Sub-image starting point (Y)", new Integer(in.readInt()));
-    addMeta("Sub-image starting point (Z)", new Integer(in.readInt()));
-    addMeta("Pixel sampling size (X)", new Integer(in.readInt()));
-    addMeta("Pixel sampling size (Y)", new Integer(in.readInt()));
-    addMeta("Pixel sampling size (Z)", new Integer(in.readInt()));
+    addMeta("Sub-image starting point (X)", in.readInt());
+    addMeta("Sub-image starting point (Y)", in.readInt());
+    addMeta("Sub-image starting point (Z)", in.readInt());
+    addMeta("Pixel sampling size (X)", in.readInt());
+    addMeta("Pixel sampling size (Y)", in.readInt());
+    addMeta("Pixel sampling size (Z)", in.readInt());
 
     float pixX = in.readFloat();
     float pixY = in.readFloat();
     float pixZ = in.readFloat();
 
-    addMeta("X element length (in um)", new Float(pixX));
-    addMeta("Y element length (in um)", new Float(pixY));
-    addMeta("Z element length (in um)", new Float(pixZ));
-    addMeta("X axis angle", new Float(in.readFloat()));
-    addMeta("Y axis angle", new Float(in.readFloat()));
-    addMeta("Z axis angle", new Float(in.readFloat()));
-    addMeta("Column axis sequence", new Integer(in.readInt()));
-    addMeta("Row axis sequence", new Integer(in.readInt()));
-    addMeta("Section axis sequence", new Integer(in.readInt()));
-    addMeta("Wavelength 1 min. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 1 max. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 1 mean intensity", new Float(in.readFloat()));
-    addMeta("Space group number", new Integer(in.readInt()));
+    addMeta("X element length (in um)", pixX);
+    addMeta("Y element length (in um)", pixY);
+    addMeta("Z element length (in um)", pixZ);
+    addMeta("X axis angle", in.readFloat());
+    addMeta("Y axis angle", in.readFloat());
+    addMeta("Z axis angle", in.readFloat());
+    addMeta("Column axis sequence", in.readInt());
+    addMeta("Row axis sequence", in.readInt());
+    addMeta("Section axis sequence", in.readInt());
+    addMeta("Wavelength 1 min. intensity", in.readFloat());
+    addMeta("Wavelength 1 max. intensity", in.readFloat());
+    addMeta("Wavelength 1 mean intensity", in.readFloat());
+    addMeta("Space group number", in.readInt());
 
     extSize = in.readInt();
 
@@ -209,14 +209,14 @@ public class DeltavisionReader extends FormatReader {
     numIntsPerSection = in.readShort();
     numFloatsPerSection = in.readShort();
 
-    addMeta("Number of Sub-resolution sets", new Integer(in.readShort()));
-    addMeta("Z axis reduction quotient", new Integer(in.readShort()));
-    addMeta("Wavelength 2 min. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 2 max. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 3 min. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 3 max. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 4 min. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 4 max. intensity", new Float(in.readFloat()));
+    addMeta("Number of Sub-resolution sets", in.readShort());
+    addMeta("Z axis reduction quotient", in.readShort());
+    addMeta("Wavelength 2 min. intensity", in.readFloat());
+    addMeta("Wavelength 2 max. intensity", in.readFloat());
+    addMeta("Wavelength 3 min. intensity", in.readFloat());
+    addMeta("Wavelength 3 max. intensity", in.readFloat());
+    addMeta("Wavelength 4 min. intensity", in.readFloat());
+    addMeta("Wavelength 4 max. intensity", in.readFloat());
 
     int type = in.readShort();
     String imageType =
@@ -224,14 +224,14 @@ public class DeltavisionReader extends FormatReader {
 
     addMeta("Image Type", imageType);
     int lensID = in.readShort();
-    addMeta("Lens ID Number", new Integer(lensID));
+    addMeta("Lens ID Number", lensID);
 
     in.seek(172);
-    addMeta("Wavelength 5 min. intensity", new Float(in.readFloat()));
-    addMeta("Wavelength 5 max. intensity", new Float(in.readFloat()));
+    addMeta("Wavelength 5 min. intensity", in.readFloat());
+    addMeta("Wavelength 5 max. intensity", in.readFloat());
 
     core[0].sizeT = in.readShort();
-    addMeta("Number of timepoints", new Integer(getSizeT()));
+    addMeta("Number of timepoints", getSizeT());
 
     int sequence = in.readShort();
     String imageSequence;
@@ -254,16 +254,16 @@ public class DeltavisionReader extends FormatReader {
     core[0].dimensionOrder = "XY" + imageSequence.replaceAll("W", "C");
     addMeta("Image sequence", imageSequence);
 
-    addMeta("X axis tilt angle", new Float(in.readFloat()));
-    addMeta("Y axis tilt angle", new Float(in.readFloat()));
-    addMeta("Z axis tilt angle", new Float(in.readFloat()));
+    addMeta("X axis tilt angle", in.readFloat());
+    addMeta("Y axis tilt angle", in.readFloat());
+    addMeta("Z axis tilt angle", in.readFloat());
 
     core[0].sizeC = in.readShort();
-    addMeta("Number of wavelengths", new Integer(getSizeC()));
+    addMeta("Number of wavelengths", getSizeC());
     if (getSizeC() == 0) core[0].sizeC = 1;
     if (getSizeT() == 0) core[0].sizeT = 1;
     core[0].sizeZ = getImageCount() / (getSizeC() * getSizeT());
-    addMeta("Number of focal planes", new Integer(getSizeZ()));
+    addMeta("Number of focal planes", getSizeZ());
 
     core[0].rgb = false;
     core[0].interleaved = false;
@@ -274,12 +274,12 @@ public class DeltavisionReader extends FormatReader {
     short[] waves = new short[5];
     for (int i=0; i<waves.length; i++) {
       waves[i] = in.readShort();
-      addMeta("Wavelength " + (i + 1) + " (in nm)", new Integer(waves[i]));
+      addMeta("Wavelength " + (i + 1) + " (in nm)", waves[i]);
     }
 
-    addMeta("X origin (in um)", new Float(in.readFloat()));
-    addMeta("Y origin (in um)", new Float(in.readFloat()));
-    addMeta("Z origin (in um)", new Float(in.readFloat()));
+    addMeta("X origin (in um)", in.readFloat());
+    addMeta("Y origin (in um)", in.readFloat());
+    addMeta("Z origin (in um)", in.readFloat());
 
     // The metadata store we're working with.
     MetadataStore store =

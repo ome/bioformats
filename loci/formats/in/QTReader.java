@@ -586,7 +586,7 @@ public class QTReader extends FormatReader {
                 in.skipBytes(10);
                 interlaced = in.read() == 2;
                 addMeta("Codec", codec);
-                addMeta("Bits per pixel", new Integer(bitsPerPixel));
+                addMeta("Bits per pixel", bitsPerPixel);
                 in.skipBytes(9);
               }
             }
@@ -630,7 +630,7 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stts")) {
           in.skipBytes(10);
           int fps = in.readInt();
-          addMeta("Frames per second", new Integer(fps));
+          addMeta("Frames per second", fps);
         }
         if (oldpos + atomSize < in.length()) {
           in.seek(oldpos + atomSize);

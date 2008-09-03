@@ -224,7 +224,7 @@ public class APNGReader extends FormatReader {
         // APNG-specific chunk
         core[0].imageCount = in.readInt();
         int loop = in.readInt();
-        addMeta("Loop count", String.valueOf(loop));
+        addMeta("Loop count", loop);
       }
       else if (type.equals("fcTL")) {
         in.skipBytes(4);

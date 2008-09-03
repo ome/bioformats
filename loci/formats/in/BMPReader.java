@@ -174,7 +174,7 @@ public class BMPReader extends FormatReader {
 
     addMeta("Magic identifier", in.readString(2));
 
-    addMeta("File size (in bytes)", "" + in.readInt());
+    addMeta("File size (in bytes)", in.readInt());
     in.skipBytes(4); // reserved
 
     // read the offset to the image data
@@ -193,12 +193,12 @@ public class BMPReader extends FormatReader {
       throw new FormatException("Invalid image dimensions: " +
         getSizeX() + " x " + getSizeY());
     }
-    addMeta("Image width", String.valueOf(getSizeX()));
-    addMeta("Image height", String.valueOf(getSizeY()));
+    addMeta("Image width", getSizeX());
+    addMeta("Image height", getSizeY());
 
-    addMeta("Color planes", String.valueOf(in.readShort()));
+    addMeta("Color planes", in.readShort());
     bpp = in.readShort();
-    addMeta("Bits per pixel", String.valueOf(bpp));
+    addMeta("Bits per pixel", bpp);
 
     compression = in.readInt();
     String comp = "invalid";
@@ -223,8 +223,8 @@ public class BMPReader extends FormatReader {
     in.skipBytes(4);
     float pixelSizeX = (float) in.readInt();
     float pixelSizeY = (float) in.readInt();
-    addMeta("X resolution", String.valueOf(pixelSizeX));
-    addMeta("Y resolution", String.valueOf(pixelSizeY));
+    addMeta("X resolution", pixelSizeX);
+    addMeta("Y resolution", pixelSizeY);
     int nColors = in.readInt();
     if (nColors == 0 && bpp != 32 && bpp != 24) {
       nColors = bpp < 8 ? 1 << bpp : 256;
@@ -247,7 +247,7 @@ public class BMPReader extends FormatReader {
 
     global = in.getFilePointer();
 
-    addMeta("Indexed color", String.valueOf(palette != null));
+    addMeta("Indexed color", palette != null);
 
     status("Populating metadata");
 

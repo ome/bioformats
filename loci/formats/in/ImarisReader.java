@@ -120,7 +120,7 @@ public class ImarisReader extends FormatReader {
 
     status("Reading header");
 
-    addMeta("Version", new Integer(in.readInt()));
+    addMeta("Version", in.readInt());
     in.skipBytes(4);
 
     addMeta("Image name", in.readString(128));
@@ -143,7 +143,7 @@ public class ImarisReader extends FormatReader {
 
     addMeta("Image comment", in.readString(128));
     int isSurvey = in.readInt();
-    addMeta("Survey performed", String.valueOf(isSurvey == 0));
+    addMeta("Survey performed", isSurvey == 0);
 
     status("Calculating image offsets");
 

@@ -202,6 +202,46 @@ public abstract class FormatReader extends FormatHandler
     metadata.put(key, val);
   }
 
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, boolean value) {
+    addMeta(key, new Boolean(value));
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, byte value) {
+    addMeta(key, new Byte(value));
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, short value) {
+    addMeta(key, new Short(value));
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, int value) {
+    addMeta(key, new Integer(value));
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, long value) {
+    addMeta(key, new Long(value));
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, float value) {
+    addMeta(key, new Float(value));
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, double value) {
+    addMeta(key, new Double(value));
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, char value) {
+    addMeta(key, new Character(value));
+  }
+
   /** Gets a value from the metadata table. */
   protected Object getMeta(String key) {
     return metadata.get(key);

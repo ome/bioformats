@@ -141,13 +141,12 @@ public class IPWReader extends FormatReader {
       }
       else if (relativePath.equals("FrameRate")) {
         byte[] b = poi.getDocumentBytes(name, 4);
-        addMeta("Frame Rate", new Integer(DataTools.bytesToInt(b, true)));
+        addMeta("Frame Rate", DataTools.bytesToInt(b, true));
       }
       else if (relativePath.equals("FrameInfo")) {
         byte[] b = poi.getDocumentBytes(name);
         for (int q=0; q<b.length/2; q++) {
-          addMeta("FrameInfo " + q,
-            new Short(DataTools.bytesToShort(b, q*2, 2, true)));
+          addMeta("FrameInfo " + q, DataTools.bytesToShort(b, q*2, 2, true));
         }
       }
       else if (relativePath.equals("ImageInfo")) {
@@ -242,7 +241,7 @@ public class IPWReader extends FormatReader {
 
     addMeta("slices", "1");
     addMeta("channels", "1");
-    addMeta("frames", new Integer(getImageCount()));
+    addMeta("frames", getImageCount());
 
     Hashtable h = ifds[0];
     core[0].sizeX = (int) TiffTools.getImageWidth(h);

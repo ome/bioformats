@@ -341,7 +341,7 @@ public class DicomReader extends FormatReader {
       // header exists, so we'll read it
       in.seek(0);
       addMeta("Header information", in.readString(128));
-      in.readInt();
+      in.skipBytes(4);
       location = 128;
     }
     else in.seek(0);

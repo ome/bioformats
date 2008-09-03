@@ -126,11 +126,11 @@ public class IPLabReader extends FormatReader {
 
     core[0].imageCount = getSizeZ() * getSizeT();
 
-    addMeta("Width", new Long(getSizeX()));
-    addMeta("Height", new Long(getSizeY()));
-    addMeta("Channels", new Long(getSizeC()));
-    addMeta("ZDepth", new Long(getSizeZ()));
-    addMeta("TDepth", new Long(getSizeT()));
+    addMeta("Width", getSizeX());
+    addMeta("Height", getSizeY());
+    addMeta("Channels", getSizeC());
+    addMeta("ZDepth", getSizeZ());
+    addMeta("TDepth", getSizeT());
 
     String ptype;
     switch (filePixelType) {
@@ -247,11 +247,11 @@ public class IPLabReader extends FormatReader {
           double black = in.readDouble();
           double white = in.readDouble();
 
-          addMeta("NormalizationMin" + i, new Double(min));
-          addMeta("NormalizationMax" + i, new Double(max));
-          addMeta("NormalizationGamma" + i, new Double(gamma));
-          addMeta("NormalizationBlack" + i, new Double(black));
-          addMeta("NormalizationWhite" + i, new Double(white));
+          addMeta("NormalizationMin" + i, min);
+          addMeta("NormalizationMax" + i, max);
+          addMeta("NormalizationGamma" + i, gamma);
+          addMeta("NormalizationBlack" + i, black);
+          addMeta("NormalizationWhite" + i, white);
 
           // CTR CHECK
 //          store.setDisplayChannel(new Integer(core[0].sizeC), new Double(black),
@@ -305,8 +305,8 @@ public class IPLabReader extends FormatReader {
           float unitsPerPixel = in.readFloat();
           int xUnitName = in.readInt();
 
-          addMeta("ResolutionStyle" + i, new Long(xResStyle));
-          addMeta("UnitsPerPixel" + i, new Float(unitsPerPixel));
+          addMeta("ResolutionStyle" + i, xResStyle);
+          addMeta("UnitsPerPixel" + i, unitsPerPixel);
 
           switch (xUnitName) {
             case 2: // mm
@@ -332,7 +332,7 @@ public class IPLabReader extends FormatReader {
             store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
           }
 
-          addMeta("UnitName" + i, new Long(xUnitName));
+          addMeta("UnitName" + i, xUnitName);
         }
       }
       else if (tag.equals("view")) {

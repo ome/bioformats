@@ -275,24 +275,24 @@ public class AVIReader extends FormatReader {
               if (type.equals("avih")) {
                 spos = in.getFilePointer();
 
-                addMeta("Microseconds per frame", new Integer(in.readInt()));
-                addMeta("Max. bytes per second", new Integer(in.readInt()));
+                addMeta("Microseconds per frame", in.readInt());
+                addMeta("Max. bytes per second", in.readInt());
 
                 in.skipBytes(8);
 
-                addMeta("Total frames", new Integer(in.readInt()));
-                addMeta("Initial frames", new Integer(in.readInt()));
+                addMeta("Total frames", in.readInt());
+                addMeta("Initial frames", in.readInt());
 
                 in.skipBytes(8);
                 core[0].sizeX = in.readInt();
 
-                addMeta("Frame height", new Integer(in.readInt()));
-                addMeta("Scale factor", new Integer(in.readInt()));
-                addMeta("Frame rate", new Integer(in.readInt()));
-                addMeta("Start time", new Integer(in.readInt()));
-                addMeta("Length", new Integer(in.readInt()));
+                addMeta("Frame height", in.readInt());
+                addMeta("Scale factor", in.readInt());
+                addMeta("Frame rate", in.readInt());
+                addMeta("Start time", in.readInt());
+                addMeta("Length", in.readInt());
 
-                addMeta("Frame width", new Integer(getSizeX()));
+                addMeta("Frame width", getSizeX());
 
                 if (spos + size <= in.length()) {
                   in.seek(spos + size);
@@ -318,8 +318,8 @@ public class AVIReader extends FormatReader {
                 spos = in.getFilePointer();
                 in.skipBytes(40);
 
-                addMeta("Stream quality", new Integer(in.readInt()));
-                addMeta("Stream sample size", new Integer(in.readInt()));
+                addMeta("Stream quality", in.readInt());
+                addMeta("Stream sample size", in.readInt());
 
                 if (spos + size <= in.length()) {
                   in.seek(spos + size);
@@ -339,16 +339,15 @@ public class AVIReader extends FormatReader {
                 bmpCompression = in.readInt();
                 in.skipBytes(4);
 
-                addMeta("Horizontal resolution", new Integer(in.readInt()));
-                addMeta("Vertical resolution", new Integer(in.readInt()));
+                addMeta("Horizontal resolution", in.readInt());
+                addMeta("Vertical resolution", in.readInt());
 
                 bmpColorsUsed = in.readInt();
                 in.skipBytes(4);
 
-                addMeta("Bitmap compression value",
-                  new Integer(bmpCompression));
-                addMeta("Number of colors used", new Integer(bmpColorsUsed));
-                addMeta("Bits per pixel", new Integer(bmpBitsPerPixel));
+                addMeta("Bitmap compression value", bmpCompression);
+                addMeta("Number of colors used", bmpColorsUsed);
+                addMeta("Bits per pixel", bmpBitsPerPixel);
 
                 // scan line is padded with zeros to be a multiple of 4 bytes
                 int npad = bmpWidth % 4;

@@ -155,21 +155,21 @@ public class MRCReader extends FormatReader {
     float ylen = in.readFloat();
     float zlen = in.readFloat();
 
-    addMeta("Pixel size (X)", String.valueOf(xlen / mx));
-    addMeta("Pixel size (Y)", String.valueOf(ylen / my));
-    addMeta("Pixel size (Z)", String.valueOf(zlen / mz));
+    addMeta("Pixel size (X)", xlen / mx);
+    addMeta("Pixel size (Y)", ylen / my);
+    addMeta("Pixel size (Z)", zlen / mz);
 
-    addMeta("Alpha angle", String.valueOf(in.readFloat()));
-    addMeta("Beta angle", String.valueOf(in.readFloat()));
-    addMeta("Gamma angle", String.valueOf(in.readFloat()));
+    addMeta("Alpha angle", in.readFloat());
+    addMeta("Beta angle", in.readFloat());
+    addMeta("Gamma angle", in.readFloat());
 
     in.skipBytes(12);
 
     // min, max and mean pixel values
 
-    addMeta("Minimum pixel value", String.valueOf(in.readFloat()));
-    addMeta("Maximum pixel value", String.valueOf(in.readFloat()));
-    addMeta("Mean pixel value", String.valueOf(in.readFloat()));
+    addMeta("Minimum pixel value", in.readFloat());
+    addMeta("Maximum pixel value", in.readFloat());
+    addMeta("Mean pixel value", in.readFloat());
 
     in.skipBytes(4);
     extHeaderSize = in.readInt();
@@ -183,25 +183,22 @@ public class MRCReader extends FormatReader {
       "unknown";
 
     addMeta("Series type", type);
-    addMeta("Lens", String.valueOf(in.readShort()));
-    addMeta("ND1", String.valueOf(in.readShort()));
-    addMeta("ND2", String.valueOf(in.readShort()));
-    addMeta("VD1", String.valueOf(in.readShort()));
-    addMeta("VD2", String.valueOf(in.readShort()));
+    addMeta("Lens", in.readShort());
+    addMeta("ND1", in.readShort());
+    addMeta("ND2", in.readShort());
+    addMeta("VD1", in.readShort());
+    addMeta("VD2", in.readShort());
 
-    float[] angles = new float[6];
-    for (int i=0; i<angles.length; i++) {
-      angles[i] = in.readFloat();
-      addMeta("Angle " + (i+1), String.valueOf(angles[i]));
+    for (int i=0; i<6; i++) {
+      addMeta("Angle " + (i + 1), in.readFloat());
     }
 
     in.skipBytes(24);
 
-    int nUsefulLabels = in.readInt();
-    addMeta("Number of useful labels", String.valueOf(nUsefulLabels));
+    addMeta("Number of useful labels", in.readInt());
 
     for (int i=0; i<10; i++) {
-      addMeta("Label " + (i+1), in.readString(80));
+      addMeta("Label " + (i + 1), in.readString(80));
     }
 
     in.skipBytes(extHeaderSize);

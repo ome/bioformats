@@ -117,8 +117,7 @@ public class OpenlabRawReader extends FormatReader {
 
     status("Populating metadata");
 
-    int version = in.readInt();
-    addMeta("Version", new Integer(version));
+    addMeta("Version", in.readInt());
 
     core[0].imageCount = in.readInt();
     offsets = new int[getImageCount()];
@@ -155,9 +154,9 @@ public class OpenlabRawReader extends FormatReader {
 
     if (getSizeC() <= 1) core[0].sizeC = 1;
     else core[0].sizeC = 3;
-    addMeta("Width", new Integer(getSizeX()));
-    addMeta("Height", new Integer(getSizeY()));
-    addMeta("Bytes per pixel", new Integer(bytesPerPixel));
+    addMeta("Width", getSizeX());
+    addMeta("Height", getSizeY());
+    addMeta("Bytes per pixel", bytesPerPixel);
 
     int plane = getSizeX() * getSizeY() * bytesPerPixel;
     for (int i=1; i<getImageCount(); i++) {

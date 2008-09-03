@@ -337,7 +337,7 @@ public class ND2Reader extends FormatReader {
         for (int j = off; j<len; j+=8) {
           double time = DataTools.bytesToDouble(b, j, 8, true);
           tsT.add(new Double(time));
-          addMeta("timestamp " + (tsT.size() - 1), String.valueOf(time));
+          addMeta("timestamp " + (tsT.size() - 1), time);
         }
         b = null;
       }
@@ -856,7 +856,7 @@ public class ND2Reader extends FormatReader {
       long v = (long) Double.parseDouble(value);
       if (!ts.contains(new Long(v))) {
         ts.add(new Long(v));
-        addMeta("number of timepoints", new Integer(ts.size()));
+        addMeta("number of timepoints", ts.size());
       }
     }
     else if (key.endsWith("dZPos")) {

@@ -77,10 +77,10 @@ public class SEQReader extends BaseTiffReader {
       if (tag2 != -1) {
         // should be one of these for every image plane
         core[0].sizeZ++;
-        addMeta("Frame Rate", new Integer(tag2));
+        addMeta("Frame Rate", tag2);
       }
 
-      addMeta("Number of images", new Integer(getSizeZ()));
+      addMeta("Number of images", getSizeZ());
     }
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
@@ -91,9 +91,9 @@ public class SEQReader extends BaseTiffReader {
     }
 
     // default values
-    addMeta("frames", String.valueOf(getSizeZ()));
-    addMeta("channels", String.valueOf(super.getSizeC()));
-    addMeta("slices", String.valueOf(getSizeT()));
+    addMeta("frames", getSizeZ());
+    addMeta("channels", super.getSizeC());
+    addMeta("slices", getSizeT());
 
     // parse the description to get channels, slices and times where applicable
     String descr = TiffTools.getComment(ifds[0]);

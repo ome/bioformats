@@ -314,23 +314,23 @@ public class BioRadReader extends FormatReader {
     }
 
     // populate metadata fields
-    addMeta("nx", new Integer(getSizeX()));
-    addMeta("ny", new Integer(getSizeY()));
-    addMeta("npic", new Integer(getImageCount()));
-    addMeta("ramp1_min", new Integer(ramp1min));
-    addMeta("ramp1_max", new Integer(ramp1max));
-    addMeta("notes", new Boolean(notes));
-    addMeta("image_number", new Integer(imageNumber));
+    addMeta("nx", getSizeX());
+    addMeta("ny", getSizeY());
+    addMeta("npic", getImageCount());
+    addMeta("ramp1_min", ramp1min);
+    addMeta("ramp1_max", ramp1max);
+    addMeta("notes", notes);
+    addMeta("image_number", imageNumber);
     addMeta("name", name);
     addMeta("merged", MERGE_NAMES[merged]);
-    addMeta("color1", new Integer(color1));
-    addMeta("file_id", new Integer(fileId));
-    addMeta("ramp2_min", new Integer(ramp2min));
-    addMeta("ramp2_max", new Integer(ramp2max));
-    addMeta("color2", new Integer(color2));
-    addMeta("edited", new Integer(edited));
-    addMeta("lens", new Integer(lens));
-    addMeta("mag_factor", new Float(magFactor));
+    addMeta("color1", color1);
+    addMeta("file_id", fileId);
+    addMeta("ramp2_min", ramp2min);
+    addMeta("ramp2_max", ramp2max);
+    addMeta("color2", color2);
+    addMeta("edited", edited);
+    addMeta("lens", lens);
+    addMeta("mag_factor", magFactor);
 
     // skip image data
     int imageLen = getSizeX() * getSizeY();
