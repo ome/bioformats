@@ -110,7 +110,9 @@ public class ICSWriter extends FormatWriter {
           else if (order.charAt(i) == 'Y') sizes[nextSize++] = y;
           else if (order.charAt(i) == 'Z') sizes[nextSize++] = z;
           else if (order.charAt(i) == 'T') sizes[nextSize++] = t;
-          dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
+          if (order.charAt(i) != 'C') {
+            dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
+          }
         }
         dimOrder.append("\t");
       }
