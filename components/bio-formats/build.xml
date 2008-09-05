@@ -1,0 +1,16 @@
+<!--
+build.xml
+
+Ant build file for Bio-Formats project.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="formats" default="jar" basedir=".">
+  <description>
+    Build file for Bio-Formats project
+  </description>
+  <property file="base.properties"/>
+  <import file="${root.dir}/common.xml"/>
+  <property file="build.properties"/>
+</project>

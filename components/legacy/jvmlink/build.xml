@@ -1,0 +1,16 @@
+<!--
+build.xml
+
+Ant build file for JVMLink project.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="jvmlink" default="jar" basedir=".">
+  <description>
+    Build file for JVMLink project
+  </description>
+  <property file="base.properties"/>
+  <import file="${root.dir}/common.xml"/>
+  <property file="build.properties"/>
+</project>

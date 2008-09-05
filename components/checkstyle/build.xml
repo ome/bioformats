@@ -1,0 +1,16 @@
+<!--
+build.xml
+
+Ant build file for LOCI Checkstyle checks project.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="checks" default="jar" basedir=".">
+  <description>
+    Build file for LOCI Checkstyle checks project
+  </description>
+  <property file="base.properties"/>
+  <import file="${root.dir}/common.xml"/>
+  <property file="build.properties"/>
+</project>
