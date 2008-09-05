@@ -71,7 +71,7 @@ Type "ant -p" for a list of targets.
     </jar>
   </target>
 
-  <target name="docs" depends="copy-source"
+  <target name="docs" depends="compile"
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${component.classpath}:${classes.dir}"

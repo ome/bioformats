@@ -369,35 +369,46 @@ Apache XML-RPC
   <!-- Global build targets -->
 
   <target name="style"
-    depends="style-formats, style-loci-plugins,
+    depends="style-ome-xml, style-formats, style-loci-plugins,
       style-ome-io, style-ome-plugins,
-      style-visbio, style-slim, style-checks,
-      style-jvmlink, style-ome-notes, style-ome-editor"
+      style-visbio, style-slim, style-flow,
+      style-checks, style-tests,
+      style-jvmlink, style-multi-lut,
+      style-ome-notes, style-ome-editor"
     description="check source code style for LOCI software packages"/>
 
   <target name="compile"
-    depends="compile-formats, compile-loci-plugins,
+    depends="compile-ome-xml, compile-formats, compile-loci-plugins,
       compile-ome-io, compile-ome-plugins,
-      compile-visbio, compile-slim, compile-checks, compile-tests,
-      compile-jvmlink, compile-ome-notes, compile-ome-editor"
+      compile-visbio, compile-slim, compile-flow,
+      compile-checks, compile-tests,
+      compile-jvmlink, compile-multi-lut,
+      compile-ome-notes, compile-ome-editor"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-formats, jar-loci-plugins,
+    depends="jar-ome-xml, jar-formats, jar-loci-plugins,
       jar-ome-io, jar-ome-plugins,
-      jar-visbio, jar-slim, jar-checks,
-      jar-jvmlink, jar-ome-notes, jar-ome-editor"
+      jar-visbio, jar-slim, jar-flow,
+      jar-checks, jar-tests,
+      jar-jvmlink, jar-multi-lut,
+      jar-ome-notes, jar-ome-editor"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="clean"
-    depends="clean-formats, clean-loci-plugins,
+    depends="clean-ome-xml, clean-formats, clean-loci-plugins,
       clean-ome-io, clean-ome-plugins,
-      clean-visbio, clean-slim, clean-checks,
-      clean-jvmlink, clean-ome-notes, clean-ome-editor"
+      clean-visbio, clean-slim, clean-flow,
+      clean-checks, clean-tests,
+      clean-jvmlink, clean-multi-lut,
+      clean-ome-notes, clean-ome-editor"
     description="remove all build files"/>
 
   <target name="docs" depends="compile"
     description="generate javadocs for LOCI software packages">
+    <tstamp>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
     <javadoc sourcepath="${merged-docs.source}"
       classpath="${merged-docs.classpath}"
       destdir="${merged-docs.dir}/api"
@@ -414,11 +425,33 @@ Apache XML-RPC
     </javadoc>
   </target>
 
+  <!-- OME-XML Java library -->
+
+  <target name="style-ome-xml"
+    description="check source code style for OME-XML Java library">
+    <ant dir="components/bio-ome-xml" target="ome-xml.style"/>
+  </target>
+
+  <target name="compile-ome-xml"
+    description="compile classes for OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.compile"/>
+  </target>
+
+  <target name="jar-ome-xml"
+    description="generate JAR file for OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.jar"/>
+  </target>
+
+  <target name="clean-ome-xml"
+    description="remove build files for OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.clean"/>
+  </target>
+
   <!-- Bio-Formats -->
 
   <target name="style-formats"
     description="check source code style for Bio-Formats">
-    <ant dir="components/bio-formats" target="style"/>
+    <ant dir="components/bio-formats" target="formats.style"/>
   </target>
 
   <target name="compile-formats"
@@ -546,6 +579,28 @@ Apache XML-RPC
     <ant dir="components/slim-plotter" target="slim.clean"/>
   </target>
 
+  <!-- WiscScan Flow Cytometry -->
+
+  <target name="style-flow"
+    description="check source code style for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.style"/>
+  </target>
+
+  <target name="compile-flow"
+    description="compile classes for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.compile"/>
+  </target>
+
+  <target name="jar-flow"
+    description="generate JAR file for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.jar"/>
+  </target>
+
+  <target name="clean-flow"
+    description="remove build files for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.clean"/>
+  </target>
+
   <!-- LOCI Checkstyle checks -->
 
   <target name="style-checks"
@@ -610,6 +665,28 @@ Apache XML-RPC
   <target name="clean-jvmlink"
     description="remove build files for JVMLink">
     <ant dir="components/legacy/jvmlink" target="jvmlink.clean"/>
+  </target>
+
+  <!-- Multi LUT app -->
+
+  <target name="style-multi-lut"
+    description="check source code style for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.style"/>
+  </target>
+
+  <target name="compile-multi-lut"
+    description="compile classes for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.compile"/>
+  </target>
+
+  <target name="jar-multi-lut"
+    description="generate JAR file for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.jar"/>
+  </target>
+
+  <target name="clean-multi-lut"
+    description="remove build files for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.clean"/>
   </target>
 
   <!-- OME Notes -->
