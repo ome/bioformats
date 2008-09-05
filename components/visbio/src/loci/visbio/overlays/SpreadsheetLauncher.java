@@ -31,8 +31,8 @@ import java.io.IOException;
  * Launches an external spreadsheet application.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/SpreadsheetLauncher.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/SpreadsheetLauncher.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/SpreadsheetLauncher.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/SpreadsheetLauncher.java">SVN</a></dd></dl>
  */
 public class SpreadsheetLauncher {
 

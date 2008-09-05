@@ -34,8 +34,8 @@ import visad.*;
  * to evaluate a function, using stdin and stdout for binary data transfer.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ext/ExternalProgram.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ext/ExternalProgram.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/ext/ExternalProgram.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/ext/ExternalProgram.java">SVN</a></dd></dl>
  */
 public class ExternalProgram extends ExternalFunction {
 

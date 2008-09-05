@@ -34,8 +34,8 @@ import javax.swing.JPanel;
  * FormsUtil contains useful JGoodies Forms functions.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/FormsUtil.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/FormsUtil.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/FormsUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/FormsUtil.java">SVN</a></dd></dl>
  */
 public final class FormsUtil {
 

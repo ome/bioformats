@@ -50,8 +50,8 @@ import org.xml.sax.SAXException;
  * virtual stack caching options, metadata, and general beautification.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/DataBrowser.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/DataBrowser.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/DataBrowser.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/DataBrowser.java">SVN</a></dd></dl>
  */
 public class DataBrowser extends StackWindow implements ActionListener {
 

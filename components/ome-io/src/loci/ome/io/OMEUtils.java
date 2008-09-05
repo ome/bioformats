@@ -32,8 +32,8 @@ import loci.formats.*;
  * Utility methods for retrieving data from an OME database.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/io/OMEUtils.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/io/OMEUtils.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">SVN</a></dd></dl>
  */
 public class OMEUtils {
 

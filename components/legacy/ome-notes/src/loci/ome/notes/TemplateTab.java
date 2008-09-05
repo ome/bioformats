@@ -29,8 +29,8 @@ import java.util.Vector;
  * Stores information about a template tab.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/TemplateTab.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/TemplateTab.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/ome-notes/src/loci/ome/notes/TemplateTab.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/ome-notes/src/loci/ome/notes/TemplateTab.java">SVN</a></dd></dl>
  */
 public class TemplateTab {
 

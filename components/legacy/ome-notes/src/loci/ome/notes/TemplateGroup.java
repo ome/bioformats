@@ -30,8 +30,8 @@ import java.util.*;
  * Stores information about a template group.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/TemplateGroup.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/TemplateGroup.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/ome-notes/src/loci/ome/notes/TemplateGroup.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/ome-notes/src/loci/ome/notes/TemplateGroup.java">SVN</a></dd></dl>
  */
 public class TemplateGroup {
 

@@ -30,8 +30,8 @@ import java.util.Random;
  * Genetic algorithm for exponential curve fitting.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/slim/GACurveFitter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/slim/GACurveFitter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/GACurveFitter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/GACurveFitter.java">SVN</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */

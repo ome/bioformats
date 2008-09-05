@@ -29,8 +29,8 @@ import java.util.EventObject;
  * VisBioEvent is the event generated when something in VisBio changes.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/VisBioEvent.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/VisBioEvent.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/VisBioEvent.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/VisBioEvent.java">SVN</a></dd></dl>
  */
 public class VisBioEvent extends EventObject {
 

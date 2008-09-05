@@ -30,8 +30,8 @@ import visad.DisplayEvent;
  * MarkerTool is the tool for creating measurement markers.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/MarkerTool.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/MarkerTool.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/MarkerTool.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/MarkerTool.java">SVN</a></dd></dl>
  */
 public class MarkerTool extends OverlayTool {
 

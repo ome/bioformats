@@ -42,8 +42,8 @@ import loci.visbio.util.ObjectUtil;
  * BioSlideWidget is a widget for exploring one dimension of a dataset.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/BioSlideWidget.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/BioSlideWidget.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/view/BioSlideWidget.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/view/BioSlideWidget.java">SVN</a></dd></dl>
  */
 public class BioSlideWidget extends JPanel
   implements ActionListener, ChangeListener

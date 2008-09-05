@@ -44,8 +44,8 @@ import loci.ome.io.OMEUtils;
  * OME and OMERO servers.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/OMEPlugin.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/OMEPlugin.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-plugins/src/loci/plugins/ome/OMEPlugin.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-plugins/src/loci/plugins/ome/OMEPlugin.java">SVN</a></dd></dl>
  *
  * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu

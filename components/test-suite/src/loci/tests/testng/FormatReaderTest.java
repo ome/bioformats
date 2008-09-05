@@ -53,8 +53,8 @@ import org.testng.SkipException;
  * ant -Dtestng.directory="/path" -Dtestng.multiplier="1.0" test-all
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/tests/testng/FormatReaderTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/tests/testng/FormatReaderTest.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/FormatReaderTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatReaderTest.java">SVN</a></dd></dl>
  */
 public class FormatReaderTest {
 

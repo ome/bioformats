@@ -34,8 +34,8 @@ import loci.formats.gui.CacheComponent;
  * Extension of JFrame that allows the user to adjust caching settings.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/BrowserOptionsWindow.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/BrowserOptionsWindow.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/BrowserOptionsWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/BrowserOptionsWindow.java">SVN</a></dd></dl>
  */
 public class BrowserOptionsWindow extends JFrame {
 

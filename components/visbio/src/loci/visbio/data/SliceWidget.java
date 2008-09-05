@@ -39,8 +39,8 @@ import loci.visbio.util.FormsUtil;
  * SliceWidget is a set of GUI controls for an arbitrary slice.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/SliceWidget.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/SliceWidget.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/data/SliceWidget.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/data/SliceWidget.java">SVN</a></dd></dl>
  */
 public class SliceWidget extends JPanel
   implements ChangeListener, ItemListener

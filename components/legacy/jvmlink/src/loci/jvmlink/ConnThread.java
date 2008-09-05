@@ -45,8 +45,8 @@ import loci.formats.ReflectedUniverse;
  * Thread for managing a client/server socket connection.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/jvmlink/ConnThread.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/jvmlink/ConnThread.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/jvmlink/src/loci/jvmlink/ConnThread.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/jvmlink/src/loci/jvmlink/ConnThread.java">SVN</a></dd></dl>
  */
 public class ConnThread extends Thread {
 

@@ -21,8 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.visbio.overlays.test;
-
 import java.awt.image.BufferedImage;
 import loci.visbio.data.ImageTransform;
 import loci.visbio.data.DataTransform;
@@ -31,8 +29,8 @@ import loci.visbio.data.DataTransform;
  * DummyImageTransform is a fake ImageTransform.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/test/DummyImageTransform.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/test/DummyImageTransform.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/overlays/DummyImageTransform.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/overlays/DummyImageTransform.java">SVN</a></dd></dl>
  */
 public class DummyImageTransform extends ImageTransform{
 

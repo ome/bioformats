@@ -42,8 +42,8 @@ import visad.*;
  * Provides GUI controls for a display capture handler.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/CapturePanel.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/CapturePanel.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/view/CapturePanel.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/view/CapturePanel.java">SVN</a></dd></dl>
  */
 public class CapturePanel extends JPanel implements ActionListener,
   ChangeListener, ItemListener, ListSelectionListener

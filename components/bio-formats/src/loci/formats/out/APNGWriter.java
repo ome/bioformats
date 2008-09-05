@@ -33,8 +33,8 @@ import loci.formats.*;
  * APNGWriter is the file format writer for PNG and APNG files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/out/APNGWriter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/out/APNGWriter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/out/APNGWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/out/APNGWriter.java">SVN</a></dd></dl>
  */
 public class APNGWriter extends FormatWriter {
 

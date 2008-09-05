@@ -37,8 +37,8 @@ import org.w3c.dom.Element;
  * StateManager is the manager encapsulating VisBio's state logic.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/StateManager.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/StateManager.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/state/StateManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/state/StateManager.java">SVN</a></dd></dl>
  */
 public class StateManager extends LogicManager {
 

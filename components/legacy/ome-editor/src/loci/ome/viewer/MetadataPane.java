@@ -44,8 +44,8 @@ import org.w3c.dom.*;
  * MetadataPane is a panel that displays OME-XML metadata.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/viewer/MetadataPane.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/viewer/MetadataPane.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/ome-editor/src/loci/ome/viewer/MetadataPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/ome-editor/src/loci/ome/viewer/MetadataPane.java">SVN</a></dd></dl>
  */
 public class MetadataPane extends JPanel
   implements Runnable, TreeSelectionListener

@@ -30,8 +30,8 @@ import javax.swing.filechooser.FileFilter;
  * A file filter based on file extensions, for use with a JFileChooser.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/gui/ExtensionFileFilter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/gui/ExtensionFileFilter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/gui/ExtensionFileFilter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/gui/ExtensionFileFilter.java">SVN</a></dd></dl>
  */
 public class ExtensionFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable

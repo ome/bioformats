@@ -29,8 +29,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * HelpTopic is a tree node representing a help topic.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/help/HelpTopic.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/help/HelpTopic.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/help/HelpTopic.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/help/HelpTopic.java">SVN</a></dd></dl>
  */
 public class HelpTopic extends DefaultMutableTreeNode {
 

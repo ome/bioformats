@@ -33,8 +33,8 @@ import javax.swing.*;
  * index.html#DragPictureDemo'.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/editor/PictureTransferHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/editor/PictureTransferHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/ome-notes/src/loci/ome/notes/editor/PictureTransferHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/ome-notes/src/loci/ome/notes/editor/PictureTransferHandler.java">SVN</a></dd></dl>
  */
 public class PictureTransferHandler extends TransferHandler {
   DataFlavor pictureFlavor = DataFlavor.imageFlavor;

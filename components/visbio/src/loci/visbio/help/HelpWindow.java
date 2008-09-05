@@ -39,8 +39,8 @@ import loci.visbio.util.SwingUtil;
  * HelpWindow details basic VisBio program usage.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/help/HelpWindow.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/help/HelpWindow.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/help/HelpWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/help/HelpWindow.java">SVN</a></dd></dl>
  */
 public class HelpWindow extends JFrame
   implements HyperlinkListener, TreeSelectionListener

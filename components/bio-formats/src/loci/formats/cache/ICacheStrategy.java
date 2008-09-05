@@ -31,8 +31,8 @@ package loci.formats.cache;
  * mapping between the two, invoked within {@link Cache} as needed.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/ICacheStrategy.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/ICacheStrategy.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/cache/ICacheStrategy.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/cache/ICacheStrategy.java">SVN</a></dd></dl>
  */
 public interface ICacheStrategy extends CacheReporter {
 

@@ -1,5 +1,5 @@
 //
-//Detector.java
+// Detector.java
 //
 
 /*

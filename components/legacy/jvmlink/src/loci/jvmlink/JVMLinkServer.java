@@ -41,8 +41,8 @@ import java.net.*;
  * {@link loci.formats.ReflectedUniverse} class.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/jvmlink/JVMLinkServer.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/jvmlink/JVMLinkServer.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/jvmlink/src/loci/jvmlink/JVMLinkServer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/jvmlink/src/loci/jvmlink/JVMLinkServer.java">SVN</a></dd></dl>
  */
 public class JVMLinkServer implements Runnable {
 

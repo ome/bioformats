@@ -36,8 +36,8 @@ import org.xml.sax.SAXException;
  * XMLUtil contains useful functions for manipulating DOMs.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/XMLUtil.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/XMLUtil.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/XMLUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/XMLUtil.java">SVN</a></dd></dl>
  */
 public final class XMLUtil {
 
