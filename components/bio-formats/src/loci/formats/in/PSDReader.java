@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -120,6 +121,7 @@ public class PSDReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     lut = null;
+    offset = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -206,64 +208,72 @@ public class PSDReader extends FormatReader {
 
       int size = in.readInt();
       if (size % 2 == 1) size++;
+
       in.skipBytes(size);
     }
+
     in.seek(in.getFilePointer() - 4);
 
     int blockLen = in.readInt();
-    int layerLen = in.readInt();
-    int layerCount = in.readShort();
-    int[] w = new int[layerCount];
-    int[] h = new int[layerCount];
-    int[] c = new int[layerCount];
-    for (int i=0; i<layerCount; i++) {
-      int top = in.readInt();
-      int left = in.readInt();
-      int bottom = in.readInt();
-      int right = in.readInt();
-      w[i] = right - left;
-      h[i] = bottom - top;
-      c[i] = in.readShort();
-      in.skipBytes(c[i] * 6 + 12);
-      int len = in.readInt();
-      if (len % 2 == 1) len++;
-      in.skipBytes(len);
-    }
 
-    // skip over pixel data for each layer
-    for (int i=0; i<layerCount; i++) {
-      int[] lens = new int[h[i]];
-      for (int cc=0; cc<c[i]; cc++) {
-        boolean compressed = in.readShort() == 1;
-        if (!compressed) in.skipBytes(w[i] * h[i]);
-        else {
-          for (int y=0; y<h[i]; y++) {
-            lens[y] = in.readShort();
-          }
-          for (int y=0; y<h[i]; y++) {
-            in.skipBytes(lens[y]);
+    if (blockLen == 0) {
+      offset = in.getFilePointer() + 2;
+    }
+    else {
+      int layerLen = in.readInt();
+      int layerCount = in.readShort();
+      int[] w = new int[layerCount];
+      int[] h = new int[layerCount];
+      int[] c = new int[layerCount];
+      for (int i=0; i<layerCount; i++) {
+        int top = in.readInt();
+        int left = in.readInt();
+        int bottom = in.readInt();
+        int right = in.readInt();
+        w[i] = right - left;
+        h[i] = bottom - top;
+        c[i] = in.readShort();
+        in.skipBytes(c[i] * 6 + 12);
+        int len = in.readInt();
+        if (len % 2 == 1) len++;
+        in.skipBytes(len);
+      }
+
+      // skip over pixel data for each layer
+      for (int i=0; i<layerCount; i++) {
+        int[] lens = new int[h[i]];
+        for (int cc=0; cc<c[i]; cc++) {
+          boolean compressed = in.readShort() == 1;
+          if (!compressed) in.skipBytes(w[i] * h[i]);
+          else {
+            for (int y=0; y<h[i]; y++) {
+              lens[y] = in.readShort();
+            }
+            for (int y=0; y<h[i]; y++) {
+              in.skipBytes(lens[y]);
+            }
           }
         }
       }
-    }
 
-    in.skipBytes((int) (in.getFilePointer() % 2) + 4);
-    while (in.read() != '8');
-    in.skipBytes(7);
-    int len = in.readInt();
-    if ((len % 4) != 0) len += 4 - (len % 4);
-    in.skipBytes(len);
-
-    String s = in.readString(4);
-    while (s.equals("8BIM")) {
-      in.skipBytes(4);
-      len = in.readInt();
+      in.skipBytes((int) (in.getFilePointer() % 2) + 4);
+      while (in.read() != '8');
+      in.skipBytes(7);
+      int len = in.readInt();
       if ((len % 4) != 0) len += 4 - (len % 4);
       in.skipBytes(len);
-      s = in.readString(4);
-    }
 
-    offset = in.getFilePointer() - 4;
+      String s = in.readString(4);
+      while (s.equals("8BIM")) {
+        in.skipBytes(4);
+        len = in.readInt();
+        if ((len % 4) != 0) len += 4 - (len % 4);
+        in.skipBytes(len);
+        s = in.readString(4);
+      }
+
+      offset = in.getFilePointer() - 4;
+    }
 
     core[0].sizeZ = 1;
     core[0].sizeT = 1;

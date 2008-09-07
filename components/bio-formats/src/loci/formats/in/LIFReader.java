@@ -275,6 +275,7 @@ public class LIFReader extends FormatReader {
       }
 
       for (int q=0; q<channelMap[i].length; q++) {
+        if (!CHANNEL_PRIORITIES.containsKey(luts[q])) luts[q] = "";
         channelMap[i][q] =
           ((Integer) CHANNEL_PRIORITIES.get(luts[q])).intValue();
       }
