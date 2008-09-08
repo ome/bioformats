@@ -6,163 +6,128 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 
 ===============================================================================
-This build file handles the following projects:
+This build file handles the following components.
+For more information on a component, see the
+build.properties file in that component's subtree.
+
+OME-XML Java library
+    A library for working with OME-XML metadata structures
+    -=-
+    JAR file:      ome-xml.jar
+    Path:          components/ome-xml
+    Project deps:  (none)
+    License:       GPL
 
 Bio-Formats
+    A library for reading and writing popular microscopy file formats
+    -=-
     JAR file:      bio-formats.jar
-    Folders:       loci/formats
-                   loci/formats/* (except auto)
-    Main class:    loci.formats.ImageViewer
-    Project deps:  (None)
-    External deps: bufr-1.1.00.jar (reflected)
-                   clibwrapper_jiio.jar (reflected)
-                   grib-5.1.03.jar (reflected)
-                   jai_imageio.jar (reflected)
-                   mdbtools-java.jar (reflected)
-                   netcdf-4.0.jar (reflected)
-                   ome-java.jar (reflected, except in loci/formats/ome)
-                   poi-loci.jar (reflected)
-                   slf4j-jdk14.jar (reflected)
-                   jmagick.jar (reflected)
-    Targets:       style-formats
-                   compile-formats
-                   jar-formats
+    Path:          components/bio-formats
+    Project deps:  OME-XML Java library
     License:       GPL
 
 LOCI Plugins for ImageJ
+    A collection of plugins for ImageJ, including the Bio-Formats Importer,
+    Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
+    Colorizer and Stack Slicer
+    -=-
     JAR file:      loci_plugins.jar
-    Folders:       loci/plugins
-                   loci/plugins/config
-    Main class:    loci.plugins.About
-    IJ plugins:    loci.plugins.Colorizer
-                   loci.plugins.LociExporter
-                   loci.plugins.LociFunctions
-                   loci.plugins.LociImporter
-                   loci.plugins.LociUploader
-                   loci.plugins.ShortcutPanel
-                   loci.plugins.Slicer
-                   loci.plugins.config.LociConfig
+    Path:          components/loci-plugins
     Project deps:  Bio-Formats
-    External deps: forms-1.0.4.jar
-    Targets:       style-loci-plugins
-                   compile-loci-plugins
-                   jar-loci-plugins
     License:       GPL
 
 OME I/O
+    A library for OME database import, upload and download
+    -=-
     JAR file:      ome-io.jar
-    Folders:       loci/ome/io
-    Main class:    loci.ome.io.OMEWriter
+    Path:          components/ome-io
     Project deps:  Bio-Formats
-    External deps: commons-httpclient-2.0-rc2.jar (ome-java.jar)
-                   commons-logging.jar (ome-java.jar)
-                   omero-client-3.0-Beta3.jar (reflected)
-                   omero-common-3.0-Beta3.jar (reflected)
-                   omero-importer-3.0-Beta3.jar (reflected)
-                   omero-model-psql-3.0-Beta3.jar (reflected)
-                   spring-2.5.jar (reflected)
-                   jbossall-client-4.2.1.GA.jar (reflected)
-                   xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       style-omeio
-                   compile-omeio
-                   jar-omeio
     License:       GPL
 
 OME Plugins for ImageJ
+    A collection of plugins for ImageJ, including the
+    Download from OME and Upload to OME plugins
+    -=-
     JAR file:      ome_plugins.jar
-    Folders:       loci/plugins/ome
-    Main class:    loci.plugins.ome.About
-    IJ plugins:    loci.plugins.LociImporter
-                   loci.plugins.ome.LociUploader
-    Project deps:  LOCI Plugins for ImageJ
-                   OME I/O
-    External deps: (None)
-    Targets:       style-ome-plugins
-                   compile-ome-plugins
-                   jar-ome-plugins
+    Path:          components/ome-plugins
+    Project deps:  LOCI Plugins, OME I/O
     License:       GPL
 
 VisBio
+    A multi-purpose biological analysis tool
+    -=-
     JAR file:      visbio.jar
-    Folders:       loci/visbio
-                   loci/visbio/*
-    Main class:    loci.visbio.VisBio
-    Project deps:  Bio-Formats
-                   OME I/O
-    External deps: forms-1.0.4.jar
-                   ij.jar
-                   looks-1.2.2.jar
-                   visad-lite.jar
-    Targets:       style-visbio
-                   compile-visbio
-                   jar-visbio
-                   source-visbio
-                   docs-visbio
-                   dist-visbio
+    Path:          components/visbio
+    Project deps:  Bio-Formats, OME I/O
     License:       GPL
 
 Slim Plotter
+    An application and curve fitting library for visualization
+    and analysis of combined spectral lifetime data
+    -=-
     JAR file:      SlimPlotter.jar
-    Folders:       loci/slim
-                   some loci/visbio
-    Main class:    loci.slim.SlimPlotter
-    Project deps:  Bio-Formats
-    External deps: lma.jar
-                   visad-lite.jar
-    Targets:       style-slim
-                   compile-slim
-                   jar-slim
-                   dist-slim
+    Path:          components/slim-plotter
+    Project deps:  Bio-Formats, VisBio
     License:       GPL
 
+WiscScan Flow Cytometry
+    Server application for flow cytometry with WiscScan using JVMLink
+    -=-
+    JAR file:      flow-cytometry.jar
+    Path:          components/flow-cytometry
+    Project deps:  Bio-Formats
+    License:       BSD
+
 LOCI Checkstyle checks
+    LOCI's Checkstyle extensions, for checking source code style
+    -=-
     JAR file:      loci-checks.jar
-    Folders:       loci/checks
-    Main class:    loci.checks.About
-    Project deps:  (None)
-    External deps: checkstyle-all-4.2.jar
-    Targets:       style-checks
-                   compile-checks
-                   jar-checks
+    Path:          components/checkstyle
+    Project deps:  (none)
     License:       Public domain
+
+LOCI testing framework
+    Framework for automated and manual testing of the LOCI software packages
+    -=-
+    JAR file:      loci-testing-framework.jar
+    Path:          components/test-suite
+    Project deps:  Bio-Formats
 
 ===============================================================================
 The following projects are considered "legacy" but still supported:
 
 JVMLink
+    A library for communicating between a Java Virtual Machine and other
+    programs (e.g., C++ applications) via IP over localhost (or remotely)
+    -=-
     JAR file:      jvmlink.jar
-    Folder:        loci/jvmlink
-                   some loci/formats
-    Main class:    loci.jvmlink.JVMLinkServer
-    Project deps:  (None)
-    External deps: (None)
-    Targets:       style-jvmlink
-                   compile-jvmlink
-                   jar-jvmlink
+    Path:          components/legacy/jvmlink
+    Project deps:  Bio-Formats
     License:       BSD
 
+Multi-LUT
+    A demo application for visually exploring multi-spectral image data
+    -=-
+    JAR file:      MultiLUT.jar
+    Path:          components/legacy/multi-lut
+    Project deps:  (None)
+    License:       Public domain
+
 OME Notes
+    A library for flexible organization and presentation of OME-XML
+    metadata within a graphical browser and editor interface
+    -=-
     JAR file:      ome-notes.jar
-    Folder:        loci/ome/notes
-    Main class:    loci.ome.notes.Notes
+    Path:          components/legacy/ome-notes
     Project deps:  Bio-Formats
-    External deps: forms-1.0.4.jar
-    Targets:       style-ome-notes
-                   compile-ome-notes
-                   jar-ome-notes
     License:       LGPL
 
 OME Metadata Editor
+    An application for exploration and editing of OME-XML and OME-TIFF metadata
+    -=-
     JAR file:      ome-editor.jar
-    Folders:       loci/ome/editor
-                   loci/ome/viewer
-    Main class:    loci.ome.editor.MetadataEditor
+    Path:          components/legacy/ome-editor
     Project deps:  Bio-Formats
-    External deps: forms-1.0.4.jar
-                   looks-1.2.2.jar
-    Targets:       style-ome-editor
-                   compile-ome-editor
-                   jar-ome-editor
     License:       LGPL
 
 ===============================================================================
@@ -257,9 +222,8 @@ NetCDF
 
 OME-Java
     JAR file:  ome-java.jar
-    URL:       http://openmicroscopy.org/api/java/
-    Notes:     used by Bio-Formats and OME Metadata Editor to work with OME-XML;
-               used by OME I/O to connect to OME
+    URL:       http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
+    Notes:     used by OME I/O to connect to OME
     License:   LGPL
 
 OMERO Client
