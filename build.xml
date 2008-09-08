@@ -92,6 +92,7 @@ LOCI testing framework
     JAR file:      loci-testing-framework.jar
     Path:          components/test-suite
     Project deps:  Bio-Formats
+    License:       BSD
 
 ===============================================================================
 The following projects are considered "legacy" but still supported:
