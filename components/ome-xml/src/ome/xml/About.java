@@ -35,7 +35,7 @@
 package ome.xml;
 
 /**
- * Displays a small information dialog about the LOCI Plugins package.
+ * Displays a small information dialog about the OME-XML Java library.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-xml/src/ome/xml/About.java">Trac</a>,
