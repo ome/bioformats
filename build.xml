@@ -367,7 +367,9 @@ Apache XML-RPC
       clean-checks, clean-tests,
       clean-jvmlink, clean-multi-lut,
       clean-ome-notes, clean-ome-editor"
-    description="remove all build files"/>
+    description="remove all build files">
+    <delete dir="build"/>
+  </target>
 
   <target name="docs" depends="compile"
     description="generate javadocs for LOCI software packages">
