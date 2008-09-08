@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
+import java.util.Vector;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -355,6 +355,7 @@ public class DeltavisionReader extends FormatReader {
 
     // if matching log file exists, extract key/value pairs from it
     parseLogFile(store);
+    parseDeconvolutionLog(store);
   }
 
   // -- Helper methods --
@@ -448,10 +449,10 @@ public class DeltavisionReader extends FormatReader {
         //else if (key.equals("Aux Magn")) { }
         // Image properties
         else if (key.equals("Pixel Size")) {
-          StringTokenizer t = new StringTokenizer(value, " ");
-          Float x = new Float(t.nextToken().trim());
-          Float y = new Float(t.nextToken().trim());
-          Float z = new Float(t.nextToken().trim());
+          String[] pixelSizes = value.split(" ");
+          Float x = new Float(pixelSizes[0].trim());
+          Float y = new Float(pixelSizes[1].trim());
+          Float z = new Float(pixelSizes[2].trim());
 
           store.setDimensionsPhysicalSizeX(x, 0, 0);
           store.setDimensionsPhysicalSizeY(y, 0, 0);
@@ -490,10 +491,10 @@ public class DeltavisionReader extends FormatReader {
         }
         else if (key.equals("Stage coordinates")) {
           value = value.substring(1, value.length() - 1);
-          StringTokenizer t = new StringTokenizer(value, ",");
-          Float x = new Float(t.nextToken().trim());
-          Float y = new Float(t.nextToken().trim());
-          Float z = new Float(t.nextToken().trim());
+          String[] coords = value.split(",");
+          Float x = new Float(coords[0].trim());
+          Float y = new Float(coords[1].trim());
+          Float z = new Float(coords[2].trim());
 
           store.setStagePositionPositionX(x, 0, 0, currentImage);
           store.setStagePositionPositionY(y, 0, 0, currentImage);
@@ -503,6 +504,92 @@ public class DeltavisionReader extends FormatReader {
         }
       }
       else if (line.startsWith("Image")) prefix = line;
+    }
+
+    s.close();
+  }
+
+  /** Parse deconvolution output, if it exists. */
+  private void parseDeconvolutionLog(MetadataStore store) throws IOException {
+    int dot = getCurrentFile().lastIndexOf(".");
+    String base = getCurrentFile().substring(0, dot);
+    if (! new Location(base + "_log.txt").exists()) return;
+
+    RandomAccessStream s = new RandomAccessStream(base + "_log.txt");
+
+    boolean doStatistics = false;
+    int cc = 0, tt = 0;
+    String previousLine = null;
+
+    while (s.getFilePointer() < s.length() - 1) {
+      String line = s.readLine().trim();
+      if (line == null || line.length() == 0) continue;
+
+      if (doStatistics) {
+        String[] keys = line.split("  ");
+        Vector realKeys = new Vector();
+        for (int i=0; i<keys.length; i++) {
+          if (keys[i].trim().length() > 0) realKeys.add(keys[i].trim());
+        }
+        keys = (String[]) realKeys.toArray(new String[0]);
+
+        s.readLine();
+
+        line = s.readLine().trim();
+        while (line.length() != 0) {
+          String[] values = line.split(" ");
+          Vector realValues = new Vector();
+          for (int i=0; i<values.length; i++) {
+            if (values[i].trim().length() > 0) {
+              realValues.add(values[i].trim());
+            }
+          }
+          values = (String[]) realValues.toArray(new String[0]);
+
+          int zz = Integer.parseInt(values[0].trim()) - 1;
+          int index = getIndex(zz, cc, tt);
+          for (int i=1; i<keys.length; i++) {
+            addMeta("Plane " + index + " " + keys[i], values[i]);
+          }
+          line = s.readLine().trim();
+        }
+      }
+      else {
+        int index = line.indexOf(".\t");
+        if (index != -1) {
+          String key = line.substring(0, index).trim();
+          String value = line.substring(index + 2).trim();
+
+          // remove trailing dots from key
+          while (key.endsWith(".")) {
+            key = key.substring(0, key.length() - 1);
+          }
+
+          if (previousLine.endsWith("Deconvolution Results:") ||
+            previousLine.endsWith("open OTF"))
+          {
+            addMeta(previousLine + " " +  key, value);
+          }
+          else addMeta(key, value);
+        }
+      }
+
+      if (line.indexOf("correcting time point") != -1) {
+        int index = line.indexOf("time point\t") + 11;
+        if (index > 10) {
+          String t = line.substring(index, line.indexOf(",", index));
+          tt = Integer.parseInt(t) - 1;
+          index = line.indexOf("wavelength\t") + 11;
+          if (index > 10) {
+            String c = line.substring(index, line.indexOf(".", index));
+            cc = Integer.parseInt(c) - 1;
+          }
+        }
+      }
+
+      if (line.length() > 0 && line.indexOf(".") == -1) previousLine = line;
+
+      doStatistics = line.endsWith("- reading image data...");
     }
 
     s.close();
