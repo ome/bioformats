@@ -39,7 +39,7 @@ import loci.formats.LogTools;
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
  * DOMs for the 2003-FC version of OME-XML. It requires the
- * ome.xml.r2003fc package to compile (part of ome-java.jar).
+ * ome.xml.r2003fc package to compile (part of ome-xml.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ome/OMEXML2003FCMetadata.java">Trac</a>,

@@ -42,7 +42,7 @@ import loci.formats.LogTools;
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
  * DOMs for the $q.version() version of OME-XML. It requires the
- * $q.basePackage() package to compile (part of ome-java.jar).
+ * $q.basePackage() package to compile (part of ome-xml.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ome/$q.id()">Trac</a>,

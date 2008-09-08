@@ -40,7 +40,7 @@ import loci.formats.LogTools;
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
  * DOMs for the 2008-02 version of OME-XML. It requires the
- * ome.xml.r200802 package to compile (part of ome-java.jar).
+ * ome.xml.r200802 package to compile (part of ome-xml.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ome/OMEXML200802Metadata.java">Trac</a>,
