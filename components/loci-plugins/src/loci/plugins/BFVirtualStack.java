@@ -58,6 +58,8 @@ public class BFVirtualStack extends VirtualStack {
   private boolean merge;
   private boolean record;
 
+  private int series;
+
   // -- Static utility methods --
 
   protected static int getWidth(IFormatReader r, String path)
@@ -87,6 +89,8 @@ public class BFVirtualStack extends VirtualStack {
     this.colorize = colorize;
     this.merge = merge;
     this.record = record;
+
+    this.series = r.getSeries();
 
     // set up cache
     int[] len = new int[] {r.getEffectiveSizeC(), r.getSizeZ(), r.getSizeT()};
@@ -120,6 +124,8 @@ public class BFVirtualStack extends VirtualStack {
   // -- VirtualStack API methods --
 
   public synchronized ImageProcessor getProcessor(int n) {
+    reader.setSeries(series);
+
     // check cache first
     if (currentSlice >= 0 && currentProcessor != null) {
       Vector currentStack = currentProcessor.getMethodStack();
@@ -215,14 +221,17 @@ public class BFVirtualStack extends VirtualStack {
   }
 
   public int getWidth() {
+    reader.setSeries(series);
     return reader.getSizeX();
   }
 
   public int getHeight() {
+    reader.setSeries(series);
     return reader.getSizeY();
   }
 
   public int getSize() {
+    reader.setSeries(series);
     if (merge) return new ChannelMerger(reader).getImageCount();
     return reader.getImageCount();
   }

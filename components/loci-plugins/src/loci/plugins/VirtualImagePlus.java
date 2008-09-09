@@ -36,7 +36,10 @@ public class VirtualImagePlus extends ImagePlus {
       if (methods != null) {
         proc.applyMethodStack(methods);
       }
-      setProcessor(getTitle(), proc);
+      // if we call setProcessor(getTitle(), proc), the type will be set
+      // to GRAY32 (regardless of the actual processor type)
+      setProcessor(getTitle(), proc.getChild());
+      this.ip = proc;
     }
   }
 

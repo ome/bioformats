@@ -69,6 +69,10 @@ public class RecordedImageProcessor extends ImageProcessor {
     }
   }
 
+  public ImageProcessor getChild() {
+    return proc;
+  }
+
   // -- ImageProcessor API methods --
 
   public void abs() {
