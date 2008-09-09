@@ -372,8 +372,12 @@ public class FV1000Reader extends FormatReader {
       if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
         key = line.substring(0, line.indexOf("=")).trim();
         value = line.substring(line.indexOf("=") + 1).trim();
+        if (value.startsWith("\"")) {
+          value = value.substring(1, value.length() - 1);
+        }
+
         if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1 &&
-          value.indexOf("-R") == -1)
+          !isPreviewName(value))
         {
           value = value.replaceAll("/", File.separator);
           value = value.replace('\\', File.separatorChar);
@@ -405,8 +409,7 @@ public class FV1000Reader extends FormatReader {
           if (thumbId == null) thumbId = value.trim();
         }
         else if (key.startsWith("LutFileName")) {
-          value = value.substring(1, value.length() - 1);
-          if (value.indexOf("-R") == -1) {
+          if (!isPreviewName(value)) {
             value = value.replaceAll("/", File.separator);
             value = value.replace('\\', File.separatorChar);
             while (value.indexOf("GST") != -1) {
@@ -422,8 +425,7 @@ public class FV1000Reader extends FormatReader {
           }
           lutNames.add(path + value);
         }
-        else if (value.indexOf("-R") != -1) {
-          // "-R" in the file name indicates that this is a preview image
+        else if (isPreviewName(value)) {
           value = value.replaceAll("/", File.separator);
           value = value.replace('\\', File.separatorChar);
           while (value.indexOf("GST") != -1) {
@@ -432,9 +434,6 @@ public class FV1000Reader extends FormatReader {
               value.length() : value.indexOf(File.separator);
             String last = value.substring(value.lastIndexOf("=", ndx) + 1);
             value = first + last;
-          }
-          if (value.startsWith("\"")) {
-            value = value.substring(1, value.length() - 1);
           }
           if (mappedOIF) {
             value = value.substring(value.lastIndexOf(File.separator) + 1);
@@ -579,7 +578,7 @@ public class FV1000Reader extends FormatReader {
     thumbReader = new BMPReader();
     thumbId = thumbId.replaceAll("pty", "bmp");
     thumbId = sanitizeFile(thumbId, (isOIB || mappedOIF) ? "" : path);
-    if (isOIB) thumbId = thumbId.substring(1);
+    //if (isOIB) thumbId = thumbId.substring(1);
 
     status("Reading additional metadata");
 
@@ -610,7 +609,7 @@ public class FV1000Reader extends FormatReader {
           value = DataTools.stripString(value);
           if (key.equals("DataName")) {
             value = value.substring(1, value.length() - 1);
-            if (value.indexOf("-R") == -1) {
+            if (!isPreviewName(value)) {
               value = value.replaceAll("/", File.separator);
               value = value.replace('\\', File.separatorChar);
               while (value.indexOf("GST") != -1) {
@@ -668,7 +667,6 @@ public class FV1000Reader extends FormatReader {
       if (pixelSize[i] == null) pixelSize[i] = "1.0";
       pixelSize[i] = pixelSize[i].replaceAll("\"", "");
       Float pixel = new Float(pixelSize[i]);
-      code[i] = code[i].substring(1, code[i].length() - 1);
       if (code[i].equals("X")) core[0].sizeX = ss;
       else if (code[i].equals("Y")) core[0].sizeY = ss;
       else if (code[i].equals("Z")) {
@@ -842,6 +840,12 @@ public class FV1000Reader extends FormatReader {
       return poi.getDocumentStream((String) oibMapping.get(name));
     }
     else return new RandomAccessStream(name);
+  }
+
+  private boolean isPreviewName(String name) {
+    // "-R" in the file name indicates that this is a preview image
+    int index = name.indexOf("-R");
+    return index == name.length() - 9;
   }
 
 }
