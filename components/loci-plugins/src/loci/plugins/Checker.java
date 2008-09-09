@@ -83,7 +83,7 @@ public final class Checker {
           "poi-loci.jar", missing);
         break;
       case OME_JAVA_XML:
-        checkLibrary("org.openmicroscopy.xml.OMENode", "ome-java.jar", missing);
+        checkLibrary("ome.xml.OMEXMLNode", "ome-xml.jar", missing);
         break;
       case OME_JAVA_DS:
         checkLibrary("org.openmicroscopy.ds.DataServer",
