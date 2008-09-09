@@ -89,6 +89,12 @@ public class AVIReader extends FormatReader {
     return stream.readString(4).equals("RIFF");
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return lut;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -501,8 +507,8 @@ public class AVIReader extends FormatReader {
 
     core[0].imageCount = offsets.size();
 
-    core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0);
-    core[0].indexed = false;
+    core[0].rgb = (bmpBitsPerPixel > 8 || (bmpCompression != 0)) && lut == null;
+    core[0].indexed = lut != null;
     core[0].sizeZ = 1;
     core[0].sizeT = getImageCount();
     core[0].littleEndian = true;
@@ -573,15 +579,6 @@ public class AVIReader extends FormatReader {
     */
     else {
       throw new FormatException("Unsupported compression : " + bmpCompression);
-    }
-    if (lut != null) {
-      b = buf;
-      buf = new byte[b.length * getSizeC()];
-      for (int i=0; i<b.length; i++) {
-        buf[i*getSizeC()] = lut[0][b[i] & 0xff];
-        buf[i*getSizeC() + 1] = lut[1][b[i] & 0xff];
-        buf[i*getSizeC() + 2] = lut[2][b[i] & 0xff];
-      }
     }
     return buf;
   }

@@ -102,7 +102,22 @@ public class AVIWriter extends FormatWriter {
     BufferedImage img = null;
     if (cm != null) img = ImageTools.makeBuffered(image, cm);
     else img = ImageTools.makeBuffered(image);
+    //if ((img.getColorModel() instanceof IndexColorModel) ||
+    //  (img.getColorModel() instanceof Index16ColorModel))
+    //{
+    //  img = ImageTools.indexedToRGB(img, false);
+    //}
     byte[][] byteData = ImageTools.getBytes(img);
+    byte[][] lut = null;
+
+    if (img.getColorModel() instanceof IndexColorModel) {
+      lut = new byte[4][256];
+      IndexColorModel model = (IndexColorModel) img.getColorModel();
+      model.getReds(lut[0]);
+      model.getGreens(lut[1]);
+      model.getBlues(lut[2]);
+      model.getAlphas(lut[3]);
+    }
 
     if (!initialized) {
       initialized = true;
@@ -343,8 +358,9 @@ public class AVIWriter extends FormatWriter {
         DataTools.writeInt(raFile, 0, true);
         // biYPelsPerMeter - vertical resolution in pixels per meter
         DataTools.writeInt(raFile, 0, true);
-        if (bitsPerPixel == 8) DataTools.writeInt(raFile, 256, true);
-        else DataTools.writeInt(raFile, 0, true); // biClrUsed
+
+        int nColors = lut == null ? 0 : 256;
+        DataTools.writeInt(raFile, nColors, true);
 
         // biClrImportant - specifies that the first x colors of the color table
         // are important to the DIB. If the rest of the colors are not
@@ -356,14 +372,24 @@ public class AVIWriter extends FormatWriter {
         // Write the LUTa.getExtents()[1] color table entries here. They are
         // written: blue byte, green byte, red byte, 0 byte
         if (bytesPerPixel == 1) {
-          byte[] lutWrite = new byte[4 * 256];
-          for (int i=0; i<256; i++) {
-            lutWrite[4*i] = (byte) i; // blue
-            lutWrite[4*i+1] = (byte) i; // green
-            lutWrite[4*i+2] = (byte) i; // red
-            lutWrite[4*i+3] = 0;
+          if (lut != null) {
+            for (int i=0; i<256; i++) {
+              raFile.write(lut[2][i]);
+              raFile.write(lut[1][i]);
+              raFile.write(lut[0][i]);
+              raFile.write(lut[3][i]);
+            }
           }
-          raFile.write(lutWrite);
+          else {
+            byte[] lutWrite = new byte[4 * 256];
+            for (int i=0; i<256; i++) {
+              lutWrite[4*i] = (byte) i; // blue
+              lutWrite[4*i+1] = (byte) i; // green
+              lutWrite[4*i+2] = (byte) i; // red
+              lutWrite[4*i+3] = 0;
+            }
+            raFile.write(lutWrite);
+          }
         }
 
         raFile.seek(savestrfSize);
@@ -449,8 +475,7 @@ public class AVIWriter extends FormatWriter {
         for (int j=0; j<width; j++) {
           offset = i*width + j;
           for (int k=(byteData.length - 1); k>=0; k--) {
-            buf[next] = byteData[k][offset];
-            next++;
+            buf[next++] = byteData[k][offset];
           }
         }
         next += xPad * byteData.length;
