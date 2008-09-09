@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.*;
@@ -61,6 +62,8 @@ public class APNGReader extends FormatReader {
   private Vector blocks;
   private Vector frameCoordinates;
 
+  private byte[][] lut;
+
   // -- Constructor --
 
   /** Constructs a new APNGReader. */
@@ -74,6 +77,12 @@ public class APNGReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
     return true;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return lut;
   }
 
   /**
@@ -178,6 +187,7 @@ public class APNGReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
     super.close();
+    lut = null;
   }
 
   // -- Internal FormatReader methods --
@@ -254,6 +264,16 @@ public class APNGReader extends FormatReader {
     core[0].rgb = img.getRaster().getNumBands() > 1;
     core[0].sizeC = img.getRaster().getNumBands();
     core[0].pixelType = ImageTools.getPixelType(img);
+    core[0].indexed = img.getColorModel() instanceof IndexColorModel;
+    core[0].falseColor = false;
+
+    if (isIndexed()) {
+      lut = new byte[3][256];
+      IndexColorModel model = (IndexColorModel) img.getColorModel();
+      model.getReds(lut[0]);
+      model.getGreens(lut[1]);
+      model.getBlues(lut[2]);
+    }
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
