@@ -810,25 +810,25 @@ public class ZeissZVIReader extends FormatReader {
         firstImageTile = value;
       }
       else if (key.equals("ImageTile Index 1")) secondImageTile = value;
-      else if (key.startsWith("Scale Factor for X")) {
+      else if (key.equals("Scale Factor for X")) {
         try {
           pixelSizeX = Float.parseFloat(value);
         }
         catch (NumberFormatException e) { }
       }
-      else if (key.startsWith("Scale Factor for Y")) {
+      else if (key.equals("Scale Factor for Y")) {
         try {
           pixelSizeY = Float.parseFloat(value);
         }
         catch (NumberFormatException e) { }
       }
-      else if (key.startsWith("Scale Factor for Z")) {
+      else if (key.equals("Scale Factor for Z")) {
         try {
           pixelSizeZ = Float.parseFloat(value);
         }
         catch (NumberFormatException e) { }
       }
-      else if (key.startsWith("Scale Unit for X")) {
+      else if (key.equals("Scale Unit for X")) {
         int v = 0;
         try {
           v = Integer.parseInt(value);
@@ -849,7 +849,7 @@ public class ZeissZVIReader extends FormatReader {
             break;
         }
       }
-      else if (key.startsWith("Scale Unit for Y")) {
+      else if (key.equals("Scale Unit for Y")) {
         int v = 0;
         try {
           v = Integer.parseInt(value);
@@ -870,7 +870,7 @@ public class ZeissZVIReader extends FormatReader {
             break;
         }
       }
-      else if (key.startsWith("Scale Unit for Z")) {
+      else if (key.equals("Scale Unit for Z")) {
         int v = 0;
         try {
           v = Integer.parseInt(value);
@@ -940,8 +940,8 @@ public class ZeissZVIReader extends FormatReader {
         if (value != null && !value.trim().equals("")) userName = value;
       }
       else if (key.equals("User company")) userCompany = value;
-      else if (key.startsWith("Objective Magnification")) mag = value;
-      else if (key.startsWith("Objective N.A.")) na = value;
+      else if (key.equals("Objective Magnification")) mag = value;
+      else if (key.equals("Objective N.A.")) na = value;
       else if (key.startsWith("Acquisition Date")) {
         if (image >= 0) {
           if (image < timestamps.size()) timestamps.setElementAt(value, image);
