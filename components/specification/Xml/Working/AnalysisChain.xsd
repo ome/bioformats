@@ -15,58 +15,58 @@
 	# Written by:  Ilya G. Goldberg, Josiah Johnston, Andrew J Patterson 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<schema xmlns = "http://www.w3.org/2001/XMLSchema"
+<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-02"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-02"
-	xmlns:AC = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-02"
-	 version = "1"
-	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	 elementFormDefault = "qualified">
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-02"
+	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
+	version = "1"
+	elementFormDefault = "qualified">
 	
-	<element name = "AnalysisChain">
-		<complexType>
-			<sequence>
-				<element ref = "AC:Nodes"/>
-				<element ref = "AC:Links"/>
-			</sequence>
-			<attribute name = "Name" use = "required" type = "string"/>
-			<attribute name = "Locked" default = "false" type = "boolean"/>
-		</complexType>
-	</element>
-	<element name = "Nodes">
-		<complexType>
-			<sequence>
-				<element ref = "AC:Node" minOccurs = "0" maxOccurs = "unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
-	<element name = "Node">
-		<complexType>
-			<attribute name = "NodeID" use = "required" type = "string"/>
-			<attribute name = "ProgramName" use = "required" type = "string"/>
-			<attribute name = "IteratorTag" type = "string"/>
-			<attribute name = "NewRegionTag" type = "string"/>
-		</complexType>
-	</element>
-	<element name = "Links">
-		<complexType>
-			<sequence>
-				<element ref = "AC:Link" minOccurs = "0" maxOccurs = "unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
-	<element name = "Link">
-		<complexType>
-			<attribute name = "FromNodeID" use = "required" type = "string"/>
-			<attribute name = "FromOutputName" use = "required" type = "string"/>
-			<attribute name = "ToNodeID" use = "required" type = "string"/>
-			<attribute name = "ToInputName" use = "required" type = "string"/>
-		</complexType>
-	</element>
-	<element name = "AnalysisChains">
-		<complexType>
-			<sequence>
-				<element ref = "AC:AnalysisChain" minOccurs = "0" maxOccurs = "unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
-</schema>
+	<xsd:element name = "AnalysisChain"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "Nodes" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref = "Links" minOccurs="1" maxOccurs="1"/>
+			</xsd:sequence>
+			<xsd:attribute name = "Name" use = "required" type = "xsd:string"/>
+			<xsd:attribute name = "Locked" default = "false" use="optional" type = "xsd:boolean"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "Nodes"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "Node" minOccurs = "0" maxOccurs = "unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "Node"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:attribute name = "NodeID" use = "required" type = "xsd:string"/>
+			<xsd:attribute name = "ProgramName" use = "required" type = "xsd:string"/>
+			<xsd:attribute name = "IteratorTag" use="optional" type = "xsd:string"/>
+			<xsd:attribute name = "NewRegionTag" use="optional" type = "xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "Links"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "Link" minOccurs = "0" maxOccurs = "unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "Link"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:attribute name = "FromNodeID" use = "required" type = "xsd:string"/>
+			<xsd:attribute name = "FromOutputName" use = "required" type = "xsd:string"/>
+			<xsd:attribute name = "ToNodeID" use = "required" type = "xsd:string"/>
+			<xsd:attribute name = "ToInputName" use = "required" type = "xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "AnalysisChains"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "AnalysisChain" minOccurs = "0" maxOccurs = "unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
