@@ -303,7 +303,7 @@
         <ome:GroupRef ID="Group:a"/>
         <ome:DatasetRef ID="Dataset:a"/>
         <ome:InstrumentRef ID="Instrument:a"/>
-        <ome:ObjectiveSettingsRef ID="ObjectiveSettings:a"/>
+        <ome:ObjectiveRef ID="Objective:a"/>
         <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
         <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype11">
         </ome:Thumbnail>

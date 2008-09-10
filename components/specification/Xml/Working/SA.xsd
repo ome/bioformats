@@ -24,7 +24,7 @@
 	elementFormDefault = "qualified">
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation = "ome-roi-sa.xsd"/>
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation = "BinaryFile.xsd"/>
-	<xsd:element name="StructuredAnnotations">
+	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<xsd:element ref="SvgAnnotation" minOccurs="1" maxOccurs="1"/>
@@ -33,19 +33,20 @@
 				<xsd:element ref="TextAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LongAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="DoubleAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="ProfileAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="BooleanAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="TimestampAnnotation" minOccurs="1" maxOccurs="1"/>
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:complexType name="CommonAnnotation">
+	<xsd:complexType name="CommonAnnotation" abstract="true">
 		<xsd:sequence>
 			<xsd:element ref="Link" minOccurs="1" maxOccurs="unbounded"/>
 		</xsd:sequence>
 		<xsd:attribute name="ID" use="required" type="AnnotationID"></xsd:attribute>
 		<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
 	</xsd:complexType>
-	<xsd:element name="Link">
+	<xsd:element name="Link"> <!-- top level definition --> 
 		<xsd:simpleType>
 			<xsd:restriction base="OME:LSID"/>
 		</xsd:simpleType>
@@ -55,23 +56,23 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Annotation:\S+)|(Annotation:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:element name="FileAnnotation">
+	<xsd:element name="FileAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
 						<xsd:element name="FileName" minOccurs="1" maxOccurs="1"/>
-						<xsd:element name="MimeType" minOccurs="0" maxOccurs="1"/>	
-						<xsd:choice>
+						<xsd:element name="MimeType" minOccurs="0" maxOccurs="1" type="OME:MIMEtype"/>	
+						<xsd:choice minOccurs="1" maxOccurs="1">
 							<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
-							<xsd:element name="ExternalFile" minOccurs="1" maxOccurs="1"/>
+							<xsd:element name="ExternalFile" minOccurs="1" maxOccurs="1" type="xsd:string"/>
 						</xsd:choice>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent> 
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="SvgAnnotation">
+	<xsd:element name="SvgAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
@@ -114,12 +115,12 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ListAnnotation">
+	<xsd:element name="ListAnnotation">  <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="List">
+						<xsd:element name="List" minOccurs="1" maxOccurs="1">
 							<xsd:complexType>
 								<xsd:sequence>
 									<xsd:element ref="Link" minOccurs="1" maxOccurs="unbounded"/>
@@ -131,60 +132,100 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="TextAnnotation">
+	<xsd:element name="TextAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="Value" type="xsd:string"/>
-						<xsd:element name="TextType" type="xsd:string"/>
+						<xsd:element name="Value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<xsd:element name="TextType" type="xsd:string" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="LongAnnotation">
+	<xsd:element name="LongAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="Value" type="xsd:long"/>
+						<xsd:element name="Value" type="xsd:long" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="DoubleAnnotation">
+	<xsd:element name="DoubleAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="Value" type="xsd:double"/>
+						<xsd:element name="Value" type="xsd:double" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="BooleanAnnotation">
+	<xsd:element name="ProfileAnnotation"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CommonAnnotation">
+					<xsd:choice minOccurs="1" maxOccurs="1">
+						<xsd:element name="InstrumentProfile" minOccurs="1" maxOccurs="1"/>
+						<xsd:element name="ChannelProfile" minOccurs="1" maxOccurs="1"/>
+					</xsd:choice>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="BooleanAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="Value" type="xsd:boolean"/>
+						<xsd:element name="Value" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>	
-	<xsd:element name="TimestampAnnotation">
+	<xsd:element name="TimestampAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="Value" type="xsd:dateTime"/>
+						<xsd:element name="Value" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="ImageProfile"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="Description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<!-- InstrumentRef is used instead of a reference to Microscope as 
+					there is no ID in Microscope. There is a 1 to 1 mapping as each
+					Instrument can contain only 1 Microscope.
+				-->
+				<xsd:element ref="OME:InstrumentRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OME:ObjectiveRef" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ChannelProfile"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="Description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OME:LightSourceRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OME:OTFRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OME:DetectorRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OME:FilterSetRef" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
 </xsd:schema>

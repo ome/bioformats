@@ -222,7 +222,7 @@
         <GroupRef ID="Group:a"/>
         <DatasetRef ID="Dataset:a"/>
         <InstrumentRef ID="Instrument:a"/>
-        <ObjectiveSettingsRef ID="ObjectiveSettings:a"/>
+        <ObjectiveRef ID="Objective:a"/>
         <ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
         <Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype11">
         </Thumbnail>
@@ -283,7 +283,6 @@
                 <StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
             </Plane>
         </Pixels>
-        <AcquiredPixelsRef ID="Pixels:a"/>
         <Region Tag="Tag22" Name="Name95" ID="Region:a">
             <Region Tag="Tag23" Name="Name96" ID="Region:a"/>
             <ca:CustomAttributes>

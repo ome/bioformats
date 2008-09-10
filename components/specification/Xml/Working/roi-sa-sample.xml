@@ -49,19 +49,19 @@
 		</ome:ROI>
 	</ome:Image>
 	<sa:StructuredAnnotations>
-		<sa:FileAnnotation ID="Annotation:1" Namespace="urn:ome:omero:attachment:file">
+		<sa:FileAnnotation ID="Annotation:1" Namespace="ome:omero:attachment:file">
 			<sa:Link>Shape:5</sa:Link>
 			<sa:FileName>file.txt</sa:FileName>
 			<sa:MimeType>text/plain</sa:MimeType>
 			<bf:BinData Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
 		</sa:FileAnnotation>
-		<sa:FileAnnotation ID="Annotation:2" Namespace="urn:ome:omero:attachment:file">
+		<sa:FileAnnotation ID="Annotation:2" Namespace="ome:omero:attachment:file">
 			<sa:Link>Image:1</sa:Link>
 			<sa:FileName>report.pdf</sa:FileName>
 			<sa:MimeType>application/pdf</sa:MimeType>
 			<sa:ExternalFile>roi-sample-annotations/report.pdf</sa:ExternalFile>
 		</sa:FileAnnotation>
-		<sa:SvgAnnotation ID="Annotation:3" Namespace="urn:ome:omero:insight:roi:svg" 
+		<sa:SvgAnnotation ID="Annotation:3" Namespace="ome:omero:insight:roi:svg" 
 			fill-opacity="0.25098039215686274" fill-rule="evenodd" stroke="#c4c4c4"
 			stroke-dashoffset="0" stroke-linecap="butt" stroke-linejoin="miter"
 			stroke-miterlimit="3" stroke-opacity="0.7686274509803922" stroke-width="1"
