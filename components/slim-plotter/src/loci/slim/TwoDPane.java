@@ -401,7 +401,10 @@ public class TwoDPane extends JPanel
         try {
           FlatField ff = (FlatField) lifetimeField.getSample(c);
           ff.setSamples(lifetimeImage);
-          imageRef.setData(lifetimeField);
+          //imageRef.setData(lifetimeField);
+          // CTR START HERE - this works, but need to make this change
+          // unilateral and then fix slider behavior to match
+          imageRef.setData(ff);
         }
         catch (VisADException exc) { exc.printStackTrace(); }
         catch (RemoteException exc) { exc.printStackTrace(); }
