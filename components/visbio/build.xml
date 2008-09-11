@@ -13,4 +13,143 @@ Type "ant -p" for a list of targets.
   <property file="base.properties"/>
   <import file="${root.dir}/common.xml"/>
   <property file="build.properties"/>
+
+  <!-- CTR TODO - fix dist targets -->
+
+  <target name="dist"
+    depends="dist-win32, dist-win32-nojre, dist-macosx,
+      dist-linux, dist-nojre"
+    description="create distribution bundles"/>
+
+  <target name="dist-win32" depends="jar"
+    description="create distribution bundle: Windows w/ JRE">
+    <copy todir="${visbio.win32-dir}/VisBio" preservelastmodified="true">
+      <fileset dir="dist/visbio/win32"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${component.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.win32-dir}/VisBio" eol="dos"
+      includes="${visbio.text-files}"/>
+    <untar src="dist/jre-win32.tar.gz" dest="${visbio.win32-dir}/VisBio"
+      overwrite="false" compression="gzip"/>
+    <zip destfile="${dist.dir}/visbio${visbio.version}_win32.zip"
+      basedir="${visbio.win32-dir}"/>
+  </target>
+
+  <target name="dist-win32-nojre" depends="jar"
+    description="create distribution bundle: Windows no JRE">
+    <copy todir="${visbio.win32-nojre-dir}/VisBio"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/win32" excludes="launcher.cfg"/>
+      <fileset dir="dist/visbio/win32-nojre"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${component.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.win32-nojre-dir}/VisBio" eol="dos"
+      includes="${visbio.text-files}"/>
+    <zip destfile="${dist.dir}/visbio${visbio.version}_win32_nojre.zip"
+      basedir="${visbio.win32-nojre-dir}"/>
+  </target>
+
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-macosx" if="isUnix" depends="jar"
+    description="create distribution bundle: Mac OS X">
+    <copy todir="${visbio.macosx-dir}/VisBio"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/macosx"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.macosx-dir}/VisBio" eol="mac"
+      includes="${visbio.text-files}"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${visbio.macosx-dir}/VisBio"
+        includes="${visbio.macosx-exec}"/>
+    </chmod>
+    <copy
+      todir="${visbio.macosx-dir}/VisBio/VisBio.app/Contents/Resources/Java">
+      <fileset dir="${jar.dir}" includes="${component.jar} ${visbio.classpath}"/>
+    </copy>
+    <!--<tar destfile="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"
+      basedir="${visbio.macosx-dir}" compression="gzip"/>-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <echo>Building tar: visbio${visbio.version}_macosx.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="czf"/>
+      <arg value="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.macosx-dir}"/>
+      <arg value="VisBio"/>
+    </exec>
+  </target>
+
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-linux" if="isUnix"
+    depends="jar"
+    description="create distribution bundle: Linux w/ JRE">
+    <copy todir="${visbio.linux-dir}/visbio${visbio.version}"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${component.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.linux-dir}/visbio${visbio.version}" eol="unix"
+      includes="${visbio.text-files}"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${visbio.linux-dir}/visbio${visbio.version}"
+        includes="${visbio.linux-exec}"/>
+    </chmod>
+    <!--<untar src="dist/jre-linux.tar.gz"
+      dest="${visbio.linux-dir}/visbio${visbio.version}"
+      overwrite="false" compression="gzip"/>-->
+    <!-- HACK - untar does not restore permissions; use exec instead -->
+    <echo>Expanding: jre-linux.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="xzf"/>
+      <arg value="dist/jre-linux.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.linux-dir}/visbio${visbio.version}"/>
+    </exec>
+    <!--<tar destfile="${dist.dir}/visbio${visbio.version}_linux.tar.gz"
+      basedir="${visbio.linux-dir}" compression="gzip"/>-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <echo>Building tar: visbio${visbio.version}_linux.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="czf"/>
+      <arg value="${dist.dir}/visbio${visbio.version}_linux.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.linux-dir}"/>
+      <arg value="visbio${visbio.version}"/>
+    </exec>
+  </target>
+
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-nojre" if="isUnix" depends="jar"
+    description="create distribution bundle: cross-platform">
+    <copy todir="${visbio.nojre-dir}/visbio${visbio.version}"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${component.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.nojre-dir}/visbio${visbio.version}" eol="unix"
+      includes="${visbio.text-files}"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${visbio.nojre-dir}/visbio${visbio.version}"
+        includes="${visbio.linux-exec}"/>
+    </chmod>
+    <!--<tar destfile="${dist.dir}/visbio${visbio.version}.tar.gz"
+      basedir="${visbio.nojre-dir}" compression="gzip"/>-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <echo>Building tar: visbio${visbio.version}.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="czf"/>
+      <arg value="${dist.dir}/visbio${visbio.version}.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.nojre-dir}"/>
+      <arg value="visbio${visbio.version}"/>
+    </exec>
+  </target>
 </project>

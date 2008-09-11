@@ -13,4 +13,25 @@ Type "ant -p" for a list of targets.
   <property file="base.properties"/>
   <import file="${root.dir}/common.xml"/>
   <property file="build.properties"/>
+
+  <!-- CTR TODO - fix dist target -->
+
+  <target name="dist" if="isUnix" depends="jar"
+    description="create distribution bundle for Slim Plotter">
+    <copy todir="${slim.dist-dir}" preservelastmodified="true">
+      <fileset dir="dist/slim"/>
+      <fileset dir="${jar.dir}" includes="${component.jar} ${slim.classpath}"/>
+    </copy>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${slim.dist-dir}" includes="${slim.exec}"/>
+    </chmod>
+    <!--<zip destfile="${dist.dir}/slim.zip" basedir="${dist.dir}/slim"/>-->
+    <!-- HACK - zip does not preserve permissions; use exec instead -->
+    <exec executable="zip" dir="${dist.dir}/slim">
+      <arg value="-r9"/>
+      <arg value="../slim.zip"/>
+      <arg value="SlimPlotter"/>
+    </exec>
+  </target>
 </project>
