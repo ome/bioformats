@@ -22,9 +22,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// Special thanks to Long Yan, Steve Trier, Kraig Kumfer,
-// Paolo Provenzano and Tony Collins for suggestions and testing.
-
 package loci.slim;
 
 import java.awt.*;
@@ -82,7 +79,7 @@ public class TwoDPane extends JPanel
 
   // lifetime parameters
   private FieldImpl lifetimeField;
-  private int lifetimeMin, lifetimeMax;
+  private double lifetimeMin, lifetimeMax;
 
   // ROI parameters
   private float[][] roiGrid;
@@ -98,9 +95,9 @@ public class TwoDPane extends JPanel
   // GUI components for image pane
   private JProgressBar progress;
   private JButton startStopButton;
+  private JSlider cSlider;
   private JRadioButton intensityMode, lifetimeMode;
   private JRadioButton projectionMode, emissionMode;
-  private JSlider cSlider;
   private JTextField minField, maxField;
   private Color validColor = null;
   private JCheckBox cToggle;
@@ -314,8 +311,7 @@ public class TwoDPane extends JPanel
     for (int c=0; c<data.channels; c++) {
       curveRenderers[c] = new BurnInRenderer(data.curves[c]);
       curveRenderers[c].setComponentCount(data.numExp);
-      curveRenderers[c].setMaxIterations(10); /* TEMP */
-      
+      curveRenderers[c].setMaxIterations(10);//TEMP
     }
     int delay = RATE;
     lifetimeRefresh = new Timer(delay, this);
@@ -408,6 +404,23 @@ public class TwoDPane extends JPanel
         }
         catch (VisADException exc) { exc.printStackTrace(); }
         catch (RemoteException exc) { exc.printStackTrace(); }
+
+        // recompute min and max
+        double lifeMin = 0, lifeMax = 0;
+        /*
+        for (int h=0; h<data.height; h++) {
+          for (int w=0; w<data.width; w++) {
+            double val = lifetimeImage[0][data.width * h + w];
+            if (val < lifeMin) lifeMin = val;
+            if (val > lifeMax) lifeMax = val;
+          }
+        }
+        */
+        if (lifeMin < lifetimeMin || lifeMax > lifetimeMax) {
+          lifetimeMin = lifeMin;
+          lifetimeMax = lifeMax;
+          resetMinMax(lifetimeMin, lifetimeMax);
+        }
       }
     }
   }
@@ -510,6 +523,7 @@ public class TwoDPane extends JPanel
   }
 
   private void resetMinMax(double min, double max) {
+    System.out.println("resetMinMax: min=" + min + ", max=" + max);//TEMP
     minField.getDocument().removeDocumentListener(this);
     maxField.getDocument().removeDocumentListener(this);
     minField.setText("" + min);
@@ -591,18 +605,8 @@ public class TwoDPane extends JPanel
     try {
       if (lifetimeField == null) {
         lifetimeField = new FieldImpl(types.cxyvFunc, types.cSet);
-        lifetimeMin = lifetimeMax = 0;
         for (int c=0; c<data.channels; c++) {
           float[][] samples = new float[1][data.width * data.height];
-          for (int h=0; h<data.height; h++) {
-            for (int w=0; w<data.width; w++) {
-              // TODO
-              float val = 100 * (float) (Math.cos(w/10.0) * Math.sin(h/10.0));
-              samples[0][data.width * h + w] = val;
-              if (val < lifetimeMin) lifetimeMin = (int) Math.floor(val);
-              if (val > lifetimeMax) lifetimeMax = (int) Math.ceil(val);
-            }
-          }
           FlatField ff = new FlatField(types.xyvFunc, types.xySet);
           ff.setSamples(samples, false);
           lifetimeField.setSample(c, ff);
@@ -613,9 +617,6 @@ public class TwoDPane extends JPanel
       // reset to RGB color map
       ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
       cc.setTable(ColorControl.initTableVis5D(new float[3][256]));
-
-      //resetMinMax(lifetimeMin, lifetimeMax);
-      resetMinMax(0, 0.035);//TEMP
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }

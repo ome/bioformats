@@ -22,9 +22,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// Special thanks to Long Yan, Steve Trier, Kraig Kumfer,
-// Paolo Provenzano and Tony Collins for suggestions and testing.
-
 package loci.slim;
 
 import java.awt.*;

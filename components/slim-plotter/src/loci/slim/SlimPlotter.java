@@ -128,12 +128,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // GUI components for decay pane
   private JLabel decayLabel;
-  private ColorMapWidget colorWidget;
-  private JCheckBox cOverride;
-  private JTextField cMinValue, cMaxValue;
-  private JButton lutLoad, lutSave, lutPresets;
+  private ColorWidget colorWidget;
   private JPopupMenu lutsMenu;
-  private JFileChooser lutBox;
   private JRadioButton linear, log;
   private JRadioButton perspective, parallel;
   private JRadioButton dataSurface, dataLines;
@@ -380,51 +376,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "Displays information about the selected region of interest");
       decayPane.add(decayLabel, BorderLayout.NORTH);
 
-      colorWidget = new ColorMapWidget(vMap);
-      Dimension prefSize = colorWidget.getPreferredSize();
-      colorWidget.setPreferredSize(new Dimension(prefSize.width, 0));
-
-      cOverride = new JCheckBox("", false);
-      cOverride.setToolTipText(
-        "Toggles manual override of color range");
-      cOverride.addActionListener(this);
-      cMinValue = new JTextField();
-      Util.adjustTextField(cMinValue);
-      cMinValue.setToolTipText("Overridden color minimum");
-      cMinValue.setEnabled(false);
-      cMinValue.getDocument().addDocumentListener(this);
-      cMaxValue = new JTextField();
-      Util.adjustTextField(cMaxValue);
-      cMaxValue.setToolTipText("Overridden color maximum");
-      cMaxValue.setEnabled(false);
-      cMaxValue.getDocument().addDocumentListener(this);
-
-      lutLoad = new JButton("Load LUT...");
-      lutLoad.setToolTipText("Loads a color table from disk");
-      lutLoad.addActionListener(this);
-
-      lutSave = new JButton("Save LUT...");
-      lutSave.setToolTipText("Saves this color table to disk");
-      lutSave.addActionListener(this);
-
-      lutsMenu = new JPopupMenu();
-      for (int i=0; i<LUT_NAMES.length; i++) {
-        if (LUT_NAMES[i] == null) lutsMenu.addSeparator();
-        else {
-          JMenuItem item = new JMenuItem(LUT_NAMES[i]);
-          item.setActionCommand("lut" + i);
-          item.addActionListener(this);
-          lutsMenu.add(item);
-        }
-      }
-
-      lutPresets = new JButton("LUTs >");
-      lutPresets.setToolTipText("Selects a LUT from the list of presets");
-      lutPresets.addActionListener(this);
-
-      lutBox = new JFileChooser(System.getProperty("user.dir"));
-      lutBox.addChoosableFileFilter(
-        new ExtensionFileFilter("lut", "Binary color table files"));
+      colorWidget = new ColorWidget(vMap, "Color Mapping");
 
       showData = new JCheckBox("Data", true);
       showData.setToolTipText("Toggles visibility of raw data");
@@ -511,25 +463,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       setProgress(progress, 990); // estimate: 99%
 
-      JPanel colorPanel = new JPanel();
-      colorPanel.setBorder(new TitledBorder("Color Mapping"));
-      colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.Y_AXIS));
-      colorPanel.add(colorWidget);
-
-      JPanel colorRange = new JPanel();
-      colorRange.setLayout(new BoxLayout(colorRange, BoxLayout.X_AXIS));
-      colorRange.add(cOverride);
-      colorRange.add(cMinValue);
-      colorRange.add(cMaxValue);
-      colorPanel.add(colorRange);
-
-      JPanel colorButtons = new JPanel();
-      colorButtons.setLayout(new BoxLayout(colorButtons, BoxLayout.X_AXIS));
-      colorButtons.add(lutLoad);
-      colorButtons.add(lutSave);
-      colorButtons.add(lutPresets);
-      colorPanel.add(colorButtons);
-
       JPanel showPanel = new JPanel();
       showPanel.setBorder(new TitledBorder("Show"));
       showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.Y_AXIS));
@@ -580,7 +513,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       JPanel options = new JPanel();
       options.setBorder(new EmptyBorder(8, 5, 8, 5));
       options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
-      options.add(colorPanel);
+      options.add(colorWidget);
       options.add(showPanel);
       options.add(miscPanel);
       decayPane.add(options, BorderLayout.SOUTH);
@@ -669,7 +602,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 //    float[][] oldTable = colorWidget.getTableView();
 //    float[] alpha = oldTable.length > 3 ? oldTable[3] : null;
 //    table = ColorUtil.adjustColorTable(table, alpha, true);
-    colorWidget.setTableView(table);
+    colorWidget.setWidgetTable(table);
   }
 
   // -- ActionListener methods --
@@ -691,43 +624,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         catch (VisADException exc) { }
         catch (RemoteException exc) { }
       }
-    }
-    else if (src == cOverride) {
-      boolean manual = cOverride.isSelected();
-      cMinValue.setEnabled(manual);
-      cMaxValue.setEnabled(manual);
-      updateColorScale();
-    }
-    else if (src == lutLoad) {
-      // ask user to specify the file
-      int returnVal = lutBox.showOpenDialog(masterWindow);
-      if (returnVal != JFileChooser.APPROVE_OPTION) return;
-      File file = lutBox.getSelectedFile();
-
-      float[][] table = ColorUtil.loadColorTable(file);
-      if (table == null) {
-        JOptionPane.showMessageDialog(masterWindow, "Error reading LUT file.",
-          "Cannot load color table", JOptionPane.ERROR_MESSAGE);
-      }
-      else setWidgetTable(table);
-    }
-    else if (src == lutSave) {
-      // ask user to specify the file
-      int returnVal = lutBox.showSaveDialog(masterWindow);
-      if (returnVal != JFileChooser.APPROVE_OPTION) return;
-      File file = lutBox.getSelectedFile();
-      String s = file.getAbsolutePath();
-      if (!s.toLowerCase().endsWith(".lut")) file = new File(s + ".lut");
-
-      boolean success =
-        ColorUtil.saveColorTable(colorWidget.getTableView(), file);
-      if (!success) {
-        JOptionPane.showMessageDialog(masterWindow, "Error writing LUT file.",
-          "Cannot save color table", JOptionPane.ERROR_MESSAGE);
-      }
-    }
-    else if (src == lutPresets) {
-      lutsMenu.show(lutPresets, lutPresets.getWidth(), 0);
     }
     else if (src == linear || src == log) plotData(true, true, true);
     else if (src == dataSurface || src == dataLines ||
@@ -811,13 +707,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           "Slim Plotter", JOptionPane.ERROR_MESSAGE);
       }
     }
-    else {
-      String cmd = e.getActionCommand();
-      if (cmd != null && cmd.startsWith("lut")) {
-        // apply the chosen LUT preset
-        setWidgetTable(LUTS[Integer.parseInt(cmd.substring(3))]);
-      }
-    }
   }
 
   // -- ChangeListener methods --
@@ -836,7 +725,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private void documentUpdate(DocumentEvent e) {
     Document doc = e.getDocument();
     if (doc == zScaleValue.getDocument()) updateZAxis();
-    else updateColorScale(); // cMinValue or cMaxValue
   }
 
   // -- Runnable methods --
@@ -1210,7 +1098,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         zScale.createStandardLabels(maxVal, 0, 0, maxVal);
       }
 
-      updateColorScale();
+      colorWidget.updateColorScale();
     }
 
     if (doRescale) {
@@ -1324,38 +1212,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     if (f == f) plotData(false, true, false);
   }
 
-  private void updateColorScale() {
-    boolean manual = cOverride.isSelected();
-    float min = Float.NaN, max = Float.NaN;
-    if (manual) {
-      try { min = Float.parseFloat(cMinValue.getText()); }
-      catch (NumberFormatException exc) { }
-      try { max = Float.parseFloat(cMaxValue.getText()); }
-      catch (NumberFormatException exc) { }
-    }
-    else {
-      if (colorHeight.isSelected()) {
-        min = 0;
-        max = maxVal;
-      }
-      else { // colorTau.isSelected()
-        min = tauMin;
-        max = tauMax;
-      }
-      cMinValue.getDocument().removeDocumentListener(this);
-      cMinValue.setText("" + min);
-      cMinValue.getDocument().addDocumentListener(this);
-      cMaxValue.getDocument().removeDocumentListener(this);
-      cMaxValue.setText("" + max);
-      cMaxValue.getDocument().addDocumentListener(this);
-    }
-    if (min == min && max == max && min < max) {
-      try { vMap.setRange(min, max); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
-  }
-
   // -- Utility methods --
 
   public static void setProgress(ProgressMonitor progress, int p) {
@@ -1381,40 +1237,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     SwingUtilities.invokeLater(new Runnable() {
       public void run() { System.err.println(message); }
     });
-  }
-
-  // -- Helper classes --
-
-  /**
-   * Helper class for clipboard interaction, stolen from
-   * <a href="http://www.javapractices.com/Topic82.cjp">Java Practices</a>.
-   */
-  public final class TextTransfer implements ClipboardOwner {
-    public void setClipboardContents(String value) {
-      Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-      if (clipboard != null) {
-        clipboard.setContents(new StringSelection(value), this);
-      }
-    }
-
-    public String getClipboardContents() {
-      Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-      if (clipboard == null) return null;
-      String result = null;
-      Transferable contents = clipboard.getContents(null);
-      boolean hasTransferableText = contents != null &&
-        contents.isDataFlavorSupported(DataFlavor.stringFlavor);
-      if (hasTransferableText) {
-        try {
-          result = (String) contents.getTransferData(DataFlavor.stringFlavor);
-        }
-        catch (UnsupportedFlavorException ex) { ex.printStackTrace(); }
-        catch (IOException ex) { ex.printStackTrace(); }
-      }
-      return result;
-    }
-
-    public void lostOwnership(Clipboard clipboard, Transferable contents) { }
   }
 
   // -- Main method --
