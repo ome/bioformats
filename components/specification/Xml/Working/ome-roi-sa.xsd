@@ -867,7 +867,7 @@
 			<xsd:enumeration value="Water"/>
 			<xsd:enumeration value="Glycerol"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
+	</xsd:simpleType>
 	
 	<xsd:element name="Filter"> <!-- top level definition -->
 		<xsd:annotation>
@@ -949,6 +949,7 @@
 				<xsd:enumeration value="PlanFluor"/>
 				<xsd:enumeration value="SuperFluor"/>
 				<xsd:enumeration value="VioletCorrected"/>
+				<xsd:enumeration value="Unknown"/>
 			</xsd:restriction>
 		</xsd:simpleType>
 	</xsd:element>
@@ -965,6 +966,7 @@
 				<xsd:enumeration value="Multi"/>
 				<xsd:enumeration value="Glycerol"/>
 				<xsd:enumeration value="Other"/>
+				<xsd:enumeration value="Unknown"/>
 			</xsd:restriction>
 		</xsd:simpleType>	
 	</xsd:element>
@@ -1027,6 +1029,7 @@
 								<xsd:enumeration value="EM-CCD"/>
 								<xsd:enumeration value="APD"/>
 								<xsd:enumeration value="CMOS"/>
+								<xsd:enumeration value="Unknown"/>
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
@@ -1068,6 +1071,7 @@
 								<xsd:enumeration value="Inverted"/>
 								<xsd:enumeration value="Dissection"/>
 								<xsd:enumeration value="Electrophysiology"/>
+								<xsd:enumeration value="Unknown"/>
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
@@ -1184,8 +1188,13 @@
 			<xsd:enumeration value="EMinus"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="UnknownLaserMedia">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="LaserMedia">
-		<xsd:union memberTypes="MetalVaporLaserMedia ExcimerLaserMedia GasLaserMedia SolidStateLaserMedia DyeLaserMedia SemiconductorLaserMedia FreeElectronLaserMedia"/>
+		<xsd:union memberTypes="MetalVaporLaserMedia ExcimerLaserMedia GasLaserMedia SolidStateLaserMedia DyeLaserMedia SemiconductorLaserMedia FreeElectronLaserMedia UnknownLaserMedia"/>
 	</xsd:simpleType>
 	<xsd:simpleType name="PercentFraction">
 		<xsd:restriction base="xsd:float">
@@ -1858,6 +1867,7 @@
 						<xsd:enumeration value="Dye"/>
 						<xsd:enumeration value="Semiconductor"/>
 						<xsd:enumeration value="FreeElectron"/>
+						<xsd:enumeration value="Unknown"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
@@ -1900,6 +1910,7 @@
 						<xsd:enumeration value="Hg"/>
 						<xsd:enumeration value="Xe"/>
 						<xsd:enumeration value="HgXe"/>
+						<xsd:enumeration value="Unknown"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
@@ -1918,6 +1929,7 @@
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Incandescent"/>
 						<xsd:enumeration value="Halogen"/>
+						<xsd:enumeration value="Unknown"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
