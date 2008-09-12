@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ome:OME 
+<ome:OME
 	xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
 	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:sa="http://www.openmicroscopy.org/Schemas/SA/2008-02" 
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome-roi-sa.xsd http://www.openmicroscopy.org/Schemas/SA/2008-02 SA.xsd"
+	xmlns:omero="http://www.openmicroscopy.org/Schemas/OMERO/2008-02" 
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome-roi-sa.xsd http://www.openmicroscopy.org/Schemas/SA/2008-02 SA.xsd http://www.openmicroscopy.org/Schemas/OMERO/2008-02 OMERO.xsd"
 	>
 	<ome:Image ID="Image:1" Name="Name92" DefaultPixels="Pixels:b">
 		<ome:CreationDate>2008-03-04T14:17:43.0Z</ome:CreationDate>
@@ -61,23 +62,30 @@
 			<sa:MimeType>application/pdf</sa:MimeType>
 			<sa:ExternalFile>roi-sample-annotations/report.pdf</sa:ExternalFile>
 		</sa:FileAnnotation>
-		<sa:SvgAnnotation ID="Annotation:3" Namespace="ome:omero:insight:roi:svg" 
-			fill-opacity="0.25098039215686274" fill-rule="evenodd" stroke="#c4c4c4"
-			stroke-dashoffset="0" stroke-linecap="butt" stroke-linejoin="miter"
-			stroke-miterlimit="3" stroke-opacity="0.7686274509803922" stroke-width="1"
-			>
+		<sa:XmlAnnotation ID="Annotation:3" Namespace="ome:omero:insight:roi:svg">
 			<sa:Link>Shape:5</sa:Link>
 			<sa:Link>Shape:4</sa:Link>
 			<sa:Link>Shape:3</sa:Link>
 			<sa:Link>Shape:2</sa:Link>
-		</sa:SvgAnnotation>
-		<sa:SvgAnnotation ID="Annotation:4" Namespace="ome:omero:insight:roi:svg"
-			fill="#c4c4c4" fill-opacity="0.7686274509803922"
-			font-family="Verdana" font-size="12" font-style="normal" 
-			font-variant="normal" font-weight="normal"
-			>
+			<sa:Value>
+				<omero:RoiDisplay
+					fill-opacity="0.25098039215686274" fill-rule="evenodd"
+					stroke="#c4c4c4" stroke-dashoffset="0" stroke-linecap="butt"
+					stroke-linejoin="miter" stroke-miterlimit="3"
+					stroke-opacity="0.7686274509803922" stroke-width="1"
+				/>				
+			</sa:Value>
+		</sa:XmlAnnotation>
+		<sa:XmlAnnotation ID="Annotation:4" Namespace="ome:omero:insight:roi:svg">
 			<sa:Link>Shape:1</sa:Link>
-		</sa:SvgAnnotation>
+			<sa:Value>
+				<omero:RoiDisplay
+					fill="#c4c4c4" fill-opacity="0.7686274509803922"
+					font-family="Verdana" font-size="12" font-style="normal" 
+					font-variant="normal" font-weight="normal"
+				/>
+			</sa:Value>
+		</sa:XmlAnnotation>
 		<sa:FileAnnotation ID="Annotation:5" Namespace="ome:omero:attachment:origionalfile">
 			<sa:Link>Shape:5</sa:Link>
 			<sa:FileName>origionalfile.dcm</sa:FileName>
@@ -107,20 +115,53 @@
 			<sa:Link>Image:1</sa:Link>
 			<sa:Value>204</sa:Value>
 		</sa:LongAnnotation>
-		<sa:TextAnnotation ID="Annotation:10" Namespace="ome:omero:attachment:url">
+		<sa:StringAnnotation ID="Annotation:11" Namespace="ome:omero:attachment:url">
 			<sa:Link>Image:1</sa:Link>
 			<sa:Value>http://www.ome-xml.org/</sa:Value>
-			<sa:TextType>url</sa:TextType>
-		</sa:TextAnnotation>
-		<sa:TimestampAnnotation ID="Annotation:11" Namespace="ome:omero:insight:last-viewed">
+		</sa:StringAnnotation>
+		<sa:TimestampAnnotation ID="Annotation:12" Namespace="ome:omero:insight:last-viewed">
 			<sa:Link>Image:1</sa:Link>
 			<sa:Value>2008-03-04T14:17:43.0Z</sa:Value>
 		</sa:TimestampAnnotation>
-		<sa:TextAnnotation ID="Annotation:12" Namespace="ome:omero:tag:taglist">
+		<sa:StringAnnotation ID="Annotation:13" Namespace="ome:omero:tag:taglist">
 			<sa:Link>Image:1</sa:Link>
 			<sa:Value>"good image" "jcb paper" "Figure 1"</sa:Value>
-			<sa:TextType>list</sa:TextType>
-		</sa:TextAnnotation>
+		</sa:StringAnnotation>
+		<sa:XmlAnnotation ID="Annotation:14" Namespace="ome:omero:profile">
+			<sa:Link>Image:1</sa:Link>
+			<sa:Value>
+				<omero:ProfileSet>
+					<omero:ImageProfile origin="User">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:InstrumentRef ID="Instrument:1"/>
+						<ome:ObjectiveRef ID="Objective:1"/>
+					</omero:ImageProfile>
+					<omero:ImageProfile origin="File">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:InstrumentRef ID="Instrument:1"/>
+						<ome:ObjectiveRef ID="Objective:2"/>
+					</omero:ImageProfile>
+					<omero:ChannelProfile origin="User">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:LightSourceRef ID="LightSource:1"/>
+						<ome:OTFRef ID="OTF:1"/>
+						<ome:DetectorRef ID="Detector:1"/>
+						<ome:FilterSetRef ID="FilterSet:1"/>
+					</omero:ChannelProfile>
+					<omero:ChannelProfile origin="File">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:LightSourceRef ID="LightSource:1"/>
+						<ome:OTFRef ID="OTF:1"/>
+						<ome:DetectorRef ID="Detector:1"/>
+						<ome:FilterSetRef ID="FilterSet:1"/>
+					</omero:ChannelProfile>
+				</omero:ProfileSet>
+			</sa:Value>
+		</sa:XmlAnnotation>
 	</sa:StructuredAnnotations>
 </ome:OME>
 
