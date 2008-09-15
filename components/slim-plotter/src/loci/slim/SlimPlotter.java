@@ -64,22 +64,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Constants --
 
-  /** Names for preset color look-up table. */
-  public static final String[] LUT_NAMES = {
-    "Grayscale", "HSV", "RGB", null,
-    "Red", "Green", "Blue", null,
-    "Cyan", "Magenta", "Yellow", null,
-    "Fire", "Ice"
-  };
-
-  /** Preset color look-up tables. */
-  public static final float[][][] LUTS = {
-    ColorUtil.LUT_GRAY, ColorUtil.LUT_HSV, ColorUtil.LUT_RGB, null,
-    ColorUtil.LUT_RED, ColorUtil.LUT_GREEN, ColorUtil.LUT_BLUE, null,
-    ColorUtil.LUT_CYAN, ColorUtil.LUT_MAGENTA, ColorUtil.LUT_YELLOW, null,
-    ColorUtil.LUT_FIRE, ColorUtil.LUT_ICE
-  };
-
   /** Default orientation for 3D decay curves display. */
   private static final double[] MATRIX_3D = {
     0.2821, 0.1503, -0.0201, 0.0418,
