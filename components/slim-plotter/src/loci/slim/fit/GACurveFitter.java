@@ -30,8 +30,8 @@ import java.util.Random;
  * Genetic algorithm for exponential curve fitting.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/GACurveFitter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/GACurveFitter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/fit/GACurveFitter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/GACurveFitter.java">SVN</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
@@ -76,9 +76,6 @@ public class GACurveFitter extends CurveFitter {
 
   // -- CurveFitter API methods --
 
-  // TODO: The set methods do not create internal copies of the passed
-  //       arrays. Should they?
-
   /**
    * iterate() runs through one iteration of whatever curve fitting
    * technique this curve fitter uses. This will generally update the
@@ -96,7 +93,9 @@ public class GACurveFitter extends CurveFitter {
     // the current estimate is.
     // Additionally, if we haven't improved for a number of generations,
     // shake things up.
-    if (geneticData == null || fitness == null || stallGenerations > STALL_GENERATIONS) {
+    if (geneticData == null || fitness == null ||
+      stallGenerations > STALL_GENERATIONS)
+    {
       stallGenerations = 0;
       mutationFactor *= MUTATION_FACTOR_REDUCTION;
       for (int i = 1; i < newGeneration.length; i++) {
@@ -149,8 +148,8 @@ public class GACurveFitter extends CurveFitter {
           for (int k = 0; k < 3; k++) {
             // mutate, if necessary
             if (r.nextDouble() < MUTATION_CHANCE) {
-              newGeneration[i][j][k] *=
-                ((1.0 - mutationFactor) + r.nextDouble() * (2.0 * mutationFactor));
+              newGeneration[i][j][k] *= ((1.0 - mutationFactor) +
+                r.nextDouble() * (2.0 * mutationFactor));
             }
           }
         }
@@ -185,8 +184,9 @@ public class GACurveFitter extends CurveFitter {
     }
     /*
     System.out.println("RCSE: " + currentRCSE);
-    for(int j = 0; j < components; j++) {
-      System.out.println("a: " + curveEstimate[j][0] + " b: " + curveEstimate[j][1] + " c: " + curveEstimate[j][2]);
+    for (int j = 0; j < components; j++) {
+      System.out.println("a: " + curveEstimate[j][0] + " b: " +
+        curveEstimate[j][1] + " c: " + curveEstimate[j][2]);
     }
     */
   }
@@ -227,7 +227,7 @@ public class GACurveFitter extends CurveFitter {
   public void estimate() {
     /*
     System.out.println("****** DATA ******");
-    for(int i = 0; i < curveData.length; i++) {
+    for (int i = 0; i < curveData.length; i++) {
       System.out.println("i: " + i + "  data: " + curveData[i]);
     }
     */
@@ -255,20 +255,22 @@ public class GACurveFitter extends CurveFitter {
           double factor =
             (curveData[i] - guessC) / (curveData[i-1] - guessC);
           double guess = 1.0 * -Math.log(factor);
-          if(DEBUG) System.out.println("Guess: " + guess + "   Factor: " + factor);
+          if (DEBUG) {
+            System.out.println("Guess: " + guess + "   Factor: " + factor);
+          }
           num += (guess * (curveData[i] - guessC));
           den += curveData[i] - guessC;
         }
       }
       double exp = num/den;
-      if(DEBUG) System.out.println("Final exp guess: " + exp);
+      if (DEBUG) System.out.println("Final exp guess: " + exp);
       num = 0.0;
       den = 0.0;
       // Hacky... we would like to do this over the entire curve length,
       // but the actual data is far too noisy to do this. Instead, we'll just
       // do it for the first 5, which have the most data.
       //for (int i = 0; i < curveData.length; i++)
-      for(int i = firstindex; i < 5 + firstindex && i < curveData.length; i++) {
+      for (int i=firstindex; i < 5 + firstindex && i < curveData.length; i++) {
         if (curveData[i] > guessC) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -i * exp);
@@ -276,7 +278,10 @@ public class GACurveFitter extends CurveFitter {
           double guessA = (curveData[i] - guessC) / value;
           num += guessA * (curveData[i] - guessC);
           den += curveData[i] - guessC;
-          if(DEBUG) System.out.println("Data: " + curveData[i] + " Value: " + value + " guessA: " + guessA);
+          if (DEBUG) {
+            System.out.println("Data: " + curveData[i] +
+              " Value: " + value + " guessA: " + guessA);
+          }
         }
       }
       double mult = num/den;
@@ -284,12 +289,12 @@ public class GACurveFitter extends CurveFitter {
       curveEstimate[0][1] = exp;
       curveEstimate[0][2] = guessC;
     }
-    
+
     if (components == 2) {
       double guessC = Double.MAX_VALUE;
-      //for(int i = 0; i < curveData.length; i++) {
+      //for (int i = 0; i < curveData.length; i++) {
       for (int i = firstindex; i < curveData.length && i < lastindex; i++) {
-        if(curveData[i] < guessC) guessC = curveData[i];
+        if (curveData[i] < guessC) guessC = curveData[i];
       }
       curveEstimate[0][2] = guessC;
       curveEstimate[1][2] = 0;
@@ -314,7 +319,7 @@ public class GACurveFitter extends CurveFitter {
 
       double highA = 0.0d;
       double lowA = Double.MAX_VALUE;
-      for(int i = firstindex; i < 5 + firstindex && i < curveData.length; i++) {
+      for (int i=firstindex; i < 5 + firstindex && i < curveData.length; i++) {
         if (curveData[i] > guessC + 10) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -i * low);
@@ -364,7 +369,7 @@ public class GACurveFitter extends CurveFitter {
       num = 0.0;
       den = 0.0;
       //for (int i = 0; i < lowValues.length; i++)
-      for(int i = 0; i < 5; i++) {
+      for (int i = 0; i < 5; i++) {
         if (lowValues[i][1] > guessC) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -lowValues[i][0] * exp);
@@ -389,26 +394,27 @@ public class GACurveFitter extends CurveFitter {
     // a factor unevenly among the two, and then sort it out in iteration.
     // This is all very "last ditch effort" estimation.
     boolean doNegativeEstimation = false;
-    for(int i = 0; i < curveEstimate.length; i++) {
-      if(curveEstimate[i][1] < 0) {
+    for (int i = 0; i < curveEstimate.length; i++) {
+      if (curveEstimate[i][1] < 0) {
         doNegativeEstimation = true;
-        //System.out.println("Negative factor " + curveEstimate[i][1] + " found.");
+        //System.out.println("Negative factor " +
+        //  curveEstimate[i][1] + " found.");
       }
     }
-    if(doNegativeEstimation) {
+    if (doNegativeEstimation) {
       // Find highest point in the curve
       int maxIndex = -1;
       int maxData = -1;
-      for(int i = firstindex; i < lastindex && i < curveData.length; i++) {
-        if(curveData[i] > maxData) {
-          maxIndex = i; 
+      for (int i = firstindex; i < lastindex && i < curveData.length; i++) {
+        if (curveData[i] > maxData) {
+          maxIndex = i;
           maxData = curveData[i];
         }
       }
-      int minIndex = -1; 
+      int minIndex = -1;
       int minData = Integer.MAX_VALUE;
-      for(int i = maxIndex; i < lastindex && i < curveData.length; i++) {
-        if(curveData[i] <= minData) {
+      for (int i = maxIndex; i < lastindex && i < curveData.length; i++) {
+        if (curveData[i] <= minData) {
           minIndex = i;
           minData = curveData[i];
         }
@@ -416,7 +422,7 @@ public class GACurveFitter extends CurveFitter {
       //System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
       // If we have valid min and max data, perform the "estimate"
       double expguess = -1;
-      
+
       // ae^-b(t0)+c = x
       // ae^-b(t1)+c = y.
       // if t0 = 0, and c is minData, then a = x - minData. (e^0 = 1)
@@ -427,25 +433,27 @@ public class GACurveFitter extends CurveFitter {
       // -b = (ln (y / (x - min)) / t1)
       // b = -(ln (y / (x - min)) / t1)
       // and c = minData
-      
-      if(maxData != -1 && minData != -1) {
+
+      if (maxData != -1 && minData != -1) {
         double a = maxData - minData;
         // min value for many trouble cases is 0, which is problematic.
         // As an estimate, if minData is 0, we'll scan back to see how far it
         // until data, and use that distance as an estimate.
         double y = 0;
         int newmin = minIndex;
-        while(curveData[newmin] == minData) newmin--;
+        while (curveData[newmin] == minData) newmin--;
         y = 1.0 / (minIndex - newmin);
         expguess = -(Math.log(y / (maxData - minData)) / (minIndex - maxIndex));
       }
-      if(expguess < 0) {
-        // If the guess is still somehow negative (example, ascending curve), punt;
+      if (expguess < 0) {
+        // If the guess is still somehow negative
+        // (example, ascending curve), punt;
         expguess = 1;
       }
       //System.out.println("Estimating: " + expguess);
-      //System.out.println("maxData: " + maxData + "  firstindex: " + firstindex + "  data: " + curveData[firstindex]);
-      if(components == 1) {
+      //System.out.println("maxData: " + maxData + "  firstindex: " +
+      //  firstindex + "  data: " + curveData[firstindex]);
+      if (components == 1) {
         curveEstimate[0][0] = maxData - minData;
         curveEstimate[0][1] = expguess;
         curveEstimate[0][2] = minData;
@@ -457,7 +465,7 @@ public class GACurveFitter extends CurveFitter {
         curveEstimate[1][1] = expguess;
         curveEstimate[0][2] = minData;
       }
-    } 
+    }
     // To update currentRCSE.
     currentRCSE = getReducedChiSquaredError();
   }
@@ -469,10 +477,10 @@ public class GACurveFitter extends CurveFitter {
    * [][0] is a, [1] is b, [2] is c.
    **/
   public double[][] getCurve() {
-    if(components == 1) return curveEstimate;
+    if (components == 1) return curveEstimate;
     // Otherwise, it's 2 exponential, and we want it in ascending order
-    if(components == 2) {
-      if(curveEstimate[0][1] > curveEstimate[1][1]) {
+    if (components == 2) {
+      if (curveEstimate[0][1] > curveEstimate[1][1]) {
         double[][] toreturn = new double[components][3];
         toreturn[0] = curveEstimate[1];
         toreturn[1] = curveEstimate[0];
@@ -482,7 +490,6 @@ public class GACurveFitter extends CurveFitter {
       }
     }
     return null;
-    
   }
 
   /**

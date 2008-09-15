@@ -28,8 +28,8 @@ package loci.slim.fit;
  * Base interface for curve fitting algorithms.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/CurveFitter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/CurveFitter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/fit/CurveFitter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/CurveFitter.java">SVN</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
@@ -52,7 +52,7 @@ public abstract class CurveFitter {
     double total = 0.0d;
     double[] expected = getEstimates(curveData, curveEstimate);
     for (int i = firstindex; i < curveData.length && i <= lastindex; i++) {
-      if (expected[i] > 0) { 
+      if (expected[i] > 0) {
         double observed = (double) curveData[i];
         double term = (observed - expected[i]);
         // (o-e)^2
@@ -60,10 +60,10 @@ public abstract class CurveFitter {
         // (o-e)^2 / e
         term /= expected[i];
         total += term;
-      } 
-    } 
+      }
+    }
     return total;
-  } 
+  }
 
   public double getChiSquaredError(double[][] estCurve) {
     double total = 0.0d;
@@ -94,10 +94,10 @@ public abstract class CurveFitter {
     int datapoints = curveData.length;
     if (datapoints - df > 0) {
       return getChiSquaredError() / (datapoints - df);
-    } 
+    }
     return Double.MAX_VALUE;
-  } 
-  
+  }
+
   public double getReducedChiSquaredError(double[][] estCurve) {
     int df = 1 + (estCurve.length * 2);
     int datapoints = curveData.length;

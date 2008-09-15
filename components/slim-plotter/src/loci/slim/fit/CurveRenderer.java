@@ -1,5 +1,5 @@
 //
-// Renderer.java
+// CurveRenderer.java
 //
 
 /*
@@ -25,15 +25,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.slim.fit;
 
 /**
- * TODO
+ * Base class for curve renderer implementations.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/Renderer.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/Renderer.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/fit/CurveRenderer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/CurveRenderer.java">SVN</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
-public abstract class Renderer implements Runnable {
+public abstract class CurveRenderer implements ICurveRenderer {
+
+  // -- Fields --
 
   protected boolean alive;
   protected int maxIterations;
@@ -48,13 +50,15 @@ public abstract class Renderer implements Runnable {
   protected CurveCollection curveData;
   protected int numExponentials;
 
+  // -- ICurveRenderer API methods --
+
   public abstract void run();
 
   public void stop() {
     alive = false;
   }
 
-  public Renderer(CurveCollection cc) {
+  public CurveRenderer(CurveCollection cc) {
     curveData = cc;
   }
 
@@ -113,4 +117,5 @@ public abstract class Renderer implements Runnable {
   public abstract int getImageY();
 
   public abstract double getWorstRCSE();
+
 }

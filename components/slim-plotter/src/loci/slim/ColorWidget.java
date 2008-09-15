@@ -197,8 +197,10 @@ public class ColorWidget extends JPanel
       cMaxValue.setText("" + max);
       cMaxValue.getDocument().addDocumentListener(this);
     }
-    cMinValue.setBackground(min == min ? validColor : INVALID_COLOR);
-    cMaxValue.setBackground(max == max ? validColor : INVALID_COLOR);
+    cMinValue.setBackground(min == min && min < max ?
+      validColor : INVALID_COLOR);
+    cMaxValue.setBackground(max == max && min < max ?
+      validColor : INVALID_COLOR);
     if (min < max) {
       try { map.setRange(min, max); }
       catch (VisADException exc) { exc.printStackTrace(); }

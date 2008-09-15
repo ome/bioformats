@@ -205,8 +205,8 @@ public class SlimData implements ActionListener {
     curves = new CurveCollection[channels];
     for (int c=0; c<channels; c++) {
       curves[c] = new CurveCollection(data[c], curveFitterClass, BIN_RADIUS);
-      SlimPlotter.setProgress(progress, 540, 360,
-        (double) (c + 1) / channels);
+      curves[c].computeCurves();
+      SlimPlotter.setProgress(progress, 540, 360, (double) (c + 1) / channels);
     }
   }
 

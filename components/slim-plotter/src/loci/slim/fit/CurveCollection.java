@@ -32,8 +32,8 @@ package loci.slim.fit;
  * subsampled images&mdash;by summing neighboring curves.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/CurveCollection.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/CurveCollection.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/fit/CurveCollection.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/CurveCollection.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -45,6 +45,9 @@ public class CurveCollection {
 
   // -- Fields --
 
+  /** Full image resolution. */
+  protected int numRows;
+
   /** Curve fit data, dimensioned [maxDepth][numRows][numCols]. */
   protected CurveFitter[][][] curves;
 
@@ -54,8 +57,8 @@ public class CurveCollection {
    * Creates an object to manage a collection of curves for the given data.
    *
    * @param data Data array dimensioned [numRows][numCols][timeBins].
-   * @param curveFitterClass Class representing the type of curve fitters
-   *   to use (e.g., loci.slim.GACurveFitter or loci.slim.LMCurveFitter).
+   * @param curveFitterClass Class representing the type of curve fitters to
+   *   use (e.g., loci.slim.fit.GACurveFitter or loci.slim.fit.LMCurveFitter).
    * @param binRadius Radius of neighboring pixels to bin,
    *   to improve signal-to-noise ratio.
    *
@@ -77,8 +80,7 @@ public class CurveCollection {
    *  if numRows or numCols is not a power of two or numRows != numCols
    */
   public CurveCollection(CurveFitter[][] curveFitters) {
-    Class curveFitterClass = curveFitters[0][0].getClass();
-    int numRows = curveFitters.length;
+    numRows = curveFitters.length;
     int numCols = curveFitters[0].length;
     if (numRows != numCols) {
       throw new IllegalArgumentException("Row and column counts do not match");
@@ -90,8 +92,14 @@ public class CurveCollection {
     }
     curves = new CurveFitter[depth + 1][][];
     curves[0] = curveFitters;
+  }
 
-    // compute subsamplings
+  // -- CurveCollection API methods --
+
+  /** Computes subsamplings. */
+  public void computeCurves() {
+    Class curveFitterClass = curves[0][0][0].getClass();
+    int depth = (int) (Math.log(numRows) / LOG2);
     int res = numRows;
     for (int d=1; d<=depth; d++) {
       res /= 2;
@@ -113,8 +121,6 @@ public class CurveCollection {
       }
     }
   }
-
-  // -- CurveCollection API methods --
 
   /** Gets the collection of curves at full resolution. */
   public CurveFitter[][] getCurves() { return getCurves(0); }

@@ -34,8 +34,8 @@ import java.io.PrintStream;
  * Levenberg-Marquardt curve fitter that uses L-M Fit package.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/LMCurveFitter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/LMCurveFitter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/fit/LMCurveFitter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/LMCurveFitter.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -192,5 +192,5 @@ public class LMCurveFitter extends CurveFitter {
   public void setFirst(int index) {}
 
   public void setLast(int index) {}
-  
+
 }

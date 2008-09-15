@@ -33,8 +33,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
-import loci.slim.fit.BurnInRenderer;
-import loci.slim.fit.Renderer;
+import loci.slim.fit.*;
 import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.DisplayImplJ3D;
@@ -104,8 +103,9 @@ public class TwoDPane extends JPanel
   private JCheckBox cToggle;
 
   // parameters for multithreaded lifetime computation
-  private Renderer[] curveRenderers;
-  private Thread[] curveThreads;
+  private CurveRenderer[] curveRenderers;
+  private RendererSwitcher switcher;
+  private Thread curveThread;
   private Timer lifetimeRefresh;
   private boolean lifetimeActive;
   private int frame; // internal frame counter
@@ -280,13 +280,13 @@ public class TwoDPane extends JPanel
     cSlider.setValue(maxChan + 1);
 
     // set up lifetime curve fitting renderers for per-pixel lifetime analysis
-    curveRenderers = new Renderer[data.channels];
-    curveThreads = new Thread[data.channels];
+    curveRenderers = new CurveRenderer[data.channels];
     for (int c=0; c<data.channels; c++) {
       curveRenderers[c] = new BurnInRenderer(data.curves[c]);
       curveRenderers[c].setComponentCount(data.numExp);
       curveRenderers[c].setMaxIterations(10);//TEMP
     }
+    switcher = new RendererSwitcher(curveRenderers);
     int delay = RATE;
     lifetimeRefresh = new Timer(delay, this);
     lifetimeRefresh.start();
@@ -310,16 +310,16 @@ public class TwoDPane extends JPanel
       if (lifetimeActive) {
         // begin lifetime computation
         startStopButton.setText("Stop");
-        for (int c=0; c<data.channels; c++) {
-          curveThreads[c] = new Thread(curveRenderers[c], "Lifetime-" + c);
-          curveThreads[c].setPriority(Thread.MIN_PRIORITY);
-        }
-        for (int c=0; c<data.channels; c++) curveThreads[c].start();
+        int c = cSlider.getValue() - 1;
+        switcher.setCurrent(c);
+        curveThread = new Thread(switcher, "Lifetime");
+        curveThread.setPriority(Thread.MIN_PRIORITY);
+        curveThread.start();
       }
       else {
         // terminate lifetime computation
         startStopButton.setText("Start");
-        for (int c=0; c<data.channels; c++) curveRenderers[c].stop();
+        switcher.stop();
       }
     }
     else if (src == cToggle) {
