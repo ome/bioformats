@@ -377,7 +377,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "Displays information about the selected region of interest");
       decayPane.add(decayLabel, BorderLayout.NORTH);
 
-      colorWidget = new ColorWidget(vMap, "Color Mapping");
+      colorWidget = new ColorWidget(vMap, "Decay Color Mapping");
 
       showData = new JCheckBox("Data", true);
       showData.setToolTipText("Toggles visibility of raw data");

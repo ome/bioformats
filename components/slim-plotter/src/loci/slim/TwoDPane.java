@@ -31,6 +31,7 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import loci.slim.fit.BurnInRenderer;
 import loci.slim.fit.Renderer;
@@ -49,7 +50,7 @@ import visad.java3d.TwoDDisplayRendererJ3D;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class TwoDPane extends JPanel
-  implements ActionListener, ChangeListener, DisplayListener, DocumentListener
+  implements ActionListener, ChangeListener, DisplayListener
 {
 
   // -- Constants --
@@ -100,8 +101,6 @@ public class TwoDPane extends JPanel
   private JSlider cSlider;
   private JRadioButton intensityMode, lifetimeMode;
   private JRadioButton projectionMode, emissionMode;
-  private JTextField minField, maxField;
-  private Color validColor = null;
   private JCheckBox cToggle;
 
   // parameters for multithreaded lifetime computation
@@ -215,11 +214,41 @@ public class TwoDPane extends JPanel
     progressPanel.add(startStopButton);
     add(progressPanel);
 
-    JPanel viewModePane = new JPanel();
-    viewModePane.setLayout(new BoxLayout(viewModePane, BoxLayout.X_AXIS));
-    add(viewModePane);
+    JPanel sliderPane = new JPanel();
+    sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
+    add(sliderPane);
 
-    viewModePane.add(new JLabel("View mode:"));
+    cSlider = new JSlider(1, data.channels, 1);
+    cSlider.setToolTipText(
+      "Selects the channel to display in the 2D image plot above");
+    cSlider.setSnapToTicks(true);
+    cSlider.setMajorTickSpacing(data.channels / 4);
+    cSlider.setMinorTickSpacing(1);
+    cSlider.setPaintTicks(true);
+    cSlider.addChangeListener(this);
+    cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
+    cSlider.setEnabled(data.channels > 1);
+    sliderPane.add(cSlider);
+    cToggle = new JCheckBox("", true);
+    cToggle.setToolTipText(
+      "Toggles the selected channel's visibility in the 3D data plot");
+    cToggle.addActionListener(this);
+    cToggle.setEnabled(data.channels > 1);
+    sliderPane.add(cToggle);
+
+    JPanel colorViewPane = new JPanel();
+    colorViewPane.setLayout(new BoxLayout(colorViewPane, BoxLayout.X_AXIS));
+    add(colorViewPane);
+
+    ColorWidget colorWidget = new ColorWidget(imageMap,
+      "Intensity Color Mapping");
+    colorViewPane.add(colorWidget);
+
+    JPanel viewModePane = new JPanel();
+    viewModePane.setLayout(new BoxLayout(viewModePane, BoxLayout.Y_AXIS));
+    viewModePane.setBorder(new TitledBorder("View Mode"));
+    colorViewPane.add(viewModePane);
+
     intensityMode = new JRadioButton("Intensity", true);
     lifetimeMode = new JRadioButton("Lifetime");
     emissionMode = new JRadioButton("Emission");
@@ -244,64 +273,7 @@ public class TwoDPane extends JPanel
     viewModePane.add(lifetimeMode);
     viewModePane.add(projectionMode);
     viewModePane.add(emissionMode);
-
-    JPanel sliderPane = new JPanel();
-    sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
-    add(sliderPane);
-
-    JPanel minMaxPane = new JPanel();
-    minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.Y_AXIS));
-    minMaxPane.setBorder(new EmptyBorder(3, 3, 3, 3));
-    sliderPane.add(minMaxPane);
-
-    JPanel minPane = new JPanel();
-    minPane.setLayout(new BoxLayout(minPane, BoxLayout.X_AXIS));
-    minMaxPane.add(minPane);
-    JLabel minLabel = new JLabel("Min");
-    minLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
-    minPane.add(minLabel);
-    minField = new JTextField(4);
-    minField.setMaximumSize(minField.getPreferredSize());
-    minField.setToolTipText("<html>" +
-      "Adjusts image plot's minimum color value.<br>" +
-      "Anything less than this value appears black.</html>");
-    minField.getDocument().addDocumentListener(this);
-    minPane.add(minField);
-
-    JPanel maxPane = new JPanel();
-    maxPane.setLayout(new BoxLayout(maxPane, BoxLayout.X_AXIS));
-    minMaxPane.add(maxPane);
-    JLabel maxLabel = new JLabel("Max");
-    maxLabel.setBorder(new EmptyBorder(0, 5, 0, 5));
-    minLabel.setPreferredSize(maxLabel.getPreferredSize());
-    maxPane.add(maxLabel);
-    maxField = new JTextField(4);
-    maxField.setMaximumSize(maxField.getPreferredSize());
-    maxField.setToolTipText("<html>" +
-      "Adjusts image plot's maximum color value.<br>" +
-      "Anything greater than this value appears white.</html>");
-    maxField.getDocument().addDocumentListener(this);
-    maxPane.add(maxField);
-
-    validColor = minField.getBackground();
-
-    cSlider = new JSlider(1, data.channels, 1);
-    cSlider.setToolTipText(
-      "Selects the channel to display in the 2D image plot above");
-    cSlider.setSnapToTicks(true);
-    cSlider.setMajorTickSpacing(data.channels / 4);
-    cSlider.setMinorTickSpacing(1);
-    cSlider.setPaintTicks(true);
-    cSlider.addChangeListener(this);
-    cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
-    cSlider.setEnabled(data.channels > 1);
-    sliderPane.add(cSlider);
-    cToggle = new JCheckBox("", true);
-    cToggle.setToolTipText(
-      "Toggles the selected channel's visibility in the 3D data plot");
-    cToggle.addActionListener(this);
-    cToggle.setEnabled(data.channels > 1);
-    sliderPane.add(cToggle);
+    viewModePane.add(Box.createVerticalStrut(60));
 
     int maxChan = doIntensity();
 
@@ -408,8 +380,8 @@ public class TwoDPane extends JPanel
         catch (RemoteException exc) { exc.printStackTrace(); }
 
         // recompute min and max
-        double lifeMin = 0, lifeMax = 0;
         /*
+        double lifeMin = 0, lifeMax = 0;
         for (int h=0; h<data.height; h++) {
           for (int w=0; w<data.width; w++) {
             double val = lifetimeImage[0][data.width * h + w];
@@ -417,12 +389,12 @@ public class TwoDPane extends JPanel
             if (val > lifeMax) lifeMax = val;
           }
         }
-        */
         if (lifeMin < lifetimeMin || lifeMax > lifetimeMax) {
           lifetimeMin = lifeMin;
           lifetimeMax = lifeMax;
           resetMinMax(lifetimeMin, lifetimeMax);
         }
+        */
       }
     }
   }
@@ -503,12 +475,6 @@ public class TwoDPane extends JPanel
     }
   }
 
-  // -- DocumentListener methods --
-
-  public void changedUpdate(DocumentEvent e) { rescaleMinMax(); }
-  public void insertUpdate(DocumentEvent e) { rescaleMinMax(); }
-  public void removeUpdate(DocumentEvent e) { rescaleMinMax(); }
-
   // -- Helper methods --
 
   /** Handles cursor updates. */
@@ -522,45 +488,6 @@ public class TwoDPane extends JPanel
     if (roiY >= data.height) roiY = data.height - 1;
     roiCount = 1;
     slim.plotData(true, rescale, refit);
-  }
-
-  private void resetMinMax(double min, double max) {
-    System.out.println("resetMinMax: min=" + min + ", max=" + max);//TEMP
-    minField.getDocument().removeDocumentListener(this);
-    maxField.getDocument().removeDocumentListener(this);
-    minField.setText("" + min);
-    maxField.setText("" + max);
-    minField.getDocument().addDocumentListener(this);
-    maxField.getDocument().addDocumentListener(this);
-    rescaleMinMax();
-  }
-
-  private void rescaleMinMax() {
-    double min = 0, max = 0;
-    boolean validRange = true;
-    try {
-      min = Double.parseDouble(minField.getText());
-      minField.setBackground(validColor);
-    }
-    catch (NumberFormatException exc) {
-      validRange = false;
-      minField.setBackground(INVALID_COLOR);
-    }
-    try {
-      max = Double.parseDouble(maxField.getText());
-      maxField.setBackground(validColor);
-    }
-    catch (NumberFormatException exc) {
-      validRange = false;
-      maxField.setBackground(INVALID_COLOR);
-    }
-    if (validRange) {
-      try {
-        imageMap.setRange(min, max);
-      }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
   }
 
   private int doIntensity() {
@@ -594,7 +521,7 @@ public class TwoDPane extends JPanel
       ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
       cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
 
-      resetMinMax(intensityMin, intensityMax);
+      //resetMinMax(intensityMin, intensityMax);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
