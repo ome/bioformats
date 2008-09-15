@@ -102,6 +102,8 @@ public class LeicaReader extends FormatReader {
   private Vector seriesNames;
   private int lastPlane = 0;
 
+  private float[][] physicalSizes;
+
   private int[][] channelMap;
 
   // -- Constructor --
@@ -211,6 +213,7 @@ public class LeicaReader extends FormatReader {
       numSeries = 0;
       lastPlane = 0;
       channelMap = null;
+      physicalSizes = null;
     }
   }
 
@@ -527,6 +530,8 @@ public class LeicaReader extends FormatReader {
     String description = null;
     String[] timestamps = null;
 
+    physicalSizes = new float[headerIFDs.length][5];
+
     for (int i=0; i<headerIFDs.length; i++) {
       String prefix = "Series " + i + " ";
       byte[] temp = (byte[]) headerIFDs[i].get(new Integer(SERIES));
@@ -642,38 +647,58 @@ public class LeicaReader extends FormatReader {
           if (dimType == null) dimType = "";
 
           int size = stream.readInt();
+          int distance = stream.readInt();
+          int strlen = stream.readInt();
+          String physicalSize = getString(stream, strlen * 2);
+          String unit = "";
+          if (physicalSize.indexOf(" ") != -1) {
+            unit = physicalSize.substring(physicalSize.indexOf(" ") + 1);
+            physicalSize = physicalSize.substring(0, physicalSize.indexOf(" "));
+          }
+          float physical = Float.parseFloat(physicalSize) / size;
+          if (unit.equals("m")) {
+            physical *= 1000000;
+          } 
 
-          if (dimType.equals("x")) core[i].sizeX = size;
-          else if (dimType.equals("y")) core[i].sizeY = size;
+          if (dimType.equals("x")) {
+            core[i].sizeX = size;
+            physicalSizes[i][0] = physical;
+          }
+          else if (dimType.equals("y")) {
+            core[i].sizeY = size;
+            physicalSizes[i][1] = physical;
+          }
           else if (dimType.indexOf("z") != -1) {
             core[i].sizeZ = size;
             if (core[i].dimensionOrder.indexOf("Z") == -1) {
               core[i].dimensionOrder += "Z";
             }
+            physicalSizes[i][2] = physical;
           }
           else if (dimType.equals("channel")) {
             core[i].sizeC = size;
             if (core[i].dimensionOrder.indexOf("C") == -1) {
               core[i].dimensionOrder += "C";
             }
+            physicalSizes[i][3] = physical;
           }
           else {
             core[i].sizeT = size;
             if (core[i].dimensionOrder.indexOf("T") == -1) {
               core[i].dimensionOrder += "T";
             }
+            physicalSizes[i][4] = physical;
           }
 
           addMeta(prefix + "Dim" + j + " type", dimType);
           addMeta(prefix + "Dim" + j + " size", size);
           addMeta(prefix + "Dim" + j + " distance between sub-dimensions",
-            stream.readInt());
+            distance);
+
+          addMeta(prefix + "Dim" + j + " physical length",
+            physicalSize + " " + unit);
 
           int len = stream.readInt();
-          addMeta(prefix + "Dim" + j + " physical length",
-            getString(stream, len * 2));
-
-          len = stream.readInt();
           addMeta(prefix + "Dim" + j + " physical origin",
             getString(stream, len * 2));
         }
@@ -888,6 +913,12 @@ public class LeicaReader extends FormatReader {
 
       store.setImageName((String) seriesNames.get(i), i);
       store.setImageDescription(description, i);
+      store.setDimensionsPhysicalSizeX(new Float(physicalSizes[i][0]), i, 0);
+      store.setDimensionsPhysicalSizeY(new Float(physicalSizes[i][1]), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Float(physicalSizes[i][2]), i, 0);
+      store.setDimensionsWaveIncrement(
+        new Integer((int) physicalSizes[i][3]), i, 0);
+      store.setDimensionsTimeIncrement(new Float(physicalSizes[i][4]), i, 0);
     }
     MetadataTools.populatePixels(store, this);
   }

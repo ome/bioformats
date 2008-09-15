@@ -287,6 +287,11 @@ LogicalChannel.SamplesPerPixel = Yes
 Pixels = Yes since r639
 Image = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.WaveIncrement = Yes
+Dimensions.TimeIncrement = Yes
 
 [MINCReader]
 Pixels = Yes
