@@ -60,6 +60,60 @@ public class LIFReader extends FormatReader {
     return h;
   }
 
+  private static final byte[][][] BYTE_LUTS = createByteLUTs();
+
+  private static byte[][][] createByteLUTs() {
+    byte[][][] lut = new byte[9][][];
+    lut[0] = new byte[3][256];
+    lut[1] = new byte[3][256];
+    lut[2] = new byte[3][256];
+    lut[3] = new byte[3][256];
+    lut[4] = new byte[3][256];
+    lut[5] = new byte[3][256];
+    for (int i=0; i<256; i++) {
+      lut[0][0][i] = (byte) (i & 0xff);
+      lut[1][1][i] = (byte) (i & 0xff);
+      lut[2][2][i] = (byte) (i & 0xff);
+
+      lut[3][1][i] = (byte) (i & 0xff);
+      lut[3][2][i] = (byte) (i & 0xff);
+
+      lut[4][0][i] = (byte) (i & 0xff);
+      lut[4][2][i] = (byte) (i & 0xff);
+
+      lut[5][0][i] = (byte) (i & 0xff);
+      lut[5][1][i] = (byte) (i & 0xff);
+    }
+    return lut;
+  }
+
+  private static final short[][][] SHORT_LUTS = createShortLUTs();
+
+  private static short[][][] createShortLUTs() {
+    short[][][] lut = new short[9][][];
+    lut[0] = new short[3][65536];
+    lut[1] = new short[3][65536];
+    lut[2] = new short[3][65536];
+    lut[3] = new short[3][65536];
+    lut[4] = new short[3][65536];
+    lut[5] = new short[3][65536];
+    for (int i=0; i<65536; i++) {
+      lut[0][0][i] = (short) (i & 0xffff);
+      lut[1][1][i] = (short) (i & 0xffff);
+      lut[2][2][i] = (short) (i & 0xffff);
+
+      lut[3][1][i] = (short) (i & 0xffff);
+      lut[3][2][i] = (short) (i & 0xffff);
+
+      lut[4][0][i] = (short) (i & 0xffff);
+      lut[4][2][i] = (short) (i & 0xffff);
+
+      lut[5][0][i] = (short) (i & 0xffff);
+      lut[5][1][i] = (short) (i & 0xffff);
+    }
+    return lut;
+  }
+
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
@@ -74,6 +128,8 @@ public class LIFReader extends FormatReader {
   private int numDatasets;
 
   private int[][] channelMap;
+  private int[][] realChannel;
+  private int lastChannel = -1;
 
   // -- Constructor --
 
@@ -85,6 +141,20 @@ public class LIFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
     return stream.read() == 0x70;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    if (getPixelType() != FormatTools.UINT8 || lastChannel == -1) return null;
+    return BYTE_LUTS[lastChannel];
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    if (getPixelType() != FormatTools.UINT16 || lastChannel == -1) return null;
+    return SHORT_LUTS[lastChannel];
   }
 
   /**
@@ -99,6 +169,7 @@ public class LIFReader extends FormatReader {
 
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
+      lastChannel = realChannel[series][pos[1]];
       pos[1] = indexOf(pos[1], channelMap[series]);
       no = getIndex(pos[0], pos[1], pos[2]);
     }
@@ -112,7 +183,7 @@ public class LIFReader extends FormatReader {
     int bytesToSkip =
       (int) (nextOffset - offset - bpp * getSizeX() * getSizeY());
     bytesToSkip /= getSizeY();
-    if ((getSizeX() % 2) == 0) bytesToSkip = 0;
+    if ((getSizeX() % 4) == 0) bytesToSkip = 0;
 
     in.seek(offset + getSizeX() * getSizeY() * (long) no * bpp);
     in.skipBytes(bytesToSkip * getSizeY() * no);
@@ -148,6 +219,13 @@ public class LIFReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
+    offsets = null;
+    bitsPerPixel = null;
+    extraDimensions = null;
+    numDatasets = -1;
+    channelMap = null;
+    realChannel = null;
+    lastChannel = -1;
   }
 
   // -- Internal FormatReader API methods --
@@ -265,9 +343,11 @@ public class LIFReader extends FormatReader {
     // set up mapping to rearrange channels
     // for instance, the green channel may be #0, and the red channel may be #1
     channelMap = new int[numDatasets][];
+    realChannel = new int[numDatasets][];
     int nextLut = 0;
     for (int i=0; i<channelMap.length; i++) {
       channelMap[i] = new int[((Integer) channels.get(i)).intValue()];
+      realChannel[i] = new int[((Integer) channels.get(i)).intValue()];
 
       String[] luts = new String[channelMap[i].length];
       for (int q=0; q<luts.length; q++) {
@@ -276,7 +356,7 @@ public class LIFReader extends FormatReader {
 
       for (int q=0; q<channelMap[i].length; q++) {
         if (!CHANNEL_PRIORITIES.containsKey(luts[q])) luts[q] = "";
-        channelMap[i][q] =
+        realChannel[i][q] =
           ((Integer) CHANNEL_PRIORITIES.get(luts[q])).intValue();
       }
 
@@ -287,8 +367,8 @@ public class LIFReader extends FormatReader {
         int min = Integer.MAX_VALUE;
         int minIndex = -1;
         for (int n=0; n<channelMap[i].length; n++) {
-          if (channelMap[i][n] < min && !containsValue(sorted, n)) {
-            min = channelMap[i][n];
+          if (realChannel[i][n] < min && !containsValue(sorted, n)) {
+            min = realChannel[i][n];
             minIndex = n;
           }
         }
@@ -339,8 +419,9 @@ public class LIFReader extends FormatReader {
       core[i].interleaved = core[i].rgb;
       core[i].imageCount = core[i].sizeZ * core[i].sizeT;
       if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
-      core[i].indexed = false;
-      core[i].falseColor = false;
+      core[i].indexed = BYTE_LUTS[realChannel[i][0]] != null ||
+        SHORT_LUTS[realChannel[i][0]] != null;
+      core[i].falseColor = true;
 
       while (bitsPerPixel[i] % 8 != 0) bitsPerPixel[i]++;
       switch (bitsPerPixel[i]) {
