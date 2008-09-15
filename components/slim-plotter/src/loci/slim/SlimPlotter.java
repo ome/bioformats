@@ -40,6 +40,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.text.Document;
 import loci.formats.gui.ExtensionFileFilter;
+import loci.slim.fit.*;
 import loci.visbio.util.BreakawayPanel;
 import loci.visbio.util.ColorUtil;
 import loci.visbio.util.OutputConsole;

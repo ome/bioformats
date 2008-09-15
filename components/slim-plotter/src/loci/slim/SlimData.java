@@ -35,6 +35,7 @@ import loci.formats.FormatException;
 import loci.formats.in.SDTInfo;
 import loci.formats.in.SDTReader;
 import loci.formats.DataTools;
+import loci.slim.fit.*;
 
 /**
  * Data structure for housing raw experimental data, as well as various

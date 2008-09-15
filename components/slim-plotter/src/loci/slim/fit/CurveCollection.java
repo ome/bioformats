@@ -22,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.slim;
+package loci.slim.fit;
 
 /**
  * Data structure for managing a collection of curves. The main purpose of this

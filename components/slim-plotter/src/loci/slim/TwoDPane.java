@@ -32,6 +32,8 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
+import loci.slim.fit.BurnInRenderer;
+import loci.slim.fit.Renderer;
 import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.DisplayImplJ3D;
