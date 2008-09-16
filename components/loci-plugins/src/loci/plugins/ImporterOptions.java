@@ -798,6 +798,7 @@ public class ImporterOptions implements ItemListener {
       gd.addNumericField("Width_" + i, 0, 0);
       gd.addNumericField("Height_" + i, 0, 0);
     }
+    Util.addScrollBars(gd);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
@@ -955,6 +956,7 @@ public class ImporterOptions implements ItemListener {
         gd.addChoice(axisSizes[i] + "_planes", labels, labels[i]);
       }
     }
+    Util.addScrollBars(gd);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
