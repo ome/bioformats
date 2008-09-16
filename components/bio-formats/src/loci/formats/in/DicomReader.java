@@ -570,7 +570,10 @@ public class DicomReader extends FormatReader {
       if (info.equals("")) info = oldValue;
 
       String key = (String) TYPES.get(new Integer(tag));
-      if (key == null) key = "" + tag;
+      if (key == null) {
+        key = Integer.toHexString((tag >> 16) & 0xffff) + "," +
+          Integer.toHexString(tag & 0xffff);
+      }
       if (key.equals("Samples per pixel")) {
         core[0].sizeC = Integer.parseInt(info.trim());
         if (getSizeC() > 1) core[0].rgb = true;
