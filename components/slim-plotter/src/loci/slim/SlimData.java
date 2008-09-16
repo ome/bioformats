@@ -47,7 +47,7 @@ import loci.slim.fit.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class SlimData implements ActionListener {
+public class SlimData implements ActionListener, CurveListener {
 
   // -- Constants --
 
@@ -87,12 +87,18 @@ public class SlimData implements ActionListener {
   private JRadioButton gaChoice, lmChoice;
   private JCheckBox peaksBox, fwhmBox, cutBox;
 
+  // GUI components for reporting progress
+  private ProgressMonitor progress;
+  private int progressBase, progressInc;
+
   // -- Constructor --
 
   /** Extracts data from the given file. */
   public SlimData(String id, ProgressMonitor progress)
     throws FormatException, IOException
   {
+    this.progress = progress;
+
     // read SDT file header
     SDTReader reader = new SDTReader();
     reader.setId(id);
@@ -113,10 +119,10 @@ public class SlimData implements ActionListener {
     maxWave = minWave + (channels - 1) * waveStep;
 
     // progress estimate:
-    // * Reading data - 50%
-    // * Constructing images - 2%
+    // * Reading data - 40%
+    // * Constructing images - 8%
     // * Adjusting peaks - 2%
-    // * Subsampling histograms - 36%
+    // * Subsampling data - 50%
 
     // read pixel data
     progress.setNote("Reading data");
@@ -128,7 +134,7 @@ public class SlimData implements ActionListener {
       int len = bytes.length - off;
       if (len > blockSize) len = blockSize;
       fin.readFully(bytes, off, len);
-      SlimPlotter.setProgress(progress, 0, 500,
+      SlimPlotter.setProgress(progress, 0, 400,
         (double) (off + blockSize) / bytes.length);
     }
     fin.close();
@@ -148,7 +154,7 @@ public class SlimData implements ActionListener {
             data[c][h][w][t] = val;
           }
         }
-        SlimPlotter.setProgress(progress, 500, 20,
+        SlimPlotter.setProgress(progress, 400, 80,
           (double) (height * c + h + 1) / (channels * height));
       }
     }
@@ -173,7 +179,7 @@ public class SlimData implements ActionListener {
           else if (t > timeBins / 3) break; // HACK - too early to give up
         }
         peaks[c] = ndx;
-        SlimPlotter.setProgress(progress, 580, 10,
+        SlimPlotter.setProgress(progress, 480, 10,
           (double) (c + 1) / channels);
       }
       maxPeak = 0;
@@ -195,18 +201,21 @@ public class SlimData implements ActionListener {
           SlimPlotter.log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
             " (shifting by " + shift + ")");
         }
-        SlimPlotter.setProgress(progress, 590, 10,
+        SlimPlotter.setProgress(progress, 490, 10,
           (double) (c + 1) / channels);
       }
     }
 
     // construct subsampled per-pixel curve estimate data
-    progress.setNote("Subsampling data");
     curves = new CurveCollection[channels];
+    progressInc = 500 / channels;
     for (int c=0; c<channels; c++) {
+      if (channels == 1) progress.setNote("Subsampling data");
+      else progress.setNote("Subsampling ch. " + (c + 1) + "/" + channels);
       curves[c] = new CurveCollection(data[c], curveFitterClass, BIN_RADIUS);
+      curves[c].addCurveListener(this);
+      progressBase = 500 + 500 * c / channels;
       curves[c].computeCurves();
-      SlimPlotter.setProgress(progress, 540, 360, (double) (c + 1) / channels);
     }
   }
 
@@ -230,6 +239,16 @@ public class SlimData implements ActionListener {
     cVisible = new boolean[channels];
     Arrays.fill(cVisible, true);
     paramDialog.setVisible(false);
+  }
+
+  // -- CurveListener methods --
+
+  /** Handles curve collection computation progress. */
+  public void curveChanged(CurveEvent e) {
+    String message = e.getMessage();
+    if (message != null) progress.setNote(message);
+    SlimPlotter.setProgress(progress, progressBase, progressInc,
+      (double) e.getValue() / e.getMaximum());
   }
 
   // -- Utility methods --

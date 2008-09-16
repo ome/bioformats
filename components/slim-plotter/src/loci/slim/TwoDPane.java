@@ -244,10 +244,14 @@ public class TwoDPane extends JPanel
       "Intensity Color Mapping");
     colorViewPane.add(colorWidget);
 
+    JPanel rightPane = new JPanel();
+    rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
+    colorViewPane.add(rightPane);
+
     JPanel viewModePane = new JPanel();
     viewModePane.setLayout(new BoxLayout(viewModePane, BoxLayout.Y_AXIS));
     viewModePane.setBorder(new TitledBorder("View Mode"));
-    colorViewPane.add(viewModePane);
+    rightPane.add(viewModePane);
 
     intensityMode = new JRadioButton("Intensity", true);
     lifetimeMode = new JRadioButton("Lifetime");
@@ -268,12 +272,43 @@ public class TwoDPane extends JPanel
     lifetimeMode.addActionListener(this);
     projectionMode.addActionListener(this);
     emissionMode.addActionListener(this);
-    viewModePane.add(Box.createHorizontalStrut(5));
     viewModePane.add(intensityMode);
     viewModePane.add(lifetimeMode);
     viewModePane.add(projectionMode);
     viewModePane.add(emissionMode);
-    viewModePane.add(Box.createVerticalStrut(60));
+
+    JPanel lifetimePane = new JPanel();
+    lifetimePane.setLayout(new BoxLayout(lifetimePane, BoxLayout.Y_AXIS));
+    lifetimePane.setBorder(new TitledBorder("Lifetime"));
+    rightPane.add(lifetimePane);
+
+    JPanel fpsPane = new JPanel();
+    fpsPane.setLayout(new BoxLayout(fpsPane, BoxLayout.X_AXIS));
+    lifetimePane.add(fpsPane);
+
+    JLabel fpsLabel = new JLabel("FPS ");
+    //fpsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    fpsPane.add(fpsLabel);
+
+    JTextField fpsField = new JTextField(3);
+    fpsField.setMaximumSize(fpsField.getPreferredSize());
+    fpsPane.add(fpsField);
+
+    JPanel binPane = new JPanel();
+    binPane.setLayout(new BoxLayout(binPane, BoxLayout.X_AXIS));
+    lifetimePane.add(binPane);
+
+    JLabel binLabel = new JLabel("Bin radius ");
+    fpsLabel.setMinimumSize(binLabel.getPreferredSize());
+    fpsLabel.setPreferredSize(binLabel.getPreferredSize());
+    fpsLabel.setMaximumSize(binLabel.getPreferredSize());
+    fpsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    //binLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    binPane.add(binLabel);
+
+    JTextField binField = new JTextField(3);
+    binField.setMaximumSize(binField.getPreferredSize());
+    binPane.add(binField);
 
     int maxChan = doIntensity();
 
@@ -346,8 +381,7 @@ public class TwoDPane extends JPanel
         int totalIter = curveRenderers[c].getTotalIterations();
         double wRCSE = curveRenderers[c].getWorstRCSE();
         wRCSE = ((int) (wRCSE * 100)) / 100.0;
-        progress.setString("Improving image: iter. #" + totalIter +
-             " Worst RCSE: " + wRCSE);
+        progress.setString("Iter. #" + totalIter + ": worst RCSE=" + wRCSE);
       }
       else {
         int subLevel = curveRenderers[c].getSubsampleLevel();

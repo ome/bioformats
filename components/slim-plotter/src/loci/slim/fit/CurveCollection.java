@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.slim.fit;
 
+import java.util.Vector;
+
 /**
  * Data structure for managing a collection of curves. The main purpose of this
  * structure is to create subsampled curve sets at a resolution for each order
@@ -37,7 +39,7 @@ package loci.slim.fit;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class CurveCollection {
+public class CurveCollection implements CurveReporter {
 
   // -- Constants --
 
@@ -101,6 +103,7 @@ public class CurveCollection {
     Class curveFitterClass = curves[0][0][0].getClass();
     int depth = (int) (Math.log(numRows) / LOG2);
     int res = numRows;
+    int value = 0, max = numRows * numRows / 3;
     for (int d=1; d<=depth; d++) {
       res /= 2;
       curves[d] = new CurveFitter[res][res];
@@ -117,6 +120,7 @@ public class CurveCollection {
           }
           cf.setData(data);
           curves[d][y][x] = cf;
+          fireCurveEvent(new CurveEvent(this, value++, max, null));
         }
       }
     }
@@ -158,6 +162,31 @@ public class CurveCollection {
         for (int x=0; x<curves[d][y].length; x++) {
           curves[d][y][x].setComponentCount(numExp);
         }
+      }
+    }
+  }
+
+  // -- CurveReporter API methods --
+
+  protected Vector curveListeners = new Vector();
+
+  public void addCurveListener(CurveListener l) {
+    synchronized (curveListeners) {
+      curveListeners.add(l);
+    }
+  }
+
+  public void removeCurveListener(CurveListener l) {
+    synchronized (curveListeners) {
+      curveListeners.remove(l);
+    }
+  }
+
+  public void fireCurveEvent(CurveEvent e) {
+    synchronized (curveListeners) {
+      for (int i=0; i<curveListeners.size(); i++) {
+        CurveListener l = (CurveListener) curveListeners.get(i);
+        l.curveChanged(e);
       }
     }
   }
