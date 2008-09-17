@@ -65,7 +65,7 @@ public class BurnInRenderer extends CurveRenderer {
       thislevel *= 4;
     }
     alive = false;
-    maxIterations = 1000;
+    maxIterations = 1;
     maxRCSE = 0.0d;
     currentDim = 1;
     numExponentials = 1;
@@ -153,7 +153,6 @@ public class BurnInRenderer extends CurveRenderer {
       }
     }
     // initial pass - iterations
-    maxIterations = 1; // TEMP?
     while (alive && !improving) {
       if (!estimated) {
         //System.out.println("Set estimated");
