@@ -1,0 +1,16 @@
+Both: fix color mapping widgets (range autodetection)
+Both: set firstindex and lastindex cutoffs
+
+Fit: get rid of hacky crap once setting firstindex/lastindex
+Fit: large bin radius results in discontinuities in bright areas?
+
+2D: add options for number of iterations, fps? and bin radius
+2D: convert results back to picoseconds
+2D: pixel probe in lifetime mode
+  * show details on curve fit result for that pixel
+  * show binned curve + fit in decay view
+
+2D: implement spectral projection view
+2D: implement emission spectraview
+3D: change data fit and residuals to check boxes for surface/lines
+2D: eliminate flickering for intensity view mode
