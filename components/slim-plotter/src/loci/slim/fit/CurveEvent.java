@@ -57,7 +57,7 @@ public class CurveEvent extends EventObject {
     this.message = message;
   }
 
-  // -- CurveEvent API methods --
+  // -- CurveEvent methods --
 
   /** Gets the message describing the event. */
   public String getMessage() { return message; }

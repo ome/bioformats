@@ -48,7 +48,7 @@ public class RendererSwitcher implements ICurveRenderer {
     this.renderers = renderers;
   }
 
-  // -- RendererSwitcher API methods --
+  // -- RendererSwitcher methods --
 
   public void setCurrent(int current) {
     int lastC = c;
@@ -56,7 +56,7 @@ public class RendererSwitcher implements ICurveRenderer {
     renderers[lastC].stop();
   }
 
-  // -- IRenderer API methods --
+  // -- IRenderer methods --
 
   public void run() {
     alive = true;

@@ -50,7 +50,7 @@ public abstract class CurveRenderer implements ICurveRenderer {
   protected CurveCollection curveData;
   protected int numExponentials;
 
-  // -- ICurveRenderer API methods --
+  // -- ICurveRenderer methods --
 
   public abstract void run();
 

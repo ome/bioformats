@@ -96,7 +96,7 @@ public class CurveCollection implements CurveReporter {
     curves[0] = curveFitters;
   }
 
-  // -- CurveCollection API methods --
+  // -- CurveCollection methods --
 
   /** Computes subsamplings. */
   public void computeCurves() {
@@ -166,7 +166,7 @@ public class CurveCollection implements CurveReporter {
     }
   }
 
-  // -- CurveReporter API methods --
+  // -- CurveReporter methods --
 
   protected Vector curveListeners = new Vector();
 
@@ -208,14 +208,14 @@ public class CurveCollection implements CurveReporter {
         for (int x=0; x<numCols; x++) {
           for (int t=0; t<timeBins; t++) {
             int sum = 0;
-            for (int dy=y-binRadius; dy<=y+binRadius; dy++) {
-              if (dy < 0) continue;
-              if (dy >= numRows) break;
-              for (int dx=x-binRadius; dx<=x+binRadius; dx++) {
-                if (dx < 0) continue;
-                if (dx >= numCols) break;
-                sum += data[dy][dx][t];
-              }
+            int yLo = y - binRadius, yHi = y + binRadius;
+            if (yLo < 0) yLo = 0;
+            if (yHi > numRows) yHi = numRows;
+            for (int dy=yLo; dy<yHi; dy++) {
+              int xLo = x - binRadius, xHi = x + binRadius;
+              if (xLo < 0) xLo = 0;
+              if (xHi > numCols) xHi = numCols;
+              for (int dx=xLo; dx<xHi; dx++) sum += data[dy][dx][t];
             }
             binnedData[y][x][t] = sum;
           }

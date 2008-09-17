@@ -53,13 +53,13 @@ public class LMCurveFitter extends CurveFitter {
 
   public LMCurveFitter() { setComponentCount(1); }
 
-  // -- LMCurveFitter API methods --
+  // -- LMCurveFitter methods --
 
   public static PrintStream filter(PrintStream out) {
     return new ConsoleStream(out);
   }
 
-  // -- CurveFitter API methods --
+  // -- CurveFitter methods --
 
   /** HACK - does nothing. */
   public void iterate() { }

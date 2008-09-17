@@ -74,7 +74,7 @@ public class GACurveFitter extends CurveFitter {
   }
 
 
-  // -- CurveFitter API methods --
+  // -- CurveFitter methods --
 
   /**
    * iterate() runs through one iteration of whatever curve fitting
