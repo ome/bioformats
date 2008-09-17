@@ -36,8 +36,7 @@ import javax.swing.event.DocumentListener;
 import java.io.File;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.util.ColorUtil;
-import visad.ScalarMap;
-import visad.VisADException;
+import visad.*;
 import visad.util.ColorMapWidget;
 import visad.util.Util;
 
@@ -51,7 +50,7 @@ import visad.util.Util;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ColorWidget extends JPanel
-  implements ActionListener, DocumentListener
+  implements ActionListener, DocumentListener, ScalarMapListener
 {
 
   // -- Constants --
@@ -88,7 +87,7 @@ public class ColorWidget extends JPanel
   private JPopupMenu lutsMenu;
   private Color validColor;
 
-  // -- Constructor --
+  // -- Constructors --
 
   public ColorWidget(ScalarMap map) throws VisADException, RemoteException {
     this(map, null);
@@ -98,6 +97,7 @@ public class ColorWidget extends JPanel
     throws VisADException, RemoteException
   {
     this.map = map;
+    map.addScalarMapListener(this);
 
     widget = new ColorMapWidget(map);
     Dimension prefSize = widget.getPreferredSize();
@@ -171,9 +171,6 @@ public class ColorWidget extends JPanel
 
   /** Sets the currently selected range component's color widget table. */
   public void setWidgetTable(float[][] table) {
-//    float[][] oldTable = widget.getTableView();
-//    float[] alpha = oldTable.length > 3 ? oldTable[3] : null;
-//    table = ColorUtil.adjustColorTable(table, alpha, true);
     widget.setTableView(table);
   }
 
@@ -185,26 +182,16 @@ public class ColorWidget extends JPanel
       catch (NumberFormatException exc) { }
       try { max = Float.parseFloat(cMaxValue.getText()); }
       catch (NumberFormatException exc) { }
+      cMinValue.setBackground(min == min && min < max ?
+        validColor : INVALID_COLOR);
+      cMaxValue.setBackground(max == max && min < max ?
+        validColor : INVALID_COLOR);
+      if (min < max) updateScalarMap(min, max);
     }
     else {
-      double[] range = map.getRange();
-      min = (float) range[0];
-      max = (float) range[1];
-      cMinValue.getDocument().removeDocumentListener(this);
-      cMinValue.setText("" + min);
-      cMinValue.getDocument().addDocumentListener(this);
-      cMaxValue.getDocument().removeDocumentListener(this);
-      cMaxValue.setText("" + max);
-      cMaxValue.getDocument().addDocumentListener(this);
-    }
-    cMinValue.setBackground(min == min && min < max ?
-      validColor : INVALID_COLOR);
-    cMaxValue.setBackground(max == max && min < max ?
-      validColor : INVALID_COLOR);
-    if (min < max) {
-      try { map.setRange(min, max); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
+      map.resetAutoScale();
+      map.getDisplay().reAutoScale();
+      updateMinMaxFields();
     }
   }
 
@@ -214,9 +201,7 @@ public class ColorWidget extends JPanel
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == cOverride) {
-      boolean manual = cOverride.isSelected();
-      cMinValue.setEnabled(manual);
-      cMaxValue.setEnabled(manual);
+      updateManualOverride();
       updateColorScale();
     }
     else if (src == lutLoad) {
@@ -265,4 +250,58 @@ public class ColorWidget extends JPanel
   public void insertUpdate(DocumentEvent e) { updateColorScale(); }
   public void removeUpdate(DocumentEvent e) { updateColorScale(); }
 
+  // -- ScalarMapListener methods --
+
+  public void mapChanged(ScalarMapEvent e) {
+    int id = e.getId();
+    boolean isAuto = id == ScalarMapEvent.AUTO_SCALE;
+    boolean isManual = id == ScalarMapEvent.MANUAL;
+    if (!isAuto && !isManual) return;
+    updateManualOverride(isManual);
+    updateMinMaxFields();
+  }
+
+  public void controlChanged(ScalarMapControlEvent e) { }
+
+  // -- Helper methods --
+
+  /** Updates text field range values to match map values. */
+  protected void updateMinMaxFields() {
+    double[] range = map.getRange();
+    cMinValue.getDocument().removeDocumentListener(this);
+    cMinValue.setText("" + range[0]);
+    cMinValue.getDocument().addDocumentListener(this);
+    cMaxValue.getDocument().removeDocumentListener(this);
+    cMaxValue.setText("" + range[1]);
+    cMaxValue.getDocument().addDocumentListener(this);
+  }
+
+  /**
+   * Updates min/max text field availability
+   * to match the current override value.
+   */
+  protected void updateManualOverride() {
+    updateManualOverride(cOverride.isSelected());
+  }
+
+  /**
+   * Updates manual override checkbox and min/max
+   * text field availaability to match the given value.
+   */
+  protected void updateManualOverride(boolean manual) {
+    if (manual != cOverride.isSelected()) {
+      cOverride.removeActionListener(this);
+      cOverride.setSelected(manual);
+      cOverride.addActionListener(this);
+    }
+    cMinValue.setEnabled(manual);
+    cMaxValue.setEnabled(manual);
+  }
+
+  /** Updates scalar map range to match the given values. */
+  protected void updateScalarMap(float min, float max) {
+    try { map.setRange(min, max); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
 }

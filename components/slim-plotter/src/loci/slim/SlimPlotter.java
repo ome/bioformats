@@ -582,14 +582,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     }.start();
   }
 
-  /** Sets the currently selected range component's color widget table. */
-  public void setWidgetTable(float[][] table) {
-//    float[][] oldTable = colorWidget.getTableView();
-//    float[] alpha = oldTable.length > 3 ? oldTable[3] : null;
-//    table = ColorUtil.adjustColorTable(table, alpha, true);
-    colorWidget.setWidgetTable(table);
-  }
-
   // -- ActionListener methods --
 
   /** Handles checkbox and button presses. */
