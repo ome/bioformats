@@ -51,6 +51,7 @@ public class RendererSwitcher implements ICurveRenderer {
   // -- RendererSwitcher methods --
 
   public void setCurrent(int current) {
+    if (current == c) return;
     int lastC = c;
     c = current;
     renderers[lastC].stop();

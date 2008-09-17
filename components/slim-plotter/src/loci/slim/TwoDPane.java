@@ -414,11 +414,9 @@ public class TwoDPane extends JPanel
         lifetimeImage = new double[][] {lifetimeImage[0]};
       }
       try {
+        //imageRef.setData(lifetimeField);
         FlatField ff = (FlatField) lifetimeField.getSample(c);
         ff.setSamples(lifetimeImage);
-        //imageRef.setData(lifetimeField);
-        // CTR START HERE - this works, but need to make this change
-        // unilateral and then fix slider behavior to match
         imageRef.setData(ff);
       }
       catch (VisADException exc) { exc.printStackTrace(); }
@@ -450,12 +448,24 @@ public class TwoDPane extends JPanel
     Object src = e.getSource();
     if (src == cSlider) {
       int c = cSlider.getValue() - 1;
-      try { ac.setCurrent(c); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
+
       cToggle.removeActionListener(this);
       cToggle.setSelected(data.cVisible[c]);
       cToggle.addActionListener(this);
+
+      try { ac.setCurrent(c); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+
+      if (switcher != null) switcher.setCurrent(c);
+      if (lifetimeActive && lifetimeMode.isSelected()) {
+        try {
+          FlatField ff = (FlatField) lifetimeField.getSample(c);
+          imageRef.setData(ff);
+        }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (RemoteException exc) { exc.printStackTrace(); }
+      }
     }
   }
 
@@ -609,7 +619,10 @@ public class TwoDPane extends JPanel
           lifetimeField.setSample(c, ff);
         }
       }
-      imageRef.setData(lifetimeField);
+      //imageRef.setData(lifetimeField);
+      int c = cSlider.getValue() - 1;
+      FlatField ff = (FlatField) lifetimeField.getSample(c);
+      imageRef.setData(ff);
 
       // reset to RGB color map
       ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
