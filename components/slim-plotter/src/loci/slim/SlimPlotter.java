@@ -516,7 +516,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       rightPanel.add(console.getWindow().getContentPane());
       BreakawayPanel breakawayPanel = new BreakawayPanel(masterPane,
         "Intensity Data - " + file.getName(), false);
-      breakawayPanel.setEdge(BorderLayout.EAST);
+      breakawayPanel.setEdge(BorderLayout.WEST);
       breakawayPanel.setUpEnabled(false);
       breakawayPanel.setDownEnabled(false);
       breakawayPanel.setContentPane(rightPanel);
