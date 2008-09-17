@@ -38,6 +38,7 @@ import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.TwoDDisplayRendererJ3D;
+import visad.util.Util;
 
 /**
  * Slim Plotter's 2D image pane.
@@ -49,19 +50,16 @@ import visad.java3d.TwoDDisplayRendererJ3D;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class TwoDPane extends JPanel
-  implements ActionListener, ChangeListener, DisplayListener
+  implements ActionListener, ChangeListener, DisplayListener, DocumentListener
 {
 
   // -- Constants --
 
-  private static final int BIN_RADIUS = 3; // TODO - make this a UI option
-  private static final Color INVALID_COLOR = Color.red.brighter();
+  /** Lifetime progress bar is updated every PROGRESS_RATE milliseconds. */
+  private static final int PROGRESS_RATE = 50;
 
-  /** Progress bar is updated every RATE milliseconds. */
-  private static final int RATE = 100; // TODO - make this a UI option
-
-  /** Lifetime image is redrawn every SKIPth frame. */
-  private static final int SKIP = 2;
+  /** Lifetime image is updated DEFAULT_FPS times per second by default. */
+  private static final int DEFAULT_FPS = 3;
 
   // -- Fields --
 
@@ -94,21 +92,21 @@ public class TwoDPane extends JPanel
   private int roiX, roiY;
   private boolean[][] roiMask;
 
-  // GUI components for image pane
+  // GUI components
   private JProgressBar progress;
   private JButton startStopButton;
   private JSlider cSlider;
   private JRadioButton intensityMode, lifetimeMode;
   private JRadioButton projectionMode, emissionMode;
   private JCheckBox cToggle;
+  private JTextField iterField, fpsField;
 
   // parameters for multithreaded lifetime computation
   private CurveRenderer[] curveRenderers;
   private RendererSwitcher switcher;
   private Thread curveThread;
-  private Timer lifetimeRefresh;
+  private Timer progressRefresh, lifetimeRefresh;
   private boolean lifetimeActive;
-  private int frame; // internal frame counter
 
   // -- Constructor --
 
@@ -255,11 +253,11 @@ public class TwoDPane extends JPanel
 
     intensityMode = new JRadioButton("Intensity", true);
     lifetimeMode = new JRadioButton("Lifetime");
-    emissionMode = new JRadioButton("Emission");
+    emissionMode = new JRadioButton("Emission Spectra");
     emissionMode.setToolTipText("<html>" +
       "Displays an emission spectrum of the data.</html>");
     emissionMode.setEnabled(false);
-    projectionMode = new JRadioButton("Projection");
+    projectionMode = new JRadioButton("Spectral Projection");
     projectionMode.setToolTipText("<html>" +
       "Displays a \"spectral projection\" of the data.</html>");
     projectionMode.setEnabled(false);
@@ -272,6 +270,7 @@ public class TwoDPane extends JPanel
     lifetimeMode.addActionListener(this);
     projectionMode.addActionListener(this);
     emissionMode.addActionListener(this);
+    viewModePane.setAlignmentX(Component.CENTER_ALIGNMENT);
     viewModePane.add(intensityMode);
     viewModePane.add(lifetimeMode);
     viewModePane.add(projectionMode);
@@ -282,33 +281,39 @@ public class TwoDPane extends JPanel
     lifetimePane.setBorder(new TitledBorder("Lifetime"));
     rightPane.add(lifetimePane);
 
+    JPanel iterPane = new JPanel();
+    iterPane.setLayout(new BoxLayout(iterPane, BoxLayout.X_AXIS));
+    lifetimePane.add(iterPane);
+    JLabel iterLabel = new JLabel("Iterations ");
+    iterLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    iterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    iterPane.add(iterLabel);
+    iterField = new JTextField(4);
+    iterField.getDocument().addDocumentListener(this);
+    Util.adjustTextField(iterField);
+    iterPane.add(iterField);
+
     JPanel fpsPane = new JPanel();
     fpsPane.setLayout(new BoxLayout(fpsPane, BoxLayout.X_AXIS));
     lifetimePane.add(fpsPane);
-
     JLabel fpsLabel = new JLabel("FPS ");
-    //fpsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    fpsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    fpsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
     fpsPane.add(fpsLabel);
-
-    JTextField fpsField = new JTextField(3);
-    fpsField.setMaximumSize(fpsField.getPreferredSize());
+    fpsField = new JTextField("" + DEFAULT_FPS, 4);
+    fpsField.getDocument().addDocumentListener(this);
+    Util.adjustTextField(fpsField);
     fpsPane.add(fpsField);
 
-    JPanel binPane = new JPanel();
-    binPane.setLayout(new BoxLayout(binPane, BoxLayout.X_AXIS));
-    lifetimePane.add(binPane);
+    // standardize label sizes
+    fpsLabel.setMinimumSize(iterLabel.getPreferredSize());
+    fpsLabel.setPreferredSize(iterLabel.getPreferredSize());
+    fpsLabel.setMaximumSize(iterLabel.getPreferredSize());
 
-    JLabel binLabel = new JLabel("Bin radius ");
-    fpsLabel.setMinimumSize(binLabel.getPreferredSize());
-    fpsLabel.setPreferredSize(binLabel.getPreferredSize());
-    fpsLabel.setMaximumSize(binLabel.getPreferredSize());
-    fpsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-    //binLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    binPane.add(binLabel);
-
-    JTextField binField = new JTextField(3);
-    binField.setMaximumSize(binField.getPreferredSize());
-    binPane.add(binField);
+    // standardize panel widths
+    lifetimePane.setPreferredSize(new Dimension(
+      viewModePane.getPreferredSize().width,
+      lifetimePane.getPreferredSize().height));
 
     int maxChan = doIntensity();
 
@@ -319,12 +324,14 @@ public class TwoDPane extends JPanel
     for (int c=0; c<data.channels; c++) {
       curveRenderers[c] = new BurnInRenderer(data.curves[c]);
       curveRenderers[c].setComponentCount(data.numExp);
-      curveRenderers[c].setMaxIterations(10);//TEMP
     }
     switcher = new RendererSwitcher(curveRenderers);
-    int delay = RATE;
-    lifetimeRefresh = new Timer(delay, this);
+    progressRefresh = new Timer(PROGRESS_RATE, this);
+    progressRefresh.start();
+    lifetimeRefresh = new Timer(1000 / DEFAULT_FPS, this);
     lifetimeRefresh.start();
+
+    iterField.setText("" + switcher.getMaxIterations());
   }
 
   // -- TwoDPane methods --
@@ -367,12 +374,11 @@ public class TwoDPane extends JPanel
     else if (src == lifetimeMode) doLifetime();
     else if (src == projectionMode) doSpectralProjection();
     else if (src == emissionMode) doEmissionSpectrum();
-    else {
-      // timer event - update progress bar and lifetime display
+    else if (src == progressRefresh) {
+      // progress timer event - update progress bar
       if (!lifetimeActive) return;
-      frame++;
-      int c = cSlider.getValue() - 1;
 
+      int c = cSlider.getValue() - 1;
       int curProg = curveRenderers[c].getCurrentProgress();
       int maxProg = curveRenderers[c].getMaxProgress();
       progress.setValue(curProg <= maxProg ? curProg : 0);
@@ -387,49 +393,53 @@ public class TwoDPane extends JPanel
         int subLevel = curveRenderers[c].getSubsampleLevel();
         if (subLevel < 0) {
           double percent = (10000 * curProg / maxProg) / 100.0;
-          progress.setString("Iterating: " + percent + "%");
+          progress.setString("Initial pass: " + percent + "%");
         }
         else {
           progress.setString("Estimating; " + (subLevel + 1) +
             " step" + (subLevel > 0 ? "s" : "") + " until total burn-in");
         }
       }
+    }
+    else if (src == lifetimeRefresh) {
+      // lifetime timer event - update lifetime display
+      if (!lifetimeActive || !lifetimeMode.isSelected()) return;
 
-      if (frame % SKIP == 0 && lifetimeMode.isSelected()) {
-        // update VisAD display
-        double[][] lifetimeImage = curveRenderers[c].getImage();
-        if (lifetimeImage.length > 1) {
-          // TEMP - only visualize first component of multi-component fit
-          lifetimeImage = new double[][] {lifetimeImage[0]};
-        }
-        try {
-          FlatField ff = (FlatField) lifetimeField.getSample(c);
-          ff.setSamples(lifetimeImage);
-          //imageRef.setData(lifetimeField);
-          // CTR START HERE - this works, but need to make this change
-          // unilateral and then fix slider behavior to match
-          imageRef.setData(ff);
-        }
-        catch (VisADException exc) { exc.printStackTrace(); }
-        catch (RemoteException exc) { exc.printStackTrace(); }
+      int c = cSlider.getValue() - 1;
 
-        // recompute min and max
-        /*
-        double lifeMin = 0, lifeMax = 0;
-        for (int h=0; h<data.height; h++) {
-          for (int w=0; w<data.width; w++) {
-            double val = lifetimeImage[0][data.width * h + w];
-            if (val < lifeMin) lifeMin = val;
-            if (val > lifeMax) lifeMax = val;
-          }
-        }
-        if (lifeMin < lifetimeMin || lifeMax > lifetimeMax) {
-          lifetimeMin = lifeMin;
-          lifetimeMax = lifeMax;
-          resetMinMax(lifetimeMin, lifetimeMax);
-        }
-        */
+      // update VisAD display
+      double[][] lifetimeImage = curveRenderers[c].getImage();
+      if (lifetimeImage.length > 1) {
+        // TEMP - only visualize first component of multi-component fit
+        lifetimeImage = new double[][] {lifetimeImage[0]};
       }
+      try {
+        FlatField ff = (FlatField) lifetimeField.getSample(c);
+        ff.setSamples(lifetimeImage);
+        //imageRef.setData(lifetimeField);
+        // CTR START HERE - this works, but need to make this change
+        // unilateral and then fix slider behavior to match
+        imageRef.setData(ff);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+
+      // recompute min and max
+      /*
+      double lifeMin = 0, lifeMax = 0;
+      for (int h=0; h<data.height; h++) {
+        for (int w=0; w<data.width; w++) {
+          double val = lifetimeImage[0][data.width * h + w];
+          if (val < lifeMin) lifeMin = val;
+          if (val > lifeMax) lifeMax = val;
+        }
+      }
+      if (lifeMin < lifetimeMin || lifeMax > lifetimeMax) {
+        lifetimeMin = lifeMin;
+        lifetimeMax = lifeMax;
+        resetMinMax(lifetimeMin, lifetimeMax);
+      }
+      */
     }
   }
 
@@ -506,6 +516,30 @@ public class TwoDPane extends JPanel
     else if (id == DisplayEvent.MOUSE_DRAGGED) {
       if (!drag) return; // not a center mouse drag
       doCursor(iPlot.getDisplayRenderer().getCursor(), false, false);
+    }
+  }
+
+  // -- DocumentListener methods --
+
+  public void insertUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void removeUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void changedUpdate(DocumentEvent e) { documentUpdate(e); }
+
+  private void documentUpdate(DocumentEvent e) {
+    Object src = e.getDocument();
+    if (src == iterField.getDocument()) {
+      try {
+        int iter = Integer.parseInt(iterField.getText());
+        switcher.setMaxIterations(iter);
+      }
+      catch (NumberFormatException exc) { }
+    }
+    else if (src == fpsField.getDocument()) {
+      try {
+        double fps = Double.parseDouble(fpsField.getText());
+        lifetimeRefresh.setDelay((int) (1000 / fps));
+      }
+      catch (NumberFormatException exc) { }
     }
   }
 
