@@ -2,6 +2,7 @@ Both: set firstindex and lastindex cutoffs
 
 Fit: get rid of hacky crap once setting firstindex/lastindex
 Fit: large bin radius results in discontinuities in bright areas?
+Fit: 2-component fits can be inaccurate (see Log scale for confirmation)
 
 2D: pixel probe in lifetime mode
   * show details on curve fit result for that pixel

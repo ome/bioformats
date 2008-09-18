@@ -11,6 +11,8 @@ Type "ant -p" for a list of targets.
   <property file="${root.dir}/global.properties"/>
   <property file="${root.dir}/common.properties"/>
 
+  <condition property="isUnix"><os family="unix"/></condition>
+
   <!-- Non-core ant tasks -->
 
   <!-- NB - We do not reference ${artifact.dir}/loci-checks.jar directly,
@@ -19,6 +21,13 @@ Type "ant -p" for a list of targets.
     to fail. -->
   <taskdef resource="checkstyletask.properties"
     classpath="${lib.dir}/checkstyle-all-4.2.jar:${lib.dir}/loci-checks.jar"/>
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
+  <!-- HACK - some environments do not install the antcontrib tasks properly
+  from antcontrib.properties above; also load them from antlib.xml -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml"
+    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
 
   <!--
   <taskdef resource="proguard/ant/task.properties"

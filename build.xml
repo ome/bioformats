@@ -61,7 +61,7 @@ VisBio
     Project deps:  Bio-Formats, OME I/O
     License:       GPL
 
-Slim Plotter
+SLIM Plotter
     An application and curve fitting library for visualization
     and analysis of combined spectral lifetime data
     -=-
@@ -199,7 +199,7 @@ L-M Fit
     JAR file:  lma.jar
     URL:       http://users.utu.fi/jaolho/
     Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
-               used by Slim Plotter
+               used by SLIM Plotter
     License:   LGPL
 
 JGoodies Looks
@@ -288,7 +288,7 @@ TestNG
 VisAD
     JAR file:  visad-lite.jar
     URL:       http://www.ssec.wisc.edu/~billh/visad.html
-    Notes:     stripped down VisAD library used by VisBio and Slim Plotter
+    Notes:     stripped down VisAD library used by VisBio and SLIM Plotter
                for interactive visualization
     License:   LGPL
 
@@ -308,9 +308,14 @@ Apache XML-RPC
   <property file="global.properties"/>
   <property file="build.properties"/>
 
-  <condition property="isUnix"><os family="unix"/></condition>
-
   <!-- Non-core ant tasks -->
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+    classpath="jar/ant-contrib-1.0b1.jar"/>
+  <!-- HACK - some environments do not install the antcontrib tasks properly
+  from antcontrib.properties above; also load them from antlib.xml -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml"
+    classpath="jar/ant-contrib-1.0b1.jar"/>
 
 <!--
   <path id="cp-testng">
@@ -323,13 +328,6 @@ Apache XML-RPC
   <taskdef name="testng" classpathref="cp-testng"
     classname="org.testng.TestNGAntTask"/>
 -->
-
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-    classpath="jar/ant-contrib-1.0b1.jar"/>
-  <!-- HACK - some environments do not install the antcontrib tasks properly
-    from antcontrib.properties above; also load them from antlib.xml -->
-  <taskdef resource="net/sf/antcontrib/antlib.xml"
-    classpath="jar/ant-contrib-1.0b1.jar"/>
 
   <!-- Global build targets -->
 
@@ -554,7 +552,7 @@ Apache XML-RPC
     <ant dir="components/visbio" target="visbio.dist-nojre"/>
   </target>
 
-  <!-- Slim Plotter -->
+  <!-- SLIM Plotter -->
 
   <target name="style-slim"
     description="check source code style for SLIM Plotter">
@@ -578,7 +576,7 @@ Apache XML-RPC
 
   <target name="dist-slim"
     description="create distribution bundle for SLIM Plotter">
-    <ant dir="components/slim-plotter" target="slim.dist"/>
+    <ant dir="components/slim-plotter" target="dist"/>
   </target>
 
   <!-- WiscScan Flow Cytometry -->
@@ -743,12 +741,13 @@ Apache XML-RPC
       <sequential>
         <for list="${jar.dirs}" param="jardir" delimiter=" " trim="true">
           <sequential>
-            <available file="@{jardir}/@{jar}"
+            <available file="${root.dir}/@{jardir}/@{jar}"
               property="@{jardir}.@{jar}.present"/>
             <if>
               <equals arg1="${@{jardir}.@{jar}.present}" arg2="true" />
               <then>
-                <unjar src="@{jardir}/@{jar}" dest="${loci-tools.dir}">
+                <unjar src="${root.dir}/@{jardir}/@{jar}"
+                  dest="${loci-tools.dir}">
                   <patternset>
                     <exclude name="META-INF/**"/>
                   </patternset>
@@ -773,12 +772,13 @@ Apache XML-RPC
       <sequential>
         <for list="${jar.dirs}" param="jardir" delimiter=" " trim="true">
           <sequential>
-            <available file="@{jardir}/@{jar}"
+            <available file="${root.dir}/@{jardir}/@{jar}"
               property="@{jardir}.@{jar}.present"/>
             <if>
               <equals arg1="${@{jardir}.@{jar}.present}" arg2="true" />
               <then>
-                <unjar src="@{jardir}/@{jar}" dest="${ome-tools.dir}">
+                <unjar src="${root.dir}/@{jardir}/@{jar}"
+                  dest="${ome-tools.dir}">
                   <patternset>
                     <exclude name="META-INF/**"/>
                   </patternset>

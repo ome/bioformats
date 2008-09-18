@@ -27,9 +27,9 @@
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>
-		<string>-Xmx256m</string>
+		<string>-Xmx512m</string>
 		<key>MainClass</key>
-		<string>loci.apps.slim.SlimPlotter</string>
+		<string>loci.slim.SlimPlotter</string>
 		<key>JVMVersion</key>
 		<string>1.4+</string>
 		<key>ClassPath</key>
@@ -38,6 +38,7 @@
 			<string>$APP_PACKAGE/../bio-formats.jar</string>
 			<string>$APP_PACKAGE/../lma.jar</string>
 			<string>$APP_PACKAGE/../visad-lite.jar</string>
+			<string>$APP_PACKAGE/../visbio.jar</string>
 			</array>
 		<key>Properties</key>
 		<dict>
