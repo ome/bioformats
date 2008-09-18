@@ -134,13 +134,18 @@ public class TwoDPane extends JPanel
     iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
     iPlot.addDisplayListener(this);
 
-    iPlot.addMap(new ScalarMap(types.xType, Display.XAxis));
-    iPlot.addMap(new ScalarMap(types.yType, Display.YAxis));
+    ScalarMap xMap = new ScalarMap(types.xType, Display.XAxis);
+    ScalarMap yMap = new ScalarMap(types.yType, Display.YAxis);
+    iPlot.addMap(xMap);
+    iPlot.addMap(yMap);
     imageMap = new ScalarMap(types.vType, Display.RGB);
     iPlot.addMap(imageMap);
     iPlot.addMap(new ScalarMap(types.cType, Display.Animation));
     imageRef = new DataReferenceImpl("image");
     iPlot.addReference(imageRef);
+
+    xMap.setRange(0, data.width - 1);
+    yMap.setRange(0, data.height - 1);
 
     // set up curve manipulation renderer
     roiGrid = new float[2][data.width * data.height];

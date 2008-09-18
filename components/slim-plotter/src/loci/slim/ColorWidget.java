@@ -274,7 +274,7 @@ public class ColorWidget extends JPanel
 
   /** Updates text field range values to match map values. */
   protected void updateMinMaxFields() {
-    if (updating) return;
+    if (updating || cOverride.isSelected()) return;
     double[] range = map.getRange();
     cMinValue.getDocument().removeDocumentListener(this);
     cMinValue.setText("" + range[0]);
