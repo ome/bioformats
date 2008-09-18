@@ -737,7 +737,7 @@ Apache XML-RPC
 
   <!-- Tool bundles -->
 
-  <target name="tools" depends="jars"
+  <target name="tools" depends="jar-formats, jar-ome-xml, jar-loci-plugins"
     description="create JAR file encompassing several LOCI tools">
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
@@ -767,7 +767,7 @@ Apache XML-RPC
     <delete dir="${loci-tools.dir}"/>
   </target>
 
-  <target name="tools-ome" depends="jars"
+  <target name="tools-ome" depends="jar-ome-io, jar-ome-plugins"
     description="create JAR file encompassing several OME tools">
     <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
