@@ -369,7 +369,8 @@ public class GACurveFitter extends CurveFitter {
       num = 0.0;
       den = 0.0;
       //for (int i = 0; i < lowValues.length; i++)
-      for (int i = 0; i < 5; i++) {
+      int lowBound = lowValues.length < 5 ? lowValues.length : 5;
+      for (int i = 0; i < lowBound; i++) {
         if (lowValues[i][1] > guessC) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.pow(Math.E, -lowValues[i][0] * exp);
