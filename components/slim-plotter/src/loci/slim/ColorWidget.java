@@ -86,6 +86,7 @@ public class ColorWidget extends JPanel
   private JButton lutLoad, lutSave, lutPresets;
   private JPopupMenu lutsMenu;
   private Color validColor;
+  private boolean updating;
 
   // -- Constructors --
 
@@ -246,9 +247,15 @@ public class ColorWidget extends JPanel
 
   // -- DocumentListener methods --
 
-  public void changedUpdate(DocumentEvent e) { updateColorScale(); }
-  public void insertUpdate(DocumentEvent e) { updateColorScale(); }
-  public void removeUpdate(DocumentEvent e) { updateColorScale(); }
+  public void changedUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void insertUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void removeUpdate(DocumentEvent e) { documentUpdate(e); }
+
+  private void documentUpdate(DocumentEvent e) {
+    updating = true;
+    updateColorScale();
+    updating = false;
+  }
 
   // -- ScalarMapListener methods --
 
@@ -267,6 +274,7 @@ public class ColorWidget extends JPanel
 
   /** Updates text field range values to match map values. */
   protected void updateMinMaxFields() {
+    if (updating) return;
     double[] range = map.getRange();
     cMinValue.getDocument().removeDocumentListener(this);
     cMinValue.setText("" + range[0]);

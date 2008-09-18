@@ -99,6 +99,7 @@ public class TwoDPane extends JPanel
   private JRadioButton intensityMode, lifetimeMode;
   private JRadioButton projectionMode, emissionMode;
   private JCheckBox cToggle;
+  private ColorWidget colorWidget;
   private JTextField iterField, fpsField;
 
   // parameters for multithreaded lifetime computation
@@ -177,7 +178,7 @@ public class TwoDPane extends JPanel
 
     ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
     iPlot.getProjectionControl().setMatrix(
-      iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
+      iPlot.make_matrix(0, 0, 0, 0.7, 0, 0, 0));
 
     // lay out components
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -238,8 +239,7 @@ public class TwoDPane extends JPanel
     colorViewPane.setLayout(new BoxLayout(colorViewPane, BoxLayout.X_AXIS));
     add(colorViewPane);
 
-    ColorWidget colorWidget = new ColorWidget(imageMap,
-      "Intensity Color Mapping");
+    colorWidget = new ColorWidget(imageMap, "Intensity Color Mapping");
     colorViewPane.add(colorWidget);
 
     JPanel rightPane = new JPanel();
@@ -393,30 +393,13 @@ public class TwoDPane extends JPanel
         lifetimeImage = new double[][] {lifetimeImage[0]};
       }
       try {
-        //imageRef.setData(lifetimeField);
         FlatField ff = (FlatField) lifetimeField.getSample(c);
         ff.setSamples(lifetimeImage);
         imageRef.setData(ff);
+        colorWidget.updateColorScale();
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
-
-      // recompute min and max
-      /*
-      double lifeMin = 0, lifeMax = 0;
-      for (int h=0; h<data.height; h++) {
-        for (int w=0; w<data.width; w++) {
-          double val = lifetimeImage[0][data.width * h + w];
-          if (val < lifeMin) lifeMin = val;
-          if (val > lifeMax) lifeMax = val;
-        }
-      }
-      if (lifeMin < lifetimeMin || lifeMax > lifetimeMax) {
-        lifetimeMin = lifeMin;
-        lifetimeMax = lifeMax;
-        resetMinMax(lifetimeMin, lifetimeMax);
-      }
-      */
     }
   }
 
@@ -444,6 +427,7 @@ public class TwoDPane extends JPanel
         try {
           FlatField ff = (FlatField) lifetimeField.getSample(c);
           imageRef.setData(ff);
+          colorWidget.updateColorScale();
         }
         catch (VisADException exc) { exc.printStackTrace(); }
         catch (RemoteException exc) { exc.printStackTrace(); }
@@ -601,10 +585,10 @@ public class TwoDPane extends JPanel
           lifetimeField.setSample(c, ff);
         }
       }
-      //imageRef.setData(lifetimeField);
       int c = cSlider.getValue() - 1;
       FlatField ff = (FlatField) lifetimeField.getSample(c);
       imageRef.setData(ff);
+      colorWidget.updateColorScale();
 
       // reset to RGB color map
       ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
