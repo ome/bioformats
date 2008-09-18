@@ -218,6 +218,18 @@ public class SlimData implements ActionListener, CurveListener {
     }
   }
 
+  // -- SlimData methods --
+
+  /** Converts value in picoseconds to histogram bins. */
+  public float picoToBins(float pico) {
+    return (timeBins - 1) * pico / timeRange / 1000;
+  }
+
+  /** Converts value in histogram bins to picoseconds. */
+  public float binsToPico(float bins) {
+    return 1000 * timeRange * bins / (timeBins - 1);
+  }
+
   // -- ActionListener methods --
 
   /** Handles checkbox and button presses. */

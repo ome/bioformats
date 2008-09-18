@@ -847,7 +847,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         // HACK - cut off last 1500 ps from lifetime histogram,
         // to improve accuracy of fit.
         if (data.cutEnd) {
-          int cutBins = (int) picoToBins(1500);
+          int cutBins = (int) data.picoToBins(1500);
           if (num > cutBins + 5) num -= cutBins;
         }
 
@@ -885,7 +885,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           for (int i=0; i<data.numExp; i++) {
             log("\t\ta" + (i + 1) + "=" +
               (100 * results[i][0] / maxVals[cc]) + "%");
-            tau[c][i] = binsToPico((float) (1 / results[i][1]));
+            tau[c][i] = data.binsToPico((float) (1 / results[i][1]));
             log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
           }
           log("\t\tc=" + results[0][2]);
@@ -1115,16 +1115,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   public void windowOpened(WindowEvent e) { }
 
   // -- Helper methods --
-
-  /** Converts value in picoseconds to histogram bins. */
-  private float picoToBins(float pico) {
-    return (data.timeBins - 1) * pico / data.timeRange / 1000;
-  }
-
-  /** Converts value in histogram bins to picoseconds. */
-  private float binsToPico(float bins) {
-    return 1000 * data.timeRange * bins / (data.timeBins - 1);
-  }
 
   /** Converts linear value to logarithm value. */
   private float linearToLog(float v) {

@@ -104,6 +104,7 @@ public class TwoDPane extends JPanel
 
   // parameters for multithreaded lifetime computation
   private CurveRenderer[] curveRenderers;
+  private float[][][] curveImages;
   private RendererSwitcher switcher;
   private Thread curveThread;
   private Timer progressRefresh, lifetimeRefresh;
@@ -330,6 +331,7 @@ public class TwoDPane extends JPanel
       curveRenderers[c] = new BurnInRenderer(data.curves[c]);
       curveRenderers[c].setComponentCount(data.numExp);
     }
+    curveImages = new float[data.channels][][];
     switcher = new RendererSwitcher(curveRenderers);
     progressRefresh = new Timer(PROGRESS_RATE, this);
     progressRefresh.start();
@@ -397,9 +399,18 @@ public class TwoDPane extends JPanel
         // TEMP - only visualize first component of multi-component fit
         lifetimeImage = new double[][] {lifetimeImage[0]};
       }
+
+      // TEMP - crappy hack to convert bins to ps
+      if (curveImages[c] == null) {
+        curveImages[c] = new float[1][lifetimeImage[0].length];
+      }
+      for (int i=0; i<lifetimeImage[0].length; i++) {
+        curveImages[c][0][i] = data.binsToPico((float) lifetimeImage[0][i]);
+      }
+
       try {
         FlatField ff = (FlatField) lifetimeField.getSample(c);
-        ff.setSamples(lifetimeImage);
+        ff.setSamples(curveImages[c]);
         imageRef.setData(ff);
         colorWidget.updateColorScale();
       }
