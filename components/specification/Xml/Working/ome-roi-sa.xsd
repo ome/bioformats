@@ -586,7 +586,7 @@
 	<xsd:element name="DisplayOptions"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				There is optionally one of these per Image. They provide support for the Origionam OME Perl server.
+				There is optionally one of these per Image. They provide support for the Origional OME Perl server.
 				This specifies mapping of image channel components to RGB or greyscale colorspace with one byte per pixel per RGB channel.
 				RedChannel, GreenChannel, BlueChannel, and GreyChannel specify the scaling of pixel values to 8-bit colorspace values.
 				Display indicates to display the image as Greyscale or RGB.
