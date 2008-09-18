@@ -14,19 +14,11 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/common.xml"/>
   <property file="build.properties"/>
 
-  <!-- CTR TODO - fix dist target -->
-
   <target name="dist" if="isUnix" depends="jar"
     description="create distribution bundle for Slim Plotter">
     <copy todir="${slim.dist-dir}" preservelastmodified="true">
       <fileset dir="dist"/>
       <fileset dir="${artifact.dir}" includes="${component.jar}"/>
-<!--
-      <fileset dir="${artifact.dir}" includes="bio-formats.jar"/>
-      <fileset dir="${artifact.dir}" includes="visbio.jar"/>
-      <fileset dir="${lib.dir}" includes="lma.jar"/>
-      <fileset dir="${lib.dir}" includes="visad-lite.jar"/>
--->
     </copy>
     <!-- copy JAR libraries in the classpath -->
     <for list="${component.manifest-cp}" param="jar" delimiter=" " trim="true">
