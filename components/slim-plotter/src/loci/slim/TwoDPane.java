@@ -589,8 +589,6 @@ public class TwoDPane extends JPanel
   }
 
   private void doLifetime() {
-    // TODO
-    // https://skyking.microscopy.wisc.edu/trac/java/ticket/130
     try {
       if (lifetimeField == null) {
         lifetimeField = new FieldImpl(types.cxyvFunc, types.cSet);
