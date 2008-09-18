@@ -986,8 +986,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
                 float sum = 0;
                 for (int i=0; i<data.numExp; i++) {
                   int e = 2 * i;
+                  // a * e ^ -bt
                   sum += (float) (q[e] * Math.exp(-q[e + 1] * et));
                 }
+                // c
                 sum += (float) q[2 * data.numExp];
                 fitSamps[ndx] = sum;
                 residuals[ndx] = samps[ndx] - fitSamps[ndx];

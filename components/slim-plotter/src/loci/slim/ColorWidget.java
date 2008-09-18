@@ -261,11 +261,15 @@ public class ColorWidget extends JPanel
 
   public void mapChanged(ScalarMapEvent e) {
     int id = e.getId();
-    boolean isAuto = id == ScalarMapEvent.AUTO_SCALE;
-    boolean isManual = id == ScalarMapEvent.MANUAL;
+    final boolean isAuto = id == ScalarMapEvent.AUTO_SCALE;
+    final boolean isManual = id == ScalarMapEvent.MANUAL;
     if (!isAuto && !isManual) return;
-    updateManualOverride(isManual);
-    updateMinMaxFields();
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        updateManualOverride(isManual);
+        updateMinMaxFields();
+      }
+    });
   }
 
   public void controlChanged(ScalarMapControlEvent e) { }
@@ -275,13 +279,20 @@ public class ColorWidget extends JPanel
   /** Updates text field range values to match map values. */
   protected void updateMinMaxFields() {
     if (updating || cOverride.isSelected()) return;
+    debug("updateMinMaxFields");
     double[] range = map.getRange();
-    cMinValue.getDocument().removeDocumentListener(this);
-    cMinValue.setText("" + range[0]);
-    cMinValue.getDocument().addDocumentListener(this);
-    cMaxValue.getDocument().removeDocumentListener(this);
-    cMaxValue.setText("" + range[1]);
-    cMaxValue.getDocument().addDocumentListener(this);
+    String minText = "" + range[0];
+    if (!minText.equals(cMinValue.getText())) {
+      cMinValue.getDocument().removeDocumentListener(this);
+      cMinValue.setText(minText);
+      cMinValue.getDocument().addDocumentListener(this);
+    }
+    String maxText = "" + range[1];
+    if (!maxText.equals(cMaxValue.getText())) {
+      cMaxValue.getDocument().removeDocumentListener(this);
+      cMaxValue.setText(maxText);
+      cMaxValue.getDocument().addDocumentListener(this);
+    }
   }
 
   /**
@@ -297,6 +308,7 @@ public class ColorWidget extends JPanel
    * text field availaability to match the given value.
    */
   protected void updateManualOverride(boolean manual) {
+    debug("updateManualOverride(" + manual + ")");
     if (manual != cOverride.isSelected()) {
       cOverride.removeActionListener(this);
       cOverride.setSelected(manual);
@@ -308,8 +320,18 @@ public class ColorWidget extends JPanel
 
   /** Updates scalar map range to match the given values. */
   protected void updateScalarMap(float min, float max) {
-    try { map.setRange(min, max); }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
+    debug("updateScalarMap(" + min + ", " + max + ")");
+    double[] range = map.getRange();
+    if (min != range[0] || max != range[1]) {
+      try { map.setRange(min, max); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
   }
+
+  private void debug(String msg) {
+    String name = Thread.currentThread().getName();
+    System.out.println("--> " + name + ": " + msg);
+  }
+
 }
