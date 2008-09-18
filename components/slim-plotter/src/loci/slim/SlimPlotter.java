@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.slim;
 
 import java.awt.*;
-import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
 import java.rmi.RemoteException;
@@ -46,8 +45,6 @@ import loci.visbio.util.ColorUtil;
 import loci.visbio.util.OutputConsole;
 import visad.*;
 import visad.java3d.*;
-import visad.util.ColorMapWidget;
-import visad.util.Util;
 
 /**
  * A tool for visualization of spectral lifetime data.

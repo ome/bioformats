@@ -332,6 +332,7 @@ public class TwoDPane extends JPanel
     lifetimeRefresh.start();
 
     iterField.setText("" + switcher.getMaxIterations());
+    doProgressString();
   }
 
   // -- TwoDPane methods --
@@ -377,29 +378,7 @@ public class TwoDPane extends JPanel
     else if (src == progressRefresh) {
       // progress timer event - update progress bar
       if (!lifetimeActive) return;
-
-      int c = cSlider.getValue() - 1;
-      int curProg = curveRenderers[c].getCurrentProgress();
-      int maxProg = curveRenderers[c].getMaxProgress();
-      progress.setValue(curProg <= maxProg ? curProg : 0);
-      progress.setMaximum(maxProg);
-      if (curProg == maxProg) {
-        int totalIter = curveRenderers[c].getTotalIterations();
-        double wRCSE = curveRenderers[c].getWorstRCSE();
-        wRCSE = ((int) (wRCSE * 100)) / 100.0;
-        progress.setString("Iter. #" + totalIter + ": worst RCSE=" + wRCSE);
-      }
-      else {
-        int subLevel = curveRenderers[c].getSubsampleLevel();
-        if (subLevel < 0) {
-          double percent = (10000 * curProg / maxProg) / 100.0;
-          progress.setString("Initial pass: " + percent + "%");
-        }
-        else {
-          progress.setString("Estimating; " + (subLevel + 1) +
-            " step" + (subLevel > 0 ? "s" : "") + " until total burn-in");
-        }
-      }
+      doProgressString();
     }
     else if (src == lifetimeRefresh) {
       // lifetime timer event - update lifetime display
@@ -457,8 +436,11 @@ public class TwoDPane extends JPanel
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
 
-      if (switcher != null) switcher.setCurrent(c);
-      if (lifetimeActive && lifetimeMode.isSelected()) {
+      if (switcher != null) {
+        switcher.setCurrent(c);
+        doProgressString();
+      }
+      if (lifetimeMode.isSelected()) {
         try {
           FlatField ff = (FlatField) lifetimeField.getSample(c);
           imageRef.setData(ff);
@@ -640,6 +622,34 @@ public class TwoDPane extends JPanel
   private void doEmissionSpectrum() {
     // TODO
     // https://skyking.microscopy.wisc.edu/trac/java/ticket/164
+  }
+
+  private void doProgressString() {
+    int c = cSlider.getValue() - 1;
+    int curProg = curveRenderers[c].getCurrentProgress();
+    int maxProg = curveRenderers[c].getMaxProgress();
+    progress.setValue(curProg <= maxProg ? curProg : 0);
+    progress.setMaximum(maxProg);
+    if (!lifetimeActive && curProg == 0) {
+      progress.setString("Press Start to compute per-pixel lifetime");
+    }
+    else if (curProg == maxProg) {
+      int totalIter = curveRenderers[c].getTotalIterations();
+      double wRCSE = curveRenderers[c].getWorstRCSE();
+      wRCSE = ((int) (wRCSE * 100)) / 100.0;
+      progress.setString("Iter. #" + totalIter + ": worst RCSE=" + wRCSE);
+    }
+    else {
+      int subLevel = curveRenderers[c].getSubsampleLevel();
+      if (subLevel < 0) {
+        double percent = (10000 * curProg / maxProg) / 100.0;
+        progress.setString("Initial pass: " + percent + "%");
+      }
+      else {
+        progress.setString("Estimating; " + (subLevel + 1) +
+          " step" + (subLevel > 0 ? "s" : "") + " until total burn-in");
+      }
+    }
   }
 
   // -- Utility methods --
