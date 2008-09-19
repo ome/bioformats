@@ -741,12 +741,12 @@ Apache XML-RPC
       <sequential>
         <for list="${jar.dirs}" param="jardir" delimiter=" " trim="true">
           <sequential>
-            <available file="${root.dir}/@{jardir}/@{jar}"
+            <available file="@{jardir}/@{jar}"
               property="@{jardir}.@{jar}.present"/>
             <if>
               <equals arg1="${@{jardir}.@{jar}.present}" arg2="true" />
               <then>
-                <unjar src="${root.dir}/@{jardir}/@{jar}"
+                <unjar src="@{jardir}/@{jar}"
                   dest="${loci-tools.dir}">
                   <patternset>
                     <exclude name="META-INF/**"/>
@@ -772,12 +772,12 @@ Apache XML-RPC
       <sequential>
         <for list="${jar.dirs}" param="jardir" delimiter=" " trim="true">
           <sequential>
-            <available file="${root.dir}/@{jardir}/@{jar}"
+            <available file="@{jardir}/@{jar}"
               property="@{jardir}.@{jar}.present"/>
             <if>
               <equals arg1="${@{jardir}.@{jar}.present}" arg2="true" />
               <then>
-                <unjar src="${root.dir}/@{jardir}/@{jar}"
+                <unjar src="@{jardir}/@{jar}"
                   dest="${ome-tools.dir}">
                   <patternset>
                     <exclude name="META-INF/**"/>
