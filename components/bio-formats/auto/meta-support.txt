@@ -287,11 +287,26 @@ LogicalChannel.SamplesPerPixel = Yes
 Pixels = Yes since r639
 Image = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 Dimensions.WaveIncrement = Yes
 Dimensions.TimeIncrement = Yes
+PlaneTiming.TheZ = Yes
+PlaneTiming.TheC = Yes
+PlaneTiming.TheT = Yes
+PlaneTiming.DeltaT = Yes
+Detector.Offset = Yes
+Detector.Voltage = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.SerialNumber = Yes
+StagePosition.PositionX = Yes
+StagePosition.PositionY = Yes
+StagePosition.PositionZ = Yes
 
 [MINCReader]
 Pixels = Yes

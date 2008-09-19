@@ -49,14 +49,14 @@ public class LeicaReader extends FormatReader {
   private static final int LEICA_MAGIC_TAG = 33923;
 
   /** IFD tags. */
-  private static final int SERIES = 10;
-  private static final int IMAGES = 15;
-  private static final int DIMDESCR = 20;
-  private static final int FILTERSET = 30;
-  private static final int TIMEINFO = 40;
-  private static final int SCANNERSET = 50;
-  private static final int EXPERIMENT = 60;
-  private static final int LUTDESC = 70;
+  private static final Integer SERIES = new Integer(10);
+  private static final Integer IMAGES = new Integer(15);
+  private static final Integer DIMDESCR = new Integer(20);
+  private static final Integer FILTERSET = new Integer(30);
+  private static final Integer TIMEINFO = new Integer(40);
+  private static final Integer SCANNERSET = new Integer(50);
+  private static final Integer EXPERIMENT = new Integer(60);
+  private static final Integer LUTDESC = new Integer(70);
 
   private static final Hashtable CHANNEL_PRIORITIES = createChannelPriorities();
 
@@ -100,6 +100,7 @@ public class LeicaReader extends FormatReader {
   private String leiFilename;
 
   private Vector seriesNames;
+  private Vector seriesDescriptions;
   private int lastPlane = 0;
 
   private float[][] physicalSizes;
@@ -214,6 +215,7 @@ public class LeicaReader extends FormatReader {
       lastPlane = 0;
       channelMap = null;
       physicalSizes = null;
+      seriesDescriptions = null; 
     }
   }
 
@@ -358,13 +360,13 @@ public class LeicaReader extends FormatReader {
     boolean[] valid = new boolean[numSeries];
     for (int i=0; i<headerIFDs.length; i++) {
       valid[i] = true;
-      if (headerIFDs[i].get(new Integer(SERIES)) != null) {
-        byte[] temp = (byte[]) headerIFDs[i].get(new Integer(SERIES));
+      if (headerIFDs[i].get(SERIES) != null) {
+        byte[] temp = (byte[]) headerIFDs[i].get(SERIES);
         nameLength = DataTools.bytesToInt(temp, 8, isLittleEndian()) * 2;
       }
 
       Vector f = new Vector();
-      byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(IMAGES));
+      byte[] tempData = (byte[]) headerIFDs[i].get(IMAGES);
       RandomAccessStream data = new RandomAccessStream(tempData);
       data.order(isLittleEndian());
       int tempImages = data.readInt();
@@ -527,14 +529,17 @@ public class LeicaReader extends FormatReader {
     int fileLength = 0;
 
     int resolution = -1;
-    String description = null;
-    String[] timestamps = null;
+    String[][] timestamps = new String[headerIFDs.length][];
+    Vector seriesDescriptions = new Vector();
 
     physicalSizes = new float[headerIFDs.length][5];
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     for (int i=0; i<headerIFDs.length; i++) {
       String prefix = "Series " + i + " ";
-      byte[] temp = (byte[]) headerIFDs[i].get(new Integer(SERIES));
+      byte[] temp = (byte[]) headerIFDs[i].get(SERIES);
       if (temp != null) {
         // the series data
         // ID_SERIES
@@ -558,7 +563,7 @@ public class LeicaReader extends FormatReader {
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(IMAGES));
+      temp = (byte[]) headerIFDs[i].get(IMAGES);
       if (temp != null) {
         // the image data
         // ID_IMAGES
@@ -595,7 +600,7 @@ public class LeicaReader extends FormatReader {
         seriesNames.add(buf.toString());
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(DIMDESCR));
+      temp = (byte[]) headerIFDs[i].get(DIMDESCR);
       if (temp != null) {
         // dimension description
         // ID_DIMDESCR
@@ -658,7 +663,7 @@ public class LeicaReader extends FormatReader {
           float physical = Float.parseFloat(physicalSize) / size;
           if (unit.equals("m")) {
             physical *= 1000000;
-          } 
+          }
 
           if (dimType.equals("x")) {
             core[i].sizeX = size;
@@ -706,19 +711,15 @@ public class LeicaReader extends FormatReader {
         addMeta(prefix + "Series name", getString(stream, len));
 
         len = stream.readInt();
-        addMeta(prefix + "Series description", getString(stream, len));
+        String description = getString(stream, len);
+        seriesDescriptions.add(description);
+        addMeta(prefix + "Series description", description);
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(FILTERSET));
-      if (temp != null) {
-        // filter data
-        // ID_FILTERSET
+      parseInstrumentData((byte[]) headerIFDs[i].get(FILTERSET), store, i);
 
-        // not currently used
-      }
-
-      temp = (byte[]) headerIFDs[i].get(new Integer(TIMEINFO));
+      temp = (byte[]) headerIFDs[i].get(TIMEINFO);
 
       if (temp != null) {
         // time data
@@ -741,10 +742,10 @@ public class LeicaReader extends FormatReader {
 
         int numStamps = stream.readInt();
         addMeta(prefix + "Number of time-stamps", numStamps);
-        timestamps = new String[numStamps];
+        timestamps[i] = new String[numStamps];
         for (int j=0; j<numStamps; j++) {
-          timestamps[j] = getString(stream, 64);
-          addMeta(prefix + "Timestamp " + j, timestamps[j]);
+          timestamps[i][j] = getString(stream, 64);
+          addMeta(prefix + "Timestamp " + j, timestamps[i][j]);
         }
 
         if (stream.getFilePointer() < stream.length()) {
@@ -764,15 +765,9 @@ public class LeicaReader extends FormatReader {
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(SCANNERSET));
-      if (temp != null) {
-        // scanner data
-        // ID_SCANNERSET
+      parseInstrumentData((byte[]) headerIFDs[i].get(SCANNERSET), store, i);
 
-        // not currently used
-      }
-
-      temp = (byte[]) headerIFDs[i].get(new Integer(EXPERIMENT));
+      temp = (byte[]) headerIFDs[i].get(EXPERIMENT);
       if (temp != null) {
         // experiment data
         // ID_EXPERIMENT
@@ -782,7 +777,7 @@ public class LeicaReader extends FormatReader {
         stream.seek(8);
 
         int len = stream.readInt();
-        description = getString(stream, len * 2);
+        String description = getString(stream, len * 2);
         addMeta(prefix + "Image Description", description);
         len = stream.readInt();
 
@@ -797,7 +792,7 @@ public class LeicaReader extends FormatReader {
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(LUTDESC));
+      temp = (byte[]) headerIFDs[i].get(LUTDESC);
       if (temp != null) {
         // LUT data
         // ID_LUTDESC
@@ -867,19 +862,14 @@ public class LeicaReader extends FormatReader {
       core[i].interleaved = false;
     }
 
-    // the metadata store we're working with
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
     for (int i=0; i<numSeries; i++) {
-      if (core[i].sizeZ == 0) core[i].sizeZ = 1;
-      if (core[i].sizeT == 0) core[i].sizeT = 1;
-      if (core[i].sizeC == 0) core[i].sizeC = 1;
-      if (core[i].imageCount == 0) core[i].imageCount = 1;
-      if (core[i].imageCount == 1 && core[i].sizeZ > 1) {
+      setSeries(i);
+      if (getSizeZ() == 0) core[i].sizeZ = 1;
+      if (getSizeT() == 0) core[i].sizeT = 1;
+      if (getSizeC() == 0) core[i].sizeC = 1;
+      if (getImageCount() == 0) core[i].imageCount = 1;
+      if (getImageCount() == 1 && getSizeZ() * getSizeT() > 1) {
         core[i].sizeZ = 1;
-      }
-      if (core[i].imageCount == 1 && core[i].sizeT > 1) {
         core[i].sizeT = 1;
       }
       tiff.setId((String) files[i].get(0));
@@ -889,41 +879,191 @@ public class LeicaReader extends FormatReader {
       core[i].indexed = tiff.isIndexed();
       core[i].sizeC *= tiff.getSizeC();
 
-      if (core[i].dimensionOrder.indexOf("C") == -1) {
+      if (getDimensionOrder().indexOf("C") == -1) {
         core[i].dimensionOrder += "C";
       }
-      if (core[i].dimensionOrder.indexOf("Z") == -1) {
+      if (getDimensionOrder().indexOf("Z") == -1) {
         core[i].dimensionOrder += "Z";
       }
-      if (core[i].dimensionOrder.indexOf("T") == -1) {
+      if (getDimensionOrder().indexOf("T") == -1) {
         core[i].dimensionOrder += "T";
       }
 
-      if (i < timestamps.length && timestamps[i] != null) {
+      long firstPlane = 0;
+
+      if (i < timestamps.length && timestamps[i] != null &&
+        timestamps[i].length > 0)
+      {
         SimpleDateFormat parse =
           new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
-        Date date = parse.parse(timestamps[i], new ParsePosition(0));
+        Date date = parse.parse(timestamps[i][0], new ParsePosition(0));
+        firstPlane = date.getTime();
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        timestamps[i] = fmt.format(date);
-        store.setImageCreationDate(timestamps[i], i);
+        store.setImageCreationDate(fmt.format(date), i);
       }
       else {
         MetadataTools.setDefaultCreationDate(store, id, i);
       }
 
       store.setImageName((String) seriesNames.get(i), i);
-      store.setImageDescription(description, i);
+      store.setImageDescription((String) seriesDescriptions.get(i), i);
       store.setDimensionsPhysicalSizeX(new Float(physicalSizes[i][0]), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(physicalSizes[i][1]), i, 0);
       store.setDimensionsPhysicalSizeZ(new Float(physicalSizes[i][2]), i, 0);
       store.setDimensionsWaveIncrement(
         new Integer((int) physicalSizes[i][3]), i, 0);
       store.setDimensionsTimeIncrement(new Float(physicalSizes[i][4]), i, 0);
+
+      for (int j=0; j<core[i].imageCount; j++) {
+        int[] coords = getZCTCoords(j);
+        store.setPlaneTheZ(new Integer(coords[0]), i, 0, j);
+        store.setPlaneTheC(new Integer(coords[1]), i, 0, j);
+        store.setPlaneTheT(new Integer(coords[2]), i, 0, j);
+
+        if (timestamps[i] != null && j < timestamps[i].length) {
+          SimpleDateFormat parse =
+            new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
+          Date date = parse.parse(timestamps[i][j], new ParsePosition(0));
+          float elapsedTime = (float) (date.getTime() - firstPlane) / 1000;
+          store.setPlaneTimingDeltaT(new Float(elapsedTime), i, 0, j);
+        }
+      }
     }
     MetadataTools.populatePixels(store, this);
+    setSeries(0);
   }
 
   // -- Helper methods --
+
+  private void parseInstrumentData(byte[] temp, MetadataStore store, int series)
+    throws IOException
+  {
+    if (temp == null) return;
+    RandomAccessStream stream = new RandomAccessStream(temp);
+    stream.order(isLittleEndian());
+    stream.seek(0);
+
+    // read 24 byte SAFEARRAY
+    stream.skipBytes(4);
+    int cbElements = stream.readInt();
+    stream.skipBytes(8);
+    int nElements = stream.readInt();
+    stream.skipBytes(4);
+
+    for (int j=0; j<nElements; j++) {
+      stream.seek(24 + j * cbElements);
+      String contentID = getString(stream, 128);
+      String description = getString(stream, 64);
+      String data = getString(stream, 64);
+      int dataType = stream.readShort();
+      stream.skipBytes(6);
+
+      // read data
+      switch (dataType) {
+        case 2:
+          data = String.valueOf(stream.readShort());
+          stream.skipBytes(6);
+          break;
+        case 3:
+          data = String.valueOf(stream.readInt());
+          stream.skipBytes(4);
+          break;
+        case 4:
+          data = String.valueOf(stream.readFloat());
+          stream.skipBytes(4);
+          break;
+        case 5:
+          data = String.valueOf(stream.readDouble());
+          break;
+        case 7:
+        case 11:
+          int b = stream.read();
+          stream.skipBytes(7);
+          data = b == 0 ? "false" : "true";
+          break;
+        case 17:
+          data = stream.readString(1);
+          stream.skipBytes(7);
+          break;
+        default:
+          stream.skipBytes(8);
+      }
+
+      String[] tokens = contentID.split("\\|");
+
+      if (tokens[0].startsWith("CDetectionUnit")) {
+        // detector information
+
+        if (tokens[1].startsWith("PMT")) {
+          try {
+            int ndx = tokens[1].lastIndexOf(" ") + 1;
+            int detector = Integer.parseInt(tokens[1].substring(ndx)) - 1;
+
+            if (tokens[2].equals("VideoOffset")) {
+              store.setDetectorOffset(new Float(data), 0, detector);
+            }
+            else if (tokens[2].equals("HighVoltage")) {
+              store.setDetectorVoltage(new Float(data), 0, detector);
+            }
+          }
+          catch (NumberFormatException e) {
+            if (debug) LogTools.trace(e);
+          }
+        }
+      }
+      else if (tokens[0].startsWith("CTurret")) {
+        // objective information
+
+        int objective = Integer.parseInt(tokens[3]);
+        if (tokens[2].equals("NumericalAperture")) {
+          store.setObjectiveLensNA(new Float(data), 0, objective);
+        }
+        else if (tokens[2].equals("Objective")) {
+          store.setObjectiveModel(data, 0, objective);
+        }
+        else if (tokens[2].equals("OrderNumber")) {
+          store.setObjectiveSerialNumber(data, 0, objective);
+        }
+      }
+      else if (tokens[0].startsWith("CSpectrophotometerUnit")) {
+        int ndx = tokens[1].lastIndexOf(" ") + 1;
+        int channel = Integer.parseInt(tokens[1].substring(ndx)) - 1;
+        if (tokens[2].equals("Wavelength")) {
+          Integer wavelength = new Integer((int) Float.parseFloat(data));
+          if (tokens[3].equals("0")) {
+            store.setLogicalChannelEmWave(wavelength, series, channel);
+          }
+          else if (tokens[3].equals("1")) {
+            store.setLogicalChannelExWave(wavelength, series, channel);
+          }
+        }
+        else if (tokens[2].equals("Stain")) {
+          store.setLogicalChannelName(data, series, channel);
+        }
+      }
+      else if (tokens[0].startsWith("CXYZStage")) {
+        if (tokens[2].equals("XPos")) {
+          for (int q=0; q<core[series].imageCount; q++) {
+            store.setStagePositionPositionX(new Float(data), series, 0, q);
+          }
+        }
+        else if (tokens[2].equals("YPos")) {
+          for (int q=0; q<core[series].imageCount; q++) {
+            store.setStagePositionPositionY(new Float(data), series, 0, q);
+          }
+        }
+        else if (tokens[2].equals("ZPos")) {
+          for (int q=0; q<core[series].imageCount; q++) {
+            store.setStagePositionPositionZ(new Float(data), series, 0, q);
+          }
+        }
+      }
+
+      addMeta("Series " + series + " " + contentID, data);
+      stream.skipBytes(16);
+    }
+    stream.close();
+  }
 
   private boolean usedFile(String s) {
     if (files == null) return false;
