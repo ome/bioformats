@@ -326,9 +326,6 @@ public class DeltavisionReader extends FormatReader {
       extHdrFields[z][w][t] = new DVExtHdrFields(in);
 
       // plane timing
-      store.setPlaneTheZ(new Integer(z), 0, 0, i);
-      store.setPlaneTheC(new Integer(w), 0, 0, i);
-      store.setPlaneTheT(new Integer(t), 0, 0, i);
       store.setPlaneTimingDeltaT(
         new Float(extHdrFields[z][w][t].getTimeStampSeconds()), 0, 0, i);
       store.setPlaneTimingExposureTime(

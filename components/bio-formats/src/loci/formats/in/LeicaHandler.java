@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -53,9 +54,11 @@ public class LeicaHandler extends DefaultHandler {
   private int numDatasets;
   private Hashtable metadata;
 
+  private MetadataStore store;
+
   // -- Constructor --
 
-  public LeicaHandler() {
+  public LeicaHandler(MetadataStore store) {
     super();
     extraDims = new Vector();
     channels = new Vector();
@@ -73,6 +76,7 @@ public class LeicaHandler extends DefaultHandler {
     zcal = new Vector();
     bits = new Vector();
     lutNames = new Vector();
+    this.store = store;
   }
 
   // -- LeicaHandler API methods --
@@ -310,8 +314,21 @@ public class LeicaHandler extends DefaultHandler {
         key = fullSeries + " - " + key;
       }
       for (int i=0; i<attributes.getLength(); i++) {
-        metadata.put(key + " - " + attributes.getQName(i),
-          attributes.getValue(i));
+        String name = attributes.getQName(i);
+        String value = attributes.getValue(i);
+        metadata.put(key + " - " + name, value);
+
+        if (name.equals("Variant")) {
+          if (key.endsWith("NumericalAperture")) {
+            store.setObjectiveLensNA(new Float(value), 0, 0);
+          }
+          else if (key.endsWith("HighVoltage")) {
+            store.setDetectorVoltage(new Float(value), 0, 0);
+          }
+          else if (key.endsWith("VideoOffset")) {
+            store.setDetectorOffset(new Float(value), 0, 0);
+          }
+        }
       }
     }
     else if (qName.equals("ATLConfocalSettingDefinition")) {
@@ -337,8 +354,21 @@ public class LeicaHandler extends DefaultHandler {
       }
 
       for (int i=0; i<attributes.getLength(); i++) {
-        metadata.put(fullSeries + " - " + attributes.getQName(i),
-          attributes.getValue(i));
+        String name = attributes.getQName(i);
+        String value = attributes.getValue(i);
+        metadata.put(fullSeries + " - " + name, value);
+
+        int series = seriesNames.size() - 1;
+
+        if (name.equals("StagePosX")) {
+          store.setStagePositionPositionX(new Float(value), series, 0, 0);
+        }
+        else if (name.equals("StagePosY")) {
+          store.setStagePositionPositionY(new Float(value), series, 0, 0);
+        }
+        else if (name.equals("StagePosZ")) {
+          store.setStagePositionPositionZ(new Float(value), series, 0, 0);
+        }
       }
     }
     else if (qName.equals("Wheel")) {
@@ -365,9 +395,23 @@ public class LeicaHandler extends DefaultHandler {
       if (fullSeries != null && !fullSeries.equals("")) {
         prefix = fullSeries + " - " + prefix;
       }
+      int series = seriesNames.size() - 1;
+      int channel = Integer.parseInt(attributes.getValue("Channel")) - 1;
       for (int i=0; i<attributes.getLength(); i++) {
-        metadata.put(prefix + " - " + attributes.getQName(i),
-          attributes.getValue(i));
+        String name = attributes.getQName(i);
+        String value = attributes.getValue(i);
+        metadata.put(prefix + " - " + name, value);
+        if (name.equals("LeftWorld")) {
+          store.setLogicalChannelEmWave(
+            new Integer((int) Float.parseFloat(value)), series, channel);
+        }
+        else if (name.equals("RightWorld")) {
+          store.setLogicalChannelExWave(
+            new Integer((int) Float.parseFloat(value)), series, channel);
+        }
+        else if (name.equals("DyeName")) {
+          store.setLogicalChannelName(value, series, channel);
+        }
       }
     }
     else if (qName.equals("LaserLineSetting")) {
@@ -379,6 +423,9 @@ public class LeicaHandler extends DefaultHandler {
         String name = attributes.getQName(i);
         if (!name.equals("LaserLine")) {
           metadata.put(prefix + " - " + name, attributes.getValue(i));
+          store.setLaserWavelength(
+            new Integer(attributes.getValue("LaserLine")), 0,
+            Integer.parseInt(attributes.getValue("LineIndex")));
         }
       }
     }
@@ -434,8 +481,13 @@ public class LeicaHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("RelTimeStamp")) {
-      metadata.put(fullSeries + qName + attributes.getValue("Frame"),
-        attributes.getValue("Time"));
+      String frame = attributes.getValue("Frame");
+      String time = attributes.getValue("Time");
+      metadata.put(fullSeries + qName + " - " + frame, time);
+
+      int planeNum = Integer.parseInt(frame.replaceAll("RelTimeStamp", ""));
+      store.setPlaneTimingDeltaT(new Float(time), seriesNames.size() - 1, 0,
+        planeNum);
     }
     else count = 0;
   }

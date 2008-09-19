@@ -915,11 +915,6 @@ public class LeicaReader extends FormatReader {
       store.setDimensionsTimeIncrement(new Float(physicalSizes[i][4]), i, 0);
 
       for (int j=0; j<core[i].imageCount; j++) {
-        int[] coords = getZCTCoords(j);
-        store.setPlaneTheZ(new Integer(coords[0]), i, 0, j);
-        store.setPlaneTheC(new Integer(coords[1]), i, 0, j);
-        store.setPlaneTheT(new Integer(coords[2]), i, 0, j);
-
         if (timestamps[i] != null && j < timestamps[i].length) {
           SimpleDateFormat parse =
             new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");

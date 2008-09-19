@@ -486,9 +486,6 @@ public class ND2Reader extends FormatReader {
           setSeries(i);
           for (int n=0; n<getImageCount(); n++) {
             int[] coords = getZCTCoords(n);
-            store.setPlaneTheZ(new Integer(coords[0]), i, 0, n);
-            store.setPlaneTheC(new Integer(coords[1]), i, 0, n);
-            store.setPlaneTheT(new Integer(coords[2]), i, 0, n);
             float stamp = ((Double) tsT.get(coords[2])).floatValue();
             store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
           }

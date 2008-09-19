@@ -51,14 +51,17 @@ Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Image.Name = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [APNGReader]
 Pixels = Yes since r647
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [AVIReader]
 Pixels = Yes since r657
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [AliconaReader]
 Pixels = Yes since r1645
@@ -68,12 +71,14 @@ Objective.WorkingDistance = No
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [BMPReader]
 Pixels = Yes since r698
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [BioRadReader]
 Pixels = Yes since r631
@@ -86,6 +91,7 @@ LogicalChannel.SamplesPerPixel = Yes
 DisplayChannel = No
 DisplayOptions = No
 Objective.CalibratedMagnification = No
+Plane = Yes
 
 [DeltavisionReader]
 Pixels = Yes since r638
@@ -113,14 +119,17 @@ Image.CreationDate = Yes
 Image.Description = Yes
 LogicalChannel = No
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [EPSReader]
 Pixels = Yes since r994
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [FEIReader]
 Pixels = Yes since r4057
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [FV1000Reader]
 Pixels = Yes since r871
@@ -131,10 +140,12 @@ Dimensions.TimeIncrement = Yes
 Detector = No
 DetectorSettings = No
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [FitsReader]
 Pixels = Yes since r2595
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [FlexReader]
 Pixels = Yes since r2711
@@ -152,6 +163,7 @@ Well.Row = Yes
 Well.Column = Yes
 Experimenter = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [FluoviewReader]
 Pixels = Yes since r639
@@ -165,10 +177,12 @@ DetectorSettings = No
 DisplayChannel = No
 Detector = No
 Experimenter = Yes
+Plane = Yes
 
 [GIFReader]
 Pixels = Yes since r647
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [GatanReader]
 Pixels = Yes since r646
@@ -179,6 +193,7 @@ DisplayChannel = No
 Objective.CalibratedMagnification = No
 Detector.Voltage = No
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [GelReader]
 Pixels = Yes since r879
@@ -188,12 +203,14 @@ Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Experimenter = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [ICSReader]
 Pixels = Yes since r629
 Dimensions = Yes
 LogicalChannel = No
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [IPLabReader]
 Pixels = Yes since r609
@@ -202,12 +219,14 @@ Dimensiosn.PhysicalSizeY = Yes
 Image.Description = Yes
 ROI = No
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [IPWReader]
 Pixels = Yes since r646
 Image.Description = Yes
 Image.CreationDate = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [ImarisHDFReader]
 Pixels = Yes since r3309
@@ -218,6 +237,7 @@ Image.Name = Yes
 LogicalChannel = No
 LogicalChannel.SamplesPerPixel = Yes
 DetectorSettings.Gain = No
+Plane = Yes
 
 [ImarisReader]
 Pixels = Yes since r879
@@ -226,6 +246,7 @@ LogicalChannel.PinholeSize = Yes
 LogicalChannel.SamplesPerPixel = Yes
 DetectorSettings = No
 Objective.CalibratedMagnification = No
+Plane = Yes
 
 [ImarisTiffReader]
 Pixels = Yes since r1712
@@ -238,6 +259,7 @@ LogicalChannel.SamplesPerPixel = Yes
 Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
+Plane = Yes
 
 [ImprovisionTiffReader]
 Pixels = Yes since r2937
@@ -247,6 +269,7 @@ Dimensions.PhysicalSizeZ = Yes
 Dimensions.TimeIncrement = Yes
 Experimenter = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [InCellReader]
 Pixels = Yes since r3414
@@ -262,14 +285,17 @@ LogicalChannel.SamplesPerPixel = Yes
 [JPEGReader]
 Pixels = Yes since r647
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [KhorosReader]
 Pixels = Yes since r2831
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [L2DReader]
 Pixels = Yes since r3763
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [LIFReader]
 Pixels = Yes since r867
@@ -278,10 +304,23 @@ Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+Objective.LensNA = Yes
+Detector.Voltage = Yes
+Detector.Offset = Yes
+StagePosition.PositionX = Yes
+StagePosition.PositionY = Yes
+StagePosition.PositionZ = Yes
+Laser.Wavelength = Yes
+PlaneTiming.DeltaT = Yes
+Plane = Yes
 
 [LIMReader]
 Pixels = Yes since r3198
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [LeicaReader]
 Pixels = Yes since r639
@@ -295,9 +334,7 @@ Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 Dimensions.WaveIncrement = Yes
 Dimensions.TimeIncrement = Yes
-PlaneTiming.TheZ = Yes
-PlaneTiming.TheC = Yes
-PlaneTiming.TheT = Yes
+Plane = Yes
 PlaneTiming.DeltaT = Yes
 Detector.Offset = Yes
 Detector.Voltage = Yes
@@ -312,11 +349,13 @@ StagePosition.PositionZ = Yes
 Pixels = Yes
 Image.Description = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [MNGReader]
 Pixels = Yes since r1844
 Image.Name = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [MRCReader]
 Pixels = Yes since r1806
@@ -324,6 +363,7 @@ Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [MetamorphReader]
 Pixels = Yes since r639
@@ -331,6 +371,7 @@ Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [MetamorphTiffReader]
 Pixels = Yes since r3700
@@ -347,10 +388,12 @@ LogicalChannel.SamplesPerPixel = Yes
 [MicromanagerReader]
 Pixels = Yes since r2384
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [NAFReader]
 Pixels = Yes since r4059
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [ND2Reader]
 Pixels = Yes since r1777
@@ -373,6 +416,7 @@ Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [NikonReader]
 Pixels = Yes since r869
@@ -380,6 +424,7 @@ Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [OMETiffReader]
 Pixels = Yes since r2943
@@ -455,6 +500,7 @@ WellSample = Yes
 Pixels = Yes since r879
 Image.CreationDate = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [OpenlabReader]
 Pixels = Yes since r659
@@ -466,24 +512,29 @@ DetectorSettings.Offset = No
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [PCIReader]
 Pixels = Yes since r3148
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [PCXReader]
 Pixels = Yes since r3727
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [PGMReader]
 Pixels = Yes since r2595
 LogicalChannel.SamplesPerPixel = Yes
+PlaneTiming.TheT = Yes
 
 [PSDReader]
 Pixels = Yes since r3202
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [PerkinElmerReader]
 Pixels = Yes since r639
@@ -501,6 +552,7 @@ StageLabel = No
 [PictReader]
 Pixels = Yes since r764
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [PrairieReader]
 Pixels = Yes since r1996
@@ -510,14 +562,17 @@ DetectorSettings = No
 Image.CreationDate = Yes
 Laser.Power = No
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [QTReader]
 Pixels = Yes since r658
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [SDTReader]
 Pixels = Yes since r958
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [SEQReader]
 Pixels = Yes since r638
@@ -525,6 +580,7 @@ Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [SVSReader]
 Pixels = Yes since r3528
@@ -533,12 +589,14 @@ Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [SlidebookReader]
 Pixels = Yes since r1519
 Image.Name = Yes
 LogicalChannel.Name = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [TCSReader]
 Pixels = Yes since r2940
@@ -548,6 +606,18 @@ Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 Experimenter = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+Objective.LensNA = Yes
+Detector.Voltage = Yes
+Detector.Offset = Yes
+StagePosition.PositionX = Yes
+StagePosition.PositionY = Yes
+StagePosition.PositionZ = Yes
+Laser.Wavelength = Yes
+PlaneTiming.DeltaT = Yes
+Plane = Yes
 
 [TiffReader]
 Pixels = Yes since r636
@@ -555,15 +625,18 @@ Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [TillVisionReader]
 Pixels = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [VisitechReader]
 Pixels = Yes since r2925
 Image.Name = Yes
 LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [ZeissLSMReader]
 Pixels = Yes since r646

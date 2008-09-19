@@ -241,6 +241,12 @@ public final class MetadataTools {
           store.setLogicalChannelSamplesPerPixel(sampleCount, i, c);
         }
       }
+      for (int q=0; q<r.getImageCount(); q++) {
+        int[] coords = r.getZCTCoords(q);
+        store.setPlaneTheZ(new Integer(coords[0]), i, 0, q);
+        store.setPlaneTheC(new Integer(coords[1]), i, 0, q);
+        store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
+      }
     }
     r.setSeries(oldSeries);
   }

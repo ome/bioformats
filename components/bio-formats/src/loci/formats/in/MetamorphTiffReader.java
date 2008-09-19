@@ -152,9 +152,6 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
-      store.setPlaneTheZ(new Integer(coords[0]), 0, 0, i);
-      store.setPlaneTheC(new Integer(coords[1]), 0, 0, i);
-      store.setPlaneTheT(new Integer(coords[2]), 0, 0, i);
       if (coords[2] < timestamps.size()) {
         String stamp = (String) timestamps.get(coords[2]);
         long ms = parse.parse(stamp, new ParsePosition(0)).getTime();

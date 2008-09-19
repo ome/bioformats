@@ -754,9 +754,6 @@ public class PerkinElmerReader extends FormatReader {
     for (int zi=0; zi<getSizeZ(); zi++) {
       for (int ti=0; ti<getSizeT(); ti++) {
         for (int ci=0; ci<getSizeC(); ci++) {
-          store.setPlaneTheZ(new Integer(zi), 0, 0, plane);
-          store.setPlaneTheC(new Integer(ci), 0, 0, plane);
-          store.setPlaneTheT(new Integer(ti), 0, 0, plane);
           store.setPlaneTimingDeltaT(new Float((plane * msPerPlane) / 1000),
             0, 0, plane);
           store.setPlaneTimingExposureTime(

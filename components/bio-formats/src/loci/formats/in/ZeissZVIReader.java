@@ -627,9 +627,6 @@ public class ZeissZVIReader extends FormatReader {
       try { exp = new Float(exposure); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
-      store.setPlaneTheZ(new Integer(zct[0]), 0, 0, plane);
-      store.setPlaneTheC(new Integer(zct[1]), 0, 0, plane);
-      store.setPlaneTheT(new Integer(zct[2]), 0, 0, plane);
       store.setPlaneTimingExposureTime(exp, 0, 0, plane);
 
       if (plane < timestamps.size()) {

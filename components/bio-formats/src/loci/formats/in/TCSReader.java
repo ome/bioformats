@@ -192,10 +192,12 @@ public class TCSReader extends FormatReader {
 
     if (checkSuffix(id, XML_SUFFIX)) {
       in = new RandomAccessStream(id);
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
       // parse XML metadata
 
-      LeicaHandler handler = new LeicaHandler();
+      LeicaHandler handler = new LeicaHandler(store);
       String prefix = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>";
       String suffix = "</LEICA>";
       String xml = prefix + in.readString((int) in.length()) + suffix;
@@ -288,9 +290,6 @@ public class TCSReader extends FormatReader {
         core[i].indexed = tiffReaders[0].isIndexed();
         core[i].falseColor = true;
       }
-
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
       for (int i=0; i<x.size(); i++) {
         store.setImageName((String) seriesNames.get(i), i);

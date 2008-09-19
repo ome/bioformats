@@ -188,10 +188,6 @@ public class InCellReader extends FormatReader {
       store.setImageCreationDate(creationDate, i);
       for (int q=0; q<core[i].imageCount; q++) {
         store.setPlaneTimingDeltaT((Float) timings.get(nextTiming++), i, 0, q);
-        int[] coords = FormatTools.getZCTCoords("XYZCT", z, c, t, z * c * t, q);
-        store.setPlaneTheZ(new Integer(coords[0]), i, 0, q);
-        store.setPlaneTheC(new Integer(coords[1]), i, 0, q);
-        store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
         store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
       }
 
