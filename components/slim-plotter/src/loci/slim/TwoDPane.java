@@ -74,12 +74,10 @@ public class TwoDPane extends JPanel
   private SlimTypes types;
 
   // intensity parameters
-  private FieldImpl intensityField;
-  private int intensityMin, intensityMax;
+  private FlatField[] intensityFields;
 
   // lifetime parameters
-  private FieldImpl lifetimeField;
-  private double lifetimeMin, lifetimeMax;
+  private FlatField[] lifetimeFields;
 
   // ROI parameters
   private float[][] roiGrid;
@@ -145,8 +143,18 @@ public class TwoDPane extends JPanel
     imageRef = new DataReferenceImpl("image");
     iPlot.addReference(imageRef);
 
+    // set image spatial ranges (disable spatial autoscaling)
     xMap.setRange(0, data.width - 1);
     yMap.setRange(0, data.height - 1);
+
+    // set up channel info label
+    DataReferenceImpl channelRef = new DataReferenceImpl("channel");
+    DataRenderer channelRend = iPlot.getDisplayRenderer().makeDefaultRenderer();
+    iPlot.addReferences(channelRend, channelRef);
+    channelRend.toggle(false);
+    FlatField channelData = new FlatField(types.cDummyFunc, types.cSet);
+    channelData.setSamples(new float[1][data.channels]);
+    channelRef.setData(channelData);
 
     // set up curve manipulation renderer
     roiGrid = new float[2][data.width * data.height];
@@ -230,7 +238,6 @@ public class TwoDPane extends JPanel
     cSlider.setMajorTickSpacing(data.channels / 4);
     cSlider.setMinorTickSpacing(1);
     cSlider.setPaintTicks(true);
-    cSlider.addChangeListener(this);
     cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
     cSlider.setEnabled(data.channels > 1);
     sliderPane.add(cSlider);
@@ -321,9 +328,8 @@ public class TwoDPane extends JPanel
       viewModePane.getPreferredSize().width,
       lifetimePane.getPreferredSize().height));
 
-    int maxChan = doIntensity();
-
-    cSlider.setValue(maxChan + 1);
+    doIntensity(true);
+    cSlider.addChangeListener(this);
 
     // set up lifetime curve fitting renderers for per-pixel lifetime analysis
     curveRenderers = new CurveRenderer[data.channels];
@@ -378,7 +384,7 @@ public class TwoDPane extends JPanel
       data.cVisible[c] = !data.cVisible[c];
       slim.plotData(true, true, false);
     }
-    else if (src == intensityMode) doIntensity();
+    else if (src == intensityMode) doIntensity(false);
     else if (src == lifetimeMode) doLifetime();
     else if (src == projectionMode) doSpectralProjection();
     else if (src == emissionMode) doEmissionSpectrum();
@@ -395,23 +401,19 @@ public class TwoDPane extends JPanel
 
       // update VisAD display
       double[][] lifetimeImage = curveRenderers[c].getImage();
-      if (lifetimeImage.length > 1) {
-        // TEMP - only visualize first component of multi-component fit
-        lifetimeImage = new double[][] {lifetimeImage[0]};
-      }
 
-      // TEMP - crappy hack to convert bins to ps
       if (curveImages[c] == null) {
+        // TEMP - only visualize first component of multi-component fit
         curveImages[c] = new float[1][lifetimeImage[0].length];
       }
+      // TEMP - crappy hack to convert bins to ps
       for (int i=0; i<lifetimeImage[0].length; i++) {
         curveImages[c][0][i] = data.binsToPico((float) lifetimeImage[0][i]);
       }
 
       try {
-        FlatField ff = (FlatField) lifetimeField.getSample(c);
-        ff.setSamples(curveImages[c]);
-        imageRef.setData(ff);
+        lifetimeFields[c].setSamples(curveImages[c]);
+        imageRef.setData(lifetimeFields[c]);
         colorWidget.updateColorScale();
       }
       catch (VisADException exc) { exc.printStackTrace(); }
@@ -431,17 +433,23 @@ public class TwoDPane extends JPanel
       cToggle.setSelected(data.cVisible[c]);
       cToggle.addActionListener(this);
 
+      // update channel info in VisAD display
       try { ac.setCurrent(c); }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
 
+      // update channel for per-pixel lifetime computation thread
       if (switcher != null) {
         switcher.setCurrent(c);
         doProgressString();
       }
-      if (lifetimeMode.isSelected()) {
+
+      // update displayed image and color scale
+      FlatField ff = null;
+      if (intensityMode.isSelected()) ff = intensityFields[c];
+      else if (lifetimeMode.isSelected()) ff = lifetimeFields[c];
+      if (ff != null) {
         try {
-          FlatField ff = (FlatField) lifetimeField.getSample(c);
           imageRef.setData(ff);
           colorWidget.updateColorScale();
         }
@@ -550,12 +558,11 @@ public class TwoDPane extends JPanel
     slim.plotData(true, rescale, refit);
   }
 
-  private int doIntensity() {
-    int maxChan = 0;
+  private void doIntensity(boolean adjustSlider) {
+    int maxChan = 0, intensityMax = 0;
     try {
-      if (intensityField == null) {
-        intensityField = new FieldImpl(types.cxyvFunc, types.cSet);
-        intensityMin = intensityMax = 0;
+      if (intensityFields == null) {
+        intensityFields = new FlatField[data.channels];
         maxChan = 0;
         for (int c=0; c<data.channels; c++) {
           float[][] samples = new float[1][data.width * data.height];
@@ -570,38 +577,35 @@ public class TwoDPane extends JPanel
               samples[0][data.width * y + x] = sum;
             }
           }
-          FlatField ff = new FlatField(types.xyvFunc, types.xySet);
-          ff.setSamples(samples, false);
-          intensityField.setSample(c, ff);
+          intensityFields[c] = new FlatField(types.xyvFunc, types.xySet);
+          intensityFields[c].setSamples(samples, false);
         }
       }
-      imageRef.setData(intensityField);
+      int c = adjustSlider ? maxChan : cSlider.getValue() - 1;
+      imageRef.setData(intensityFields[c]);
+      if (adjustSlider) cSlider.setValue(c + 1);
+      colorWidget.updateColorScale();
 
       // reset to grayscale color map
       ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
       cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
-
-      //resetMinMax(intensityMin, intensityMax);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
-    return maxChan;
   }
 
   private void doLifetime() {
     try {
-      if (lifetimeField == null) {
-        lifetimeField = new FieldImpl(types.cxyvFunc, types.cSet);
+      if (lifetimeFields == null) {
+        lifetimeFields = new FlatField[data.channels];
+        float[][] samples = new float[1][data.width * data.height];
         for (int c=0; c<data.channels; c++) {
-          float[][] samples = new float[1][data.width * data.height];
-          FlatField ff = new FlatField(types.xyvFunc, types.xySet);
-          ff.setSamples(samples, false);
-          lifetimeField.setSample(c, ff);
+          lifetimeFields[c] = new FlatField(types.xyvFunc, types.xySet);
+          lifetimeFields[c].setSamples(samples, false);
         }
       }
       int c = cSlider.getValue() - 1;
-      FlatField ff = (FlatField) lifetimeField.getSample(c);
-      imageRef.setData(ff);
+      imageRef.setData(lifetimeFields[c]);
       colorWidget.updateColorScale();
 
       // reset to RGB color map

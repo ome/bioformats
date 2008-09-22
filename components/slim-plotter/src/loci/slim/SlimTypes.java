@@ -97,8 +97,8 @@ public class SlimTypes {
   // ((element, line) -> count
   public final FunctionType xyvFunc;
 
-  // (channel -> ((element, line) -> count))
-  public final FunctionType cxyvFunc;
+  // (channel -> dummy)
+  public final FunctionType cDummyFunc;
 
   // ((bin, channel) -> (count, value))
   public final FunctionType bcvFunc;
@@ -123,7 +123,8 @@ public class SlimTypes {
     xy = new RealTupleType(xType, yType);
     xySet = new Integer2DSet(xy, width, height);
     xyvFunc = new FunctionType(xy, vType);
-    cxyvFunc = new FunctionType(cType, xyvFunc);
+    RealType dummy = RealType.getRealType("dummy");
+    cDummyFunc = new FunctionType(cType, dummy);
     cSet = new Linear1DSet(cType,
       minWave, maxWave, channels, null, new Unit[] {nm}, null);
     bc = new RealTupleType(bType, cType);
