@@ -48,7 +48,7 @@
 				<xsd:element ref="Well" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PlateID"/>
-			<xsd:attribute name="Name" use="required" type="xsd:string">
+			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						The Name identifies the plate to the user.	It is used much like the 
@@ -167,7 +167,7 @@
 				<xsd:element ref="ScreenAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ScreenID"/>
-			<xsd:attribute name="Name" use="required" type="xsd:string"/>
+			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="ProtocolIdentifier" use="optional" type="xsd:string">
 					<xsd:annotation>
 						<xsd:documentation>
