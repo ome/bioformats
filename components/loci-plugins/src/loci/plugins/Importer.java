@@ -482,6 +482,8 @@ public class Importer {
                 String label = constructSliceLabel(
                   new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]), r,
                   retrieve, i, new int[][] {zCount, cCount, tCount});
+                ru.setVar("label", label);
+                ru.exec("stackB.addSlice(label)");
               }
             }
             else {

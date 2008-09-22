@@ -87,7 +87,7 @@ public class BFVirtualStack extends VirtualStack {
     id = path;
 
     this.colorize = colorize;
-    this.merge = merge;
+    this.merge = merge && !r.isIndexed();
     this.record = record;
 
     this.series = r.getSeries();
