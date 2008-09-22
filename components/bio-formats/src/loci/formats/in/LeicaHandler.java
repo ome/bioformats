@@ -358,16 +358,16 @@ public class LeicaHandler extends DefaultHandler {
         String value = attributes.getValue(i);
         metadata.put(fullSeries + " - " + name, value);
 
-        int series = seriesNames.size() - 1;
+        int s = seriesNames.size() - 1;
 
         if (name.equals("StagePosX")) {
-          store.setStagePositionPositionX(new Float(value), series, 0, 0);
+          store.setStagePositionPositionX(new Float(value), s, 0, 0);
         }
         else if (name.equals("StagePosY")) {
-          store.setStagePositionPositionY(new Float(value), series, 0, 0);
+          store.setStagePositionPositionY(new Float(value), s, 0, 0);
         }
         else if (name.equals("StagePosZ")) {
-          store.setStagePositionPositionZ(new Float(value), series, 0, 0);
+          store.setStagePositionPositionZ(new Float(value), s, 0, 0);
         }
       }
     }
@@ -395,7 +395,7 @@ public class LeicaHandler extends DefaultHandler {
       if (fullSeries != null && !fullSeries.equals("")) {
         prefix = fullSeries + " - " + prefix;
       }
-      int series = seriesNames.size() - 1;
+      int s = seriesNames.size() - 1;
       int channel = Integer.parseInt(attributes.getValue("Channel")) - 1;
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
@@ -403,14 +403,14 @@ public class LeicaHandler extends DefaultHandler {
         metadata.put(prefix + " - " + name, value);
         if (name.equals("LeftWorld")) {
           store.setLogicalChannelEmWave(
-            new Integer((int) Float.parseFloat(value)), series, channel);
+            new Integer((int) Float.parseFloat(value)), s, channel);
         }
         else if (name.equals("RightWorld")) {
           store.setLogicalChannelExWave(
-            new Integer((int) Float.parseFloat(value)), series, channel);
+            new Integer((int) Float.parseFloat(value)), s, channel);
         }
         else if (name.equals("DyeName")) {
-          store.setLogicalChannelName(value, series, channel);
+          store.setLogicalChannelName(value, s, channel);
         }
       }
     }

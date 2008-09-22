@@ -28,7 +28,6 @@ import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * A utility class with convenience methods for manipulating images.

@@ -25,7 +25,6 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
-import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;

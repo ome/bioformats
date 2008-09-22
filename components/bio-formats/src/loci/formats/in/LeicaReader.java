@@ -215,7 +215,7 @@ public class LeicaReader extends FormatReader {
       lastPlane = 0;
       channelMap = null;
       physicalSizes = null;
-      seriesDescriptions = null; 
+      seriesDescriptions = null;
     }
   }
 
@@ -530,7 +530,7 @@ public class LeicaReader extends FormatReader {
 
     int resolution = -1;
     String[][] timestamps = new String[headerIFDs.length][];
-    Vector seriesDescriptions = new Vector();
+    seriesDescriptions = new Vector();
 
     physicalSizes = new float[headerIFDs.length][5];
 

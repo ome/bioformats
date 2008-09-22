@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -849,8 +848,8 @@ public class FV1000Reader extends FormatReader {
       creationDate = creationDate.replaceAll("'", "");
       SimpleDateFormat parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       Date date = parse.parse(creationDate, new ParsePosition(0));
-      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      creationDate = format.format(date);
+      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      creationDate = fmt.format(date);
     }
 
     for (int i=0; i<core.length; i++) {
