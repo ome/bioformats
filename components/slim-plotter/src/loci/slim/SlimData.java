@@ -49,6 +49,10 @@ import loci.slim.fit.*;
  */
 public class SlimData implements ActionListener, CurveListener {
 
+  // -- Constants --
+
+  public static final String TITLE = "SLIM Plotter";
+
   // -- Fields --
 
   /** Actual data values, dimensioned [channel][row][column][bin]. */
@@ -293,7 +297,7 @@ public class SlimData implements ActionListener, CurveListener {
   // -- Helper methods --
 
   private void showParamDialog() {
-    paramDialog = new JDialog((Frame) null, "Slim Plotter", true);
+    paramDialog = new JDialog((Frame) null, TITLE, true);
     JPanel paramPane = new JPanel();
     paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
     paramDialog.setContentPane(paramPane);

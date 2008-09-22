@@ -41,7 +41,7 @@ import visad.java3d.TwoDDisplayRendererJ3D;
 import visad.util.Util;
 
 /**
- * Slim Plotter's 2D image pane.
+ * SLIM Plotter's 2D image pane.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/TwoDPane.java">Trac</a>,
@@ -328,8 +328,8 @@ public class TwoDPane extends JPanel
       viewModePane.getPreferredSize().width,
       lifetimePane.getPreferredSize().height));
 
-    doIntensity(true);
     cSlider.addChangeListener(this);
+    doIntensity(true);
 
     // set up lifetime curve fitting renderers for per-pixel lifetime analysis
     curveRenderers = new CurveRenderer[data.channels];
@@ -507,7 +507,7 @@ public class TwoDPane extends JPanel
         if ("path self intersects".equals(msg)) {
           JOptionPane.showMessageDialog(iPlot.getComponent(),
             "Please draw a curve that does not intersect itself.",
-            "Slim Plotter", JOptionPane.ERROR_MESSAGE);
+            SlimData.TITLE, JOptionPane.ERROR_MESSAGE);
         }
         else exc.printStackTrace();
       }

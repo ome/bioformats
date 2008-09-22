@@ -158,7 +158,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     // * Building displays - 6%
     // * Creating plots - 3%
     ProgressMonitor progress = new ProgressMonitor(null,
-      "Launching Slim Plotter", "Initializing", 0, 1000);
+      "Launching " + SlimData.TITLE, "Initializing", 0, 1000);
     progress.setMillisToPopup(0);
     progress.setMillisToDecideToPopup(0);
 
@@ -190,9 +190,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           url = "http://www.sgi.com/products/evaluation/6.5_java3d_1.3.1/";
         }
         JOptionPane.showMessageDialog(null,
-          "Slim Plotter requires Java3D, but it was not found." +
+          SlimData.TITLE + " requires Java3D, but it was not found." +
           (url == null ? "" : ("\nPlease install it from:\n" + url)),
-          "Slim Plotter", JOptionPane.ERROR_MESSAGE);
+          SlimData.TITLE, JOptionPane.ERROR_MESSAGE);
         System.exit(3);
       }
 
@@ -320,7 +320,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // construct 2D pane
       progress.setNote("Creating plots");
-      masterWindow = new JFrame("Slim Plotter - " + file.getName());
+      masterWindow = new JFrame(SlimData.TITLE + " - " + file.getName());
       masterWindow.addWindowListener(this);
       JPanel masterPane = new JPanel();
       masterPane.setLayout(new BorderLayout());
@@ -534,8 +534,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       t.printStackTrace(new PrintStream(out));
       String stackTrace = new String(out.toByteArray());
       JOptionPane.showMessageDialog(null,
-        "Sorry, Slim Plotter encountered a problem loading your data:\n" +
-        stackTrace, "Slim Plotter", JOptionPane.ERROR_MESSAGE);
+        "Sorry, " + SlimData.TITLE + " encountered a problem loading your " +
+        "data:\n" + stackTrace, SlimData.TITLE, JOptionPane.ERROR_MESSAGE);
       System.exit(4);
     }
 
@@ -678,7 +678,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       catch (IOException exc) {
         JOptionPane.showMessageDialog(exportData,
           "There was a problem writing the file: " + exc.getMessage(),
-          "Slim Plotter", JOptionPane.ERROR_MESSAGE);
+          SlimData.TITLE, JOptionPane.ERROR_MESSAGE);
       }
     }
   }
