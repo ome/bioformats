@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
@@ -75,13 +76,21 @@ public class FV1000Reader extends FormatReader {
   private Vector previewNames;
 
   private String pixelSizeX, pixelSizeY;
-  private Vector channelNames, emWaves, exWaves, gains, voltages, offsets;
+  private Vector channelNames, emWaves, exWaves;
+  private String gain, offset, voltage, pinholeSize;
+  private String magnification, lensNA, objectiveName, workingDistance;
+  private String creationDate;
 
   private POITools poi;
 
   private short[][][] lut;
   private int lastChannel;
   private int[] channelIndexes;
+
+  private Vector pinholeSizes;
+  private Vector dyeNames;
+  private Vector wavelengths;
+  private Vector illuminations;
 
   // -- Constructor --
 
@@ -200,6 +209,10 @@ public class FV1000Reader extends FormatReader {
       if (poi != null) poi.close();
       poi = null;
       lastChannel = 0;
+      pinholeSizes = null;
+      dyeNames = null;
+      wavelengths = null;
+      illuminations = null;
     }
   }
 
@@ -234,9 +247,9 @@ public class FV1000Reader extends FormatReader {
     channelNames = new Vector();
     emWaves = new Vector();
     exWaves = new Vector();
-    gains = new Vector();
-    offsets = new Vector();
-    voltages = new Vector();
+    dyeNames = new Vector();
+    wavelengths = new Vector();
+    illuminations = new Vector();
 
     String line = null, key = null, value = null, oifName = null;
 
@@ -362,6 +375,7 @@ public class FV1000Reader extends FormatReader {
     StringTokenizer st = new StringTokenizer(s, "\r\n");
 
     previewNames = new Vector();
+    boolean laserEnabled = true;
 
     Vector channels = new Vector();
     Vector lutNames = new Vector();
@@ -470,12 +484,37 @@ public class FV1000Reader extends FormatReader {
           prefix.indexOf("Parameters] - ") != -1)
         {
           if (key.equals("CH Name")) channelNames.add(value);
-          else if (key.equals("EmissionWavelength")) emWaves.add(value);
-          else if (key.equals("ExcitationWavelength")) exWaves.add(value);
-          else if (key.equals("CountingPMTGain")) gains.add(value);
-          else if (key.equals("CountingPMTVoltage")) voltages.add(value);
-          else if (key.equals("CountingPMTOffset")) offsets.add(value);
+          else if (key.equals("DyeName")) dyeNames.add(value);
+          else if (key.equals("EmissionWavelength")) {
+            emWaves.add(new Integer(value));
+          }
+          else if (key.equals("ExcitationWavelength")) {
+            exWaves.add(new Integer(value));
+          }
           else if (key.equals("SequentialNumber")) channels.add(value);
+          else if (key.equals("LightType")) {
+            String illumination = value.toLowerCase();
+            if (illumination.indexOf("fluorescence") != -1) {
+              illumination = "Epifluorescence";
+            }
+            else if (illumination.indexOf("transmitted") != -1) {
+              illumination = "Transmitted";
+            }
+            else illumination = null;
+            illuminations.add(illumination);
+          }
+        }
+        else if (prefix.startsWith("[Laser ") && key.equals("Laser Enable")) {
+          laserEnabled = value.equals("1");
+        }
+        else if (prefix.startsWith("[Laser ") && key.equals("LaserWavelength"))
+        {
+          if (laserEnabled) wavelengths.add(new Integer(value));
+        }
+        else if (key.equals("ImageCaputreDate") ||
+          key.equals("ImageCaptureDate"))
+        {
+          creationDate = value;
         }
       }
       else if (line.length() > 0) {
@@ -586,6 +625,10 @@ public class FV1000Reader extends FormatReader {
 
     String tiffPath = null;
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    pinholeSizes = new Vector();
+
     for (int i=0, ii=0; ii<core[0].imageCount; i++, ii++) {
       String file = (String) filenames.get(new Integer(i));
       while (file == null) file = (String) filenames.get(new Integer(++i));
@@ -623,7 +666,35 @@ public class FV1000Reader extends FormatReader {
               else tiffs.add(ii, tiffPath + File.separator + value);
             }
           }
+          value = value.replaceAll("\"", "");
           addMeta("Image " + ii + " : " + key, value);
+
+          if (key.equals("AnalogPMTGain") || key.equals("CountingPMTGain")) {
+            gain = value;
+          }
+          else if (key.equals("AnalogPMTOffset") ||
+            key.equals("CountingPMTOffset"))
+          {
+            offset = value;
+          }
+          else if (key.equals("Magnification")) {
+            magnification = value;
+          }
+          else if (key.equals("ObjectiveLens NAValue")) {
+            lensNA = value;
+          }
+          else if (key.equals("ObjectiveLens Name")) {
+            objectiveName = value;
+          }
+          else if (key.equals("ObjectiveLens WDValue")) {
+            workingDistance = value;
+          }
+          else if (key.equals("PMTVoltage")) {
+            voltage = value;
+          }
+          else if (key.equals("PinholeDiameter")) {
+            pinholeSize = value;
+          }
         }
       }
     }
@@ -655,9 +726,6 @@ public class FV1000Reader extends FormatReader {
     }
 
     status("Populating metadata");
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     // calculate axis sizes
 
@@ -777,45 +845,62 @@ public class FV1000Reader extends FormatReader {
 
     // populate MetadataStore
 
+    if (creationDate != null) {
+      creationDate = creationDate.replaceAll("'", "");
+      SimpleDateFormat parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      Date date = parse.parse(creationDate, new ParsePosition(0));
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      creationDate = format.format(date);
+    }
+
     for (int i=0; i<core.length; i++) {
       store.setImageName("Series " + i, i);
-      MetadataTools.setDefaultCreationDate(store, id, i);
+      if (creationDate != null) store.setImageCreationDate(creationDate, i);
+      else MetadataTools.setDefaultCreationDate(store, id, i);
+
+      if (pixelSizeX != null) {
+        store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
+      }
+      if (pixelSizeY != null) {
+        store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
+      }
     }
 
     MetadataTools.populatePixels(store, this);
 
-    if (pixelSizeX != null) {
-      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-    }
-    if (pixelSizeY != null) {
-      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+    for (int i=0; i<core.length; i++) {
+      for (int c=0; c<core[i].sizeC; c++) {
+        if (c < channelNames.size()) {
+          store.setLogicalChannelName((String) channelNames.get(c), i, c);
+        }
+        if (c < emWaves.size()) {
+          store.setLogicalChannelEmWave((Integer) emWaves.get(c), i, c);
+        }
+        if (c < exWaves.size()) {
+          store.setLogicalChannelExWave((Integer) exWaves.get(c), i, c);
+        }
+        if (c < illuminations.size()) {
+          store.setLogicalChannelIlluminationType(
+            (String) illuminations.get(c), i, c);
+        }
+      }
     }
 
-    for (int i=0; i<core[0].sizeC; i++) {
-      String name = i < channelNames.size() ? (String) channelNames.get(i) : "";
-      String emWave = i < emWaves.size() ? (String) emWaves.get(i) : "";
-      String exWave = i < exWaves.size() ? (String) exWaves.get(i) : "";
-
-      String gain = i < gains.size() ? (String) gains.get(i) : "";
-      String voltage = i < voltages.size() ? (String) voltages.get(i) : "";
-      String offset = i < offsets.size() ? (String) offsets.get(i) : "";
-
-      // CTR CHECK
-      /*
-      if (gain != null) {
-        gain = gain.replaceAll("\"", "");
-        store.setDetectorSettingsGain(new Float(gain), 0, i);
-      }
-      if (voltage != null) {
-        voltage = voltage.replaceAll("\"", "");
-        store.setDetectorVoltage(new Float(voltage), 0, 0);
-      }
-      if (offset != null) {
-        offset = offset.replaceAll("\"", "");
-        store.setDetectorSettingsOffset(new Float(offset), 0, i);
-      }
-      */
+    int nLasers = (int) Math.min(dyeNames.size(), wavelengths.size());
+    for (int i=0; i<nLasers; i++) {
+      store.setLaserLaserMedium((String) dyeNames.get(i), 0, i);
+      store.setLaserWavelength((Integer) wavelengths.get(i), 0, i);
     }
+
+    store.setDetectorGain(new Float(gain), 0, 0);
+    store.setDetectorOffset(new Float(offset), 0, 0);
+    store.setDetectorVoltage(new Float(voltage), 0, 0);
+
+    store.setObjectiveLensNA(new Float(lensNA), 0, 0);
+    store.setObjectiveModel(objectiveName, 0, 0);
+    store.setObjectiveNominalMagnification(
+      new Integer((int) Float.parseFloat(magnification)), 0, 0);
+    store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
   }
 
   // -- Helper methods --

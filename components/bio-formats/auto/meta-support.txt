@@ -137,10 +137,24 @@ Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 Dimensions.TimeIncrement = Yes
-Detector = No
-DetectorSettings = No
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.IlluminationType = Yes
 Plane = Yes
+Image.Name = Yes
+Image.CreationDate = Yes
+Laser.LaserMedium = Yes
+Laser.Wavelength = Yes
+DetectorSettings = No
+Detector.Gain = Yes
+Detector.Offset = Yes
+Detector.Voltage = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+Objective.WorkingDistance = Yes
 
 [FitsReader]
 Pixels = Yes since r2595
