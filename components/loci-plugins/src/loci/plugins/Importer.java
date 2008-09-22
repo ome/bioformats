@@ -184,7 +184,8 @@ public class Importer {
       }
 
       if (groupFiles) r = new FileStitcher(r, true);
-      r = new DimensionSwapper(new ChannelSeparator(r));
+      // NB: VirtualReader extends DimensionSwapper
+      r = new VirtualReader(new ChannelSeparator(r));
       r.setId(id);
 
       // -- Step 4b: prompt for which series to import, if necessary --
@@ -378,6 +379,14 @@ public class Importer {
       if (options.isViewNone()) return;
 
       IJ.showStatus("Reading " + currentFile);
+
+      if (options.isVirtual()) {
+        int totalSeries = 0;
+        for (int i=0; i<seriesCount; i++) {
+          if (series[i]) totalSeries++;
+        }
+        ((VirtualReader) r).setRefCount(totalSeries);
+      }
 
       for (int i=0; i<seriesCount; i++) {
         if (!series[i]) continue;
@@ -970,6 +979,31 @@ public class Importer {
     public void statusUpdated(StatusEvent e) {
       IJ.showStatus(e.getStatusMessage());
     }
+  }
+
+  private class VirtualReader extends DimensionSwapper {
+    private int refCount;
+
+    // -- Constructor --
+
+    public VirtualReader(IFormatReader r) {
+      super(r);
+      refCount = 0;
+    }
+
+    // -- VirtualReader API methods --
+
+    public void setRefCount(int refCount) {
+      this.refCount = refCount;
+    }
+
+    // -- IFormatReader API methods --
+
+    public void close() throws IOException {
+      if (refCount > 0) refCount--;
+      if (refCount == 0) super.close();
+    }
+
   }
 
 }
