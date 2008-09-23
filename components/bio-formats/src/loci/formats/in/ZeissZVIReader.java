@@ -46,22 +46,11 @@ public class ZeissZVIReader extends FormatReader {
   /** Number of bytes per pixel. */
   private int bpp;
 
-  private Vector imageFiles;
+  private String[] imageFiles;
+  private int[] offsets;
+  private int[][] coordinates;
 
-  /** Vector containing Z indices. */
-  private Vector zIndices;
-
-  /** Vector containing C indices. */
-  private Vector cIndices;
-
-  /** Vector containing T indices. */
-  private Vector tIndices;
-
-  private Hashtable offsets;
-  private Hashtable coordinates;
-
-  private int zIndex = -1, cIndex = -1, tIndex = -1;
-
+  private int cIndex = -1;
   private boolean isTiled;
   private int tileRows, tileColumns;
   private boolean isJPEG;
@@ -69,9 +58,8 @@ public class ZeissZVIReader extends FormatReader {
   private String firstImageTile, secondImageTile;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
   private String microscopeName;
-  private Vector emWave, exWave;
-  private Hashtable channelNames;
-  private Vector whiteValue, blackValue, gammaValue, exposureTime, timestamps;
+  private Hashtable channelNames, emWave, exWave, exposureTime;
+  private Hashtable whiteValue, blackValue, gammaValue, timestamps;
   private String userName, userCompany, mag, na;
 
   private int tileWidth, tileHeight;
@@ -106,12 +94,13 @@ public class ZeissZVIReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
+    int pixel = bytes * getRGBChannelCount();
 
     if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
-      RandomAccessStream s = poi.getDocumentStream((String) imageFiles.get(no));
-      s.seek(((Integer) offsets.get(new Integer(no))).intValue());
+      RandomAccessStream s = poi.getDocumentStream(imageFiles[no]);
+      s.seek(offsets[no]);
 
-      int len = w * bytes * getRGBChannelCount();
+      int len = w * pixel;
 
       if (isJPEG) {
         byte[] t = new byte[(int) (s.length() - s.getFilePointer())];
@@ -119,11 +108,10 @@ public class ZeissZVIReader extends FormatReader {
         t = new JPEGCodec().decompress(t, new Object[] {
           new Boolean(isLittleEndian()), new Boolean(isInterleaved())});
 
-        int row = getSizeX() * bytes * getRGBChannelCount();
+        int row = getSizeX() * pixel;
 
         for (int yy=0; yy<h; yy++) {
-          System.arraycopy(t, (yy + y) * row + x * bytes * getRGBChannelCount(),
-            buf, yy*len, len);
+          System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
         }
       }
       else {
@@ -166,10 +154,8 @@ public class ZeissZVIReader extends FormatReader {
                 ii = no + (row*tileColumns + (tileColumns - col - 1))*count;
               }
 
-              RandomAccessStream s =
-                poi.getDocumentStream((String) imageFiles.get(ii));
-              s.skipBytes(
-                ((Integer) offsets.get(new Integer(ii))).intValue());
+              RandomAccessStream s = poi.getDocumentStream(imageFiles[ii]);
+              s.seek(offsets[ii]);
               s.read(tile);
               if (isJPEG) {
                 tile = new JPEGCodec().decompress(tile,
@@ -179,9 +165,9 @@ public class ZeissZVIReader extends FormatReader {
               s.close();
 
               for (int r=tileY; r<tileY + tileH; r++) {
-                int src = bytes * (r * tileWidth + tileX);
-                int dest = bytes * (w * (rowOffset + r - tileY) + colOffset);
-                int len = tileW * bytes;
+                int src = pixel * (r * tileWidth + tileX);
+                int dest = pixel * (w * (rowOffset + r - tileY) + colOffset);
+                int len = pixel * bytes;
                 System.arraycopy(tile, src, buf, dest, len);
               }
 
@@ -196,11 +182,10 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
-    if (bpp > 6) bpp = 1;
-    if (bpp == 3 || bpp == 6) {
+    if ((bpp % 3) == 0) {
       // reverse bytes in groups of 3 to account for BGR storage
-      byte[] bb = new byte[bpp / 3];
       int bp = bpp / 3;
+      byte[] bb = new byte[bp];
       for (int i=0; i<buf.length; i+=bpp) {
         System.arraycopy(buf, i + 2*bp, bb, 0, bp);
         System.arraycopy(buf, i, buf, i + 2*bp, bp);
@@ -210,24 +195,19 @@ public class ZeissZVIReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) {
-      if (in != null) in.close();
-    }
-    else close();
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
 
-    offsets = coordinates = null;
-    imageFiles = zIndices = cIndices = tIndices = null;
+    offsets = null;
+    coordinates = null;
+    imageFiles = null;
+    channelNames = whiteValue = blackValue = gammaValue = null;
+    exposureTime = timestamps = null;
+    cIndex = -1;
     bpp = tileRows = tileColumns = 0;
-    zIndex = cIndex = tIndex = -1;
     isTiled = isJPEG = false;
     if (poi != null) poi.close();
     poi = null;
@@ -240,207 +220,160 @@ public class ZeissZVIReader extends FormatReader {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
     super.initFile(id);
 
-    imageFiles = new Vector();
-    offsets = new Hashtable();
-    coordinates = new Hashtable();
-    zIndices = new Vector();
-    cIndices = new Vector();
-    tIndices = new Vector();
-
-    emWave = new Vector();
-    exWave = new Vector();
+    emWave = new Hashtable();
+    exWave = new Hashtable();
     channelNames = new Hashtable();
-    whiteValue = new Vector();
-    blackValue = new Vector();
-    gammaValue = new Vector();
-    exposureTime = new Vector();
-    timestamps = new Vector();
+    whiteValue = new Hashtable();
+    blackValue = new Hashtable();
+    gammaValue = new Hashtable();
+    exposureTime = new Hashtable();
+    timestamps = new Hashtable();
 
     poi = new POITools(Location.getMappedId(id));
 
+    // count number of images
+
+    String[] files = (String[]) poi.getDocumentList().toArray(new String[0]);
+    Arrays.sort(files, new Comparator() {
+      public int compare(Object o1, Object o2) {
+        int n1 = getImageNumber((String) o1, -1);
+        int n2 = getImageNumber((String) o2, -1);
+
+        return new Integer(n1).compareTo(new Integer(n2));
+      }
+    });
+    core[0].imageCount = 0;
+
+    for (int i=0; i<files.length; i++) {
+      String uname = files[i].toUpperCase();
+      uname = uname.substring(uname.indexOf(File.separator) + 1);
+      if (uname.endsWith("CONTENTS") && (uname.startsWith("IMAGE") ||
+        uname.indexOf("ITEM") != -1) && poi.getFileSize(files[i]) > 1024)
+      {
+        if (getImageNumber(files[i], 0) >= getImageCount()) {
+          core[0].imageCount++;
+        }
+      }
+    }
+
+    offsets = new int[getImageCount()];
+    coordinates = new int[getImageCount()][3];
+    imageFiles = new String[getImageCount()];
+
     // parse each embedded file
 
-    Vector files = poi.getDocumentList();
+    Vector cIndices = new Vector();
 
-    for (int i=0; i<files.size(); i++) {
-      String name = (String) files.get(i);
+    for (int i=0; i<files.length; i++) {
+      String name = files[i];
       String relPath = name.substring(name.lastIndexOf(File.separator) + 1);
+      if (!relPath.toUpperCase().equals("CONTENTS")) continue;
       String dirName = name.substring(0, name.lastIndexOf(File.separator));
       if (dirName.indexOf(File.separator) != -1) {
         dirName = dirName.substring(dirName.lastIndexOf(File.separator) + 1);
       }
 
-      boolean isContents = relPath.toUpperCase().equals("CONTENTS");
-
-      RandomAccessStream s = poi.getDocumentStream(name);
-      s.order(true);
-
-      if (name.indexOf("Scaling") == -1 && dirName.equals("Tags") &&
-        isContents)
-      {
-        int imageNum = -1;
-        if (name.toUpperCase().indexOf("ITEM") != -1) {
-          String num = name.substring(name.indexOf("(") + 1);
-          num = num.substring(0, num.indexOf(")"));
-          imageNum = Integer.parseInt(num);
-        }
+      if (name.indexOf("Scaling") == -1 && dirName.equals("Tags")) {
+        RandomAccessStream s = poi.getDocumentStream(name);
+        s.order(true);
+        int imageNum = getImageNumber(name, -1);
         try { parseTags(imageNum, s); }
         catch (EOFException e) { }
+        s.close();
       }
-      else if (isContents && (dirName.equals("Image") ||
-        dirName.toUpperCase().indexOf("ITEM") != -1) &&
-        (s.length() > 1024))
+      else if (dirName.equals("Image") ||
+        dirName.toUpperCase().indexOf("ITEM") != -1)
       {
+        int imageNum = getImageNumber(dirName, getImageCount() == 1 ? 0 : -1);
+        if (imageNum == -1) continue;
+
         // found a valid image stream
-        try {
-          s.seek(6);
+        RandomAccessStream s = poi.getDocumentStream(name);
+        s.order(true);
 
-          int vt = s.readShort();
-          if (vt == 3) {
-            s.skipBytes(6);
-          }
-          else if (vt == 8) {
-            int l = s.readShort();
-            s.skipBytes(l + 2);
-          }
-          int len = s.readShort();
-          if (s.readShort() != 0) s.seek(s.getFilePointer() - 2);
-
-          if (s.getFilePointer() + len <= s.length()) {
-            s.skipBytes(len);
-          }
-          else break;
-
-          vt = s.readShort();
-          if (vt == 8) {
-            len = s.readInt();
-            s.skipBytes(len + 2);
-          }
-
-          int tw = s.readInt();
-          if (getSizeX() == 0 || (tw < getSizeX() && tw > 0)) {
-            core[0].sizeX = tw;
-          }
-          s.skipBytes(2);
-          int th = s.readInt();
-          if (getSizeY() == 0 || (th < getSizeY() && th > 0)) {
-            core[0].sizeY = th;
-          }
-
-          s.skipBytes(14);
-
-          int numImageContainers = s.readInt();
-          s.skipBytes(6);
-
-          // VT_CLSID - PluginCLSID
-          while (s.readShort() != 65);
-
-          // VT_BLOB - Others
-          len = s.readInt();
-          s.skipBytes(len);
-
-          // VT_STORED_OBJECT - Layers
-          s.skipBytes(2);
-          long old = s.getFilePointer();
-          len = s.readInt();
-
-          s.skipBytes(8);
-
-          int zidx = s.readInt();
-          int cidx = s.readInt();
-          int tidx = s.readInt();
-
-          Integer zndx = new Integer(zidx);
-          Integer cndx = new Integer(cidx);
-          Integer tndx = new Integer(tidx);
-
-          if (!zIndices.contains(zndx)) zIndices.add(zndx);
-          if (!cIndices.contains(cndx)) cIndices.add(cndx);
-          if (!tIndices.contains(tndx)) tIndices.add(tndx);
-
-          s.seek(old + len + 4);
-
-          boolean foundWidth = s.readInt() == getSizeX();
-          boolean foundHeight = s.readInt() == getSizeY();
-          boolean findFailed = false;
-          while ((!foundWidth || !foundHeight) &&
-            s.getFilePointer() + 1 < s.length())
-          {
-            s.seek(s.getFilePointer() - 7);
-            foundWidth = s.readInt() == getSizeX();
-            foundHeight = s.readInt() == getSizeY();
-          }
-          s.seek(s.getFilePointer() - 16);
-          findFailed = !foundWidth && !foundHeight;
-
-          // image header and data
-
-          if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
-            (dirName.equals("Image") && numImageContainers == 0))
-          {
-            if (findFailed) s.seek(old + len + 92);
-            long fp = s.getFilePointer();
-            byte[] o = new byte[(int) (s.length() - fp)];
-            s.read(o);
-
-            int imageNum = 0;
-            if (dirName.toUpperCase().indexOf("ITEM") != -1) {
-              String num = dirName.substring(dirName.indexOf("(") + 1);
-              num = num.substring(0, num.length() - 1);
-              imageNum = Integer.parseInt(num);
-            }
-
-            coordinates.put(new Integer(imageNum),
-              new int[] {zidx, cidx, tidx});
-
-            offsets.put(new Integer(imageNum), new Integer((int) fp + 32));
-            parsePlane(o, imageNum, name);
-          }
+        if (s.length() <= 1024) {
+          s.close();
+          continue;
         }
-        catch (EOFException exc) { }
-      }
-      else {
-        try { parseTags(-1, s); }
-        catch (IOException e) { }
+
+        for (int q=0; q<11; q++) {
+          getNextTag(s);
+        }
+
+        s.skipBytes(2);
+        int len = s.readInt() - 20;
+        s.skipBytes(8);
+
+        int zidx = s.readInt();
+        int cidx = s.readInt();
+        int tidx = s.readInt();
+
+        if (zidx >= getSizeZ()) core[0].sizeZ++;
+        if (tidx >= getSizeT()) core[0].sizeT++;
+
+        Integer c = new Integer(cidx);
+        if (!cIndices.contains(c)) cIndices.add(c);
+
+        s.skipBytes(len);
+
+        for (int q=0; q<5; q++) {
+          getNextTag(s);
+        }
+
+        s.skipBytes(4);
+        core[0].sizeX = s.readInt();
+        core[0].sizeY = s.readInt();
+        s.skipBytes(4);
+        bpp = s.readInt();
+        s.skipBytes(4);
+
+        int valid = s.readInt();
+        isJPEG = valid == 0 || valid == 1;
+
+        // save the offset to the pixel data
+
+        offsets[imageNum] = (int) s.getFilePointer();
+        coordinates[imageNum][0] = zidx;
+        coordinates[imageNum][1] = cidx;
+        coordinates[imageNum][2] = tidx;
+        imageFiles[imageNum] = name;
+        s.close();
       }
     }
 
     status("Populating metadata");
 
-    core[0].rgb = getSizeC() > 1 &&
-      (getSizeZ() * getSizeC() * getSizeT() != getImageCount());
+    core[0].sizeC = cIndices.size();
+
     core[0].littleEndian = true;
     core[0].interleaved = !isJPEG;
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
-    core[0].sizeZ = zIndices.size();
-    core[0].sizeT = tIndices.size();
+    if ((bpp % 3) == 0) {
+      core[0].sizeC *= 3;
+      core[0].rgb = true;
+    }
+    else {
+      core[0].rgb = false;
+    }
 
-    if (channelNames.size() > 0) core[0].sizeC *= channelNames.size();
-    else core[0].sizeC *= cIndices.size();
-
-    core[0].imageCount = getSizeZ() * getSizeT() *
-      (isRGB() ? getSizeC() / 3 : getSizeC());
+    int nPlanes = getSizeZ() * getSizeT();
+    core[0].imageCount = nPlanes * (getSizeC() / (isRGB() ? 3 : 1));
 
     if (isTiled) {
       // calculate tile dimensions and number of tiles
-      int totalTiles = offsets.size() / (getSizeZ() * getSizeC() * getSizeT());
+      int totalTiles = offsets.length / getImageCount();
 
-      tileRows = (realHeight / getSizeY()) + 1;
-      tileColumns = (realWidth / getSizeX()) + 1;
+      tileRows = realHeight / getSizeY();
+      tileColumns = realWidth / getSizeX();
 
       if (totalTiles <= 1) {
         tileRows = 1;
         tileColumns = 1;
         totalTiles = 1;
         isTiled = false;
-      }
-
-      while (tileRows * tileColumns > totalTiles) {
-        totalTiles = offsets.size() / (getSizeZ() * getSizeC() * getSizeT());
-        core[0].imageCount -= getSizeZ() * getSizeT();
       }
 
       if (tileRows == 0) tileRows = 1;
@@ -456,9 +389,9 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     core[0].dimensionOrder = "XY";
-    for (int i=0; i<coordinates.size()-1; i++) {
-      int[] zct1 = (int[]) coordinates.get(new Integer(i));
-      int[] zct2 = (int[]) coordinates.get(new Integer(i + 1));
+    for (int i=0; i<coordinates.length-1; i++) {
+      int[] zct1 = coordinates[i];
+      int[] zct2 = coordinates[i + 1];
       int deltaZ = zct2[0] - zct1[0];
       int deltaC = zct2[1] - zct1[1];
       int deltaT = zct2[2] - zct1[2];
@@ -482,40 +415,6 @@ public class ZeissZVIReader extends FormatReader {
       core[0].dimensionOrder += "T";
     }
 
-    // rearrange axis sizes, if necessary
-
-    int lastZ = zIndices.size() == 0 ? Integer.MAX_VALUE :
-      ((Integer) zIndices.get(zIndices.size() - 1)).intValue();
-    int lastT = tIndices.size() == 0 ? Integer.MAX_VALUE :
-      ((Integer) tIndices.get(tIndices.size() - 1)).intValue();
-
-    if ((zIndex > lastZ || tIndex > lastT) && (zIndex == getSizeC() - 1 ||
-      tIndex == getSizeC() - 1 ||
-      (zIndex != 0 && zIndex % getSizeC() == 0) ||
-      (tIndex != 0 && tIndex % getSizeC() == 0)) && zIndex != lastT)
-    {
-      if (zIndex >= getSizeZ() || tIndex >= getSizeT()) {
-        int tmp = getSizeZ();
-        core[0].sizeZ = getSizeT();
-        core[0].sizeT = tmp;
-      }
-    }
-
-    try {
-      initMetadata();
-    }
-    catch (FormatException exc) {
-      if (debug) trace(exc);
-    }
-    catch (IOException exc) {
-      if (debug) trace(exc);
-    }
-  }
-
-  // -- Helper methods --
-
-  /** Initialize metadata hashtable and OME-XML structure. */
-  private void initMetadata() throws FormatException, IOException {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
@@ -533,76 +432,52 @@ public class ZeissZVIReader extends FormatReader {
     // CTR CHECK
 //    store.setInstrumentModel(microscopeName, 0);
 
-    // trim metadata arrays
-    String[] s = (String[]) exposureTime.toArray(new String[0]);
-    exposureTime.clear();
-    for (int i=0; i<s.length; i++) {
-      if (!s[i].trim().equals("")) exposureTime.add(s[i]);
-    }
+    String[] channels = (String[]) channelNames.keySet().toArray(new String[0]);
+    Arrays.sort(channels);
 
-    s = (String[]) timestamps.toArray(new String[0]);
-    timestamps.clear();
-    for (int i=0; i<s.length; i++) {
-      if (!s[i].trim().equals("")) timestamps.add(s[i]);
-    }
+    for (int i=0; i<getEffectiveSizeC(); i++) {
+      if (i >= channels.length) break;
+      String key = channels[i];
+      String em = (String) emWave.get(key);
+      String ex = (String) exWave.get(key);
 
-    s = (String[]) emWave.toArray(new String[0]);
-    emWave.clear();
-    for (int i=0; i<s.length; i++) {
-      if (!s[i].trim().equals("")) emWave.add(s[i]);
-    }
-
-    s = (String[]) exWave.toArray(new String[0]);
-    exWave.clear();
-    for (int i=0; i<s.length; i++) {
-      if (!s[i].trim().equals("")) exWave.add(s[i]);
-    }
-
-    String[] channelNumbers =
-      (String[]) channelNames.keySet().toArray(new String[0]);
-    Arrays.sort(channelNumbers);
-
-    for (int i=0; i<getSizeC(); i++) {
-      int idx = i % getEffectiveSizeC();
-      String em = idx < emWave.size() ? (String) emWave.get(idx) : null;
-      String ex = idx < exWave.size() ? (String) exWave.get(idx) : null;
-
-      if (em != null && em.indexOf(".") != -1) {
-        em = em.substring(0, em.indexOf("."));
-      }
-      if (ex != null && ex.indexOf(".") != -1) {
-        ex = ex.substring(0, ex.indexOf("."));
-      }
-      if (em != null && !em.trim().equals("")) {
-        store.setLogicalChannelEmWave(new Integer(em), 0, idx);
-      }
-      if (ex != null && !ex.trim().equals("")) {
-        store.setLogicalChannelExWave(new Integer(ex), 0, idx);
-      }
-      if (idx < channelNumbers.length) {
-        store.setLogicalChannelName(
-          (String) channelNames.get(channelNumbers[idx]), 0, idx);
+      if (em != null) {
+        try {
+          store.setLogicalChannelEmWave(
+            new Integer((int) Float.parseFloat(em)), 0, i);
+        }
+        catch (NumberFormatException e) { }
       }
 
-      String black =
-        idx < blackValue.size() ? (String) blackValue.get(idx) : null;
-      String white =
-        idx < whiteValue.size() ? (String) whiteValue.get(idx) : null;
-      String gamma =
-        idx < gammaValue.size() ? (String) gammaValue.get(idx) : null;
+      if (ex != null) {
+        try {
+          store.setLogicalChannelExWave(
+            new Integer((int) Float.parseFloat(ex)), 0, i);
+        }
+        catch (NumberFormatException e) { }
+      }
+
+      store.setLogicalChannelName((String) channelNames.get(key), 0, i);
+
+      String black = (String) blackValue.get(key);
+      String white = (String) whiteValue.get(key);
+      String gamma = (String) gammaValue.get(key);
 
       Double blackVal = null, whiteVal = null;
       Float gammaVal = null;
 
-      try { blackVal = new Double(black); }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
-      try { whiteVal = new Double(white); }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
-      try { gammaVal = new Float(gamma); }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
+      if (black != null) {
+        try { blackVal = new Double(black); }
+        catch (NumberFormatException e) { }
+      }
+      if (white != null) {
+        try { whiteVal = new Double(white); }
+        catch (NumberFormatException e) { }
+      }
+      if (gamma != null) {
+        try { gammaVal = new Float(gamma); }
+        catch (NumberFormatException e) { }
+      }
 
       // CTR CHECK
 //      store.setDisplayChannel(new Integer(i), blackVal, whiteVal,
@@ -611,7 +486,7 @@ public class ZeissZVIReader extends FormatReader {
 
     long firstStamp = 0;
     if (timestamps.size() > 0) {
-      firstStamp = Long.parseLong((String) timestamps.get(0));
+      firstStamp = Long.parseLong((String) timestamps.get(new Integer(0)));
       store.setImageCreationDate(DataTools.convertDate(
         (long) (firstStamp / 1600), DataTools.ZVI), 0);
     }
@@ -620,9 +495,8 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     for (int plane=0; plane<getImageCount(); plane++) {
-      int[] zct = FormatTools.getZCTCoords(this, plane);
-      String exposure =
-        zct[1] < exposureTime.size() ? (String) exposureTime.get(zct[1]) : null;
+      int[] zct = getZCTCoords(plane);
+      String exposure = (String) exposureTime.get(new Integer(zct[1]));
       Float exp = new Float(0.0);
       try { exp = new Float(exposure); }
       catch (NumberFormatException e) { }
@@ -630,7 +504,8 @@ public class ZeissZVIReader extends FormatReader {
       store.setPlaneTimingExposureTime(exp, 0, 0, plane);
 
       if (plane < timestamps.size()) {
-        long stamp = Long.parseLong((String) timestamps.get(plane));
+        long stamp =
+          Long.parseLong((String) timestamps.get(new Integer(plane)));
         stamp -= firstStamp;
         store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
       }
@@ -641,14 +516,10 @@ public class ZeissZVIReader extends FormatReader {
       int space = userName.indexOf(" ");
       String firstName = space == -1 ? "": userName.substring(0, space);
       String lastName = userName.substring(space + 1);
-      if (firstName.trim().equals("")) firstName = null;
-      if (lastName.trim().equals("")) lastName = null;
-      if (firstName != null || lastName != null) {
-        store.setExperimenterFirstName(firstName, 0);
-        store.setExperimenterLastName(lastName, 0);
-        if (userCompany != null) {
-          store.setExperimenterInstitution(userCompany, 0);
-        }
+      if (!firstName.equals("")) store.setExperimenterFirstName(firstName, 0);
+      if (!lastName.equals("")) store.setExperimenterLastName(lastName, 0);
+      if (userCompany != null) {
+        store.setExperimenterInstitution(userCompany, 0);
       }
     }
 
@@ -664,33 +535,60 @@ public class ZeissZVIReader extends FormatReader {
 //      new Float(mag), null, null);
   }
 
-  /** Parse a plane of data. */
-  private void parsePlane(byte[] data, int num, String name) throws IOException
-  {
-    RandomAccessStream s = new RandomAccessStream(data);
-    s.order(true);
-
-    if (s.readInt() == 0) s.skipBytes(4);
-
-    core[0].sizeX = s.readInt();
-    core[0].sizeY = s.readInt();
-    s.skipBytes(4);
-    bpp = s.readInt();
-    s.skipBytes(4);
-    int valid = s.readInt();
-    isJPEG = valid == 0 || valid == 1;
-
-    if (num < imageFiles.size()) imageFiles.setElementAt(name, num);
-    else {
-      int diff = num - imageFiles.size();
-      for (int i=0; i<diff; i++) {
-        imageFiles.add("");
-      }
-      imageFiles.add(name);
+  private int getImageNumber(String dirName, int defaultNumber) {
+    if (dirName.toUpperCase().indexOf("ITEM") != -1) {
+      int open = dirName.indexOf("(");
+      int close = dirName.indexOf(")");
+      if (open < 0 || close < 0 || close < open) return defaultNumber;
+      return Integer.parseInt(dirName.substring(open + 1, close));
     }
-    core[0].imageCount++;
-    if (bpp % 3 == 0) core[0].sizeC = 3;
-    else core[0].sizeC = 1;
+    return defaultNumber;
+  }
+
+  private String getNextTag(RandomAccessStream s) throws IOException {
+    int type = s.readShort();
+    switch (type) {
+      case 0:
+      case 1:
+        return "";
+      case 2:
+        return String.valueOf(s.readShort());
+      case 3:
+      case 22:
+      case 23:
+        return String.valueOf(s.readInt());
+      case 4:
+        return String.valueOf(s.readFloat());
+      case 5:
+        return String.valueOf(s.readDouble());
+      case 7:
+      case 20:
+      case 21:
+        return String.valueOf(s.readLong());
+      case 8:
+      case 69:
+        int len = s.readInt();
+        return s.readString(len);
+      case 9:
+      case 13:
+        s.skipBytes(16);
+        return "";
+      case 63:
+      case 65:
+        len = s.readInt();
+        s.skipBytes(len);
+        return "";
+      case 66:
+        len = s.readShort();
+        return s.readString(len);
+      default:
+        long old = s.getFilePointer();
+        while (s.readShort() != 3 &&
+          s.getFilePointer() + 2 < s.length());
+        long fp = s.getFilePointer() - 2;
+        s.seek(old - 2);
+        return s.readString((int) (fp - old + 2));
+    }
   }
 
   /** Parse all of the tags in a stream. */
@@ -703,86 +601,23 @@ public class ZeissZVIReader extends FormatReader {
 
     for (int i=0; i<count; i++) {
       if (s.getFilePointer() + 2 >= s.length()) break;
-      int type = s.readShort();
-
-      String value = "";
-      switch (type) {
-        case 0:
-          break;
-        case 1:
-          break;
-        case 2:
-          value = "" + s.readShort();
-          break;
-        case 3:
-        case 22:
-        case 23:
-          value = "" + s.readInt();
-          break;
-        case 4:
-          value = "" + s.readFloat();
-          break;
-        case 5:
-          value = "" + s.readDouble();
-          break;
-        case 7:
-        case 20:
-        case 21:
-          value = "" + s.readLong();
-          break;
-        case 69:
-        case 8:
-          int len = s.readInt();
-          if (s.getFilePointer() + len < s.length()) {
-            value = s.readString(len);
-          }
-          else return;
-          break;
-        case 66:
-          int l = s.readShort();
-          s.seek(s.getFilePointer() - 2);
-          value = s.readString(l + 2);
-          break;
-        default:
-          long old = s.getFilePointer();
-          while (s.readShort() != 3 &&
-            s.getFilePointer() + 2 < s.length());
-          long fp = s.getFilePointer() - 2;
-          s.seek(old - 2);
-          value = s.readString((int) (fp - old + 2));
-      }
+      String value = DataTools.stripString(getNextTag(s));
 
       s.skipBytes(2);
-      int tagID = 0;
-
-      try { tagID = s.readInt(); }
-      catch (IOException e) { }
+      int tagID = s.readInt();
 
       s.skipBytes(6);
 
       String key = getKey(tagID);
-      value = DataTools.stripString(value);
-      if (key.equals("Image Index Z")) {
-        try {
-          zIndex = Integer.parseInt(value);
-        }
-        catch (NumberFormatException f) { }
-      }
-      else if (key.equals("Image Index T")) {
-        try {
-          tIndex = Integer.parseInt(value);
-        }
-        catch (NumberFormatException f) { }
-      }
-      else if (key.equals("Image Channel Index")) {
+      if (key.equals("Image Channel Index")) {
         try {
           cIndex = Integer.parseInt(value);
         }
-        catch (NumberFormatException f) { }
+        catch (NumberFormatException exc) { }
       }
       else if (key.equals("ImageWidth")) {
         try {
-          if (getSizeX() == 0) Integer.parseInt(value);
+          if (getSizeX() == 0) core[0].sizeX = Integer.parseInt(value);
           if (realWidth == 0 && Integer.parseInt(value) > realWidth) {
             realWidth = Integer.parseInt(value);
           }
@@ -826,83 +661,22 @@ public class ZeissZVIReader extends FormatReader {
         catch (NumberFormatException e) { }
       }
       else if (key.equals("Scale Unit for X")) {
-        int v = 0;
-        try {
-          v = Integer.parseInt(value);
-        }
-        catch (NumberFormatException e) { }
-        switch (v) {
-          case 72:
-            // meters
-            pixelSizeX *= 1000000;
-            break;
-          case 77:
-            // nanometers
-            pixelSizeX /= 1000;
-            break;
-          case 81:
-            // inches
-            pixelSizeX *= 25400;
-            break;
-        }
+        pixelSizeX *= getScaleUnit(value);
       }
       else if (key.equals("Scale Unit for Y")) {
-        int v = 0;
-        try {
-          v = Integer.parseInt(value);
-        }
-        catch (NumberFormatException e) { }
-        switch (v) {
-          case 72:
-            // meters
-            pixelSizeY *= 1000000;
-            break;
-          case 77:
-            // nanometers
-            pixelSizeY /= 1000;
-            break;
-          case 81:
-            // inches
-            pixelSizeY *= 25400;
-            break;
-        }
+        pixelSizeY *= getScaleUnit(value);
       }
       else if (key.equals("Scale Unit for Z")) {
-        int v = 0;
-        try {
-          v = Integer.parseInt(value);
-        }
-        catch (NumberFormatException e) { }
-        switch (v) {
-          case 72:
-            // meters
-            pixelSizeZ *= 1000000;
-            break;
-          case 77:
-            // nanometers
-            pixelSizeZ /= 1000;
-            break;
-          case 81:
-            // inches
-            pixelSizeZ *= 25400;
-            break;
-        }
+        pixelSizeZ *= getScaleUnit(value);
       }
-      else if (key.equals("Microscope Name") || key.equals("Microscope Name 0"))
-      {
+      else if (key.startsWith("Microscope Name")) {
         microscopeName = value;
       }
       else if (key.startsWith("Emission Wavelength")) {
-        if (cIndex != -1) {
-          while (cIndex >= emWave.size()) emWave.add("");
-          emWave.setElementAt(value, cIndex);
-        }
+        if (cIndex != -1) emWave.put(new Integer(cIndex), value);
       }
       else if (key.startsWith("Excitation Wavelength")) {
-        if (cIndex != -1) {
-          while (cIndex >= exWave.size()) exWave.add("");
-          exWave.setElementAt(value, cIndex);
-        }
+        if (cIndex != -1) exWave.put(new Integer(cIndex), value);
       }
       else if (key.startsWith("Channel Name")) {
         if (cIndex != -1) {
@@ -910,28 +684,16 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       else if (key.startsWith("BlackValue")) {
-        if (cIndex != -1) {
-          while (cIndex >= blackValue.size()) blackValue.add("");
-          blackValue.setElementAt(value, cIndex);
-        }
+        if (cIndex != -1) blackValue.put(new Integer(cIndex), value);
       }
       else if (key.startsWith("WhiteValue")) {
-        if (cIndex != -1) {
-          while (cIndex >= whiteValue.size()) whiteValue.add("");
-          whiteValue.setElementAt(value, cIndex);
-        }
+        if (cIndex != -1) whiteValue.put(new Integer(cIndex), value);
       }
       else if (key.startsWith("GammaValue")) {
-        if (cIndex != -1) {
-          while (cIndex >= gammaValue.size()) gammaValue.add("");
-          gammaValue.setElementAt(value, cIndex);
-        }
+        if (cIndex != -1) gammaValue.put(new Integer(cIndex), value);
       }
       else if (key.startsWith("Exposure Time [ms]")) {
-        if (cIndex != -1) {
-          while (cIndex >= exposureTime.size()) exposureTime.add("");
-          exposureTime.setElementAt(value, cIndex);
-        }
+        if (cIndex != -1) exposureTime.put(new Integer(cIndex), value);
       }
       else if (key.startsWith("User Name")) {
         if (value != null && !value.trim().equals("")) userName = value;
@@ -941,18 +703,31 @@ public class ZeissZVIReader extends FormatReader {
       else if (key.equals("Objective N.A.")) na = value;
       else if (key.startsWith("Acquisition Date")) {
         if (image >= 0) {
-          if (image < timestamps.size()) timestamps.setElementAt(value, image);
-          else {
-            int diff = image - timestamps.size();
-            for (int q=0; q<diff; q++) {
-              timestamps.add("");
-            }
-            timestamps.add(value);
-          }
+          timestamps.put(new Integer(image), value);
           addMeta("Timestamp " + image, value);
         }
       }
     }
+  }
+
+  private float getScaleUnit(String value) {
+    int v = 0;
+    try {
+      v = Integer.parseInt(value);
+    }
+    catch (NumberFormatException e) { }
+    switch (v) {
+      case 72:
+        // meters
+        return 1000000f;
+      case 77:
+        // nanometers
+        return 0.001f;
+      case 81:
+        // inches
+        return 25400f;
+    }
+    return 1f;
   }
 
   /** Return the string corresponding to the given ID. */
