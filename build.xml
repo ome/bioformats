@@ -315,7 +315,8 @@ Apache XML-RPC
   <!-- Global build targets -->
 
   <target name="style"
-    depends="style-poi-loci, style-mdbtools, style-ome-xml, style-formats,
+    depends="style-poi-loci, style-mdbtools,
+      style-ome-xml, style-formats,
       style-loci-plugins, style-ome-io, style-ome-plugins,
       style-visbio, style-slim, style-flow,
       style-checks, style-tests,
@@ -324,7 +325,8 @@ Apache XML-RPC
     description="check source code style for LOCI software packages"/>
 
   <target name="compile"
-    depends="compile-poi-loci, compile-mdbtools, compile-ome-xml, compile-formats,
+    depends="compile-poi-loci, compile-mdbtools,
+      compile-ome-xml, compile-formats,
       compile-loci-plugins, compile-ome-io, compile-ome-plugins,
       compile-visbio, compile-slim, compile-flow,
       compile-checks, compile-tests,
@@ -333,7 +335,8 @@ Apache XML-RPC
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-poi-loci, jar-mdbtools, jar-ome-xml, jar-formats, jar-loci-plugins,
+    depends="jar-poi-loci, jar-mdbtools,
+      jar-ome-xml, jar-formats, jar-loci-plugins,
       jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
       jar-checks, jar-tests,
@@ -342,7 +345,8 @@ Apache XML-RPC
     description="generate JAR files for LOCI software packages"/>
 
   <target name="clean"
-    depends="clean-poi-loci, clean-mdbtools, clean-ome-xml, clean-formats,
+    depends="clean-poi-loci, clean-mdbtools,
+      clean-ome-xml, clean-formats,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
       clean-checks, clean-tests,
@@ -762,7 +766,8 @@ Apache XML-RPC
 
   <!-- Tool bundles -->
 
-  <target name="tools" depends="jar-poi-loci, jar-formats, jar-ome-xml, jar-loci-plugins"
+  <target name="tools" depends="jar-poi-loci, jar-mdbtools,
+    jar-ome-xml, jar-formats, jar-loci-plugins"
     description="create JAR file encompassing several LOCI tools">
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
