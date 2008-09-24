@@ -208,13 +208,6 @@ JGoodies Looks
     Notes:     used for a nicer Look & Feel by VisBio and OME Metadata Editor
     License:   BSD
 
-MDB Tools (Java port)
-    JAR file:  mdbtools-java.jar
-    URLs:      http://mdbtools.sourceforge.net/
-               http://sourceforge.net/forum/message.php?msg_id=2550619
-    Notes:     used by Bio-Formats for Zeiss LSM metadata in MDB database files
-    License:   LGPL
-
 NetCDF
     JAR files: netcdf-4.0.jar, bufr-1.1.00.jar, grib-5.1.03.jar, slf4j-jdk14.jar
     URL:       http://www.unidata.ucar.edu/software/netcdf-java/
@@ -262,16 +255,6 @@ JBoss
     URL:       http://jboss.org
     Notes:     used by OME I/O to connect to OMERO
     License:   LGPL
-
-Apache Jakarta POI
-    JAR file:  poi-loci.jar
-    URL:       http://jakarta.apache.org/poi/
-    Notes:     based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2
-               and memory efficiency improvements;
-               used by Bio-Formats via reflection for OLE support
-               (CXD, IPW, OIB, ZVI);
-               used by VisBio overlays logic for XLS export feature
-    License:   Apache
 
 Skin Look and Feel
     JAR file:  skinlf.jar

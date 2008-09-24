@@ -3,4 +3,4 @@ ROOT=$HOME/svn/java
 if [ ! -e $ROOT/build/jar/loci-checks.jar ]; then
   cd $ROOT && ant jar-checks && cd -
 fi
-java -cp $ROOT/jar/AppleJavaExtensions.jar:$ROOT/jar/checkstyle-all-4.2.jar:$ROOT/jar/commons-httpclient-2.0-rc2.jar:$ROOT/jar/commons-logging.jar:$ROOT/jar/forms-1.0.4.jar:$ROOT/jar/ij.jar:$ROOT/jar/lma.jar:$ROOT/jar/looks-1.2.2.jar:$ROOT/jar/poi-loci.jar:$ROOT/jar/xmlrpc-1.2-b1.jar:$ROOT/build/jar/loci-checks.jar:$ROOT com.puppycrawl.tools.checkstyle.Main -c $ROOT/checkstyle.xml $*
+java -cp $ROOT/jar/AppleJavaExtensions.jar:$ROOT/jar/checkstyle-all-4.2.jar:$ROOT/jar/commons-httpclient-2.0-rc2.jar:$ROOT/jar/commons-logging.jar:$ROOT/jar/forms-1.0.4.jar:$ROOT/jar/ij.jar:$ROOT/jar/lma.jar:$ROOT/jar/looks-1.2.2.jar:$ROOT/build/jar/poi-loci.jar:$ROOT/jar/xmlrpc-1.2-b1.jar:$ROOT/build/jar/loci-checks.jar:$ROOT com.puppycrawl.tools.checkstyle.Main -c $ROOT/checkstyle.xml $*

@@ -1,0 +1,10 @@
+[PropertyInfo]
+eq,Equation,false,false, , ,false,<default>
+left,Object,false,false, , ,false,<default>
+right,Object,false,false, , ,false,<default>
+type,int,false,false, , ,false,<default>
+[IconNames]
+
+
+
+
