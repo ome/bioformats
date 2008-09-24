@@ -23,7 +23,8 @@ Bio-Formats
     -=-
     JAR file:      bio-formats.jar
     Path:          components/bio-formats
-    Project deps:  OME-XML Java library
+    Project deps:  OME-XML Java library,
+                   Apache Jakarta POI (reflected), MDB Tools (reflected)
     License:       GPL
 
 LOCI Plugins for ImageJ
@@ -58,7 +59,7 @@ VisBio
     -=-
     JAR file:      visbio.jar
     Path:          components/visbio
-    Project deps:  Bio-Formats, OME I/O
+    Project deps:  Bio-Formats, OME I/O, Apache Jakarta POI
     License:       GPL
 
 SLIM Plotter
@@ -95,7 +96,7 @@ LOCI testing framework
     License:       BSD
 
 ===============================================================================
-The following projects are considered "legacy" but still supported:
+The following components are considered "legacy" but still supported:
 
 JVMLink
     A library for communicating between a Java Virtual Machine and other
@@ -130,6 +131,34 @@ OME Metadata Editor
     Path:          components/legacy/ome-editor
     Project deps:  Bio-Formats
     License:       LGPL
+
+===============================================================================
+The following components are forks of third party projects:
+
+Apache Jakarta POI
+    Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
+    -=-
+    JAR file:     poi-loci.jar
+    Path:         components/poi
+    Project deps: (None)
+    License:      Apache
+    Project URL:  http://jakarta.apache.org/poi/
+    Notes:        based on poi-2.5.1-final-20040804.jar,
+                  with bugfixes for OLE v2 and memory efficiency improvements;
+                  used by Bio-Formats for OLE support
+                  (cxd, ipw, oib, zvi);
+                  used by VisBio overlays logic for XLS export feature
+
+MDB Tools (Java port)
+    Java API to handle Microsoft MDB format (Access)
+    -=-
+    JAR file:     mdbtools-java.jar
+    Path:         components/mdbtools
+    Project deps: (None)
+    License:      LGPL
+    Project URLs: http://mdbtools.sourceforge.net/
+                  http://sourceforge.net/forum/message.php?msg_id=2550619
+    Notes:        used by Bio-Formats for Zeiss LSM metadata in MDB files
 
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
