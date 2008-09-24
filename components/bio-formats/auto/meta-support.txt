@@ -95,6 +95,7 @@ Plane = Yes
 
 [DeltavisionReader]
 Pixels = Yes since r638
+Image.CreationDate = Yes
 Image.Description = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
@@ -544,6 +545,7 @@ Plane = Yes
 Pixels = Yes since r2595
 LogicalChannel.SamplesPerPixel = Yes
 PlaneTiming.TheT = Yes
+Plane = Yes
 
 [PSDReader]
 Pixels = Yes since r3202

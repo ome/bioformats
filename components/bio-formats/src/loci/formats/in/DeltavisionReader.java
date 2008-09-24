@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.text.*;
+import java.util.Date;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
@@ -501,6 +503,13 @@ public class DeltavisionReader extends FormatReader {
         }
       }
       else if (line.startsWith("Image")) prefix = line;
+      else if (line.startsWith("Created")) {
+        SimpleDateFormat parse =
+          new SimpleDateFormat("EEE MMM  d HH:mm:ss yyyy");
+        Date date = parse.parse(line.substring(8).trim(), new ParsePosition(0));
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        store.setImageCreationDate(fmt.format(date), 0);
+      }
     }
 
     s.close();
