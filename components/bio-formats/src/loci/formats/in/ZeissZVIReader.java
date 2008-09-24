@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.codec.JPEGCodec;
@@ -486,7 +488,8 @@ public class ZeissZVIReader extends FormatReader {
 
     long firstStamp = 0;
     if (timestamps.size() > 0) {
-      firstStamp = Long.parseLong((String) timestamps.get(new Integer(0)));
+      String timestamp = (String) timestamps.get(new Integer(0));
+      firstStamp = parseTimestamp(timestamp);
       store.setImageCreationDate(DataTools.convertDate(
         (long) (firstStamp / 1600), DataTools.ZVI), 0);
     }
@@ -504,8 +507,8 @@ public class ZeissZVIReader extends FormatReader {
       store.setPlaneTimingExposureTime(exp, 0, 0, plane);
 
       if (plane < timestamps.size()) {
-        long stamp =
-          Long.parseLong((String) timestamps.get(new Integer(plane)));
+        String timestamp = (String) timestamps.get(new Integer(plane));
+        long stamp = parseTimestamp(timestamp);
         stamp -= firstStamp;
         store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
       }
@@ -1145,6 +1148,18 @@ public class ZeissZVIReader extends FormatReader {
         return "Image Name";
       default: return "" + tagID;
     }
+  }
+
+  private long parseTimestamp(String s) {
+    long stamp = 0;
+    try {
+      stamp = Long.parseLong(s);
+    }
+    catch (NumberFormatException exc) {
+      SimpleDateFormat sdf = new SimpleDateFormat("M/d/y h:mm:ss aa");
+      stamp = sdf.parse(s, new ParsePosition(0)).getTime();
+    }
+    return stamp;
   }
 
 }
