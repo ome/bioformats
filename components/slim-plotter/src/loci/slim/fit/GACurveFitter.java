@@ -225,13 +225,10 @@ public class GACurveFitter extends CurveFitter {
 
   // Initializes the curve fitter with a starting curve estimate.
   public void estimate() {
-    /*
-    System.out.println("****** DATA ******");
-    for (int i = 0; i < curveData.length; i++) {
-      System.out.println("i: " + i + "  data: " + curveData[i]);
-    }
-    */
-    //try { Thread.sleep(1000); } catch(Exception e) {}
+    //System.out.println("****** DATA ******");
+    //for (int i = 0; i < curveData.length; i++) {
+    //  System.out.println("i: " + i + "  data: " + curveData[i]);
+    //}
     if (components >= 1) {
       // TODO: Estimate c, factor it in below.
 
@@ -458,7 +455,8 @@ public class GACurveFitter extends CurveFitter {
         curveEstimate[0][0] = maxData - minData;
         curveEstimate[0][1] = expguess;
         curveEstimate[0][2] = minData;
-      } else {
+      }
+      else {
         // 2 components
         curveEstimate[0][0] = maxData * .8;
         curveEstimate[0][1] = expguess;
@@ -486,7 +484,8 @@ public class GACurveFitter extends CurveFitter {
         toreturn[0] = curveEstimate[1];
         toreturn[1] = curveEstimate[0];
         return toreturn;
-      } else {
+      }
+      else {
         return curveEstimate;
       }
     }
