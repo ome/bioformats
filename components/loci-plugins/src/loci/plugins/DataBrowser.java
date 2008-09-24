@@ -55,6 +55,10 @@ import org.xml.sax.SAXException;
  */
 public class DataBrowser extends StackWindow implements ActionListener {
 
+  // -- Constants --
+
+  protected static final int MIN_BROWSER_WIDTH = 400;
+
   // -- Fields --
 
   protected JSpinner fpsSpin;
@@ -82,7 +86,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
     while (getComponentCount() > 1) remove(1);
     Panel controls = new Panel() {
       public Dimension getPreferredSize() {
-        int minWidth = 200;
+        int minWidth = MIN_BROWSER_WIDTH;
         int w = imp.getCanvas().getWidth();
         if (w < minWidth) w = minWidth;
         int h = super.getPreferredSize().height;
@@ -91,7 +95,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
     };
 
     String cols =
-      "5dlu, right:pref, 3dlu, pref, pref:grow, pref, 5dlu, pref, 5dlu";
+      "5dlu, right:pref, 3dlu, pref:grow, 5dlu, pref, 5dlu, pref, 5dlu";
     //       <-labels->        <------sliders------>       <misc>
 
     String rows = "4dlu, pref, 3dlu, pref, 3dlu, pref, 6dlu";
