@@ -19,6 +19,9 @@
 
 package org.apache.poi.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.*;
 
 /**
@@ -35,8 +38,13 @@ import java.util.*;
 public class CommonsLogger extends POILogger
 {
 
+    private static LogFactory   _creator = LogFactory.getFactory();
+    private Log             log   = null;
+
+   
     public void initialize(final String cat)
     {
+        this.log = _creator.getInstance(cat);
     }   
      
     /**
@@ -48,6 +56,49 @@ public class CommonsLogger extends POILogger
 
     public void log(final int level, final Object obj1)
     {
+        if(level==FATAL)
+        {
+          if(log.isFatalEnabled())
+          {
+            log.fatal(obj1);
+          }
+        }
+        else if(level==ERROR)
+        {
+          if(log.isErrorEnabled())
+          {
+            log.error(obj1);
+          }
+        }
+        else if(level==WARN)
+        {
+          if(log.isWarnEnabled())
+          {
+            log.warn(obj1);
+          }
+        }
+        else if(level==INFO)
+        {
+          if(log.isInfoEnabled())
+          {
+            log.info(obj1);
+          }
+        }
+        else if(level==DEBUG)
+        {
+          if(log.isDebugEnabled())
+          {
+            log.debug(obj1);
+          }
+        }
+        else
+        {
+          if(log.isTraceEnabled())
+          {
+            log.trace(obj1);
+          }
+        }
+
     }
 
     /**
@@ -58,7 +109,44 @@ public class CommonsLogger extends POILogger
 
     public boolean check(final int level)
     {
+        if(level==FATAL)
+        {
+          if(log.isFatalEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==ERROR)
+        {
+          if(log.isErrorEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==WARN)
+        {
+          if(log.isWarnEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==INFO)
+        {
+          if(log.isInfoEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==DEBUG)
+        {
+          if(log.isDebugEnabled())
+          {
+            return true;
+          }
+        }
+
         return false;
+
     }
 
  
