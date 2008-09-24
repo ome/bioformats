@@ -156,7 +156,7 @@ class = loci.formats.IFormatReader
 version = bfVersion
 url = http://www.loci.wisc.edu/ome/formats.html
 license = GPL
-notes = LOCI Bio-Formats package for reading and converting
+notes = OME Bio-Formats package for reading and converting
         biological file formats.
 
 [OME I/O]
@@ -241,17 +241,17 @@ url = http://www.slf4j.org/
 license = MIT
 notes = Used by the NetCDF Java library.
 
-[OME-Java OME-XML]
+[OME-XML Java library]
 type = Java library
 class = ome.xml.OMEXMLNode
-url = http://www.loci.wisc.edu/ome/ome-java.html
+url = http://www.loci.wisc.edu/ome/ome-xml-java.html
 license = LGPL
 notes = Used by Bio-Formats to work with OME-XML.
 
-[OME-Java Remoting]
+[OME-Java API]
 type = Java library
 class = org.openmicroscopy.is.ImageServer
-url = http://www.loci.wisc.edu/ome/ome-java.html
+url = http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
 license = LGPL
 notes = Used by the "Download from OME" and "Upload to OME" plugins
         to connect to OME servers.
@@ -261,21 +261,21 @@ type = Java library
 class = org.apache.commons.httpclient.HttpConnection
 url = http://jakarta.apache.org/commons/httpclient/
 license = Apache
-notes = Required for OME-Java Remoting to communicate with OME servers.
+notes = Required for OME-Java API to communicate with OME servers.
 
 [Apache Jakarta Commons Logging]
 type = Java library
 class = org.apache.commons.logging.Log
 url = http://jakarta.apache.org/commons/logging/
 license = Apache
-notes = Used by OME-Java Remoting.
+notes = Used by OME-Java API.
 
 [Apache XML-RPC]
 type = Java library
 class = org.apache.xmlrpc.XmlRpc
 url = http://ws.apache.org/xmlrpc/
 license = Apache
-notes = Required for OME-Java Remoting to communicate with OME servers
+notes = Required for OME-Java API to communicate with OME servers
 
 [OMERO Common]
 type = Java library
