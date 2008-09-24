@@ -11,4 +11,3 @@ Fit: 2-component fits can be inaccurate (see Log scale for confirmation)
 2D: implement spectral projection view
 2D: implement emission spectraview
 3D: change data fit and residuals to check boxes for surface/lines
-2D: eliminate flickering for intensity view mode (will fix disappearing bug)
