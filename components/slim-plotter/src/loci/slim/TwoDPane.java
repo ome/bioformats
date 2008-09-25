@@ -122,14 +122,21 @@ public class TwoDPane extends JPanel
 
     // create 2D display
     iPlot = new DisplayImplJ3D("image", new TwoDDisplayRendererJ3D());
-    iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
-      {{MouseHelper.DIRECT, MouseHelper.NONE}, // L, shift-L
-       {MouseHelper.NONE, MouseHelper.NONE}}, // ctrl-L, ctrl-shift-L
-      {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, // M, shift-M
-       {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}}, // ctrl-M, ctrl-shift-M
-      {{MouseHelper.ROTATE, MouseHelper.ZOOM}, // R, shift-R
-       {MouseHelper.TRANSLATE, MouseHelper.NONE}}, // ctrl-R, ctrl-shift-R
-    });
+    int[][][] mouseMap = {
+      {{MouseHelper.DIRECT,           // L
+        MouseHelper.NONE},            // shift-L
+       {MouseHelper.NONE,             // ctrl-L
+        MouseHelper.NONE}},           // ctrl-shift-L
+      {{MouseHelper.CURSOR_TRANSLATE, // M
+        MouseHelper.CURSOR_ZOOM},     // shift-M
+       {MouseHelper.CURSOR_ROTATE,    // ctrl-M
+        MouseHelper.NONE}},           // ctrl-shift-M
+      {{MouseHelper.ROTATE,           // R
+        MouseHelper.ZOOM},            // shift-R
+       {MouseHelper.TRANSLATE,        // ctrl-R
+        MouseHelper.NONE}},           // ctrl-shift-R
+    };
+    iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(mouseMap);
     iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
     iPlot.addDisplayListener(this);
 
@@ -467,11 +474,13 @@ public class TwoDPane extends JPanel
     int id = e.getId();
     if (id == DisplayEvent.MOUSE_PRESSED_CENTER) {
       drag = true;
-      doCursor(iPlot.getDisplayRenderer().getCursor(), false, false);
+      // plot per-pixel lifetime without rescale or refit (i.e., fast)
+      doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
     }
     else if (id == DisplayEvent.MOUSE_RELEASED_CENTER) {
       drag = false;
-      doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
+      // plot per-pixel lifetime with rescale and refit (i.e., not fast)
+      doCursor(iPlot.getDisplayRenderer().getCursor(), true, false);
     }
     else if (id == DisplayEvent.MOUSE_RELEASED_LEFT) {
       // done drawing curve
@@ -479,7 +488,8 @@ public class TwoDPane extends JPanel
         roiSet = DelaunayCustom.fillCheck(curveSet, false);
         if (roiSet == null) {
           roiRef.setData(new Real(0));
-          doCursor(pixelToCursor(iPlot, e.getX(), e.getY()), true, true);
+          // plot single-pixel region with rescale and refit (i.e., not fast)
+          doCursor(pixelToCursor(iPlot, e.getX(), e.getY()), false, false);
           iPlot.reAutoScale();
         }
         else {
@@ -499,7 +509,7 @@ public class TwoDPane extends JPanel
             }
           }
           roiPercent = 100000 * roiCount / (data.width * data.height) / 1000.0;
-          slim.plotData(true, true, true);
+          slim.plotRegion(true, true, true);
         }
       }
       catch (VisADException exc) {
@@ -515,7 +525,8 @@ public class TwoDPane extends JPanel
     }
     else if (id == DisplayEvent.MOUSE_DRAGGED) {
       if (!drag) return; // not a center mouse drag
-      doCursor(iPlot.getDisplayRenderer().getCursor(), false, false);
+      // plot per-pixel lifetime without rescale or refit (i.e., fast)
+      doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
     }
   }
 
@@ -546,7 +557,7 @@ public class TwoDPane extends JPanel
   // -- Helper methods --
 
   /** Handles cursor updates. */
-  private void doCursor(double[] cursor, boolean rescale, boolean refit) {
+  private void doCursor(double[] cursor, boolean perPix, boolean fast) {
     double[] domain = cursorToDomain(iPlot, cursor);
     roiX = (int) Math.round(domain[0]);
     roiY = (int) Math.round(domain[1]);
@@ -555,7 +566,9 @@ public class TwoDPane extends JPanel
     if (roiY < 0) roiY = 0;
     if (roiY >= data.height) roiY = data.height - 1;
     roiCount = 1;
-    slim.plotData(true, rescale, refit);
+    boolean rescale = !fast, refit = !fast;
+    if (perPix) slim.plotProbe(rescale);
+    else slim.plotRegion(true, rescale, refit);
   }
 
   private void doIntensity(boolean adjustSlider) {

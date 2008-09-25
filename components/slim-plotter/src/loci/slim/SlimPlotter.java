@@ -61,6 +61,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Constants --
 
+  private static final boolean DEBUG = false;
+
   /** Default orientation for 3D decay curves display. */
   private static final double[] MATRIX_3D = {
     0.2821, 0.1503, -0.0201, 0.0418,
@@ -137,6 +139,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
   private DataReferenceImpl decayRef, fwhmRef, fitRef, resRef;
   private DisplayImpl decayPlot;
+  private Hashtable zScaleLogTable;
 
   // -- Constructor --
 
@@ -239,6 +242,22 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // plot decay curves in 3D display
       decayPlot = data.channels > 1 ? new DisplayImplJ3D("decay") :
         new DisplayImplJ3D("decay", new TwoDDisplayRendererJ3D());
+      int[][][] mouseMap = {
+        {{MouseHelper.ROTATE,           // L
+          MouseHelper.ZOOM},            // shift-L
+         {MouseHelper.TRANSLATE,        // ctrl-L
+          MouseHelper.NONE}},           // ctrl-shift-L
+        {{MouseHelper.CURSOR_TRANSLATE, // M
+          MouseHelper.CURSOR_ZOOM},     // shift-M
+         {MouseHelper.CURSOR_ROTATE,    // ctrl-M
+          MouseHelper.NONE}},           // ctrl-shift-M
+        {{MouseHelper.ROTATE,           // R
+          MouseHelper.ZOOM},            // shift-R
+         {MouseHelper.TRANSLATE,        // ctrl-R
+          MouseHelper.NONE}},           // ctrl-shift-R
+      };
+      decayPlot.getMouseBehavior().getMouseHelper().setFunctionMap(mouseMap);
+
       ScalarMap xMap = new ScalarMap(types.bType, Display.XAxis);
       ScalarMap yMap = new ScalarMap(types.cType, Display.YAxis);
       DisplayRealType heightAxis = data.channels > 1 ?
@@ -257,6 +276,15 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayPlot.addMap(vMap);
       //decayPlot.addMap(vMapFit);
       decayPlot.addMap(vMapRes);
+
+      // construct log scale label table
+      zScaleLogTable = new Hashtable();
+      double maxExp = Math.log(Integer.MAX_VALUE) / BASE_LOG;
+      for (int exp=1, val=1; exp<maxExp; exp++, val*=BASE) {
+        zScaleLogTable.put(new Double(Math.log(val) / BASE_LOG),
+          exp > 3 ? "1e" + exp : "" + val);
+      }
+
       setProgress(progress, 950); // estimate: 95%
 
       decayRend = new DefaultRendererJ3D();
@@ -552,11 +580,23 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   private Thread plotThread;
   private boolean plotCanceled;
-  private boolean doRecalc, doRescale, doRefit;
+  private boolean doProbe, doRecalc, doRescale, doRefit;
+
+  public void plotProbe(boolean rescale) {
+    plotData(true, true, rescale, true);
+  }
+
+  public void plotRegion(boolean recalc, boolean rescale, boolean refit) {
+    plotData(false, recalc, rescale, refit);
+  }
+
+  public void plotData(boolean recalc, boolean rescale, boolean refit) {
+    plotData(doProbe, recalc, rescale, refit);
+  }
 
   /** Plots the data in a separate thread. */
-  public void plotData(final boolean recalc,
-    final boolean rescale, final boolean refit)
+  private void plotData(final boolean probe,
+    final boolean recalc, final boolean rescale, final boolean refit)
   {
     final SlimPlotter sp = this;
     new Thread("PlotSpawner") {
@@ -568,6 +608,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             try { plotThread.join(); }
             catch (InterruptedException exc) { exc.printStackTrace(); }
           }
+          sp.doProbe = probe;
           sp.doRecalc = recalc;
           sp.doRescale = rescale;
           sp.doRefit = refit;
@@ -704,13 +745,17 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   // -- Runnable methods --
 
   public void run() {
+    debug("Plotting data: probe=" + doProbe + ", recalc=" + doRecalc +
+      ", rescale=" + doRescale + ", refit=" + doRefit);
+
     decayPlot.disableAction();
     boolean doLog = log.isSelected();
 
     if (doRecalc) {
-      ProgressMonitor progress = new ProgressMonitor(null, "Plotting data",
-        "Calculating sums", 0,
-        data.channels * data.timeBins + (doRefit ? data.channels : 0) + 1);
+      int progMax = data.channels * data.timeBins +
+        (doRefit ? data.channels : 0) + 1;
+      ProgressMonitor progress = new ProgressMonitor(null,
+        "Plotting data", "Plotting data", 0, progMax);
       progress.setMillisToPopup(100);
       progress.setMillisToDecideToPopup(50);
       int p = 0;
@@ -723,18 +768,20 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // update scale labels for log scale
       if (doLog) {
         AxisScale zScale = zMap.getAxisScale();
-        Hashtable hash = new Hashtable();
-        for (int i=1, v=1; v<=maxVal; i++, v*=BASE) {
-          hash.put(new Double(Math.log(v) / BASE_LOG),
-            i > 3 ? "1e" + i : "" + v);
-        }
         try {
-          zScale.setLabelTable(hash);
+          zScale.setLabelTable(zScaleLogTable);
         }
         catch (VisADException exc) { exc.printStackTrace(); }
       }
 
+      if (doProbe) {
+        // display per-pixel lifetime probe rather than binned region
+        // CTR START HERE - get renderer from 2-D pane's switcher, get relevant
+        // curve collection, get raw data and fitted curve from collection
+      }
+
       // calculate samples
+      progress.setNote("Calculating sums");
       int numChanVis = 0;
       for (int c=0; c<data.channels; c++) {
         if (data.cVisible[c]) numChanVis++;
@@ -837,68 +884,75 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // curve fitting
       double[][] fitResults = null;
       if (data.adjustPeaks && doRefit) {
-        // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
-        progress.setNote("Fitting curves");
-        fitResults = new double[data.channels][];
-        tau = new float[data.channels][data.numExp];
-        for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
-        int num = data.timeBins - data.maxPeak;
-
-        // HACK - cut off last 1500 ps from lifetime histogram,
-        // to improve accuracy of fit.
-        if (data.cutEnd) {
-          int cutBins = (int) data.picoToBins(1500);
-          if (num > cutBins + 5) num -= cutBins;
+        if (doProbe) {
+          // CTR TODO fill in pre-existing curve
         }
+        else {
+          // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
+          progress.setNote("Fitting curves");
+          fitResults = new double[data.channels][];
+          tau = new float[data.channels][data.numExp];
+          for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
+          int num = data.timeBins - data.maxPeak;
 
-        StringBuffer equation = new StringBuffer();
-        equation.append("y(t) = ");
-        for (int i=0; i<data.numExp; i++) {
-          equation.append("a");
-          equation.append(i + 1);
-          equation.append(" * e^(-t/");
-          equation.append(TAU);
-          equation.append(i + 1);
-          equation.append(") + ");
-        }
-        equation.append("c");
-        log("Computing fit parameters: " + equation.toString());
-        int[] curveData = new int[num];
-        for (int c=0, cc=0; c<data.channels; c++) {
-          if (!data.cVisible[c]) {
-            fitResults[c] = null;
-            continue;
-          }
-          log("\tChannel #" + (c + 1) + ":");
+          // CTR FIXME - use setLastIndex instead of this 1500 ps hack
 
-          CurveFitter fitter =
-            CurveCollection.newCurveFitter(data.curveFitterClass);
-          for (int i=0; i<num; i++) {
-            curveData[i] = (int) samps[data.timeBins * cc + data.maxPeak + i];
+          // HACK - cut off last 1500 ps from lifetime histogram,
+          // to improve accuracy of fit.
+          if (data.cutEnd) {
+            int cutBins = (int) data.picoToBins(1500);
+            if (num > cutBins + 5) num -= cutBins;
           }
-          fitter.setComponentCount(data.numExp);
-          fitter.setData(curveData);
-          fitter.estimate();
-          for (int i=0; i<250; i++) fitter.iterate();
-          double[][] results = fitter.getCurve();
-          log("\t\tchi2=" + fitter.getReducedChiSquaredError());
+
+          StringBuffer equation = new StringBuffer();
+          equation.append("y(t) = ");
           for (int i=0; i<data.numExp; i++) {
-            log("\t\ta" + (i + 1) + "=" +
-              (100 * results[i][0] / maxVals[cc]) + "%");
-            tau[c][i] = data.binsToPico((float) (1 / results[i][1]));
-            log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
+            equation.append("a");
+            equation.append(i + 1);
+            equation.append(" * e^(-t/");
+            equation.append(TAU);
+            equation.append(i + 1);
+            equation.append(") + ");
           }
-          log("\t\tc=" + results[0][2]);
-          fitResults[c] = new double[2 * data.numExp + 1];
-          for (int i=0; i<data.numExp; i++) {
-            int e = 2 * i;
-            fitResults[c][e] = results[i][0];
-            fitResults[c][e + 1] = results[i][1];
-          }
-          fitResults[c][2 * data.numExp] = results[0][2];
+          equation.append("c");
+          log("Computing fit parameters: " + equation.toString());
+          int[] curveData = new int[num];
+          for (int c=0, cc=0; c<data.channels; c++) {
+            if (!data.cVisible[c]) {
+              fitResults[c] = null;
+              continue;
+            }
+            log("\tChannel #" + (c + 1) + ":");
 
-          setProgress(progress, ++p, false);
-          cc++;
+            CurveFitter fitter =
+              CurveCollection.newCurveFitter(data.curveFitterClass);
+            for (int i=0; i<num; i++) {
+              curveData[i] = (int) samps[data.timeBins * cc + data.maxPeak + i];
+            }
+            fitter.setComponentCount(data.numExp);
+            fitter.setData(curveData);
+            fitter.estimate();
+            for (int i=0; i<250; i++) fitter.iterate();
+            double[][] results = fitter.getCurve();
+            log("\t\tchi2=" + fitter.getReducedChiSquaredError());
+            for (int i=0; i<data.numExp; i++) {
+              log("\t\ta" + (i + 1) + "=" +
+                (100 * results[i][0] / maxVals[cc]) + "%");
+              tau[c][i] = data.binsToPico((float) (1 / results[i][1]));
+              log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
+            }
+            log("\t\tc=" + results[0][2]);
+            fitResults[c] = new double[2 * data.numExp + 1];
+            for (int i=0; i<data.numExp; i++) {
+              int e = 2 * i;
+              fitResults[c][e] = results[i][0];
+              fitResults[c][e + 1] = results[i][1];
+            }
+            fitResults[c][2 * data.numExp] = results[0][2];
+
+            setProgress(progress, ++p, false);
+            cc++;
+          }
         }
       }
 
@@ -1102,6 +1156,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
     }
+
     decayPlot.enableAction();
     plotThread = null;
   }
@@ -1203,6 +1258,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     SwingUtilities.invokeLater(new Runnable() {
       public void run() { System.err.println(message); }
     });
+  }
+
+  public static void debug(String msg) {
+    if (!DEBUG) return;
+    String name = Thread.currentThread().getName();
+    System.out.println("--> " + name + ": " + msg);
   }
 
   // -- Main method --

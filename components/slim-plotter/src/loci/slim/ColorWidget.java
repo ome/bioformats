@@ -73,8 +73,6 @@ public class ColorWidget extends JPanel
 
   private static final Color INVALID_COLOR = Color.red.brighter();
 
-  private static final boolean DEBUG = false;
-
   // -- Static fields --
 
   private static JFileChooser lutBox;
@@ -281,7 +279,7 @@ public class ColorWidget extends JPanel
   /** Updates text field range values to match map values. */
   protected void updateMinMaxFields() {
     if (updating || cOverride.isSelected()) return;
-    if (DEBUG) debug("updateMinMaxFields");
+    SlimPlotter.debug("updateMinMaxFields");
     double[] range = map.getRange();
     String minText = "" + range[0];
     if (!minText.equals(cMinValue.getText())) {
@@ -310,7 +308,7 @@ public class ColorWidget extends JPanel
    * text field availaability to match the given value.
    */
   protected void updateManualOverride(boolean manual) {
-    if (DEBUG) debug("updateManualOverride(" + manual + ")");
+    SlimPlotter.debug("updateManualOverride(" + manual + ")");
     if (manual != cOverride.isSelected()) {
       cOverride.removeActionListener(this);
       cOverride.setSelected(manual);
@@ -322,18 +320,13 @@ public class ColorWidget extends JPanel
 
   /** Updates scalar map range to match the given values. */
   protected void updateScalarMap(float min, float max) {
-    if (DEBUG) debug("updateScalarMap(" + min + ", " + max + ")");
+    SlimPlotter.debug("updateScalarMap(" + min + ", " + max + ")");
     double[] range = map.getRange();
     if (min != range[0] || max != range[1]) {
       try { map.setRange(min, max); }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
     }
-  }
-
-  private void debug(String msg) {
-    String name = Thread.currentThread().getName();
-    System.out.println("--> " + name + ": " + msg);
   }
 
 }
