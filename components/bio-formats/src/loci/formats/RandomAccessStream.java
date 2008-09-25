@@ -536,9 +536,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
         fp = 0;
       }
 
-      while (fp < afp) {
-        fp += dis.skipBytes((int) (afp - fp));
+      int skip = 0;
+      do {
+        skip = dis.skipBytes((int) (afp - fp));
+        fp += skip;
       }
+      while (fp < afp && skip > 0);
 
       return DIS;
     }
