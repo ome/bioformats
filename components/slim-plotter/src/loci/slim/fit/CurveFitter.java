@@ -49,20 +49,7 @@ public abstract class CurveFitter {
 
   /** Returns the Chi Squared Error of the current curve estimate. */
   public double getChiSquaredError() {
-    double total = 0.0d;
-    double[] expected = getEstimates(curveData, curveEstimate);
-    for (int i = firstindex; i < curveData.length && i <= lastindex; i++) {
-      if (expected[i] > 0) {
-        double observed = (double) curveData[i];
-        double term = (observed - expected[i]);
-        // (o-e)^2
-        term *= term;
-        // (o-e)^2 / e
-        term /= expected[i];
-        total += term;
-      }
-    }
-    return total;
+    return getChiSquaredError(curveEstimate);
   }
 
   public double getChiSquaredError(double[][] estCurve) {
@@ -90,12 +77,7 @@ public abstract class CurveFitter {
    * of exponentials in setComponentCount.
    */
   public double getReducedChiSquaredError() {
-    int df = 1 + (curveEstimate.length * 2);
-    int datapoints = curveData.length;
-    if (datapoints - df > 0) {
-      return getChiSquaredError() / (datapoints - df);
-    }
-    return Double.MAX_VALUE;
+    return getReducedChiSquaredError(curveEstimate);
   }
 
   public double getReducedChiSquaredError(double[][] estCurve) {
