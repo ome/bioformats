@@ -63,8 +63,6 @@ public abstract class CurveFitter {
         term *= term;
         // (o-e)^2 / e
         term /= expected[i];
-        //System.out.println("Obs: " + observed +
-        //  " Expect: " + expected[i] + " Term: " + term);
         total += term;
       }
     }
@@ -81,10 +79,11 @@ public abstract class CurveFitter {
   }
 
   public double getReducedChiSquaredError(double[][] estCurve) {
-    int df = 1 + (estCurve.length * 2);
-    int datapoints = curveData.length;
-    if (datapoints - df > 0) {
-      return getChiSquaredError(estCurve) / (datapoints - df);
+    int numVars = 2 * estCurve.length + 1;
+    int datapoints = lastindex - firstindex + 1;
+    int degreesOfFreedom = datapoints - numVars;
+    if (degreesOfFreedom > 0) {
+      return getChiSquaredError(estCurve) / degreesOfFreedom;
     }
     return Double.MAX_VALUE;
   }
