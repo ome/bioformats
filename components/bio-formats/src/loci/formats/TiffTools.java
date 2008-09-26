@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.io.*;
@@ -1300,72 +1301,70 @@ public final class TiffTools {
       int numTileCols = (int) (imageWidth / tileWidth);
       if (numTileCols * tileWidth < imageWidth) numTileCols++;
 
-      // read appropriate tiles into buffer
+      Rectangle imageBounds = new Rectangle(x, y, (int) width, (int) height);
+      int endX = (int) width + x;
+      int endY = (int) height + y;
+      int pixel = (int) bitsPerSample[0] / 8;
+      int channels = 1;
+      if (planarConfig != 2) channels = samplesPerPixel;
+      else pixel *= samplesPerPixel;
 
-      int tileSize = (int)
-        (tileWidth * tileLength * samplesPerPixel * (bitsPerSample[0] / 8));
-
-      int outputRow = 0, outputCol = 0;
-
-      int xMin = 0, xMax = 0, yMin = 0, yMax = 0;
-
-      byte[] b = null;
       for (int row=0; row<numTileRows; row++) {
         for (int col=0; col<numTileCols; col++) {
-          xMin = (int) (col * tileWidth);
-          xMax = (int) ((col + 1) * tileWidth - 1);
-          yMin = (int) (row * tileLength);
-          yMax = (int) ((row + 1) * tileLength - 1);
+          Rectangle tileBounds = new Rectangle(col * (int) tileWidth,
+            row * (int) tileLength, (int) tileWidth, (int) tileLength);
 
-          if (xMax >= x && yMax >= y && xMin < (x + width) &&
-            yMin < (y + height))
-          {
-            int tileIndex = row * numTileCols + col;
-            b = new byte[(int) stripByteCounts[tileIndex]];
-            in.seek(stripOffsets[tileIndex]);
-            in.read(b);
+          if (!imageBounds.intersects(tileBounds)) continue;
 
-            if (jpegTable != null) {
-              byte[] q = new byte[jpegTable.length + b.length - 4];
-              System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
-              System.arraycopy(b, 2, q, jpegTable.length - 2, b.length - 2);
-              b = uncompress(q, compression, tileSize);
-            }
-            else b = uncompress(b, compression, tileSize);
+          int tileNumber = row * numTileCols + col;
+          byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
 
-            int ext = (int) (b.length / (tileWidth * tileLength));
-            int rowBytes = (int) (tileWidth * ext);
+          in.seek(stripOffsets[tileNumber] & 0xffffffffL);
+          in.read(tile);
 
-            for (int m=0; m<tileLength; m++) {
-              if (outputRow + m < height) {
-                int rowLen = rowBytes;
-                int offset =
-                  (int) ((outputRow + m) * width * ext + ext * outputCol);
-                if (outputCol + tileWidth > width) {
-                  rowLen = ext * (int) (width - outputCol);
-                }
-                System.arraycopy(b, rowBytes*m, buf, offset, rowLen);
-              }
-              else break;
-            }
+          int size = (int) (tileWidth * tileLength * pixel * channels);
+          if (jpegTable != null) {
+            byte[] q = new byte[jpegTable.length + tile.length - 4];
+            System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
+            System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
+            tile = uncompress(q, compression, size);
+          }
+          else tile = uncompress(tile, compression, size);
 
-            // update output row and column
-            outputCol += (int) tileWidth;
-            if (outputCol >= width) {
-              outputRow += (int) tileLength;
-              outputCol = 0;
+          undifference(tile, bitsPerSample, tileWidth, planarConfig, predictor,
+            littleEndian);
+          byte[] t = new byte[size];
+          unpackBytes(t, 0, tile, bitsPerSample, photoInterp, colorMap,
+            littleEndian, maxValue, planarConfig, 0, 1, tileWidth);
+
+          // adjust tile bounds, if necessary
+
+          int tileX = (int) Math.max(tileBounds.x, x);
+          int tileY = (int) Math.max(tileBounds.y, y);
+
+          int realX = tileX % (int) tileWidth;
+          int realY = tileY % (int) tileLength;
+
+          int twidth = (int) Math.min(endX - tileX, tileWidth - realX);
+          int theight = (int) Math.min(endY - tileY, tileLength - realY);
+
+          // copy appropriate portion of the tile to the output buffer
+
+          int rowLen = pixel * (int) tileWidth;
+          int copy = pixel * twidth;
+          int tileSize = (int) (tileWidth * tileLength * pixel);
+          int planeSize = (int) (width * height * pixel);
+          for (int q=0; q<channels; q++) {
+            for (int tileRow=0; tileRow<theight; tileRow++) {
+              int src = q * tileSize + (realY + tileRow) * rowLen +
+                realX * pixel;
+              int dest = (int) (q * planeSize +
+                (tileY - y + tileRow) * width * pixel + (tileX - x) * pixel);
+              System.arraycopy(t, src, buf, dest, copy);
             }
           }
         }
       }
-
-      undifference(buf, bitsPerSample, imageWidth, planarConfig, predictor,
-        littleEndian);
-      byte[] tmp = new byte[buf.length];
-      System.arraycopy(buf, 0, tmp, 0, tmp.length);
-      Arrays.fill(buf, (byte) 0);
-      unpackBytes(buf, 0, tmp, bitsPerSample, photoInterp, colorMap,
-        littleEndian, maxValue, planarConfig, 0, 1, imageWidth);
     }
     else {
       int offset = 0;
@@ -1760,16 +1759,12 @@ public final class TiffTools {
     else if (compression == LZW) {
       return new LZWCodec().decompress(input, new Integer(size));
     }
-    else if (compression == JPEG) {
+    else if (compression == JPEG || compression == ALT_JPEG) {
       return new JPEGCodec().decompress(input,
         new Object[] {Boolean.TRUE, Boolean.TRUE});
     }
     else if (compression == JPEG_2000) {
       return new JPEG2000Codec().decompress(input,
-        new Object[] {Boolean.TRUE, Boolean.TRUE});
-    }
-    else if (compression == ALT_JPEG) {
-      return new JPEGCodec().decompress(input,
         new Object[] {Boolean.TRUE, Boolean.TRUE});
     }
     else if (compression == PACK_BITS) {
@@ -1788,7 +1783,7 @@ public final class TiffTools {
         "supported; we hope to support it in the future");
     }
     else if (compression == LURAWAVE) {
-      return new LuraWaveCodec().decompress(input);
+      return new LuraWaveCodec().decompress(input, new Integer(size));
     }
     else {
       throw new FormatException(
