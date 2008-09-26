@@ -59,7 +59,9 @@ public class ZeissZVIReader extends FormatReader {
 
   private String firstImageTile, secondImageTile;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
-  private String microscopeName;
+  private String microscopeName, objectiveName, workingDistance;
+  private String correction, stageX, stageY, voltage, filterName;
+  private String gain, offset, comments;
   private Hashtable channelNames, emWave, exWave, exposureTime;
   private Hashtable whiteValue, blackValue, gammaValue, timestamps;
   private String userName, userCompany, mag, na;
@@ -420,6 +422,7 @@ public class ZeissZVIReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
+    store.setImageDescription(comments, 0);
     MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
@@ -431,8 +434,27 @@ public class ZeissZVIReader extends FormatReader {
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
 
-    // CTR CHECK
-//    store.setInstrumentModel(microscopeName, 0);
+    if (correction != null) store.setObjectiveCorrection(correction, 0, 0);
+    if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);
+    if (objectiveName != null) store.setObjectiveModel(objectiveName, 0, 0);
+    if (mag != null) {
+      store.setObjectiveNominalMagnification(
+        new Integer((int) Float.parseFloat(mag)), 0, 0);
+    }
+    if (workingDistance != null) {
+      store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+    }
+
+    if (stageX != null) {
+      store.setStagePositionPositionX(new Float(stageX), 0, 0, 0);
+    }
+    if (stageY != null) {
+      store.setStagePositionPositionY(new Float(stageY), 0, 0, 0);
+    }
+
+    if (gain != null) store.setDetectorGain(new Float(gain), 0, 0);
+    if (offset != null) store.setDetectorOffset(new Float(offset), 0, 0);
+    if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
 
     String[] channels = (String[]) channelNames.keySet().toArray(new String[0]);
     Arrays.sort(channels);
@@ -525,17 +547,6 @@ public class ZeissZVIReader extends FormatReader {
         store.setExperimenterInstitution(userCompany, 0);
       }
     }
-
-    // TODO : Objective Working Distance
-
-    // CTR CHECK - use Objective, combined w/ ObjectiveSettings once it exists?
-//    String objectiveName = (String) getMeta("Objective Name 0");
-//
-//    if (mag == null) mag = "1.0";
-//    if (na == null) na = "1.0";
-//
-//    store.setObjective(null, objectiveName, null, new Float(na),
-//      new Float(mag), null, null);
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {
@@ -702,8 +713,28 @@ public class ZeissZVIReader extends FormatReader {
         if (value != null && !value.trim().equals("")) userName = value;
       }
       else if (key.equals("User company")) userCompany = value;
-      else if (key.equals("Objective Magnification")) mag = value;
-      else if (key.equals("Objective N.A.")) na = value;
+      else if (key.startsWith("Objective Magnification")) mag = value;
+      else if (key.startsWith("Objective N.A.")) na = value;
+      else if (key.startsWith("Objective Name")) objectiveName = value;
+      else if (key.startsWith("Objective Working Distance")) {
+        workingDistance = value;
+      }
+      else if (key.startsWith("Parfocal Correction")) correction = value;
+      else if (key.startsWith("Stage Position X") ||
+        key.startsWith("Original Stage Position X"))
+      {
+        stageX = value;
+      }
+      else if (key.startsWith("Stage Position Y") ||
+        key.startsWith("Original Stage Position Y"))
+      {
+        stageY = value;
+      }
+      else if (key.startsWith("Halogen Lamp Voltage")) voltage = value;
+      else if (key.startsWith("Orca Analog Gain")) gain = value;
+      else if (key.startsWith("Orca Analog Offset")) offset = value;
+      else if (key.startsWith("Comments")) comments = value;
+      else if (key.startsWith("External Filter Wheel")) filterName = value;
       else if (key.startsWith("Acquisition Date")) {
         if (image >= 0) {
           timestamps.put(new Integer(image), value);
