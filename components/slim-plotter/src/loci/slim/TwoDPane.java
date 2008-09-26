@@ -363,6 +363,20 @@ public class TwoDPane extends JPanel
   public int getROIY() { return roiY; }
   public boolean[][] getROIMask() { return roiMask; }
 
+  /**
+   * Gets the curve fitter for each spectral channel
+   * at the current ROI coordinates.
+   */
+  public CurveFitter[] getCurveFitters() {
+    CurveRenderer[] renderers = switcher.getCurveRenderers();
+    CurveFitter[] cf = new CurveFitter[data.channels];
+    for (int c=0; c<data.channels; c++) {
+      CurveCollection cc = renderers[c].getCurveCollection();
+      cf[c] = cc.getCurves()[roiX][roiY];
+    }
+    return cf;
+  }
+
   // -- ActionListener methods --
 
   /** Handles checkbox presses. */
@@ -415,7 +429,8 @@ public class TwoDPane extends JPanel
       }
       // TEMP - crappy hack to convert bins to ps
       for (int i=0; i<lifetimeImage[0].length; i++) {
-        curveImages[c][0][i] = data.binsToPico((float) lifetimeImage[0][i]);
+        curveImages[c][0][i] =
+          data.binsToPico((float) (1 / lifetimeImage[0][i]));
       }
 
       try {

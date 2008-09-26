@@ -63,6 +63,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   private static final boolean DEBUG = false;
 
+  /** Number of iterations to perform for regional lifetime curve fitting. */
+  private static final int NUM_ITERATIONS = 250;
+
   /** Default orientation for 3D decay curves display. */
   private static final double[] MATRIX_3D = {
     0.2821, 0.1503, -0.0201, 0.0418,
@@ -139,7 +142,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
   private DataReferenceImpl decayRef, fwhmRef, fitRef, resRef;
   private DisplayImpl decayPlot;
-  private Hashtable zScaleLogTable;
 
   // -- Constructor --
 
@@ -276,14 +278,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayPlot.addMap(vMap);
       //decayPlot.addMap(vMapFit);
       decayPlot.addMap(vMapRes);
-
-      // construct log scale label table
-      zScaleLogTable = new Hashtable();
-      double maxExp = Math.log(Integer.MAX_VALUE) / BASE_LOG;
-      for (int exp=1, val=1; exp<maxExp; exp++, val*=BASE) {
-        zScaleLogTable.put(new Double(Math.log(val) / BASE_LOG),
-          exp > 3 ? "1e" + exp : "" + val);
-      }
 
       setProgress(progress, 950); // estimate: 95%
 
@@ -767,17 +761,17 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // update scale labels for log scale
       if (doLog) {
+        Hashtable zScaleLogTable = new Hashtable();
+        double maxExp = Math.log(Integer.MAX_VALUE) / BASE_LOG;
+        for (int exp=1, val=1; exp<maxExp; exp++, val*=BASE) {
+          zScaleLogTable.put(new Double(Math.log(val) / BASE_LOG),
+            exp > 3 ? "1e" + exp : "" + val);
+        }
         AxisScale zScale = zMap.getAxisScale();
         try {
           zScale.setLabelTable(zScaleLogTable);
         }
         catch (VisADException exc) { exc.printStackTrace(); }
-      }
-
-      if (doProbe) {
-        // display per-pixel lifetime probe rather than binned region
-        // CTR START HERE - get renderer from 2-D pane's switcher, get relevant
-        // curve collection, get raw data and fitted curve from collection
       }
 
       // calculate samples
@@ -789,17 +783,27 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       samps = new float[numChanVis * data.timeBins];
       maxVal = 0;
       float[] maxVals = new float[numChanVis];
+      CurveFitter[] curveFitters = null;
+      if (doProbe) curveFitters = twoDPane.getCurveFitters();
       for (int c=0, cc=0; c<data.channels; c++) {
         if (!data.cVisible[c]) continue;
+        int[] cfData = null;
+        if (doProbe) cfData = curveFitters[c].getData();
         for (int t=0; t<data.timeBins; t++) {
           int ndx = data.timeBins * cc + t;
           int sum = 0;
-          if (twoDPane.getROICount() == 1) {
+          if (doProbe) {
+            // use per-pixel lifetime probe rather than binned region
+            sum = cfData[t];
+          }
+          else if (twoDPane.getROICount() == 1) {
+            // single pixel "region"
             int roiX = twoDPane.getROIX();
             int roiY = twoDPane.getROIY();
             sum = data.data[c][roiY][roiX][t];
           }
           else {
+            // sum pixels within region
             boolean[][] roiMask = twoDPane.getROIMask();
             for (int y=0; y<data.height; y++) {
               for (int x=0; x<data.width; x++) {
@@ -846,7 +850,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             sumTotal += sums[t];
           }
           int maxSum = 0;
-          for (int t=0; t<data.timeBins; t++) if (sums[t] > maxSum) maxSum = sums[t];
+          for (int t=0; t<data.timeBins; t++) {
+            if (sums[t] > maxSum) maxSum = sums[t];
+          }
           grandTotal += sumTotal;
           // find full width half max
           float half = maxSum / 2f;
@@ -854,11 +860,13 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           for (int t=0; t<data.timeBins-1; t++) {
             if (sums[t] <= half && sums[t + 1] >= half) { // upslope
               float q = (half - sums[t]) / (sums[t + 1] - sums[t]);
-              fwhm1 = data.timeRange * (t + q) / (data.timeBins - 1); // binsToNano
+              // binsToNano
+              fwhm1 = data.timeRange * (t + q) / (data.timeBins - 1);
             }
             else if (sums[t] >= half && sums[t + 1] <= half) { // downslope
               float q = (half - sums[t + 1]) / (sums[t] - sums[t + 1]);
-              fwhm2 = data.timeRange * (t + 1 - q) / (data.timeBins - 1); // binsToNano
+              // binsToNano
+              fwhm2 = data.timeRange * (t + 1 - q) / (data.timeBins - 1);
             }
             if (fwhm1 == fwhm1 && fwhm2 == fwhm2) break;
           }
@@ -884,19 +892,17 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // curve fitting
       double[][] fitResults = null;
       if (data.adjustPeaks && doRefit) {
-        if (doProbe) {
-          // CTR TODO fill in pre-existing curve
-        }
-        else {
-          // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
-          progress.setNote("Fitting curves");
-          fitResults = new double[data.channels][];
-          tau = new float[data.channels][data.numExp];
-          for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
+        // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
+        progress.setNote("Fitting curves");
+        fitResults = new double[data.channels][];
+        tau = new float[data.channels][data.numExp];
+        for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
+
+        int[] curveData = null;
+        if (!doProbe) {
           int num = data.timeBins - data.maxPeak;
 
           // CTR FIXME - use setLastIndex instead of this 1500 ps hack
-
           // HACK - cut off last 1500 ps from lifetime histogram,
           // to improve accuracy of fit.
           if (data.cutEnd) {
@@ -916,43 +922,61 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           equation.append("c");
           log("Computing fit parameters: " + equation.toString());
-          int[] curveData = new int[num];
-          for (int c=0, cc=0; c<data.channels; c++) {
-            if (!data.cVisible[c]) {
-              fitResults[c] = null;
-              continue;
-            }
-            log("\tChannel #" + (c + 1) + ":");
 
-            CurveFitter fitter =
-              CurveCollection.newCurveFitter(data.curveFitterClass);
-            for (int i=0; i<num; i++) {
-              curveData[i] = (int) samps[data.timeBins * cc + data.maxPeak + i];
+          curveData = new int[num];
+        }
+
+        for (int c=0, cc=0; c<data.channels; c++) {
+          if (!data.cVisible[c]) {
+            fitResults[c] = null;
+            continue;
+          }
+
+          CurveFitter curveFitter = null;
+          if (doProbe) {
+            // use per-pixel lifetime results rather than fitting to region
+            curveFitter = curveFitters[c];
+          }
+          else {
+            // fit curve to region
+            log("\tChannel #" + (c + 1) + ":");
+            curveFitter = CurveCollection.newCurveFitter(data.curveFitterClass);
+            for (int i=0; i<curveData.length; i++) {
+              curveData[i] = (int)
+                samps[data.timeBins * cc + data.maxPeak + i];
             }
-            fitter.setComponentCount(data.numExp);
-            fitter.setData(curveData);
-            fitter.estimate();
-            for (int i=0; i<250; i++) fitter.iterate();
-            double[][] results = fitter.getCurve();
-            log("\t\tchi2=" + fitter.getReducedChiSquaredError());
+            curveFitter.setComponentCount(data.numExp);
+            curveFitter.setData(curveData);
+            curveFitter.estimate();
+            for (int i=0; i<NUM_ITERATIONS; i++) curveFitter.iterate();
+          }
+
+          // extract fit results from curve fitter object
+          double[][] results = curveFitter.getCurve();
+          for (int i=0; i<data.numExp; i++) {
+            tau[c][i] = data.binsToPico((float) (1 / results[i][1]));
+          }
+          fitResults[c] = new double[2 * data.numExp + 1];
+          for (int i=0; i<data.numExp; i++) {
+            int e = 2 * i;
+            fitResults[c][e] = results[i][0];
+            fitResults[c][e + 1] = results[i][1];
+          }
+          fitResults[c][2 * data.numExp] = results[0][2];
+
+          if (!doProbe) {
+            // output results
+            log("\t\tchi2=" + curveFitter.getReducedChiSquaredError());
             for (int i=0; i<data.numExp; i++) {
               log("\t\ta" + (i + 1) + "=" +
                 (100 * results[i][0] / maxVals[cc]) + "%");
-              tau[c][i] = data.binsToPico((float) (1 / results[i][1]));
               log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
             }
             log("\t\tc=" + results[0][2]);
-            fitResults[c] = new double[2 * data.numExp + 1];
-            for (int i=0; i<data.numExp; i++) {
-              int e = 2 * i;
-              fitResults[c][e] = results[i][0];
-              fitResults[c][e + 1] = results[i][1];
-            }
-            fitResults[c][2 * data.numExp] = results[0][2];
-
-            setProgress(progress, ++p, false);
-            cc++;
           }
+
+          setProgress(progress, ++p, false);
+          cc++;
         }
       }
 
@@ -965,7 +989,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
       }
       StringBuffer sb = new StringBuffer();
-      sb.append("Decay curve for ");
+      if (doProbe) sb.append("Per-pixel lifetime decay curve for ");
+      else sb.append("Decay curve for ");
       if (twoDPane.getROICount() == 1) {
         int roiX = twoDPane.getROIX();
         int roiY = twoDPane.getROIY();
@@ -1004,8 +1029,11 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           if (!data.cVisible[c]) continue;
           for (int t=0; t<data.timeBins; t++) {
             int ndx = data.timeBins * cc + t;
-            bcGrid[0][ndx] = data.timeBins > 1 ? t * data.timeRange / (data.timeBins - 1) : 0;
-            bcGrid[1][ndx] = data.channels > 1 ? c * (data.maxWave - data.minWave) / (data.channels - 1) + data.minWave : 0;
+            bcGrid[0][ndx] = data.timeBins > 1 ?
+              t * data.timeRange / (data.timeBins - 1) : 0;
+            bcGrid[1][ndx] = data.channels > 1 ?
+              c * (data.maxWave - data.minWave) /
+              (data.channels - 1) + data.minWave : 0;
           }
           cc++;
         }
@@ -1175,7 +1203,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   /** Converts linear value to logarithm value. */
   private float linearToLog(float v) {
-    return (float) v >= 1 ? (float) Math.log(v) / BASE_LOG : 0;
+    boolean inverse = v < 0;
+    if (inverse) v = -v;
+    float result = (float) v >= 1 ? (float) Math.log(v) / BASE_LOG : 0;
+    return inverse ? -result : result;
   }
 
   private JPanel makeRadioPanel(String title,
@@ -1200,7 +1231,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // probably could eliminate this by writing cleaner logic to convert
       // from 2D surface to 1D lines...
       Linear1DSet timeSet = new Linear1DSet(types.bType, 0,
-        data.timeRange, data.timeBins, null, new Unit[] {types.bcUnits[0]}, null);
+        data.timeRange, data.timeBins, null,
+        new Unit[] {types.bcUnits[0]}, null);
       int numChanVis = 0;
       for (int c=0; c<data.channels; c++) {
         if (data.cVisible[c]) numChanVis++;
@@ -1209,7 +1241,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       for (int c=0, cc=0; c<data.channels; c++) {
         if (!data.cVisible[c]) continue;
         cGrid[0][cc++] = data.channels > 1 ?
-          c * (data.maxWave - data.minWave) / (data.channels - 1) + data.minWave : 0;
+          c * (data.maxWave - data.minWave) /
+          (data.channels - 1) + data.minWave : 0;
       }
       Gridded1DSet waveSet = new Gridded1DSet(types.cType,
         cGrid, numChanVis, null, new Unit[] {types.bcUnits[1]}, null, false);
