@@ -196,9 +196,23 @@ public class GACurveFitter extends CurveFitter {
    * The array is expected to be of size datapoints
    **/
   public void setData(int[] data) {
+    int first = 0;
+    // HACKY CRAP: GET RID OF THIS IN FINAL VERSION OR SUFFER
+    int maxValue = 0;
+    for (int i = 0; i < data.length; i++) {
+      if (data[i] > maxValue) {
+        maxValue = data[i];
+        first = i;
+      }
+    }
+    // END HACKY CRAP
+    setData(data, first, data.length - 1);
+  }
+
+  public void setData(int[] data, int first, int last) {
     curveData = data;
-    firstindex = 0;
-    lastindex = data.length - 1;
+    firstindex = first;
+    lastindex = last;
   }
 
   /**
@@ -207,6 +221,14 @@ public class GACurveFitter extends CurveFitter {
    */
   public int[] getData() {
     return curveData;
+  }
+
+  public int getFirst() {
+    return firstindex;
+  }
+
+  public int getLast() {
+    return lastindex;
   }
 
   /**
@@ -507,14 +529,6 @@ public class GACurveFitter extends CurveFitter {
     }
     curveEstimate = curve;
     currentRCSE = getReducedChiSquaredError();
-  }
-
-  public void setFirst(int index) {
-    firstindex = index;
-  }
-
-  public void setLast(int index) {
-    lastindex = index;
   }
 
 }

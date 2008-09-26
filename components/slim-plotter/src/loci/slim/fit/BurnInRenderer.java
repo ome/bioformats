@@ -90,19 +90,6 @@ public class BurnInRenderer extends CurveRenderer {
         while (currentX < currentDim && alive) {
           //System.out.println("ssl: " + subsampleLevel + " x: " + currentX +
           //  " y: " + currentY);
-          // HACKY CRAP: GET RID OF THIS IN FINAL VERSION OR SUFFER
-          int[] cdata = currentCurves[currentY][currentX].getData();
-          int maxValue = 0;
-          int maxIndex = 0;
-          for (int i = 0; i < cdata.length; i++) {
-            if (cdata[i] > maxValue) {
-              maxValue = cdata[i];
-              maxIndex = i;
-            }
-          }
-          currentCurves[currentY][currentX].setFirst(maxIndex);
-          //System.out.println("Set first to " + maxIndex);
-          // END HACKY CRAP
           currentCurves[currentY][currentX].estimate();
           //currentCurves[currentY][currentX].iterate();
           // This only really matters for the last subsampleLevel

@@ -898,17 +898,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         tau = new float[data.channels][data.numExp];
         for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
 
+        int cutBins = 0;
         int[] curveData = null;
         if (!doProbe) {
-          int num = data.timeBins - data.maxPeak;
+          curveData = new int[data.timeBins];
 
-          // CTR FIXME - use setLastIndex instead of this 1500 ps hack
           // HACK - cut off last 1500 ps from lifetime histogram,
           // to improve accuracy of fit.
-          if (data.cutEnd) {
-            int cutBins = (int) data.picoToBins(1500);
-            if (num > cutBins + 5) num -= cutBins;
-          }
+          if (data.cutEnd) cutBins = (int) data.picoToBins(1500);
 
           StringBuffer equation = new StringBuffer();
           equation.append("y(t) = ");
@@ -922,8 +919,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           equation.append("c");
           log("Computing fit parameters: " + equation.toString());
-
-          curveData = new int[num];
         }
 
         for (int c=0, cc=0; c<data.channels; c++) {
@@ -941,12 +936,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             // fit curve to region
             log("\tChannel #" + (c + 1) + ":");
             curveFitter = CurveCollection.newCurveFitter(data.curveFitterClass);
-            for (int i=0; i<curveData.length; i++) {
-              curveData[i] = (int)
-                samps[data.timeBins * cc + data.maxPeak + i];
+            for (int i=0; i<data.timeBins; i++) {
+              curveData[i] = (int) samps[data.timeBins * cc + i];
             }
             curveFitter.setComponentCount(data.numExp);
-            curveFitter.setData(curveData);
+            curveFitter.setData(curveData,
+              data.maxPeak, data.timeBins - cutBins);
             curveFitter.estimate();
             for (int i=0; i<NUM_ITERATIONS; i++) curveFitter.iterate();
           }
@@ -966,7 +961,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
           if (!doProbe) {
             // output results
-            log("\t\tchi2=" + curveFitter.getReducedChiSquaredError());
+            log("\t\treduced chi2=" + curveFitter.getReducedChiSquaredError());
+            log("\t\traw chi2=" + curveFitter.getChiSquaredError());
+            log("\t\tbin range=[" +
+              curveFitter.getFirst() + ", " + curveFitter.getLast() + "]");
             for (int i=0; i<data.numExp; i++) {
               log("\t\ta" + (i + 1) + "=" +
                 (100 * results[i][0] / maxVals[cc]) + "%");

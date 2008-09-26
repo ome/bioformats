@@ -346,7 +346,7 @@ public class SlimData implements ActionListener, CurveListener {
       "fitting, excludes the last 1.5 ns<br>from the computation. This " +
       "option is useful because the end of the<br>the lifetime histogram " +
       "sometimes drops off unexpectedly, skewing<br>the fit results.</html>");
-    //paramPane.add(cutBox);
+    paramPane.add(cutBox);
     paramPane.add(new JLabel());
     // row 12
     paramPane.add(new JLabel());

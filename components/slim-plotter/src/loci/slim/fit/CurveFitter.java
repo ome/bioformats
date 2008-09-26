@@ -114,12 +114,18 @@ public abstract class CurveFitter {
    */
   public abstract void setData(int[] data);
 
+  public abstract void setData(int[] data, int first, int last);
+
   /**
    * Gets the data to be used to generate curve estimates.
    * Single dimension of data... time values are index, since
    * we can assume that the datapoints are evenly spaced.
    */
   public abstract int[] getData();
+
+  public abstract int getFirst();
+
+  public abstract int getLast();
 
   /** Sets how many exponentials are expected to be fitted. */
   public abstract void setComponentCount(int numExp);
@@ -146,7 +152,4 @@ public abstract class CurveFitter {
    */
   public abstract void setCurve(double[][] curve);
 
-  public abstract void setFirst(int firstindex);
-
-  public abstract void setLast(int lastindex);
 }

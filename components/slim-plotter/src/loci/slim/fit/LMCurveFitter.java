@@ -65,6 +65,11 @@ public class LMCurveFitter extends CurveFitter {
   public void iterate() { }
 
   public void setData(int[] data) {
+    setData(data, 0, data.length - 1);
+  }
+
+  public void setData(int[] data, int first, int last) {
+    // TODO - respect first and last values
     curveData = data;
     int num = curveData.length;
     xVals = new float[num];
@@ -80,6 +85,10 @@ public class LMCurveFitter extends CurveFitter {
   }
 
   public int[] getData() { return curveData; }
+
+  public int getFirst() { return 0; }
+
+  public int getLast() { return curveData.length; }
 
   /** Sets the number of components in the fit. Must be 1 or 2. */
   public void setComponentCount(int numExp) {
@@ -187,10 +196,5 @@ public class LMCurveFitter extends CurveFitter {
       println(s);
     }
   }
-
-  // TODO: Dummy methods to implement CurveFitter
-  public void setFirst(int index) {}
-
-  public void setLast(int index) {}
 
 }

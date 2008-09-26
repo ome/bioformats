@@ -427,10 +427,12 @@ public class TwoDPane extends JPanel
         // TEMP - only visualize first component of multi-component fit
         curveImages[c] = new float[1][lifetimeImage[0].length];
       }
-      // TEMP - crappy hack to convert bins to ps
-      for (int i=0; i<lifetimeImage[0].length; i++) {
-        curveImages[c][0][i] =
-          data.binsToPico((float) (1 / lifetimeImage[0][i]));
+      // convert bins to ps
+      for (int j=0; j<curveImages.length; j++) {
+        for (int i=0; i<curveImages[c][j].length; i++) {
+          curveImages[c][j][i] =
+            data.binsToPico((float) (1 / lifetimeImage[j][i]));
+        }
       }
 
       try {
