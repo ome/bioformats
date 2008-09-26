@@ -134,7 +134,7 @@ public abstract class CurveFitter {
   public abstract void setData(int[] data);
 
   /**
-   * Sets the data to be used to generate curve estimates.
+   * Gets the data to be used to generate curve estimates.
    * Single dimension of data... time values are index, since
    * we can assume that the datapoints are evenly spaced.
    */

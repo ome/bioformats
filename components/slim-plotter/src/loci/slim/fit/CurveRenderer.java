@@ -50,16 +50,22 @@ public abstract class CurveRenderer implements ICurveRenderer {
   protected CurveCollection curveData;
   protected int numExponentials;
 
+  // -- Constructor --
+
+  public CurveRenderer(CurveCollection cc) {
+    curveData = cc;
+  }
+
   // -- ICurveRenderer methods --
+
+  public CurveCollection getCurveCollection() {
+    return curveData;
+  }
 
   public abstract void run();
 
   public void stop() {
     alive = false;
-  }
-
-  public CurveRenderer(CurveCollection cc) {
-    curveData = cc;
   }
 
   public int getCurrentIterations() {

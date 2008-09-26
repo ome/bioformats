@@ -35,6 +35,8 @@ package loci.slim.fit;
  */
 public interface ICurveRenderer extends Runnable {
 
+  CurveCollection getCurveCollection();
+
   void run();
 
   void stop();

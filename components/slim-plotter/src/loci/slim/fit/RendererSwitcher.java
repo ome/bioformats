@@ -57,7 +57,21 @@ public class RendererSwitcher implements ICurveRenderer {
     renderers[lastC].stop();
   }
 
-  // -- IRenderer methods --
+  public CurveRenderer[] getCurveRenderers() {
+    return renderers;
+  }
+
+  public CurveCollection[] getCurveCollections() {
+    CurveCollection[] cc = new CurveCollection[renderers.length];
+    for (int i=0; i<cc.length; i++) cc[i] = renderers[i].getCurveCollection();
+    return cc;
+  }
+
+  // -- ICurveRenderer methods --
+
+  public CurveCollection getCurveCollection() {
+    return renderers[c].getCurveCollection();
+  }
 
   public void run() {
     alive = true;
