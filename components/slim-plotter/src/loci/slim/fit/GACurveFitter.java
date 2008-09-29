@@ -53,8 +53,9 @@ public class GACurveFitter extends CurveFitter {
   protected double[][][] geneticData;
   protected double[] fitness;
   protected int stallGenerations;
-  private double mutationFactor;
+  protected double mutationFactor;
   protected int numIter;
+  protected Random r;
 
   // -- Constructor --
 
@@ -71,6 +72,8 @@ public class GACurveFitter extends CurveFitter {
     currentRCSE = Double.MAX_VALUE;
     stallGenerations = 0;
     mutationFactor = INITIAL_MUTATION_FACTOR;
+    numIter = 0;
+    r = new Random();
   }
 
 
@@ -86,7 +89,6 @@ public class GACurveFitter extends CurveFitter {
 
     // TODO: Move these out, reuse them. Synchronized?
     double[][][] newGeneration = new double[SPECIMENS][components][3];
-    Random r = new Random();
 
     // First make the new generation.
     // If we don't have generation or fitness data, generate it from whatever
@@ -182,13 +184,13 @@ public class GACurveFitter extends CurveFitter {
         }
       }
     }
-    /*
-    System.out.println("RCSE: " + currentRCSE);
-    for (int j = 0; j < components; j++) {
-      System.out.println("a: " + curveEstimate[j][0] + " b: " +
-        curveEstimate[j][1] + " c: " + curveEstimate[j][2]);
+    if (DEBUG) {
+      System.out.println("RCSE: " + currentRCSE);
+      for (int j = 0; j < components; j++) {
+        System.out.println("a: " + curveEstimate[j][0] + " b: " +
+          curveEstimate[j][1] + " c: " + curveEstimate[j][2]);
+      }
     }
-    */
 
     numIter++;
   }

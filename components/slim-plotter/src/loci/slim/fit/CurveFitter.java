@@ -37,7 +37,7 @@ public abstract class CurveFitter implements ICurveFitter {
 
   // -- Constants --
 
-  private static final boolean DEBUG = false;
+  protected static final boolean DEBUG = false;
 
   // -- Fields --
 
@@ -66,12 +66,11 @@ public abstract class CurveFitter implements ICurveFitter {
   }
 
   public double getChiSquaredError(double[][] estCurve) {
-    double total = 0.0d;
+    double total = 0;
     double[] expected = getEstimates(curveData, estCurve);
     for (int i = firstIndex; i <= lastIndex; i++) {
       if (expected[i] > 0) {
-        double observed = curveData[i];
-        double term = (observed - expected[i]);
+        double term = curveData[i] - expected[i];
         // (o-e)^2
         term *= term;
         // (o-e)^2 / e
@@ -107,7 +106,7 @@ public abstract class CurveFitter implements ICurveFitter {
       double value = 0;
       for (int j = 0; j < estimate.length; j++) {
         // e^-bt
-        double term = Math.pow(Math.E, -estimate[j][1] * i);
+        double term = Math.exp(-estimate[j][1] * i);
         // ae^-bt
         term *= estimate[j][0];
         // ae^-bt + c
@@ -217,7 +216,7 @@ public abstract class CurveFitter implements ICurveFitter {
       for (int i=firstIndex; i < 5 + firstIndex && i <= lastIndex; i++) {
         if (curveData[i] > guessC) {
           // calculate e^-bt based on our exponent estimate
-          double value = Math.pow(Math.E, -i * exp);
+          double value = Math.exp(-i * exp);
           // estimate a
           double guessA = (curveData[i] - guessC) / value;
           num += guessA * (curveData[i] - guessC);
@@ -265,7 +264,7 @@ public abstract class CurveFitter implements ICurveFitter {
       for (int i=firstIndex; i < 5 + firstIndex && i <= lastIndex; i++) {
         if (curveData[i] > guessC + 10) {
           // calculate e^-bt based on our exponent estimate
-          double value = Math.pow(Math.E, -i * low);
+          double value = Math.exp(-i * low);
           // estimate a
           double guessA = curveData[i] / value;
           if (guessA > highA) highA = guessA;
@@ -316,7 +315,7 @@ public abstract class CurveFitter implements ICurveFitter {
       for (int i = 0; i < lowBound; i++) {
         if (lowValues[i][1] > guessC) {
           // calculate e^-bt based on our exponent estimate
-          double value = Math.pow(Math.E, -lowValues[i][0] * exp);
+          double value = Math.exp(-lowValues[i][0] * exp);
           // estimate a
           double guessA = lowValues[i][1] / value;
           num += guessA * (lowValues[i][1] - guessC);

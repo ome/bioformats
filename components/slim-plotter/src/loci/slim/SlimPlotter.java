@@ -1106,7 +1106,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
                 // c
                 sum += (float) q[2 * data.numExp];
                 fitSamps[ndx] = sum;
-                residuals[ndx] = samps[ndx] - fitSamps[ndx];
+                if (t <= fitLast[c]) {
+                  residuals[ndx] = samps[ndx] - fitSamps[ndx];
+                }
               }
             }
             cc++;
