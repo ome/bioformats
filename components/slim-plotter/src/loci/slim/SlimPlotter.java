@@ -318,9 +318,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           new ConstantMap(0, Display.Blue),
           //new ConstantMap(2, Display.LineWidth)
         });
+        fwhmRend.toggle(false);
       }
 
-      if (data.adjustPeaks) {
+      if (data.allowCurveFit) {
         // add references for curve fitting
         fitRend = new DefaultRendererJ3D();
         fitRef = new DataReferenceImpl("fit");
@@ -415,21 +416,20 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       showBox = new JCheckBox("Box", true);
       showBox.setToolTipText("Toggles visibility of bounding box");
       showBox.addActionListener(this);
-      showLine = new JCheckBox("Lines", data.adjustPeaks);
-      showLine.setToolTipText(
-        "Toggles visibility of aligned peaks indicator line");
-      showLine.setEnabled(data.adjustPeaks);
+      showLine = new JCheckBox("Lines", data.allowCurveFit);
+      showLine.setToolTipText("Toggles visibility of curve fit cutoff lines");
+      showLine.setEnabled(data.allowCurveFit);
       showLine.addActionListener(this);
       showFit = new JCheckBox("Fit", false);
       showFit.setToolTipText("Toggles visibility of fitted curves");
-      showFit.setEnabled(data.adjustPeaks);
+      showFit.setEnabled(data.allowCurveFit);
       showFit.addActionListener(this);
       showResiduals = new JCheckBox("Residuals", false);
       showResiduals.setToolTipText(
         "Toggles visibility of fitted curve residuals");
-      showResiduals.setEnabled(data.adjustPeaks);
+      showResiduals.setEnabled(data.allowCurveFit);
       showResiduals.addActionListener(this);
-      showFWHMs = new JCheckBox("FWHMs", data.computeFWHMs);
+      showFWHMs = new JCheckBox("FWHMs", false);
       showFWHMs.setToolTipText("Toggles visibility of full width half maxes");
       showFWHMs.setEnabled(data.computeFWHMs);
       showFWHMs.addActionListener(this);
@@ -454,26 +454,26 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       dataLines.setEnabled(data.channels > 1);
       fitSurface = new JRadioButton("Surface", false);
       fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
-      fitSurface.setEnabled(data.adjustPeaks && data.channels > 1);
+      fitSurface.setEnabled(data.allowCurveFit && data.channels > 1);
       fitLines = new JRadioButton("Lines", true);
       fitLines.setToolTipText("Displays fitted curves as a series of lines");
-      fitLines.setEnabled(data.adjustPeaks && data.channels > 1);
+      fitLines.setEnabled(data.allowCurveFit && data.channels > 1);
       resSurface = new JRadioButton("Surface", false);
       resSurface.setToolTipText(
         "Displays fitted curve residuals as a 2D surface");
-      resSurface.setEnabled(data.adjustPeaks && data.channels > 1);
+      resSurface.setEnabled(data.allowCurveFit && data.channels > 1);
       resLines = new JRadioButton("Lines", true);
       resLines.setToolTipText(
         "Displays fitted curve residuals as a series of lines");
-      resLines.setEnabled(data.adjustPeaks && data.channels > 1);
+      resLines.setEnabled(data.allowCurveFit && data.channels > 1);
       colorHeight = new JRadioButton("Counts", true);
       colorHeight.setToolTipText(
         "Colorizes data according to the height (histogram count)");
-      colorHeight.setEnabled(data.adjustPeaks && data.channels > 1);
+      colorHeight.setEnabled(data.allowCurveFit && data.channels > 1);
       colorTau = new JRadioButton("Lifetimes", false);
       colorTau.setToolTipText(
         "Colorizes data according to aggregate lifetime value");
-      colorTau.setEnabled(data.adjustPeaks && data.channels > 1);
+      colorTau.setEnabled(data.allowCurveFit && data.channels > 1);
 
       zOverride = new JCheckBox("", false);
       zOverride.setToolTipText(
@@ -905,7 +905,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           float h1 = 1000 * fwhm1, h2 = 1000 * fwhm2;
           log("\tChannel " + s + ": fwhm = " + (h2 - h1) + " ps");
           log("\t             counts = " + sumTotal);
-          log("\t             peak = " + sums[data.maxPeak]);
+          log("\t             peak = " + maxSum);
           log("\t             center = " + ((h1 + h2) / 2) + " ps");
           log("\t             range = [" + h1 + ", " + h2 + "] ps");
           if (plotCanceled) break;
@@ -917,7 +917,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // curve fitting
       double[][] fitResults = null;
       int[] fitFirst = null, fitLast = null;
-      if (data.adjustPeaks && doRefit) {
+      if (data.allowCurveFit && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
         progress.setNote("Fitting curves");
         fitResults = new double[data.channels][];
@@ -926,14 +926,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         tau = new float[data.channels][data.numExp];
         for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
 
-        int cutBins = 0;
         int[] curveData = null;
         if (!doProbe) {
           curveData = new int[data.timeBins];
-
-          // HACK - cut off last 1500 ps from lifetime histogram,
-          // to improve accuracy of fit.
-          if (data.cutEnd) cutBins = (int) data.picoToBins(1500);
 
           StringBuffer equation = new StringBuffer();
           equation.append("y(t) = ");
@@ -969,7 +964,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             }
             curveFitter.setComponentCount(data.numExp);
             curveFitter.setData(curveData,
-              data.maxPeak, data.timeBins - cutBins);
+              data.maxPeak, data.timeBins - 1 - data.cutBins);
             curveFitter.estimate();
             for (int i=0; i<NUM_ITERATIONS; i++) curveFitter.iterate();
           }
@@ -1090,9 +1085,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             double[] q = fitResults[c];
             for (int t=0; t<data.timeBins; t++) {
               int ndx = data.timeBins * cc + t;
-              int et = t - data.maxPeak; // adjust for peak alignment
-              if (et < 0) fitSamps[ndx] = residuals[ndx] = 0;
-              else {
+              int et = t - fitFirst[c]; // adjust for peak offset
+              if (et >= 0) {
                 float sum = 0;
                 for (int i=0; i<data.numExp; i++) {
                   int e = 2 * i;

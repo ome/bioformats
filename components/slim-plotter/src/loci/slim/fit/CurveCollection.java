@@ -67,10 +67,11 @@ public class CurveCollection implements CurveReporter {
    * @throws IllegalArgumentException
    *  if numRows or numCols is not a power of two or numRows != numCols
    */
-  public CurveCollection(int[][][] data,
-    Class curveFitterClass, int binRadius)
+  public CurveCollection(int[][][] data, Class curveFitterClass,
+    int binRadius, int firstIndex, int lastIndex)
   {
-    this(makeCurveFitters(data, curveFitterClass, binRadius));
+    this(makeCurveFitters(data, curveFitterClass,
+      binRadius, firstIndex, lastIndex));
   }
 
   /**
@@ -109,16 +110,30 @@ public class CurveCollection implements CurveReporter {
       curves[d] = new ICurveFitter[res][res];
       for (int y=0; y<res; y++) {
         for (int x=0; x<res; x++) {
-          ICurveFitter cf = newCurveFitter(curveFitterClass);
-          int[] data0 = curves[d-1][2*y][2*x].getData();
-          int[] data1 = curves[d-1][2*y][2*x+1].getData();
-          int[] data2 = curves[d-1][2*y+1][2*x].getData();
-          int[] data3 = curves[d-1][2*y+1][2*x+1].getData();
+          ICurveFitter cf0 = curves[d-1][2*y][2*x];
+          ICurveFitter cf1 = curves[d-1][2*y][2*x+1];
+          ICurveFitter cf2 = curves[d-1][2*y+1][2*x];
+          ICurveFitter cf3 = curves[d-1][2*y+1][2*x+1];
+          int[] data0 = cf0.getData();
+          int[] data1 = cf1.getData();
+          int[] data2 = cf2.getData();
+          int[] data3 = cf3.getData();
+          int first0 = cf0.getFirst();
+          int first1 = cf1.getFirst();
+          int first2 = cf2.getFirst();
+          int first3 = cf3.getFirst();
+          int last0 = cf0.getLast();
+          int last1 = cf1.getLast();
+          int last2 = cf2.getLast();
+          int last3 = cf3.getLast();
           int[] data = new int[data0.length];
           for (int i=0; i<data.length; i++) {
             data[i] = data0[i] + data1[i] + data2[i] + data3[i];
           }
-          cf.setData(data);
+          int first = (first0 + first1 + first2 + first3) / 4;
+          int last = (last0 + last1 + last2 + last3) / 4;
+          ICurveFitter cf = newCurveFitter(curveFitterClass);
+          cf.setData(data, first, last);
           curves[d][y][x] = cf;
           fireCurveEvent(new CurveEvent(this, value++, max, null));
         }
@@ -195,7 +210,7 @@ public class CurveCollection implements CurveReporter {
 
   /** Creates a list of curve fitters using the given data as a source. */
   public static ICurveFitter[][] makeCurveFitters(int[][][] data,
-    Class curveFitterClass, int binRadius)
+    Class curveFitterClass, int binRadius, int firstIndex, int lastIndex)
   {
     int numRows = data.length;
     int numCols = data[0].length;
@@ -228,7 +243,7 @@ public class CurveCollection implements CurveReporter {
     for (int y=0; y<numRows; y++) {
       for (int x=0; x<numCols; x++) {
         curveFitters[y][x] = newCurveFitter(curveFitterClass);
-        curveFitters[y][x].setData(data[y][x]);
+        curveFitters[y][x].setData(data[y][x], firstIndex, lastIndex);
       }
     }
     return curveFitters;

@@ -123,21 +123,21 @@ public abstract class CurveFitter implements ICurveFitter {
    * we can assume that the datapoints are evenly spaced.
    */
   public void setData(int[] data) {
-    int first = 0;
-    // HACKY CRAP: GET RID OF THIS IN FINAL VERSION OR SUFFER
-    int maxValue = 0;
-    for (int i = 0; i < data.length; i++) {
-      if (data[i] > maxValue) {
-        maxValue = data[i];
-        first = i;
-      }
-    }
-    // END HACKY CRAP
-    setData(data, 0, data.length - 1);
+    setData(data, -1, data.length - 1);
   }
 
   public void setData(int[] data, int first, int last) {
     curveData = data;
+    if (first < 0) {
+      // autodetect start of curve based on peak
+      int maxValue = Integer.MIN_VALUE;
+      for (int i = 0; i < data.length; i++) {
+        if (data[i] > maxValue) {
+          maxValue = data[i];
+          first = i;
+        }
+      }
+    }
     firstindex = first;
     lastindex = last;
   }

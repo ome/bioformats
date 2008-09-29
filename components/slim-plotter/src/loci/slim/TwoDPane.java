@@ -428,7 +428,7 @@ public class TwoDPane extends JPanel
         curveImages[c] = new float[1][lifetimeImage[0].length];
       }
       // convert bins to ps
-      for (int j=0; j<curveImages.length; j++) {
+      for (int j=0; j<curveImages[c].length; j++) {
         for (int i=0; i<curveImages[c][j].length; i++) {
           curveImages[c][j][i] =
             data.binsToPico((float) (1 / lifetimeImage[j][i]));

@@ -70,8 +70,9 @@ public class SlimData implements ActionListener, CurveListener {
   // fit parameters
   protected int numExp;
   protected Class curveFitterClass;
+  protected boolean allowCurveFit;
   protected int binRadius;
-  protected boolean adjustPeaks, cutEnd;
+  protected int cutBins;
   protected int maxPeak;
 
   // miscellaneous parameters
@@ -85,9 +86,10 @@ public class SlimData implements ActionListener, CurveListener {
   private JTextField wField, hField, tField, cField;
   private JTextField trField, wlField, sField;
   private JTextField fitField;
-  private JRadioButton gaChoice, lmChoice;
+  private JRadioButton gaChoice, lmChoice, noChoice;
   private JTextField binField;
-  private JCheckBox peaksBox, fwhmBox, cutBox;
+  private JCheckBox alignBox, cutBox;
+  private JCheckBox fwhmBox;
 
   // GUI components for reporting progress
   private ProgressMonitor progress;
@@ -163,7 +165,7 @@ public class SlimData implements ActionListener, CurveListener {
     }
 
     // adjust peaks
-    if (adjustPeaks) {
+    if (allowCurveFit && maxPeak == 0) {
       progress.setNote("Adjusting peaks");
       int[] peaks = new int[channels];
       for (int c=0; c<channels; c++) {
@@ -185,7 +187,6 @@ public class SlimData implements ActionListener, CurveListener {
         SlimPlotter.setProgress(progress, 480, 10,
           (double) (c + 1) / channels);
       }
-      maxPeak = 0;
       for (int c=0; c<channels; c++) {
         if (maxPeak < peaks[c]) maxPeak = peaks[c];
       }
@@ -215,7 +216,8 @@ public class SlimData implements ActionListener, CurveListener {
     for (int c=0; c<channels; c++) {
       if (channels == 1) progress.setNote("Subsampling data");
       else progress.setNote("Subsampling ch. " + (c + 1) + "/" + channels);
-      curves[c] = new CurveCollection(data[c], curveFitterClass, binRadius);
+      curves[c] = new CurveCollection(data[c],
+        curveFitterClass, binRadius, maxPeak, timeBins - 1 - cutBins);
       curves[c].addCurveListener(this);
       progressBase = 500 + 500 * c / channels;
       curves[c].computeCurves();
@@ -236,7 +238,7 @@ public class SlimData implements ActionListener, CurveListener {
 
   // -- ActionListener methods --
 
-  /** Handles checkbox and button presses. */
+  /** Handles OK button press. */
   public void actionPerformed(ActionEvent e) {
     width = parse(wField.getText(), width);
     height = parse(hField.getText(), height);
@@ -246,12 +248,14 @@ public class SlimData implements ActionListener, CurveListener {
     minWave = parse(wlField.getText(), minWave);
     waveStep = parse(sField.getText(), waveStep);
     numExp = parse(fitField.getText(), numExp);
-    curveFitterClass = lmChoice.isSelected() ?
-      LMCurveFitter.class : GACurveFitter.class;
+    curveFitterClass = null;
+    if (gaChoice.isSelected()) curveFitterClass = GACurveFitter.class;
+    else if (lmChoice.isSelected()) curveFitterClass = LMCurveFitter.class;
+    allowCurveFit = !noChoice.isSelected();
     binRadius = parse(binField.getText(), binRadius);
-    adjustPeaks = peaksBox.isSelected();
+    maxPeak = alignBox.isSelected() ? 0 : -1;
+    cutBins = cutBox.isSelected() ? (int) picoToBins(1500) : 0;
     computeFWHMs = fwhmBox.isSelected();
-    cutEnd = cutBox.isSelected();
     cVisible = new boolean[channels];
     Arrays.fill(cVisible, true);
     paramDialog.setVisible(false);
@@ -301,7 +305,7 @@ public class SlimData implements ActionListener, CurveListener {
     JPanel paramPane = new JPanel();
     paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
     paramDialog.setContentPane(paramPane);
-    paramPane.setLayout(new GridLayout(13, 3));
+    paramPane.setLayout(new GridLayout(14, 3));
     // rows 1-7
     wField = addRow(paramPane, "Image width", width, "pixels");
     hField = addRow(paramPane, "Image height", height, "pixels");
@@ -312,47 +316,52 @@ public class SlimData implements ActionListener, CurveListener {
     sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
     // row 8
     paramPane.add(new JLabel("Fit algorithm"));
-    lmChoice = new JRadioButton("LM");
     gaChoice = new JRadioButton("Genetic", true);
+    lmChoice = new JRadioButton("LM");
+    noChoice = new JRadioButton("None");
     ButtonGroup group = new ButtonGroup();
-    group.add(lmChoice);
     group.add(gaChoice);
+    group.add(lmChoice);
+    group.add(noChoice);
     JPanel algPane = new JPanel();
     algPane.setLayout(new BoxLayout(algPane, BoxLayout.X_AXIS));
-    algPane.add(lmChoice);
     algPane.add(gaChoice);
+    algPane.add(lmChoice);
+    //algPane.add(noChoice);
     paramPane.add(algPane);
-    paramPane.add(new JLabel());
+    paramPane.add(noChoice);
     // rows 9-10
     fitField = addRow(paramPane, "Exponential fit", 1, "components");
     binField = addRow(paramPane, "Bin radius", binRadius, "pixels");
     // row 11, column 1
-    peaksBox = new JCheckBox("Align peaks", true);
-    peaksBox.setToolTipText("<html>Computes the peak of each spectral " +
-      "channel, and aligns those peaks <br>to match by adjusting the " +
-      "lifetime histograms. This option corrects<br>for skew across " +
-      "channels caused by the multispectral detector's<br>variable system " +
-      "response time between channels. This option must<br>be enabled to " +
-      "perform exponential curve fitting.</html>");
-    paramPane.add(peaksBox);
+    paramPane.add(new JLabel("Fit options"));
     // row 11, column 2
-    fwhmBox = new JCheckBox("Show FWHMs", false);
-    fwhmBox.setToolTipText(
-      "<html>Computes the full width half max at each channel.</html>");
-    paramPane.add(fwhmBox);
+    alignBox = new JCheckBox("Align peaks", true);
+    alignBox.setToolTipText("<html>If checked, data peaks are globally " +
+      "aligned spatially and across channels;<br>otherwise, each curve's " +
+      "peak is individually auto-detected.</html>");
+    paramPane.add(alignBox);
     // row 11, column 3
-    cutBox = new JCheckBox("Cut 1.5ns from fit", true);
+    cutBox = new JCheckBox("Cut 1.5ns", true);
     cutBox.setToolTipText("<html>When performing exponential curve " +
       "fitting, excludes the last 1.5 ns<br>from the computation. This " +
       "option is useful because the end of the<br>the lifetime histogram " +
       "sometimes drops off unexpectedly, skewing<br>the fit results.</html>");
     paramPane.add(cutBox);
-    paramPane.add(new JLabel());
-    // row 12
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
+    // row 12, column 1
+    paramPane.add(new JLabel("Toggles"));
+    // row 12, column 2
+    fwhmBox = new JCheckBox("FWHMs", true);
+    fwhmBox.setToolTipText(
+      "<html>Computes the full width half max at each channel.</html>");
+    paramPane.add(fwhmBox);
+    // row 12, column 3
     paramPane.add(new JLabel());
     // row 13
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    // row 14
     paramPane.add(new JLabel());
     JButton ok = new JButton("OK");
     paramDialog.getRootPane().setDefaultButton(ok);
