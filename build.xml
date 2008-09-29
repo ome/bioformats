@@ -329,18 +329,6 @@ Apache XML-RPC
   <taskdef resource="net/sf/antcontrib/antlib.xml"
     classpath="jar/ant-contrib-1.0b1.jar"/>
 
-<!--
-  <path id="cp-testng">
-    <pathelement location="${classes.dir}"/>
-    <fileset dir="jar">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-
-  <taskdef name="testng" classpathref="cp-testng"
-    classname="org.testng.TestNGAntTask"/>
--->
-
   <!-- Global build targets -->
 
   <target name="style"
@@ -858,81 +846,28 @@ Apache XML-RPC
     <delete dir="${ome-tools.dir}"/>
   </target>
 
-  <!-- TODO - rework targets below this point -->
-
   <!-- Test targets -->
 
-<!--
-  <target name="test-all" depends="compile"
-    description="run all automated tests">
-    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
-      annotations="Javadoc" groups="all" testname="All tests"
-      listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
-      <sysproperty key="testng.filename" value="${testng.filename}"/>
-      <sysproperty key="testng.directory" value="${testng.directory}"/>
-      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
+  <target name="test-all" description="run all automated tests">
+    <ant dir="components/test-suite" target="test-all"/>
   </target>
 
-  <target name="test-config" depends="compile"
+  <target name="test-config"
     description="generate config files for automated test suite">
-    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
-      annotations="Javadoc" groups="config" testname="Config generation"
-      listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
-      <sysproperty key="testng.directory" value="${testng.directory}"/>
-      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
+    <ant dir="components/test-suite" target="test-config"/>
   </target>
 
-  <target name="test-fast" depends="compile"
-    description="run automated tests in group 'fast'">
-    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
-      annotations="Javadoc" groups="fast" testname="Fast tests"
-      listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
-      <sysproperty key="testng.directory" value="${testng.directory}"/>
-      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
-      <jvmarg value="-Xmx${testng.memory}"/>
-    </testng>
+  <target name="test-fast" description="run automated tests in group 'fast'">
+    <ant dir="components/test-suite" target="test-fast"/>
   </target>
 
-  <target name="test-pixels" depends="compile"
+  <target name="test-pixels"
     description="run automated tests in group 'pixels'">
-    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
-      annotations="Javadoc" groups="pixels" testname="Pixels tests"
-      listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
-      <sysproperty key="testng.directory" value="${testng.directory}"/>
-      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
-      <jvmarg value="-Xmx${testng.memory}"/>
-    </testng>
+    <ant dir="components/test-suite" target="test-pixels"/>
   </target>
 
-  <target name="test-xml" depends="compile"
-    description="run automated tests in group 'xml'">
-    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
-      annotations="Javadoc" groups="xml" testname="XML tests"
-      listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
-      <sysproperty key="testng.directory" value="${testng.directory}"/>
-      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
-      <jvmarg value="-Xmx${testng.memory}"/>
-    </testng>
+  <target name="test-xml" description="run automated tests in group 'xml'">
+    <ant dir="components/test-suite" target="test-xml"/>
   </target>
--->
 
 </project>
