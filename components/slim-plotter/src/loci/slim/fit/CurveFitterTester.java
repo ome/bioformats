@@ -78,7 +78,7 @@ public class CurveFitterTester {
 
     int[] data = curveData(in);
     long start = System.currentTimeMillis();
-    CurveFitter cf = new GACurveFitter();
+    ICurveFitter cf = new GACurveFitter();
     // TODO: Change this to test all of the test data.
     cf.setComponentCount(numExp);
     cf.setData(data);

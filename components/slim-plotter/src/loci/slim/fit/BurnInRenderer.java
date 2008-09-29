@@ -39,7 +39,7 @@ import java.util.Arrays;
  */
 public class BurnInRenderer extends CurveRenderer {
 
-  protected CurveFitter[][] currentCurves = null;
+  protected ICurveFitter[][] currentCurves = null;
   protected int currentDim;
   protected double[][] image;
   protected int maxDim;

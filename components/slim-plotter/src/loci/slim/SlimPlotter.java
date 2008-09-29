@@ -783,7 +783,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       samps = new float[numChanVis * data.timeBins];
       maxVal = 0;
       float[] maxVals = new float[numChanVis];
-      CurveFitter[] curveFitters = null;
+      ICurveFitter[] curveFitters = null;
       if (doProbe) curveFitters = twoDPane.getCurveFitters();
       for (int c=0, cc=0; c<data.channels; c++) {
         if (!data.cVisible[c]) continue;
@@ -927,7 +927,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             continue;
           }
 
-          CurveFitter curveFitter = null;
+          ICurveFitter curveFitter = null;
           if (doProbe) {
             // use per-pixel lifetime results rather than fitting to region
             curveFitter = curveFitters[c];

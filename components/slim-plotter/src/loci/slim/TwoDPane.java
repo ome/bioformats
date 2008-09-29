@@ -367,9 +367,9 @@ public class TwoDPane extends JPanel
    * Gets the curve fitter for each spectral channel
    * at the current ROI coordinates.
    */
-  public CurveFitter[] getCurveFitters() {
+  public ICurveFitter[] getCurveFitters() {
     CurveRenderer[] renderers = switcher.getCurveRenderers();
-    CurveFitter[] cf = new CurveFitter[data.channels];
+    ICurveFitter[] cf = new ICurveFitter[data.channels];
     for (int c=0; c<data.channels; c++) {
       CurveCollection cc = renderers[c].getCurveCollection();
       cf[c] = cc.getCurves()[roiX][roiY];

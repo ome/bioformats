@@ -51,7 +51,7 @@ public class CurveCollection implements CurveReporter {
   protected int numRows;
 
   /** Curve fit data, dimensioned [maxDepth][numRows][numCols]. */
-  protected CurveFitter[][][] curves;
+  protected ICurveFitter[][][] curves;
 
   // -- Constructors --
 
@@ -81,7 +81,7 @@ public class CurveCollection implements CurveReporter {
    * @throws IllegalArgumentException
    *  if numRows or numCols is not a power of two or numRows != numCols
    */
-  public CurveCollection(CurveFitter[][] curveFitters) {
+  public CurveCollection(ICurveFitter[][] curveFitters) {
     numRows = curveFitters.length;
     int numCols = curveFitters[0].length;
     if (numRows != numCols) {
@@ -92,7 +92,7 @@ public class CurveCollection implements CurveReporter {
     if (log != depth) {
       throw new IllegalArgumentException("Row count is not a power of two");
     }
-    curves = new CurveFitter[depth + 1][][];
+    curves = new ICurveFitter[depth + 1][][];
     curves[0] = curveFitters;
   }
 
@@ -106,10 +106,10 @@ public class CurveCollection implements CurveReporter {
     int value = 0, max = numRows * numRows / 3;
     for (int d=1; d<=depth; d++) {
       res /= 2;
-      curves[d] = new CurveFitter[res][res];
+      curves[d] = new ICurveFitter[res][res];
       for (int y=0; y<res; y++) {
         for (int x=0; x<res; x++) {
-          CurveFitter cf = newCurveFitter(curveFitterClass);
+          ICurveFitter cf = newCurveFitter(curveFitterClass);
           int[] data0 = curves[d-1][2*y][2*x].getData();
           int[] data1 = curves[d-1][2*y][2*x+1].getData();
           int[] data2 = curves[d-1][2*y+1][2*x].getData();
@@ -127,7 +127,7 @@ public class CurveCollection implements CurveReporter {
   }
 
   /** Gets the collection of curves at full resolution. */
-  public CurveFitter[][] getCurves() { return getCurves(0); }
+  public ICurveFitter[][] getCurves() { return getCurves(0); }
 
   /**
    * Gets the collection of curves subsampled at the given depth.
@@ -137,7 +137,7 @@ public class CurveCollection implements CurveReporter {
    * @throws IllegalArgumentException
    *   if the subsampling depth is greater than {@link #getSubsamplingDepth}
    */
-  public CurveFitter[][] getCurves(int depth) {
+  public ICurveFitter[][] getCurves(int depth) {
     if (depth < 0 || depth > getSubsamplingDepth()) {
       throw new IllegalArgumentException("Invalid subsampling depth " +
         "(expected 0 <= depth <= " + getSubsamplingDepth());
@@ -194,7 +194,7 @@ public class CurveCollection implements CurveReporter {
   // -- Utility methods --
 
   /** Creates a list of curve fitters using the given data as a source. */
-  public static CurveFitter[][] makeCurveFitters(int[][][] data,
+  public static ICurveFitter[][] makeCurveFitters(int[][][] data,
     Class curveFitterClass, int binRadius)
   {
     int numRows = data.length;
@@ -224,7 +224,7 @@ public class CurveCollection implements CurveReporter {
       data = binnedData;
     }
 
-    CurveFitter[][] curveFitters = new CurveFitter[numRows][numCols];
+    ICurveFitter[][] curveFitters = new ICurveFitter[numRows][numCols];
     for (int y=0; y<numRows; y++) {
       for (int x=0; x<numCols; x++) {
         curveFitters[y][x] = newCurveFitter(curveFitterClass);
@@ -234,9 +234,9 @@ public class CurveCollection implements CurveReporter {
     return curveFitters;
   }
 
-  public static CurveFitter newCurveFitter(Class c) {
+  public static ICurveFitter newCurveFitter(Class c) {
     try {
-      return (CurveFitter) c.newInstance();
+      return (ICurveFitter) c.newInstance();
     }
     catch (InstantiationException exc) { exc.printStackTrace(System.out); }
     catch (IllegalAccessException exc) { exc.printStackTrace(System.out); }
