@@ -372,7 +372,7 @@ public class TwoDPane extends JPanel
     ICurveFitter[] cf = new ICurveFitter[data.channels];
     for (int c=0; c<data.channels; c++) {
       CurveCollection cc = renderers[c].getCurveCollection();
-      cf[c] = cc.getCurves()[roiX][roiY];
+      cf[c] = cc.getCurves()[roiY][roiX];
     }
     return cf;
   }
