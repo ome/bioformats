@@ -42,6 +42,9 @@ public interface ICurveFitter {
    */
   void iterate();
 
+  /** Returns the number of iterations so far. */
+  int getIterations();
+
   /** Returns the Chi Squared Error of the current curve estimate. */
   double getChiSquaredError();
 

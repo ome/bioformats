@@ -54,6 +54,7 @@ public class GACurveFitter extends CurveFitter {
   protected double[] fitness;
   protected int stallGenerations;
   private double mutationFactor;
+  protected int numIter;
 
   // -- Constructor --
 
@@ -188,6 +189,10 @@ public class GACurveFitter extends CurveFitter {
         curveEstimate[j][1] + " c: " + curveEstimate[j][2]);
     }
     */
+
+    numIter++;
   }
+
+  public int getIterations() { return numIter; }
 
 }

@@ -916,13 +916,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // curve fitting
       double[][] fitResults = null;
-      int[] fitFirst = null, fitLast = null;
+      int[] fitFirst = null, fitLast = null, fitIter = null;
       if (data.allowCurveFit && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
         progress.setNote("Fitting curves");
         fitResults = new double[data.channels][];
         fitFirst = new int[data.channels];
         fitLast = new int[data.channels];
+        fitIter = new int[data.channels];
         tau = new float[data.channels][data.numExp];
         for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
 
@@ -984,6 +985,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
           fitFirst[c] = curveFitter.getFirst();
           fitLast[c] = curveFitter.getLast();
+          fitIter[c] = curveFitter.getIterations();
 
           if (!doProbe) {
             // output results
@@ -1042,6 +1044,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
         else sb.append(tauMin);
         sb.append(" ps");
+      }
+      if (fitIter != null) {
+        sb.append("; iterations=");
+        for (int c=0; c<fitIter.length; c++) {
+          sb.append(c == 0 ? "[" : ", ");
+          sb.append(fitIter[c]);
+        }
+        sb.append("]");
       }
       decayLabel.setText(sb.toString());
 

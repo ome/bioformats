@@ -80,6 +80,8 @@ public class LMCurveFitter extends CurveFitter {
     curveEstimate[0][2] = lma.parameters[2 * components]; // c
   }
 
+  public int getIterations() { return lma.iterationCount; }
+
   public void setData(int[] data, int first, int last) {
     super.setData(data, first, last);
 

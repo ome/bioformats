@@ -57,6 +57,9 @@ public abstract class CurveFitter implements ICurveFitter {
    */
   public abstract void iterate();
 
+  /** Returns the number of iterations so far. */
+  public abstract int getIterations();
+
   /** Returns the Chi Squared Error of the current curve estimate. */
   public double getChiSquaredError() {
     return getChiSquaredError(curveEstimate);
