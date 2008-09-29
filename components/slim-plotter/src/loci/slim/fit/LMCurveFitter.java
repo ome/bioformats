@@ -85,12 +85,12 @@ public class LMCurveFitter extends CurveFitter {
   public void setData(int[] data, int first, int last) {
     super.setData(data, first, last);
 
-    int num = lastindex - firstindex + 1;
+    int num = lastIndex - firstIndex + 1;
     xVals = new double[num];
     yVals = new double[num];
     weights = new double[num];
     maxVal = 0;
-    for (int i=0, q=firstindex; i<num; i++, q++) {
+    for (int i=0, q=firstIndex; i<num; i++, q++) {
       if (curveData[q] > maxVal) maxVal = curveData[q];
       xVals[i] = i;
       yVals[i] = curveData[q];
