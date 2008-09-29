@@ -603,14 +603,18 @@ public final class ImageTools {
       ColorModel model = null;
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
         byte[][] table = r.get8BitLookupTable();
-        model = new IndexColorModel(8, table[0].length,
-          table[0], table[1], table[2]);
+        if (table != null) {
+          model = new IndexColorModel(8, table[0].length,
+            table[0], table[1], table[2]);
+        }
       }
       else if (pixelType == FormatTools.UINT16 ||
         pixelType == FormatTools.INT16)
       {
         short[][] table = r.get16BitLookupTable();
-        model = new Index16ColorModel(16, table[0].length, table);
+        if (table != null) {
+          model = new Index16ColorModel(16, table[0].length, table);
+        }
       }
       if (model != null) {
         WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
