@@ -140,7 +140,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapRes;
   //private ScalarMap vMapFit;
   private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
-  private DataReferenceImpl decayRef, fwhmRef, fitRef, resRef;
+  private DataReferenceImpl decayRef, fitRef, resRef, lineRef, fwhmRef;
   private DisplayImpl decayPlot;
 
   // -- Constructor --
@@ -285,12 +285,36 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayRef = new DataReferenceImpl("decay");
       decayPlot.addReferences(decayRend, decayRef);
 
+      // add reference for yellow lines
+      lineRend = new DefaultRendererJ3D();
+      lineRef = new DataReferenceImpl("line");
+      ConstantMap[] lineMaps = null;
+      if (data.channels == 1) { // 2-D plot
+        lineMaps = new ConstantMap[] {
+          new ConstantMap(1, Display.Red),
+          new ConstantMap(1, Display.Green),
+          new ConstantMap(0, Display.Blue)
+          //new ConstantMap(2, Display.LineWidth)
+        };
+      }
+      else { // 3-D plot
+        lineMaps = new ConstantMap[] {
+          new ConstantMap(1, Display.Red),
+          new ConstantMap(1, Display.Green),
+          new ConstantMap(0, Display.Blue),
+          new ConstantMap(-1, Display.ZAxis)
+          //new ConstantMap(2, Display.LineWidth)
+        };
+      }
+      decayPlot.addReferences(lineRend, lineRef, lineMaps);
+
       if (data.computeFWHMs) {
         // add reference for full width half maxes
         fwhmRend = new DefaultRendererJ3D();
         fwhmRef = new DataReferenceImpl("fwhm");
         decayPlot.addReferences(fwhmRend, fwhmRef, new ConstantMap[] {
           new ConstantMap(0, Display.Red),
+          new ConstantMap(1, Display.Green),
           new ConstantMap(0, Display.Blue),
           //new ConstantMap(2, Display.LineWidth)
         });
@@ -302,7 +326,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         fitRef = new DataReferenceImpl("fit");
         decayPlot.addReferences(fitRend, fitRef, new ConstantMap[] {
           new ConstantMap(1, Display.Red),
-          new ConstantMap(1, Display.Green),
+          new ConstantMap(0.5, Display.Green),
           new ConstantMap(1, Display.Blue)
         });
         fitRend.toggle(false);
@@ -391,7 +415,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       showBox = new JCheckBox("Box", true);
       showBox.setToolTipText("Toggles visibility of bounding box");
       showBox.addActionListener(this);
-      showLine = new JCheckBox("Line", data.adjustPeaks);
+      showLine = new JCheckBox("Lines", data.adjustPeaks);
       showLine.setToolTipText(
         "Toggles visibility of aligned peaks indicator line");
       showLine.setEnabled(data.adjustPeaks);
@@ -874,6 +898,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           fwhmLines[c][0][1] = fwhm2;
           fwhmLines[c][1][0] = fwhmLines[c][1][1] =
             data.minWave + c * data.waveStep;
+          if (doLog) half = linearToLog(half); // adjust for log scale
           fwhmLines[c][2][0] = fwhmLines[c][2][1] = half;
           String s = "#" + (c + 1);
           while (s.length() < 3) s = " " + s;
@@ -891,10 +916,13 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // curve fitting
       double[][] fitResults = null;
+      int[] fitFirst = null, fitLast = null;
       if (data.adjustPeaks && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
         progress.setNote("Fitting curves");
         fitResults = new double[data.channels][];
+        fitFirst = new int[data.channels];
+        fitLast = new int[data.channels];
         tau = new float[data.channels][data.numExp];
         for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
 
@@ -959,12 +987,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           fitResults[c][2 * data.numExp] = results[0][2];
 
+          fitFirst[c] = curveFitter.getFirst();
+          fitLast[c] = curveFitter.getLast();
+
           if (!doProbe) {
             // output results
             log("\t\treduced chi2=" + curveFitter.getReducedChiSquaredError());
             log("\t\traw chi2=" + curveFitter.getChiSquaredError());
-            log("\t\tbin range=[" +
-              curveFitter.getFirst() + ", " + curveFitter.getLast() + "]");
+            log("\t\tbin range=[" + fitFirst[c] + ", " + fitLast[c] + "]");
             for (int i=0; i<data.numExp; i++) {
               log("\t\ta" + (i + 1) + "=" +
                 (100 * results[i][0] / maxVals[cc]) + "%");
@@ -1087,23 +1117,49 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             samps[i] = linearToLog(samps[i]);
           }
         }
-        FlatField ff = new FlatField(types.bcvFunc, bcSet);
-        ff.setSamples(new float[][] {samps, colors}, false);
-        decayRef.setData(doDataLines ? makeLines(ff) : ff);
+        FlatField dataField = new FlatField(types.bcvFunc, bcSet);
+        dataField.setSamples(new float[][] {samps, colors}, false);
+        decayRef.setData(doDataLines ? makeLines(dataField) : dataField);
+
+        // construct "Lines" plot
+        if (fitFirst != null && fitLast != null) {
+          RealTupleType lineType = null;
+          float[][] firstSamps = null, lastSamps = null;
+          if (data.channels == 1) { // 2-D plot
+            lineType = types.bv;
+            float first = fitFirst[0] * data.timeRange / (data.timeBins - 1);
+            float last = fitLast[0] * data.timeRange / (data.timeBins - 1);
+            float max = doLog ? linearToLog(maxVal) : maxVal;
+            firstSamps = new float[][] {{first, first}, {0, max}};
+            lastSamps = new float[][] {{last, last}, {0, max}};
+          }
+          else { // 3-D plot
+            lineType = types.bc;
+            firstSamps = new float[2][data.channels];
+            lastSamps = new float[2][data.channels];
+            for (int c=0; c<data.channels; c++) {
+              float chan = c * (data.maxWave - data.minWave) /
+                (data.channels - 1) + data.minWave;
+              float first = fitFirst[c] * data.timeRange / (data.timeBins - 1);
+              float last = fitLast[c] * data.timeRange / (data.timeBins - 1);
+              firstSamps[0][c] = first;
+              firstSamps[1][c] = chan;
+              lastSamps[0][c] = last;
+              lastSamps[1][c] = chan;
+            }
+          }
+          Gridded2DSet[] lineSets = {
+            new Gridded2DSet(lineType, firstSamps, firstSamps[0].length),
+            new Gridded2DSet(lineType, lastSamps, lastSamps[0].length)
+          };
+          UnionSet lineSet = new UnionSet(lineType, lineSets);
+          lineRef.setData(lineSet);
+        }
 
         if (fwhmLines != null) {
           // construct "FWHMs" plot
           SampledSet[] fwhmSets = new SampledSet[data.channels];
           for (int c=0; c<data.channels; c++) {
-            if (doLog) {
-              // convert samples to log values for plotting
-              // this is done AFTER any computations involving samples (above)
-              for (int i=0; i<fwhmLines[c].length; i++) {
-                for (int j=0; j<fwhmLines[c][i].length; i++) {
-                  fwhmLines[c][i][j] = linearToLog(fwhmLines[c][i][j]);
-                }
-              }
-            }
             if (data.channels > 1) {
               fwhmSets[c] = new Gridded3DSet(types.bcv, fwhmLines[c], 2);
             }
