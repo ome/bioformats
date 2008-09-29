@@ -41,13 +41,18 @@ import java.io.PrintStream;
  */
 public class LMCurveFitter extends CurveFitter {
 
+  // -- Constants --
+
+  protected static final ExpFunction[] EXP_FUNCTIONS = {
+    new ExpFunction(1), new ExpFunction(2)
+  };
+
   // -- Fields --
 
-  protected ExpFunction func;
-  protected int numExponentials = 1;
-
   protected int maxVal;
-  protected float[] xVals, yVals, weights;
+  protected double[] xVals, yVals, weights;
+
+  protected LMA lma;
 
   // -- Constructor --
 
@@ -59,79 +64,48 @@ public class LMCurveFitter extends CurveFitter {
     return new ConsoleStream(out);
   }
 
-  // -- CurveFitter methods --
-
-  /** HACK - does nothing. */
-  public void iterate() { }
-
-  public void setData(int[] data) {
-    setData(data, 0, data.length - 1);
-  }
-
-  public void setData(int[] data, int first, int last) {
-    // TODO - respect first and last values
-    curveData = data;
-    int num = curveData.length;
-    xVals = new float[num];
-    yVals = new float[num];
-    weights = new float[num];
-    maxVal = 0;
-    for (int i=0; i<num; i++) {
-      if (curveData[i] > maxVal) maxVal = curveData[i];
-      xVals[i] = i;
-      yVals[i] = curveData[i];
-      weights[i] = 1; // no weighting
-    }
-  }
-
-  public int[] getData() { return curveData; }
-
-  public int getFirst() { return 0; }
-
-  public int getLast() { return curveData.length; }
-
-  /** Sets the number of components in the fit. Must be 1 or 2. */
-  public void setComponentCount(int numExp) {
-    if (numExp < 1 || numExp > 2) {
-      throw new IllegalArgumentException("Number of degrees must be 1 or 2");
-    }
-    numExponentials = numExp;
-    func = new ExpFunction(numExponentials);
-  }
-
-  /** Gets the number of components in the fit. */
-  public int getComponentCount() { return numExponentials; }
+  // -- ICurveFitter methods --
 
   /** HACK - performs the actual fit. */
-  public void estimate() {
-    int num = curveData.length;
-    final float[] guess = {num / 10, num / 5};
-    float[] params = new float[2 * numExponentials + 1];
-    for (int i=0; i<numExponentials; i++) {
-      int e = 2 * i;
-      params[e] = maxVal / numExponentials;
-      params[e + 1] = guess[i]; // ?
-    }
-    LMA lma = new LMA(func, params, new float[][] {xVals, yVals},
-      weights, new JAMAMatrix(params.length, params.length));
+  public void iterate() {
     lma.fit();
     //log("\t\titerations=" + lma.iterationCount);
 
     // store parameters into curve array
-    curveEstimate = new double[numExponentials][3];
-    for (int i=0; i<numExponentials; i++) {
+    for (int i=0; i<components; i++) {
       int e = 2 * i;
       curveEstimate[i][0] = lma.parameters[e]; // a
       curveEstimate[i][1] = lma.parameters[e + 1]; // b
     }
-    curveEstimate[0][2] = lma.parameters[2 * numExponentials]; // c
+    curveEstimate[0][2] = lma.parameters[2 * components]; // c
   }
 
-  /** Gets the fit results. */
-  public double[][] getCurve() { return curveEstimate; }
+  public void setData(int[] data, int first, int last) {
+    super.setData(data, first, last);
 
-  /** Sets the fit results. */
-  public void setCurve(double[][] curve) { curveEstimate = curve; }
+    int num = lastindex - firstindex + 1;
+    xVals = new double[num];
+    yVals = new double[num];
+    weights = new double[num];
+    maxVal = 0;
+    for (int i=0, q=firstindex; i<num; i++, q++) {
+      if (curveData[q] > maxVal) maxVal = curveData[q];
+      xVals[i] = i;
+      yVals[i] = curveData[q];
+      weights[i] = 1; // no weighting
+    }
+
+    final double[] guess = {num / 10, num / 5};
+    double[] params = new double[2 * components + 1];
+    for (int i=0; i<components; i++) {
+      int e = 2 * i;
+      params[e] = maxVal / components;
+      params[e + 1] = guess[i]; // ?
+    }
+    lma = new LMA(EXP_FUNCTIONS[components - 1], params,
+      new double[][] {xVals, yVals}, weights,
+      new JAMAMatrix(params.length, params.length));
+  }
 
   // -- Helper classes --
 
@@ -139,7 +113,7 @@ public class LMCurveFitter extends CurveFitter {
    * A summed exponential function of the form:
    * y(t) = a1*e^(-b1*t) + ... + an*e^(-bn*t) + c.
    */
-  public class ExpFunction extends LMAFunction {
+  public static class ExpFunction extends LMAFunction {
 
     /** Number of exponentials to fit. */
     private int numExp = 1;
