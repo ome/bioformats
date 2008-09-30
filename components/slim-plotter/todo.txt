@@ -3,10 +3,6 @@ Fit: still something wrong with chi^2 error computation -- fix it
   * large bin radius results in discontinuities in bright areas?
   * 2-component fits can be inaccurate (see Log scale for confirmation)
 
-3D: move view toggles into menus to free up real estate for numerical reporting
-3D: change data, fit, and residuals to separate check boxes for surface & lines
-  * allows viewing data as both a surface and as lines simultaneously
-
 2D: pixel probe in lifetime mode
   * show details on curve fit result for that pixel
   * report information beneath 3D plot where view toggles used to be
