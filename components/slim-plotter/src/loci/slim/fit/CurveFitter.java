@@ -193,8 +193,7 @@ public abstract class CurveFitter implements ICurveFitter {
         if (curveData[i] > guessC && curveData[i-1] > guessC) {
           //double time = curveData[i][0] - curveData[i-1][0];
           double time = 1.0d;
-          double factor =
-            (curveData[i] - guessC) / (curveData[i-1] - guessC);
+          double factor = (curveData[i] - guessC) / (curveData[i-1] - guessC);
           double guess = 1.0 * -Math.log(factor);
           if (DEBUG) {
             System.out.println("Guess: " + guess + "   Factor: " + factor);
@@ -247,8 +246,7 @@ public abstract class CurveFitter implements ICurveFitter {
         if (curveData[i] > guessC && curveData[i-3] > guessC + 10) {
           //double time = curveData[i][0] - curveData[i-3][0];
           double time = 3.0d;
-          double factor =
-            (curveData[i] - guessC) / (curveData[i-3] - guessC);
+          double factor = (curveData[i] - guessC) / (curveData[i-3] - guessC);
           double guess = (1.0 / 3.0) * -Math.log(factor);
           if (guess > high) high = guess;
           if (guess < low) low = guess;
