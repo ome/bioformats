@@ -11,5 +11,8 @@ Fit: still something wrong with chi^2 error computation -- fix it
   * show details on curve fit result for that pixel
   * report information beneath 3D plot where view toggles used to be
 
+3D: fix bug in FWHMs when pixel probing
+3D: fix bug in yellow lines when toggling individual channels
+
 2D: implement spectral projection view
 2D: implement emission spectraview
