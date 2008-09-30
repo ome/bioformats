@@ -56,7 +56,7 @@ import visad.java3d.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class SlimPlotter implements ActionListener, ChangeListener,
-  DocumentListener, Runnable, WindowListener
+  DocumentListener, ItemListener, Runnable, WindowListener
 {
 
   // -- Constants --
@@ -109,6 +109,19 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private MenuItem menuFileExit;
   private MenuItem menuViewSaveProj;
   private MenuItem menuViewLoadProj;
+  private CheckboxMenuItem menuViewScale;
+  private CheckboxMenuItem menuViewBox;
+  private CheckboxMenuItem menuViewLines;
+  private CheckboxMenuItem menuViewFWHMs;
+  private CheckboxMenuItem menuViewDataSurface;
+  private CheckboxMenuItem menuViewDataLines;
+  private CheckboxMenuItem menuViewFitSurface;
+  private CheckboxMenuItem menuViewFitLines;
+  private CheckboxMenuItem menuViewResSurface;
+  private CheckboxMenuItem menuViewResLines;
+  private CheckboxMenuItem menuViewLogScale;
+  private CheckboxMenuItem menuViewParallel;
+  private CheckboxMenuItem menuViewColorTau;
 
   // GUI components for 2D pane
   private TwoDPane twoDPane;
@@ -116,17 +129,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   // GUI components for decay pane
   private JLabel decayLabel;
   private ColorWidget colorWidget;
-  private JPopupMenu lutsMenu;
-  private JRadioButton linear, log;
-  private JRadioButton perspective, parallel;
-  private JRadioButton dataSurface, dataLines;
-  private JRadioButton fitSurface, fitLines;
-  private JRadioButton resSurface, resLines;
-  private JRadioButton colorHeight, colorTau;
-  private JCheckBox showData, showScale;
-  private JCheckBox showBox, showLine;
-  private JCheckBox showFit, showResiduals;
-  private JCheckBox showFWHMs;
   private JCheckBox zOverride;
   private JTextField zScaleValue;
   private JButton exportData;
@@ -139,9 +141,15 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private SlimTypes types;
   private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapRes;
   //private ScalarMap vMapFit;
-  private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
-  private DataReferenceImpl decayRef, fitRef, resRef, lineRef, fwhmRef;
   private DisplayImpl decayPlot;
+  private DataRenderer lineRend, fwhmRend;
+  private DataRenderer dataSurfaceRend, dataLinesRend;
+  private DataRenderer fitSurfaceRend, fitLinesRend;
+  private DataRenderer resSurfaceRend, resLinesRend;
+  private DataReferenceImpl lineRef, fwhmRef;
+  private DataReferenceImpl dataSurfaceRef, dataLinesRef;
+  private DataReferenceImpl fitSurfaceRef, fitLinesRef;
+  private DataReferenceImpl resSurfaceRef, resLinesRef;
 
   // -- Constructor --
 
@@ -281,10 +289,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       setProgress(progress, 950); // estimate: 95%
 
-      decayRend = new DefaultRendererJ3D();
-      decayRef = new DataReferenceImpl("decay");
-      decayPlot.addReferences(decayRend, decayRef);
-
       // add reference for yellow lines
       lineRend = new DefaultRendererJ3D();
       lineRef = new DataReferenceImpl("line");
@@ -308,8 +312,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       }
       decayPlot.addReferences(lineRend, lineRef, lineMaps);
 
+      // add reference for full width half maxes
       if (data.computeFWHMs) {
-        // add reference for full width half maxes
         fwhmRend = new DefaultRendererJ3D();
         fwhmRef = new DataReferenceImpl("fwhm");
         decayPlot.addReferences(fwhmRend, fwhmRef, new ConstantMap[] {
@@ -321,23 +325,49 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         fwhmRend.toggle(false);
       }
 
+      // add references for raw data
+      dataSurfaceRend = new DefaultRendererJ3D();
+      dataSurfaceRef = new DataReferenceImpl("data surface");
+      decayPlot.addReferences(dataSurfaceRend, dataSurfaceRef);
+      dataSurfaceRend.toggle(data.channels > 1);
+      dataLinesRend = new DefaultRendererJ3D();
+      dataLinesRef = new DataReferenceImpl("data lines");
+      decayPlot.addReferences(dataLinesRend, dataLinesRef);
+      dataLinesRend.toggle(data.channels == 1);
+
+      // add references for curve fitting
       if (data.allowCurveFit) {
-        // add references for curve fitting
-        fitRend = new DefaultRendererJ3D();
-        fitRef = new DataReferenceImpl("fit");
-        decayPlot.addReferences(fitRend, fitRef, new ConstantMap[] {
+        fitSurfaceRend = new DefaultRendererJ3D();
+        fitSurfaceRef = new DataReferenceImpl("fit surface");
+        decayPlot.addReferences(fitSurfaceRend, fitSurfaceRef,
+          new ConstantMap[]
+        {
           new ConstantMap(1, Display.Red),
           new ConstantMap(0.5, Display.Green),
           new ConstantMap(1, Display.Blue)
         });
-        fitRend.toggle(false);
-        resRend = new DefaultRendererJ3D();
-        resRef = new DataReferenceImpl("residuals");
-        decayPlot.addReferences(resRend, resRef);
-        resRend.toggle(false);
+        fitSurfaceRend.toggle(false);
+        fitLinesRend = new DefaultRendererJ3D();
+        fitLinesRef = new DataReferenceImpl("fit surface");
+        decayPlot.addReferences(fitLinesRend, fitLinesRef,
+          new ConstantMap[]
+        {
+          new ConstantMap(1, Display.Red),
+          new ConstantMap(0.5, Display.Green),
+          new ConstantMap(1, Display.Blue)
+        });
+        resSurfaceRend = new DefaultRendererJ3D();
+        resSurfaceRef = new DataReferenceImpl("res surface");
+        decayPlot.addReferences(resSurfaceRend, resSurfaceRef);
+        resSurfaceRend.toggle(false);
+        resLinesRend = new DefaultRendererJ3D();
+        resLinesRef = new DataReferenceImpl("res surface");
+        decayPlot.addReferences(resLinesRend, resLinesRef);
+        resLinesRend.toggle(false);
       }
       setProgress(progress, 960); // estimate: 96%
 
+      // configure axes
       xMap.setRange(0, data.timeRange);
       yMap.setRange(data.minWave, data.maxWave);
       AxisScale xScale = xMap.getAxisScale();
@@ -361,8 +391,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       gmc.setTextureEnable(false);
       ProjectionControl pc = decayPlot.getProjectionControl();
       pc.setMatrix(data.channels > 1 ? MATRIX_3D : MATRIX_2D);
-      pc.setAspectCartesian(
-        new double[] {2, 1, 1});
+      pc.setAspectCartesian(new double[] {2, 1, 1});
       setProgress(progress, 970); // estimate: 97%
 
       // construct 2D pane
@@ -375,16 +404,23 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       twoDPane = new TwoDPane(this, data, types);
 
+      setProgress(progress, 980); // estimate: 98%
+
+      // construct menu bar
+      progress.setNote("Building GUI");
+
       MenuBar menubar = new MenuBar();
       masterWindow.setMenuBar(menubar);
+
       Menu menuFile = new Menu("File");
-//      menubar.add(menuFile);
+      //menubar.add(menuFile);
+      Menu menuView = new Menu("View");
+      menubar.add(menuView);
+
       menuFileExit = new MenuItem("Exit");
       menuFileExit.addActionListener(this);
       menuFile.add(menuFileExit);
 
-      Menu menuView = new Menu("View");
-      menubar.add(menuView);
       menuViewSaveProj = new MenuItem("Save projection to clipboard");
       menuViewSaveProj.addActionListener(this);
       menuView.add(menuViewSaveProj);
@@ -393,9 +429,75 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       menuViewLoadProj.addActionListener(this);
       menuView.add(menuViewLoadProj);
 
-      setProgress(progress, 980); // estimate: 98%
+      menuView.addSeparator();
 
-      // construct 3D pane
+      menuViewScale = new CheckboxMenuItem("Scale bar", true);
+      menuViewScale.addItemListener(this);
+      menuView.add(menuViewScale);
+
+      menuViewBox = new CheckboxMenuItem("Bounding box", true);
+      menuViewBox.addItemListener(this);
+      menuView.add(menuViewBox);
+
+      menuViewLines = new CheckboxMenuItem("Fit bounds", data.allowCurveFit);
+      menuViewLines.setEnabled(data.allowCurveFit);
+      menuViewLines.addItemListener(this);
+      menuView.add(menuViewLines);
+
+      menuViewFWHMs = new CheckboxMenuItem("FWHMs");
+      menuViewFWHMs.setEnabled(data.computeFWHMs);
+      menuViewFWHMs.addItemListener(this);
+      menuView.add(menuViewFWHMs);
+
+      menuView.addSeparator();
+
+      boolean threeD = data.channels > 1;
+
+      menuViewDataSurface = new CheckboxMenuItem("Data surface", threeD);
+      menuViewDataSurface.setEnabled(threeD);
+      menuViewDataSurface.addItemListener(this);
+      menuView.add(menuViewDataSurface);
+
+      menuViewDataLines = new CheckboxMenuItem("Data lines", !threeD);
+      menuViewDataLines.addItemListener(this);
+      menuView.add(menuViewDataLines);
+
+      menuViewFitSurface = new CheckboxMenuItem("Fit surface");
+      menuViewFitSurface.setEnabled(data.allowCurveFit && threeD);
+      menuViewFitSurface.addItemListener(this);
+      menuView.add(menuViewFitSurface);
+
+      menuViewFitLines = new CheckboxMenuItem("Fit lines", data.allowCurveFit);
+      menuViewFitLines.setEnabled(data.allowCurveFit);
+      menuViewFitLines.addItemListener(this);
+      menuView.add(menuViewFitLines);
+
+      menuViewResSurface = new CheckboxMenuItem("Residuals surface");
+      menuViewResSurface.setEnabled(data.allowCurveFit && threeD);
+      menuViewResSurface.addItemListener(this);
+      menuView.add(menuViewResSurface);
+
+      menuViewResLines = new CheckboxMenuItem("Residuals lines");
+      menuViewResLines.setEnabled(data.allowCurveFit);
+      menuViewResLines.addItemListener(this);
+      menuView.add(menuViewResLines);
+
+      menuView.addSeparator();
+
+      menuViewLogScale = new CheckboxMenuItem("Log scale");
+      menuViewLogScale.addItemListener(this);
+      menuView.add(menuViewLogScale);
+
+      menuViewParallel = new CheckboxMenuItem("Parallel projection");
+      menuViewParallel.addItemListener(this);
+      menuView.add(menuViewParallel);
+
+      menuViewColorTau = new CheckboxMenuItem("Colorize data by lifetime");
+      menuViewColorTau.setEnabled(data.allowCurveFit);
+      menuViewColorTau.addItemListener(this);
+      menuView.add(menuViewColorTau);
+
+      // construct other GUI components
       JPanel decayPane = new JPanel();
       decayPane.setLayout(new BorderLayout());
       decayPane.add(decayPlot.getComponent(), BorderLayout.CENTER);
@@ -406,74 +508,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayPane.add(decayLabel, BorderLayout.NORTH);
 
       colorWidget = new ColorWidget(vMap, "Decay Color Mapping");
-
-      showData = new JCheckBox("Data", true);
-      showData.setToolTipText("Toggles visibility of raw data");
-      showData.addActionListener(this);
-      showScale = new JCheckBox("Scale", true);
-      showScale.setToolTipText("Toggles visibility of scale bars");
-      showScale.addActionListener(this);
-      showBox = new JCheckBox("Box", true);
-      showBox.setToolTipText("Toggles visibility of bounding box");
-      showBox.addActionListener(this);
-      showLine = new JCheckBox("Lines", data.allowCurveFit);
-      showLine.setToolTipText("Toggles visibility of curve fit cutoff lines");
-      showLine.setEnabled(data.allowCurveFit);
-      showLine.addActionListener(this);
-      showFit = new JCheckBox("Fit", false);
-      showFit.setToolTipText("Toggles visibility of fitted curves");
-      showFit.setEnabled(data.allowCurveFit);
-      showFit.addActionListener(this);
-      showResiduals = new JCheckBox("Residuals", false);
-      showResiduals.setToolTipText(
-        "Toggles visibility of fitted curve residuals");
-      showResiduals.setEnabled(data.allowCurveFit);
-      showResiduals.addActionListener(this);
-      showFWHMs = new JCheckBox("FWHMs", false);
-      showFWHMs.setToolTipText("Toggles visibility of full width half maxes");
-      showFWHMs.setEnabled(data.computeFWHMs);
-      showFWHMs.addActionListener(this);
-
-      linear = new JRadioButton("Linear", true);
-      linear.setToolTipText("Plots 3D data with a linear scale");
-      log = new JRadioButton("Log", false);
-      log.setToolTipText("Plots 3D data with a logarithmic scale");
-      perspective = new JRadioButton("Perspective", true);
-      perspective.setToolTipText(
-        "Displays 3D plot with a perspective projection");
-      perspective.setEnabled(data.channels > 1);
-      parallel = new JRadioButton("Parallel", false);
-      parallel.setToolTipText(
-        "Displays 3D plot with a parallel (orthographic) projection");
-      parallel.setEnabled(data.channels > 1);
-      dataSurface = new JRadioButton("Surface", data.channels > 1);
-      dataSurface.setToolTipText("Displays raw data as a 2D surface");
-      dataSurface.setEnabled(data.channels > 1);
-      dataLines = new JRadioButton("Lines", data.channels == 1);
-      dataLines.setToolTipText("Displays raw data as a series of lines");
-      dataLines.setEnabled(data.channels > 1);
-      fitSurface = new JRadioButton("Surface", false);
-      fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
-      fitSurface.setEnabled(data.allowCurveFit && data.channels > 1);
-      fitLines = new JRadioButton("Lines", true);
-      fitLines.setToolTipText("Displays fitted curves as a series of lines");
-      fitLines.setEnabled(data.allowCurveFit && data.channels > 1);
-      resSurface = new JRadioButton("Surface", false);
-      resSurface.setToolTipText(
-        "Displays fitted curve residuals as a 2D surface");
-      resSurface.setEnabled(data.allowCurveFit && data.channels > 1);
-      resLines = new JRadioButton("Lines", true);
-      resLines.setToolTipText(
-        "Displays fitted curve residuals as a series of lines");
-      resLines.setEnabled(data.allowCurveFit && data.channels > 1);
-      colorHeight = new JRadioButton("Counts", true);
-      colorHeight.setToolTipText(
-        "Colorizes data according to the height (histogram count)");
-      colorHeight.setEnabled(data.allowCurveFit && data.channels > 1);
-      colorTau = new JRadioButton("Lifetimes", false);
-      colorTau.setToolTipText(
-        "Colorizes data according to aggregate lifetime value");
-      colorTau.setEnabled(data.allowCurveFit && data.channels > 1);
 
       zOverride = new JCheckBox("", false);
       zOverride.setToolTipText(
@@ -491,41 +525,16 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       setProgress(progress, 990); // estimate: 99%
 
-      JPanel showPanel = new JPanel();
-      showPanel.setBorder(new TitledBorder("Show"));
-      showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.Y_AXIS));
-      showPanel.add(showData);
-      showPanel.add(showScale);
-      showPanel.add(showBox);
-      showPanel.add(showLine);
-      showPanel.add(showFit);
-      showPanel.add(showResiduals);
-      showPanel.add(showFWHMs);
-
       JPanel scalePanel = new JPanel();
       scalePanel.setBorder(new TitledBorder("Z Scale Override"));
       scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
       scalePanel.add(zOverride);
       scalePanel.add(zScaleValue);
 
-      JPanel scaleTogglePanel = makeRadioPanel("Scale", linear, log);
-      JPanel colorsTogglePanel =
-        makeRadioPanel("Colors", colorHeight, colorTau);
-      JPanel projectionTogglePanel =
-        makeRadioPanel("Projection", perspective, parallel);
-      JPanel dataTogglePanel = makeRadioPanel("Data", dataSurface, dataLines);
-      JPanel fitTogglePanel = makeRadioPanel("Fit", fitSurface, fitLines);
-      JPanel residualsTogglePanel =
-        makeRadioPanel("Residuals", resSurface, resLines);
-
       JPanel miscRow1 = new JPanel();
-      miscRow1.setLayout(new GridLayout(2, 3));
-      miscRow1.add(scaleTogglePanel);
-      miscRow1.add(projectionTogglePanel);
-      miscRow1.add(colorsTogglePanel);
-      miscRow1.add(dataTogglePanel);
-      miscRow1.add(fitTogglePanel);
-      miscRow1.add(residualsTogglePanel);
+      miscRow1.setBorder(new TitledBorder("Stuff"));
+      miscRow1.add(Box.createRigidArea(new Dimension(400, 150)));
+      // CTR TODO populate
 
       JPanel miscRow2 = new JPanel();
       miscRow2.setLayout(new BoxLayout(miscRow2, BoxLayout.X_AXIS));
@@ -542,7 +551,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       options.setBorder(new EmptyBorder(8, 5, 8, 5));
       options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
       options.add(colorWidget);
-      options.add(showPanel);
       options.add(miscPanel);
       decayPane.add(options, BorderLayout.SOUTH);
       masterPane.add(decayPane, BorderLayout.CENTER);
@@ -658,48 +666,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         catch (RemoteException exc) { }
       }
     }
-    else if (src == linear || src == log) plotData(true, true, true);
-    else if (src == dataSurface || src == dataLines ||
-      src == colorHeight || src == colorTau)
-    {
-      plotData(true, false, false);
-    }
-    else if (src == fitSurface || src == fitLines ||
-      src == resSurface || src == resLines)
-    {
-      plotData(true, false, true);
-    }
-    else if (src == perspective || src == parallel) {
-      try {
-        decayPlot.getGraphicsModeControl().setProjectionPolicy(
-          parallel.isSelected() ? DisplayImplJ3D.PARALLEL_PROJECTION :
-          DisplayImplJ3D.PERSPECTIVE_PROJECTION);
-      }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
-    else if (src == showData) decayRend.toggle(showData.isSelected());
-    else if (src == showLine) lineRend.toggle(showLine.isSelected());
-    else if (src == showBox) {
-      try { decayPlot.getDisplayRenderer().setBoxOn(showBox.isSelected()); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
-    else if (src == showScale) {
-      try {
-        boolean scale = showScale.isSelected();
-        decayPlot.getGraphicsModeControl().setScaleEnable(scale);
-      }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
-    else if (src == showFit) {
-      fitRend.toggle(showFit.isSelected());
-    }
-    else if (src == showResiduals) {
-      resRend.toggle(showResiduals.isSelected());
-    }
-    else if (src == showFWHMs) fwhmRend.toggle(showFWHMs.isSelected());
     else if (src == zOverride) {
       boolean manual = zOverride.isSelected();
       zScaleValue.setEnabled(manual);
@@ -760,6 +726,69 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     if (doc == zScaleValue.getDocument()) updateZAxis();
   }
 
+  // -- ItemListener methods --
+
+  public void itemStateChanged(ItemEvent e) {
+    Object src = e.getSource();
+    if (src == menuViewScale) {
+      boolean scale = menuViewScale.getState();
+      try { decayPlot.getGraphicsModeControl().setScaleEnable(scale); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+    else if (src == menuViewBox) {
+      boolean box = menuViewBox.getState();
+      try { decayPlot.getDisplayRenderer().setBoxOn(box); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+    else if (src == menuViewLines) {
+      boolean lines = menuViewLines.getState();
+      lineRend.toggle(lines);
+    }
+    else if (src == menuViewFWHMs) {
+      boolean fwhms = menuViewFWHMs.getState();
+      fwhmRend.toggle(fwhms);
+    }
+    else if (src == menuViewDataSurface) {
+      boolean dataSurface = menuViewDataSurface.getState();
+      dataSurfaceRend.toggle(dataSurface);
+    }
+    else if (src == menuViewDataLines) {
+      boolean dataLines = menuViewDataLines.getState();
+      dataLinesRend.toggle(dataLines);
+    }
+    else if (src == menuViewFitSurface) {
+      boolean fitSurface = menuViewFitSurface.getState();
+      fitSurfaceRend.toggle(fitSurface);
+    }
+    else if (src == menuViewFitLines) {
+      boolean fitLines = menuViewFitLines.getState();
+      fitLinesRend.toggle(fitLines);
+    }
+    else if (src == menuViewResSurface) {
+      boolean resSurface = menuViewResSurface.getState();
+      resSurfaceRend.toggle(resSurface);
+    }
+    else if (src == menuViewResLines) {
+      boolean resLines = menuViewResLines.getState();
+      resLinesRend.toggle(resLines);
+    }
+    else if (src == menuViewLogScale) plotData(true, true, true);
+    else if (src == menuViewParallel) {
+      boolean parallel = menuViewParallel.getState();
+      int policy = parallel ?
+        DisplayImplJ3D.PARALLEL_PROJECTION :
+        DisplayImplJ3D.PERSPECTIVE_PROJECTION;
+      try { decayPlot.getGraphicsModeControl().setProjectionPolicy(policy); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+    else if (src == menuViewColorTau) {
+      plotData(true, false, false);
+    }
+  }
+
   // -- Runnable methods --
 
   public void run() {
@@ -767,7 +796,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       ", rescale=" + doRescale + ", refit=" + doRefit);
 
     decayPlot.disableAction();
-    boolean doLog = log.isSelected();
+    boolean doLog = menuViewLogScale.getState();
 
     if (doRecalc) {
       int progMax = data.channels * data.timeBins +
@@ -778,10 +807,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       progress.setMillisToDecideToPopup(50);
       int p = 0;
 
-      boolean doDataLines = dataLines.isSelected();
-      boolean doFitLines = fitLines.isSelected();
-      boolean doResLines = resLines.isSelected();
-      boolean doTauColors = colorTau.isSelected();
+      boolean doTauColors = menuViewColorTau.getState();
 
       // update scale labels for log scale
       if (doLog) {
@@ -1125,7 +1151,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
         FlatField dataField = new FlatField(types.bcvFunc, bcSet);
         dataField.setSamples(new float[][] {samps, colors}, false);
-        decayRef.setData(doDataLines ? makeLines(dataField) : dataField);
+        dataSurfaceRef.setData(dataField);
+        dataLinesRef.setData(makeLines(dataField));
 
         // construct "Lines" plot
         if (fitFirst != null && fitLast != null) {
@@ -1188,7 +1215,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           FlatField fit = new FlatField(types.bcvFuncFit, bcSet);
           fit.setSamples(new float[][] {fitSamps}, false);
-          fitRef.setData(doFitLines ? makeLines(fit) : fit);
+          fitSurfaceRef.setData(fit);
+          fitLinesRef.setData(makeLines(fit));
         }
 
         if (residuals != null) {
@@ -1202,7 +1230,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           FlatField res = new FlatField(types.bcvFuncRes, bcSet);
           res.setSamples(new float[][] {residuals}, false);
-          resRef.setData(doResLines ? makeLines(res) : res);
+          resSurfaceRef.setData(res);
+          resLinesRef.setData(makeLines(res));
         }
       }
       catch (VisADException exc) { exc.printStackTrace(); }
@@ -1267,22 +1296,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     if (inverse) v = -v;
     float result = (float) v >= 1 ? (float) Math.log(v) / BASE_LOG : 0;
     return inverse ? -result : result;
-  }
-
-  private JPanel makeRadioPanel(String title,
-    JRadioButton b1, JRadioButton b2)
-  {
-    JPanel p = new JPanel();
-    p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-    p.setBorder(new TitledBorder(title));
-    p.add(b1);
-    p.add(b2);
-    ButtonGroup group = new ButtonGroup();
-    group.add(b1);
-    group.add(b2);
-    b1.addActionListener(this);
-    b2.addActionListener(this);
-    return p;
   }
 
   private FieldImpl makeLines(FlatField surface) {
