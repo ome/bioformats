@@ -67,15 +67,13 @@ public abstract class CurveFitter implements ICurveFitter {
 
   public double getChiSquaredError(double[][] estCurve) {
     double total = 0;
-    double[] expected = getEstimates(curveData, estCurve);
-    for (int i = firstIndex; i <= lastIndex; i++) {
-      if (expected[i] > 0) {
-        double term = curveData[i] - expected[i];
-        // (o-e)^2
-        term *= term;
+    double[] expected = getEstimates(estCurve);
+    for (int i = 0; i < expected.length; i++) {
+      double o = curveData[firstIndex + i];
+      double e = expected[i];
+      if (e > 0) {
         // (o-e)^2 / e
-        term /= expected[i];
-        total += term;
+        total += (o - e) * (o - e) / e;
       }
     }
     return total;
@@ -100,8 +98,8 @@ public abstract class CurveFitter implements ICurveFitter {
     return Double.MAX_VALUE;
   }
 
-  public double[] getEstimates(int[] data, double[][] estimate) {
-    double[] toreturn = new double[data.length];
+  public double[] getEstimates(double[][] estimate) {
+    double[] toreturn = new double[lastIndex - firstIndex + 1];
     for (int i = 0; i < toreturn.length; i++) {
       double value = 0;
       for (int j = 0; j < estimate.length; j++) {
@@ -213,7 +211,7 @@ public abstract class CurveFitter implements ICurveFitter {
       // but the actual data is far too noisy to do this. Instead, we'll just
       // do it for the first 5, which have the most data.
       //for (int i = 0; i < curveData.length; i++)
-      for (int i=firstIndex; i < 5 + firstIndex && i <= lastIndex; i++) {
+      for (int i=firstIndex; i < firstIndex + 5 && i <= lastIndex; i++) {
         if (curveData[i] > guessC) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.exp(-i * exp);
@@ -261,7 +259,7 @@ public abstract class CurveFitter implements ICurveFitter {
 
       double highA = 0.0d;
       double lowA = Double.MAX_VALUE;
-      for (int i=firstIndex; i < 5 + firstIndex && i <= lastIndex; i++) {
+      for (int i=firstIndex; i < firstIndex + 5 && i <= lastIndex; i++) {
         if (curveData[i] > guessC + 10) {
           // calculate e^-bt based on our exponent estimate
           double value = Math.exp(-i * low);
@@ -285,13 +283,11 @@ public abstract class CurveFitter implements ICurveFitter {
       lowEst[0][0] = curveEstimate[1][0];
       lowEst[0][1] = curveEstimate[1][1];
       lowEst[0][2] = curveEstimate[1][2];
-      int[] cdata = new int[lastIndex - firstIndex + 1];
-      System.arraycopy(curveData, firstIndex, cdata, 0, cdata.length);
-      double[] lowData = getEstimates(cdata, lowEst);
-      double[][] lowValues = new double[cdata.length][2];
+      double[] lowData = getEstimates(lowEst);
+      double[][] lowValues = new double[lastIndex - firstIndex + 1][2];
       for (int i = 0; i < lowValues.length; i++) {
         lowValues[i][0] = i;
-        lowValues[i][1] = cdata[i] - lowData[i];
+        lowValues[i][1] = curveData[firstIndex + i] - lowData[i];
       }
 
       // now, treat lowValues as a single exponent.

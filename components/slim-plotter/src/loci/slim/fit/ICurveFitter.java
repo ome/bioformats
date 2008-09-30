@@ -59,7 +59,7 @@ public interface ICurveFitter {
 
   double getReducedChiSquaredError(double[][] estCurve);
 
-  double[] getEstimates(int[] data, double[][] estimate);
+  double[] getEstimates(double[][] estimate);
 
   /**
    * Sets the data to be used to generate curve estimates.
