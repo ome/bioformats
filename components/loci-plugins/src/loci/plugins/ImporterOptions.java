@@ -29,6 +29,8 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import java.awt.*;
+import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
@@ -705,7 +707,28 @@ public class ImporterOptions implements ItemListener {
     int seriesCount = r.getSeriesCount();
 
     // prompt user to specify series inclusion (or grab from macro options)
-    GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
+    GenericDialog gd = new GenericDialog("Bio-Formats Series Options") {
+      public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        if ("select".equals(cmd)) {
+          Checkbox[] boxes =
+            (Checkbox[]) getCheckboxes().toArray(new Checkbox[0]);
+          for (int i=0; i<boxes.length; i++) {
+            boxes[i].setState(true);
+          }
+        }
+        else if ("deselect".equals(cmd)) {
+          Checkbox[] boxes =
+            (Checkbox[]) getCheckboxes().toArray(new Checkbox[0]);
+          for (int i=0; i<boxes.length; i++) {
+            boxes[i].setState(false);
+          }
+        }
+        else {
+          super.actionPerformed(e);
+        }
+      }
+    };
 
     GridBagLayout gdl = (GridBagLayout) gd.getLayout();
     GridBagConstraints gbc = new GridBagConstraints();
@@ -741,6 +764,24 @@ public class ImporterOptions implements ItemListener {
       gd.add(p[i]);
     }
     Util.addScrollBars(gd);
+
+    Panel buttons = new Panel();
+
+    Button select = new Button("Select All");
+    select.setActionCommand("select");
+    select.addActionListener(gd);
+    Button deselect = new Button("Deselect All");
+    deselect.setActionCommand("deselect");
+    deselect.addActionListener(gd);
+
+    buttons.add(select);
+    buttons.add(deselect);
+
+    gbc.gridx = 0;
+    gbc.gridy = seriesCount;
+    gdl.setConstraints(buttons, gbc);
+    gd.add(buttons);
+
     if (forceThumbnails) gd.showDialog();
     else {
       ThumbLoader loader = new ThumbLoader(r, p, gd, isAutoscale());
