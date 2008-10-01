@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
-import loci.formats.DataTools;
-import loci.formats.FormatException;
+import java.io.IOException;
+import loci.formats.*;
 
 /**
  * Methods for compressing and decompressing data using Microsoft Video 1.
@@ -45,8 +45,10 @@ public class MSVideoCodec extends BaseCodec implements Codec {
     throw new FormatException("MS Video 1 compression not supported.");
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] data, Object options) throws FormatException {
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
+  {
     if (options == null || !(options instanceof Object[])) return null;
     Object[] optionsArray = (Object[]) options;
     int bitsPerPixel = ((Integer) optionsArray[0]).intValue();
@@ -54,7 +56,6 @@ public class MSVideoCodec extends BaseCodec implements Codec {
     int height = ((Integer) optionsArray[2]).intValue();
     byte[] lastImage = (byte[]) optionsArray[3];
 
-    int pt = 0;
     int row = 0;
     int column = 0;
 
@@ -62,10 +63,14 @@ public class MSVideoCodec extends BaseCodec implements Codec {
     short[] shorts = new short[width * height];
 
     while (true) {
-      if (pt >= data.length || row >= width || column >= height) break;
-      short a = (short) (data[pt++] & 0xff);
-      short b = (short) (data[pt++] & 0xff);
-      if (a == 0 && b == 0 && pt >= data.length) break;
+      if (in.getFilePointer() >= in.length() || row >= width ||
+        column >= height)
+      {
+        break;
+      }
+      short a = (short) (in.read() & 0xff);
+      short b = (short) (in.read() & 0xff);
+      if (a == 0 && b == 0 && in.getFilePointer() >= in.read()) break;
       if (b >= 0x84 && b < 0x88) {
         // indicates that we are skipping some blocks
 
@@ -101,8 +106,8 @@ public class MSVideoCodec extends BaseCodec implements Codec {
       }
       else if (b >= 0 && b < 0x80) {
         if (bitsPerPixel == 8) {
-          byte colorA = data[pt++];
-          byte colorB = data[pt++];
+          byte colorA = in.readByte();
+          byte colorB = in.readByte();
 
           for (int y=0; y<4; y++) {
             for (int x=3; x>=0; x--) {
@@ -116,27 +121,19 @@ public class MSVideoCodec extends BaseCodec implements Codec {
           }
         }
         else {
-          short check1 = DataTools.bytesToShort(data, pt, true);
-          pt += 2;
-          short check2 = DataTools.bytesToShort(data, pt, true);
-          pt += 2;
+          short check1 = in.readShort();
+          short check2 = in.readShort();
 
           if ((check1 & 0x8000) == 0x8000) {
             // 8 color encoding
             short q1a = check1;
             short q1b = check2;
-            short q2a = DataTools.bytesToShort(data, pt, true);
-            pt += 2;
-            short q2b = DataTools.bytesToShort(data, pt, true);
-            pt += 2;
-            short q3a = DataTools.bytesToShort(data, pt, true);
-            pt += 2;
-            short q3b = DataTools.bytesToShort(data, pt, true);
-            pt += 2;
-            short q4a = DataTools.bytesToShort(data, pt, true);
-            pt += 2;
-            short q4b = DataTools.bytesToShort(data, pt, true);
-            pt += 2;
+            short q2a = in.readShort();
+            short q2b = in.readShort();
+            short q3a = in.readShort();
+            short q3b = in.readShort();
+            short q4a = in.readShort();
+            short q4b = in.readShort();
 
             for (int y=0; y<4; y++) {
               for (int x=3; x>= 0; x--) {
@@ -183,8 +180,7 @@ public class MSVideoCodec extends BaseCodec implements Codec {
       }
       else if (bitsPerPixel == 8 && 0x90 < b) {
         byte[] colors = new byte[8];
-        System.arraycopy(data, pt, colors, 0, colors.length);
-        pt += colors.length;
+        in.read(colors);
 
         for (int y=0; y<4; y++) {
           for (int x=3; x>=0; x--) {

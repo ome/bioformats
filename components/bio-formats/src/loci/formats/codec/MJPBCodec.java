@@ -52,8 +52,10 @@ public class MJPBCodec extends BaseCodec implements Codec {
     throw new FormatException("Motion JPEG-B compression not supported.");
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] data, Object options) throws FormatException {
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
+  {
     if (options == null || !(options instanceof int[])) return null;
     int[] o = (int[]) options;
     int x = o[0];
@@ -64,38 +66,38 @@ public class MJPBCodec extends BaseCodec implements Codec {
     byte[] raw = null;
     byte[] raw2 = null;
 
+    long fp = in.getFilePointer();
+
     try {
-      RandomAccessStream ras = new RandomAccessStream(data);
-      ras.order(false);
-      ras.seek(4);
+      in.skipBytes(4);
 
       byte[] lumDcBits = null, lumAcBits = null, lumDc = null, lumAc = null;
       byte[] quant = null;
 
-      String s1 = ras.readString(4);
-      ras.skipBytes(12);
-      String s2 = ras.readString(4);
-      ras.seek(ras.getFilePointer() - 4);
+      String s1 = in.readString(4);
+      in.skipBytes(12);
+      String s2 = in.readString(4);
+      in.seek(in.getFilePointer() - 4);
       if (s1.equals("mjpg") || s2.equals("mjpg")) {
         int extra = 16;
         if (s1.startsWith("m")) {
           extra = 0;
-          ras.seek(4);
+          in.seek(fp + 4);
         }
-        ras.skipBytes(12);
+        in.skipBytes(12);
 
-        int offset = ras.readInt() + extra;
-        int quantOffset = ras.readInt() + extra;
-        int huffmanOffset = ras.readInt() + extra;
-        int sof = ras.readInt() + extra;
-        int sos = ras.readInt() + extra;
-        int sod = ras.readInt() + extra;
+        int offset = in.readInt() + extra;
+        int quantOffset = in.readInt() + extra;
+        int huffmanOffset = in.readInt() + extra;
+        int sof = in.readInt() + extra;
+        int sos = in.readInt() + extra;
+        int sod = in.readInt() + extra;
 
         if (quantOffset != 0) {
-          ras.seek(quantOffset);
-          ras.skipBytes(3);
+          in.seek(fp + quantOffset);
+          in.skipBytes(3);
           quant = new byte[64];
-          ras.read(quant);
+          in.read(quant);
         }
         else {
           quant = new byte[] {
@@ -107,15 +109,15 @@ public class MJPBCodec extends BaseCodec implements Codec {
         }
 
         if (huffmanOffset != 0) {
-          ras.seek(huffmanOffset);
-          ras.skipBytes(3);
+          in.seek(fp + huffmanOffset);
+          in.skipBytes(3);
           lumDcBits = new byte[16];
-          ras.read(lumDcBits);
+          in.read(lumDcBits);
           lumDc = new byte[12];
-          ras.read(lumDc);
-          ras.skipBytes(1);
+          in.read(lumDc);
+          in.skipBytes(1);
           lumAcBits = new byte[16];
-          ras.read(lumAcBits);
+          in.read(lumAcBits);
 
           int sum = 0;
 
@@ -124,78 +126,44 @@ public class MJPBCodec extends BaseCodec implements Codec {
           }
 
           lumAc = new byte[sum];
-          ras.read(lumAc);
-          /*
-          if (sum == 162) ras.read(lumAc);
-          else {
-            byte[] tmp = new byte[162];
-            ras.read(tmp);
-
-            ByteVector v = new ByteVector(sum);
-            int[] count = new int[lumAcBits.length];
-            Arrays.fill(count, (byte) 0);
-            for (int i=0; i<tmp.length; i++) {
-              int size = 0;
-              int val = tmp[i] & 0xff;
-              while (Math.pow(2, size) < val) size++;
-              if (count[size] < lumAcBits[size]) {
-                v.add(tmp[i]);
-                count[size]++;
-              }
-              else if (size == 8) {
-                for (int j=size+1; j<lumAcBits.length; j++) {
-                  if (count[j] < lumAcBits[j]) {
-                    v.add(tmp[i]);
-                    count[j]++;
-                  }
-                }
-              }
-            }
-
-            lumAc = v.toByteArray();
-          }
-          */
+          in.read(lumAc);
         }
 
-        ras.seek(sof + 7);
+        in.seek(fp + sof + 7);
 
-        int channels = ras.read();
+        int channels = in.read();
 
         int[] sampling = new int[channels];
         for (int i=0; i<channels; i++) {
-          ras.skipBytes(1);
-          sampling[i] = ras.read();
-          ras.skipBytes(1);
+          in.skipBytes(1);
+          sampling[i] = in.read();
+          in.skipBytes(1);
         }
 
-        ras.seek(sos + 3);
+        in.seek(fp + sos + 3);
         int[] tables = new int[channels];
         for (int i=0; i<channels; i++) {
-          ras.skipBytes(1);
-          tables[i] = ras.read();
+          in.skipBytes(1);
+          tables[i] = in.read();
         }
 
-        ras.seek(sod);
-        int numBytes = (int) (offset - ras.getFilePointer());
-        if (offset == 0) numBytes = (int) (ras.length() - ras.getFilePointer());
+        in.seek(fp + sod);
+        int numBytes = (int) (offset - in.getFilePointer());
+        if (offset == 0) numBytes = (int) (in.length() - in.getFilePointer());
         raw = new byte[numBytes];
-        ras.read(raw);
+        in.read(raw);
 
         if (offset != 0) {
-          ras.seek(offset + 36);
-          int n = ras.readInt();
-          ras.skipBytes(n);
-          ras.seek(ras.getFilePointer() - 40);
+          in.seek(fp + offset + 36);
+          int n = in.readInt();
+          in.skipBytes(n);
+          in.seek(in.getFilePointer() - 40);
 
-          numBytes = (int) (ras.length() - ras.getFilePointer());
+          numBytes = (int) (in.length() - in.getFilePointer());
           raw2 = new byte[numBytes];
-          ras.read(raw2);
+          in.read(raw2);
         }
       }
-
-      ras.close();
-
-      if (raw == null) raw = data;
 
       // insert zero after each byte equal to 0xff
       ByteVector b = new ByteVector();

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.RandomAccessStream;
 
@@ -129,6 +130,6 @@ public interface Codec {
    *   decompressor.
    */
   byte[] decompress(RandomAccessStream in, Object options)
-    throws FormatException;
+    throws FormatException, IOException;
 
 }

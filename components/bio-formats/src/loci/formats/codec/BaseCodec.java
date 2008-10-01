@@ -159,30 +159,35 @@ public abstract class BaseCodec implements Codec {
   }
 
   /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] data, Object options) throws FormatException
+  //public abstract byte[] decompress(byte[] data, Object options)
+  //  throws FormatException;
+  public byte[] decompress(byte[] data, Object options)
+    throws FormatException
   {
     try {
-      RandomAccessStream s = new RandomAccessStream(data);
-      byte[] b = decompress(s, options);
-      s.close();
-      return b;
+      RandomAccessStream r = new RandomAccessStream(data);
+      byte[] t = decompress(r, options);
+      r.close();
+      return t;
     }
-    catch (IOException exc) {
-      throw new FormatException(exc);
+    catch (IOException e) {
+      throw new FormatException(e);
     }
   }
 
   /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
-    throws FormatException
-  {
-    try {
-      byte[] b = new byte[(int) in.length()];
-      in.read(b);
-      return decompress(b, options);
-    }
-    catch (IOException exc) { throw new FormatException(exc); }
-  }
+  //public byte[] decompress(RandomAccessStream in, Object options)
+  //  throws FormatException
+  //{
+  //  try {
+  //    byte[] b = new byte[(int) in.length()];
+  //    in.read(b);
+  //    return decompress(b, options);
+  //  }
+  //  catch (IOException exc) { throw new FormatException(exc); }
+  //}
+  public abstract byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException;
 
   /**
    * 2D data block decoding default implementation.

@@ -133,13 +133,10 @@ public class ND2Reader extends FormatReader {
     }
     else if (isLossless) {
       // plane is compressed using ZLIB
-      int plane = getSizeX() * getSizeY() * pixel;
-      byte[] b = new byte[plane];
-      in.read(b);
 
       int effectiveX = getSizeX();
       if ((getSizeX() % 2) != 0) effectiveX++;
-      byte[] t = new ZlibCodec().decompress(b, null);
+      byte[] t = new ZlibCodec().decompress(in, null);
 
       for (int row=0; row<h; row++) {
         int offset = (row + y) * effectiveX * pixel + x * pixel;

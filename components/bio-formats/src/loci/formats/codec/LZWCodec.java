@@ -23,8 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import java.util.Arrays;
 import loci.formats.FormatException;
+import loci.formats.RandomAccessStream;
 
 /**
  * This is an optimized LZW codec for use with TIFF files.
@@ -91,16 +93,7 @@ public class LZWCodec extends BaseCodec {
   private static final int[] DECOMPR_MASKS =
     {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f};
 
-  /**
-   * Compress sequence of bytes.
-   * <p>
-   * Compresses the input sequence of bytes according to LZW algorithm, as
-   * defined in the TIFF specification.
-   * <p>
-   * @param input
-   *          The sequence of bytes to be compressed.
-   * @return  Result of compression.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] input, int x, int y, int[] dims, Object options)
     throws FormatException
   {
@@ -247,18 +240,11 @@ public class LZWCodec extends BaseCodec {
     return result;
   }
 
-  /**
-   * Decompresses the input sequence of bytes according to LZW algorithm, as
-   * defined in the TIFF specification.
-   * @param input The sequence of bytes to be decompressed.
-   * @param options Decompression options.  In this case, an Integer indicating
-   *   the maximum number of bytes to be decompressed.
-   * @return Result of decompression.
-   * @throws FormatException if input is not LZW-compressed data.
-   */
-  public byte[] decompress(byte[] input, Object options) throws FormatException
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
   {
-    if (input == null || input.length == 0) return input;
+    if (in == null || in.length() == 0) return null;
     if (options == null) {
       throw new FormatException("Options must be the maximum number of " +
         "decompressed bytes.");
@@ -292,8 +278,6 @@ public class LZWCodec extends BaseCodec {
     int nextCode = FIRST_CODE;
 
     // Variables to handle reading bit stream:
-    // Position in 'input' to read next byte from
-    int currInPos = 0;
     // Byte from 'input[curr_in_pos-1]' -- only 'bits_read' bits on the right
     // are non-zero
     int currRead = 0;
@@ -311,11 +295,11 @@ public class LZWCodec extends BaseCodec {
         {
           int bitsLeft = currCodeLength - bitsRead;
           if (bitsLeft > 8) {
-            currRead = (currRead << 8) | (input[currInPos++] & 0xff);
+            currRead = (currRead << 8) | (in.read() & 0xff);
             bitsLeft -= 8;
           }
           bitsRead = 8 - bitsLeft;
-          int nextByte = input[currInPos++] & 0xff;
+          int nextByte = in.read() & 0xff;
           currCode = (currRead << bitsLeft) | (nextByte >> bitsRead);
           currRead = nextByte & DECOMPR_MASKS[bitsRead];
         }
@@ -330,12 +314,12 @@ public class LZWCodec extends BaseCodec {
           {
             int bitsLeft = currCodeLength - bitsRead;
             if (bitsLeft > 8) {
-              currRead = (currRead << 8) | (input[currInPos++] & 0xff);
+              currRead = (currRead << 8) | (in.read() & 0xff);
               bitsLeft -= 8;
             }
             bitsRead = 8 - bitsLeft;
 
-            int nextByte = input[currInPos++] & 0xff;
+            int nextByte = in.read() & 0xff;
             currCode = (currRead << bitsLeft) | (nextByte >> bitsRead);
             currRead = nextByte & DECOMPR_MASKS[bitsRead];
           }

@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import loci.formats.FormatException;
+import loci.formats.RandomAccessStream;
 
 /**
  * This class implements LZO decompression. Compression is not yet
@@ -40,17 +42,7 @@ public class LZOCodec extends BaseCodec implements Codec {
   // LZO compression codes
   private static final int LZO_OVERRUN = -6;
 
-  /**
-   * Compresses a block of lzo data. Currently not supported.
-   *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not an LZO-compressed data block.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
   {
@@ -58,128 +50,104 @@ public class LZOCodec extends BaseCodec implements Codec {
     throw new FormatException("LZO Compression not currently supported");
   }
 
-  /**
-   * Decodes an LZO-compressed array.
-   * Adapted from LZO for Java, available at
-   * http://www.oberhumer.com/opensource/lzo/
-   *
-   * @param src the data to be decompressed
-   * @return The decompressed data
-   * @throws FormatException if data is not valid compressed data for this
-   *                         decompressor
-   */
-  public byte[] decompress(byte[] src, Object options) throws FormatException {
-    int ip = 0;
-    int op = 0;
-    byte[] dst = new byte[src.length];
-    int t = src[ip++] & 0xff;
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
+  {
+    // Adapted from LZO for Java, available at
+    // http://www.oberhumer.com/opensource/lzo/
+    ByteVector dst = new ByteVector();
+    int t = in.read() & 0xff;
     int mPos;
 
     if (t > 17) {
       t -= 17;
       // do dst[op++] = src[ip++]; while (--t > 0);
-      do {
-        dst[op++] = src[ip++];
-        if(op == dst.length) {
-          byte[] newdst = new byte[dst.length * 2];
-          System.arraycopy(dst, 0, newdst, 0, dst.length);
-          dst = newdst;
-        }
-      } while (--t > 0);
-      t = src[ip++] & 0xff;
+      byte[] b = new byte[t];
+      in.read(b);
+      dst.add(b);
+      t = in.read() & 0xff;
 //      if (t < 16) return;
       if(t < 16) {
-        byte[] newdst = new byte[op];
-        System.arraycopy(dst, 0, newdst, 0, op);
-        return newdst;
+        return dst.toByteArray();
       }
     }
 
   loop:
-    for (;; t = src[ip++] & 0xff) {
+    for (;; t = in.read() & 0xff) {
       if (t < 16) {
         if (t == 0) {
-          while (src[ip] == 0) {
+          byte f = in.readByte();
+          while (f == 0) {
             t += 255;
-            ip++;
+            f = in.readByte();
           }
-          t += 15 + (src[ip++] & 0xff);
+          t += 15 + (f & 0xff);
         }
         t += 3;
         // do dst[op++] = src[ip++]; while (--t > 0);
-        do {
-          dst[op++] = src[ip++];
-          if(op == dst.length) {
-            byte[] newdst = new byte[dst.length * 2];
-            System.arraycopy(dst, 0, newdst, 0, dst.length);
-            dst = newdst;
-          }
-        } while (--t > 0);
-        t = src[ip++] & 0xff;
+        byte[] b = new byte[t];
+        in.read(b);
+        dst.add(b);
+        t = in.read() & 0xff;
         if (t < 16) {
-          mPos = op - 0x801 - (t >> 2) - ((src[ip++] & 0xff) << 2);
+          mPos = dst.size() - 0x801 - (t >> 2) - ((in.read() & 0xff) << 2);
           if (mPos < 0) {
             t = LZO_OVERRUN;
             break loop;
           }
           t = 3;
           do {
-            dst[op++] = dst[mPos++];
-            if(op == dst.length || mPos == dst.length) {
-              byte[] newdst = new byte[dst.length * 2];
-              System.arraycopy(dst, 0, newdst, 0, dst.length);
-              dst = newdst;
-            }
+            dst.add(dst.get(mPos++));
           } while (--t > 0);
 //          do dst[op++] = dst[mPos++]; while (--t > 0);
-          t = src[ip - 2] & 3;
+          in.seek(in.getFilePointer() - 2);
+          t = in.read() & 3;
+          in.skipBytes(1);
           if (t == 0) continue;
 //          do dst[op++] = src[ip++]; while (--t > 0);
-          do {
-            dst[op++] = src[ip++];
-            if(op == dst.length) {
-              byte[] newdst = new byte[dst.length * 2];
-              System.arraycopy(dst, 0, newdst, 0, dst.length);
-              dst = newdst;
-            }
-          } while (--t > 0);
-          t = src[ip++] & 0xff;
+          b = new byte[t];
+          in.read(b);
+          dst.add(b);
+          t = in.read() & 0xff;
         }
       }
-      for (;; t = src[ip++] & 0xff) {
+      for (;; t = in.read() & 0xff) {
         if (t >= 64) {
-          mPos = op - 1 - ((t >> 2) & 7) - ((src[ip++] & 0xff) << 3);
+          mPos = dst.size() - 1 - ((t >> 2) & 7) - ((in.read() & 0xff) << 3);
           t = (t >> 5) - 1;
         }
         else if (t >= 32) {
           t &= 31;
           if (t == 0) {
-            while (src[ip] == 0) {
+            byte f = in.readByte();
+            while (f == 0) {
               t += 255;
-              ip++;
+              f = in.readByte();
             }
-            t += 31 + (src[ip++] & 0xff);
+            t += 31 + (f & 0xff);
           }
-          mPos = op - 1 - ((src[ip++] & 0xff) >> 2);
-          mPos -= ((src[ip++] & 0xff) << 6);
+          mPos = dst.size() - 1 - ((in.read() & 0xff) >> 2);
+          mPos -= ((in.read() & 0xff) << 6);
         }
         else if (t >= 16) {
-          mPos = op - ((t & 8) << 11);
+          mPos = dst.size() - ((t & 8) << 11);
           t &= 7;
           if (t == 0) {
-            while (src[ip] == 0) {
+            byte f = in.readByte();
+            while (f == 0) {
               t += 255;
-              ip++;
+              f = in.readByte();
             }
-            t += 7 + (src[ip++] & 0xff);
+            t += 7 + (f & 0xff);
           }
-          mPos -= ((src[ip++] & 0xff) >> 2);
-          mPos -= ((src[ip++] & 0xff) << 6);
-          if (mPos == op) break loop;
+          mPos -= ((in.read() & 0xff) >> 2);
+          mPos -= ((in.read() & 0xff) << 6);
+          if (mPos == dst.size()) break loop;
           mPos -= 0x4000;
         }
         else {
-          mPos = op - 1 - (t >> 2) - ((src[ip++] & 0xff) << 2);
+          mPos = dst.size() - 1 - (t >> 2) - ((in.read() & 0xff) << 2);
           t = 0;
         }
 
@@ -191,28 +159,19 @@ public class LZOCodec extends BaseCodec implements Codec {
         t += 2;
 //        do dst[op++] = dst[mPos++]; while (--t > 0);
         do {
-          dst[op++] = dst[mPos++];
-          if(op == dst.length || mPos == dst.length) {
-            byte[] newdst = new byte[dst.length * 2];
-            System.arraycopy(dst, 0, newdst, 0, dst.length);
-            dst = newdst;
-          }
+          dst.add(dst.get(mPos++));
         } while (--t > 0);
-        t = src[ip - 2] & 3;
+        in.seek(in.getFilePointer() - 2);
+        t = in.read() & 3;
+        in.skipBytes(1);
         if (t == 0) break;
 //        do dst[op++] = src[ip++]; while (--t > 0);
-        do {
-          dst[op++] = src[ip++];
-          if(op == dst.length) {
-            byte[] newdst = new byte[dst.length * 2];
-            System.arraycopy(dst, 0, newdst, 0, dst.length);
-            dst = newdst;
-          }
-        } while (--t > 0);
+        byte[] b = new byte[t];
+        in.read(b);
+        dst.add(b);
+        t = 0;
       }
     }
-    byte[] newdst = new byte[op];
-    System.arraycopy(dst, 0, newdst, 0, op);
-    return newdst;
+    return dst.toByteArray();
   }
 }

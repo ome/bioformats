@@ -163,10 +163,8 @@ public class DicomReader extends FormatReader {
 
     if (isRLE) {
       // plane is compressed using run-length encoding
-      byte[] b = new byte[bytes];
-      in.read(b);
       PackbitsCodec codec = new PackbitsCodec();
-      byte[] t = codec.decompress(b, new Integer(bytes));
+      byte[] t = codec.decompress(in, new Integer(bytes));
       if (t.length < bytes) {
         byte[] tmp = t;
         t = new byte[bytes];

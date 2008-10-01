@@ -42,8 +42,10 @@ public class QTRLECodec extends BaseCodec implements Codec {
     throw new FormatException("QTRLE compression not supported.");
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] data, Object options) throws FormatException {
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
+  {
     if (options == null || !(options instanceof Object[])) return null;
 
     Object[] o = (Object[]) options;
@@ -54,116 +56,106 @@ public class QTRLECodec extends BaseCodec implements Codec {
     int bpp = dims[2];
     int numLines = y;
 
-    if (data.length < 8) return prev;
+    if (in.length() - in.getFilePointer() < 8) return prev;
 
-    try {
-      RABytes s = new RABytes(data);
-      s.skipBytes(4);
+    in.skipBytes(4);
 
-      int header = s.readShort();
-      int off = 0;
-      int start = 0;
+    int header = in.readShort();
+    int off = 0;
+    int start = 0;
 
-      byte[] output = new byte[x * y * bpp];
+    byte[] output = new byte[x * y * bpp];
 
-      if ((header & 8) == 8) {
-        start = s.readShort();
-        s.skipBytes(2);
-        numLines = s.readShort();
-        s.skipBytes(2);
+    if ((header & 8) == 8) {
+      start = in.readShort();
+      in.skipBytes(2);
+      numLines = in.readShort();
+      in.skipBytes(2);
 
-        if (prev != null) {
-          for (int i=0; i<start; i++) {
-            off = i * x * bpp;
-            System.arraycopy(prev, off, output, off, x * bpp);
-          }
-        }
-        off += x * bpp;
-
-        if (prev != null) {
-          for (int i=start+numLines; i<y; i++) {
-            int offset = i * x * bpp;
-            System.arraycopy(prev, offset, output, offset, x * bpp);
-          }
+      if (prev != null) {
+        for (int i=0; i<start; i++) {
+          off = i * x * bpp;
+          System.arraycopy(prev, off, output, off, x * bpp);
         }
       }
-      else throw new FormatException("Unsupported header : " + header);
+      off += x * bpp;
 
-      // uncompress remaining lines
-
-      int skip = 0; // number of bytes to skip
-      byte rle = 0; // RLE code
-
-      int rowPointer = start * x * bpp;
-
-      for (int i=0; i<numLines; i++) {
-        skip = s.read();
-        if (skip < 0) skip += 256;
-
-        if (prev != null) {
-          try {
-            System.arraycopy(prev, rowPointer, output, rowPointer,
-              (skip - 1) * bpp);
-          }
-          catch (ArrayIndexOutOfBoundsException e) { }
+      if (prev != null) {
+        for (int i=start+numLines; i<y; i++) {
+          int offset = i * x * bpp;
+          System.arraycopy(prev, offset, output, offset, x * bpp);
         }
-
-        off = rowPointer + ((skip - 1) * bpp);
-        while (true) {
-          rle = (byte) (s.read() & 0xff);
-
-          if (rle == 0) {
-            skip = s.read();
-
-            if (prev != null) {
-              try {
-                System.arraycopy(prev, off, output, off, (skip - 1) * bpp);
-              }
-              catch (ArrayIndexOutOfBoundsException e) { }
-            }
-
-            off += (skip - 1) * bpp;
-          }
-          else if (rle == -1) {
-            if (off < (rowPointer + (x * bpp)) && prev != null) {
-              System.arraycopy(prev, off, output, off, rowPointer +
-                (x * bpp) - off);
-            }
-            break;
-          }
-          else if (rle < -1) {
-            // unpack next pixel and copy it to output -(rle) times
-            for (int j=0; j<(-1*rle); j++) {
-              if (off < output.length) {
-                System.arraycopy(data, (int) s.getFilePointer(), output,
-                  off, bpp);
-                off += bpp;
-              }
-              else break;
-            }
-            s.skipBytes(bpp);
-          }
-          else {
-            // copy (rle) pixels to output
-            int len = rle * bpp;
-            if (output.length - off < len) len = output.length - off;
-            if (s.length() - s.getFilePointer() < len) {
-              len = (int) (s.length() - s.getFilePointer());
-            }
-            if (len < 0) len = 0;
-            if (off > output.length) off = output.length;
-            s.read(output, off, len);
-            off += len;
-          }
-          if (s.getFilePointer() >= s.length()) return output;
-        }
-        rowPointer += x * bpp;
       }
-      return output;
     }
-    catch (IOException e) {
-      throw new FormatException(e);
+    else throw new FormatException("Unsupported header : " + header);
+
+    // uncompress remaining lines
+
+    int skip = 0; // number of bytes to skip
+    byte rle = 0; // RLE code
+
+    int rowPointer = start * x * bpp;
+
+    for (int i=0; i<numLines; i++) {
+      skip = in.read() & 0xff;
+
+      if (prev != null) {
+        try {
+          System.arraycopy(prev, rowPointer, output, rowPointer,
+            (skip - 1) * bpp);
+        }
+        catch (ArrayIndexOutOfBoundsException e) { }
+      }
+
+      off = rowPointer + ((skip - 1) * bpp);
+      while (true) {
+        rle = (byte) (in.read() & 0xff);
+
+        if (rle == 0) {
+          skip = in.read();
+
+          if (prev != null) {
+            try {
+              System.arraycopy(prev, off, output, off, (skip - 1) * bpp);
+            }
+            catch (ArrayIndexOutOfBoundsException e) { }
+          }
+
+          off += (skip - 1) * bpp;
+        }
+        else if (rle == -1) {
+          if (off < (rowPointer + (x * bpp)) && prev != null) {
+            System.arraycopy(prev, off, output, off, rowPointer +
+              (x * bpp) - off);
+          }
+          break;
+        }
+        else if (rle < -1) {
+          // unpack next pixel and copy it to output -(rle) times
+          in.read(output, off, bpp);
+          for (int j=1; j<(-1*rle); j++) {
+            if (off < output.length) {
+              System.arraycopy(output, off, output, off + bpp, bpp);
+              off += bpp;
+            }
+            else break;
+          }
+        }
+        else {
+          // copy (rle) pixels to output
+          int len = rle * bpp;
+          len = (int) Math.min(len, output.length - off);
+          len =
+            (int) Math.min(len, (int) (in.length() - in.getFilePointer()));
+          if (len < 0) len = 0;
+          if (off > output.length) off = output.length;
+          in.read(output, off, len);
+          off += len;
+        }
+        if (in.getFilePointer() >= in.length()) return output;
+      }
+      rowPointer += x * bpp;
     }
+    return output;
   }
-
 }

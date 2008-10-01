@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import loci.formats.*;
 
 /**
@@ -42,17 +43,20 @@ public class RPZACodec extends BaseCodec implements Codec {
     throw new FormatException("RPZA compression not supported.");
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] data, Object options) throws FormatException {
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
+  {
     if (options == null || !(options instanceof int[])) return null;
 
     int[] o = (int[]) options;
     int x = o[0];
     int y = o[1];
 
+    in.skipBytes(8);
+
     int stride = x;
     int rowInc = stride - 4;
-    int streamPtr = 8;
     short opcode;
     int nBlocks;
     int colorA = 0, colorB;
@@ -66,24 +70,25 @@ public class RPZACodec extends BaseCodec implements Codec {
     int[] pixels = new int[x * y];
     byte[] rtn = new byte[x * y * 3];
 
-    while (data[streamPtr] != (byte) 0xe1) streamPtr++;
-    streamPtr += 4;
+    while (in.read() != (byte) 0xe1);
+    in.skipBytes(3);
 
     totalBlocks = ((x + 3) / 4) * ((y + 3) / 4);
 
-    while (streamPtr < data.length) {
-      opcode = data[streamPtr++];
+    while (in.getFilePointer() < in.length()) {
+      opcode = in.readByte();
       nBlocks = (opcode & 0x1f) + 1;
 
       if ((opcode & 0x80) == 0) {
-        if (streamPtr >= data.length) break;
-        colorA = (opcode << 8) | data[streamPtr++];
+        if (in.getFilePointer() >= in.length()) break;
+        colorA = (opcode << 8) | in.read();
         opcode = 0;
-        if (streamPtr >= data.length) break;
-        if ((data[streamPtr] & 0x80) != 0) {
+        if (in.getFilePointer() >= in.length()) break;
+        if ((in.read() & 0x80) != 0) {
           opcode = 0x20;
           nBlocks = 1;
         }
+        in.seek(in.getFilePointer() - 1);
       }
 
       switch (opcode & 0xe0) {
@@ -98,8 +103,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           }
           break;
         case 0xa0:
-          colorA = DataTools.bytesToInt(data, streamPtr, 2, false);
-          streamPtr += 2;
+          colorA = in.readShort();
           while (nBlocks-- > 0) {
             blockPtr = rowPtr + pixelPtr;
             for (pixelY=0; pixelY<4; pixelY++) {
@@ -124,12 +128,10 @@ public class RPZACodec extends BaseCodec implements Codec {
         case 0xc0:
         case 0x20:
           if ((opcode & 0xe0) == 0xc0) {
-            colorA = DataTools.bytesToInt(data, streamPtr, 2, false);
-            streamPtr += 2;
+            colorA = in.readShort();
           }
 
-          colorB = DataTools.bytesToInt(data, streamPtr, 2, false);
-          streamPtr += 2;
+          colorB = in.readShort();
 
           color4[0] = colorB;
           color4[1] = 0;
@@ -154,8 +156,8 @@ public class RPZACodec extends BaseCodec implements Codec {
           while (nBlocks-- > 0) {
             blockPtr = rowPtr + pixelPtr;
             for (pixelY=0; pixelY<4; pixelY++) {
-              if (streamPtr >= data.length) break;
-              index = data[streamPtr++];
+              if (in.getFilePointer() >= in.length()) break;
+              index = in.read();
               for (pixelX=0; pixelX<4; pixelX++) {
                 idx = (index >> (2*(3 - pixelX))) & 3;
                 if (blockPtr >= pixels.length) break;
@@ -180,8 +182,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           for (pixelY=0; pixelY<4; pixelY++) {
             for (pixelX=0; pixelX<4; pixelX++) {
               if ((pixelY != 0) || (pixelX != 0)) {
-                colorA = DataTools.bytesToInt(data, streamPtr, 2, false);
-                streamPtr += 2;
+                colorA = in.readShort();
               }
               if (blockPtr >= pixels.length) break;
               pixels[blockPtr] = colorA;

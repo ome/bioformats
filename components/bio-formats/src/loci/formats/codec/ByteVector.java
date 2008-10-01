@@ -59,6 +59,10 @@ public class ByteVector {
     return size;
   }
 
+  public byte get(int index) {
+    return data[index];
+  }
+
   public void add(byte[] array) { add(array, 0, array.length); }
 
   public void add(byte[] array, int off, int len) {

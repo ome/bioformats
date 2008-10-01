@@ -97,7 +97,6 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
       ru = new ReflectedUniverse();
 
       ru.exec("import " + J2K_READER);
-      ru.exec("import com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam");
       ru.setVar("j2kSpi", j2kSpi);
       ru.exec("j2kReader = new J2KImageReader(j2kSpi)");
     }
@@ -110,17 +109,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
   // -- Codec API methods --
 
-  /**
-   * Compresses a block of JPEG 2000 data.  Currently not supported.
-   *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not a proper data block.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
     throws FormatException
   {
@@ -128,15 +117,9 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     throw new FormatException("JPEG 2000 compression not currently supported");
   }
 
-  /**
-   * Decodes an image strip using JPEG 2000.
-   *
-   * @param in The stream from which to read compressed data.
-   * @return The decompressed data
-   * @throws FormatException if data is not valid
-   */
+  /* @see Codec#decompress(RandomAccessStream, Object) */
   public byte[] decompress(RandomAccessStream in, Object options)
-    throws FormatException
+    throws FormatException, IOException
   {
     boolean littleEndian = false, interleaved = false;
     long maxFP = 0;
@@ -211,9 +194,6 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
         single = ImageTools.getBytes(b);
       }
       catch (ReflectException exc) {
-        throw new FormatException(exc);
-      }
-      catch (IOException exc) {
         throw new FormatException(exc);
       }
     }

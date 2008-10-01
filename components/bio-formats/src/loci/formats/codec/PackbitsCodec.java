@@ -39,17 +39,7 @@ import loci.formats.RandomAccessStream;
  */
 public class PackbitsCodec extends BaseCodec implements Codec {
 
-  /**
-   * Compresses a block of Packbits data. Currently not supported.
-   *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not an Adobe data block.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
   {
@@ -57,39 +47,26 @@ public class PackbitsCodec extends BaseCodec implements Codec {
     throw new FormatException("Packbits Compression not currently supported");
   }
 
-  /**
-   * Decodes a PackBits (Macintosh RLE) compressed image.
-   * Adapted from the TIFF 6.0 specification, page 42.
-   *
-   * @param in stream containing input data to be decompressed
-   * @param options options to be used during compression, if appropriate
-   * @return The decompressed data
-   * @throws FormatException if data is not valid
-   *   compressed data for this decompressor
-   */
+  /* @see Codec#decompress(RandomAccessStream, Object) */
   public byte[] decompress(RandomAccessStream in, Object options)
-    throws FormatException
+    throws FormatException, IOException
   {
+    // Adapted from the TIFF 6.0 specification, page 42.
     int expected = ((Integer) options).intValue();
     ByteVector output = new ByteVector(1024);
-    try {
-      while (output.size() < expected && in.getFilePointer() < in.length()) {
-        byte n = in.readByte();
-        if (n >= 0) { // 0 <= n <= 127
-          byte[] b = new byte[n + 1];
-          in.read(b);
-          output.add(b);
-          b = null;
-        }
-        else if (n != -128) { // -127 <= n <= -1
-          int len = -n + 1;
-          byte inp = in.readByte();
-          for (int i=0; i<len; i++) output.add(inp);
-        }
+    while (output.size() < expected && in.getFilePointer() < in.length()) {
+      byte n = in.readByte();
+      if (n >= 0) { // 0 <= n <= 127
+        byte[] b = new byte[n + 1];
+        in.read(b);
+        output.add(b);
+        b = null;
       }
-    }
-    catch (IOException exc) {
-      throw new FormatException(exc);
+      else if (n != -128) { // -127 <= n <= -1
+        int len = -n + 1;
+        byte inp = in.readByte();
+        for (int i=0; i<len; i++) output.add(inp);
+      }
     }
     return output.toByteArray();
   }

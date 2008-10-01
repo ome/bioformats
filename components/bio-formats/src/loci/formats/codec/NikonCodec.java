@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import loci.formats.FormatException;
+import loci.formats.RandomAccessStream;
 
 /**
  * This class implements Nikon decompression. Compression is not yet
@@ -43,76 +45,19 @@ public class NikonCodec extends BaseCodec implements Codec {
     0, 5, 4, 3, 6, 2, 7, 1, 0, 8, 9, 11, 10, 12
   };
 
-  /**
-   * Compresses a block of Nikon data. Currently not supported.
-   *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not an Adobe data block.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] data, int x, int y,
-      int[] dims, Object options) throws FormatException
+    int[] dims, Object options) throws FormatException
   {
     // TODO: Add compression support.
     throw new FormatException("Nikon Compression not currently supported");
   }
 
-  /**
-   * Decodes an image strip using Nikon's compression algorithm (a variant on
-   * Huffman coding).
-   *
-   * TODO : this is broken
-   *
-   * @param input input data to be decompressed
-   * @return The decompressed data
-   * @throws FormatException if data is not valid compressed data for this
-   *                         decompressor
-   */
-  public byte[] decompress(byte[] input, Object options) throws FormatException
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
   {
-    BitWriter out = new BitWriter(input.length);
-    BitBuffer bb = new BitBuffer(input);
-    boolean eof = false;
-    while (!eof) {
-      boolean codeFound = false;
-      int code = 0;
-      int bitsRead = 0;
-      while (!codeFound) {
-        int bit = bb.getBits(1);
-        if (bit == -1) {
-          eof = true;
-          break;
-        }
-        bitsRead++;
-        code >>= 1;
-        code += bit;
-        for (int i=16; i<NIKON_TREE.length; i++) {
-          if (code == NIKON_TREE[i]) {
-            int ndx = i;
-            int count = 0;
-            while (ndx > 16) {
-              ndx -= NIKON_TREE[count];
-              count++;
-            }
-            if (ndx < 16) count--;
-            if (bitsRead == count + 1) {
-              codeFound = true;
-              i = NIKON_TREE.length;
-              break;
-            }
-          }
-        }
-      }
-      while (code > 0) {
-        out.write(bb.getBits(1), 1);
-        code--;
-      }
-    }
-    byte[] b = out.toByteArray();
-    return b;
+    // TODO
+    throw new FormatException("Nikon decompression not currently supported");
   }
 }

@@ -107,9 +107,7 @@ public class ZeissZVIReader extends FormatReader {
       int len = w * pixel;
 
       if (isJPEG) {
-        byte[] t = new byte[(int) (s.length() - s.getFilePointer())];
-        s.read(t);
-        t = new JPEGCodec().decompress(t, new Object[] {
+        byte[] t = new JPEGCodec().decompress(s, new Object[] {
           new Boolean(isLittleEndian()), new Boolean(isInterleaved())});
 
         int row = getSizeX() * pixel;

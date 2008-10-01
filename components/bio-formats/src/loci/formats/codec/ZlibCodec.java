@@ -29,6 +29,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import loci.formats.FormatException;
+import loci.formats.RandomAccessStream;
 
 /**
  * This class implements ZLIB decompression.
@@ -41,19 +42,9 @@ import loci.formats.FormatException;
  */
 public class ZlibCodec extends BaseCodec implements Codec {
 
-  /**
-   * Compresses a block of ZLIB data.
-   *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not an Adobe data block.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] data, int x, int y,
-      int[] dims, Object options) throws FormatException
+    int[] dims, Object options) throws FormatException
   {
     Deflater deflater = new Deflater();
     deflater.setInput(data);
@@ -68,35 +59,17 @@ public class ZlibCodec extends BaseCodec implements Codec {
     return bytes.toByteArray();
   }
 
-  /** Decodes an ZLIB compressed image strip.
-   *
-   * @param input the data to be decompressed
-   * @return The decompressed data
-   * @throws FormatException if data is not valid compressed data for this
-   *                         decompressor
-   */
-  public byte[] decompress(byte[] input, Object options)
-    throws FormatException
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
   {
-    Inflater inf = new Inflater(false);
-    inf.setInput(input);
-    InflaterInputStream i =
-      new InflaterInputStream(new PipedInputStream(), inf);
+    InflaterInputStream i = new InflaterInputStream(in);
     ByteVector bytes = new ByteVector();
     byte[] buf = new byte[8192];
     while (true) {
-      try {
-        int r = i.read(buf, 0, buf.length);
-        if (r <= 0) break; // eof
-        bytes.add(buf, 0, r);
-      }
-      catch (IOException e) {
-        if (bytes.size() == 0) {
-          throw new FormatException("Error uncompressing " +
-            "ZLIB compressed image strip.", e);
-        }
-        else break;
-      }
+      int r = i.read(buf, 0, buf.length);
+      if (r <= 0) break; // eof
+      bytes.add(buf, 0, r);
     }
     return bytes.toByteArray();
   }

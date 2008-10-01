@@ -115,34 +115,29 @@ public class BitBuffer {
     while (bitsToRead != 0 && !eofFlag) {
       // if we need to read from more than the current byte in the buffer...
       if (bitsToRead >= 8 - currentBit) {
+        toStore <<= (8 - currentBit);
+        bitsToRead -= (8 - currentBit);
+        int cb = (int) byteBuffer[currentByte];
         if (currentBit == 0) {
           // we can read in a whole byte, so we'll do that.
-          toStore = toStore << 8;
-          int cb = ((int) byteBuffer[currentByte]);
-          toStore += (cb<0 ? (int) 256 + cb : (int) cb);
-          bitsToRead -= 8;
-          currentByte++;
+          toStore += cb & 0xff;
         }
         else {
           // otherwise, only read the appropriate number of bits off the back
           // side of the byte, in order to "finish" the current byte in the
           // buffer.
-          toStore = toStore << (8 - currentBit);
-          toStore += ((int)
-            byteBuffer[currentByte]) & BACK_MASK[8 - currentBit];
-          bitsToRead -= (8 - currentBit);
+          toStore += cb & BACK_MASK[8 - currentBit];
           currentBit = 0;
-          currentByte++;
         }
+        currentByte++;
       }
       else {
         // We will be able to finish using the current byte.
         // read the appropriate number of bits off the front side of the byte,
         // then push them into the int.
         toStore = toStore << bitsToRead;
-        int cb = ((int) byteBuffer[currentByte]);
-        cb = (cb<0 ? (int) 256 + cb : (int) cb);
-        toStore += ((cb) & (0x00FF - FRONT_MASK[currentBit])) >>
+        int cb = byteBuffer[currentByte] & 0xff;
+        toStore += (cb & (0x00FF - FRONT_MASK[currentBit])) >>
           (8 - (currentBit + bitsToRead));
         currentBit += bitsToRead;
         bitsToRead = 0;

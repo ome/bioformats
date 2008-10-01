@@ -99,9 +99,7 @@ public class PSDReader extends FormatReader {
         for (int row=0; row<getSizeY(); row++) {
           if (row < y || row >= (y + h)) in.skipBytes(lens[c][row]);
           else {
-            byte[] b = new byte[lens[c][row]];
-            in.read(b);
-            b = codec.decompress(b, new Integer(getSizeX() * bpp));
+            byte[] b = codec.decompress(in, new Integer(getSizeX() * bpp));
             System.arraycopy(b, x * bpp, buf,
               c * h * bpp * w + (row - y) * bpp * w, w * bpp);
           }

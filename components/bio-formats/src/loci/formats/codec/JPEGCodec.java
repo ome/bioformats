@@ -41,17 +41,7 @@ import loci.formats.*;
  */
 public class JPEGCodec extends BaseCodec implements Codec {
 
-  /**
-   * Compresses a block of JPEG data. Currently not supported.
-   *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not an Adobe data block.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
   {
@@ -59,16 +49,9 @@ public class JPEGCodec extends BaseCodec implements Codec {
     throw new FormatException("JPEG Compression not currently supported");
   }
 
-  /**
-   * Decodes an image strip using JPEG compression algorithm.
-   *
-   * @param in The stream from which to read compressed data.
-   * @return The decompressed data
-   * @throws FormatException if data is not valid compressed data for this
-   *                         decompressor
-   */
+  /* @see Codec#decompress(RandomAccessStream, Object) */
   public byte[] decompress(RandomAccessStream in, Object options)
-    throws FormatException
+    throws FormatException, IOException
   {
     BufferedImage b;
     long fp = in.getFilePointer();
@@ -118,10 +101,6 @@ public class JPEGCodec extends BaseCodec implements Codec {
         b = r.read(0);
         ii.close();
         r.dispose();
-      }
-      catch (IOException e) {
-        throw new FormatException(
-          "An I/O error occurred while decompressing the image", e);
       }
       catch (ClassNotFoundException e) {
         throw new FormatException(

@@ -137,19 +137,11 @@ public class OMEXMLReader extends FormatReader {
       length = in.length() - offset;
     }
 
-    String data = in.readString((int) length * 2);
-
-    // retrieve the compressed pixel data
-
-    int dataEnd = data.indexOf("<");
-    if (dataEnd != -1) data = data.substring(0, dataEnd);
+    int depth = FormatTools.getBytesPerPixel(getPixelType());
+    int planeSize = getSizeX() * getSizeY() * depth;
 
     Base64Codec e = new Base64Codec();
-    byte[] pixels = e.base64Decode(data);
-    data = null;
-
-    int planeSize =
-      getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
+    byte[] pixels = e.decompress(in, new Integer(planeSize));
 
     if (compress.equals("bzip2")) {
       byte[] tempPixels = pixels;
@@ -169,7 +161,6 @@ public class OMEXMLReader extends FormatReader {
       pixels = new ZlibCodec().decompress(pixels, null);
     }
 
-    int depth = FormatTools.getBytesPerPixel(getPixelType());
     for (int row=0; row<h; row++) {
       int off = (row + y) * getSizeX() * depth + x * depth;
       System.arraycopy(pixels, off, buf, row * w * depth, w * depth);
@@ -248,7 +239,7 @@ public class OMEXMLReader extends FormatReader {
       core[i].rgb = false;
       core[i].interleaved = false;
       core[i].indexed = false;
-      core[i].falseColor = false;
+      core[i].falseColor = true;
 
       String type = pixType.toLowerCase();
       boolean signed = type.charAt(0) != 'u';

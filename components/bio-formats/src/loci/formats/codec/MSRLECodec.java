@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import loci.formats.*;
 
 /**
@@ -41,8 +42,10 @@ public class MSRLECodec extends BaseCodec implements Codec {
     throw new FormatException("MSRLE compression not supported.");
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] data, Object options) throws FormatException {
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
+  {
     if (options == null || !(options instanceof Object[])) return null;
 
     Object[] o = (Object[]) options;
@@ -51,10 +54,9 @@ public class MSRLECodec extends BaseCodec implements Codec {
     int x = dims[0];
     int y = dims[1];
 
-    int pt = 0;
-    short code = 0;
+    int code = 0;
     short extra = 0;
-    short stream = 0;
+    int stream = 0;
 
     int pixelPt = 0;
     int row = x;
@@ -63,25 +65,23 @@ public class MSRLECodec extends BaseCodec implements Codec {
 
     if (prev == null) prev = new byte[frameSize];
 
-    while (rowPt >= 0 && pt < data.length && pixelPt < prev.length) {
-      stream = data[pt++];
-      if (stream < 0) stream += 256;
+    while (rowPt >= 0 && in.getFilePointer() < in.length() &&
+      pixelPt < prev.length)
+    {
+      stream = in.read() & 0xff;
       code = stream;
 
       if (code == 0) {
-        stream = data[pt++];
-        if (stream < 0) stream += 256;
+        stream = in.read() & 0xff;
         if (stream == 0) {
           rowPt -= row;
           pixelPt = 0;
         }
         else if (stream == 1) return prev;
         else if (stream == 2) {
-          stream = data[pt++];
-          if (stream < 0) stream += 256;
+          stream = in.read() & 0xff;
           pixelPt += stream;
-          stream = data[pt++];
-          if (stream < 0) stream += 256;
+          stream = in.read() & 0xff;
           rowPt -= stream * row;
         }
         else {
@@ -91,14 +91,14 @@ public class MSRLECodec extends BaseCodec implements Codec {
 
           code = stream;
           extra = (short) (stream & 0x01);
-          if (stream + code + extra > data.length) return prev;
+          if (stream + code + extra > in.length()) return prev;
 
           while (code-- > 0) {
-            stream = data[pt++];
+            stream = in.read();
             prev[rowPt + pixelPt] = (byte) stream;
             pixelPt++;
           }
-          if (extra != 0) pt++;
+          if (extra != 0) in.skipBytes(1);
         }
       }
       else {
@@ -106,7 +106,7 @@ public class MSRLECodec extends BaseCodec implements Codec {
           return prev;
         }
 
-        stream = data[pt++];
+        stream = in.read();
 
         while (code-- > 0) {
           prev[rowPt + pixelPt] = (byte) stream;

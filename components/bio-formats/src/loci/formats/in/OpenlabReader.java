@@ -145,9 +145,10 @@ public class OpenlabReader extends FormatReader {
       }
       else {
         in.skipBytes(16);
+        int bytes = bpp * getRGBChannelCount();
         in.read(b);
-        b = new LZOCodec().decompress(b);
-
+        b = new LZOCodec().decompress(b,
+          new Integer(getSizeX() * getSizeY() * bytes));
         if (getSizeX() * getSizeY() * 4 <= b.length) {
           for (int yy=y; yy<h + y; yy++) {
             for (int xx=x; xx<w + x; xx++) {
@@ -158,7 +159,6 @@ public class OpenlabReader extends FormatReader {
         }
         else {
           int src = b.length / getSizeY();
-          int bytes = bpp * getRGBChannelCount();
           if (src - (getSizeX() * bytes) != 16) src = getSizeX() * bytes;
           int dest = w * bytes;
           for (int row=0; row<h; row++) {
@@ -188,7 +188,7 @@ public class OpenlabReader extends FormatReader {
         if (getRGBChannelCount() == 1) {
           byte[] splitBuf = ImageTools.splitChannels(tmpBuf, 0, 3,
             FormatTools.getBytesPerPixel(getPixelType()), false,
-            !pict.isInterleaved());
+            pict.isInterleaved());
           System.arraycopy(splitBuf, 0, buf, 0, splitBuf.length);
         }
         else System.arraycopy(tmpBuf, 0, buf, 0, tmpBuf.length);

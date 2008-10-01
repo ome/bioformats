@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import loci.formats.FormatException;
+import loci.formats.RandomAccessStream;
 
 /**
  * Implements encoding (compress) and decoding (decompress) methods
@@ -52,43 +54,25 @@ public class Base64Codec extends BaseCodec implements Codec {
     }
     for (int i = 'Z'; i >= 'A'; i--) {
       base64Alphabet[i] = (byte) (i - 'A');
+      lookupBase64Alphabet[i - 'A'] = (byte) i;
     }
     for (int i = 'z'; i >= 'a'; i--) {
       base64Alphabet[i] = (byte) (i - 'a' + 26);
+      lookupBase64Alphabet[i - 'a' + 26] = (byte) i;
     }
     for (int i = '9'; i >= '0'; i--) {
       base64Alphabet[i] = (byte) (i - '0' + 52);
+      lookupBase64Alphabet[i - '0' + 52] = (byte) i;
     }
 
     base64Alphabet['+'] = 62;
     base64Alphabet['/'] = 63;
 
-    for (int i=0; i<=25; i++) {
-      lookupBase64Alphabet[i] = (byte) ('A' + i);
-    }
-
-    for (int i=26, j=0; i<=51; i++, j++) {
-      lookupBase64Alphabet[i] = (byte) ('a' + j);
-    }
-
-    for (int i=52, j=0; i<=61; i++, j++) {
-      lookupBase64Alphabet[i] = (byte) ('0' + j);
-    }
-
     lookupBase64Alphabet[62] = (byte) '+';
     lookupBase64Alphabet[63] = (byte) '/';
   }
 
-  /**
-   * Encodes a block of data into Base64.
-   *
-   * @param input the data to be encoded.
-   * @param x ignored.
-   * @param y ignored.
-   * @param dims ignored.
-   * @param options ignored.
-   * @return The encoded data.
-   */
+  /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] input, int x, int y, int[] dims,
     Object options) throws FormatException
   {
@@ -163,90 +147,54 @@ public class Base64Codec extends BaseCodec implements Codec {
     return encoded;
   }
 
-  /**
-   * Decompresses a block of data.
-   *
-   * @param base64Data the data to be decoded
-   * @return The decoded data
-   * @throws FormatException if data is not valid Base64 data
-   */
-  public byte[] decompress(byte[] base64Data, Object options)
-    throws FormatException
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException, IOException
   {
     // TODO: Add checks for invalid data.
-    if (base64Data.length == 0) return new byte[0];
+    if (in.length() == 0) return new byte[0];
 
-    int numberQuadruple = base64Data.length / FOURBYTE;
-    byte[] decodedData = null;
-    byte b1 = 0, b2 = 0, b3 = 0, b4 = 0, marker0 = 0, marker1 = 0;
+    byte b3 = 0, b4 = 0, marker0 = 0, marker1 = 0;
 
-    int encodedIndex = 0;
-    int dataIndex = 0;
+    ByteVector decodedData = new ByteVector();
 
-    int lastData = base64Data.length;
-    while (base64Data[lastData - 1] == PAD) {
-      if (--lastData == 0) {
-        return new byte[0];
+    byte[] block = new byte[8192];
+    in.read(block);
+    int p = 0;
+    byte b1 = base64Alphabet[block[p++]];
+    byte b2 = base64Alphabet[block[p++]];
+
+    while (b1 != -1 && b2 != -1) {
+      marker0 = block[p++];
+      marker1 = block[p++];
+
+      if (p == block.length) {
+        in.read(block);
+        p = 0;
       }
-    }
-    decodedData = new byte[lastData - numberQuadruple];
 
-    for (int i=0; i<numberQuadruple; i++) {
-      dataIndex = i * 4;
-      marker0 = base64Data[dataIndex + 2];
-      marker1 = base64Data[dataIndex + 3];
-
-      b1 = base64Alphabet[base64Data[dataIndex]];
-      b2 = base64Alphabet[base64Data[dataIndex + 1]];
-
+      decodedData.add((byte) (b1 << 2 | b2 >> 4));
       if (marker0 != PAD && marker1 != PAD) {
         b3 = base64Alphabet[marker0];
         b4 = base64Alphabet[marker1];
 
-        decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);
-        decodedData[encodedIndex + 1] =
-          (byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf));
-        decodedData[encodedIndex + 2] = (byte) (b3 << 6 | b4);
+        decodedData.add((byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf)));
+        decodedData.add((byte) (b3 << 6 | b4));
       }
       else if (marker0 == PAD) {
-        decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);
+        decodedData.add((byte) 0);
+        decodedData.add((byte) 0);
       }
       else if (marker1 == PAD) {
         b3 = base64Alphabet[marker0];
 
-        decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);
-        decodedData[encodedIndex + 1] =
-          (byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf));
+        decodedData.add((byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf)));
+        decodedData.add((byte) 0);
       }
-      encodedIndex += 3;
+      b1 = base64Alphabet[block[p++]];
+      b2 = base64Alphabet[block[p++]];
     }
-    return decodedData;
-  }
-
-  /**
-   * Decodes a Base64 String by converting to bytes and passing to the
-   * decompress method.
-   *
-   * @param s the String to be decoded
-   * @return The decoded data
-   * @throws FormatException if s is not valid Base64 data.
-   */
-  public byte[] base64Decode(String s) throws FormatException {
-    byte[] base64Data = s.getBytes();
-    return decompress(base64Data);
-  }
-
-  /**
-   * Main testing method. test is inherited from parent class.
-   *
-   * @param args ignored
-   * @throws FormatException Can only occur if there is a bug in the
-   *                         compress method.
-   */
-
-  public static void main(String[] args) throws FormatException {
-    Base64Codec c = new Base64Codec();
-    c.test();
+    return decodedData.toByteArray();
   }
 
 }
