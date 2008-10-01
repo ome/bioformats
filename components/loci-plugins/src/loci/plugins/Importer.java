@@ -784,7 +784,10 @@ public class Importer {
       }
 
       if (!concatenate) {
-        if (options.isViewBrowser()) new DataBrowser(imp);
+        if (options.isViewBrowser()) {
+          new DataBrowser(imp, null, r.getChannelDimTypes(),
+            r.getChannelDimLengths());
+        }
         else imp.show();
         if ((splitC || splitZ || splitT) && !options.isVirtual()) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +

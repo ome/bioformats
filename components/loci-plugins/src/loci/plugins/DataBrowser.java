@@ -39,6 +39,7 @@ import ij.io.FileInfo;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.xml.parsers.*;
+import loci.formats.FormatTools;
 import loci.formats.cache.Cache;
 import loci.formats.gui.CacheIndicator;
 import loci.formats.gui.XMLCellRenderer;
@@ -70,14 +71,30 @@ public class DataBrowser extends StackWindow implements ActionListener {
   protected BrowserOptionsWindow optionsWindow;
   protected String xml;
 
+  protected Scrollbar[] cSliders;
+
+  private int[] cLengths;
+  private int[] cIndex;
+
   // -- Constructors --
 
   public DataBrowser(ImagePlus imp) {
-    this(imp, null);
+    this(imp, null, null, null);
   }
 
-  public DataBrowser(final ImagePlus imp, ImageCanvas ic) {
+  public DataBrowser(final ImagePlus imp, ImageCanvas ic, String[] channels,
+    int[] cLengths)
+  {
     super(imp, ic);
+
+    if (channels == null || channels.length == 0) {
+      channels = new String[] {"channel"};
+    }
+    if (cLengths == null || cLengths.length == 0) {
+      cLengths = new int[] {imp.getNChannels()};
+    }
+    this.cLengths = cLengths;
+    cIndex = new int[cLengths.length];
 
     // build metadata window
     metaWindow = new JFrame("Metadata - " + getTitle());
@@ -98,8 +115,13 @@ public class DataBrowser extends StackWindow implements ActionListener {
       "5dlu, right:pref, 3dlu, pref:grow, 5dlu, pref, 5dlu, pref, 5dlu";
     //       <-labels->        <------sliders------>       <misc>
 
-    String rows = "4dlu, pref, 3dlu, pref, 3dlu, pref, 6dlu";
+    String rows = "4dlu, pref, 3dlu, pref";
     //                   <Z->        <T->        <C->
+
+    for (int i=0; i<channels.length; i++) {
+      rows += ", 3dlu, pref";
+    }
+    rows += ", 6dlu";
 
     controls.setLayout(new FormLayout(cols, rows));
     controls.setBackground(Color.white);
@@ -108,19 +130,39 @@ public class DataBrowser extends StackWindow implements ActionListener {
     if (sliceSelector == null) zLabel.setEnabled(false);
     Label tLabel = new Label("time");
     if (frameSelector == null) tLabel.setEnabled(false);
-    Label cLabel = new Label("channel");
-    if (channelSelector == null) cLabel.setEnabled(false);
+
+    Label[] cLabels = new Label[channels.length];
+    for (int i=0; i<channels.length; i++) {
+      cLabels[i] = new Label(channels[i]);
+      if (channels.length == 1 && channelSelector == null) {
+        cLabels[i].setEnabled(false);
+      }
+    }
 
     Scrollbar zSlider = sliceSelector == null ?
       makeDummySlider() : sliceSelector;
     Scrollbar tSlider = frameSelector == null ?
       makeDummySlider() : frameSelector;
-    Scrollbar cSlider = channelSelector == null ?
-      makeDummySlider() : channelSelector;
+
+    cSliders = new Scrollbar[channels.length];
+    Panel[] cPanels = new Panel[channels.length];
+    for (int i=0; i<channels.length; i++) {
+      if (channels.length == 1 && channelSelector == null) {
+        cSliders[i] = makeDummySlider();
+      }
+      else if (channels.length == 1) {
+        cSliders[i] = channelSelector;
+      }
+      else {
+        cSliders[i] =
+          new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, cLengths[i] + 1);
+        cSliders[i].addAdjustmentListener(this);
+      }
+      cPanels[i] = makeHeavyPanel(cSliders[i]);
+    }
 
     Panel zPanel = makeHeavyPanel(zSlider);
     Panel tPanel = makeHeavyPanel(tSlider);
-    Panel cPanel = makeHeavyPanel(cSlider);
 
     fpsSpin = new JSpinner(new SpinnerNumberModel(10, 1, 99, 1));
     fpsSpin.setToolTipText("Animation rate in frames per second");
@@ -138,8 +180,11 @@ public class DataBrowser extends StackWindow implements ActionListener {
       zPanel.add(zCache, BorderLayout.SOUTH);
       CacheIndicator tCache = new CacheIndicator(cache, 2, tSlider, 10, 20);
       tPanel.add(tCache, BorderLayout.SOUTH);
-      CacheIndicator cCache = new CacheIndicator(cache, 0, cSlider, 10, 20);
-      cPanel.add(cCache, BorderLayout.SOUTH);
+      for (int i=0; i<channels.length; i++) {
+        CacheIndicator cCache = new CacheIndicator(cache, 0, i, cLengths,
+          (Component) cSliders[i], 10, 20);
+        cPanels[i].add(cCache, BorderLayout.SOUTH);
+      }
 
       optionsWindow =
         new BrowserOptionsWindow("Options - " + getTitle(), cache);
@@ -170,10 +215,12 @@ public class DataBrowser extends StackWindow implements ActionListener {
     controls.add(tPanel, cc.xyw(4, 4, 3));
     controls.add(animate, cc.xy(8, 4));
 
-    controls.add(cLabel, cc.xy(2, 6));
-    controls.add(cPanel, cc.xy(4, 6));
-    controls.add(options, cc.xy(6, 6));
-    controls.add(metadata, cc.xy(8, 6));
+    for (int i=0; i<channels.length; i++) {
+      controls.add(cLabels[i], cc.xy(2, i*2 + 6));
+      controls.add(cPanels[i], cc.xy(4, i*2 + 6));
+    }
+    controls.add(options, cc.xy(6, (channels.length - 1) * 2 + 6));
+    controls.add(metadata, cc.xy(8, (channels.length - 1) * 2 + 6));
 
     add(controls, BorderLayout.SOUTH);
 
@@ -317,6 +364,26 @@ public class DataBrowser extends StackWindow implements ActionListener {
     // NB: Do not eat superclass events. Om nom nom nom. :-)
     else super.actionPerformed(e);
   }
+
+  // -- AdjustmentListener API methods --
+
+  public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
+    for (int i=0; i<cSliders.length; i++) {
+      if (e.getSource().equals(cSliders[i])) {
+        cIndex[i] = cSliders[i].getValue() - 1;
+        int channel = FormatTools.positionToRaster(cLengths, cIndex) + 1;
+        if (channelSelector != null) {
+          channelSelector.setValue(channel);
+          super.adjustmentValueChanged(new AdjustmentEvent(channelSelector,
+            AdjustmentEvent.ADJUSTMENT_VALUE_CHANGED, AdjustmentEvent.TRACK,
+            channel));
+        }
+        return;
+      }
+    }
+    super.adjustmentValueChanged(e);
+  }
+
 
   // -- Helper methods --
 
