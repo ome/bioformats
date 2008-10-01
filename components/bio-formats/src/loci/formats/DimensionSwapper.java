@@ -161,8 +161,11 @@ public class DimensionSwapper extends ReaderWrapper {
 
   /* @see loci.formats.IFormatReader#setId(String) */
   public void setId(String id) throws FormatException, IOException {
+    String oldFile = getCurrentFile();
     super.setId(id);
-    outputOrder = new String[getSeriesCount()];
+    if (!id.equals(oldFile) || outputOrder == null) {
+      outputOrder = new String[getSeriesCount()];
+    }
   }
 
   /* @see loci.formats.IFormatReader#getSizeX() */
@@ -258,6 +261,12 @@ public class DimensionSwapper extends ReaderWrapper {
   public int[] getZCTCoords(int no) {
     return FormatTools.getZCTCoords(this, no);
   }
+
+  /* @see loci.formats.IFormatReader#getIndex(int, int, int) */
+  public int getIndex(int z, int c, int t) {
+    return FormatTools.getIndex(this, z, c, t);
+  }
+
 
   // -- Helper methods --
 
