@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-formats"/>
+	<classpathentry kind="var" path="LOCI_JARS/visad-lite.jar"/>
+	<classpathentry kind="var" path="LOCI_JARS/forms-1.0.4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ome-io"/>
+	<classpathentry kind="var" path="LOCI_JARS/looks-1.2.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/poi"/>
+	<classpathentry kind="var" path="LOCI_JARS/ij.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
