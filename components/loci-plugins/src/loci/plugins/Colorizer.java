@@ -272,8 +272,7 @@ public class Colorizer implements PlugInFilter {
               }
             }
             else if (mergeOption.equals(ImporterOptions.MERGE_PROJECTION)) {
-              // TODO
-              // Add spectral projection logic here (see ticket #86).
+              // TODO - Add spectral projection logic here (see ticket #86).
             }
             else closeOriginal = false;
           }

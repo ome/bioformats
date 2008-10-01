@@ -87,7 +87,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
   // -- JComponent API methods --
 
   public void paintComponent(Graphics g) {
-//    super.paintComponent(g);
+    //super.paintComponent(g);
 
     g.setColor(Color.BLACK);
     int xStart = lPad, width = getWidth() - lPad - rPad;

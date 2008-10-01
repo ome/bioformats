@@ -481,7 +481,7 @@ public class Importer {
                 if (pos[1] > 0) continue;
                 String label = constructSliceLabel(
                   new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]), r,
-                  retrieve, i, new int[][] {zCount, cCount, tCount});
+                  retrieve, i, zCount, cCount, tCount);
                 ru.setVar("label", label);
                 ru.exec("stackB.addSlice(label)");
               }
@@ -489,7 +489,7 @@ public class Importer {
             else {
               for (int j=0; j<num[i]; j++) {
                 String label = constructSliceLabel(j, r,
-                  retrieve, i, new int[][] {zCount, cCount, tCount});
+                  retrieve, i, zCount, cCount, tCount);
                 ru.setVar("label", label);
                 ru.exec("stackB.addSlice(label)");
               }
@@ -518,8 +518,8 @@ public class Importer {
             int ndx = j;
             //int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
 
-            String label = constructSliceLabel(ndx, r, retrieve, i,
-              new int[][] {zCount, cCount, tCount});
+            String label = constructSliceLabel(ndx, r,
+              retrieve, i, zCount, cCount, tCount);
 
             // get image processor for jth plane
             ImageProcessor ip = Util.openProcessors(r, ndx, cropOptions[i])[0];
@@ -867,7 +867,8 @@ public class Importer {
 
   /** Constructs slice label. */
   private String constructSliceLabel(int ndx, IFormatReader r,
-    MetadataRetrieve retrieve, int series, int[][] counts)
+    MetadataRetrieve retrieve, int series,
+    int[] zCount, int[] cCount, int[] tCount)
   {
     r.setSeries(series);
     int[] zct = r.getZCTCoords(ndx);
@@ -876,23 +877,21 @@ public class Importer {
     StringBuffer sb = new StringBuffer();
     if (r.isOrderCertain()) {
       boolean first = true;
-      if (counts[1][series] > 1) {
+      if (cCount[series] > 1) {
         if (first) first = false;
         else sb.append("; ");
         int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
         for (int i=0; i<subC.length; i++) {
-          if (!subCTypes[i].equals(FormatTools.CHANNEL)) {
-            sb.append(subCTypes[i]);
-          }
-          else sb.append("ch");
+          boolean ch = subCTypes[i].equals(FormatTools.CHANNEL);
+          sb.append(ch ? "c" : subCTypes[i]);
           sb.append(":");
           sb.append(subCPos[i] + 1);
           sb.append("/");
           sb.append(subC[i]);
-          if (i < subC.length - 1) sb.append("; ");
+          if (i < subC.length - 1) sb.append(", ");
         }
       }
-      if (counts[0][series] > 1) {
+      if (zCount[series] > 1) {
         if (first) first = false;
         else sb.append("; ");
         sb.append("z:");
@@ -900,7 +899,7 @@ public class Importer {
         sb.append("/");
         sb.append(r.getSizeZ());
       }
-      if (counts[2][series] > 1) {
+      if (tCount[series] > 1) {
         if (first) first = false;
         else sb.append("; ");
         sb.append("t:");
@@ -915,9 +914,9 @@ public class Importer {
       sb.append("/");
       sb.append(r.getImageCount());
     }
-    // put image name at the end, in case it is too long
+    // put image name at the end, in case it is long
     String imageName = retrieve.getImageName(series);
-    if (imageName != null) {
+    if (imageName != null && !imageName.trim().equals("")) {
       sb.append(" - ");
       sb.append(imageName);
     }

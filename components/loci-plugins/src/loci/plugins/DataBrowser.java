@@ -73,8 +73,8 @@ public class DataBrowser extends StackWindow implements ActionListener {
 
   protected Scrollbar[] cSliders;
 
-  private int[] cLengths;
-  private int[] cIndex;
+  protected int[] cLengths;
+  protected int[] cIndex;
 
   // -- Constructors --
 
@@ -82,13 +82,13 @@ public class DataBrowser extends StackWindow implements ActionListener {
     this(imp, null, null, null);
   }
 
-  public DataBrowser(final ImagePlus imp, ImageCanvas ic, String[] channels,
-    int[] cLengths)
+  public DataBrowser(final ImagePlus imp, ImageCanvas ic,
+    String[] channels, int[] cLengths)
   {
     super(imp, ic);
 
     if (channels == null || channels.length == 0) {
-      channels = new String[] {"channel"};
+      channels = new String[] {"Channel"};
     }
     if (cLengths == null || cLengths.length == 0) {
       cLengths = new int[] {imp.getNChannels()};
@@ -118,40 +118,38 @@ public class DataBrowser extends StackWindow implements ActionListener {
     String rows = "4dlu, pref, 3dlu, pref";
     //                   <Z->        <T->        <C->
 
-    for (int i=0; i<channels.length; i++) {
-      rows += ", 3dlu, pref";
-    }
+    for (int i=0; i<channels.length; i++) rows += ", 3dlu, pref";
     rows += ", 6dlu";
 
     controls.setLayout(new FormLayout(cols, rows));
     controls.setBackground(Color.white);
 
-    Label zLabel = new Label("z-depth");
-    if (sliceSelector == null) zLabel.setEnabled(false);
-    Label tLabel = new Label("time");
-    if (frameSelector == null) tLabel.setEnabled(false);
+    boolean hasZ = sliceSelector != null;
+    boolean hasT = frameSelector != null;
+    boolean hasC = channelSelector != null;
+
+    Label zLabel = new Label("Z-depth");
+    zLabel.setEnabled(hasZ);
+    Label tLabel = new Label("Time");
+    tLabel.setEnabled(hasT);
 
     Label[] cLabels = new Label[channels.length];
     for (int i=0; i<channels.length; i++) {
       cLabels[i] = new Label(channels[i]);
-      if (channels.length == 1 && channelSelector == null) {
-        cLabels[i].setEnabled(false);
-      }
+      cLabels[i].setEnabled(hasC);
     }
 
-    Scrollbar zSlider = sliceSelector == null ?
-      makeDummySlider() : sliceSelector;
-    Scrollbar tSlider = frameSelector == null ?
-      makeDummySlider() : frameSelector;
+    final Scrollbar zSlider = hasZ ? sliceSelector : makeDummySlider();
+    final Scrollbar tSlider = hasT ? frameSelector : makeDummySlider();
 
     cSliders = new Scrollbar[channels.length];
     Panel[] cPanels = new Panel[channels.length];
     for (int i=0; i<channels.length; i++) {
-      if (channels.length == 1 && channelSelector == null) {
-        cSliders[i] = makeDummySlider();
+      if (channels.length == 1) {
+        cSliders[i] = hasC ? channelSelector : makeDummySlider();
       }
-      else if (channels.length == 1) {
-        cSliders[i] = channelSelector;
+      else if (cLengths[i] == 1) {
+        cSliders[i] = makeDummySlider();
       }
       else {
         cSliders[i] =
@@ -176,14 +174,22 @@ public class DataBrowser extends StackWindow implements ActionListener {
     if (stack instanceof BFVirtualStack) {
       BFVirtualStack bfvs = (BFVirtualStack) stack;
       Cache cache = bfvs.getCache();
-      CacheIndicator zCache = new CacheIndicator(cache, 1, zSlider, 10, 20);
-      zPanel.add(zCache, BorderLayout.SOUTH);
-      CacheIndicator tCache = new CacheIndicator(cache, 2, tSlider, 10, 20);
-      tPanel.add(tCache, BorderLayout.SOUTH);
+      if (hasZ) {
+        CacheIndicator zCache = new CacheIndicator(cache, 1, zSlider, 10, 20);
+        zPanel.add(zCache, BorderLayout.SOUTH);
+      }
+      if (hasT) {
+        CacheIndicator tCache = new CacheIndicator(cache, 2, tSlider, 10, 20);
+        tPanel.add(tCache, BorderLayout.SOUTH);
+      }
       for (int i=0; i<channels.length; i++) {
-        CacheIndicator cCache = new CacheIndicator(cache, 0, i, cLengths,
-          (Component) cSliders[i], 10, 20);
-        cPanels[i].add(cCache, BorderLayout.SOUTH);
+        if (cLengths[i] > 1) {
+          // TODO use different cache index for each subC dimension
+          //      once cache is configured that way
+          CacheIndicator cCache = new CacheIndicator(cache, 0, i,
+            cLengths, (Component) cSliders[i], 10, 20);
+          cPanels[i].add(cCache, BorderLayout.SOUTH);
+        }
       }
 
       optionsWindow =
@@ -192,11 +198,10 @@ public class DataBrowser extends StackWindow implements ActionListener {
 
     animate = new Button("Animate");
     animate.addActionListener(this);
-    if (frameSelector == null) {
-      fpsSpin.setEnabled(false);
-      fpsLabel.setEnabled(false);
-      animate.setEnabled(false);
-    }
+
+    fpsSpin.setEnabled(hasT);
+    fpsLabel.setEnabled(hasT);
+    animate.setEnabled(hasT);
 
     options = new Button("Options");
     options.addActionListener(this);
@@ -215,12 +220,25 @@ public class DataBrowser extends StackWindow implements ActionListener {
     controls.add(tPanel, cc.xyw(4, 4, 3));
     controls.add(animate, cc.xy(8, 4));
 
-    for (int i=0; i<channels.length; i++) {
-      controls.add(cLabels[i], cc.xy(2, i*2 + 6));
-      controls.add(cPanels[i], cc.xy(4, i*2 + 6));
+    int row = 6;
+
+    // place Options and Metadata buttons intelligently
+    if (channels.length == 1) {
+      controls.add(options, cc.xy(6, row));
+      controls.add(metadata, cc.xy(8, row));
+      controls.add(cLabels[0], cc.xy(2, row));
+      controls.add(cPanels[0], cc.xy(4, row));
     }
-    controls.add(options, cc.xy(6, (channels.length - 1) * 2 + 6));
-    controls.add(metadata, cc.xy(8, (channels.length - 1) * 2 + 6));
+    else {
+      controls.add(options, cc.xy(8, row));
+      controls.add(metadata, cc.xy(8, row + 2));
+      for (int i=0; i<channels.length; i++) {
+        int w = i < 2 ? 3 : 5;
+        controls.add(cLabels[i], cc.xyw(2, row, w));
+        controls.add(cPanels[i], cc.xyw(4, row, w));
+        row += 2;
+      }
+    }
 
     add(controls, BorderLayout.SOUTH);
 
@@ -234,7 +252,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
     setVisible(true);
 
     // start up animation thread
-    if (frameSelector != null) {
+    if (hasT) {
       // NB: Cannot implement Runnable because one of the superclasses does so
       // for its SliceSelector thread, and overriding results in a conflict.
       new Thread("DataBrowser-Animation") {
@@ -245,7 +263,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
               int c = imp.getChannel();
               int z = imp.getSlice();
               int t = imp.getFrame() + 1;
-              int sizeT = frameSelector.getMaximum() - 1;
+              int sizeT = tSlider.getMaximum() - 1;
               if (t > sizeT) t = 1;
               setPosition(c, z, t);
               int fps = ((Number) fpsSpin.getValue()).intValue();
@@ -368,8 +386,9 @@ public class DataBrowser extends StackWindow implements ActionListener {
   // -- AdjustmentListener API methods --
 
   public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
+    Object src = e.getSource();
     for (int i=0; i<cSliders.length; i++) {
-      if (e.getSource().equals(cSliders[i])) {
+      if (src == cSliders[i]) {
         cIndex[i] = cSliders[i].getValue() - 1;
         int channel = FormatTools.positionToRaster(cLengths, cIndex) + 1;
         if (channelSelector != null) {

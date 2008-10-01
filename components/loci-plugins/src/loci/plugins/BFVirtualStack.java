@@ -93,6 +93,7 @@ public class BFVirtualStack extends VirtualStack {
     this.series = r.getSeries();
 
     // set up cache
+    // TODO: include subC dimensions in cache when applicable
     int[] len = new int[] {r.getEffectiveSizeC(), r.getSizeZ(), r.getSizeT()};
     CacheStrategy strategy = new CrosshairStrategy(len);
 
