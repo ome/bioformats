@@ -323,6 +323,21 @@ public final class Util {
       cal.frameInterval = tcal;
       imp.setCalibration(cal);
     }
+
+    String type = retrieve.getPixelsPixelType(series, 0);
+    int pixelType = FormatTools.pixelTypeFromString(type);
+
+    boolean signed = pixelType == FormatTools.INT8 ||
+      pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
+
+    // set calibration function, so that both signed and unsigned pixel
+    // values are shown
+    if (signed) {
+      int bitsPerPixel = FormatTools.getBytesPerPixel(pixelType) * 8;
+      double min = -1 * Math.pow(2, bitsPerPixel - 1);
+      imp.getLocalCalibration().setFunction(Calibration.STRAIGHT_LINE,
+        new double[] {min, 1.0}, "gray value");
+    }
   }
 
   /** Adds AWT scroll bars to the given container. */
