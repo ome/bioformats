@@ -60,6 +60,8 @@ public class BFVirtualStack extends VirtualStack {
 
   private int series;
 
+  private int[] len;
+
   // -- Static utility methods --
 
   protected static int getWidth(IFormatReader r, String path)
@@ -93,8 +95,11 @@ public class BFVirtualStack extends VirtualStack {
     this.series = r.getSeries();
 
     // set up cache
-    // TODO: include subC dimensions in cache when applicable
-    int[] len = new int[] {r.getEffectiveSizeC(), r.getSizeZ(), r.getSizeT()};
+    int[] subC = r.getChannelDimLengths();
+    len = new int[subC.length + 2];
+    System.arraycopy(subC, 0, len, 0, subC.length);
+    len[len.length - 2] = r.getSizeZ();
+    len[len.length - 1] = r.getSizeT();
     CacheStrategy strategy = new CrosshairStrategy(len);
 
     cache = new Cache(strategy, new ImageProcessorSource(r), true);
@@ -136,7 +141,7 @@ public class BFVirtualStack extends VirtualStack {
     }
     int[] pos = reader.getZCTCoords(n - 1);
     if (merge) pos = new ChannelMerger(reader).getZCTCoords(n - 1);
-    int[] cachePos = new int[] {pos[1], pos[0], pos[2]};
+    int[] cachePos = FormatTools.rasterToPosition(len, n - 1);
     ImageProcessor ip = null;
 
     try {

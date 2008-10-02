@@ -41,12 +41,10 @@ public class BrowserOptionsWindow extends JFrame {
 
   // -- Constructor --
 
-  public BrowserOptionsWindow(String title, Cache cache) {
+  public BrowserOptionsWindow(String title, Cache cache, String[] axes) {
     super(title);
 
-    // TODO: include subC dimensions in cache component when applicable
-    CacheComponent panel =
-      new CacheComponent(cache, new String[] {"C", "Z", "T"});
+    CacheComponent panel = new CacheComponent(cache, axes);
 
     panel.setMinimumSize(new Dimension(300, 500));
     setContentPane(panel);

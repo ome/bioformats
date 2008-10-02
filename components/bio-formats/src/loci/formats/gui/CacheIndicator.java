@@ -25,8 +25,6 @@ package loci.formats.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
-import loci.formats.FormatTools;
 import loci.formats.cache.*;
 
 /**
@@ -47,22 +45,15 @@ public class CacheIndicator extends JComponent implements CacheListener {
   // -- Fields --
 
   private Cache cache;
-  private int axis, subAxis;
+  private int axis;
   private Component comp;
   private int lPad, rPad;
-  private int[] subAxisLengths;
 
   // -- Constructor --
 
   /** Creates a new cache indicator for the given cache. */
   public CacheIndicator(Cache cache, int axis) {
-    this(cache, axis, 0, null, null, 0, 0);
-  }
-
-  public CacheIndicator(Cache cache, int axis,
-    Component comp, int lPad, int rPad)
-  {
-    this(cache, axis, 0, null, comp, lPad, rPad);
+    this(cache, axis, null, 0, 0);
   }
 
   /**
@@ -70,13 +61,11 @@ public class CacheIndicator extends JComponent implements CacheListener {
    * below an AWT Scrollbar or Swing JScrollBar, but any component can be
    * given, and the indicator will mimic its width (minus padding).
    */
-  public CacheIndicator(Cache cache, int axis, int subAxis,
-    int[] subAxisLengths, Component comp, int lPad, int rPad)
+  public CacheIndicator(Cache cache, int axis,
+    Component comp, int lPad, int rPad)
   {
     this.cache = cache;
     this.axis = axis;
-    this.subAxis = subAxis;
-    this.subAxisLengths = subAxisLengths;
     this.comp = comp;
     this.lPad = lPad;
     this.rPad = rPad;
@@ -87,7 +76,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
   // -- JComponent API methods --
 
   public void paintComponent(Graphics g) {
-    //super.paintComponent(g);
+//    super.paintComponent(g);
 
     g.setColor(Color.BLACK);
     int xStart = lPad, width = getWidth() - lPad - rPad;
@@ -95,13 +84,6 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
     int[] lengths = cache.getStrategy().getLengths();
     int cacheLength = axis >= 0 && axis < lengths.length ? lengths[axis] : 0;
-    if (subAxisLengths != null && subAxis < subAxisLengths.length) {
-      cacheLength = subAxisLengths[subAxis];
-    }
-
-    if (subAxisLengths == null) {
-      subAxisLengths = new int[] {lengths[axis]};
-    }
 
     if (cacheLength == 0) return;
 
@@ -119,11 +101,8 @@ public class CacheIndicator extends JComponent implements CacheListener {
       System.arraycopy(currentPos, 0, pos, 0, pos.length);
 
       int start = xStart + 1;
-      int[] subPos = new int[subAxisLengths.length];
-      Arrays.fill(subPos, 0);
       for (int i=0; i<cacheLength; i++) {
-        subPos[subAxis] = i;
-        pos[axis] = FormatTools.positionToRaster(subAxisLengths, subPos);
+        pos[axis] = i;
 
         boolean inLoadList = false;
         for (int j=0; j<loadList.length; j++) {

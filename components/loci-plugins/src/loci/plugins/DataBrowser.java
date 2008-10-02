@@ -175,25 +175,29 @@ public class DataBrowser extends StackWindow implements ActionListener {
       BFVirtualStack bfvs = (BFVirtualStack) stack;
       Cache cache = bfvs.getCache();
       if (hasZ) {
-        CacheIndicator zCache = new CacheIndicator(cache, 1, zSlider, 10, 20);
+        CacheIndicator zCache =
+          new CacheIndicator(cache, channels.length, zSlider, 10, 20);
         zPanel.add(zCache, BorderLayout.SOUTH);
       }
       if (hasT) {
-        CacheIndicator tCache = new CacheIndicator(cache, 2, tSlider, 10, 20);
+        CacheIndicator tCache =
+          new CacheIndicator(cache, channels.length + 1, tSlider, 10, 20);
         tPanel.add(tCache, BorderLayout.SOUTH);
       }
       for (int i=0; i<channels.length; i++) {
         if (cLengths[i] > 1) {
-          // TODO use different cache index for each subC dimension
-          //      once cache is configured that way
-          CacheIndicator cCache = new CacheIndicator(cache, 0, i,
-            cLengths, (Component) cSliders[i], 10, 20);
+          CacheIndicator cCache =
+            new CacheIndicator(cache, i, cSliders[i], 10, 20);
           cPanels[i].add(cCache, BorderLayout.SOUTH);
         }
       }
 
+      String[] axes = new String[channels.length + 2];
+      System.arraycopy(channels, 0, axes, 0, channels.length);
+      axes[channels.length] = "Z";
+      axes[channels.length + 1] = "T";
       optionsWindow =
-        new BrowserOptionsWindow("Options - " + getTitle(), cache);
+        new BrowserOptionsWindow("Options - " + getTitle(), cache, axes);
     }
 
     animate = new Button("Animate");
@@ -234,7 +238,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
       controls.add(metadata, cc.xy(8, row + 2));
       for (int i=0; i<channels.length; i++) {
         int w = i < 2 ? 3 : 5;
-        controls.add(cLabels[i], cc.xyw(2, row, w));
+        controls.add(cLabels[i], cc.xy(2, row));
         controls.add(cPanels[i], cc.xyw(4, row, w));
         row += 2;
       }
@@ -363,8 +367,8 @@ public class DataBrowser extends StackWindow implements ActionListener {
       // center window and show
       Rectangle r = getBounds();
       Dimension w = optionsWindow.getSize();
-      int x = (int) Math.min(5, r.x + (r.width - w.width) / 2);
-      int y = (int) Math.min(5, r.y + (r.height - w.height) / 2);
+      int x = (int) Math.max(5, r.x + (r.width - w.width) / 2);
+      int y = (int) Math.max(5, r.y + (r.height - w.height) / 2);
       optionsWindow.setLocation(x, y);
       optionsWindow.setVisible(true);
     }
