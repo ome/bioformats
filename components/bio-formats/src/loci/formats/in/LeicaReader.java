@@ -1054,6 +1054,16 @@ public class LeicaReader extends FormatReader {
         }
       }
 
+      if (contentID.equals("dblVoxelX")) {
+        physicalSizes[series][0] = Float.parseFloat(data);
+      }
+      else if (contentID.equals("dblVoxelY")) {
+        physicalSizes[series][1] = Float.parseFloat(data);
+      }
+      else if (contentID.equals("dblVoxelZ")) {
+        physicalSizes[series][2] = Float.parseFloat(data);
+      }
+
       addMeta("Series " + series + " " + contentID, data);
       stream.skipBytes(16);
     }
