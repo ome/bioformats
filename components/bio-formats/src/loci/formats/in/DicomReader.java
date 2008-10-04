@@ -337,7 +337,7 @@ public class DicomReader extends FormatReader {
 
       oddLocations = (location & 1) != 0;
 
-      String s;
+      String s = null;
       switch (tag) {
         case TRANSFER_SYNTAX_UID:
           // this tag can indicate which compression scheme is used
@@ -437,8 +437,9 @@ public class DicomReader extends FormatReader {
           in.skipBytes(elementLength);
           break;
         default:
-          s = in.readString(elementLength);
+          long oldfp = in.getFilePointer();
           addInfo(tag, s);
+          in.seek(oldfp + elementLength);
       }
       if (in.getFilePointer() >= (in.length() - 4)) {
         decodingTags = false;
@@ -559,7 +560,6 @@ public class DicomReader extends FormatReader {
   // -- Helper methods --
 
   private void addInfo(int tag, String value) throws IOException {
-    long oldFp = in.getFilePointer();
     String oldValue = value;
     String info = getHeaderInfo(tag, value);
 
