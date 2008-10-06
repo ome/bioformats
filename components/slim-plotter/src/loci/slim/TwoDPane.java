@@ -91,6 +91,7 @@ public class TwoDPane extends JPanel
   private boolean[][] roiMask;
 
   // GUI components
+  private MouseBehaviorButtons mbButtons;
   private JProgressBar progress;
   private JButton startStopButton;
   private JSlider cSlider;
@@ -122,21 +123,6 @@ public class TwoDPane extends JPanel
 
     // create 2D display
     iPlot = new DisplayImplJ3D("image", new TwoDDisplayRendererJ3D());
-    int[][][] mouseMap = {
-      {{MouseHelper.DIRECT,           // L
-        MouseHelper.NONE},            // shift-L
-       {MouseHelper.NONE,             // ctrl-L
-        MouseHelper.NONE}},           // ctrl-shift-L
-      {{MouseHelper.CURSOR_TRANSLATE, // M
-        MouseHelper.CURSOR_ZOOM},     // shift-M
-       {MouseHelper.CURSOR_ROTATE,    // ctrl-M
-        MouseHelper.NONE}},           // ctrl-shift-M
-      {{MouseHelper.ROTATE,           // R
-        MouseHelper.ZOOM},            // shift-R
-       {MouseHelper.TRANSLATE,        // ctrl-R
-        MouseHelper.NONE}},           // ctrl-shift-R
-    };
-    iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(mouseMap);
     iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
     iPlot.addDisplayListener(this);
 
@@ -221,6 +207,9 @@ public class TwoDPane extends JPanel
     iPlotPane.setLayout(new BorderLayout());
     iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
     add(iPlotPane);
+
+    mbButtons = new MouseBehaviorButtons(iPlot, false, true);
+    add(mbButtons);
 
     progress = new JProgressBar();
     progress.setStringPainted(true);
@@ -489,61 +478,71 @@ public class TwoDPane extends JPanel
 
   public void displayChanged(DisplayEvent e) {
     int id = e.getId();
-    if (id == DisplayEvent.MOUSE_PRESSED_CENTER) {
+    boolean probe = mbButtons != null && mbButtons.isProbe();
+    boolean region = mbButtons != null && mbButtons.isRegion();
+
+    if (id == DisplayEvent.MOUSE_PRESSED) {
       drag = true;
-      // plot per-pixel lifetime without rescale or refit (i.e., fast)
-      doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
+      if (probe) {
+        // plot per-pixel lifetime without rescale or refit (i.e., fast)
+        doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
+      }
     }
-    else if (id == DisplayEvent.MOUSE_RELEASED_CENTER) {
+    else if (id == DisplayEvent.MOUSE_RELEASED) {
       drag = false;
-      // plot per-pixel lifetime with rescale and refit (i.e., not fast)
-      doCursor(iPlot.getDisplayRenderer().getCursor(), true, false);
-    }
-    else if (id == DisplayEvent.MOUSE_RELEASED_LEFT) {
-      // done drawing curve
-      try {
-        roiSet = DelaunayCustom.fillCheck(curveSet, false);
-        if (roiSet == null) {
-          roiRef.setData(new Real(0));
-          // plot single-pixel region with rescale and refit (i.e., not fast)
-          doCursor(pixelToCursor(iPlot, e.getX(), e.getY()), false, false);
-          iPlot.reAutoScale();
-        }
-        else {
-          roiRef.setData(roiSet);
-          int[] tri = roiSet.valueToTri(roiGrid);
-          roiX = roiY = 0;
-          roiCount = 0;
-          for (int y=0; y<data.height; y++) {
-            for (int x=0; x<data.width; x++) {
-              int ndx = y * data.width + x;
-              roiMask[y][x] = tri[ndx] >= 0;
-              if (roiMask[y][x]) {
-                roiX = x;
-                roiY = y;
-                roiCount++;
+      if (region) {
+        // done drawing curve
+        try {
+          roiSet = DelaunayCustom.fillCheck(curveSet, false);
+          if (roiSet == null) {
+            roiRef.setData(new Real(0));
+            // plot single-pixel region with rescale and refit (i.e., not fast)
+            doCursor(pixelToCursor(iPlot, e.getX(), e.getY()), false, false);
+            iPlot.reAutoScale();
+          }
+          else {
+            roiRef.setData(roiSet);
+            int[] tri = roiSet.valueToTri(roiGrid);
+            roiX = roiY = 0;
+            roiCount = 0;
+            for (int y=0; y<data.height; y++) {
+              for (int x=0; x<data.width; x++) {
+                int ndx = y * data.width + x;
+                roiMask[y][x] = tri[ndx] >= 0;
+                if (roiMask[y][x]) {
+                  roiX = x;
+                  roiY = y;
+                  roiCount++;
+                }
               }
             }
+            roiPercent = 100000 * roiCount /
+              (data.width * data.height) / 1000.0;
+            slim.plotRegion(true, true, true);
           }
-          roiPercent = 100000 * roiCount / (data.width * data.height) / 1000.0;
-          slim.plotRegion(true, true, true);
         }
-      }
-      catch (VisADException exc) {
-        String msg = exc.getMessage();
-        if ("path self intersects".equals(msg)) {
-          JOptionPane.showMessageDialog(iPlot.getComponent(),
-            "Please draw a curve that does not intersect itself.",
-            SlimData.TITLE, JOptionPane.ERROR_MESSAGE);
+        catch (VisADException exc) {
+          String msg = exc.getMessage();
+          if ("path self intersects".equals(msg)) {
+            JOptionPane.showMessageDialog(iPlot.getComponent(),
+              "Please draw a curve that does not intersect itself.",
+              SlimData.TITLE, JOptionPane.ERROR_MESSAGE);
+          }
+          else exc.printStackTrace();
         }
-        else exc.printStackTrace();
+        catch (RemoteException exc) { exc.printStackTrace(); }
       }
-      catch (RemoteException exc) { exc.printStackTrace(); }
+      else if (probe) {
+        // plot per-pixel lifetime with rescale and refit (i.e., not fast)
+        doCursor(iPlot.getDisplayRenderer().getCursor(), true, false);
+      }
     }
     else if (id == DisplayEvent.MOUSE_DRAGGED) {
       if (!drag) return; // not a center mouse drag
-      // plot per-pixel lifetime without rescale or refit (i.e., fast)
-      doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
+      if (probe) {
+        // plot per-pixel lifetime without rescale or refit (i.e., fast)
+        doCursor(iPlot.getDisplayRenderer().getCursor(), true, true);
+      }
     }
   }
 

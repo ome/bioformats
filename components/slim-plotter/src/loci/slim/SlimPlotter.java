@@ -252,21 +252,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // plot decay curves in 3D display
       decayPlot = data.channels > 1 ? new DisplayImplJ3D("decay") :
         new DisplayImplJ3D("decay", new TwoDDisplayRendererJ3D());
-      int[][][] mouseMap = {
-        {{MouseHelper.ROTATE,           // L
-          MouseHelper.ZOOM},            // shift-L
-         {MouseHelper.TRANSLATE,        // ctrl-L
-          MouseHelper.NONE}},           // ctrl-shift-L
-        {{MouseHelper.CURSOR_TRANSLATE, // M
-          MouseHelper.CURSOR_ZOOM},     // shift-M
-         {MouseHelper.CURSOR_ROTATE,    // ctrl-M
-          MouseHelper.NONE}},           // ctrl-shift-M
-        {{MouseHelper.ROTATE,           // R
-          MouseHelper.ZOOM},            // shift-R
-         {MouseHelper.TRANSLATE,        // ctrl-R
-          MouseHelper.NONE}},           // ctrl-shift-R
-      };
-      decayPlot.getMouseBehavior().getMouseHelper().setFunctionMap(mouseMap);
 
       ScalarMap xMap = new ScalarMap(types.bType, Display.XAxis);
       ScalarMap yMap = new ScalarMap(types.cType, Display.YAxis);
@@ -507,6 +492,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "Displays information about the selected region of interest");
       decayPane.add(decayLabel, BorderLayout.NORTH);
 
+      MouseBehaviorButtons mbButtons =
+        new MouseBehaviorButtons(decayPlot, true, false);
+
       colorWidget = new ColorWidget(vMap, "Decay Color Mapping");
 
       zOverride = new JCheckBox("", false);
@@ -547,11 +535,17 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       miscPanel.add(miscRow1);
       miscPanel.add(miscRow2);
 
+      JPanel stuff = new JPanel();
+      stuff.setLayout(new BoxLayout(stuff, BoxLayout.X_AXIS));
+      stuff.add(colorWidget);
+      stuff.add(miscPanel);
+
       JPanel options = new JPanel();
+      options.setLayout(new BoxLayout(options, BoxLayout.Y_AXIS));
+      options.add(mbButtons);
+      options.add(stuff);
       options.setBorder(new EmptyBorder(8, 5, 8, 5));
-      options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
-      options.add(colorWidget);
-      options.add(miscPanel);
+
       decayPane.add(options, BorderLayout.SOUTH);
       masterPane.add(decayPane, BorderLayout.CENTER);
 
@@ -1341,17 +1335,17 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Utility methods --
 
-  public static void setProgress(ProgressMonitor progress, int p) {
+  protected static void setProgress(ProgressMonitor progress, int p) {
     setProgress(progress, p, true);
   }
 
-  public static void setProgress(ProgressMonitor progress,
+  protected static void setProgress(ProgressMonitor progress,
     int base, int inc, double frac)
   {
     setProgress(progress, (int) (base + (long) inc * frac));
   }
 
-  public static void setProgress(ProgressMonitor progress,
+  protected static void setProgress(ProgressMonitor progress,
     int p, boolean quitOnCancel)
   {
     progress.setProgress(p);
@@ -1359,14 +1353,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   }
 
   /** Logs the given output to the appropriate location. */
-  public static void log(String msg) {
+  protected static void log(String msg) {
     final String message = msg;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() { System.err.println(message); }
     });
   }
 
-  public static void debug(String msg) {
+  protected static void debug(String msg) {
     if (!DEBUG) return;
     String name = Thread.currentThread().getName();
     System.out.println("--> " + name + ": " + msg);
