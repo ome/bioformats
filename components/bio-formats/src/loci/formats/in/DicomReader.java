@@ -157,47 +157,50 @@ public class DicomReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
+    int ec = isIndexed() ? 1 : getSizeC();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bytes = getSizeX() * getSizeY() * bpp * (isIndexed() ? 1 : getSizeC());
+    int bytes = getSizeX() * getSizeY() * bpp * ec;
     in.seek(offsets[no]);
 
     if (isRLE) {
       // plane is compressed using run-length encoding
-      PackbitsCodec codec = new PackbitsCodec();
-      byte[] t = codec.decompress(in, new Integer(bytes));
-      if (t.length < bytes) {
-        byte[] tmp = t;
-        t = new byte[bytes];
-        System.arraycopy(tmp, 0, t, 0, tmp.length);
-      }
-
-      if (bpp > 1) {
-        int plane = bytes / bpp;
-        byte[][] tmp = new byte[bpp][plane];
-        for (int i=0; i<bpp; i++) {
-          System.arraycopy(t, i*plane, tmp[i], 0, plane);
+      for (int c=0; c<ec; c++) {
+        PackbitsCodec codec = new PackbitsCodec();
+        byte[] t = codec.decompress(in, new Integer(bytes / ec));
+        if (t.length < (bytes / ec)) {
+          byte[] tmp = t;
+          t = new byte[bytes / ec];
+          System.arraycopy(tmp, 0, t, 0, tmp.length);
         }
-        for (int i=0; i<plane; i++) {
-          for (int j=0; j<bpp; j++) {
-            t[i*bpp + j] = isLittleEndian() ? tmp[bpp - j - 1][i] : tmp[j][i];
+
+        if (bpp > 1) {
+          int plane = bytes / (bpp * ec);
+          byte[][] tmp = new byte[bpp][plane];
+          for (int i=0; i<bpp; i++) {
+            System.arraycopy(t, i*plane, tmp[i], 0, plane);
+          }
+          for (int i=0; i<plane; i++) {
+            for (int j=0; j<bpp; j++) {
+              t[i*bpp + j] = isLittleEndian() ? tmp[bpp - j - 1][i] : tmp[j][i];
+            }
           }
         }
-      }
 
-      int rowLen = w * bpp;
-      int srcRowLen = getSizeX() * bpp;
+        int rowLen = w * bpp;
+        int srcRowLen = getSizeX() * bpp;
 
-      int ec = isIndexed() ? 1 : getSizeC();
-      int srcPlane = getSizeY() * srcRowLen;
+        int srcPlane = getSizeY() * srcRowLen;
 
-      for (int c=0; c<ec; c++) {
         for (int row=0; row<h; row++) {
-          int src = c * srcPlane + (row + y) * srcRowLen + x * bpp;
+          int src = (row + y) * srcRowLen + x * bpp;
           int dest = h * rowLen * c + row * rowLen;
           int len = (int) Math.min(rowLen, t.length - src - 1);
           if (len < 0) break;
           System.arraycopy(t, src, buf, dest, len);
         }
+
+        while (in.read() == 0);
+        in.seek(in.getFilePointer() - 1);
       }
     }
     else if (isJPEG || isJP2K) {
@@ -221,7 +224,6 @@ public class DicomReader extends FormatReader {
       int rowLen = w * bpp;
       int srcRowLen = getSizeX() * bpp;
 
-      int ec = isIndexed() ? 1 : getSizeC();
       int srcPlane = getSizeY() * srcRowLen;
 
       for (int c=0; c<ec; c++) {
