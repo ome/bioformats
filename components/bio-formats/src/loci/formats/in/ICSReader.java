@@ -257,8 +257,6 @@ public class ICSReader extends FormatReader {
     if (f.readString(17).trim().equals("ics_version\t2.0")) {
       in = new RandomAccessStream(icsId);
       versionTwo = true;
-      f.close();
-      f = null;
     }
     else {
       if (idsId == null) throw new FormatException("No IDS file found.");
@@ -267,6 +265,7 @@ public class ICSReader extends FormatReader {
       currentIdsId = idsId;
       in = new RandomAccessStream(idsId);
     }
+    f.close();
 
     currentIcsId = icsId;
 
@@ -280,15 +279,14 @@ public class ICSReader extends FormatReader {
     // parse key/value pairs from beginning of ICS file
 
     RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
+    reader.seek(0);
     String token;
-    String s = reader.readString((int) reader.length());
-    reader.close();
-    StringTokenizer st = new StringTokenizer(s, "\n");
-    String line = st.nextToken();
-    line = st.nextToken();
+    String line = reader.readLine();
+    line = reader.readLine();
     boolean signed = false;
 
     StringBuffer textBlock = new StringBuffer();
+    String[] sizes = null, labels = null, lengths= null;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -431,7 +429,25 @@ public class ICSReader extends FormatReader {
               DataTools.formatDate(v, "HH:mm:ss dd-MM-yyyy"), 0);
           }
           else if (k.equalsIgnoreCase("history extents")) {
-
+            sizes = v.split(" ");
+          }
+          else if (k.equalsIgnoreCase("history lengths")) {
+            lengths = v.split(" ");
+          }
+          else if (k.equalsIgnoreCase("history labels")) {
+            labels = v.split(" ");
+          }
+          else if (k.equalsIgnoreCase("history stage_xyzum")) {
+            String[] stagePos = v.split(" ");
+            if (stagePos.length > 0) {
+              store.setStageLabelX(new Float(stagePos[0]), 0);
+            }
+            if (stagePos.length > 1) {
+              store.setStageLabelY(new Float(stagePos[1]), 0);
+            }
+            if (stagePos.length > 2) {
+              store.setStageLabelZ(new Float(stagePos[2]), 0);
+            }
           }
           else if (k.equalsIgnoreCase("history other text")) {
             store.setImageDescription(v, 0);
@@ -446,9 +462,10 @@ public class ICSReader extends FormatReader {
           key.append(" ");
         }
       }
-      if (st.hasMoreTokens()) line = st.nextToken();
-      else line = null;
+      line = reader.readLine();
+      if (line.trim().equals("")) line = null;
     }
+    reader.close();
 
     addMeta("history text", textBlock.toString());
 
@@ -507,6 +524,30 @@ public class ICSReader extends FormatReader {
     if (getSizeC() == 0) core[0].sizeC = 1;
     if (getSizeT() == 0) core[0].sizeT = 1;
 
+    if (labels != null && (lengths != null || sizes != null)) {
+      for (int i=0; i<labels.length; i++) {
+        labels[i] = labels[i].toLowerCase().trim();
+        float size = lengths != null && i < lengths.length ?
+          Float.parseFloat(lengths[i]) : Float.parseFloat(sizes[i]);
+        if (labels[i].equals("x")) {
+          store.setDimensionsPhysicalSizeX(new Float(size / getSizeX()), 0, 0);
+        }
+        else if (labels[i].equals("y")) {
+          store.setDimensionsPhysicalSizeY(new Float(size / getSizeY()), 0, 0);
+        }
+        else if (labels[i].equals("z")) {
+          store.setDimensionsPhysicalSizeZ(new Float(size / getSizeZ()), 0, 0);
+        }
+        else if (labels[i].equals("t")) {
+          store.setDimensionsTimeIncrement(new Float(size / getSizeT()), 0, 0);
+        }
+        else if (labels[i].equals("c")) {
+          store.setDimensionsWaveIncrement(
+            new Integer((int) (size / getSizeC())), 0, 0);
+        }
+      }
+    }
+
     if (getImageCount() == 0) core[0].imageCount = 1;
     core[0].rgb = isRGB() && getSizeC() > 1;
     core[0].interleaved = isRGB();
@@ -530,7 +571,7 @@ public class ICSReader extends FormatReader {
     gzip = (test == null) ? false : test.equals("gzip");
 
     if (versionTwo) {
-      s = in.readLine();
+      String s = in.readLine();
       while(!s.trim().equals("end")) s = in.readLine();
     }
 
