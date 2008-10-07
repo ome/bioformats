@@ -845,4 +845,12 @@ public final class DataTools {
     return sb.toString();
   }
 
+  /** Return given date in ISO 8601 format. */
+  public static String formatDate(String date, String format) {
+    SimpleDateFormat f = new SimpleDateFormat(format);
+    Date d = f.parse(date, new ParsePosition(0));
+    f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    return f.format(d);
+  }
+
 }

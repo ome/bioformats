@@ -56,10 +56,29 @@ public class ICSReader extends FormatReader {
     "file", "offset", "parameters", "order", "sizes", "coordinates",
     "significant_bits", "format", "sign", "compression", "byte_order",
     "origin", "scale", "units", "labels", "SCIL_TYPE", "type", "model",
-    "s_params", "laser", "gain1", "gain2", "gain3", "gain4", "dwell",
-    "shutter1", "shutter2", "shutter3", "pinhole", "laser1", "laser2",
-    "laser3", "objective", "PassCount", "step1", "step2", "step3", "view",
-    "view1", "date", "GMTdate", "label", "software"
+    "s_params", "laser", "gain*", "dwell", "shutter*", "pinhole", "laser*",
+    "version", "objective", "PassCount", "step*", "view",
+    "view*", "date", "GMTdate", "label", "software", "author", "length",
+    "Z (background)", "dimensions", "rep period", "image form",
+    "extents", "offsets", "region", "expon. order", "a*", "tau*",
+    "noiseval", "excitationfwhm", "created on",
+    "text", "other text", "mode", "CFD limit low", "CFD limit high",
+    "CFD zc level", "CFD holdoff", "SYNC zc level", "SYNC freq div",
+    "SYNC holdoff", "TAC range", "TAC gain", "TAC offset", "TAC limit low",
+    "ADC resolution", "Ext latch delay", "collection time", "repeat time",
+    "stop on time", "stop on O'flow", "dither range", "count increment",
+    "memory bank", "sync threshold", "dead time comp", "polarity",
+    "line compressio", "scan flyback", "scan borders", "pixel time",
+    "pixel clock", "trigger", "scan pixels x", "scan pixels y",
+    "routing chan x", "routing chan y", "detector type", "channel*",
+    "filter*", "wavelength*", "black level*", "gain*", "ht*",
+    "scan resolution", "scan speed", "scan zoom", "scan pattern",
+    "scan pos x", "scan pos y", "transmission", "x amplitude", "y amplitude",
+    "x offset", "y offset", "x delay", "y delay", "beam zoom", "mirror *",
+    "direct turret", "desc exc turret", "desc emm turret", "cube",
+    "stage_xyzum", "cube descriptio", "camera", "exposure", "bits/pixel",
+    "black level", "binning", "left", "top", "cols", "rows", "gain",
+    "significant_channels", "allowedlinemodes"
   };
 
   /** Metadata field sub-subcategories. */
@@ -67,13 +86,11 @@ public class ICSReader extends FormatReader {
     "Channels", "PinholeRadius", "LambdaEx", "LambdaEm", "ExPhotonCnt",
     "RefInxMedium", "NumAperture", "RefInxLensMedium", "PinholeSpacing",
     "power", "wavelength", "name", "Type", "Magnification", "NA",
-    "WorkingDistance", "Immersion", "Pinhole", "Channel 1", "Channel 2",
-    "Channel 3", "Channel 4", "Gain 1", "Gain 2", "Gain 3", "Gain 4",
-    "Shutter 1", "Shutter 2", "Shutter 3", "Position", "Size", "Port",
-    "Cursor", "Color", "BlackLevel", "Saturation", "Gamma", "IntZoom",
-    "Live", "Synchronize", "ShowIndex", "AutoResize", "UseUnits", "Zoom",
-    "IgnoreAspect", "ShowCursor", "ShowAll", "Axis", "Order", "Tile", "scale",
-    "DimViewOption"
+    "WorkingDistance", "Immersion", "Pinhole", "Channel *", "Gain *",
+    "Shutter *", "Position", "Size", "Port", "Cursor", "Color", "BlackLevel",
+    "Saturation", "Gamma", "IntZoom", "Live", "Synchronize", "ShowIndex",
+    "AutoResize", "UseUnits", "Zoom", "IgnoreAspect", "ShowCursor", "ShowAll",
+    "Axis", "Order", "Tile", "scale", "DimViewOption"
   };
 
   // -- Fields --
@@ -263,7 +280,6 @@ public class ICSReader extends FormatReader {
     // parse key/value pairs from beginning of ICS file
 
     RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
-    StringTokenizer t;
     String token;
     String s = reader.readString((int) reader.length());
     reader.close();
@@ -271,55 +287,170 @@ public class ICSReader extends FormatReader {
     String line = st.nextToken();
     line = st.nextToken();
     boolean signed = false;
+
+    StringBuffer textBlock = new StringBuffer();
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     while (line != null && !line.trim().equals("end")) {
-      t = new StringTokenizer(line);
+      String[] tokens = null;
+      if (line.indexOf("\t") != -1) tokens = line.split("\t");
+      else tokens = line.split(" ");
       StringBuffer key = new StringBuffer();
-      while (t.hasMoreTokens()) {
-        token = t.nextToken();
+      for (int q=0; q<tokens.length; q++) {
+        tokens[q] = tokens[q].trim();
+        if (tokens[q].length() == 0) continue;
+
         boolean foundValue = true;
         for (int i=0; i<CATEGORIES.length; i++) {
-          if (token.equals(CATEGORIES[i])) foundValue = false;
+          if (matches(CATEGORIES[i], tokens[q])) {
+            foundValue = false;
+            break;
+          }
         }
-        for (int i=0; i<SUB_CATEGORIES.length; i++) {
-          if (token.equals(SUB_CATEGORIES[i])) foundValue = false;
+        if (foundValue) {
+          for (int i=0; i<SUB_CATEGORIES.length; i++) {
+            if (matches(SUB_CATEGORIES[i], tokens[q])) {
+              foundValue = false;
+              break;
+            }
+          }
         }
-        for (int i=0; i<SUB_SUB_CATEGORIES.length; i++) {
-          if (token.equals(SUB_SUB_CATEGORIES[i])) foundValue = false;
+        if (foundValue) {
+          for (int i=0; i<SUB_SUB_CATEGORIES.length; i++) {
+            if (matches(SUB_SUB_CATEGORIES[i], tokens[q])) {
+              foundValue = false;
+              break;
+            }
+          }
         }
 
         if (foundValue) {
           StringBuffer value = new StringBuffer();
-          value.append(token);
-          while (t.hasMoreTokens()) {
+          value.append(tokens[q++]);
+          for (; q<tokens.length; q++) {
             value.append(" ");
-            value.append(t.nextToken());
+            value.append(tokens[q].trim());
           }
           String k = key.toString().trim();
           String v = value.toString().trim();
           addMeta(k, v);
 
-          if (k.equals("layout sizes")) layoutSizes = v;
-          else if (k.equals("layout order")) layoutOrder = v;
-          else if (k.equals("representation byte_order")) byteOrder = v;
-          else if (k.equals("representation format")) rFormat = v;
-          else if (k.equals("representation compression")) compression = v;
-          else if (k.equals("parameter scale")) scale = v;
-          else if (k.equals("representation sign")) signed = v.equals("signed");
-          else if (k.equals("sensor s_params LambdaEm")) em = v;
-          else if (k.equals("sensor s_params LambdaEx")) ex = v;
-          else if (k.equals("history software") && v.indexOf("SVI") != -1) {
+          k = k.replaceAll("\t", " ");
+
+          if (k.equalsIgnoreCase("layout sizes")) layoutSizes = v;
+          else if (k.equalsIgnoreCase("layout order")) layoutOrder = v;
+          else if (k.equalsIgnoreCase("representation byte_order")) {
+            byteOrder = v;
+          }
+          else if (k.equalsIgnoreCase("representation format")) rFormat = v;
+          else if (k.equalsIgnoreCase("representation compression")) {
+            compression = v;
+          }
+          else if (k.equalsIgnoreCase("parameter scale")) scale = v;
+          else if (k.equalsIgnoreCase("representation sign")) {
+            signed = v.equals("signed");
+          }
+          else if (k.equalsIgnoreCase("sensor s_params LambdaEm")) em = v;
+          else if (k.equalsIgnoreCase("sensor s_params LambdaEx")) ex = v;
+          else if (k.equalsIgnoreCase("history software") &&
+            v.indexOf("SVI") != -1)
+          {
             // ICS files written by SVI Huygens are inverted on the Y axis
             invertY = true;
           }
+          else if (k.equalsIgnoreCase("history") ||
+            k.equalsIgnoreCase("history text"))
+          {
+            textBlock.append(v);
+            textBlock.append("\n");
+            metadata.remove(k);
+          }
+          else if (k.equalsIgnoreCase("filename")) {
+            store.setImageName(v, 0);
+          }
+          else if (k.equalsIgnoreCase("history date")) {
+            if (v.indexOf(" ") == -1) continue;
+            String date = v.substring(0, v.lastIndexOf(" "));
+            try {
+              date = DataTools.formatDate(date, "EEEE, MMMM dd, yyyy HH:mm:ss");
+            }
+            catch (NullPointerException e) {
+              try {
+                date = DataTools.formatDate(date, "EEE dd MMMM yyyy HH:mm:ss");
+              }
+              catch (NullPointerException exc) {
+                date = DataTools.formatDate(v, "EEE MMM dd HH:mm:ss yyyy");
+              }
+            }
+            store.setImageCreationDate(date, 0);
+          }
+          else if (k.startsWith("history gain")) {
+            int n = 0;
+            if (k.indexOf(" ", 12) > 0) {
+              n = Integer.parseInt(k.substring(12, k.indexOf(" ", 12)));
+            }
+            store.setDetectorSettingsGain(new Float(v), 0, n);
+          }
+          else if (k.startsWith("history laser") && k.endsWith("wavelength")) {
+            int laser = Integer.parseInt(k.substring(13, k.indexOf(" ", 13)));
+            v = v.replaceAll("nm", "").trim();
+            store.setLaserWavelength(new Integer(v), 0, laser);
+          }
+          else if (k.equalsIgnoreCase("history objective")) {
+            store.setObjectiveModel(v, 0, 0);
+          }
+          else if (k.equalsIgnoreCase("history objective immersion")) {
+            store.setObjectiveImmersion(v, 0, 0);
+          }
+          else if (k.equalsIgnoreCase("history objective NA")) {
+            store.setObjectiveLensNA(new Float(v), 0, 0);
+          }
+          else if (k.equalsIgnoreCase("history objective WorkingDistance")) {
+            store.setObjectiveWorkingDistance(new Float(v), 0, 0);
+          }
+          else if (k.equalsIgnoreCase("history objective magnification")) {
+            store.setObjectiveNominalMagnification(
+              new Integer((int) Float.parseFloat(v)), 0, 0);
+          }
+          else if (k.equalsIgnoreCase("sensor s_params PinholeRadius")) {
+            String[] pinholes = v.split(" ");
+            int channel = 0;
+            for (int n=0; n<pinholes.length; n++) {
+              if (pinholes[n].trim().equals("")) continue;
+              store.setLogicalChannelPinholeSize(
+                new Integer((int) Float.parseFloat(pinholes[n])), 0, channel++);
+            }
+          }
+          else if (k.equalsIgnoreCase("history author")) {
+            store.setExperimenterLastName(v, 0);
+          }
+          else if (k.equalsIgnoreCase("history created on")) {
+            store.setImageCreationDate(
+              DataTools.formatDate(v, "HH:mm:ss dd-MM-yyyy"), 0);
+          }
+          else if (k.equalsIgnoreCase("history extents")) {
+
+          }
+          else if (k.equalsIgnoreCase("history other text")) {
+            store.setImageDescription(v, 0);
+          }
+          else if (k.startsWith("history step") && k.endsWith("name")) {
+            int n = Integer.parseInt(k.substring(12, k.indexOf(" ", 12)));
+            store.setLogicalChannelName(v, 0, n);
+          }
         }
         else {
-          key.append(token);
+          key.append(tokens[q]);
           key.append(" ");
         }
       }
       if (st.hasMoreTokens()) line = st.nextToken();
       else line = null;
     }
+
+    addMeta("history text", textBlock.toString());
 
     status("Populating metadata");
 
@@ -435,9 +566,6 @@ public class ICSReader extends FormatReader {
 
     // Populate metadata store
 
-    // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
@@ -447,7 +575,12 @@ public class ICSReader extends FormatReader {
 
     if (bitsPerPixel < 32) core[0].littleEndian = !isLittleEndian();
 
-    if (fmt.equals("real")) core[0].pixelType = FormatTools.FLOAT;
+    if (fmt.equals("real") && bitsPerPixel == 32) {
+      core[0].pixelType = FormatTools.FLOAT;
+    }
+    else if (fmt.equals("real") && bitsPerPixel == 64) {
+      core[0].pixelType = FormatTools.DOUBLE;
+    }
     else if (fmt.equals("integer")) {
       while (bitsPerPixel % 8 != 0) bitsPerPixel++;
       if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
@@ -465,7 +598,7 @@ public class ICSReader extends FormatReader {
       }
     }
     else {
-      throw new RuntimeException("Unknown pixel format: " + format);
+      throw new RuntimeException("Unknown pixel format: " + fmt);
     }
 
     MetadataTools.populatePixels(store, this);
@@ -516,5 +649,16 @@ public class ICSReader extends FormatReader {
       }
     }
   }
+
+  // -- Helper functions --
+
+  private boolean matches(String pattern, String text) {
+    if (text == null || pattern == null) return false;
+    if (text.equalsIgnoreCase(pattern)) return true;
+    if (!pattern.endsWith("*")) return false;
+
+    return text.startsWith(pattern.substring(0, pattern.length() - 1));
+  }
+
 
 }
