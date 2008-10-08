@@ -133,6 +133,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private JTextField zScaleValue;
   private JButton exportData;
 
+  // GUI components for numerical results
+  private JTextField a1Param, t1Param, a2Param, t2Param, cParam, chi2;
+
   // other GUI components
   private JFrame masterWindow;
   private OutputConsole console;
@@ -493,7 +496,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayPane.add(decayLabel, BorderLayout.NORTH);
 
       MouseBehaviorButtons mbButtons =
-        new MouseBehaviorButtons(decayPlot, true, false);
+        new MouseBehaviorButtons(decayPlot, data.channels > 1, false);
 
       colorWidget = new ColorWidget(vMap, "Decay Color Mapping");
 
@@ -519,21 +522,74 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       scalePanel.add(zOverride);
       scalePanel.add(zScaleValue);
 
-      JPanel miscRow1 = new JPanel();
-      miscRow1.setBorder(new TitledBorder("Stuff"));
-      miscRow1.add(Box.createRigidArea(new Dimension(400, 150)));
-      // CTR TODO populate
+      JPanel numbers = new JPanel();
+      numbers.setBorder(new TitledBorder("Numbers"));
+      numbers.setLayout(new GridLayout(5, 5));
 
-      JPanel miscRow2 = new JPanel();
-      miscRow2.setLayout(new BoxLayout(miscRow2, BoxLayout.X_AXIS));
-      miscRow2.add(scalePanel);
-      miscRow2.add(Box.createHorizontalStrut(5));
-      miscRow2.add(exportData);
+      JLabel a1Label = new JLabel("a1 ");
+      a1Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(a1Label);
+      a1Param = new JTextField(9);
+      a1Param.setEditable(false);
+      numbers.add(a1Param);
+      JLabel t1Label = new JLabel("t1 ");
+      t1Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(t1Label);
+      t1Param = new JTextField(9);
+      t1Param.setEditable(false);
+      numbers.add(t1Param);
+      numbers.add(new JLabel(""));//TEMP
+
+      JLabel a2Label = new JLabel("a2 ");
+      a2Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(a2Label);
+      a2Param = new JTextField(9);
+      a2Param.setEditable(false);
+      numbers.add(a2Param);
+      JLabel t2Label = new JLabel("t2 ");
+      t2Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(t2Label);
+      t2Param = new JTextField(9);
+      t2Param.setEditable(false);
+      numbers.add(t2Param);
+      numbers.add(new JLabel(""));//TEMP
+
+      JLabel cLabel = new JLabel("c ");
+      cLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(cLabel);
+      cParam = new JTextField(9);
+      cParam.setEditable(false);
+      numbers.add(cParam);
+      JLabel chi2Label = new JLabel("chi^2 ");
+      chi2Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(chi2Label);
+      chi2 = new JTextField(9);
+      chi2.setEditable(false);
+      numbers.add(chi2);
+      numbers.add(new JLabel(""));//TEMP
+
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+      numbers.add(new JLabel(""));//TEMP
+
+      JPanel miscRow = new JPanel();
+      miscRow.setLayout(new BoxLayout(miscRow, BoxLayout.X_AXIS));
+      miscRow.add(scalePanel);
+      miscRow.add(Box.createHorizontalStrut(5));
+      miscRow.add(exportData);
 
       JPanel miscPanel = new JPanel();
       miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
-      miscPanel.add(miscRow1);
-      miscPanel.add(miscRow2);
+      miscPanel.add(numbers);
+      miscPanel.add(miscRow);
 
       JPanel stuff = new JPanel();
       stuff.setLayout(new BoxLayout(stuff, BoxLayout.X_AXIS));
@@ -937,6 +993,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // curve fitting
       double[][] fitResults = null;
       int[] fitFirst = null, fitLast = null, fitIter = null;
+      double[] fitA1 = null, fitT1 = null;
+      double[] fitA2 = null, fitT2 = null;
+      double[] fitC = null, fitChi2 = null;
       if (data.allowCurveFit && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
         progress.setNote("Fitting curves");
@@ -944,6 +1003,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         fitFirst = new int[data.channels];
         fitLast = new int[data.channels];
         fitIter = new int[data.channels];
+        fitA1 = new double[data.channels];
+        fitT1 = new double[data.channels];
+        fitA2 = new double[data.channels];
+        fitT2 = new double[data.channels];
+        fitC = new double[data.channels];
+        fitChi2 = new double[data.channels];
         tau = new float[data.channels][data.numExp];
         for (int c=0; c<data.channels; c++) Arrays.fill(tau[c], Float.NaN);
 
@@ -992,32 +1057,44 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
           // extract fit results from curve fitter object
           double[][] results = curveFitter.getCurve();
+          double aTotal = 0, cTotal = 0;
           for (int i=0; i<data.numExp; i++) {
             tau[c][i] = data.binsToPico((float) (1 / results[i][1]));
+            aTotal += results[i][0];
+            cTotal += results[i][2];
           }
           fitResults[c] = new double[2 * data.numExp + 1];
           for (int i=0; i<data.numExp; i++) {
             int e = 2 * i;
             fitResults[c][e] = results[i][0];
             fitResults[c][e + 1] = results[i][1];
+            fitResults[c][2 * data.numExp] += results[i][2];
           }
-          fitResults[c][2 * data.numExp] = results[0][2];
+          //fitResults[c][2 * data.numExp] = results[0][2];
 
           fitFirst[c] = curveFitter.getFirst();
           fitLast[c] = curveFitter.getLast();
           fitIter[c] = curveFitter.getIterations();
+          fitChi2[c] = curveFitter.getReducedChiSquaredError();
+          fitA1[c] = results[0][0];
+          fitT1[c] = results[0][1];
+          if (data.numExp > 1) {
+            fitA2[c] = results[1][0];
+            fitT2[c] = results[1][1];
+          }
+          fitC[c] = fitResults[c][2 * data.numExp];
 
           if (!doProbe) {
             // output results
-            log("\t\treduced chi2=" + curveFitter.getReducedChiSquaredError());
+            log("\t\treduced chi2=" + fitChi2[c]);
             log("\t\traw chi2=" + curveFitter.getChiSquaredError());
             log("\t\tbin range=[" + fitFirst[c] + ", " + fitLast[c] + "]");
             for (int i=0; i<data.numExp; i++) {
               log("\t\ta" + (i + 1) + "=" +
-                (100 * results[i][0] / maxVals[cc]) + "%");
+                (100 * results[i][0] / aTotal) + "%");
               log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
             }
-            log("\t\tc=" + results[0][2]);
+            log("\t\tc=" + cTotal);
           }
 
           setProgress(progress, ++p, false);
@@ -1065,6 +1142,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         else sb.append(tauMin);
         sb.append(" ps");
       }
+      if (fitChi2 != null) {
+        sb.append("; chi2=");
+        for (int c=0; c<fitChi2.length; c++) {
+          sb.append(c == 0 ? "[" : ", ");
+          sb.append(fitChi2[c]);
+        }
+        sb.append("]");
+      }
       if (fitIter != null) {
         sb.append("; iterations=");
         for (int c=0; c<fitIter.length; c++) {
@@ -1074,6 +1159,15 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         sb.append("]");
       }
       decayLabel.setText(sb.toString());
+
+      // update Numbers fields
+      // CTR TEMP - this is crap; refactor to MVC
+      a1Param.setText("" + fitA1[0]);
+      t1Param.setText("" + fitT1[0]);
+      a2Param.setText("" + fitA2[0]);
+      t2Param.setText("" + fitT2[0]);
+      cParam.setText("" + fitC[0]);
+      chi2.setText("" + fitChi2[0]);
 
       try {
         // construct domain set for 3D surface plots

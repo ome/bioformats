@@ -122,6 +122,8 @@ public abstract class CurveRenderer implements ICurveRenderer {
 
   public abstract int getImageY();
 
+  public abstract double getTotalRCSE();
+
   public abstract double getWorstRCSE();
 
 }

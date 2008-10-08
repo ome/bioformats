@@ -102,7 +102,7 @@ public class TwoDPane extends JPanel
   private JTextField iterField, fpsField;
 
   // parameters for multithreaded lifetime computation
-  private CurveRenderer[] curveRenderers;
+  private ICurveRenderer[] curveRenderers;
   private float[][][] curveImages;
   private RendererSwitcher switcher;
   private Thread curveThread;
@@ -328,7 +328,7 @@ public class TwoDPane extends JPanel
     doIntensity(true);
 
     // set up lifetime curve fitting renderers for per-pixel lifetime analysis
-    curveRenderers = new CurveRenderer[data.channels];
+    curveRenderers = new ICurveRenderer[data.channels];
     for (int c=0; c<data.channels; c++) {
       curveRenderers[c] = new BurnInRenderer(data.curves[c]);
       curveRenderers[c].setComponentCount(data.numExp);
@@ -357,7 +357,7 @@ public class TwoDPane extends JPanel
    * at the current ROI coordinates.
    */
   public ICurveFitter[] getCurveFitters() {
-    CurveRenderer[] renderers = switcher.getCurveRenderers();
+    ICurveRenderer[] renderers = switcher.getCurveRenderers();
     ICurveFitter[] cf = new ICurveFitter[data.channels];
     for (int c=0; c<data.channels; c++) {
       CurveCollection cc = renderers[c].getCurveCollection();
@@ -666,9 +666,24 @@ public class TwoDPane extends JPanel
     }
     else if (curProg == maxProg) {
       int totalIter = curveRenderers[c].getTotalIterations();
+      int tRCSE = (int) (curveRenderers[c].getTotalRCSE() + 0.5);
       double wRCSE = curveRenderers[c].getWorstRCSE();
-      wRCSE = ((int) (wRCSE * 100)) / 100.0;
-      progress.setString("Iter. #" + totalIter + ": worst RCSE=" + wRCSE);
+      // format worst RCSE string to two decimal places
+      String worst = "" + wRCSE;
+      int dot = worst.indexOf(".");
+      if (dot < 0) worst += ".00";
+      else {
+        int sig = worst.length() - dot - 1;
+        if (sig > 2) worst = worst.substring(0, dot + 3);
+        else for (int i=sig; i<2; i++) worst += "0";
+      }
+      String s = "Iter. #" + totalIter +
+        ": worst=" + worst + ": total=" + tRCSE;
+      if (curveRenderers[c] instanceof BurnInRenderer) {//TEMP
+        BurnInRenderer bir = (BurnInRenderer) curveRenderers[c];//TEMP
+        s += "; stalled=" + bir.getStallCount();//TEMP
+      }//TEMP
+      progress.setString(s);
     }
     else {
       int subLevel = curveRenderers[c].getSubsampleLevel();

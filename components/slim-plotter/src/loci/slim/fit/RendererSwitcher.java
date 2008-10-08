@@ -38,13 +38,13 @@ public class RendererSwitcher implements ICurveRenderer {
 
   // -- Fields --
 
-  protected CurveRenderer[] renderers;
+  protected ICurveRenderer[] renderers;
   protected int c;
   protected boolean alive;
 
   // -- Constructor --
 
-  public RendererSwitcher(CurveRenderer[] renderers) {
+  public RendererSwitcher(ICurveRenderer[] renderers) {
     this.renderers = renderers;
   }
 
@@ -57,7 +57,7 @@ public class RendererSwitcher implements ICurveRenderer {
     renderers[lastC].stop();
   }
 
-  public CurveRenderer[] getCurveRenderers() {
+  public ICurveRenderer[] getCurveRenderers() {
     return renderers;
   }
 
@@ -147,6 +147,10 @@ public class RendererSwitcher implements ICurveRenderer {
 
   public int getImageY() {
     return renderers[c].getImageY();
+  }
+
+  public double getTotalRCSE() {
+    return renderers[c].getTotalRCSE();
   }
 
   public double getWorstRCSE() {

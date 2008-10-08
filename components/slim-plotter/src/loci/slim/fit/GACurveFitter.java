@@ -159,7 +159,7 @@ public class GACurveFitter extends CurveFitter {
     }
     geneticData = newGeneration;
     double total = 0.0d;
-    double best = Double.MAX_VALUE;
+    double best = Double.POSITIVE_INFINITY;
     int bestindex = -1;
     stallGenerations++;
     for (int i = 0; i < geneticData.length; i++) {

@@ -71,17 +71,18 @@ public abstract class CurveFitter implements ICurveFitter {
     for (int i = 0; i < expected.length; i++) {
       double o = curveData[firstIndex + i];
       double e = expected[i];
-      if (e > 0) {
-        // (o-e)^2 / e
-        total += (o - e) * (o - e) / e;
-      }
+
+      // penalize NaNs and zeroes harshly ;-)
+      if (e != e || e == 0) return Double.POSITIVE_INFINITY;
+
+      total += (o - e) * (o - e) / e;
     }
     return total;
   }
 
   /**
    * Returns the Reduced Chi Squared Error of the current curve estimate
-   * This is based on the number of datapoints in data and the number
+   * This is based on the number of dataPoints in data and the number
    * of exponentials in setComponentCount.
    */
   public double getReducedChiSquaredError() {
@@ -90,8 +91,8 @@ public abstract class CurveFitter implements ICurveFitter {
 
   public double getReducedChiSquaredError(double[][] estCurve) {
     int numVars = 2 * estCurve.length + 1;
-    int datapoints = lastIndex - firstIndex + 1;
-    int degreesOfFreedom = datapoints - numVars;
+    int dataPoints = lastIndex - firstIndex + 1;
+    int degreesOfFreedom = dataPoints - numVars;
     if (degreesOfFreedom > 0) {
       return getChiSquaredError(estCurve) / degreesOfFreedom;
     }
@@ -99,8 +100,10 @@ public abstract class CurveFitter implements ICurveFitter {
   }
 
   public double[] getEstimates(double[][] estimate) {
-    double[] toreturn = new double[lastIndex - firstIndex + 1];
-    for (int i = 0; i < toreturn.length; i++) {
+    int dataPoints = lastIndex - firstIndex + 1;
+    if (dataPoints < 0) dataPoints = 0;
+    double[] toReturn = new double[dataPoints];
+    for (int i = 0; i < dataPoints; i++) {
       double value = 0;
       for (int j = 0; j < estimate.length; j++) {
         // e^-bt
@@ -111,16 +114,16 @@ public abstract class CurveFitter implements ICurveFitter {
         term += estimate[j][2];
         value += term;
       }
-      toreturn[i] = value;
+      toReturn[i] = value;
     }
-    return toreturn;
+    return toReturn;
   }
 
 
   /**
    * Sets the data to be used to generate curve estimates.
    * Single dimension of data... time values are index, since
-   * we can assume that the datapoints are evenly spaced.
+   * we can assume that the dataPoints are evenly spaced.
    */
   public void setData(int[] data) {
     setData(data, -1, data.length - 1);
@@ -145,7 +148,7 @@ public abstract class CurveFitter implements ICurveFitter {
   /**
    * Gets the data to be used to generate curve estimates.
    * Single dimension of data... time values are index, since
-   * we can assume that the datapoints are evenly spaced.
+   * we can assume that the dataPoints are evenly spaced.
    */
   public int[] getData() { return curveData; }
 
@@ -170,19 +173,32 @@ public abstract class CurveFitter implements ICurveFitter {
 
   /** Initializes the curve fitter with a starting curve estimate. */
   public void estimate() {
-    //System.out.println("****** DATA ******");
-    //for (int i = 0; i < curveData.length; i++) {
-    //  System.out.println("i: " + i + "  data: " + curveData[i]);
-    //}
+    if (DEBUG) {
+      System.out.println("****** DATA ******");
+      for (int i = 0; i < curveData.length; i++) {
+        System.out.println("i: " + i + "  data: " + curveData[i]);
+      }
+    }
+
+    int dataPoints = lastIndex - firstIndex + 1;
+    if (DEBUG) {
+      if (dataPoints < 0) {
+        System.out.println("WARNING: first=" +
+          firstIndex + "; last=" + lastIndex);
+      }
+    }
+    if (dataPoints < 0) dataPoints = 0;
+
     if (components >= 1) {
       // TODO: Estimate c, factor it in below.
 
-      double guessC = Double.MAX_VALUE;
+      double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
       for (int i = firstIndex; i <= lastIndex; i++) {
-        if (curveData[i] < guessC) guessC = curveData[i];
+        if (curveData[i] < min) min = curveData[i];
+        if (curveData[i] > max) max = curveData[i];
       }
-
-      //double guessC = 0.0d;
+      double gap = 0.1; // ensure all data values are > background
+      double guessC = min - gap;
 
       // First, get a guess for the exponent.
       // The exponent should be "constant", but we'd also like to weight
@@ -190,26 +206,28 @@ public abstract class CurveFitter implements ICurveFitter {
       double num = 0.0;
       double den = 0.0;
       for (int i = firstIndex + 1; i <= lastIndex; i++) {
-        if (curveData[i] > guessC && curveData[i-1] > guessC) {
+        double i0 = curveData[i - 1] - guessC;
+        double i1 = curveData[i] - guessC;
+        if (i0 > 0 && i1 > 0) {
           //double time = curveData[i][0] - curveData[i-1][0];
           double time = 1.0d;
-          double factor = (curveData[i] - guessC) / (curveData[i-1] - guessC);
+          double factor = i1 / i0;
           double guess = 1.0 * -Math.log(factor);
           if (DEBUG) {
             System.out.println("Guess: " + guess + "   Factor: " + factor);
           }
-          num += (guess * (curveData[i] - guessC));
+          num += guess * i1;
           den += curveData[i] - guessC;
         }
       }
-      double exp = num/den;
+      if (num == 0) num = 1;
+      double exp = den == 0 ? dataPoints / 2 : num / den;
       if (DEBUG) System.out.println("Final exp guess: " + exp);
       num = 0.0;
       den = 0.0;
       // Hacky... we would like to do this over the entire curve length,
       // but the actual data is far too noisy to do this. Instead, we'll just
       // do it for the first 5, which have the most data.
-      //for (int i = 0; i < curveData.length; i++)
       for (int i=firstIndex; i < firstIndex + 5 && i <= lastIndex; i++) {
         if (curveData[i] > guessC) {
           // calculate e^-bt based on our exponent estimate
@@ -224,10 +242,17 @@ public abstract class CurveFitter implements ICurveFitter {
           }
         }
       }
-      double mult = num/den;
+      double mult = den == 0 ? max : num / den;
       curveEstimate[0][0] = mult;
       curveEstimate[0][1] = exp;
-      curveEstimate[0][2] = guessC;
+      curveEstimate[0][2] = guessC + gap;
+      if (DEBUG) {
+        if (mult != mult || exp != exp || guessC != guessC) {
+          System.out.println("Corrupt estimate: mult=" + mult +
+            "; exp=" + exp + "; guessC=" + guessC +
+            "; firstIndex=" + firstIndex + "; lastIndex=" + lastIndex);
+        }
+      }
     }
 
     if (components == 2) {
@@ -282,8 +307,8 @@ public abstract class CurveFitter implements ICurveFitter {
       lowEst[0][1] = curveEstimate[1][1];
       lowEst[0][2] = curveEstimate[1][2];
       double[] lowData = getEstimates(lowEst);
-      double[][] lowValues = new double[lastIndex - firstIndex + 1][2];
-      for (int i = 0; i < lowValues.length; i++) {
+      double[][] lowValues = new double[dataPoints][2];
+      for (int i = 0; i < dataPoints; i++) {
         lowValues[i][0] = i;
         lowValues[i][1] = curveData[firstIndex + i] - lowData[i];
       }
@@ -304,7 +329,6 @@ public abstract class CurveFitter implements ICurveFitter {
       double exp = num/den;
       num = 0.0;
       den = 0.0;
-      //for (int i = 0; i < lowValues.length; i++)
       int lowBound = lowValues.length < 5 ? lowValues.length : 5;
       for (int i = 0; i < lowBound; i++) {
         if (lowValues[i][1] > guessC) {
@@ -330,15 +354,18 @@ public abstract class CurveFitter implements ICurveFitter {
     // two points. In the case of a multiple exponential curve, we'll split the
     // a factor unevenly among the two, and then sort it out in iteration.
     // This is all very "last ditch effort" estimation.
-    boolean doNegativeEstimation = false;
+    boolean negativeEstimate = false;
     for (int i = 0; i < curveEstimate.length; i++) {
       if (curveEstimate[i][1] < 0) {
-        doNegativeEstimation = true;
-        //System.out.println("Negative factor " +
-        //  curveEstimate[i][1] + " found.");
+        negativeEstimate = true;
+        if (DEBUG) {
+          System.out.println("Negative factor " +
+            curveEstimate[i][1] + " found.");
+        }
+        break;
       }
     }
-    if (doNegativeEstimation) {
+    if (negativeEstimate) {
       // Find highest point in the curve
       int maxIndex = -1;
       int maxData = -1;
@@ -356,7 +383,9 @@ public abstract class CurveFitter implements ICurveFitter {
           minData = curveData[i];
         }
       }
-      //System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
+      if (DEBUG) {
+        System.out.println("maxIndex: " + maxIndex + "  minIndex: " + minIndex);
+      }
       // If we have valid min and max data, perform the "estimate"
       double expguess = -1;
 
@@ -387,9 +416,11 @@ public abstract class CurveFitter implements ICurveFitter {
         // (example, ascending curve), punt;
         expguess = 1;
       }
-      //System.out.println("Estimating: " + expguess);
-      //System.out.println("maxData: " + maxData + "  firstIndex: " +
-      //  firstIndex + "  data: " + curveData[firstIndex]);
+      if (DEBUG) {
+        System.out.println("Estimating: " + expguess);
+        System.out.println("maxData: " + maxData + "  firstIndex: " +
+          firstIndex + "  data: " + curveData[firstIndex]);
+      }
       if (components == 1) {
         curveEstimate[0][0] = maxData - minData;
         curveEstimate[0][1] = expguess;
@@ -403,9 +434,30 @@ public abstract class CurveFitter implements ICurveFitter {
         curveEstimate[1][1] = expguess;
         curveEstimate[0][2] = minData;
       }
+      if (DEBUG) {
+        for (int i=0; i<curveEstimate.length; i++) {
+          System.out.println("Fixed estimate: component " + i +
+            ": a=" + curveEstimate[i][0] +
+            ", t=" + curveEstimate[i][1] +
+            ", c=" + curveEstimate[i][2]);
+        }
+      }
     }
     // To update currentRCSE.
     currentRCSE = getReducedChiSquaredError();
+    if (DEBUG) {
+      if (curveEstimate[0][0] != curveEstimate[0][0] ||
+        curveEstimate[0][1] != curveEstimate[0][1] ||
+        curveEstimate[0][2] != curveEstimate[0][2])
+      {
+        for (int i=0; i<curveEstimate.length; i++) {
+          System.out.println("Estimate is corrupt: component " + i +
+            ": a=" + curveEstimate[i][0] +
+            ", t=" + curveEstimate[i][1] +
+            ", c=" + curveEstimate[i][2]);
+        }
+      }
+    }
   }
 
   /**
@@ -416,13 +468,13 @@ public abstract class CurveFitter implements ICurveFitter {
    */
   public double[][] getCurve() {
     if (components == 1) return curveEstimate;
-    // Otherwise, it's 2 exponential, and we want it in ascending order
     if (components == 2) {
-      if (curveEstimate[0][1] > curveEstimate[1][1]) {
-        double[][] toreturn = new double[components][3];
-        toreturn[0] = curveEstimate[1];
-        toreturn[1] = curveEstimate[0];
-        return toreturn;
+      // return 2-component fits in descending order
+      if (curveEstimate[0][1] < curveEstimate[1][1]) {
+        double[][] toReturn = new double[components][3];
+        toReturn[0] = curveEstimate[1];
+        toReturn[1] = curveEstimate[0];
+        return toReturn;
       }
       else {
         return curveEstimate;

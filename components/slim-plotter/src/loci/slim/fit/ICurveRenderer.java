@@ -71,6 +71,8 @@ public interface ICurveRenderer extends Runnable {
 
   int getImageY();
 
+  double getTotalRCSE();
+
   double getWorstRCSE();
 
 }
