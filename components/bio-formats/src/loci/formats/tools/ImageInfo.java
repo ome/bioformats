@@ -238,7 +238,9 @@ public final class ImageInfo {
     if (swapOrder != null) dimSwapper.swapDimensions(swapOrder);
     if (shuffleOrder != null) dimSwapper.setOutputOrder(shuffleOrder);
 
-    if (!normalize && reader.getPixelType() == FormatTools.FLOAT) {
+    if (!normalize && (reader.getPixelType() == FormatTools.FLOAT ||
+      reader.getPixelType() == FormatTools.DOUBLE))
+    {
       LogTools.println("Warning: Java does not support " +
         "display of unnormalized floating point data.");
       LogTools.println("Please use the '-normalize' option " +
