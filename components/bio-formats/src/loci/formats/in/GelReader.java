@@ -63,7 +63,7 @@ public class GelReader extends BaseTiffReader {
 
   /** Constructs a new GEL reader. */
   public GelReader() {
-    super("Molecular Dynamics GEL", new String[] {"gel"});
+    super("Amersham Biosciences GEL", new String[] {"gel"});
   }
 
   // -- IFormatReader API methods --
