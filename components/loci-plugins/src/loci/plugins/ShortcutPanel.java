@@ -166,7 +166,16 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   /** Opens the given file with the Bio-Formats Importer plugin. */
   public void open(File f) {
     String arg = args[openerIndex] + "open=[" + f + "] ";
-    IJ.runPlugIn(plugins[openerIndex], arg);
+    runPlugIn(plugins[openerIndex], arg);
+  }
+
+  public static void runPlugIn(String className, String arg) {
+    try {
+      IJ.runPlugIn(className, arg);
+    }
+    catch (Throwable t) {
+      Util.reportException(t);
+    }
   }
 
   // -- ActionListener API methods --
@@ -177,7 +186,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     String name = b.getText();
     for (int i=0; i<names.length; i++) {
       if (name.equals(names[i])) {
-        IJ.runPlugIn(plugins[i], args[i]);
+        runPlugIn(plugins[i], args[i]);
         break;
       }
     }

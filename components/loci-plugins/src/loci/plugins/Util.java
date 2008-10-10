@@ -29,6 +29,8 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.process.*;
+import ij.text.TextWindow;
+import ij.util.Tools;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -569,6 +571,23 @@ public final class Util {
     }
 
     w.setLocation(p);
+  }
+
+  /** Reports an exception in an ImageJ text window. */
+  public static void reportException(Throwable t) {
+    // stolen from IJ.Executor.run()
+    IJ.showStatus("");
+    IJ.showProgress(1.0);
+    CharArrayWriter caw = new CharArrayWriter();
+    PrintWriter pw = new PrintWriter(caw);
+    t.printStackTrace(pw);
+    String s = caw.toString();
+    if (IJ.isMacintosh()) {
+      if (s.indexOf("ThreadDeath") > 0) return;
+      s = Tools.fixNewLines(s);
+    }
+    if (IJ.getInstance() != null) new TextWindow("Exception", s, 350, 250);
+    else IJ.log(s);
   }
 
 }
