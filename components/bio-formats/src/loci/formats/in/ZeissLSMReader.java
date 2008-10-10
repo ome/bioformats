@@ -185,7 +185,6 @@ public class ZeissLSMReader extends BaseTiffReader {
       byte[] cz = new byte[s.length];
       for (int i=0; i<s.length; i++) {
         cz[i] = (byte) s[i];
-        if (cz[i] < 0) cz[i]++; // account for byte->short conversion
       }
 
       RandomAccessStream ras = new RandomAccessStream(cz);
@@ -358,7 +357,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DimensionChannels", getSizeC());
 
       if (channelColorsOffset != 0) {
-        in.seek(channelColorsOffset + 12);
+        in.seek(channelColorsOffset + 16);
         int namesOffset = in.readInt();
 
         // read in the intensity value for each color
