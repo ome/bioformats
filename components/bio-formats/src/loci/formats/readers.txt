@@ -59,6 +59,7 @@ loci.formats.in.FEIReader             # img
 loci.formats.in.NAFReader             # naf
 loci.formats.in.MINCReader            # mnc
 loci.formats.in.QTReader              # mov
+loci.formats.in.MRWReader             # mrw
 
 # multi-extension messes
 loci.formats.in.APLReader             # apl, mtb, tnb

@@ -650,7 +650,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   // -- Helper methods --
 
-  private static String getExifTagName(int tag) {
+  public static String getExifTagName(int tag) {
     switch (tag) {
       case EXIF_VERSION:
         return "EXIF Version";
