@@ -38,7 +38,7 @@ description = an image in the metadata store
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the image
 
 [Image Name]
 type = String
@@ -53,21 +53,24 @@ type = String
 description = the full description of the image
 
 [Image InstrumentRef]
-type = String 
-description = TODO
+type = String
+description = label reference for the associated instrument
+
+#[Image DefaultPixels]
+#TODO - need Image.setDefaultPixels in OME-XML Java library
 
 ## Pixels ##
 
 [Pixels]
 countable = true
 path = Image+/Pixels+
-description = A pixels set in the metadata store.
+description = a pixels set in the metadata store
 
 [Pixels ID]
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the pixels set
 
 [Pixels SizeX]
 type = Integer
@@ -300,7 +303,7 @@ path = Image+/ChannelInfo+
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the logical channel
 
 [LogicalChannel Name]
 type = String
@@ -392,7 +395,7 @@ description = various display options for a particular pixels set
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the display options
 
 # FIXME xsd-fu needs to include get/setPixels methods in DisplayOptionsNode
 #[DisplayOptions Pixels]
@@ -658,7 +661,7 @@ description = a 5D bounding box region of interest in the metadata store \
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the 5D bounding box ROI
 
 [ROI X0]
 type = Integer
@@ -771,13 +774,13 @@ description = the z coordinate of the stage
 [Instrument]
 countable = true
 path = Instrument+
-description = an instrument in the metadata store with a particular index
+description = information about a microscope or other instrument
 
 [Instrument ID]
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the instrument
 
 ## LightSource ##
 
@@ -790,7 +793,7 @@ description = a light source for a particular instrument
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the light source
 
 [LightSource Manufacturer]
 type = String
@@ -888,7 +891,7 @@ description = a detector for a particular instrument
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the detector
 
 [Detector Manufacturer]
 type = String
@@ -929,7 +932,7 @@ description = an objective for a particular instrument
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the objective
 
 [Objective Manufacturer]
 type = String
@@ -1094,7 +1097,7 @@ description = an optical transfer function for a particular instrument
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the optical transfer function
 
 [OTF SizeX]
 type = Integer
@@ -1116,20 +1119,44 @@ description = TODO
 getter = getOpticalAxisAvrg
 setter = setOpticalAxisAvrg
 
-### Entities for Experimenter details ###
+### Entities for Experiment & Experimenter details ###
+
+## Experiment ##
+
+[Experiment]
+countable = true
+path = Experiment+
+description = information about a particular experiment
+
+[Experiment ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the experiment
+
+[Experiment Description]
+type = String
+description = TODO
+
+[Experiment Type]
+type = String
+description = TODO
+
+#[Experiment Experimenter]
+#TODO - need Experiment.setExperimenter in OME-XML Java library
 
 ## Experimenter ##
 
 [Experimenter]
 countable = true
 path = Experimenter+
-description = an experimenter in the metadata store with a particular index
+description = information about someone performing an experiment
 
 [Experimenter ID]
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the experimenter
 
 [Experimenter FirstName]
 type = String
@@ -1163,7 +1190,7 @@ path = -
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the plate
 
 #[Plate ScreenRef]
 #type =
@@ -1198,7 +1225,7 @@ path = -
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = label reference for the associated plate
 
 ## Reagent ##
 
@@ -1214,7 +1241,7 @@ path = -
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the reagent
 
 [Reagent Description]
 type = String
@@ -1242,7 +1269,7 @@ description = reference to this reagent in an external database
 #type = String
 #getter = getNodeID
 #setter = setNodeID
-#description = TODO
+#description = label reference for the associated reagent
 
 ## Screen ##
 
@@ -1256,13 +1283,13 @@ path = -
 
 #[Screen PlateRef]
 #type = String
-#description = TODO
+#description = label reference for the associated plate
 
 [Screen ID]
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the screen
 
 [Screen Name]
 type = String
@@ -1302,7 +1329,7 @@ description = human-readable screen type, e.g. RNAi, cDNA
 #type = String
 #getter = getNodeID
 #setter = setNodeID
-#description = TODO
+#description = label reference for the associated screen
 
 ## ScreenAcquisition ##
 
@@ -1320,7 +1347,7 @@ path = -
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the screen's acquisition run
 
 [ScreenAcquisition EndTime]
 type = String
@@ -1342,13 +1369,13 @@ path = -
 
 #[Well ReagentRef]
 #type = String
-#description = TODO
+#description = label reference for the associated reagent
 
 [Well ID]
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the well
 
 [Well Column]
 type = Integer
@@ -1382,13 +1409,13 @@ path = -
 
 #[WellSample ImageRef]
 #type = String
-#description = TODO
+#description = label reference for the associated image
 
 [WellSample ID]
 type = String
 getter = getNodeID
 setter = setNodeID
-description = TODO
+description = unique label identifying the individual well image
 
 [WellSample Index]
 type = Integer
