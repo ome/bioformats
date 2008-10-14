@@ -33,7 +33,6 @@ import ij.gui.StackWindow;
 import ij.io.FileInfo;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.swing.*;
 import javax.xml.parsers.*;

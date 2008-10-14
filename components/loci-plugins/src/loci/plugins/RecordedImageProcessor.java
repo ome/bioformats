@@ -6,12 +6,9 @@ package loci.plugins;
 
 import java.awt.*;
 import java.awt.image.*;
-import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
-import ij.io.*;
 import ij.gui.*;
-import ij.measure.*;
 import ij.process.*;
 
 public class RecordedImageProcessor extends ImageProcessor {

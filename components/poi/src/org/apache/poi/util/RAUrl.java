@@ -155,7 +155,6 @@ public class RAUrl implements IRandomAccess {
       mark = 0;
     }
     if (os != null) os = new DataOutputStream(conn.getOutputStream());
-    this.url = url;
     fp = 0;
     skipBytes((int) pos);
   }

@@ -29,7 +29,6 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;

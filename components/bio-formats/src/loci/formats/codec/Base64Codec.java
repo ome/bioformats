@@ -42,7 +42,6 @@ public class Base64Codec extends BaseCodec implements Codec {
 
   // Base64 alphabet and codes
 
-  private static final int FOURBYTE = 4;
   private static final byte PAD = (byte) '=';
 
   private static byte[] base64Alphabet = new byte[255];
