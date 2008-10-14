@@ -1,14 +1,34 @@
-Fit: still something wrong with chi^2 error computation -- fix it
-  * chi^2 error is inexplicably low on some horribly inaccurate curves
-  * large bin radius results in discontinuities in bright areas?
-  * 2-component fits can be inaccurate (see Log scale for confirmation)
-
-2D: pixel probe in lifetime mode
-  * show details on curve fit result for that pixel
-  * report information beneath 3D plot where view toggles used to be
+Fit: still something wrong -- fix it
+  * large bin radius results in strange blocks,
+    and discontinuities in bright areas
 
 3D: fix bug in FWHMs when pixel probing
 3D: fix bug in yellow lines when toggling individual channels
 
 2D: implement spectral projection view
 2D: implement emission spectraview
+
+View all channels simultaneously vs one at a time (2D plot)
+Improve results in the circled region first
+
+The larger the chi2, the dimmer the pixel could be? I.e., ability to plot
+different parameters in 2D lifetime window to three different color components
+
+Use forms for GUI
+
+Numbers for RENDERER:
+  - Phase, percent complete
+  - Iteration #
+  - Worst RCSE
+  - Total RCSE
+
+Numbers for active CURVE FITTER:
+  - a1 raw, a1 %
+  - t1 raw, t1 ps
+  - a2 raw, a2 %
+  - t2 raw, t2 ps
+  - c
+  - chi^2 raw, chi^2 reduced
+
+Improve export button: also export curve statistics for current curve,
+including formulas -- makes it easy to duplicate plot in Excel
