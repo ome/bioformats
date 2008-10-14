@@ -577,6 +577,8 @@ public final class ImageInfo {
 
       // display pixels in image viewer
       // NB: avoid dependencies on optional loci.formats.gui package
+      LogTools.println();
+      LogTools.println("Launching image viewer");
       ReflectedUniverse r = new ReflectedUniverse();
       try {
         r.exec("import loci.formats.gui.ImageViewer");

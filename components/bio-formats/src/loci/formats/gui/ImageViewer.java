@@ -115,24 +115,32 @@ public class ImageViewer extends JFrame implements ActionListener,
       r.exec("import loci.ome.io.OMEReader");
       omeReader = (IFormatReader) r.exec("new OMEReader()");
     }
-    catch (ReflectException exc) { LogTools.trace(exc); }
+    catch (ReflectException exc) {
+      LogTools.println("Warning: OME reader not available");
+    }
     try {
       r.exec("import loci.ome.io.OMEWriter");
       omeWriter = (IFormatWriter) r.exec("new OMEWriter()");
     }
-    catch (ReflectException exc) { LogTools.trace(exc); }
+    catch (ReflectException exc) {
+      LogTools.println("Warning: OME writer not available");
+    }
 
     // OMERO server I/O engine
     try {
       r.exec("import loci.ome.io.OMEROReader");
       omeroReader = (IFormatReader) r.exec("new OMEROReader()");
     }
-    catch (ReflectException exc) { LogTools.trace(exc); }
+    catch (ReflectException exc) {
+      LogTools.println("Warning: OMERO reader not available");
+    }
     try {
       r.exec("import loci.ome.io.OMEROWriter");
       omeroWriter = (IFormatWriter) r.exec("new OMEROWriter()");
     }
-    catch (ReflectException exc) { LogTools.trace(exc); }
+    catch (ReflectException exc) {
+      LogTools.println("Warning: OMERO writer not available");
+    }
 
     // content pane
     pane = new JPanel();
