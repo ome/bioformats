@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
+import java.io.ByteArrayOutputStream;
+import javax.xml.transform.TransformerException;
+import loci.formats.LogTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import ome.xml.DOMUtil;
@@ -72,7 +75,18 @@ public abstract class OMEXMLMetadata
    * Dumps the given OME-XML DOM tree to a string.
    * @return OME-XML as a string.
    */
-  public abstract String dumpXML();
+  public String dumpXML() {
+    if (root == null) return null;
+    try {
+      ByteArrayOutputStream os = new ByteArrayOutputStream();
+      DOMUtil.writeXML(os, root.getDOMElement().getOwnerDocument());
+      return os.toString();
+    }
+    catch (TransformerException exc) {
+      LogTools.trace(exc);
+    }
+    return null;
+  }
 
   /** Adds the key/value pair as a new OriginalMetadata node. */
   public void setOriginalMetadata(String key, String value) {

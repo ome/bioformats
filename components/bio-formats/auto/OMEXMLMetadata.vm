@@ -53,22 +53,6 @@ import loci.formats.LogTools;
  */
 public class $q.className() extends OMEXMLMetadata {
 
-  // -- OMEXMLMetadata API methods --
-
-  /* @see OMEXMLMetadata#dumpXML() */
-  public String dumpXML() {
-    if (root == null) return null;
-    try {
-      java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-      ome.xml.DOMUtil.writeXML(os, root.getDOMElement().getOwnerDocument());
-      return os.toString();
-    }
-    catch (javax.xml.transform.TransformerException exc) {
-      LogTools.trace(exc);
-    }
-    return null;
-  }
-
   // -- MetadataRetrieve API methods --
 
   // - Entity counting -
