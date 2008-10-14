@@ -37,6 +37,7 @@ import java.io.IOException;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/TextTransfer.java">SVN</a></dd></dl>
  */
 public final class TextTransfer implements ClipboardOwner {
+
   public void setClipboardContents(String value) {
     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     if (clipboard != null) {

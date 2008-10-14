@@ -1162,12 +1162,13 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // update Numbers fields
       // CTR TEMP - this is crap; refactor to MVC
-      a1Param.setText("" + fitA1[0]);
-      t1Param.setText("" + fitT1[0]);
-      a2Param.setText("" + fitA2[0]);
-      t2Param.setText("" + fitT2[0]);
-      cParam.setText("" + fitC[0]);
-      chi2.setText("" + fitChi2[0]);
+      int activeC = twoDPane.getActiveC();
+      a1Param.setText("" + fitA1[activeC]);
+      t1Param.setText("" + fitT1[activeC]);
+      a2Param.setText("" + fitA2[activeC]);
+      t2Param.setText("" + fitT2[activeC]);
+      cParam.setText("" + fitC[activeC]);
+      chi2.setText("" + fitChi2[activeC]);
 
       try {
         // construct domain set for 3D surface plots

@@ -351,6 +351,7 @@ public class TwoDPane extends JPanel
   public int getROIX() { return roiX; }
   public int getROIY() { return roiY; }
   public boolean[][] getROIMask() { return roiMask; }
+  public int getActiveC() { return cSlider.getValue() - 1; }
 
   /**
    * Gets the curve fitter for each spectral channel
@@ -376,7 +377,7 @@ public class TwoDPane extends JPanel
       if (lifetimeActive) {
         // begin lifetime computation
         startStopButton.setText("Stop");
-        int c = cSlider.getValue() - 1;
+        int c = getActiveC();
         switcher.setCurrent(c);
         curveThread = new Thread(switcher, "Lifetime");
         curveThread.setPriority(Thread.MIN_PRIORITY);
@@ -390,7 +391,7 @@ public class TwoDPane extends JPanel
     }
     else if (src == cToggle) {
       // toggle visibility of this channel
-      int c = cSlider.getValue() - 1;
+      int c = getActiveC();
       data.cVisible[c] = !data.cVisible[c];
       slim.plotData(true, true, false);
     }
@@ -407,7 +408,7 @@ public class TwoDPane extends JPanel
       // lifetime timer event - update lifetime display
       if (!lifetimeActive || !lifetimeMode.isSelected()) return;
 
-      int c = cSlider.getValue() - 1;
+      int c = getActiveC();
 
       // update VisAD display
       double[][] lifetimeImage = curveRenderers[c].getImage();
@@ -440,7 +441,7 @@ public class TwoDPane extends JPanel
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
     if (src == cSlider) {
-      int c = cSlider.getValue() - 1;
+      int c = getActiveC();
 
       cToggle.removeActionListener(this);
       cToggle.setSelected(data.cVisible[c]);
@@ -610,7 +611,7 @@ public class TwoDPane extends JPanel
           intensityFields[c].setSamples(samples, false);
         }
       }
-      int c = adjustSlider ? maxChan : cSlider.getValue() - 1;
+      int c = adjustSlider ? maxChan : getActiveC();
       imageRef.setData(intensityFields[c]);
       if (adjustSlider) cSlider.setValue(c + 1);
       colorWidget.updateColorScale();
@@ -633,7 +634,7 @@ public class TwoDPane extends JPanel
           lifetimeFields[c].setSamples(samples, false);
         }
       }
-      int c = cSlider.getValue() - 1;
+      int c = getActiveC();
       imageRef.setData(lifetimeFields[c]);
       colorWidget.updateColorScale();
 
@@ -656,7 +657,7 @@ public class TwoDPane extends JPanel
   }
 
   private void doProgressString() {
-    int c = cSlider.getValue() - 1;
+    int c = getActiveC();
     int curProg = curveRenderers[c].getCurrentProgress();
     int maxProg = curveRenderers[c].getMaxProgress();
     progress.setValue(curProg <= maxProg ? curProg : 0);
