@@ -27,6 +27,7 @@ package loci.plugins;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;
+import javax.swing.border.EmptyBorder;
 import loci.formats.cache.Cache;
 import loci.formats.gui.CacheComponent;
 
@@ -46,6 +47,7 @@ public class BrowserOptionsWindow extends JFrame {
 
     CacheComponent panel = new CacheComponent(cache, axes);
 
+    panel.setBorder(new EmptyBorder(15, 15, 15, 15));
     panel.setMinimumSize(new Dimension(300, 500));
     setContentPane(panel);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
