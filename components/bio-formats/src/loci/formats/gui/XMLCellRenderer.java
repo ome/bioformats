@@ -87,27 +87,6 @@ public class XMLCellRenderer extends DefaultTreeCellRenderer {
     return c;
   }
 
-  // -- Main method --
-
-  public static void main(String[] args) throws Exception {
-    String file = args[0];
-
-    // parse XML into DOM structure
-    DocumentBuilderFactory docFact = DocumentBuilderFactory.newInstance();
-    DocumentBuilder db = docFact.newDocumentBuilder();
-    Document doc = db.parse(new File(file));
-
-    // display DOM in a JTree on screen
-    JTree tree = makeJTree(doc);
-    JFrame frame = new JFrame("XMLCellRenderer");
-    JPanel pane = new JPanel();
-    pane.setLayout(new BorderLayout());
-    pane.add(tree, BorderLayout.CENTER);
-    frame.setContentPane(new JScrollPane(pane));
-    frame.setBounds(200, 200, 750, 500);
-    frame.setVisible(true);
-  }
-
   // -- Helper methods --
 
   /** Recursively builds JTree node structure from DOM node structure. */
