@@ -105,6 +105,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_T = "bioformats.splitTimepoints";
   public static final String PREF_CROP = "bioformats.crop";
   public static final String PREF_METADATA = "bioformats.showMetadata";
+  public static final String PREF_OME_XML = "bioformats.showOMEXML";
   public static final String PREF_GROUP = "bioformats.groupFiles";
   public static final String PREF_CONCATENATE = "bioformats.concatenate";
   public static final String PREF_RANGE = "bioformats.specifyRanges";
@@ -133,13 +134,15 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_CROP = "Crop on import";
   public static final String LABEL_METADATA =
     "Display_metadata in results window";
+  public static final String LABEL_OME_XML = "Display_OME-XML metadata";
   public static final String LABEL_GROUP = "Group_files with similar names";
   public static final String LABEL_CONCATENATE =
     "Concatenate_series when compatible";
   public static final String LABEL_RANGE = "Specify_range for each series";
   public static final String LABEL_AUTOSCALE = "Autoscale images";
   public static final String LABEL_VIRTUAL = "Use_virtual_stack";
-  public static final String LABEL_RECORD = "Record_modifications_to_virtual_stack";
+  public static final String LABEL_RECORD =
+    "Record_modifications_to_virtual_stack";
   public static final String LABEL_ALL_SERIES = "Open_all_series";
   public static final String LABEL_SWAP = "Swap_dimensions";
 
@@ -183,6 +186,7 @@ public class ImporterOptions implements ItemListener {
   private boolean splitTimepoints;
   private boolean crop;
   private boolean showMetadata;
+  private boolean showOMEXML;
   private boolean groupFiles;
   private boolean concatenate;
   private boolean specifyRanges;
@@ -217,6 +221,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isSplitFocalPlanes() { return splitFocalPlanes; }
   public boolean isSplitTimepoints() { return splitTimepoints; }
   public boolean isShowMetadata() { return showMetadata; }
+  public boolean isShowOMEXML() { return showOMEXML; }
   public boolean isGroupFiles() { return groupFiles; }
   public boolean isConcatenate() { return concatenate; }
   public boolean isSpecifyRanges() { return specifyRanges; }
@@ -263,6 +268,7 @@ public class ImporterOptions implements ItemListener {
   public void setSplitFocalPlanes(boolean b) { splitFocalPlanes = b; }
   public void setSplitTimepoints(boolean b) { splitTimepoints = b; }
   public void setShowMetadata(boolean b) { showMetadata = b; }
+  public void setShowOMEXML(boolean b) { showOMEXML = b; }
   public void setGroupFiles(boolean b) { groupFiles = b; }
   public void setConcatenate(boolean b) { concatenate = b; }
   public void setSpecifyRanges(boolean b) { specifyRanges = b; }
@@ -286,6 +292,7 @@ public class ImporterOptions implements ItemListener {
     splitTimepoints = Prefs.get(PREF_T, false);
     crop = Prefs.get(PREF_CROP, false);
     showMetadata = Prefs.get(PREF_METADATA, false);
+    showOMEXML = Prefs.get(PREF_OME_XML, false);
     groupFiles = Prefs.get(PREF_GROUP, false);
     concatenate = Prefs.get(PREF_CONCATENATE, false);
     specifyRanges = Prefs.get(PREF_RANGE, false);
@@ -314,6 +321,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_T, splitTimepoints);
     Prefs.set(PREF_CROP, crop);
     Prefs.set(PREF_METADATA, showMetadata);
+    Prefs.set(PREF_OME_XML, showOMEXML);
     Prefs.set(PREF_GROUP, groupFiles);
     Prefs.set(PREF_CONCATENATE, concatenate);
     Prefs.set(PREF_RANGE, specifyRanges);
@@ -365,6 +373,7 @@ public class ImporterOptions implements ItemListener {
       splitTimepoints = getMacroValue(arg, LABEL_T, splitTimepoints);
       crop = getMacroValue(arg, LABEL_CROP, crop);
       showMetadata = getMacroValue(arg, LABEL_METADATA, showMetadata);
+      showOMEXML = getMacroValue(arg, LABEL_OME_XML, showOMEXML);
       groupFiles = getMacroValue(arg, LABEL_GROUP, groupFiles);
       concatenate = getMacroValue(arg, LABEL_CONCATENATE, concatenate);
       specifyRanges = getMacroValue(arg, LABEL_RANGE, specifyRanges);
@@ -577,6 +586,7 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_T, splitTimepoints);
     gd.addCheckbox(LABEL_CROP, crop);
     gd.addCheckbox(LABEL_METADATA, showMetadata);
+    gd.addCheckbox(LABEL_OME_XML, showOMEXML);
     gd.addCheckbox(LABEL_GROUP, groupFiles);
     gd.addCheckbox(LABEL_CONCATENATE, concatenate);
     gd.addCheckbox(LABEL_RANGE, specifyRanges);
@@ -629,6 +639,7 @@ public class ImporterOptions implements ItemListener {
     splitTimepoints = gd.getNextBoolean();
     crop = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
+    showOMEXML = gd.getNextBoolean();
     groupFiles = gd.getNextBoolean();
     concatenate = gd.getNextBoolean();
     specifyRanges = gd.getNextBoolean();

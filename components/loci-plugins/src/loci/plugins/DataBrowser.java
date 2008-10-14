@@ -26,24 +26,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import com.jgoodies.forms.layout.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import ij.io.FileInfo;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import javax.swing.*;
 import javax.xml.parsers.*;
 import loci.formats.FormatTools;
 import loci.formats.cache.Cache;
 import loci.formats.gui.CacheIndicator;
-import loci.formats.gui.XMLCellRenderer;
-import org.w3c.dom.Document;
+import loci.formats.gui.XMLWindow;
 import org.xml.sax.SAXException;
 
 /**
@@ -67,7 +64,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
   protected boolean anim = false;
   protected boolean allowShow = false;
 
-  protected JFrame metaWindow;
+  protected XMLWindow metaWindow;
   protected BrowserOptionsWindow optionsWindow;
   protected String xml;
 
@@ -97,7 +94,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
     cIndex = new int[cLengths.length];
 
     // build metadata window
-    metaWindow = new JFrame("Metadata - " + getTitle());
+    metaWindow = new XMLWindow("OME Metadata - " + getTitle());
 
     // build fancy UI widgets
     while (getComponentCount() > 1) remove(1);
@@ -290,51 +287,49 @@ public class DataBrowser extends StackWindow implements ActionListener {
    * displayed in a tree structure when the Metadata button is clicked.
    */
   public void setXML(String xml) {
-    this.xml = xml;
-    metaWindow.getContentPane().removeAll();
-    boolean success = false;
-    if (xml == null) {
-      metaWindow.setVisible(false);
-      success = true;
+    try {
+      metaWindow.setXML(xml);
     }
-    else {
-      try {
-        // parse XML into DOM structure
-        DocumentBuilderFactory docFact = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = docFact.newDocumentBuilder();
-        ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes());
-        Document doc = db.parse(is);
-        is.close();
-
-        // construct metadata window and size intelligently
-        JTree tree = XMLCellRenderer.makeJTree(doc);
-        for (int i=0; i<tree.getRowCount(); i++) tree.expandRow(i);
-        metaWindow.getContentPane().add(new JScrollPane(tree));
-        metaWindow.pack();
-        Dimension dim = metaWindow.getSize();
-        int pad = 20;
-        dim.width += pad;
-        dim.height += pad;
-        Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
-        int maxWidth = 3 * ss.width / 4;
-        int maxHeight = 3 * ss.height / 4;
-        if (dim.width > maxWidth) dim.width = maxWidth;
-        if (dim.height > maxHeight) dim.height = maxHeight;
-        metaWindow.setSize(dim);
-
-        success = true;
-      }
-      catch (ParserConfigurationException exc) {
-        exc.printStackTrace();
-      }
-      catch (SAXException exc) {
-        exc.printStackTrace();
-      }
-      catch (IOException exc) {
-        exc.printStackTrace();
-      }
+    catch (ParserConfigurationException exc) {
+      exc.printStackTrace();
     }
-    metadata.setEnabled(success);
+    catch (SAXException exc) {
+      exc.printStackTrace();
+    }
+    catch (IOException exc) {
+      exc.printStackTrace();
+    }
+    metadata.setEnabled(metaWindow.getDocument() != null);
+  }
+
+  /** Toggles whether the data browser is animating. */
+  public void toggleAnimation() {
+    animate.setLabel(anim ? "Animate" : "Stop");
+    anim = !anim;
+  }
+
+  /** Displays the caching options window onscreen. */
+  public void showOptionsWindow() {
+    // center window and show
+    Rectangle r = getBounds();
+    Dimension w = optionsWindow.getSize();
+    int x = (int) Math.max(5, r.x + (r.width - w.width) / 2);
+    int y = (int) Math.max(5, r.y + (r.height - w.height) / 2);
+    optionsWindow.setLocation(x, y);
+    optionsWindow.setVisible(true);
+  }
+
+  /** Displays the OME-XML metadata window onscreen. */
+  public void showMetadataWindow() {
+    // center window and show
+    Rectangle r = getBounds();
+    Dimension w = metaWindow.getSize();
+    int x = r.x + (r.width - w.width) / 2;
+    int y = r.y + (r.height - w.height) / 2;
+    if (x < 5) x = 5;
+    if (y < 5) y = 5;
+    metaWindow.setLocation(x, y);
+    metaWindow.setVisible(true);
   }
 
   // -- Window API methods --
@@ -360,28 +355,13 @@ public class DataBrowser extends StackWindow implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == animate) {
-      animate.setLabel(anim ? "Animate" : "Stop");
-      anim = !anim;
+      toggleAnimation();
     }
     else if (src == options) {
-      // center window and show
-      Rectangle r = getBounds();
-      Dimension w = optionsWindow.getSize();
-      int x = (int) Math.max(5, r.x + (r.width - w.width) / 2);
-      int y = (int) Math.max(5, r.y + (r.height - w.height) / 2);
-      optionsWindow.setLocation(x, y);
-      optionsWindow.setVisible(true);
+      showOptionsWindow();
     }
     else if (src == metadata) {
-      // center window and show
-      Rectangle r = getBounds();
-      Dimension w = metaWindow.getSize();
-      int x = r.x + (r.width - w.width) / 2;
-      int y = r.y + (r.height - w.height) / 2;
-      if (x < 5) x = 5;
-      if (y < 5) y = 5;
-      metaWindow.setLocation(x, y);
-      metaWindow.setVisible(true);
+      showMetadataWindow();
     }
     // NB: Do not eat superclass events. Om nom nom nom. :-)
     else super.actionPerformed(e);

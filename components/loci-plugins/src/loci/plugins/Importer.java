@@ -32,6 +32,7 @@ import java.awt.Rectangle;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.gui.XMLWindow;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 
@@ -150,6 +151,7 @@ public class Importer {
     boolean mergeChannels = options.isMergeChannels();
     boolean colorize = options.isColorize();
     boolean showMetadata = options.isShowMetadata();
+    boolean showOMEXML = options.isShowOMEXML();
     boolean groupFiles = options.isGroupFiles();
     boolean concatenate = options.isConcatenate();
     boolean specifyRanges = options.isSpecifyRanges();
@@ -369,9 +371,33 @@ public class Importer {
         // sort metadata keys
         String metaString = getMetadataString(meta, "\t");
 
-        SearchableWindow w = new SearchableWindow("Metadata - " + id,
+        SearchableWindow w = new SearchableWindow("Original Metadata - " + id,
           "Key\tValue", metaString, 400, 400);
         w.setVisible(true);
+      }
+
+      if (showOMEXML) {
+        if (options.isViewBrowser()) {
+          // NB: Data Browser has its own internal OME-XML metadata window,
+          // which we'll trigger once we have created a Data Browser.
+          // So there is no need to pop up a separate OME-XML here.
+        }
+        else {
+          XMLWindow metaWindow = new XMLWindow("OME Metadata - " + id);
+          try {
+            metaWindow.setXML(MetadataTools.getOMEXML(retrieve));
+            Util.placeWindow(metaWindow);
+            metaWindow.setVisible(true);
+          }
+          catch (javax.xml.parsers.ParserConfigurationException exc) {
+            reportException(exc, options.isQuiet(),
+              "Sorry, there was a problem displaying the OME metadata");
+          }
+          catch (org.xml.sax.SAXException exc) {
+            reportException(exc, options.isQuiet(),
+              "Sorry, there was a problem displaying the OME metadata");
+          }
+        }
       }
 
       // -- Step 4f: read pixel data --
@@ -785,8 +811,9 @@ public class Importer {
 
       if (!concatenate) {
         if (options.isViewBrowser()) {
-          new DataBrowser(imp, null, r.getChannelDimTypes(),
-            r.getChannelDimLengths());
+          DataBrowser dataBrowser = new DataBrowser(imp, null,
+            r.getChannelDimTypes(), r.getChannelDimLengths());
+          if (options.isShowOMEXML()) dataBrowser.showMetadataWindow();
         }
         else imp.show();
         if ((splitC || splitZ || splitT) && !options.isVirtual()) {
