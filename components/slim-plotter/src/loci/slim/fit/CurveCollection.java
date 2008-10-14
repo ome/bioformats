@@ -225,12 +225,12 @@ public class CurveCollection implements CurveReporter {
             int sum = 0;
             int yLo = y - binRadius, yHi = y + binRadius;
             if (yLo < 0) yLo = 0;
-            if (yHi > numRows) yHi = numRows;
-            for (int dy=yLo; dy<yHi; dy++) {
+            if (yHi > numRows - 1) yHi = numRows - 1;
+            for (int dy=yLo; dy<=yHi; dy++) {
               int xLo = x - binRadius, xHi = x + binRadius;
               if (xLo < 0) xLo = 0;
-              if (xHi > numCols) xHi = numCols;
-              for (int dx=xLo; dx<xHi; dx++) sum += data[dy][dx][t];
+              if (xHi > numCols - 1) xHi = numCols - 1;
+              for (int dx=xLo; dx<=xHi; dx++) sum += data[dy][dx][t];
             }
             binnedData[y][x][t] = sum;
           }

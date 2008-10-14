@@ -189,10 +189,9 @@ public abstract class CurveFitter implements ICurveFitter {
     }
     if (dataPoints < 0) dataPoints = 0;
 
+    double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
     if (components >= 1) {
-      // TODO: Estimate c, factor it in below.
-
-      double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
+      // Estimate c, and factor it in below.
       for (int i = firstIndex; i <= lastIndex; i++) {
         if (curveData[i] < min) min = curveData[i];
         if (curveData[i] > max) max = curveData[i];
@@ -326,7 +325,8 @@ public abstract class CurveFitter implements ICurveFitter {
           den += lowValues[i][1] - guessC;
         }
       }
-      double exp = num/den;
+      if (num == 0) num = 1;
+      double exp = den == 0 ? dataPoints / 2 : num / den;
       num = 0.0;
       den = 0.0;
       int lowBound = lowValues.length < 5 ? lowValues.length : 5;
@@ -340,7 +340,7 @@ public abstract class CurveFitter implements ICurveFitter {
           den += lowValues[i][1] - guessC;
         }
       }
-      double mult = num/den;
+      double mult = den == 0 ? max : num / den;
       curveEstimate[0][0] = mult;
       curveEstimate[0][1] = exp;
       curveEstimate[0][2] = guessC;
