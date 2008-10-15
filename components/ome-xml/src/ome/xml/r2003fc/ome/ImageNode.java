@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r2003fc.ome;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -102,7 +100,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("Feature");
 	}
 
-	public Vector getFeatureList()
+	public java.util.Vector getFeatureList()
 	{
 		return getChildNodes("Feature");
 	}
@@ -208,12 +206,12 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("DatasetRef");
 	}
 
-	public Vector getDatasetList()
+	public java.util.Vector getDatasetList()
 	{
 		return getReferencedNodes("Dataset", "DatasetRef");
 	}
 
-	public Vector getDatasetRefList()
+	public java.util.Vector getDatasetRefList()
 	{
 		return getChildNodes("DatasetRef");
 	}
@@ -224,7 +222,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("ChannelInfo");
 	}
 
-	public Vector getChannelInfoList()
+	public java.util.Vector getChannelInfoList()
 	{
 		return getChildNodes("ChannelInfo");
 	}
@@ -327,7 +325,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("Pixels");
 	}
 
-	public Vector getPixelsList()
+	public java.util.Vector getPixelsList()
 	{
 		return getChildNodes("Pixels");
 	}

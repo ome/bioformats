@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:18-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200802.spw;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -127,7 +125,7 @@ public class ScreenNode extends OMEXMLNode
 		return getChildCount("Reagent");
 	}
 
-	public Vector getReagentList()
+	public java.util.Vector getReagentList()
 	{
 		return getChildNodes("Reagent");
 	}
@@ -138,12 +136,12 @@ public class ScreenNode extends OMEXMLNode
 		return getChildCount("PlateRef");
 	}
 
-	public Vector getPlatePlateRefList()
+	public java.util.Vector getPlatePlateRefList()
 	{
 		return getReferencedNodes("Plate", "PlateRef");
 	}
 
-	public Vector getPlateRefList()
+	public java.util.Vector getPlateRefList()
 	{
 		return getChildNodes("PlateRef");
 	}
@@ -165,7 +163,7 @@ public class ScreenNode extends OMEXMLNode
 		return getChildCount("ScreenAcquisition");
 	}
 
-	public Vector getScreenAcquisitionList()
+	public java.util.Vector getScreenAcquisitionList()
 	{
 		return getChildNodes("ScreenAcquisition");
 	}

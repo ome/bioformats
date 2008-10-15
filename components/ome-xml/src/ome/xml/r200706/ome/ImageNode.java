@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.ome;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -126,7 +124,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("LogicalChannel");
 	}
 
-	public Vector getLogicalChannelList()
+	public java.util.Vector getLogicalChannelList()
 	{
 		return getChildNodes("LogicalChannel");
 	}
@@ -144,7 +142,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("ROI");
 	}
 
-	public Vector getROIList()
+	public java.util.Vector getROIList()
 	{
 		return getChildNodes("ROI");
 	}
@@ -199,7 +197,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("Pixels");
 	}
 
-	public Vector getPixelsList()
+	public java.util.Vector getPixelsList()
 	{
 		return getChildNodes("Pixels");
 	}
@@ -221,7 +219,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("Region");
 	}
 
-	public Vector getRegionList()
+	public java.util.Vector getRegionList()
 	{
 		return getChildNodes("Region");
 	}
@@ -234,7 +232,7 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("MicrobeamManipulation");
 	}
 
-	public Vector getMicrobeamManipulationList()
+	public java.util.Vector getMicrobeamManipulationList()
 	{
 		return getChildNodes("MicrobeamManipulation");
 	}
@@ -265,12 +263,12 @@ public class ImageNode extends OMEXMLNode
 		return getChildCount("DatasetRef");
 	}
 
-	public Vector getDatasetList()
+	public java.util.Vector getDatasetList()
 	{
 		return getReferencedNodes("Dataset", "DatasetRef");
 	}
 
-	public Vector getDatasetRefList()
+	public java.util.Vector getDatasetRefList()
 	{
 		return getChildNodes("DatasetRef");
 	}

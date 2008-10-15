@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r2003fc.ome;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -104,12 +102,12 @@ public class PlateNode extends OMEXMLNode
 		return getChildCount("ScreenRef");
 	}
 
-	public Vector getScreenList()
+	public java.util.Vector getScreenList()
 	{
 		return getReferencedNodes("Screen", "ScreenRef");
 	}
 
-	public Vector getScreenRefList()
+	public java.util.Vector getScreenRefList()
 	{
 		return getChildNodes("ScreenRef");
 	}

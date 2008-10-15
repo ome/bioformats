@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.ome;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -82,7 +80,7 @@ public class InstrumentNode extends OMEXMLNode
 		return getChildCount("LightSource");
 	}
 
-	public Vector getLightSourceList()
+	public java.util.Vector getLightSourceList()
 	{
 		return getChildNodes("LightSource");
 	}
@@ -93,7 +91,7 @@ public class InstrumentNode extends OMEXMLNode
 		return getChildCount("Dichroic");
 	}
 
-	public Vector getDichroicList()
+	public java.util.Vector getDichroicList()
 	{
 		return getChildNodes("Dichroic");
 	}
@@ -115,7 +113,7 @@ public class InstrumentNode extends OMEXMLNode
 		return getChildCount("OTF");
 	}
 
-	public Vector getOTFList()
+	public java.util.Vector getOTFList()
 	{
 		return getChildNodes("OTF");
 	}
@@ -126,7 +124,7 @@ public class InstrumentNode extends OMEXMLNode
 		return getChildCount("Filter");
 	}
 
-	public Vector getFilterList()
+	public java.util.Vector getFilterList()
 	{
 		return getChildNodes("Filter");
 	}
@@ -144,7 +142,7 @@ public class InstrumentNode extends OMEXMLNode
 		return getChildCount("Objective");
 	}
 
-	public Vector getObjectiveList()
+	public java.util.Vector getObjectiveList()
 	{
 		return getChildNodes("Objective");
 	}
@@ -155,7 +153,7 @@ public class InstrumentNode extends OMEXMLNode
 		return getChildCount("Detector");
 	}
 
-	public Vector getDetectorList()
+	public java.util.Vector getDetectorList()
 	{
 		return getChildNodes("Detector");
 	}
@@ -168,7 +166,7 @@ public class InstrumentNode extends OMEXMLNode
 		return getChildCount("FilterSet");
 	}
 
-	public Vector getFilterSetList()
+	public java.util.Vector getFilterSetList()
 	{
 		return getChildNodes("FilterSet");
 	}

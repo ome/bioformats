@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.ome;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -137,12 +135,12 @@ public class ExperimenterNode extends OMEXMLNode
 		return getChildCount("GroupRef");
 	}
 
-	public Vector getGroupList()
+	public java.util.Vector getGroupList()
 	{
 		return getReferencedNodes("Group", "GroupRef");
 	}
 
-	public Vector getGroupRefList()
+	public java.util.Vector getGroupRefList()
 	{
 		return getChildNodes("GroupRef");
 	}

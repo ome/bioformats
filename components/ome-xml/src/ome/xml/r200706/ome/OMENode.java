@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.ome;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -82,7 +80,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Plate");
 	}
 
-	public Vector getPlateList()
+	public java.util.Vector getPlateList()
 	{
 		return getChildNodes("Plate");
 	}
@@ -93,7 +91,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Group");
 	}
 
-	public Vector getGroupList()
+	public java.util.Vector getGroupList()
 	{
 		return getChildNodes("Group");
 	}
@@ -115,7 +113,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Screen");
 	}
 
-	public Vector getScreenList()
+	public java.util.Vector getScreenList()
 	{
 		return getChildNodes("Screen");
 	}
@@ -137,7 +135,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Dataset");
 	}
 
-	public Vector getDatasetList()
+	public java.util.Vector getDatasetList()
 	{
 		return getChildNodes("Dataset");
 	}
@@ -148,7 +146,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Project");
 	}
 
-	public Vector getProjectList()
+	public java.util.Vector getProjectList()
 	{
 		return getChildNodes("Project");
 	}
@@ -159,7 +157,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Instrument");
 	}
 
-	public Vector getInstrumentList()
+	public java.util.Vector getInstrumentList()
 	{
 		return getChildNodes("Instrument");
 	}
@@ -181,7 +179,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Experiment");
 	}
 
-	public Vector getExperimentList()
+	public java.util.Vector getExperimentList()
 	{
 		return getChildNodes("Experiment");
 	}
@@ -192,7 +190,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Experimenter");
 	}
 
-	public Vector getExperimenterList()
+	public java.util.Vector getExperimenterList()
 	{
 		return getChildNodes("Experimenter");
 	}
@@ -203,7 +201,7 @@ public class OMENode extends OMEXMLNode
 		return getChildCount("Image");
 	}
 
-	public Vector getImageList()
+	public java.util.Vector getImageList()
 	{
 		return getChildNodes("Image");
 	}

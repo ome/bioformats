@@ -31,14 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
+ * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r2003fc.ome;
-
-import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
@@ -117,12 +115,12 @@ public class DatasetNode extends OMEXMLNode
 		return getChildCount("ProjectRef");
 	}
 
-	public Vector getProjectList()
+	public java.util.Vector getProjectList()
 	{
 		return getReferencedNodes("Project", "ProjectRef");
 	}
 
-	public Vector getProjectRefList()
+	public java.util.Vector getProjectRefList()
 	{
 		return getChildNodes("ProjectRef");
 	}
