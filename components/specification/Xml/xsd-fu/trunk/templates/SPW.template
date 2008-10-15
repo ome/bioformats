@@ -38,8 +38,6 @@
 
 package ${fu.package};
 
-import java.util.Vector;
-
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ${fu.package[:-4]}.ome.*;
@@ -139,12 +137,12 @@ public class ${klass.name}Node extends ${klass.javaBase}
 		return getChildCount("${prop.name}");
 	}
 
-	public Vector get${prop.name[:-3]}${prop.name}List()
+	public java.util.Vector get${prop.name[:-3]}${prop.name}List()
 	{
 		return getReferencedNodes("${prop.name[:-3]}", "${prop.name}");
 	}
 
-	public Vector get${prop.name}List()
+	public java.util.Vector get${prop.name}List()
 	{
 		return getChildNodes("${prop.name}");
 	}
@@ -156,7 +154,7 @@ public class ${klass.name}Node extends ${klass.javaBase}
 		return getChildCount("${prop.name}");
 	}
 
-	public Vector get${prop.name}List()
+	public java.util.Vector get${prop.name}List()
 	{
 		return getChildNodes("${prop.name}");
 	}
