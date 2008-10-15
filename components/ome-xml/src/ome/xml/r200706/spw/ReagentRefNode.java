@@ -31,19 +31,18 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-05-23 11:22:11-0500
+ * Created by curtis via xsd-fu on 2008-10-15 11:46:18-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.spw;
 
+import java.util.Vector;
+
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ome.xml.r200706.ome.*;
-
-import java.util.Vector;
-import java.util.List;
 
 import org.w3c.dom.Element;
 

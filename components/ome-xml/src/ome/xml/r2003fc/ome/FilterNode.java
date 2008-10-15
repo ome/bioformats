@@ -31,18 +31,17 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-05-31 10:06:36-0500
+ * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r2003fc.ome;
 
+import java.util.Vector;
+
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-
-import java.util.Vector;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -97,7 +96,7 @@ public class FilterNode extends OMEXMLNode
 		return getReferringCount("OTF");
 	}
 
-	public List getOTFList()
+	public java.util.List getOTFList()
 	{
 		return getReferringNodes("OTF");
 	}
@@ -117,7 +116,7 @@ public class FilterNode extends OMEXMLNode
 		return getReferringCount("ChannelInfo");
 	}
 
-	public List getChannelInfoList()
+	public java.util.List getChannelInfoList()
 	{
 		return getReferringNodes("ChannelInfo");
 	}

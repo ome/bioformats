@@ -31,18 +31,17 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-05-30 12:57:22-0500
+ * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.ome;
 
+import java.util.Vector;
+
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-
-import java.util.Vector;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -127,7 +126,7 @@ public class ExperimenterNode extends OMEXMLNode
 		return getReferringCount("Image");
 	}
 
-	public List getImageList()
+	public java.util.List getImageList()
 	{
 		return getReferringNodes("Image");
 	}
@@ -156,7 +155,7 @@ public class ExperimenterNode extends OMEXMLNode
 		return getReferringCount("Project");
 	}
 
-	public List getProjectList()
+	public java.util.List getProjectList()
 	{
 		return getReferringNodes("Project");
 	}
@@ -167,7 +166,7 @@ public class ExperimenterNode extends OMEXMLNode
 		return getReferringCount("Experiment");
 	}
 
-	public List getExperimentList()
+	public java.util.List getExperimentList()
 	{
 		return getReferringNodes("Experiment");
 	}
@@ -178,7 +177,7 @@ public class ExperimenterNode extends OMEXMLNode
 		return getReferringCount("Dataset");
 	}
 
-	public List getDatasetList()
+	public java.util.List getDatasetList()
 	{
 		return getReferringNodes("Dataset");
 	}
@@ -200,7 +199,7 @@ public class ExperimenterNode extends OMEXMLNode
 		return getReferringCount("MicrobeamManipulation");
 	}
 
-	public List getMicrobeamManipulationList()
+	public java.util.List getMicrobeamManipulationList()
 	{
 		return getReferringNodes("MicrobeamManipulation");
 	}

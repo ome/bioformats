@@ -31,18 +31,17 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2007-11-24 06:33:32-0600
+ * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r2003fc.ome;
 
+import java.util.Vector;
+
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-
-import java.util.Vector;
-import java.util.List;
 
 import org.w3c.dom.Element;
 

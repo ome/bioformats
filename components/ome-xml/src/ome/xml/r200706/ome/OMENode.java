@@ -31,18 +31,17 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-05-30 12:57:22-0500
+ * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.ome;
 
+import java.util.Vector;
+
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-
-import java.util.Vector;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -80,12 +79,12 @@ public class OMENode extends OMEXMLNode
 	// Element which occurs more than once
 	public int getPlateCount()
 	{
-		return getChildCount("SPW:Plate"); // CTR - MANUALLY ADDED NAMESPACE
+		return getChildCount("Plate");
 	}
 
 	public Vector getPlateList()
 	{
-		return getChildNodes("SPW:Plate"); // CTR - MANUALLY ADDED NAMESPACE
+		return getChildNodes("Plate");
 	}
                                             
 	// Element which occurs more than once
@@ -113,28 +112,13 @@ public class OMENode extends OMEXMLNode
 	// Element which occurs more than once
 	public int getScreenCount()
 	{
-		return getChildCount("SPW:Screen"); // CTR - MANUALLY ADDED NAMESPACE
+		return getChildCount("Screen");
 	}
 
 	public Vector getScreenList()
 	{
-		return getChildNodes("SPW:Screen"); // CTR - MANUALLY ADDED NAMESPACE
+		return getChildNodes("Screen");
 	}
-
-  // -- CTR - BEGIN MANUALLY ADDED CODE BLOCK --
-
-	// Element which occurs more than once
-	public int getWellCount()
-	{
-		return getChildCount("SPW:Well");
-	}
-
-	public Vector getWellList()
-	{
-		return getChildNodes("SPW:Well");
-	}
-
-  // -- CTR - END MANUALLY ADDED CODE BLOCK --
                                                 
 	// Element which is not complex (has only a text node)
 	public String getAnalysisModuleLibrary()

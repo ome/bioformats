@@ -31,18 +31,17 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-05-30 12:57:22-0500
+ * Created by curtis via xsd-fu on 2008-10-15 11:46:17-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200706.ome;
 
+import java.util.Vector;
+
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-
-import java.util.Vector;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -116,7 +115,7 @@ public class OTFNode extends OMEXMLNode
 		return getReferringCount("LogicalChannel");
 	}
 
-	public List getLogicalChannelList()
+	public java.util.List getLogicalChannelList()
 	{
 		return getReferringNodes("LogicalChannel");
 	}

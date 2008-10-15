@@ -31,18 +31,17 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-05-30 12:57:22-0500
+ * Created by curtis via xsd-fu on 2008-10-15 11:46:18-0500
  *
  *-----------------------------------------------------------------------------
  */
 
 package ome.xml.r200802.ome;
 
+import java.util.Vector;
+
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-
-import java.util.Vector;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -94,20 +93,29 @@ public class GroupNode extends OMEXMLNode
 		return getReferringCount("Image");
 	}
 
-	public List getImageList()
+	public java.util.List getImageList()
 	{
 		return getReferringNodes("Image");
 	}
-                                                                            
-	// *** WARNING *** Unhandled or skipped property ID
-            
+                                            
+	// Virtual, inferred back reference Dataset_BackReference
+	public int getDatasetCount()
+	{
+		return getReferringCount("Dataset");
+	}
+
+	public java.util.List getDatasetList()
+	{
+		return getReferringNodes("Dataset");
+	}
+                                            
 	// Virtual, inferred back reference Project_BackReference
 	public int getProjectCount()
 	{
 		return getReferringCount("Project");
 	}
 
-	public List getProjectList()
+	public java.util.List getProjectList()
 	{
 		return getReferringNodes("Project");
 	}
@@ -125,22 +133,13 @@ public class GroupNode extends OMEXMLNode
 		return getReferringCount("Experimenter");
 	}
 
-	public List getExperimenterList()
+	public java.util.List getExperimenterList()
 	{
 		return getReferringNodes("Experimenter");
 	}
-                                            
-	// Virtual, inferred back reference Dataset_BackReference
-	public int getDatasetCount()
-	{
-		return getReferringCount("Dataset");
-	}
-
-	public List getDatasetList()
-	{
-		return getReferringNodes("Dataset");
-	}
-                                                                        
+                                                                            
+	// *** WARNING *** Unhandled or skipped property ID
+                                        
 	// Element which is complex (has sub-elements)
 	public ExperimenterRefNode getLeader()
 	{
