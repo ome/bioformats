@@ -497,6 +497,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * sub-classes that override the getters for pixel set array size, etc.
    */
   protected void initMetadataStore() throws FormatException {
+    status("Populating OME metadata");
+
     // the metadata store we're working with
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
