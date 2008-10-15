@@ -42,6 +42,7 @@ import java.util.Vector;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ${fu.package[:-4]}.ome.*;
 
 import org.w3c.dom.Element;
 
@@ -71,7 +72,7 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	public ${klass.name}Node(OMEXMLNode parent, boolean attach)
 	{
 		super(DOMUtil.createChild(parent.getDOMElement(),
-		                          "${klass.name}", attach));
+		                          "SPW:${klass.name}", attach));
 	}
 {% if klass.base == "Reference" %}
 	/** 
@@ -133,12 +134,12 @@ public class ${klass.name}Node extends ${klass.javaBase}
     {% end %}\
     {% when not prop.isAttribute and prop.maxOccurs > 1 and prop.name[-3:] == "Ref" %}
 	// Element which occurs more than once and is an OME XML "Ref"
-	public int get${prop.name[:-3]}Count()
+	public int get${prop.name}Count()
 	{
 		return getChildCount("${prop.name}");
 	}
 
-	public Vector get${prop.name[:-3]}List()
+	public Vector get${prop.name[:-3]}${prop.name}List()
 	{
 		return getReferencedNodes("${prop.name[:-3]}", "${prop.name}");
 	}
