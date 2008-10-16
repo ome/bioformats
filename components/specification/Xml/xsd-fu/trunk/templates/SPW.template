@@ -41,11 +41,13 @@ package ${fu.package};
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ${fu.package[:-4]}.ome.*;
+import ${fu.package[:-4]}.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ${klass.name}Node extends ${klass.javaBase}
 {
+
 	// -- Constructors --
 
 	/** Constructs a ${klass.name} node with an associated DOM element. */
@@ -96,8 +98,8 @@ public class ${klass.name}Node extends ${klass.javaBase}
 
 	// -- ${klass.name} API methods --
 {% for prop in klass.properties.values() %}\
-  {% choose %}\
-    {% when prop.isReference %}
+{% choose %}\
+{% when prop.isReference %}
 	// Virtual, inferred back reference ${prop.name}
 	public int get${prop.javaType}Count()
 	{
@@ -108,17 +110,17 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	{
 		return getReferringNodes("${prop.javaType}");
 	}
-    {% end %}\
-    {% when prop.isAttribute and prop.type[-2:] == "ID" and \
-       prop.name not in fu.DO_NOT_PROCESS %}
+{% end %}\
+{% when prop.isAttribute and prop.type[-2:] == "ID" and \
+   prop.name not in fu.DO_NOT_PROCESS %}
 	// Attribute which is an OME XML "ID"
 	public ${prop.javaType} get${prop.name}()
 	{
 		return (${prop.javaType})
 			getAttrReferencedNode("${prop.type[:-2]}", "${prop.name}");
 	}
-    {% end %}\
-    {% when prop.isAttribute and prop.name not in fu.DO_NOT_PROCESS %}
+{% end %}\
+{% when prop.isAttribute and prop.name not in fu.DO_NOT_PROCESS %}
 	// Attribute
 	public ${prop.javaType} get${prop.name}()
 	{
@@ -129,8 +131,8 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	{
 		setAttribute("${prop.name}", ${prop.javaArgumentName});
 	}
-    {% end %}\
-    {% when not prop.isAttribute and prop.maxOccurs > 1 and prop.name[-3:] == "Ref" %}
+{% end %}\
+{% when not prop.isAttribute and prop.maxOccurs > 1 and prop.name[-3:] == "Ref" %}
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int get${prop.name}Count()
 	{
@@ -146,8 +148,8 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	{
 		return getChildNodes("${prop.name}");
 	}
-    {% end %}\
-    {% when not prop.isAttribute and prop.maxOccurs > 1 %}
+{% end %}\
+{% when not prop.isAttribute and prop.maxOccurs > 1 %}
 	// Element which occurs more than once
 	public int get${prop.name}Count()
 	{
@@ -158,8 +160,13 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	{
 		return getChildNodes("${prop.name}");
 	}
-    {% end %}\
-    {% when not prop.isAttribute and not prop.isComplex() %}
+
+	public ${prop.name}Node get${prop.name}(int index)
+	{
+		return (${prop.name}Node) getChildNode("${prop.name}", index);
+	}
+{% end %}\
+{% when not prop.isAttribute and not prop.isComplex() %}
 	// Element which is not complex (has only a text node)
 	public ${prop.javaType} get${prop.name}()
 	{
@@ -170,8 +177,8 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	{
 		setCData("${prop.name}", ${prop.javaArgumentName});
 	}
-    {% end %}\
-    {% when not prop.isAttribute and prop.isComplex() and prop.name[-3:] == "Ref" %}
+{% end %}\
+{% when not prop.isAttribute and prop.isComplex() and prop.name[-3:] == "Ref" %}
 	// Element which is complex and is an OME XML "Ref"
 	public ${prop.javaType.replace("Ref", "")} get${prop.name[:-3]}()
 	{
@@ -184,19 +191,19 @@ public class ${klass.name}Node extends ${klass.javaBase}
 		return (${prop.javaType})
 			getChildNode("${prop.javaType[:-4]}", "${prop.name}");
 	}
-    {% end %}\
-    {% when not prop.isAttribute and prop.isComplex() %}
+{% end %}\
+{% when not prop.isAttribute and prop.isComplex() %}
 	// Element which is complex (has sub-elements)
 	public ${prop.javaType} get${prop.name}()
 	{
 		return (${prop.javaType})
 			getChildNode("${prop.javaType[:-4]}", "${prop.name}");
 	}
-    {% end %}\
-    {% otherwise %}
+{% end %}\
+{% otherwise %}
 	// *** WARNING *** Unhandled or skipped property ${prop.name}
-    {% end %}\
-  {% end %}\
+{% end %}\
+{% end %}\
 {% end %}\
 
 	// -- OMEXMLNode API methods --
@@ -212,5 +219,5 @@ public class ${klass.name}Node extends ${klass.javaBase}
 {% end %}\
 {% end %}\
 	}
-}
 
+}
