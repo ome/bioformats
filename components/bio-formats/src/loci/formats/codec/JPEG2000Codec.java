@@ -27,9 +27,12 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.*;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import loci.formats.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This class implements JPEG 2000 decompression.  Compression is not yet
@@ -164,38 +167,8 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     }
 
     if (exception != null) {
-      // decoding may have failed if this is a more exotic flavor of JP2K
-      // we will now try to use JMagick (Java wrappers for ImageMagick)
-
-      try {
-        in.seek(fp);
-        if (maxFP == 0) maxFP = in.length();
-        byte[] buf = new byte[(int) (maxFP - fp)];
-        in.read(buf);
-
-        // modified from code contributed by Toby Cornish
-        ReflectedUniverse jmagick = new ReflectedUniverse();
-        jmagick.exec("import magick.util.MagickCanvas");
-        jmagick.exec("import magick.MagickImage");
-        jmagick.exec("import magick.ColorspaceType");
-        jmagick.exec("import magick.MagickProducer");
-        jmagick.exec("import magick.ImageInfo");
-
-        jmagick.setVar("buf", buf);
-        jmagick.exec("info = new ImageInfo()");
-        jmagick.exec("image = new MagickImage(info, buf)");
-        jmagick.exec("image.transformRgbImage(ColorspaceType.YCbCrColorspace)");
-        jmagick.exec("canvas = new MagickCanvas()");
-        jmagick.exec("producer = new MagickProducer(image)");
-        Image img = (Image) jmagick.exec("canvas.createImage(producer)");
-        b = ImageTools.makeBuffered(img);
-        // don't use getPixelBytes, because JMagick always gives us
-        // 32 bits per channel
-        single = ImageTools.getBytes(b);
-      }
-      catch (ReflectException exc) {
-        throw new FormatException(exc);
-      }
+      throw new FormatException("Could not decompress JPEG2000 image. Please " +
+        "make sure that jai_imageio.jar is installed.", exception);
     }
 
     if (single.length == 1) return single[0];

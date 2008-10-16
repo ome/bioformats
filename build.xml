@@ -160,6 +160,22 @@ MDB Tools (Java port)
                   http://sourceforge.net/forum/message.php?msg_id=2550619
     Notes:        used by Bio-Formats for Zeiss LSM metadata in MDB files
 
+JAI ImageIO
+    Java API to handle JPEG and JPEG2000 files
+    -=-
+    JAR file:     jai_imageio.jar
+    Path:         components/jai
+    Project deps: (None)
+    License:      BSD
+    Project URLs: http://jai-imageio.dev.java.net/
+    Notes:        Used by Bio-Formats to read images compressed with JPEG2000
+                  and lossless JPEG.  Modified from the 2008-10-14 source to
+                  include support for the YCbCr color space.  Several files
+                  in the com.sun.media.jai packages were removed, as they
+                  are not needed by Bio-Formats, and created an additional
+                  dependency.  This component will be removed once our changes
+                  have been added to the official JAI CVS repository.
+
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
 
@@ -206,7 +222,7 @@ ImageJ
     License:   Public domain
 
 Java Advanced Imaging Image I/O Tools
-    JAR files: jai_imageio.jar, clibwrapper_jiio.jar
+    JAR files: clibwrapper_jiio.jar
     URL:       https://jai-imageio.dev.java.net/
     Notes:     used by Bio-Formats via reflection for JPEG2000 support
                (ND2, JP2) and lossless JPEG decompression (DICOM)
@@ -332,7 +348,7 @@ Apache XML-RPC
   <!-- Global build targets -->
 
   <target name="style"
-    depends="style-poi-loci, style-mdbtools,
+    depends="style-jai, style-poi-loci, style-mdbtools,
       style-ome-xml, style-formats,
       style-loci-plugins, style-ome-io, style-ome-plugins,
       style-visbio, style-slim, style-flow,
@@ -342,7 +358,7 @@ Apache XML-RPC
     description="check source code style for LOCI software packages"/>
 
   <target name="compile"
-    depends="compile-poi-loci, compile-mdbtools,
+    depends="compile-jai, compile-poi-loci, compile-mdbtools,
       compile-ome-xml, compile-formats,
       compile-loci-plugins, compile-ome-io, compile-ome-plugins,
       compile-visbio, compile-slim, compile-flow,
@@ -352,7 +368,7 @@ Apache XML-RPC
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-poi-loci, jar-mdbtools,
+    depends="jar-jai, jar-poi-loci, jar-mdbtools,
       jar-ome-xml, jar-formats, jar-loci-plugins,
       jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
@@ -362,7 +378,7 @@ Apache XML-RPC
     description="generate JAR files for LOCI software packages"/>
 
   <target name="clean"
-    depends="clean-poi-loci, clean-mdbtools,
+    depends="clean-jai, clean-poi-loci, clean-mdbtools,
       clean-ome-xml, clean-formats,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
@@ -392,6 +408,28 @@ Apache XML-RPC
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
       <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
     </javadoc>
+  </target>
+
+  <!-- JAI ImageIO Java library -->
+
+  <target name="style-jai"
+    description="check source code style for JAI ImageIO library">
+    <ant dir="components/jai" target="jai.style"/>
+  </target>
+
+  <target name="compile-jai"
+    description="compile classes for JAI ImageIO library">
+    <ant dir="components/jai" target="jai.compile"/>
+  </target>
+
+  <target name="jar-jai"
+    description="generate JAR file for JAI ImageIO library">
+    <ant dir="components/jai" target="jai.jar"/>
+  </target>
+
+  <target name="clean-jai"
+    description="remove build files for JAI ImageIO library">
+    <ant dir="components/jai" target="jai.clean"/>
   </target>
 
   <!-- Apache POI Java library -->
@@ -783,7 +821,7 @@ Apache XML-RPC
 
   <!-- Tool bundles -->
 
-  <target name="tools" depends="jar-poi-loci, jar-mdbtools,
+  <target name="tools" depends="jar-jai, jar-poi-loci, jar-mdbtools,
     jar-ome-xml, jar-formats, jar-loci-plugins"
     description="create JAR file encompassing several LOCI tools">
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
