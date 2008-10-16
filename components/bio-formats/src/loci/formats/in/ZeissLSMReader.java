@@ -648,7 +648,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (getSizeZ() == 0) core[0].sizeZ = getImageCount();
     if (getSizeT() == 0) core[0].sizeT = getImageCount() / getSizeZ();
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     Float pixX = new Float((float) pixelSizeX);
     Float pixY = new Float((float) pixelSizeY);

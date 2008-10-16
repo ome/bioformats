@@ -196,7 +196,7 @@ public class InCellReader extends FormatReader {
       store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
     }
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     for (int i=0; i<seriesCount; i++) {
       for (int q=0; q<emWaves.size(); q++) {

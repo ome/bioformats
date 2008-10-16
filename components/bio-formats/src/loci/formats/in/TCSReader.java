@@ -296,7 +296,7 @@ public class TCSReader extends FormatReader {
         MetadataTools.setDefaultCreationDate(store, id, i);
       }
 
-      MetadataTools.populatePixels(store, this);
+      MetadataTools.populatePixels(store, this, true);
 
       for (int i=0; i<x.size(); i++) {
         store.setDimensionsPhysicalSizeX((Float) xcal.get(i), i, 0);

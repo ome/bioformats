@@ -161,7 +161,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     store.setImageCreationDate(fmt.format(d), 0);
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     store.setImagingEnvironmentTemperature(new Float(temperature), 0);
     store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);

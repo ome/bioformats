@@ -426,7 +426,7 @@ public class ZeissZVIReader extends FormatReader {
     if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core[0].pixelType = FormatTools.UINT16;
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);

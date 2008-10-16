@@ -722,7 +722,7 @@ public class PerkinElmerReader extends FormatReader {
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // populate Pixels element
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     // populate LogicalChannel element
     for (int i=0; i<getSizeC(); i++) {

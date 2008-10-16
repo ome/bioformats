@@ -924,7 +924,7 @@ public class LeicaReader extends FormatReader {
         }
       }
     }
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
     setSeries(0);
   }
 

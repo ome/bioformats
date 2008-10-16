@@ -223,6 +223,17 @@ public final class MetadataTools {
    * metadata from the given reader.
    */
   public static void populatePixels(MetadataStore store, IFormatReader r) {
+    populatePixels(store, r, false);
+  }
+
+  /**
+   * Populates the 'pixels' element of the given metadata store, using core
+   * metadata from the given reader.  If the 'doPlane' flag is set,
+   * then the 'plane' elements will be populated as well.
+   */
+  public static void populatePixels(MetadataStore store, IFormatReader r,
+    boolean doPlane)
+  {
     if (store == null || r == null) return;
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
@@ -242,7 +253,7 @@ public final class MetadataTools {
           store.setLogicalChannelSamplesPerPixel(sampleCount, i, c);
         }
       }
-      if (r.getSizeZ() > 0 && r.getSizeC() > 0 && r.getSizeT() > 0) {
+      if (r.getSizeZ() > 0 && r.getSizeC() > 0 && r.getSizeT() > 0 && doPlane) {
         // Don't set plane attributes if one of the dimensions is zero - we
         // don't want to throw an exception, since the file may still be valid.
         // For instance, FileStitcher calls MetadataTools.populatePixels once

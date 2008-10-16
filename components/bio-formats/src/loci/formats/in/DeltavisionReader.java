@@ -306,7 +306,7 @@ public class DeltavisionReader extends FormatReader {
     setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
     extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);

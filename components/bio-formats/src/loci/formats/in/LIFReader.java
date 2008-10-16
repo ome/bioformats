@@ -464,7 +464,7 @@ public class LIFReader extends FormatReader {
         }
       }
     }
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
   }
 
   private boolean containsValue(int[] array, int value) {
