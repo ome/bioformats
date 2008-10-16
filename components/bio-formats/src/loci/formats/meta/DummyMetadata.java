@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -56,6 +56,11 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataRetrieve#getDetectorCount(int) */
   public int getDetectorCount(int instrumentIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getExperimentCount() */
+  public int getExperimentCount() {
     return -1;
   }
 
@@ -281,6 +286,21 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   }
   /* @see MetadataRetrieve#getDisplayOptionsTimeTStop(int) */
   public Integer getDisplayOptionsTimeTStop(int imageIndex) {
+    return null;
+  }
+
+  // - Experiment property retrieval -
+
+  /* @see MetadataRetrieve#getExperimentDescription(int) */
+  public String getExperimentDescription(int experimentIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getExperimentID(int) */
+  public String getExperimentID(int experimentIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getExperimentType(int) */
+  public String getExperimentType(int experimentIndex) {
     return null;
   }
 
@@ -996,6 +1016,20 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
   public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
+  }
+
+  // - Experiment property storage -
+
+  /* @see MetadataStore#setExperimentDescription(String, int) */
+  public void setExperimentDescription(String description, int experimentIndex) {
+  }
+
+  /* @see MetadataStore#setExperimentID(String, int) */
+  public void setExperimentID(String id, int experimentIndex) {
+  }
+
+  /* @see MetadataStore#setExperimentType(String, int) */
+  public void setExperimentType(String type, int experimentIndex) {
   }
 
   // - Experimenter property storage -

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,6 +58,15 @@ public final class MetadataConverter {
    * (source) into a metadata store (destination).
    */
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
+    int experimentCount = src.getExperimentCount();
+    for (int experimentIndex=0; experimentIndex<experimentCount; experimentIndex++) {
+      String experimentDescriptionValue = src.getExperimentDescription(experimentIndex);
+      if (experimentDescriptionValue != null) dest.setExperimentDescription(experimentDescriptionValue, experimentIndex);
+      String experimentIDValue = src.getExperimentID(experimentIndex);
+      if (experimentIDValue != null) dest.setExperimentID(experimentIDValue, experimentIndex);
+      String experimentTypeValue = src.getExperimentType(experimentIndex);
+      if (experimentTypeValue != null) dest.setExperimentType(experimentTypeValue, experimentIndex);
+    }
     int experimenterCount = src.getExperimenterCount();
     for (int experimenterIndex=0; experimenterIndex<experimenterCount; experimenterIndex++) {
       String experimenterEmailValue = src.getExperimenterEmail(experimenterIndex);

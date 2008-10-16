@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -234,6 +234,26 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
   public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
     store.setDisplayOptionsTimeTStop(tStop, imageIndex);
+  }
+
+  // -- Experiment property storage -
+
+  /* @see MetadataStore#setExperimentDescription(String, int) */
+  public void setExperimentDescription(String description, int experimentIndex) {
+    String value = filter ? DataTools.sanitize(description) : description;
+    store.setExperimentDescription(value, experimentIndex);
+  }
+
+  /* @see MetadataStore#setExperimentID(String, int) */
+  public void setExperimentID(String id, int experimentIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setExperimentID(value, experimentIndex);
+  }
+
+  /* @see MetadataStore#setExperimentType(String, int) */
+  public void setExperimentType(String type, int experimentIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setExperimentType(value, experimentIndex);
   }
 
   // -- Experimenter property storage -

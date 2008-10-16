@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,8 @@ public interface MetadataRetrieve {
   int getChannelComponentCount(int imageIndex, int logicalChannelIndex);
 
   int getDetectorCount(int instrumentIndex);
+
+  int getExperimentCount();
 
   int getExperimenterCount();
 
@@ -127,7 +129,7 @@ public interface MetadataRetrieve {
   Float getDetectorGain(int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets unique label identifying the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -245,7 +247,7 @@ public interface MetadataRetrieve {
   // - DisplayOptions property retrieval -
 
   /**
-   * For a particular DisplayOptions, gets TODO.
+   * For a particular DisplayOptions, gets unique label identifying the display options.
    * @param imageIndex index of the Image
    */
   String getDisplayOptionsID(int imageIndex);
@@ -284,6 +286,26 @@ public interface MetadataRetrieve {
    */
   Integer getDisplayOptionsTimeTStop(int imageIndex);
 
+  // - Experiment property retrieval -
+
+  /**
+   * For a particular Experiment, gets TODO.
+   * @param experimentIndex index of the Experiment
+   */
+  String getExperimentDescription(int experimentIndex);
+
+  /**
+   * For a particular Experiment, gets unique label identifying the experiment.
+   * @param experimentIndex index of the Experiment
+   */
+  String getExperimentID(int experimentIndex);
+
+  /**
+   * For a particular Experiment, gets TODO.
+   * @param experimentIndex index of the Experiment
+   */
+  String getExperimentType(int experimentIndex);
+
   // - Experimenter property retrieval -
 
   /**
@@ -299,7 +321,7 @@ public interface MetadataRetrieve {
   String getExperimenterFirstName(int experimenterIndex);
 
   /**
-   * For a particular Experimenter, gets TODO.
+   * For a particular Experimenter, gets unique label identifying the experimenter.
    * @param experimenterIndex index of the Experimenter
    */
   String getExperimenterID(int experimenterIndex);
@@ -340,13 +362,13 @@ public interface MetadataRetrieve {
   String getImageDescription(int imageIndex);
 
   /**
-   * For a particular Image, gets TODO.
+   * For a particular Image, gets unique label identifying the image.
    * @param imageIndex index of the Image
    */
   String getImageID(int imageIndex);
 
   /**
-   * For a particular Image, gets TODO.
+   * For a particular Image, gets label reference for the associated instrument.
    * @param imageIndex index of the Image
    */
   String getImageInstrumentRef(int imageIndex);
@@ -386,7 +408,7 @@ public interface MetadataRetrieve {
   // - Instrument property retrieval -
 
   /**
-   * For a particular Instrument, gets TODO.
+   * For a particular Instrument, gets unique label identifying the instrument.
    * @param instrumentIndex index of the Instrument
    */
   String getInstrumentID(int instrumentIndex);
@@ -438,7 +460,7 @@ public interface MetadataRetrieve {
   // - LightSource property retrieval -
 
   /**
-   * For a particular LightSource, gets TODO.
+   * For a particular LightSource, gets unique label identifying the light source.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -526,7 +548,7 @@ public interface MetadataRetrieve {
   String getLogicalChannelFluor(int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular LogicalChannel, gets TODO.
+   * For a particular LogicalChannel, gets unique label identifying the logical channel.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
@@ -591,7 +613,7 @@ public interface MetadataRetrieve {
   // - OTF property retrieval -
 
   /**
-   * For a particular OTF, gets TODO.
+   * For a particular OTF, gets unique label identifying the optical transfer function.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -642,7 +664,7 @@ public interface MetadataRetrieve {
   String getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets unique label identifying the objective.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -714,7 +736,7 @@ public interface MetadataRetrieve {
   String getPixelsDimensionOrder(int imageIndex, int pixelsIndex);
 
   /**
-   * For a particular Pixels, gets TODO.
+   * For a particular Pixels, gets unique label identifying the pixels set.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
@@ -821,7 +843,7 @@ public interface MetadataRetrieve {
   String getPlateExternalIdentifier(int plateIndex);
 
   /**
-   * For a particular Plate, gets TODO.
+   * For a particular Plate, gets unique label identifying the plate.
    * @param plateIndex index of the Plate
    */
   String getPlateID(int plateIndex);
@@ -841,7 +863,7 @@ public interface MetadataRetrieve {
   // - PlateRef property retrieval -
 
   /**
-   * For a particular PlateRef, gets TODO.
+   * For a particular PlateRef, gets label reference for the associated plate.
    * @param screenIndex index of the Screen
    * @param plateRefIndex index of the PlateRef
    */
@@ -850,7 +872,7 @@ public interface MetadataRetrieve {
   // - ROI property retrieval -
 
   /**
-   * For a particular ROI, gets TODO.
+   * For a particular ROI, gets unique label identifying the 5D bounding box ROI.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
@@ -922,7 +944,7 @@ public interface MetadataRetrieve {
   String getReagentDescription(int screenIndex, int reagentIndex);
 
   /**
-   * For a particular Reagent, gets TODO.
+   * For a particular Reagent, gets unique label identifying the reagent.
    * @param screenIndex index of the Screen
    * @param reagentIndex index of the Reagent
    */
@@ -945,7 +967,7 @@ public interface MetadataRetrieve {
   // - Screen property retrieval -
 
   /**
-   * For a particular Screen, gets TODO.
+   * For a particular Screen, gets unique label identifying the screen.
    * @param screenIndex index of the Screen
    */
   String getScreenID(int screenIndex);
@@ -990,7 +1012,7 @@ public interface MetadataRetrieve {
   String getScreenAcquisitionEndTime(int screenIndex, int screenAcquisitionIndex);
 
   /**
-   * For a particular ScreenAcquisition, gets TODO.
+   * For a particular ScreenAcquisition, gets unique label identifying the screen's acquisition run.
    * @param screenIndex index of the Screen
    * @param screenAcquisitionIndex index of the ScreenAcquisition
    */
@@ -1137,7 +1159,7 @@ public interface MetadataRetrieve {
   String getWellExternalIdentifier(int plateIndex, int wellIndex);
 
   /**
-   * For a particular Well, gets TODO.
+   * For a particular Well, gets unique label identifying the well.
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
@@ -1160,7 +1182,7 @@ public interface MetadataRetrieve {
   // - WellSample property retrieval -
 
   /**
-   * For a particular WellSample, gets TODO.
+   * For a particular WellSample, gets unique label identifying the individual well image.
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample

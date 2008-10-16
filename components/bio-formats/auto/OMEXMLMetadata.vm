@@ -93,14 +93,14 @@ public class $q.className() extends OMEXMLMetadata {
     return null;
 #else
     ${last}Node $lastVar = get${last}Node($q.varsList(), false);
-  #if ($prop.endsWith("Ref"))
-    #set ($refName = $prop.replaceAll('Ref', ''))
+#if ($prop.endsWith("Ref"))
+#set ($refName = $prop.replaceAll('Ref', ''))
     ${refName}Node node = ${lastVar}.get${refName}();
     if (node == null) return null;
     return node.getNodeID();
-  #else  
+#else
     return $lastVar == null ? null : $q.getter($lastVar);
-  #end
+#end##if $prop.endsWith("Ref")
 #end##if "-"
   }
 #end##foreach $prop
@@ -147,8 +147,8 @@ public class $q.className() extends OMEXMLMetadata {
 #else
     if ($varName == null) return;
     ${last}Node ${lastVar}Node = get${last}Node($q.varsList(), true);
-  #if ($prop.endsWith("Ref"))
-    #set ($refName = $prop.replaceAll('Ref', ''))
+#if ($prop.endsWith("Ref"))
+#set ($refName = $prop.replaceAll('Ref', ''))
     OMENode ome = (OMENode) root;
     List list = ome.get${refName}List();
     ${refName}Node node = null;
@@ -162,9 +162,9 @@ public class $q.className() extends OMEXMLMetadata {
     }
     ${prop}Node ref = new ${prop}Node(${lastVar}Node);
     ref.set${refName}Node(node);
-  #else   
+#else
     $q.setter("${lastVar}Node", $varName);
-  #end 
+#end##if $prop.endsWith("Ref")
 #end##if "-"
   }
 #end##foreach $prop
@@ -174,9 +174,27 @@ public class $q.className() extends OMEXMLMetadata {
 #foreach ($path in $q.unique())
 #set ($last = $q.last($path))
 #set ($lastVar = $q.var($last))
+#set ($indices = $q.indices($path))
 
   // $path
+  private ${last}Node ${lastVar}Node = null;
+#foreach ($index in $indices)
+  private int ${lastVar}Node${index}Index = -1;
+#end##foreach $index
   private ${last}Node get${last}Node($q.argsList($path), boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+#foreach ($index in $indices)
+#set ($indexVar = $q.var($index))
+    if (${lastVar}Node${index}Index != ${indexVar}Index) match = false;
+#end##foreach $index
+    if (match) return ${lastVar}Node;
+    ${lastVar}Node = null;
+#foreach ($index in $indices)
+#set ($indexVar = $q.var($index))
+    ${lastVar}Node${index}Index = ${indexVar}Index;
+#end##foreach $index
+
 #set ($slash = $path.lastIndexOf("/"))
 #if ($slash < 0)
 #set ($pre = "")
@@ -202,7 +220,7 @@ public class $q.className() extends OMEXMLMetadata {
     if (!create && count <= ${lastVar}Index) return null;
     for (int i=count; i<=${lastVar}Index; i++) new ${last}Node($nodeVar);
     List list = ${nodeVar}.get${last}List();
-    return (${last}Node) list.get(${lastVar}Index);
+    ${lastVar}Node = (${last}Node) list.get(${lastVar}Index);
 #else
     // get $last node
     ${last}Node $lastVar = ${nodeVar}.get$last();
@@ -210,8 +228,9 @@ public class $q.className() extends OMEXMLMetadata {
       if (create) $lastVar = new ${last}Node($nodeVar);
       else return null;
     }
-    return $lastVar;
+    ${lastVar}Node = $lastVar;
 #end##if $multi
+    return ${lastVar}Node;
   }
 #end##foreach $path
 

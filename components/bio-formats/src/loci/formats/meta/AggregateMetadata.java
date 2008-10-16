@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -113,6 +113,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getDetectorCount(instrumentIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getExperimentCount() */
+  public int getExperimentCount() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getExperimentCount();
         if (result >= 0) return result;
       }
     }
@@ -716,6 +729,47 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Integer result = retrieve.getDisplayOptionsTimeTStop(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - Experiment property retrieval -
+
+  /* @see MetadataRetrieve#getExperimentDescription(int) */
+  public String getExperimentDescription(int experimentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getExperimentDescription(experimentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getExperimentID(int) */
+  public String getExperimentID(int experimentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getExperimentID(experimentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getExperimentType(int) */
+  public String getExperimentType(int experimentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getExperimentType(experimentIndex);
         if (result != null) return result;
       }
     }
@@ -2735,6 +2789,41 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setDisplayOptionsTimeTStop(tStop, imageIndex);
+      }
+    }
+  }
+
+  // - Experiment property storage -
+
+  /* @see MetadataStore#setExperimentDescription(String, int) */
+  public void setExperimentDescription(String description, int experimentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setExperimentDescription(description, experimentIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setExperimentID(String, int) */
+  public void setExperimentID(String id, int experimentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setExperimentID(id, experimentIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setExperimentType(String, int) */
+  public void setExperimentType(String type, int experimentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setExperimentType(type, experimentIndex);
       }
     }
   }

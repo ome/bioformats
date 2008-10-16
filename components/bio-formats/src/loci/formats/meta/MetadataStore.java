@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 1, 2008 8:53:09 AM PDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -112,8 +112,8 @@ public interface MetadataStore {
   void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param id TODO
+   * For a particular Detector, sets unique label identifying the detector.
+   * @param id unique label identifying the detector
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -246,8 +246,8 @@ public interface MetadataStore {
   // - DisplayOptions property storage -
 
   /**
-   * For a particular DisplayOptions, sets TODO.
-   * @param id TODO
+   * For a particular DisplayOptions, sets unique label identifying the display options.
+   * @param id unique label identifying the display options
    * @param imageIndex index of the Image
    */
   void setDisplayOptionsID(String id, int imageIndex);
@@ -291,6 +291,29 @@ public interface MetadataStore {
    */
   void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex);
 
+  // - Experiment property storage -
+
+  /**
+   * For a particular Experiment, sets TODO.
+   * @param description TODO
+   * @param experimentIndex index of the Experiment
+   */
+  void setExperimentDescription(String description, int experimentIndex);
+
+  /**
+   * For a particular Experiment, sets unique label identifying the experiment.
+   * @param id unique label identifying the experiment
+   * @param experimentIndex index of the Experiment
+   */
+  void setExperimentID(String id, int experimentIndex);
+
+  /**
+   * For a particular Experiment, sets TODO.
+   * @param type TODO
+   * @param experimentIndex index of the Experiment
+   */
+  void setExperimentType(String type, int experimentIndex);
+
   // - Experimenter property storage -
 
   /**
@@ -308,8 +331,8 @@ public interface MetadataStore {
   void setExperimenterFirstName(String firstName, int experimenterIndex);
 
   /**
-   * For a particular Experimenter, sets TODO.
-   * @param id TODO
+   * For a particular Experimenter, sets unique label identifying the experimenter.
+   * @param id unique label identifying the experimenter
    * @param experimenterIndex index of the Experimenter
    */
   void setExperimenterID(String id, int experimenterIndex);
@@ -355,15 +378,15 @@ public interface MetadataStore {
   void setImageDescription(String description, int imageIndex);
 
   /**
-   * For a particular Image, sets TODO.
-   * @param id TODO
+   * For a particular Image, sets unique label identifying the image.
+   * @param id unique label identifying the image
    * @param imageIndex index of the Image
    */
   void setImageID(String id, int imageIndex);
 
   /**
-   * For a particular Image, sets TODO.
-   * @param instrumentRef TODO
+   * For a particular Image, sets label reference for the associated instrument.
+   * @param instrumentRef label reference for the associated instrument
    * @param imageIndex index of the Image
    */
   void setImageInstrumentRef(String instrumentRef, int imageIndex);
@@ -408,8 +431,8 @@ public interface MetadataStore {
   // - Instrument property storage -
 
   /**
-   * For a particular Instrument, sets TODO.
-   * @param id TODO
+   * For a particular Instrument, sets unique label identifying the instrument.
+   * @param id unique label identifying the instrument
    * @param instrumentIndex index of the Instrument
    */
   void setInstrumentID(String id, int instrumentIndex);
@@ -467,8 +490,8 @@ public interface MetadataStore {
   // - LightSource property storage -
 
   /**
-   * For a particular LightSource, sets TODO.
-   * @param id TODO
+   * For a particular LightSource, sets unique label identifying the light source.
+   * @param id unique label identifying the light source
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -567,8 +590,8 @@ public interface MetadataStore {
   void setLogicalChannelFluor(String fluor, int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular LogicalChannel, sets TODO.
-   * @param id TODO
+   * For a particular LogicalChannel, sets unique label identifying the logical channel.
+   * @param id unique label identifying the logical channel
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
@@ -641,8 +664,8 @@ public interface MetadataStore {
   // - OTF property storage -
 
   /**
-   * For a particular OTF, sets TODO.
-   * @param id TODO
+   * For a particular OTF, sets unique label identifying the optical transfer function.
+   * @param id unique label identifying the optical transfer function
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -699,8 +722,8 @@ public interface MetadataStore {
   void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param id TODO
+   * For a particular Objective, sets unique label identifying the objective.
+   * @param id unique label identifying the objective
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -781,8 +804,8 @@ public interface MetadataStore {
   void setPixelsDimensionOrder(String dimensionOrder, int imageIndex, int pixelsIndex);
 
   /**
-   * For a particular Pixels, sets TODO.
-   * @param id TODO
+   * For a particular Pixels, sets unique label identifying the pixels set.
+   * @param id unique label identifying the pixels set
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
@@ -902,8 +925,8 @@ public interface MetadataStore {
   void setPlateExternalIdentifier(String externalIdentifier, int plateIndex);
 
   /**
-   * For a particular Plate, sets TODO.
-   * @param id TODO
+   * For a particular Plate, sets unique label identifying the plate.
+   * @param id unique label identifying the plate
    * @param plateIndex index of the Plate
    */
   void setPlateID(String id, int plateIndex);
@@ -925,8 +948,8 @@ public interface MetadataStore {
   // - PlateRef property storage -
 
   /**
-   * For a particular PlateRef, sets TODO.
-   * @param id TODO
+   * For a particular PlateRef, sets label reference for the associated plate.
+   * @param id label reference for the associated plate
    * @param screenIndex index of the Screen
    * @param plateRefIndex index of the PlateRef
    */
@@ -935,8 +958,8 @@ public interface MetadataStore {
   // - ROI property storage -
 
   /**
-   * For a particular ROI, sets TODO.
-   * @param id TODO
+   * For a particular ROI, sets unique label identifying the 5D bounding box ROI.
+   * @param id unique label identifying the 5D bounding box ROI
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
@@ -1017,8 +1040,8 @@ public interface MetadataStore {
   void setReagentDescription(String description, int screenIndex, int reagentIndex);
 
   /**
-   * For a particular Reagent, sets TODO.
-   * @param id TODO
+   * For a particular Reagent, sets unique label identifying the reagent.
+   * @param id unique label identifying the reagent
    * @param screenIndex index of the Screen
    * @param reagentIndex index of the Reagent
    */
@@ -1043,8 +1066,8 @@ public interface MetadataStore {
   // - Screen property storage -
 
   /**
-   * For a particular Screen, sets TODO.
-   * @param id TODO
+   * For a particular Screen, sets unique label identifying the screen.
+   * @param id unique label identifying the screen
    * @param screenIndex index of the Screen
    */
   void setScreenID(String id, int screenIndex);
@@ -1095,8 +1118,8 @@ public interface MetadataStore {
   void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex);
 
   /**
-   * For a particular ScreenAcquisition, sets TODO.
-   * @param id TODO
+   * For a particular ScreenAcquisition, sets unique label identifying the screen's acquisition run.
+   * @param id unique label identifying the screen's acquisition run
    * @param screenIndex index of the Screen
    * @param screenAcquisitionIndex index of the ScreenAcquisition
    */
@@ -1261,8 +1284,8 @@ public interface MetadataStore {
   void setWellExternalIdentifier(String externalIdentifier, int plateIndex, int wellIndex);
 
   /**
-   * For a particular Well, sets TODO.
-   * @param id TODO
+   * For a particular Well, sets unique label identifying the well.
+   * @param id unique label identifying the well
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
@@ -1287,8 +1310,8 @@ public interface MetadataStore {
   // - WellSample property storage -
 
   /**
-   * For a particular WellSample, sets TODO.
-   * @param id TODO
+   * For a particular WellSample, sets unique label identifying the individual well image.
+   * @param id unique label identifying the individual well image
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample

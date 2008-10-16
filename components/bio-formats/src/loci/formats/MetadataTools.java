@@ -242,13 +242,13 @@ public final class MetadataTools {
           store.setLogicalChannelSamplesPerPixel(sampleCount, i, c);
         }
       }
-      for (int q=0; q<r.getImageCount(); q++) {
-        // Don't set plane attributes if one of the dimensions is zero -
-        // we don't want to throw an exception, since the file may
-        // still be valid.  For instance, FileStitcher calls
-        // MetadataTools.populatePixels once per series, and does not guarantee
-        // that every series' core metadata has been populated in advance.
-        if (r.getSizeZ() * r.getSizeC() * r.getSizeT() > 0) {
+      if (r.getSizeZ() > 0 && r.getSizeC() > 0 && r.getSizeT() > 0) {
+        // Don't set plane attributes if one of the dimensions is zero - we
+        // don't want to throw an exception, since the file may still be valid.
+        // For instance, FileStitcher calls MetadataTools.populatePixels once
+        // per series, and does not guarantee that every series' core metadata
+        // has been populated in advance.
+        for (int q=0; q<r.getImageCount(); q++) {
           int[] coords = r.getZCTCoords(q);
           store.setPlaneTheZ(new Integer(coords[0]), i, 0, q);
           store.setPlaneTheC(new Integer(coords[1]), i, 0, q);
