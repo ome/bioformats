@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,11 +41,13 @@ package ome.xml.r200706.spw;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ScreenAcquisitionNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ScreenAcquisition node with an associated DOM element. */
@@ -74,7 +76,7 @@ public class ScreenAcquisitionNode extends OMEXMLNode
 	}
 
 	// -- ScreenAcquisition API methods --
-              
+
 	// Attribute
 	public String getEndTime()
 	{
@@ -85,7 +87,7 @@ public class ScreenAcquisitionNode extends OMEXMLNode
 	{
 		setAttribute("EndTime", endTime);
 	}
-                                                
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getWellSampleRefCount()
 	{
@@ -101,9 +103,9 @@ public class ScreenAcquisitionNode extends OMEXMLNode
 	{
 		return getChildNodes("WellSampleRef");
 	}
-                                                                
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getStartTime()
 	{
@@ -114,12 +116,12 @@ public class ScreenAcquisitionNode extends OMEXMLNode
 	{
 		setAttribute("StartTime", startTime);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

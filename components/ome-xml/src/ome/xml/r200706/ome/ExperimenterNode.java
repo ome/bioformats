@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ExperimenterNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Experimenter node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class ExperimenterNode extends OMEXMLNode
 	}
 
 	// -- Experimenter API methods --
-                          
+
 	// Element which is not complex (has only a text node)
 	public String getEmail()
 	{
@@ -84,7 +87,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		setCData("Email", email);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public String getOMEName()
 	{
@@ -95,7 +98,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		setCData("OMEName", omename);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public String getFirstName()
 	{
@@ -106,7 +109,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		setCData("FirstName", firstName);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public String getLastName()
 	{
@@ -117,7 +120,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		setCData("LastName", lastName);
 	}
-                        
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -128,7 +131,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		return getReferringNodes("Image");
 	}
-                                                        
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getGroupCount()
 	{
@@ -144,9 +147,9 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		return getChildNodes("GroupRef");
 	}
-                                                                
+
 	// *** WARNING *** Unhandled or skipped property ID
-            
+
 	// Virtual, inferred back reference Project_BackReference
 	public int getProjectCount()
 	{
@@ -157,7 +160,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		return getReferringNodes("Project");
 	}
-                                            
+
 	// Virtual, inferred back reference Experiment_BackReference
 	public int getExperimentCount()
 	{
@@ -168,7 +171,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		return getReferringNodes("Experiment");
 	}
-                                            
+
 	// Virtual, inferred back reference Dataset_BackReference
 	public int getDatasetCount()
 	{
@@ -179,7 +182,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		return getReferringNodes("Dataset");
 	}
-                                                                
+
 	// Element which is not complex (has only a text node)
 	public String getInstitution()
 	{
@@ -190,7 +193,7 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		setCData("Institution", institution);
 	}
-                        
+
 	// Virtual, inferred back reference MicrobeamManipulation_BackReference
 	public int getMicrobeamManipulationCount()
 	{
@@ -201,12 +204,12 @@ public class ExperimenterNode extends OMEXMLNode
 	{
 		return getReferringNodes("MicrobeamManipulation");
 	}
-                                      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

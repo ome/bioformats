@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ROINode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ROI node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ROINode extends OMEXMLNode
 	}
 
 	// -- ROI API methods --
-              
+
 	// Attribute
 	public Integer getT0()
 	{
@@ -84,7 +86,7 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("T0", t0);
 	}
-                                            
+
 	// Attribute
 	public Integer getT1()
 	{
@@ -95,7 +97,7 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("T1", t1);
 	}
-                                            
+
 	// Attribute
 	public Integer getY1()
 	{
@@ -106,7 +108,7 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("Y1", y1);
 	}
-                                            
+
 	// Attribute
 	public Integer getY0()
 	{
@@ -117,7 +119,7 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("Y0", y0);
 	}
-                                            
+
 	// Attribute
 	public Integer getX0()
 	{
@@ -128,7 +130,7 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("X0", x0);
 	}
-                                            
+
 	// Attribute
 	public Integer getX1()
 	{
@@ -139,7 +141,7 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("X1", x1);
 	}
-                                            
+
 	// Attribute
 	public Integer getZ0()
 	{
@@ -150,7 +152,7 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("Z0", z0);
 	}
-                                            
+
 	// Attribute
 	public Integer getZ1()
 	{
@@ -161,12 +163,12 @@ public class ROINode extends OMEXMLNode
 	{
 		setAttribute("Z1", z1);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

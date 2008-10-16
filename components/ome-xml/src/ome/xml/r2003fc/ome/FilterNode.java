@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class FilterNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Filter node with an associated DOM element. */
@@ -73,21 +75,21 @@ public class FilterNode extends OMEXMLNode
 	}
 
 	// -- Filter API methods --
-                                  
+
 	// Element which is complex (has sub-elements)
 	public DichroicNode getDichroic()
 	{
 		return (DichroicNode)
 			getChildNode("Dichroic", "Dichroic");
 	}
-                                            
+
 	// Element which is complex (has sub-elements)
 	public ExFilterNode getExFilter()
 	{
 		return (ExFilterNode)
 			getChildNode("ExFilter", "ExFilter");
 	}
-                
+
 	// Virtual, inferred back reference OTF_BackReference
 	public int getOTFCount()
 	{
@@ -98,16 +100,16 @@ public class FilterNode extends OMEXMLNode
 	{
 		return getReferringNodes("OTF");
 	}
-                                                                        
+
 	// Element which is complex (has sub-elements)
 	public EmFilterNode getEmFilter()
 	{
 		return (EmFilterNode)
 			getChildNode("EmFilter", "EmFilter");
 	}
-                                                
+
 	// *** WARNING *** Unhandled or skipped property ID
-            
+
 	// Virtual, inferred back reference ChannelInfo_BackReference
 	public int getChannelInfoCount()
 	{
@@ -118,19 +120,19 @@ public class FilterNode extends OMEXMLNode
 	{
 		return getReferringNodes("ChannelInfo");
 	}
-                                                                        
+
 	// Element which is complex (has sub-elements)
 	public FilterSetNode getFilterSet()
 	{
 		return (FilterSetNode)
 			getChildNode("FilterSet", "FilterSet");
 	}
-          
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

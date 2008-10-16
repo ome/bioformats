@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,11 +41,13 @@ package ome.xml.r200706.spw;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class PlateNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Plate node with an associated DOM element. */
@@ -74,7 +76,7 @@ public class PlateNode extends OMEXMLNode
 	}
 
 	// -- Plate API methods --
-              
+
 	// Attribute
 	public String getStatus()
 	{
@@ -85,7 +87,7 @@ public class PlateNode extends OMEXMLNode
 	{
 		setAttribute("Status", status);
 	}
-                                            
+
 	// Attribute
 	public String getName()
 	{
@@ -96,7 +98,7 @@ public class PlateNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                                            
+
 	// Attribute
 	public String getExternalIdentifier()
 	{
@@ -107,7 +109,7 @@ public class PlateNode extends OMEXMLNode
 	{
 		setAttribute("ExternalIdentifier", externalIdentifier);
 	}
-                                    
+
 	// Virtual, inferred back reference Screen_BackReference
 	public int getScreenCount()
 	{
@@ -118,7 +120,7 @@ public class PlateNode extends OMEXMLNode
 	{
 		return getReferringNodes("Screen");
 	}
-                                                            
+
 	// Element which occurs more than once
 	public int getWellCount()
 	{
@@ -129,7 +131,12 @@ public class PlateNode extends OMEXMLNode
 	{
 		return getChildNodes("Well");
 	}
-                                        
+
+	public WellNode getWell(int index)
+	{
+		return (WellNode) getChildNode("Well", index);
+	}
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getScreenRefCount()
 	{
@@ -145,9 +152,9 @@ public class PlateNode extends OMEXMLNode
 	{
 		return getChildNodes("ScreenRef");
 	}
-                                                                
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getDescription()
 	{
@@ -158,12 +165,12 @@ public class PlateNode extends OMEXMLNode
 	{
 		setAttribute("Description", description);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:39-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,11 +41,13 @@ package ome.xml.r200802.spw;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class WellSampleNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a WellSample node with an associated DOM element. */
@@ -74,7 +76,7 @@ public class WellSampleNode extends OMEXMLNode
 	}
 
 	// -- WellSample API methods --
-              
+
 	// Attribute
 	public Integer getIndex()
 	{
@@ -85,7 +87,7 @@ public class WellSampleNode extends OMEXMLNode
 	{
 		setAttribute("Index", index);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public ImageNode getImage()
 	{
@@ -98,7 +100,7 @@ public class WellSampleNode extends OMEXMLNode
 		return (ImageRefNode)
 			getChildNode("ImageRef", "ImageRef");
 	}
-                            
+
 	// Attribute
 	public Integer getTimepoint()
 	{
@@ -109,7 +111,7 @@ public class WellSampleNode extends OMEXMLNode
 	{
 		setAttribute("Timepoint", timepoint);
 	}
-                                            
+
 	// Attribute
 	public Float getPosX()
 	{
@@ -120,7 +122,7 @@ public class WellSampleNode extends OMEXMLNode
 	{
 		setAttribute("PosX", posX);
 	}
-                                            
+
 	// Attribute
 	public Float getPosY()
 	{
@@ -131,7 +133,7 @@ public class WellSampleNode extends OMEXMLNode
 	{
 		setAttribute("PosY", posY);
 	}
-                                    
+
 	// Virtual, inferred back reference ScreenAcquisition_BackReference
 	public int getScreenAcquisitionCount()
 	{
@@ -142,14 +144,14 @@ public class WellSampleNode extends OMEXMLNode
 	{
 		return getReferringNodes("ScreenAcquisition");
 	}
-                                                                            
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

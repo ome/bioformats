@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200802.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class TiffDataNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a TiffData node with an associated DOM element. */
@@ -73,14 +76,14 @@ public class TiffDataNode extends OMEXMLNode
 	}
 
 	// -- TiffData API methods --
-                                  
+
 	// Element which is complex (has sub-elements)
 	public UUIDNode getUUID()
 	{
 		return (UUIDNode)
 			getChildNode("UUID", "UUID");
 	}
-                        
+
 	// Attribute
 	public Integer getNumPlanes()
 	{
@@ -91,7 +94,7 @@ public class TiffDataNode extends OMEXMLNode
 	{
 		setAttribute("NumPlanes", numPlanes);
 	}
-                                            
+
 	// Attribute
 	public Integer getFirstC()
 	{
@@ -102,7 +105,7 @@ public class TiffDataNode extends OMEXMLNode
 	{
 		setAttribute("FirstC", firstC);
 	}
-                                            
+
 	// Attribute
 	public Integer getIFD()
 	{
@@ -113,7 +116,7 @@ public class TiffDataNode extends OMEXMLNode
 	{
 		setAttribute("IFD", ifd);
 	}
-                                            
+
 	// Attribute
 	public Integer getFirstZ()
 	{
@@ -124,7 +127,7 @@ public class TiffDataNode extends OMEXMLNode
 	{
 		setAttribute("FirstZ", firstZ);
 	}
-                                            
+
 	// Attribute
 	public Integer getFirstT()
 	{
@@ -135,12 +138,12 @@ public class TiffDataNode extends OMEXMLNode
 	{
 		setAttribute("FirstT", firstT);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

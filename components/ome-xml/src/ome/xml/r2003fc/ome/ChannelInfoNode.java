@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ChannelInfoNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ChannelInfo node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	}
 
 	// -- ChannelInfo API methods --
-                      
+
 	// Element which occurs more than once
 	public int getChannelComponentCount()
 	{
@@ -84,7 +86,12 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		return getChildNodes("ChannelComponent");
 	}
-                                    
+
+	public ChannelComponentNode getChannelComponent(int index)
+	{
+		return (ChannelComponentNode) getChildNode("ChannelComponent", index);
+	}
+
 	// Attribute
 	public Integer getPinholeSize()
 	{
@@ -95,7 +102,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("PinholeSize", pinholeSize);
 	}
-                                            
+
 	// Attribute
 	public String getName()
 	{
@@ -106,7 +113,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public LightSourceNode getAuxLightSource()
 	{
@@ -119,7 +126,7 @@ public class ChannelInfoNode extends OMEXMLNode
 		return (AuxLightSourceRefNode)
 			getChildNode("LightSourceRef", "AuxLightSourceRef");
 	}
-                            
+
 	// Attribute
 	public Integer getSamplesPerPixel()
 	{
@@ -130,7 +137,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("SamplesPerPixel", samplesPerPixel);
 	}
-                                            
+
 	// Attribute
 	public String getContrastMethod()
 	{
@@ -141,7 +148,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("ContrastMethod", contrastMethod);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public OTFNode getOTF()
 	{
@@ -154,9 +161,9 @@ public class ChannelInfoNode extends OMEXMLNode
 		return (OTFRefNode)
 			getChildNode("OTFRef", "OTFRef");
 	}
-                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                                    
+
 	// Element which is complex and is an OME XML "Ref"
 	public FilterNode getFilter()
 	{
@@ -169,7 +176,7 @@ public class ChannelInfoNode extends OMEXMLNode
 		return (FilterRefNode)
 			getChildNode("FilterRef", "FilterRef");
 	}
-                            
+
 	// Attribute
 	public String getFluor()
 	{
@@ -180,7 +187,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("Fluor", fluor);
 	}
-                                            
+
 	// Attribute
 	public String getPhotometricInterpretation()
 	{
@@ -191,7 +198,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("PhotometricInterpretation", photometricInterpretation);
 	}
-                                            
+
 	// Attribute
 	public Float getNDfilter()
 	{
@@ -202,7 +209,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("NDfilter", ndfilter);
 	}
-                                            
+
 	// Attribute
 	public String getMode()
 	{
@@ -213,7 +220,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("Mode", mode);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public DetectorNode getDetector()
 	{
@@ -226,7 +233,7 @@ public class ChannelInfoNode extends OMEXMLNode
 		return (DetectorRefNode)
 			getChildNode("DetectorRef", "DetectorRef");
 	}
-                            
+
 	// Attribute
 	public Integer getEmWave()
 	{
@@ -237,7 +244,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("EmWave", emWave);
 	}
-                                            
+
 	// Attribute
 	public Integer getExWave()
 	{
@@ -248,7 +255,7 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("ExWave", exWave);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public LightSourceNode getLightSource()
 	{
@@ -261,7 +268,7 @@ public class ChannelInfoNode extends OMEXMLNode
 		return (LightSourceRefNode)
 			getChildNode("LightSourceRef", "LightSourceRef");
 	}
-                            
+
 	// Attribute
 	public String getIlluminationType()
 	{
@@ -272,12 +279,12 @@ public class ChannelInfoNode extends OMEXMLNode
 	{
 		setAttribute("IlluminationType", illuminationType);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

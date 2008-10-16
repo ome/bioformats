@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class PixelsNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Pixels node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class PixelsNode extends OMEXMLNode
 	}
 
 	// -- Pixels API methods --
-              
+
 	// Attribute
 	public Integer getSizeT()
 	{
@@ -84,7 +87,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeT", sizeT);
 	}
-                                            
+
 	// Attribute
 	public String getDimensionOrder()
 	{
@@ -95,7 +98,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("DimensionOrder", dimensionOrder);
 	}
-                                            
+
 	// Attribute
 	public Float getTimeIncrement()
 	{
@@ -106,7 +109,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("TimeIncrement", timeIncrement);
 	}
-                                            
+
 	// Attribute
 	public Float getPhysicalSizeY()
 	{
@@ -117,7 +120,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("PhysicalSizeY", physicalSizeY);
 	}
-                                            
+
 	// Attribute
 	public Float getPhysicalSizeX()
 	{
@@ -128,7 +131,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("PhysicalSizeX", physicalSizeX);
 	}
-                                            
+
 	// Attribute
 	public Float getPhysicalSizeZ()
 	{
@@ -139,7 +142,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("PhysicalSizeZ", physicalSizeZ);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeX()
 	{
@@ -150,7 +153,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeX", sizeX);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeY()
 	{
@@ -161,7 +164,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeY", sizeY);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeZ()
 	{
@@ -172,7 +175,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeZ", sizeZ);
 	}
-                                                    
+
 	// Element which occurs more than once
 	public int getTiffDataCount()
 	{
@@ -183,7 +186,12 @@ public class PixelsNode extends OMEXMLNode
 	{
 		return getChildNodes("TiffData");
 	}
-                                    
+
+	public TiffDataNode getTiffData(int index)
+	{
+		return (TiffDataNode) getChildNode("TiffData", index);
+	}
+
 	// Attribute
 	public Integer getWaveStart()
 	{
@@ -194,7 +202,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("WaveStart", waveStart);
 	}
-                                            
+
 	// Attribute
 	public Boolean getBigEndian()
 	{
@@ -205,7 +213,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("BigEndian", bigEndian);
 	}
-                                                    
+
 	// Element which occurs more than once
 	public int getPlaneCount()
 	{
@@ -216,7 +224,12 @@ public class PixelsNode extends OMEXMLNode
 	{
 		return getChildNodes("Plane");
 	}
-                                            
+
+	public PlaneNode getPlane(int index)
+	{
+		return (PlaneNode) getChildNode("Plane", index);
+	}
+
 	// Element which occurs more than once
 	public int getBinDataCount()
 	{
@@ -227,7 +240,12 @@ public class PixelsNode extends OMEXMLNode
 	{
 		return getChildNodes("BinData");
 	}
-                                    
+
+	public OMEXMLNode getBinData(int index)
+	{
+		return (OMEXMLNode) getChildNode("BinData", index);
+	}
+
 	// Attribute
 	public String getPixelType()
 	{
@@ -238,7 +256,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("PixelType", pixelType);
 	}
-                                            
+
 	// Attribute
 	public Integer getWaveIncrement()
 	{
@@ -249,9 +267,9 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("WaveIncrement", waveIncrement);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public Integer getSizeC()
 	{
@@ -262,12 +280,12 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeC", sizeC);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

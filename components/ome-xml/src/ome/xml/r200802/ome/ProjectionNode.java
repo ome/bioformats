@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200802.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ProjectionNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Projection node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class ProjectionNode extends OMEXMLNode
 	}
 
 	// -- Projection API methods --
-              
+
 	// Attribute
 	public Integer getZStart()
 	{
@@ -84,7 +87,7 @@ public class ProjectionNode extends OMEXMLNode
 	{
 		setAttribute("ZStart", zstart);
 	}
-                                            
+
 	// Attribute
 	public Integer getZStop()
 	{
@@ -95,12 +98,12 @@ public class ProjectionNode extends OMEXMLNode
 	{
 		setAttribute("ZStop", zstop);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

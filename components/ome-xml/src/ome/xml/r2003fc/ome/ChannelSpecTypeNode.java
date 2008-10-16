@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ChannelSpecTypeNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ChannelSpecType node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ChannelSpecTypeNode extends OMEXMLNode
 	}
 
 	// -- ChannelSpecType API methods --
-              
+
 	// Attribute
 	public Integer getChannelNumber()
 	{
@@ -84,7 +86,7 @@ public class ChannelSpecTypeNode extends OMEXMLNode
 	{
 		setAttribute("ChannelNumber", channelNumber);
 	}
-                                            
+
 	// Attribute
 	public Float getWhiteLevel()
 	{
@@ -95,7 +97,7 @@ public class ChannelSpecTypeNode extends OMEXMLNode
 	{
 		setAttribute("WhiteLevel", whiteLevel);
 	}
-                                            
+
 	// Attribute
 	public Float getBlackLevel()
 	{
@@ -106,7 +108,7 @@ public class ChannelSpecTypeNode extends OMEXMLNode
 	{
 		setAttribute("BlackLevel", blackLevel);
 	}
-                                            
+
 	// Attribute
 	public Float getGamma()
 	{
@@ -117,7 +119,7 @@ public class ChannelSpecTypeNode extends OMEXMLNode
 	{
 		setAttribute("Gamma", gamma);
 	}
-                                            
+
 	// Attribute
 	public Boolean getisOn()
 	{
@@ -128,12 +130,12 @@ public class ChannelSpecTypeNode extends OMEXMLNode
 	{
 		setAttribute("isOn", isOn);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

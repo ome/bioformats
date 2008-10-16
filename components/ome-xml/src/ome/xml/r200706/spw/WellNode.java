@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,11 +41,13 @@ package ome.xml.r200706.spw;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class WellNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Well node with an associated DOM element. */
@@ -74,7 +76,7 @@ public class WellNode extends OMEXMLNode
 	}
 
 	// -- Well API methods --
-              
+
 	// Attribute
 	public String getExternalIdentifier()
 	{
@@ -85,7 +87,7 @@ public class WellNode extends OMEXMLNode
 	{
 		setAttribute("ExternalIdentifier", externalIdentifier);
 	}
-                                            
+
 	// Attribute
 	public Integer getColumn()
 	{
@@ -96,7 +98,7 @@ public class WellNode extends OMEXMLNode
 	{
 		setAttribute("Column", column);
 	}
-                                            
+
 	// Attribute
 	public String getExternalDescription()
 	{
@@ -107,7 +109,7 @@ public class WellNode extends OMEXMLNode
 	{
 		setAttribute("ExternalDescription", externalDescription);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public ReagentNode getReagent()
 	{
@@ -120,7 +122,7 @@ public class WellNode extends OMEXMLNode
 		return (ReagentRefNode)
 			getChildNode("ReagentRef", "ReagentRef");
 	}
-                                    
+
 	// Element which occurs more than once
 	public int getWellSampleCount()
 	{
@@ -131,7 +133,12 @@ public class WellNode extends OMEXMLNode
 	{
 		return getChildNodes("WellSample");
 	}
-                                    
+
+	public WellSampleNode getWellSample(int index)
+	{
+		return (WellSampleNode) getChildNode("WellSample", index);
+	}
+
 	// Attribute
 	public String getType()
 	{
@@ -142,9 +149,9 @@ public class WellNode extends OMEXMLNode
 	{
 		setAttribute("Type", type);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public Integer getRow()
 	{
@@ -155,12 +162,12 @@ public class WellNode extends OMEXMLNode
 	{
 		setAttribute("Row", row);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

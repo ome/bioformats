@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class PixelsNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Pixels node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class PixelsNode extends OMEXMLNode
 	}
 
 	// -- Pixels API methods --
-              
+
 	// Attribute
 	public Integer getSizeT()
 	{
@@ -84,7 +86,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeT", sizeT);
 	}
-                                            
+
 	// Attribute
 	public String getDimensionOrder()
 	{
@@ -95,7 +97,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("DimensionOrder", dimensionOrder);
 	}
-                                            
+
 	// Attribute
 	public String getPixelType()
 	{
@@ -106,7 +108,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("PixelType", pixelType);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeX()
 	{
@@ -117,7 +119,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeX", sizeX);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeY()
 	{
@@ -128,7 +130,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeY", sizeY);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeZ()
 	{
@@ -139,7 +141,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeZ", sizeZ);
 	}
-                                                    
+
 	// Element which occurs more than once
 	public int getTiffDataCount()
 	{
@@ -150,7 +152,12 @@ public class PixelsNode extends OMEXMLNode
 	{
 		return getChildNodes("TiffData");
 	}
-                                    
+
+	public TiffDataNode getTiffData(int index)
+	{
+		return (TiffDataNode) getChildNode("TiffData", index);
+	}
+
 	// Attribute
 	public Boolean getBigEndian()
 	{
@@ -161,7 +168,7 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("BigEndian", bigEndian);
 	}
-                                                    
+
 	// Element which occurs more than once
 	public int getBinDataCount()
 	{
@@ -172,7 +179,12 @@ public class PixelsNode extends OMEXMLNode
 	{
 		return getChildNodes("BinData");
 	}
-                                    
+
+	public OMEXMLNode getBinData(int index)
+	{
+		return (OMEXMLNode) getChildNode("BinData", index);
+	}
+
 	// Attribute
 	public Integer getSizeC()
 	{
@@ -183,14 +195,14 @@ public class PixelsNode extends OMEXMLNode
 	{
 		setAttribute("SizeC", sizeC);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

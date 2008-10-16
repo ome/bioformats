@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class LaserNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Laser node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class LaserNode extends OMEXMLNode
 	}
 
 	// -- Laser API methods --
-              
+
 	// Attribute
 	public Boolean getPockelCell()
 	{
@@ -84,7 +87,7 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("PockelCell", pockelCell);
 	}
-                                            
+
 	// Attribute
 	public Boolean getTuneable()
 	{
@@ -95,7 +98,7 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("Tuneable", tuneable);
 	}
-                                            
+
 	// Attribute
 	public String getLaserMedium()
 	{
@@ -106,14 +109,14 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("LaserMedium", laserMedium);
 	}
-                                                                
+
 	// Element which is complex (has sub-elements)
 	public PumpNode getPump()
 	{
 		return (PumpNode)
 			getChildNode("Pump", "Pump");
 	}
-                        
+
 	// Attribute
 	public String getPulse()
 	{
@@ -124,7 +127,7 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("Pulse", pulse);
 	}
-                                            
+
 	// Attribute
 	public Integer getWavelength()
 	{
@@ -135,7 +138,7 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("Wavelength", wavelength);
 	}
-                                            
+
 	// Attribute
 	public Integer getFrequencyMultiplication()
 	{
@@ -146,7 +149,7 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("FrequencyMultiplication", frequencyMultiplication);
 	}
-                                            
+
 	// Attribute
 	public String getType()
 	{
@@ -157,7 +160,7 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("Type", type);
 	}
-                                            
+
 	// Attribute
 	public Boolean getRepetitionRate()
 	{
@@ -168,12 +171,12 @@ public class LaserNode extends OMEXMLNode
 	{
 		setAttribute("RepetitionRate", repetitionRate);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

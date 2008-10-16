@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class LightSourceNode extends ManufactSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a LightSource node with an associated DOM element. */
@@ -73,30 +75,30 @@ public class LightSourceNode extends ManufactSpecNode
 	}
 
 	// -- LightSource API methods --
-                                  
+
 	// Element which is complex (has sub-elements)
 	public ArcNode getArc()
 	{
 		return (ArcNode)
 			getChildNode("Arc", "Arc");
 	}
-                                            
+
 	// Element which is complex (has sub-elements)
 	public LaserNode getLaser()
 	{
 		return (LaserNode)
 			getChildNode("Laser", "Laser");
 	}
-                                                
+
 	// *** WARNING *** Unhandled or skipped property ID
-                                        
+
 	// Element which is complex (has sub-elements)
 	public FilamentNode getFilament()
 	{
 		return (FilamentNode)
 			getChildNode("Filament", "Filament");
 	}
-                
+
 	// Virtual, inferred back reference ChannelInfo_BackReference
 	public int getChannelInfoCount()
 	{
@@ -107,12 +109,12 @@ public class LightSourceNode extends ManufactSpecNode
 	{
 		return getReferringNodes("ChannelInfo");
 	}
-                                      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

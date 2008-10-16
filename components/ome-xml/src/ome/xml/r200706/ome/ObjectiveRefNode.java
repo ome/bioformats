@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ObjectiveRefNode extends ReferenceNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ObjectiveRef node with an associated DOM element. */
@@ -93,7 +96,7 @@ public class ObjectiveRefNode extends ReferenceNode
 	}
 
 	// -- ObjectiveRef API methods --
-              
+
 	// Attribute
 	public Float getRefractiveIndex()
 	{
@@ -104,7 +107,7 @@ public class ObjectiveRefNode extends ReferenceNode
 	{
 		setAttribute("RefractiveIndex", refractiveIndex);
 	}
-                                            
+
 	// Attribute
 	public Float getCorrectionCollar()
 	{
@@ -115,9 +118,9 @@ public class ObjectiveRefNode extends ReferenceNode
 	{
 		setAttribute("CorrectionCollar", correctionCollar);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getMedium()
 	{
@@ -128,12 +131,12 @@ public class ObjectiveRefNode extends ReferenceNode
 	{
 		setAttribute("Medium", medium);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ExperimenterTypeNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ExperimenterType node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ExperimenterTypeNode extends OMEXMLNode
 	}
 
 	// -- ExperimenterType API methods --
-                          
+
 	// Element which is not complex (has only a text node)
 	public String getEmail()
 	{
@@ -84,7 +86,7 @@ public class ExperimenterTypeNode extends OMEXMLNode
 	{
 		setCData("Email", email);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public String getOMEName()
 	{
@@ -95,7 +97,7 @@ public class ExperimenterTypeNode extends OMEXMLNode
 	{
 		setCData("OMEName", omename);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public String getFirstName()
 	{
@@ -106,7 +108,7 @@ public class ExperimenterTypeNode extends OMEXMLNode
 	{
 		setCData("FirstName", firstName);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public String getLastName()
 	{
@@ -117,7 +119,7 @@ public class ExperimenterTypeNode extends OMEXMLNode
 	{
 		setCData("LastName", lastName);
 	}
-                                    
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getGroupCount()
 	{
@@ -133,9 +135,9 @@ public class ExperimenterTypeNode extends OMEXMLNode
 	{
 		return getChildNodes("GroupRef");
 	}
-                                                                
+
 	// *** WARNING *** Unhandled or skipped property ID
-                                
+
 	// Element which is not complex (has only a text node)
 	public String getInstitution()
 	{
@@ -146,12 +148,12 @@ public class ExperimenterTypeNode extends OMEXMLNode
 	{
 		setCData("Institution", institution);
 	}
-                  
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

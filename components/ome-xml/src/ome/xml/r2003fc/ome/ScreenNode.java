@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ScreenNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Screen node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ScreenNode extends OMEXMLNode
 	}
 
 	// -- Screen API methods --
-              
+
 	// Attribute
 	public String getExternRef()
 	{
@@ -84,7 +86,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("ExternRef", externRef);
 	}
-                                                        
+
 	// Element which is not complex (has only a text node)
 	public String getDescription()
 	{
@@ -95,7 +97,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setCData("Description", description);
 	}
-                        
+
 	// Virtual, inferred back reference Plate_BackReference
 	public int getPlateCount()
 	{
@@ -106,9 +108,9 @@ public class ScreenNode extends OMEXMLNode
 	{
 		return getReferringNodes("Plate");
 	}
-                                                                            
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getName()
 	{
@@ -119,12 +121,12 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

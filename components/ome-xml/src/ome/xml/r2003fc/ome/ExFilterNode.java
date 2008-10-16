@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ExFilterNode extends FilterSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ExFilter node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ExFilterNode extends FilterSpecNode
 	}
 
 	// -- ExFilter API methods --
-              
+
 	// Attribute
 	public String getType()
 	{
@@ -84,12 +86,12 @@ public class ExFilterNode extends FilterSpecNode
 	{
 		setAttribute("Type", type);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

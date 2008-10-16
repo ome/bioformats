@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class OTFNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a OTF node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class OTFNode extends OMEXMLNode
 	}
 
 	// -- OTF API methods --
-              
+
 	// Attribute
 	public String getPixelType()
 	{
@@ -84,7 +86,7 @@ public class OTFNode extends OMEXMLNode
 	{
 		setAttribute("PixelType", pixelType);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeX()
 	{
@@ -95,7 +97,7 @@ public class OTFNode extends OMEXMLNode
 	{
 		setAttribute("SizeX", sizeX);
 	}
-                                            
+
 	// Attribute
 	public Integer getSizeY()
 	{
@@ -106,7 +108,7 @@ public class OTFNode extends OMEXMLNode
 	{
 		setAttribute("SizeY", sizeY);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public FilterNode getFilter()
 	{
@@ -119,7 +121,7 @@ public class OTFNode extends OMEXMLNode
 		return (FilterRefNode)
 			getChildNode("FilterRef", "FilterRef");
 	}
-                            
+
 	// Attribute
 	public Boolean getOpticalAxisAvrg()
 	{
@@ -130,7 +132,7 @@ public class OTFNode extends OMEXMLNode
 	{
 		setAttribute("OpticalAxisAvrg", opticalAxisAvrg);
 	}
-                                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public ObjectiveNode getObjective()
 	{
@@ -143,7 +145,7 @@ public class OTFNode extends OMEXMLNode
 		return (ObjectiveRefNode)
 			getChildNode("ObjectiveRef", "ObjectiveRef");
 	}
-                                        
+
 	// Element which is not complex (has only a text node)
 	public String getBinaryFile()
 	{
@@ -154,9 +156,9 @@ public class OTFNode extends OMEXMLNode
 	{
 		setCData("BinaryFile", binaryFile);
 	}
-                                                        
+
 	// *** WARNING *** Unhandled or skipped property ID
-            
+
 	// Virtual, inferred back reference ChannelInfo_BackReference
 	public int getChannelInfoCount()
 	{
@@ -167,12 +169,12 @@ public class OTFNode extends OMEXMLNode
 	{
 		return getReferringNodes("ChannelInfo");
 	}
-                                      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

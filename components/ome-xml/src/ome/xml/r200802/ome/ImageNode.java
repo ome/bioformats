@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200802.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ImageNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Image node with an associated DOM element. */
@@ -73,14 +76,14 @@ public class ImageNode extends OMEXMLNode
 	}
 
 	// -- Image API methods --
-                                  
+
 	// Element which is complex (has sub-elements)
 	public ImagingEnvironmentNode getImagingEnvironment()
 	{
 		return (ImagingEnvironmentNode)
 			getChildNode("ImagingEnvironment", "ImagingEnvironment");
 	}
-                                        
+
 	// Element which is complex and is an OME XML "Ref"
 	public ExperimenterNode getExperimenter()
 	{
@@ -93,14 +96,14 @@ public class ImageNode extends OMEXMLNode
 		return (ExperimenterRefNode)
 			getChildNode("ExperimenterRef", "ExperimenterRef");
 	}
-                        
+
 	// Attribute which is an OME XML "ID"
 	public PixelsNode getDefaultPixels()
 	{
 		return (PixelsNode)
 			getAttrReferencedNode("Pixels", "DefaultPixels");
 	}
-                                                            
+
 	// Element which is not complex (has only a text node)
 	public String getCustomAttributes()
 	{
@@ -111,7 +114,7 @@ public class ImageNode extends OMEXMLNode
 	{
 		setCData("CustomAttributes", customAttributes);
 	}
-                                        
+
 	// Element which occurs more than once
 	public int getLogicalChannelCount()
 	{
@@ -122,14 +125,19 @@ public class ImageNode extends OMEXMLNode
 	{
 		return getChildNodes("LogicalChannel");
 	}
-                                                        
+
+	public LogicalChannelNode getLogicalChannel(int index)
+	{
+		return (LogicalChannelNode) getChildNode("LogicalChannel", index);
+	}
+
 	// Element which is complex (has sub-elements)
 	public ThumbnailNode getThumbnail()
 	{
 		return (ThumbnailNode)
 			getChildNode("Thumbnail", "Thumbnail");
 	}
-                                
+
 	// Element which occurs more than once
 	public int getROICount()
 	{
@@ -140,7 +148,12 @@ public class ImageNode extends OMEXMLNode
 	{
 		return getChildNodes("ROI");
 	}
-                                                
+
+	public ROINode getROI(int index)
+	{
+		return (ROINode) getChildNode("ROI", index);
+	}
+
 	// Element which is not complex (has only a text node)
 	public String getDescription()
 	{
@@ -151,14 +164,14 @@ public class ImageNode extends OMEXMLNode
 	{
 		setCData("Description", description);
 	}
-                                                    
+
 	// Element which is complex (has sub-elements)
 	public StageLabelNode getStageLabel()
 	{
 		return (StageLabelNode)
 			getChildNode("StageLabel", "StageLabel");
 	}
-                                        
+
 	// Element which is complex and is an OME XML "Ref"
 	public GroupNode getGroup()
 	{
@@ -171,7 +184,7 @@ public class ImageNode extends OMEXMLNode
 		return (GroupRefNode)
 			getChildNode("GroupRef", "GroupRef");
 	}
-                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public InstrumentNode getInstrument()
 	{
@@ -184,7 +197,7 @@ public class ImageNode extends OMEXMLNode
 		return (InstrumentRefNode)
 			getChildNode("InstrumentRef", "InstrumentRef");
 	}
-                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public ObjectiveNode getObjective()
 	{
@@ -197,7 +210,7 @@ public class ImageNode extends OMEXMLNode
 		return (ObjectiveRefNode)
 			getChildNode("ObjectiveRef", "ObjectiveRef");
 	}
-                                    
+
 	// Element which occurs more than once
 	public int getPixelsCount()
 	{
@@ -208,7 +221,12 @@ public class ImageNode extends OMEXMLNode
 	{
 		return getChildNodes("Pixels");
 	}
-                                    
+
+	public PixelsNode getPixels(int index)
+	{
+		return (PixelsNode) getChildNode("Pixels", index);
+	}
+
 	// Attribute
 	public String getName()
 	{
@@ -219,7 +237,7 @@ public class ImageNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                                                    
+
 	// Element which occurs more than once
 	public int getRegionCount()
 	{
@@ -230,16 +248,21 @@ public class ImageNode extends OMEXMLNode
 	{
 		return getChildNodes("Region");
 	}
-                                
+
+	public RegionNode getRegion(int index)
+	{
+		return (RegionNode) getChildNode("Region", index);
+	}
+
 	// Attribute which is an OME XML "ID"
 	public PixelsNode getAcquiredPixels()
 	{
 		return (PixelsNode)
 			getAttrReferencedNode("Pixels", "AcquiredPixels");
 	}
-                                                                        
+
 	// *** WARNING *** Unhandled or skipped property ID
-                            
+
 	// Element which occurs more than once
 	public int getMicrobeamManipulationCount()
 	{
@@ -250,7 +273,12 @@ public class ImageNode extends OMEXMLNode
 	{
 		return getChildNodes("MicrobeamManipulation");
 	}
-                                                    
+
+	public MicrobeamManipulationNode getMicrobeamManipulation(int index)
+	{
+		return (MicrobeamManipulationNode) getChildNode("MicrobeamManipulation", index);
+	}
+
 	// Element which is complex and is an OME XML "Ref"
 	public ExperimentNode getExperiment()
 	{
@@ -263,7 +291,7 @@ public class ImageNode extends OMEXMLNode
 		return (ExperimentRefNode)
 			getChildNode("ExperimentRef", "ExperimentRef");
 	}
-                                
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getDatasetCount()
 	{
@@ -279,7 +307,7 @@ public class ImageNode extends OMEXMLNode
 	{
 		return getChildNodes("DatasetRef");
 	}
-                                                    
+
 	// Element which is not complex (has only a text node)
 	public String getCreationDate()
 	{
@@ -290,19 +318,19 @@ public class ImageNode extends OMEXMLNode
 	{
 		setCData("CreationDate", creationDate);
 	}
-                                                    
+
 	// Element which is complex (has sub-elements)
 	public DisplayOptionsNode getDisplayOptions()
 	{
 		return (DisplayOptionsNode)
 			getChildNode("DisplayOptions", "DisplayOptions");
 	}
-          
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

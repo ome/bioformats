@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:39-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,11 +41,13 @@ package ome.xml.r200802.spw;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ReagentNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Reagent node with an associated DOM element. */
@@ -74,7 +76,7 @@ public class ReagentNode extends OMEXMLNode
 	}
 
 	// -- Reagent API methods --
-              
+
 	// Attribute
 	public String getDescription()
 	{
@@ -85,7 +87,7 @@ public class ReagentNode extends OMEXMLNode
 	{
 		setAttribute("Description", description);
 	}
-                                            
+
 	// Attribute
 	public String getReagentIdentifier()
 	{
@@ -96,7 +98,7 @@ public class ReagentNode extends OMEXMLNode
 	{
 		setAttribute("ReagentIdentifier", reagentIdentifier);
 	}
-                                    
+
 	// Virtual, inferred back reference Well_BackReference
 	public int getWellCount()
 	{
@@ -107,7 +109,7 @@ public class ReagentNode extends OMEXMLNode
 	{
 		return getReferringNodes("Well");
 	}
-                                                    
+
 	// Attribute
 	public String getName()
 	{
@@ -118,14 +120,14 @@ public class ReagentNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ExperimenterNode extends ExperimenterTypeNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Experimenter node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ExperimenterNode extends ExperimenterTypeNode
 	}
 
 	// -- Experimenter API methods --
-      
+
 	// Virtual, inferred back reference Project_BackReference
 	public int getProjectCount()
 	{
@@ -84,7 +86,7 @@ public class ExperimenterNode extends ExperimenterTypeNode
 	{
 		return getReferringNodes("Project");
 	}
-                                            
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -95,7 +97,7 @@ public class ExperimenterNode extends ExperimenterTypeNode
 	{
 		return getReferringNodes("Image");
 	}
-                                            
+
 	// Virtual, inferred back reference Experiment_BackReference
 	public int getExperimentCount()
 	{
@@ -106,7 +108,7 @@ public class ExperimenterNode extends ExperimenterTypeNode
 	{
 		return getReferringNodes("Experiment");
 	}
-                                            
+
 	// Virtual, inferred back reference Dataset_BackReference
 	public int getDatasetCount()
 	{
@@ -117,12 +119,12 @@ public class ExperimenterNode extends ExperimenterTypeNode
 	{
 		return getReferringNodes("Dataset");
 	}
-                                      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

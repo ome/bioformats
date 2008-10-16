@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ExperimentNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Experiment node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class ExperimentNode extends OMEXMLNode
 	}
 
 	// -- Experiment API methods --
-                          
+
 	// Element which is not complex (has only a text node)
 	public String getDescription()
 	{
@@ -84,7 +87,7 @@ public class ExperimentNode extends OMEXMLNode
 	{
 		setCData("Description", description);
 	}
-                                                
+
 	// Element which is complex and is an OME XML "Ref"
 	public ExperimenterNode getExperimenter()
 	{
@@ -97,7 +100,7 @@ public class ExperimentNode extends OMEXMLNode
 		return (ExperimenterRefNode)
 			getChildNode("ExperimenterRef", "ExperimenterRef");
 	}
-                    
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -108,9 +111,9 @@ public class ExperimentNode extends OMEXMLNode
 	{
 		return getReferringNodes("Image");
 	}
-                                                                            
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getType()
 	{
@@ -121,7 +124,7 @@ public class ExperimentNode extends OMEXMLNode
 	{
 		setAttribute("Type", type);
 	}
-                                                
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getMicrobeamManipulationCount()
 	{
@@ -137,12 +140,12 @@ public class ExperimentNode extends OMEXMLNode
 	{
 		return getChildNodes("MicrobeamManipulationRef");
 	}
-                          
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

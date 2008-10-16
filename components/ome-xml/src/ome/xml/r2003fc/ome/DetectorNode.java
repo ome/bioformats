@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class DetectorNode extends ManufactSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Detector node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class DetectorNode extends ManufactSpecNode
 	}
 
 	// -- Detector API methods --
-              
+
 	// Attribute
 	public Float getGain()
 	{
@@ -84,7 +86,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Gain", gain);
 	}
-                                            
+
 	// Attribute
 	public Float getOffset()
 	{
@@ -95,7 +97,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Offset", offset);
 	}
-                                            
+
 	// Attribute
 	public String getType()
 	{
@@ -106,9 +108,9 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Type", type);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-            
+
 	// Virtual, inferred back reference ChannelInfo_BackReference
 	public int getChannelInfoCount()
 	{
@@ -119,7 +121,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		return getReferringNodes("ChannelInfo");
 	}
-                                                    
+
 	// Attribute
 	public Float getVoltage()
 	{
@@ -130,12 +132,12 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Voltage", voltage);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

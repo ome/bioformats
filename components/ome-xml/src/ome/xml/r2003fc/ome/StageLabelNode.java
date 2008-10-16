@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class StageLabelNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a StageLabel node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class StageLabelNode extends OMEXMLNode
 	}
 
 	// -- StageLabel API methods --
-              
+
 	// Attribute
 	public Float getY()
 	{
@@ -84,7 +86,7 @@ public class StageLabelNode extends OMEXMLNode
 	{
 		setAttribute("Y", y);
 	}
-                                            
+
 	// Attribute
 	public Float getX()
 	{
@@ -95,7 +97,7 @@ public class StageLabelNode extends OMEXMLNode
 	{
 		setAttribute("X", x);
 	}
-                                            
+
 	// Attribute
 	public Float getZ()
 	{
@@ -106,7 +108,7 @@ public class StageLabelNode extends OMEXMLNode
 	{
 		setAttribute("Z", z);
 	}
-                                            
+
 	// Attribute
 	public String getName()
 	{
@@ -117,12 +119,12 @@ public class StageLabelNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class StagePositionNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a StagePosition node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class StagePositionNode extends OMEXMLNode
 	}
 
 	// -- StagePosition API methods --
-              
+
 	// Attribute
 	public Float getPositionZ()
 	{
@@ -84,7 +87,7 @@ public class StagePositionNode extends OMEXMLNode
 	{
 		setAttribute("PositionZ", positionZ);
 	}
-                                            
+
 	// Attribute
 	public Float getPositionX()
 	{
@@ -95,7 +98,7 @@ public class StagePositionNode extends OMEXMLNode
 	{
 		setAttribute("PositionX", positionX);
 	}
-                                            
+
 	// Attribute
 	public Float getPositionY()
 	{
@@ -106,12 +109,12 @@ public class StagePositionNode extends OMEXMLNode
 	{
 		setAttribute("PositionY", positionY);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

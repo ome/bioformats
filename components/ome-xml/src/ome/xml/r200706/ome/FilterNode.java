@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class FilterNode extends FilterSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Filter node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class FilterNode extends FilterSpecNode
 	}
 
 	// -- Filter API methods --
-              
+
 	// Attribute
 	public String getFilterWheel()
 	{
@@ -84,7 +87,7 @@ public class FilterNode extends FilterSpecNode
 	{
 		setAttribute("FilterWheel", filterWheel);
 	}
-                                            
+
 	// Attribute
 	public String getType()
 	{
@@ -95,21 +98,21 @@ public class FilterNode extends FilterSpecNode
 	{
 		setAttribute("Type", type);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                                        
+
 	// Element which is complex (has sub-elements)
 	public TransmittanceRangeNode getTransmittanceRange()
 	{
 		return (TransmittanceRangeNode)
 			getChildNode("TransmittanceRange", "TransmittanceRange");
 	}
-          
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

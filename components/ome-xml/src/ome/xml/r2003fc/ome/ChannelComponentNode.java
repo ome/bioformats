@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ChannelComponentNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a ChannelComponent node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ChannelComponentNode extends OMEXMLNode
 	}
 
 	// -- ChannelComponent API methods --
-              
+
 	// Attribute
 	public Integer getIndex()
 	{
@@ -84,7 +86,7 @@ public class ChannelComponentNode extends OMEXMLNode
 	{
 		setAttribute("Index", index);
 	}
-                                            
+
 	// Attribute
 	public String getColorDomain()
 	{
@@ -95,19 +97,19 @@ public class ChannelComponentNode extends OMEXMLNode
 	{
 		setAttribute("ColorDomain", colorDomain);
 	}
-                                        
+
 	// Attribute which is an OME XML "ID"
 	public PixelsNode getPixels()
 	{
 		return (PixelsNode)
 			getAttrReferencedNode("Pixels", "Pixels");
 	}
-                                  
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

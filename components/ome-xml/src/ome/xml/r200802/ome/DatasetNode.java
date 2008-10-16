@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200802.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class DatasetNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Dataset node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class DatasetNode extends OMEXMLNode
 	}
 
 	// -- Dataset API methods --
-              
+
 	// Attribute
 	public Boolean getLocked()
 	{
@@ -84,7 +87,7 @@ public class DatasetNode extends OMEXMLNode
 	{
 		setAttribute("Locked", locked);
 	}
-                                                        
+
 	// Element which is not complex (has only a text node)
 	public String getDescription()
 	{
@@ -95,7 +98,7 @@ public class DatasetNode extends OMEXMLNode
 	{
 		setCData("Description", description);
 	}
-                                                
+
 	// Element which is complex and is an OME XML "Ref"
 	public ExperimenterNode getExperimenter()
 	{
@@ -108,7 +111,7 @@ public class DatasetNode extends OMEXMLNode
 		return (ExperimenterRefNode)
 			getChildNode("ExperimenterRef", "ExperimenterRef");
 	}
-                                
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getProjectCount()
 	{
@@ -124,7 +127,7 @@ public class DatasetNode extends OMEXMLNode
 	{
 		return getChildNodes("ProjectRef");
 	}
-                                
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -135,7 +138,7 @@ public class DatasetNode extends OMEXMLNode
 	{
 		return getReferringNodes("Image");
 	}
-                                                                    
+
 	// Element which is complex and is an OME XML "Ref"
 	public GroupNode getGroup()
 	{
@@ -148,7 +151,7 @@ public class DatasetNode extends OMEXMLNode
 		return (GroupRefNode)
 			getChildNode("GroupRef", "GroupRef");
 	}
-                                        
+
 	// Element which is not complex (has only a text node)
 	public String getCustomAttributes()
 	{
@@ -159,9 +162,9 @@ public class DatasetNode extends OMEXMLNode
 	{
 		setCData("CustomAttributes", customAttributes);
 	}
-                                                        
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getName()
 	{
@@ -172,12 +175,12 @@ public class DatasetNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

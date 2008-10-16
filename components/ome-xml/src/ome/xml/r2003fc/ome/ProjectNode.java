@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ProjectNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Project node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ProjectNode extends OMEXMLNode
 	}
 
 	// -- Project API methods --
-                          
+
 	// Element which is not complex (has only a text node)
 	public String getDescription()
 	{
@@ -84,7 +86,7 @@ public class ProjectNode extends OMEXMLNode
 	{
 		setCData("Description", description);
 	}
-                                                
+
 	// Element which is complex and is an OME XML "Ref"
 	public ExperimenterNode getExperimenter()
 	{
@@ -97,7 +99,7 @@ public class ProjectNode extends OMEXMLNode
 		return (ExperimenterRefNode)
 			getChildNode("ExperimenterRef", "ExperimenterRef");
 	}
-                                            
+
 	// Element which is complex and is an OME XML "Ref"
 	public GroupNode getGroup()
 	{
@@ -110,7 +112,7 @@ public class ProjectNode extends OMEXMLNode
 		return (GroupRefNode)
 			getChildNode("GroupRef", "GroupRef");
 	}
-                    
+
 	// Virtual, inferred back reference Dataset_BackReference
 	public int getDatasetCount()
 	{
@@ -121,9 +123,9 @@ public class ProjectNode extends OMEXMLNode
 	{
 		return getReferringNodes("Dataset");
 	}
-                                                                            
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getName()
 	{
@@ -134,12 +136,12 @@ public class ProjectNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

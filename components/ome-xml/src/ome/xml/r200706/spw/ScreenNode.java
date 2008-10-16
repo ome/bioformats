@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,11 +41,13 @@ package ome.xml.r200706.spw;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ScreenNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Screen node with an associated DOM element. */
@@ -74,7 +76,7 @@ public class ScreenNode extends OMEXMLNode
 	}
 
 	// -- Screen API methods --
-      
+
 	// Virtual, inferred back reference Plate_BackReference
 	public int getPlateCount()
 	{
@@ -85,7 +87,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		return getReferringNodes("Plate");
 	}
-                                                    
+
 	// Attribute
 	public String getName()
 	{
@@ -96,7 +98,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                                            
+
 	// Attribute
 	public String getProtocolDescription()
 	{
@@ -107,7 +109,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("ProtocolDescription", protocolDescription);
 	}
-                                            
+
 	// Attribute
 	public String getProtocolIdentifier()
 	{
@@ -118,7 +120,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("ProtocolIdentifier", protocolIdentifier);
 	}
-                                                    
+
 	// Element which occurs more than once
 	public int getReagentCount()
 	{
@@ -129,7 +131,12 @@ public class ScreenNode extends OMEXMLNode
 	{
 		return getChildNodes("Reagent");
 	}
-                                        
+
+	public ReagentNode getReagent(int index)
+	{
+		return (ReagentNode) getChildNode("Reagent", index);
+	}
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getPlateRefCount()
 	{
@@ -145,7 +152,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		return getChildNodes("PlateRef");
 	}
-                                        
+
 	// Attribute
 	public String getReagentSetDescription()
 	{
@@ -156,7 +163,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("ReagentSetDescription", reagentSetDescription);
 	}
-                                                    
+
 	// Element which occurs more than once
 	public int getScreenAcquisitionCount()
 	{
@@ -167,7 +174,12 @@ public class ScreenNode extends OMEXMLNode
 	{
 		return getChildNodes("ScreenAcquisition");
 	}
-                                                
+
+	public ScreenAcquisitionNode getScreenAcquisition(int index)
+	{
+		return (ScreenAcquisitionNode) getChildNode("ScreenAcquisition", index);
+	}
+
 	// Element which is not complex (has only a text node)
 	public String getDescription()
 	{
@@ -178,7 +190,7 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setCData("Description", description);
 	}
-                                
+
 	// Attribute
 	public String getType()
 	{
@@ -189,9 +201,9 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("Type", type);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public String getReagentSetIdentifier()
 	{
@@ -202,12 +214,12 @@ public class ScreenNode extends OMEXMLNode
 	{
 		setAttribute("ReagentSetIdentifier", reagentSetIdentifier);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200802.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class PlaneNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Plane node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class PlaneNode extends OMEXMLNode
 	}
 
 	// -- Plane API methods --
-              
+
 	// Attribute
 	public Integer getTheC()
 	{
@@ -84,7 +87,7 @@ public class PlaneNode extends OMEXMLNode
 	{
 		setAttribute("TheC", theC);
 	}
-                                                        
+
 	// Element which is not complex (has only a text node)
 	public String getHashSHA1()
 	{
@@ -95,7 +98,7 @@ public class PlaneNode extends OMEXMLNode
 	{
 		setCData("HashSHA1", hashSHA1);
 	}
-                                
+
 	// Attribute
 	public Integer getTheZ()
 	{
@@ -106,14 +109,14 @@ public class PlaneNode extends OMEXMLNode
 	{
 		setAttribute("TheZ", theZ);
 	}
-                                                                
+
 	// Element which is complex (has sub-elements)
 	public PlaneTimingNode getPlaneTiming()
 	{
 		return (PlaneTimingNode)
 			getChildNode("PlaneTiming", "PlaneTiming");
 	}
-                        
+
 	// Attribute
 	public Integer getTheT()
 	{
@@ -124,19 +127,19 @@ public class PlaneNode extends OMEXMLNode
 	{
 		setAttribute("TheT", theT);
 	}
-                                                                
+
 	// Element which is complex (has sub-elements)
 	public StagePositionNode getStagePosition()
 	{
 		return (StagePositionNode)
 			getChildNode("StagePosition", "StagePosition");
 	}
-          
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ExperimentNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Experiment node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ExperimentNode extends OMEXMLNode
 	}
 
 	// -- Experiment API methods --
-                              
+
 	// Element which is complex and is an OME XML "Ref"
 	public ExperimenterNode getExperimenter()
 	{
@@ -86,7 +88,7 @@ public class ExperimentNode extends OMEXMLNode
 		return (ExperimenterRefNode)
 			getChildNode("ExperimenterRef", "ExperimenterRef");
 	}
-                    
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -97,7 +99,7 @@ public class ExperimentNode extends OMEXMLNode
 	{
 		return getReferringNodes("Image");
 	}
-                                                    
+
 	// Attribute
 	public String getType()
 	{
@@ -108,9 +110,9 @@ public class ExperimentNode extends OMEXMLNode
 	{
 		setAttribute("Type", type);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                                
+
 	// Element which is not complex (has only a text node)
 	public String getDescription()
 	{
@@ -121,12 +123,12 @@ public class ExperimentNode extends OMEXMLNode
 	{
 		setCData("Description", description);
 	}
-                  
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

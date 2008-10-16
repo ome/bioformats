@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200802.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class DetectorRefNode extends ReferenceNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a DetectorRef node with an associated DOM element. */
@@ -93,7 +96,7 @@ public class DetectorRefNode extends ReferenceNode
 	}
 
 	// -- DetectorRef API methods --
-              
+
 	// Attribute
 	public Float getGain()
 	{
@@ -104,7 +107,7 @@ public class DetectorRefNode extends ReferenceNode
 	{
 		setAttribute("Gain", gain);
 	}
-                                            
+
 	// Attribute
 	public String getBinning()
 	{
@@ -115,7 +118,7 @@ public class DetectorRefNode extends ReferenceNode
 	{
 		setAttribute("Binning", binning);
 	}
-                                            
+
 	// Attribute
 	public Float getVoltage()
 	{
@@ -126,7 +129,7 @@ public class DetectorRefNode extends ReferenceNode
 	{
 		setAttribute("Voltage", voltage);
 	}
-                                            
+
 	// Attribute
 	public Float getOffset()
 	{
@@ -137,9 +140,9 @@ public class DetectorRefNode extends ReferenceNode
 	{
 		setAttribute("Offset", offset);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public Float getReadOutRate()
 	{
@@ -150,12 +153,12 @@ public class DetectorRefNode extends ReferenceNode
 	{
 		setAttribute("ReadOutRate", readOutRate);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class GroupNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Group node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class GroupNode extends OMEXMLNode
 	}
 
 	// -- Group API methods --
-              
+
 	// Attribute
 	public String getName()
 	{
@@ -84,7 +87,7 @@ public class GroupNode extends OMEXMLNode
 	{
 		setAttribute("Name", name);
 	}
-                                    
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -95,7 +98,7 @@ public class GroupNode extends OMEXMLNode
 	{
 		return getReferringNodes("Image");
 	}
-                                            
+
 	// Virtual, inferred back reference Dataset_BackReference
 	public int getDatasetCount()
 	{
@@ -106,7 +109,7 @@ public class GroupNode extends OMEXMLNode
 	{
 		return getReferringNodes("Dataset");
 	}
-                                            
+
 	// Virtual, inferred back reference Project_BackReference
 	public int getProjectCount()
 	{
@@ -117,14 +120,14 @@ public class GroupNode extends OMEXMLNode
 	{
 		return getReferringNodes("Project");
 	}
-                                                                        
+
 	// Element which is complex (has sub-elements)
 	public ContactNode getContact()
 	{
 		return (ContactNode)
 			getChildNode("Contact", "Contact");
 	}
-                
+
 	// Virtual, inferred back reference Experimenter_BackReference
 	public int getExperimenterCount()
 	{
@@ -135,21 +138,21 @@ public class GroupNode extends OMEXMLNode
 	{
 		return getReferringNodes("Experimenter");
 	}
-                                                                            
+
 	// *** WARNING *** Unhandled or skipped property ID
-                                        
+
 	// Element which is complex (has sub-elements)
 	public ExperimenterRefNode getLeader()
 	{
 		return (ExperimenterRefNode)
 			getChildNode("ExperimenterRef", "Leader");
 	}
-          
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

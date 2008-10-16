@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class InstrumentNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Instrument node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class InstrumentNode extends OMEXMLNode
 	}
 
 	// -- Instrument API methods --
-                      
+
 	// Element which occurs more than once
 	public int getLightSourceCount()
 	{
@@ -84,7 +86,12 @@ public class InstrumentNode extends OMEXMLNode
 	{
 		return getChildNodes("LightSource");
 	}
-                            
+
+	public LightSourceNode getLightSource(int index)
+	{
+		return (LightSourceNode) getChildNode("LightSource", index);
+	}
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -95,7 +102,7 @@ public class InstrumentNode extends OMEXMLNode
 	{
 		return getReferringNodes("Image");
 	}
-                                                            
+
 	// Element which occurs more than once
 	public int getOTFCount()
 	{
@@ -106,7 +113,12 @@ public class InstrumentNode extends OMEXMLNode
 	{
 		return getChildNodes("OTF");
 	}
-                                            
+
+	public OTFNode getOTF(int index)
+	{
+		return (OTFNode) getChildNode("OTF", index);
+	}
+
 	// Element which occurs more than once
 	public int getFilterCount()
 	{
@@ -117,14 +129,19 @@ public class InstrumentNode extends OMEXMLNode
 	{
 		return getChildNodes("Filter");
 	}
-                                                        
+
+	public FilterNode getFilter(int index)
+	{
+		return (FilterNode) getChildNode("Filter", index);
+	}
+
 	// Element which is complex (has sub-elements)
 	public MicroscopeNode getMicroscope()
 	{
 		return (MicroscopeNode)
 			getChildNode("Microscope", "Microscope");
 	}
-                                
+
 	// Element which occurs more than once
 	public int getObjectiveCount()
 	{
@@ -135,7 +152,12 @@ public class InstrumentNode extends OMEXMLNode
 	{
 		return getChildNodes("Objective");
 	}
-                                            
+
+	public ObjectiveNode getObjective(int index)
+	{
+		return (ObjectiveNode) getChildNode("Objective", index);
+	}
+
 	// Element which occurs more than once
 	public int getDetectorCount()
 	{
@@ -146,14 +168,19 @@ public class InstrumentNode extends OMEXMLNode
 	{
 		return getChildNodes("Detector");
 	}
-                                                            
+
+	public DetectorNode getDetector(int index)
+	{
+		return (DetectorNode) getChildNode("Detector", index);
+	}
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

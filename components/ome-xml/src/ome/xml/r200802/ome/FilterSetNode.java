@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:45-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200802.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200802.ome.*;
+import ome.xml.r200802.spw.*;
 
 import org.w3c.dom.Element;
 
 public class FilterSetNode extends FilterSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a FilterSet node with an associated DOM element. */
@@ -73,21 +76,21 @@ public class FilterSetNode extends FilterSpecNode
 	}
 
 	// -- FilterSet API methods --
-          
+
 	// Attribute which is an OME XML "ID"
 	public FilterNode getExFilterRef()
 	{
 		return (FilterNode)
 			getAttrReferencedNode("Filter", "ExFilterRef");
 	}
-                                            
+
 	// Attribute which is an OME XML "ID"
 	public FilterNode getEmFilterRef()
 	{
 		return (FilterNode)
 			getAttrReferencedNode("Filter", "EmFilterRef");
 	}
-                                        
+
 	// Virtual, inferred back reference OTF_BackReference
 	public int getOTFCount()
 	{
@@ -98,14 +101,14 @@ public class FilterSetNode extends FilterSpecNode
 	{
 		return getReferringNodes("OTF");
 	}
-                                                
+
 	// Attribute which is an OME XML "ID"
 	public DichroicNode getDichroicRef()
 	{
 		return (DichroicNode)
 			getAttrReferencedNode("Dichroic", "DichroicRef");
 	}
-                                        
+
 	// Virtual, inferred back reference LogicalChannel_BackReference
 	public int getLogicalChannelCount()
 	{
@@ -116,14 +119,14 @@ public class FilterSetNode extends FilterSpecNode
 	{
 		return getReferringNodes("LogicalChannel");
 	}
-                                                                            
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

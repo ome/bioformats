@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class MicrobeamManipulationNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a MicrobeamManipulation node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 	}
 
 	// -- MicrobeamManipulation API methods --
-                              
+
 	// Element which is complex and is an OME XML "Ref"
 	public ExperimenterNode getExperimenter()
 	{
@@ -86,7 +89,7 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 		return (ExperimenterRefNode)
 			getChildNode("ExperimenterRef", "ExperimenterRef");
 	}
-                            
+
 	// Attribute
 	public String getType()
 	{
@@ -97,7 +100,7 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 	{
 		setAttribute("Type", type);
 	}
-                                                
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getROICount()
 	{
@@ -113,7 +116,7 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 	{
 		return getChildNodes("ROIRef");
 	}
-                                
+
 	// Virtual, inferred back reference Experiment_BackReference
 	public int getExperimentCount()
 	{
@@ -124,7 +127,7 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 	{
 		return getReferringNodes("Experiment");
 	}
-                                                        
+
 	// Element which occurs more than once and is an OME XML "Ref"
 	public int getLightSourceCount()
 	{
@@ -140,14 +143,14 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 	{
 		return getChildNodes("LightSourceRef");
 	}
-                                                                
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

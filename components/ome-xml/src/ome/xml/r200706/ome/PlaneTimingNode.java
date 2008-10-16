@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class PlaneTimingNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a PlaneTiming node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class PlaneTimingNode extends OMEXMLNode
 	}
 
 	// -- PlaneTiming API methods --
-              
+
 	// Attribute
 	public Float getExposureTime()
 	{
@@ -84,7 +87,7 @@ public class PlaneTimingNode extends OMEXMLNode
 	{
 		setAttribute("ExposureTime", exposureTime);
 	}
-                                            
+
 	// Attribute
 	public Float getDeltaT()
 	{
@@ -95,12 +98,12 @@ public class PlaneTimingNode extends OMEXMLNode
 	{
 		setAttribute("DeltaT", deltaT);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

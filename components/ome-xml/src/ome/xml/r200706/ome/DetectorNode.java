@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class DetectorNode extends ManufactSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Detector node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class DetectorNode extends ManufactSpecNode
 	}
 
 	// -- Detector API methods --
-              
+
 	// Attribute
 	public Float getZoom()
 	{
@@ -84,7 +87,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Zoom", zoom);
 	}
-                                            
+
 	// Attribute
 	public Float getAmplificationGain()
 	{
@@ -95,7 +98,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("AmplificationGain", amplificationGain);
 	}
-                                            
+
 	// Attribute
 	public Float getGain()
 	{
@@ -106,7 +109,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Gain", gain);
 	}
-                                            
+
 	// Attribute
 	public Float getOffset()
 	{
@@ -117,7 +120,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Offset", offset);
 	}
-                                    
+
 	// Virtual, inferred back reference LogicalChannel_BackReference
 	public int getLogicalChannelCount()
 	{
@@ -128,7 +131,7 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		return getReferringNodes("LogicalChannel");
 	}
-                                                    
+
 	// Attribute
 	public String getType()
 	{
@@ -139,9 +142,9 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Type", type);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-                    
+
 	// Attribute
 	public Float getVoltage()
 	{
@@ -152,12 +155,12 @@ public class DetectorNode extends ManufactSpecNode
 	{
 		setAttribute("Voltage", voltage);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

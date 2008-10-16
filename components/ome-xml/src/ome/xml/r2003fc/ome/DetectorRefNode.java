@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class DetectorRefNode extends ReferenceNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a DetectorRef node with an associated DOM element. */
@@ -93,7 +95,7 @@ public class DetectorRefNode extends ReferenceNode
 	}
 
 	// -- DetectorRef API methods --
-              
+
 	// Attribute
 	public Float getOffset()
 	{
@@ -104,7 +106,7 @@ public class DetectorRefNode extends ReferenceNode
 	{
 		setAttribute("Offset", offset);
 	}
-                                            
+
 	// Attribute
 	public Float getGain()
 	{
@@ -115,14 +117,14 @@ public class DetectorRefNode extends ReferenceNode
 	{
 		setAttribute("Gain", gain);
 	}
-                                                                    
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

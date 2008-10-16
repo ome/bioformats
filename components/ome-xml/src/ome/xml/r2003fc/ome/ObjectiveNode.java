@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class ObjectiveNode extends ManufactSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Objective node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	}
 
 	// -- Objective API methods --
-                          
+
 	// Element which is not complex (has only a text node)
 	public Float getLensNA()
 	{
@@ -84,7 +86,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("LensNA", lensNA);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public Float getMagnification()
 	{
@@ -95,9 +97,9 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("Magnification", magnification);
 	}
-                                                        
+
 	// *** WARNING *** Unhandled or skipped property ID
-            
+
 	// Virtual, inferred back reference OTF_BackReference
 	public int getOTFCount()
 	{
@@ -108,7 +110,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		return getReferringNodes("OTF");
 	}
-                                            
+
 	// Virtual, inferred back reference Image_BackReference
 	public int getImageCount()
 	{
@@ -119,12 +121,12 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		return getReferringNodes("Image");
 	}
-                                      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}

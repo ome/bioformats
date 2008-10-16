@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:43-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,13 @@ package ome.xml.r2003fc.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
 public class FilterSpecNode extends OMEXMLNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a FilterSpec node with an associated DOM element. */
@@ -73,7 +75,7 @@ public class FilterSpecNode extends OMEXMLNode
 	}
 
 	// -- FilterSpec API methods --
-              
+
 	// Attribute
 	public String getModel()
 	{
@@ -84,7 +86,7 @@ public class FilterSpecNode extends OMEXMLNode
 	{
 		setAttribute("Model", model);
 	}
-                                            
+
 	// Attribute
 	public String getLotNumber()
 	{
@@ -95,7 +97,7 @@ public class FilterSpecNode extends OMEXMLNode
 	{
 		setAttribute("LotNumber", lotNumber);
 	}
-                                            
+
 	// Attribute
 	public String getManufacturer()
 	{
@@ -106,12 +108,12 @@ public class FilterSpecNode extends OMEXMLNode
 	{
 		setAttribute("Manufacturer", manufacturer);
 	}
-                              
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return false;
 	}
-}
 
+}

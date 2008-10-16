@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 12:13:44-0500
+ * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,11 +40,14 @@ package ome.xml.r200706.ome;
 
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
 
 import org.w3c.dom.Element;
 
 public class ObjectiveNode extends ManufactSpecNode
 {
+
 	// -- Constructors --
 
 	/** Constructs a Objective node with an associated DOM element. */
@@ -73,7 +76,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	}
 
 	// -- Objective API methods --
-                          
+
 	// Element which is not complex (has only a text node)
 	public Float getWorkingDistance()
 	{
@@ -84,7 +87,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("WorkingDistance", workingDistance);
 	}
-                        
+
 	// Virtual, inferred back reference ObjectiveSettings_BackReference
 	public int getObjectiveSettingsCount()
 	{
@@ -95,7 +98,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		return getReferringNodes("ObjectiveSettings");
 	}
-                                                                
+
 	// Element which is not complex (has only a text node)
 	public String getImmersion()
 	{
@@ -106,7 +109,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("Immersion", immersion);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public String getCorrection()
 	{
@@ -117,7 +120,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("Correction", correction);
 	}
-                        
+
 	// Virtual, inferred back reference OTF_BackReference
 	public int getOTFCount()
 	{
@@ -128,7 +131,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		return getReferringNodes("OTF");
 	}
-                                                                
+
 	// Element which is not complex (has only a text node)
 	public Float getLensNA()
 	{
@@ -139,7 +142,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("LensNA", lensNA);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public Integer getNominalMagnification()
 	{
@@ -150,7 +153,7 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("NominalMagnification", nominalMagnification);
 	}
-                                            
+
 	// Element which is not complex (has only a text node)
 	public Float getCalibratedMagnification()
 	{
@@ -161,14 +164,14 @@ public class ObjectiveNode extends ManufactSpecNode
 	{
 		setCData("CalibratedMagnification", calibratedMagnification);
 	}
-                                                        
+
 	// *** WARNING *** Unhandled or skipped property ID
-      
+
 	// -- OMEXMLNode API methods --
 
 	public boolean hasID()
 	{
 		return true;
 	}
-}
 
+}
