@@ -221,6 +221,28 @@ public final class DOMUtil {
   }
 
   /**
+   * Gets the given element's index-th child DOM element with the specified
+   * name, or the index-th child element overall if name is null.
+   */
+  public static Element getChildElement(String name, Element el, int index) {
+    if (el == null) return null;
+    NodeList list = el.getChildNodes();
+    int size = list.getLength();
+    String cName = ":" + name;
+    int q = 0;
+    for (int i=0; i<size; i++) {
+      Node node = list.item(i);
+      if (!(node instanceof Element)) continue;
+      String nodeName = node.getNodeName();
+      if (name == null || nodeName.equals(name) || nodeName.endsWith(cName)) {
+        if (q == index) return (Element) node;
+        q++;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Gets the given element's first ancestor DOM element
    * with the specified name.
    */

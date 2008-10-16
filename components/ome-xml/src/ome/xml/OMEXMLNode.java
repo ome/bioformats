@@ -243,6 +243,11 @@ public abstract class OMEXMLNode {
     return getNodes(DOMUtil.getChildElements(name, element));
   }
 
+  /** Gets the index-th OME-XML node child with the given name. */
+  protected OMEXMLNode getChildNode(String name, int index) {
+    return getNode(DOMUtil.getChildElement(name, element, index));
+  }
+
   /**
    * Gets an OME-XML node representing the
    * first ancestor element with the given name.
