@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -139,6 +139,32 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getExperimenterCount();
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getExperimenterMembershipCount(int) */
+  public int getExperimenterMembershipCount(int experimenterIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getExperimenterMembershipCount(experimenterIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getGroupRefCount(int) */
+  public int getGroupRefCount(int experimenterIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getGroupRefCount(experimenterIndex);
         if (result >= 0) return result;
       }
     }
@@ -843,6 +869,21 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - ExperimenterMembership property retrieval -
+
+  /* @see MetadataRetrieve#getExperimenterMembershipGroup(int, int) */
+  public String getExperimenterMembershipGroup(int experimenterIndex, int groupRefIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getExperimenterMembershipGroup(experimenterIndex, groupRefIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   // - Filament property retrieval -
 
   /* @see MetadataRetrieve#getFilamentType(int, int) */
@@ -857,6 +898,8 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
     return null;
   }
+
+  // - GroupRef property retrieval -
 
   // - Image property retrieval -
 
@@ -1301,6 +1344,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  /* @see MetadataRetrieve#getLogicalChannelOTF(int, int) */
+  public String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getLogicalChannelOTF(imageIndex, logicalChannelIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getLogicalChannelPhotometricInterpretation(int, int) */
   public String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1368,6 +1424,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  /* @see MetadataRetrieve#getOTFObjective(int, int) */
+  public String getOTFObjective(int instrumentIndex, int otfIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getOTFObjective(instrumentIndex, otfIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getOTFOpticalAxisAveraged(int, int) */
   public Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1414,21 +1483,6 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Integer result = retrieve.getOTFSizeY(instrumentIndex, otfIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  // - OTFSettings property retrieval -
-
-  /* @see MetadataRetrieve#getOTFSettingsOTF(int, int) */
-  public String getOTFSettingsOTF(int imageIndex, int logicalChannelIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getOTFSettingsOTF(imageIndex, logicalChannelIndex);
         if (result != null) return result;
       }
     }
@@ -2900,6 +2954,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
   }
 
+  // - ExperimenterMembership property storage -
+
+  /* @see MetadataStore#setExperimenterMembershipGroup(String, int, int) */
+  public void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setExperimenterMembershipGroup(group, experimenterIndex, groupRefIndex);
+      }
+    }
+  }
+
   // - Filament property storage -
 
   /* @see MetadataStore#setFilamentType(String, int, int) */
@@ -2912,6 +2979,8 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       }
     }
   }
+
+  // - GroupRef property storage -
 
   // - Image property storage -
 
@@ -3290,6 +3359,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
   }
 
+  /* @see MetadataStore#setLogicalChannelOTF(String, int, int) */
+  public void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setLogicalChannelOTF(otf, imageIndex, logicalChannelIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setLogicalChannelPhotometricInterpretation(String, int, int) */
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -3347,6 +3427,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
   }
 
+  /* @see MetadataStore#setOTFObjective(String, int, int) */
+  public void setOTFObjective(String objective, int instrumentIndex, int otfIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setOTFObjective(objective, instrumentIndex, otfIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setOTFOpticalAxisAveraged(Boolean, int, int) */
   public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -3387,19 +3478,6 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setOTFSizeY(sizeY, instrumentIndex, otfIndex);
-      }
-    }
-  }
-
-  // - OTFSettings property storage -
-
-  /* @see MetadataStore#setOTFSettingsOTF(String, int, int) */
-  public void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setOTFSettingsOTF(otf, imageIndex, logicalChannelIndex);
       }
     }
   }

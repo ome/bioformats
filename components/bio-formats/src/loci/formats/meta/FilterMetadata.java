@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -288,6 +288,14 @@ public class FilterMetadata implements MetadataStore {
     store.setExperimenterLastName(value, experimenterIndex);
   }
 
+  // -- ExperimenterMembership property storage -
+
+  /* @see MetadataStore#setExperimenterMembershipGroup(String, int, int) */
+  public void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex) {
+    String value = filter ? DataTools.sanitize(group) : group;
+    store.setExperimenterMembershipGroup(value, experimenterIndex, groupRefIndex);
+  }
+
   // -- Filament property storage -
 
   /* @see MetadataStore#setFilamentType(String, int, int) */
@@ -295,6 +303,8 @@ public class FilterMetadata implements MetadataStore {
     String value = filter ? DataTools.sanitize(type) : type;
     store.setFilamentType(value, instrumentIndex, lightSourceIndex);
   }
+
+  // -- GroupRef property storage -
 
   // -- Image property storage -
 
@@ -495,6 +505,12 @@ public class FilterMetadata implements MetadataStore {
     store.setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex);
   }
 
+  /* @see MetadataStore#setLogicalChannelOTF(String, int, int) */
+  public void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex) {
+    String value = filter ? DataTools.sanitize(otf) : otf;
+    store.setLogicalChannelOTF(value, imageIndex, logicalChannelIndex);
+  }
+
   /* @see MetadataStore#setLogicalChannelPhotometricInterpretation(String, int, int) */
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
     String value = filter ? DataTools.sanitize(photometricInterpretation) : photometricInterpretation;
@@ -524,6 +540,12 @@ public class FilterMetadata implements MetadataStore {
     store.setOTFID(value, instrumentIndex, otfIndex);
   }
 
+  /* @see MetadataStore#setOTFObjective(String, int, int) */
+  public void setOTFObjective(String objective, int instrumentIndex, int otfIndex) {
+    String value = filter ? DataTools.sanitize(objective) : objective;
+    store.setOTFObjective(value, instrumentIndex, otfIndex);
+  }
+
   /* @see MetadataStore#setOTFOpticalAxisAveraged(Boolean, int, int) */
   public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex) {
     store.setOTFOpticalAxisAveraged(opticalAxisAveraged, instrumentIndex, otfIndex);
@@ -543,14 +565,6 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setOTFSizeY(Integer, int, int) */
   public void setOTFSizeY(Integer sizeY, int instrumentIndex, int otfIndex) {
     store.setOTFSizeY(sizeY, instrumentIndex, otfIndex);
-  }
-
-  // -- OTFSettings property storage -
-
-  /* @see MetadataStore#setOTFSettingsOTF(String, int, int) */
-  public void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex) {
-    String value = filter ? DataTools.sanitize(otf) : otf;
-    store.setOTFSettingsOTF(value, imageIndex, logicalChannelIndex);
   }
 
   // -- Objective property storage -

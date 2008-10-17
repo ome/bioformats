@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,6 +66,16 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataRetrieve#getExperimenterCount() */
   public int getExperimenterCount() {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getExperimenterMembershipCount(int) */
+  public int getExperimenterMembershipCount(int experimenterIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getGroupRefCount(int) */
+  public int getGroupRefCount(int experimenterIndex) {
     return -1;
   }
 
@@ -327,12 +337,22 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - ExperimenterMembership property retrieval -
+
+  /* @see MetadataRetrieve#getExperimenterMembershipGroup(int, int) */
+  public String getExperimenterMembershipGroup(int experimenterIndex, int groupRefIndex) {
+    return null;
+  }
+
   // - Filament property retrieval -
 
   /* @see MetadataRetrieve#getFilamentType(int, int) */
   public String getFilamentType(int instrumentIndex, int lightSourceIndex) {
     return null;
   }
+
+  // - GroupRef property retrieval -
+
 
   // - Image property retrieval -
 
@@ -486,6 +506,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex) {
     return null;
   }
+  /* @see MetadataRetrieve#getLogicalChannelOTF(int, int) */
+  public String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getLogicalChannelPhotometricInterpretation(int, int) */
   public String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex) {
     return null;
@@ -509,6 +533,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public String getOTFID(int instrumentIndex, int otfIndex) {
     return null;
   }
+  /* @see MetadataRetrieve#getOTFObjective(int, int) */
+  public String getOTFObjective(int instrumentIndex, int otfIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getOTFOpticalAxisAveraged(int, int) */
   public Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex) {
     return null;
@@ -523,13 +551,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   }
   /* @see MetadataRetrieve#getOTFSizeY(int, int) */
   public Integer getOTFSizeY(int instrumentIndex, int otfIndex) {
-    return null;
-  }
-
-  // - OTFSettings property retrieval -
-
-  /* @see MetadataRetrieve#getOTFSettingsOTF(int, int) */
-  public String getOTFSettingsOTF(int imageIndex, int logicalChannelIndex) {
     return null;
   }
 
@@ -1061,11 +1082,19 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setExperimenterLastName(String lastName, int experimenterIndex) {
   }
 
+  // - ExperimenterMembership property storage -
+
+  /* @see MetadataStore#setExperimenterMembershipGroup(String, int, int) */
+  public void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex) {
+  }
+
   // - Filament property storage -
 
   /* @see MetadataStore#setFilamentType(String, int, int) */
   public void setFilamentType(String type, int instrumentIndex, int lightSourceIndex) {
   }
+
+  // - GroupRef property storage -
 
   // - Image property storage -
 
@@ -1213,6 +1242,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex) {
   }
 
+  /* @see MetadataStore#setLogicalChannelOTF(String, int, int) */
+  public void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex) {
+  }
+
   /* @see MetadataStore#setLogicalChannelPhotometricInterpretation(String, int, int) */
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
   }
@@ -1235,6 +1268,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setOTFID(String id, int instrumentIndex, int otfIndex) {
   }
 
+  /* @see MetadataStore#setOTFObjective(String, int, int) */
+  public void setOTFObjective(String objective, int instrumentIndex, int otfIndex) {
+  }
+
   /* @see MetadataStore#setOTFOpticalAxisAveraged(Boolean, int, int) */
   public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex) {
   }
@@ -1249,12 +1286,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setOTFSizeY(Integer, int, int) */
   public void setOTFSizeY(Integer sizeY, int instrumentIndex, int otfIndex) {
-  }
-
-  // - OTFSettings property storage -
-
-  /* @see MetadataStore#setOTFSettingsOTF(String, int, int) */
-  public void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex) {
   }
 
   // - Objective property storage -

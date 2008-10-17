@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,6 +79,11 @@ public final class MetadataConverter {
       if (experimenterInstitutionValue != null) dest.setExperimenterInstitution(experimenterInstitutionValue, experimenterIndex);
       String experimenterLastNameValue = src.getExperimenterLastName(experimenterIndex);
       if (experimenterLastNameValue != null) dest.setExperimenterLastName(experimenterLastNameValue, experimenterIndex);
+      int groupRefCount = src.getGroupRefCount(experimenterIndex);
+      for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++) {
+        String experimenterMembershipGroupValue = src.getExperimenterMembershipGroup(experimenterIndex, groupRefIndex);
+        if (experimenterMembershipGroupValue != null) dest.setExperimenterMembershipGroup(experimenterMembershipGroupValue, experimenterIndex, groupRefIndex);
+      }
     }
     int imageCount = src.getImageCount();
     for (int imageIndex=0; imageIndex<imageCount; imageIndex++) {
@@ -153,6 +158,8 @@ public final class MetadataConverter {
         if (logicalChannelNameValue != null) dest.setLogicalChannelName(logicalChannelNameValue, imageIndex, logicalChannelIndex);
         Float logicalChannelNdFilterValue = src.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex);
         if (logicalChannelNdFilterValue != null) dest.setLogicalChannelNdFilter(logicalChannelNdFilterValue, imageIndex, logicalChannelIndex);
+        String logicalChannelOTFValue = src.getLogicalChannelOTF(imageIndex, logicalChannelIndex);
+        if (logicalChannelOTFValue != null) dest.setLogicalChannelOTF(logicalChannelOTFValue, imageIndex, logicalChannelIndex);
         String logicalChannelPhotometricInterpretationValue = src.getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex);
         if (logicalChannelPhotometricInterpretationValue != null) dest.setLogicalChannelPhotometricInterpretation(logicalChannelPhotometricInterpretationValue, imageIndex, logicalChannelIndex);
         Integer logicalChannelPinholeSizeValue = src.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex);
@@ -180,8 +187,6 @@ public final class MetadataConverter {
           if (lightSourceSettingsLightSourceValue != null) dest.setLightSourceSettingsLightSource(lightSourceSettingsLightSourceValue, imageIndex, logicalChannelIndex);
           Integer lightSourceSettingsWavelengthValue = src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex);
           if (lightSourceSettingsWavelengthValue != null) dest.setLightSourceSettingsWavelength(lightSourceSettingsWavelengthValue, imageIndex, logicalChannelIndex);
-          String otfSettingsOTFValue = src.getOTFSettingsOTF(imageIndex, logicalChannelIndex);
-          if (otfSettingsOTFValue != null) dest.setOTFSettingsOTF(otfSettingsOTFValue, imageIndex, logicalChannelIndex);
       }
       int pixelsCount = src.getPixelsCount(imageIndex);
       for (int pixelsIndex=0; pixelsIndex<pixelsCount; pixelsIndex++) {
@@ -317,6 +322,8 @@ public final class MetadataConverter {
       for (int otfIndex=0; otfIndex<otfCount; otfIndex++) {
         String otfidValue = src.getOTFID(instrumentIndex, otfIndex);
         if (otfidValue != null) dest.setOTFID(otfidValue, instrumentIndex, otfIndex);
+        String otfObjectiveValue = src.getOTFObjective(instrumentIndex, otfIndex);
+        if (otfObjectiveValue != null) dest.setOTFObjective(otfObjectiveValue, instrumentIndex, otfIndex);
         Boolean otfOpticalAxisAveragedValue = src.getOTFOpticalAxisAveraged(instrumentIndex, otfIndex);
         if (otfOpticalAxisAveragedValue != null) dest.setOTFOpticalAxisAveraged(otfOpticalAxisAveragedValue, instrumentIndex, otfIndex);
         String otfPixelTypeValue = src.getOTFPixelType(instrumentIndex, otfIndex);

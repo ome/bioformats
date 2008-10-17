@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,6 +83,22 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
   public int getExperimenterCount() {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getExperimenterNode(i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getExperimenterMembershipCount(int) */
+  public int getExperimenterMembershipCount(int experimenterIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getGroupRefNode(experimenterIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGroupRefCount(int) */
+  public int getGroupRefCount(int experimenterIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getGroupRefNode(experimenterIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -449,6 +465,14 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     return experimenter == null ? null : experimenter.getLastName();
   }
 
+  // - ExperimenterMembership property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getExperimenterMembershipGroup(int, int) */
+  public String getExperimenterMembershipGroup(int experimenterIndex, int groupRefIndex) {
+    GroupRefNode groupRef = getGroupRefNode(experimenterIndex, groupRefIndex, false);
+    return groupRef == null ? null : groupRef.getNodeID();
+  }
+
   // - Filament property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getFilamentType(int, int) */
@@ -456,6 +480,8 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     FilamentNode filament = getFilamentNode(instrumentIndex, lightSourceIndex, false);
     return filament == null ? null : filament.getType();
   }
+
+  // - GroupRef property retrieval -
 
   // - Image property retrieval -
 
@@ -671,6 +697,12 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     return logicalChannel == null ? null : logicalChannel.getNdFilter();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelOTF(int, int) */
+  public String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex) {
+    OTFRefNode otfRef = getOTFRefNode(imageIndex, logicalChannelIndex, false);
+    return otfRef == null ? null : otfRef.getNodeID();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelPhotometricInterpretation(int, int) */
   public String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex) {
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
@@ -703,6 +735,12 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     return otf == null ? null : otf.getNodeID();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getOTFObjective(int, int) */
+  public String getOTFObjective(int instrumentIndex, int otfIndex) {
+    ObjectiveRefNode objectiveRef = getObjectiveRefNode(instrumentIndex, otfIndex, false);
+    return objectiveRef == null ? null : objectiveRef.getNodeID();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getOTFOpticalAxisAveraged(int, int) */
   public Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex) {
     OTFNode otf = getOTFNode(instrumentIndex, otfIndex, false);
@@ -725,14 +763,6 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
   public Integer getOTFSizeY(int instrumentIndex, int otfIndex) {
     OTFNode otf = getOTFNode(instrumentIndex, otfIndex, false);
     return otf == null ? null : otf.getSizeY();
-  }
-
-  // - OTFSettings property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getOTFSettingsOTF(int, int) */
-  public String getOTFSettingsOTF(int imageIndex, int logicalChannelIndex) {
-    OTFRefNode otfRef = getOTFRefNode(imageIndex, logicalChannelIndex, false);
-    return otfRef == null ? null : otfRef.getNodeID();
   }
 
   // - Objective property retrieval -
@@ -1510,6 +1540,15 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     experimenterNode.setLastName(lastName);
   }
 
+  // - ExperimenterMembership property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setExperimenterMembershipGroup(String, int, int) */
+  public void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex) {
+    if (group == null) return;
+    GroupRefNode groupRefNode = getGroupRefNode(experimenterIndex, groupRefIndex, true);
+    groupRefNode.setNodeID(group);
+  }
+
   // - Filament property storage -
 
   /* @see loci.formats.meta.MetadataStore#setFilamentType(String, int, int) */
@@ -1518,6 +1557,8 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     FilamentNode filamentNode = getFilamentNode(instrumentIndex, lightSourceIndex, true);
     filamentNode.setType(type);
   }
+
+  // - GroupRef property storage -
 
   // - Image property storage -
 
@@ -1776,6 +1817,13 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     logicalChannelNode.setNdFilter(ndFilter);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setLogicalChannelOTF(String, int, int) */
+  public void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex) {
+    if (otf == null) return;
+    OTFRefNode otfRefNode = getOTFRefNode(imageIndex, logicalChannelIndex, true);
+    otfRefNode.setNodeID(otf);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelPhotometricInterpretation(String, int, int) */
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
     if (photometricInterpretation == null) return;
@@ -1813,6 +1861,13 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     otfNode.setNodeID(id);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setOTFObjective(String, int, int) */
+  public void setOTFObjective(String objective, int instrumentIndex, int otfIndex) {
+    if (objective == null) return;
+    ObjectiveRefNode objectiveRefNode = getObjectiveRefNode(instrumentIndex, otfIndex, true);
+    objectiveRefNode.setNodeID(objective);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setOTFOpticalAxisAveraged(Boolean, int, int) */
   public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex) {
     if (opticalAxisAveraged == null) return;
@@ -1839,15 +1894,6 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     if (sizeY == null) return;
     OTFNode otfNode = getOTFNode(instrumentIndex, otfIndex, true);
     otfNode.setSizeY(sizeY);
-  }
-
-  // - OTFSettings property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setOTFSettingsOTF(String, int, int) */
-  public void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex) {
-    if (otf == null) return;
-    OTFRefNode otfRefNode = getOTFRefNode(imageIndex, logicalChannelIndex, true);
-    otfRefNode.setNodeID(otf);
   }
 
   // - Objective property storage -
@@ -2461,6 +2507,32 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     List list = ome.getExperimenterList();
     experimenterNode = (ExperimenterNode) list.get(experimenterIndex);
     return experimenterNode;
+  }
+
+  // Experimenter+/GroupRef+
+  private GroupRefNode groupRefNode = null;
+  private int groupRefNodeExperimenterIndex = -1;
+  private int groupRefNodeGroupRefIndex = -1;
+  private GroupRefNode getGroupRefNode(int experimenterIndex, int groupRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (groupRefNodeExperimenterIndex != experimenterIndex) match = false;
+    if (groupRefNodeGroupRefIndex != groupRefIndex) match = false;
+    if (match) return groupRefNode;
+    groupRefNode = null;
+    groupRefNodeExperimenterIndex = experimenterIndex;
+    groupRefNodeGroupRefIndex = groupRefIndex;
+
+    // get Experimenter+ node
+    ExperimenterNode experimenter = getExperimenterNode(experimenterIndex, create);
+    if (experimenter == null) return null;
+    // get GroupRef+ node
+    int count = experimenter.getGroupRefCount();
+    if (!create && count <= groupRefIndex) return null;
+    for (int i=count; i<=groupRefIndex; i++) new GroupRefNode(experimenter);
+    List list = experimenter.getGroupRefList();
+    groupRefNode = (GroupRefNode) list.get(groupRefIndex);
+    return groupRefNode;
   }
 
   // Image+
@@ -3118,6 +3190,33 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     List list = instrument.getOTFList();
     otfNode = (OTFNode) list.get(otfIndex);
     return otfNode;
+  }
+
+  // Instrument+/OTF+/ObjectiveRef
+  private ObjectiveRefNode objectiveRefNode = null;
+  private int objectiveRefNodeInstrumentIndex = -1;
+  private int objectiveRefNodeOTFIndex = -1;
+  private ObjectiveRefNode getObjectiveRefNode(int instrumentIndex, int otfIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (objectiveRefNodeInstrumentIndex != instrumentIndex) match = false;
+    if (objectiveRefNodeOTFIndex != otfIndex) match = false;
+    if (match) return objectiveRefNode;
+    objectiveRefNode = null;
+    objectiveRefNodeInstrumentIndex = instrumentIndex;
+    objectiveRefNodeOTFIndex = otfIndex;
+
+    // get Instrument+/OTF+ node
+    OTFNode otf = getOTFNode(instrumentIndex, otfIndex, create);
+    if (otf == null) return null;
+    // get ObjectiveRef node
+    ObjectiveRefNode objectiveRef = otf.getObjectiveRef();
+    if (objectiveRef == null) {
+      if (create) objectiveRef = new ObjectiveRefNode(otf);
+      else return null;
+    }
+    objectiveRefNode = objectiveRef;
+    return objectiveRefNode;
   }
 
   // Instrument+/Objective+

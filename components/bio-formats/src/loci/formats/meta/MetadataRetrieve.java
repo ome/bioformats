@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,6 +52,10 @@ public interface MetadataRetrieve {
   int getExperimentCount();
 
   int getExperimenterCount();
+
+  int getExperimenterMembershipCount(int experimenterIndex);
+
+  int getGroupRefCount(int experimenterIndex);
 
   int getImageCount();
 
@@ -338,6 +342,15 @@ public interface MetadataRetrieve {
    */
   String getExperimenterLastName(int experimenterIndex);
 
+  // - ExperimenterMembership property retrieval -
+
+  /**
+   * For a particular ExperimenterMembership, gets the group associated with this membership.
+   * @param experimenterIndex index of the Experimenter
+   * @param groupRefIndex index of the GroupRef
+   */
+  String getExperimenterMembershipGroup(int experimenterIndex, int groupRefIndex);
+
   // - Filament property retrieval -
 
   /**
@@ -346,6 +359,8 @@ public interface MetadataRetrieve {
    * @param lightSourceIndex index of the LightSource
    */
   String getFilamentType(int instrumentIndex, int lightSourceIndex);
+
+  // - GroupRef property retrieval -
 
   // - Image property retrieval -
 
@@ -583,6 +598,13 @@ public interface MetadataRetrieve {
   Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
 
   /**
+   * For a particular LogicalChannel, gets the OTF associated with the logical channel.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex);
+
+  /**
    * For a particular LogicalChannel, gets the photometric interpretation type.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
@@ -620,6 +642,13 @@ public interface MetadataRetrieve {
   String getOTFID(int instrumentIndex, int otfIndex);
 
   /**
+   * For a particular OTF, gets objective described by the optical transfer function.
+   * @param instrumentIndex index of the Instrument
+   * @param otfIndex index of the OTF
+   */
+  String getOTFObjective(int instrumentIndex, int otfIndex);
+
+  /**
    * For a particular OTF, gets TODO.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
@@ -646,15 +675,6 @@ public interface MetadataRetrieve {
    * @param otfIndex index of the OTF
    */
   Integer getOTFSizeY(int instrumentIndex, int otfIndex);
-
-  // - OTFSettings property retrieval -
-
-  /**
-   * For a particular OTFSettings, gets the OTF.
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  String getOTFSettingsOTF(int imageIndex, int logicalChannelIndex);
 
   // - Objective property retrieval -
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -351,6 +351,16 @@ public interface MetadataStore {
    */
   void setExperimenterLastName(String lastName, int experimenterIndex);
 
+  // - ExperimenterMembership property storage -
+
+  /**
+   * For a particular ExperimenterMembership, sets the group associated with this membership.
+   * @param group the group associated with this membership
+   * @param experimenterIndex index of the Experimenter
+   * @param groupRefIndex index of the GroupRef
+   */
+  void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex);
+
   // - Filament property storage -
 
   /**
@@ -360,6 +370,8 @@ public interface MetadataStore {
    * @param lightSourceIndex index of the LightSource
    */
   void setFilamentType(String type, int instrumentIndex, int lightSourceIndex);
+
+  // - GroupRef property storage -
 
   // - Image property storage -
 
@@ -630,6 +642,14 @@ public interface MetadataStore {
   void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex);
 
   /**
+   * For a particular LogicalChannel, sets the OTF associated with the logical channel.
+   * @param otf the OTF associated with the logical channel
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex);
+
+  /**
    * For a particular LogicalChannel, sets the photometric interpretation type.
    * @param photometricInterpretation the photometric interpretation type
    * @param imageIndex index of the Image
@@ -672,6 +692,14 @@ public interface MetadataStore {
   void setOTFID(String id, int instrumentIndex, int otfIndex);
 
   /**
+   * For a particular OTF, sets objective described by the optical transfer function.
+   * @param objective objective described by the optical transfer function
+   * @param instrumentIndex index of the Instrument
+   * @param otfIndex index of the OTF
+   */
+  void setOTFObjective(String objective, int instrumentIndex, int otfIndex);
+
+  /**
    * For a particular OTF, sets TODO.
    * @param opticalAxisAveraged TODO
    * @param instrumentIndex index of the Instrument
@@ -702,16 +730,6 @@ public interface MetadataStore {
    * @param otfIndex index of the OTF
    */
   void setOTFSizeY(Integer sizeY, int instrumentIndex, int otfIndex);
-
-  // - OTFSettings property storage -
-
-  /**
-   * For a particular OTFSettings, sets the OTF.
-   * @param otf the OTF
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex);
 
   // - Objective property storage -
 

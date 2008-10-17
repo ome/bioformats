@@ -360,6 +360,16 @@ description = TODO
 [LogicalChannel PockelCellSetting 2003FC]
 path = -
 
+[LogicalChannel OTF]
+path = Image+/LogicalChannel+/OTFRef
+type = String
+getter = getNodeID
+setter = setNodeID
+description = the OTF associated with the logical channel
+
+[LogicalChannel OTF 2003FC]
+path = Image+/ChannelInfo+/OTFRef
+
 ## ChannelComponent ##
 
 [ChannelComponent]
@@ -743,21 +753,6 @@ description = the primary light source attenuation
 type = Integer
 description = the primary light source wavelength
 
-## OTFSettings ##
-
-[OTFSettings]
-path = Image+/LogicalChannel+/OTFRef
-description = the OTF associated with a particular logical channel
-
-[OTFSettings 2003FC]
-path = Image+/ChannelInfo+/OTFRef
-
-[OTFSettings OTF]
-type = String
-getter = getNodeID
-setter = setNodeID
-description = the OTF
-
 ### Entities for other Image-specific information ###
 
 ## StageLabel ##
@@ -1134,6 +1129,13 @@ description = TODO
 getter = getOpticalAxisAvrg
 setter = setOpticalAxisAvrg
 
+[OTF Objective]
+path = Instrument+/OTF+/ObjectiveRef
+type = String
+getter = getNodeID
+setter = setNodeID
+description = objective described by the optical transfer function
+
 ### Entities for Experiment & Experimenter details ###
 
 ## Experiment ##
@@ -1188,6 +1190,26 @@ description = the e-mail address of the experimenter
 [Experimenter Institution]
 type = String
 description = the institution to which the experimenter belongs
+
+## GroupRef ##
+
+[GroupRef]
+countable = true
+path = Experimenter+/GroupRef+
+description = HACK - force creation of MetadataRetrieve.getGroupRefCount(int)
+
+## ExperimenterMembership ##
+
+[ExperimenterMembership]
+countable = true
+path = Experimenter+/GroupRef+
+description = a linkage between a particular experimenter and a group
+
+[ExperimenterMembership Group]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = the group associated with this membership
 
 ### Entities for high-content screening ###
 
