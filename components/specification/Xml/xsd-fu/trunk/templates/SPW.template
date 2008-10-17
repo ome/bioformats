@@ -114,10 +114,20 @@ public class ${klass.name}Node extends ${klass.javaBase}
 {% when prop.isAttribute and prop.type[-2:] == "ID" and \
    prop.name not in fu.DO_NOT_PROCESS %}
 	// Attribute which is an OME XML "ID"
-	public ${prop.javaType} get${prop.name}()
+	public ${prop.javaType} get${prop.name}Node()
 	{
 		return (${prop.javaType})
 			getAttrReferencedNode("${prop.type[:-2]}", "${prop.name}");
+	}
+
+	public String get${prop.name}()
+	{
+		return getStringAttribute("${prop.name}");
+	}
+
+	public void set${prop.name}(String ${prop.javaArgumentName})
+	{
+		setAttribute("${prop.name}", ${prop.javaArgumentName});
 	}
 {% end %}\
 {% when prop.isAttribute and prop.name not in fu.DO_NOT_PROCESS %}
