@@ -743,6 +743,21 @@ description = the primary light source attenuation
 type = Integer
 description = the primary light source wavelength
 
+## OTFSettings ##
+
+[OTFSettings]
+path = Image+/LogicalChannel+/OTFRef
+description = the OTF associated with a particular logical channel
+
+[OTFSettings 2003FC]
+path = Image+/ChannelInfo+/OTFRef
+
+[OTFSettings OTF]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = the OTF
+
 ### Entities for other Image-specific information ###
 
 ## StageLabel ##

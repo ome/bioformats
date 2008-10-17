@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1414,6 +1414,21 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Integer result = retrieve.getOTFSizeY(instrumentIndex, otfIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - OTFSettings property retrieval -
+
+  /* @see MetadataRetrieve#getOTFSettingsOTF(int, int) */
+  public String getOTFSettingsOTF(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getOTFSettingsOTF(imageIndex, logicalChannelIndex);
         if (result != null) return result;
       }
     }
@@ -3372,6 +3387,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setOTFSizeY(sizeY, instrumentIndex, otfIndex);
+      }
+    }
+  }
+
+  // - OTFSettings property storage -
+
+  /* @see MetadataStore#setOTFSettingsOTF(String, int, int) */
+  public void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setOTFSettingsOTF(otf, imageIndex, logicalChannelIndex);
       }
     }
   }

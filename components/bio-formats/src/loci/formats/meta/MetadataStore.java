@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -702,6 +702,16 @@ public interface MetadataStore {
    * @param otfIndex index of the OTF
    */
   void setOTFSizeY(Integer sizeY, int instrumentIndex, int otfIndex);
+
+  // - OTFSettings property storage -
+
+  /**
+   * For a particular OTFSettings, sets the OTF.
+   * @param otf the OTF
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex);
 
   // - Objective property storage -
 

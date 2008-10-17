@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -725,6 +725,14 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
   public Integer getOTFSizeY(int instrumentIndex, int otfIndex) {
     OTFNode otf = getOTFNode(instrumentIndex, otfIndex, false);
     return otf == null ? null : otf.getSizeY();
+  }
+
+  // - OTFSettings property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getOTFSettingsOTF(int, int) */
+  public String getOTFSettingsOTF(int imageIndex, int logicalChannelIndex) {
+    OTFRefNode otfRef = getOTFRefNode(imageIndex, logicalChannelIndex, false);
+    return otfRef == null ? null : otfRef.getNodeID();
   }
 
   // - Objective property retrieval -
@@ -1833,6 +1841,15 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     otfNode.setSizeY(sizeY);
   }
 
+  // - OTFSettings property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setOTFSettingsOTF(String, int, int) */
+  public void setOTFSettingsOTF(String otf, int imageIndex, int logicalChannelIndex) {
+    if (otf == null) return;
+    OTFRefNode otfRefNode = getOTFRefNode(imageIndex, logicalChannelIndex, true);
+    otfRefNode.setNodeID(otf);
+  }
+
   // - Objective property storage -
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveCalibratedMagnification(Float, int, int) */
@@ -2696,6 +2713,33 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     }
     lightSourceRefNode = lightSourceRef;
     return lightSourceRefNode;
+  }
+
+  // Image+/LogicalChannel+/OTFRef
+  private OTFRefNode otfRefNode = null;
+  private int otfRefNodeImageIndex = -1;
+  private int otfRefNodeLogicalChannelIndex = -1;
+  private OTFRefNode getOTFRefNode(int imageIndex, int logicalChannelIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (otfRefNodeImageIndex != imageIndex) match = false;
+    if (otfRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
+    if (match) return otfRefNode;
+    otfRefNode = null;
+    otfRefNodeImageIndex = imageIndex;
+    otfRefNodeLogicalChannelIndex = logicalChannelIndex;
+
+    // get Image+/LogicalChannel+ node
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
+    if (logicalChannel == null) return null;
+    // get OTFRef node
+    OTFRefNode otfRef = logicalChannel.getOTFRef();
+    if (otfRef == null) {
+      if (create) otfRef = new OTFRefNode(logicalChannel);
+      else return null;
+    }
+    otfRefNode = otfRef;
+    return otfRefNode;
   }
 
   // Image+/Pixels+

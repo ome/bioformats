@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 16, 2008 2:23:08 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 3:56:04 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -180,6 +180,8 @@ public final class MetadataConverter {
           if (lightSourceSettingsLightSourceValue != null) dest.setLightSourceSettingsLightSource(lightSourceSettingsLightSourceValue, imageIndex, logicalChannelIndex);
           Integer lightSourceSettingsWavelengthValue = src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex);
           if (lightSourceSettingsWavelengthValue != null) dest.setLightSourceSettingsWavelength(lightSourceSettingsWavelengthValue, imageIndex, logicalChannelIndex);
+          String otfSettingsOTFValue = src.getOTFSettingsOTF(imageIndex, logicalChannelIndex);
+          if (otfSettingsOTFValue != null) dest.setOTFSettingsOTF(otfSettingsOTFValue, imageIndex, logicalChannelIndex);
       }
       int pixelsCount = src.getPixelsCount(imageIndex);
       for (int pixelsIndex=0; pixelsIndex<pixelsCount; pixelsIndex++) {
