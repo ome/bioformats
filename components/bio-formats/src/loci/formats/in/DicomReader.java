@@ -97,6 +97,8 @@ public class DicomReader extends FormatReader {
   private long[] offsets;
   private int maxPixelValue;
 
+  private double rescaleSlope, rescaleIntercept;
+
   private boolean isJP2K = false;
   private boolean isJPEG = false;
   private boolean isRLE = false;
@@ -267,6 +269,14 @@ public class DicomReader extends FormatReader {
           DataTools.unpackShort(s, buf, i, isLittleEndian());
         }
       }
+    }
+
+    // apply rescale function
+
+    for (int i=0; i<w * h; i++) {
+      int pixel = DataTools.bytesToInt(buf, i * bpp, bpp, isLittleEndian());
+      pixel = (int) (pixel * rescaleSlope + rescaleIntercept);
+      DataTools.unpackBytes(pixel, buf, i * bpp, bpp, isLittleEndian());
     }
 
     return buf;
@@ -604,6 +614,12 @@ public class DicomReader extends FormatReader {
       else if (key.equals("Content Time")) time = info;
       else if (key.equals("Content Date")) date = info;
       else if (key.equals("Image Type")) imageType = info;
+      else if (key.equals("Rescale Intercept")) {
+        rescaleIntercept = Double.parseDouble(info);
+      }
+      else if (key.equals("Rescale Slope")) {
+        rescaleSlope = Double.parseDouble(info);
+      }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
         addMeta(key, info);
