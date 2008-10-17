@@ -1082,6 +1082,15 @@ public class FileStitcher implements IFormatReader {
       computeAxisLengths();
     }
     setSeries(oldSeries);
+
+    // populate metadata store
+    store = reader.getMetadataStore();
+    for (int i=0; i<core.length; i++) {
+      if (seriesNames != null) {
+        store.setImageName((String) seriesNames.get(i), i);
+      }
+    }
+    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --
@@ -1173,15 +1182,6 @@ public class FileStitcher implements IFormatReader {
       core[sno].cLengths[c] = lenC[sno][i];
       core[sno].cTypes[c] = FormatTools.CHANNEL;
     }
-
-    // populate metadata store
-    store = reader.getMetadataStore();
-    for (int i=0; i<core.length; i++) {
-      if (seriesNames != null) {
-        store.setImageName((String) seriesNames.get(i), i);
-      }
-    }
-    MetadataTools.populatePixels(store, this);
   }
 
   /**
@@ -1287,7 +1287,6 @@ public class FileStitcher implements IFormatReader {
     readers[sno][fno].setId(files[sno][fno]);
     readers[sno][fno].setSeries(seriesInFile ? getSeries() : 0);
     readers[sno][fno].swapDimensions(reader.getDimensionOrder());
-    if (getSizeC() > 0) MetadataTools.populatePixels(store, this);
   }
 
   private FilePattern getPattern(String[] f, String dir, String block) {
