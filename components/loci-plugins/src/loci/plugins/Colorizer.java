@@ -132,6 +132,13 @@ public class Colorizer implements PlugInFilter {
     }
 
     ImageStack stack = imp.getImageStack();
+
+    if (stack.isVirtual()) {
+      IJ.error("Colorizer plugin cannot be used with virtual stacks.\n" +
+        "Please convert the virtual stack using Image>Duplicate.");
+      return;
+    }
+
     Calibration calibration = imp.getCalibration();
 
     int nChannels = imp.getNChannels();

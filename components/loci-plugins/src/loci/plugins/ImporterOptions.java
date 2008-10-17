@@ -1108,10 +1108,28 @@ public class ImporterOptions implements ItemListener {
         changed.add(mergeBox);
       }
     }
+    // TODO: make splitting work with Data Browser/virtual stacks
     else if (src == splitCBox) {
+      String s = stackChoice.getSelectedItem();
+      if (s.equals(VIEW_BROWSER) || virtualBox.getState()) {
+        splitCBox.setState(false);
+      }
+
       if (splitCBox.getState()) {
         mergeBox.setState(false);
         changed.add(mergeBox);
+      }
+    }
+    else if (src == splitZBox) {
+      String s = stackChoice.getSelectedItem();
+      if (s.equals(VIEW_BROWSER) || virtualBox.getState()) {
+        splitZBox.setState(false);
+      }
+    }
+    else if (src == splitTBox) {
+      String s = stackChoice.getSelectedItem();
+      if (s.equals(VIEW_BROWSER) || virtualBox.getState()) {
+        splitTBox.setState(false);
       }
     }
     else if (src == metadataBox) {
@@ -1149,7 +1167,13 @@ public class ImporterOptions implements ItemListener {
     else if (src == virtualBox) {
       if (virtualBox.getState()) {
         autoscaleBox.setState(false);
+        splitCBox.setState(false);
+        splitZBox.setState(false);
+        splitTBox.setState(false);
         changed.add(autoscaleBox);
+        changed.add(splitCBox);
+        changed.add(splitZBox);
+        changed.add(splitTBox);
       }
       else {
         recordBox.setState(false);
