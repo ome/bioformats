@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:14-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -100,12 +100,12 @@ public class ReagentNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference Well_BackReference
-	public int getWellCount()
+	public int getReferringWellCount()
 	{
 		return getReferringCount("Well");
 	}
 
-	public java.util.List getWellList()
+	public java.util.List getReferringWellList()
 	{
 		return getReferringNodes("Well");
 	}

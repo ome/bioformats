@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -168,12 +168,12 @@ public class ROINode extends OMEXMLNode
 	// *** WARNING *** Unhandled or skipped property ID
 
 	// Virtual, inferred back reference MicrobeamManipulation_BackReference
-	public int getMicrobeamManipulationCount()
+	public int getReferringMicrobeamManipulationCount()
 	{
 		return getReferringCount("MicrobeamManipulation");
 	}
 
-	public java.util.List getMicrobeamManipulationList()
+	public java.util.List getReferringMicrobeamManipulationList()
 	{
 		return getReferringNodes("MicrobeamManipulation");
 	}

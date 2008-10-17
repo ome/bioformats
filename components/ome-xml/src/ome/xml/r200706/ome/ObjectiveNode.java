@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -89,12 +89,12 @@ public class ObjectiveNode extends ManufactSpecNode
 	}
 
 	// Virtual, inferred back reference ObjectiveSettings_BackReference
-	public int getObjectiveSettingsCount()
+	public int getReferringObjectiveSettingsCount()
 	{
 		return getReferringCount("ObjectiveSettings");
 	}
 
-	public java.util.List getObjectiveSettingsList()
+	public java.util.List getReferringObjectiveSettingsList()
 	{
 		return getReferringNodes("ObjectiveSettings");
 	}
@@ -122,12 +122,12 @@ public class ObjectiveNode extends ManufactSpecNode
 	}
 
 	// Virtual, inferred back reference OTF_BackReference
-	public int getOTFCount()
+	public int getReferringOTFCount()
 	{
 		return getReferringCount("OTF");
 	}
 
-	public java.util.List getOTFList()
+	public java.util.List getReferringOTFList()
 	{
 		return getReferringNodes("OTF");
 	}

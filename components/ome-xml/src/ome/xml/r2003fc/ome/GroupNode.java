@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:12-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,15 +76,15 @@ public class GroupNode extends OMEXMLNode
 
 	// -- Group API methods --
 
-	// Virtual, inferred back reference ExperimenterType_BackReference
-	public int getExperimenterTypeCount()
+	// Virtual, inferred back reference Project_BackReference
+	public int getReferringProjectCount()
 	{
-		return getReferringCount("ExperimenterType");
+		return getReferringCount("Project");
 	}
 
-	public java.util.List getExperimenterTypeList()
+	public java.util.List getReferringProjectList()
 	{
-		return getReferringNodes("ExperimenterType");
+		return getReferringNodes("Project");
 	}
 
 	// Attribute
@@ -99,27 +99,27 @@ public class GroupNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference Image_BackReference
-	public int getImageCount()
+	public int getReferringImageCount()
 	{
 		return getReferringCount("Image");
 	}
 
-	public java.util.List getImageList()
+	public java.util.List getReferringImageList()
 	{
 		return getReferringNodes("Image");
 	}
 
 	// *** WARNING *** Unhandled or skipped property ID
 
-	// Virtual, inferred back reference Project_BackReference
-	public int getProjectCount()
+	// Virtual, inferred back reference ExperimenterType_BackReference
+	public int getReferringExperimenterTypeCount()
 	{
-		return getReferringCount("Project");
+		return getReferringCount("ExperimenterType");
 	}
 
-	public java.util.List getProjectList()
+	public java.util.List getReferringExperimenterTypeList()
 	{
-		return getReferringNodes("Project");
+		return getReferringNodes("ExperimenterType");
 	}
 
 	// Element which is complex (has sub-elements)
@@ -130,12 +130,12 @@ public class GroupNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference Dataset_BackReference
-	public int getDatasetCount()
+	public int getReferringDatasetCount()
 	{
 		return getReferringCount("Dataset");
 	}
 
-	public java.util.List getDatasetList()
+	public java.util.List getReferringDatasetList()
 	{
 		return getReferringNodes("Dataset");
 	}

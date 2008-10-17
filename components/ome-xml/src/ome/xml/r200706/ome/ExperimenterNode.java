@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -122,12 +122,12 @@ public class ExperimenterNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference Image_BackReference
-	public int getImageCount()
+	public int getReferringImageCount()
 	{
 		return getReferringCount("Image");
 	}
 
-	public java.util.List getImageList()
+	public java.util.List getReferringImageList()
 	{
 		return getReferringNodes("Image");
 	}
@@ -143,6 +143,11 @@ public class ExperimenterNode extends OMEXMLNode
 		return getReferencedNodes("Group", "GroupRef");
 	}
 
+	public int getGroupRefCount()
+	{
+		return getChildCount("GroupRef");
+	}
+
 	public java.util.Vector getGroupRefList()
 	{
 		return getChildNodes("GroupRef");
@@ -151,34 +156,34 @@ public class ExperimenterNode extends OMEXMLNode
 	// *** WARNING *** Unhandled or skipped property ID
 
 	// Virtual, inferred back reference Project_BackReference
-	public int getProjectCount()
+	public int getReferringProjectCount()
 	{
 		return getReferringCount("Project");
 	}
 
-	public java.util.List getProjectList()
+	public java.util.List getReferringProjectList()
 	{
 		return getReferringNodes("Project");
 	}
 
 	// Virtual, inferred back reference Experiment_BackReference
-	public int getExperimentCount()
+	public int getReferringExperimentCount()
 	{
 		return getReferringCount("Experiment");
 	}
 
-	public java.util.List getExperimentList()
+	public java.util.List getReferringExperimentList()
 	{
 		return getReferringNodes("Experiment");
 	}
 
 	// Virtual, inferred back reference Dataset_BackReference
-	public int getDatasetCount()
+	public int getReferringDatasetCount()
 	{
 		return getReferringCount("Dataset");
 	}
 
-	public java.util.List getDatasetList()
+	public java.util.List getReferringDatasetList()
 	{
 		return getReferringNodes("Dataset");
 	}
@@ -195,12 +200,12 @@ public class ExperimenterNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference MicrobeamManipulation_BackReference
-	public int getMicrobeamManipulationCount()
+	public int getReferringMicrobeamManipulationCount()
 	{
 		return getReferringCount("MicrobeamManipulation");
 	}
 
-	public java.util.List getMicrobeamManipulationList()
+	public java.util.List getReferringMicrobeamManipulationList()
 	{
 		return getReferringNodes("MicrobeamManipulation");
 	}

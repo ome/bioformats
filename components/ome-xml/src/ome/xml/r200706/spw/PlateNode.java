@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:14-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -111,12 +111,12 @@ public class PlateNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference Screen_BackReference
-	public int getScreenCount()
+	public int getReferringScreenCount()
 	{
 		return getReferringCount("Screen");
 	}
 
-	public java.util.List getScreenList()
+	public java.util.List getReferringScreenList()
 	{
 		return getReferringNodes("Screen");
 	}
@@ -138,14 +138,19 @@ public class PlateNode extends OMEXMLNode
 	}
 
 	// Element which occurs more than once and is an OME XML "Ref"
-	public int getScreenRefCount()
+	public int getScreenCount()
 	{
 		return getChildCount("ScreenRef");
 	}
 
-	public java.util.Vector getScreenScreenRefList()
+	public java.util.Vector getScreenList()
 	{
 		return getReferencedNodes("Screen", "ScreenRef");
+	}
+
+	public int getScreenRefCount()
+	{
+		return getChildCount("ScreenRef");
 	}
 
 	public java.util.Vector getScreenRefList()

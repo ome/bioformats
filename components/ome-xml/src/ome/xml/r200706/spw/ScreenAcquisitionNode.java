@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:14-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -89,14 +89,19 @@ public class ScreenAcquisitionNode extends OMEXMLNode
 	}
 
 	// Element which occurs more than once and is an OME XML "Ref"
-	public int getWellSampleRefCount()
+	public int getWellSampleCount()
 	{
 		return getChildCount("WellSampleRef");
 	}
 
-	public java.util.Vector getWellSampleWellSampleRefList()
+	public java.util.Vector getWellSampleList()
 	{
 		return getReferencedNodes("WellSample", "WellSampleRef");
+	}
+
+	public int getWellSampleRefCount()
+	{
+		return getChildCount("WellSampleRef");
 	}
 
 	public java.util.Vector getWellSampleRefList()

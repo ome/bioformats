@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:38-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:14-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -135,12 +135,12 @@ public class WellSampleNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference ScreenAcquisition_BackReference
-	public int getScreenAcquisitionCount()
+	public int getReferringScreenAcquisitionCount()
 	{
 		return getReferringCount("ScreenAcquisition");
 	}
 
-	public java.util.List getScreenAcquisitionList()
+	public java.util.List getReferringScreenAcquisitionList()
 	{
 		return getReferringNodes("ScreenAcquisition");
 	}

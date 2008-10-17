@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:12-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -88,12 +88,12 @@ public class PlateNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference Image_BackReference
-	public int getImageCount()
+	public int getReferringImageCount()
 	{
 		return getReferringCount("Image");
 	}
 
-	public java.util.List getImageList()
+	public java.util.List getReferringImageList()
 	{
 		return getReferringNodes("Image");
 	}
@@ -107,6 +107,11 @@ public class PlateNode extends OMEXMLNode
 	public java.util.Vector getScreenList()
 	{
 		return getReferencedNodes("Screen", "ScreenRef");
+	}
+
+	public int getScreenRefCount()
+	{
+		return getChildCount("ScreenRef");
 	}
 
 	public java.util.Vector getScreenRefList()

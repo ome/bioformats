@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -112,18 +112,23 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 		return getReferencedNodes("ROI", "ROIRef");
 	}
 
+	public int getROIRefCount()
+	{
+		return getChildCount("ROIRef");
+	}
+
 	public java.util.Vector getROIRefList()
 	{
 		return getChildNodes("ROIRef");
 	}
 
 	// Virtual, inferred back reference Experiment_BackReference
-	public int getExperimentCount()
+	public int getReferringExperimentCount()
 	{
 		return getReferringCount("Experiment");
 	}
 
-	public java.util.List getExperimentList()
+	public java.util.List getReferringExperimentList()
 	{
 		return getReferringNodes("Experiment");
 	}
@@ -137,6 +142,11 @@ public class MicrobeamManipulationNode extends OMEXMLNode
 	public java.util.Vector getLightSourceList()
 	{
 		return getReferencedNodes("LightSource", "LightSourceRef");
+	}
+
+	public int getLightSourceRefCount()
+	{
+		return getChildCount("LightSourceRef");
 	}
 
 	public java.util.Vector getLightSourceRefList()

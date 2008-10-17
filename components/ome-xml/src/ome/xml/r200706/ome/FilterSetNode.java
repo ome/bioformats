@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,12 +92,12 @@ public class FilterSetNode extends FilterSpecNode
 	}
 
 	// Virtual, inferred back reference OTF_BackReference
-	public int getOTFCount()
+	public int getReferringOTFCount()
 	{
 		return getReferringCount("OTF");
 	}
 
-	public java.util.List getOTFList()
+	public java.util.List getReferringOTFList()
 	{
 		return getReferringNodes("OTF");
 	}
@@ -110,12 +110,12 @@ public class FilterSetNode extends FilterSpecNode
 	}
 
 	// Virtual, inferred back reference LogicalChannel_BackReference
-	public int getLogicalChannelCount()
+	public int getReferringLogicalChannelCount()
 	{
 		return getReferringCount("LogicalChannel");
 	}
 
-	public java.util.List getLogicalChannelList()
+	public java.util.List getReferringLogicalChannelList()
 	{
 		return getReferringNodes("LogicalChannel");
 	}

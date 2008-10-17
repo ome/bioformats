@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:12-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -114,12 +114,12 @@ public class ProjectNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference Dataset_BackReference
-	public int getDatasetCount()
+	public int getReferringDatasetCount()
 	{
 		return getReferringCount("Dataset");
 	}
 
-	public java.util.List getDatasetList()
+	public java.util.List getReferringDatasetList()
 	{
 		return getReferringNodes("Dataset");
 	}

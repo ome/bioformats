@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:12-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -91,12 +91,12 @@ public class FilterNode extends OMEXMLNode
 	}
 
 	// Virtual, inferred back reference OTF_BackReference
-	public int getOTFCount()
+	public int getReferringOTFCount()
 	{
 		return getReferringCount("OTF");
 	}
 
-	public java.util.List getOTFList()
+	public java.util.List getReferringOTFList()
 	{
 		return getReferringNodes("OTF");
 	}
@@ -111,12 +111,12 @@ public class FilterNode extends OMEXMLNode
 	// *** WARNING *** Unhandled or skipped property ID
 
 	// Virtual, inferred back reference ChannelInfo_BackReference
-	public int getChannelInfoCount()
+	public int getReferringChannelInfoCount()
 	{
 		return getReferringCount("ChannelInfo");
 	}
 
-	public java.util.List getChannelInfoList()
+	public java.util.List getReferringChannelInfoList()
 	{
 		return getReferringNodes("ChannelInfo");
 	}

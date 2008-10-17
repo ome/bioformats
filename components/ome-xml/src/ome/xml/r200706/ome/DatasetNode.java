@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:37-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -123,18 +123,23 @@ public class DatasetNode extends OMEXMLNode
 		return getReferencedNodes("Project", "ProjectRef");
 	}
 
+	public int getProjectRefCount()
+	{
+		return getChildCount("ProjectRef");
+	}
+
 	public java.util.Vector getProjectRefList()
 	{
 		return getChildNodes("ProjectRef");
 	}
 
 	// Virtual, inferred back reference Image_BackReference
-	public int getImageCount()
+	public int getReferringImageCount()
 	{
 		return getReferringCount("Image");
 	}
 
-	public java.util.List getImageList()
+	public java.util.List getReferringImageList()
 	{
 		return getReferringNodes("Image");
 	}

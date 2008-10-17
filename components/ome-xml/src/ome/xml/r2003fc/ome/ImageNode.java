@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-15 21:58:36-0500
+ * Created by curtis via xsd-fu on 2008-10-16 05:38:12-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -216,6 +216,11 @@ public class ImageNode extends OMEXMLNode
 	public java.util.Vector getDatasetList()
 	{
 		return getReferencedNodes("Dataset", "DatasetRef");
+	}
+
+	public int getDatasetRefCount()
+	{
+		return getChildCount("DatasetRef");
 	}
 
 	public java.util.Vector getDatasetRefList()
