@@ -101,12 +101,12 @@ public class ${klass.name}Node extends ${klass.javaBase}
 {% choose %}\
 {% when prop.isReference %}
 	// Virtual, inferred back reference ${prop.name}
-	public int get${prop.javaType}Count()
+	public int getReferring${prop.javaType}Count()
 	{
 		return getReferringCount("${prop.javaType}");
 	}
 
-	public java.util.List get${prop.javaType}List()
+	public java.util.List getReferring${prop.javaType}List()
 	{
 		return getReferringNodes("${prop.javaType}");
 	}
@@ -142,6 +142,11 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	public java.util.Vector get${prop.name[:-3]}List()
 	{
 		return getReferencedNodes("${prop.name[:-3]}", "${prop.name}");
+	}
+
+	public int get${prop.name}Count()
+	{
+		return getChildCount("${prop.name}");
 	}
 
 	public java.util.Vector get${prop.name}List()
