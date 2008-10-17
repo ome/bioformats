@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
+ * Created by curtis via xsd-fu on 2008-10-16 06:18:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -116,10 +116,20 @@ public class LogicalChannelNode extends OMEXMLNode
 	}
 
 	// Attribute which is an OME XML "ID"
-	public FilterNode getSecondaryExcitationFilter()
+	public FilterNode getSecondaryExcitationFilterNode()
 	{
 		return (FilterNode)
 			getAttrReferencedNode("Filter", "SecondaryExcitationFilter");
+	}
+
+	public String getSecondaryExcitationFilter()
+	{
+		return getStringAttribute("SecondaryExcitationFilter");
+	}
+
+	public void setSecondaryExcitationFilter(String secondaryExcitationFilter)
+	{
+		setAttribute("SecondaryExcitationFilter", secondaryExcitationFilter);
 	}
 
 	// Attribute
@@ -158,10 +168,20 @@ public class LogicalChannelNode extends OMEXMLNode
 	}
 
 	// Attribute which is an OME XML "ID"
-	public FilterNode getSecondaryEmissionFilter()
+	public FilterNode getSecondaryEmissionFilterNode()
 	{
 		return (FilterNode)
 			getAttrReferencedNode("Filter", "SecondaryEmissionFilter");
+	}
+
+	public String getSecondaryEmissionFilter()
+	{
+		return getStringAttribute("SecondaryEmissionFilter");
+	}
+
+	public void setSecondaryEmissionFilter(String secondaryEmissionFilter)
+	{
+		setAttribute("SecondaryEmissionFilter", secondaryEmissionFilter);
 	}
 
 	// *** WARNING *** Unhandled or skipped property ID

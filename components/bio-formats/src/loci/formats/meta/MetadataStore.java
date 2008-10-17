@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 6:13:57 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -381,6 +381,13 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    */
   void setImageCreationDate(String creationDate, int imageIndex);
+
+  /**
+   * For a particular Image, sets default pixels set for the image.
+   * @param defaultPixels default pixels set for the image
+   * @param imageIndex index of the Image
+   */
+  void setImageDefaultPixels(String defaultPixels, int imageIndex);
 
   /**
    * For a particular Image, sets the full description of the image.

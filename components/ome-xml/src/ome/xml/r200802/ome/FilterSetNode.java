@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
+ * Created by curtis via xsd-fu on 2008-10-16 06:18:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -78,17 +78,37 @@ public class FilterSetNode extends FilterSpecNode
 	// -- FilterSet API methods --
 
 	// Attribute which is an OME XML "ID"
-	public FilterNode getExFilterRef()
+	public FilterNode getExFilterRefNode()
 	{
 		return (FilterNode)
 			getAttrReferencedNode("Filter", "ExFilterRef");
 	}
 
+	public String getExFilterRef()
+	{
+		return getStringAttribute("ExFilterRef");
+	}
+
+	public void setExFilterRef(String exFilterRef)
+	{
+		setAttribute("ExFilterRef", exFilterRef);
+	}
+
 	// Attribute which is an OME XML "ID"
-	public FilterNode getEmFilterRef()
+	public FilterNode getEmFilterRefNode()
 	{
 		return (FilterNode)
 			getAttrReferencedNode("Filter", "EmFilterRef");
+	}
+
+	public String getEmFilterRef()
+	{
+		return getStringAttribute("EmFilterRef");
+	}
+
+	public void setEmFilterRef(String emFilterRef)
+	{
+		setAttribute("EmFilterRef", emFilterRef);
 	}
 
 	// Virtual, inferred back reference OTF_BackReference
@@ -103,10 +123,20 @@ public class FilterSetNode extends FilterSpecNode
 	}
 
 	// Attribute which is an OME XML "ID"
-	public DichroicNode getDichroicRef()
+	public DichroicNode getDichroicRefNode()
 	{
 		return (DichroicNode)
 			getAttrReferencedNode("Dichroic", "DichroicRef");
+	}
+
+	public String getDichroicRef()
+	{
+		return getStringAttribute("DichroicRef");
+	}
+
+	public void setDichroicRef(String dichroicRef)
+	{
+		setAttribute("DichroicRef", dichroicRef);
 	}
 
 	// Virtual, inferred back reference LogicalChannel_BackReference

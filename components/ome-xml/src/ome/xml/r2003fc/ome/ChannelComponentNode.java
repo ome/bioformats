@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-16 05:38:12-0500
+ * Created by curtis via xsd-fu on 2008-10-16 06:18:35-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -99,10 +99,20 @@ public class ChannelComponentNode extends OMEXMLNode
 	}
 
 	// Attribute which is an OME XML "ID"
-	public PixelsNode getPixels()
+	public PixelsNode getPixelsNode()
 	{
 		return (PixelsNode)
 			getAttrReferencedNode("Pixels", "Pixels");
+	}
+
+	public String getPixels()
+	{
+		return getStringAttribute("Pixels");
+	}
+
+	public void setPixels(String pixels)
+	{
+		setAttribute("Pixels", pixels);
 	}
 
 	// -- OMEXMLNode API methods --

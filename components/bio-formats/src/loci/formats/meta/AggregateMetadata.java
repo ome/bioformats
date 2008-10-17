@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 6:13:57 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -910,6 +910,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getImageCreationDate(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getImageDefaultPixels(int) */
+  public String getImageDefaultPixels(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getImageDefaultPixels(imageIndex);
         if (result != null) return result;
       }
     }
@@ -2991,6 +3004,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setImageCreationDate(creationDate, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setImageDefaultPixels(String, int) */
+  public void setImageDefaultPixels(String defaultPixels, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setImageDefaultPixels(defaultPixels, imageIndex);
       }
     }
   }

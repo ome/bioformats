@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-16 05:38:12-0500
+ * Created by curtis via xsd-fu on 2008-10-16 06:18:35-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -113,10 +113,20 @@ public class ImageNode extends OMEXMLNode
 	}
 
 	// Attribute which is an OME XML "ID"
-	public PixelsNode getDefaultPixels()
+	public PixelsNode getDefaultPixelsNode()
 	{
 		return (PixelsNode)
 			getAttrReferencedNode("Pixels", "DefaultPixels");
+	}
+
+	public String getDefaultPixels()
+	{
+		return getStringAttribute("DefaultPixels");
+	}
+
+	public void setDefaultPixels(String defaultPixels)
+	{
+		setAttribute("DefaultPixels", defaultPixels);
 	}
 
 	// Element which is not complex (has only a text node)

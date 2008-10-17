@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 6:13:57 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -369,6 +369,12 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    */
   String getImageCreationDate(int imageIndex);
+
+  /**
+   * For a particular Image, gets default pixels set for the image.
+   * @param imageIndex index of the Image
+   */
+  String getImageDefaultPixels(int imageIndex);
 
   /**
    * For a particular Image, gets the full description of the image.

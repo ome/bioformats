@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 6:13:57 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -489,6 +489,12 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   public String getImageCreationDate(int imageIndex) {
     ImageNode image = getImageNode(imageIndex, false);
     return image == null ? null : image.getCreationDate();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getImageDefaultPixels(int) */
+  public String getImageDefaultPixels(int imageIndex) {
+    ImageNode image = getImageNode(imageIndex, false);
+    return image == null ? null : image.getDefaultPixels();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getImageDescription(int) */
@@ -1567,6 +1573,13 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (creationDate == null) return;
     ImageNode imageNode = getImageNode(imageIndex, true);
     imageNode.setCreationDate(creationDate);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setImageDefaultPixels(String, int) */
+  public void setImageDefaultPixels(String defaultPixels, int imageIndex) {
+    if (defaultPixels == null) return;
+    ImageNode imageNode = getImageNode(imageIndex, true);
+    imageNode.setDefaultPixels(defaultPixels);
   }
 
   /* @see loci.formats.meta.MetadataStore#setImageDescription(String, int) */

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 4:50:42 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 16, 2008 6:13:57 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -358,6 +358,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataRetrieve#getImageCreationDate(int) */
   public String getImageCreationDate(int imageIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getImageDefaultPixels(int) */
+  public String getImageDefaultPixels(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getImageDescription(int) */
@@ -1100,6 +1104,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setImageCreationDate(String, int) */
   public void setImageCreationDate(String creationDate, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setImageDefaultPixels(String, int) */
+  public void setImageDefaultPixels(String defaultPixels, int imageIndex) {
   }
 
   /* @see MetadataStore#setImageDescription(String, int) */

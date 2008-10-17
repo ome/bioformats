@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via xsd-fu on 2008-10-16 05:38:13-0500
+ * Created by curtis via xsd-fu on 2008-10-16 06:18:36-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,10 +98,20 @@ public class ImageNode extends OMEXMLNode
 	}
 
 	// Attribute which is an OME XML "ID"
-	public PixelsNode getDefaultPixels()
+	public PixelsNode getDefaultPixelsNode()
 	{
 		return (PixelsNode)
 			getAttrReferencedNode("Pixels", "DefaultPixels");
+	}
+
+	public String getDefaultPixels()
+	{
+		return getStringAttribute("DefaultPixels");
+	}
+
+	public void setDefaultPixels(String defaultPixels)
+	{
+		setAttribute("DefaultPixels", defaultPixels);
 	}
 
 	// Element which is not complex (has only a text node)
@@ -255,10 +265,20 @@ public class ImageNode extends OMEXMLNode
 	}
 
 	// Attribute which is an OME XML "ID"
-	public PixelsNode getAcquiredPixels()
+	public PixelsNode getAcquiredPixelsNode()
 	{
 		return (PixelsNode)
 			getAttrReferencedNode("Pixels", "AcquiredPixels");
+	}
+
+	public String getAcquiredPixels()
+	{
+		return getStringAttribute("AcquiredPixels");
+	}
+
+	public void setAcquiredPixels(String acquiredPixels)
+	{
+		setAttribute("AcquiredPixels", acquiredPixels);
 	}
 
 	// *** WARNING *** Unhandled or skipped property ID

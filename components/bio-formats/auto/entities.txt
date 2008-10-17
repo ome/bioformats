@@ -56,8 +56,9 @@ description = the full description of the image
 type = String
 description = label reference for the associated instrument
 
-#[Image DefaultPixels]
-#TODO - need Image.setDefaultPixels in OME-XML Java library
+[Image DefaultPixels]
+type = String
+description = default pixels set for the image
 
 ## Pixels ##
 
