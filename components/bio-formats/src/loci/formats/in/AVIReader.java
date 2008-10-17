@@ -541,9 +541,9 @@ public class AVIReader extends FormatReader {
   private byte[] uncompress(int no, byte[] buf)
     throws FormatException, IOException
   {
-    byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()];
-    in.read(b);
     if (bmpCompression == MSRLE) {
+      byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()];
+      in.read(b);
       Object[] options = new Object[2];
       options[1] = (lastImageNo == no - 1) ? lastImage : null;
       options[0] = new int[] {getSizeX(), getSizeY()};
@@ -560,7 +560,7 @@ public class AVIReader extends FormatReader {
       options[3] = (lastImageNo == no - 1) ? lastImage : null;
 
       MSVideoCodec codec = new MSVideoCodec();
-      buf = codec.decompress(b, options);
+      buf = codec.decompress(in, options);
       lastImage = buf;
       lastImageNo = no;
     }

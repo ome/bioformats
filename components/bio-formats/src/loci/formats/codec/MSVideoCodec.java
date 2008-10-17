@@ -56,6 +56,8 @@ public class MSVideoCodec extends BaseCodec implements Codec {
     int height = ((Integer) optionsArray[2]).intValue();
     byte[] lastImage = (byte[]) optionsArray[3];
 
+    in.order(true);
+
     int row = 0;
     int column = 0;
 
@@ -70,7 +72,7 @@ public class MSVideoCodec extends BaseCodec implements Codec {
       }
       short a = (short) (in.read() & 0xff);
       short b = (short) (in.read() & 0xff);
-      if (a == 0 && b == 0 && in.getFilePointer() >= in.read()) break;
+      if (a == 0 && b == 0 && in.getFilePointer() >= in.length()) break;
       if (b >= 0x84 && b < 0x88) {
         // indicates that we are skipping some blocks
 
