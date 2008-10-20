@@ -481,7 +481,7 @@ public final class ImageTools {
   }
 
   /** Creates an image with the given DataBuffer. */
-  private static BufferedImage constructImage(int c, int type, int w,
+  public static BufferedImage constructImage(int c, int type, int w,
     int h, boolean interleaved, boolean banded, DataBuffer buffer)
   {
     ColorModel colorModel = makeColorModel(c, type);

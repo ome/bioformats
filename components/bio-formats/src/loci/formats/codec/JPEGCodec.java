@@ -32,8 +32,7 @@ import javax.imageio.stream.ImageInputStream;
 import loci.formats.*;
 
 /**
- * This class implements JPEG decompression. Compression is not yet
- * implemented.
+ * This class implements JPEG compression and decompression.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/JPEGCodec.java">Trac</a>,
@@ -45,8 +44,21 @@ public class JPEGCodec extends BaseCodec implements Codec {
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
   {
-    // TODO: Add compression support.
-    throw new FormatException("JPEG Compression not currently supported");
+    Object[] o = (Object[]) options;
+    boolean interleaved = ((Boolean) o[0]).booleanValue();
+    boolean littleEndian = ((Boolean) o[1]).booleanValue();
+
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    BufferedImage img = ImageTools.makeImage(data, x, y, dims[0],
+      interleaved, dims[1], littleEndian);
+
+    try {
+      ImageIO.write(img, "jpeg", out);
+    }
+    catch (IOException e) {
+      throw new FormatException("Could not write JPEG data", e);
+    }
+    return out.toByteArray();
   }
 
   /* @see Codec#decompress(RandomAccessStream, Object) */

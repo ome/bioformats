@@ -128,6 +128,10 @@ public class ND2Reader extends FormatReader {
       byte[] tmp = new JPEG2000Codec().decompress(in, new Object[] {
         new Boolean(isLittleEndian()),
         new Boolean(isInterleaved()), new Long(maxFP)});
+      for (int row=y; row<h+y; row++) {
+        System.arraycopy(tmp, pixel * row * getSizeX(), buf,
+          pixel * w * (row - y), pixel * w);
+      }
       System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
       tmp = null;
     }
@@ -530,7 +534,7 @@ public class ND2Reader extends FormatReader {
           x = in.readInt();
           c = in.readShort();
           type = in.readInt();
-          if (type == 0xf070100) type = FormatTools.UINT16;
+          if (type == 0xf070100 || type == 0xf070000) type = FormatTools.UINT16;
           else type = FormatTools.UINT8;
         }
       }

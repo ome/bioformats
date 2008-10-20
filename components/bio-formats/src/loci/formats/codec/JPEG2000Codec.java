@@ -23,16 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.awt.image.*;
 import java.io.*;
 import java.util.Iterator;
-import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.ImageIO;
 import javax.imageio.spi.*;
+import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import loci.formats.*;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * This class implements JPEG 2000 decompression.  Compression is not yet
@@ -48,15 +47,46 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
   private static final String NO_J2K_MSG =
     "The JAI Image I/O Tools are required to read JPEG-2000 files.  Please " +
-    "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats.html";
+    "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats-library.html";
 
   private static final String J2K_READER =
     "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
+
+  private static final String J2K_WRITER =
+    "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriter";
 
   // -- Static fields --
 
   private static boolean noJ2k = false;
   private static ReflectedUniverse r = createReflectedUniverse();
+
+  private static void registerClass(String className) {
+    String spi = className + "Spi";
+    Class spiClass = null;
+    try {
+      spiClass = Class.forName(spi);
+    }
+    catch (ClassNotFoundException exc) {
+      LogTools.trace(exc);
+      noJ2k = true;
+    }
+    catch (NoClassDefFoundError err) {
+      LogTools.trace(err);
+      noJ2k = true;
+    }
+    catch (RuntimeException exc) {
+      // HACK: workaround for bug in Apache Axis2
+      String msg = exc.getMessage();
+      if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
+      LogTools.trace(exc);
+      noJ2k = true;
+    }
+    IIORegistry registry = IIORegistry.getDefaultInstance();
+    if (spiClass != null) {
+      Iterator providers = ServiceRegistry.lookupProviders(spiClass);
+      registry.registerServiceProviders(providers);
+    }
+  }
 
   private static ReflectedUniverse createReflectedUniverse() {
     // NB: ImageJ does not access the jai_imageio classes with the normal
@@ -69,39 +99,26 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     ReflectedUniverse ru = null;
     try {
       // register J2KImageReader with IIORegistry
-      String j2kReaderSpi = J2K_READER + "Spi";
-      Class j2kSpiClass = null;
-      try {
-        j2kSpiClass = Class.forName(j2kReaderSpi);
-      }
-      catch (ClassNotFoundException exc) {
-        LogTools.trace(exc);
-        noJ2k = true;
-      }
-      catch (NoClassDefFoundError err) {
-        LogTools.trace(err);
-        noJ2k = true;
-      }
-      catch (RuntimeException exc) {
-        // HACK: workaround for bug in Apache Axis2
-        String msg = exc.getMessage();
-        if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-        LogTools.trace(exc);
-        noJ2k = true;
-      }
+      registerClass(J2K_READER);
+
       IIORegistry registry = IIORegistry.getDefaultInstance();
-      if (j2kSpiClass != null) {
-        Iterator providers = ServiceRegistry.lookupProviders(j2kSpiClass);
-        registry.registerServiceProviders(providers);
-      }
 
       // obtain J2KImageReaderSpi instance from IIORegistry
+      Class j2kSpiClass = Class.forName(J2K_READER + "Spi");
       Object j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
       ru = new ReflectedUniverse();
 
       ru.exec("import " + J2K_READER);
       ru.setVar("j2kSpi", j2kSpi);
       ru.exec("j2kReader = new J2KImageReader(j2kSpi)");
+
+      // register J2KImageWriter with IIORegistry
+      registerClass(J2K_WRITER);
+      j2kSpiClass = Class.forName(J2K_WRITER + "Spi");
+      j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
+      ru.exec("import " + J2K_WRITER);
+      ru.setVar("j2kSpi", j2kSpi);
+      ru.exec("j2kWriter = new J2KImageWriter(j2kSpi)");
     }
     catch (Throwable t) {
       noJ2k = true;
@@ -116,8 +133,73 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
   public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
     throws FormatException
   {
-    // TODO
-    throw new FormatException("JPEG 2000 compression not currently supported");
+    Object[] o = (Object[]) options;
+    boolean interleaved = ((Boolean) o[0]).booleanValue();
+    boolean littleEndian = ((Boolean) o[1]).booleanValue();
+
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+    BufferedImage img = null;
+
+    int next = 0;
+
+    if (dims[1] == 1) {
+      byte[][] b = new byte[dims[0]][x * y];
+      if (interleaved) {
+        for (int q=0; q<x*y; q++) {
+          for (int c=0; c<dims[0]; c++) {
+            b[c][q] = data[next++];
+          }
+        }
+      }
+      else {
+        for (int c=0; c<dims[0]; c++) {
+          System.arraycopy(data, c * x * y, b[c], 0, x * y);
+        }
+      }
+      DataBuffer buffer = new DataBufferByte(b, x * y);
+      img = ImageTools.constructImage(b.length, DataBuffer.TYPE_BYTE, x, y,
+        false, true, buffer);
+    }
+    else if (dims[1] == 2) {
+      short[][] s = new short[dims[0]][x * y];
+      if (interleaved) {
+        for (int q=0; q<x*y; q++) {
+          for (int c=0; c<dims[0]; c++) {
+            s[c][q] = DataTools.bytesToShort(data, next, 2, littleEndian);
+            next += 2;
+          }
+        }
+      }
+      else {
+        for (int c=0; c<dims[0]; c++) {
+          for (int q=0; q<x*y; q++) {
+            s[c][q] = DataTools.bytesToShort(data, next, 2, littleEndian);
+            next += 2;
+          }
+        }
+      }
+      DataBuffer buffer = new DataBufferUShort(s, x * y);
+      img = ImageTools.constructImage(s.length, DataBuffer.TYPE_USHORT, x, y,
+        false, true, buffer);
+    }
+
+    try {
+      ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+      r.setVar("img", img);
+      r.setVar("out", ios);
+      r.exec("j2kWriter.setOutput(out)");
+      r.exec("j2kWriter.write(img)");
+      ios.close();
+    }
+    catch (ReflectException e) {
+      throw new FormatException("Could not compress JPEG-2000 data.", e);
+    }
+    catch (IOException e) {
+      throw new FormatException("Could not compress JPEG-2000 data.", e);
+    }
+
+    return out.toByteArray();
   }
 
   /* @see Codec#decompress(RandomAccessStream, Object) */
