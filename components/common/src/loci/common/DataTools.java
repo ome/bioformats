@@ -743,10 +743,14 @@ public final class DataTools {
       parser.parse(stream, handler);
     }
     catch (ParserConfigurationException exc) {
-      throw new IOException(exc);
+      IOException e = new IOException();
+      e.setStackTrace(exc.getStackTrace());
+      throw e;
     }
     catch (SAXException exc) {
-      throw new IOException(exc);
+      IOException e = new IOException();
+      e.setStackTrace(exc.getStackTrace());
+      throw e;
     }
   }
 
@@ -758,10 +762,14 @@ public final class DataTools {
       parser.parse(new ByteArrayInputStream(xml), handler);
     }
     catch (ParserConfigurationException exc) {
-      throw new IOException(exc);
+      IOException e = new IOException();
+      e.setStackTrace(exc.getStackTrace());
+      throw e;
     }
     catch (SAXException exc) {
-      throw new IOException(exc);
+      IOException e = new IOException();
+      e.setStackTrace(exc.getStackTrace());
+      throw e;
     }
   }
 
