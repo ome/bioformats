@@ -386,11 +386,11 @@ public final class SampleTest {
     checkNull("Image LogicalChannel SamplesPerPixel",
       imageLogicalChannelSamplesPerPixel);
     FilterNode imageLogicalChannelSecondaryEmissionFilter =
-      imageLogicalChannel.getSecondaryEmissionFilter();
+      imageLogicalChannel.getSecondaryEmissionFilterNode();
     checkNull("Image LogicalChannel SecondaryEmissionFilter",
       imageLogicalChannelSecondaryEmissionFilter);
     FilterNode imageLogicalChannelSecondaryExcitationFilter =
-      imageLogicalChannel.getSecondaryExcitationFilter();
+      imageLogicalChannel.getSecondaryExcitationFilterNode();
     checkNull("Image LogicalChannel SecondaryExcitationFilter",
       imageLogicalChannelSecondaryExcitationFilter);
     String imageLogicalChannelIlluminationType =
