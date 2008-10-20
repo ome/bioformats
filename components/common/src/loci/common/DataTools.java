@@ -744,12 +744,12 @@ public final class DataTools {
     }
     catch (ParserConfigurationException exc) {
       IOException e = new IOException();
-      e.setStackTrace(exc.getStackTrace());
+      e.initCause(exc);
       throw e;
     }
     catch (SAXException exc) {
       IOException e = new IOException();
-      e.setStackTrace(exc.getStackTrace());
+      e.initCause(exc);
       throw e;
     }
   }
@@ -763,12 +763,12 @@ public final class DataTools {
     }
     catch (ParserConfigurationException exc) {
       IOException e = new IOException();
-      e.setStackTrace(exc.getStackTrace());
+      e.initCause(exc);
       throw e;
     }
     catch (SAXException exc) {
       IOException e = new IOException();
-      e.setStackTrace(exc.getStackTrace());
+      e.initCause(exc);
       throw e;
     }
   }
