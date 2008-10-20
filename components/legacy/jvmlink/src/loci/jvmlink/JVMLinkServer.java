@@ -38,7 +38,7 @@ import java.net.*;
 /**
  * Java server for JVMLink. Clients can connect to the server and issue
  * arbitrary Java commands according to the legal syntax of the
- * {@link loci.formats.ReflectedUniverse} class.
+ * {@link loci.common.ReflectedUniverse} class.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/jvmlink/src/loci/jvmlink/JVMLinkServer.java">Trac</a>,
