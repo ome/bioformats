@@ -399,6 +399,7 @@ Apache XML-RPC
     <javadoc sourcepath="${merged-docs.source}"
       classpath="${merged-docs.classpath}"
       destdir="${merged-docs.dir}/api"
+      maxmemory="${merged-docs.memory}"
       author="true" version="true" use="true"
       nodeprecated="true" windowtitle="LOCI Software API">
       <doctitle><![CDATA[<h1>LOCI Software</h1>]]></doctitle>
