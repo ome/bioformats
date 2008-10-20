@@ -25,9 +25,7 @@ package loci.formats.gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -52,7 +50,11 @@ public class XMLWindow extends JFrame {
 
   private Document doc;
 
-  // -- Constructor --
+  // -- Constructors --
+
+  public XMLWindow() {
+    super();
+  }
 
   public XMLWindow(String title) {
     super(title);
@@ -122,10 +124,25 @@ public class XMLWindow extends JFrame {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    String filename = args[0];
-    XMLWindow xmlWindow = new XMLWindow("XML Window - " + filename);
+    XMLWindow xmlWindow = new XMLWindow();
     xmlWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    xmlWindow.setXML(new File(filename));
+    if (args.length > 0) {
+      String filename = args[0];
+      xmlWindow.setXML(new File(filename));
+      xmlWindow.setTitle("XML Window - " + filename);
+    }
+    else {
+      BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+      StringBuffer sb = new StringBuffer();
+      while (true) {
+        String line = in.readLine();
+        if (line == null) break;
+        sb.append(line);
+        sb.append("\n");
+      }
+      xmlWindow.setXML(sb.toString());
+      xmlWindow.setTitle("XML Window - <stdin>");
+    }
     xmlWindow.setLocation(200, 200);
     xmlWindow.setVisible(true);
   }
