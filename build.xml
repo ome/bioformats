@@ -10,7 +10,7 @@ This build file handles the following components.
 For more information on a component, see the
 build.properties file in that component's subtree.
 
-LOCI Common library
+LOCI Common
     A library containing common I/O and reflection classes
     -=-
     JAR file:      loci-common.jar
@@ -31,7 +31,7 @@ Bio-Formats
     -=-
     JAR file:      bio-formats.jar
     Path:          components/bio-formats
-    Project deps:  OME-XML Java library,
+    Project deps:  LOCI Common, OME-XML Java library,
                    Apache Jakarta POI (reflected), MDB Tools (reflected)
     License:       GPL
 
@@ -42,7 +42,7 @@ LOCI Plugins for ImageJ
     -=-
     JAR file:      loci_plugins.jar
     Path:          components/loci-plugins
-    Project deps:  Bio-Formats
+    Project deps:  LOCI Common, Bio-Formats
     License:       GPL
 
 OME I/O
@@ -50,7 +50,7 @@ OME I/O
     -=-
     JAR file:      ome-io.jar
     Path:          components/ome-io
-    Project deps:  Bio-Formats
+    Project deps:  LOCI Common, Bio-Formats
     License:       GPL
 
 OME Plugins for ImageJ
@@ -59,7 +59,7 @@ OME Plugins for ImageJ
     -=-
     JAR file:      ome_plugins.jar
     Path:          components/ome-plugins
-    Project deps:  LOCI Plugins, OME I/O
+    Project deps:  LOCI Common, Bio-Formats, LOCI Plugins, OME I/O
     License:       GPL
 
 VisBio
@@ -67,7 +67,7 @@ VisBio
     -=-
     JAR file:      visbio.jar
     Path:          components/visbio
-    Project deps:  Bio-Formats, OME I/O, Apache Jakarta POI
+    Project deps:  LOCI Common, Bio-Formats, OME I/O, Apache Jakarta POI
     License:       GPL
 
 SLIM Plotter
@@ -76,7 +76,7 @@ SLIM Plotter
     -=-
     JAR file:      SlimPlotter.jar
     Path:          components/slim-plotter
-    Project deps:  Bio-Formats, VisBio
+    Project deps:  LOCI Common, Bio-Formats, VisBio
     License:       GPL
 
 WiscScan Flow Cytometry
@@ -100,7 +100,7 @@ LOCI testing framework
     -=-
     JAR file:      loci-testing-framework.jar
     Path:          components/test-suite
-    Project deps:  Bio-Formats
+    Project deps:  LOCI Common, Bio-Formats
     License:       BSD
 
 ===============================================================================
@@ -112,7 +112,7 @@ JVMLink
     -=-
     JAR file:      jvmlink.jar
     Path:          components/legacy/jvmlink
-    Project deps:  Bio-Formats
+    Project deps:  LOCI Common
     License:       BSD
 
 Multi-LUT
@@ -129,7 +129,7 @@ OME Notes
     -=-
     JAR file:      ome-notes.jar
     Path:          components/legacy/ome-notes
-    Project deps:  Bio-Formats
+    Project deps:  LOCI Common, Bio-Formats
     License:       LGPL
 
 OME Metadata Editor
@@ -137,7 +137,7 @@ OME Metadata Editor
     -=-
     JAR file:      ome-editor.jar
     Path:          components/legacy/ome-editor
-    Project deps:  Bio-Formats
+    Project deps:  LOCI Common, Bio-Formats
     License:       LGPL
 
 ===============================================================================
@@ -147,8 +147,8 @@ Apache Jakarta POI
     Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
     -=-
     JAR file:     poi-loci.jar
-    Path:         components/poi
-    Project deps: (None)
+    Path:         components/forks/poi
+    Project deps: LOCI Common
     License:      Apache
     Project URL:  http://jakarta.apache.org/poi/
     Notes:        based on poi-2.5.1-final-20040804.jar,
@@ -161,7 +161,7 @@ MDB Tools (Java port)
     Java API to handle Microsoft MDB format (Access)
     -=-
     JAR file:     mdbtools-java.jar
-    Path:         components/mdbtools
+    Path:         components/forks/mdbtools
     Project deps: (None)
     License:      LGPL
     Project URLs: http://mdbtools.sourceforge.net/
@@ -172,7 +172,7 @@ JAI ImageIO
     Java API to handle JPEG and JPEG2000 files
     -=-
     JAR file:     jai_imageio.jar
-    Path:         components/jai
+    Path:         components/forks/jai
     Project deps: (None)
     License:      BSD
     Project URLs: http://jai-imageio.dev.java.net/
@@ -439,22 +439,22 @@ Apache XML-RPC
 
   <target name="style-jai"
     description="check source code style for JAI ImageIO library">
-    <ant dir="components/jai" target="jai.style"/>
+    <ant dir="components/forks/jai" target="jai.style"/>
   </target>
 
   <target name="compile-jai"
     description="compile classes for JAI ImageIO library">
-    <ant dir="components/jai" target="jai.compile"/>
+    <ant dir="components/forks/jai" target="jai.compile"/>
   </target>
 
   <target name="jar-jai"
     description="generate JAR file for JAI ImageIO library">
-    <ant dir="components/jai" target="jai.jar"/>
+    <ant dir="components/forks/jai" target="jai.jar"/>
   </target>
 
   <target name="clean-jai"
     description="remove build files for JAI ImageIO library">
-    <ant dir="components/jai" target="jai.clean"/>
+    <ant dir="components/forks/jai" target="jai.clean"/>
   </target>
 
   <!-- Apache POI Java library -->
@@ -462,47 +462,47 @@ Apache XML-RPC
   <target name="style-poi-loci"
     depends="style-common"
     description="check source code style for Apache POI library">
-    <ant dir="components/poi" target="poi-loci.style"/>
+    <ant dir="components/forks/poi" target="poi-loci.style"/>
   </target>
 
   <target name="compile-poi-loci"
     depends="compile-common"
     description="compile classes for Apache POI library">
-    <ant dir="components/poi" target="poi-loci.compile"/>
+    <ant dir="components/forks/poi" target="poi-loci.compile"/>
   </target>
 
   <target name="jar-poi-loci"
     depends="jar-common"
     description="generate JAR file for Apache POI library">
-    <ant dir="components/poi" target="poi-loci.jar"/>
+    <ant dir="components/forks/poi" target="poi-loci.jar"/>
   </target>
 
   <target name="clean-poi-loci"
     depends="clean-common"
     description="remove build files for Apache POI library">
-    <ant dir="components/poi" target="poi-loci.clean"/>
+    <ant dir="components/forks/poi" target="poi-loci.clean"/>
   </target>
 
   <!-- MDB Tools Java library -->
 
   <target name="style-mdbtools"
     description="check source code style for MDB Tools Java library">
-    <ant dir="components/mdbtools" target="mdbtools.style"/>
+    <ant dir="components/forks/mdbtools" target="mdbtools.style"/>
   </target>
 
   <target name="compile-mdbtools"
     description="compile classes for MDB Tools Java library">
-    <ant dir="components/mdbtools" target="mdbtools.compile"/>
+    <ant dir="components/forks/mdbtools" target="mdbtools.compile"/>
   </target>
 
   <target name="jar-mdbtools"
     description="generate JAR file for MDB Tools Java library">
-    <ant dir="components/mdbtools" target="mdbtools.jar"/>
+    <ant dir="components/forks/mdbtools" target="mdbtools.jar"/>
   </target>
 
   <target name="clean-mdbtools"
     description="remove build files for MDB Tools Java library">
-    <ant dir="components/mdbtools" target="mdbtools.clean"/>
+    <ant dir="components/forks/mdbtools" target="mdbtools.clean"/>
   </target>
 
   <!-- OME-XML Java library -->
@@ -866,7 +866,8 @@ Apache XML-RPC
 
   <!-- Tool bundles -->
 
-  <target name="tools" depends="jar-jai, jar-poi-loci, jar-mdbtools,
+  <target name="tools" depends="jar-common,
+    jar-jai, jar-poi-loci, jar-mdbtools,
     jar-ome-xml, jar-formats, jar-loci-plugins"
     description="create JAR file encompassing several LOCI tools">
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
