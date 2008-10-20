@@ -43,7 +43,7 @@ package loci.formats.meta;
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class DummyMetadata implements MetadataRetrieve, MetadataStore {
+public class DummyMetadata implements IMetadata {
 
   // -- MetadataRetrieve API methods --
 

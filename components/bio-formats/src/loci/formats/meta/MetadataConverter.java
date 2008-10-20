@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 20, 2008 12:02:52 PM PDT
+ * Created by curtis via MetadataAutogen on Oct 20, 2008 1:16:25 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -34,10 +34,12 @@ package loci.formats.meta;
 /**
  * A utility class containing a method for piping a source
  * {@link MetadataRetrieve} object into a destination {@link MetadataStore}.
- * This technique allows non-OME-XML-based metadata stores (such as OMERO's
- * metadata store implementation) to be easily converted to another
- * implementation, particularly {@link loci.formats.ome.OMEXMLMetadata},
- * which allows generation of OME-XML from OMERO metadata.
+ *
+ * <p>This technique allows conversion between two different storage media.
+ * For example, it can be used to convert an <code>OMEROMetadataStore</code>
+ * (OMERO's metadata store implementation) into an
+ * {@link loci.formats.ome.OMEXMLMetadata}, thus generating OME-XML from
+ * information in an OMERO database.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/meta/MetadataConverter.java">Trac</a>,

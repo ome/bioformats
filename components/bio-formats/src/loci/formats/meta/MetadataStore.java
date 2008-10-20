@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 20, 2008 12:02:52 PM PDT
+ * Created by curtis via MetadataAutogen on Oct 20, 2008 1:16:25 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -35,9 +35,22 @@ package loci.formats.meta;
  * A proxy whose responsibility it is to marshal biological image data into a
  * particular storage medium.
  *
- * The <code>MetadataStore</code> interface encompasses the basic metadata that
+ * <p>The <code>MetadataStore</code> interface encompasses the metadata that
  * any specific storage medium (file, relational database, etc.) should be
  * expected to store into its backing data model.
+ *
+ * <p>The <code>MetadataStore</code> interface goes hand in hand with the
+ * <code>MetadataRetrieve</code> interface. Essentially,
+ * <code>MetadataRetrieve</code> provides the "getter" methods for a storage
+ * medium, and <code>MetadataStore</code> provides the "setter" methods.
+ *
+ * <p>Since it often makes sense for a storage medium to implement both
+ * interfaces, there is also an {@link IMetadata} interface encompassing
+ * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
+ * reduces the need to cast between object types.
+ *
+ * <p>See {@link loci.formats.ome.OMEXMLMetadata} for an example
+ * implementation.
  *
  * <p><b>Important note:</b> It is strongly recommended that applications
  * (e.g., file format readers) using <code>MetadataStore</code> populate

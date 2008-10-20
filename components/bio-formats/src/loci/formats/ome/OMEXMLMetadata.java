@@ -26,8 +26,7 @@ package loci.formats.ome;
 import java.io.ByteArrayOutputStream;
 import javax.xml.transform.TransformerException;
 import loci.common.LogTools;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.IMetadata;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 import org.w3c.dom.*;
@@ -44,9 +43,7 @@ import org.w3c.dom.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public abstract class OMEXMLMetadata
-  implements MetadataStore, MetadataRetrieve
-{
+public abstract class OMEXMLMetadata implements IMetadata {
 
   // -- Constants --
 

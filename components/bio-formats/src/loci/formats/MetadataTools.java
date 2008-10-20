@@ -24,9 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import loci.common.*;
-import loci.formats.meta.MetadataConverter;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.*;
 
 /**
  * A utility class for working with metadata objects,
@@ -53,7 +51,7 @@ public final class MetadataTools {
    * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
    *   or null if the class is not available.
    */
-  public static MetadataStore createOMEXMLMetadata() {
+  public static IMetadata createOMEXMLMetadata() {
     return createOMEXMLMetadata(null);
   }
 
@@ -64,7 +62,7 @@ public final class MetadataTools {
    * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
    *   or null if the class is not available.
    */
-  public static MetadataStore createOMEXMLMetadata(String xml) {
+  public static IMetadata createOMEXMLMetadata(String xml) {
     return createOMEXMLMetadata(xml, null);
   }
 
@@ -81,9 +79,9 @@ public final class MetadataTools {
    * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
    *   or null if the class is not available.
    */
-  public static MetadataStore createOMEXMLMetadata(String xml, String version) {
+  public static IMetadata createOMEXMLMetadata(String xml, String version) {
     Object ome = null;
-    MetadataStore store = null;
+    IMetadata meta = null;
     ReflectedUniverse r = new ReflectedUniverse();
     try {
       ome = createOMEXMLRoot(xml);
@@ -104,15 +102,15 @@ public final class MetadataTools {
       String metaClass = "OMEXML" +
         version.replaceAll("[^\\w]", "") + "Metadata";
       r.exec("import loci.formats.ome." + metaClass);
-      store = (MetadataStore) r.exec("new " + metaClass + "()");
+      meta = (IMetadata) r.exec("new " + metaClass + "()");
 
       // attach OME root node to metadata object
-      if (ome != null) store.setRoot(ome);
+      if (ome != null) meta.setRoot(ome);
     }
     catch (ReflectException exc) {
       if (FormatHandler.debug) LogTools.trace(exc);
     }
-    return store;
+    return meta;
   }
 
   /**
@@ -353,7 +351,7 @@ public final class MetadataTools {
     else {
       // metadata store is incompatible; create an OME-XML
       // metadata object and copy it into the destination
-      MetadataRetrieve src = (MetadataRetrieve) createOMEXMLMetadata(xml);
+      IMetadata src = createOMEXMLMetadata(xml);
       convertMetadata(src, dest);
     }
   }

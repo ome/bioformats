@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.IMetadata;
 
 /**
  * OMETiffReader is the file format reader for
@@ -103,8 +103,7 @@ public class OMETiffReader extends FormatReader {
     Hashtable firstIFD = TiffTools.getFirstIFD(ras);
     ras.close();
     String xml = TiffTools.getComment(firstIFD);
-    MetadataRetrieve meta = (MetadataRetrieve)
-      MetadataTools.createOMEXMLMetadata(xml);
+    IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
     String currentUUID = meta.getUUID();
     MetadataTools.convertMetadata(meta, metadataStore);
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 20, 2008 12:02:52 PM PDT
+ * Created by curtis via MetadataAutogen on Oct 20, 2008 1:16:25 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -43,7 +43,7 @@ package loci.formats.meta;
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class DummyMetadata implements MetadataRetrieve, MetadataStore {
+public class DummyMetadata implements IMetadata {
 
   // -- MetadataRetrieve API methods --
 

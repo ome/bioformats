@@ -45,7 +45,7 @@ import java.util.List;
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
+public class AggregateMetadata implements IMetadata {
 
   // -- Fields --
 
