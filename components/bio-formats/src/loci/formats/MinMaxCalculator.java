@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.image.*;
 import java.io.IOException;
 import java.util.*;
+import loci.common.*;
 import loci.formats.meta.IMinMaxStore;
 
 /**

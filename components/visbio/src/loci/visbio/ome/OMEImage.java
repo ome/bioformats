@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import loci.common.ReflectException;
 import loci.formats.*;
 import loci.ome.io.OMECredentials;
 import loci.ome.io.OMEReader;

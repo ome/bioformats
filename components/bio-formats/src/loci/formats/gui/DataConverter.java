@@ -32,6 +32,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
+import loci.common.*;
 import loci.formats.*;
 
 /**

@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -189,7 +190,7 @@ public class LIFReader extends FormatReader {
     in.skipBytes(bytesToSkip * getSizeY() * no);
 
     if (bytesToSkip == 0) {
-      DataTools.readPlane(in, x, y, w, h, this, buf);
+      readPlane(in, x, y, w, h, buf);
     }
     else {
       in.skipBytes(y * getSizeX() * bpp + y * bytesToSkip);

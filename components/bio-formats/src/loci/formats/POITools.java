@@ -25,7 +25,7 @@ package loci.formats;
 
 import java.io.*;
 import java.util.*;
-import loci.formats.RandomAccessStream;
+import loci.common.*;
 
 /**
  * Utility methods for working with Microsoft OLE document format files.

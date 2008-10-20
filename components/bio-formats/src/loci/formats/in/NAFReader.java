@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -78,7 +79,7 @@ public class NAFReader extends FormatReader {
     int plane = getSizeX() * getSizeY() * bpp;
     in.seek(offsets[series] + no * plane);
 
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
     return buf;
   }
 

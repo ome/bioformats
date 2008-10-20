@@ -26,6 +26,7 @@ package loci.ome.io;
 import java.awt.Image;
 import java.io.*;
 import java.util.Hashtable;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 

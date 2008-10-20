@@ -23,6 +23,8 @@
  */
 package org.apache.poi.hssf.usermodel;
 
+import loci.common.*;
+
 import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;

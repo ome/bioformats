@@ -24,7 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.*;
-import loci.formats.*;
+import loci.common.*;
+import loci.formats.FormatException;
 
 /**
  * This class provides LuraWave decompression, using LuraWave's Java decoding

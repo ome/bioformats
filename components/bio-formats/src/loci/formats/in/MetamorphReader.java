@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.*;
 

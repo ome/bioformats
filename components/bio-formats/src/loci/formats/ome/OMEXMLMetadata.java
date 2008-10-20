@@ -25,7 +25,7 @@ package loci.formats.ome;
 
 import java.io.ByteArrayOutputStream;
 import javax.xml.transform.TransformerException;
-import loci.formats.LogTools;
+import loci.common.LogTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import ome.xml.DOMUtil;

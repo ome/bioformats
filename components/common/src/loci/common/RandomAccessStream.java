@@ -21,12 +21,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.common;
 
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
-import loci.formats.codec.CBZip2InputStream;
 
 /**
  * RandomAccessStream provides methods for "intelligent" reading of files and
@@ -34,8 +33,8 @@ import loci.formats.codec.CBZip2InputStream;
  * to prevent an IOException caused by too many open files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/RandomAccessStream.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/RandomAccessStream.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RandomAccessStream.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RandomAccessStream.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  */

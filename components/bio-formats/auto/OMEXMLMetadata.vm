@@ -37,7 +37,7 @@ import ${q.basePackage()}.ome.*;
 import ${q.basePackage()}.spw.*;
 #end##if spwImport
 import java.util.List;
-import loci.formats.LogTools;
+import loci.common.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML

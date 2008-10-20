@@ -37,6 +37,7 @@ import java.util.*;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import loci.common.*;
 import loci.formats.*;
 
 /**

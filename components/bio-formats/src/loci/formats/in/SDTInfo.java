@@ -26,7 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import loci.formats.RandomAccessStream;
+import loci.common.RandomAccessStream;
 
 /**
  * SDTInfo encapsulates the header information for

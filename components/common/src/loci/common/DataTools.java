@@ -3,38 +3,41 @@
 //
 
 /*
-LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
-Eric Kjellman and Brian Loranger.
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Library General Public License for more details.
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package org.apache.poi.util;
+package loci.common;
 
 import java.io.*;
 import java.text.*;
 import java.util.Date;
+import java.util.Hashtable;
+import javax.xml.parsers.*;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A utility class with convenience methods for
  * reading, writing and decoding words.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DataTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/DataTools.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/DataTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/DataTools.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
@@ -47,10 +50,18 @@ public final class DataTools {
   /** Timestamp formats. */
   public static final int UNIX = 0;  // January 1, 1970
   public static final int COBOL = 1;  // January 1, 1601
+  public static final int MICROSOFT = 2; // December 30, 1899
+  public static final int ZVI = 3;
 
   /** Milliseconds until UNIX epoch. */
   public static final long UNIX_EPOCH = 0;
   public static final long COBOL_EPOCH = 11644444800000L;
+  public static final long MICROSOFT_EPOCH = 2272060800000L;
+  public static final long ZVI_EPOCH = 2921084975759000L;
+
+  /** Factory for generating SAX parsers. */
+  public static final SAXParserFactory SAX_FACTORY =
+    SAXParserFactory.newInstance();
 
   // -- Static fields --
 
@@ -151,6 +162,32 @@ public final class DataTools {
   {
     byte[] b =  s.getBytes("UTF-8");
     out.write(b);
+  }
+
+  /** Writes a long to the given data output destination. */
+  public static void writeLong(DataOutput out, long v, boolean little)
+    throws IOException
+  {
+    if (little) {
+      out.write((int) (v & 0xff));
+      out.write((int) ((v >>> 8) & 0xff));
+      out.write((int) ((v >>> 16) & 0xff));
+      out.write((int) ((v >>> 24) & 0xff));
+      out.write((int) ((v >>> 32) & 0xff));
+      out.write((int) ((v >>> 40) & 0xff));
+      out.write((int) ((v >>> 48) & 0xff));
+      out.write((int) ((v >>> 56) & 0xff));
+    }
+    else {
+      out.write((int) ((v >>> 56) & 0xff));
+      out.write((int) ((v >>> 48) & 0xff));
+      out.write((int) ((v >>> 40) & 0xff));
+      out.write((int) ((v >>> 32) & 0xff));
+      out.write((int) ((v >>> 24) & 0xff));
+      out.write((int) ((v >>> 16) & 0xff));
+      out.write((int) ((v >>> 8) & 0xff));
+      out.write((int) (v & 0xff));
+    }
   }
 
   /** Writes an integer to the given data output destination. */
@@ -326,6 +363,17 @@ public final class DataTools {
   }
 
   /**
+   * Translates up to the first 4 bytes of a byte array to a float.
+   * If there are fewer than 4 bytes in the array, the MSBs are all
+   * assumed to be zero (regardless of endianness).
+   */
+  public static float bytesToFloat(byte[] bytes, int off, int len,
+    boolean little)
+  {
+    return Float.intBitsToFloat(bytesToInt(bytes, off, len, little));
+  }
+
+  /**
    * Translates up to the first len bytes of a byte array beyond the given
    * offset to a long. If there are fewer than 8 bytes in the array,
    * the MSBs are all assumed to be zero (regardless of endianness).
@@ -392,6 +440,53 @@ public final class DataTools {
    */
   public static long bytesToLong(short[] bytes, boolean little) {
     return bytesToLong(bytes, 0, 8, little);
+  }
+
+  /** 
+   * Translates the specified number of bytes of a byte array to a double.
+   * If there are fewer than 8 bytes in the array, the MSBs are all assumed
+   * to be zero (regardless of endianness).
+   */
+  public static double bytesToDouble(byte[] bytes, int offset, int len,
+     boolean little) 
+  {
+    return Double.longBitsToDouble(bytesToLong(bytes, offset, len, little));
+  }
+
+  /**
+   * Translates the short value into two bytes, and places them in a byte
+   * array at the given index.
+   */
+  public static void unpackShort(short value, byte[] buf, int ndx,
+    boolean little)
+  {
+    if (little) {
+      buf[ndx] = (byte) (value & 0xff);
+      buf[ndx + 1] = (byte) ((value >> 8) & 0xff);
+    }
+    else {
+      buf[ndx + 1] = (byte) (value & 0xff);
+      buf[ndx] = (byte) ((value >> 8) & 0xff);
+    }
+  }
+
+  /**
+   * Translates nBytes of the given long and places the result in the
+   * given byte array.
+   */
+  public static void unpackBytes(long value, byte[] buf, int ndx,
+    int nBytes, boolean little)
+  {
+    if (little) {
+      for (int i=0; i<nBytes; i++) {
+        buf[ndx + i] = (byte) ((value >> (8*i)) & 0xff);
+      }
+    }
+    else {
+      for (int i=0; i<nBytes; i++) {
+        buf[ndx + i] = (byte) ((value >> (8*(nBytes - i - 1))) & 0xff);
+      }
+    }
   }
 
   /** Convert a byte array to a signed byte array. */
@@ -487,6 +582,14 @@ public final class DataTools {
       ((long) swap((int) (x >> 32)) & 0xFFFFFFFFL));
   }
 
+  public static float swap(float x) {
+    return Float.intBitsToFloat(swap(Float.floatToIntBits(x)));
+  }
+
+  public static double swap(double x) {
+    return Double.longBitsToDouble(swap(Double.doubleToLongBits(x)));
+  }
+
   // -- Miscellaneous --
 
   /** Remove null bytes from a string. */
@@ -519,6 +622,64 @@ public final class DataTools {
     return sub1.equals(sub2) || sub1.startsWith(sub2) || sub2.startsWith(sub1);
   }
 
+  /** Remove unprintable characters from the given string. */
+  public static String sanitize(String s) {
+    if (s == null) return null;
+    StringBuffer buf = new StringBuffer(s);
+    for (int i=0; i<buf.length(); i++) {
+      char c = buf.charAt(i);
+      if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
+        buf = buf.deleteCharAt(i--);
+      }
+    }
+    return buf.toString();
+  }
+
+  /** Remove invalid characters from an XML string. */
+  public static String sanitizeXML(String s) {
+    for (int i=0; i<s.length(); i++) {
+      char c = s.charAt(i);
+      if (Character.isISOControl(c) || !Character.isDefined(c) || c > '~') {
+        s = s.replace(c, ' ');
+      }
+    }
+    return s;
+  }
+
+  /**
+   * Load a list of metadata tags and their corresponding descriptions.
+   */
+  public static Hashtable getMetadataTags(String baseClass, String file) {
+    try {
+      return getMetadataTags(Class.forName(baseClass), file);
+    }
+    catch (ClassNotFoundException e) { }
+    return null;
+  }
+
+  /**
+   * Load a list of metadata tags and their corresponding descriptions.
+   */
+  public static Hashtable getMetadataTags(Class c, String file) {
+    Hashtable h = new Hashtable();
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+      c.getResourceAsStream(file)));
+    String line = null, key = null, value = null;
+    while (true) {
+      try {
+        line = in.readLine();
+      }
+      catch (IOException e) {
+        line = null;
+      }
+      if (line == null) break;
+      key = line.substring(0, line.indexOf("=>")).trim();
+      value = line.substring(line.indexOf("=>") + 2).trim();
+      h.put(key, value);
+    }
+    return h;
+  }
+
   /**
    * Normalize the given float array so that the minimum value maps to 0.0
    * and the maximum value maps to 1.0.
@@ -547,9 +708,66 @@ public final class DataTools {
     return rtn;
   }
 
+  /**
+   * Normalize the given double array so that the minimum value maps to 0.0
+   * and the maximum value maps to 1.0.
+   */
+  public static double[] normalizeDoubles(double[] data) {
+    double[] rtn = new double[data.length];
+
+    double min = Double.MAX_VALUE;
+    double max = Double.MIN_VALUE;
+
+    for (int i=0; i<data.length; i++) {
+      if (data[i] < min) min = data[i];
+      if (data[i] > max) max = data[i];
+    }
+
+    for (int i=0; i<rtn.length; i++) {
+      rtn[i] = (data[i] - min) / (max - min);
+    }
+    return rtn;
+  }
+
+  public static void parseXML(String xml, DefaultHandler handler)
+    throws IOException
+  {
+    parseXML(xml.getBytes(), handler);
+  }
+
+  public static void parseXML(RandomAccessStream stream, DefaultHandler handler)
+    throws IOException
+  {
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(stream, handler);
+    }
+    catch (ParserConfigurationException exc) {
+      throw new IOException(exc);
+    }
+    catch (SAXException exc) {
+      throw new IOException(exc);
+    }
+  }
+
+  public static void parseXML(byte[] xml, DefaultHandler handler)
+    throws IOException
+  {
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(new ByteArrayInputStream(xml), handler);
+    }
+    catch (ParserConfigurationException exc) {
+      throw new IOException(exc);
+    }
+    catch (SAXException exc) {
+      throw new IOException(exc);
+    }
+  }
+
   // -- Date handling --
 
-  /** Converts the given timestamp into an ISO 8061 date. */
+  /** Converts the given timestamp into an ISO 8601 date. */
   public static String convertDate(long stamp, int format) {
     // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
     // dates than you will ever need (or want)
@@ -557,18 +775,35 @@ public final class DataTools {
     long ms = stamp;
 
     switch (format) {
+      case UNIX:
+        ms -= UNIX_EPOCH;
+        break;
       case COBOL:
         ms -= COBOL_EPOCH;
         break;
+      case MICROSOFT:
+        ms -= MICROSOFT_EPOCH;
+        break;
+      case ZVI:
+        ms -= ZVI_EPOCH;
+        break;
     }
 
-    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     StringBuffer sb = new StringBuffer();
 
     Date d = new Date(ms);
 
     fmt.format(d, sb, new FieldPosition(0));
     return sb.toString();
+  }
+
+  /** Return given date in ISO 8601 format. */
+  public static String formatDate(String date, String format) {
+    SimpleDateFormat f = new SimpleDateFormat(format);
+    Date d = f.parse(date, new ParsePosition(0));
+    f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    return f.format(d);
   }
 
 }

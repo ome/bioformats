@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import loci.common.*;
+
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.util.*;
 

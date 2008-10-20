@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.awt.Point;
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
@@ -151,7 +152,7 @@ public class ND2Reader extends FormatReader {
     }
     else {
       // plane is not compressed
-      DataTools.readPlane(in, x, y, w, h, this, buf);
+      readPlane(in, x, y, w, h, buf);
     }
     return buf;
   }

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.FilterMetadata;

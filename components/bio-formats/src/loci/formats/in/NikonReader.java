@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 
 /**

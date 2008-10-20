@@ -28,6 +28,7 @@ import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.IOException;
+import loci.common.*;
 
 /**
  * A utility class with convenience methods for manipulating images.

@@ -37,7 +37,7 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import loci.formats.ImageTools;
-import loci.formats.LogTools;
+import loci.common.LogTools;
 
 /**
  * A class for testing the {@link loci.formats.ImageTools#makeImage} methods.

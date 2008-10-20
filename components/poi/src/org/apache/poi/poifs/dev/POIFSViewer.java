@@ -23,6 +23,8 @@ import java.io.*;
 
 import java.util.*;
 
+import loci.common.*;
+
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.*;
 

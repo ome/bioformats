@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
+import loci.common.RandomAccessStream;
 import loci.formats.meta.MetadataStore;
 
 /**

@@ -26,7 +26,9 @@ package loci.ome.io;
 import java.awt.image.BufferedImage;
 import java.sql.Timestamp;
 import java.util.*;
-import loci.formats.*;
+import loci.common.LogTools;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 
 /**
  * Utility methods for retrieving data from an OME database.

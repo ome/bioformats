@@ -29,6 +29,7 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.*;
 import javax.imageio.stream.ImageInputStream;
+import loci.common.*;
 import loci.formats.*;
 
 /**

@@ -30,6 +30,7 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.imageio.ImageIO;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.ByteVector;
 import loci.formats.meta.*;

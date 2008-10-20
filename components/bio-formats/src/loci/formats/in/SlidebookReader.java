@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -78,7 +79,7 @@ public class SlidebookReader extends FormatReader {
     long offset = ((Long) pixelOffsets.get(series)).longValue() + plane * no;
     in.seek(offset);
 
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
     return buf;
   }
 

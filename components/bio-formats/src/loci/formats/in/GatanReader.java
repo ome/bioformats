@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -100,7 +101,7 @@ public class GatanReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(pixelOffset);
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
 
     return buf;
   }

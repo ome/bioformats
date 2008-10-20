@@ -28,6 +28,7 @@ import java.awt.image.DirectColorModel;
 import java.awt.image.MemoryImageSource;
 import java.net.*;
 import java.util.StringTokenizer;
+import loci.common.*;
 
 /**
  * Utility class for working with QuickTime for Java.

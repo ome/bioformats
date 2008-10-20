@@ -26,6 +26,7 @@ package loci.formats.ome;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import ome.xml.DOMUtil;
 import ome.xml.r2003fc.ome.OMENode;

@@ -26,6 +26,7 @@ package loci.formats.out;
 import java.awt.Image;
 import java.io.*;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.Base64Codec;
 import loci.formats.codec.ZlibCodec;

@@ -18,10 +18,11 @@
         
 package org.apache.poi.util;
 
+import loci.common.*;
+
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.*;
 
 import java.io.IOException;
 

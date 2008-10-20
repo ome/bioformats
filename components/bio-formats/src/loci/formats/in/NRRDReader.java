@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.StringTokenizer;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -96,7 +97,7 @@ public class NRRDReader extends FormatReader {
         int rowLen = getSizeX() * bpp * getSizeC();
         in.seek(offset + no * getSizeY() * rowLen);
 
-        DataTools.readPlane(in, x, y, w, h, this, buf);
+        readPlane(in, x, y, w, h, buf);
         return buf;
       }
       else throw new FormatException("Unsupported encoding: " + encoding);

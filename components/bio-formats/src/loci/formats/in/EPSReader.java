@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -86,7 +87,7 @@ public class EPSReader extends FormatReader {
 
       int[] map = TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
       if (map == null) {
-        DataTools.readPlane(in, x, y, w, h, this, buf);
+        readPlane(in, x, y, w, h, buf);
         return buf;
       }
 
@@ -122,7 +123,7 @@ public class EPSReader extends FormatReader {
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     if (binary) {
       // pixels are stored as raw bytes
-      DataTools.readPlane(in, x, y, w, h, this, buf);
+      readPlane(in, x, y, w, h, buf);
     }
     else {
       // pixels are stored as a 2 character hexadecimal value

@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -76,7 +77,7 @@ public class PCIReader extends FormatReader {
     int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
       FormatTools.getBytesPerPixel(getPixelType());
     s.skipBytes((int) (s.length() - planeSize));
-    DataTools.readPlane(s, x, y, w, h, this, buf);
+    readPlane(s, x, y, w, h, buf);
     s.close();
 
     return buf;

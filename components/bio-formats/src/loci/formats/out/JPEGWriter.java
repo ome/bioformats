@@ -26,6 +26,7 @@ package loci.formats.out;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import loci.common.*;
 import loci.formats.*;
 
 /**

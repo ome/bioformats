@@ -23,6 +23,8 @@ import java.io.*;
 
 import java.util.*;
 
+import loci.common.*;
+
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;

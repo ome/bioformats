@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.Hashtable;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.FilterMetadata;

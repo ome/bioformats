@@ -27,6 +27,7 @@ import java.io.*;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.meta.FilterMetadata;
@@ -117,7 +118,7 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       else {
-        DataTools.readPlane(s, x, y, w, h, this, buf);
+        readPlane(s, x, y, w, h, buf);
       }
       s.close();
     }

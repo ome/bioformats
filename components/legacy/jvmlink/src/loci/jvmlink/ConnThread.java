@@ -35,9 +35,9 @@ package loci.jvmlink;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.*;
-import loci.formats.DataTools;
-import loci.formats.ReflectException;
-import loci.formats.ReflectedUniverse;
+import loci.common.DataTools;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 
 //TODO: Communicating exceptions ..
 

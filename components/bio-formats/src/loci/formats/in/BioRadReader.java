@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -234,12 +235,12 @@ public class BioRadReader extends FormatReader {
       long offset = (no / picFiles.length) * getSizeX() * getSizeY() * bytes;
       ras.seek(offset + 76);
 
-      DataTools.readPlane(ras, x, y, w, h, this, buf);
+      readPlane(ras, x, y, w, h, buf);
       ras.close();
     }
     else {
       in.seek(no * getSizeX() * getSizeY() * bytes + 76);
-      DataTools.readPlane(in, x, y, w, h, this, buf);
+      readPlane(in, x, y, w, h, buf);
     }
     return buf;
   }

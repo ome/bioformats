@@ -26,6 +26,7 @@ package loci.ome.io;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataStore;
 

@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.*;
 import org.xml.sax.Attributes;

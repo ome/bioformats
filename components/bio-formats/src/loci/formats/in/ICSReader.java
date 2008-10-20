@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.zip.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.ByteVector;
 import loci.formats.meta.FilterMetadata;
@@ -182,7 +183,7 @@ public class ICSReader extends FormatReader {
       }
     }
     else {
-      DataTools.readPlane(in, x, y, w, h, this, buf);
+      readPlane(in, x, y, w, h, buf);
     }
 
     if (invertY) {

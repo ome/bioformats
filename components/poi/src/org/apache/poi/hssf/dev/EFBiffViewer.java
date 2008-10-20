@@ -20,13 +20,14 @@ package org.apache.poi.hssf.dev;
 import java.io.InputStream;
 import java.io.IOException;
 
+import loci.common.*;
+
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hssf.record.Record;
 
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
-import org.apache.poi.util.*;
 
 /**
  *

@@ -32,6 +32,7 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import loci.common.*;
 import loci.formats.*;
 
 /**

@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.common;
 
 import java.io.*;
 
@@ -29,8 +29,8 @@ import java.io.*;
  * A wrapper for RandomAccessFile that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/RAFile.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/RAFile.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RAFile.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RAFile.java">SVN</a></dd></dl>
  *
  * @see IRandomAccess
  * @see java.io.RandomAccessFile

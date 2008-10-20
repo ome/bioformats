@@ -3,26 +3,25 @@
 //
 
 /*
-LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
-Eric Kjellman and Brian Loranger.
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Library General Public License for more details.
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package org.apache.poi.util;
+package loci.common;
 
 import java.io.*;
 import java.net.*;
@@ -34,8 +33,8 @@ import java.util.Vector;
  * It is strongly recommended that you use this instead of java.io.File.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/Location.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/Location.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/Location.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/Location.java">SVN</a></dd></dl>
  */
 public class Location {
 
@@ -94,6 +93,14 @@ public class Location {
     else idMap.put(id, filename);
   }
 
+  /** Maps the given id to the given random access handle. */
+  public static void mapFile(String id, IRandomAccess ira) {
+    if (idMap == null) idMap = new Hashtable();
+    if (id == null) return;
+    if (ira == null) idMap.remove(id);
+    else idMap.put(id, ira);
+  }
+
   /**
    * Gets the actual filename on disk for the given id. Typically the id itself
    * is the filename, but in some cases may not be; e.g., if OMEIS has renamed
@@ -105,8 +112,21 @@ public class Location {
    */
   public static String getMappedId(String id) {
     if (idMap == null) return id;
-    String filename = id == null ? null : (String) idMap.get(id);
+    String filename = null;
+    if (id != null && (idMap.get(id) instanceof String)) {
+      filename = (String) idMap.get(id);
+    }
     return filename == null ? id : filename;
+  }
+
+  /** Gets the random access handle for the given id. */
+  public static IRandomAccess getMappedFile(String id) {
+    if (idMap == null) return null;
+    IRandomAccess ira = null;
+    if (id != null && (idMap.get(id) instanceof IRandomAccess)) {
+      ira = (IRandomAccess) idMap.get(id);
+    }
+    return ira;
   }
 
   public static Hashtable getIdMap() { return idMap; }

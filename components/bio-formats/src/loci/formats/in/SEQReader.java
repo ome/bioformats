@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
+import loci.common.*;
 import loci.formats.*;
 
 /**

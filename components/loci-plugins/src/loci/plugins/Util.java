@@ -34,6 +34,7 @@ import ij.util.Tools;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.LuraWaveCodec;
 import loci.formats.in.*;

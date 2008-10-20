@@ -25,8 +25,10 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.*;
+import loci.formats.codec.Base64Codec;
+import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;

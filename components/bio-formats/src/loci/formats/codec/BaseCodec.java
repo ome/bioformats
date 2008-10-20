@@ -25,9 +25,9 @@ package loci.formats.codec;
 
 import java.io.IOException;
 import java.util.*;
+import loci.common.LogTools;
+import loci.common.RandomAccessStream;
 import loci.formats.FormatException;
-import loci.formats.LogTools;
-import loci.formats.RandomAccessStream;
 
 /**
  * BaseCodec contains default implementation and testing for classes

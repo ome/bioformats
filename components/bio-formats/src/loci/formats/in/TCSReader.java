@@ -26,8 +26,8 @@ package loci.formats.in;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
-import loci.formats.in.TiffReader;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 

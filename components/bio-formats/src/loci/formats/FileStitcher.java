@@ -28,6 +28,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.*;
+import loci.common.*;
 import loci.formats.meta.MetadataStore;
 
 /**

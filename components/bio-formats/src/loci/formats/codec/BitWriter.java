@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.util.*;
-import loci.formats.LogTools;
+import loci.common.LogTools;
 
 /**
  * A class for writing arbitrary numbers of bits to a byte array.

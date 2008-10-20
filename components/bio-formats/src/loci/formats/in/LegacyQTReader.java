@@ -29,6 +29,7 @@ import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;

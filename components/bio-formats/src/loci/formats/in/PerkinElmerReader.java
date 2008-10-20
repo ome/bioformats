@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -149,7 +150,7 @@ public class PerkinElmerReader extends FormatReader {
     RandomAccessStream ras = new RandomAccessStream(files[no]);
     ras.seek(6);
 
-    DataTools.readPlane(ras, x, y, w, h, this, buf);
+    readPlane(ras, x, y, w, h, buf);
     ras.close();
     return buf;
   }

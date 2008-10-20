@@ -18,6 +18,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import loci.common.*;
+
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FormatRecord;

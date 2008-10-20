@@ -30,6 +30,7 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import loci.common.*;
 import loci.formats.*;
 
 /**

@@ -27,7 +27,7 @@ import com.jgoodies.forms.layout.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import loci.formats.*;
+import loci.common.*;
 import loci.formats.cache.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Constructor;

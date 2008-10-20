@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;

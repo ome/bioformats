@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Vector;
 import javax.swing.*;
-import loci.formats.ReflectedUniverse;
+import loci.common.ReflectedUniverse;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 import loci.visbio.ext.ExtManager;

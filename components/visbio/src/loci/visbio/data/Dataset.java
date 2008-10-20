@@ -32,6 +32,7 @@ import java.util.Hashtable;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import loci.common.Location;
 import loci.formats.*;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataStore;

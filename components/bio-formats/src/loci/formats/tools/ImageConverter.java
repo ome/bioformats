@@ -25,6 +25,7 @@ package loci.formats.tools;
 
 import java.awt.Image;
 import java.io.IOException;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;

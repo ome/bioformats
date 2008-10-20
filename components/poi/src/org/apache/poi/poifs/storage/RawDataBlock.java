@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.storage;
 
+import loci.common.*;
 import org.apache.poi.util.*;
 
 import java.io.*;

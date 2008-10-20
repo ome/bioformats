@@ -10,6 +10,14 @@ This build file handles the following components.
 For more information on a component, see the
 build.properties file in that component's subtree.
 
+LOCI Common library
+    A library containing common I/O and reflection classes
+    -=-
+    JAR file:      loci-common.jar
+    Path:          components/common
+    Project deps:  (none)
+    License:       GPL
+
 OME-XML Java library
     A library for working with OME-XML metadata structures
     -=-
@@ -228,12 +236,6 @@ Java Advanced Imaging Image I/O Tools
                (ND2, JP2) and lossless JPEG decompression (DICOM)
     License:   BSD
 
-JMagick
-    JAR file:  jmagick.jar
-    URL:       http://www.jmagick.org
-    Notes:     required for JPEG-2000 support in Aperio SVS
-    License:   LGPL
-
 JUnit
     JAR file:  junit.jar
     URL:       http://www.junit.org/
@@ -348,7 +350,7 @@ Apache XML-RPC
   <!-- Global build targets -->
 
   <target name="style"
-    depends="style-jai, style-poi-loci, style-mdbtools,
+    depends="style-common, style-jai, style-poi-loci, style-mdbtools,
       style-ome-xml, style-formats,
       style-loci-plugins, style-ome-io, style-ome-plugins,
       style-visbio, style-slim, style-flow,
@@ -358,7 +360,7 @@ Apache XML-RPC
     description="check source code style for LOCI software packages"/>
 
   <target name="compile"
-    depends="compile-jai, compile-poi-loci, compile-mdbtools,
+    depends="compile-common, compile-jai, compile-poi-loci, compile-mdbtools,
       compile-ome-xml, compile-formats,
       compile-loci-plugins, compile-ome-io, compile-ome-plugins,
       compile-visbio, compile-slim, compile-flow,
@@ -368,7 +370,7 @@ Apache XML-RPC
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-jai, jar-poi-loci, jar-mdbtools,
+    depends="jar-common, jar-jai, jar-poi-loci, jar-mdbtools,
       jar-ome-xml, jar-formats, jar-loci-plugins,
       jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
@@ -378,7 +380,7 @@ Apache XML-RPC
     description="generate JAR files for LOCI software packages"/>
 
   <target name="clean"
-    depends="clean-jai, clean-poi-loci, clean-mdbtools,
+    depends="clean-common, clean-jai, clean-poi-loci, clean-mdbtools,
       clean-ome-xml, clean-formats,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
@@ -410,6 +412,28 @@ Apache XML-RPC
     </javadoc>
   </target>
 
+  <!-- LOCI common library -->
+
+  <target name="style-common"
+    description="check source code style for LOCI common library">
+    <ant dir="components/common" target="common.style"/>
+  </target>
+
+  <target name="compile-common"
+    description="compile classes for LOCI common library">
+    <ant dir="components/common" target="common.compile"/>
+  </target>
+
+  <target name="jar-common"
+    description="generate JAR file for LOCI common library">
+    <ant dir="components/common" target="common.jar"/>
+  </target>
+
+  <target name="clean-common"
+    description="remove build files for LOCI common library">
+    <ant dir="components/common" target="common.clean"/>
+  </target>
+
   <!-- JAI ImageIO Java library -->
 
   <target name="style-jai"
@@ -435,21 +459,25 @@ Apache XML-RPC
   <!-- Apache POI Java library -->
 
   <target name="style-poi-loci"
+    depends="style-common"
     description="check source code style for Apache POI library">
     <ant dir="components/poi" target="poi-loci.style"/>
   </target>
 
   <target name="compile-poi-loci"
+    depends="compile-common"
     description="compile classes for Apache POI library">
     <ant dir="components/poi" target="poi-loci.compile"/>
   </target>
 
   <target name="jar-poi-loci"
+    depends="jar-common"
     description="generate JAR file for Apache POI library">
     <ant dir="components/poi" target="poi-loci.jar"/>
   </target>
 
   <target name="clean-poi-loci"
+    depends="clean-common"
     description="remove build files for Apache POI library">
     <ant dir="components/poi" target="poi-loci.clean"/>
   </target>
@@ -501,21 +529,25 @@ Apache XML-RPC
   <!-- Bio-Formats -->
 
   <target name="style-formats"
+    depends="style-common"
     description="check source code style for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.style"/>
   </target>
 
   <target name="compile-formats"
+    depends="compile-common"
     description="compile classes for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.compile"/>
   </target>
 
   <target name="jar-formats"
+    depends="jar-common"
     description="generate JAR file for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.jar"/>
   </target>
 
   <target name="clean-formats"
+    depends="clean-common"
     description="remove build files for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.clean"/>
   </target>
@@ -523,21 +555,25 @@ Apache XML-RPC
   <!-- LOCI Plugins for ImageJ -->
 
   <target name="style-loci-plugins"
+    depends="style-common"
     description="check source code style for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.style"/>
   </target>
 
   <target name="compile-loci-plugins"
+    depends="compile-common"
     description="compile classes for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.compile"/>
   </target>
 
   <target name="jar-loci-plugins"
+    depends="jar-common"
     description="generate JAR file for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.jar"/>
   </target>
 
   <target name="clean-loci-plugins"
+    depends="clean-common"
     description="remove build files for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.clean"/>
   </target>
@@ -545,21 +581,25 @@ Apache XML-RPC
   <!-- OME I/O -->
 
   <target name="style-ome-io"
+    depends="style-common"
     description="check source code style for OME I/O">
     <ant dir="components/ome-io" target="ome-io.style"/>
   </target>
 
   <target name="compile-ome-io"
+    depends="compile-common"
     description="compile classes for OME I/O">
     <ant dir="components/ome-io" target="ome-io.compile"/>
   </target>
 
   <target name="jar-ome-io"
+    depends="jar-common"
     description="generate JAR file for OME I/O">
     <ant dir="components/ome-io" target="ome-io.jar"/>
   </target>
 
   <target name="clean-ome-io"
+    depends="clean-common"
     description="remove build files for OME I/O">
     <ant dir="components/ome-io" target="ome-io.clean"/>
   </target>
@@ -567,21 +607,25 @@ Apache XML-RPC
   <!-- OME Plugins for ImageJ -->
 
   <target name="style-ome-plugins"
+    depends="style-common"
     description="check source code style for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.style"/>
   </target>
 
   <target name="compile-ome-plugins"
+    depends="compile-common"
     description="compile classes for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.compile"/>
   </target>
 
   <target name="jar-ome-plugins"
+    depends="jar-common"
     description="generate JAR file for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.jar"/>
   </target>
 
   <target name="clean-ome-plugins"
+    depends="clean-common"
     description="remove build files for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.clean"/>
   </target>

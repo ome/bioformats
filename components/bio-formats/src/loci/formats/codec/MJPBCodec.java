@@ -25,7 +25,8 @@ package loci.formats.codec;
 
 import java.io.*;
 //import java.util.Arrays;
-import loci.formats.*;
+import loci.common.*;
+import loci.formats.FormatException;
 
 /**
  * Methods for compressing and decompressing QuickTime Motion JPEG-B data.

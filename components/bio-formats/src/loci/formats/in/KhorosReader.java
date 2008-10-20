@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -85,7 +86,7 @@ public class KhorosReader extends FormatReader {
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bufSize = getSizeX() * getSizeY() * bytes;
     in.seek(offset + no * bufSize);
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
 
     return buf;
   }

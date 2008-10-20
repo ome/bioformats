@@ -35,6 +35,7 @@ import java.io.*;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 
 /**

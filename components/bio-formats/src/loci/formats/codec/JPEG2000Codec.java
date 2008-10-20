@@ -31,6 +31,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.spi.*;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
+import loci.common.*;
 import loci.formats.*;
 
 /**

@@ -34,7 +34,7 @@ import javax.swing.border.EmptyBorder;
 import loci.formats.FormatException;
 import loci.formats.in.SDTInfo;
 import loci.formats.in.SDTReader;
-import loci.formats.DataTools;
+import loci.common.DataTools;
 import loci.slim.fit.*;
 
 /**

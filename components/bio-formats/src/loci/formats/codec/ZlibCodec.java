@@ -26,8 +26,8 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
+import loci.common.RandomAccessStream;
 import loci.formats.FormatException;
-import loci.formats.RandomAccessStream;
 
 /**
  * This class implements ZLIB decompression.

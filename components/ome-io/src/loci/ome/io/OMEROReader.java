@@ -25,6 +25,7 @@ package loci.ome.io;
 
 import java.io.IOException;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataStore;
 import ome.api.IAdmin;

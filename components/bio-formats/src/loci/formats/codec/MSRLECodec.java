@@ -24,7 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.IOException;
-import loci.formats.*;
+import loci.common.*;
+import loci.formats.FormatException;
 
 /**
  * Methods for compressing and decompressing data using Microsoft RLE.

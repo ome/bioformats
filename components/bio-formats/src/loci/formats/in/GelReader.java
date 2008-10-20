@@ -27,6 +27,7 @@ import java.io.*;
 import java.text.*;
 import java.util.Date;
 import java.util.Hashtable;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;

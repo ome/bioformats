@@ -24,14 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 16, 2008 6:13:57 AM CDT
+ * Created by melissa via MetadataAutogen on Oct 20, 2008 12:02:52 PM PDT
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.meta;
 
-import loci.formats.DataTools;
+import loci.common.DataTools;
 
 /**
  * An implementation of {@link MetadataStore} that removes unprintable

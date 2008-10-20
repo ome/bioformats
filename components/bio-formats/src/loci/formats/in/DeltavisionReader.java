@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.text.*;
 import java.util.Date;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -105,7 +106,7 @@ public class DeltavisionReader extends FormatReader {
     long offset = HEADER_LENGTH + extSize;
     long planeOffset = (long) getSizeX() * getSizeY() * bytesPerPixel * no;
     in.seek(offset + planeOffset);
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
 
     return buf;
   }

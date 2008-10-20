@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;

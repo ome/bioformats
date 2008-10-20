@@ -23,6 +23,8 @@ import java.io.*;
 
 import java.util.*;
 
+import loci.common.*;
+
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;

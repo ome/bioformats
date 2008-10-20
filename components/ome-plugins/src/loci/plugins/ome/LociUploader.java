@@ -32,7 +32,7 @@ import ij.io.FileInfo;
 import java.awt.TextField;
 import java.util.HashSet;
 import loci.plugins.Checker;
-import loci.formats.DataTools;
+import loci.common.DataTools;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;

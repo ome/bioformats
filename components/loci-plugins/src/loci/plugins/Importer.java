@@ -31,6 +31,7 @@ import ij.process.*;
 import java.awt.Rectangle;
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.gui.XMLWindow;
 import loci.formats.meta.MetadataRetrieve;
@@ -902,44 +903,36 @@ public class Importer {
     int[] subC = r.getChannelDimLengths();
     String[] subCTypes = r.getChannelDimTypes();
     StringBuffer sb = new StringBuffer();
-    if (r.isOrderCertain()) {
-      boolean first = true;
-      if (cCount[series] > 1) {
-        if (first) first = false;
-        else sb.append("; ");
-        int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
-        for (int i=0; i<subC.length; i++) {
-          boolean ch = subCTypes[i].equals(FormatTools.CHANNEL);
-          sb.append(ch ? "c" : subCTypes[i]);
-          sb.append(":");
-          sb.append(subCPos[i] + 1);
-          sb.append("/");
-          sb.append(subC[i]);
-          if (i < subC.length - 1) sb.append(", ");
-        }
-      }
-      if (zCount[series] > 1) {
-        if (first) first = false;
-        else sb.append("; ");
-        sb.append("z:");
-        sb.append(zct[0] + 1);
+    boolean first = true;
+    if (cCount[series] > 1) {
+      if (first) first = false;
+      else sb.append("; ");
+      int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
+      for (int i=0; i<subC.length; i++) {
+        boolean ch = subCTypes[i].equals(FormatTools.CHANNEL);
+        sb.append(ch ? "c" : subCTypes[i]);
+        sb.append(":");
+        sb.append(subCPos[i] + 1);
         sb.append("/");
-        sb.append(r.getSizeZ());
-      }
-      if (tCount[series] > 1) {
-        if (first) first = false;
-        else sb.append("; ");
-        sb.append("t:");
-        sb.append(zct[2] + 1);
-        sb.append("/");
-        sb.append(r.getSizeT());
+        sb.append(subC[i]);
+        if (i < subC.length - 1) sb.append(", ");
       }
     }
-    else {
-      sb.append("no:");
-      sb.append(ndx + 1);
+    if (zCount[series] > 1) {
+      if (first) first = false;
+      else sb.append("; ");
+      sb.append("z:");
+      sb.append(zct[0] + 1);
       sb.append("/");
-      sb.append(r.getImageCount());
+      sb.append(r.getSizeZ());
+    }
+    if (tCount[series] > 1) {
+      if (first) first = false;
+      else sb.append("; ");
+      sb.append("t:");
+      sb.append(zct[2] + 1);
+      sb.append("/");
+      sb.append(r.getSizeT());
     }
     // put image name at the end, in case it is long
     String imageName = retrieve.getImageName(series);

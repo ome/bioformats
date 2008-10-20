@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.util.Random; // used in main method test
-import loci.formats.LogTools;
+import loci.common.LogTools;
 
 /**
  * A class for reading arbitrary numbers of bits from a byte array.

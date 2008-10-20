@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import loci.common.*;
+
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.PropertySet;

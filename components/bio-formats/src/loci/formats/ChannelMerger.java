@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import loci.common.*;
 
 /**
  * Logic to automatically merge channels in a file.

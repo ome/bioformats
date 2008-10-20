@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.FilterMetadata;
@@ -141,7 +142,7 @@ public class OpenlabReader extends FormatReader {
 
     if (!planes[index].pict) {
       if (version == 2) {
-        DataTools.readPlane(in, x, y, w, h, this, buf);
+        readPlane(in, x, y, w, h, buf);
       }
       else {
         in.skipBytes(16);

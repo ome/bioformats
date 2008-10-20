@@ -28,6 +28,7 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
+import loci.common.*;
 import loci.formats.*;
 
 /**

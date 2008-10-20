@@ -27,6 +27,7 @@ import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Vector;
+import loci.common.*;
 import loci.formats.*;
 
 /**

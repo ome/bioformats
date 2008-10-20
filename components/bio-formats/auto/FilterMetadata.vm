@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.meta;
 
-import loci.formats.DataTools;
+import loci.common.DataTools;
 
 /**
  * An implementation of {@link MetadataStore} that removes unprintable

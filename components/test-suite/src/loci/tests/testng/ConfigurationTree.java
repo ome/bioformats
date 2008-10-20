@@ -34,8 +34,8 @@ package loci.tests.testng;
 import java.io.*;
 import java.util.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import loci.common.LogTools;
 import loci.formats.FormatTools;
-import loci.formats.LogTools;
 
 /**
  * Stores configuration data about files in a directory structure.

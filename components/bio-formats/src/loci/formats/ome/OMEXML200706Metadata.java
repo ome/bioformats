@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 16, 2008 6:13:57 AM CDT
+ * Created by melissa via MetadataAutogen on Oct 20, 2008 12:02:52 PM PDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -35,7 +35,7 @@ import ome.xml.OMEXMLNode;
 import ome.xml.r200706.ome.*;
 import ome.xml.r200706.spw.*;
 import java.util.List;
-import loci.formats.LogTools;
+import loci.common.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML

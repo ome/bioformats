@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -93,7 +94,7 @@ public class VisitechReader extends FormatReader {
       else s.skipBytes((plane + 164) * planeIndex - 4);
     }
 
-    DataTools.readPlane(s, x, y, w, h, this, buf);
+    readPlane(s, x, y, w, h, buf);
     s.close();
     return buf;
   }

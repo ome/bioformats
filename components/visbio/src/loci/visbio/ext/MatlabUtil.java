@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ext;
 
 import java.rmi.RemoteException;
-import loci.formats.ReflectException;
-import loci.formats.ReflectedUniverse;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import visad.*;
 
 /**

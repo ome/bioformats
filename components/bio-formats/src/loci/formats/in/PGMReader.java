@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -75,7 +76,7 @@ public class PGMReader extends FormatReader {
 
     in.seek(offset);
     if (rawBits) {
-      DataTools.readPlane(in, x, y, w, h, this, buf);
+      readPlane(in, x, y, w, h, buf);
     }
     else {
       int pt = 0;

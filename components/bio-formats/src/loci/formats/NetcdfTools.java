@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 
 /**
  * Utility class for working with NetCDF/HDF files.  Uses reflection to

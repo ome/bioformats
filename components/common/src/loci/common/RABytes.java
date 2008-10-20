@@ -3,26 +3,25 @@
 //
 
 /*
-LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
-Eric Kjellman and Brian Loranger.
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Library General Public License for more details.
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package org.apache.poi.util;
+package loci.common;
 
 import java.io.*;
 
@@ -30,8 +29,8 @@ import java.io.*;
  * A wrapper for a byte array that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/RABytes.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/RABytes.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RABytes.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RABytes.java">SVN</a></dd></dl>
  *
  * @see IRandomAccess
  *
@@ -91,7 +90,7 @@ public class RABytes implements IRandomAccess {
   /* @see IRandomAccess.read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
     if (fp + len > array.length) len = array.length - fp;
-    System.arraycopy(array, fp, b, off, len);
+    if (len > 0) System.arraycopy(array, fp, b, off, len);
     fp += len;
     return len;
   }

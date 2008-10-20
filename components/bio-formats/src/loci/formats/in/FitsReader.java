@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -68,7 +69,7 @@ public class FitsReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(2880 * ((((count * 80) - 1) / 2880) + 1));
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
     return buf;
   }
 

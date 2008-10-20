@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
+import loci.common.*;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -245,6 +246,53 @@ public abstract class FormatReader extends FormatHandler
   /** Gets a value from the metadata table. */
   protected Object getMeta(String key) {
     return metadata.get(key);
+  }
+
+  /** Reads a raw plane from disk. */
+  protected byte[] readPlane(RandomAccessStream s, int x, int y, int w, int h,
+    byte[] buf) throws IOException
+  {
+    int c = getSizeC();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY()) {
+      s.read(buf);
+    }
+    else if (x == 0 && w == getSizeX()) {
+      if (isInterleaved()) {
+        s.skipBytes(y * w * bpp * c);
+        s.read(buf, 0, h * w * bpp * c);
+      }
+      else {
+        int rowLen = w * bpp;
+        for (int channel=0; channel<c; channel++) {
+          s.skipBytes(y * rowLen);
+          s.read(buf, channel * h * rowLen, h * rowLen);
+          s.skipBytes((getSizeY() - y - h) * rowLen);
+        }
+      }
+    }
+    else {
+      if (isInterleaved()) {
+        s.skipBytes(y * getSizeX() * bpp * c);
+        for (int row=0; row<h; row++) {
+          s.skipBytes(x * bpp * c);
+          s.read(buf, row * w * bpp * c, w * bpp * c);
+          s.skipBytes(bpp * c * (getSizeX() - w - x));
+        }
+      }
+      else {
+        for (int channel=0; channel<c; channel++) {
+          s.skipBytes(y * getSizeX() * bpp);
+          for (int row=0; row<h; row++) {
+            s.skipBytes(x * bpp);
+            s.read(buf, channel * w * h * bpp + row * w * bpp, w * bpp);
+            s.skipBytes(bpp * (getSizeX() - w - x));
+          }
+          s.skipBytes(getSizeX() * bpp * (getSizeY() - y - h));
+        }
+      }
+    }
+    return buf;
   }
 
   // -- IFormatReader API methods --

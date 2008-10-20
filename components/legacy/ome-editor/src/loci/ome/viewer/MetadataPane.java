@@ -34,7 +34,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
-import loci.formats.RandomAccessStream;
+import loci.common.RandomAccessStream;
 import loci.formats.TiffTools;
 import ome.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;

@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -79,7 +80,7 @@ public class OpenlabRawReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(offsets[no / getSizeC()] + 288);
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
 
     if (FormatTools.getBytesPerPixel(getPixelType()) == 1) {
       // need to invert the pixels

@@ -27,6 +27,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import loci.common.*;
 import loci.formats.*;
 
 /**

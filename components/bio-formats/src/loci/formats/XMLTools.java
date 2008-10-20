@@ -26,6 +26,7 @@ package loci.formats;
 import java.io.*;
 import java.util.StringTokenizer;
 import javax.xml.parsers.*;
+import loci.common.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 

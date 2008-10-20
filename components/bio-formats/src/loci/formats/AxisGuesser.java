@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import loci.common.*;
 
 /**
  * AxisGuesser guesses which blocks in a file pattern correspond to which

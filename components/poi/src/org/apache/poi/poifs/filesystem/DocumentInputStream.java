@@ -20,6 +20,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.*;
+import loci.common.*;
 import org.apache.poi.util.*;
 
 /**

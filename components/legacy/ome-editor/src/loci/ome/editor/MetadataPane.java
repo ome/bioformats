@@ -35,6 +35,7 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.in.*;
 import loci.formats.ome.OMEXML2003FCMetadata;

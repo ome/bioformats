@@ -25,6 +25,8 @@ import java.io.OutputStream;
 
 import java.util.Arrays;
 
+import loci.common.*;
+
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.*;
 

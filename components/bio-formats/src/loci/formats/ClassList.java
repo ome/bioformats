@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
+import loci.common.*;
 
 /**
  * ClassList is a list of classes for use with ImageReader or ImageWriter,

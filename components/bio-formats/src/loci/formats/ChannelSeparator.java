@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import loci.common.*;
 
 /**
  * Logic to automatically separate the channels in a file.

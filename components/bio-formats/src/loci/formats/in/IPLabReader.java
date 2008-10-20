@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -86,7 +87,7 @@ public class IPLabReader extends FormatReader {
     int numPixels = getSizeX() * getSizeY() * getSizeC() * bps;
     in.seek(numPixels * (no / getSizeC()) + 44);
 
-    DataTools.readPlane(in, x, y, w, h, this, buf);
+    readPlane(in, x, y, w, h, buf);
     return buf;
   }
 

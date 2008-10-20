@@ -34,8 +34,8 @@ import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import loci.formats.ReflectedUniverse;
-import loci.formats.ReflectException;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
 
 /**

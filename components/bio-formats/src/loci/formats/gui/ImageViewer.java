@@ -33,6 +33,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import loci.common.*;
 import loci.formats.*;
 
 /**

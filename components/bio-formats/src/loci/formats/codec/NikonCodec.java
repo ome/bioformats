@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.IOException;
+import loci.common.RandomAccessStream;
 import loci.formats.FormatException;
-import loci.formats.RandomAccessStream;
 
 /**
  * This class implements Nikon decompression. Compression is not yet
