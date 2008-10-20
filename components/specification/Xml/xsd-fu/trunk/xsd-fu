@@ -129,7 +129,7 @@ def docGenMain():
 	namespace = "xsd:"
 	
 	for theSchemas in [
-	["OME","../../Working/ome-roi-sa.xsd"], 
+	["OME","../../Working/ome.xsd"], 
 	["SPW","../../Working/SPW.xsd"],
 	["CA","../../Working/CA.xsd"],
 	["CLI","../../Working/CLI.xsd"],
@@ -154,8 +154,55 @@ def docGenMain():
 				    (prefix, obj.name, prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
 			print "\n"
 
+def tabGenMain():
+	"""
+	Documentation main() that does not parse the command line and puts
+	tab sperated format to STDOUT.
+	Added by Andrew Patterson (October 2008) to generate content for arity spreadsheet
+	"""
+	outputDirectory = None
+	package = DEFAULT_PACKAGE
+	namespace = "xsd:"
+	
+	for theSchemas in [
+	["OME","../../Working/ome.xsd", [["OME", "OME:"]]], 
+	["SPW","../../Working/SPW.xsd", [["Plate", "OME:Plate:"],["Screen", "OME:Screen:"]]],
+	["CA","../../Working/CA.xsd", [["CustomAttributes", "OME:Image:CustomAttributes:"],["CustomAttributes", "OME:CustomAttributes:"],["CustomAttributes", "OME:Region:CustomAttributes:"]]],
+	["SA","../../Working/SA.xsd", [["StructuredAnnotations", "OME:StructuredAnnotations:"]]],
+	["STD","../../Working/STD.xsd", [["SemanticTypeDefinitions", "OME:SemanticTypeDefinitions:"]]],
+	["AnalysisModule","../../Working/AnalysisModule.xsd", [["AnalysisModuleLibrary", "OME:AnalysisModuleLibrary:"]]],
+	["BinaryFile","../../Working/BinaryFile.xsd", [["BinaryFile", "OME:Instrument:OTF:BinaryFile:"]]]#,
+
+	#["CLI","../../Working/CLI.xsd"],
+	#["AnalysisChain","../../Working/AnalysisChain.xsd"],
+	#["DataHistory","../../Working/DataHistory.xsd"],
+	#["MLI","../../Working/MLI.xsd"],
+	]:
+		prefix = theSchemas[0] + ":"
+		model = parseXmlSchema(theSchemas[1], namespace)
+		fu = TemplateInfo(outputDirectory, package)
+		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
+		for theToplevelNode in theSchemas[2]:
+			parentlist(model, theToplevelNode[0], theToplevelNode[1])
+
+def parentlist(model, name, pre):
+	for obj in model.objects.values():
+		if obj.name in [name]:
+			#print pre + name;
+			for prop in obj.properties.values():
+				if prop.name[-14:] == "_BackReference":
+					print "%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\tback\t" + pre + prop.name;
+					pass
+				else:
+					if prop.name == name:
+						print "%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\trecursion\t" + pre + prop.name + " - recursion";
+					else:
+						print "%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\t\t" + pre + prop.name;
+						parentlist(model, prop.type, pre + prop.name + ":")
+
 if __name__ == '__main__':
 #	debugMain()
 #	docGenMain()
+#	tabGenMain()
 	main()
 
