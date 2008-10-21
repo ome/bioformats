@@ -93,6 +93,9 @@ public class JPEGCodec extends BaseCodec implements Codec {
     }
     catch (IOException exc) {
       try {
+        // NB: the following comment facilitates dependency detection:
+        // import com.sun.media.imageioimpl.plugins.jpeg
+
         Class jpegSpi = Class.forName(
           "com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi");
         IIORegistry registry = IIORegistry.getDefaultInstance();

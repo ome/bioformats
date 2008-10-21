@@ -99,6 +99,9 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
     ReflectedUniverse ru = null;
     try {
+      // NB: the following comment facilitates dependency detection:
+      // import com.sun.media.imageioimpl.plugins.jpeg2000
+
       // register J2KImageReader with IIORegistry
       registerClass(J2K_READER);
 

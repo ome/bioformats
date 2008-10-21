@@ -8,6 +8,9 @@ use strict;
 # the build.xml file's top-level comment, as well as verify the correctness of
 # the component.classpath field in each component's build.properties file.
 
+# TODO - Use this script to autogenerate the LOCI plugins configuration file:
+#   components/loci-plugins/src/loci/plugins/config/libraries.txt
+
 # -- DATA STRUCTURES --
 
 # Active LOCI software components
@@ -95,7 +98,7 @@ my %titles = (
   "ome-editor"     => "OME Metadata Editor",
   "ome-notes"      => "OME Notes",
   # components - forks
-  "jai"            => "JAI ImageIO",
+  "jai"            => "JAI Image I/O Tools",
   "mdbtools"       => "MDB Tools (Java port)",
   "poi"            => "Apache Jakarta POI",
   # libraries
@@ -107,7 +110,7 @@ my %titles = (
   "forms"               => "JGoodies Forms",
   "ij"                  => "ImageJ",
   "jboss"               => "JBoss",
-  "jiio"                => "JAI Image I/O Tools",
+  "jiio"                => "JAI ImageIO wrapper",
   "junit"               => "JUnit",
   "lma"                 => "L-M Fit",
   "looks"               => "JGoodies Looks",
@@ -228,7 +231,7 @@ my %packages = (
   "ome-editor"     => "loci.ome.editor",
   "ome-notes"      => "loci.ome.notes",
   # components - forks
-  "jai"            => "jj2000.j2k",
+  "jai"            => "com.sun.media.imageioimpl",
   "mdbtools"       => "mdbtools",
   "poi"            => "org.apache.poi",
   # libraries
@@ -243,14 +246,14 @@ my %packages = (
   "jiio"                => "com.sun.medialib.codec",
   "junit"               => "junit",
   "lma"                 => "jaolho.data.lma",
-  "looks"               => "com.jgoodies.looks",
+  "looks"               => "com.jgoodies.plaf",
   "netcdf"              => "ucar.nc2",
   "netcdf-bufr"         => "ucar.bufr",
   "netcdf-grib"         => "ucar.grib",
   "slf4j"               => "org.slf4j",
   "ome-java"            => "org.openmicroscopy.[di]s",
   "ome-java-deprecated" => "org.openmicroscopy.xml",
-  "omero-client"        => "ome.client",
+  "omero-client"        => "pojos",
   "omero-common"        => "ome.api",
   "omero-importer"      => "ome.formats",
   "omero-model-psql"    => "ome.model",
@@ -545,9 +548,13 @@ my %projectOpt = ();
 my %libraryDeps = ();
 my %libraryOpt = ();
 
+my %compileCP = ();
+my %runtimeCP = ();
+
 # -- DATA COLLECTION --
 
 # verify that all JAR files exist -- if not, this file is probably out of date
+print STDERR "--== VERIFYING JAR FILE EXISTENCE ==--\n\n";
 foreach my $c (@components) {
   my $jar = $jars{$c};
   unless (-e "artifacts/$jar") {
@@ -562,7 +569,7 @@ foreach my $l (@libs) {
 }
 
 # scan for project dependencies
-print STDERR "--== SCANNING PROJECT DEPENDENCIES ==--\n";
+print STDERR "--== SCANNING PROJECT DEPENDENCIES ==--\n\n";
 foreach my $c (@components) {
   my $path = $paths{$c};
   print STDERR "[$titles{$c}]\n";
@@ -609,12 +616,124 @@ foreach my $c (@components) {
   print STDERR "\n";
 }
 
+print STDERR "--== GATHERING COMPONENT CLASSPATHS ==--\n\n";
+foreach my $c (@components) {
+  my $path = $paths{$c};
+
+  # read
+  open FILE, "$path/build.properties" or die $!;
+  my @lines = <FILE>;
+  close(FILE);
+  my $inCompile = 0;
+  my $inManifest = 0;
+  my @compile = ();
+  my @runtime = ();
+  foreach my $line (@lines) {
+    $line = rtrim($line);
+    if ($line =~ /^component.classpath/) {
+      # found the compile-time classpath variable
+      $inCompile = 1;
+    }
+    elsif ($line =~ /^component.manifest-cp/) {
+      # found the runtime classpath variable
+      $inManifest = 1;
+    }
+    if ($inCompile || $inManifest) {
+      my $end = $line !~ /\\$/;
+      # append the entry to the classpath list
+      $line =~ s/[ :\\]*$//;
+      $line =~ s/.* //;
+      if ($line ne '(none)') {
+        if ($inCompile) {
+          push(@compile, $line);
+        }
+        elsif ($inManifest) {
+          push(@runtime, $line);
+        }
+      }
+      if ($end) {
+        # line does not end with a backslash; end of variable
+        $inCompile = $inManifest = 0;
+      }
+    }
+  }
+  $compileCP{$c} = \@compile;
+  $runtimeCP{$c} = \@runtime;
+}
+
+print STDERR "--== VERIFYING CLASSPATH MATCHES ==--\n\n";
+foreach my $c (@components) {
+  my @projDeps = @{$projectDeps{$c}};
+  my @libDeps = @{$libraryDeps{$c}};
+  my @projOpt = @{$projectOpt{$c}};
+  my @libOpt = @{$libraryOpt{$c}};
+
+  # verify compile-time classpath
+  my @deps = (@projDeps, @libDeps);
+  my @cp = @{$compileCP{$c}};
+  if (@deps != @cp) {
+    print STDERR "Dependency mismatch for $c compile time classpath:\n";
+    print STDERR "  project deps        = @projDeps\n";
+    print STDERR "  library deps        = @libDeps\n";
+    print STDERR "  component.classpath = @cp\n";
+    print STDERR "\n";
+  }
+  else {
+    for (my $i = 0; $i < @cp; $i++) {
+      my $dep = $deps[$i];
+      my $cpJar = $cp[$i];
+      my $prefix = $i < @projDeps ? '${artifact.dir}' : '${lib.dir}';
+      my $depJar = "$prefix/$jars{$dep}";
+      if ($cpJar ne $depJar) {
+        print STDERR "Dependency mismatch for $c compile time classpath:\n";
+        print STDERR "  #$i: $depJar != $cpJar\n";
+        print STDERR "  project deps        = @projDeps\n";
+        print STDERR "  library deps        = @libDeps\n";
+        print STDERR "  component.classpath = @cp\n";
+        print STDERR "\n";
+        last;
+      }
+    }
+  }
+  # verify runtime classpath
+  @deps = (@projDeps, @projOpt, @libDeps, @libOpt);
+  @cp = @{$runtimeCP{$c}};
+  if (@deps != @cp) {
+    print STDERR "Dependency mismatch for $c runtime classpath:\n";
+    print STDERR "  project deps          = @projDeps\n";
+    print STDERR "  reflected projects    = @projOpt\n";
+    print STDERR "  library deps          = @libDeps\n";
+    print STDERR "  reflected libraries   = @libOpt\n";
+    print STDERR "  component.manifest-cp = @cp\n";
+    print STDERR "\n";
+  }
+  else {
+    for (my $i = 0; $i < @cp; $i++) {
+      my $dep = $deps[$i];
+      my $cpJar = $cp[$i];
+      my $depJar = $jars{$dep};
+      if ($cpJar ne $depJar) {
+        print STDERR "Dependency mismatch for $c runtime classpath:\n";
+        print STDERR "  #$i: $depJar != $cpJar\n";
+        print STDERR "  project deps          = @projDeps\n";
+        print STDERR "  reflected projects    = @projOpt\n";
+        print STDERR "  library deps          = @libDeps\n";
+        print STDERR "  reflected libraries   = @libOpt\n";
+        print STDERR "  component.manifest-cp = @cp\n";
+        print STDERR "\n";
+        last;
+      }
+    }
+  }
+}
+
 # -- FORMATTED DATA OUTPUT --
 
 print STDERR "--== DUMPING RESULTS TO STDOUT ==--\n\n";
 
-my $div = "========================================" .
-          "=======================================";
+my $div = <<ZZ;
+===============================================================================
+ZZ
 
 # components - active
 print "$div\n";
@@ -787,4 +906,3 @@ sub rtrim {
   $string =~ s/\s+$//;
   return $string;
 }
-
