@@ -736,7 +736,7 @@ my $div = <<ZZ;
 ZZ
 
 # components - active
-print "$div\n";
+print "$div";
 print "This build file handles the following components.\n";
 print "For more information on a component, see the\n";
 print "build.properties file in that component's subtree.\n";
@@ -780,7 +780,7 @@ foreach my $c (@active) {
 }
 
 # components - legacy
-print "$div\n";
+print "$div";
 print "The following components are considered \"legacy\" but still " .
       "available:\n\n";
 foreach my $c (@legacy) {
@@ -811,7 +811,7 @@ foreach my $c (@legacy) {
 }
 
 # components - forks
-print "$div\n";
+print "$div";
 print "The following components are forks of third party projects:\n\n";
 foreach my $c (@forks) {
   print "$titles{$c}\n";
@@ -841,7 +841,7 @@ foreach my $c (@forks) {
 }
 
 # libraries
-print "$div\n";
+print "$div";
 print "The following external dependencies (in the jar folder) may be " .
       "required:\n";
 foreach my $l (@libs) {

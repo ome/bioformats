@@ -39,7 +39,7 @@ Bio-Formats
     Project deps:  LOCI Common, OME-XML Java library
     Library deps:  JGoodies Forms
     Optional:      OME I/O, OME Notes, Apache Jakarta POI,
-                   MDB Tools (Java port), NetCDF
+                   MDB Tools (Java port), JAI Image I/O Tools, NetCDF
     License:       GPL
 
 LOCI Plugins for ImageJ
@@ -60,7 +60,8 @@ OME I/O
     JAR file:      ome-io.jar
     Path:          components/ome-io
     Project deps:  LOCI Common, Bio-Formats
-    Library deps:  OMERO Common, OMERO Importer, OMERO Model PostgreSQL
+    Library deps:  OMERO Client, OMERO Common, OMERO Importer,
+                   OMERO Model PostgreSQL
     Optional:      OME-Java
     License:       GPL
 
@@ -82,7 +83,8 @@ VisBio
     Path:          components/visbio
     Project deps:  LOCI Common, OME-XML Java library, Bio-Formats, OME I/O,
                    Apache Jakarta POI
-    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, VisAD
+    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, JGoodies Looks,
+                   VisAD
     Optional:      (none)
     License:       GPL
 
@@ -196,7 +198,7 @@ MDB Tools (Java port)
     Project URL:   http://sourceforge.net/forum/message.php?msg_id=2550619
     Notes:         Used by Bio-Formats for Zeiss LSM metadata in MDB files.
 
-JAI ImageIO
+JAI Image I/O Tools
     Java API to handle JPEG and JPEG2000 files
     -=-
     JAR file:      jai_imageio.jar
@@ -258,7 +260,7 @@ ImageJ
                bundled with VisBio to achieve ImageJ interconnectivity
     License:   Public domain
 
-JAI Image I/O Tools
+JAI ImageIO wrapper
     JAR file:  clibwrapper_jiio.jar
     URL:       https://jai-imageio.dev.java.net/
     Notes:     used by Bio-Formats via reflection for JPEG2000 support (ND2,
@@ -387,6 +389,7 @@ Apache XML-RPC
     URL:       http://ws.apache.org/xmlrpc/
     Notes:     used by OME-Java library to communicate with OME servers
     License:   Apache
+
 -->
 
 <project name="LOCI Software" default="jars" basedir=".">
@@ -495,25 +498,25 @@ Apache XML-RPC
     <ant dir="components/common" target="common.clean"/>
   </target>
 
-  <!-- JAI ImageIO Java library -->
+  <!-- JAI Image I/O Tools library -->
 
   <target name="style-jai"
-    description="check source code style for JAI ImageIO library">
+    description="check source code style for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.style"/>
   </target>
 
   <target name="compile-jai"
-    description="compile classes for JAI ImageIO library">
+    description="compile classes for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.compile"/>
   </target>
 
   <target name="jar-jai"
-    description="generate JAR file for JAI ImageIO library">
+    description="generate JAR file for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.jar"/>
   </target>
 
   <target name="clean-jai"
-    description="remove build files for JAI ImageIO library">
+    description="remove build files for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.clean"/>
   </target>
 
