@@ -9,6 +9,7 @@ Type "ant -p" for a list of targets.
 This build file handles the following components.
 For more information on a component, see the
 build.properties file in that component's subtree.
+Run ./scan-deps.pl to programmatically list project interdependencies.
 
 LOCI Common
     A library containing common I/O and reflection classes
@@ -32,7 +33,7 @@ Bio-Formats
     JAR file:      bio-formats.jar
     Path:          components/bio-formats
     Project deps:  LOCI Common, OME-XML Java library,
-                   Apache Jakarta POI (reflected), MDB Tools (reflected)
+    Optional:      OME I/O, OME Notes, Apache Jakarta POI, MDB Tools
     License:       GPL
 
 LOCI Plugins for ImageJ
@@ -43,6 +44,7 @@ LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
     Path:          components/loci-plugins
     Project deps:  LOCI Common, Bio-Formats
+    Optional:      OME I/O, VisBio
     License:       GPL
 
 OME I/O
@@ -67,7 +69,8 @@ VisBio
     -=-
     JAR file:      visbio.jar
     Path:          components/visbio
-    Project deps:  LOCI Common, Bio-Formats, OME I/O, Apache Jakarta POI
+    Project deps:  LOCI Common, OME-XML Java library,
+                   Bio-Formats, OME I/O, Apache Jakarta POI
     License:       GPL
 
 SLIM Plotter
@@ -137,7 +140,7 @@ OME Metadata Editor
     -=-
     JAR file:      ome-editor.jar
     Path:          components/legacy/ome-editor
-    Project deps:  LOCI Common, Bio-Formats
+    Project deps:  LOCI Common, OME-XML Java library, Bio-Formats
     License:       LGPL
 
 ===============================================================================
