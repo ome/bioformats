@@ -451,6 +451,7 @@ Apache XML-RPC
       clean-jvmlink, clean-multi-lut,
       clean-ome-notes, clean-ome-editor"
     description="remove all build files">
+    <delete dir="artifacts"/>
     <delete dir="build"/>
   </target>
 
