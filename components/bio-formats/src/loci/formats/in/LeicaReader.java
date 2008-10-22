@@ -552,7 +552,7 @@ public class LeicaReader extends FormatReader {
         addMeta(prefix + "Length of filename", fileLength);
         Integer extLen = new Integer(stream.readInt());
         if (extLen.intValue() > fileLength) {
-          stream.seek(0);
+          stream.seek(8);
           core[0].littleEndian = !isLittleEndian();
           stream.order(isLittleEndian());
           fileLength = stream.readInt();
