@@ -539,6 +539,9 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     String creationDate = getImageCreationDate();
     String date = parseDate(creationDate, "yyyy:MM:dd HH:mm:ss");
     if (date == null) date = parseDate(creationDate, "dd/MM/yyyy HH:mm:ss.SS");
+    if (date == null) {
+      date = parseDate(creationDate, "MM/dd/yyyy hh:mm:ss.SSS aa");
+    }
     if (creationDate != null && date == null && debug) {
       debug("Warning: unknown creation date format: " + creationDate);
     }
@@ -549,7 +552,9 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (creationDate != null) {
       store.setImageCreationDate(creationDate, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
+    else {
+       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
+    }
     store.setImageDescription(TiffTools.getComment(ifds[0]), 0);
 
     // set the X and Y pixel dimensions
@@ -747,6 +752,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (date == null) return null;
     try {
       SimpleDateFormat parse = new SimpleDateFormat(format);
+      parse.setLenient(false);
       Date d = parse.parse(date, new ParsePosition(0));
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       return sdf.format(d);
