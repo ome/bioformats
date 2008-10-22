@@ -6,7 +6,7 @@
 export PYTHONPATH=Genshi-0.5dev_r765-py2.4-macosx-10.4-fat.egg
 
 legacy_ome_path=~/svn/ome/src/xml/schemas/ome.xsd
-modern_schemas="2007-06 2008-02"
+modern_schemas="2007-06 2008-02 2008-09"
 out_path=~/svn/java/components/ome-xml/src
 
 echo Generating OME 2003-FC source in ome/xml/r2003fc/ome
