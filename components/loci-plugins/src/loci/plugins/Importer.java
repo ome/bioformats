@@ -34,8 +34,8 @@ import java.util.*;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.gui.XMLWindow;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
 
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
@@ -137,9 +137,8 @@ public class Importer {
       reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");
     }
-    MetadataStore store = MetadataTools.createOMEXMLMetadata();
-    MetadataRetrieve retrieve = (MetadataRetrieve) store;
-    r.setMetadataStore(store);
+    IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
+    r.setMetadataStore(omexmlMeta);
 
     IJ.showStatus("");
     r.addStatusListener(new StatusEchoer());
@@ -230,7 +229,7 @@ public class Importer {
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(i);
         StringBuffer sb = new StringBuffer();
-        String name = retrieve.getImageName(i);
+        String name = omexmlMeta.getImageName(i);
         if (name != null && name.length() > 0) {
           sb.append(name);
           sb.append(": ");
@@ -343,7 +342,7 @@ public class Importer {
           r.setSeries(i);
           //meta.putAll(r.getCoreMetadata().seriesMetadata[i]);
 
-          String s = retrieve.getImageName(i);
+          String s = omexmlMeta.getImageName(i);
           if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
             StringBuffer sb = new StringBuffer();
             sb.append("Series ");
@@ -386,7 +385,7 @@ public class Importer {
         else {
           XMLWindow metaWindow = new XMLWindow("OME Metadata - " + id);
           try {
-            metaWindow.setXML(MetadataTools.getOMEXML(retrieve));
+            metaWindow.setXML(MetadataTools.getOMEXML(omexmlMeta));
             Util.placeWindow(metaWindow);
             metaWindow.setVisible(true);
           }
@@ -475,10 +474,10 @@ public class Importer {
 
         ((DimensionSwapper) r).setOutputOrder(stackOrder);
 
-        store.setPixelsDimensionOrder(stackOrder, i, 0);
+        omexmlMeta.setPixelsDimensionOrder(stackOrder, i, 0);
 
         // dump OME-XML to ImageJ's description field, if available
-        fi.description = MetadataTools.getOMEXML(retrieve);
+        fi.description = MetadataTools.getOMEXML(omexmlMeta);
 
         if (options.isVirtual()) {
           int cSize = r.getSizeC();
@@ -508,7 +507,7 @@ public class Importer {
                 if (pos[1] > 0) continue;
                 String label = constructSliceLabel(
                   new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]), r,
-                  retrieve, i, zCount, cCount, tCount);
+                  omexmlMeta, i, zCount, cCount, tCount);
                 ru.setVar("label", label);
                 ru.exec("stackB.addSlice(label)");
               }
@@ -516,7 +515,7 @@ public class Importer {
             else {
               for (int j=0; j<num[i]; j++) {
                 String label = constructSliceLabel(j, r,
-                  retrieve, i, zCount, cCount, tCount);
+                  omexmlMeta, i, zCount, cCount, tCount);
                 ru.setVar("label", label);
                 ru.exec("stackB.addSlice(label)");
               }
@@ -546,7 +545,7 @@ public class Importer {
             //int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
 
             String label = constructSliceLabel(ndx, r,
-              retrieve, i, zCount, cCount, tCount);
+              omexmlMeta, i, zCount, cCount, tCount);
 
             // get image processor for jth plane
             ImageProcessor ip = Util.openProcessors(r, ndx, cropOptions[i])[0];
@@ -589,18 +588,18 @@ public class Importer {
         IJ.showStatus("Creating image");
         IJ.showProgress(1);
 
-        String seriesName = retrieve.getImageName(i);
+        String seriesName = omexmlMeta.getImageName(i);
 
-        showStack(stackB, currentFile, seriesName, retrieve,
+        showStack(stackB, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
           fi, r, options, metadata);
-        showStack(stackS, currentFile, seriesName, retrieve,
+        showStack(stackS, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
           fi, r, options, metadata);
-        showStack(stackF, currentFile, seriesName, retrieve,
+        showStack(stackF, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
           fi, r, options, metadata);
-        showStack(stackO, currentFile, seriesName, retrieve,
+        showStack(stackO, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
           fi, r, options, metadata);
 
