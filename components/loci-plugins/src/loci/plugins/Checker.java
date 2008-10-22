@@ -78,9 +78,12 @@ public final class Checker {
   public static void checkLibrary(int library, HashSet missing) {
     switch (library) {
       case BIO_FORMATS:
+        checkLibrary("loci.common.RandomAccessStream",
+          "loci-common.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
-        checkLibrary("org.apache.poi.poifs.filesystem.POIFSFileSystem",
+        checkLibrary("org.apache.poi.poifs.filesystem.POIFSDocument",
           "poi-loci.jar", missing);
+        checkLibrary("mdbtools.libmdb.MdbFile", "mdbtools-java.jar", missing);
         break;
       case OME_JAVA_XML:
         checkLibrary("ome.xml.OMEXMLNode", "ome-xml.jar", missing);
