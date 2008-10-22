@@ -111,7 +111,7 @@ public class $q.className() extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void createRoot() {
     try {
-      root = ome.xml.OMEXMLFactory.newOMENode("$q.version()");
+      setRoot(ome.xml.OMEXMLFactory.newOMENode("$q.version()"));
     }
     catch (java.io.IOException exc) { LogTools.trace(exc); }
     catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
@@ -129,6 +129,7 @@ public class $q.className() extends OMEXMLMetadata {
         OMENode.class.getName());
     }
     this.root = (OMENode) root;
+    clearCachedNodes();
   }
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
@@ -233,5 +234,18 @@ public class $q.className() extends OMEXMLMetadata {
     return ${lastVar}Node;
   }
 #end##foreach $path
+
+  private void clearCachedNodes() {
+#foreach ($path in $q.unique())
+#set ($last = $q.last($path))
+#set ($lastVar = $q.var($last))
+#set ($indices = $q.indices($path))
+    // $path
+    ${lastVar}Node = null;
+#foreach ($index in $indices)
+    ${lastVar}Node${index}Index = -1;
+#end##foreach $index
+#end##foreach $path
+  }
 
 }

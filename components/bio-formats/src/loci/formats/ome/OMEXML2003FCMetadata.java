@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 20, 2008 12:02:52 PM PDT
+ * Created by curtis via MetadataAutogen on Oct 22, 2008 1:03:38 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1251,7 +1251,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void createRoot() {
     try {
-      root = ome.xml.OMEXMLFactory.newOMENode("2003-FC");
+      setRoot(ome.xml.OMEXMLFactory.newOMENode("2003-FC"));
     }
     catch (java.io.IOException exc) { LogTools.trace(exc); }
     catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
@@ -1269,6 +1269,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
         OMENode.class.getName());
     }
     this.root = (OMENode) root;
+    clearCachedNodes();
   }
 
   // - Arc property storage -
@@ -3028,6 +3029,106 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     List list = instrument.getObjectiveList();
     objectiveNode = (ObjectiveNode) list.get(objectiveIndex);
     return objectiveNode;
+  }
+
+  private void clearCachedNodes() {
+    // Experiment+
+    experimentNode = null;
+    experimentNodeExperimentIndex = -1;
+    // Experimenter+
+    experimenterNode = null;
+    experimenterNodeExperimenterIndex = -1;
+    // Experimenter+/GroupRef+
+    groupRefNode = null;
+    groupRefNodeExperimenterIndex = -1;
+    groupRefNodeGroupRefIndex = -1;
+    // Image+
+    imageNode = null;
+    imageNodeImageIndex = -1;
+    // Image+/ChannelInfo+
+    channelInfoNode = null;
+    channelInfoNodeImageIndex = -1;
+    channelInfoNodeChannelInfoIndex = -1;
+    // Image+/ChannelInfo+/ChannelComponent+
+    channelComponentNode = null;
+    channelComponentNodeImageIndex = -1;
+    channelComponentNodeChannelInfoIndex = -1;
+    channelComponentNodeChannelComponentIndex = -1;
+    // Image+/ChannelInfo+/DetectorRef
+    detectorRefNode = null;
+    detectorRefNodeImageIndex = -1;
+    detectorRefNodeChannelInfoIndex = -1;
+    // Image+/ChannelInfo+/LightSourceRef
+    lightSourceRefNode = null;
+    lightSourceRefNodeImageIndex = -1;
+    lightSourceRefNodeChannelInfoIndex = -1;
+    // Image+/ChannelInfo+/OTFRef
+    otfRefNode = null;
+    otfRefNodeImageIndex = -1;
+    otfRefNodeChannelInfoIndex = -1;
+    // Image+/DisplayOptions
+    displayOptionsNode = null;
+    displayOptionsNodeImageIndex = -1;
+    // Image+/DisplayOptions/Projection
+    projectionNode = null;
+    projectionNodeImageIndex = -1;
+    // Image+/DisplayOptions/ROI+
+    roiNode = null;
+    roiNodeImageIndex = -1;
+    roiNodeROIIndex = -1;
+    // Image+/DisplayOptions/Time
+    timeNode = null;
+    timeNodeImageIndex = -1;
+    // Image+/ImagingEnvironment
+    imagingEnvironmentNode = null;
+    imagingEnvironmentNodeImageIndex = -1;
+    // Image+/Pixels+
+    pixelsNode = null;
+    pixelsNodeImageIndex = -1;
+    pixelsNodePixelsIndex = -1;
+    // Image+/Pixels+/TiffData+
+    tiffDataNode = null;
+    tiffDataNodeImageIndex = -1;
+    tiffDataNodePixelsIndex = -1;
+    tiffDataNodeTiffDataIndex = -1;
+    // Image+/StageLabel
+    stageLabelNode = null;
+    stageLabelNodeImageIndex = -1;
+    // Instrument+
+    instrumentNode = null;
+    instrumentNodeInstrumentIndex = -1;
+    // Instrument+/Detector+
+    detectorNode = null;
+    detectorNodeInstrumentIndex = -1;
+    detectorNodeDetectorIndex = -1;
+    // Instrument+/LightSource+
+    lightSourceNode = null;
+    lightSourceNodeInstrumentIndex = -1;
+    lightSourceNodeLightSourceIndex = -1;
+    // Instrument+/LightSource+/Arc
+    arcNode = null;
+    arcNodeInstrumentIndex = -1;
+    arcNodeLightSourceIndex = -1;
+    // Instrument+/LightSource+/Filament
+    filamentNode = null;
+    filamentNodeInstrumentIndex = -1;
+    filamentNodeLightSourceIndex = -1;
+    // Instrument+/LightSource+/Laser
+    laserNode = null;
+    laserNodeInstrumentIndex = -1;
+    laserNodeLightSourceIndex = -1;
+    // Instrument+/OTF+
+    otfNode = null;
+    otfNodeInstrumentIndex = -1;
+    otfNodeOTFIndex = -1;
+    // Instrument+/OTF+/ObjectiveRef
+    objectiveRefNode = null;
+    objectiveRefNodeInstrumentIndex = -1;
+    objectiveRefNodeOTFIndex = -1;
+    // Instrument+/Objective+
+    objectiveNode = null;
+    objectiveNodeInstrumentIndex = -1;
+    objectiveNodeObjectiveIndex = -1;
   }
 
 }

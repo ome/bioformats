@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 20, 2008 12:02:52 PM PDT
+ * Created by curtis via MetadataAutogen on Oct 22, 2008 1:03:38 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1268,7 +1268,7 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void createRoot() {
     try {
-      root = ome.xml.OMEXMLFactory.newOMENode("2008-02");
+      setRoot(ome.xml.OMEXMLFactory.newOMENode("2008-02"));
     }
     catch (java.io.IOException exc) { LogTools.trace(exc); }
     catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
@@ -1286,6 +1286,7 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
         OMENode.class.getName());
     }
     this.root = (OMENode) root;
+    clearCachedNodes();
   }
 
   // - Arc property storage -
@@ -3431,6 +3432,153 @@ public class OMEXML200802Metadata extends OMEXMLMetadata {
     List list = screen.getScreenAcquisitionList();
     screenAcquisitionNode = (ScreenAcquisitionNode) list.get(screenAcquisitionIndex);
     return screenAcquisitionNode;
+  }
+
+  private void clearCachedNodes() {
+    // Experiment+
+    experimentNode = null;
+    experimentNodeExperimentIndex = -1;
+    // Experimenter+
+    experimenterNode = null;
+    experimenterNodeExperimenterIndex = -1;
+    // Experimenter+/GroupRef+
+    groupRefNode = null;
+    groupRefNodeExperimenterIndex = -1;
+    groupRefNodeGroupRefIndex = -1;
+    // Image+
+    imageNode = null;
+    imageNodeImageIndex = -1;
+    // Image+/DisplayOptions
+    displayOptionsNode = null;
+    displayOptionsNodeImageIndex = -1;
+    // Image+/DisplayOptions/Projection
+    projectionNode = null;
+    projectionNodeImageIndex = -1;
+    // Image+/DisplayOptions/ROI+
+    roiNode = null;
+    roiNodeImageIndex = -1;
+    roiNodeROIIndex = -1;
+    // Image+/DisplayOptions/Time
+    timeNode = null;
+    timeNodeImageIndex = -1;
+    // Image+/ImagingEnvironment
+    imagingEnvironmentNode = null;
+    imagingEnvironmentNodeImageIndex = -1;
+    // Image+/LogicalChannel+
+    logicalChannelNode = null;
+    logicalChannelNodeImageIndex = -1;
+    logicalChannelNodeLogicalChannelIndex = -1;
+    // Image+/LogicalChannel+/ChannelComponent+
+    channelComponentNode = null;
+    channelComponentNodeImageIndex = -1;
+    channelComponentNodeLogicalChannelIndex = -1;
+    channelComponentNodeChannelComponentIndex = -1;
+    // Image+/LogicalChannel+/DetectorRef
+    detectorRefNode = null;
+    detectorRefNodeImageIndex = -1;
+    detectorRefNodeLogicalChannelIndex = -1;
+    // Image+/LogicalChannel+/LightSourceRef
+    lightSourceRefNode = null;
+    lightSourceRefNodeImageIndex = -1;
+    lightSourceRefNodeLogicalChannelIndex = -1;
+    // Image+/LogicalChannel+/OTFRef
+    otfRefNode = null;
+    otfRefNodeImageIndex = -1;
+    otfRefNodeLogicalChannelIndex = -1;
+    // Image+/Pixels+
+    pixelsNode = null;
+    pixelsNodeImageIndex = -1;
+    pixelsNodePixelsIndex = -1;
+    // Image+/Pixels+/Plane+
+    planeNode = null;
+    planeNodeImageIndex = -1;
+    planeNodePixelsIndex = -1;
+    planeNodePlaneIndex = -1;
+    // Image+/Pixels+/Plane+/PlaneTiming
+    planeTimingNode = null;
+    planeTimingNodeImageIndex = -1;
+    planeTimingNodePixelsIndex = -1;
+    planeTimingNodePlaneIndex = -1;
+    // Image+/Pixels+/Plane+/StagePosition
+    stagePositionNode = null;
+    stagePositionNodeImageIndex = -1;
+    stagePositionNodePixelsIndex = -1;
+    stagePositionNodePlaneIndex = -1;
+    // Image+/Pixels+/TiffData+
+    tiffDataNode = null;
+    tiffDataNodeImageIndex = -1;
+    tiffDataNodePixelsIndex = -1;
+    tiffDataNodeTiffDataIndex = -1;
+    // Image+/Pixels+/TiffData+/UUID
+    uuidNode = null;
+    uuidNodeImageIndex = -1;
+    uuidNodePixelsIndex = -1;
+    uuidNodeTiffDataIndex = -1;
+    // Image+/StageLabel
+    stageLabelNode = null;
+    stageLabelNodeImageIndex = -1;
+    // Instrument+
+    instrumentNode = null;
+    instrumentNodeInstrumentIndex = -1;
+    // Instrument+/Detector+
+    detectorNode = null;
+    detectorNodeInstrumentIndex = -1;
+    detectorNodeDetectorIndex = -1;
+    // Instrument+/LightSource+
+    lightSourceNode = null;
+    lightSourceNodeInstrumentIndex = -1;
+    lightSourceNodeLightSourceIndex = -1;
+    // Instrument+/LightSource+/Arc
+    arcNode = null;
+    arcNodeInstrumentIndex = -1;
+    arcNodeLightSourceIndex = -1;
+    // Instrument+/LightSource+/Filament
+    filamentNode = null;
+    filamentNodeInstrumentIndex = -1;
+    filamentNodeLightSourceIndex = -1;
+    // Instrument+/LightSource+/Laser
+    laserNode = null;
+    laserNodeInstrumentIndex = -1;
+    laserNodeLightSourceIndex = -1;
+    // Instrument+/OTF+
+    otfNode = null;
+    otfNodeInstrumentIndex = -1;
+    otfNodeOTFIndex = -1;
+    // Instrument+/OTF+/ObjectiveRef
+    objectiveRefNode = null;
+    objectiveRefNodeInstrumentIndex = -1;
+    objectiveRefNodeOTFIndex = -1;
+    // Instrument+/Objective+
+    objectiveNode = null;
+    objectiveNodeInstrumentIndex = -1;
+    objectiveNodeObjectiveIndex = -1;
+    // Plate+
+    plateNode = null;
+    plateNodePlateIndex = -1;
+    // Plate+/Well+
+    wellNode = null;
+    wellNodePlateIndex = -1;
+    wellNodeWellIndex = -1;
+    // Plate+/Well+/WellSample+
+    wellSampleNode = null;
+    wellSampleNodePlateIndex = -1;
+    wellSampleNodeWellIndex = -1;
+    wellSampleNodeWellSampleIndex = -1;
+    // Screen+
+    screenNode = null;
+    screenNodeScreenIndex = -1;
+    // Screen+/PlateRef+
+    plateRefNode = null;
+    plateRefNodeScreenIndex = -1;
+    plateRefNodePlateRefIndex = -1;
+    // Screen+/Reagent+
+    reagentNode = null;
+    reagentNodeScreenIndex = -1;
+    reagentNodeReagentIndex = -1;
+    // Screen+/ScreenAcquisition+
+    screenAcquisitionNode = null;
+    screenAcquisitionNodeScreenIndex = -1;
+    screenAcquisitionNodeScreenAcquisitionIndex = -1;
   }
 
 }
