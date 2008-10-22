@@ -101,8 +101,10 @@ public class APLReader extends FormatReader {
     // find the corresponding .mtb file
     String name = id.toLowerCase();
     if (!name.endsWith(".mtb")) {
+      int separator = id.lastIndexOf(File.separator);
+      if (separator < 0) separator = 0;
       int underscore = id.lastIndexOf("_");
-      if (underscore < 0) underscore = id.lastIndexOf(".");
+      if (underscore < separator) underscore = id.lastIndexOf(".");
       String mtbFile = id.substring(0, underscore) + "_d.mtb";
       if (!new Location(mtbFile).exists()) {
         throw new FormatException(".mtb file not found");
