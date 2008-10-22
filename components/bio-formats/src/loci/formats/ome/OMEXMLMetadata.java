@@ -194,8 +194,8 @@ public abstract class OMEXMLMetadata implements IMetadata {
 
   /**
    * Converts Boolean value to Integer. Used to convert
-   * from 2003-FC Laser element's FrequencyDoubled Boolean value
-   * to Laser entity's FrequencyMultiplication Integer value.
+   * from 2003-FC Laser FrequencyDoubled Boolean value
+   * to Laser FrequencyMultiplication Integer value.
    */
   protected Integer booleanToInteger(Boolean value) {
     return value == null ? null : new Integer(value.booleanValue() ? 2 : 1);
@@ -203,11 +203,29 @@ public abstract class OMEXMLMetadata implements IMetadata {
 
   /**
    * Converts Integer value to Boolean. Used to convert
-   * from Laser entity's FrequencyMultiplication Integer value
-   * to 2003-FC Laser element's FrequencyDoubled Boolean value.
+   * from Laser FrequencyMultiplication Integer value
+   * to 2003-FC Laser FrequencyDoubled Boolean value.
    */
   protected Boolean integerToBoolean(Integer value) {
     return value == null ? null : new Boolean(value.intValue() == 2);
+  }
+
+  /**
+   * Converts Float value to Integer. Used to convert
+   * from 2008-02 LogicalChannel PinholeSize Integer value
+   * to LogicalChannel PinholeSize Float value.
+   */
+  protected Integer floatToInteger(Float value) {
+    return value == null ? null : new Integer(value.intValue());
+  }
+
+  /**
+   * Converts Integer value to Float. Used to convert
+   * from LogicalChannel PinholeSize Float value
+   * to 2008-02 LogicalChannel PinholeSize Integer value.
+   */
+  protected Float integerToFloat(Integer value) {
+    return value == null ? null : new Float(value.floatValue());
   }
 
 }

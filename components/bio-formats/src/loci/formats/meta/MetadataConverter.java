@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 22, 2008 1:03:38 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 1:25:59 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -166,7 +166,7 @@ public final class MetadataConverter {
         if (logicalChannelOTFValue != null) dest.setLogicalChannelOTF(logicalChannelOTFValue, imageIndex, logicalChannelIndex);
         String logicalChannelPhotometricInterpretationValue = src.getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex);
         if (logicalChannelPhotometricInterpretationValue != null) dest.setLogicalChannelPhotometricInterpretation(logicalChannelPhotometricInterpretationValue, imageIndex, logicalChannelIndex);
-        Integer logicalChannelPinholeSizeValue = src.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex);
+        Float logicalChannelPinholeSizeValue = src.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex);
         if (logicalChannelPinholeSizeValue != null) dest.setLogicalChannelPinholeSize(logicalChannelPinholeSizeValue, imageIndex, logicalChannelIndex);
         Integer logicalChannelPockelCellSettingValue = src.getLogicalChannelPockelCellSetting(imageIndex, logicalChannelIndex);
         if (logicalChannelPockelCellSettingValue != null) dest.setLogicalChannelPockelCellSetting(logicalChannelPockelCellSettingValue, imageIndex, logicalChannelIndex);

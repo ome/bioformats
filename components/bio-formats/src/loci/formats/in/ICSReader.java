@@ -419,7 +419,7 @@ public class ICSReader extends FormatReader {
             for (int n=0; n<pinholes.length; n++) {
               if (pinholes[n].trim().equals("")) continue;
               store.setLogicalChannelPinholeSize(
-                new Integer((int) Float.parseFloat(pinholes[n])), 0, channel++);
+                new Float(pinholes[n]), 0, channel++);
             }
           }
           else if (k.equalsIgnoreCase("history author")) {

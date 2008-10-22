@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 22, 2008 1:03:38 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 1:25:59 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -519,7 +519,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getLogicalChannelPinholeSize(int, int) */
-  public Integer getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex) {
+  public Float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getLogicalChannelPockelCellSetting(int, int) */
@@ -1258,8 +1258,8 @@ public class DummyMetadata implements IMetadata {
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannelPinholeSize(Integer, int, int) */
-  public void setLogicalChannelPinholeSize(Integer pinholeSize, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setLogicalChannelPinholeSize(Float, int, int) */
+  public void setLogicalChannelPinholeSize(Float pinholeSize, int imageIndex, int logicalChannelIndex) {
   }
 
   /* @see MetadataStore#setLogicalChannelPockelCellSetting(Integer, int, int) */

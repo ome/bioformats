@@ -319,8 +319,17 @@ type = String
 description = the illumination type
 
 [LogicalChannel PinholeSize]
-type = Integer
+type = Float
 description = the size of the pinhole
+
+[LogicalChannel PinholeSize 200802]
+type = Integer
+
+[LogicalChannel PinholeSize 200706]
+type = Integer
+
+[LogicalChannel PinholeSize 2003FC]
+type = Integer
 
 [LogicalChannel PhotometricInterpretation]
 type = String
@@ -667,6 +676,9 @@ countable = true
 path = Image+/DisplayOptions/ROI+
 description = a 5D bounding box region of interest in the metadata store \
               with a particular index
+
+[ROI 200809]
+path = -
 
 [ROI ID]
 type = String

@@ -517,6 +517,7 @@ public class ZeissLSMReader extends BaseTiffReader {
           if (value instanceof String) value = ((String) value).trim();
           if (key != null) addMeta(key, value);
 
+          float n;
           switch (entry) {
             case RECORDING_ENTRY_DESCRIPTION:
               store.setImageDescription(value.toString(), 0);
@@ -562,38 +563,39 @@ public class ZeissLSMReader extends BaseTiffReader {
               }
 
               break;
-          //case LASER_POWER:
-          //  TODO: this is a setting, not a fixed value
-          //  store.setLaserPower(new Float(value.toString()), 0, count - 1);
-          //  break;
+            //case LASER_POWER:
+              // TODO: this is a setting, not a fixed value
+              //n = Float.parseFloat(value.toString());
+              //store.setLaserPower(new Float(n), 0, count - 1);
+              //break;
             case CHANNEL_ENTRY_DETECTOR_GAIN:
-              //store.setDetectorSettingsGain(
-              //  new Float(value.toString()), 0, nextGain++);
+              //n = Float.parseFloat(value.toString());
+              //store.setDetectorSettingsGain(new Float(n), 0, nextGain++);
               break;
             case CHANNEL_ENTRY_PINHOLE_DIAMETER:
-              int n = (int) Float.parseFloat(value.toString());
+              n = Float.parseFloat(value.toString());
               if (n > 0 && nextPinhole < getSizeC()) {
-                store.setLogicalChannelPinholeSize(new Integer(n), 0,
+                store.setLogicalChannelPinholeSize(new Float(n), 0,
                   nextPinhole++);
               }
               break;
             case CHANNEL_ENTRY_SPI_WAVELENGTH_START:
-              n = (int) Float.parseFloat(value.toString());
-              store.setLogicalChannelEmWave(new Integer(n), 0,
+              n = Float.parseFloat(value.toString());
+              store.setLogicalChannelEmWave(new Integer((int) n), 0,
                 (nextEmWave % getSizeC()));
               nextEmWave++;
               break;
             case CHANNEL_ENTRY_SPI_WAVELENGTH_END:
-              n = (int) Float.parseFloat(value.toString());
-              store.setLogicalChannelExWave(new Integer(n), 0,
+              n = Float.parseFloat(value.toString());
+              store.setLogicalChannelExWave(new Integer((int) n), 0,
                 (nextExWave % getSizeC()));
               nextExWave++;
               break;
             case ILLUM_CHANNEL_WAVELENGTH:
-              n = (int) Float.parseFloat(value.toString());
-              store.setLogicalChannelEmWave(new Integer(n), 0,
+              n = Float.parseFloat(value.toString());
+              store.setLogicalChannelEmWave(new Integer((int) n), 0,
                 (nextEmWave % getSizeC()));
-              store.setLogicalChannelExWave(new Integer(n), 0,
+              store.setLogicalChannelExWave(new Integer((int) n), 0,
                 (nextExWave % getSizeC()));
               nextEmWave++;
               nextExWave++;

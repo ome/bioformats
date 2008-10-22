@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 22, 2008 1:03:38 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 17, 2008 1:25:59 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -640,7 +640,7 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Integer getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
+  Float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, gets TODO.

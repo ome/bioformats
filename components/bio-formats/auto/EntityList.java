@@ -114,6 +114,10 @@ import java.util.*;
  */
 public class EntityList {
 
+  // -- Constants --
+
+  private static final boolean DEBUG = false;
+
   // -- Fields --
 
   /** List of versions and their details. */
@@ -133,7 +137,7 @@ public class EntityList {
   /** The active property. */
   protected String prop;
 
-  // -- Constructors --
+  // -- Constructor --
 
   /** Constructs an entity list. */
   public EntityList(String versionPath, String entityPath) throws IOException {
@@ -158,6 +162,7 @@ public class EntityList {
     entities = new Hashtable<String, Entity>();
     for (Hashtable<String, String> attrs : entityList) {
       String name = attrs.get(IniParser.HEADER_KEY);
+      if (DEBUG) debug("-- Parsing entry '" + name + "' --");
 
       // "entity" list actually contains attribute tables for entities,
       // properties and version overrides; determine which kind this one is
@@ -166,8 +171,10 @@ public class EntityList {
       switch (num) {
         case 1:
           // entity header
+          if (DEBUG) debug("Entry is an entity definition");
           entities.put(name, new Entity(attrs));
           System.out.println("\t" + name);
+          if (DEBUG) debug("Added entity '" + name + "'");
           break;
         case 2:
           // property header, or entity version header
@@ -178,18 +185,28 @@ public class EntityList {
             throw new IOException("bad entity name '" + t1 + "'");
           }
           attrs.put(IniParser.HEADER_KEY, t2);
+          if (DEBUG) debug("Reset header value to '" + t2 + "'");
           Hashtable<String, String> version = versions.get(t2);
           if (version == null) {
             // property header
+            if (DEBUG) debug("Entry is a property definition");
             entity.props.put(t2, new Property(attrs));
+            if (DEBUG) {
+              debug("Added property '" + t2 + "' to entity '" + t1 + "'");
+            }
           }
           else {
             // entity version header
+            if (DEBUG) debug("Entry is an entity version definition");
             entity.versions.put(t2, attrs);
+            if (DEBUG) {
+              debug("Added version '" + t2 + "' to entity '" + t1 + "'");
+            }
           }
           break;
         case 3:
           // property version header
+          if (DEBUG) debug("Entry is a property version definition");
           t1 = st.nextToken();
           t2 = st.nextToken();
           String t3 = st.nextToken();
@@ -202,7 +219,13 @@ public class EntityList {
             throw new IOException("bad property name '" +
               t2 + "' for entity '" + t1 + "'");
           }
+          attrs.put(IniParser.HEADER_KEY, t2);
+          if (DEBUG) debug("Reset header value to '" + t2 + "'");
           prop.versions.put(t3, attrs);
+          if (DEBUG) {
+            debug("Added property '" + t2 +
+              "' to version '" + t3 + "' of entity '" + t1 + "'");
+          }
           break;
         default:
           throw new IOException("bad token count for header '" + name + "'");
@@ -326,6 +349,12 @@ public class EntityList {
     }
 
     return value;
+  }
+
+  // -- Helper methods --
+
+  private void debug(String s) {
+    System.out.println("DEBUG: " + s);
   }
 
 }

@@ -196,8 +196,7 @@ public class ImarisReader extends FormatReader {
     // CTR CHECK
     for (int i=0; i<getSizeC(); i++) {
       if (pinholes[i] > 0) {
-        store.setLogicalChannelPinholeSize(new Integer((int) pinholes[i]),
-          0, i);
+        store.setLogicalChannelPinholeSize(new Float(pinholes[i]), 0, i);
       }
       //if (gains[i] > 0) {
       //  store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
