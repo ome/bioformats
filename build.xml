@@ -454,7 +454,7 @@ Apache XML-RPC
     <delete dir="build"/>
   </target>
 
-  <target name="docs" depends="compile"
+  <target name="docs" depends="jars"
     description="generate javadocs for LOCI software packages">
     <tstamp>
       <format property="YEAR" pattern="yyyy"/>
