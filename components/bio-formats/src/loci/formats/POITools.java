@@ -52,7 +52,7 @@ public class POITools {
   private Vector filePath;
   private Vector fileList;
   private Hashtable fileSizes;
- 
+
   // -- Constructor --
 
   public POITools(String id) throws FormatException, IOException {
@@ -158,7 +158,7 @@ public class POITools {
     catch (ReflectException e) {
       throw new FormatException(e);
     }
- 
+
     fileList = new Vector();
     filePath = new Vector();
     try {

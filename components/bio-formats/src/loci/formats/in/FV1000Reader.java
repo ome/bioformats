@@ -463,8 +463,8 @@ public class FV1000Reader extends FormatReader {
             Integer.parseInt(prefix.substring(6, prefix.indexOf("P")).trim());
           if (key.equals("AxisCode")) code[ndx] = value;
           else if (key.equals("MaxSize")) size[ndx] = value;
-	        else if (key.equals("Interval")) pixelSize[ndx] = value;
-	      }
+          else if (key.equals("Interval")) pixelSize[ndx] = value;
+        }
         else if ((prefix + key).equals(
           "[Reference Image Parameter] - ImageDepth"))
         {

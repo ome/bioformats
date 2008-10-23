@@ -1110,7 +1110,8 @@ public final class AWTImageTools {
         byte[][] b = (byte[][]) pixels;
         byte[][] newBytes = new byte[b.length][width * height];
         for (int i=0; i<b.length; i++) {
-          newBytes[i] = ImageTools.padImage(b[i], false, 1, img.getWidth(), width, height);
+          newBytes[i] = ImageTools.padImage(b[i],
+            false, 1, img.getWidth(), width, height);
         }
         return makeImage(newBytes, width, height);
       }
@@ -1127,7 +1128,8 @@ public final class AWTImageTools {
         int[][] b = (int[][]) pixels;
         int[][] newInts = new int[b.length][width * height];
         for (int i=0; i<b.length; i++) {
-          newInts[i] = ImageTools.padImage(b[i], false, 1, img.getWidth(), width, height);
+          newInts[i] = ImageTools.padImage(b[i],
+            false, 1, img.getWidth(), width, height);
         }
         return makeImage(newInts, width, height);
       }

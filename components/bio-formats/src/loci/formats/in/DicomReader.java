@@ -566,8 +566,9 @@ public class DicomReader extends FormatReader {
     store.setImageDescription(imageType, 0);
 
     // CTR CHECK
-//    store.setInstrumentManufacturer((String) getMeta("Manufacturer"), 0);
-//    store.setInstrumentModel((String) getMeta("Manufacturer's Model Name"), 0);
+    //store.setInstrumentManufacturer((String) getMeta("Manufacturer"), 0);
+    //store.setInstrumentModel((String)
+    //  getMeta("Manufacturer's Model Name"), 0);
   }
 
   // -- Helper methods --
@@ -754,7 +755,7 @@ public class DicomReader extends FormatReader {
       case QQ:
         // Explicit VR with 16-bit length
         if (tag == 0x00283006) {
-    	 	  return DataTools.bytesToInt(b, 2, 2, isLittleEndian());
+          return DataTools.bytesToInt(b, 2, 2, isLittleEndian());
         }
         int n1 = DataTools.bytesToShort(b, 2, 2, isLittleEndian());
         int n2 = DataTools.bytesToShort(b, 2, 2, !isLittleEndian());

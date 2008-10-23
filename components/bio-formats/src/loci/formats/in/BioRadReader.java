@@ -692,32 +692,27 @@ public class BioRadReader extends FormatReader {
         store.setDetectorSettingsOffset(new Float(offset), 0, 0);
       }
       if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
-      // CTR CHECK
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//       offset == null ? null : new Float(offset),
-//       gain == null ? null : new Float(gain), null, null, null, null, null,
-//       null, null, null, null, null, null, null, null, null);
       // CTR FIXME
-//      store.setDisplayChannel(ii, new Double(ramp1max),
-//        new Double(ramp1min), null, null);
+      //store.setDisplayChannel(ii, new Double(ramp1max),
+      //  new Double(ramp1min), null, null);
     }
     // CTR FIXME
-//    store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-//      new Boolean(core[0].sizeC > 1), new Boolean(core[0].sizeC >= 2),
-//      new Boolean(core[0].sizeC >= 3), Boolean.FALSE, null,
-//      zstart == null ? null :
-//      new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
-//      null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
-//      null, null, core[0].sizeC > 1 ? new Integer(0) : null,
-//      core[0].sizeC > 1 ? new Integer(1) : null,
-//      core[0].sizeC > 1 ? new Integer(2) : null, new Integer(0));
+    //store.setDisplayOptions(zoom == null ? null : new Float(zoom),
+    //  new Boolean(core[0].sizeC > 1), new Boolean(core[0].sizeC >= 2),
+    //  new Boolean(core[0].sizeC >= 3), Boolean.FALSE, null,
+    //  zstart == null ? null :
+    //  new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
+    //  null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
+    //  null, null, core[0].sizeC > 1 ? new Integer(0) : null,
+    //  core[0].sizeC > 1 ? new Integer(1) : null,
+    //  core[0].sizeC > 1 ? new Integer(2) : null, new Integer(0));
 
     for (int i=0; i<3; i++) {
       String exc = i == 0 ? ex1 : i == 1 ? ex2 : ex3;
       String ems = i == 0 ? em1 : i == 1 ? em2 : em3;
       // CTR FIXME
-//      if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
-//      if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
+      //if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
+      //if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
     }
     if (mag != null) {
       // CTR CHECK

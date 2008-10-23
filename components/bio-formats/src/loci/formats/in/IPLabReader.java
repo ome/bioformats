@@ -255,8 +255,8 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationWhite" + i, white);
 
           // CTR CHECK
-//          store.setDisplayChannel(new Integer(core[0].sizeC), new Double(black),
-//            new Double(white), new Float(gamma), null);
+          //store.setDisplayChannel(new Integer(core[0].sizeC),
+          //  new Double(black), new Double(white), new Float(gamma), null);
         }
       }
       else if (tag.equals("head")) {

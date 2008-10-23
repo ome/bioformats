@@ -131,7 +131,7 @@ public class NetcdfTools {
 
         r.exec("array = attr.getValues()");
         h.put(r.exec("attr.getName()"),
-          r.exec("s = array.copyTo1DJavaArray()"));
+        r.exec("s = array.copyTo1DJavaArray()"));
       }
 
       return h;
@@ -147,7 +147,9 @@ public class NetcdfTools {
     String attr = name.substring(name.lastIndexOf("/") + 1);
 
     try {
-      setupGroup(dir); r.setVar("name", attr); r.exec("dim = g.findDimension(name)");
+      setupGroup(dir);
+      r.setVar("name", attr);
+      r.exec("dim = g.findDimension(name)");
       return ((Integer) r.exec("dim.getLength()")).intValue();
     }
     catch (ReflectException e) {

@@ -36,7 +36,7 @@ import loci.formats.FormatException;
 import loci.formats.ImageReader;
 
 /**
- * A class for testing {@link loci.formats.RandomAccessStream}'s
+ * A class for testing {@link loci.common.RandomAccessStream}'s
  * ability to handle files compressed with gz, zip or bz2.
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -49,7 +49,9 @@ public class ZipTester {
 
   private static ImageReader reader = new ImageReader();
 
-  public static void main(String[] args) throws IOException, FormatException, InterruptedException {
+  public static void main(String[] args)
+    throws IOException, FormatException, InterruptedException
+  {
     if (args.length < 2) {
       System.out.println("Usage: java loci.tests.ZipTester " +
         "/path/to/input-file /path/to/output-folder");

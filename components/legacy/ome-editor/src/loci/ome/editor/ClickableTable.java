@@ -482,7 +482,8 @@ public class ClickableTable extends JTable
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
         }
         else {
-          OMEXMLNode realParent = tp.tPanel.ome.getChildNode("CustomAttributes");
+          OMEXMLNode realParent =
+            tp.tPanel.ome.getChildNode("CustomAttributes");
           parentEle = realParent.getDOMElement();
           //remove the node in question from its (CustomAttributes) parent
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
@@ -508,7 +509,8 @@ public class ClickableTable extends JTable
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
         }
         else {
-          OMEXMLNode realParent = tp.tPanel.oNode.getChildNode("CustomAttributes");
+          OMEXMLNode realParent =
+            tp.tPanel.oNode.getChildNode("CustomAttributes");
           Element parentEle = realParent.getDOMElement();
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
 

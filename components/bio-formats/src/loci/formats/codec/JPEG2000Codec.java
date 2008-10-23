@@ -269,7 +269,8 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     }
     else {
       for (int i=0; i<single.length; i++) {
-        System.arraycopy(single[i], 0, rtn, i*single[0].length, single[i].length);
+        System.arraycopy(single[i], 0,
+          rtn, i*single[0].length, single[i].length);
       }
     }
     single = null;

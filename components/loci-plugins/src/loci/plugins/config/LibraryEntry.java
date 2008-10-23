@@ -124,8 +124,8 @@ public class LibraryEntry implements Comparable {
       path = path.replaceAll("^/([A-Z]:)", "$1");
       path = path.replaceAll("!.*", "");
       path = URLDecoder.decode(path, "UTF-8");
-			String slash = File.separator;
-			if (slash.equals("\\")) slash = "\\\\";
+      String slash = File.separator;
+      if (slash.equals("\\")) slash = "\\\\";
       path = path.replaceAll("/", slash);
 
       log.println("Found library " + name + ":");
