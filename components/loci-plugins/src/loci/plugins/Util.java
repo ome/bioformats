@@ -56,6 +56,8 @@ public final class Util {
     "ImageJ 1.39l or later is required to merge >8 bit or >3 channel data";
 
   public static final String PREF_READER_ENABLED = "bioformats.enabled";
+  public static final String PREF_READER_WINDOWLESS = "bioformats.windowless";
+
   public static final String PREF_ND2_NIKON = "bioformats.nd2.nikon";
   public static final String PREF_PICT_QTJAVA = "bioformats.pict.qtjava";
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
@@ -492,10 +494,7 @@ public final class Util {
     }
     ClassList enabledClasses = new ClassList(IFormatReader.class);
     for (int i=0; i<c.length; i++) {
-      String n = c[i].getName();
-      String readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
-      String key = PREF_READER_ENABLED + "." + readerName;
-      boolean on = Prefs.get(key, true);
+      boolean on = getPref(PREF_READER_ENABLED, c[i], true);
       if (on) {
         try {
           enabledClasses.addClass(c[i]);
@@ -533,6 +532,14 @@ public final class Util {
     }
 
     return reader;
+  }
+
+  /**
+   * Gets whether windowless mode should be used when opening
+   * the given image reader's currently initialized dataset.
+   */
+  public static boolean isWindowless(IFormatReader reader) {
+    return getPref(PREF_READER_WINDOWLESS, reader.getClass(), false);
   }
 
   /**
@@ -589,6 +596,15 @@ public final class Util {
     }
     if (IJ.getInstance() != null) new TextWindow("Exception", s, 350, 250);
     else IJ.log(s);
+  }
+
+  // -- Helper methods --
+
+  private static boolean getPref(String pref, Class c, boolean defaultValue) {
+    String n = c.getName();
+    String readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
+    String key = pref + "." + readerName;
+    return Prefs.get(key, defaultValue);
   }
 
 }

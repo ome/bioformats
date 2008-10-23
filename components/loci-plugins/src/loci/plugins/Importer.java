@@ -83,7 +83,6 @@ public class Importer {
 
     String id = options.getId();
     boolean quiet = options.isQuiet();
-    boolean windowless = options.isWindowless();
 
     Location idLoc = options.getIdLocation();
     String idName = options.getIdName();
@@ -145,6 +144,7 @@ public class Importer {
 
     // -- Step 3: get parameter values --
 
+    boolean windowless = options.isWindowless() || Util.isWindowless(r);
     if (!windowless) status = options.promptOptions();
     if (!statusOk(status)) return;
 
@@ -592,16 +592,16 @@ public class Importer {
 
         showStack(stackB, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-          fi, r, options, metadata);
+          fi, r, options, metadata, windowless);
         showStack(stackS, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-          fi, r, options, metadata);
+          fi, r, options, metadata, windowless);
         showStack(stackF, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-          fi, r, options, metadata);
+          fi, r, options, metadata, windowless);
         showStack(stackO, currentFile, seriesName, omexmlMeta,
           cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-          fi, r, options, metadata);
+          fi, r, options, metadata, windowless);
 
         long endTime = System.currentTimeMillis();
         double elapsed = (endTime - startTime) / 1000.0;
@@ -701,7 +701,7 @@ public class Importer {
   private void showStack(ImageStack stack, String file, String series,
     MetadataRetrieve retrieve, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, final IFormatReader r,
-    final ImporterOptions options, String metadata)
+    final ImporterOptions options, String metadata, boolean windowless)
     throws FormatException, IOException
   {
     if (stack == null) return;
@@ -719,12 +719,12 @@ public class Importer {
     Util.applyCalibration(retrieve, imp, r.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
-    displayStack(imp, r, options);
+    displayStack(imp, r, options, windowless);
   }
 
   /** Displays the image stack using the appropriate plugin. */
-  private void displayStack(ImagePlus imp,
-    IFormatReader r, ImporterOptions options)
+  private void displayStack(ImagePlus imp, IFormatReader r,
+    ImporterOptions options, boolean windowless)
   {
     boolean mergeChannels = options.isMergeChannels();
     boolean colorize = options.isColorize();
@@ -747,7 +747,7 @@ public class Importer {
     if (!concatenate && mergeChannels) imp.show();
 
     if (!options.isVirtual()) {
-      if (mergeChannels && options.isWindowless()) {
+      if (mergeChannels && windowless) {
         IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
           " merge=true merge_option=[" + options.getMergeOption() + "] " +
           "hyper_stack=" + options.isViewHyperstack() + " ");

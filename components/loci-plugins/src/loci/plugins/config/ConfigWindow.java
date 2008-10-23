@@ -28,6 +28,7 @@ package loci.plugins.config;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.io.*;
 import java.util.*;
@@ -60,7 +61,7 @@ public class ConfigWindow extends JFrame
   private JList formatsList;
   private JPanel formatInfo;
   private JTextField extensions;
-  private JCheckBox enabled;
+  private JCheckBox enabledBox, windowlessBox;
 
   private DefaultListModel libsListModel;
   private JList libsList;
@@ -104,8 +105,10 @@ public class ConfigWindow extends JFrame
     tabs.addTab("Formats", makeSplitPane(formatsList, formatInfo));
 
     extensions = makeTextField();
-    enabled = new JCheckBox("", false);
-    enabled.addItemListener(this);
+    enabledBox = new JCheckBox("", false);
+    enabledBox.addItemListener(this);
+    windowlessBox = new JCheckBox("", false);
+    windowlessBox.addItemListener(this);
 
     doFormatLayout(null);
 
@@ -191,7 +194,14 @@ public class ConfigWindow extends JFrame
     Object value = formatsList.getSelectedValue();
     if (!(value instanceof FormatEntry)) return;
     FormatEntry entry = (FormatEntry) value;
-    setReaderEnabled(entry, enabled.isSelected());
+
+    Object src = e.getSource();
+    if (src == enabledBox) {
+      setReaderEnabled(entry, enabledBox.isSelected());
+    }
+    else if (src == windowlessBox) {
+      setReaderWindowless(entry, windowlessBox.isSelected());
+    }
   }
 
   // -- ListSelectionListener API methods --
@@ -460,7 +470,8 @@ public class ConfigWindow extends JFrame
       extensions.setText(sb.toString());
     }
 
-    enabled.setSelected(isReaderEnabled(entry));
+    enabledBox.setSelected(isReaderEnabled(entry));
+    windowlessBox.setSelected(isReaderWindowless(entry));
 
     formatInfo.removeAll();
     formatInfo.setLayout(new SpringLayout());
@@ -469,7 +480,10 @@ public class ConfigWindow extends JFrame
     formatInfo.add(extensions);
 
     formatInfo.add(makeLabel("Enabled", false));
-    formatInfo.add(enabled);
+    formatInfo.add(enabledBox);
+
+    formatInfo.add(makeLabel("Windowless", false));
+    formatInfo.add(windowlessBox);
 
     // format-specific widgets
     int rows = entry == null ? 0 : entry.widgets.length;
@@ -479,50 +493,73 @@ public class ConfigWindow extends JFrame
     }
 
     SpringUtilities.makeCompactGrid(formatInfo,
-      2 + rows, 2, PAD, PAD, PAD, PAD);
+      3 + rows, 2, PAD, PAD, PAD, PAD);
 
     formatInfo.validate();
     formatInfo.repaint();
   }
 
   private boolean isReaderEnabled(FormatEntry entry) {
+    return isReaderPref("ENABLED", entry, true);
+  }
+
+  private void setReaderEnabled(FormatEntry entry, boolean value) {
+    setReaderPref("ENABLED", entry, value);
+  }
+
+  private boolean isReaderWindowless(FormatEntry entry) {
+    return isReaderPref("WINDOWLESS", entry, false);
+  }
+
+  private void setReaderWindowless(FormatEntry entry, boolean value) {
+    setReaderPref("WINDOWLESS", entry, value);
+  }
+
+  private boolean isReaderPref(String pref, FormatEntry entry,
+    boolean defaultValue)
+  {
     if (entry == null) return false;
     try {
-      Class importerClass = Class.forName("loci.plugins.Util");
-      Field field = importerClass.getField("PREF_READER_ENABLED");
-      String key = field.get(null) + "." + entry.readerName;
-      Class prefsClass = Class.forName("ij.Prefs");
-      Method get = prefsClass.getMethod("get",
-        new Class[] {String.class, boolean.class});
-      Boolean on = (Boolean) get.invoke(null,
-        new Object[] {key, Boolean.TRUE});
-      return on.booleanValue();
+      Boolean result = (Boolean)
+        invokeMethod("PREF_READER_" + pref, "get", entry, defaultValue);
+      return result.booleanValue();
     }
     catch (Throwable t) {
-      log.println("Error determining status for " +
-        entry.readerName + " reader:");
+      t.printStackTrace();
+      log.println("Error querying property '" + pref.toLowerCase() +
+        "' for reader '" + entry.readerName + "':");
       t.printStackTrace(log);
       return false;
     }
   }
 
-  private void setReaderEnabled(FormatEntry entry, boolean on) {
+  private void setReaderPref(String pref, FormatEntry entry, boolean value) {
     if (entry == null) return;
     try {
-      Class importerClass = Class.forName("loci.plugins.Util");
-      Field field = importerClass.getField("PREF_READER_ENABLED");
-      String key = field.get(null) + "." + entry.readerName;
-      Class prefsClass = Class.forName("ij.Prefs");
-      Method set = prefsClass.getMethod("set",
-        new Class[] {String.class, boolean.class});
-      set.invoke(null, new Object[] {key, new Boolean(on)});
+      invokeMethod("PREF_READER_" + pref, "set", entry, value);
     }
     catch (Throwable t) {
       t.printStackTrace();
-      log.println("Error " + (on ? "enabling" : "disabling") +
-        " " + entry.readerName + " reader:");
+      log.println("Error setting property '" + pref.toLowerCase() +
+        "' for reader '" + entry.readerName + "':");
       t.printStackTrace(log);
     }
+  }
+
+  private static final Class[] PARAMS = {String.class, boolean.class};
+
+  private Object invokeMethod(String fieldName, String methodName,
+    FormatEntry entry, boolean value) throws ClassNotFoundException,
+    NoSuchFieldException, IllegalAccessException, NoSuchMethodException,
+    InvocationTargetException
+  {
+    Class importerClass = Class.forName("loci.plugins.Util");
+    Field field = importerClass.getField(fieldName);
+    String key = field.get(null) + "." + entry.readerName;
+    Class prefsClass = Class.forName("ij.Prefs");
+    Method method = prefsClass.getMethod(methodName, PARAMS);
+    Object[] args = {key, value ? Boolean.TRUE : Boolean.FALSE};
+    return method.invoke(null, args);
   }
 
 }
