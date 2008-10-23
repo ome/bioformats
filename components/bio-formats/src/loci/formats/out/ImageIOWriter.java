@@ -75,9 +75,8 @@ public abstract class ImageIOWriter extends FormatWriter {
   public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    BufferedImage img = (cm == null) ?
-      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
-    if (ImageTools.getPixelType(img) == FormatTools.FLOAT) {
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    if (AWTImageTools.getPixelType(img) == FormatTools.FLOAT) {
       throw new FormatException("Floating point data not supported.");
     }
     out = new DataOutputStream(new BufferedOutputStream(

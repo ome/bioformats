@@ -423,7 +423,8 @@ public class FileStitcher implements IFormatReader {
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     if (blankImage[sno] == null) {
-      blankImage[sno] = ImageTools.blankImage(w, h, sizeC[sno], getPixelType());
+      blankImage[sno] = AWTImageTools.blankImage(w, h,
+        sizeC[sno], getPixelType());
     }
 
     return blankImage[sno];
@@ -505,7 +506,7 @@ public class FileStitcher implements IFormatReader {
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     if (blankThumb[sno] == null) {
-      blankThumb[sno] = ImageTools.blankImage(getThumbSizeX(),
+      blankThumb[sno] = AWTImageTools.blankImage(getThumbSizeX(),
         getThumbSizeY(), sizeC[sno], getPixelType());
     }
     return blankThumb[sno];

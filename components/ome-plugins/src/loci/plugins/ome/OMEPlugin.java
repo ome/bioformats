@@ -33,9 +33,9 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import loci.common.*;
+import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.ImageTools;
 import loci.plugins.Checker;
 import loci.plugins.Util;
 import loci.ome.io.OMECredentials;
@@ -357,7 +357,7 @@ public class OMEPlugin implements PlugIn {
       else {
         gbc.gridy = i;
         if (thumbs[i] == null) {
-          thumbs[i] = ImageTools.blankImage(64, 64, 1, FormatTools.UINT8);
+          thumbs[i] = AWTImageTools.blankImage(64, 64, 1, FormatTools.UINT8);
         }
         JLabel label = new JLabel(new ImageIcon(thumbs[i]));
         label.setToolTipText(tips[i]);

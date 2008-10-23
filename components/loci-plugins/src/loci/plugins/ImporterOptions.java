@@ -763,7 +763,7 @@ public class ImporterOptions implements ItemListener {
         try {
           BufferedImage img = r.openThumbImage(ndx);
           if (isAutoscale() && r.getPixelType() != FormatTools.FLOAT) {
-            img = ImageTools.autoscale(img);
+            img = AWTImageTools.autoscale(img);
           }
           ImageIcon icon = new ImageIcon(img);
           p[i].removeAll();

@@ -68,7 +68,7 @@ public abstract class ImageIOReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false);
+    byte[] t = AWTImageTools.getBytes(openImage(no, x, y, w, h), false);
     System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
     return buf;
   }
@@ -110,7 +110,7 @@ public abstract class ImageIOReader extends FormatReader {
     core[0].sizeC = isRGB() ? 3 : 1;
     core[0].sizeT = 1;
     core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = ImageTools.getPixelType(img);
+    core[0].pixelType = AWTImageTools.getPixelType(img);
     core[0].interleaved = false;
     core[0].littleEndian = false;
     core[0].metadataComplete = true;

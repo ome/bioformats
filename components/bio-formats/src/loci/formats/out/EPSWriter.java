@@ -61,15 +61,14 @@ public class EPSWriter extends FormatWriter {
 
     out = new RandomAccessFile(currentId, "rw");
 
-    BufferedImage img = (cm == null) ?
-      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
 
     // get the width and height of the image
     int width = img.getWidth();
     int height = img.getHeight();
 
     // retrieve pixel data for this plane
-    byte[][] byteData = ImageTools.getBytes(img);
+    byte[][] byteData = AWTImageTools.getBytes(img);
 
     // write the header
 

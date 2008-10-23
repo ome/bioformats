@@ -131,7 +131,7 @@ public class ChannelMerger extends ReaderWrapper {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return ImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
+    return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
   }
 
   /* @see IFormatReader#openThumbImage(int) */
@@ -140,7 +140,7 @@ public class ChannelMerger extends ReaderWrapper {
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
     if (!canMerge()) return super.openThumbImage(no);
-    return ImageTools.scale(openImage(no), getThumbSizeX(),
+    return AWTImageTools.scale(openImage(no), getThumbSizeX(),
       getThumbSizeY(), true);
   }
 

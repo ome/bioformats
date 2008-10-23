@@ -127,7 +127,7 @@ public class LegacyQTWriter extends FormatWriter {
 
       try {
         r.exec("QTSession.open()");
-        BufferedImage img = ImageTools.makeBuffered(image);
+        BufferedImage img = AWTImageTools.makeBuffered(image);
         width = img.getWidth();
         height = img.getHeight();
         File f = new File(currentId);
@@ -193,7 +193,7 @@ public class LegacyQTWriter extends FormatWriter {
       r.exec("intsPerRow = pixelData.getRowBytes()");
       int intsPerRow = ((Integer) r.getVar("intsPerRow")).intValue() / 4;
 
-      byte[][] px = ImageTools.getBytes(ImageTools.makeBuffered(image));
+      byte[][] px = AWTImageTools.getBytes(AWTImageTools.makeBuffered(image));
 
       int[] pixels = new int[px[0].length];
       for (int i=0; i<pixels.length; i++) {

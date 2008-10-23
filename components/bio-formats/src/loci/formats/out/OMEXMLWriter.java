@@ -86,7 +86,7 @@ public class OMEXMLWriter extends FormatWriter {
       initialized = true;
     }
 
-    byte[][] pix = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),
+    byte[][] pix = AWTImageTools.getPixelBytes(AWTImageTools.makeBuffered(image),
       !retrieve.getPixelsBigEndian(series, 0).booleanValue());
     for (int i=0; i<pix.length; i++) {
       byte[] encodedPix = new Base64Codec().compress(pix[i], 0, 0, null, null);

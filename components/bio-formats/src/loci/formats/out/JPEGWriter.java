@@ -51,9 +51,8 @@ public class JPEGWriter extends ImageIOWriter {
   public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    BufferedImage img = (cm == null) ?
-      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
-    int type = ImageTools.getPixelType(img);
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    int type = AWTImageTools.getPixelType(img);
     int[] types = getPixelTypes();
     for (int i=0; i<types.length; i++) {
       if (types[i] == type) {

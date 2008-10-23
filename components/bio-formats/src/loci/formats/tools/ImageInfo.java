@@ -482,13 +482,12 @@ public final class ImageInfo {
             FormatTools.getBytesPerPixel(reader.getPixelType()),
             reader.getPixelType() == FormatTools.FLOAT,
             reader.isLittleEndian());
-          images[i - start] =
-            ImageTools.makeImage(ImageTools.make24Bits(pix, x, y,
-              false, false), x, y);
+          images[i - start] = AWTImageTools.makeImage(
+            ImageTools.make24Bits(pix, x, y, false, false), x, y);
         }
 
         // check for pixel type mismatch
-        int pixType = ImageTools.getPixelType(images[i - start]);
+        int pixType = AWTImageTools.getPixelType(images[i - start]);
         if (pixType != pixelType && pixType != pixelType + 1 && !fastBlit) {
           if (!mismatch) {
             LogTools.println();

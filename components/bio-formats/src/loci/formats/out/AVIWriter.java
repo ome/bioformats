@@ -100,15 +100,13 @@ public class AVIWriter extends FormatWriter {
     if (image == null) {
       throw new FormatException("Image is null");
     }
-    BufferedImage img = null;
-    if (cm != null) img = ImageTools.makeBuffered(image, cm);
-    else img = ImageTools.makeBuffered(image);
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
     //if ((img.getColorModel() instanceof IndexColorModel) ||
     //  (img.getColorModel() instanceof Index16ColorModel))
     //{
     //  img = ImageTools.indexedToRGB(img, false);
     //}
-    byte[][] byteData = ImageTools.getBytes(img);
+    byte[][] byteData = AWTImageTools.getBytes(img);
     byte[][] lut = null;
 
     if (img.getColorModel() instanceof IndexColorModel) {

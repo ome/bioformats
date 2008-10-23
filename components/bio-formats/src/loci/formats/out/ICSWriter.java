@@ -59,12 +59,10 @@ public class ICSWriter extends FormatWriter {
     if (image == null) {
       throw new FormatException("Image is null");
     }
-    BufferedImage img = null;
-    if (cm != null) img = ImageTools.makeBuffered(image, cm);
-    else img = ImageTools.makeBuffered(image);
-    byte[][] byteData = ImageTools.getPixelBytes(img, false);
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
     int bytesPerPixel =
-      FormatTools.getBytesPerPixel(ImageTools.getPixelType(img));
+      FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
 
     if (!initialized) {
       initialized = true;

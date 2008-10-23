@@ -96,7 +96,7 @@ public class APNGReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    byte[] t = ImageTools.getBytes(openImage(no, x, y, w, h), false);
+    byte[] t = AWTImageTools.getBytes(openImage(no, x, y, w, h), false);
     System.arraycopy(t, 0, buf, 0, buf.length);
 
     return buf;
@@ -264,7 +264,7 @@ public class APNGReader extends FormatReader {
     core[0].sizeY = img.getHeight();
     core[0].rgb = img.getRaster().getNumBands() > 1;
     core[0].sizeC = img.getRaster().getNumBands();
-    core[0].pixelType = ImageTools.getPixelType(img);
+    core[0].pixelType = AWTImageTools.getPixelType(img);
     core[0].indexed = img.getColorModel() instanceof IndexColorModel;
     core[0].falseColor = false;
 

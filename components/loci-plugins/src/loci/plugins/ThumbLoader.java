@@ -33,10 +33,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
-import loci.formats.ImageTools;
 
 /**
  * Loads thumbnails for Bio-Formats Importer
@@ -119,7 +119,7 @@ public class ThumbLoader implements Runnable {
         int ndx = ir.getIndex(z, 0, t);
         BufferedImage thumb = ir.openThumbImage(ndx);
         if (scale && ir.getPixelType() != FormatTools.FLOAT) {
-          thumb = ImageTools.autoscale(thumb);
+          thumb = AWTImageTools.autoscale(thumb);
         }
         ImageIcon icon = new ImageIcon(thumb);
         p[ii].removeAll();

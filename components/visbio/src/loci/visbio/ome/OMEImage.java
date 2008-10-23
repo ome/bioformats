@@ -295,7 +295,7 @@ public class OMEImage extends ImageTransform {
     try {
       for (int c=0; c<sizeC; c++) {
         int ndx = downloader.getIndex(z, c, t);
-        samples[c] = ImageTools.getFloats(downloader.openImage(ndx))[0];
+        samples[c] = AWTImageTools.getFloats(downloader.openImage(ndx))[0];
       }
     }
     catch (FormatException exc) { exc.printStackTrace(); }

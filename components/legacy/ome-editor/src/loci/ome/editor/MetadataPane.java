@@ -806,7 +806,7 @@ public class MetadataPane extends JPanel
           else img = null;
           images[i] = img;
           int width = 50, height = 50;
-          thumb = ImageTools.scale(img, width, height, false);
+          thumb = AWTImageTools.scale(img, width, height, false);
           thumbs[i] = thumb;
         }
         ome = (OMENode) ms.getRoot();

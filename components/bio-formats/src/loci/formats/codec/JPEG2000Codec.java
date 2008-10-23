@@ -162,7 +162,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
         }
       }
       DataBuffer buffer = new DataBufferByte(b, x * y);
-      img = ImageTools.constructImage(b.length, DataBuffer.TYPE_BYTE, x, y,
+      img = AWTImageTools.constructImage(b.length, DataBuffer.TYPE_BYTE, x, y,
         false, true, buffer);
     }
     else if (dims[1] == 2) {
@@ -184,7 +184,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
         }
       }
       DataBuffer buffer = new DataBufferUShort(s, x * y);
-      img = ImageTools.constructImage(s.length, DataBuffer.TYPE_USHORT, x, y,
+      img = AWTImageTools.constructImage(s.length, DataBuffer.TYPE_USHORT, x, y,
         false, true, buffer);
     }
 
@@ -238,7 +238,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
       r.exec("j2kReader.setInput(mciis)");
       r.setVar("zero", 0);
       b = (BufferedImage) r.exec("j2kReader.read(zero)");
-      single = ImageTools.getPixelBytes(b, littleEndian);
+      single = AWTImageTools.getPixelBytes(b, littleEndian);
 
       bis.close();
       mciis.close();

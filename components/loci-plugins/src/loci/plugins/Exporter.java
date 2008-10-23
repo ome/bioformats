@@ -140,8 +140,8 @@ public class Exporter {
       String[] codecs = w.getCompressionTypes();
       ImageProcessor proc = imp.getStack().getProcessor(1);
       Image firstImage = proc.createImage();
-      firstImage = ImageTools.makeBuffered(firstImage, proc.getColorModel());
-      int thisType = ImageTools.getPixelType((BufferedImage) firstImage);
+      firstImage = AWTImageTools.makeBuffered(firstImage, proc.getColorModel());
+      int thisType = AWTImageTools.getPixelType((BufferedImage) firstImage);
       if (proc instanceof ColorProcessor) {
         thisType = FormatTools.UINT8;
       }
@@ -198,11 +198,11 @@ public class Exporter {
             for (int j=0; j<n; j++) {
               b[j] = (byte[]) is.getProcessor(i + j + 1).getPixels();
             }
-            img = ImageTools.makeImage(b, x, y);
+            img = AWTImageTools.makeImage(b, x, y);
           }
           else {
             byte[] b = (byte[]) proc.getPixels();
-            img = ImageTools.makeImage(b, x, y);
+            img = AWTImageTools.makeImage(b, x, y);
           }
         }
         else if (proc instanceof ShortProcessor) {
@@ -211,11 +211,11 @@ public class Exporter {
             for (int j=0; j<n; j++) {
               s[j] = (short[]) is.getProcessor(i + j + 1).getPixels();
             }
-            img = ImageTools.makeImage(s, x, y);
+            img = AWTImageTools.makeImage(s, x, y);
           }
           else {
             short[] s = (short[]) proc.getPixels();
-            img = ImageTools.makeImage(s, x, y);
+            img = AWTImageTools.makeImage(s, x, y);
           }
         }
         else if (proc instanceof FloatProcessor) {
@@ -224,17 +224,17 @@ public class Exporter {
             for (int j=0; j<n; j++) {
               f[j] = (float[]) is.getProcessor(i + j + 1).getPixels();
             }
-            img = ImageTools.makeImage(f, x, y);
+            img = AWTImageTools.makeImage(f, x, y);
           }
           else {
             float[] b = (float[]) proc.getPixels();
-            img = ImageTools.makeImage(b, x, y);
+            img = AWTImageTools.makeImage(b, x, y);
           }
         }
         else if (proc instanceof ColorProcessor) {
           byte[][] pix = new byte[3][x*y];
           ((ColorProcessor) proc).getRGB(pix[0], pix[1], pix[2]);
-          img = ImageTools.makeImage(pix, x, y);
+          img = AWTImageTools.makeImage(pix, x, y);
         }
 
         if (notSupportedType) {

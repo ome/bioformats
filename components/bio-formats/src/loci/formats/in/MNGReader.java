@@ -69,7 +69,7 @@ public class MNGReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] tmp = ImageTools.getBytes(openImage(no, x, y, w, h), true);
+    byte[] tmp = AWTImageTools.getBytes(openImage(no, x, y, w, h), true);
     System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
     return buf;
   }
@@ -199,7 +199,8 @@ public class MNGReader extends FormatReader {
 
       BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
       String data = img.getWidth() + "-" + img.getHeight() + "-" +
-        img.getRaster().getNumBands() + "-" + ImageTools.getPixelType(img);
+        img.getRaster().getNumBands() + "-" +
+        AWTImageTools.getPixelType(img);
       Vector v = new Vector();
       if (seriesOffsets.containsKey(data)) {
         v = (Vector) seriesOffsets.get(data);

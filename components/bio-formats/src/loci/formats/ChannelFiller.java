@@ -177,7 +177,7 @@ public class ChannelFiller extends ReaderWrapper {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(no, x, y, w, h), w, h,
+    return AWTImageTools.makeImage(openBytes(no, x, y, w, h), w, h,
       getRGBChannelCount(), isInterleaved(),
       FormatTools.getBytesPerPixel(getPixelType()), isLittleEndian());
   }

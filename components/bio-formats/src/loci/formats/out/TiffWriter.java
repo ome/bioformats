@@ -127,12 +127,11 @@ public class TiffWriter extends FormatWriter {
       tmp.close();
     }
 
-    BufferedImage img = (cm == null) ?
-      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
 
     int plane = img.getWidth() * img.getHeight() *
       img.getRaster().getNumBands() *
-      FormatTools.getBytesPerPixel(ImageTools.getPixelType(img));
+      FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
 
     if (!isBigTiff) {
       RandomAccessStream tmp = new RandomAccessStream(currentId);

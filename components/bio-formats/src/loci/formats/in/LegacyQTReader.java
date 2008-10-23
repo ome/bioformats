@@ -84,7 +84,7 @@ public class LegacyQTReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] tmp = ImageTools.getBytes(openImage(no, x, y, w, h), false);
+    byte[] tmp = AWTImageTools.getBytes(openImage(no, x, y, w, h), false);
     System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
     return buf;
   }
@@ -106,7 +106,7 @@ public class LegacyQTReader extends FormatReader {
     catch (ReflectException re) {
       throw new FormatException("Open movie failed", re);
     }
-    return ImageTools.makeBuffered(image).getSubimage(x, y, w, h);
+    return AWTImageTools.makeBuffered(image).getSubimage(x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -219,14 +219,14 @@ public class LegacyQTReader extends FormatReader {
 
       status("Populating metadata");
 
-      BufferedImage img = ImageTools.makeBuffered(image);
+      BufferedImage img = AWTImageTools.makeBuffered(image);
 
       core[0].sizeX = img.getWidth();
       core[0].sizeY = img.getHeight();
       core[0].sizeZ = 1;
       core[0].sizeC = img.getRaster().getNumBands();
       core[0].sizeT = getImageCount();
-      core[0].pixelType = ImageTools.getPixelType(img);
+      core[0].pixelType = AWTImageTools.getPixelType(img);
       core[0].dimensionOrder = "XYCTZ";
       core[0].rgb = true;
       core[0].interleaved = false;

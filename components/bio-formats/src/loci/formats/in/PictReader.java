@@ -111,8 +111,9 @@ public class PictReader extends FormatReader {
       in.seek(512);
       byte[] pix = new byte[(int) (in.length() - in.getFilePointer())];
       in.read(pix);
-      byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(
-        qtTools.pictToImage(pix)), isLittleEndian());
+      byte[][] b = AWTImageTools.getPixelBytes(
+        AWTImageTools.makeBuffered(qtTools.pictToImage(pix)),
+        isLittleEndian());
       for (int i=0; i<b.length; i++) {
         System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
       }

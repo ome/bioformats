@@ -150,7 +150,7 @@ public class ChannelSeparator extends ReaderWrapper {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return ImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
+    return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
   }
 
   /* @see IFormatReader#openThumbImage(int) */
@@ -158,7 +158,7 @@ public class ChannelSeparator extends ReaderWrapper {
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return ImageTools.scale(openImage(no), getThumbSizeX(),
+    return AWTImageTools.scale(openImage(no), getThumbSizeX(),
       getThumbSizeY(), true);
   }
 

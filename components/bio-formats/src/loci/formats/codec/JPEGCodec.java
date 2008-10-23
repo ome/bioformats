@@ -50,7 +50,7 @@ public class JPEGCodec extends BaseCodec implements Codec {
     boolean littleEndian = ((Boolean) o[1]).booleanValue();
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    BufferedImage img = ImageTools.makeImage(data, x, y, dims[0],
+    BufferedImage img = AWTImageTools.makeImage(data, x, y, dims[0],
       interleaved, dims[1], littleEndian);
 
     try {
@@ -134,7 +134,7 @@ public class JPEGCodec extends BaseCodec implements Codec {
       interleaved = ((Boolean) o[1]).booleanValue();
     }
 
-    byte[][] buf = ImageTools.getPixelBytes(b, littleEndian);
+    byte[][] buf = AWTImageTools.getPixelBytes(b, littleEndian);
     byte[] rtn = new byte[buf.length * buf[0].length];
     if (buf.length == 1) rtn = buf[0];
     else {

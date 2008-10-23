@@ -36,11 +36,11 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
-import loci.formats.ImageTools;
+import loci.formats.AWTImageTools;
 import loci.common.LogTools;
 
 /**
- * A class for testing the {@link loci.formats.ImageTools#makeImage} methods.
+ * A class for testing the {@link loci.formats.AWTImageTools#makeImage} methods.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/formats/test/ImageTester.java">Trac</a>,
@@ -165,15 +165,15 @@ public class ImageTester extends JPanel implements WindowListener {
           }
         }
       }
-      bimg1[q] = ImageTools.makeImage(bdata1, w, h);
-      bimg2[q] = ImageTools.makeImage(bdata2, w, h, c, true);
-      bimg3[q] = ImageTools.makeImage(bdata3, w, h, c, false);
-      simg1[q] = ImageTools.makeImage(sdata1, w, h);
-      simg2[q] = ImageTools.makeImage(sdata2, w, h, c, true);
-      simg3[q] = ImageTools.makeImage(sdata3, w, h, c, false);
-//      iimg1[q] = ImageTools.makeImage(idata1, w, h);
-//      iimg2[q] = ImageTools.makeImage(idata2, w, h, c, true);
-//      iimg3[q] = ImageTools.makeImage(idata3, w, h, c, false);
+      bimg1[q] = AWTImageTools.makeImage(bdata1, w, h);
+      bimg2[q] = AWTImageTools.makeImage(bdata2, w, h, c, true);
+      bimg3[q] = AWTImageTools.makeImage(bdata3, w, h, c, false);
+      simg1[q] = AWTImageTools.makeImage(sdata1, w, h);
+      simg2[q] = AWTImageTools.makeImage(sdata2, w, h, c, true);
+      simg3[q] = AWTImageTools.makeImage(sdata3, w, h, c, false);
+//      iimg1[q] = AWTImageTools.makeImage(idata1, w, h);
+//      iimg2[q] = AWTImageTools.makeImage(idata2, w, h, c, true);
+//      iimg3[q] = AWTImageTools.makeImage(idata3, w, h, c, false);
     }
 
     LogTools.println("Rows are: byte[][], byte[] (interleaved), " +

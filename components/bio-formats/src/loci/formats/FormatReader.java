@@ -512,7 +512,7 @@ public abstract class FormatReader extends FormatHandler
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return ImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
+    return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
@@ -541,7 +541,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    return ImageTools.scale(openImage(no), getThumbSizeX(),
+    return AWTImageTools.scale(openImage(no), getThumbSizeX(),
       getThumbSizeY(), false);
   }
 
@@ -549,7 +549,7 @@ public abstract class FormatReader extends FormatHandler
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     BufferedImage img = openThumbImage(no);
-    byte[][] bytes = ImageTools.getPixelBytes(img, isLittleEndian());
+    byte[][] bytes = AWTImageTools.getPixelBytes(img, isLittleEndian());
     if (bytes.length == 1) return bytes[0];
     byte[] rtn = new byte[getRGBChannelCount() * bytes[0].length];
     for (int i=0; i<getRGBChannelCount(); i++) {

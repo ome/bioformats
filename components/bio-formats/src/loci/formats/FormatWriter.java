@@ -97,7 +97,7 @@ public abstract class FormatWriter extends FormatHandler
     int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
     boolean littleEndian = !r.getPixelsBigEndian(series, 0).booleanValue();
 
-    BufferedImage img = ImageTools.makeImage(bytes, width, height, channels,
+    BufferedImage img = AWTImageTools.makeImage(bytes, width, height, channels,
       true, FormatTools.getBytesPerPixel(type), littleEndian);
     saveImage(img, series, lastInSeries, last);
   }

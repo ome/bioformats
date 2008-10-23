@@ -275,7 +275,7 @@ public class OMEReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.checkPlaneNumber(this, no);
-    byte[][] b = ImageTools.getPixelBytes(openThumbImage(no), true);
+    byte[][] b = AWTImageTools.getPixelBytes(openThumbImage(no), true);
     byte[] rtn = new byte[b.length * b[0].length];
     for (int i=0; i<b.length; i++) {
       System.arraycopy(b[i], 0, rtn, i*b[0].length, b[i].length);

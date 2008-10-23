@@ -27,7 +27,7 @@ import java.awt.image.BufferedImage;
 import java.math.BigInteger;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import loci.formats.ImageTools;
+import loci.formats.AWTImageTools;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
@@ -149,7 +149,7 @@ public class DataSampling extends ImageTransform {
     if (img == null) return null;
     int w = resX > 0 ? resX : img.getWidth();
     int h = resY > 0 ? resY : img.getHeight();
-    return ImageTools.scale(img, w, h, false);
+    return AWTImageTools.scale(img, w, h, false);
   }
 
   /**

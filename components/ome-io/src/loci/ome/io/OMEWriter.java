@@ -128,10 +128,9 @@ public class OMEWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
   public void saveImage(Image image, int series, boolean lastInSeries,
-    boolean last)
-    throws FormatException, IOException
+    boolean last) throws FormatException, IOException
   {
-    byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),
+    byte[][] b = AWTImageTools.getPixelBytes(AWTImageTools.makeBuffered(image),
       !metadataRetrieve.getPixelsBigEndian(series, 0).booleanValue());
     for (int i=0; i<b.length; i++) {
       saveBytes(b[i], series, lastInSeries && (i == b.length - 1),

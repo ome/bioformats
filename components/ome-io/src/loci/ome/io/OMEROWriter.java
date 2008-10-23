@@ -32,10 +32,10 @@ import loci.common.LogTools;
 //import java.util.ArrayList;
 //import java.util.Date;
 //import java.util.List;
+import loci.formats.AWTImageTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatWriter;
-import loci.formats.ImageTools;
 //import loci.formats.MetadataTools;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
@@ -144,7 +144,8 @@ public class OMEROWriter extends FormatWriter {
     throws FormatException, IOException
   {
 
-    byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),true);
+    byte[][] b = AWTImageTools.getPixelBytes(
+      AWTImageTools.makeBuffered(image), true);
 
     //!metadata.getBigEndian(series).booleanValue());
     for (int i=0; i<b.length; i++) {

@@ -134,7 +134,7 @@ public class FormatReaderTest {
           boolean passC = c == actualC;
           if (!passC) msg = "C: was " + actualC + ", expected " + c;
 
-          int actualType = ImageTools.getPixelType(b);
+          int actualType = AWTImageTools.getPixelType(b);
           boolean passType = type == actualType;
           if (!passType && actualType == FormatTools.UINT16 &&
             type == FormatTools.INT16)
@@ -232,7 +232,7 @@ public class FormatReaderTest {
           msg = "series #" + i + ": C: was " + actualC + ", expected < " + c;
         }
 
-        int actualType = ImageTools.getPixelType(b);
+        int actualType = AWTImageTools.getPixelType(b);
         boolean passType = type == actualType;
         if (!passType && actualType == FormatTools.UINT16 &&
           type == FormatTools.INT16)

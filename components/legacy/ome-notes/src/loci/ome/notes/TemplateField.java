@@ -25,7 +25,7 @@ package loci.ome.notes;
 
 import java.util.*;
 import javax.swing.*;
-import loci.formats.ImageTools;
+import loci.formats.AWTImageTools;
 
 /**
  * Stores information about a template field.
@@ -146,7 +146,7 @@ public class TemplateField {
     }
     else if (type.equals("thumbnail")) {
       ImageIcon icon =
-        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1));
+        new ImageIcon(AWTImageTools.makeImage(new byte[1][1], 1, 1));
       component = new JLabel(icon, SwingConstants.LEFT);
     }
     else if (type.equals("int")) {
@@ -192,7 +192,7 @@ public class TemplateField {
     }
     else if (type.equals("thumbnail")) {
       ImageIcon icon =
-        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1));
+        new ImageIcon(AWTImageTools.makeImage(new byte[1][1], 1, 1));
       comp = new JLabel(icon, SwingConstants.LEFT);
     }
     else if (type.equals("int")) {

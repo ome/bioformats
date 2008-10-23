@@ -67,11 +67,9 @@ public class APNGWriter extends FormatWriter {
     if (image == null) {
       throw new FormatException("Image is null");
     }
-    BufferedImage img = null;
-    if (cm != null) img = ImageTools.makeBuffered(image, cm);
-    else img = ImageTools.makeBuffered(image);
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
 
-    byte[][] byteData = ImageTools.getPixelBytes(img, false);
+    byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
     byte[] stream =
       new byte[byteData.length * byteData[0].length + img.getHeight()];
     int next = 0;
@@ -88,7 +86,7 @@ public class APNGWriter extends FormatWriter {
       }
     }
     int bytesPerPixel =
-      FormatTools.getBytesPerPixel(ImageTools.getPixelType(img));
+      FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
 
     if (!initialized) {
       out = new RandomAccessFile(currentId, "rw");

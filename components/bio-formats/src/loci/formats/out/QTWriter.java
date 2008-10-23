@@ -168,15 +168,14 @@ public class QTWriter extends FormatWriter {
       return;
     }
 
-    BufferedImage img = (cm == null) ?
-      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
+    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
 
     // get the width and height of the image
     int width = img.getWidth();
     int height = img.getHeight();
 
     // retrieve pixel data for this plane
-    byte[][] byteData = ImageTools.getPixelBytes(img, false);
+    byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
 
     // need to check if the width is a multiple of 8
     // if it is, great; if not, we need to pad each scanline with enough

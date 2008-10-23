@@ -2182,7 +2182,7 @@ public final class TiffTools {
     if (img == null) throw new FormatException("Image is null");
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
-    byte[][] values = ImageTools.getPixelBytes(img, false);
+    byte[][] values = AWTImageTools.getPixelBytes(img, false);
 
     int width = img.getWidth();
     int height = img.getHeight();

@@ -202,7 +202,7 @@ public class ImageViewer extends JFrame implements ActionListener,
     ztcPanel.add(Box.createHorizontalStrut(7));
 
     // image icon
-    BufferedImage dummy = ImageTools.makeImage(new byte[1][1], 1, 1);
+    BufferedImage dummy = AWTImageTools.makeImage(new byte[1][1], 1, 1);
     icon = new ImageIcon(dummy);
     iconLabel = new JLabel(icon, SwingConstants.LEFT);
     iconLabel.setVerticalAlignment(SwingConstants.TOP);
@@ -691,7 +691,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         }
         if (pix.length > 1) sb.append(")");
         sb.append("; type=");
-        int pixelType = ImageTools.getPixelType(image);
+        int pixelType = AWTImageTools.getPixelType(image);
         sb.append(FormatTools.getPixelTypeString(pixelType));
       }
     }
