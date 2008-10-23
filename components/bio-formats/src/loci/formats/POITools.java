@@ -130,7 +130,7 @@ public class POITools {
       r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import org.apache.poi.util.RandomAccessStream");
+      r.exec("import loci.common.RandomAccessStream");
       r.exec("import java.util.Iterator");
     }
     catch (ReflectException exc) {
