@@ -15,9 +15,15 @@ public class LineLength implements FileFilter {
   private static final int LENGTH = 80;
   private static final int TABWIDTH = 2;
 
+  private static final String[] LOCI_HACKS = {
+    " * <dd><a href=\"https://skyking.microscopy.wisc.edu/trac/",
+    " * <a href=\"https://skyking.microscopy.wisc.edu/svn/java/trunk/"
+  };
+
   public static void main(String[] args) throws IOException {
     int tabWidth = TABWIDTH;
     boolean checkTabs = true, checkEndSpaces = true;
+    boolean lociHacks = false;
     Vector v = new Vector();
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
@@ -31,6 +37,7 @@ public class LineLength implements FileFilter {
         }
         else if (args[i].equals("-notabs")) checkTabs = false;
         else if (args[i].equals("-noendspaces")) checkEndSpaces = false;
+        else if (args[i].equals("-locihacks")) lociHacks = true;
         else System.out.println("Unknown flag: " + args[i]);
         continue;
       }
@@ -69,6 +76,14 @@ public class LineLength implements FileFilter {
         line = line.replaceAll("\t", tabSpaces);
         int len = line.length();
         boolean tooLong = len > LENGTH;
+        if (lociHacks) {
+          for (int j=0; j<LOCI_HACKS.length; j++) {
+            if (line.startsWith(LOCI_HACKS[j])) {
+              tooLong = false;
+              break;
+            }
+          }
+        }
         boolean endSpace = checkEndSpaces &&
           len > 0 && line.charAt(len - 1) == ' ';
         if (!tooLong && !hasTabs && !endSpace) continue;
