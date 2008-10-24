@@ -571,7 +571,7 @@ public final class TiffTools {
         if (count == 1) value = new Byte(in.readByte());
         else {
           byte[] sbytes = new byte[count];
-          in.readFully(sbytes);
+          in.read(sbytes);
           value = sbytes;
         }
       }
@@ -1572,7 +1572,7 @@ public final class TiffTools {
 
       int[] tmp = colorMap;
       colorMap = new int[tmp.length - 6];
-      System.arraycopy(tmp, 4, colorMap, 0, colorMap.length);
+      System.arraycopy(tmp, 6, colorMap, 0, colorMap.length);
     }
 
     int index = 0;
@@ -1589,9 +1589,8 @@ public final class TiffTools {
 
           int ndx = startIndex + j;
           short s = 0;
-          if ((i == 0 && (photoInterp == CFA_ARRAY ||
-            photoInterp == RGB_PALETTE) || (photoInterp != CFA_ARRAY &&
-            photoInterp != RGB_PALETTE)))
+          if ((i == 0 && photoInterp == RGB_PALETTE) ||
+            (photoInterp != CFA_ARRAY && photoInterp != RGB_PALETTE))
           {
             s = (short) (bb.getBits(bps0) & 0xffff);
             if ((ndx % imageWidth) == imageWidth - 1 && bps0 < 8) {
@@ -1604,30 +1603,9 @@ public final class TiffTools {
             s = (short) (Math.pow(2, bitsPerSample[0]) - 1 - s);
           }
 
-          if (photoInterp == CFA_ARRAY) {
-            if (i == 0) {
-              int pixelIndex = (int) ((row + (count / cw))*imageWidth + col +
-                (count % cw));
-
-              samples[colorMap[count]*nSamples + pixelIndex] = (byte) s;
-              count++;
-
-              if (count == colorMap.length) {
-                count = 0;
-                col += cw*ch;
-                if (col == imageWidth) col = cw;
-                else if (col > imageWidth) {
-                  row += ch;
-                  col = 0;
-                }
-              }
-            }
-          }
-          else {
-            if (i*nSamples + (ndx + 1)*(numBytes + 1) <= samples.length) {
-              DataTools.unpackBytes(s, samples,
-                i*nSamples + ndx*(numBytes + 1), numBytes + 1, littleEndian);
-            }
+          if (i*nSamples + (ndx + 1)*(numBytes + 1) <= samples.length) {
+            DataTools.unpackBytes(s, samples,
+              i*nSamples + ndx*(numBytes + 1), numBytes + 1, littleEndian);
           }
         }
         else if (bps8) {
@@ -1779,9 +1757,7 @@ public final class TiffTools {
         "Thunderscan compression mode is not supported");
     }
     else if (compression == NIKON) {
-      //return new NikonCodec().decompress(input);
-      throw new FormatException("Sorry, Nikon compression mode is not " +
-        "supported; we hope to support it in the future");
+      return new NikonCodec().decompress(input, new Integer(size));
     }
     else if (compression == LURAWAVE) {
       return new LuraWaveCodec().decompress(input, new Integer(size));

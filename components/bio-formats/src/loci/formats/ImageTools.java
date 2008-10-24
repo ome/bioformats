@@ -500,4 +500,173 @@ public final class ImageTools {
     return rtn;
   }
 
+  public static byte[] interpolate(short[] s, byte[] buf, int[] bayerPattern,
+    int width, int height, boolean littleEndian)
+  {
+    // use linear interpolation to fill in missing components
+
+    int plane = width * height;
+
+    for (int row=0; row<height; row++) {
+      for (int col=0; col<width; col++) {
+        boolean evenRow = (row % 2) == 0;
+        boolean evenCol = (col % 2) == 0;
+
+        int index = (row % 2) * 2 + (col % 2);
+        boolean needGreen = bayerPattern[index] != 1;
+        boolean needRed = bayerPattern[index] != 0;
+        boolean needBlue = bayerPattern[index] != 2;
+
+        if (needGreen) {
+          int sum = 0;
+          int ncomps = 0;
+
+          if (row > 0) {
+            sum += s[plane + (row - 1) * width + col];
+            ncomps++;
+          }
+          if (row < height - 1) {
+            sum += s[plane + (row + 1) * width + col];
+            ncomps++;
+          }
+          if (col > 0) {
+            sum += s[plane + row * width + col - 1];
+            ncomps++;
+          }
+          if (col < width- 1) {
+            sum += s[plane + row*width + col + 1];
+            ncomps++;
+          }
+
+          short v = (short) (sum / ncomps);
+          DataTools.unpackShort(v, buf, row*width*6 + col*6 + 2, littleEndian);
+        }
+        else {
+          DataTools.unpackShort(s[plane + row*width + col],
+            buf, row*width*6 + col*6 + 2, littleEndian);
+        }
+
+        if (needRed) {
+          int sum = 0;
+          int ncomps = 0;
+          if (!needBlue) {
+            // four corners
+            if (row > 0) {
+              if (col > 0) {
+                sum += s[(row-1)*width + col - 1];
+                ncomps++;
+              }
+              if (col < width - 1) {
+                sum += s[(row-1)*width + col + 1];
+                ncomps++;
+              }
+            }
+            if (row < height - 1) {
+              if (col > 0) {
+                sum += s[(row+1)*width + col - 1];
+                ncomps++;
+              }
+              if (col < width - 1) {
+                sum += s[(row+1)*width + col + 1];
+                ncomps++;
+              }
+            }
+          }
+          else if ((evenCol && bayerPattern[index + 1] == 0) ||
+            (!evenCol && bayerPattern[index - 1] == 0))
+          {
+            // horizontal
+            if (col > 0) {
+              sum += s[row*width + col - 1];
+              ncomps++;
+            }
+            if (col < width - 1) {
+              sum += s[row*width + col + 1];
+              ncomps++;
+            }
+          }
+          else {
+            // vertical
+            if (row > 0) {
+              sum += s[(row - 1)*width + col];
+              ncomps++;
+            }
+            if (row < height - 1) {
+              sum += s[(row+1)*width + col];
+              ncomps++;
+            }
+          }
+
+          short v = (short) (sum / ncomps);
+          DataTools.unpackShort(v, buf, row*width*6 + col*6, littleEndian);
+        }
+        else {
+          DataTools.unpackShort(s[row*width + col],
+            buf, row*width*6 + col*6, littleEndian);
+        }
+
+        if (needBlue) {
+          int sum = 0;
+          int ncomps = 0;
+          if (!needRed) {
+            // four corners
+            if (row > 0) {
+              if (col > 0) {
+                sum += s[(2*height + row - 1)*width + col - 1];
+                ncomps++;
+              }
+              if (col < width - 1) {
+                sum += s[(2*height + row-1)*width + col + 1];
+                ncomps++;
+              }
+            }
+            if (row < height - 1) {
+              if (col > 0) {
+                sum += s[(2*height + row+1)*width + col - 1];
+                ncomps++;
+              }
+              if (col < width - 1) {
+                sum += s[(2*height + row+1)*width + col + 1];
+                ncomps++;
+              }
+            }
+          }
+          else if ((evenCol && bayerPattern[index + 1] == 2) ||
+            (!evenCol && bayerPattern[index - 1] == 2))
+          {
+            // horizontal
+            if (col > 0) {
+              sum += s[(2*height + row)*width + col - 1];
+              ncomps++;
+            }
+            if (col < width - 1) {
+              sum += s[(2*height + row)*width + col + 1];
+              ncomps++;
+            }
+          }
+          else {
+            // vertical
+            if (row > 0) {
+              sum += s[(2*height + row - 1)*width + col];
+              ncomps++;
+            }
+            if (row < height - 1) {
+              sum += s[(2*height + row+1)*width + col];
+              ncomps++;
+            }
+          }
+
+          short v = (short) (sum / ncomps);
+          DataTools.unpackShort(v, buf, row*width*6 + col*6 + 4, littleEndian);
+        }
+        else {
+          DataTools.unpackShort(s[2*plane + row*width + col],
+            buf, row*width*6 + col*6 + 4, littleEndian);
+        }
+      }
+    }
+
+    return buf;
+  }
+
 }

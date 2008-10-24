@@ -126,176 +126,22 @@ public class MRWReader extends FormatReader {
       bb.skipBits(dataSize * (sensorWidth - getSizeX()));
     }
 
-    // use linear interpolation to fill in missing components
-
-    for (int row=0; row<getSizeY(); row++) {
-      for (int col=0; col<getSizeX(); col++) {
-        boolean evenRow = (row % 2) == 0;
-        boolean evenCol = (col % 2) == 0;
-
-        boolean needGreen = bayerPattern == 1 ?
-          (evenCol && evenRow) || (!evenCol && !evenRow) :
-          (!evenCol && evenRow) || (evenCol && !evenRow);
-
-        boolean needRed = bayerPattern == 1 ? (!evenRow || !evenCol) :
-          (evenRow || !evenCol);
-        boolean needBlue = bayerPattern == 1 ? (evenRow || evenCol) :
-          (evenCol || !evenRow);
-
-        if (needGreen) {
-          int sum = 0;
-          int ncomps = 0;
-
-          if (row > 0) {
-            sum += s[getSizeY()*getSizeX() + (row - 1) * getSizeX() + col];
-            ncomps++;
-          }
-          if (row < getSizeY() - 1) {
-            sum += s[getSizeY()*getSizeX() + (row + 1) * getSizeX() + col];
-            ncomps++;
-          }
-          if (col > 0) {
-            sum += s[getSizeY()*getSizeX() + row * getSizeX() + col - 1];
-            ncomps++;
-          }
-          if (col < getSizeX() - 1) {
-            sum += s[getSizeY()*getSizeX() + row*getSizeX() + col + 1];
-            ncomps++;
-          }
-
-          short v = (short) (sum / ncomps);
-          DataTools.unpackShort(v, buf, row*getSizeX()*6 + col*6 + 2,
-            isLittleEndian());
-        }
-        else {
-          DataTools.unpackShort(s[getSizeY()*getSizeX() + row*getSizeX() + col],
-            buf, row*getSizeX()*6 + col*6 + 2, isLittleEndian());
-        }
-
-        if (needRed) {
-          int sum = 0;
-          int ncomps = 0;
-          if (!needBlue) {
-            // four corners
-            if (row > 0) {
-              if (col > 0) {
-                sum += s[(row-1)*getSizeX() + col - 1];
-                ncomps++;
-              }
-              if (col < getSizeX() - 1) {
-                sum += s[(row-1)*getSizeX() + col + 1];
-                ncomps++;
-              }
-            }
-            if (row < getSizeY() - 1) {
-              if (col > 0) {
-                sum += s[(row+1)*getSizeX() + col - 1];
-                ncomps++;
-              }
-              if (col < getSizeX() - 1) {
-                sum += s[(row+1)*getSizeX() + col + 1];
-                ncomps++;
-              }
-            }
-          }
-          else if ((evenRow && bayerPattern == 1) ||
-            (!evenRow && bayerPattern != 1))
-          {
-            // horizontal
-            if (col > 0) {
-              sum += s[row*getSizeX() + col - 1];
-              ncomps++;
-            }
-            if (col < getSizeX() - 1) {
-              sum += s[row*getSizeX() + col + 1];
-              ncomps++;
-            }
-          }
-          else {
-            // vertical
-            if (row > 0) {
-              sum += s[(row - 1)*getSizeX() + col];
-              ncomps++;
-            }
-            if (row < getSizeY() - 1) {
-              sum += s[(row+1)*getSizeX() + col];
-              ncomps++;
-            }
-          }
-
-          short v = (short) (sum / ncomps);
-          DataTools.unpackShort(v, buf, row*getSizeX()*6 + col*6,
-            isLittleEndian());
-        }
-        else {
-          DataTools.unpackShort(s[row*getSizeX() + col],
-            buf, row*getSizeX()*6 + col*6, isLittleEndian());
-        }
-
-        if (needBlue) {
-          int sum = 0;
-          int ncomps = 0;
-          if (!needRed) {
-            // four corners
-            if (row > 0) {
-              if (col > 0) {
-                sum += s[(2*getSizeY() + row - 1)*getSizeX() + col - 1];
-                ncomps++;
-              }
-              if (col < getSizeX() - 1) {
-                sum += s[(2*getSizeY() + row-1)*getSizeX() + col + 1];
-                ncomps++;
-              }
-            }
-            if (row < getSizeY() - 1) {
-              if (col > 0) {
-                sum += s[(2*getSizeY() + row+1)*getSizeX() + col - 1];
-                ncomps++;
-              }
-              if (col < getSizeX() - 1) {
-                sum += s[(2*getSizeY() + row+1)*getSizeX() + col + 1];
-                ncomps++;
-              }
-            }
-          }
-          else if ((!evenRow && bayerPattern == 1) ||
-            (evenRow && bayerPattern != 1))
-          {
-            // horizontal
-            if (col > 0) {
-              sum += s[(2*getSizeY() + row)*getSizeX() + col - 1];
-              ncomps++;
-            }
-            if (col < getSizeX() - 1) {
-              sum += s[(2*getSizeY() + row)*getSizeX() + col + 1];
-              ncomps++;
-            }
-          }
-          else {
-            // vertical
-            if (row > 0) {
-              sum += s[(2*getSizeY() + row - 1)*getSizeX() + col];
-              ncomps++;
-            }
-            if (row < getSizeY() - 1) {
-              sum += s[(2*getSizeY() + row+1)*getSizeX() + col];
-              ncomps++;
-            }
-          }
-
-          short v = (short) (sum / ncomps);
-          DataTools.unpackShort(v, buf, row*getSizeX()*6 + col*6 + 4,
-            isLittleEndian());
-        }
-        else {
-          DataTools.unpackShort(
-            s[2*getSizeY()*getSizeX() + row*getSizeX() + col],
-            buf, row*getSizeX()*6 + col*6 + 4, isLittleEndian());
-        }
-      }
+    int[] colorMap = new int[4];
+    if (bayerPattern == 1) {
+      colorMap[0] = 0;
+      colorMap[1] = 1;
+      colorMap[2] = 1;
+      colorMap[3] = 2;
+    }
+    else {
+      colorMap[0] = 1;
+      colorMap[1] = 2;
+      colorMap[2] = 0;
+      colorMap[3] = 1;
     }
 
-    return buf;
+    return ImageTools.interpolate(s, buf, colorMap, getSizeX(), getSizeY(),
+      isLittleEndian());
   }
 
   // -- IFormatHandler API methods --
