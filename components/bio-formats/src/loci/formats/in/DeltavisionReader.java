@@ -451,7 +451,8 @@ public class DeltavisionReader extends FormatReader {
             0, 0);
           store.setObjectiveLensNA(new Float(na), 0, 0);
           store.setObjectiveCorrection(tokens[1], 0, 0);
-          // TODO:  Last token is the microscope model name.
+          // TODO:  Token #2 is the microscope model name.
+          if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
         }
         else if (key.equals("Lens ID")) {
           store.setObjectiveID(value, 0, 0);
