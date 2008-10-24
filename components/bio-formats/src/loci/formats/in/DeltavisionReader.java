@@ -438,10 +438,20 @@ public class DeltavisionReader extends FormatReader {
         if (key.equals("Objective")) {
           // assume first word is the manufacturer's name
           String manufacturer = value.substring(0, value.indexOf(" "));
-          String model = value.substring(value.indexOf(" ") + 1);
+          String extra = value.substring(value.indexOf(" ") + 1);
+
+          String[] tokens = extra.split(",");
 
           store.setObjectiveManufacturer(manufacturer, 0, 0);
-          store.setObjectiveModel(model, 0, 0);
+
+          String magnification = tokens[0].substring(0, tokens[0].indexOf("X"));
+          String na = tokens[0].substring(tokens[0].indexOf("/") + 1);
+
+          store.setObjectiveNominalMagnification(new Integer(magnification),
+            0, 0);
+          store.setObjectiveLensNA(new Float(na), 0, 0);
+          store.setObjectiveCorrection(tokens[1], 0, 0);
+          // TODO:  Last token is the microscope model name.
         }
         else if (key.equals("Lens ID")) {
           store.setObjectiveID(value, 0, 0);
