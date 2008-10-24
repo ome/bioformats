@@ -99,10 +99,18 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
   public byte[] decompress(RandomAccessStream in, Object options)
     throws FormatException, IOException
   {
+    byte[] buf = new byte[(int) in.length()];
+    in.read(buf);
+    return decompress(buf, options);
+  }
+
+  /* @see Codec#decompress(byte[], Object) */
+  public byte[] decompress(byte[] buf, Object options) throws FormatException {
     if (noLuraWave) throw new FormatException(NO_LURAWAVE_MSG);
     licenseCode = System.getProperty(LICENSE_PROPERTY);
     if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);
-    r.setVar("stream", in);
+    r.setVar("stream",
+      new BufferedInputStream(new ByteArrayInputStream(buf), 4096));
     try {
       r.setVar("licenseCode", licenseCode);
       r.exec("lwf = new lwfDecoder(stream, null, licenseCode)");
