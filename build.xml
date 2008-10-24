@@ -594,25 +594,25 @@ Apache XML-RPC
   <!-- Bio-Formats -->
 
   <target name="style-formats"
-    depends="style-common"
+    depends="style-common, style-ome-xml"
     description="check source code style for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.style"/>
   </target>
 
   <target name="compile-formats"
-    depends="compile-common"
+    depends="compile-common, compile-ome-xml"
     description="compile classes for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.compile"/>
   </target>
 
   <target name="jar-formats"
-    depends="jar-common"
+    depends="jar-common, jar-ome-xml"
     description="generate JAR file for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.jar"/>
   </target>
 
   <target name="clean-formats"
-    depends="clean-common"
+    depends="clean-common, clean-ome-xml"
     description="remove build files for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.clean"/>
   </target>
@@ -777,21 +777,25 @@ Apache XML-RPC
   <!-- WiscScan Flow Cytometry -->
 
   <target name="style-flow"
+    depends="style-formats"
     description="check source code style for WiscScan Flow Cytometry">
     <ant dir="components/flow-cytometry" target="flow.style"/>
   </target>
 
   <target name="compile-flow"
+    depends="compile-formats"
     description="compile classes for WiscScan Flow Cytometry">
     <ant dir="components/flow-cytometry" target="flow.compile"/>
   </target>
 
   <target name="jar-flow"
+    depends="jar-formats"
     description="generate JAR file for WiscScan Flow Cytometry">
     <ant dir="components/flow-cytometry" target="flow.jar"/>
   </target>
 
   <target name="clean-flow"
+    depends="clean-formats"
     description="remove build files for WiscScan Flow Cytometry">
     <ant dir="components/flow-cytometry" target="flow.clean"/>
   </target>
