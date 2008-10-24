@@ -11,6 +11,8 @@ use strict;
 # TODO - Use this script to autogenerate the LOCI plugins configuration file:
 #   components/loci-plugins/src/loci/plugins/config/libraries.txt
 
+# TODO - Use this script to check build.xml's depends clauses.
+
 # -- DATA STRUCTURES --
 
 # Active LOCI software components

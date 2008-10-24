@@ -620,25 +620,25 @@ Apache XML-RPC
   <!-- LOCI Plugins for ImageJ -->
 
   <target name="style-loci-plugins"
-    depends="style-common"
+    depends="style-common, style-formats"
     description="check source code style for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.style"/>
   </target>
 
   <target name="compile-loci-plugins"
-    depends="compile-common"
+    depends="compile-common, compile-formats"
     description="compile classes for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.compile"/>
   </target>
 
   <target name="jar-loci-plugins"
-    depends="jar-common"
+    depends="jar-common, jar-formats"
     description="generate JAR file for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.jar"/>
   </target>
 
   <target name="clean-loci-plugins"
-    depends="clean-common"
+    depends="clean-common, clean-formats"
     description="remove build files for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.clean"/>
   </target>
@@ -646,25 +646,25 @@ Apache XML-RPC
   <!-- OME I/O -->
 
   <target name="style-ome-io"
-    depends="style-common"
+    depends="style-common, style-formats"
     description="check source code style for OME I/O">
     <ant dir="components/ome-io" target="ome-io.style"/>
   </target>
 
   <target name="compile-ome-io"
-    depends="compile-common"
+    depends="compile-common, compile-formats"
     description="compile classes for OME I/O">
     <ant dir="components/ome-io" target="ome-io.compile"/>
   </target>
 
   <target name="jar-ome-io"
-    depends="jar-common"
+    depends="jar-common, jar-formats"
     description="generate JAR file for OME I/O">
     <ant dir="components/ome-io" target="ome-io.jar"/>
   </target>
 
   <target name="clean-ome-io"
-    depends="clean-common"
+    depends="clean-common, clean-formats"
     description="remove build files for OME I/O">
     <ant dir="components/ome-io" target="ome-io.clean"/>
   </target>
@@ -672,25 +672,26 @@ Apache XML-RPC
   <!-- OME Plugins for ImageJ -->
 
   <target name="style-ome-plugins"
-    depends="style-common"
+    depends="style-common, style-formats, style-loci-plugins, style-ome-io"
     description="check source code style for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.style"/>
   </target>
 
   <target name="compile-ome-plugins"
-    depends="compile-common"
+    depends="compile-common, compile-formats,
+      compile-loci-plugins, compile-ome-io"
     description="compile classes for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.compile"/>
   </target>
 
   <target name="jar-ome-plugins"
-    depends="jar-common"
+    depends="jar-common, jar-formats, jar-loci-plugins, jar-ome-io"
     description="generate JAR file for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.jar"/>
   </target>
 
   <target name="clean-ome-plugins"
-    depends="clean-common"
+    depends="clean-common, clean-formats, clean-loci-plugins, clean-ome-io"
     description="remove build files for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.clean"/>
   </target>
@@ -698,21 +699,28 @@ Apache XML-RPC
   <!-- VisBio -->
 
   <target name="style-visbio"
+    depends="style-common, style-ome-xml, style-formats,
+      style-ome-io, style-poi-loci"
     description="check source code style for VisBio">
     <ant dir="components/visbio" target="visbio.style"/>
   </target>
 
   <target name="compile-visbio"
+    depends="compile-common, compile-ome-xml, compile-formats,
+      compile-ome-io, compile-poi-loci"
     description="compile classes for VisBio">
     <ant dir="components/visbio" target="visbio.compile"/>
   </target>
 
   <target name="jar-visbio"
+    depends="jar-common, jar-ome-xml, jar-formats, jar-ome-io, jar-poi-loci"
     description="generate JAR file for VisBio">
     <ant dir="components/visbio" target="visbio.jar"/>
   </target>
 
   <target name="clean-visbio"
+    depends="clean-common, clean-ome-xml, clean-formats,
+      clean-ome-io, clean-poi-loci"
     description="remove build files for VisBio">
     <ant dir="components/visbio" target="visbio.clean"/>
   </target>
@@ -750,21 +758,25 @@ Apache XML-RPC
   <!-- SLIM Plotter -->
 
   <target name="style-slim"
+    depends="style-common, style-formats, style-visbio"
     description="check source code style for SLIM Plotter">
     <ant dir="components/slim-plotter" target="slim.style"/>
   </target>
 
   <target name="compile-slim"
+    depends="compile-common, compile-formats, compile-visbio"
     description="compile classes for SLIM Plotter">
     <ant dir="components/slim-plotter" target="slim.compile"/>
   </target>
 
   <target name="jar-slim"
+    depends="jar-common, jar-formats, jar-visbio"
     description="generate JAR file for SLIM Plotter">
     <ant dir="components/slim-plotter" target="slim.jar"/>
   </target>
 
   <target name="clean-slim"
+    depends="clean-common, clean-formats, clean-visbio"
     description="remove build files for SLIM Plotter">
     <ant dir="components/slim-plotter" target="slim.clean"/>
   </target>
@@ -825,21 +837,25 @@ Apache XML-RPC
   <!-- LOCI testing framework -->
 
   <target name="style-tests"
+    depends="style-common, style-formats"
     description="check source code style for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.style"/>
   </target>
 
   <target name="compile-tests"
+    depends="compile-common, compile-formats"
     description="compile classes for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.compile"/>
   </target>
 
   <target name="jar-tests"
+    depends="jar-common, jar-formats"
     description="generate JAR file for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.jar"/>
   </target>
 
   <target name="clean-tests"
+    depends="clean-common, clean-formats"
     description="remove build files for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.clean"/>
   </target>
@@ -847,21 +863,25 @@ Apache XML-RPC
   <!-- JVMLink -->
 
   <target name="style-jvmlink"
+    depends="style-common"
     description="check source code style for JVMLink">
     <ant dir="components/legacy/jvmlink" target="jvmlink.style"/>
   </target>
 
   <target name="compile-jvmlink"
+    depends="compile-common"
     description="compile classes for JVMLink">
     <ant dir="components/legacy/jvmlink" target="jvmlink.compile"/>
   </target>
 
   <target name="jar-jvmlink"
+    depends="jar-common"
     description="generate JAR file for JVMLink">
     <ant dir="components/legacy/jvmlink" target="jvmlink.jar"/>
   </target>
 
   <target name="clean-jvmlink"
+    depends="clean-common"
     description="remove build files for JVMLink">
     <ant dir="components/legacy/jvmlink" target="jvmlink.clean"/>
   </target>
@@ -891,21 +911,25 @@ Apache XML-RPC
   <!-- OME Notes -->
 
   <target name="style-ome-notes"
+    depends="style-common, style-formats"
     description="check source code style for OME Notes">
     <ant dir="components/legacy/ome-notes" target="ome-notes.style"/>
   </target>
 
   <target name="compile-ome-notes"
+    depends="compile-common, compile-formats"
     description="compile classes for OME Notes">
     <ant dir="components/legacy/ome-notes" target="ome-notes.compile"/>
   </target>
 
   <target name="jar-ome-notes"
+    depends="jar-common, jar-formats"
     description="generate JAR file for OME Notes">
     <ant dir="components/legacy/ome-notes" target="ome-notes.jar"/>
   </target>
 
   <target name="clean-ome-notes"
+    depends="clean-common, clean-formats"
     description="remove build files for OME Notes">
     <ant dir="components/legacy/ome-notes" target="ome-notes.clean"/>
   </target>
@@ -913,21 +937,25 @@ Apache XML-RPC
   <!-- OME Metadata Editor -->
 
   <target name="style-ome-editor"
+    depends="style-common, style-ome-xml, style-formats"
     description="check source code style for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.style"/>
   </target>
 
   <target name="compile-ome-editor"
+    depends="compile-common, compile-ome-xml, compile-formats"
     description="compile classes for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.compile"/>
   </target>
 
   <target name="jar-ome-editor"
+    depends="jar-common, jar-ome-xml, jar-formats"
     description="generate JAR file for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.jar"/>
   </target>
 
   <target name="clean-ome-editor"
+    depends="clean-common, clean-ome-xml, clean-formats"
     description="remove build files for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.clean"/>
   </target>
