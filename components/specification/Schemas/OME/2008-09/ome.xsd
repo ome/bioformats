@@ -151,9 +151,9 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:choice minOccurs="1" maxOccurs="unbounded">
-					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="1"/>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
 				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -1572,9 +1572,9 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:choice minOccurs="1" maxOccurs="unbounded">
-					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="1"/>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
 				</xsd:choice>
 			</xsd:sequence>
 				<xsd:attribute name="ExtendedPixelType" use="required" type="ExtendedPixelTypes"/>
