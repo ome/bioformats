@@ -88,7 +88,7 @@ public interface MetadataRetrieve {
 #end##foreach $index
    */
   $q.type() get$entity$prop($q.argsList());
-#end
-#end
+#end##foreach $prop
+#end##foreach $entity
 
 }

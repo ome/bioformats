@@ -70,13 +70,13 @@ public class MetaSupportAutogen {
     context.put("q", supportList);
 
     // generate master table of metadata properties
-    VelocityTools.processTemplate(ve, context, "meta-summary.vm",
+    VelocityTools.processTemplate(ve, context, "doc/meta-summary.vm",
       "doc/meta-summary.html");
 
     // generate metadata property support documentation for each handler
     for (String handler : supportList.handlers()) {
       supportList.setHandler(handler);
-      VelocityTools.processTemplate(ve, context, "MetaSupportWikiPage.vm",
+      VelocityTools.processTemplate(ve, context, "doc/MetaSupportWikiPage.vm",
         "doc/meta/" + handler + ".txt");
     }
   }

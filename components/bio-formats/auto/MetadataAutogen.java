@@ -45,11 +45,22 @@ public class MetadataAutogen {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
+    boolean ice = false;
+    for (int i=0; i<args.length; i++) {
+      if (args[i].equals("-ice")) ice = true;
+    }
+
     // create needed directories
-    File ome = new File("ome");
-    if (!ome.exists()) ome.mkdir();
-    File meta = new File("meta");
-    if (!meta.exists()) meta.mkdir();
+    if (ice) {
+      File iceDir = new File("ice");
+      if (!iceDir.exists()) iceDir.mkdir();
+    }
+    else {
+      File omeDir = new File("ome");
+      if (!omeDir.exists()) omeDir.mkdir();
+      File metaDir = new File("meta");
+      if (!metaDir.exists()) metaDir.mkdir();
+    }
 
     // get Velocity objects
     VelocityEngine ve = VelocityTools.createEngine();
@@ -59,26 +70,39 @@ public class MetadataAutogen {
     MetaEntityList entityList = new MetaEntityList();
     context.put("q", entityList);
 
-    // generate base metadata classes
-    VelocityTools.processTemplate(ve, context,
-      "MetadataStore.vm", "meta/MetadataStore.java");
-    VelocityTools.processTemplate(ve, context,
-      "MetadataRetrieve.vm", "meta/MetadataRetrieve.java");
-    VelocityTools.processTemplate(ve, context,
-      "DummyMetadata.vm", "meta/DummyMetadata.java");
-    VelocityTools.processTemplate(ve, context,
-      "FilterMetadata.vm", "meta/FilterMetadata.java");
-    VelocityTools.processTemplate(ve, context,
-      "AggregateMetadata.vm", "meta/AggregateMetadata.java");
-    context.put("convertMetadataBody", generateConvertMetadata(entityList));
-    VelocityTools.processTemplate(ve, context,
-      "MetadataConverter.vm", "meta/MetadataConverter.java");
+    if (ice) {
+      // generate Slice interfaces
+      VelocityTools.processTemplate(ve, context,
+        "ice/BioFormats.vm", "ice/BioFormats.ice");
 
-    // generate version-specific OME-XML metadata implementations
-    for (String versionKey : entityList.versions()) {
-      entityList.setVersion(versionKey);
-      VelocityTools.processTemplate(ve, context, "OMEXMLMetadata.vm",
-        "ome/OMEXML" + versionKey + "Metadata.java");
+      // generate server-side Ice implementations
+      VelocityTools.processTemplate(ve, context,
+        "ice/MetadataStoreI.vm", "ice/MetadataStoreI.java");
+      VelocityTools.processTemplate(ve, context,
+        "ice/MetadataRetrieveI.vm", "ice/MetadataRetrieveI.java");
+    }
+    else {
+      // generate base metadata classes
+      VelocityTools.processTemplate(ve, context,
+        "meta/MetadataStore.vm", "meta/MetadataStore.java");
+      VelocityTools.processTemplate(ve, context,
+        "meta/MetadataRetrieve.vm", "meta/MetadataRetrieve.java");
+      VelocityTools.processTemplate(ve, context,
+        "meta/DummyMetadata.vm", "meta/DummyMetadata.java");
+      VelocityTools.processTemplate(ve, context,
+        "meta/FilterMetadata.vm", "meta/FilterMetadata.java");
+      VelocityTools.processTemplate(ve, context,
+        "meta/AggregateMetadata.vm", "meta/AggregateMetadata.java");
+      context.put("convertMetadataBody", generateConvertMetadata(entityList));
+      VelocityTools.processTemplate(ve, context,
+        "meta/MetadataConverter.vm", "meta/MetadataConverter.java");
+
+      // generate version-specific OME-XML metadata implementations
+      for (String versionKey : entityList.versions()) {
+        entityList.setVersion(versionKey);
+        VelocityTools.processTemplate(ve, context, "ome/OMEXMLMetadata.vm",
+          "ome/OMEXML" + versionKey + "Metadata.java");
+      }
     }
   }
 

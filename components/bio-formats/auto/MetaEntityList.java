@@ -186,6 +186,21 @@ public class MetaEntityList extends EntityList {
     return new String(c).replaceAll("\\+", "");
   }
 
+  /** Converts the given type from Java to Slice syntax. */
+  public String ice(String s) {
+    s = s.toLowerCase();
+    s = s.replaceAll("\\[\\]", "Seq");
+    s = s.replaceAll("integer", "int");
+    s = s.replaceAll("boolean", "bool");
+    if (s.endsWith("Seq")) {
+      // capitalize first letter
+      char[] c = s.toCharArray();
+      if (c[0] >= 'a' && c[0] <= 'z') c[0] += 'A' - 'a';
+      s = new String(c);
+    }
+    return s;
+  }
+
   /** Gets the last node in the given path, without markup symbols. */
   public String last(String path) {
     int first = path.lastIndexOf("/") + 1;
