@@ -1,14 +1,14 @@
 <!--
 build.xml
 
-Ant build file for Bio-Formats project.
+Ant build file for Bio-Formats Ice framework.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="formats" default="jar" basedir=".">
+<project name="formats-ice" default="jar" basedir=".">
   <description>
-    Build file for Bio-Formats project
+    Build file for Bio-Formats Ice framework
   </description>
   <property file="base.properties"/>
   <import file="${root.dir}/common.xml"/>

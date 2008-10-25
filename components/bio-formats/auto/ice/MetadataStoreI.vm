@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ice.formats;
 
+import Ice.Current;
 //import loci.ice.formats._MetadataStoreDisp;
 //import loci.ice.formats.MetadataStore;
 import loci.formats.MetadataTools;
@@ -75,22 +76,22 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 
   // -- MetadataStore methods --
 
-  public MetadataStore getServant(Ice.Current current) {
+  public MetadataStore getServant(Current current) {
     return this;
   }
 
-  public String getOMEXML(Ice.Current current) {
+  public String getOMEXML(Current current) {
     return MetadataTools.getOMEXML(
       (loci.formats.meta.MetadataRetrieve) metadataObject);
   }
 
-  public void createRoot(Ice.Current current) {
+  public void createRoot(Current current) {
     metadataObject.createRoot();
   }
 
   // - Entity storage -
 
-  public void setUUID(String uuid, Ice.Current current) {
+  public void setUUID(String uuid, Current current) {
     metadataObject.setUUID(uuid);
   }
 #foreach ($entity in $q.entities())
@@ -100,7 +101,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  public void set$entity$prop($q.primitive($q.type()) $q.var($prop), $q.argsList(), Ice.Current current) {
+  public void set$entity$prop($q.primitive($q.type()) $q.var($prop), $q.argsList(), Current current) {
     metadataObject.set$entity$prop($q.var($prop), $q.varsList());
   }
 #end##foreach $prop

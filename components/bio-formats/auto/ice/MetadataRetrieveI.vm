@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ice.formats;
 
+import Ice.Current;
 //import loci.ice.formats._MetadataRetrieveDisp;
 //import loci.formats.*;
 //import loci.formats.meta.*;
@@ -68,11 +69,11 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // -- MetadataRetrieve methods --
 
-  public MetadataRetrieveI getServant(Ice.Current current) {
+  public MetadataRetrieveI getServant(Current current) {
     return this;
   }
 
-  public String getOMEXML(Ice.Current current) {
+  public String getOMEXML(Current current) {
     return MetadataTools.getOMEXML(metadataObject);
   }
 
@@ -82,9 +83,9 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 #if ($q.countable())
 #set ($args = $q.argsList($q.chop()))
 #if ($args == "")
-#set ($args = "Ice.Current current")
+#set ($args = "Current current")
 #else
-#set ($args = $args + ", Ice.Current current")
+#set ($args = $args + ", Current current")
 #end##if $args == ""
 
   public int get${entity}Count($args) {
@@ -95,7 +96,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // - Entity retrieval -
 
-  public String getUUID(Ice.Current current) {
+  public String getUUID(Current current) {
     return metadataObject.getUUID();
   }
 #foreach ($entity in $q.entities())
@@ -105,7 +106,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  public $q.primitive($q.type()) get$entity$prop($q.argsList(), Ice.Current current) {
+  public $q.primitive($q.type()) get$entity$prop($q.argsList(), Current current) {
     return metadataObject.get$entity$prop($q.varsList());
   }
 #end##foreach $prop

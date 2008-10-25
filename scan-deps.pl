@@ -20,6 +20,7 @@ my @active = (
   "common",
   "ome-xml",
   "bio-formats",
+  "bio-formats-ice",
   "loci-plugins",
   "ome-io",
   "ome-plugins",
@@ -56,6 +57,7 @@ my @libs = (
   "commons-httpclient",
   "commons-logging",
   "forms",
+  "ice",
   "ij",
   "jiio",
   "junit",
@@ -83,26 +85,27 @@ my @libs = (
 # Human-friendly title for each component and library
 my %titles = (
   # components - active
-  "bio-formats"    => "Bio-Formats",
-  "loci-checks"    => "LOCI Checkstyle checks",
-  "common"         => "LOCI Common",
-  "flow-cytometry" => "WiscScan Flow Cytometry",
-  "loci-plugins"   => "LOCI Plugins for ImageJ",
-  "ome-io"         => "OME I/O",
-  "ome-plugins"    => "OME Plugins for ImageJ",
-  "ome-xml"        => "OME-XML Java library",
-  "slim-plotter"   => "SLIM Plotter",
-  "test-suite"     => "LOCI testing framework",
-  "visbio"         => "VisBio",
+  "bio-formats"     => "Bio-Formats",
+  "bio-formats-ice" => "Bio-Formats Ice framework",
+  "loci-checks"     => "LOCI Checkstyle checks",
+  "common"          => "LOCI Common",
+  "flow-cytometry"  => "WiscScan Flow Cytometry",
+  "loci-plugins"    => "LOCI Plugins for ImageJ",
+  "ome-io"          => "OME I/O",
+  "ome-plugins"     => "OME Plugins for ImageJ",
+  "ome-xml"         => "OME-XML Java library",
+  "slim-plotter"    => "SLIM Plotter",
+  "test-suite"      => "LOCI testing framework",
+  "visbio"          => "VisBio",
   # components - legacy
-  "jvmlink"        => "JVMLink",
-  "multi-lut"      => "Multi-LUT",
-  "ome-editor"     => "OME Metadata Editor",
-  "ome-notes"      => "OME Notes",
+  "jvmlink"         => "JVMLink",
+  "multi-lut"       => "Multi-LUT",
+  "ome-editor"      => "OME Metadata Editor",
+  "ome-notes"       => "OME Notes",
   # components - forks
-  "jai"            => "JAI Image I/O Tools",
-  "mdbtools"       => "MDB Tools (Java port)",
-  "poi"            => "Apache Jakarta POI",
+  "jai"             => "JAI Image I/O Tools",
+  "mdbtools"        => "MDB Tools (Java port)",
+  "poi"             => "Apache Jakarta POI",
   # libraries
   "AppleJavaExtensions" => "Apple eAWT stubs",
   "ant-contrib"         => "Ant-Contrib",
@@ -110,6 +113,7 @@ my %titles = (
   "commons-httpclient"  => "Apache Jakarta Commons HttpClient",
   "commons-logging"     => "Apache Jakarta Commons Logging",
   "forms"               => "JGoodies Forms",
+  "ice"                 => "Ice",
   "ij"                  => "ImageJ",
   "jboss"               => "JBoss",
   "jiio"                => "JAI ImageIO wrapper",
@@ -137,51 +141,53 @@ my %titles = (
 # Source code path for each component
 my %paths = (
   # active
-  "bio-formats"    => "components/bio-formats",
-  "loci-checks"    => "components/checkstyle",
-  "common"         => "components/common",
-  "flow-cytometry" => "components/flow-cytometry",
-  "loci-plugins"   => "components/loci-plugins",
-  "ome-io"         => "components/ome-io",
-  "ome-plugins"    => "components/ome-plugins",
-  "ome-xml"        => "components/ome-xml",
-  "slim-plotter"   => "components/slim-plotter",
-  "test-suite"     => "components/test-suite",
-  "visbio"         => "components/visbio",
+  "bio-formats"     => "components/bio-formats",
+  "bio-formats-ice" => "components/bio-formats-ice",
+  "loci-checks"     => "components/checkstyle",
+  "common"          => "components/common",
+  "flow-cytometry"  => "components/flow-cytometry",
+  "loci-plugins"    => "components/loci-plugins",
+  "ome-io"          => "components/ome-io",
+  "ome-plugins"     => "components/ome-plugins",
+  "ome-xml"         => "components/ome-xml",
+  "slim-plotter"    => "components/slim-plotter",
+  "test-suite"      => "components/test-suite",
+  "visbio"          => "components/visbio",
   # legacy
-  "jvmlink"        => "components/legacy/jvmlink",
-  "multi-lut"      => "components/legacy/multi-lut",
-  "ome-editor"     => "components/legacy/ome-editor",
-  "ome-notes"      => "components/legacy/ome-notes",
+  "jvmlink"         => "components/legacy/jvmlink",
+  "multi-lut"       => "components/legacy/multi-lut",
+  "ome-editor"      => "components/legacy/ome-editor",
+  "ome-notes"       => "components/legacy/ome-notes",
   # forks
-  "jai"            => "components/forks/jai",
-  "mdbtools"       => "components/forks/mdbtools",
-  "poi"            => "components/forks/poi",
+  "jai"             => "components/forks/jai",
+  "mdbtools"        => "components/forks/mdbtools",
+  "poi"             => "components/forks/poi",
 );
 
 # JAR file name for each component and library
 my %jars = (
   # components - active
-  "bio-formats"    => "bio-formats.jar",
-  "loci-checks"    => "loci-checks.jar",
-  "common"         => "loci-common.jar",
-  "flow-cytometry" => "flow-cytometry.jar",
-  "loci-plugins"   => "loci_plugins.jar",
-  "ome-io"         => "ome-io.jar",
-  "ome-plugins"    => "ome_plugins.jar",
-  "ome-xml"        => "ome-xml.jar",
-  "slim-plotter"   => "SlimPlotter.jar",
-  "test-suite"     => "loci-testing-framework.jar",
-  "visbio"         => "visbio.jar",
+  "bio-formats"     => "bio-formats.jar",
+  "bio-formats-ice" => "bio-formats-ice.jar",
+  "loci-checks"     => "loci-checks.jar",
+  "common"          => "loci-common.jar",
+  "flow-cytometry"  => "flow-cytometry.jar",
+  "loci-plugins"    => "loci_plugins.jar",
+  "ome-io"          => "ome-io.jar",
+  "ome-plugins"     => "ome_plugins.jar",
+  "ome-xml"         => "ome-xml.jar",
+  "slim-plotter"    => "SlimPlotter.jar",
+  "test-suite"      => "loci-testing-framework.jar",
+  "visbio"          => "visbio.jar",
   # components - legacy
-  "jvmlink"        => "jvmlink.jar",
-  "multi-lut"      => "MultiLUT.jar",
-  "ome-editor"     => "ome-editor.jar",
-  "ome-notes"      => "ome-notes.jar",
+  "jvmlink"         => "jvmlink.jar",
+  "multi-lut"       => "MultiLUT.jar",
+  "ome-editor"      => "ome-editor.jar",
+  "ome-notes"       => "ome-notes.jar",
   # components - forks
-  "jai"            => "jai_imageio.jar",
-  "mdbtools"       => "mdbtools-java.jar",
-  "poi"            => "poi-loci.jar",
+  "jai"             => "jai_imageio.jar",
+  "mdbtools"        => "mdbtools-java.jar",
+  "poi"             => "poi-loci.jar",
   # libraries
   "AppleJavaExtensions" => "AppleJavaExtensions.jar",
   "ant-contrib"         => "ant-contrib-1.0b1.jar",
@@ -189,6 +195,7 @@ my %jars = (
   "commons-httpclient"  => "commons-httpclient-2.0-rc2.jar",
   "commons-logging"     => "commons-logging.jar",
   "forms"               => "forms-1.0.4.jar",
+  "ice"                 => "Ice-3.2.1.jar",
   "ij"                  => "ij.jar",
   "jboss"               => "jbossall-client-4.2.1.GA.jar",
   "jiio"                => "clibwrapper_jiio.jar",
@@ -216,26 +223,27 @@ my %jars = (
 # Base package for each component and library
 my %packages = (
   # components - active
-  "bio-formats"    => "loci.formats",
-  "loci-checks"    => "loci.checks",
-  "common"         => "loci.common",
-  "flow-cytometry" => "loci.apps.flow",
-  "loci-plugins"   => "loci.plugins",
-  "ome-io"         => "loci.ome.io",
-  "ome-plugins"    => "loci.plugins.ome",
-  "ome-xml"        => "ome.xml",
-  "slim-plotter"   => "loci.slim",
-  "test-suite"     => "loci.tests",
-  "visbio"         => "loci.visbio",
+  "bio-formats"     => "loci.formats",
+  "bio-formats-ice" => "loci.ice.formats",
+  "loci-checks"     => "loci.checks",
+  "common"          => "loci.common",
+  "flow-cytometry"  => "loci.apps.flow",
+  "loci-plugins"    => "loci.plugins",
+  "ome-io"          => "loci.ome.io",
+  "ome-plugins"     => "loci.plugins.ome",
+  "ome-xml"         => "ome.xml",
+  "slim-plotter"    => "loci.slim",
+  "test-suite"      => "loci.tests",
+  "visbio"          => "loci.visbio",
   # components - legacy
-  "jvmlink"        => "loci.jvmlink",
-  "multi-lut"      => "loci.apps.MultiLUT",
-  "ome-editor"     => "loci.ome.editor",
-  "ome-notes"      => "loci.ome.notes",
+  "jvmlink"         => "loci.jvmlink",
+  "multi-lut"       => "loci.apps.MultiLUT",
+  "ome-editor"      => "loci.ome.editor",
+  "ome-notes"       => "loci.ome.notes",
   # components - forks
-  "jai"            => "com.sun.media.imageioimpl",
-  "mdbtools"       => "mdbtools",
-  "poi"            => "org.apache.poi",
+  "jai"             => "com.sun.media.imageioimpl",
+  "mdbtools"        => "mdbtools",
+  "poi"             => "org.apache.poi",
   # libraries
   "AppleJavaExtensions" => "com.apple",
   "ant-contrib"         => "net.sf.antcontrib",
@@ -243,6 +251,7 @@ my %packages = (
   "commons-httpclient"  => "org.apache.commons.httpclient",
   "commons-logging"     => "org.apache.commons.logging",
   "forms"               => "com.jgoodies.forms",
+  "ice"                 => "Ice",
   "ij"                  => "ij",
   "jboss"               => "org.jboss",
   "jiio"                => "com.sun.medialib.codec",
@@ -270,66 +279,70 @@ my %packages = (
 # Description for each component
 my %desc = (
   # active
-  "bio-formats"    => <<ZZ,
+  "bio-formats"     => <<ZZ,
 A library for reading and writing popular microscopy file formats
 ZZ
-  "loci-checks"    => <<ZZ,
+  "bio-formats-ice" => <<ZZ,
+Bindings for Bio-Formats client/server communication enabling cross-language
+interoperability
+ZZ
+  "loci-checks"     => <<ZZ,
 LOCI's Checkstyle extensions, for checking source code style
 ZZ
-  "common"         => <<ZZ,
+  "common"          => <<ZZ,
 A library containing common I/O and reflection classes
 ZZ
-  "flow-cytometry" => <<ZZ,
+  "flow-cytometry"  => <<ZZ,
 Server application for flow cytometry with WiscScan using JVMLink
 ZZ
-  "loci-plugins"   => <<ZZ,
+  "loci-plugins"    => <<ZZ,
 A collection of plugins for ImageJ, including the Bio-Formats Importer,
 Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
 Colorizer and Stack Slicer
 ZZ
-  "ome-io"         => <<ZZ,
+  "ome-io"          => <<ZZ,
 A library for OME database import, upload and download
 ZZ
-  "ome-plugins"    => <<ZZ,
+  "ome-plugins"     => <<ZZ,
 A collection of plugins for ImageJ, including the Download from OME and Upload
 to OME plugins
 ZZ
-  "ome-xml"        => <<ZZ,
+  "ome-xml"         => <<ZZ,
 A library for working with OME-XML metadata structures
 ZZ
-  "slim-plotter"   => <<ZZ,
+  "slim-plotter"    => <<ZZ,
 An application and curve fitting library for visualization and analysis of
 combined spectral lifetime data
 ZZ
-  "test-suite"     => <<ZZ,
+  "test-suite"      => <<ZZ,
 Framework for automated and manual testing of the LOCI software packages
 ZZ
-  "visbio"         => <<ZZ,
+  "visbio"          => <<ZZ,
 A multi-purpose biological analysis tool
 ZZ
   # legacy
-  "jvmlink"        => <<ZZ,
+  "jvmlink"         => <<ZZ,
 A library for communicating between a Java Virtual Machine and other programs
 (e.g., C++ applications) via IP over localhost (or remotely)
 ZZ
-  "multi-lut"      => <<ZZ,
+  "multi-lut"       => <<ZZ,
 A demo application for visually exploring  multi-spectral image data
 ZZ
-  "ome-editor"     => <<ZZ,
+  "ome-editor"      => <<ZZ,
 An application for exploration and editing of OME-XML and OME-TIFF metadata
 ZZ
-  "ome-notes"      => <<ZZ,
+  "ome-notes"       => <<ZZ,
 A library for flexible organization and presentation of OME-XML metadata within
 a graphical browser and editor interface
 ZZ
   # forks
-  "jai"            => <<ZZ,
+  "jai"             => <<ZZ,
 Java API to handle JPEG and JPEG2000 files
 ZZ
-  "mdbtools"       => <<ZZ,
+  "mdbtools"        => <<ZZ,
 Java API to handle Microsoft MDB format (Access)
 ZZ
-  "poi"            => <<ZZ,
+  "poi"             => <<ZZ,
 Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
 ZZ
 );
@@ -337,26 +350,27 @@ ZZ
 # License governing each component and library
 my %licenses = (
   # components - active
-  "bio-formats"    => "GPL",
-  "loci-checks"    => "Public domain",
-  "common"         => "GPL",
-  "flow-cytometry" => "BSD",
-  "loci-plugins"   => "GPL",
-  "ome-io"         => "GPL",
-  "ome-plugins"    => "GPL",
-  "ome-xml"        => "GPL",
-  "slim-plotter"   => "GPL",
-  "test-suite"     => "BSD",
-  "visbio"         => "GPL",
+  "bio-formats"     => "GPL",
+  "bio-formats-ice" => "GPL",
+  "loci-checks"     => "Public domain",
+  "common"          => "GPL",
+  "flow-cytometry"  => "BSD",
+  "loci-plugins"    => "GPL",
+  "ome-io"          => "GPL",
+  "ome-plugins"     => "GPL",
+  "ome-xml"         => "GPL",
+  "slim-plotter"    => "GPL",
+  "test-suite"      => "BSD",
+  "visbio"          => "GPL",
   # components - legacy
-  "jvmlink"        => "BSD",
-  "multi-lut"      => "Public domain",
-  "ome-editor"     => "LGPL",
-  "ome-notes"      => "LGPL",
+  "jvmlink"         => "BSD",
+  "multi-lut"       => "Public domain",
+  "ome-editor"      => "LGPL",
+  "ome-notes"       => "LGPL",
   # components - forks
-  "jai"            => "BSD",
-  "mdbtools"       => "LGPL",
-  "poi"            => "Apache",
+  "jai"             => "BSD",
+  "mdbtools"        => "LGPL",
+  "poi"             => "Apache",
   # libraries
   "AppleJavaExtensions" => "BSD",
   "ant-contrib"         => "Apache",
@@ -364,6 +378,7 @@ my %licenses = (
   "commons-httpclient"  => "Apache",
   "commons-logging"     => "Apache",
   "forms"               => "BSD",
+  "ice"                 => "GPL",
   "ij"                  => "Public domain",
   "jboss"               => "LGPL",
   "jiio"                => "BSD",
@@ -403,6 +418,7 @@ my %urls = (
   "commons-httpclient"  => "http://jakarta.apache.org/commons/httpclient/",
   "commons-logging"     => "http://jakarta.apache.org/commons/logging/",
   "forms"               => "http://www.jgoodies.com/freeware/forms/index.html",
+  "ice"                 => "http://www.zeroc.com/ice.html",
   "ij"                  => "http://rsb.info.nih.gov/ij/",
   "jboss"               => "http://www.jboss.org/",
   "jiio"                => "https://jai-imageio.dev.java.net/",
@@ -470,6 +486,9 @@ used by OME-Java
 ZZ
   "forms"               => <<ZZ,
 used for layout by VisBio, Data Browser and OME Notes
+ZZ
+  "ice"                 => <<ZZ,
+used by Bio-Formats Ice framework
 ZZ
   "ij"                  => <<ZZ,
 used by LOCI plugins for ImageJ and OME plugins for ImageJ; bundled with VisBio

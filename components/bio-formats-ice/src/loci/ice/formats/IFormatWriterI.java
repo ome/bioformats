@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ice.formats;
 
+import Ice.Current;
 //import loci.ice.formats._IFormatWriterDisp;
 //import loci.ice.formats.MetadataRetrievePrx;
 //import loci.ice.formats.MetadataStorePrx;
@@ -63,7 +64,7 @@ public class IFormatWriterI extends _IFormatWriterDisp {
 
   // -- IFormatWriter methods --
 
-  public void setId(String id, Ice.Current current) {
+  public void setId(String id, Current current) {
     try {
       writer.setId(id);
     }
@@ -75,19 +76,19 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     }
   }
 
-  public void saveImage(Image image, boolean last, Ice.Current current)
+  public void saveImage(Image image, boolean last, Current current)
     throws FormatException, IOException
   {
     writer.saveImage(image, last);
   }
 
   public void saveImage(Image image, int series, boolean lastInSeries,
-    boolean last, Ice.Current current) throws FormatException, IOException
+    boolean last, Current current) throws FormatException, IOException
   {
     writer.saveImage(image, series, lastInSeries, last);
   }
 
-  public void saveBytes1(byte[] bytes, boolean last, Ice.Current current) {
+  public void saveBytes1(byte[] bytes, boolean last, Current current) {
     try {
       writer.saveBytes(bytes, last);
     }
@@ -100,7 +101,7 @@ public class IFormatWriterI extends _IFormatWriterDisp {
   }
 
   public void saveBytes2(byte[] bytes, int series, boolean lastInSeries,
-    boolean last, Ice.Current current)
+    boolean last, Current current)
   {
     try {
       writer.saveBytes(bytes, series, lastInSeries, last);
@@ -113,50 +114,50 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     }
   }
 
-  public boolean canDoStacks(Ice.Current current) {
+  public boolean canDoStacks(Current current) {
     return writer.canDoStacks();
   }
 
-  public void setMetadataRetrieve(MetadataRetrievePrx r, Ice.Current current) {
+  public void setMetadataRetrieve(MetadataRetrievePrx r, Current current) {
     r.getServant();
     writer.setMetadataRetrieve(((MetadataRetrieveI)
       r.getServant()).getWrappedObject());
   }
 
-  public MetadataRetrieve getMetadataRetrieve(Ice.Current current)
+  public MetadataRetrieve getMetadataRetrieve(Current current)
   {
     return (MetadataRetrieve) writer.getMetadataRetrieve();
   }
 
-  public void setColorModel(ColorModel cm, Ice.Current current) {
+  public void setColorModel(ColorModel cm, Current current) {
     writer.setColorModel(cm);
   }
 
-  public ColorModel getColorModel(Ice.Current current) {
+  public ColorModel getColorModel(Current current) {
     return writer.getColorModel();
   }
 
-  public void setFramesPerSecond(int rate, Ice.Current current) {
+  public void setFramesPerSecond(int rate, Current current) {
     writer.setFramesPerSecond(rate);
   }
 
-  public int getFramesPerSecond(Ice.Current current) {
+  public int getFramesPerSecond(Current current) {
     return writer.getFramesPerSecond();
   }
 
-  public String[] getCompressionTypes(Ice.Current current) {
+  public String[] getCompressionTypes(Current current) {
     return writer.getCompressionTypes();
   }
 
-  public int[] getPixelTypes(Ice.Current current) {
+  public int[] getPixelTypes(Current current) {
     return writer.getPixelTypes();
   }
 
-  public boolean isSupportedType(int type, Ice.Current current) {
+  public boolean isSupportedType(int type, Current current) {
     return writer.isSupportedType(type);
   }
 
-  public void setCompression(String compress, Ice.Current current) {
+  public void setCompression(String compress, Current current) {
     try {
       writer.setCompression(compress);
     }
@@ -166,14 +167,14 @@ public class IFormatWriterI extends _IFormatWriterDisp {
   }
 
   public void setStoreAsRetrieve(MetadataStorePrx storePrx,
-    Ice.Current current)
+    Current current)
   {
     loci.formats.meta.MetadataRetrieve r = (loci.formats.meta.MetadataRetrieve)
       ((MetadataStoreI) storePrx.getServant()).getWrappedObject();
     writer.setMetadataRetrieve(r);
   }
 
-  public void close(Ice.Current current) {
+  public void close(Current current) {
     try {
       writer.close();
     }
@@ -182,15 +183,15 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     }
   }
 
-  public String getFormat(Ice.Current current) {
+  public String getFormat(Current current) {
     return writer.getFormat();
   }
 
-  public String[] getSuffixes(Ice.Current current) {
+  public String[] getSuffixes(Current current) {
     return writer.getSuffixes();
   }
 
-  public boolean isThisType(String name, Ice.Current current) {
+  public boolean isThisType(String name, Current current) {
     return writer.isThisType(name);
   }
 

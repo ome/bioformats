@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ice.formats;
 
+import Ice.Current;
 //import loci.ice.formats._IFormatReaderDisp;
 //import loci.ice.formats.MetadataRetrievePrx;
 //import loci.ice.formats.MetadataStorePrx;
@@ -55,7 +56,7 @@ public class IFormatReaderI extends _IFormatReaderDisp {
 
   // -- IFormatReader methods --
 
-  public void setId(String id, Ice.Current current) {
+  public void setId(String id, Current current) {
     try {
       reader.setId(id);
     }
@@ -68,66 +69,66 @@ public class IFormatReaderI extends _IFormatReaderDisp {
   }
 
   public void setRetrieveAsStore(MetadataRetrievePrx retrievePrx,
-    Ice.Current current)
+    Current current)
   {
     loci.formats.meta.MetadataStore s = (loci.formats.meta.MetadataStore)
       ((MetadataRetrieveI) retrievePrx.getServant()).getWrappedObject();
     reader.setMetadataStore(s);
   }
 
-  public boolean isThisType(String name, boolean open, Ice.Current current) {
+  public boolean isThisType(String name, boolean open, Current current) {
     return reader.isThisType(name, open);
   }
 
-  public int getImageCount(Ice.Current current) {
+  public int getImageCount(Current current) {
     return reader.getImageCount();
   }
 
-  public boolean isRGB(Ice.Current current) {
+  public boolean isRGB(Current current) {
     return reader.isRGB();
   }
 
-  public int getSizeX(Ice.Current current) {
+  public int getSizeX(Current current) {
     return reader.getSizeX();
   }
 
-  public int getSizeY(Ice.Current current) {
+  public int getSizeY(Current current) {
     return reader.getSizeY();
   }
 
-  public int getSizeZ(Ice.Current current) {
+  public int getSizeZ(Current current) {
     return reader.getSizeZ();
   }
 
-  public int getSizeC(Ice.Current current) {
+  public int getSizeC(Current current) {
     return reader.getSizeC();
   }
 
-  public int getSizeT(Ice.Current current) {
+  public int getSizeT(Current current) {
     return reader.getSizeT();
   }
 
-  public int getPixelType(Ice.Current current) {
+  public int getPixelType(Current current) {
     return reader.getPixelType();
   }
 
-  public int getEffectiveSizeC(Ice.Current current) {
+  public int getEffectiveSizeC(Current current) {
     return reader.getEffectiveSizeC();
   }
 
-  public int getRGBChannelCount(Ice.Current current) {
+  public int getRGBChannelCount(Current current) {
     return reader.getRGBChannelCount();
   }
 
-  public boolean isIndexed(Ice.Current current) {
+  public boolean isIndexed(Current current) {
     return reader.isIndexed();
   }
 
-  public boolean isFalseColor(Ice.Current current) {
+  public boolean isFalseColor(Current current) {
     return reader.isFalseColor();
   }
 
-  public byte[][] get8BitLookupTable(Ice.Current current) {
+  public byte[][] get8BitLookupTable(Current current) {
     try {
       return reader.get8BitLookupTable();
     }
@@ -140,7 +141,7 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     return null;
   }
 
-  public short[][] get16BitLookupTable(Ice.Current current) {
+  public short[][] get16BitLookupTable(Current current) {
     try {
       return reader.get16BitLookupTable();
     }
@@ -153,44 +154,44 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     return null;
   }
 
-  public int[] getChannelDimLengths(Ice.Current current) {
+  public int[] getChannelDimLengths(Current current) {
     return reader.getChannelDimLengths();
   }
 
-  public String[] getChannelDimTypes(Ice.Current current) {
+  public String[] getChannelDimTypes(Current current) {
     return reader.getChannelDimTypes();
   }
 
-  public int getThumbSizeX(Ice.Current current) {
+  public int getThumbSizeX(Current current) {
     return reader.getThumbSizeX();
   }
 
-  public int getThumbSizeY(Ice.Current current) {
+  public int getThumbSizeY(Current current) {
     return reader.getThumbSizeY();
   }
 
-  public boolean isLittleEndian(Ice.Current current) {
+  public boolean isLittleEndian(Current current) {
     return reader.isLittleEndian();
   }
 
-  public String getDimensionOrder(Ice.Current current) {
+  public String getDimensionOrder(Current current) {
     return reader.getDimensionOrder();
   }
 
-  public boolean isOrderCertain(Ice.Current current) {
+  public boolean isOrderCertain(Current current) {
     return reader.isOrderCertain();
   }
 
-  public boolean isInterleaved(Ice.Current current) {
+  public boolean isInterleaved(Current current) {
     return reader.isInterleaved();
   }
 
-  public boolean isInterleavedSubC(int subC, Ice.Current current) {
+  public boolean isInterleavedSubC(int subC, Current current) {
     return reader.isInterleaved(subC);
   }
 
   public byte[] openBytes(int no, int x, int y, int width, int height,
-    Ice.Current current)
+    Current current)
   {
     try {
       return reader.openBytes(no, x, y, width, height);
@@ -204,7 +205,7 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     return null;
   }
 
-  public byte[] openThumbBytes(int no, Ice.Current current) {
+  public byte[] openThumbBytes(int no, Current current) {
     try {
       return reader.openThumbBytes(no);
     }
@@ -217,7 +218,7 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     return null;
   }
 
-  public void close(boolean fileOnly, Ice.Current current) {
+  public void close(boolean fileOnly, Current current) {
     try {
       reader.close(fileOnly);
     }
@@ -226,57 +227,57 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     }
   }
 
-  public int getSeriesCount(Ice.Current current) {
+  public int getSeriesCount(Current current) {
     return reader.getSeriesCount();
   }
 
-  public void setSeries(int no, Ice.Current current) {
+  public void setSeries(int no, Current current) {
     reader.setSeries(no);
   }
 
-  public int getSeries(Ice.Current current) {
+  public int getSeries(Current current) {
     return reader.getSeries();
   }
 
-  public void setNormalized(boolean normalize, Ice.Current current) {
+  public void setNormalized(boolean normalize, Current current) {
     reader.setNormalized(normalize);
   }
 
-  public boolean isNormalized(Ice.Current current) {
+  public boolean isNormalized(Current current) {
     return reader.isNormalized();
   }
 
-  public void setMetadataCollected(boolean collect, Ice.Current current) {
+  public void setMetadataCollected(boolean collect, Current current) {
     reader.setMetadataCollected(collect);
   }
 
-  public boolean isMetadataCollected(Ice.Current current) {
+  public boolean isMetadataCollected(Current current) {
     return reader.isMetadataCollected();
   }
 
   public void setOriginalMetadataPopulated(boolean populate,
-    Ice.Current current)
+    Current current)
   {
     reader.setOriginalMetadataPopulated(populate);
   }
 
-  public boolean isOriginalMetadataPopulated(Ice.Current current) {
+  public boolean isOriginalMetadataPopulated(Current current) {
     return reader.isOriginalMetadataPopulated();
   }
 
-  public void setGroupFiles(boolean group, Ice.Current current) {
+  public void setGroupFiles(boolean group, Current current) {
     reader.setGroupFiles(group);
   }
 
-  public boolean isGroupFiles(Ice.Current current) {
+  public boolean isGroupFiles(Current current) {
     return reader.isGroupFiles();
   }
 
-  public boolean isMetadataComplete(Ice.Current current) {
+  public boolean isMetadataComplete(Current current) {
     return reader.isMetadataComplete();
   }
 
-  public int fileGroupOption(String id, Ice.Current current) {
+  public int fileGroupOption(String id, Current current) {
     try {
       return reader.fileGroupOption(id);
     }
@@ -289,36 +290,36 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     return -1;
   }
 
-  public String[] getUsedFiles(Ice.Current current) {
+  public String[] getUsedFiles(Current current) {
     return reader.getUsedFiles();
   }
 
-  public String getCurrentFile(Ice.Current current) {
+  public String getCurrentFile(Current current) {
     return reader.getCurrentFile();
   }
 
-  public int getIndex(int z, int c, int t, Ice.Current current) {
+  public int getIndex(int z, int c, int t, Current current) {
     return reader.getIndex(z, c, t);
   }
 
-  public int[] getZCTCoords(int index, Ice.Current current) {
+  public int[] getZCTCoords(int index, Current current) {
     return reader.getZCTCoords(index);
   }
 
-  public void setMetadataFiltered(boolean filter, Ice.Current current) {
+  public void setMetadataFiltered(boolean filter, Current current) {
     reader.setMetadataFiltered(filter);
   }
 
-  public boolean isMetadataFiltered(Ice.Current current) {
+  public boolean isMetadataFiltered(Current current) {
     return reader.isMetadataFiltered();
   }
 
-  public void setMetadataStore(MetadataStorePrx store, Ice.Current current) {
+  public void setMetadataStore(MetadataStorePrx store, Current current) {
     reader.setMetadataStore(((MetadataStoreI)
       store.getServant()).getWrappedObject());
   }
 
-  public void close(Ice.Current current) {
+  public void close(Current current) {
     try {
       reader.close();
     }
@@ -327,7 +328,7 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     }
   }
 
-  public void closeFile(boolean fileOnly, Ice.Current current) {
+  public void closeFile(boolean fileOnly, Current current) {
     try {
       reader.close(fileOnly);
     }
@@ -337,11 +338,11 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     }
   }
 
-  public String getFormat(Ice.Current current) {
+  public String getFormat(Current current) {
     return reader.getFormat();
   }
 
-  public String[] getSuffixes(Ice.Current current) {
+  public String[] getSuffixes(Current current) {
     return reader.getSuffixes();
   }
 

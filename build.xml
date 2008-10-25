@@ -42,6 +42,17 @@ Bio-Formats
                    MDB Tools (Java port), JAI Image I/O Tools, NetCDF
     License:       GPL
 
+Bio-Formats Ice framework
+    Bindings for Bio-Formats client/server communication enabling
+    cross-language interoperability
+    -=-
+    JAR file:      bio-formats-ice.jar
+    Path:          components/bio-formats-ice
+    Project deps:  Bio-Formats
+    Library deps:  Ice
+    Optional:      (none)
+    License:       GPL
+
 LOCI Plugins for ImageJ
     A collection of plugins for ImageJ, including the Bio-Formats Importer,
     Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
@@ -253,6 +264,12 @@ JGoodies Forms
     Notes:     used for layout by VisBio, Data Browser and OME Notes
     License:   BSD
 
+Ice
+    JAR file:  Ice-3.2.1.jar
+    URL:       http://www.zeroc.com/ice.html
+    Notes:     used by Bio-Formats Ice framework
+    License:   GPL
+
 ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
@@ -389,7 +406,6 @@ Apache XML-RPC
     URL:       http://ws.apache.org/xmlrpc/
     Notes:     used by OME-Java library to communicate with OME servers
     License:   Apache
-
 -->
 
 <project name="LOCI Software" default="jars" basedir=".">
@@ -414,7 +430,7 @@ Apache XML-RPC
 
   <target name="style"
     depends="style-common, style-jai, style-poi-loci, style-mdbtools,
-      style-ome-xml, style-formats,
+      style-ome-xml, style-formats, style-formats-ice,
       style-loci-plugins, style-ome-io, style-ome-plugins,
       style-visbio, style-slim, style-flow,
       style-checks, style-tests,
@@ -424,7 +440,7 @@ Apache XML-RPC
 
   <target name="compile"
     depends="compile-common, compile-jai, compile-poi-loci, compile-mdbtools,
-      compile-ome-xml, compile-formats,
+      compile-ome-xml, compile-formats, compile-formats-ice,
       compile-loci-plugins, compile-ome-io, compile-ome-plugins,
       compile-visbio, compile-slim, compile-flow,
       compile-checks, compile-tests,
@@ -434,7 +450,7 @@ Apache XML-RPC
 
   <target name="jars"
     depends="jar-common, jar-jai, jar-poi-loci, jar-mdbtools,
-      jar-ome-xml, jar-formats, jar-loci-plugins,
+      jar-ome-xml, jar-formats, jar-formats-ice, jar-loci-plugins,
       jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
       jar-checks, jar-tests,
@@ -444,7 +460,7 @@ Apache XML-RPC
 
   <target name="clean"
     depends="clean-common, clean-jai, clean-poi-loci, clean-mdbtools,
-      clean-ome-xml, clean-formats,
+      clean-ome-xml, clean-formats, clean-formats-ice,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
       clean-checks, clean-tests,
@@ -615,6 +631,32 @@ Apache XML-RPC
     depends="clean-common, clean-ome-xml"
     description="remove build files for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.clean"/>
+  </target>
+
+  <!-- Bio-Formats Ice framework -->
+
+  <target name="style-formats-ice"
+    depends="style-formats"
+    description="check source code style for Bio-Formats Ice framework">
+    <ant dir="components/bio-formats-ice" target="formats-ice.style"/>
+  </target>
+
+  <target name="compile-formats-ice"
+    depends="compile-formats"
+    description="compile classes for Bio-Formats Ice framework">
+    <ant dir="components/bio-formats-ice" target="formats-ice.compile"/>
+  </target>
+
+  <target name="jar-formats-ice"
+    depends="jar-formats"
+    description="generate JAR file for Bio-Formats Ice framework">
+    <ant dir="components/bio-formats-ice" target="formats-ice.jar"/>
+  </target>
+
+  <target name="clean-formats-ice"
+    depends="clean-formats"
+    description="remove build files for Bio-Formats Ice framework">
+    <ant dir="components/bio-formats-ice" target="formats-ice.clean"/>
   </target>
 
   <!-- LOCI Plugins for ImageJ -->
