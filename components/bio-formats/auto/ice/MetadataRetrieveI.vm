@@ -29,9 +29,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.ice;
+package loci.ice.formats;
 
-import BioFormats._MetadataRetrieveDisp;
+//import loci.ice.formats._MetadataRetrieveDisp;
 import loci.formats.*;
 import loci.formats.meta.*;
 
@@ -40,8 +40,8 @@ import loci.formats.meta.*;
  * {@link loci.formats.meta.MetadataRetrieve} objects.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats-ice/src/loci/formats/ice/MetadataRetrieveI.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats-ice/src/loci/formats/ice/MetadataRetrieveI.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats-ice/src/loci/ice/formats/MetadataRetrieveI.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats-ice/src/loci/ice/formats/MetadataRetrieveI.java">SVN</a></dd></dl>
  *
  * @author Hidayath Ansari mansari at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu

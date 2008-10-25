@@ -1,5 +1,5 @@
 //
-// BioFormats.ice
+// bio-formats.ice
 //
 
 /*
@@ -29,7 +29,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *-----------------------------------------------------------------------------
  */
 
-module BioFormats {
+[["java:package:loci.ice"]]
+
+module formats {
 
   sequence<byte> ByteSeq;
   sequence<ByteSeq> ByteByteSeq;
@@ -78,7 +80,7 @@ module BioFormats {
     ByteSeq openBytes(int no, int x, int y, int width, int height);
     //ByteSeq openBytes3(int no, ByteSeq buf);
     //ByteSeq openBytes4(int no, ByteSeq buf,
-      int x, int y, int width, int height);
+    //  int x, int y, int width, int height);
     ByteSeq openThumbBytes(int no);
     void closeFile(bool fileOnly);
     string getFormat();
@@ -142,7 +144,7 @@ module BioFormats {
 
     // - Entity storage -
 
-    void setUUID(String uuid);
+    void setUUID(string uuid);
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 
@@ -169,7 +171,7 @@ module BioFormats {
 
     // - Entity retrieval -
 
-    String getUUID();
+    string getUUID();
 #foreach ($entity in $q.entities())
 #set ($dummy = $q.setEntity($entity))
 

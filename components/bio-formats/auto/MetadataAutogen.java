@@ -52,8 +52,12 @@ public class MetadataAutogen {
 
     // create needed directories
     if (ice) {
-      File iceDir = new File("ice");
+      File lociDir = new File("loci");
+      if (!lociDir.exists()) lociDir.mkdir();
+      File iceDir = new File(lociDir, "ice");
       if (!iceDir.exists()) iceDir.mkdir();
+      File formatsDir = new File(iceDir, "formats");
+      if (!formatsDir.exists()) formatsDir.mkdir();
     }
     else {
       File omeDir = new File("ome");
@@ -73,13 +77,13 @@ public class MetadataAutogen {
     if (ice) {
       // generate Slice interfaces
       VelocityTools.processTemplate(ve, context,
-        "ice/BioFormats.vm", "ice/BioFormats.ice");
+        "ice/bio-formats.vm", "bio-formats.ice");
 
       // generate server-side Ice implementations
       VelocityTools.processTemplate(ve, context,
-        "ice/MetadataStoreI.vm", "ice/MetadataStoreI.java");
+        "ice/MetadataStoreI.vm", "loci/ice/formats/MetadataStoreI.java");
       VelocityTools.processTemplate(ve, context,
-        "ice/MetadataRetrieveI.vm", "ice/MetadataRetrieveI.java");
+        "ice/MetadataRetrieveI.vm", "loci/ice/formats/MetadataRetrieveI.java");
     }
     else {
       // generate base metadata classes

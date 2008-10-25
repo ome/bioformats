@@ -1,0 +1,197 @@
+//
+// IFormatReaderI.java
+//
+
+/*
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.ice.formats;
+
+//import loci.ice.formats._IFormatWriterDisp;
+//import loci.ice.formats.MetadataRetrievePrx;
+//import loci.ice.formats.MetadataStorePrx;
+import java.awt.Image;
+import java.awt.image.ColorModel;
+import java.io.IOException;
+import loci.formats.FormatException;
+import loci.formats.ImageWriter;
+import loci.formats.meta.MetadataRetrieve;
+
+/**
+ * Server-side Ice wrapper for client/server
+ * {@link loci.formats.IFormatWriter} objects.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats-ice/src/loci/ice/formats/IFormatWriterI.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats-ice/src/loci/ice/formats/IFormatWriterI.java">SVN</a></dd></dl>
+ *
+ * @author Hidayath Ansari mansari at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public class IFormatWriterI extends _IFormatWriterDisp {
+
+  // -- Fields --
+
+  private ImageWriter writer;
+
+  // -- Constructor --
+
+  public IFormatWriterI() {
+    writer = new ImageWriter();
+  }
+
+  // -- _IFormatWriterDisp methods --
+
+  public void setId(String id, Ice.Current current) {
+    try {
+      writer.setId(id);
+    }
+    catch (FormatException exc) {
+      exc.printStackTrace();
+    }
+    catch (IOException exc) {
+      exc.printStackTrace();
+    }
+  }
+
+  public void saveImage(Image image, boolean last, Ice.Current current)
+    throws FormatException, IOException
+  {
+    writer.saveImage(image, last);
+  }
+
+  public void saveImage(Image image, int series, boolean lastInSeries,
+    boolean last, Ice.Current current) throws FormatException, IOException
+  {
+    writer.saveImage(image, series, lastInSeries, last);
+  }
+
+  public void saveBytes1(byte[] bytes, boolean last, Ice.Current current) {
+    try {
+      writer.saveBytes(bytes, last);
+    }
+    catch (FormatException e) {
+      e.printStackTrace();
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void saveBytes2(byte[] bytes, int series, boolean lastInSeries,
+    boolean last, Ice.Current current)
+  {
+    try {
+      writer.saveBytes(bytes, series, lastInSeries, last);
+    }
+    catch (FormatException e) {
+      e.printStackTrace();
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public boolean canDoStacks(Ice.Current current) {
+    return writer.canDoStacks();
+  }
+
+  public void setMetadataRetrieve(MetadataRetrieve r, Ice.Current current) {
+    writer.setMetadataRetrieve(r);
+  }
+
+  public loci.ice.formats.MetadataRetrieve getMetadataRetrieve(
+    Ice.Current current)
+  {
+    return (loci.ice.formats.MetadataRetrieve) writer.getMetadataRetrieve();
+  }
+
+  public void setColorModel(ColorModel cm, Ice.Current current) {
+    writer.setColorModel(cm);
+  }
+
+  public ColorModel getColorModel(Ice.Current current) {
+    return writer.getColorModel();
+  }
+
+  public void setFramesPerSecond(int rate, Ice.Current current) {
+    writer.setFramesPerSecond(rate);
+  }
+
+  public int getFramesPerSecond(Ice.Current current) {
+    return writer.getFramesPerSecond();
+  }
+
+  public String[] getCompressionTypes(Ice.Current current) {
+    return writer.getCompressionTypes();
+  }
+
+  public int[] getPixelTypes(Ice.Current current) {
+    return writer.getPixelTypes();
+  }
+
+  public boolean isSupportedType(int type, Ice.Current current) {
+    return writer.isSupportedType(type);
+  }
+
+  public void setCompression(String compress, Ice.Current current) {
+    try {
+      writer.setCompression(compress);
+    }
+    catch (FormatException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void setMetadataRetrieve(MetadataRetrievePrx r, Ice.Current current) {
+    r.getServant();
+    writer.setMetadataRetrieve(((MetadataRetrieveI)
+      r.getServant()).getWrappedObject());
+  }
+
+  public void setStoreAsRetrieve(MetadataStorePrx storePrx,
+    Ice.Current current)
+  {
+    MetadataRetrieve r = (MetadataRetrieve)
+      ((MetadataStoreI) storePrx.getServant()).getWrappedObject();
+    writer.setMetadataRetrieve(r);
+  }
+
+  public void close(Ice.Current current) {
+    try {
+      writer.close();
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public String getFormat(Ice.Current current) {
+    return writer.getFormat();
+  }
+
+  public String[] getSuffixes(Ice.Current current) {
+    return writer.getSuffixes();
+  }
+
+  public boolean isThisType(String name, Ice.Current current) {
+    return writer.isThisType(name);
+  }
+
+}
