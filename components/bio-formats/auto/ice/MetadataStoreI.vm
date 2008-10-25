@@ -33,8 +33,8 @@ package loci.ice.formats;
 
 //import loci.ice.formats._MetadataStoreDisp;
 //import loci.ice.formats.MetadataStore;
-import loci.formats.*;
-import loci.formats.meta.*;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -51,7 +51,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 
   // -- Fields --
 
-  private MetadataStore metadataObject;
+  private IMetadata metadataObject;
 
   // -- Constructors --
 
@@ -59,28 +59,29 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject = MetadataTools.createOMEXMLMetadata();
   }
 
-  public MetadataStoreI(MetadataStore store) {
-    metadataObject = store;
+  public MetadataStoreI(loci.formats.meta.MetadataStore store) {
+    metadataObject = (IMetadata) store;
   }
 
   // -- MetadataStoreI methods --
 
-  public MetadataStore getWrappedObject() {
+  public loci.formats.meta.MetadataStore getWrappedObject() {
     return metadataObject;
   }
 
-  public void setMetadataObject(MetadataStore store) {
-    metadataObject = store;
+  public void setMetadataObject(loci.formats.meta.MetadataStore store) {
+    metadataObject = (IMetadata) store;
   }
 
-  // -- _MetadataStoreDisp methods --
+  // -- MetadataStore methods --
 
   public MetadataStore getServant(Ice.Current current) {
     return this;
   }
 
   public String getOMEXML(Ice.Current current) {
-    return MetadataTools.getOMEXML((MetadataRetrieve) metadataObject);
+    return MetadataTools.getOMEXML(
+      (loci.formats.meta.MetadataRetrieve) metadataObject);
   }
 
   public void createRoot(Ice.Current current) {
@@ -99,7 +100,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  public void set$entity$prop($q.type() $q.var($prop), $q.argsList(), Ice.Current current) {
+  public void set$entity$prop($q.primitive($q.type()) $q.var($prop), $q.argsList(), Ice.Current current) {
     metadataObject.set$entity$prop($q.var($prop), $q.varsList());
   }
 #end##foreach $prop

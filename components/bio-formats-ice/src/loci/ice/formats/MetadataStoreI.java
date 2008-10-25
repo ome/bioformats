@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 24, 2008 7:57:38 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 24, 2008 8:16:09 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -33,8 +33,8 @@ package loci.ice.formats;
 
 //import loci.ice.formats._MetadataStoreDisp;
 //import loci.ice.formats.MetadataStore;
-import loci.formats.*;
-import loci.formats.meta.*;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -51,7 +51,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 
   // -- Fields --
 
-  private MetadataStore metadataObject;
+  private IMetadata metadataObject;
 
   // -- Constructors --
 
@@ -59,28 +59,29 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject = MetadataTools.createOMEXMLMetadata();
   }
 
-  public MetadataStoreI(MetadataStore store) {
-    metadataObject = store;
+  public MetadataStoreI(loci.formats.meta.MetadataStore store) {
+    metadataObject = (IMetadata) store;
   }
 
   // -- MetadataStoreI methods --
 
-  public MetadataStore getWrappedObject() {
+  public loci.formats.meta.MetadataStore getWrappedObject() {
     return metadataObject;
   }
 
-  public void setMetadataObject(MetadataStore store) {
-    metadataObject = store;
+  public void setMetadataObject(loci.formats.meta.MetadataStore store) {
+    metadataObject = (IMetadata) store;
   }
 
-  // -- _MetadataStoreDisp methods --
+  // -- MetadataStore methods --
 
   public MetadataStore getServant(Ice.Current current) {
     return this;
   }
 
   public String getOMEXML(Ice.Current current) {
-    return MetadataTools.getOMEXML((MetadataRetrieve) metadataObject);
+    return MetadataTools.getOMEXML(
+      (loci.formats.meta.MetadataRetrieve) metadataObject);
   }
 
   public void createRoot(Ice.Current current) {
@@ -105,13 +106,13 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setChannelComponentColorDomain(colorDomain, imageIndex, logicalChannelIndex, channelComponentIndex);
   }
 
-  public void setChannelComponentIndex(Integer index, int imageIndex, int logicalChannelIndex, int channelComponentIndex, Ice.Current current) {
+  public void setChannelComponentIndex(int index, int imageIndex, int logicalChannelIndex, int channelComponentIndex, Ice.Current current) {
     metadataObject.setChannelComponentIndex(index, imageIndex, logicalChannelIndex, channelComponentIndex);
   }
 
   // - Detector property storage -
 
-  public void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex, Ice.Current current) {
+  public void setDetectorGain(float gain, int instrumentIndex, int detectorIndex, Ice.Current current) {
     metadataObject.setDetectorGain(gain, instrumentIndex, detectorIndex);
   }
 
@@ -127,7 +128,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setDetectorModel(model, instrumentIndex, detectorIndex);
   }
 
-  public void setDetectorOffset(Float offset, int instrumentIndex, int detectorIndex, Ice.Current current) {
+  public void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex, Ice.Current current) {
     metadataObject.setDetectorOffset(offset, instrumentIndex, detectorIndex);
   }
 
@@ -139,7 +140,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setDetectorType(type, instrumentIndex, detectorIndex);
   }
 
-  public void setDetectorVoltage(Float voltage, int instrumentIndex, int detectorIndex, Ice.Current current) {
+  public void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, Ice.Current current) {
     metadataObject.setDetectorVoltage(voltage, instrumentIndex, detectorIndex);
   }
 
@@ -149,37 +150,37 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setDetectorSettingsDetector(detector, imageIndex, logicalChannelIndex);
   }
 
-  public void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex);
   }
 
-  public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex);
   }
 
   // - Dimensions property storage -
 
-  public void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setDimensionsWaveIncrement(waveIncrement, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setDimensionsWaveStart(int waveStart, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setDimensionsWaveStart(waveStart, imageIndex, pixelsIndex);
   }
 
@@ -189,27 +190,27 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setDisplayOptionsID(id, imageIndex);
   }
 
-  public void setDisplayOptionsZoom(Float zoom, int imageIndex, Ice.Current current) {
+  public void setDisplayOptionsZoom(float zoom, int imageIndex, Ice.Current current) {
     metadataObject.setDisplayOptionsZoom(zoom, imageIndex);
   }
 
   // - DisplayOptionsProjection property storage -
 
-  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex, Ice.Current current) {
+  public void setDisplayOptionsProjectionZStart(int zStart, int imageIndex, Ice.Current current) {
     metadataObject.setDisplayOptionsProjectionZStart(zStart, imageIndex);
   }
 
-  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex, Ice.Current current) {
+  public void setDisplayOptionsProjectionZStop(int zStop, int imageIndex, Ice.Current current) {
     metadataObject.setDisplayOptionsProjectionZStop(zStop, imageIndex);
   }
 
   // - DisplayOptionsTime property storage -
 
-  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex, Ice.Current current) {
+  public void setDisplayOptionsTimeTStart(int tStart, int imageIndex, Ice.Current current) {
     metadataObject.setDisplayOptionsTimeTStart(tStart, imageIndex);
   }
 
-  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex, Ice.Current current) {
+  public void setDisplayOptionsTimeTStop(int tStop, int imageIndex, Ice.Current current) {
     metadataObject.setDisplayOptionsTimeTStop(tStop, imageIndex);
   }
 
@@ -291,19 +292,19 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 
   // - ImagingEnvironment property storage -
 
-  public void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex, Ice.Current current) {
+  public void setImagingEnvironmentAirPressure(float airPressure, int imageIndex, Ice.Current current) {
     metadataObject.setImagingEnvironmentAirPressure(airPressure, imageIndex);
   }
 
-  public void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex, Ice.Current current) {
+  public void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex, Ice.Current current) {
     metadataObject.setImagingEnvironmentCO2Percent(cO2Percent, imageIndex);
   }
 
-  public void setImagingEnvironmentHumidity(Float humidity, int imageIndex, Ice.Current current) {
+  public void setImagingEnvironmentHumidity(float humidity, int imageIndex, Ice.Current current) {
     metadataObject.setImagingEnvironmentHumidity(humidity, imageIndex);
   }
 
-  public void setImagingEnvironmentTemperature(Float temperature, int imageIndex, Ice.Current current) {
+  public void setImagingEnvironmentTemperature(float temperature, int imageIndex, Ice.Current current) {
     metadataObject.setImagingEnvironmentTemperature(temperature, imageIndex);
   }
 
@@ -315,7 +316,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 
   // - Laser property storage -
 
-  public void setLaserFrequencyMultiplication(Integer frequencyMultiplication, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public void setLaserFrequencyMultiplication(int frequencyMultiplication, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     metadataObject.setLaserFrequencyMultiplication(frequencyMultiplication, instrumentIndex, lightSourceIndex);
   }
 
@@ -327,7 +328,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setLaserPulse(pulse, instrumentIndex, lightSourceIndex);
   }
 
-  public void setLaserTuneable(Boolean tuneable, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     metadataObject.setLaserTuneable(tuneable, instrumentIndex, lightSourceIndex);
   }
 
@@ -335,7 +336,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setLaserType(type, instrumentIndex, lightSourceIndex);
   }
 
-  public void setLaserWavelength(Integer wavelength, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public void setLaserWavelength(int wavelength, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     metadataObject.setLaserWavelength(wavelength, instrumentIndex, lightSourceIndex);
   }
 
@@ -353,7 +354,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setLightSourceModel(model, instrumentIndex, lightSourceIndex);
   }
 
-  public void setLightSourcePower(Float power, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     metadataObject.setLightSourcePower(power, instrumentIndex, lightSourceIndex);
   }
 
@@ -363,7 +364,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 
   // - LightSourceSettings property storage -
 
-  public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex);
   }
 
@@ -371,7 +372,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setLightSourceSettingsLightSource(lightSource, imageIndex, logicalChannelIndex);
   }
 
-  public void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLightSourceSettingsWavelength(int wavelength, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLightSourceSettingsWavelength(wavelength, imageIndex, logicalChannelIndex);
   }
 
@@ -381,11 +382,11 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setLogicalChannelContrastMethod(contrastMethod, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelEmWave(Integer emWave, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLogicalChannelEmWave(int emWave, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLogicalChannelEmWave(emWave, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelExWave(Integer exWave, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLogicalChannelExWave(int exWave, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLogicalChannelExWave(exWave, imageIndex, logicalChannelIndex);
   }
 
@@ -409,7 +410,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setLogicalChannelName(name, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex);
   }
 
@@ -421,15 +422,15 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setLogicalChannelPhotometricInterpretation(photometricInterpretation, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelPinholeSize(Float pinholeSize, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLogicalChannelPockelCellSetting(pockelCellSetting, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public void setLogicalChannelSamplesPerPixel(int samplesPerPixel, int imageIndex, int logicalChannelIndex, Ice.Current current) {
     metadataObject.setLogicalChannelSamplesPerPixel(samplesPerPixel, imageIndex, logicalChannelIndex);
   }
 
@@ -443,7 +444,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setOTFObjective(objective, instrumentIndex, otfIndex);
   }
 
-  public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex, Ice.Current current) {
+  public void setOTFOpticalAxisAveraged(boolean opticalAxisAveraged, int instrumentIndex, int otfIndex, Ice.Current current) {
     metadataObject.setOTFOpticalAxisAveraged(opticalAxisAveraged, instrumentIndex, otfIndex);
   }
 
@@ -451,17 +452,17 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setOTFPixelType(pixelType, instrumentIndex, otfIndex);
   }
 
-  public void setOTFSizeX(Integer sizeX, int instrumentIndex, int otfIndex, Ice.Current current) {
+  public void setOTFSizeX(int sizeX, int instrumentIndex, int otfIndex, Ice.Current current) {
     metadataObject.setOTFSizeX(sizeX, instrumentIndex, otfIndex);
   }
 
-  public void setOTFSizeY(Integer sizeY, int instrumentIndex, int otfIndex, Ice.Current current) {
+  public void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex, Ice.Current current) {
     metadataObject.setOTFSizeY(sizeY, instrumentIndex, otfIndex);
   }
 
   // - Objective property storage -
 
-  public void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex, Ice.Current current) {
     metadataObject.setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex);
   }
 
@@ -477,7 +478,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setObjectiveImmersion(immersion, instrumentIndex, objectiveIndex);
   }
 
-  public void setObjectiveLensNA(Float lensNA, int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, Ice.Current current) {
     metadataObject.setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex);
   }
 
@@ -489,7 +490,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setObjectiveModel(model, instrumentIndex, objectiveIndex);
   }
 
-  public void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public void setObjectiveNominalMagnification(int nominalMagnification, int instrumentIndex, int objectiveIndex, Ice.Current current) {
     metadataObject.setObjectiveNominalMagnification(nominalMagnification, instrumentIndex, objectiveIndex);
   }
 
@@ -497,13 +498,13 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setObjectiveSerialNumber(serialNumber, instrumentIndex, objectiveIndex);
   }
 
-  public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, Ice.Current current) {
     metadataObject.setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex);
   }
 
   // - Pixels property storage -
 
-  public void setPixelsBigEndian(Boolean bigEndian, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setPixelsBigEndian(boolean bigEndian, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setPixelsBigEndian(bigEndian, imageIndex, pixelsIndex);
   }
 
@@ -519,47 +520,47 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setPixelsPixelType(pixelType, imageIndex, pixelsIndex);
   }
 
-  public void setPixelsSizeC(Integer sizeC, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setPixelsSizeC(int sizeC, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setPixelsSizeC(sizeC, imageIndex, pixelsIndex);
   }
 
-  public void setPixelsSizeT(Integer sizeT, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setPixelsSizeT(int sizeT, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setPixelsSizeT(sizeT, imageIndex, pixelsIndex);
   }
 
-  public void setPixelsSizeX(Integer sizeX, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setPixelsSizeX(int sizeX, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setPixelsSizeX(sizeX, imageIndex, pixelsIndex);
   }
 
-  public void setPixelsSizeY(Integer sizeY, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setPixelsSizeY(int sizeY, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setPixelsSizeY(sizeY, imageIndex, pixelsIndex);
   }
 
-  public void setPixelsSizeZ(Integer sizeZ, int imageIndex, int pixelsIndex, Ice.Current current) {
+  public void setPixelsSizeZ(int sizeZ, int imageIndex, int pixelsIndex, Ice.Current current) {
     metadataObject.setPixelsSizeZ(sizeZ, imageIndex, pixelsIndex);
   }
 
   // - Plane property storage -
 
-  public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setPlaneTheC(int theC, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setPlaneTheC(theC, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setPlaneTheT(int theT, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setPlaneTheT(theT, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setPlaneTheZ(theZ, imageIndex, pixelsIndex, planeIndex);
   }
 
   // - PlaneTiming property storage -
 
-  public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -597,35 +598,35 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setROIID(id, imageIndex, roiIndex);
   }
 
-  public void setROIT0(Integer t0, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIT0(int t0, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIT0(t0, imageIndex, roiIndex);
   }
 
-  public void setROIT1(Integer t1, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIT1(int t1, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIT1(t1, imageIndex, roiIndex);
   }
 
-  public void setROIX0(Integer x0, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIX0(int x0, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIX0(x0, imageIndex, roiIndex);
   }
 
-  public void setROIX1(Integer x1, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIX1(int x1, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIX1(x1, imageIndex, roiIndex);
   }
 
-  public void setROIY0(Integer y0, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIY0(int y0, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIY0(y0, imageIndex, roiIndex);
   }
 
-  public void setROIY1(Integer y1, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIY1(int y1, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIY1(y1, imageIndex, roiIndex);
   }
 
-  public void setROIZ0(Integer z0, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIZ0(int z0, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIZ0(z0, imageIndex, roiIndex);
   }
 
-  public void setROIZ1(Integer z1, int imageIndex, int roiIndex, Ice.Current current) {
+  public void setROIZ1(int z1, int imageIndex, int roiIndex, Ice.Current current) {
     metadataObject.setROIZ1(z1, imageIndex, roiIndex);
   }
 
@@ -693,29 +694,29 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setStageLabelName(name, imageIndex);
   }
 
-  public void setStageLabelX(Float x, int imageIndex, Ice.Current current) {
+  public void setStageLabelX(float x, int imageIndex, Ice.Current current) {
     metadataObject.setStageLabelX(x, imageIndex);
   }
 
-  public void setStageLabelY(Float y, int imageIndex, Ice.Current current) {
+  public void setStageLabelY(float y, int imageIndex, Ice.Current current) {
     metadataObject.setStageLabelY(y, imageIndex);
   }
 
-  public void setStageLabelZ(Float z, int imageIndex, Ice.Current current) {
+  public void setStageLabelZ(float z, int imageIndex, Ice.Current current) {
     metadataObject.setStageLabelZ(z, imageIndex);
   }
 
   // - StagePosition property storage -
 
-  public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     metadataObject.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -725,23 +726,23 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setTiffDataFileName(fileName, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public void setTiffDataFirstC(int firstC, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     metadataObject.setTiffDataFirstC(firstC, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public void setTiffDataFirstT(int firstT, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     metadataObject.setTiffDataFirstT(firstT, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public void setTiffDataFirstZ(int firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     metadataObject.setTiffDataFirstZ(firstZ, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public void setTiffDataIFD(int ifd, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     metadataObject.setTiffDataIFD(ifd, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public void setTiffDataNumPlanes(int numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     metadataObject.setTiffDataNumPlanes(numPlanes, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
@@ -751,7 +752,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
 
   // - Well property storage -
 
-  public void setWellColumn(Integer column, int plateIndex, int wellIndex, Ice.Current current) {
+  public void setWellColumn(int column, int plateIndex, int wellIndex, Ice.Current current) {
     metadataObject.setWellColumn(column, plateIndex, wellIndex);
   }
 
@@ -767,7 +768,7 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setWellID(id, plateIndex, wellIndex);
   }
 
-  public void setWellRow(Integer row, int plateIndex, int wellIndex, Ice.Current current) {
+  public void setWellRow(int row, int plateIndex, int wellIndex, Ice.Current current) {
     metadataObject.setWellRow(row, plateIndex, wellIndex);
   }
 
@@ -781,19 +782,19 @@ public class MetadataStoreI extends _MetadataStoreDisp {
     metadataObject.setWellSampleID(id, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSampleIndex(Integer index, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     metadataObject.setWellSampleIndex(index, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     metadataObject.setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     metadataObject.setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     metadataObject.setWellSampleTimepoint(timepoint, plateIndex, wellIndex, wellSampleIndex);
   }
 

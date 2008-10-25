@@ -201,6 +201,19 @@ public class MetaEntityList extends EntityList {
     return s;
   }
 
+  /** Converts the given wrapper class name to the equivalent primitive. */
+  public String primitive(String s) {
+    if (s.equals("Boolean")) return "boolean";
+    if (s.equals("Character")) return "char";
+    if (s.equals("Byte")) return "byte";
+    if (s.equals("Double")) return "double";
+    if (s.equals("Float")) return "float";
+    if (s.equals("Integer")) return "int";
+    if (s.equals("Long")) return "long";
+    if (s.equals("Short")) return "short";
+    return s;
+  }
+
   /** Gets the last node in the given path, without markup symbols. */
   public String last(String path) {
     int first = path.lastIndexOf("/") + 1;

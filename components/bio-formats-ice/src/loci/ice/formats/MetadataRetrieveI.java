@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 24, 2008 7:57:38 PM CDT
+ * Created by curtis via MetadataAutogen on Oct 24, 2008 8:16:09 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -32,8 +32,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ice.formats;
 
 //import loci.ice.formats._MetadataRetrieveDisp;
-import loci.formats.*;
-import loci.formats.meta.*;
+//import loci.formats.*;
+//import loci.formats.meta.*;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -50,21 +52,21 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // -- Fields --
 
-  private MetadataRetrieve metadataObject;
+  private IMetadata metadataObject;
 
   // -- Constructor --
 
   public MetadataRetrieveI() {
-    metadataObject = (MetadataRetrieve) MetadataTools.createOMEXMLMetadata();
+    metadataObject = MetadataTools.createOMEXMLMetadata();
   }
 
   // -- MetadataRetrieveI methods --
 
-  public MetadataRetrieve getWrappedObject() {
+  public loci.formats.meta.MetadataRetrieve getWrappedObject() {
     return metadataObject;
   }
 
-  // -- _MetadataRetrieveDisp methods --
+  // -- MetadataRetrieve methods --
 
   public MetadataRetrieveI getServant(Ice.Current current) {
     return this;
@@ -186,13 +188,13 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getChannelComponentColorDomain(imageIndex, logicalChannelIndex, channelComponentIndex);
   }
 
-  public Integer getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex, Ice.Current current) {
+  public int getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex, Ice.Current current) {
     return metadataObject.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex);
   }
 
   // - Detector property retrieval -
 
-  public Float getDetectorGain(int instrumentIndex, int detectorIndex, Ice.Current current) {
+  public float getDetectorGain(int instrumentIndex, int detectorIndex, Ice.Current current) {
     return metadataObject.getDetectorGain(instrumentIndex, detectorIndex);
   }
 
@@ -208,7 +210,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getDetectorModel(instrumentIndex, detectorIndex);
   }
 
-  public Float getDetectorOffset(int instrumentIndex, int detectorIndex, Ice.Current current) {
+  public float getDetectorOffset(int instrumentIndex, int detectorIndex, Ice.Current current) {
     return metadataObject.getDetectorOffset(instrumentIndex, detectorIndex);
   }
 
@@ -220,7 +222,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getDetectorType(instrumentIndex, detectorIndex);
   }
 
-  public Float getDetectorVoltage(int instrumentIndex, int detectorIndex, Ice.Current current) {
+  public float getDetectorVoltage(int instrumentIndex, int detectorIndex, Ice.Current current) {
     return metadataObject.getDetectorVoltage(instrumentIndex, detectorIndex);
   }
 
@@ -230,37 +232,37 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getDetectorSettingsDetector(imageIndex, logicalChannelIndex);
   }
 
-  public Float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getDetectorSettingsGain(imageIndex, logicalChannelIndex);
   }
 
-  public Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getDetectorSettingsOffset(imageIndex, logicalChannelIndex);
   }
 
   // - Dimensions property retrieval -
 
-  public Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex);
   }
 
-  public Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getDimensionsPhysicalSizeY(imageIndex, pixelsIndex);
   }
 
-  public Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex);
   }
 
-  public Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getDimensionsTimeIncrement(imageIndex, pixelsIndex);
   }
 
-  public Integer getDimensionsWaveIncrement(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getDimensionsWaveIncrement(imageIndex, pixelsIndex);
   }
 
-  public Integer getDimensionsWaveStart(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public int getDimensionsWaveStart(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getDimensionsWaveStart(imageIndex, pixelsIndex);
   }
 
@@ -270,27 +272,27 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getDisplayOptionsID(imageIndex);
   }
 
-  public Float getDisplayOptionsZoom(int imageIndex, Ice.Current current) {
+  public float getDisplayOptionsZoom(int imageIndex, Ice.Current current) {
     return metadataObject.getDisplayOptionsZoom(imageIndex);
   }
 
   // - DisplayOptionsProjection property retrieval -
 
-  public Integer getDisplayOptionsProjectionZStart(int imageIndex, Ice.Current current) {
+  public int getDisplayOptionsProjectionZStart(int imageIndex, Ice.Current current) {
     return metadataObject.getDisplayOptionsProjectionZStart(imageIndex);
   }
 
-  public Integer getDisplayOptionsProjectionZStop(int imageIndex, Ice.Current current) {
+  public int getDisplayOptionsProjectionZStop(int imageIndex, Ice.Current current) {
     return metadataObject.getDisplayOptionsProjectionZStop(imageIndex);
   }
 
   // - DisplayOptionsTime property retrieval -
 
-  public Integer getDisplayOptionsTimeTStart(int imageIndex, Ice.Current current) {
+  public int getDisplayOptionsTimeTStart(int imageIndex, Ice.Current current) {
     return metadataObject.getDisplayOptionsTimeTStart(imageIndex);
   }
 
-  public Integer getDisplayOptionsTimeTStop(int imageIndex, Ice.Current current) {
+  public int getDisplayOptionsTimeTStop(int imageIndex, Ice.Current current) {
     return metadataObject.getDisplayOptionsTimeTStop(imageIndex);
   }
 
@@ -372,19 +374,19 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // - ImagingEnvironment property retrieval -
 
-  public Float getImagingEnvironmentAirPressure(int imageIndex, Ice.Current current) {
+  public float getImagingEnvironmentAirPressure(int imageIndex, Ice.Current current) {
     return metadataObject.getImagingEnvironmentAirPressure(imageIndex);
   }
 
-  public Float getImagingEnvironmentCO2Percent(int imageIndex, Ice.Current current) {
+  public float getImagingEnvironmentCO2Percent(int imageIndex, Ice.Current current) {
     return metadataObject.getImagingEnvironmentCO2Percent(imageIndex);
   }
 
-  public Float getImagingEnvironmentHumidity(int imageIndex, Ice.Current current) {
+  public float getImagingEnvironmentHumidity(int imageIndex, Ice.Current current) {
     return metadataObject.getImagingEnvironmentHumidity(imageIndex);
   }
 
-  public Float getImagingEnvironmentTemperature(int imageIndex, Ice.Current current) {
+  public float getImagingEnvironmentTemperature(int imageIndex, Ice.Current current) {
     return metadataObject.getImagingEnvironmentTemperature(imageIndex);
   }
 
@@ -396,7 +398,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // - Laser property retrieval -
 
-  public Integer getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public int getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     return metadataObject.getLaserFrequencyMultiplication(instrumentIndex, lightSourceIndex);
   }
 
@@ -408,7 +410,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getLaserPulse(instrumentIndex, lightSourceIndex);
   }
 
-  public Boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     return metadataObject.getLaserTuneable(instrumentIndex, lightSourceIndex);
   }
 
@@ -416,7 +418,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getLaserType(instrumentIndex, lightSourceIndex);
   }
 
-  public Integer getLaserWavelength(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public int getLaserWavelength(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     return metadataObject.getLaserWavelength(instrumentIndex, lightSourceIndex);
   }
 
@@ -434,7 +436,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getLightSourceModel(instrumentIndex, lightSourceIndex);
   }
 
-  public Float getLightSourcePower(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
+  public float getLightSourcePower(int instrumentIndex, int lightSourceIndex, Ice.Current current) {
     return metadataObject.getLightSourcePower(instrumentIndex, lightSourceIndex);
   }
 
@@ -444,7 +446,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // - LightSourceSettings property retrieval -
 
-  public Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex);
   }
 
@@ -452,7 +454,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex);
   }
 
-  public Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public int getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex);
   }
 
@@ -462,11 +464,11 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getLogicalChannelContrastMethod(imageIndex, logicalChannelIndex);
   }
 
-  public Integer getLogicalChannelEmWave(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public int getLogicalChannelEmWave(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLogicalChannelEmWave(imageIndex, logicalChannelIndex);
   }
 
-  public Integer getLogicalChannelExWave(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public int getLogicalChannelExWave(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLogicalChannelExWave(imageIndex, logicalChannelIndex);
   }
 
@@ -490,7 +492,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getLogicalChannelName(imageIndex, logicalChannelIndex);
   }
 
-  public Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex);
   }
 
@@ -502,15 +504,15 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex);
   }
 
-  public Float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex);
   }
 
-  public Integer getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLogicalChannelPockelCellSetting(imageIndex, logicalChannelIndex);
   }
 
-  public Integer getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex, Ice.Current current) {
+  public int getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex, Ice.Current current) {
     return metadataObject.getLogicalChannelSamplesPerPixel(imageIndex, logicalChannelIndex);
   }
 
@@ -524,7 +526,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getOTFObjective(instrumentIndex, otfIndex);
   }
 
-  public Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex, Ice.Current current) {
+  public boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex, Ice.Current current) {
     return metadataObject.getOTFOpticalAxisAveraged(instrumentIndex, otfIndex);
   }
 
@@ -532,17 +534,17 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getOTFPixelType(instrumentIndex, otfIndex);
   }
 
-  public Integer getOTFSizeX(int instrumentIndex, int otfIndex, Ice.Current current) {
+  public int getOTFSizeX(int instrumentIndex, int otfIndex, Ice.Current current) {
     return metadataObject.getOTFSizeX(instrumentIndex, otfIndex);
   }
 
-  public Integer getOTFSizeY(int instrumentIndex, int otfIndex, Ice.Current current) {
+  public int getOTFSizeY(int instrumentIndex, int otfIndex, Ice.Current current) {
     return metadataObject.getOTFSizeY(instrumentIndex, otfIndex);
   }
 
   // - Objective property retrieval -
 
-  public Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, Ice.Current current) {
     return metadataObject.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex);
   }
 
@@ -558,7 +560,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getObjectiveImmersion(instrumentIndex, objectiveIndex);
   }
 
-  public Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public float getObjectiveLensNA(int instrumentIndex, int objectiveIndex, Ice.Current current) {
     return metadataObject.getObjectiveLensNA(instrumentIndex, objectiveIndex);
   }
 
@@ -570,7 +572,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getObjectiveModel(instrumentIndex, objectiveIndex);
   }
 
-  public Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public int getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex, Ice.Current current) {
     return metadataObject.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex);
   }
 
@@ -578,13 +580,13 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getObjectiveSerialNumber(instrumentIndex, objectiveIndex);
   }
 
-  public Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, Ice.Current current) {
+  public float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, Ice.Current current) {
     return metadataObject.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex);
   }
 
   // - Pixels property retrieval -
 
-  public Boolean getPixelsBigEndian(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public boolean getPixelsBigEndian(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getPixelsBigEndian(imageIndex, pixelsIndex);
   }
 
@@ -600,47 +602,47 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getPixelsPixelType(imageIndex, pixelsIndex);
   }
 
-  public Integer getPixelsSizeC(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public int getPixelsSizeC(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getPixelsSizeC(imageIndex, pixelsIndex);
   }
 
-  public Integer getPixelsSizeT(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public int getPixelsSizeT(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getPixelsSizeT(imageIndex, pixelsIndex);
   }
 
-  public Integer getPixelsSizeX(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public int getPixelsSizeX(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getPixelsSizeX(imageIndex, pixelsIndex);
   }
 
-  public Integer getPixelsSizeY(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public int getPixelsSizeY(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getPixelsSizeY(imageIndex, pixelsIndex);
   }
 
-  public Integer getPixelsSizeZ(int imageIndex, int pixelsIndex, Ice.Current current) {
+  public int getPixelsSizeZ(int imageIndex, int pixelsIndex, Ice.Current current) {
     return metadataObject.getPixelsSizeZ(imageIndex, pixelsIndex);
   }
 
   // - Plane property retrieval -
 
-  public Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public int getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getPlaneTheC(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public Integer getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public int getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getPlaneTheT(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public Integer getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public int getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getPlaneTheZ(imageIndex, pixelsIndex, planeIndex);
   }
 
   // - PlaneTiming property retrieval -
 
-  public Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -678,35 +680,35 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getROIID(imageIndex, roiIndex);
   }
 
-  public Integer getROIT0(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIT0(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIT0(imageIndex, roiIndex);
   }
 
-  public Integer getROIT1(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIT1(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIT1(imageIndex, roiIndex);
   }
 
-  public Integer getROIX0(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIX0(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIX0(imageIndex, roiIndex);
   }
 
-  public Integer getROIX1(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIX1(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIX1(imageIndex, roiIndex);
   }
 
-  public Integer getROIY0(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIY0(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIY0(imageIndex, roiIndex);
   }
 
-  public Integer getROIY1(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIY1(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIY1(imageIndex, roiIndex);
   }
 
-  public Integer getROIZ0(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIZ0(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIZ0(imageIndex, roiIndex);
   }
 
-  public Integer getROIZ1(int imageIndex, int roiIndex, Ice.Current current) {
+  public int getROIZ1(int imageIndex, int roiIndex, Ice.Current current) {
     return metadataObject.getROIZ1(imageIndex, roiIndex);
   }
 
@@ -774,29 +776,29 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getStageLabelName(imageIndex);
   }
 
-  public Float getStageLabelX(int imageIndex, Ice.Current current) {
+  public float getStageLabelX(int imageIndex, Ice.Current current) {
     return metadataObject.getStageLabelX(imageIndex);
   }
 
-  public Float getStageLabelY(int imageIndex, Ice.Current current) {
+  public float getStageLabelY(int imageIndex, Ice.Current current) {
     return metadataObject.getStageLabelY(imageIndex);
   }
 
-  public Float getStageLabelZ(int imageIndex, Ice.Current current) {
+  public float getStageLabelZ(int imageIndex, Ice.Current current) {
     return metadataObject.getStageLabelZ(imageIndex);
   }
 
   // - StagePosition property retrieval -
 
-  public Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
+  public float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current current) {
     return metadataObject.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -806,23 +808,23 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getTiffDataFileName(imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public Integer getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public int getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     return metadataObject.getTiffDataFirstC(imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public Integer getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public int getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     return metadataObject.getTiffDataFirstT(imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public Integer getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public int getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     return metadataObject.getTiffDataFirstZ(imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public Integer getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public int getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     return metadataObject.getTiffDataIFD(imageIndex, pixelsIndex, tiffDataIndex);
   }
 
-  public Integer getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
+  public int getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current current) {
     return metadataObject.getTiffDataNumPlanes(imageIndex, pixelsIndex, tiffDataIndex);
   }
 
@@ -832,7 +834,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // - Well property retrieval -
 
-  public Integer getWellColumn(int plateIndex, int wellIndex, Ice.Current current) {
+  public int getWellColumn(int plateIndex, int wellIndex, Ice.Current current) {
     return metadataObject.getWellColumn(plateIndex, wellIndex);
   }
 
@@ -848,7 +850,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getWellID(plateIndex, wellIndex);
   }
 
-  public Integer getWellRow(int plateIndex, int wellIndex, Ice.Current current) {
+  public int getWellRow(int plateIndex, int wellIndex, Ice.Current current) {
     return metadataObject.getWellRow(plateIndex, wellIndex);
   }
 
@@ -862,19 +864,19 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
     return metadataObject.getWellSampleID(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public Integer getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     return metadataObject.getWellSampleIndex(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public Float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     return metadataObject.getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public Float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     return metadataObject.getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
+  public int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current current) {
     return metadataObject.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
   }
 

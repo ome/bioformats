@@ -32,8 +32,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ice.formats;
 
 //import loci.ice.formats._MetadataRetrieveDisp;
-import loci.formats.*;
-import loci.formats.meta.*;
+//import loci.formats.*;
+//import loci.formats.meta.*;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -50,21 +52,21 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 
   // -- Fields --
 
-  private MetadataRetrieve metadataObject;
+  private IMetadata metadataObject;
 
   // -- Constructor --
 
   public MetadataRetrieveI() {
-    metadataObject = (MetadataRetrieve) MetadataTools.createOMEXMLMetadata();
+    metadataObject = MetadataTools.createOMEXMLMetadata();
   }
 
   // -- MetadataRetrieveI methods --
 
-  public MetadataRetrieve getWrappedObject() {
+  public loci.formats.meta.MetadataRetrieve getWrappedObject() {
     return metadataObject;
   }
 
-  // -- _MetadataRetrieveDisp methods --
+  // -- MetadataRetrieve methods --
 
   public MetadataRetrieveI getServant(Ice.Current current) {
     return this;
@@ -103,7 +105,7 @@ public class MetadataRetrieveI extends _MetadataRetrieveDisp {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
 
-  public $q.type() get$entity$prop($q.argsList(), Ice.Current current) {
+  public $q.primitive($q.type()) get$entity$prop($q.argsList(), Ice.Current current) {
     return metadataObject.get$entity$prop($q.varsList());
   }
 #end##foreach $prop

@@ -29,7 +29,6 @@ package loci.ice.formats;
 import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
-import loci.formats.meta.MetadataStore;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -54,7 +53,7 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     reader = new ImageReader();
   }
 
-  // -- _IFormatReaderDisp methods --
+  // -- IFormatReader methods --
 
   public void setId(String id, Ice.Current current) {
     try {
@@ -71,7 +70,7 @@ public class IFormatReaderI extends _IFormatReaderDisp {
   public void setRetrieveAsStore(MetadataRetrievePrx retrievePrx,
     Ice.Current current)
   {
-    MetadataStore s = (MetadataStore)
+    loci.formats.meta.MetadataStore s = (loci.formats.meta.MetadataStore)
       ((MetadataRetrieveI) retrievePrx.getServant()).getWrappedObject();
     reader.setMetadataStore(s);
   }

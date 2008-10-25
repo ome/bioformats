@@ -31,7 +31,6 @@ import java.awt.image.ColorModel;
 import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.ImageWriter;
-import loci.formats.meta.MetadataRetrieve;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -56,7 +55,13 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     writer = new ImageWriter();
   }
 
-  // -- _IFormatWriterDisp methods --
+  // -- IFormatWriterI methods --
+
+  public void setMetadataRetrieve(loci.formats.meta.MetadataRetrieve r) {
+    writer.setMetadataRetrieve(r);
+  }
+
+  // -- IFormatWriter methods --
 
   public void setId(String id, Ice.Current current) {
     try {
@@ -112,14 +117,15 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     return writer.canDoStacks();
   }
 
-  public void setMetadataRetrieve(MetadataRetrieve r, Ice.Current current) {
-    writer.setMetadataRetrieve(r);
+  public void setMetadataRetrieve(MetadataRetrievePrx r, Ice.Current current) {
+    r.getServant();
+    writer.setMetadataRetrieve(((MetadataRetrieveI)
+      r.getServant()).getWrappedObject());
   }
 
-  public loci.ice.formats.MetadataRetrieve getMetadataRetrieve(
-    Ice.Current current)
+  public MetadataRetrieve getMetadataRetrieve(Ice.Current current)
   {
-    return (loci.ice.formats.MetadataRetrieve) writer.getMetadataRetrieve();
+    return (MetadataRetrieve) writer.getMetadataRetrieve();
   }
 
   public void setColorModel(ColorModel cm, Ice.Current current) {
@@ -159,16 +165,10 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     }
   }
 
-  public void setMetadataRetrieve(MetadataRetrievePrx r, Ice.Current current) {
-    r.getServant();
-    writer.setMetadataRetrieve(((MetadataRetrieveI)
-      r.getServant()).getWrappedObject());
-  }
-
   public void setStoreAsRetrieve(MetadataStorePrx storePrx,
     Ice.Current current)
   {
-    MetadataRetrieve r = (MetadataRetrieve)
+    loci.formats.meta.MetadataRetrieve r = (loci.formats.meta.MetadataRetrieve)
       ((MetadataStoreI) storePrx.getServant()).getWrappedObject();
     writer.setMetadataRetrieve(r);
   }
