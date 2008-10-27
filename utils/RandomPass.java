@@ -10,9 +10,13 @@ public class RandomPass {
   private static final char MAX_CHAR = '~';
 
   public static void main(String[] args) {
-    StringBuffer sb = new StringBuffer(PASS_LEN + 2);
+    int passLen = PASS_LEN;
+    if (args.length > 0) {
+      passLen = Integer.parseInt(args[0]);
+    }
+    StringBuffer sb = new StringBuffer(passLen + 2);
     int range = MAX_CHAR - MIN_CHAR + 1;
-    for (int i=0; i<PASS_LEN; i++) {
+    for (int i=0; i<passLen; i++) {
       char c = (char) (range * Math.random() + MIN_CHAR);
       sb.append(c);
     }
