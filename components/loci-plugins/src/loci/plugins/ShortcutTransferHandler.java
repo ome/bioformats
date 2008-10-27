@@ -29,6 +29,8 @@ import java.awt.datatransfer.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
@@ -63,17 +65,70 @@ public class ShortcutTransferHandler extends TransferHandler {
 
   public boolean importData(JComponent comp, Transferable t) {
     try {
-      List l = (List) t.getTransferData(DataFlavor.javaFileListFlavor);
-      for (int i=0; i<l.size(); i++) {
-        File f = (File) l.get(i);
-        shortcutPanel.open(f);
+      // search for compatible data flavors (lists, files and strings)
+      DataFlavor[] flavors = t.getTransferDataFlavors();
+      int fileIndex = -1, stringIndex = -1, listIndex = -1;
+      for (int i=0; i<flavors.length; i++) {
+        if (fileIndex >= 0 && stringIndex >= 0 && listIndex >= 0) break;
+        Class c = flavors[i].getRepresentationClass();
+        if (fileIndex < 0 && c == File.class) fileIndex = i;
+        if (stringIndex < 0 && c == String.class) stringIndex = i;
+        if (listIndex < 0 && c == List.class) listIndex = i;
+      }
+      // convert data into list of objects
+      List list = null;
+      if (listIndex >= 0) {
+        list = (List) t.getTransferData(flavors[listIndex]);
+      }
+      else if (fileIndex >= 0) {
+        File f = (File) t.getTransferData(flavors[fileIndex]);
+        list = new Vector();
+        list.add(f);
+      }
+      else if (stringIndex >= 0) {
+        String s = (String) t.getTransferData(flavors[stringIndex]);
+        list = new Vector();
+        StringTokenizer st = new StringTokenizer(s);
+        while (st.hasMoreTokens()) list.add(st.nextToken());
+      }
+      if (list == null) {
+        // no compatible data flavors found
+        return false;
+      }
+      // process each item on the list
+      for (int i=0; i<list.size(); i++) {
+        Object item = list.get(i);
+        String id = null;
+        if (item instanceof File) {
+          File f = (File) item;
+          id = f.getAbsolutePath();
+        }
+        else if (item instanceof String) {
+          id = (String) item;
+        }
+        if (id == null) {
+          System.err.println("Warning: ignoring item #" + i + ": " + item);
+        }
+        else {
+          // convert "file://" URLs into path names
+          id = id.replaceAll("^file:/*", "/");
+          shortcutPanel.open(id);
+        }
       }
     }
     catch (UnsupportedFlavorException e) {
+      e.printStackTrace();
+      // dump list of supported flavors, for debugging
+      DataFlavor[] df = t.getTransferDataFlavors();
+      System.err.println("Supported flavors:");
+      for (int i=0; i<df.length; i++) {
+        System.err.println("\t#" + i + ": " + df[i]);
+      }
       ij.IJ.error(e.toString());
       return false;
     }
     catch (IOException e) {
+      e.printStackTrace();
       ij.IJ.error(e.toString());
       return false;
     }

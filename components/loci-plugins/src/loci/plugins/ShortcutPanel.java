@@ -163,9 +163,12 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
 
   // -- ShortcutPanel API methods --
 
-  /** Opens the given file with the Bio-Formats Importer plugin. */
-  public void open(File f) {
-    String arg = args[openerIndex] + "open=[" + f + "] ";
+  /**
+   * Opens the given location (e.g., file)
+   * with the Bio-Formats Importer plugin.
+   */
+  public void open(String id) {
+    String arg = args[openerIndex] + "open=[" + id + "] ";
     runPlugIn(plugins[openerIndex], arg);
   }
 
