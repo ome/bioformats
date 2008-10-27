@@ -112,7 +112,9 @@ public class APLReader extends FormatReader {
       currentId = new Location(mtbFile).getAbsolutePath();
     }
 
-    Vector rows = MDBParser.parseDatabase(currentId)[0];
+    String mtb = new Location(currentId).getAbsolutePath();
+
+    Vector rows = MDBParser.parseDatabase(mtb)[0];
     String[] columnNames = (String[]) rows.get(0);
 
     // add full table to metadata hashtable
@@ -126,7 +128,7 @@ public class APLReader extends FormatReader {
 
     used = new Vector();
     used.add(id);
-    if (!id.equals(currentId)) used.add(currentId);
+    if (!id.equals(mtb)) used.add(mtb);
 
     // calculate indexes to relevant metadata
 
@@ -154,8 +156,7 @@ public class APLReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    String parentDirectory =
-      currentId.substring(0, currentId.lastIndexOf(File.separator));
+    String parentDirectory = mtb.substring(0, mtb.lastIndexOf(File.separator));
 
     for (int i=0; i<seriesCount; i++) {
       String[] row2 = (String[]) rows.get(i * 3 + 2);
@@ -227,7 +228,7 @@ public class APLReader extends FormatReader {
       store.setDimensionsPhysicalSizeX(new Float(px), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(py), i, 0);
 
-      MetadataTools.setDefaultCreationDate(store, currentId, i);
+      MetadataTools.setDefaultCreationDate(store, mtb, i);
       store.setImageName(row3[imageName], i);
     }
 

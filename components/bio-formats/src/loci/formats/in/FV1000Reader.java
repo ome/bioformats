@@ -157,14 +157,25 @@ public class FV1000Reader extends FormatReader {
       lastChannel = coords[1];
     }
 
-    int planeNum = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
-      getEffectiveSizeC(), getSizeT(), getImageCount(), coords[0],
-      coords[1], coords[2]);
+    int planeNum = coords[1];
+
+    if (getSizeY() > 1 && getImageCount() > getSizeC()) {
+      planeNum = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
+        getEffectiveSizeC(), getSizeT(), getImageCount(), coords[0],
+        coords[1], coords[2]);
+    }
 
     String file =
       (String) (series == 0 ? tiffs.get(planeNum) : previewNames.get(planeNum));
     RandomAccessStream plane = getFile(file);
-    TiffTools.getSamples(TiffTools.getFirstIFD(plane), plane, buf, x, y, w, h);
+    Hashtable ifd = TiffTools.getFirstIFD(plane);
+
+    if (getSizeY() != TiffTools.getImageLength(ifd)) {
+      TiffTools.getSamples(ifd, plane, buf, x,
+        getIndex(coords[0], 0, coords[2]), w, 1);
+    }
+    else TiffTools.getSamples(ifd, plane, buf, x, y, w, h);
+
     plane.close();
     plane = null;
     return buf;
@@ -612,7 +623,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     core[0].imageCount = filenames.size();
-    tiffs = new Vector(core[0].imageCount);
+    tiffs = new Vector(getImageCount());
 
     thumbReader = new BMPReader();
     thumbId = thumbId.replaceAll("pty", "bmp");
@@ -629,7 +640,7 @@ public class FV1000Reader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     pinholeSizes = new Vector();
 
-    for (int i=0, ii=0; ii<core[0].imageCount; i++, ii++) {
+    for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
       String file = (String) filenames.get(new Integer(i));
       while (file == null) file = (String) filenames.get(new Integer(++i));
       file = sanitizeFile(file, (isOIB || mappedOIF) ? "" : path);
@@ -740,8 +751,8 @@ public class FV1000Reader extends FormatReader {
       else if (code[i].equals("Z")) {
         core[0].sizeZ = ss;
         // Z size stored in nm
-        store.setDimensionsPhysicalSizeZ(new Float(pixel.floatValue() * 0.001),
-          0, 0);
+        store.setDimensionsPhysicalSizeZ(
+          new Float(pixel.floatValue() * 0.001), 0, 0);
       }
       else if (code[i].equals("T")) {
         core[0].sizeT = ss;
@@ -749,27 +760,25 @@ public class FV1000Reader extends FormatReader {
         store.setDimensionsTimeIncrement(pixel, 0, 0);
       }
       else if (ss > 0) {
-        if (core[0].sizeC == 0) core[0].sizeC = ss;
+        if (getSizeC() == 0) core[0].sizeC = ss;
         else core[0].sizeC *= ss;
         if (code[i].equals("C")) realChannels = ss;
       }
     }
 
-    if (core[0].sizeZ == 0) core[0].sizeZ = 1;
-    if (core[0].sizeC == 0) core[0].sizeC = 1;
-    if (core[0].sizeT == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeC() == 0) core[0].sizeC = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
 
-    if (core[0].imageCount == core[0].sizeC) {
-      core[0].sizeZ = 1;
-      core[0].sizeT = 1;
+    if (getImageCount() == getSizeC()) {
+      core[0].imageCount *= getSizeZ() * getSizeT();
     }
 
-    if (core[0].sizeZ * core[0].sizeT * core[0].sizeC > core[0].imageCount) {
-      int diff =
-        (core[0].sizeZ * core[0].sizeC * core[0].sizeT) - core[0].imageCount;
+    if (getSizeZ() * getSizeT() * getSizeC() > getImageCount()) {
+      int diff = (getSizeZ() * getSizeC() * getSizeT()) - getImageCount();
       if (diff == previewNames.size()) {
-        if (core[0].sizeT > 1 && core[0].sizeZ == 1) core[0].sizeT -= diff;
-        else if (core[0].sizeZ > 1 && core[0].sizeT == 1) core[0].sizeZ -= diff;
+        if (getSizeT() > 1 && getSizeZ() == 1) core[0].sizeT -= diff;
+        else if (getSizeZ() > 1 && getSizeT() == 1) core[0].sizeZ -= diff;
       }
       else core[0].imageCount += diff;
     }
@@ -813,9 +822,9 @@ public class FV1000Reader extends FormatReader {
 
     // initialize lookup table
 
-    lut = new short[core[0].sizeC][3][65536];
+    lut = new short[getSizeC()][3][65536];
     byte[] buffer = new byte[65536 * 4];
-    int count = (int) Math.min(core[0].sizeC, lutNames.size());
+    int count = (int) Math.min(getSizeC(), lutNames.size());
     for (int c=0; c<count; c++) {
       try {
         RandomAccessStream stream = getFile((String) lutNames.get(c));
