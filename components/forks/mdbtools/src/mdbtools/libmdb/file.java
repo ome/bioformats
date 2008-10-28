@@ -99,8 +99,13 @@ public class file
 //System.out.println("read page");
     if (mdb.f.fd.length() < offset)
     {
-      throw new RuntimeException("offset " + offset + " is beyond EOF");
+      //throw new RuntimeException("offset " + offset + " is beyond EOF");
 //      return 0;
+      pg = (mdb.f.fd.length() - mdb.fmt.pg_size) / mdb.fmt.pg_size;
+      offset = pg * mdb.fmt.pg_size;
+      if (mdb.f.fd.length() < offset) {
+        throw new RuntimeException("offset " + offset + " is beyond EOF");
+      }
     }
 
     if (mdb.stats != null && mdb.stats.collect)
