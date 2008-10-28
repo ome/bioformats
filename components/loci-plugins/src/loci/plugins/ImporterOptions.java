@@ -35,9 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.swing.*;
 import loci.common.*;
 import loci.formats.*;
 
@@ -51,7 +49,9 @@ import loci.formats.*;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/ImporterOptions.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/ImporterOptions.java">SVN</a></dd></dl>
  */
-public class ImporterOptions implements ItemListener, MouseListener {
+public class ImporterOptions
+  implements FocusListener, ItemListener, MouseListener
+{
 
   // -- Constants --
 
@@ -153,46 +153,46 @@ public class ImporterOptions implements ItemListener, MouseListener {
   public static final String LABEL_LOCATION = "Location: ";
   public static final String LABEL_ID = "Open";
 
-  // information describing each option
+  // informative description of each option
   public static final String INFO_STACK =
-    info(LABEL_STACK) + " Description to go here.<br>";
+    info(LABEL_STACK) + " Description to go here.";
   public static final String INFO_ORDER =
-    info(LABEL_ORDER) + " Description to go here.<br>";
+    info(LABEL_ORDER) + " Description to go here.";
   public static final String INFO_MERGE =
-    info(LABEL_MERGE) + " Description to go here.<br>";
+    info(LABEL_MERGE) + " Description to go here.";
   public static final String INFO_COLORIZE =
-    info(LABEL_COLORIZE) + " Description to go here.<br>";
+    info(LABEL_COLORIZE) + " Description to go here.";
   public static final String INFO_C =
-    info(LABEL_C) + " Description to go here.<br>";
+    info(LABEL_C) + " Description to go here.";
   public static final String INFO_Z =
-    info(LABEL_Z) + " Description to go here.<br>";
+    info(LABEL_Z) + " Description to go here.";
   public static final String INFO_T =
-    info(LABEL_T) + " Description to go here.<br>";
+    info(LABEL_T) + " Description to go here.";
   public static final String INFO_CROP =
-    info(LABEL_CROP) + " Description to go here.<br>";
+    info(LABEL_CROP) + " Description to go here.";
   public static final String INFO_METADATA =
-    info(LABEL_METADATA) + " Description to go here.<br>";
+    info(LABEL_METADATA) + " Description to go here.";
   public static final String INFO_OME_XML =
-    info(LABEL_OME_XML) + " Description to go here.<br>";
+    info(LABEL_OME_XML) + " Description to go here.";
   public static final String INFO_GROUP =
-    info(LABEL_GROUP) + " Description to go here.<br>";
+    info(LABEL_GROUP) + " Description to go here.";
   public static final String INFO_CONCATENATE =
-    info(LABEL_CONCATENATE) + " Description to go here.<br>";
+    info(LABEL_CONCATENATE) + " Description to go here.";
   public static final String INFO_RANGE =
-    info(LABEL_RANGE) + " Description to go here.<br>";
+    info(LABEL_RANGE) + " Description to go here.";
   public static final String INFO_AUTOSCALE =
-    info(LABEL_AUTOSCALE) + " Description to go here.<br>";
+    info(LABEL_AUTOSCALE) + " Description to go here.";
   public static final String INFO_VIRTUAL =
-    info(LABEL_VIRTUAL) + " Description to go here.<br>";
+    info(LABEL_VIRTUAL) + " Description to go here.";
   public static final String INFO_RECORD =
-    info(LABEL_RECORD) + " Description to go here.<br>";
+    info(LABEL_RECORD) + " Description to go here.";
   public static final String INFO_ALL_SERIES =
-    info(LABEL_ALL_SERIES) + " Description to go here.<br>";
+    info(LABEL_ALL_SERIES) + " Description to go here.";
   public static final String INFO_SWAP =
-    info(LABEL_SWAP) + " Description to go here.<br>";
+    info(LABEL_SWAP) + " Description to go here.";
 
   public static final String INFO_DEFAULT =
-    "<i>Mouse over an option for a description.</i><br>";
+    "<i>Mouse over an option for a description.</i>";
 
   // -- Fields - GUI components --
 
@@ -209,14 +209,16 @@ public class ImporterOptions implements ItemListener, MouseListener {
   private Checkbox concatenateBox;
   private Checkbox rangeBox;
   private Checkbox autoscaleBox;
-  private Choice mergeChoice;
   private Checkbox virtualBox;
   private Checkbox recordBox;
   private Checkbox allSeriesBox;
   private Checkbox cropBox;
   private Checkbox swapBox;
+
   private Hashtable infoTable;
-  private JLabel infoLabel;
+  private JEditorPane infoPane;
+
+  private Choice mergeChoice;
 
   // -- Fields - core options --
 
@@ -257,6 +259,7 @@ public class ImporterOptions implements ItemListener, MouseListener {
   // -- ImporterOptions methods - accessors --
 
   public boolean isFirstTime() { return firstTime; }
+
   public String getStackFormat() { return stackFormat; }
   public String getStackOrder() { return stackOrder; }
   public boolean isMergeChannels() { return mergeChannels; }
@@ -272,12 +275,13 @@ public class ImporterOptions implements ItemListener, MouseListener {
   public boolean isForceThumbnails() { return forceThumbnails; }
   public boolean isAutoscale() { return autoscale; }
   public boolean isWindowless() { return windowless; }
-  public String getMergeOption() { return mergeOption; }
   public boolean isVirtual() { return virtual; }
   public boolean isRecord() { return record; }
   public boolean openAllSeries() { return openAllSeries; }
   public boolean doCrop() { return crop; }
   public boolean isSwapDimensions() { return swapDimensions; }
+
+  public String getMergeOption() { return mergeOption; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
   public boolean isViewStandard() { return VIEW_STANDARD.equals(stackFormat); }
@@ -324,6 +328,8 @@ public class ImporterOptions implements ItemListener, MouseListener {
   public void setOpenAllSeries(boolean b) { openAllSeries = b; }
   public void setCrop(boolean b) { crop = b; }
   public void setSwapDimensions(boolean b) { swapDimensions = b; }
+
+  // -- ImporterOptions methods --
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
@@ -651,7 +657,6 @@ public class ImporterOptions implements ItemListener, MouseListener {
         if (c[i] instanceof Label) {
           Label item = (Label) c[i];
           labels.add(item);
-          item.addMouseListener(this);
         }
       }
       stackLabel = (Label) labels.get(0);
@@ -664,6 +669,7 @@ public class ImporterOptions implements ItemListener, MouseListener {
       orderChoice = (Choice) choices.get(1);
       for (int i=0; i<choices.size(); i++) {
         Choice item = (Choice) choices.get(i);
+        item.addFocusListener(this);
         item.addItemListener(this);
         item.addMouseListener(this);
       }
@@ -689,10 +695,13 @@ public class ImporterOptions implements ItemListener, MouseListener {
       swapBox = (Checkbox) boxes.get(15);
       for (int i=0; i<boxes.size(); i++) {
         Checkbox item = (Checkbox) boxes.get(i);
+        item.addFocusListener(this);
         item.addItemListener(this);
         item.addMouseListener(this);
       }
     }
+
+    verifyOptions(null);
 
     // associate information for each option
     infoTable = new Hashtable();
@@ -733,7 +742,7 @@ public class ImporterOptions implements ItemListener, MouseListener {
       // Color options        | Split into separate windows
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Information
-      "9dlu, pref, 3dlu, pref";
+      "9dlu, pref, 3dlu, fill:40dlu";
 
     // TODO: change "Merge channels into RGB" checkbox to
     // "Channel merging" choice with options:
@@ -805,8 +814,11 @@ public class ImporterOptions implements ItemListener, MouseListener {
     // information section
     builder.addSeparator("Information", cc.xyw(1, row, 5));
     row += 2;
-    infoLabel = new JLabel("<html>" + INFO_DEFAULT);
-    builder.add(infoLabel, cc.xyw(1, row, 5));
+    infoPane = new JEditorPane();
+    infoPane.setContentType("text/html");
+    infoPane.setEditable(false);
+    infoPane.setText("<html>" + INFO_DEFAULT);
+    builder.add(new JScrollPane(infoPane), cc.xyw(1, row, 5));
     row += 2;
 
     gd.removeAll();
@@ -1226,168 +1238,40 @@ public class ImporterOptions implements ItemListener, MouseListener {
     return STATUS_OK;
   }
 
+  // -- FocusListener methods --
+
+  /** Handles information pane updates when component focus changes. */
+  public void focusGained(FocusEvent e) {
+    Object src = e.getSource();
+    String text = (String) infoTable.get(src);
+    infoPane.setText("<html>" + text);
+  }
+
+  public void focusLost(FocusEvent e) { }
+
   // -- ItemListener methods --
 
   /** Handles toggling of mutually exclusive options. */
   public void itemStateChanged(ItemEvent e) {
-    Object src = e.getSource();
-    Vector changed = new Vector();
-    if (src == stackChoice) {
-      String s = stackChoice.getSelectedItem();
-      if (s.equals(VIEW_NONE)) {
-        metadataBox.setState(true);
-        changed.add(metadataBox);
-        rangeBox.setState(false);
-        changed.add(rangeBox);
-      }
-      if (s.equals(VIEW_STANDARD)) {
-      }
-      else if (s.equals(VIEW_BROWSER)) {
-        orderChoice.select(ORDER_XYCZT);
-        virtualBox.setState(true);
-        splitCBox.setState(false);
-        splitZBox.setState(false);
-        splitTBox.setState(false);
-        changed.add(orderChoice);
-        changed.add(virtualBox);
-        changed.add(splitCBox);
-        changed.add(splitZBox);
-        changed.add(splitTBox);
-      }
-      else if (s.equals(VIEW_VISBIO)) {
-      }
-      else if (s.equals(VIEW_IMAGE_5D)) {
-        mergeBox.setState(false);
-        changed.add(mergeBox);
-      }
-      else if (s.equals(VIEW_VIEW_5D)) {
-      }
-      else if (s.equals(VIEW_HYPERSTACK)) {
-        orderChoice.select(ORDER_XYCZT);
-        changed.add(orderChoice);
-      }
-    }
-    else if (src == orderChoice) {
-      String s = orderChoice.getSelectedItem();
-      String item = stackChoice.getSelectedItem();
-      if (!s.equals(ORDER_XYCZT) && (item.equals(VIEW_HYPERSTACK) ||
-        item.equals(VIEW_BROWSER)))
-      {
-        stackChoice.select(VIEW_STANDARD);
-        changed.add(stackChoice);
-      }
-    }
-    else if (src == mergeBox) {
-      if (mergeBox.getState()) {
-        colorizeBox.setState(false);
-        changed.add(colorizeBox);
-        splitCBox.setState(false);
-        changed.add(splitCBox);
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_IMAGE_5D)) {
-          stackChoice.select(VIEW_STANDARD);
-          changed.add(stackChoice);
-        }
-      }
-    }
-    else if (src == colorizeBox) {
-      if (colorizeBox.getState()) {
-        mergeBox.setState(false);
-        changed.add(mergeBox);
-      }
-    }
-    // TODO: make splitting work with Data Browser/virtual stacks
-    else if (src == splitCBox) {
-      String s = stackChoice.getSelectedItem();
-      if (s.equals(VIEW_BROWSER) || virtualBox.getState()) {
-        splitCBox.setState(false);
-      }
-
-      if (splitCBox.getState()) {
-        mergeBox.setState(false);
-        changed.add(mergeBox);
-      }
-    }
-    else if (src == splitZBox) {
-      String s = stackChoice.getSelectedItem();
-      if (s.equals(VIEW_BROWSER) || virtualBox.getState()) {
-        splitZBox.setState(false);
-      }
-    }
-    else if (src == splitTBox) {
-      String s = stackChoice.getSelectedItem();
-      if (s.equals(VIEW_BROWSER) || virtualBox.getState()) {
-        splitTBox.setState(false);
-      }
-    }
-    else if (src == metadataBox) {
-      if (!metadataBox.getState()) {
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_NONE)) {
-          stackChoice.select(VIEW_STANDARD);
-          changed.add(stackChoice);
-        }
-      }
-    }
-    else if (src == groupBox) {
-      if (groupBox.getState() && (getLocation().equals(LOCATION_OME) ||
-        getLocation().equals(LOCATION_OMERO)))
-      {
-        groupBox.setState(false);
-        changed.add(groupBox);
-      }
-    }
-    else if (src == rangeBox) {
-      if (rangeBox.getState()) {
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_NONE)) {
-          stackChoice.select(VIEW_STANDARD);
-          changed.add(stackChoice);
-        }
-      }
-    }
-    else if (src == autoscaleBox) {
-      if (autoscaleBox.getState()) {
-        virtualBox.setState(false);
-        changed.add(virtualBox);
-      }
-    }
-    else if (src == virtualBox) {
-      if (virtualBox.getState()) {
-        autoscaleBox.setState(false);
-        splitCBox.setState(false);
-        splitZBox.setState(false);
-        splitTBox.setState(false);
-        changed.add(autoscaleBox);
-        changed.add(splitCBox);
-        changed.add(splitZBox);
-        changed.add(splitTBox);
-      }
-      else {
-        recordBox.setState(false);
-        changed.add(recordBox);
-      }
-    }
-    if (changed.size() > 0) flash(changed);
+    verifyOptions(e.getSource());
   }
 
   // -- MouseListener methods --
 
+  /** Focuses the component upon mouseover. */
   public void mouseEntered(MouseEvent e) {
     Object src = e.getSource();
-    String text = (String) infoTable.get(src);
-    infoLabel.setText("<html>" + text);
-  }
-
-  public void mouseExited(MouseEvent e) {
-    infoLabel.setText("<html>" + INFO_DEFAULT);
+    if (src instanceof Component) {
+      ((Component) src).requestFocus();
+    }
   }
 
   public void mouseClicked(MouseEvent e) { }
+  public void mouseExited(MouseEvent e) { }
   public void mousePressed(MouseEvent e) { }
   public void mouseReleased(MouseEvent e) { }
 
-  // -- Helper methods --
+  // -- Static helper methods --
 
   private static boolean getMacroValue(String options,
     String key, boolean defaultValue)
@@ -1419,11 +1303,206 @@ public class ImporterOptions implements ItemListener, MouseListener {
   }
 
   private static String info(String label) {
-    return "<b>" + label.replaceAll("[_:]", " ").trim() + "</b> &ndash; ";
+    return "<b>" + label.replaceAll("[_:]", " ").trim() + "</b> - ";
   }
 
   private static CellConstraints xyw(CellConstraints cc, int x, int y, int w) {
     return cc.xyw(x, y, w, CellConstraints.LEFT, CellConstraints.CENTER);
+  }
+
+  // -- Helper methods --
+
+  /** Ensures that the options dialog has no mutually exclusive options. */
+  private void verifyOptions(Object src) {
+    // record GUI state
+
+    //boolean stackEnabled = stackChoice.isEnabled();
+    boolean orderEnabled = orderChoice.isEnabled();
+    boolean mergeEnabled = mergeBox.isEnabled();
+    boolean colorizeEnabled = colorizeBox.isEnabled();
+    boolean splitCEnabled = splitCBox.isEnabled();
+    boolean splitZEnabled = splitZBox.isEnabled();
+    boolean splitTEnabled = splitTBox.isEnabled();
+    boolean metadataEnabled = metadataBox.isEnabled();
+    boolean omexmlEnabled = omexmlBox.isEnabled();
+    boolean groupEnabled = groupBox.isEnabled();
+    boolean concatenateEnabled = concatenateBox.isEnabled();
+    boolean rangeEnabled = rangeBox.isEnabled();
+    boolean autoscaleEnabled = autoscaleBox.isEnabled();
+    boolean virtualEnabled = virtualBox.isEnabled();
+    boolean recordEnabled = recordBox.isEnabled();
+    boolean allSeriesEnabled = allSeriesBox.isEnabled();
+    boolean cropEnabled = cropBox.isEnabled();
+    boolean swapEnabled = swapBox.isEnabled();
+
+    boolean isStackNone = false;
+    boolean isStackStandard = false;
+    boolean isStackHyperstack = false;
+    boolean isStackBrowser = false;
+    boolean isStackVisBio = false;
+    boolean isStackImage5D = false;
+    boolean isStackView5D = false;
+    String stackValue = stackChoice.getSelectedItem();
+    if (stackValue.equals(VIEW_NONE)) isStackNone = true;
+    else if (stackValue.equals(VIEW_STANDARD)) isStackStandard = true;
+    else if (stackValue.equals(VIEW_HYPERSTACK)) isStackHyperstack = true;
+    else if (stackValue.equals(VIEW_BROWSER)) isStackBrowser = true;
+    else if (stackValue.equals(VIEW_VISBIO)) isStackVisBio = true;
+    else if (stackValue.equals(VIEW_IMAGE_5D)) isStackImage5D = true;
+    else if (stackValue.equals(VIEW_VIEW_5D)) isStackView5D = true;
+    String orderValue = orderChoice.getSelectedItem();
+    boolean isMerge = mergeBox.getState();
+    boolean isColorize = colorizeBox.getState();
+    boolean isSplitC = splitCBox.getState();
+    boolean isSplitZ = splitZBox.getState();
+    boolean isSplitT = splitTBox.getState();
+    boolean isMetadata = metadataBox.getState();
+    boolean isOMEXML = omexmlBox.getState();
+    boolean isGroup = groupBox.getState();
+    boolean isConcatenate = concatenateBox.getState();
+    boolean isRange = rangeBox.getState();
+    boolean isAutoscale = autoscaleBox.getState();
+    boolean isVirtual = virtualBox.getState();
+    boolean isRecord = recordBox.getState();
+    boolean isAllSeries = allSeriesBox.getState();
+    boolean isCrop = cropBox.getState();
+    boolean isSwap = swapBox.getState();
+
+    // toggle availability of each option based on state of earlier options
+
+    // NB: The order the options are examined here defines their order of
+    // precedence. This ordering is necessary because it affects which
+    // component states are capable of graying out other components.
+    // For example, when virtualBox is enabled, autoscaleBox is grayed out,
+    // so the virtualBox logic must appear before the autoscaleBox logic.
+
+    // == Stack viewing ==
+
+    // orderChoice
+    orderEnabled = !isStackNone && !isStackHyperstack && !isStackBrowser;
+    if (src == stackChoice) {
+      orderValue = isStackHyperstack || isStackBrowser ?
+        ORDER_XYCZT : ORDER_DEFAULT;
+    }
+
+    // == Metadata viewing ==
+
+    // metadataBox
+    metadataEnabled = !isStackNone;
+    if (!metadataEnabled) isMetadata = true;
+
+    // omexmlBox
+    // NB: no other options affect omexmlBox
+
+    // == Dataset organization ==
+
+    // groupBox
+    // NB: no other options affect groupBox
+    groupEnabled = !isOME() && !isOMERO();
+    if (!groupEnabled) isGroup = false;
+    else if (src == stackChoice && isStackBrowser) isGroup = true;
+
+    // swapBox
+    // NB: no other options affect swapBox
+
+    // allSeriesBox
+    // NB: no other options affect allSeriesBox
+
+    // concatenateBox
+    // NB: no other options affect concatenateBox
+
+    // == Memory management ==
+
+    // virtualBox
+    virtualEnabled = !isStackNone;
+    if (!virtualEnabled) isVirtual = false;
+    else if (src == stackChoice && isStackBrowser) isVirtual = true;
+
+    // recordBox
+    recordEnabled = isVirtual;
+    if (!recordEnabled) isRecord = false;
+
+    // rangeBox
+    rangeEnabled = !isStackNone;
+    if (!rangeEnabled) isRange = false;
+
+    // cropBox
+    cropEnabled = !isStackNone;
+    if (!cropEnabled) isCrop = false;
+
+    // == Color options ==
+
+    // mergeBox
+    mergeEnabled = !isStackImage5D;
+    if (!mergeEnabled) isMerge = false;
+
+    // colorizeBox
+    colorizeEnabled = !isMerge;
+    if (!colorizeEnabled) isColorize = false;
+
+    // autoscaleBox
+    autoscaleEnabled = !isVirtual;
+    if (!autoscaleEnabled) isAutoscale = false;
+
+    // == Split into separate windows ==
+
+    boolean splitEnabled = !isStackNone && !isStackBrowser && !isVirtual;
+    // TODO: make splitting work with Data Browser/virtual stacks
+
+    // splitCBox
+    splitCEnabled = splitEnabled && !isMerge;
+    if (!splitCEnabled) isSplitC = false;
+
+    // splitZBox
+    splitZEnabled = splitEnabled;
+    if (!splitZEnabled) isSplitZ = false;
+
+    // splitTBox
+    splitTEnabled = splitEnabled;
+    if (!splitTEnabled) isSplitT = false;
+
+    // update state of each option, in case anything changed
+
+    //stackChoice.setEnabled(stackEnabled);
+    orderChoice.setEnabled(orderEnabled);
+    mergeBox.setEnabled(mergeEnabled);
+    colorizeBox.setEnabled(colorizeEnabled);
+    splitCBox.setEnabled(splitCEnabled);
+    splitZBox.setEnabled(splitZEnabled);
+    splitTBox.setEnabled(splitTEnabled);
+    metadataBox.setEnabled(metadataEnabled);
+    omexmlBox.setEnabled(omexmlEnabled);
+    groupBox.setEnabled(groupEnabled);
+    concatenateBox.setEnabled(concatenateEnabled);
+    rangeBox.setEnabled(rangeEnabled);
+    autoscaleBox.setEnabled(autoscaleEnabled);
+    virtualBox.setEnabled(virtualEnabled);
+    recordBox.setEnabled(recordEnabled);
+    allSeriesBox.setEnabled(allSeriesEnabled);
+    cropBox.setEnabled(cropEnabled);
+    swapBox.setEnabled(swapEnabled);
+
+    //stackChoice.select(stackValue);
+    orderChoice.select(orderValue);
+    mergeBox.setState(isMerge);
+    colorizeBox.setState(isColorize);
+    splitCBox.setState(isSplitC);
+    splitZBox.setState(isSplitZ);
+    splitTBox.setState(isSplitT);
+    metadataBox.setState(isMetadata);
+    omexmlBox.setState(isOMEXML);
+    groupBox.setState(isGroup);
+    concatenateBox.setState(isConcatenate);
+    rangeBox.setState(isRange);
+    autoscaleBox.setState(isAutoscale);
+    virtualBox.setState(isVirtual);
+    recordBox.setState(isRecord);
+    allSeriesBox.setState(isAllSeries);
+    cropBox.setState(isCrop);
+    swapBox.setState(isSwap);
+
+    // TODO: find better workaround for Mac OS X GUI update bug
+    //if (changed.size() > 0) flash(changed);
   }
 
 }
