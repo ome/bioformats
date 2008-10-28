@@ -770,8 +770,12 @@ public class FV1000Reader extends FormatReader {
     if (getSizeC() == 0) core[0].sizeC = 1;
     if (getSizeT() == 0) core[0].sizeT = 1;
 
-    if (getImageCount() == getSizeC()) {
+    if (getImageCount() == getSizeC() && getSizeY() == 1) {
       core[0].imageCount *= getSizeZ() * getSizeT();
+    }
+    else if (getImageCount() == getSizeC()) {
+      core[0].sizeZ = 1;
+      core[0].sizeT = 1;
     }
 
     if (getSizeZ() * getSizeT() * getSizeC() > getImageCount()) {
