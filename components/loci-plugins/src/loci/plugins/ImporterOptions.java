@@ -25,18 +25,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.swing.Box;
-import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import loci.common.*;
 import loci.formats.*;
 
@@ -50,7 +51,7 @@ import loci.formats.*;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/ImporterOptions.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/ImporterOptions.java">SVN</a></dd></dl>
  */
-public class ImporterOptions implements ItemListener {
+public class ImporterOptions implements ItemListener, MouseListener {
 
   // -- Constants --
 
@@ -127,10 +128,9 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_ORDER = "Stack_order: ";
   public static final String LABEL_MERGE = "Merge_channels to RGB";
   public static final String LABEL_COLORIZE = "Colorize channels";
-  public static final String LABEL_C = "Split_channels into separate windows";
-  public static final String LABEL_Z =
-    "Split_focal planes into separate windows";
-  public static final String LABEL_T = "Split_timepoints into separate windows";
+  public static final String LABEL_C = "Split_channels";
+  public static final String LABEL_Z = "Split_focal planes";
+  public static final String LABEL_T = "Split_timepoints";
   public static final String LABEL_CROP = "Crop on import";
   public static final String LABEL_METADATA =
     "Display_metadata in results window";
@@ -153,6 +153,47 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_LOCATION = "Location: ";
   public static final String LABEL_ID = "Open";
 
+  // information describing each option
+  public static final String INFO_STACK =
+    info(LABEL_STACK) + " Description to go here.<br>";
+  public static final String INFO_ORDER =
+    info(LABEL_ORDER) + " Description to go here.<br>";
+  public static final String INFO_MERGE =
+    info(LABEL_MERGE) + " Description to go here.<br>";
+  public static final String INFO_COLORIZE =
+    info(LABEL_COLORIZE) + " Description to go here.<br>";
+  public static final String INFO_C =
+    info(LABEL_C) + " Description to go here.<br>";
+  public static final String INFO_Z =
+    info(LABEL_Z) + " Description to go here.<br>";
+  public static final String INFO_T =
+    info(LABEL_T) + " Description to go here.<br>";
+  public static final String INFO_CROP =
+    info(LABEL_CROP) + " Description to go here.<br>";
+  public static final String INFO_METADATA =
+    info(LABEL_METADATA) + " Description to go here.<br>";
+  public static final String INFO_OME_XML =
+    info(LABEL_OME_XML) + " Description to go here.<br>";
+  public static final String INFO_GROUP =
+    info(LABEL_GROUP) + " Description to go here.<br>";
+  public static final String INFO_CONCATENATE =
+    info(LABEL_CONCATENATE) + " Description to go here.<br>";
+  public static final String INFO_RANGE =
+    info(LABEL_RANGE) + " Description to go here.<br>";
+  public static final String INFO_AUTOSCALE =
+    info(LABEL_AUTOSCALE) + " Description to go here.<br>";
+  public static final String INFO_VIRTUAL =
+    info(LABEL_VIRTUAL) + " Description to go here.<br>";
+  public static final String INFO_RECORD =
+    info(LABEL_RECORD) + " Description to go here.<br>";
+  public static final String INFO_ALL_SERIES =
+    info(LABEL_ALL_SERIES) + " Description to go here.<br>";
+  public static final String INFO_SWAP =
+    info(LABEL_SWAP) + " Description to go here.<br>";
+
+  public static final String INFO_DEFAULT =
+    "<i>Mouse over an option for a description.</i><br>";
+
   // -- Fields - GUI components --
 
   private Choice stackChoice;
@@ -163,6 +204,7 @@ public class ImporterOptions implements ItemListener {
   private Checkbox splitZBox;
   private Checkbox splitTBox;
   private Checkbox metadataBox;
+  private Checkbox omexmlBox;
   private Checkbox groupBox;
   private Checkbox concatenateBox;
   private Checkbox rangeBox;
@@ -173,6 +215,8 @@ public class ImporterOptions implements ItemListener {
   private Checkbox allSeriesBox;
   private Checkbox cropBox;
   private Checkbox swapBox;
+  private Hashtable infoTable;
+  private JLabel infoLabel;
 
   // -- Fields - core options --
 
@@ -210,7 +254,7 @@ public class ImporterOptions implements ItemListener {
   private String idName;
   private String idType;
 
-  // -- ImporterOptions API methods - accessors --
+  // -- ImporterOptions methods - accessors --
 
   public boolean isFirstTime() { return firstTime; }
   public String getStackFormat() { return stackFormat; }
@@ -258,7 +302,7 @@ public class ImporterOptions implements ItemListener {
   public String getIdName() { return idName; }
   public String getIdType() { return idType; }
 
-  // -- ImporterOptions API methods - mutators --
+  // -- ImporterOptions methods - mutators --
 
   public void setStackFormat(String s) { stackFormat = s; }
   public void setStackOrder(String s) { stackOrder = s; }
@@ -597,14 +641,34 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_SWAP, swapDimensions);
 
     // extract GUI components from dialog and add listeners
+
+    Vector labels = null;
+    Label stackLabel = null, orderLabel = null;
+    Component[] c = gd.getComponents();
+    if (c != null) {
+      labels = new Vector();
+      for (int i=0; i<c.length; i++) {
+        if (c[i] instanceof Label) {
+          Label item = (Label) c[i];
+          labels.add(item);
+          item.addMouseListener(this);
+        }
+      }
+      stackLabel = (Label) labels.get(0);
+      orderLabel = (Label) labels.get(1);
+    }
+
     Vector choices = gd.getChoices();
     if (choices != null) {
       stackChoice = (Choice) choices.get(0);
       orderChoice = (Choice) choices.get(1);
       for (int i=0; i<choices.size(); i++) {
-        ((Choice) choices.get(i)).addItemListener(this);
+        Choice item = (Choice) choices.get(i);
+        item.addItemListener(this);
+        item.addMouseListener(this);
       }
     }
+
     Vector boxes = gd.getCheckboxes();
     if (boxes != null) {
       mergeBox = (Checkbox) boxes.get(0);
@@ -614,18 +678,141 @@ public class ImporterOptions implements ItemListener {
       splitTBox = (Checkbox) boxes.get(4);
       cropBox = (Checkbox) boxes.get(5);
       metadataBox = (Checkbox) boxes.get(6);
-      groupBox = (Checkbox) boxes.get(7);
-      concatenateBox = (Checkbox) boxes.get(8);
-      rangeBox = (Checkbox) boxes.get(9);
-      autoscaleBox = (Checkbox) boxes.get(10);
-      virtualBox = (Checkbox) boxes.get(11);
-      recordBox = (Checkbox) boxes.get(12);
-      allSeriesBox = (Checkbox) boxes.get(13);
-      swapBox = (Checkbox) boxes.get(14);
+      omexmlBox = (Checkbox) boxes.get(7);
+      groupBox = (Checkbox) boxes.get(8);
+      concatenateBox = (Checkbox) boxes.get(9);
+      rangeBox = (Checkbox) boxes.get(10);
+      autoscaleBox = (Checkbox) boxes.get(11);
+      virtualBox = (Checkbox) boxes.get(12);
+      recordBox = (Checkbox) boxes.get(13);
+      allSeriesBox = (Checkbox) boxes.get(14);
+      swapBox = (Checkbox) boxes.get(15);
       for (int i=0; i<boxes.size(); i++) {
-        ((Checkbox) boxes.get(i)).addItemListener(this);
+        Checkbox item = (Checkbox) boxes.get(i);
+        item.addItemListener(this);
+        item.addMouseListener(this);
       }
     }
+
+    // associate information for each option
+    infoTable = new Hashtable();
+    infoTable.put(stackLabel, INFO_STACK);
+    infoTable.put(stackChoice, INFO_STACK);
+    infoTable.put(orderLabel, INFO_ORDER);
+    infoTable.put(orderChoice, INFO_ORDER);
+    infoTable.put(mergeBox, INFO_MERGE);
+    infoTable.put(colorizeBox, INFO_COLORIZE);
+    infoTable.put(splitCBox, INFO_C);
+    infoTable.put(splitZBox, INFO_Z);
+    infoTable.put(splitTBox, INFO_T);
+    infoTable.put(cropBox, INFO_CROP);
+    infoTable.put(metadataBox, INFO_METADATA);
+    infoTable.put(omexmlBox, INFO_OME_XML);
+    infoTable.put(groupBox, INFO_GROUP);
+    infoTable.put(concatenateBox, INFO_CONCATENATE);
+    infoTable.put(rangeBox, INFO_RANGE);
+    infoTable.put(autoscaleBox, INFO_AUTOSCALE);
+    infoTable.put(virtualBox, INFO_VIRTUAL);
+    infoTable.put(recordBox, INFO_RECORD);
+    infoTable.put(allSeriesBox, INFO_ALL_SERIES);
+    infoTable.put(swapBox, INFO_SWAP);
+
+    // rebuild dialog using FormLayout to organize things more nicely
+
+    String cols =
+      // first column
+      "pref, 3dlu, pref:grow, " +
+      // second column
+      "10dlu, pref";
+
+    String rows =
+      // Stack viewing        | Metadata viewing
+      "pref, 3dlu, pref, 3dlu, pref, " +
+      // Dataset organization | Memory management
+      "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      // Color options        | Split into separate windows
+      "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      // Information
+      "9dlu, pref, 3dlu, pref";
+
+    // TODO: change "Merge channels into RGB" checkbox to
+    // "Channel merging" choice with options:
+    //   "Default", "Merge channels" or "Separate channels"
+
+    // TODO: change "Use virtual stack" and "Record modifications to virtual
+    // stack" checkboxes to "Stack type" choice with options:
+    //   "Normal", "Virtual" or "Smart virtual"
+
+    PanelBuilder builder = new PanelBuilder(new FormLayout(cols, rows));
+    CellConstraints cc = new CellConstraints();
+
+    // populate 1st column
+    int row = 1;
+    builder.addSeparator("Stack viewing", cc.xyw(1, row, 3));
+    row += 2;
+    builder.add(stackLabel, cc.xy(1, row));
+    builder.add(stackChoice, cc.xy(3, row));
+    row += 2;
+    builder.add(orderLabel, cc.xy(1, row));
+    builder.add(orderChoice, cc.xy(3, row));
+    row += 2;
+    builder.addSeparator("Dataset organization", cc.xyw(1, row, 3));
+    row += 2;
+    builder.add(groupBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.add(swapBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.add(allSeriesBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.add(concatenateBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.addSeparator("Color options", cc.xyw(1, row, 3));
+    row += 2;
+    builder.add(mergeBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.add(colorizeBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.add(autoscaleBox, xyw(cc, 1, row, 3));
+    row += 2;
+
+    // populate 2nd column
+    row = 1;
+    builder.addSeparator("Metadata viewing", cc.xy(5, row));
+    row += 2;
+    builder.add(metadataBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(omexmlBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.addSeparator("Memory management", cc.xy(5, row));
+    row += 2;
+    builder.add(virtualBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(recordBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(rangeBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(cropBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.addSeparator("Split into separate windows", cc.xy(5, row));
+    row += 2;
+    builder.add(splitCBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(splitZBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(splitTBox, xyw(cc, 5, row, 1));
+    row += 2;
+
+    // information section
+    builder.addSeparator("Information", cc.xyw(1, row, 5));
+    row += 2;
+    infoLabel = new JLabel("<html>" + INFO_DEFAULT);
+    builder.add(infoLabel, cc.xyw(1, row, 5));
+    row += 2;
+
+    gd.removeAll();
+    gd.add(builder.getPanel());
+
+    // display dialog to user and harvest results
 
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
@@ -1039,7 +1226,7 @@ public class ImporterOptions implements ItemListener {
     return STATUS_OK;
   }
 
-  // -- ItemListener API methods --
+  // -- ItemListener methods --
 
   /** Handles toggling of mutually exclusive options. */
   public void itemStateChanged(ItemEvent e) {
@@ -1184,6 +1371,22 @@ public class ImporterOptions implements ItemListener {
     if (changed.size() > 0) flash(changed);
   }
 
+  // -- MouseListener methods --
+
+  public void mouseEntered(MouseEvent e) {
+    Object src = e.getSource();
+    String text = (String) infoTable.get(src);
+    infoLabel.setText("<html>" + text);
+  }
+
+  public void mouseExited(MouseEvent e) {
+    infoLabel.setText("<html>" + INFO_DEFAULT);
+  }
+
+  public void mouseClicked(MouseEvent e) { }
+  public void mousePressed(MouseEvent e) { }
+  public void mouseReleased(MouseEvent e) { }
+
   // -- Helper methods --
 
   private static boolean getMacroValue(String options,
@@ -1213,6 +1416,14 @@ public class ImporterOptions implements ItemListener {
       Component c = (Component) v.get(i);
       c.setBackground(bg[i]);
     }
+  }
+
+  private static String info(String label) {
+    return "<b>" + label.replaceAll("[_:]", " ").trim() + "</b> &ndash; ";
+  }
+
+  private static CellConstraints xyw(CellConstraints cc, int x, int y, int w) {
+    return cc.xyw(x, y, w, CellConstraints.LEFT, CellConstraints.CENTER);
   }
 
 }
