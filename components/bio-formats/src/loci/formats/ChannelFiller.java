@@ -52,24 +52,21 @@ public class ChannelFiller extends ReaderWrapper {
     return false;
   }
 
-  /* @see IFormatReader#isFalseColor() */
-  public boolean isFalseColor() {
-    return false;
-  }
-
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() {
-    return reader.getSizeC() * (reader.isIndexed() ? 3 : 1);
+    return reader.getSizeC() *
+      ((reader.isIndexed() && !reader.isFalseColor()) ? 3 : 1);
   }
 
   /* @see IFormatReader#getRGBChannelCount() */
   public int getRGBChannelCount() {
-    return reader.isIndexed() ? 3 : reader.getRGBChannelCount();
+    return (reader.isIndexed() && !reader.isFalseColor()) ? 3 :
+      reader.getRGBChannelCount();
   }
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
-    return reader.isIndexed() || reader.isRGB();
+    return (reader.isIndexed() && !reader.isFalseColor()) || reader.isRGB();
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
