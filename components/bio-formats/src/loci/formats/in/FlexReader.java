@@ -77,43 +77,29 @@ public class FlexReader extends BaseTiffReader {
     // expand pixel values with multiplication by factor[no]
     byte[] bytes = super.openBytes(no, buf, x, y, w, h);
 
-    if (binX > 1) {
-      // actually 8 bit data
-      int num = bytes.length / binX;
-      byte[] t = new byte[bytes.length];
-      System.arraycopy(bytes, 0, t, 0, t.length);
-      Arrays.fill(bytes, (byte) 0);
-      int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    if (getPixelType() == FormatTools.UINT8) {
+      int num = bytes.length;
       for (int i=num-1; i>=0; i--) {
-        int q = (int) ((t[i] & 0xff) * factors[no]);
-        DataTools.unpackBytes(q, bytes, i * bpp, bpp, isLittleEndian());
+        int q = (int) ((bytes[i] & 0xff) * factors[no]);
+        bytes[i] = (byte) (q & 0xff);
       }
     }
-    else {
-      if (getPixelType() == FormatTools.UINT8) {
-        int num = bytes.length;
-        for (int i=num-1; i>=0; i--) {
-          int q = (int) ((bytes[i] & 0xff) * factors[no]);
-          bytes[i] = (byte) (q & 0xff);
-        }
+    else if (getPixelType() == FormatTools.UINT16) {
+      int num = bytes.length / 2;
+      for (int i=num-1; i>=0; i--) {
+        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
+          (int) (DataTools.bytesToInt(bytes, i*2, 2, isLittleEndian()) *
+          factors[no]);
+        DataTools.unpackBytes(q, bytes, i * 2, 2, isLittleEndian());
       }
-      else if (getPixelType() == FormatTools.UINT16) {
-        int num = bytes.length / 2;
-        for (int i=num-1; i>=0; i--) {
-          int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
-            (int) (DataTools.bytesToInt(bytes, i*2, 2, isLittleEndian()) *
-            factors[no]);
-          DataTools.unpackBytes(q, bytes, i * 2, 2, isLittleEndian());
-        }
-      }
-      else if (getPixelType() == FormatTools.UINT32) {
-        int num = bytes.length / 4;
-        for (int i=num-1; i>=0; i--) {
-          int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
-            (int) (DataTools.bytesToInt(bytes, i*4, nBytes,
-            isLittleEndian()) * factors[no]);
-          DataTools.unpackBytes(q, bytes, i * 4, 4, isLittleEndian());
-        }
+    }
+    else if (getPixelType() == FormatTools.UINT32) {
+      int num = bytes.length / 4;
+      for (int i=num-1; i>=0; i--) {
+        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
+          (int) (DataTools.bytesToInt(bytes, i*4, nBytes,
+          isLittleEndian()) * factors[no]);
+        DataTools.unpackBytes(q, bytes, i * 4, 4, isLittleEndian());
       }
     }
     System.arraycopy(bytes, 0, buf, 0, bytes.length);

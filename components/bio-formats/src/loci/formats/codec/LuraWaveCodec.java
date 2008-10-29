@@ -78,6 +78,7 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
     try {
       r.exec("import com.luratech.lwf.lwfDecoder");
       r.setVar("-1", -1);
+      r.setVar("1", 1);
       r.setVar("1024", 1024);
       r.setVar("0", 0);
     }
@@ -106,6 +107,8 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
 
   /* @see Codec#decompress(byte[], Object) */
   public byte[] decompress(byte[] buf, Object options) throws FormatException {
+    int maxBytes = ((Integer) options).intValue();
+
     if (noLuraWave) throw new FormatException(NO_LURAWAVE_MSG);
     licenseCode = System.getProperty(LICENSE_PROPERTY);
     if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);
@@ -118,28 +121,50 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
     catch (ReflectException exc) {
       throw new FormatException(INVALID_LICENSE_MSG + licenseCode, exc);
     }
-    int[] image8 = null;
+
+    int w = 0, h = 0;
+
     try {
-      int w = ((Integer) r.exec("lwf.getWidth()")).intValue();
-      int h = ((Integer) r.exec("lwf.getHeight()")).intValue();
-      image8 = new int[w * h];
-      r.setVar("image8", image8);
-      r.exec("lwf.decodeToMemory(image8, -1, 1024, 0)");
+      w = ((Integer) r.exec("lwf.getWidth()")).intValue();
+      h = ((Integer) r.exec("lwf.getHeight()")).intValue();
     }
     catch (ReflectException exc) {
-      throw new FormatException("Could not decode LuraWave data", exc);
+      throw new FormatException("Could not retrieve image dimensions", exc);
     }
-    int len = image8.length;
-    byte[] output = new byte[len];
-    for (int i=0; i<len; i++) {
-      // image is 8-bit grayscale encoded as 24/32-bit RGB
-      byte b0 = (byte) ((image8[i]) & 0xff);
-      //byte b1 = (byte) ((image8[i] >> 8) & 0xff);
-      //byte b2 = (byte) ((image8[i] >> 16) & 0xff);
-      //byte b3 = (byte) ((image8[i] >> 24) & 0xff);
-      output[i] = b0;
+
+    int nbits = 8 * (maxBytes / (w * h));
+
+    if (nbits == 8) {
+      byte[] image8 = new byte[w * h];
+      try {
+        r.setVar("image8", image8);
+        r.exec("lwf.decodeToMemoryGray8(image8, -1, 1024, 0)");
+      }
+      catch (ReflectException exc) {
+        throw new FormatException("Could not decode LuraWave data", exc);
+      }
+      return image8;
     }
-    return output;
+    else if (nbits == 16) {
+      short[] image16 = new short[w * h];
+      try {
+        r.setVar("image16", image16);
+        r.setVar("w", w);
+        r.setVar("h", h);
+        r.exec("lwf.decodeToMemoryGray16(image16, 0, -1, 1024, 0, 1, w, 0, 0, w, h)");
+      }
+      catch (ReflectException exc) {
+        throw new FormatException("Could not decode LuraWave data", exc);
+      }
+
+      byte[] output = new byte[w * h * 2];
+      for (int i=0; i<image16.length; i++) {
+        DataTools.unpackShort(image16[i], output, i * 2, true);
+      }
+      return output;
+    }
+
+    throw new FormatException("Unsupported bits per pixel: " + nbits);
   }
 
 }
