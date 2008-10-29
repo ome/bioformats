@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
 /**
@@ -96,7 +97,8 @@ public class ShortcutTransferHandler extends TransferHandler {
         return false;
       }
       // process each item on the list
-      for (int i=0; i<list.size(); i++) {
+      final String[] ids = new String[list.size()];
+      for (int i=0; i<ids.length; i++) {
         Object item = list.get(i);
         String id = null;
         if (item instanceof File) {
@@ -111,10 +113,16 @@ public class ShortcutTransferHandler extends TransferHandler {
         }
         else {
           // convert "file://" URLs into path names
-          id = id.replaceAll("^file:/*", "/");
-          shortcutPanel.open(id);
+          ids[i] = id.replaceAll("^file:/*", "/");
         }
       }
+
+      // open each item
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          for (int i=0; i<ids.length; i++) shortcutPanel.open(ids[i]);
+        }
+      });
     }
     catch (UnsupportedFlavorException e) {
       e.printStackTrace();
