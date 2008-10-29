@@ -1262,7 +1262,7 @@ public class ImporterOptions
   public void mouseEntered(MouseEvent e) {
     Object src = e.getSource();
     if (src instanceof Component) {
-      ((Component) src).requestFocus();
+      ((Component) src).requestFocusInWindow();
     }
   }
 
@@ -1278,28 +1278,6 @@ public class ImporterOptions
   {
     String s = Macro.getValue(options, key, null);
     return s == null ? defaultValue : s.equalsIgnoreCase("true");
-  }
-
-  /**
-   * Besides flashing the components's background red for a split second,
-   * this method also acts as a workaround for a Mac OS X bug that causes
-   * components not to be redrawn after programmatic state changes.
-   */
-  private static void flash(Vector v) {
-    Color[] bg = new Color[v.size()];
-    for (int i=0; i<bg.length; i++) {
-      Component c = (Component) v.get(i);
-      bg[i] = c.isBackgroundSet() ? c.getBackground() : null;
-      c.setBackground(Color.red);
-    }
-    try {
-      Thread.sleep(100);
-    }
-    catch (InterruptedException exc) { }
-    for (int i=0; i<bg.length; i++) {
-      Component c = (Component) v.get(i);
-      c.setBackground(bg[i]);
-    }
   }
 
   private static String info(String label) {
@@ -1373,8 +1351,13 @@ public class ImporterOptions
     // NB: The order the options are examined here defines their order of
     // precedence. This ordering is necessary because it affects which
     // component states are capable of graying out other components.
-    // For example, when virtualBox is enabled, autoscaleBox is grayed out,
+
+    // For example, we want to disable autoscaleBox when virtualBox is checked,
     // so the virtualBox logic must appear before the autoscaleBox logic.
+
+    // To make it more intuitive for the user, the order of precedence should
+    // match the component layout from left to right, top to bottom, according
+    // to subsection.
 
     // == Stack viewing ==
 
@@ -1447,7 +1430,7 @@ public class ImporterOptions
     // == Split into separate windows ==
 
     boolean splitEnabled = !isStackNone && !isStackBrowser && !isVirtual;
-    // TODO: make splitting work with Data Browser/virtual stacks
+    // TODO: make splitting work with Data Browser & virtual stacks
 
     // splitCBox
     splitCEnabled = splitEnabled && !isMerge;
@@ -1501,8 +1484,51 @@ public class ImporterOptions
     cropBox.setState(isCrop);
     swapBox.setState(isSwap);
 
-    // TODO: find better workaround for Mac OS X GUI update bug
-    //if (changed.size() > 0) flash(changed);
+    // HACK - workaround a Mac OS X bug where GUI components do not update
+
+    // This trick works by changing each affected component's background color
+    // as subtly as possible, then changing it back after a brief delay.
+    // On an afflicted system the background color will end up "out of sync"
+    // but it is very difficult to tell because the difference is minimal.
+
+    // list of affected components
+    Component[] c = {
+      stackChoice,
+      orderChoice,
+      mergeBox,
+      colorizeBox,
+      splitCBox,
+      splitZBox,
+      splitTBox,
+      metadataBox,
+      omexmlBox,
+      groupBox,
+      concatenateBox,
+      rangeBox,
+      autoscaleBox,
+      virtualBox,
+      recordBox,
+      allSeriesBox,
+      cropBox,
+      swapBox
+    };
+    // record original background colors and change subtly
+    Color[] bgColor = new Color[c.length];
+    for (int i=0; i<c.length; i++) {
+      Color bg = c[i].getBackground();
+      bgColor[i] = c[i].isBackgroundSet() ? bg : null;
+      int red = bg.getRed();
+      if (red < 255) red++;
+      else red--;
+      c[i].setBackground(new Color(red, bg.getGreen(), bg.getBlue()));
+    }
+    // brief delay
+    try {
+      Thread.sleep(10);
+    }
+    catch (InterruptedException exc) { }
+    // change backgrounds back
+    for (int i=0; i<c.length; i++) c[i].setBackground(bgColor[i]);
   }
 
 }
