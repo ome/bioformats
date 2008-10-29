@@ -154,42 +154,59 @@ public class ImporterOptions
   public static final String LABEL_ID = "Open";
 
   // informative description of each option
-  public static final String INFO_STACK =
-    info(LABEL_STACK) + " Description to go here.";
-  public static final String INFO_ORDER =
-    info(LABEL_ORDER) + " Description to go here.";
-  public static final String INFO_MERGE =
-    info(LABEL_MERGE) + " Description to go here.";
-  public static final String INFO_COLORIZE =
-    info(LABEL_COLORIZE) + " Description to go here.";
-  public static final String INFO_C =
-    info(LABEL_C) + " Description to go here.";
-  public static final String INFO_Z =
-    info(LABEL_Z) + " Description to go here.";
-  public static final String INFO_T =
-    info(LABEL_T) + " Description to go here.";
-  public static final String INFO_CROP =
-    info(LABEL_CROP) + " Description to go here.";
-  public static final String INFO_METADATA =
-    info(LABEL_METADATA) + " Description to go here.";
-  public static final String INFO_OME_XML =
-    info(LABEL_OME_XML) + " Description to go here.";
-  public static final String INFO_GROUP =
-    info(LABEL_GROUP) + " Description to go here.";
-  public static final String INFO_CONCATENATE =
-    info(LABEL_CONCATENATE) + " Description to go here.";
-  public static final String INFO_RANGE =
-    info(LABEL_RANGE) + " Description to go here.";
-  public static final String INFO_AUTOSCALE =
-    info(LABEL_AUTOSCALE) + " Description to go here.";
-  public static final String INFO_VIRTUAL =
-    info(LABEL_VIRTUAL) + " Description to go here.";
-  public static final String INFO_RECORD =
-    info(LABEL_RECORD) + " Description to go here.";
-  public static final String INFO_ALL_SERIES =
-    info(LABEL_ALL_SERIES) + " Description to go here.";
-  public static final String INFO_SWAP =
-    info(LABEL_SWAP) + " Description to go here.";
+  public static final String INFO_STACK = info(LABEL_STACK) +
+    "The type of image viewer to use when displaying the dataset. " +
+    "Possible choices are:<ul>" +
+    "<li><b>" + VIEW_NONE + "</b> - Display no pixels, only metadata.</li>" +
+    "<li><b>" + VIEW_STANDARD + "</b> - Display the pixels in a standard " +
+    "ImageJ window without multidimensional support.</li>" +
+    "<li><b>" + VIEW_HYPERSTACK + "</b> - Display the pixels in ImageJ's " +
+    "built-in 5D viewer. If you do not have this option, upgrade to a more " +
+    "recent version of ImageJ.</li>" +
+    "<li><b>" + VIEW_BROWSER + "</b> - Display the pixels in LOCI's " +
+    "multidimensional Data Browser viewer. The Data Browser has some " +
+    "additional features on top of the normal ImageJ hyperstack. If you do " +
+    "not have this option, upgrade to a more recent version of ImageJ.</li>" +
+    //"<li><b>" + VIEW_VISBIO + "</b> - Not yet implemented.</li>"
+    "<li><b>" + VIEW_IMAGE_5D + "</b> - Display the pixels in " +
+    "Joachim Walter's Image5D viewer. Requires the Image5D plugin.</li>" +
+    "<li><b>" + VIEW_VIEW_5D + "</b> - Display the pixels in " +
+    "Rainer Heintzmann's View5D viewer. Requires the View5D plugin.</li>" +
+    "</ul>";
+  public static final String INFO_ORDER = info(LABEL_ORDER) +
+    "Description to go here.";
+  public static final String INFO_MERGE = info(LABEL_MERGE) +
+    "Description to go here.";
+  public static final String INFO_COLORIZE = info(LABEL_COLORIZE) +
+    "Description to go here.";
+  public static final String INFO_C = info(LABEL_C) +
+    "Description to go here.";
+  public static final String INFO_Z = info(LABEL_Z) +
+    "Description to go here.";
+  public static final String INFO_T = info(LABEL_T) +
+    "Description to go here.";
+  public static final String INFO_CROP = info(LABEL_CROP) +
+    "Description to go here.";
+  public static final String INFO_METADATA = info(LABEL_METADATA) +
+    "Description to go here.";
+  public static final String INFO_OME_XML = info(LABEL_OME_XML) +
+    "Description to go here.";
+  public static final String INFO_GROUP = info(LABEL_GROUP) +
+    "Description to go here.";
+  public static final String INFO_CONCATENATE = info(LABEL_CONCATENATE) +
+    "Description to go here.";
+  public static final String INFO_RANGE = info(LABEL_RANGE) +
+    "Description to go here.";
+  public static final String INFO_AUTOSCALE = info(LABEL_AUTOSCALE) +
+    "Description to go here.";
+  public static final String INFO_VIRTUAL = info(LABEL_VIRTUAL) +
+    "Description to go here.";
+  public static final String INFO_RECORD = info(LABEL_RECORD) +
+    "Description to go here.";
+  public static final String INFO_ALL_SERIES = info(LABEL_ALL_SERIES) +
+    "Description to go here.";
+  public static final String INFO_SWAP = info(LABEL_SWAP) +
+    "Description to go here.";
 
   public static final String INFO_DEFAULT =
     "<i>Mouse over an option for a description.</i>";
@@ -742,7 +759,7 @@ public class ImporterOptions
       // Color options        | Split into separate windows
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Information
-      "9dlu, pref, 3dlu, fill:40dlu";
+      "9dlu, pref, 3dlu, fill:100dlu";
 
     // TODO: change "Merge channels into RGB" checkbox to
     // "Channel merging" choice with options:
@@ -1245,6 +1262,7 @@ public class ImporterOptions
     Object src = e.getSource();
     String text = (String) infoTable.get(src);
     infoPane.setText("<html>" + text);
+    infoPane.setCaretPosition(0);
   }
 
   public void focusLost(FocusEvent e) { }
