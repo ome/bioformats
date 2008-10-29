@@ -320,6 +320,11 @@ public final class Util {
     if (tf != null) tcal = tf.floatValue();
 
     if (xcal == xcal || ycal == ycal || zcal == zcal || tcal == tcal) {
+      // if the physical width or physical height are missing, assume that
+      // the width and height are equal
+      if (xcal != xcal) xcal = ycal;
+      if (ycal != ycal) ycal = xcal;
+
       Calibration cal = new Calibration();
       cal.setUnit("micron");
       cal.pixelWidth = xcal;
