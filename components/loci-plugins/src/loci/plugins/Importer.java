@@ -463,15 +463,6 @@ public class Importer {
         if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
           stackOrder = r.getDimensionOrder();
         }
-        if (options.isViewView5D()) {
-          stackOrder = ImporterOptions.ORDER_XYZCT;
-        }
-        if (options.isViewImage5D() || options.isViewHyperstack() ||
-          options.isViewBrowser())
-        {
-          stackOrder = ImporterOptions.ORDER_XYCZT;
-        }
-
         ((DimensionSwapper) r).setOutputOrder(stackOrder);
 
         omexmlMeta.setPixelsDimensionOrder(stackOrder, i, 0);

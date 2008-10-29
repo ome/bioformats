@@ -101,9 +101,9 @@ public class ImporterOptions
   public static final String PREF_ORDER = "bioformats.stackOrder";
   public static final String PREF_MERGE = "bioformats.mergeChannels";
   public static final String PREF_COLORIZE = "bioformats.colorize";
-  public static final String PREF_C = "bioformats.splitWindows";
-  public static final String PREF_Z = "bioformats.splitFocalPlanes";
-  public static final String PREF_T = "bioformats.splitTimepoints";
+  public static final String PREF_SPLIT_C = "bioformats.splitWindows";
+  public static final String PREF_SPLIT_Z = "bioformats.splitFocalPlanes";
+  public static final String PREF_SPLIT_T = "bioformats.splitTimepoints";
   public static final String PREF_CROP = "bioformats.crop";
   public static final String PREF_METADATA = "bioformats.showMetadata";
   public static final String PREF_OME_XML = "bioformats.showOMEXML";
@@ -128,9 +128,9 @@ public class ImporterOptions
   public static final String LABEL_ORDER = "Stack_order: ";
   public static final String LABEL_MERGE = "Merge_channels to RGB";
   public static final String LABEL_COLORIZE = "Colorize channels";
-  public static final String LABEL_C = "Split_channels";
-  public static final String LABEL_Z = "Split_focal planes";
-  public static final String LABEL_T = "Split_timepoints";
+  public static final String LABEL_SPLIT_C = "Split_channels";
+  public static final String LABEL_SPLIT_Z = "Split_focal planes";
+  public static final String LABEL_SPLIT_T = "Split_timepoints";
   public static final String LABEL_CROP = "Crop on import";
   public static final String LABEL_METADATA =
     "Display_metadata in results window";
@@ -139,7 +139,7 @@ public class ImporterOptions
   public static final String LABEL_CONCATENATE =
     "Concatenate_series when compatible";
   public static final String LABEL_RANGE = "Specify_range for each series";
-  public static final String LABEL_AUTOSCALE = "Autoscale images";
+  public static final String LABEL_AUTOSCALE = "Autoscale";
   public static final String LABEL_VIRTUAL = "Use_virtual_stack";
   public static final String LABEL_RECORD =
     "Record_modifications_to_virtual_stack";
@@ -155,8 +155,8 @@ public class ImporterOptions
 
   // informative description of each option
   public static final String INFO_STACK = info(LABEL_STACK) +
-    "The type of image viewer to use when displaying the dataset. " +
-    "Possible choices are:<ul>" +
+    " - The type of image viewer to use when displaying the dataset." +
+    "<br><br>Possible choices are:<ul>" +
     "<li><b>" + VIEW_NONE + "</b> - Display no pixels, only metadata.</li>" +
     "<li><b>" + VIEW_STANDARD + "</b> - Display the pixels in a standard " +
     "ImageJ window without multidimensional support.</li>" +
@@ -174,42 +174,148 @@ public class ImporterOptions
     "Rainer Heintzmann's View5D viewer. Requires the View5D plugin.</li>" +
     "</ul>";
   public static final String INFO_ORDER = info(LABEL_ORDER) +
-    "Description to go here.";
+    " - Controls the rasterization order of the dataset's dimensional axes." +
+    "<br><br>Unless you care about the order in which the image planes " +
+    "appear, you probably don't need to worry too much about this option." +
+    "<br><br>By default, Bio-Formats reads the image planes in whatever " +
+    "order they are stored, which is format-dependent. However, several " +
+    "stack view modes require a specific rasterization order:<ul>" +
+    "<li>Hyperstacks must be in " + ORDER_XYCZT + " order.</li>" +
+    "<li>Image5D must be in " + ORDER_XYCZT + " order.</li>" +
+    "<li>View5D must be in " + ORDER_XYCZT + " order.</li>" +
+    "</ul><b>Example:</b> For a dataset in " + ORDER_XYCZT + " order with " +
+    "2 channels, 3 focal planes and 5 time points, the order would be:<ol>" +
+    "<li>C1-Z1-T1</li>" +
+    "<li>C2-Z1-T1</li>" +
+    "<li>C1-Z2-T1</li>" +
+    "<li>C2-Z2-T1</li>" +
+    "<li>C1-Z3-T1</li>" +
+    "<li>C2-Z3-T1</li>" +
+    "<li>C1-Z1-T2</li>" +
+    "<li>C2-Z1-T2</li>" +
+    "<li>etc.</li>" +
+    "</ol>";
   public static final String INFO_MERGE = info(LABEL_MERGE) +
-    "Description to go here.";
+    " - A dataset with multiple channels will be opened and merged with " +
+    "channels pseudocolored in the order of the RGB color scheme; i.e., " +
+    "channel 1 is red, channel 2 is green, and channel 3 is blue." +
+    "<br><br>The bit depth will be preserved. If the dataset has more than " +
+    "3 channels, Bio-Formats will ask how to combine them." +
+    "<br><br>For example, a 12-channel image could be combined into:<ul>" +
+    "<li>6 planes with 2 channels each (1st channel is red, 2nd is green)" +
+    "</li>" +
+    "<li>4 planes with 3 channels each (3rd channel is blue)</li>" +
+    "<li>3 planes with 4 channels each (4th channel is gray)</li>" +
+    "<li>3 planes with 5 channels each (5th channel is cyan)</li>" +
+    "<li>2 planes with 6 channels each (6th channel is magenta)</li>" +
+    "<li>2 planes with 7 channels each (7th channel is yellow)</li>" +
+    "</ul>";
   public static final String INFO_COLORIZE = info(LABEL_COLORIZE) +
-    "Description to go here.";
-  public static final String INFO_C = info(LABEL_C) +
-    "Description to go here.";
-  public static final String INFO_Z = info(LABEL_Z) +
-    "Description to go here.";
-  public static final String INFO_T = info(LABEL_T) +
-    "Description to go here.";
+    " - TODO Description to go here.";
+  public static final String INFO_SPLIT_C = info(LABEL_SPLIT_C) +
+    " - Each channel is opened as a separate stack." +
+    "<br><br>This option is especially useful if you want to merge the " +
+    "channels into a specific order, rather than automatically assign " +
+    "channels to the order of RGB. The bit depth is preserved.";
+  public static final String INFO_SPLIT_Z = info(LABEL_SPLIT_Z) +
+    " - Each focal plane is opened as a separate stack.";
+  public static final String INFO_SPLIT_T = info(LABEL_SPLIT_T) +
+    " - Timelapse data will be opened as a separate stack for each timepoint.";
   public static final String INFO_CROP = info(LABEL_CROP) +
-    "Description to go here.";
+    " - Image planes may be cropped during import to conserve memory." +
+    "<br><br>A window is opened with display of the pixel width and height " +
+    "of the image plane. Enter the X and Y coordinates for the upper left " +
+    "corner of the crop region and the width and height of the selection to " +
+    "be displayed, in pixels.";
   public static final String INFO_METADATA = info(LABEL_METADATA) +
-    "Description to go here.";
+    " - Reads metadata that may be contained within the file format and " +
+    "displays it. You can save it as a text file or copy it from the File " +
+    "and Edit menus specific to the ImageJ Results window. Readability " +
+    "depends upon the manner in which metadata is formatted in the data " +
+    "source.";
   public static final String INFO_OME_XML = info(LABEL_OME_XML) +
-    "Description to go here.";
+    " - Displays a tree of metadata standardized into the OME data model. " +
+    "This structure is the same regardless of file format, though some " +
+    "formats will populate more information than others." +
+    "<br><br><b>Examples:</b><ul>" +
+    "<li>The title of the dataset is listed under " +
+    "OME &gt; Image &gt; Name.</li>" +
+    "<li>The time and date when the dataset was acquired is listed under " +
+    "OME &gt; Image &gt; CreationDate.</li>" +
+    "<li>The physical pixel sizes of each plane in microns is listed under " +
+    "OME &gt; Image &gt; Pixels &gt; " +
+    "PhysicalSizeX, PhysicalSizeY, PhysicalSizeZ.</li>" +
+    "</ul>";
   public static final String INFO_GROUP = info(LABEL_GROUP) +
-    "Description to go here.";
+    " - Parses filenames in the selected folder to open files with similar " +
+    "names as planes in the same dataset." +
+    "<br><br>The base filename and path is presented before opening for " +
+    "editing." +
+    "<br><br><b>Example:</b> Suppose you have a collection of 12 TIFF files " +
+    "numbered data1.tif, data2.tif, ..., data12.tif, with each file " +
+    "representing one timepoint, and containing the 9 focal planes at that " +
+    "timepoint. If you leave this option unchecked and attempt to import " +
+    "data1.tif, Bio-Formats will create an image stack with 9 planes. " +
+    "But if you enable this option, Bio-Formats will automatically detect " +
+    "the other similarly named files and present a confirmation dialog with " +
+    "the detected file pattern, which in this example would be " +
+    "<code>data&lt;1-12&gt;.tif</code>. You can then edit the pattern in " +
+    "case it is incorrect. Bio-Formats will then import all 12 x 9 = 108 " +
+    "planes of the dataset.";
   public static final String INFO_CONCATENATE = info(LABEL_CONCATENATE) +
-    "Description to go here.";
+    " - Allows multiple image series to be joined end to end." +
+    "<br><br><b>Example:</b> You want to join two sequential timelapse " +
+    "series.";
   public static final String INFO_RANGE = info(LABEL_RANGE) +
-    "Description to go here.";
+    " - Opens only the specified range of image planes from a dataset." +
+    "<br><br>After analyzing the dataset dimensional parameters, " +
+    "Bio-Formats will present an additional dialog box prompting for the " +
+    "desired range." +
+    "<br><br><b>Example:</b> You only want to open the range of focal " +
+    "planes in a z-series that actually contain structures of interest to " +
+    "conserve memory.";
   public static final String INFO_AUTOSCALE = info(LABEL_AUTOSCALE) +
-    "Description to go here.";
+    " - Stretches the histogram of the image planes to fit the data range. " +
+    "Does not alter underlying values in the image. If selected, histogram " +
+    "is stretched for each stack based upon the global minimum and maximum " +
+    "value throughout the stack. " +
+    "<br><br>Note that you can use the Brightness &amp; Contrast or " +
+    "Window/Level controls to adjust the contrast range regardless of " +
+    "whether this option is used.";
   public static final String INFO_VIRTUAL = info(LABEL_VIRTUAL) +
-    "Description to go here.";
+    " - Only reads one image plane into memory at a time, loading from the " +
+    "data source on the fly as the active image plane changes." +
+    "<br><br>This option is essential for datasets too large to fit into " +
+    "memory.";
   public static final String INFO_RECORD = info(LABEL_RECORD) +
-    "Description to go here.";
+    " - TODO Description to go here.";
   public static final String INFO_ALL_SERIES = info(LABEL_ALL_SERIES) +
-    "Description to go here.";
-  public static final String INFO_SWAP = info(LABEL_SWAP) +
-    "Description to go here.";
+    " - Opens every available image series without prompting." +
+    "<br><br>Some datasets contain multiple distinct image series. Normally " +
+    "when Bio-Formats detects such data it presents a dialog box with " +
+    "thumbnails allowing individual selection of each available series. " +
+    "Checking this box instructs Bio-Formats to bypass this dialog box and " +
+    "instead open every available image series. Essentially, it is a " +
+    "shortcut for checking all the boxes in the series selector dialog box. " +
+    "It is also useful in a macro when the number of available image series " +
+    "is unknown.";
+  public static final String INFO_SWAP = info(LABEL_SWAP) + " - " +
+    " - Allows reassignment of dimensional axes (e.g., channel, Z and time)." +
+    "<br><br>Bio-Formats is supposed to be smart about handling " +
+    "multidimensional image data, but in some cases gets things wrong. " +
+    "For example, when stitching together a dataset from multiple files " +
+    "using the " + info(LABEL_GROUP) + " option, Bio-Formats may not know " +
+    "which dimensional axis the file numbering is supposed to represent. " +
+    "It will take a guess, but in case it guesses wrong, you can use " +
+    info(LABEL_SWAP) + " to reassign which dimensions are which.";
 
   public static final String INFO_DEFAULT =
-    "<i>Mouse over an option for a description.</i>";
+    "<i>Select an option for a detailed explanation. " +
+    "Documentation written by Glen MacDonald and Curtis Rueden.</i>";
+
+  /** Flag indicating whether to invoke workaround for AWT refresh bug. */
+  private static final boolean IS_GLITCHED =
+    System.getProperty("os.name").indexOf("Mac OS X") >= 0;
 
   // -- Fields - GUI components --
 
@@ -354,9 +460,9 @@ public class ImporterOptions
     stackOrder = Prefs.get(PREF_ORDER, ORDER_DEFAULT);
     mergeChannels = Prefs.get(PREF_MERGE, false);
     colorize = Prefs.get(PREF_COLORIZE, true);
-    splitChannels = Prefs.get(PREF_C, true);
-    splitFocalPlanes = Prefs.get(PREF_Z, false);
-    splitTimepoints = Prefs.get(PREF_T, false);
+    splitChannels = Prefs.get(PREF_SPLIT_C, true);
+    splitFocalPlanes = Prefs.get(PREF_SPLIT_Z, false);
+    splitTimepoints = Prefs.get(PREF_SPLIT_T, false);
     crop = Prefs.get(PREF_CROP, false);
     showMetadata = Prefs.get(PREF_METADATA, false);
     showOMEXML = Prefs.get(PREF_OME_XML, false);
@@ -383,9 +489,9 @@ public class ImporterOptions
     Prefs.set(PREF_ORDER, stackOrder);
     Prefs.set(PREF_MERGE, mergeChannels);
     Prefs.set(PREF_COLORIZE, colorize);
-    Prefs.set(PREF_C, splitChannels);
-    Prefs.set(PREF_Z, splitFocalPlanes);
-    Prefs.set(PREF_T, splitTimepoints);
+    Prefs.set(PREF_SPLIT_C, splitChannels);
+    Prefs.set(PREF_SPLIT_Z, splitFocalPlanes);
+    Prefs.set(PREF_SPLIT_T, splitTimepoints);
     Prefs.set(PREF_CROP, crop);
     Prefs.set(PREF_METADATA, showMetadata);
     Prefs.set(PREF_OME_XML, showOMEXML);
@@ -435,9 +541,9 @@ public class ImporterOptions
       stackOrder = Macro.getValue(arg, LABEL_ORDER, stackOrder);
       mergeChannels = getMacroValue(arg, LABEL_MERGE, mergeChannels);
       colorize = getMacroValue(arg, LABEL_COLORIZE, colorize);
-      splitChannels = getMacroValue(arg, LABEL_C, splitChannels);
-      splitFocalPlanes = getMacroValue(arg, LABEL_Z, splitFocalPlanes);
-      splitTimepoints = getMacroValue(arg, LABEL_T, splitTimepoints);
+      splitChannels = getMacroValue(arg, LABEL_SPLIT_C, splitChannels);
+      splitFocalPlanes = getMacroValue(arg, LABEL_SPLIT_Z, splitFocalPlanes);
+      splitTimepoints = getMacroValue(arg, LABEL_SPLIT_T, splitTimepoints);
       crop = getMacroValue(arg, LABEL_CROP, crop);
       showMetadata = getMacroValue(arg, LABEL_METADATA, showMetadata);
       showOMEXML = getMacroValue(arg, LABEL_OME_XML, showOMEXML);
@@ -648,9 +754,9 @@ public class ImporterOptions
     gd.addChoice(LABEL_ORDER, stackOrders, stackOrder);
     gd.addCheckbox(LABEL_MERGE, mergeChannels);
     gd.addCheckbox(LABEL_COLORIZE, colorize);
-    gd.addCheckbox(LABEL_C, splitChannels);
-    gd.addCheckbox(LABEL_Z, splitFocalPlanes);
-    gd.addCheckbox(LABEL_T, splitTimepoints);
+    gd.addCheckbox(LABEL_SPLIT_C, splitChannels);
+    gd.addCheckbox(LABEL_SPLIT_Z, splitFocalPlanes);
+    gd.addCheckbox(LABEL_SPLIT_T, splitTimepoints);
     gd.addCheckbox(LABEL_CROP, crop);
     gd.addCheckbox(LABEL_METADATA, showMetadata);
     gd.addCheckbox(LABEL_OME_XML, showOMEXML);
@@ -728,9 +834,9 @@ public class ImporterOptions
     infoTable.put(orderChoice, INFO_ORDER);
     infoTable.put(mergeBox, INFO_MERGE);
     infoTable.put(colorizeBox, INFO_COLORIZE);
-    infoTable.put(splitCBox, INFO_C);
-    infoTable.put(splitZBox, INFO_Z);
-    infoTable.put(splitTBox, INFO_T);
+    infoTable.put(splitCBox, INFO_SPLIT_C);
+    infoTable.put(splitZBox, INFO_SPLIT_Z);
+    infoTable.put(splitTBox, INFO_SPLIT_T);
     infoTable.put(cropBox, INFO_CROP);
     infoTable.put(metadataBox, INFO_METADATA);
     infoTable.put(omexmlBox, INFO_OME_XML);
@@ -1280,7 +1386,7 @@ public class ImporterOptions
   public void mouseEntered(MouseEvent e) {
     Object src = e.getSource();
     if (src instanceof Component) {
-      ((Component) src).requestFocusInWindow();
+      ((Component) src).requestFocus();
     }
   }
 
@@ -1299,7 +1405,7 @@ public class ImporterOptions
   }
 
   private static String info(String label) {
-    return "<b>" + label.replaceAll("[_:]", " ").trim() + "</b> - ";
+    return "<b>" + label.replaceAll("[_:]", " ").trim() + "</b>";
   }
 
   private static CellConstraints xyw(CellConstraints cc, int x, int y, int w) {
@@ -1380,10 +1486,13 @@ public class ImporterOptions
     // == Stack viewing ==
 
     // orderChoice
-    orderEnabled = !isStackNone && !isStackHyperstack && !isStackBrowser;
+    orderEnabled = isStackStandard || isStackVisBio;
     if (src == stackChoice) {
-      orderValue = isStackHyperstack || isStackBrowser ?
-        ORDER_XYCZT : ORDER_DEFAULT;
+      if (isStackHyperstack || isStackBrowser || isStackImage5D) {
+        orderValue = ORDER_XYCZT;
+      }
+      else if (isStackView5D) orderValue = ORDER_XYZCT;
+      else orderValue = ORDER_DEFAULT;
     }
 
     // == Metadata viewing ==
@@ -1415,7 +1524,7 @@ public class ImporterOptions
     // == Memory management ==
 
     // virtualBox
-    virtualEnabled = !isStackNone;
+    virtualEnabled = !isStackNone && !isStackImage5D && !isStackView5D;
     if (!virtualEnabled) isVirtual = false;
     else if (src == stackChoice && isStackBrowser) isVirtual = true;
 
@@ -1502,51 +1611,62 @@ public class ImporterOptions
     cropBox.setState(isCrop);
     swapBox.setState(isSwap);
 
-    // HACK - workaround a Mac OS X bug where GUI components do not update
+    if (IS_GLITCHED) {
+      // HACK - workaround a Mac OS X bug where GUI components do not update
 
-    // This trick works by changing each affected component's background color
-    // as subtly as possible, then changing it back after a brief delay.
-    // On an afflicted system the background color will end up "out of sync"
-    // but it is very difficult to tell because the difference is minimal.
+      // list of affected components
+      Component[] c = {
+        stackChoice,
+        orderChoice,
+        mergeBox,
+        colorizeBox,
+        splitCBox,
+        splitZBox,
+        splitTBox,
+        metadataBox,
+        omexmlBox,
+        groupBox,
+        concatenateBox,
+        rangeBox,
+        autoscaleBox,
+        virtualBox,
+        recordBox,
+        allSeriesBox,
+        cropBox,
+        swapBox
+      };
 
-    // list of affected components
-    Component[] c = {
-      stackChoice,
-      orderChoice,
-      mergeBox,
-      colorizeBox,
-      splitCBox,
-      splitZBox,
-      splitTBox,
-      metadataBox,
-      omexmlBox,
-      groupBox,
-      concatenateBox,
-      rangeBox,
-      autoscaleBox,
-      virtualBox,
-      recordBox,
-      allSeriesBox,
-      cropBox,
-      swapBox
-    };
-    // record original background colors and change subtly
-    Color[] bgColor = new Color[c.length];
-    for (int i=0; i<c.length; i++) {
-      Color bg = c[i].getBackground();
-      bgColor[i] = c[i].isBackgroundSet() ? bg : null;
-      int red = bg.getRed();
-      if (red < 255) red++;
-      else red--;
-      c[i].setBackground(new Color(red, bg.getGreen(), bg.getBlue()));
+      // identify currently focused component
+      Component focused = null;
+      for (int i=0; i<c.length; i++) {
+        if (c[i].isFocusOwner()) focused = c[i];
+      }
+
+      // temporarily disable focus events
+      for (int i=0; i<c.length; i++) c[i].removeFocusListener(this);
+
+      // cycle through focus on all components
+      for (int i=0; i<c.length; i++) c[i].requestFocusInWindow();
+
+      // clear the focus globally
+      KeyboardFocusManager kfm =
+        KeyboardFocusManager.getCurrentKeyboardFocusManager();
+      kfm.clearGlobalFocusOwner();
+      sleep(100); // doesn't work if this value is too small
+
+      // refocus the originally focused component
+      if (focused != null) focused.requestFocusInWindow();
+
+      // reenable focus events
+      for (int i=0; i<c.length; i++) c[i].addFocusListener(this);
     }
-    // brief delay
+  }
+
+  private void sleep(long ms) {
     try {
-      Thread.sleep(10);
+      Thread.sleep(ms);
     }
     catch (InterruptedException exc) { }
-    // change backgrounds back
-    for (int i=0; i<c.length; i++) c[i].setBackground(bgColor[i]);
   }
 
 }
