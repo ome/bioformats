@@ -211,7 +211,11 @@ public class ImporterOptions
     "<li>2 planes with 7 channels each (7th channel is yellow)</li>" +
     "</ul>";
   public static final String INFO_COLORIZE = info(LABEL_COLORIZE) +
-    " - TODO Description to go here.";
+    " - Each channel is assigned an appropriate pseudocolor table rather " +
+    "than the normal grayscale." +
+    "<br><br>The first channel is colorized red, the second channel is " +
+    "green, and the third channel is blue. This option is not available " +
+    "when " + info(LABEL_MERGE) + " is set.";
   public static final String INFO_SPLIT_C = info(LABEL_SPLIT_C) +
     " - Each channel is opened as a separate stack." +
     "<br><br>This option is especially useful if you want to merge the " +
@@ -288,7 +292,14 @@ public class ImporterOptions
     "<br><br>This option is essential for datasets too large to fit into " +
     "memory.";
   public static final String INFO_RECORD = info(LABEL_RECORD) +
-    " - TODO Description to go here.";
+    " - <i>BETA FEATURE</i> - Record and reapply changes to virtual stack " +
+    "planes." +
+    "<br><br>When viewing as a virtual stack with this option enabled, " +
+    "Bio-Formats will attempt to record the operations you perform. When " +
+    "you switch to a new image plane, Bio-Formats will \"play back\" those " +
+    "same operations, so that the image plane undergoes the same processing " +
+    "you performed previously. In this way, the image stack should behave " +
+    "more like a normal, fully memory-resident image stack.";
   public static final String INFO_ALL_SERIES = info(LABEL_ALL_SERIES) +
     " - Opens every available image series without prompting." +
     "<br><br>Some datasets contain multiple distinct image series. Normally " +
@@ -1386,7 +1397,7 @@ public class ImporterOptions
   public void mouseEntered(MouseEvent e) {
     Object src = e.getSource();
     if (src instanceof Component) {
-      ((Component) src).requestFocus();
+      ((Component) src).requestFocusInWindow();
     }
   }
 
@@ -1547,7 +1558,8 @@ public class ImporterOptions
     if (!mergeEnabled) isMerge = false;
 
     // colorizeBox
-    colorizeEnabled = !isMerge;
+    colorizeEnabled = !isMerge && !isStackBrowser &&
+      !isStackImage5D && !isStackView5D;
     if (!colorizeEnabled) isColorize = false;
 
     // autoscaleBox
@@ -1556,7 +1568,8 @@ public class ImporterOptions
 
     // == Split into separate windows ==
 
-    boolean splitEnabled = !isStackNone && !isStackBrowser && !isVirtual;
+    boolean splitEnabled = !isStackNone && !isStackBrowser &&
+      !isStackVisBio && !isStackImage5D && !isStackView5D && !isVirtual;
     // TODO: make splitting work with Data Browser & virtual stacks
 
     // splitCBox
