@@ -262,6 +262,21 @@ public class Colorizer implements PlugInFilter {
             int ndx = mergeOption.indexOf("channels");
             if (ndx != -1) {
               int n = Integer.parseInt(mergeOption.substring(ndx - 2, ndx - 1));
+
+              // add extra blank slices if the number of slices is not a
+              // multiple of the number of channels
+              if ((stack.getSize() % n) != 0) {
+                int toAdd = n - (stack.getSize() % n);
+                ImageProcessor blank =
+                  stack.getProcessor(stack.getSize()).duplicate();
+                blank.setValue(0);
+                blank.fill();
+                for (int i=0; i<toAdd; i++) {
+                  stack.addSlice("", blank);
+                }
+                imp.setStack(imp.getTitle(), stack);
+              }
+
               if (imp.getType() == ImagePlus.GRAY8 && n < 4) {
                 newImp = makeRGB(newImp, stack, n);
               }
