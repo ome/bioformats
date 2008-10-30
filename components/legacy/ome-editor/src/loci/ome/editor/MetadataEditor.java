@@ -504,7 +504,7 @@ public class MetadataEditor extends JFrame
     else if ("about".equals(cmd)) {
       JOptionPane.showMessageDialog(this,
         "OME Metadata Editor\n" +
-        "Built @date@\n\n" +
+        "Revision @svn.revision@, built @date@\n\n" +
         "The OME Metadata Editor is LOCI software written by\n" +
         "Christopher Peterson.\n" +
         "http://www.loci.wisc.edu/software/#editor",

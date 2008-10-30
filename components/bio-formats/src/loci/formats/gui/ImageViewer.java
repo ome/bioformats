@@ -531,14 +531,17 @@ public class ImageViewer extends JFrame implements ActionListener,
       // HACK - JOptionPane prevents shutdown on dispose
       setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-      JOptionPane.showMessageDialog(this,
-        "LOCI Bio-Formats\n" +
-        "Built @date@\n\n" +
-        "The Bio-Formats library is LOCI software written by\n" +
-        "Melissa Linkert, Curtis Rueden, Chris Allan, Eric Kjellman\n" +
-        "and Brian Loranger.\n" +
-        "http://www.loci.wisc.edu/ome/formats.html",
-        "Bio-Formats", JOptionPane.INFORMATION_MESSAGE);
+      String msg = "<html>" +
+        "OME Bio-Formats package for reading and " +
+        "converting biological file formats." +
+        "<br>Copyright (C) 2005-@year@ " +
+        "UW-Madison LOCI and Glencoe Software, Inc." +
+        "<br><i>http://www.loci.wisc.edu/ome/formats.html</i>" +
+        "<br>Revision @svn.revision@, built @date@";
+      ImageIcon bioFormatsLogo = new ImageIcon(
+          IFormatHandler.class.getResource("bio-formats-logo.png"));
+      JOptionPane.showMessageDialog(null, msg, "Bio-Formats",
+          JOptionPane.INFORMATION_MESSAGE, bioFormatsLogo);
     }
   }
 

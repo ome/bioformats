@@ -135,6 +135,22 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="copy-source" depends="init">
+    <!-- determine SVN revision number -->
+    <!--
+    Thanks to Chris Collins for this code snippet:
+      http://ccollins.wordpress.com/2008/01/30/
+        getting-subversion-revision-in-ant/
+    -->
+    <property name="revision" value="HEAD"/>
+    <exec executable="svn" outputproperty="svn.log">
+      <arg line="info ${base.dir} -r ${revision}"/>
+    </exec>
+    <!--<echo>${svn.log}</echo>-->
+    <propertyregex property="svn.revision" input="${svn.log}" select="\1">
+      <regexp pattern="Revision: ([0-9]*)"/>
+    </propertyregex>
+    <!--<echo>Revision found: ${svn.revision}</echo>-->
+
     <!-- copy binary resources without filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${component.resources-bin}"/>
@@ -142,6 +158,7 @@ Type "ant -p" for a list of targets.
     <!-- copy source files and text resources with filtering -->
     <filter token="date" value="${DATE}"/>
     <filter token="year" value="${YEAR}"/>
+    <filter token="svn.revision" value="${svn.revision}"/>
     <filter token="visbio.version" value="${visbio.version}"/>
     <copy todir="${dest.dir}" filtering="true" preservelastmodified="true">
       <fileset dir="${src.dir}"

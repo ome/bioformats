@@ -111,7 +111,7 @@ public class MetadataViewer extends JFrame
     else if ("about".equals(cmd)) {
       JOptionPane.showMessageDialog(this,
         "OME Metadata Viewer\n" +
-        "Built @date@\n\n" +
+        "Revision @svn.revision@, built @date@\n\n" +
         "The OME Metadata Viewer is LOCI software written by\n" +
         "Curtis Rueden.",
         "OME Metadata Viewer", JOptionPane.INFORMATION_MESSAGE);

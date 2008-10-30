@@ -24,7 +24,7 @@ public final class About {
 
   public static void main(String[] args) {
     JOptionPane.showMessageDialog(null,
-      "LOCI Checkstyle checks, built @date@\n" +
+      "LOCI Checkstyle checks, revision @svn.revision@, built @date@\n" +
       "Download Checkstyle from http://checkstyle.sourceforge.net/\n" +
       "Download LOCI software from http://www.loci.wisc.edu/software/",
       "LOCI Checkstyle checks", JOptionPane.INFORMATION_MESSAGE);

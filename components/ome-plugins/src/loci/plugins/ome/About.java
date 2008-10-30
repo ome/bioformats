@@ -48,7 +48,7 @@ public final class About implements PlugIn {
 
   public static void about() {
     String msg = "<html>" +
-      "OME Plugins for ImageJ, built @date@" +
+      "OME Plugins for ImageJ, revision @svn.revision@, built @date@" +
       "<br>Copyright 2005-@year@ UW-Madison LOCI" +
       "<br><i>http://www.loci.wisc.edu/software</i>" +
       "<br>" +
