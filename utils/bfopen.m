@@ -17,7 +17,7 @@ and converting pixel types.
 
 Thanks to Ville Rantanen for his performance improvements and ideas.
 Thanks to Brett Shoelson of The MathWorks for his excellent suggestions.
-Thanks to Martin Offterdinger for his feedback.
+Thanks to Martin Offterdinger and Tony Collins for additional feedback.
 
 Internet Explorer sometimes erroneously renames the Bio-Formats library
 to loci_tools.zip. If this happens, rename it back to loci_tools.jar.
@@ -33,7 +33,7 @@ Alternately, you can add the library to MATLAB's static class path:
     3. Save the file and restart MATLAB.
 %}
 
-% to work with Evotec Flex, fill in your license code from LuraWave
+% to work with Evotec Flex, fill in your LuraWave license code
 %java.lang.System.setProperty('lurawave.license', 'xxxxxx-xxxxxxx');
 
 r = loci.formats.ChannelFiller();
