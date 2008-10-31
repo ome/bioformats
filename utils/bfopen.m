@@ -43,7 +43,7 @@ r = loci.formats.FileStitcher(r);
 tic
 r.setId(id);
 numSeries = r.getSeriesCount();
-result = cell(numSeries, 1);
+result = cell(numSeries, 2);
 for s = 1:numSeries
     fprintf('Reading series #%d', s);
     r.setSeries(s - 1);
@@ -97,8 +97,11 @@ for s = 1:numSeries
         imageList{i, 1} = arr;
         imageList{i, 2} = label;
     end
-    % save the whole image list into our master series list
-    result{s} = imageList;
+    % extract metadata table for this series
+    metadataList = r.getMetadata();
+    % save the list of images into our master series list
+    result{s, 1} = imageList;
+    result{s, 2} = metadataList;
     fprintf('\n');
 end
 toc
@@ -114,6 +117,7 @@ numSeries = size(data, 1);
 series1 = data{1, 1};
 series2 = data{2, 1};
 series3 = data{3, 1};
+metadataList = data{1, 2};
 % ...etc.
 series1_numPlanes = size(series1, 1);
 series1_plane1 = series1{1, 1};
@@ -139,4 +143,8 @@ for p = 1:series1_numPlanes
     M(p) = im2frame(uint8(series1{p, 1}), cmap);
 end
 movie(M);
+
+% Query some metadata fields (keys are format-dependent)
+subject = metadataList.get('Subject');
+title = metadataList.get('Title');
 %}
