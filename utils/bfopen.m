@@ -39,7 +39,11 @@ Alternately, you can add the library to MATLAB's static class path:
 
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
-r = loci.formats.FileStitcher(r);
+
+% uncomment the following line to enable grouping of similarly
+% named files into a single dataset based on file numbering
+%r = loci.formats.FileStitcher(r);
+
 tic
 r.setId(id);
 numSeries = r.getSeriesCount();
@@ -99,7 +103,7 @@ for s = 1:numSeries
     end
     % extract metadata table for this series
     metadataList = r.getMetadata();
-    % save the list of images into our master series list
+    % save images and metadata into our master series list
     result{s, 1} = imageList;
     result{s, 2} = metadataList;
     fprintf('\n');
