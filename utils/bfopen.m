@@ -34,6 +34,7 @@ Alternately, you can add the library to MATLAB's static class path:
 %}
 
 % to work with Evotec Flex, fill in your LuraWave license code
+%javaaddpath('lwf_jsdk2.6.jar');
 %java.lang.System.setProperty('lurawave.license', 'xxxxxx-xxxxxxx');
 
 r = loci.formats.ChannelFiller();
