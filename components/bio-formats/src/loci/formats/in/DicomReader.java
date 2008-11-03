@@ -98,7 +98,7 @@ public class DicomReader extends FormatReader {
   private long[] offsets;
   private int maxPixelValue;
 
-  private double rescaleSlope, rescaleIntercept;
+  private double rescaleSlope = 1.0, rescaleIntercept = 0.0;
 
   private boolean isJP2K = false;
   private boolean isJPEG = false;
@@ -242,16 +242,7 @@ public class DicomReader extends FormatReader {
       int c = isIndexed() ? 1 : getSizeC();
       in.skipBytes(y * c * bpp * getSizeX());
 
-      if (getSizeX() == w) {
-        in.read(buf);
-      }
-      else {
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * c * bpp);
-          in.read(buf, row * w * c * bpp, w * c * bpp);
-          in.skipBytes(c * bpp * (getSizeX() - w - x));
-        }
-      }
+      readPlane(in, x, y, w, h, buf);
     }
 
     if (inverted) {
@@ -294,6 +285,8 @@ public class DicomReader extends FormatReader {
     lut = null;
     offsets = null;
     shortLut = null;
+    rescaleSlope = 1.0;
+    rescaleIntercept = 0.0;
   }
 
   // -- Internal FormatReader API methods --
