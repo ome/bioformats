@@ -262,9 +262,11 @@ public class ImarisHDFReader extends FormatReader {
         core[i].imageCount = core[i].sizeZ * getSizeC() * getSizeT();
         core[i].sizeC = getSizeC();
         core[i].sizeT = getSizeT();
+        core[i].thumbnail = true;
       }
     }
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    core[0].thumbnail = false;
 
     // determine pixel type - this isn't stored in the metadata, so we need
     // to check the pixels themselves

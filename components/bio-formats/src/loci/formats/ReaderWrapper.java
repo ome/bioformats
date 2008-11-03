@@ -160,6 +160,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isOrderCertain();
   }
 
+  public boolean isThumbnailSeries() {
+    return reader.isThumbnailSeries();
+  }
+
   public boolean isInterleaved() {
     return reader.isInterleaved();
   }

@@ -317,6 +317,7 @@ public final class ImageInfo {
       boolean little = reader.isLittleEndian();
       String dimOrder = reader.getDimensionOrder();
       boolean orderCertain = reader.isOrderCertain();
+      boolean thumbnail = reader.isThumbnailSeries();
       boolean interleaved = reader.isInterleaved();
       boolean metadataComplete = reader.isMetadataComplete();
 
@@ -394,6 +395,7 @@ public final class ImageInfo {
       LogTools.println("\tPixel type = " +
         FormatTools.getPixelTypeString(pixelType));
       LogTools.println("\tMetadata complete = " + metadataComplete);
+      LogTools.println("\tThumbnail series = " + thumbnail);
       if (doMeta) {
         LogTools.println("\t-----");
         int[] indices;

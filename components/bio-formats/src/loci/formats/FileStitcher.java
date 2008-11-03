@@ -385,6 +385,12 @@ public class FileStitcher implements IFormatReader {
     return noStitch ? reader.isOrderCertain() : core[getSeries()].orderCertain;
   }
 
+  /* @see IFormatReader#isThumbnailSeries() */
+  public boolean isThumbnailSeries() {
+    FormatTools.assertId(currentId, true, 2);
+    return noStitch ? reader.isThumbnailSeries() : core[getSeries()].thumbnail;
+  }
+
   /* @see IFormatReader#isInterleaved() */
   public boolean isInterleaved() {
     FormatTools.assertId(currentId, true, 2);

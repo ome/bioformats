@@ -172,6 +172,12 @@ public interface IFormatReader extends IFormatHandler {
   boolean isOrderCertain();
 
   /**
+   * Gets whether the current series is a lower resolution copy of a different
+   * series.
+   */
+  boolean isThumbnailSeries();
+
+  /**
    * Gets whether or not the channels are interleaved. This method exists
    * because X and Y must appear first in the dimension order. For
    * interleaved data, XYCTZ or XYCZT is used, and this method returns true.

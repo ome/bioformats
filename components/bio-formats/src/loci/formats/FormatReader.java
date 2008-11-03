@@ -487,6 +487,12 @@ public abstract class FormatReader extends FormatHandler
     return core[series].orderCertain;
   }
 
+  /* @see IFormatReader#isThumbnailSeries() */
+  public boolean isThumbnailSeries() {
+    FormatTools.assertId(currentId, true, 1);
+    return core[series].thumbnail;
+  }
+
   /* @see IFormatReader#isInterleaved() */
   public boolean isInterleaved() {
     return isInterleaved(0);

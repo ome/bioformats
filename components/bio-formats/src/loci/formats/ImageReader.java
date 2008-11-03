@@ -312,6 +312,12 @@ public class ImageReader implements IFormatReader {
     return getReader().isOrderCertain();
   }
 
+  /* @see IFormatReader#isThumbnailSeries() */
+  public boolean isThumbnailSeries() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().isThumbnailSeries();
+  }
+
   /* @see IFormatReader#isInterleaved() */
   public boolean isInterleaved() {
     FormatTools.assertId(currentId, true, 2);
