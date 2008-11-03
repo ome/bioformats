@@ -349,9 +349,9 @@
 				All units are in the microscope reference frame
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:attribute name="PositionX" use="required" type="xsd:float"/>
-		<xsd:attribute name="PositionY" use="required" type="xsd:float"/>
-		<xsd:attribute name="PositionZ" use="required" type="xsd:float"/>
+		<xsd:attribute name="PositionX" use="optional" type="xsd:float"/>
+		<xsd:attribute name="PositionY" use="optional" type="xsd:float"/>
+		<xsd:attribute name="PositionZ" use="optional" type="xsd:float"/>
 	</xsd:complexType>
 	
 	<xsd:element name="Experiment"> <!-- top level definition -->
@@ -368,7 +368,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="Description" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1">
+				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
 						This is a link to the Experimenter who conducted the experiment - ajp
@@ -920,11 +920,11 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="CutIn" use="required" type="xsd:integer" />
-			<xsd:attribute name="CutOut" use="required" type="xsd:integer" />
+			<xsd:attribute name="CutIn" use="optional" type="xsd:integer" />
+			<xsd:attribute name="CutOut" use="optional" type="xsd:integer" />
 			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" />
 			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" />
-			<xsd:attribute name="Transmittance" use="required" type="xsd:integer" />
+			<xsd:attribute name="Transmittance" use="optional" type="xsd:integer" />
 		</xsd:complexType>
 	</xsd:element>
 	
