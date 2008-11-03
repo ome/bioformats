@@ -258,6 +258,12 @@ Apache Jakarta Commons Logging
     Notes:     used by OME-Java
     License:   Apache
 
+FindBugs Ant task
+    JAR file:  findbugs-ant.jar
+    URL:       http://findbugs.sourceforge.net/
+    Notes:     used by findbugs Ant target to check for program bugs
+    License:   LGPL
+
 JGoodies Forms
     JAR file:  forms-1.0.4.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html

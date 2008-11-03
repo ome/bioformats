@@ -29,6 +29,9 @@ Type "ant -p" for a list of targets.
   <taskdef resource="net/sf/antcontrib/antlib.xml"
     classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
 
+  <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties"
+    classpath="${lib.dir}/findbugs-ant.jar"/>
+
   <!--
   <taskdef resource="proguard/ant/task.properties"
     classpath="${lib.dir}/proguard.jar"/>
@@ -59,6 +62,29 @@ Type "ant -p" for a list of targets.
       srcdir="${dest.dir}" destdir="${classes.dir}"
       classpath="${component.classpath}"
       includes="${component.source}"/>
+  </target>
+
+  <target name="findbugs" depends="compile"
+    description="check source code for bugs">
+    <if>
+      <isset property="findbugs.home"/>
+      <then>
+        <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
+          output="xml" outputFile="${build.dir}/findbugs.xml">
+          <auxClasspath path="${component.classpath}"/>
+          <sourcePath path="${dest.dir}"/>
+          <class location="${classes.dir}"/>
+        </findbugs>
+        <java jar="${findbugs.home}/findbugs.jar" fork="true">
+          <arg value="${build.dir}/findbugs.xml"/>
+        </java>
+      </then>
+      <else>
+        <echo>Please set the findbugs.home property to point to your</echo>
+        <echo>FindBugs installation's lib directory. E.g.:</echo>
+        <echo>  ant -Dfindbugs.home=${user.home}/findbugs/lib findbugs</echo>
+      </else>
+    </if>
   </target>
 
   <target name="style" depends="compile"

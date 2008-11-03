@@ -56,6 +56,7 @@ my @libs = (
   "checkstyle",
   "commons-httpclient",
   "commons-logging",
+  "findbugs",
   "forms",
   "ice",
   "ij",
@@ -112,6 +113,7 @@ my %titles = (
   "checkstyle"          => "Checkstyle",
   "commons-httpclient"  => "Apache Jakarta Commons HttpClient",
   "commons-logging"     => "Apache Jakarta Commons Logging",
+  "findbugs"            => "FindBugs Ant task",
   "forms"               => "JGoodies Forms",
   "ice"                 => "Ice",
   "ij"                  => "ImageJ",
@@ -194,6 +196,7 @@ my %jars = (
   "checkstyle"          => "checkstyle-all-4.2.jar",
   "commons-httpclient"  => "commons-httpclient-2.0-rc2.jar",
   "commons-logging"     => "commons-logging.jar",
+  "findbugs"            => "findbugs-ant.jar",
   "forms"               => "forms-1.0.4.jar",
   "ice"                 => "Ice-3.2.1.jar",
   "ij"                  => "ij.jar",
@@ -250,6 +253,7 @@ my %packages = (
   "checkstyle"          => "com.puppycrawl.tools.checkstyle",
   "commons-httpclient"  => "org.apache.commons.httpclient",
   "commons-logging"     => "org.apache.commons.logging",
+  "findbugs"            => "edu.umd.cs.findbugs.anttask",
   "forms"               => "com.jgoodies.forms",
   "ice"                 => "Ice",
   "ij"                  => "ij",
@@ -377,6 +381,7 @@ my %licenses = (
   "checkstyle"          => "LGPL",
   "commons-httpclient"  => "Apache",
   "commons-logging"     => "Apache",
+  "findbugs"            => "LGPL",
   "forms"               => "BSD",
   "ice"                 => "GPL",
   "ij"                  => "Public domain",
@@ -417,6 +422,7 @@ my %urls = (
   "checkstyle"          => "http://checkstyle.sourceforge.net/",
   "commons-httpclient"  => "http://jakarta.apache.org/commons/httpclient/",
   "commons-logging"     => "http://jakarta.apache.org/commons/logging/",
+  "findbugs"            => "http://findbugs.sourceforge.net/",
   "forms"               => "http://www.jgoodies.com/freeware/forms/index.html",
   "ice"                 => "http://www.zeroc.com/ice.html",
   "ij"                  => "http://rsb.info.nih.gov/ij/",
@@ -483,6 +489,9 @@ required for OME-Java to communicate with OME servers
 ZZ
   "commons-logging"     => <<ZZ,
 used by OME-Java
+ZZ
+  "findbugs"            => <<ZZ,
+used by findbugs Ant target to check for program bugs
 ZZ
   "forms"               => <<ZZ,
 used for layout by VisBio, Data Browser and OME Notes
