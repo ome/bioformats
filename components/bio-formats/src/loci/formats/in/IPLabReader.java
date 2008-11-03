@@ -191,15 +191,17 @@ public class IPLabReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     status("Reading tags");
 
-    String tag = in.readString(4);
+    byte[] tagBytes = new byte[4];
+    in.read(tagBytes);
+    String tag = new String(tagBytes);
     while (!tag.equals("fini") && in.getFilePointer() < in.length() - 4) {
+      int size = in.readInt();
       if (tag.equals("clut")) {
         // read in Color Lookup Table
-        int size = in.readInt();
         if (size == 8) {
           // indexed lookup table
           in.skipBytes(4);
@@ -222,9 +224,6 @@ public class IPLabReader extends FormatReader {
       }
       else if (tag.equals("norm")) {
         // read in normalization information
-
-        int size = in.readInt();
-        // error checking
 
         if (size != (44 * getSizeC())) {
           throw new FormatException("Bad normalization settings");
@@ -262,19 +261,18 @@ public class IPLabReader extends FormatReader {
       else if (tag.equals("head")) {
         // read in header labels
 
-        int size = in.readInt();
         for (int i=0; i<size / 22; i++) {
           int num = in.readShort();
           addMeta("Header" + num, in.readString(20));
         }
       }
       else if (tag.equals("mmrc")) {
-        in.skipBytes(in.readInt());
+        in.skipBytes(size);
       }
       else if (tag.equals("roi ")) {
         // read in ROI information
 
-        in.skipBytes(8);
+        in.skipBytes(4);
         int roiLeft = in.readInt();
         int roiTop = in.readInt();
         int roiRight = in.readInt();
@@ -295,11 +293,10 @@ public class IPLabReader extends FormatReader {
       }
       else if (tag.equals("mask")) {
         // read in Segmentation Mask
-        in.skipBytes(in.readInt());
+        in.skipBytes(size);
       }
       else if (tag.equals("unit")) {
         // read in units
-        in.skipBytes(4);
 
         for (int i=0; i<4; i++) {
           int xResStyle = in.readInt();
@@ -338,16 +335,15 @@ public class IPLabReader extends FormatReader {
       }
       else if (tag.equals("view")) {
         // read in view
-        in.skipBytes(4);
+        in.skipBytes(size);
       }
       else if (tag.equals("plot")) {
         // read in plot
         // skipping this field for the moment
-        in.skipBytes(2512);
+        in.skipBytes(size);
       }
-      else if (tag.equals("notes")) {
+      else if (tag.equals("note")) {
         // read in notes (image info)
-        in.skipBytes(4);
         String descriptor = in.readString(64);
         String notes = in.readString(512);
         addMeta("Descriptor", descriptor);
@@ -355,9 +351,44 @@ public class IPLabReader extends FormatReader {
 
         store.setImageDescription(notes, 0);
       }
+      else if (tagBytes[0] == 0x1a && tagBytes[1] == (byte) 0xd9 &&
+        tagBytes[2] == (byte) 0x8b && tagBytes[3] == (byte) 0xef)
+      {
+        int units = in.readInt();
+
+        for (int i=0; i<getSizeT(); i++) {
+          float timepoint = in.readFloat();
+          // normalize to seconds
+          switch (units) {
+            case 0:
+              // time stored in milliseconds
+              timepoint /= 1000;
+              break;
+            case 2:
+              // time stored in minutes
+              timepoint *= 60;
+              break;
+            case 3:
+              // time stored in hours
+              timepoint *= 60 * 60;
+              break;
+          }
+
+          addMeta("Timestamp " + i, timepoint);
+
+          for (int c=0; c<getSizeC(); c++) {
+            for (int z=0; z<getSizeZ(); z++) {
+              int plane = getIndex(z, c, i);
+              store.setPlaneTimingDeltaT(new Float(timepoint), 0, 0, plane);
+            }
+          }
+        }
+      }
+      else in.skipBytes(size);
 
       if (in.getFilePointer() + 4 <= in.length()) {
-        tag = in.readString(4);
+        in.read(tagBytes);
+        tag = new String(tagBytes);
       }
       else {
         tag = "fini";
