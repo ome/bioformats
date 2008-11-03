@@ -132,25 +132,36 @@ Type "ant -p" for a list of targets.
       <format property="DATE" pattern="d MMMMM yyyy"/>
       <format property="YEAR" pattern="yyyy"/>
     </tstamp>
+    <!-- determine SVN revision number -->
+    <if>
+      <isset property="svn.revision"/>
+      <else>
+        <!--
+        Thanks to Chris Collins for this code snippet:
+          http://ccollins.wordpress.com/2008/01/30/
+            getting-subversion-revision-in-ant/
+        -->
+        <property name="revision" value="HEAD"/>
+        <exec executable="svn" outputproperty="svn.log"
+          failifexecutionfails="false">
+          <arg line="info ${base.dir} -r ${revision}"/>
+        </exec>
+        <if>
+          <isset property="svn.log"/>
+          <then>
+            <!--<echo>${svn.log}</echo>-->
+            <propertyregex property="svn.revision"
+              input="${svn.log}" select="\1">
+              <regexp pattern="Revision: ([0-9]*)"/>
+            </propertyregex>
+            <echo>SVN revision: ${svn.revision}</echo>
+          </then>
+        </if>
+      </else>
+    </if>
   </target>
 
   <target name="copy-source" depends="init">
-    <!-- determine SVN revision number -->
-    <!--
-    Thanks to Chris Collins for this code snippet:
-      http://ccollins.wordpress.com/2008/01/30/
-        getting-subversion-revision-in-ant/
-    -->
-    <property name="revision" value="HEAD"/>
-    <exec executable="svn" outputproperty="svn.log">
-      <arg line="info ${base.dir} -r ${revision}"/>
-    </exec>
-    <!--<echo>${svn.log}</echo>-->
-    <propertyregex property="svn.revision" input="${svn.log}" select="\1">
-      <regexp pattern="Revision: ([0-9]*)"/>
-    </propertyregex>
-    <!--<echo>Revision found: ${svn.revision}</echo>-->
-
     <!-- copy binary resources without filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${component.resources-bin}"/>
