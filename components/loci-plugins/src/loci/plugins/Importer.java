@@ -217,7 +217,8 @@ public class Importer {
         sizeT[i] = r.getSizeT();
         certain[i] = r.isOrderCertain();
         cBegin[i] = zBegin[i] = tBegin[i] = 0;
-        cEnd[i] = certain[i] ? sizeC[i] - 1 : num[i] - 1;
+        //cEnd[i] = certain[i] ? sizeC[i] - 1 : num[i] - 1;
+        cEnd[i] = sizeC[i] - 1;
         zEnd[i] = sizeZ[i] - 1;
         tEnd[i] = sizeT[i] - 1;
         cStep[i] = zStep[i] = tStep[i] = 1;
@@ -423,7 +424,8 @@ public class Importer {
           for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
             for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
               for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
-                int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
+                //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
+                int index = r.getIndex(z, c, t);
                 load[index] = true;
               }
             }

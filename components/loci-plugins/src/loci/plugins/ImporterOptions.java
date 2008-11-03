@@ -1245,28 +1245,28 @@ public class ImporterOptions
       r.setSeries(i);
       gd.addMessage(seriesLabels[i].replaceAll("_", " "));
       String s = seriesCount > 1 ? "_" + (i + 1) : "";
-      if (r.isOrderCertain()) {
-        if (r.getEffectiveSizeC() > 1) {
-          gd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
-          gd.addNumericField("C_End" + s, cEnd[i] + 1, 0);
-          gd.addNumericField("C_Step" + s, cStep[i], 0);
-        }
-        if (r.getSizeZ() > 1) {
-          gd.addNumericField("Z_Begin" + s, zBegin[i] + 1, 0);
-          gd.addNumericField("Z_End" + s, zEnd[i] + 1, 0);
-          gd.addNumericField("Z_Step" + s, zStep[i], 0);
-        }
-        if (r.getSizeT() > 1) {
-          gd.addNumericField("T_Begin" + s, tBegin[i] + 1, 0);
-          gd.addNumericField("T_End" + s, tEnd[i] + 1, 0);
-          gd.addNumericField("T_Step" + s, tStep[i], 0);
-        }
+      //if (r.isOrderCertain()) {
+      if (r.getEffectiveSizeC() > 1) {
+        gd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
+        gd.addNumericField("C_End" + s, cEnd[i] + 1, 0);
+        gd.addNumericField("C_Step" + s, cStep[i], 0);
       }
-      else {
-        gd.addNumericField("Begin" + s, cBegin[i] + 1, 0);
-        gd.addNumericField("End" + s, cEnd[i] + 1, 0);
-        gd.addNumericField("Step" + s, cStep[i], 0);
+      if (r.getSizeZ() > 1) {
+        gd.addNumericField("Z_Begin" + s, zBegin[i] + 1, 0);
+        gd.addNumericField("Z_End" + s, zEnd[i] + 1, 0);
+        gd.addNumericField("Z_Step" + s, zStep[i], 0);
       }
+      if (r.getSizeT() > 1) {
+        gd.addNumericField("T_Begin" + s, tBegin[i] + 1, 0);
+        gd.addNumericField("T_End" + s, tEnd[i] + 1, 0);
+        gd.addNumericField("T_Step" + s, tStep[i], 0);
+      }
+      //}
+      //else {
+      //  gd.addNumericField("Begin" + s, cBegin[i] + 1, 0);
+      //  gd.addNumericField("End" + s, cEnd[i] + 1, 0);
+      //  gd.addNumericField("Step" + s, cStep[i], 0);
+      //}
     }
     Util.addScrollBars(gd);
     gd.showDialog();
@@ -1280,28 +1280,28 @@ public class ImporterOptions
       int sizeT = r.getSizeT();
       boolean certain = r.isOrderCertain();
 
-      if (certain) {
-        if (r.getEffectiveSizeC() > 1) {
-          cBegin[i] = (int) gd.getNextNumber() - 1;
-          cEnd[i] = (int) gd.getNextNumber() - 1;
-          cStep[i] = (int) gd.getNextNumber();
-        }
-        if (r.getSizeZ() > 1) {
-          zBegin[i] = (int) gd.getNextNumber() - 1;
-          zEnd[i] = (int) gd.getNextNumber() - 1;
-          zStep[i] = (int) gd.getNextNumber();
-        }
-        if (r.getSizeT() > 1) {
-          tBegin[i] = (int) gd.getNextNumber() - 1;
-          tEnd[i] = (int) gd.getNextNumber() - 1;
-          tStep[i] = (int) gd.getNextNumber();
-        }
-      }
-      else {
+      //if (certain) {
+      if (r.getEffectiveSizeC() > 1) {
         cBegin[i] = (int) gd.getNextNumber() - 1;
         cEnd[i] = (int) gd.getNextNumber() - 1;
         cStep[i] = (int) gd.getNextNumber();
       }
+      if (r.getSizeZ() > 1) {
+        zBegin[i] = (int) gd.getNextNumber() - 1;
+        zEnd[i] = (int) gd.getNextNumber() - 1;
+        zStep[i] = (int) gd.getNextNumber();
+      }
+      if (r.getSizeT() > 1) {
+        tBegin[i] = (int) gd.getNextNumber() - 1;
+        tEnd[i] = (int) gd.getNextNumber() - 1;
+        tStep[i] = (int) gd.getNextNumber();
+      }
+      //}
+      //else {
+      //  cBegin[i] = (int) gd.getNextNumber() - 1;
+      //  cEnd[i] = (int) gd.getNextNumber() - 1;
+      //  cStep[i] = (int) gd.getNextNumber();
+      //}
       int maxC = certain ? sizeC : r.getImageCount();
       if (cBegin[i] < 0) cBegin[i] = 0;
       if (cBegin[i] >= maxC) cBegin[i] = maxC - 1;
