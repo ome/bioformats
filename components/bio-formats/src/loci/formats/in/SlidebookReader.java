@@ -198,7 +198,10 @@ public class SlidebookReader extends FormatReader {
             if (n != 0) in.seek(in.getFilePointer() - 1);
           }
           else if (s.equals("CScaleBarAnnotation")) {
-            in.skipBytes(52);
+            in.skipBytes(38);
+            int extra = in.read();
+            if (extra <= 16) in.skipBytes(3 + extra);
+            else in.skipBytes(2);
           }
         }
         else if (s != null && s.indexOf("Decon") != -1) {
