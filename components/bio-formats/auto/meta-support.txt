@@ -234,10 +234,12 @@ Plane = Yes
 Pixels = Yes since r609
 Dimensions.PhysicalSizeX = Yes
 Dimensiosn.PhysicalSizeY = Yes
+Dimensions.TimeIncrement = Yes
 Image.Description = Yes
 ROI = No
 LogicalChannel.SamplesPerPixel = Yes
 Plane = Yes
+PlaneTiming.DeltaT = Yes
 
 [IPWReader]
 Pixels = Yes since r646
