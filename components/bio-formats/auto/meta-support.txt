@@ -124,6 +124,8 @@ Image.Description = Yes
 LogicalChannel = No
 LogicalChannel.SamplesPerPixel = Yes
 Plane = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
 
 [EPSReader]
 Pixels = Yes since r994

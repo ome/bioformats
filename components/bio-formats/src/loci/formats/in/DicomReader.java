@@ -106,6 +106,7 @@ public class DicomReader extends FormatReader {
   private boolean inverted;
 
   private String date, time, imageType;
+  private String pixelSizeX, pixelSizeY;
 
   // -- Constructor --
 
@@ -287,6 +288,7 @@ public class DicomReader extends FormatReader {
     shortLut = null;
     rescaleSlope = 1.0;
     rescaleIntercept = 0.0;
+    pixelSizeX = pixelSizeY = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -558,6 +560,13 @@ public class DicomReader extends FormatReader {
     else MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageDescription(imageType, 0);
 
+    if (pixelSizeX != null) {
+      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
+    }
+    if (pixelSizeY != null) {
+      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+    }
+
     // CTR CHECK
     //store.setInstrumentManufacturer((String) getMeta("Manufacturer"), 0);
     //store.setInstrumentModel((String)
@@ -614,6 +623,10 @@ public class DicomReader extends FormatReader {
       }
       else if (key.equals("Rescale Slope")) {
         rescaleSlope = Double.parseDouble(info);
+      }
+      else if (key.equals("Pixel Spacing")) {
+        pixelSizeX = info.substring(0, info.indexOf("\\"));
+        pixelSizeY = info.substring(info.indexOf("\\") + 1);
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
