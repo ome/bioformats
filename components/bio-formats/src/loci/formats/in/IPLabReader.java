@@ -382,6 +382,9 @@ public class IPLabReader extends FormatReader {
               store.setPlaneTimingDeltaT(new Float(timepoint), 0, 0, plane);
             }
           }
+          if (i == 1) {
+            store.setDimensionsTimeIncrement(new Float(timepoint), 0, 0);
+          }
         }
       }
       else in.skipBytes(size);
