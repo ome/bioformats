@@ -626,7 +626,7 @@ public class DicomReader extends FormatReader {
       }
       else if (key.equals("Pixel Spacing")) {
         pixelSizeX = info.substring(0, info.indexOf("\\"));
-        pixelSizeY = info.substring(info.indexOf("\\") + 1);
+        pixelSizeY = info.substring(info.lastIndexOf("\\") + 1);
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {

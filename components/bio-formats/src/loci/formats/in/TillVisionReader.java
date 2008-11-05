@@ -42,6 +42,7 @@ public class TillVisionReader extends FormatReader {
   // -- Fields --
 
   private RandomAccessStream[] pixelsStream;
+  private Hashtable exposureTimes;
 
   // -- Constructor --
 
@@ -96,6 +97,8 @@ public class TillVisionReader extends FormatReader {
     if (debug) debug("TillVisionReader.initFile(" + id + ")");
     super.initFile(id);
 
+    exposureTimes = new Hashtable();
+
     POITools poi = new POITools(id);
     Vector documents = poi.getDocumentList();
 
@@ -143,7 +146,6 @@ public class TillVisionReader extends FormatReader {
           len = s.readShort();
           if (len <= 0) break;
           String description = s.readString(len);
-          store.setImageDescription(description, pixelsFile.size());
 
           // look for first occurence of 0x04000004
 
@@ -174,6 +176,63 @@ public class TillVisionReader extends FormatReader {
           addMeta("Series " + (pixelsFile.size() - 1) + " palette",
             s.readString(len));
           s.skipBytes(16);
+
+          // parse key/value pairs from description
+
+          String dateTime = "";
+
+          String[] lines = description.split("\n");
+          int seriesNum = pixelsFile.size() - 1;
+          for (int q=0; q<lines.length; q++) {
+            lines[q] = lines[q].trim();
+            if (lines[q].indexOf(":") != -1 && !lines[q].startsWith(";")) {
+              String key = lines[q].substring(0, lines[q].indexOf(":")).trim();
+              String value =
+                lines[q].substring(lines[q].indexOf(":") + 1).trim();
+              addMeta("Series " + seriesNum + " " + key, value);
+
+              if (key.equals("Start time of experiment")) {
+                // HH:mm:ss aa OR HH:mm:ss.sss aa
+                dateTime += " " + value;
+              }
+              else if (key.equals("Date")) {
+                // mm/dd/yy ?
+                dateTime = value + " " + dateTime;
+              }
+              else if (key.equals("Exposure time [ms]")) {
+                exposureTimes.put(new Integer(seriesNum), new Float(value));
+              }
+              else if (key.equals("Image type")) {
+                store.setExperimentType(value, seriesNum);
+              }
+              else if (key.equals("Monochromator wavelength [nm]")) {
+
+              }
+              else if (key.equals("Monochromator wavelength increment[nm]")) {
+                store.setDimensionsWaveIncrement(new Integer(value),
+                  seriesNum, 0);
+              }
+            }
+          }
+
+          dateTime = dateTime.trim();
+          if (!dateTime.equals("")) {
+            String[] formats = new String[] {"mm/dd/yy HH:mm:ss aa",
+              "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy", "HH:mm:ss aa",
+              "HH:mm:ss.SSS aa"};
+            boolean success = false;
+            for (int q=0; q<formats.length; q++) {
+              try {
+                dateTime = DataTools.formatDate(dateTime, formats[q]);
+                success = true;
+              }
+              catch (NullPointerException e) { }
+            }
+            if (success) {
+              store.setImageCreationDate(dateTime, seriesNum);
+            }
+            else MetadataTools.setDefaultCreationDate(store, id, seriesNum);
+          }
         }
       }
     }
@@ -258,11 +317,15 @@ public class TillVisionReader extends FormatReader {
       core[i].rgb = false;
       core[i].littleEndian = true;
       core[i].dimensionOrder = "XYCZT";
-      MetadataTools.setDefaultCreationDate(store, id, i);
       in.close();
+
+      for (int q=0; q<core[i].imageCount; q++) {
+        store.setPlaneTimingExposureTime(
+          (Float) exposureTimes.get(new Integer(i)), i, 0, q);
+      }
     }
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
   }
 
 }
