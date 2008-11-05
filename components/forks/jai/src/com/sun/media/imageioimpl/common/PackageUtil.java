@@ -93,6 +93,10 @@ public class PackageUtil {
 	    specTitle = thisPackage.getSpecificationTitle();
         } catch(ClassNotFoundException e) {
         }
+
+      // HACK
+      if (vendor == null) vendor = "";
+      if (version == null) version = "";
     }
 
     /**
