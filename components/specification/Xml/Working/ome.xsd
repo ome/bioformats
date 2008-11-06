@@ -46,7 +46,7 @@
 	<xsd:element name="OME"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The OME element is a container for all information objects acessible by OME.  These information objects include descriptions of the imaging experiments
+				The OME element is a container for all information objects accessible by OME.  These information objects include descriptions of the imaging experiments
 				and the people who perform them, descriptions of the microscope, the resulting images and how they were acquired, the analyses performed on those images,
 				and the analysis results themselves.
 				An OME file may contain any or all of this information.
@@ -151,9 +151,9 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:choice minOccurs="1" maxOccurs="unbounded">
-					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="1"/>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
 				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -349,9 +349,9 @@
 				All units are in the microscope reference frame
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:attribute name="PositionX" use="required" type="xsd:float"/>
-		<xsd:attribute name="PositionY" use="required" type="xsd:float"/>
-		<xsd:attribute name="PositionZ" use="required" type="xsd:float"/>
+		<xsd:attribute name="PositionX" use="optional" type="xsd:float"/>
+		<xsd:attribute name="PositionY" use="optional" type="xsd:float"/>
+		<xsd:attribute name="PositionZ" use="optional" type="xsd:float"/>
 	</xsd:complexType>
 	
 	<xsd:element name="Experiment"> <!-- top level definition -->
@@ -368,7 +368,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="Description" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1">
+				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
 						This is a link to the Experimenter who conducted the experiment - ajp
@@ -916,15 +916,15 @@
 				CutOut Units: nm,
 				CutInTolerance Units: nm,
 				CutOutTolerance Units: nm,
-				Transmittance Units: Percentage Fraction
+				Transmittance Units: PercentFraction
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="CutIn" use="required" type="xsd:integer" />
-			<xsd:attribute name="CutOut" use="required" type="xsd:integer" />
+			<xsd:attribute name="CutIn" use="optional" type="xsd:integer" />
+			<xsd:attribute name="CutOut" use="optional" type="xsd:integer" />
 			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" />
 			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" />
-			<xsd:attribute name="Transmittance" use="required" type="xsd:integer" />
+			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" />
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -1572,9 +1572,9 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:choice minOccurs="1" maxOccurs="unbounded">
-					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="1"/>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
 				</xsd:choice>
 			</xsd:sequence>
 				<xsd:attribute name="ExtendedPixelType" use="required" type="ExtendedPixelTypes"/>
@@ -1683,8 +1683,8 @@
 				Unlike the ManufactSpec, filters are referred to by lot number rather than serial number.
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:attribute name="Manufacturer" use="required" type="xsd:string"/>
-		<xsd:attribute name="Model" use="required" type="xsd:string"/>
+		<xsd:attribute name="Manufacturer" use="optional" type="xsd:string"/>
+		<xsd:attribute name="Model" use="optional" type="xsd:string"/>
 		<xsd:attribute name="LotNumber" use="optional" type="xsd:string"/>
 	</xsd:complexType>
 	<xsd:element name="LightSource"> <!-- top level definition -->
@@ -1887,7 +1887,7 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="PockelCell" use="optional" type="xsd:boolean"/>
-			<xsd:attribute name="RepetitionRate" use="optional" type="xsd:boolean">
+			<xsd:attribute name="RepetitionRate" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>The is the rate in Hz at which the laser pulses if the Pulse type is 'Repetitive'
 					</xsd:documentation>

@@ -22,7 +22,7 @@
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation = "ome-roi-sa.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation = "ome.xsd"/>
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation = "BinaryFile.xsd"/>
 	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
 		<xsd:complexType>
