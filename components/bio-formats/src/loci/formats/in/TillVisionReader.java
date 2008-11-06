@@ -43,6 +43,8 @@ public class TillVisionReader extends FormatReader {
 
   private RandomAccessStream[] pixelsStream;
   private Hashtable exposureTimes;
+  private boolean embeddedImages;
+  private int embeddedOffset;
 
   // -- Constructor --
 
@@ -69,8 +71,14 @@ public class TillVisionReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    pixelsStream[series].seek(no * getSizeX() * getSizeY() * bpp);
-    readPlane(pixelsStream[series], x, y, w, h, buf);
+    if (embeddedImages) {
+      in.seek(embeddedOffset + no * getSizeX() * getSizeY() * bpp);
+      readPlane(in, x, y, w, h, buf);
+    }
+    else {
+      pixelsStream[series].seek(no * getSizeX() * getSizeY() * bpp);
+      readPlane(pixelsStream[series], x, y, w, h, buf);
+    }
 
     return buf;
   }
@@ -88,6 +96,7 @@ public class TillVisionReader extends FormatReader {
       }
     }
     pixelsStream = null;
+    embeddedOffset = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -112,12 +121,47 @@ public class TillVisionReader extends FormatReader {
       if (name.equals("Root Entry/Contents")) {
         RandomAccessStream s = poi.getDocumentStream(name);
 
-        // look for next-to-last occurence of 0x00f03fff
-
         byte[] b = new byte[(int) s.length()];
         s.read(b);
         int pos = 0;
         int nFound = 0;
+
+        embeddedImages = b[0] == 1;
+
+        if (embeddedImages) {
+          int len = DataTools.bytesToShort(b, 13, 2, true);
+          String type = new String(b, 15, len);
+          if (!type.equals("CImage")) {
+            embeddedImages = false;
+            continue;
+          }
+
+          int offset = 27;
+          len = b[offset++] & 0xff;
+          while (len != 0) {
+            offset += len;
+            len = b[offset++] & 0xff;
+          }
+
+          offset += 1243;
+
+          core[0].sizeX = DataTools.bytesToInt(b, offset, 4, true);
+          offset += 4;
+          core[0].sizeY = DataTools.bytesToInt(b, offset, 4, true);
+          offset += 4;
+          core[0].sizeZ = DataTools.bytesToInt(b, offset, 4, true);
+          offset += 4;
+          core[0].sizeC = DataTools.bytesToInt(b, offset, 4, true);
+          offset += 4;
+          core[0].sizeT = DataTools.bytesToInt(b, offset, 4, true);
+          offset += 4;
+          core[0].pixelType =
+            convertPixelType(DataTools.bytesToInt(b, offset, 4, true));
+          embeddedOffset = offset + 32;
+          in = poi.getDocumentStream(name);
+        }
+
+        // look for next-to-last occurence of 0x00f03fff
 
         for (int q=b.length - 4; q>=0; q--) {
           if (b[q] == 0 && b[q + 1] == (byte) 0xf0 && b[q + 2] == 0x3f &&
@@ -237,87 +281,84 @@ public class TillVisionReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata[pixelsFile.size()];
+    if (!embeddedImages) {
+      if (pixelsFile.size() == 0) {
+        throw new FormatException("No image files found.");
+      }
+      core = new CoreMetadata[pixelsFile.size()];
+    }
 
     String directory = new Location(currentId).getAbsoluteFile().getParent();
 
     pixelsStream = new RandomAccessStream[core.length];
 
     for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
+      if (!embeddedImages) {
+        core[i] = new CoreMetadata();
 
-      // make sure that pixels file exists
+        // make sure that pixels file exists
 
-      String file = (String) pixelsFile.get(i);
+        String file = (String) pixelsFile.get(i);
 
-      file = file.replaceAll("/", File.separator);
-      file = file.replace('\\', File.separatorChar);
-      String oldFile = file;
+        file = file.replaceAll("/", File.separator);
+        file = file.replace('\\', File.separatorChar);
+        String oldFile = file;
 
-      file = directory + File.separator + oldFile;
-
-      if (!new Location(file).exists()) {
-        oldFile = oldFile.substring(oldFile.lastIndexOf(File.separator) + 1);
         file = directory + File.separator + oldFile;
+
         if (!new Location(file).exists()) {
-          throw new FormatException("Could not find pixels file '" + file);
-        }
-      }
-
-      pixelsStream[i] = new RandomAccessStream(file);
-
-      // read key/value pairs from .inf files
-
-      int dot = file.lastIndexOf(".");
-      String infFile = file.substring(0, dot) + ".inf";
-      in = new RandomAccessStream(infFile);
-
-      String data = in.readString((int) in.length());
-      StringTokenizer lines = new StringTokenizer(data);
-
-      while (lines.hasMoreTokens()) {
-        String line = lines.nextToken().trim();
-        if (line.startsWith("[") || line.indexOf("=") == -1) {
-          continue;
-        }
-
-        int equal = line.indexOf("=");
-        String key = line.substring(0, equal).trim();
-        String value = line.substring(equal + 1).trim();
-
-        addMeta(key, value);
-
-        if (key.equals("Width")) core[i].sizeX = Integer.parseInt(value);
-        else if (key.equals("Height")) core[i].sizeY = Integer.parseInt(value);
-        else if (key.equals("Bands")) core[i].sizeC = Integer.parseInt(value);
-        else if (key.equals("Slices")) core[i].sizeZ = Integer.parseInt(value);
-        else if (key.equals("Frames")) core[i].sizeT = Integer.parseInt(value);
-        else if (key.equals("Datatype")) {
-          int type = Integer.parseInt(value);
-          switch (type) {
-            case 1:
-              core[i].pixelType = FormatTools.INT8;
-              break;
-            case 2:
-              core[i].pixelType = FormatTools.UINT8;
-              break;
-            case 3:
-              core[i].pixelType = FormatTools.INT16;
-              break;
-            case 4:
-              core[i].pixelType = FormatTools.UINT16;
-              break;
-            default:
-              throw new FormatException("Unsupported data type: " + type);
+          oldFile = oldFile.substring(oldFile.lastIndexOf(File.separator) + 1);
+          file = directory + File.separator + oldFile;
+          if (!new Location(file).exists()) {
+            throw new FormatException("Could not find pixels file '" + file);
           }
         }
+
+        pixelsStream[i] = new RandomAccessStream(file);
+
+        // read key/value pairs from .inf files
+
+        int dot = file.lastIndexOf(".");
+        String infFile = file.substring(0, dot) + ".inf";
+        in = new RandomAccessStream(infFile);
+
+        String data = in.readString((int) in.length());
+        StringTokenizer lines = new StringTokenizer(data);
+
+        while (lines.hasMoreTokens()) {
+          String line = lines.nextToken().trim();
+          if (line.startsWith("[") || line.indexOf("=") == -1) {
+            continue;
+          }
+
+          int equal = line.indexOf("=");
+          String key = line.substring(0, equal).trim();
+          String value = line.substring(equal + 1).trim();
+
+          addMeta(key, value);
+
+          if (key.equals("Width")) core[i].sizeX = Integer.parseInt(value);
+          else if (key.equals("Height")) {
+            core[i].sizeY = Integer.parseInt(value);
+          }
+          else if (key.equals("Bands")) core[i].sizeC = Integer.parseInt(value);
+          else if (key.equals("Slices")) {
+            core[i].sizeZ = Integer.parseInt(value);
+          }
+          else if (key.equals("Frames")) {
+            core[i].sizeT = Integer.parseInt(value);
+          }
+          else if (key.equals("Datatype")) {
+            core[i].pixelType = convertPixelType(Integer.parseInt(value));
+          }
+        }
+        in.close();
       }
 
       core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
       core[i].rgb = false;
       core[i].littleEndian = true;
       core[i].dimensionOrder = "XYCZT";
-      in.close();
 
       for (int q=0; q<core[i].imageCount; q++) {
         store.setPlaneTimingExposureTime(
@@ -326,6 +367,24 @@ public class TillVisionReader extends FormatReader {
     }
 
     MetadataTools.populatePixels(store, this, true);
+  }
+
+
+  // -- Helper methods --
+
+  private int convertPixelType(int type) throws FormatException {
+    switch (type) {
+      case 1:
+        return FormatTools.INT8;
+      case 2:
+        return FormatTools.UINT8;
+      case 3:
+        return FormatTools.INT16;
+      case 4:
+        return FormatTools.UINT16;
+      default:
+        throw new FormatException("Unsupported data type: " + type);
+    }
   }
 
 }
