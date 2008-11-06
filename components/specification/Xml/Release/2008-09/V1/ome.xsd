@@ -916,7 +916,7 @@
 				CutOut Units: nm,
 				CutInTolerance Units: nm,
 				CutOutTolerance Units: nm,
-				Transmittance Units: Percentage Fraction
+				Transmittance Units: PercentFraction
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -924,7 +924,7 @@
 			<xsd:attribute name="CutOut" use="optional" type="xsd:integer" />
 			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" />
 			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" />
-			<xsd:attribute name="Transmittance" use="optional" type="xsd:integer" />
+			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" />
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -1683,8 +1683,8 @@
 				Unlike the ManufactSpec, filters are referred to by lot number rather than serial number.
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:attribute name="Manufacturer" use="required" type="xsd:string"/>
-		<xsd:attribute name="Model" use="required" type="xsd:string"/>
+		<xsd:attribute name="Manufacturer" use="optional" type="xsd:string"/>
+		<xsd:attribute name="Model" use="optional" type="xsd:string"/>
 		<xsd:attribute name="LotNumber" use="optional" type="xsd:string"/>
 	</xsd:complexType>
 	<xsd:element name="LightSource"> <!-- top level definition -->
@@ -1887,7 +1887,7 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="PockelCell" use="optional" type="xsd:boolean"/>
-			<xsd:attribute name="RepetitionRate" use="optional" type="xsd:boolean">
+			<xsd:attribute name="RepetitionRate" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>The is the rate in Hz at which the laser pulses if the Pulse type is 'Repetitive'
 					</xsd:documentation>
