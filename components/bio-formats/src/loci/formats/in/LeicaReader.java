@@ -584,14 +584,15 @@ public class LeicaReader extends FormatReader {
         String p = getString(s, fileLength * 2);
         s.close();
 
+        if (p.indexOf(".") != -1) p = p.substring(0, p.lastIndexOf("."));
+
         StringTokenizer st = new StringTokenizer(p, "_");
         StringBuffer buf = new StringBuffer();
         st.nextToken();
         while (st.hasMoreTokens()) {
           String token = st.nextToken();
           String lcase = token.toLowerCase();
-          if (!checkSuffix(lcase, TiffReader.TIFF_SUFFIXES) &&
-            !lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
+          if (!lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
             !lcase.startsWith("z0"))
           {
             if (buf.length() > 0) buf.append("_");
