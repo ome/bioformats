@@ -39,6 +39,12 @@ import loci.formats.meta.MetadataStore;
  */
 public class TillVisionReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final byte[] MARKER_0 = new byte[] {0x25, (byte) 0x80, 3, 0};
+  private static final byte[] MARKER_1 =
+    new byte[] {(byte) 0x96, (byte) 0x81, 3, 0};
+
   // -- Fields --
 
   private RandomAccessStream[] pixelsStream;
@@ -114,7 +120,7 @@ public class TillVisionReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    Vector pixelsFile = new Vector();
+    int nImages = 0;
 
     for (int i=0; i<documents.size(); i++) {
       String name = (String) documents.get(i);
@@ -161,79 +167,37 @@ public class TillVisionReader extends FormatReader {
           in = poi.getDocumentStream(name);
         }
 
-        // look for next-to-last occurence of 0x00f03fff
-
-        for (int q=b.length - 4; q>=0; q--) {
-          if (b[q] == 0 && b[q + 1] == (byte) 0xf0 && b[q + 2] == 0x3f &&
-            b[q + 3] == (byte) 0xff)
-          {
-            nFound++;
-            if (nFound == 2) {
-              pos = q;
-              break;
-            }
-          }
-        }
-
-        s.seek(pos + 26);
-
+        byte[] marker = getMarker(b);
         byte[] check = new byte[] {4, 0, 0, 4};
+        s.seek(0);
 
-        s.order(false);
         while (s.getFilePointer() < s.length() - 2) {
+          s.order(false);
+          s.seek(findNextOffset(b, marker, (int) s.getFilePointer()));
+          if (s.getFilePointer() < 0) break;
+          s.skipBytes(3);
           int len = s.readShort();
-          if (len <= 0) break;
+          if (len <= 0) continue;
           String imageName = s.readString(len);
-          store.setImageName(imageName, pixelsFile.size());
+          store.setImageName(imageName, nImages);
           s.skipBytes(6);
           s.order(true);
           len = s.readShort();
-          if (len <= 0) break;
+          if (len < 0 || len > 0x1000) continue;
           String description = s.readString(len);
-
-          // look for first occurence of 0x04000004
-
-          int p = 0;
-          while (s.getFilePointer() < s.length() - 64) {
-            byte n = s.readByte();
-            if (n == check[p]) p++;
-            else {
-              p = 0;
-              if (n == check[p]) p++;
-            }
-            if (p == 4) break;
-          }
-
-          s.skipBytes(6);
-
-          s.order(false);
-          len = s.readShort();
-
-          s.skipBytes(len + 7);
-          len = s.readShort();
-
-          if (len <= 0 || len > 512) break;
-          pixelsFile.add(s.readString(len));
-          s.skipBytes(50);
-          len = s.readShort();
-          if (len < 0) break;
-          addMeta("Series " + (pixelsFile.size() - 1) + " palette",
-            s.readString(len));
-          s.skipBytes(16);
 
           // parse key/value pairs from description
 
           String dateTime = "";
 
           String[] lines = description.split("\n");
-          int seriesNum = pixelsFile.size() - 1;
           for (int q=0; q<lines.length; q++) {
             lines[q] = lines[q].trim();
             if (lines[q].indexOf(":") != -1 && !lines[q].startsWith(";")) {
               String key = lines[q].substring(0, lines[q].indexOf(":")).trim();
               String value =
                 lines[q].substring(lines[q].indexOf(":") + 1).trim();
-              addMeta("Series " + seriesNum + " " + key, value);
+              addMeta("Series " + nImages + " " + key, value);
 
               if (key.equals("Start time of experiment")) {
                 // HH:mm:ss aa OR HH:mm:ss.sss aa
@@ -244,17 +208,17 @@ public class TillVisionReader extends FormatReader {
                 dateTime = value + " " + dateTime;
               }
               else if (key.equals("Exposure time [ms]")) {
-                exposureTimes.put(new Integer(seriesNum), new Float(value));
+                exposureTimes.put(new Integer(nImages), new Float(value));
               }
               else if (key.equals("Image type")) {
-                store.setExperimentType(value, seriesNum);
+                store.setExperimentType(value, nImages);
               }
               else if (key.equals("Monochromator wavelength [nm]")) {
 
               }
               else if (key.equals("Monochromator wavelength increment[nm]")) {
                 store.setDimensionsWaveIncrement(new Integer(value),
-                  seriesNum, 0);
+                  nImages, 0);
               }
             }
           }
@@ -273,22 +237,55 @@ public class TillVisionReader extends FormatReader {
               catch (NullPointerException e) { }
             }
             if (success) {
-              store.setImageCreationDate(dateTime, seriesNum);
+              store.setImageCreationDate(dateTime, nImages);
             }
-            else MetadataTools.setDefaultCreationDate(store, id, seriesNum);
+            else MetadataTools.setDefaultCreationDate(store, id, nImages);
           }
+          nImages++;
         }
       }
     }
 
+    String directory = new Location(currentId).getAbsoluteFile().getParent();
+
+    String[] pixelsFile = new String[nImages];
+
     if (!embeddedImages) {
-      if (pixelsFile.size() == 0) {
+      if (nImages == 0) {
+        throw new FormatException("No images found.");
+      }
+      core = new CoreMetadata[nImages];
+
+      // look for appropriate pixels files
+
+      Location dir = new Location(directory);
+      String[] files = dir.list();
+
+      int nextFile = 0;
+
+      for (int i=0; i<files.length; i++) {
+        if (files[i].endsWith(".pst")) {
+          Location pst = new Location(directory + File.separator + files[i]);
+          if (pst.isDirectory()) {
+            String[] subfiles = pst.list();
+            for (int q=0; q<subfiles.length; q++) {
+              if (subfiles[q].endsWith(".pst") && nextFile < nImages) {
+                pixelsFile[nextFile++] =
+                  files[i] + File.separator + subfiles[q];
+              }
+            }
+          }
+          else if (nextFile < nImages) {
+            pixelsFile[nextFile++] = files[i];
+          }
+        }
+      }
+      if (nextFile == 0) {
         throw new FormatException("No image files found.");
       }
-      core = new CoreMetadata[pixelsFile.size()];
     }
 
-    String directory = new Location(currentId).getAbsoluteFile().getParent();
+    Arrays.sort(pixelsFile);
 
     pixelsStream = new RandomAccessStream[core.length];
 
@@ -298,7 +295,7 @@ public class TillVisionReader extends FormatReader {
 
         // make sure that pixels file exists
 
-        String file = (String) pixelsFile.get(i);
+        String file = pixelsFile[i];
 
         file = file.replaceAll("/", File.separator);
         file = file.replace('\\', File.separatorChar);
@@ -385,6 +382,28 @@ public class TillVisionReader extends FormatReader {
       default:
         throw new FormatException("Unsupported data type: " + type);
     }
+  }
+
+  private byte[] getMarker(byte[] s) throws IOException {
+    int offset = findNextOffset(s, MARKER_0, 0);
+    if (offset != -1) return MARKER_0;
+    return MARKER_1;
+  }
+
+  private int findNextOffset(byte[] s, byte[] marker, int pos)
+    throws IOException
+  {
+    for (int i=pos; i<s.length-marker.length; i++) {
+      boolean found = true;
+      for (int q=0; q<marker.length; q++) {
+        if (marker[q] != s[i + q]) {
+          found = false;
+          break;
+        }
+      }
+      if (found) return i + marker.length;
+    }
+    return -1;
   }
 
 }

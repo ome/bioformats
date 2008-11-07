@@ -593,7 +593,7 @@ public class LeicaReader extends FormatReader {
           String token = st.nextToken();
           String lcase = token.toLowerCase();
           if (!lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
-            !lcase.startsWith("z0"))
+            !lcase.startsWith("z0") && !lcase.startsWith("t0"))
           {
             if (buf.length() > 0) buf.append("_");
             buf.append(token);
