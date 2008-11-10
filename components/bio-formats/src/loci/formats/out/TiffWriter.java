@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * TiffWriter is the file format writer for TIFF files.
@@ -90,6 +91,10 @@ public class TiffWriter extends FormatWriter {
   public void saveImage(Image image, Hashtable ifd, int series,
     boolean lastInSeries, boolean last) throws IOException, FormatException
   {
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    boolean littleEndian = retrieve == null ? false :
+      !retrieve.getPixelsBigEndian(series, 0).booleanValue();
+
     if (!initialized) {
       imageCounts = new Vector();
       initialized = true;
@@ -100,14 +105,25 @@ public class TiffWriter extends FormatWriter {
       if (tmp.length() == 0) {
         // write TIFF header
         DataOutputStream dataOut = new DataOutputStream(out);
-        dataOut.writeByte(TiffTools.BIG);
-        dataOut.writeByte(TiffTools.BIG);
-        if (isBigTiff) dataOut.writeShort(TiffTools.BIG_TIFF_MAGIC_NUMBER);
-        else dataOut.writeShort(TiffTools.MAGIC_NUMBER);
-        dataOut.writeInt(8); // offset to first IFD
+        if (littleEndian) {
+          dataOut.writeByte(TiffTools.LITTLE);
+          dataOut.writeByte(TiffTools.LITTLE);
+        }
+        else {
+          dataOut.writeByte(TiffTools.BIG);
+          dataOut.writeByte(TiffTools.BIG);
+        }
+        if (isBigTiff) {
+          DataTools.writeShort(dataOut, TiffTools.BIG_TIFF_MAGIC_NUMBER,
+            littleEndian);
+        }
+        else {
+          DataTools.writeShort(dataOut, TiffTools.MAGIC_NUMBER, littleEndian);
+        }
+        DataTools.writeInt(dataOut, 8, littleEndian); // offset to first IFD
         lastOffset = 8;
         if (isBigTiff) {
-          dataOut.writeLong(16);
+          DataTools.writeLong(dataOut, 16, littleEndian);
           lastOffset = 16;
         }
       }
@@ -143,6 +159,7 @@ public class TiffWriter extends FormatWriter {
     }
 
     // write the image
+    ifd.put(new Integer(TiffTools.LITTLE_ENDIAN), new Boolean(littleEndian));
     lastOffset +=
       TiffTools.writeImage(img, ifd, out, lastOffset, last, isBigTiff);
     if (last) close();

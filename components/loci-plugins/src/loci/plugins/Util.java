@@ -34,6 +34,7 @@ import ij.util.Tools;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.net.*;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.LuraWaveCodec;
@@ -135,9 +136,6 @@ public final class Util {
     int bpp = FormatTools.getBytesPerPixel(type);
     boolean interleave = r.isInterleaved();
 
-    boolean isSigned = type == FormatTools.INT8 ||
-      type == FormatTools.INT16 || type == FormatTools.INT32;
-
     if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
       // HACK - byte array dimensions are incorrect - image is probably
       // a different size, but we have no way of knowing what size;
@@ -176,8 +174,6 @@ public final class Util {
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
 
-        if (isSigned) q = DataTools.makeSigned(q);
-
         ip[i] = new ByteProcessor(w, h, q, null);
         if (cm != null) ip[i].setColorModel(cm);
       }
@@ -189,8 +185,6 @@ public final class Util {
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
 
-        if (isSigned) q = DataTools.makeSigned(q);
-
         ip[i] = new ShortProcessor(w, h, q, model);
       }
       else if (pixels instanceof int[]) {
@@ -200,8 +194,6 @@ public final class Util {
           q = new int[w * h];
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
-
-        if (isSigned) q = DataTools.makeSigned(q);
 
         ip[i] = new FloatProcessor(w, h, q);
       }

@@ -164,6 +164,13 @@ public final class DataTools {
     out.write(b);
   }
 
+  /** Writes a double to the given data output destination. */
+  public static void writeDouble(DataOutput out, double v, boolean little)
+    throws IOException
+  {
+    writeLong(out, Double.doubleToLongBits(v), little);
+  }
+
   /** Writes a long to the given data output destination. */
   public static void writeLong(DataOutput out, long v, boolean little)
     throws IOException
@@ -188,6 +195,13 @@ public final class DataTools {
       out.write((int) ((v >>> 8) & 0xff));
       out.write((int) (v & 0xff));
     }
+  }
+
+  /** Writes a float to the given data output destination. */
+  public static void writeFloat(DataOutput out, float v, boolean little)
+    throws IOException
+  {
+    writeInt(out, Float.floatToIntBits(v), little);
   }
 
   /** Writes an integer to the given data output destination. */
@@ -487,30 +501,6 @@ public final class DataTools {
         buf[ndx + i] = (byte) ((value >> (8*(nBytes - i - 1))) & 0xff);
       }
     }
-  }
-
-  /** Convert a byte array to a signed byte array. */
-  public static byte[] makeSigned(byte[] b) {
-    for (int i=0; i<b.length; i++) {
-      b[i] = (byte) (b[i] + 128);
-    }
-    return b;
-  }
-
-  /** Convert a short array to a signed short array. */
-  public static short[] makeSigned(short[] s) {
-    for (int i=0; i<s.length; i++) {
-      s[i] = (short) (s[i] + 32768);
-    }
-    return s;
-  }
-
-  /** Convert an int array to a signed int array. */
-  public static int[] makeSigned(int[] i) {
-    for (int j=0; j<i.length; j++) {
-      i[j] = (int) (i[j] + 2147483648L);
-    }
-    return i;
   }
 
   /**

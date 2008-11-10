@@ -562,41 +562,32 @@ public final class AWTImageTools {
       float[] f =
         (float[]) DataTools.makeDataArray(buf, 4, true, r.isLittleEndian());
       if (r.isNormalized()) f = DataTools.normalizeFloats(f);
-      return makeImage(f, w, h, r.getRGBChannelCount(), true);
+      return makeImage(f, w, h, r.getRGBChannelCount(), r.isInterleaved());
     }
     else if (pixelType == FormatTools.DOUBLE) {
       double[] d =
         (double[]) DataTools.makeDataArray(buf, 8, true, r.isLittleEndian());
       if (r.isNormalized()) d = DataTools.normalizeDoubles(d);
-      return makeImage(d, w, h, r.getRGBChannelCount(), true);
+      return makeImage(d, w, h, r.getRGBChannelCount(), r.isInterleaved());
     }
 
     boolean signed = pixelType == FormatTools.INT8 ||
       pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
 
+    ColorModel model = null;
+
     if (signed) {
-      if (pixelType == FormatTools.INT8) buf = DataTools.makeSigned(buf);
+      if (pixelType == FormatTools.INT8) {
+        model = new SignedColorModel(8, DataBuffer.TYPE_BYTE,
+          r.getRGBChannelCount());
+      }
       else if (pixelType == FormatTools.INT16) {
-        short[] s =
-          (short[]) DataTools.makeDataArray(buf, 2, false, r.isLittleEndian());
-        s = DataTools.makeSigned(s);
-        for (int i=0; i<s.length; i++) {
-          byte high = (byte) (s[i] >> 8);
-          byte low = (byte) s[i];
-          buf[i * 2] = r.isLittleEndian() ? low : high;
-          buf[i * 2 + 1] = r.isLittleEndian() ? high : low;
-        }
+        model = new SignedColorModel(16, DataBuffer.TYPE_USHORT,
+          r.getRGBChannelCount());
       }
       else if (pixelType == FormatTools.INT32) {
-        int[] ii =
-          (int[]) DataTools.makeDataArray(buf, 4, false, r.isLittleEndian());
-        ii = DataTools.makeSigned(ii);
-        for (int i=0; i<ii.length; i++) {
-          buf[i*4] = (byte) (r.isLittleEndian() ? ii[i] : ii[i] >> 24);
-          buf[i*4 + 1] = (byte) (r.isLittleEndian() ? ii[i] >> 8 : ii[i] >> 16);
-          buf[i*4 + 2] = (byte) (r.isLittleEndian() ? ii[i] >> 16 : ii[i] >> 8);
-          buf[i*4 + 3] = (byte) (r.isLittleEndian() ? ii[i] >> 24 : ii[i]);
-        }
+        model = new SignedColorModel(32, DataBuffer.TYPE_INT,
+          r.getRGBChannelCount());
       }
     }
 
@@ -605,7 +596,6 @@ public final class AWTImageTools {
       FormatTools.getBytesPerPixel(r.getPixelType()), r.isLittleEndian());
 
     if (r.isIndexed()) {
-      ColorModel model = null;
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
         byte[][] table = r.get8BitLookupTable();
         if (table != null) {
@@ -621,11 +611,12 @@ public final class AWTImageTools {
           model = new Index16ColorModel(16, table[0].length, table);
         }
       }
-      if (model != null) {
-        WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
-          b.getData().getDataBuffer(), null);
-        b = new BufferedImage(model, raster, false, null);
-      }
+    }
+
+    if (model != null) {
+      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+        b.getData().getDataBuffer(), null);
+      b = new BufferedImage(model, raster, false, null);
     }
 
     return b;
@@ -785,15 +776,7 @@ public final class AWTImageTools {
       byte[][] b = new byte[s.length][s[0].length * 2];
       for (int i=0; i<b.length; i++) {
         for (int j=0; j<s[0].length; j++) {
-          short v = s[i][j];
-          if (little) {
-            b[i][j*2] = (byte) (v & 0xff);
-            b[i][j*2+1] = (byte) ((v >>> 8) & 0xff);
-          }
-          else {
-            b[i][j*2] = (byte) ((v >>> 8) & 0xff);
-            b[i][j*2+1] = (byte) (v & 0xff);
-          }
+          DataTools.unpackShort(s[i][j], b[i], j * 2, little);
         }
       }
       return b;
@@ -822,19 +805,7 @@ public final class AWTImageTools {
         b = new byte[in.length][in[0].length * 4];
         for (int i=0; i<b.length; i++) {
           for (int j=0; j<in[0].length; j++) {
-            int v = in[i][j];
-            if (little) {
-              b[i][j*4] = (byte) (v & 0xff); b[i][j*4+1] =
-                (byte) ((v >> 8) & 0xff);
-              b[i][j*4+2] = (byte) ((v >> 16) & 0xff);
-              b[i][j*4+3] = (byte) ((v >> 24) & 0xff);
-            }
-            else {
-              b[i][j*4] = (byte) ((v >> 24) & 0xff);
-              b[i][j*4+1] = (byte) ((v >> 16) & 0xff);
-              b[i][j*4+2] = (byte) ((v >> 8) & 0xff);
-              b[i][j*4+3] = (byte) (v & 0xff);
-            }
+            DataTools.unpackBytes(in[i][j], b[i], j * 4, 4, little);
           }
         }
       }
@@ -846,24 +817,21 @@ public final class AWTImageTools {
       for (int i=0; i<b.length; i++) {
         for (int j=0; j<in[0].length; j++) {
           int v = Float.floatToIntBits(in[i][j]);
-          if (little) {
-            b[i][j*4] = (byte) (v & 0xff);
-            b[i][j*4+1] = (byte) ((v >> 8) & 0xff);
-            b[i][j*4+2] = (byte) ((v >> 16) & 0xff);
-            b[i][j*4+3] = (byte) ((v >> 24) & 0xff);
-          }
-          else {
-            b[i][j*4] = (byte) ((v >> 24) & 0xff);
-            b[i][j*4+1] = (byte) ((v >> 16) & 0xff);
-            b[i][j*4+2] = (byte) ((v >> 8) & 0xff);
-            b[i][j*4+3] = (byte) (v & 0xff);
-          }
+          DataTools.unpackBytes(v, b[i], j * 4, 4, little);
         }
       }
       return b;
     }
     else if (pixels instanceof double[][]) {
-
+      double[][] in = (double[][]) pixels;
+      byte[][] b = new byte[in.length][in[0].length * 8];
+      for (int i=0; i<b.length; i++) {
+        for (int j=0; j<in[0].length; j++) {
+          long v = Double.doubleToLongBits(in[i][j]);
+          DataTools.unpackBytes(v, b[i], j * 8, 8, little);
+        }
+      }
+      return b;
     }
     return null;
   }
@@ -1459,7 +1427,7 @@ public final class AWTImageTools {
   // -- Color model --
 
   /** Gets a color space for the given number of color components. */
-  public static ColorModel makeColorModel(int c, int dataType) {
+  public static ColorSpace makeColorSpace(int c) {
     int type;
     switch (c) {
       case 1:
@@ -1477,7 +1445,12 @@ public final class AWTImageTools {
       default:
         return null;
     }
-    return new ComponentColorModel(TwoChannelColorSpace.getInstance(type),
+    return TwoChannelColorSpace.getInstance(type);
+  }
+
+  /** Gets a color model for the given number of color components. */
+  public static ColorModel makeColorModel(int c, int dataType) {
+    return new ComponentColorModel(makeColorSpace(c),
       c == 4, false, ColorModel.TRANSLUCENT, dataType);
   }
 
