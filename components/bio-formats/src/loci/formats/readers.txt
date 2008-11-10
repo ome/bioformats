@@ -60,14 +60,13 @@ loci.formats.in.NAFReader             # naf
 loci.formats.in.MINCReader            # mnc
 loci.formats.in.QTReader              # mov
 loci.formats.in.MRWReader             # mrw
+loci.formats.in.TillVisionReader      # vws
 
 # multi-extension messes
 loci.formats.in.APLReader             # apl, mtb, tnb
 loci.formats.in.NRRDReader            # nrrd, nhdr, pic
 loci.formats.in.ICSReader             # ics, ids
 loci.formats.in.PerkinElmerReader     # rec, ano, csv, htm, tim, zpo, 2, 3, ...
-loci.formats.in.TCSReader             # xml, tif
-loci.formats.in.TillVisionReader      # vws
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
@@ -90,6 +89,7 @@ loci.formats.in.FlexReader            # flex
 loci.formats.in.SVSReader             # svs
 
 # TIFF-based readers with slow isThisType
+loci.formats.in.TCSReader             # xml, tif
 loci.formats.in.LeicaReader           # lei, tif
 loci.formats.in.NikonReader           # nef, tif
 loci.formats.in.FluoviewReader        # tif
