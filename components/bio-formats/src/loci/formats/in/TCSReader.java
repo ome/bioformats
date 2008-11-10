@@ -89,7 +89,10 @@ public class TCSReader extends FormatReader {
     }
     if (lei.exists()) return false;
     try {
-      return isThisType(new RandomAccessStream(name));
+      RandomAccessStream s = new RandomAccessStream(name);
+      boolean isThisType = isThisType(s);
+      s.close();
+      return isThisType;
     }
     catch (IOException e) {
       if (debug) LogTools.trace(e);

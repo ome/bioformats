@@ -70,7 +70,10 @@ public class MicromanagerReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA)) {
       try {
-        return new RandomAccessStream(name).length() > 0;
+        RandomAccessStream stream = new RandomAccessStream(name);
+        long length = stream.length();
+        stream.close();
+        return length > 0;
       }
       catch (IOException e) {
         return false;
