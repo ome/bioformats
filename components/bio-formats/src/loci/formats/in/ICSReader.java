@@ -372,18 +372,22 @@ public class ICSReader extends FormatReader {
           else if (k.equalsIgnoreCase("history date")) {
             if (v.indexOf(" ") == -1) continue;
             String date = v.substring(0, v.lastIndexOf(" "));
-            try {
-              date = DataTools.formatDate(date, "EEEE, MMMM dd, yyyy HH:mm:ss");
-            }
-            catch (NullPointerException e) {
+            String[] formats = new String[] {"EEEE, MMMM dd, yyyy HH:mm:ss",
+              "EEE dd MMMM yyyy HH:mm:ss", "EEE MMM dd HH:mm:ss yyyy",
+              "EE dd MMM yyyy HH:mm:ss z"};
+
+            boolean success = false;
+
+            for (int n=0; n<formats.length; n++) {
               try {
-                date = DataTools.formatDate(date, "EEE dd MMMM yyyy HH:mm:ss");
+                date = DataTools.formatDate(date, formats[n]);
+                success = true;
               }
-              catch (NullPointerException exc) {
-                date = DataTools.formatDate(v, "EEE MMM dd HH:mm:ss yyyy");
-              }
+              catch (NullPointerException e) { }
             }
-            store.setImageCreationDate(date, 0);
+
+            if (success) store.setImageCreationDate(date, 0);
+            else MetadataTools.setDefaultCreationDate(store, currentId, 0);
           }
           else if (k.startsWith("history gain")) {
             int n = 0;
