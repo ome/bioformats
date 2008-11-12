@@ -2,7 +2,7 @@
 use strict;
 
 # scan-deps.pl - Scans source code to determine project interdependencies,
-#                as well as dependencies on third party libraries.
+#                as well as dependencies on external libraries.
 
 # This script was used to autogenerate the project dependency documentation in
 # the build.xml file's top-level comment, as well as verify the correctness of
@@ -13,452 +13,256 @@ use strict;
 
 # TODO - Use this script to check build.xml's depends clauses.
 
-# -- DATA STRUCTURES --
+# TODO - Use this script to check Eclipse .classpath dependencies.
 
-# Active LOCI software components
-my @active = (
-  "common",
-  "ome-xml",
-  "bio-formats",
-  "bio-formats-ice",
-  "loci-plugins",
-  "ome-io",
-  "ome-plugins",
-  "visbio",
-  "slim-plotter",
-  "flow-cytometry",
-  "loci-checks",
-  "test-suite",
-);
+use constant {
+  NAME      => 0,  # short name, for ease of reference
+  TITLE     => 1,  # human-friendly title for each component and library
+  PATH      => 2,  # source code path for each component
+  JAR       => 3,  # JAR file name for each component and library
+  PACKAGE   => 4,  # base package for each component and library
+  DESC      => 5,  # description for each component
+  LICENSE   => 6,  # license governing each component and library
+  URL       => 7,  # project URL for each external project (forks & libs)
+  NOTES     => 8,  # important notes for each external project (forks & libs)
+  PROJ_DEPS => 9,  # compile-time project dependencies for each component
+  PROJ_OPT  => 10, # runtime project dependencies for each component
+  LIB_DEPS  => 11, # compile-time library dependencies for each component
+  LIB_OPT   => 12, # runtime library dependencies for each component
+  COMPILE   => 13, # compile-time classpath for each component
+  RUNTIME   => 14, # runtime classpath for each component
+};
 
-# Legacy components (no longer supported)
-my @legacy = (
-  "jvmlink",
-  "multi-lut",
-  "ome-notes",
-  "ome-editor",
-);
+# -- COMPONENT DEFINITIONS - ACTIVE --
 
-# Third party project forks
-my @forks = (
-  "poi",
-  "mdbtools",
-  "jai",
-);
-
-# All LOCI software components
-my @components = (@active, @legacy, @forks);
-
-# Third party libraries
-my @libs = (
-  "AppleJavaExtensions",
-  "ant-contrib",
-  "checkstyle",
-  "commons-httpclient",
-  "commons-logging",
-  "findbugs",
-  "forms",
-  "ice",
-  "ij",
-  "jiio",
-  "junit",
-  "lma",
-  "looks",
-  "netcdf",
-  "netcdf-bufr",
-  "netcdf-grib",
-  "slf4j",
-  "ome-java",
-  "ome-java-deprecated",
-  "omero-client",
-  "omero-common",
-  "omero-importer",
-  "omero-model-psql",
-  "spring",
-  "jboss",
-  "skinlf",
-  "testng",
-  "velocity",
-  "visad",
-  "xmlrpc",
-);
-
-# Human-friendly title for each component and library
-my %titles = (
-  # components - active
-  "bio-formats"     => "Bio-Formats",
-  "bio-formats-ice" => "Bio-Formats Ice framework",
-  "loci-checks"     => "LOCI Checkstyle checks",
-  "common"          => "LOCI Common",
-  "flow-cytometry"  => "WiscScan Flow Cytometry",
-  "loci-plugins"    => "LOCI Plugins for ImageJ",
-  "ome-io"          => "OME I/O",
-  "ome-plugins"     => "OME Plugins for ImageJ",
-  "ome-xml"         => "OME-XML Java library",
-  "slim-plotter"    => "SLIM Plotter",
-  "test-suite"      => "LOCI testing framework",
-  "visbio"          => "VisBio",
-  # components - legacy
-  "jvmlink"         => "JVMLink",
-  "multi-lut"       => "Multi-LUT",
-  "ome-editor"      => "OME Metadata Editor",
-  "ome-notes"       => "OME Notes",
-  # components - forks
-  "jai"             => "JAI Image I/O Tools",
-  "mdbtools"        => "MDB Tools (Java port)",
-  "poi"             => "Apache Jakarta POI",
-  # libraries
-  "AppleJavaExtensions" => "Apple eAWT stubs",
-  "ant-contrib"         => "Ant-Contrib",
-  "checkstyle"          => "Checkstyle",
-  "commons-httpclient"  => "Apache Jakarta Commons HttpClient",
-  "commons-logging"     => "Apache Jakarta Commons Logging",
-  "findbugs"            => "FindBugs Ant task",
-  "forms"               => "JGoodies Forms",
-  "ice"                 => "Ice",
-  "ij"                  => "ImageJ",
-  "jboss"               => "JBoss",
-  "jiio"                => "JAI ImageIO wrapper",
-  "junit"               => "JUnit",
-  "lma"                 => "L-M Fit",
-  "looks"               => "JGoodies Looks",
-  "netcdf"              => "NetCDF",
-  "netcdf-bufr"         => "BUFR Java Decoder",
-  "netcdf-grib"         => "GRIB Java Decoder",
-  "slf4j"               => "Simple Logging Facade for Java",
-  "ome-java"            => "OME-Java",
-  "ome-java-deprecated" => "OME-Java deprecated classes",
-  "omero-client"        => "OMERO Client",
-  "omero-common"        => "OMERO Common",
-  "omero-importer"      => "OMERO Importer",
-  "omero-model-psql"    => "OMERO Model PostgreSQL",
-  "skinlf"              => "Skin Look and Feel",
-  "spring"              => "Spring",
-  "testng"              => "TestNG",
-  "velocity"            => "Apache Velocity",
-  "visad"               => "VisAD",
-  "xmlrpc"              => "Apache XML-RPC",
-);
-
-# Source code path for each component
-my %paths = (
-  # active
-  "bio-formats"     => "components/bio-formats",
-  "bio-formats-ice" => "components/bio-formats-ice",
-  "loci-checks"     => "components/checkstyle",
-  "common"          => "components/common",
-  "flow-cytometry"  => "components/flow-cytometry",
-  "loci-plugins"    => "components/loci-plugins",
-  "ome-io"          => "components/ome-io",
-  "ome-plugins"     => "components/ome-plugins",
-  "ome-xml"         => "components/ome-xml",
-  "slim-plotter"    => "components/slim-plotter",
-  "test-suite"      => "components/test-suite",
-  "visbio"          => "components/visbio",
-  # legacy
-  "jvmlink"         => "components/legacy/jvmlink",
-  "multi-lut"       => "components/legacy/multi-lut",
-  "ome-editor"      => "components/legacy/ome-editor",
-  "ome-notes"       => "components/legacy/ome-notes",
-  # forks
-  "jai"             => "components/forks/jai",
-  "mdbtools"        => "components/forks/mdbtools",
-  "poi"             => "components/forks/poi",
-);
-
-# JAR file name for each component and library
-my %jars = (
-  # components - active
-  "bio-formats"     => "bio-formats.jar",
-  "bio-formats-ice" => "bio-formats-ice.jar",
-  "loci-checks"     => "loci-checks.jar",
-  "common"          => "loci-common.jar",
-  "flow-cytometry"  => "flow-cytometry.jar",
-  "loci-plugins"    => "loci_plugins.jar",
-  "ome-io"          => "ome-io.jar",
-  "ome-plugins"     => "ome_plugins.jar",
-  "ome-xml"         => "ome-xml.jar",
-  "slim-plotter"    => "SlimPlotter.jar",
-  "test-suite"      => "loci-testing-framework.jar",
-  "visbio"          => "visbio.jar",
-  # components - legacy
-  "jvmlink"         => "jvmlink.jar",
-  "multi-lut"       => "MultiLUT.jar",
-  "ome-editor"      => "ome-editor.jar",
-  "ome-notes"       => "ome-notes.jar",
-  # components - forks
-  "jai"             => "jai_imageio.jar",
-  "mdbtools"        => "mdbtools-java.jar",
-  "poi"             => "poi-loci.jar",
-  # libraries
-  "AppleJavaExtensions" => "AppleJavaExtensions.jar",
-  "ant-contrib"         => "ant-contrib-1.0b1.jar",
-  "checkstyle"          => "checkstyle-all-4.2.jar",
-  "commons-httpclient"  => "commons-httpclient-2.0-rc2.jar",
-  "commons-logging"     => "commons-logging.jar",
-  "findbugs"            => "findbugs-ant.jar",
-  "forms"               => "forms-1.0.4.jar",
-  "ice"                 => "Ice-3.2.1.jar",
-  "ij"                  => "ij.jar",
-  "jboss"               => "jbossall-client-4.2.1.GA.jar",
-  "jiio"                => "clibwrapper_jiio.jar",
-  "junit"               => "junit.jar",
-  "lma"                 => "lma.jar",
-  "looks"               => "looks-1.2.2.jar",
-  "netcdf"              => "netcdf-4.0.jar",
-  "netcdf-bufr"         => "bufr-1.1.00.jar",
-  "netcdf-grib"         => "grib-5.1.03.jar",
-  "slf4j"               => "slf4j-jdk14.jar",
-  "ome-java"            => "ome-java.jar",
-  "ome-java-deprecated" => "ome-java-deprecated.jar",
-  "omero-client"        => "omero-client-3.0-Beta3.jar",
-  "omero-common"        => "omero-common-3.0-Beta3.jar",
-  "omero-importer"      => "omero-importer-3.0-Beta3.jar",
-  "omero-model-psql"    => "omero-model-psql-3.0-Beta3.jar",
-  "skinlf"              => "skinlf.jar",
-  "spring"              => "spring-2.5.jar",
-  "testng"              => "testng-5.7-jdk14.jar",
-  "velocity"            => "velocity-dep-1.5.jar",
-  "visad"               => "visad-lite.jar",
-  "xmlrpc"              => "xmlrpc-1.2-b1.jar",
-);
-
-# Base package for each component and library
-my %packages = (
-  # components - active
-  "bio-formats"     => "loci.formats",
-  "bio-formats-ice" => "loci.ice.formats",
-  "loci-checks"     => "loci.checks",
-  "common"          => "loci.common",
-  "flow-cytometry"  => "loci.apps.flow",
-  "loci-plugins"    => "loci.plugins",
-  "ome-io"          => "loci.ome.io",
-  "ome-plugins"     => "loci.plugins.ome",
-  "ome-xml"         => "ome.xml",
-  "slim-plotter"    => "loci.slim",
-  "test-suite"      => "loci.tests",
-  "visbio"          => "loci.visbio",
-  # components - legacy
-  "jvmlink"         => "loci.jvmlink",
-  "multi-lut"       => "loci.apps.MultiLUT",
-  "ome-editor"      => "loci.ome.editor",
-  "ome-notes"       => "loci.ome.notes",
-  # components - forks
-  "jai"             => "com.sun.media.imageioimpl",
-  "mdbtools"        => "mdbtools",
-  "poi"             => "org.apache.poi",
-  # libraries
-  "AppleJavaExtensions" => "com.apple",
-  "ant-contrib"         => "net.sf.antcontrib",
-  "checkstyle"          => "com.puppycrawl.tools.checkstyle",
-  "commons-httpclient"  => "org.apache.commons.httpclient",
-  "commons-logging"     => "org.apache.commons.logging",
-  "findbugs"            => "edu.umd.cs.findbugs.anttask",
-  "forms"               => "com.jgoodies.forms",
-  "ice"                 => "Ice",
-  "ij"                  => "ij",
-  "jboss"               => "org.jboss",
-  "jiio"                => "com.sun.medialib.codec",
-  "junit"               => "junit",
-  "lma"                 => "jaolho.data.lma",
-  "looks"               => "com.jgoodies.plaf",
-  "netcdf"              => "ucar.nc2",
-  "netcdf-bufr"         => "ucar.bufr",
-  "netcdf-grib"         => "ucar.grib",
-  "slf4j"               => "org.slf4j",
-  "ome-java"            => "org.openmicroscopy.[di]s",
-  "ome-java-deprecated" => "org.openmicroscopy.xml",
-  "omero-client"        => "pojos",
-  "omero-common"        => "ome.api",
-  "omero-importer"      => "ome.formats",
-  "omero-model-psql"    => "ome.model",
-  "skinlf"              => "com.l2fprod",
-  "spring"              => "org.spring",
-  "testng"              => "org.testng",
-  "velocity"            => "org.apache.velocity",
-  "visad"               => "visad",
-  "xmlrpc"              => "org.apache.xmlrpc",
-);
-
-# Description for each component
-my %desc = (
-  # active
-  "bio-formats"     => <<ZZ,
+my %bioFormats = (
+  NAME    => "bio-formats",
+  TITLE   => "Bio-Formats",
+  PATH    => "components/bio-formats",
+  JAR     => "bio-formats.jar",
+  PACKAGE => "loci.formats",
+  DESC    => <<ZZ,
 A library for reading and writing popular microscopy file formats
 ZZ
-  "bio-formats-ice" => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %bioFormatsAuto = (
+  NAME    => "bio-formats-auto",
+  TITLE   => "Bio-Formats code generation framework",
+  PATH    => "components/bio-formats-auto",
+  JAR     => "bio-formats-auto.jar",
+  PACKAGE => "loci.formats.auto",
+  DESC    => <<ZZ,
+Code that generates the Bio-Formats metadata API, related documentation and Ice
+bindings
+ZZ
+  LICENSE => "GPL",
+);
+
+my %bioFormatsIce = (
+  NAME    => "bio-formats-ice",
+  TITLE   => "Bio-Formats Ice framework",
+  PATH    => "components/bio-formats-ice",
+  JAR     => "bio-formats-ice.jar",
+  PACKAGE => "loci.ice.formats",
+  DESC    => <<ZZ,
 Bindings for Bio-Formats client/server communication enabling cross-language
 interoperability
 ZZ
-  "loci-checks"     => <<ZZ,
-LOCI's Checkstyle extensions, for checking source code style
-ZZ
-  "common"          => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %lociCommon = (
+  NAME    => "loci-common",
+  TITLE   => "LOCI Common",
+  PATH    => "components/common",
+  JAR     => "loci-common.jar",
+  PACKAGE => "loci.common",
+  DESC    => <<ZZ,
 A library containing common I/O and reflection classes
 ZZ
-  "flow-cytometry"  => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %flowCytometry = (
+  NAME    => "flow-cytometry",
+  TITLE   => "WiscScan Flow Cytometry",
+  PATH    => "components/flow-cytometry",
+  JAR     => "flow-cytometry.jar",
+  PACKAGE => "loci.apps.flow",
+  DESC    => <<ZZ,
 Server application for flow cytometry with WiscScan using JVMLink
 ZZ
-  "loci-plugins"    => <<ZZ,
+  LICENSE => "BSD",
+);
+
+my %lociChecks = (
+  NAME    => "loci-checks",
+  TITLE   => "LOCI Checkstyle checks",
+  PATH    => "components/checkstyle",
+  JAR     => "loci-checks.jar",
+  PACKAGE => "loci.checks",
+  DESC    => <<ZZ,
+LOCI's Checkstyle extensions, for checking source code style
+ZZ
+  LICENSE => "Public domain",
+);
+
+my %lociPlugins = (
+  NAME    => "loci-plugins",
+  TITLE   => "LOCI Plugins for ImageJ",
+  PATH    => "components/loci-plugins",
+  JAR     => "loci_plugins.jar",
+  PACKAGE => "loci.plugins",
+  DESC    => <<ZZ,
 A collection of plugins for ImageJ, including the Bio-Formats Importer,
 Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
 Colorizer and Stack Slicer
 ZZ
-  "ome-io"          => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %omeIO = (
+  NAME    => "ome-io",
+  TITLE   => "OME I/O",
+  PATH    => "components/ome-io",
+  JAR     => "ome-io.jar",
+  PACKAGE => "loci.ome.io",
+  DESC    => <<ZZ,
 A library for OME database import, upload and download
 ZZ
-  "ome-plugins"     => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %omePlugins = (
+  NAME    => "ome-plugins",
+  TITLE   => "OME Plugins for ImageJ",
+  PATH    => "components/ome-plugins",
+  JAR     => "ome_plugins.jar",
+  PACKAGE => "loci.plugins.ome",
+  DESC    => <<ZZ,
 A collection of plugins for ImageJ, including the Download from OME and Upload
 to OME plugins
 ZZ
-  "ome-xml"         => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %omeXML = (
+  NAME    => "ome-xml",
+  TITLE   => "OME-XML Java library",
+  PATH    => "components/ome-xml",
+  JAR     => "ome-xml.jar",
+  PACKAGE => "ome.xml",
+  DESC    => <<ZZ,
 A library for working with OME-XML metadata structures
 ZZ
-  "slim-plotter"    => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %slimPlotter = (
+  NAME    => "slim-plotter",
+  TITLE   => "SLIM Plotter",
+  PATH    => "components/slim-plotter",
+  JAR     => "SlimPlotter.jar",
+  PACKAGE => "loci.slim",
+  DESC    => <<ZZ,
 An application and curve fitting library for visualization and analysis of
 combined spectral lifetime data
 ZZ
-  "test-suite"      => <<ZZ,
+  LICENSE => "GPL",
+);
+
+my %testSuite = (
+  NAME    => "test-suite",
+  TITLE   => "LOCI testing framework",
+  PATH    => "components/test-suite",
+  JAR     => "loci-testing-framework.jar",
+  PACKAGE => "loci.tests",
+  DESC    => <<ZZ,
 Framework for automated and manual testing of the LOCI software packages
 ZZ
-  "visbio"          => <<ZZ,
+  LICENSE => "BSD",
+);
+
+my %visbio = (
+  NAME    => "visbio",
+  TITLE   => "VisBio",
+  PATH    => "components/visbio",
+  JAR     => "visbio.jar",
+  PACKAGE => "loci.visbio",
+  DESC    => <<ZZ,
 A multi-purpose biological analysis tool
 ZZ
-  # legacy
-  "jvmlink"         => <<ZZ,
+  LICENSE => "GPL",
+);
+
+# -- COMPONENT DEFINITIONS - LEGACY --
+
+my %jvmlink = (
+  NAME    => "jvmlink",
+  TITLE   => "JVMLink",
+  PATH    => "components/legacy/jvmlink",
+  JAR     => "jvmlink.jar",
+  PACKAGE => "loci.jvmlink",
+  DESC    => <<ZZ,
 A library for communicating between a Java Virtual Machine and other programs
 (e.g., C++ applications) via IP over localhost (or remotely)
 ZZ
-  "multi-lut"       => <<ZZ,
+  LICENSE => "BSD",
+);
+
+my %multiLUT = (
+  NAME    => "multi-lut",
+  TITLE   => "Multi-LUT",
+  PATH    => "components/legacy/multi-lut",
+  JAR     => "MultiLUT.jar",
+  PACKAGE => "loci.apps",
+  DESC    => <<ZZ,
 A demo application for visually exploring  multi-spectral image data
 ZZ
-  "ome-editor"      => <<ZZ,
+  LICENSE => "Public domain",
+);
+
+my %omeEditor = (
+  NAME    => "ome-editor",
+  TITLE   => "OME Metadata Editor",
+  PATH    => "components/legacy/ome-editor",
+  JAR     => "ome-editor.jar",
+  PACKAGE => "loci.ome.editor",
+  DESC    => <<ZZ,
 An application for exploration and editing of OME-XML and OME-TIFF metadata
 ZZ
-  "ome-notes"       => <<ZZ,
+  LICENSE => "LGPL",
+);
+
+my %omeNotes = (
+  NAME    => "ome-notes",
+  TITLE   => "OME Notes",
+  PATH    => "components/legacy/ome-notes",
+  JAR     => "ome-notes.jar",
+  PACKAGE => "loci.ome.notes",
+  DESC    => <<ZZ,
 A library for flexible organization and presentation of OME-XML metadata within
 a graphical browser and editor interface
 ZZ
-  # forks
-  "jai"             => <<ZZ,
+  LICENSE => "LGPL",
+);
+
+# -- COMPONENT DEFINITIONS - FORKS --
+
+my %jai = (
+  NAME    => "jai",
+  TITLE   => "JAI Image I/O Tools",
+  PATH    => "components/forks/jai",
+  JAR     => "jai_imageio.jar",
+  PACKAGE => "com.sun.media.imageioimpl",
+  DESC    => <<ZZ,
 Java API to handle JPEG and JPEG2000 files
 ZZ
-  "mdbtools"        => <<ZZ,
-Java API to handle Microsoft MDB format (Access)
-ZZ
-  "poi"             => <<ZZ,
-Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
-ZZ
-);
-
-# License governing each component and library
-my %licenses = (
-  # components - active
-  "bio-formats"     => "GPL",
-  "bio-formats-ice" => "GPL",
-  "loci-checks"     => "Public domain",
-  "common"          => "GPL",
-  "flow-cytometry"  => "BSD",
-  "loci-plugins"    => "GPL",
-  "ome-io"          => "GPL",
-  "ome-plugins"     => "GPL",
-  "ome-xml"         => "GPL",
-  "slim-plotter"    => "GPL",
-  "test-suite"      => "BSD",
-  "visbio"          => "GPL",
-  # components - legacy
-  "jvmlink"         => "BSD",
-  "multi-lut"       => "Public domain",
-  "ome-editor"      => "LGPL",
-  "ome-notes"       => "LGPL",
-  # components - forks
-  "jai"             => "BSD",
-  "mdbtools"        => "LGPL",
-  "poi"             => "Apache",
-  # libraries
-  "AppleJavaExtensions" => "BSD",
-  "ant-contrib"         => "Apache",
-  "checkstyle"          => "LGPL",
-  "commons-httpclient"  => "Apache",
-  "commons-logging"     => "Apache",
-  "findbugs"            => "LGPL",
-  "forms"               => "BSD",
-  "ice"                 => "GPL",
-  "ij"                  => "Public domain",
-  "jboss"               => "LGPL",
-  "jiio"                => "BSD",
-  "junit"               => "Common Public License",
-  "lma"                 => "LGPL",
-  "looks"               => "BSD",
-  "netcdf"              => "LGPL",
-  "netcdf-bufr"         => "LGPL",
-  "netcdf-grib"         => "LGPL",
-  "slf4j"               => "BSD",
-  "ome-java"            => "LGPL",
-  "ome-java-deprecated" => "LGPL",
-  "omero-client"        => "GPL",
-  "omero-common"        => "GPL",
-  "omero-importer"      => "GPL",
-  "omero-model-psql"    => "GPL",
-  "skinlf"              => "Custom (BSD-like)",
-  "spring"              => "Apache",
-  "testng"              => "Apache",
-  "velocity"            => "Apache",
-  "visad"               => "LGPL",
-  "xmlrpc"              => "Apache",
-);
-
-# Project URL for each third party project (forks and libraries)
-my %urls = (
-  # components - forks
-  "jai"            => "http://jai-imageio.dev.java.net/",
-  "mdbtools"       => "http://sourceforge.net/forum/".
-                      "message.php?msg_id=2550619",
-  "poi"            => "http://jakarta.apache.org/poi/",
-  # libraries
-  "AppleJavaExtensions" => "http://developer.apple.com/samplecode/".
-                           "AppleJavaExtensions/",
-  "ant-contrib"         => "http://ant-contrib.sourceforge.net/",
-  "checkstyle"          => "http://checkstyle.sourceforge.net/",
-  "commons-httpclient"  => "http://jakarta.apache.org/commons/httpclient/",
-  "commons-logging"     => "http://jakarta.apache.org/commons/logging/",
-  "findbugs"            => "http://findbugs.sourceforge.net/",
-  "forms"               => "http://www.jgoodies.com/freeware/forms/index.html",
-  "ice"                 => "http://www.zeroc.com/ice.html",
-  "ij"                  => "http://rsb.info.nih.gov/ij/",
-  "jboss"               => "http://www.jboss.org/",
-  "jiio"                => "https://jai-imageio.dev.java.net/",
-  "junit"               => "http://www.junit.org/",
-  "lma"                 => "http://users.utu.fi/jaolho/",
-  "looks"               => "http://www.jgoodies.com/freeware/looks/index.html",
-  "netcdf"              => "http://www.unidata.ucar.edu/software/netcdf-java/",
-  "netcdf-bufr"         => "http://www.unidata.ucar.edu/software/netcdf-java/",
-  "netcdf-grib"         => "http://www.unidata.ucar.edu/software/netcdf-java/",
-  "slf4j"               => "http://www.slf4j.org/",
-  "ome-java"            => "http://www.openmicroscopy.org/site/documents/".
-                           "data-management/ome-server/developer/java-api",
-  "ome-java-deprecated" => "http://www.openmicroscopy.org/site/documents/".
-                           "data-management/ome-server/developer/java-api",
-  "omero-client"        => "http://trac.openmicroscopy.org.uk/omero/wiki/".
-                           "MilestoneDownloads",
-  "omero-common"        => "http://trac.openmicroscopy.org.uk/omero/wiki/".
-                           "MilestoneDownloads",
-  "omero-importer"      => "http://trac.openmicroscopy.org.uk/omero/wiki/".
-                           "MilestoneDownloads",
-  "omero-model-psql"    => "http://trac.openmicroscopy.org.uk/omero/wiki/".
-                           "MilestoneDownloads",
-  "skinlf"              => "http://skinlf.l2fprod.com/",
-  "spring"              => "http://springframework.org",
-  "testng"              => "http://testng.org/",
-  "velocity"            => "http://velocity.apache.org/",
-  "visad"               => "http://www.ssec.wisc.edu/~billh/visad.html",
-  "xmlrpc"              => "http://ws.apache.org/xmlrpc/",
-);
-
-# Important notes for each third party project (forks and libraries)
-my %notes = (
-  # components - forks
-  "jai"                 => <<ZZ,
+  LICENSE => "BSD",
+  URL     => "http://jai-imageio.dev.java.net/",
+  NOTES   => <<ZZ,
 Used by Bio-Formats to read images compressed with JPEG2000 and lossless JPEG.
 Modified from the 2008-10-14 source to include support for the YCbCr color
 space. Several files in the com.sun.media.jai packages were removed, as they
@@ -466,133 +270,494 @@ are not needed by Bio-Formats, and created an additional dependency. This
 component will be removed once our changes have been added to the official JAI
 CVS repository.
 ZZ
-  "mdbtools"            => <<ZZ,
+);
+
+my %mdbtools = (
+  NAME    => "mdbtools",
+  TITLE   => "MDB Tools (Java port)",
+  PATH    => "components/forks/mdbtools",
+  JAR     => "mdbtools-java.jar",
+  PACKAGE => "mdbtools",
+  DESC    => <<ZZ,
+Java API to handle Microsoft MDB format (Access)
+ZZ
+  LICENSE => "LGPL",
+  URL     => "http://sourceforge.net/forum/message.php?msg_id=2550619",
+  NOTES   => <<ZZ,
 Used by Bio-Formats for Zeiss LSM metadata in MDB files.
 ZZ
-  "poi"                 => <<ZZ,
+);
+
+my %poi = (
+  NAME    => "poi",
+  TITLE   => "Apache Jakarta POI",
+  PATH    => "components/forks/poi",
+  JAR     => "poi-loci.jar",
+  PACKAGE => "org.apache.poi",
+  DESC    => <<ZZ,
+Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
+ZZ
+  LICENSE => "Apache",
+  URL     => "http://jakarta.apache.org/poi/",
+  NOTES   => <<ZZ,
 Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2 and memory
 efficiency improvements. Used by Bio-Formats for OLE support (cxd, ipw, oib,
 zvi). Used by VisBio overlays logic for XLS export feature.
 ZZ
-  # libraries
-  "AppleJavaExtensions" => <<ZZ,
+);
+
+# -- LIBRARY DEFINITIONS --
+
+my %appleJavaExtensions = (
+  NAME    => "AppleJavaExtensions",
+  TITLE   => "Apple eAWT stubs",
+  JAR     => "AppleJavaExtensions.jar",
+  PACKAGE => "com.apple",
+  LICENSE => "BSD",
+  URL     => "http://developer.apple.com/samplecode/AppleJavaExtensions/",
+  NOTES   => <<ZZ,
 required to compile VisBio on non-Mac OS X machines
 ZZ
-  "ant-contrib"         => <<ZZ,
+);
+
+my %antContrib = (
+  NAME    => "ant-contrib",
+  TITLE   => "Ant-Contrib",
+  JAR     => "ant-contrib-1.0b1.jar",
+  PACKAGE => "net.sf.antcontrib",
+  LICENSE => "Apache",
+  URL     => "http://ant-contrib.sourceforge.net/",
+  NOTES   => <<ZZ,
 used by tools target to iterate over JAR files ("for" task)
 ZZ
-  "checkstyle"          => <<ZZ,
+);
+
+my %checkstyle = (
+  NAME    => "checkstyle",
+  TITLE   => "Checkstyle",
+  JAR     => "checkstyle-all-4.2.jar",
+  PACKAGE => "com.puppycrawl.tools.checkstyle",
+  LICENSE => "LGPL",
+  URL     => "http://checkstyle.sourceforge.net/",
+  NOTES   => <<ZZ,
 used by style targets to check source code style conventions
 ZZ
-  "commons-httpclient"  => <<ZZ,
+);
+
+my %commonsHTTPClient = (
+  NAME    => "commons-httpclient",
+  TITLE   => "Apache Jakarta Commons HttpClient",
+  JAR     => "commons-httpclient-2.0-rc2.jar",
+  PACKAGE => "org.apache.commons.httpclient",
+  LICENSE => "Apache",
+  URL     => "http://jakarta.apache.org/commons/httpclient/",
+  NOTES   => <<ZZ,
 required for OME-Java to communicate with OME servers
 ZZ
-  "commons-logging"     => <<ZZ,
+);
+
+my %commonsLogging = (
+  NAME    => "commons-logging",
+  TITLE   => "Apache Jakarta Commons Logging",
+  JAR     => "commons-logging.jar",
+  PACKAGE => "org.apache.commons.logging",
+  LICENSE => "Apache",
+  URL     => "http://jakarta.apache.org/commons/logging/",
+  NOTES   => <<ZZ,
 used by OME-Java
 ZZ
-  "findbugs"            => <<ZZ,
+);
+
+my %findbugs = (
+  NAME    => "findbugs",
+  TITLE   => "FindBugs Ant task",
+  JAR     => "findbugs-ant.jar",
+  PACKAGE => "edu.umd.cs.findbugs.anttask",
+  LICENSE => "LGPL",
+  URL     => "http://findbugs.sourceforge.net/",
+  NOTES   => <<ZZ,
 used by findbugs Ant target to check for program bugs
 ZZ
-  "forms"               => <<ZZ,
+);
+
+my %forms = (
+  NAME    => "forms",
+  TITLE   => "JGoodies Forms",
+  JAR     => "forms-1.0.4.jar",
+  PACKAGE => "com.jgoodies.forms",
+  LICENSE => "BSD",
+  URL     => "http://www.jgoodies.com/freeware/forms/index.html",
+  NOTES   => <<ZZ,
 used for layout by VisBio, Data Browser and OME Notes
 ZZ
-  "ice"                 => <<ZZ,
+);
+
+my %ice = (
+  NAME    => "ice",
+  TITLE   => "Ice",
+  JAR     => "Ice-3.2.1.jar",
+  PACKAGE => "Ice",
+  LICENSE => "GPL",
+  URL     => "http://www.zeroc.com/ice.html",
+  NOTES   => <<ZZ,
 used by Bio-Formats Ice framework
 ZZ
-  "ij"                  => <<ZZ,
+);
+
+my %ij = (
+  NAME    => "ij",
+  TITLE   => "ImageJ",
+  JAR     => "ij.jar",
+  PACKAGE => "ij",
+  LICENSE => "Public domain",
+  URL     => "http://rsb.info.nih.gov/ij/",
+  NOTES   => <<ZZ,
 used by LOCI plugins for ImageJ and OME plugins for ImageJ; bundled with VisBio
 to achieve ImageJ interconnectivity
 ZZ
-  "jboss"               => <<ZZ,
+);
+
+my %jboss = (
+  NAME    => "jboss",
+  TITLE   => "JBoss",
+  JAR     => "jbossall-client-4.2.1.GA.jar",
+  PACKAGE => "org.jboss",
+  LICENSE => "LGPL",
+  URL     => "http://www.jboss.org/",
+  NOTES   => <<ZZ,
 used by the OMERO libraries
 ZZ
-  "jiio"                => <<ZZ,
+);
+
+my %jiio = (
+  NAME    => "jiio",
+  TITLE   => "JAI ImageIO wrapper",
+  JAR     => "clibwrapper_jiio.jar",
+  PACKAGE => "com.sun.medialib.codec",
+  LICENSE => "BSD",
+  URL     => "https://jai-imageio.dev.java.net/",
+  NOTES   => <<ZZ,
 used by Bio-Formats via reflection for JPEG2000 support (ND2, JP2) and lossless
 JPEG decompression (DICOM)
 ZZ
-  "junit"               => <<ZZ,
+);
+
+my %junit = (
+  NAME    => "junit",
+  TITLE   => "JUnit",
+  JAR     => "junit.jar",
+  PACKAGE => "junit",
+  LICENSE => "Common Public License",
+  URL     => "http://www.junit.org/",
+  NOTES   => <<ZZ,
 unit testing framework used for a few VisBio unit tests
 ZZ
-  "lma"                 => <<ZZ,
+);
+
+my %lma = (
+  NAME    => "lma",
+  TITLE   => "L-M Fit",
+  JAR     => "lma.jar",
+  PACKAGE => "jaolho.data.lma",
+  LICENSE => "LGPL",
+  URL     => "http://users.utu.fi/jaolho/",
+  NOTES   => <<ZZ,
 Levenberg-Marquardt algorithm for exponential curve fitting, used by SLIM
 Plotter
 ZZ
-  "looks"               => <<ZZ,
+);
+
+my %looks = (
+  NAME    => "looks",
+  TITLE   => "JGoodies Looks",
+  JAR     => "looks-1.2.2.jar",
+  PACKAGE => "com.jgoodies.plaf",
+  LICENSE => "BSD",
+  URL     => "http://www.jgoodies.com/freeware/looks/index.html",
+  NOTES   => <<ZZ,
 used for a nicer Look & Feel by VisBio and OME Metadata Editor
 ZZ
-  "netcdf"              => <<ZZ,
+);
+
+my %netcdf = (
+  NAME    => "netcdf",
+  TITLE   => "NetCDF",
+  JAR     => "netcdf-4.0.jar",
+  PACKAGE => "ucar.nc2",
+  LICENSE => "LGPL",
+  URL     => "http://www.unidata.ucar.edu/software/netcdf-java/",
+  NOTES   => <<ZZ,
 used by Bio-Formats via reflection for HDF support (Imaris 5.5)
 ZZ
-  "netcdf-bufr"         => <<ZZ,
+);
+
+my %netcdfBufr = (
+  NAME    => "netcdf-bufr",
+  TITLE   => "BUFR Java Decoder",
+  JAR     => "bufr-1.1.00.jar",
+  PACKAGE => "ucar.bufr",
+  LICENSE => "LGPL",
+  URL     => "http://www.unidata.ucar.edu/software/netcdf-java/",
+  NOTES   => <<ZZ,
 used by NetCDF library
 ZZ
-  "netcdf-grib"         => <<ZZ,
+);
+
+my %netcdfGrib = (
+  NAME    => "netcdf-grib",
+  TITLE   => "GRIB Java Decoder",
+  JAR     => "grib-5.1.03.jar",
+  PACKAGE => "ucar.grib",
+  LICENSE => "LGPL",
+  URL     => "http://www.unidata.ucar.edu/software/netcdf-java/",
+  NOTES   => <<ZZ,
 used by NetCDF library
 ZZ
-  "slf4j"               => <<ZZ,
-used by NetCDF library
-ZZ
-  "ome-java"            => <<ZZ,
+);
+
+my %omeJava = (
+  NAME    => "ome-java",
+  TITLE   => "OME-Java",
+  JAR     => "ome-java.jar",
+  PACKAGE => "org.openmicroscopy.[di]s",
+  LICENSE => "LGPL",
+  URL     => "http://www.openmicroscopy.org/site/documents/data-management/".
+             "ome-server/developer/java-api",
+  NOTES   => <<ZZ,
 used by OME I/O to connect to OME servers
 ZZ
-  "ome-java-deprecated" => <<ZZ,
+);
+
+my %omeJavaDeprecated = (
+  NAME    => "ome-java-deprecated",
+  TITLE   => "OME-Java deprecated classes",
+  JAR     => "ome-java-deprecated.jar",
+  PACKAGE => "org.openmicroscopy.xml",
+  LICENSE => "LGPL",
+  URL     => "http://www.openmicroscopy.org/site/documents/data-management/".
+             "ome-server/developer/java-api",
+  NOTES   => <<ZZ,
 used by OME Notes and OME Metadata Editor to work with OME-XML
 ZZ
-  "omero-client"        => <<ZZ,
+);
+
+my %omeroClient = (
+  NAME    => "omero-client",
+  TITLE   => "OMERO Client",
+  JAR     => "omero-client-3.0-Beta3.jar",
+  PACKAGE => "pojos",
+  LICENSE => "GPL",
+  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
+  NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  "omero-common"        => <<ZZ,
+);
+
+my %omeroCommon = (
+  NAME    => "omero-common",
+  TITLE   => "OMERO Common",
+  JAR     => "omero-common-3.0-Beta3.jar",
+  PACKAGE => "ome.api",
+  LICENSE => "GPL",
+  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
+  NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  "omero-importer"      => <<ZZ,
+);
+
+my %omeroImporter = (
+  NAME    => "omero-importer",
+  TITLE   => "OMERO Importer",
+  JAR     => "omero-importer-3.0-Beta3.jar",
+  PACKAGE => "ome.formats",
+  LICENSE => "GPL",
+  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
+  NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  "omero-model-psql"    => <<ZZ,
+);
+
+my %omeroModelPSQL = (
+  NAME    => "omero-model-psql",
+  TITLE   => "OMERO Model PostgreSQL",
+  JAR     => "omero-model-psql-3.0-Beta3.jar",
+  PACKAGE => "ome.model",
+  LICENSE => "GPL",
+  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
+  NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  "skinlf"              => <<ZZ,
+);
+
+my %skinlf = (
+  NAME    => "skinlf",
+  TITLE   => "Skin Look and Feel",
+  JAR     => "skinlf.jar",
+  PACKAGE => "com.l2fprod",
+  LICENSE => "Custom (BSD-like)",
+  URL     => "http://skinlf.l2fprod.com/",
+  NOTES   => <<ZZ,
 not used (may be used in the future for flexible skinning)
 ZZ
-  "spring"              => <<ZZ,
+);
+
+my %slf4j = (
+  NAME    => "slf4j",
+  TITLE   => "Simple Logging Facade for Java",
+  JAR     => "slf4j-jdk14.jar",
+  PACKAGE => "org.slf4j",
+  LICENSE => "BSD",
+  URL     => "http://www.slf4j.org/",
+  NOTES   => <<ZZ,
+used by NetCDF library
+ZZ
+);
+
+my %spring = (
+  NAME    => "spring",
+  TITLE   => "Spring",
+  JAR     => "spring-2.5.jar",
+  PACKAGE => "org.spring",
+  LICENSE => "Apache",
+  URL     => "http://springframework.org",
+  NOTES   => <<ZZ,
 used by the OMERO libraries
 ZZ
-  "testng"              => <<ZZ,
+);
+
+my %testng = (
+  NAME    => "testng",
+  TITLE   => "TestNG",
+  JAR     => "testng-5.7-jdk14.jar",
+  PACKAGE => "org.testng",
+  LICENSE => "Apache",
+  URL     => "http://testng.org/",
+  NOTES   => <<ZZ,
 testing framework used for LOCI software automated test suite
 ZZ
-  "velocity"            => <<ZZ,
+);
+
+my %velocity = (
+  NAME    => "velocity",
+  TITLE   => "Apache Velocity",
+  JAR     => "velocity-dep-1.5.jar",
+  PACKAGE => "org.apache.velocity",
+  LICENSE => "Apache",
+  URL     => "http://velocity.apache.org/",
+  NOTES   => <<ZZ,
 used to autogenerate the loci.formats.meta and loci.formats.ome Bio-Formats
 packages
 ZZ
-  "visad"               => <<ZZ,
+);
+
+my %visad = (
+  NAME    => "visad",
+  TITLE   => "VisAD",
+  JAR     => "visad-lite.jar",
+  PACKAGE => "visad",
+  LICENSE => "LGPL",
+  URL     => "http://www.ssec.wisc.edu/~billh/visad.html",
+  NOTES   => <<ZZ,
 stripped down VisAD library used by VisBio and SLIM Plotter for interactive
 visualization
 ZZ
-  "xmlrpc"              => <<ZZ,
+);
+
+my %xmlrpc = (
+  NAME    => "xmlrpc",
+  TITLE   => "Apache XML-RPC",
+  JAR     => "xmlrpc-1.2-b1.jar",
+  PACKAGE => "org.apache.xmlrpc",
+  LICENSE => "Apache",
+  URL     => "http://ws.apache.org/xmlrpc/",
+  NOTES   => <<ZZ,
 used by OME-Java library to communicate with OME servers
 ZZ
 );
 
-my %projectDeps = ();
-my %projectOpt = ();
+# -- DATA STRUCTURES --
 
-my %libraryDeps = ();
-my %libraryOpt = ();
+# List of active LOCI software components
+my @active = (
+  \%lociCommon,
+  \%omeXML,
+  \%bioFormats,
+#  \%bioFormatsAuto,
+  \%bioFormatsIce,
+  \%lociPlugins,
+  \%omeIO,
+  \%omePlugins,
+  \%visbio,
+  \%slimPlotter,
+  \%flowCytometry,
+  \%lociChecks,
+  \%testSuite,
+);
 
-my %compileCP = ();
-my %runtimeCP = ();
+# List of legacy components (no longer supported)
+my @legacy = (
+  \%jvmlink,
+  \%multiLUT,
+  \%omeNotes,
+  \%omeEditor,
+);
+
+# List of external project forks
+my @forks = (
+  \%poi,
+  \%mdbtools,
+  \%jai,
+);
+
+# List of all LOCI software components
+my @components = (@active, @legacy, @forks);
+
+# List of external libraries
+my @libs = (
+  \%appleJavaExtensions,
+  \%antContrib,
+  \%checkstyle,
+  \%commonsHTTPClient,
+  \%commonsLogging,
+  \%findbugs,
+  \%forms,
+  \%ice,
+  \%ij,
+  \%jiio,
+  \%junit,
+  \%lma,
+  \%looks,
+  \%netcdf,
+  \%netcdfBufr,
+  \%netcdfGrib,
+  \%slf4j,
+  \%omeJava,
+  \%omeJavaDeprecated,
+  \%omeroClient,
+  \%omeroCommon,
+  \%omeroImporter,
+  \%omeroModelPSQL,
+  \%spring,
+  \%jboss,
+  \%skinlf,
+  \%testng,
+  \%velocity,
+  \%visad,
+  \%xmlrpc,
+);
 
 # -- DATA COLLECTION --
 
 # verify that all JAR files exist -- if not, this file is probably out of date
 print STDERR "--== VERIFYING JAR FILE EXISTENCE ==--\n\n";
 foreach my $c (@components) {
-  my $jar = $jars{$c};
+  my $jar = $$c{JAR};
   unless (-e "artifacts/$jar") {
     die "Component $jar does not exist";
   }
 }
 foreach my $l (@libs) {
-  my $jar = $jars{$l};
+  my $jar = $$l{JAR};
   unless (-e "jar/$jar") {
     die "Library $jar does not exist";
   }
@@ -601,14 +766,14 @@ foreach my $l (@libs) {
 # scan for project dependencies
 print STDERR "--== SCANNING PROJECT DEPENDENCIES ==--\n\n";
 foreach my $c (@components) {
-  my $path = $paths{$c};
-  print STDERR "[$titles{$c}]\n";
+  my $path = $$c{PATH};
+  print STDERR "[$$c{TITLE}]\n";
   my @deps = ();
   my @opt = ();
   foreach my $c2 (@components) {
     if ($c eq $c2) { next; }
-    my $name = $titles{$c2};
-    my $package = $packages{$c2};
+    my $name = $$c2{TITLE};
+    my $package = $$c2{PACKAGE};
     if (checkDirect($package, $path)) {
       push (@deps, $c2);
       print STDERR "$name\n";
@@ -618,8 +783,8 @@ foreach my $c (@components) {
       print STDERR "$name (reflected)\n";
     }
   }
-  $projectDeps{$c} = \@deps;
-  $projectOpt{$c} = \@opt;
+  $$c{PROJ_DEPS} = \@deps;
+  $$c{PROJ_OPT} = \@opt;
   print STDERR "\n";
 }
 
@@ -627,11 +792,11 @@ print STDERR "--== SCANNING LIBRARY DEPENDENCIES ==--\n\n";
 foreach my $c (@components) {
   my @deps = ();
   my @opt = ();
-  my $path = $paths{$c};
-  print STDERR "[$titles{$c}]\n";
+  my $path = $$c{PATH};
+  print STDERR "[$$c{TITLE}]\n";
   foreach my $l (@libs) {
-    my $name = $titles{$l};
-    my $package = $packages{$l};
+    my $name = $$l{TITLE};
+    my $package = $$l{PACKAGE};
     if (checkDirect($package, $path)) {
       push (@deps, $l);
       print STDERR "$name\n";
@@ -641,16 +806,16 @@ foreach my $c (@components) {
       print STDERR "$name (reflected)\n";
     }
   }
-  $libraryDeps{$c} = \@deps;
-  $libraryOpt{$c} = \@opt;
+  $$c{LIB_DEPS} = \@deps;
+  $$c{LIB_OPT} = \@opt;
   print STDERR "\n";
 }
 
 print STDERR "--== GATHERING COMPONENT CLASSPATHS ==--\n\n";
 foreach my $c (@components) {
-  my $path = $paths{$c};
+  my $path = $$c{PATH};
 
-  # read
+  # read compile-time and runtime classpaths from properties file
   open FILE, "$path/build.properties" or die $!;
   my @lines = <FILE>;
   close(FILE);
@@ -687,73 +852,92 @@ foreach my $c (@components) {
       }
     }
   }
-  $compileCP{$c} = \@compile;
-  $runtimeCP{$c} = \@runtime;
+  $$c{COMPILE} = \@compile;
+  $$c{RUNTIME} = \@runtime;
 }
 
 print STDERR "--== VERIFYING CLASSPATH MATCHES ==--\n\n";
 foreach my $c (@components) {
-  my @projDeps = @{$projectDeps{$c}};
-  my @libDeps = @{$libraryDeps{$c}};
-  my @projOpt = @{$projectOpt{$c}};
-  my @libOpt = @{$libraryOpt{$c}};
+  my @projDeps = @{$$c{PROJ_DEPS}};
+  my @libDeps = @{$$c{LIB_DEPS}};
+  my @projOpt = @{$$c{PROJ_OPT}};
+  my @libOpt = @{$$c{LIB_OPT}};
 
   # verify compile-time classpath
   my @deps = (@projDeps, @libDeps);
-  my @cp = @{$compileCP{$c}};
+  my @cp = @{$$c{COMPILE}};
+  my $name = $$c{TITLE};
+  my $compileError = 0;
   if (@deps != @cp) {
-    print STDERR "Dependency mismatch for $c compile time classpath:\n";
-    print STDERR "  project deps        = @projDeps\n";
-    print STDERR "  library deps        = @libDeps\n";
-    print STDERR "  component.classpath = @cp\n";
-    print STDERR "\n";
+    print STDERR "Dependency mismatch for $name compile time classpath:\n";
+    $compileError = 1;
   }
   else {
     for (my $i = 0; $i < @cp; $i++) {
       my $dep = $deps[$i];
       my $cpJar = $cp[$i];
       my $prefix = $i < @projDeps ? '${artifact.dir}' : '${lib.dir}';
-      my $depJar = "$prefix/$jars{$dep}";
+      my $depJar = "$prefix/$$dep{JAR}";
       if ($cpJar ne $depJar) {
-        print STDERR "Dependency mismatch for $c compile time classpath:\n";
+        print STDERR "Dependency mismatch for $name compile time classpath:\n";
         print STDERR "  #$i: $depJar != $cpJar\n";
-        print STDERR "  project deps        = @projDeps\n";
-        print STDERR "  library deps        = @libDeps\n";
-        print STDERR "  component.classpath = @cp\n";
-        print STDERR "\n";
+        $compileError = 1;
         last;
       }
     }
   }
+  if ($compileError) {
+    print STDERR "  project deps        =";
+    foreach my $q (@projDeps) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  library deps        =";
+    foreach my $q (@libDeps) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  component.classpath = @cp\n";
+    print STDERR "\n";
+  }
   # verify runtime classpath
   @deps = (@projDeps, @projOpt, @libDeps, @libOpt);
-  @cp = @{$runtimeCP{$c}};
+  @cp = @{$$c{RUNTIME}};
+  my $runtimeError = 0;
   if (@deps != @cp) {
-    print STDERR "Dependency mismatch for $c runtime classpath:\n";
-    print STDERR "  project deps          = @projDeps\n";
-    print STDERR "  reflected projects    = @projOpt\n";
-    print STDERR "  library deps          = @libDeps\n";
-    print STDERR "  reflected libraries   = @libOpt\n";
-    print STDERR "  component.manifest-cp = @cp\n";
-    print STDERR "\n";
+    print STDERR "Dependency mismatch for $$c{TITLE} runtime classpath:\n";
+    $runtimeError = 1;
   }
   else {
     for (my $i = 0; $i < @cp; $i++) {
       my $dep = $deps[$i];
       my $cpJar = $cp[$i];
-      my $depJar = $jars{$dep};
+      my $depJar = $$dep{JAR};
       if ($cpJar ne $depJar) {
         print STDERR "Dependency mismatch for $c runtime classpath:\n";
         print STDERR "  #$i: $depJar != $cpJar\n";
-        print STDERR "  project deps          = @projDeps\n";
-        print STDERR "  reflected projects    = @projOpt\n";
-        print STDERR "  library deps          = @libDeps\n";
-        print STDERR "  reflected libraries   = @libOpt\n";
-        print STDERR "  component.manifest-cp = @cp\n";
-        print STDERR "\n";
+        $runtimeError = 1;
         last;
       }
     }
+  }
+  if ($runtimeError) {
+    print STDERR "  project deps          =";
+    foreach my $q (@projDeps) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  reflected projects    =";
+    foreach my $q (@projOpt) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  library deps          =";
+    foreach my $q (@libDeps) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  reflected libraries   =";
+    foreach my $q (@libOpt) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  component.manifest-cp = @cp\n";
+    print STDERR "\n";
   }
 }
 
@@ -772,40 +956,40 @@ print "For more information on a component, see the\n";
 print "build.properties file in that component's subtree.\n";
 print "Run ./scan-deps.pl to programmatically generate this list.\n\n";
 foreach my $c (@active) {
-  print "$titles{$c}\n";
-  smartSplit("    ", " ", split(/[ \n]/, $desc{$c}));
+  print "$$c{TITLE}\n";
+  smartSplit("    ", " ", split(/[ \n]/, $$c{DESC}));
   print "    -=-\n";
-  print "    JAR file:      $jars{$c}\n";
-  print "    Path:          $paths{$c}\n";
+  print "    JAR file:      $$c{JAR}\n";
+  print "    Path:          $$c{PATH}\n";
 
   my $lead = "                   ";
 
-  my @projDeps = @{$projectDeps{$c}};
+  my @projDeps = @{$$c{PROJ_DEPS}};
   my @prettyDeps = ();
   foreach my $q (@projDeps) {
-    push(@prettyDeps, $titles{$q});
+    push(@prettyDeps, $$q{TITLE});
   }
   smartSplit("    Project deps:  ", ", ", @prettyDeps);
 
-  my @libDeps = @{$libraryDeps{$c}};
+  my @libDeps = @{$$c{LIB_DEPS}};
   @prettyDeps = ();
   foreach my $q (@libDeps) {
-    push(@prettyDeps, $titles{$q});
+    push(@prettyDeps, $$q{TITLE});
   }
   smartSplit("    Library deps:  ", ", ", @prettyDeps);
 
-  my @projOpt = @{$projectOpt{$c}};
+  my @projOpt = @{$$c{PROJ_OPT}};
   my @prettyOpt = ();
   foreach my $q (@projOpt) {
-    push(@prettyOpt, $titles{$q});
+    push(@prettyOpt, $$q{TITLE});
   }
-  my @libOpt = @{$libraryOpt{$c}};
+  my @libOpt = @{$$c{LIB_OPT}};
   foreach my $q (@libOpt) {
-    push(@prettyOpt, $titles{$q});
+    push(@prettyOpt, $$q{TITLE});
   }
   smartSplit("    Optional:      ", ", ", @prettyOpt);
 
-  print "    License:       $licenses{$c}\n";
+  print "    License:       $$c{LICENSE}\n";
   print "\n";
 }
 
@@ -814,29 +998,29 @@ print "$div";
 print "The following components are considered \"legacy\" but still " .
       "available:\n\n";
 foreach my $c (@legacy) {
-  print "$titles{$c}\n";
-  smartSplit("    ", " ", split(/[ \n]/, $desc{$c}));
+  print "$$c{TITLE}\n";
+  smartSplit("    ", " ", split(/[ \n]/, $$c{DESC}));
   print "    -=-\n";
-  print "    JAR file:      $jars{$c}\n";
-  print "    Path:          $paths{$c}\n";
+  print "    JAR file:      $$c{JAR}\n";
+  print "    Path:          $$c{PATH}\n";
 
   my $lead = "                   ";
 
-  my @deps = @{$projectDeps{$c}};
+  my @deps = @{$$c{PROJ_DEPS}};
   my @prettyDeps = ();
   foreach my $q (@deps) {
-    push(@prettyDeps, $titles{$q});
+    push(@prettyDeps, $$q{TITLE});
   }
   smartSplit("    Project deps:  ", ", ", @prettyDeps);
 
-  my @opt = @{$projectOpt{$c}};
+  my @opt = @{$$c{PROJ_OPT}};
   my @prettyOpt = ();
   foreach my $q (@opt) {
-    push(@prettyOpt, $titles{$q});
+    push(@prettyOpt, $$q{TITLE});
   }
   smartSplit("    Optional:      ", ", ", @prettyOpt);
 
-  print "    License:       $licenses{$c}\n";
+  print "    License:       $$c{LICENSE}\n";
   print "\n";
 }
 
@@ -844,29 +1028,29 @@ foreach my $c (@legacy) {
 print "$div";
 print "The following components are forks of third party projects:\n\n";
 foreach my $c (@forks) {
-  print "$titles{$c}\n";
-  smartSplit("    ", " ", split(/[ \n]/, $desc{$c}));
+  print "$$c{TITLE}\n";
+  smartSplit("    ", " ", split(/[ \n]/, $$c{DESC}));
   print "    -=-\n";
-  print "    JAR file:      $jars{$c}\n";
-  print "    Path:          $paths{$c}\n";
+  print "    JAR file:      $$c{JAR}\n";
+  print "    Path:          $$c{PATH}\n";
 
-  my @deps = @{$projectDeps{$c}};
+  my @deps = @{$$c{PROJ_DEPS}};
   my @prettyDeps = ();
   foreach my $q (@deps) {
-    push(@prettyDeps, $titles{$q});
+    push(@prettyDeps, $$q{TITLE});
   }
   smartSplit("    Project deps:  ", ", ", @prettyDeps);
 
-  my @opt = @{$projectOpt{$c}};
+  my @opt = @{$$c{PROJ_OPT}};
   my @prettyOpt = ();
   foreach my $q (@opt) {
-    push(@prettyOpt, $titles{$q});
+    push(@prettyOpt, $$q{TITLE});
   }
   smartSplit("    Optional:      ", ", ", @prettyOpt);
 
-  print "    License:       $licenses{$c}\n";
-  print "    Project URL:   $urls{$c}\n";
-  smartSplit("    Notes:         ", " ", split(/[ \n]/, $notes{$c}));
+  print "    License:       $$c{LICENSE}\n";
+  print "    Project URL:   $$c{URL}\n";
+  smartSplit("    Notes:         ", " ", split(/[ \n]/, $$c{NOTES}));
   print "\n";
 }
 
@@ -875,11 +1059,11 @@ print "$div";
 print "The following external dependencies (in the jar folder) may be " .
       "required:\n";
 foreach my $l (@libs) {
-  print "$titles{$l}\n";
-  print "    JAR file:  $jars{$l}\n";
-  print "    URL:       $urls{$l}\n";
-  smartSplit("    Notes:     ", " ", split(/[ \n]/, $notes{$l}));
-  print "    License:   $licenses{$l}\n";
+  print "$$l{TITLE}\n";
+  print "    JAR file:  $$l{JAR}\n";
+  print "    URL:       $$l{URL}\n";
+  smartSplit("    Notes:     ", " ", split(/[ \n]/, $$l{NOTES}));
+  print "    License:   $$l{LICENSE}\n";
   print "\n";
 }
 
@@ -887,12 +1071,12 @@ foreach my $l (@libs) {
 
 sub checkDirect {
   my ($package, $path) = @_;
-  return `grep -IRl "^import $package\." $path/src`;
+  return `find $path/src -name '*.java' | xargs grep -l "^import $package\\."`;
 }
 
 sub checkReflect {
   my ($package, $path) = @_;
-  return `grep -IRl "import $package\." $path/src`;
+  return `find $path/src -name '*.java' | xargs grep -l "import $package\\."`;
 }
 
 sub smartSplit {
