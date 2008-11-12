@@ -13,8 +13,6 @@ use strict;
 
 # TODO - Use this script to check build.xml's depends clauses.
 
-# TODO - Use this script to check Eclipse .classpath dependencies.
-
 use constant {
   NAME      => 0,  # short name, for ease of reference
   TITLE     => 1,  # human-friendly title for each component and library
@@ -31,6 +29,7 @@ use constant {
   LIB_OPT   => 12, # runtime library dependencies for each component
   COMPILE   => 13, # compile-time classpath for each component
   RUNTIME   => 14, # runtime classpath for each component
+  ECLIPSE   => 15, # Eclipse classpath for each component
 };
 
 # -- COMPONENT DEFINITIONS - ACTIVE --
@@ -74,7 +73,7 @@ ZZ
 );
 
 my %lociCommon = (
-  NAME    => "loci-common",
+  NAME    => "common",
   TITLE   => "LOCI Common",
   PATH    => "components/common",
   JAR     => "loci-common.jar",
@@ -682,7 +681,7 @@ my @active = (
   \%lociCommon,
   \%omeXML,
   \%bioFormats,
-#  \%bioFormatsAuto,
+  \%bioFormatsAuto,
   \%bioFormatsIce,
   \%lociPlugins,
   \%omeIO,
@@ -816,7 +815,8 @@ foreach my $c (@components) {
   my $path = $$c{PATH};
 
   # read compile-time and runtime classpaths from properties file
-  open FILE, "$path/build.properties" or die $!;
+  open FILE, "$path/build.properties"
+    or die "$path/build.properties: $!";
   my @lines = <FILE>;
   close(FILE);
   my $inCompile = 0;
@@ -856,17 +856,40 @@ foreach my $c (@components) {
   $$c{RUNTIME} = \@runtime;
 }
 
+print STDERR "--== GATHERING ECLIPSE DEPENDENCIES ==--\n\n";
+foreach my $c (@components) {
+  my $path = $$c{PATH};
+
+  # read Eclipse classpath from classpath file
+  open FILE, "$path/.classpath"
+    or die "$path/.classpath: $!";
+  my @lines = <FILE>;
+  close(FILE);
+  my @eclipse = ();
+  foreach my $line (@lines) {
+    $line = rtrim($line);
+    if ($line =~ /<classpathentry /) {
+      # found a compile-time classpath entry
+      $line =~ s/.* path="//;
+      $line =~ s/"\/>$//;
+      push(@eclipse, $line);
+    }
+  }
+  @eclipse = sort @eclipse;
+  $$c{ECLIPSE} = \@eclipse;
+}
+
 print STDERR "--== VERIFYING CLASSPATH MATCHES ==--\n\n";
 foreach my $c (@components) {
   my @projDeps = @{$$c{PROJ_DEPS}};
   my @libDeps = @{$$c{LIB_DEPS}};
   my @projOpt = @{$$c{PROJ_OPT}};
   my @libOpt = @{$$c{LIB_OPT}};
+  my $name = $$c{TITLE};
 
   # verify compile-time classpath
   my @deps = (@projDeps, @libDeps);
   my @cp = @{$$c{COMPILE}};
-  my $name = $$c{TITLE};
   my $compileError = 0;
   if (@deps != @cp) {
     print STDERR "Dependency mismatch for $name compile time classpath:\n";
@@ -898,12 +921,57 @@ foreach my $c (@components) {
     print STDERR "\n  component.classpath = @cp\n";
     print STDERR "\n";
   }
+
+  # verify Eclipse classpath
+  # tweak list of dependencies
+  @deps = ();
+  foreach my $dep (@projDeps) {
+    push(@deps, "/" . $$dep{NAME});
+  }
+  foreach my $dep (@libDeps) {
+    push(@deps, "LOCI_JARS/" . $$dep{JAR});
+  }
+  push(@deps, "build/classes");
+  push(@deps, "org.eclipse.jdt.launching.JRE_CONTAINER");
+  push(@deps, "src");
+  @deps = sort @deps;
+  @cp = @{$$c{ECLIPSE}};
+  my $eclipseError = 0;
+  if (@deps != @cp) {
+    print STDERR "Dependency mismatch for $name Eclipse classpath:\n";
+    $eclipseError = 1;
+  }
+  else {
+    for (my $i = 0; $i < @cp; $i++) {
+      my $depEntry = $deps[$i];
+      my $cpEntry = $cp[$i];
+      if ($cpEntry ne $depEntry) {
+        print STDERR "Dependency mismatch for $name Eclipse classpath:\n";
+        print STDERR "  #$i: $depEntry != $cpEntry\n";
+        $eclipseError = 1;
+        last;
+      }
+    }
+  }
+  if ($eclipseError) {
+    print STDERR "  project deps      =";
+    foreach my $q (@projDeps) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  library deps      =";
+    foreach my $q (@libDeps) {
+      print STDERR " $$q{NAME}";
+    }
+    print STDERR "\n  Eclipse classpath = @cp\n";
+    print STDERR "\n";
+  }
+
   # verify runtime classpath
   @deps = (@projDeps, @projOpt, @libDeps, @libOpt);
   @cp = @{$$c{RUNTIME}};
   my $runtimeError = 0;
   if (@deps != @cp) {
-    print STDERR "Dependency mismatch for $$c{TITLE} runtime classpath:\n";
+    print STDERR "Dependency mismatch for $name runtime classpath:\n";
     $runtimeError = 1;
   }
   else {
@@ -912,7 +980,7 @@ foreach my $c (@components) {
       my $cpJar = $cp[$i];
       my $depJar = $$dep{JAR};
       if ($cpJar ne $depJar) {
-        print STDERR "Dependency mismatch for $c runtime classpath:\n";
+        print STDERR "Dependency mismatch for $name runtime classpath:\n";
         print STDERR "  #$i: $depJar != $cpJar\n";
         $runtimeError = 1;
         last;

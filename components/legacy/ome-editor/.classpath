@@ -4,8 +4,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="LOCI_JARS/forms-1.0.4.jar"/>
 	<classpathentry kind="var" path="LOCI_JARS/ome-java-deprecated.jar"/>
-	<classpathentry kind="var" path="LOCI_JARS/ome-java.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-formats"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="var" path="LOCI_JARS/ome-java.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

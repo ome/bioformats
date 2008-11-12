@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-formats"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/visbio"/>
 	<classpathentry kind="var" path="LOCI_JARS/lma.jar"/>
+	<classpathentry kind="src" path="/common"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

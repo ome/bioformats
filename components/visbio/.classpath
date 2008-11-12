@@ -10,5 +10,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/poi"/>
 	<classpathentry kind="var" path="LOCI_JARS/ij.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="var" path="LOCI_JARS/AppleJavaExtensions.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

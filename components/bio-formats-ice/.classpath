@@ -2,8 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-formats"/>
-	<classpathentry kind="var" path="LOCI_JARS/forms-1.0.4.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="var" path="LOCI_JARS/Ice-3.2.1.jar"/>
+	<classpathentry kind="src" path="/bio-formats"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

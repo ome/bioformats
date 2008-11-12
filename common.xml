@@ -64,6 +64,13 @@ Type "ant -p" for a list of targets.
       includes="${component.source}"/>
   </target>
 
+  <!-- CTR TODO FINISH THIS
+  <target name="exec" depends="compile" description="execute package">
+     <java classname="component.manifest-main"
+       classpath="${}"
+  </target>
+  -->
+
   <target name="findbugs" depends="compile"
     description="check source code for bugs">
     <if>

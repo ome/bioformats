@@ -7,5 +7,6 @@
 	<classpathentry kind="var" path="LOCI_JARS/omero-common-3.0-Beta3.jar"/>
 	<classpathentry kind="var" path="LOCI_JARS/omero-importer-3.0-Beta3.jar"/>
 	<classpathentry kind="var" path="LOCI_JARS/omero-model-psql-3.0-Beta3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

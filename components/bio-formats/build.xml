@@ -14,28 +14,4 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/common.xml"/>
   <property file="build.properties"/>
 
-  <target name="compile-auto"
-    description="build the Bio-Formats autogeneration framework">
-    <javac debug="true" deprecation="true"
-      source="${auto.java-version}" target="${auto.java-version}"
-      srcdir="${auto.dir}" destdir="${auto.dir}"
-      classpath="${auto.classpath}"/>
-  </target>
-
-  <target name="autogen-meta" depends="compile-auto"
-    description="autogenerate Bio-Formats metadata classes">
-    <java classname="MetadataAutogen"
-      classpath="${auto.classpath}"
-      fork="true" dir="${base.dir}/src/loci/formats"/>
-  </target>
-
-  <target name="autogen-ice" depends="compile-auto"
-    description="autogenerate Bio-Formats Ice framework">
-    <java classname="MetadataAutogen"
-      classpath="${auto.classpath}"
-      fork="true" dir="${base.dir}/../bio-formats-ice/src">
-      <arg value="-ice"/>
-    </java>
-  </target>
-
 </project>

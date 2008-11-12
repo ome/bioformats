@@ -667,7 +667,7 @@ public class TwoDPane extends JPanel
     }
     else if (curProg == maxProg) {
       int totalIter = curveRenderers[c].getTotalIterations();
-      int tRCSE = (int) (curveRenderers[c].getTotalRCSE() + 0.5);
+      long tRCSE = (long) (curveRenderers[c].getTotalRCSE() + 0.5);
       double wRCSE = curveRenderers[c].getWorstRCSE();
       // format worst RCSE string to two decimal places
       String worst = "" + wRCSE;
