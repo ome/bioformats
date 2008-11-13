@@ -20,7 +20,7 @@ Type "ant -p" for a list of targets.
   <target name="test-all" depends="compile"
     description="run all automated tests">
     <testng sourcedir="${dest.dir}"
-      classpath="${component.classpath}:${classes.dir}"
+      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="all" testname="All tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
@@ -36,7 +36,7 @@ Type "ant -p" for a list of targets.
   <target name="test-config" depends="compile"
     description="generate config files for automated test suite">
     <testng sourcedir="${dest.dir}"
-      classpath="${component.classpath}:${classes.dir}"
+      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
@@ -52,7 +52,7 @@ Type "ant -p" for a list of targets.
   <target name="test-fast" depends="compile"
     description="run automated tests in group 'fast'">
     <testng sourcedir="${dest.dir}"
-      classpath="${component.classpath}:${classes.dir}"
+      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="fast" testname="Fast tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
@@ -68,7 +68,7 @@ Type "ant -p" for a list of targets.
   <target name="test-pixels" depends="compile"
     description="run automated tests in group 'pixels'">
     <testng sourcedir="${dest.dir}"
-      classpath="${component.classpath}:${classes.dir}"
+      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="pixels" testname="Pixels tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
@@ -84,7 +84,7 @@ Type "ant -p" for a list of targets.
   <target name="test-xml" depends="compile"
     description="run automated tests in group 'xml'">
     <testng sourcedir="${dest.dir}"
-      classpath="${component.classpath}:${classes.dir}"
+      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="xml" testname="XML tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">

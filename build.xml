@@ -42,6 +42,17 @@ Bio-Formats
                    MDB Tools (Java port), JAI Image I/O Tools, NetCDF
     License:       GPL
 
+Bio-Formats code generator
+    Code that generates the Bio-Formats metadata API, related documentation and
+    Ice bindings
+    -=-
+    JAR file:      bio-formats-auto.jar
+    Path:          components/bio-formats-auto
+    Project deps:  LOCI Common, Bio-Formats
+    Library deps:  Apache Velocity
+    Optional:      (none)
+    License:       GPL
+
 Bio-Formats Ice framework
     Bindings for Bio-Formats client/server communication enabling
     cross-language interoperability
@@ -243,7 +254,7 @@ Ant-Contrib
 Checkstyle
     JAR file:  checkstyle-all-4.2.jar
     URL:       http://checkstyle.sourceforge.net/
-    Notes:     used by style targets to check source code style conventions
+    Notes:     used by style Ant target to check source code style conventions
     License:   LGPL
 
 Apache Jakarta Commons HttpClient
@@ -434,19 +445,10 @@ Apache XML-RPC
 
   <!-- Global build targets -->
 
-  <target name="style"
-    depends="style-common, style-jai, style-poi-loci, style-mdbtools,
-      style-ome-xml, style-formats, style-formats-ice,
-      style-loci-plugins, style-ome-io, style-ome-plugins,
-      style-visbio, style-slim, style-flow,
-      style-checks, style-tests,
-      style-jvmlink, style-multi-lut,
-      style-ome-notes, style-ome-editor"
-    description="check source code style for LOCI software packages"/>
-
   <target name="compile"
-    depends="compile-common, compile-jai, compile-poi-loci, compile-mdbtools,
-      compile-ome-xml, compile-formats, compile-formats-ice,
+    depends="compile-common, compile-ome-xml,
+      compile-jai, compile-poi-loci, compile-mdbtools,
+      compile-formats, compile-formats-auto, compile-formats-ice,
       compile-loci-plugins, compile-ome-io, compile-ome-plugins,
       compile-visbio, compile-slim, compile-flow,
       compile-checks, compile-tests,
@@ -455,9 +457,10 @@ Apache XML-RPC
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-common, jar-jai, jar-poi-loci, jar-mdbtools,
-      jar-ome-xml, jar-formats, jar-formats-ice, jar-loci-plugins,
-      jar-ome-io, jar-ome-plugins,
+    depends="jar-common, jar-ome-xml,
+      jar-jai, jar-poi-loci, jar-mdbtools,
+      jar-formats, jar-formats-auto, jar-formats-ice,
+      jar-loci-plugins, jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
       jar-checks, jar-tests,
       jar-jvmlink, jar-multi-lut,
@@ -465,8 +468,9 @@ Apache XML-RPC
     description="generate JAR files for LOCI software packages"/>
 
   <target name="clean"
-    depends="clean-common, clean-jai, clean-poi-loci, clean-mdbtools,
-      clean-ome-xml, clean-formats, clean-formats-ice,
+    depends="clean-common, clean-ome-xml,
+      clean-jai, clean-poi-loci, clean-mdbtools,
+      clean-formats, clean-formats-auto, clean-formats-ice,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
       clean-checks, clean-tests,
@@ -501,11 +505,6 @@ Apache XML-RPC
 
   <!-- LOCI common library -->
 
-  <target name="style-common"
-    description="check source code style for LOCI common library">
-    <ant dir="components/common" target="common.style"/>
-  </target>
-
   <target name="compile-common"
     description="compile classes for LOCI common library">
     <ant dir="components/common" target="common.compile"/>
@@ -523,11 +522,6 @@ Apache XML-RPC
 
   <!-- JAI Image I/O Tools library -->
 
-  <target name="style-jai"
-    description="check source code style for JAI Image I/O Tools library">
-    <ant dir="components/forks/jai" target="jai.style"/>
-  </target>
-
   <target name="compile-jai"
     description="compile classes for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.compile"/>
@@ -544,12 +538,6 @@ Apache XML-RPC
   </target>
 
   <!-- Apache POI Java library -->
-
-  <target name="style-poi-loci"
-    depends="style-common"
-    description="check source code style for Apache POI library">
-    <ant dir="components/forks/poi" target="poi-loci.style"/>
-  </target>
 
   <target name="compile-poi-loci"
     depends="compile-common"
@@ -571,11 +559,6 @@ Apache XML-RPC
 
   <!-- MDB Tools Java library -->
 
-  <target name="style-mdbtools"
-    description="check source code style for MDB Tools Java library">
-    <ant dir="components/forks/mdbtools" target="mdbtools.style"/>
-  </target>
-
   <target name="compile-mdbtools"
     description="compile classes for MDB Tools Java library">
     <ant dir="components/forks/mdbtools" target="mdbtools.compile"/>
@@ -593,11 +576,6 @@ Apache XML-RPC
 
   <!-- OME-XML Java library -->
 
-  <target name="style-ome-xml"
-    description="check source code style for OME-XML Java library">
-    <ant dir="components/bio-ome-xml" target="ome-xml.style"/>
-  </target>
-
   <target name="compile-ome-xml"
     description="compile classes for OME-XML Java library">
     <ant dir="components/ome-xml" target="ome-xml.compile"/>
@@ -614,12 +592,6 @@ Apache XML-RPC
   </target>
 
   <!-- Bio-Formats -->
-
-  <target name="style-formats"
-    depends="style-common, style-ome-xml"
-    description="check source code style for Bio-Formats">
-    <ant dir="components/bio-formats" target="formats.style"/>
-  </target>
 
   <target name="compile-formats"
     depends="compile-common, compile-ome-xml"
@@ -639,13 +611,27 @@ Apache XML-RPC
     <ant dir="components/bio-formats" target="formats.clean"/>
   </target>
 
-  <!-- Bio-Formats Ice framework -->
+  <!-- Bio-Formats code generator -->
 
-  <target name="style-formats-ice"
-    depends="style-formats"
-    description="check source code style for Bio-Formats Ice framework">
-    <ant dir="components/bio-formats-ice" target="formats-ice.style"/>
+  <target name="compile-formats-auto"
+    depends="compile-common, compile-formats"
+    description="compile classes for Bio-Formats code gen">
+    <ant dir="components/bio-formats-auto" target="formats-auto.compile"/>
   </target>
+
+  <target name="jar-formats-auto"
+    depends="jar-common, jar-formats"
+    description="generate JAR file for Bio-Formats code gen">
+    <ant dir="components/bio-formats-auto" target="formats-auto.jar"/>
+  </target>
+
+  <target name="clean-formats-auto"
+    depends="clean-common, clean-formats"
+    description="remove build files for Bio-Formats code gen">
+    <ant dir="components/bio-formats-auto" target="formats-auto.clean"/>
+  </target>
+
+  <!-- Bio-Formats Ice framework -->
 
   <target name="compile-formats-ice"
     depends="compile-formats"
@@ -667,12 +653,6 @@ Apache XML-RPC
 
   <!-- LOCI Plugins for ImageJ -->
 
-  <target name="style-loci-plugins"
-    depends="style-common, style-formats"
-    description="check source code style for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.style"/>
-  </target>
-
   <target name="compile-loci-plugins"
     depends="compile-common, compile-formats"
     description="compile classes for LOCI Plugins for ImageJ">
@@ -693,12 +673,6 @@ Apache XML-RPC
 
   <!-- OME I/O -->
 
-  <target name="style-ome-io"
-    depends="style-common, style-formats"
-    description="check source code style for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.style"/>
-  </target>
-
   <target name="compile-ome-io"
     depends="compile-common, compile-formats"
     description="compile classes for OME I/O">
@@ -718,12 +692,6 @@ Apache XML-RPC
   </target>
 
   <!-- OME Plugins for ImageJ -->
-
-  <target name="style-ome-plugins"
-    depends="style-common, style-formats, style-loci-plugins, style-ome-io"
-    description="check source code style for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.style"/>
-  </target>
 
   <target name="compile-ome-plugins"
     depends="compile-common, compile-formats,
@@ -746,12 +714,6 @@ Apache XML-RPC
 
   <!-- VisBio -->
 
-  <target name="style-visbio"
-    depends="style-common, style-ome-xml, style-formats,
-      style-ome-io, style-poi-loci"
-    description="check source code style for VisBio">
-    <ant dir="components/visbio" target="visbio.style"/>
-  </target>
 
   <target name="compile-visbio"
     depends="compile-common, compile-ome-xml, compile-formats,
@@ -805,12 +767,6 @@ Apache XML-RPC
 
   <!-- SLIM Plotter -->
 
-  <target name="style-slim"
-    depends="style-common, style-formats, style-visbio"
-    description="check source code style for SLIM Plotter">
-    <ant dir="components/slim-plotter" target="slim.style"/>
-  </target>
-
   <target name="compile-slim"
     depends="compile-common, compile-formats, compile-visbio"
     description="compile classes for SLIM Plotter">
@@ -836,12 +792,6 @@ Apache XML-RPC
 
   <!-- WiscScan Flow Cytometry -->
 
-  <target name="style-flow"
-    depends="style-formats"
-    description="check source code style for WiscScan Flow Cytometry">
-    <ant dir="components/flow-cytometry" target="flow.style"/>
-  </target>
-
   <target name="compile-flow"
     depends="compile-formats"
     description="compile classes for WiscScan Flow Cytometry">
@@ -862,11 +812,6 @@ Apache XML-RPC
 
   <!-- LOCI Checkstyle checks -->
 
-  <target name="style-checks"
-    description="check source code style for LOCI Checkstyle checks">
-    <ant dir="components/checkstyle" target="checks.style"/>
-  </target>
-
   <target name="compile-checks"
     description="compile classes for LOCI Checkstyle checks">
     <ant dir="components/checkstyle" target="checks.compile"/>
@@ -883,12 +828,6 @@ Apache XML-RPC
   </target>
 
   <!-- LOCI testing framework -->
-
-  <target name="style-tests"
-    depends="style-common, style-formats"
-    description="check source code style for LOCI testing framework">
-    <ant dir="components/test-suite" target="tests.style"/>
-  </target>
 
   <target name="compile-tests"
     depends="compile-common, compile-formats"
@@ -910,12 +849,6 @@ Apache XML-RPC
 
   <!-- JVMLink -->
 
-  <target name="style-jvmlink"
-    depends="style-common"
-    description="check source code style for JVMLink">
-    <ant dir="components/legacy/jvmlink" target="jvmlink.style"/>
-  </target>
-
   <target name="compile-jvmlink"
     depends="compile-common"
     description="compile classes for JVMLink">
@@ -936,11 +869,6 @@ Apache XML-RPC
 
   <!-- Multi LUT app -->
 
-  <target name="style-multi-lut"
-    description="check source code style for Multi LUT app">
-    <ant dir="components/legacy/multi-lut" target="multi-lut.style"/>
-  </target>
-
   <target name="compile-multi-lut"
     description="compile classes for Multi LUT app">
     <ant dir="components/legacy/multi-lut" target="multi-lut.compile"/>
@@ -957,12 +885,6 @@ Apache XML-RPC
   </target>
 
   <!-- OME Notes -->
-
-  <target name="style-ome-notes"
-    depends="style-common, style-formats"
-    description="check source code style for OME Notes">
-    <ant dir="components/legacy/ome-notes" target="ome-notes.style"/>
-  </target>
 
   <target name="compile-ome-notes"
     depends="compile-common, compile-formats"
@@ -983,12 +905,6 @@ Apache XML-RPC
   </target>
 
   <!-- OME Metadata Editor -->
-
-  <target name="style-ome-editor"
-    depends="style-common, style-ome-xml, style-formats"
-    description="check source code style for OME Metadata Editor">
-    <ant dir="components/legacy/ome-editor" target="ome-editor.style"/>
-  </target>
 
   <target name="compile-ome-editor"
     depends="compile-common, compile-ome-xml, compile-formats"

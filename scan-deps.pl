@@ -48,10 +48,10 @@ ZZ
 
 my %bioFormatsAuto = (
   NAME    => "bio-formats-auto",
-  TITLE   => "Bio-Formats code generation framework",
+  TITLE   => "Bio-Formats code generator",
   PATH    => "components/bio-formats-auto",
   JAR     => "bio-formats-auto.jar",
-  PACKAGE => "loci.formats.auto",
+  PACKAGE => "(none)",
   DESC    => <<ZZ,
 Code that generates the Bio-Formats metadata API, related documentation and Ice
 bindings
@@ -339,7 +339,7 @@ my %checkstyle = (
   LICENSE => "LGPL",
   URL     => "http://checkstyle.sourceforge.net/",
   NOTES   => <<ZZ,
-used by style targets to check source code style conventions
+used by style Ant target to check source code style conventions
 ZZ
 );
 
@@ -829,7 +829,7 @@ foreach my $c (@components) {
       # found the compile-time classpath variable
       $inCompile = 1;
     }
-    elsif ($line =~ /^component.manifest-cp/) {
+    elsif ($line =~ /^component.runtime-cp/) {
       # found the runtime classpath variable
       $inManifest = 1;
     }
@@ -843,7 +843,12 @@ foreach my $c (@components) {
           push(@compile, $line);
         }
         elsif ($inManifest) {
-          push(@runtime, $line);
+          if ($line =~ /\${component.classpath}/) {
+            push(@runtime, @compile);
+          }
+          else {
+            push(@runtime, $line);
+          }
         }
       }
       if ($end) {
@@ -888,7 +893,13 @@ foreach my $c (@components) {
   my $name = $$c{TITLE};
 
   # verify compile-time classpath
-  my @deps = (@projDeps, @libDeps);
+  my @deps = ();
+  foreach my $dep (@projDeps) {
+    push(@deps, "\${artifact.dir}/$$dep{JAR}");
+  }
+  foreach my $dep (@libDeps) {
+    push(@deps, "\${lib.dir}/$$dep{JAR}");
+  }
   my @cp = @{$$c{COMPILE}};
   my $compileError = 0;
   if (@deps != @cp) {
@@ -897,10 +908,8 @@ foreach my $c (@components) {
   }
   else {
     for (my $i = 0; $i < @cp; $i++) {
-      my $dep = $deps[$i];
+      my $depJar = $deps[$i];
       my $cpJar = $cp[$i];
-      my $prefix = $i < @projDeps ? '${artifact.dir}' : '${lib.dir}';
-      my $depJar = "$prefix/$$dep{JAR}";
       if ($cpJar ne $depJar) {
         print STDERR "Dependency mismatch for $name compile time classpath:\n";
         print STDERR "  #$i: $depJar != $cpJar\n";
@@ -923,13 +932,12 @@ foreach my $c (@components) {
   }
 
   # verify Eclipse classpath
-  # tweak list of dependencies
   @deps = ();
   foreach my $dep (@projDeps) {
-    push(@deps, "/" . $$dep{NAME});
+    push(@deps, "/$$dep{NAME}");
   }
   foreach my $dep (@libDeps) {
-    push(@deps, "LOCI_JARS/" . $$dep{JAR});
+    push(@deps, "LOCI_JARS/$$dep{JAR}");
   }
   push(@deps, "build/classes");
   push(@deps, "org.eclipse.jdt.launching.JRE_CONTAINER");
@@ -967,7 +975,19 @@ foreach my $c (@components) {
   }
 
   # verify runtime classpath
-  @deps = (@projDeps, @projOpt, @libDeps, @libOpt);
+  @deps = ();
+  foreach my $dep (@projDeps) {
+    push(@deps, "\${artifact.dir}/$$dep{JAR}");
+  }
+  foreach my $dep (@libDeps) {
+    push(@deps, "\${lib.dir}/$$dep{JAR}");
+  }
+  foreach my $dep (@projOpt) {
+    push(@deps, "\${artifact.dir}/$$dep{JAR}");
+  }
+  foreach my $dep (@libOpt) {
+    push(@deps, "\${lib.dir}/$$dep{JAR}");
+  }
   @cp = @{$$c{RUNTIME}};
   my $runtimeError = 0;
   if (@deps != @cp) {
@@ -976,9 +996,8 @@ foreach my $c (@components) {
   }
   else {
     for (my $i = 0; $i < @cp; $i++) {
-      my $dep = $deps[$i];
+      my $depJar = $deps[$i];
       my $cpJar = $cp[$i];
-      my $depJar = $$dep{JAR};
       if ($cpJar ne $depJar) {
         print STDERR "Dependency mismatch for $name runtime classpath:\n";
         print STDERR "  #$i: $depJar != $cpJar\n";
@@ -988,23 +1007,23 @@ foreach my $c (@components) {
     }
   }
   if ($runtimeError) {
-    print STDERR "  project deps          =";
+    print STDERR "  project deps         =";
     foreach my $q (@projDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  reflected projects    =";
+    print STDERR "\n  reflected projects   =";
     foreach my $q (@projOpt) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  library deps          =";
+    print STDERR "\n  library deps         =";
     foreach my $q (@libDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  reflected libraries   =";
+    print STDERR "\n  reflected libraries  =";
     foreach my $q (@libOpt) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  component.manifest-cp = @cp\n";
+    print STDERR "\n  component.runtime-cp = @cp\n";
     print STDERR "\n";
   }
 }
