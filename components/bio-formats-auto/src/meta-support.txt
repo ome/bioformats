@@ -85,13 +85,22 @@ Pixels = Yes since r631
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
-DetectorSettings = No
 LogicalChannel = No
 LogicalChannel.SamplesPerPixel = Yes
 DisplayChannel = No
 DisplayOptions = No
-Objective.CalibratedMagnification = No
 Plane = Yes
+Image.Name = Yes
+Image.CreationDate = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+DisplayOptions.Zoom = Yes
+Detector.Offset = Yes
+Detector.Gain = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Experiment.Type = Yes
 
 [DeltavisionReader]
 Pixels = Yes since r638

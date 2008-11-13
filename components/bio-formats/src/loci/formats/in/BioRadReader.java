@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-0year1 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ import java.util.*;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -66,98 +67,20 @@ public class BioRadReader extends FormatReader {
     "16", "17", "18", "19", "VARIABLE", "STRUCTURE", "4D SERIES"
   };
 
-  /** List of metadata keys. */
-  public static final String[][] METADATA_KEYS = {
-    {},
-    {"Scan Channel", "Both Mode", "Speed", "Filter", "Factor",
-      "Number of scans", "Photon counting mode (channel 1)",
-      "Photon counting detector (channel 1)",
-      "Photon counting mode (channel 2)",
-      "Photon counting detector (channel 2)", "Photon mode",
-      "Objective lens magnification", "Zoom factor (user selected)",
-      "Motor on", "Z step size"},
-    {"Z start", "Z stop", "Scan area - cx", "Scan area - cy",
-      "Scan area - lx", "Scan area - ly"},
-    {"PMT 1 Iris", "PMT 1 Gain", "PMT 1 Black level", "PMT 1 Emission filter",
-      "PMT 2 Iris", "PMT 2 Gain", "PMT 2 Black level", "PMT 2 Emission filter",
-      "PMT 3 Iris", "PMT 3 Gain", "PMT 3 Black level", "PMT 3 Emission filter",
-      "Multiplier of channel 1", "Multiplier of channel 2",
-      "Multiplier of channel 3"},
-    {"Number of lasers", "Number of transmission detectors", "Number of PMTs",
-      "Shutter present for laser 1", "Shutter present for laser 2",
-      "Shutter present for laser 3", "Neutral density filter for laser 1",
-      "Excitation filter for laser 1", "Use laser 1",
-      "Neutral density filter for laser 2", "Excitation filter for laser 2",
-      "Use laser 2", "Neutral density filter for laser 3",
-      "Excitation filter for laser 3", "Use laser 3",
-      "Neutral density filter name - laser 1",
-      "Neutral density filter name - laser 2",
-      "Neutral density filter name - laser 3"},
-    {"Excitation filter name - laser 1", "Excitation filter name - laser 2",
-      "Excitation filter name - laser 3"},
-    {"Emission filter name - laser 1", "Emission filter name - laser 2",
-      "Emission filter name - laser 3"},
-    {"Mixer 0 - enhanced", "Mixer 0 - PMT 1 percentage",
-      "Mixer 0 - PMT 2 percentage", "Mixer 0 - PMT 3 percentage",
-      "Mixer 0 - Transmission 1 percentage",
-      "Mixer 0 - Transmission 2 percentage",
-      "Mixer 0 - Transmission 3 percentage", "Mixer 1 - enhanced",
-      "Mixer 1 - PMT 1 percentage", "Mixer 1 - PMT 2 percentage",
-      "Mixer 1 - PMT 3 percentage", "Mixer 1 - Transmission 1 percentage",
-      "Mixer 1 - Transmission 2 percentage",
-      "Mixer 1 - Transmission 3 percentage", "Mixer 0 - low signal on",
-      "Mixer 1 - low signal on"},
-    {"Laser 1 name"},
-    {"Laser 2 name"},
-    {"Laser 3 name"},
-    {"Transmission detector 1 - offset", "Transmission detector 1 - gain",
-      "Transmission detector 1 - black level",
-      "Transmission detector 2 - offset", "Transmission detector 2 - gain",
-      "Transmission detector 2 - black level",
-      "Transmission detector 3 - offset", "Transmission detector 3 - gain",
-      "Transmission detector 3 - black level"},
-    {"Part number of laser 1", "Part number of excitation filter for laser 1",
-      "Part number of ND filter for laser 1",
-      "Part number of emission filter for laser 1", "Part number of laser 2",
-      "Part number of excitation filter for laser 2",
-      "Part number of ND filter for laser 2",
-      "Part number of emission filter for laser 2"},
-    {"Part number of laser 3", "Part number of excitation filter for laser 3",
-      "Part number of ND filter for laser 3",
-      "Part number of emission filter for laser 3",
-      "Part number of filter block 1", "Part number of filter block 2",
-      "Filter block 1", "Filter block 2"},
-    {"Filter block 1 name", "Filter block 2 name"},
-    {"Image band 1 status", "Image band 1 min", "Image band 1 max",
-      "Image band 2 status", "Image band 2 min", "Image band 2 max",
-      "Image band 3 status", "Image band 3 min", "Image band 3 max",
-      "Image band 4 status", "Image band 4 min", "Image band 4 max",
-      "Image band 5 status", "Image band 5 min", "Image band 5 max"},
-    {"Image band 5 status", "Image band 5 min", "Image band 5 max"},
-    {"Date stamp (seconds)", "Date stamp (minutes)", "Date stamp (hours)",
-      "Date stamp (day of month)", "Date stamp (month)",
-      "Date stamp (year: actual year - 1900)", "Date stamp (day of week)",
-      "Date stamp (day of year)", "Daylight savings?"},
-    {"Mixer 3 - enhanced", "Mixer 3 - PMT 1 percentage",
-      "Mixer 3 - PMT 2 percentage", "Mixer 3 - PMT 3 percentage",
-      "Mixer 3 - Transmission 1 percentage",
-      "Mixer 3 - Transmission 2 percentage",
-      "Mixer 3 - Transmission 3 percentage", "Mixer 3 - low signal on",
-      "Mixer 3 - photon counting 1", "Mixer 3 - photon counting 2",
-      "Mixer 3 - photon counting 3", "Mixer 3 - mode"},
-    {"Mixer 1 - photon counting 1", "Mixer 1 - photon counting 2",
-      "Mixer 1 - photon counting 3", "Mixer 1 - mode",
-      "Mixer2 - photon counting 1", "Mixer 2 - photon counting 2",
-      "Mixer 2 - photon counting 3", "Mixer 2 - mode"},
-    {"Display mode", "Course", "Time Course - experiment type",
-      "Time Course - kd factor"},
-    {"Time Course - ion name"},
-    {"PIC file generated on Isoscan (lite)", "Photon counting used (PMT 1)",
-      "Photon counting used (PMT 2)", "Photon counting used (PMT 3)",
-      "Hot spot filter used (PMT 1)", "Hot spot filter used (PMT 2)",
-      "Hot spot filter used (PMT 3)", "Tx selector used (TX 1)",
-      "Tx selected used (TX 2)", "Tx selector used (TX 3)"}
-  };
+  public static final int NOTE_TYPE_LIVE = 1;
+  public static final int NOTE_TYPE_FILE1 = 2;
+  public static final int NOTE_TYPE_NUMBER = 3;
+  public static final int NOTE_TYPE_USER = 4;
+  public static final int NOTE_TYPE_LINE = 5;
+  public static final int NOTE_TYPE_COLLECT = 6;
+  public static final int NOTE_TYPE_FILE2 = 7;
+  public static final int NOTE_TYPE_SCALEBAR = 8;
+  public static final int NOTE_TYPE_MERGE = 9;
+  public static final int NOTE_TYPE_THRUVIEW = 10;
+  public static final int NOTE_TYPE_ARROW = 11;
+  public static final int NOTE_TYPE_VARIABLE = 20;
+  public static final int NOTE_TYPE_STRUCTURE = 21;
+  public static final int NOTE_TYPE_4D_SERIES = 22;
 
   public static final String[] PIC_SUFFIX = {"pic"};
 
@@ -338,8 +261,6 @@ public class BioRadReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     in.skipBytes(bpp * getImageCount() * imageLen + 6);
 
-    Vector pixelSize = new Vector();
-
     core[0].sizeZ = getImageCount();
     core[0].sizeC = 1;
     core[0].sizeT = 1;
@@ -357,6 +278,16 @@ public class BioRadReader extends FormatReader {
     String offset1 = null;
     String ex1 = null, ex2 = null, ex3 = null;
     String em1 = null, em2 = null, em3 = null;
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
+    MetadataTools.setDefaultCreationDate(store, id, 0);
+    store.setImageName(name, 0);
+    store.setObjectiveLensNA(new Float(lens), 0, 0);
+    store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
+
+    int nLasers = 0;
 
     // read notes
     int noteCount = 0;
@@ -394,100 +325,299 @@ public class BioRadReader extends FormatReader {
       noteCount++;
 
       switch (type) {
-        case 8: // NOTE_TYPE_SCALEBAR
-          int eq = text.indexOf("=");
-          if (eq != -1) {
-            text = text.substring(eq + 1).trim();
-            String len = text.substring(0, text.indexOf(" ")).trim();
-            String angle = text.substring(text.indexOf(" ")).trim();
-            addMeta("Scalebar length (in microns)", len);
-            addMeta("Scalebar angle (in degrees)", angle);
-          }
+        case NOTE_TYPE_USER:
+          // TODO : this should be an overlay
+          addMeta("Note #" + noteCount,
+            noteString(num, level, status, type, x, y, text));
           break;
-        case 11: // NOTE_TYPE_ARROW
-          eq = text.indexOf("=");
-          if (eq != -1) {
-            text = text.substring(eq + 1).trim();
-            StringTokenizer st = new StringTokenizer(text, " ");
-            addMeta("Arrow width", st.nextToken());
-            addMeta("Arrow height", st.nextToken());
-            addMeta("Arrow angle", st.nextToken());
-            addMeta("Arrow fill type", st.nextToken());
-          }
+        case NOTE_TYPE_SCALEBAR:
+          // TODO : this should be an overlay
+          // the format of the text is:
+          // SCALEBAR = <length> <angle>
+          // where <length> is the length of the scalebar in microns,
+          // and <angle> is the angle in degrees
+          addMeta("Note #" + noteCount,
+            noteString(num, level, status, type, x, y, text));
           break;
-        case 20: // NOTE_TYPE_VARIABLE
-          eq = text.indexOf("=");
-          if (eq != -1) {
-            String key = text.substring(0, eq);
-            String value = text.substring(eq + 1);
+        case NOTE_TYPE_ARROW:
+          // TODO : this should be an overlay
+          // the format of the text is:
+          // ARROW = <lx> <ly> <angle> <fill>
+          // where <lx> and <ly> define the arrow's bounding box,
+          // <angle> is the angle in degrees and <fill> is either "Fill" or
+          // "Outline"
+          addMeta("Note #" + noteCount,
+            noteString(num, level, status, type, x, y, text));
+          break;
+        case NOTE_TYPE_VARIABLE:
+          if (text.indexOf("=") >= 0) {
+            String key = text.substring(0, text.indexOf("=")).trim();
+            String value = text.substring(text.indexOf("=") + 1).trim();
             addMeta(key, value);
+
+            if (key.equals("INFO_OBJECTIVE_NAME")) {
+              store.setObjectiveModel(value, 0, 0);
+            }
+            else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
+              store.setObjectiveNominalMagnification(
+                new Integer((int) Double.parseDouble(value)), 0, 0);
+            }
+            else if (key.equals("LENS_MAGNIFICATION")) {
+              store.setObjectiveNominalMagnification(
+                new Integer((int) Double.parseDouble(value)), 0, 0);
+            }
+            else if (key.startsWith("SETTING")) {
+              if (key.indexOf("_DET_") != -1) {
+                int index = key.indexOf("_DET_") + 5;
+                if (key.lastIndexOf("_") > index) {
+                  int detector = Integer.parseInt(
+                    key.substring(index, key.indexOf("_", index)));
+                  if (key.endsWith("OFFSET")) {
+                    store.setDetectorSettingsOffset(
+                      new Float(value), 0, detector);
+                  }
+                  else if (key.endsWith("GAIN")) {
+                    store.setDetectorSettingsGain(
+                      new Float(value), 0, detector);
+                  }
+                }
+              }
+            }
+          }
+          else {
+            addMeta("Note #" + noteCount,
+              noteString(num, level, status, type, x, y, text));
           }
           break;
-        case 21: // NOTE_TYPE_STRUCTURE
-          StringTokenizer st = new StringTokenizer(text, " ");
+        case NOTE_TYPE_STRUCTURE:
+          int structureType = (x & 0xff00) >> 8;
+          int version = (x & 0xff);
+          String[] values = text.split(" ");
+          if (structureType == 1) {
+            switch (y) {
+              case 1:
+                addMeta("Scan Channel", values[0]);
+                addMeta("Both mode", values[1]);
+                addMeta("Speed", values[2]);
+                addMeta("Filter", values[3]);
+                addMeta("Factor", values[4]);
+                addMeta("Number of scans", values[5]);
+                addMeta("Photon counting mode (channel 1)", values[6]);
+                addMeta("Photon counting detector (channel 1)", values[7]);
+                addMeta("Photon counting mode (channel 2)", values[8]);
+                addMeta("Photon counting detector (channel 2)", values[9]);
+                addMeta("Photon mode", values[10]);
+                addMeta("Objective magnification", values[11]);
+                addMeta("Zoom factor", values[12]);
+                addMeta("Motor on", values[13]);
+                addMeta("Z Step Size", values[14]);
 
-          String[] keys =
-            y < METADATA_KEYS.length ? METADATA_KEYS[y] : new String[0];
-          int idx = 0;
+                store.setObjectiveNominalMagnification(
+                  new Integer((int) Double.parseDouble(values[11])), 0, 0);
+                store.setDisplayOptionsZoom(new Float(values[12]), 0);
+                store.setDimensionsPhysicalSizeZ(new Float(values[14]), 0, 0);
+                break;
+              case 2:
+                addMeta("Z Start", values[0]);
+                addMeta("Z Stop", values[1]);
+                addMeta("Scan area X coordinate", values[2]);
+                addMeta("Scan area Y coordinate", values[3]);
+                addMeta("Scan area width", values[4]);
+                addMeta("Scan area height", values[5]);
 
-          String value;
-          while (st.hasMoreTokens() && idx < keys.length) {
-            value = st.nextToken();
-            addMeta(keys[idx], value);
-            if (keys[idx].equals("Zoom factor (user selected)")) zoom = value;
-            else if (keys[idx].equals("Z start")) zstart = value;
-            else if (keys[idx].equals("Z stop")) zstop = value;
-            else if (keys[idx].equals("Transmission detector 1 - gain")) {
-              gain1 = value;
-            }
-            else if (keys[idx].equals("Transmission detector 2 - gain")) {
-              gain2 = value;
-            }
-            else if (keys[idx].equals("Transmission detector 3 - gain")) {
-              gain3 = value;
-            }
-            else if (keys[idx].equals("Transmission detector 1 - offset")) {
-              offset1 = value;
-            }
-            else if (keys[idx].equals(
-              "Part number of excitation filter for laser 1"))
-            {
-              ex1 = value;
-            }
-            else if (keys[idx].equals(
-              "Part number of excitation filter for laser 2"))
-            {
-              ex2 = value;
-            }
-            else if (keys[idx].equals(
-              "Part number of excitation filter for laser 3"))
-            {
-              ex3 = value;
-            }
-            else if (keys[idx].equals(
-              "Part number of emission filter for laser 1"))
-            {
-              em1 = value;
-            }
-            else if (keys[idx].equals(
-              "Part number of emission filter for laser 2"))
-            {
-              em2 = value;
-            }
-            else if (keys[idx].equals(
-              "Part number of emission filter for laser 3"))
-            {
-              em3 = value;
-            }
-            else if (keys[idx].equals("Objective lens magnification")) {
-              mag = value;
-            }
+                float width =
+                  Float.parseFloat(values[4]) - Float.parseFloat(values[2]);
+                width /= getSizeX();
+                float height =
+                  Float.parseFloat(values[5]) - Float.parseFloat(values[3]);
+                height /= getSizeY();
 
-            idx++;
+                store.setDimensionsPhysicalSizeX(new Float(width), 0, 0);
+                store.setDimensionsPhysicalSizeY(new Float(height), 0, 0);
+
+                break;
+              case 3:
+                for (int i=0; i<3; i++) {
+                  addMeta("Iris for PMT " + (i + 1), values[i * 4]);
+                  addMeta("Gain for PMT " + (i + 1), values[i * 4 + 1]);
+                  addMeta("Black level for PMT " + (i + 1), values[i * 4 + 2]);
+                  addMeta("Emission filter for PMT " + (i+1), values[i*4] + 3);
+                }
+                addMeta("Multiplier for channel 1", values[12]);
+                addMeta("Multiplier for channel 2", values[13]);
+                addMeta("Multiplier for channel 3", values[14]);
+                break;
+              case 4:
+                nLasers = Integer.parseInt(values[0]);
+                addMeta("Number of lasers", values[0]);
+                addMeta("Number of transmission detectors", values[1]);
+                addMeta("Number of PMTs", values[2]);
+                addMeta("Shutter present for laser 1", values[3]);
+                addMeta("Shutter present for laser 2", values[4]);
+                addMeta("Shutter present for laser 3", values[5]);
+                for (int i=1; i<=3; i++) {
+                  addMeta("Neutral density filter for laser " + i,
+                    values[(i + 1) * 3]);
+                  addMeta("Excitation filter for laser " + i,
+                    values[(i + 1) * 3 + 1]);
+                  addMeta("Use laser " + i, values[(i + 1) * 3 + 2]);
+                }
+                for (int i=0; i<nLasers; i++) {
+                  addMeta("Neutral density filter name - laser " + (i + 1),
+                    values[15 + i]);
+                }
+                break;
+              case 5:
+                for (int i=0; i<nLasers; i++) {
+                  addMeta("Excitation filter name - laser " + (i+1), values[i]);
+                }
+                break;
+              case 6:
+                for (int i=0; i<nLasers; i++) {
+                  addMeta("Emission filter name - laser " + (i+1), values[i]);
+                }
+                break;
+              case 7:
+                for (int i=0; i<2; i++) {
+                  addMeta("Mixer " +i+ " - enhanced", values[i*7]);
+                  addMeta("Mixer " +i+ " - PMT 1 percentage", values[i*7 + 1]);
+                  addMeta("Mixer " +i+ " - PMT 2 percentage", values[i*7 + 2]);
+                  addMeta("Mixer " +i+ " - PMT 3 percentage", values[i*7 + 3]);
+                  addMeta("Mixer " +i+ " - Transmission 1 percentage",
+                    values[i * 7 + 4]);
+                  addMeta("Mixer " +i+ " - Transmission 2 percentage",
+                    values[i * 7 + 5]);
+                  addMeta("Mixer " +i+ " - Transmission 3 percentage",
+                    values[i * 7 + 6]);
+                }
+                addMeta("Mixer 0 - low signal on", values[14]);
+                addMeta("Mixer 1 - low signal on", values[15]);
+                break;
+              case 8:
+                addMeta("Laser name - laser 1", values[0]);
+                break;
+              case 9:
+                addMeta("Laser name - laser 2", values[0]);
+                break;
+              case 10:
+                addMeta("Laser name - laser 3", values[0]);
+                break;
+              case 11:
+                for (int i=0; i<3; i++) {
+                  addMeta("Transmission detector " + (i + 1) + " - offset",
+                    values[i * 3]);
+                  addMeta("Transmission detector " + (i + 1) + " - gain",
+                    values[i * 3 + 1]);
+                  addMeta("Transmission detector " + (i + 1) + " - black level",
+                    values[i * 3 + 2]);
+
+                  store.setDetectorOffset(new Float(values[i * 3]), 0, i);
+                  store.setDetectorGain(new Float(values[i * 3 + 1]), 0, i);
+                }
+                break;
+              case 12:
+                for (int i=0; i<2; i++) {
+                  addMeta("Part number for laser " + (i + 1), values[i * 4]);
+                  addMeta("Part number for excitation filter for laser " +
+                    (i + 1), values[i * 4 + 1]);
+                  addMeta("Part number for ND filter for laser " + (i + 1),
+                    values[i * 4 + 2]);
+                  addMeta("Part number for emission filter for laser " +
+                    (i + 1), values[i * 4 + 3]);
+                }
+                break;
+              case 13:
+                  addMeta("Part number for laser 3", values[0]);
+                  addMeta("Part number for excitation filter for laser 3",
+                    values[1]);
+                  addMeta("Part number for ND filter for laser 3", values[2]);
+                  addMeta("Part number for emission filter for laser 3",
+                    values[3]);
+                  addMeta("Part number for filter block 1", values[4]);
+                  addMeta("Part number for filter block 2", values[5]);
+                break;
+              case 14:
+                addMeta("Filter Block Name - filter block 1", values[0]);
+                addMeta("Filter Block Name - filter block 2", values[1]);
+                break;
+              case 15:
+                for (int i=0; i<5; i++) {
+                  addMeta("Image bands status - band " + (i + 1), values[i*3]);
+                  addMeta("Image bands min - band " + (i + 1), values[i*3 + 1]);
+                  addMeta("Image bands max - band " + (i + 1), values[i*3 + 2]);
+                  if (store instanceof IMinMaxStore) {
+                    ((IMinMaxStore) store).setChannelGlobalMinMax(i,
+                      Double.parseDouble(values[i*3 + 1]),
+                      Double.parseDouble(values[i*3 + 2]), 0);
+                  }
+                }
+                break;
+              case 17:
+                int year = Integer.parseInt(values[5]) + 1900;
+                String month = values[4];
+                if (month.length() == 1) month = "0" + month;
+                String day = values[3];
+                if (day.length() == 1) day = "0" + day;
+
+                // date is in yyyy-MM-dd'T'HH:mm:ss
+                String date = year + "-" + month + "-" + day + "T" +
+                  values[2] + ":" + values[1] + ":" + values[0];
+                addMeta("Acquisition date", date);
+                store.setImageCreationDate(date, 0);
+                break;
+              case 18:
+                addMeta("Mixer 3 - enhanced", values[0]);
+                addMeta("Mixer 3 - PMT 1 percentage", values[1]);
+                addMeta("Mixer 3 - PMT 2 percentage", values[2]);
+                addMeta("Mixer 3 - PMT 3 percentage", values[3]);
+                addMeta("Mixer 3 - Transmission 1 percentage", values[4]);
+                addMeta("Mixer 3 - Transmission 2 percentage", values[5]);
+                addMeta("Mixer 3 - Transmission 3 percentage", values[6]);
+                addMeta("Mixer 3 - low signal on", values[7]);
+                addMeta("Mixer 3 - photon counting 1", values[8]);
+                addMeta("Mixer 3 - photon counting 2", values[9]);
+                addMeta("Mixer 3 - photon counting 3", values[10]);
+                addMeta("Mixer 3 - mode", values[11]);
+                break;
+              case 19:
+                for (int i=1; i<=2; i++) {
+                  addMeta("Mixer " + i + " - photon counting 1",
+                    values[i * 4 - 4]);
+                  addMeta("Mixer " + i + " - photon counting 2",
+                    values[i * 4 - 3]);
+                  addMeta("Mixer " + i + " - photon counting 3",
+                    values[i * 4 - 2]);
+                  addMeta("Mixer " + i + " - mode", values[i * 4 - 1]);
+                }
+                break;
+              case 20:
+                addMeta("Display mode", values[0]);
+                addMeta("Course", values[1]);
+                addMeta("Time Course - experiment type", values[2]);
+                addMeta("Time Course - kd factor", values[3]);
+                store.setExperimentType(values[2], 0);
+                break;
+              case 21:
+                addMeta("Time Course - ion name", values[0]);
+                break;
+              case 22:
+                addMeta("PIC file generated on Isoscan (lite)", values[0]);
+                addMeta("Photon counting used (PMT 1)", values[1]);
+                addMeta("Photon counting used (PMT 2)", values[2]);
+                addMeta("Photon counting used (PMT 3)", values[3]);
+                addMeta("Hot spot filter (polariser) used (PMT 1)", values[4]);
+                addMeta("Hot spot filter (polariser) used (PMT 2)", values[5]);
+                addMeta("Hot spot filter (polariser) used (PMT 3)", values[6]);
+                addMeta("Tx Selector (mirror) used (TX 1)", values[7]);
+                addMeta("Tx Selector (mirror) used (TX 2)", values[8]);
+                addMeta("Tx Selector (mirror) used (TX 3)", values[9]);
+                break;
+            }
           }
           break;
         default:
-          addMeta("note" + noteCount,
+          // notes for display only
+          addMeta("Note #" + noteCount,
             noteString(num, level, status, type, x, y, text));
       }
 
@@ -495,93 +625,80 @@ public class BioRadReader extends FormatReader {
       // more thoroughly (see pg. 21 of the BioRad specs)
 
       if (text.indexOf("AXIS") != -1) {
-        // use StringTokenizer to break up the text
-        StringTokenizer st = new StringTokenizer(text);
-        String key = st.nextToken();
-        String noteType = "";
-        if (st.hasMoreTokens()) {
-          noteType = st.nextToken();
-        }
+        String[] values = text.split(" ");
+        String key = values[0];
+        String noteType = values[1];
 
         int axisType = Integer.parseInt(noteType);
-        Vector params = new Vector();
-        while (st.hasMoreTokens()) {
-          params.add(st.nextToken());
-        }
 
-        if (params.size() > 1) {
+        if (values.length > 2) {
           switch (axisType) {
             case 1:
-              String dx = (String) params.get(0), dy = (String) params.get(1);
+              String dx = values[2];
+              String dy = values[3];
               addMeta(key + " distance (X) in microns", dx);
               addMeta(key + " distance (Y) in microns", dy);
-              pixelSize.add(dy);
               break;
             case 2:
               if (text.indexOf("AXIS_4") != -1) {
-                addMeta(key + " time (X) in seconds", params.get(0));
-                addMeta(key + " time (Y) in seconds", params.get(1));
+                addMeta(key + " time (X) in seconds", values[2]);
+                addMeta(key + " time (Y) in seconds", values[3]);
                 core[0].sizeZ = 1;
                 core[0].sizeT = getImageCount();
                 core[0].orderCertain = true;
               }
               break;
             case 3:
-              addMeta(key + " angle (X) in degrees", params.get(0));
-              addMeta(key + " angle (Y) in degrees", params.get(1));
+              addMeta(key + " angle (X) in degrees", values[2]);
+              addMeta(key + " angle (Y) in degrees", values[3]);
               break;
             case 4:
-              addMeta(key + " intensity (X)", params.get(0));
-              addMeta(key + " intensity (Y)", params.get(1));
+              addMeta(key + " intensity (X)", values[2]);
+              addMeta(key + " intensity (Y)", values[3]);
               break;
             case 6:
-              addMeta(key + " ratio (X)", params.get(0));
-              addMeta(key + " ratio (Y)", params.get(1));
+              addMeta(key + " ratio (X)", values[2]);
+              addMeta(key + " ratio (Y)", values[3]);
               break;
             case 7:
-              addMeta(key + " log ratio (X)", params.get(0));
-              addMeta(key + " log ratio (Y)", params.get(1));
+              addMeta(key + " log ratio (X)", values[2]);
+              addMeta(key + " log ratio (Y)", values[3]);
               break;
             case 9:
-              addMeta(key + " noncalibrated intensity min", params.get(0));
-              addMeta(key + " noncalibrated intensity max", params.get(1));
-              addMeta(key + " calibrated intensity min", params.get(2));
-              addMeta(key + " calibrated intensity max", params.get(3));
+              addMeta(key + " noncalibrated intensity min", values[2]);
+              addMeta(key + " noncalibrated intensity max", values[3]);
+              addMeta(key + " calibrated intensity min", values[4]);
+              addMeta(key + " calibrated intensity max", values[5]);
               break;
             case 11:
-              addMeta(key + " RGB type (X)", params.get(0));
-              addMeta(key + " RGB type (Y)", params.get(1));
+              addMeta(key + " RGB type (X)", values[2]);
+              addMeta(key + " RGB type (Y)", values[3]);
               break;
             case 14:
-              addMeta(key + " time course type (X)", params.get(0));
-              addMeta(key + " time course type (Y)", params.get(1));
+              addMeta(key + " time course type (X)", values[2]);
+              addMeta(key + " time course type (Y)", values[3]);
               break;
             case 15:
               addMeta(key + " inverse sigmoid calibrated intensity (min)",
-                params.get(0));
+                values[2]);
               addMeta(key + " inverse sigmoid calibrated intensity (max)",
-                params.get(1));
-              addMeta(key +
-                " inverse sigmoid calibrated intensity (beta)", params.get(2));
+                values[3]);
+              addMeta(key + " inverse sigmoid calibrated intensity (beta)",
+                values[4]);
               addMeta(key + " inverse sigmoid calibrated intensity (Kd)",
-                params.get(3));
-              addMeta(key + " inverse sigmoid calibrated intensity " +
-                "(calibrated max)", params.get(0));
+                values[5]);
               break;
             case 16:
-              addMeta(key + " log inverse sigmoid calibrated " +
-                "intensity (min)", params.get(0));
-              addMeta(key + " log inverse sigmoid calibrated " +
-                "intensity (max)", params.get(1));
-              addMeta(key + " log inverse sigmoid calibrated " +
-                "intensity (beta)", params.get(2));
-              addMeta(key + " log inverse sigmoid calibrated " +
-                "intensity (Kd)", params.get(3));
-              addMeta(key + " log inverse sigmoid calibrated " +
-                "intensity (calibrated max)", params.get(0));
+              addMeta(key + " log inverse sigmoid calibrated intensity (min)",
+                values[2]);
+              addMeta(key + " log inverse sigmoid calibrated intensity (max)",
+                values[3]);
+              addMeta(key + " log inverse sigmoid calibrated intensity (beta)",
+                values[4]);
+              addMeta(key + " log inverse sigmoid calibrated intensity (Kd)",
+                values[5]);
               break;
           }
-
         }
       }
     }
@@ -653,14 +770,6 @@ public class BioRadReader extends FormatReader {
     core[0].indexed = lut != null;
     core[0].falseColor = true;
 
-    // Populate the metadata store
-
-    // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-
     // populate Pixels
 
     core[0].dimensionOrder = "XYCTZ";
@@ -672,53 +781,6 @@ public class BioRadReader extends FormatReader {
     else picFiles = null;
 
     MetadataTools.populatePixels(store, this);
-
-    // populate Dimensions
-    int size = pixelSize.size();
-    Float pixelSizeX = null, pixelSizeY = null, pixelSizeZ = null;
-    if (size >= 1) pixelSizeX = new Float((String) pixelSize.get(0));
-    if (size >= 2) pixelSizeY = new Float((String) pixelSize.get(1));
-    if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
-    store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-    store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
-    store.setDimensionsPhysicalSizeZ(pixelSizeZ, 0, 0);
-
-    /*
-    for (int i=0; i<core[0].sizeC; i++) {
-      String gain = i == 0 ? gain1 : i == 1 ? gain2 : gain3;
-      String offset = i == 0 ? offset1 : i == 1 ? gain2 : gain3;
-      Integer ii = new Integer(i);
-      if (offset != null) {
-        store.setDetectorSettingsOffset(new Float(offset), 0, 0);
-      }
-      if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
-      // CTR FIXME
-      //store.setDisplayChannel(ii, new Double(ramp1max),
-      //  new Double(ramp1min), null, null);
-    }
-    // CTR FIXME
-    //store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-    //  new Boolean(core[0].sizeC > 1), new Boolean(core[0].sizeC >= 2),
-    //  new Boolean(core[0].sizeC >= 3), Boolean.FALSE, null,
-    //  zstart == null ? null :
-    //  new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
-    //  null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
-    //  null, null, core[0].sizeC > 1 ? new Integer(0) : null,
-    //  core[0].sizeC > 1 ? new Integer(1) : null,
-    //  core[0].sizeC > 1 ? new Integer(2) : null, new Integer(0));
-
-    for (int i=0; i<3; i++) {
-      String exc = i == 0 ? ex1 : i == 1 ? ex2 : ex3;
-      String ems = i == 0 ? em1 : i == 1 ? em2 : em3;
-      // CTR FIXME
-      //if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
-      //if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
-    }
-    if (mag != null) {
-      // CTR CHECK
-      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
-    }
-    */
   }
 
   // -- Helper methods --
