@@ -990,28 +990,4 @@ Apache XML-RPC
     <delete dir="${ome-tools.dir}"/>
   </target>
 
-  <!-- Test targets -->
-
-  <target name="test-all" description="run all automated tests">
-    <ant dir="components/test-suite" target="test-all"/>
-  </target>
-
-  <target name="test-config"
-    description="generate config files for automated test suite">
-    <ant dir="components/test-suite" target="test-config"/>
-  </target>
-
-  <target name="test-fast" description="run automated tests in group 'fast'">
-    <ant dir="components/test-suite" target="test-fast"/>
-  </target>
-
-  <target name="test-pixels"
-    description="run automated tests in group 'pixels'">
-    <ant dir="components/test-suite" target="test-pixels"/>
-  </target>
-
-  <target name="test-xml" description="run automated tests in group 'xml'">
-    <ant dir="components/test-suite" target="test-xml"/>
-  </target>
-
 </project>
