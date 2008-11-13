@@ -1584,10 +1584,14 @@ public final class TiffTools {
 
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<nChannels; i++) {
+        int ndx = startIndex + j;
+        if (i * nSamples + ndx >= (i + 1) * nSamples) {
+          break;
+        }
+
         if (noDiv8) {
           // bits per sample is not a multiple of 8
 
-          int ndx = startIndex + j;
           short s = 0;
           if ((i == 0 && photoInterp == RGB_PALETTE) ||
             (photoInterp != CFA_ARRAY && photoInterp != RGB_PALETTE))
@@ -1611,7 +1615,6 @@ public final class TiffTools {
         else if (bps8) {
           // special case handles 8-bit data more quickly
 
-          int ndx = startIndex + j;
           if (i*nSamples + ndx >= samples.length) break;
 
           if (photoInterp != Y_CB_CR) {
@@ -1669,7 +1672,6 @@ public final class TiffTools {
           }
         }  // End if (bps8)
         else if (bps16) {
-          int ndx = startIndex + j;
           int nioIndex =
             numBytes + index < bytes.length ? index : bytes.length - numBytes;
           short v = DataTools.bytesToShort(bytes, nioIndex, 2, littleEndian);
@@ -1694,7 +1696,6 @@ public final class TiffTools {
               0, numBytes);
           }
           index += numBytes;
-          int ndx = startIndex + j;
           long v = DataTools.bytesToLong(copyByteArray, littleEndian);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
