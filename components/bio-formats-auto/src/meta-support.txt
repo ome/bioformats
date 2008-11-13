@@ -114,6 +114,7 @@ PlaneTiming = Yes
 StagePosition = Yes
 LogicalChannel.EmWave = Yes
 LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
 LogicalChannel.NdFilter = Yes
 LogicalChannel.SamplesPerPixel = Yes
 Objective.ID = Yes
@@ -125,6 +126,7 @@ Objective.Correction = Yes
 StagePosition = Yes
 Detector.Model = Yes
 Detector.Gain = Yes
+ImagingEnvironment.Temperature = Yes
 
 [DicomReader]
 Pixels = Yes since r920

@@ -30,6 +30,7 @@ import java.util.Vector;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -128,6 +129,9 @@ public class DeltavisionReader extends FormatReader {
     if (debug) debug("DeltavisionReader.initFile(" + id + ")");
     super.initFile(id);
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     in = new RandomAccessStream(id);
 
     status("Reading header");
@@ -201,8 +205,7 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Column axis sequence", in.readInt());
     addMeta("Row axis sequence", in.readInt());
     addMeta("Section axis sequence", in.readInt());
-    addMeta("Wavelength 1 min. intensity", in.readFloat());
-    addMeta("Wavelength 1 max. intensity", in.readFloat());
+    readWavelength(0, store);
     addMeta("Wavelength 1 mean intensity", in.readFloat());
     addMeta("Space group number", in.readInt());
 
@@ -214,12 +217,9 @@ public class DeltavisionReader extends FormatReader {
 
     addMeta("Number of Sub-resolution sets", in.readShort());
     addMeta("Z axis reduction quotient", in.readShort());
-    addMeta("Wavelength 2 min. intensity", in.readFloat());
-    addMeta("Wavelength 2 max. intensity", in.readFloat());
-    addMeta("Wavelength 3 min. intensity", in.readFloat());
-    addMeta("Wavelength 3 max. intensity", in.readFloat());
-    addMeta("Wavelength 4 min. intensity", in.readFloat());
-    addMeta("Wavelength 4 max. intensity", in.readFloat());
+    readWavelength(1, store);
+    readWavelength(2, store);
+    readWavelength(3, store);
 
     int type = in.readShort();
     String imageType =
@@ -230,8 +230,7 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Lens ID Number", lensID);
 
     in.seek(172);
-    addMeta("Wavelength 5 min. intensity", in.readFloat());
-    addMeta("Wavelength 5 max. intensity", in.readFloat());
+    readWavelength(4, store);
 
     core[0].sizeT = in.readShort();
     addMeta("Number of timepoints", getSizeT());
@@ -285,8 +284,6 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Z origin (in um)", in.readFloat());
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setObjectiveID(String.valueOf(lensID), 0, 0);
@@ -478,7 +475,10 @@ public class DeltavisionReader extends FormatReader {
           store.setDetectorGain(new Float(value), 0, 0);
         }
         //else if (key.equals("Speed")) { }
-        //else if (key.equals("Temp Setting")) { }
+        else if (key.equals("Temp Setting")) {
+          value = value.replaceAll("C", "").trim();
+          store.setImagingEnvironmentTemperature(new Float(value), 0);
+        }
         // Plane properties
         //else if (key.equals("Time")) { }
         else if (key.equals("Time Point")) {
@@ -491,7 +491,10 @@ public class DeltavisionReader extends FormatReader {
           store.setPlaneTimingExposureTime(time, 0, 0, currentImage);
         }
         //else if (key.equals("EX filter")) { }
-        //else if (key.equals("EM filter")) { }
+        else if (key.equals("EM filter")) {
+          int cIndex = getZCTCoords(currentImage)[1];
+          store.setLogicalChannelName(value, 0, cIndex);
+        }
         else if (key.equals("ND filter")) {
           try {
             Float nd = new Float(value);
@@ -611,6 +614,18 @@ public class DeltavisionReader extends FormatReader {
     }
 
     s.close();
+  }
+
+  private void readWavelength(int channel, MetadataStore store)
+    throws FormatException, IOException
+  {
+    float min = in.readFloat();
+    float max = in.readFloat();
+    addMeta("Wavelength " + (channel + 1) + " min. intensity", min);
+    addMeta("Wavelength " + (channel + 1) + " max. intensity", max);
+    if (store instanceof IMinMaxStore) {
+      ((IMinMaxStore) store).setChannelGlobalMinMax(0, min, max, channel);
+    }
   }
 
   // -- Helper classes --
