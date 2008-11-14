@@ -1,4 +1,4 @@
-//
+
 // DicomReader.java
 //
 
@@ -142,12 +142,22 @@ public class DicomReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    return lut;
+    if (getPixelType() != FormatTools.INT8 &&
+      getPixelType() != FormatTools.UINT8)
+   {
+      return null;
+   }
+   return lut;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
+    if (getPixelType() != FormatTools.INT16 &&
+      getPixelType() != FormatTools.UINT16)
+   {
+      return null;
+   }
     return shortLut;
   }
 
@@ -581,7 +591,7 @@ public class DicomReader extends FormatReader {
 
     if (info != null && tag != ITEM) {
       info = info.trim();
-      if (info.equals("")) info = oldValue;
+      if (info.equals("")) info = oldValue == null ? "" : oldValue.trim();
 
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) {
@@ -589,18 +599,19 @@ public class DicomReader extends FormatReader {
           Integer.toHexString(tag & 0xffff);
       }
       if (key.equals("Samples per pixel")) {
-        core[0].sizeC = Integer.parseInt(info.trim());
+        core[0].sizeC = Integer.parseInt(info);
         if (getSizeC() > 1) core[0].rgb = true;
       }
       else if (key.equals("Photometric Interpretation")) {
-        if (info.trim().equals("PALETTE COLOR")) {
+        if (info.equals("PALETTE COLOR")) {
           core[0].indexed = true;
           core[0].sizeC = 1;
           core[0].rgb = false;
           lut = new byte[3][];
+          shortLut = new short[3][];
         }
-        else if (info.trim().startsWith("MONOCHROME")) {
-          inverted = info.trim().endsWith("1");
+        else if (info.startsWith("MONOCHROME")) {
+          inverted = info.endsWith("1");
         }
       }
       else if (key.indexOf("Palette Color LUT Data") != -1) {
@@ -608,10 +619,11 @@ public class DicomReader extends FormatReader {
         int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
         long fp = in.getFilePointer();
         in.seek(in.getFilePointer() - elementLength + 1);
+        shortLut[ndx] = new short[elementLength / 2];
         lut[ndx] = new byte[elementLength / 2];
         for (int i=0; i<lut[ndx].length; i++) {
-          lut[ndx][i] = (byte) (in.read() & 0xff);
-          in.skipBytes(1);
+          shortLut[ndx][i] = in.readShort();
+          lut[ndx][i] = (byte) (shortLut[ndx][i] & 0xff);
         }
         in.seek(fp);
       }
