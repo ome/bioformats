@@ -329,7 +329,7 @@ public class DeltavisionReader extends FormatReader {
       store.setPlaneTimingDeltaT(
         new Float(extHdrFields[z][w][t].getTimeStampSeconds()), 0, 0, i);
       store.setPlaneTimingExposureTime(
-        new Float(extHdrFields[z][w][t].getExpTime()), 0, 0, i);
+        new Float(extHdrFields[z][w][t].getExpTime() / 1000), 0, 0, i);
 
       // stage position
       store.setStagePositionPositionX(
@@ -486,10 +486,6 @@ public class DeltavisionReader extends FormatReader {
           store.setPlaneTimingDeltaT(time, 0, 0, currentImage);
         }
         //else if (key.equals("Intensity")) { }
-        else if (key.equals("Exposure time")) {
-          Float time = new Float(value.substring(0, value.indexOf(" ")));
-          store.setPlaneTimingExposureTime(time, 0, 0, currentImage);
-        }
         //else if (key.equals("EX filter")) { }
         else if (key.equals("EM filter")) {
           int cIndex = getZCTCoords(currentImage)[1];
@@ -664,7 +660,7 @@ public class DeltavisionReader extends FormatReader {
     /** Mean intesity. */
     private float meanInten;
 
-    /** Exposure time in seconds. */
+    /** Exposure time in milliseconds. */
     private float expTime;
 
     /** Neutral density value. */
@@ -741,7 +737,7 @@ public class DeltavisionReader extends FormatReader {
         expTime = in.readFloat();
         in.skipBytes(4);
 
-        // DV files store the ND (neuatral density) Filter
+        // DV files store the ND (neutral density) Filter
         // (normally expressed as a %T (transmittance)) as an OD
         // (optical density) rating.
         // To convert from one to the other the formula is %T = 10^(-OD) X 100.
