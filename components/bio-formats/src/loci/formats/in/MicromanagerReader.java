@@ -242,6 +242,12 @@ public class MicromanagerReader extends FormatReader {
             channels[q] = t.nextToken().replaceAll("\"", "").trim();
           }
         }
+        else if (key.equals("Frames")) {
+          core[0].sizeT = Integer.parseInt(value);
+        }
+        else if (key.equals("Slices")) {
+          core[0].sizeZ = Integer.parseInt(value);
+        }
       }
 
       if (token.trim().startsWith("\"FrameKey")) {
@@ -270,17 +276,8 @@ public class MicromanagerReader extends FormatReader {
     }
     tiffReader.setId((String) tiffs.get(0));
 
-    String z = (String) metadata.get("Slices");
-    if (z != null) {
-      core[0].sizeZ = Integer.parseInt(z);
-    }
-    else core[0].sizeZ = 1;
-
-    String t = (String) metadata.get("Frames");
-    if (t != null) {
-      core[0].sizeT = Integer.parseInt(t);
-    }
-    else core[0].sizeT = tiffs.size() / getSizeC();
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeT() == 0) core[0].sizeT = tiffs.size() / getSizeC();
 
     core[0].sizeX = tiffReader.getSizeX();
     core[0].sizeY = tiffReader.getSizeY();
