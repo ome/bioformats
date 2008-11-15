@@ -147,11 +147,12 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
     int next = 0;
 
-    // Construct BufferedImages manually, rather than using
-    // AWTImageTools.makeImage.  The AWTImageTools.makeImage methods construct
-    // images that are not properly handled by the JPEG2000 writer - specifically,
-    // 8-bit multi-channel images are constructed with type DataBuffer.TYPE_INT
-    // (so a single int is used to store all of the channels for a specific pixel).
+    // NB: Construct BufferedImages manually, rather than using
+    // AWTImageTools.makeImage. The AWTImageTools.makeImage methods construct
+    // images that are not properly handled by the JPEG2000 writer.
+    // Specifically, 8-bit multi-channel images are constructed with type
+    // DataBuffer.TYPE_INT (so a single int is used to store all of the
+    // channels for a specific pixel).
 
     if (dims[1] == 1) {
       byte[][] b = new byte[dims[0]][x * y];

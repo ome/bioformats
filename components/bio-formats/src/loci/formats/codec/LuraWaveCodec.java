@@ -151,7 +151,8 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
         r.setVar("image16", image16);
         r.setVar("w", w);
         r.setVar("h", h);
-        r.exec("lwf.decodeToMemoryGray16(image16, 0, -1, 1024, 0, 1, w, 0, 0, w, h)");
+        r.exec("lwf.decodeToMemoryGray16(image16, " +
+          "0, -1, 1024, 0, 1, w, 0, 0, w, h)");
       }
       catch (ReflectException exc) {
         throw new FormatException("Could not decode LuraWave data", exc);
