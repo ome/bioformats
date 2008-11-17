@@ -476,6 +476,8 @@ public class ICSReader extends FormatReader {
 
     status("Populating metadata");
 
+    if (invertY) signed = false;
+
     layoutOrder = layoutOrder.trim();
     StringTokenizer t1 = new StringTokenizer(layoutSizes);
     StringTokenizer t2 = new StringTokenizer(layoutOrder);
