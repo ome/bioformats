@@ -24,11 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.out;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.Base64Codec;
+import loci.formats.codec.JPEG2000Codec;
+import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataRetrieve;
 import org.xml.sax.Attributes;
@@ -53,7 +56,7 @@ public class OMEXMLWriter extends FormatWriter {
 
   public OMEXMLWriter() {
     super("OME-XML", new String[] {"ome"});
-    compressionTypes = new String[] {"none", "zlib"};
+    compressionTypes = new String[] {"none", "zlib","J2K","JPEG"};
   }
 
   // -- IFormatHandler API methods --
@@ -85,16 +88,31 @@ public class OMEXMLWriter extends FormatWriter {
       out.writeBytes((String) xmlFragments.get(0));
       initialized = true;
     }
-
-    byte[][] pix = AWTImageTools.getPixelBytes(
-      AWTImageTools.makeBuffered(image),
-      !retrieve.getPixelsBigEndian(series, 0).booleanValue());
-    for (int i=0; i<pix.length; i++) {
+    boolean littleEndian=!retrieve.getPixelsBigEndian(series, 0).booleanValue();
+    BufferedImage buffImage=AWTImageTools.makeBuffered(image);
+  	int width = buffImage.getWidth();
+	int height = buffImage.getHeight();
+    byte[][] pix = AWTImageTools.getPixelBytes(buffImage,littleEndian);
+    buffImage=null;
+	//TODO: Write decompress to use LittleEndian option
+    Object[] options= {Boolean.TRUE,Boolean.TRUE};//{Boolean.TRUE, Boolean(littleEndian);
+    for (int i = 0; i < pix.length; i++) {
+        //TODO: Create a Method compress to take into account all compression methods
+		int bytes = pix[i].length / (width * height);
+		int[] dims = new int[] { 1, bytes }; // one channels compressed at a time
+		if (compression.equals("J2K")) {
+			pix[i] = new JPEG2000Codec().compress(pix[i], width, height,
+				dims, options);
+		}
+		if (compression.equals("JPEG")) {
+			pix[i] = new JPEGCodec().compress(pix[i], width, height,
+				dims, options);
+		}
+	      if (compression.equals("zlib")) {
+	    	  pix[i] = new ZlibCodec().compress(pix[i], 0, 0, null, null);
+	        }
       byte[] encodedPix = new Base64Codec().compress(pix[i], 0, 0, null, null);
 
-      if (compression.equals("zlib")) {
-        encodedPix = new ZlibCodec().compress(encodedPix, 0, 0, null, null);
-      }
 
       StringBuffer plane = new StringBuffer("\n<Bin:BinData Length=\"");
       plane.append(encodedPix.length);
@@ -112,6 +130,7 @@ public class OMEXMLWriter extends FormatWriter {
 
     if (lastInSeries) {
       out.writeBytes((String) xmlFragments.get(series + 1));
+      close();
     }
   }
 
