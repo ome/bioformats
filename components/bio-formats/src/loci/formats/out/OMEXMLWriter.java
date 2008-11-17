@@ -57,6 +57,7 @@ public class OMEXMLWriter extends FormatWriter {
   public OMEXMLWriter() {
     super("OME-XML", new String[] {"ome"});
     compressionTypes = new String[] {"none", "zlib","J2K","JPEG"};
+    compression = compressionTypes[0];
   }
 
   // -- IFormatHandler API methods --
@@ -104,13 +105,13 @@ public class OMEXMLWriter extends FormatWriter {
 			pix[i] = new JPEG2000Codec().compress(pix[i], width, height,
 				dims, options);
 		}
-		if (compression.equals("JPEG")) {
+		else if (compression.equals("JPEG")) {
 			pix[i] = new JPEGCodec().compress(pix[i], width, height,
 				dims, options);
 		}
-	      if (compression.equals("zlib")) {
-	    	  pix[i] = new ZlibCodec().compress(pix[i], 0, 0, null, null);
-	        }
+		else if (compression.equals("zlib")) {
+	    	pix[i] = new ZlibCodec().compress(pix[i], 0, 0, null, null);
+	    }
       byte[] encodedPix = new Base64Codec().compress(pix[i], 0, 0, null, null);
 
 
