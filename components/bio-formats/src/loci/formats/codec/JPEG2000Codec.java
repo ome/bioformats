@@ -70,10 +70,12 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     catch (ClassNotFoundException exc) {
       LogTools.trace(exc);
       noJ2k = true;
+      return;
     }
     catch (NoClassDefFoundError err) {
       LogTools.trace(err);
       noJ2k = true;
+      return;
     }
     catch (RuntimeException exc) {
       // HACK: workaround for bug in Apache Axis2
@@ -81,6 +83,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
       if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
       LogTools.trace(exc);
       noJ2k = true;
+      return;
     }
     IIORegistry registry = IIORegistry.getDefaultInstance();
     if (spiClass != null) {
@@ -104,7 +107,9 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
       // register J2KImageReader with IIORegistry
       registerClass(J2K_READER);
-
+      
+      if (noJ2k) throw new FormatException("Could not compress JPEG-2000 data.\r\n"+NO_J2K_MSG);
+      
       IIORegistry registry = IIORegistry.getDefaultInstance();
 
       // obtain J2KImageReaderSpi instance from IIORegistry
@@ -137,9 +142,15 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
   public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
     throws FormatException
   {
-    Object[] o = (Object[]) options;
-    boolean interleaved = ((Boolean) o[0]).booleanValue();
-    boolean littleEndian = ((Boolean) o[1]).booleanValue();
+	    boolean littleEndian = false, interleaved = false;
+	    if (options instanceof Boolean) {
+	      littleEndian = ((Boolean) options).booleanValue();
+	    }
+	    else {
+	      Object[] o = (Object[]) options;
+	      littleEndian = ((Boolean) o[0]).booleanValue();
+	      interleaved = ((Boolean) o[1]).booleanValue();
+	    }
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
 
