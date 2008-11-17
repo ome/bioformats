@@ -53,20 +53,13 @@ public class ZeissZVIReader extends FormatReader {
   private int[] offsets;
   private int[][] coordinates;
 
+  private Hashtable timestamps, exposureTime;
   private int cIndex = -1;
   private boolean isTiled;
   private int tileRows, tileColumns;
   private boolean isJPEG;
 
   private String firstImageTile, secondImageTile;
-  private float pixelSizeX, pixelSizeY, pixelSizeZ;
-  private String microscopeName, objectiveName, workingDistance;
-  private String correction, stageX, stageY, voltage, filterName;
-  private String gain, offset, comments;
-  private Hashtable channelNames, emWave, exWave, exposureTime;
-  private Hashtable whiteValue, blackValue, gammaValue, timestamps;
-  private String userName, userCompany, mag, na;
-
   private int tileWidth, tileHeight;
   private int realWidth, realHeight;
 
@@ -170,7 +163,7 @@ public class ZeissZVIReader extends FormatReader {
               for (int r=tileY; r<tileY + tileH; r++) {
                 int src = pixel * (r * tileWidth + tileX);
                 int dest = pixel * (w * (rowOffset + r - tileY) + colOffset);
-                int len = pixel * bytes;
+                int len = pixel * tileW;
                 System.arraycopy(tile, src, buf, dest, len);
               }
 
@@ -185,14 +178,13 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
-    if ((bpp % 3) == 0) {
+    if (isRGB()) {
       // reverse bytes in groups of 3 to account for BGR storage
-      int bp = bpp / 3;
-      byte[] bb = new byte[bp];
+      byte[] bb = new byte[bytes];
       for (int i=0; i<buf.length; i+=bpp) {
-        System.arraycopy(buf, i + 2*bp, bb, 0, bp);
-        System.arraycopy(buf, i, buf, i + 2*bp, bp);
-        System.arraycopy(bb, 0, buf, i, bp);
+        System.arraycopy(buf, i + 2*bytes, bb, 0, bytes);
+        System.arraycopy(buf, i, buf, i + 2*bytes, bytes);
+        System.arraycopy(bb, 0, buf, i, bytes);
       }
     }
     return buf;
@@ -204,11 +196,10 @@ public class ZeissZVIReader extends FormatReader {
   public void close() throws IOException {
     super.close();
 
+    timestamps = exposureTime = null;
     offsets = null;
     coordinates = null;
     imageFiles = null;
-    channelNames = whiteValue = blackValue = gammaValue = null;
-    exposureTime = timestamps = null;
     cIndex = -1;
     bpp = tileRows = tileColumns = 0;
     isTiled = isJPEG = false;
@@ -223,15 +214,8 @@ public class ZeissZVIReader extends FormatReader {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
     super.initFile(id);
 
-    emWave = new Hashtable();
-    exWave = new Hashtable();
-    channelNames = new Hashtable();
-    whiteValue = new Hashtable();
-    blackValue = new Hashtable();
-    gammaValue = new Hashtable();
-    exposureTime = new Hashtable();
     timestamps = new Hashtable();
-
+    exposureTime = new Hashtable();
     poi = new POITools(Location.getMappedId(id));
 
     // count number of images
@@ -266,6 +250,11 @@ public class ZeissZVIReader extends FormatReader {
     // parse each embedded file
 
     Vector cIndices = new Vector();
+    Vector zIndices = new Vector();
+    Vector tIndices = new Vector();
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     for (int i=0; i<files.length; i++) {
       String name = files[i];
@@ -280,7 +269,7 @@ public class ZeissZVIReader extends FormatReader {
         RandomAccessStream s = poi.getDocumentStream(name);
         s.order(true);
         int imageNum = getImageNumber(name, -1);
-        try { parseTags(imageNum, s); }
+        try { parseTags(imageNum, s, store); }
         catch (EOFException e) { }
         s.close();
       }
@@ -311,10 +300,11 @@ public class ZeissZVIReader extends FormatReader {
         int cidx = s.readInt();
         int tidx = s.readInt();
 
-        if (zidx >= getSizeZ()) core[0].sizeZ++;
-        if (tidx >= getSizeT()) core[0].sizeT++;
-
+        Integer z = new Integer(zidx);
+        Integer t = new Integer(tidx);
         Integer c = new Integer(cidx);
+        if (!zIndices.contains(z)) zIndices.add(z);
+        if (!tIndices.contains(t)) tIndices.add(t);
         if (!cIndices.contains(c)) cIndices.add(c);
 
         s.skipBytes(len);
@@ -346,6 +336,8 @@ public class ZeissZVIReader extends FormatReader {
 
     status("Populating metadata");
 
+    core[0].sizeZ = zIndices.size();
+    core[0].sizeT = tIndices.size();
     core[0].sizeC = cIndices.size();
 
     core[0].littleEndian = true;
@@ -354,23 +346,16 @@ public class ZeissZVIReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
-    if ((bpp % 3) == 0) {
-      core[0].sizeC *= 3;
-      core[0].rgb = true;
-    }
-    else {
-      core[0].rgb = false;
-    }
-
-    int nPlanes = getSizeZ() * getSizeT();
-    core[0].imageCount = nPlanes * (getSizeC() / (isRGB() ? 3 : 1));
+    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
+    core[0].rgb = (bpp % 3) == 0;
+    if (isRGB()) core[0].sizeC *= 3;
 
     if (isTiled) {
       // calculate tile dimensions and number of tiles
       int totalTiles = offsets.length / getImageCount();
 
-      tileRows = realHeight / getSizeY();
-      tileColumns = realWidth / getSizeX();
+      tileRows = (realHeight / getSizeY()) + 1;
+      tileColumns = (realWidth / getSizeX()) + 1;
 
       if (totalTiles <= 1) {
         tileRows = 1;
@@ -418,10 +403,7 @@ public class ZeissZVIReader extends FormatReader {
       core[0].dimensionOrder += "T";
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
-    store.setImageDescription(comments, 0);
     MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
@@ -429,93 +411,12 @@ public class ZeissZVIReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
-
-    if (correction != null) store.setObjectiveCorrection(correction, 0, 0);
-    if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);
-    if (objectiveName != null) store.setObjectiveModel(objectiveName, 0, 0);
-    if (mag != null) {
-      store.setObjectiveNominalMagnification(
-        new Integer((int) Float.parseFloat(mag)), 0, 0);
-    }
-    if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
-    }
-
-    if (stageX != null) {
-      store.setStagePositionPositionX(new Float(stageX), 0, 0, 0);
-    }
-    if (stageY != null) {
-      store.setStagePositionPositionY(new Float(stageY), 0, 0, 0);
-    }
-
-    if (gain != null) store.setDetectorGain(new Float(gain), 0, 0);
-    if (offset != null) store.setDetectorOffset(new Float(offset), 0, 0);
-    if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
-
-    String[] channels = (String[]) channelNames.keySet().toArray(new String[0]);
-    Arrays.sort(channels);
-
-    for (int i=0; i<getEffectiveSizeC(); i++) {
-      if (i >= channels.length) break;
-      String key = channels[i];
-      String em = (String) emWave.get(key);
-      String ex = (String) exWave.get(key);
-
-      if (em != null) {
-        try {
-          store.setLogicalChannelEmWave(
-            new Integer((int) Float.parseFloat(em)), 0, i);
-        }
-        catch (NumberFormatException e) { }
-      }
-
-      if (ex != null) {
-        try {
-          store.setLogicalChannelExWave(
-            new Integer((int) Float.parseFloat(ex)), 0, i);
-        }
-        catch (NumberFormatException e) { }
-      }
-
-      store.setLogicalChannelName((String) channelNames.get(key), 0, i);
-
-      String black = (String) blackValue.get(key);
-      String white = (String) whiteValue.get(key);
-      String gamma = (String) gammaValue.get(key);
-
-      Double blackVal = null, whiteVal = null;
-      Float gammaVal = null;
-
-      if (black != null) {
-        try { blackVal = new Double(black); }
-        catch (NumberFormatException e) { }
-      }
-      if (white != null) {
-        try { whiteVal = new Double(white); }
-        catch (NumberFormatException e) { }
-      }
-      if (gamma != null) {
-        try { gammaVal = new Float(gamma); }
-        catch (NumberFormatException e) { }
-      }
-
-      // CTR CHECK
-//      store.setDisplayChannel(new Integer(i), blackVal, whiteVal,
-//        gammaVal, null);
-    }
-
     long firstStamp = 0;
     if (timestamps.size() > 0) {
       String timestamp = (String) timestamps.get(new Integer(0));
       firstStamp = parseTimestamp(timestamp);
       store.setImageCreationDate(DataTools.convertDate(
         (long) (firstStamp / 1600), DataTools.ZVI), 0);
-    }
-    else {
-      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
     for (int plane=0; plane<getImageCount(); plane++) {
@@ -532,18 +433,6 @@ public class ZeissZVIReader extends FormatReader {
         long stamp = parseTimestamp(timestamp);
         stamp -= firstStamp;
         store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
-      }
-    }
-
-    // set experimenter data
-    if (userName != null) {
-      int space = userName.indexOf(" ");
-      String firstName = space == -1 ? "": userName.substring(0, space);
-      String lastName = userName.substring(space + 1);
-      if (!firstName.equals("")) store.setExperimenterFirstName(firstName, 0);
-      if (!lastName.equals("")) store.setExperimenterLastName(lastName, 0);
-      if (userCompany != null) {
-        store.setExperimenterInstitution(userCompany, 0);
       }
     }
   }
@@ -605,12 +494,16 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /** Parse all of the tags in a stream. */
-  private void parseTags(int image, RandomAccessStream s) throws IOException {
+  private void parseTags(int image, RandomAccessStream s, MetadataStore store)
+    throws IOException
+  {
     s.skipBytes(8);
 
     int count = s.readInt();
 
     // limit count to 4096
+
+    float pixelSizeX = 0f, pixelSizeY = 0f, pixelSizeZ = 0f;
 
     for (int i=0; i<count; i++) {
       if (s.getFilePointer() + 2 >= s.length()) break;
@@ -621,143 +514,158 @@ public class ZeissZVIReader extends FormatReader {
 
       s.skipBytes(6);
 
-      String key = getKey(tagID);
-      if (key.equals("Image Channel Index")) {
-        try {
+      try {
+        String key = getKey(tagID);
+        if (key.equals("Image Channel Index")) {
           cIndex = Integer.parseInt(value);
         }
-        catch (NumberFormatException exc) { }
-      }
-      else if (key.equals("ImageWidth")) {
-        try {
-          if (getSizeX() == 0) core[0].sizeX = Integer.parseInt(value);
-          if (realWidth == 0 && Integer.parseInt(value) > realWidth) {
-            realWidth = Integer.parseInt(value);
-          }
+        else if (key.equals("ImageWidth")) {
+          int v = Integer.parseInt(value);
+          if (getSizeX() == 0) core[0].sizeX = v;
+          if (realWidth == 0 && v > realWidth) realWidth = v;
         }
-        catch (NumberFormatException f) { }
-      }
-      else if (key.equals("ImageHeight")) {
-        try {
-          if (getSizeY() == 0) core[0].sizeY = Integer.parseInt(value);
-          if (realHeight == 0 || Integer.parseInt(value) > realHeight) {
-            realHeight = Integer.parseInt(value);
-          }
+        else if (key.equals("ImageHeight")) {
+          int v = Integer.parseInt(value);
+          if (getSizeY() == 0) core[0].sizeY = v;
+          if (realHeight == 0 || v > realHeight) realHeight = v;
         }
-        catch (NumberFormatException f) { }
-      }
 
-      if (key.indexOf("ImageTile") != -1) isTiled = true;
-      if (cIndex != -1) key += " " + cIndex;
-      addMeta(key, value);
+        if (key.indexOf("ImageTile") != -1) isTiled = true;
+        if (cIndex != -1) key += " " + cIndex;
+        addMeta(key, value);
 
-      if (key.equals("ImageTile Index") || key.equals("ImageTile Index 0")) {
-        firstImageTile = value;
-      }
-      else if (key.equals("ImageTile Index 1")) secondImageTile = value;
-      else if (key.equals("Scale Factor for X")) {
-        try {
+        if (key.equals("ImageTile Index") || key.equals("ImageTile Index 0")) {
+          firstImageTile = value;
+        }
+        else if (key.equals("ImageTile Index 1")) secondImageTile = value;
+        else if (key.equals("Scale Factor for X")) {
           pixelSizeX = Float.parseFloat(value);
         }
-        catch (NumberFormatException e) { }
-      }
-      else if (key.equals("Scale Factor for Y")) {
-        try {
+        else if (key.equals("Scale Factor for Y")) {
           pixelSizeY = Float.parseFloat(value);
         }
-        catch (NumberFormatException e) { }
-      }
-      else if (key.equals("Scale Factor for Z")) {
-        try {
+        else if (key.equals("Scale Factor for Z")) {
           pixelSizeZ = Float.parseFloat(value);
         }
-        catch (NumberFormatException e) { }
-      }
-      else if (key.equals("Scale Unit for X")) {
-        pixelSizeX *= getScaleUnit(value);
-      }
-      else if (key.equals("Scale Unit for Y")) {
-        pixelSizeY *= getScaleUnit(value);
-      }
-      else if (key.equals("Scale Unit for Z")) {
-        pixelSizeZ *= getScaleUnit(value);
-      }
-      else if (key.startsWith("Microscope Name")) {
-        microscopeName = value;
-      }
-      else if (key.startsWith("Emission Wavelength")) {
-        if (cIndex != -1) emWave.put(new Integer(cIndex), value);
-      }
-      else if (key.startsWith("Excitation Wavelength")) {
-        if (cIndex != -1) exWave.put(new Integer(cIndex), value);
-      }
-      else if (key.startsWith("Channel Name")) {
-        if (cIndex != -1) {
-          channelNames.put(String.valueOf(cIndex), value);
+        else if (key.equals("Scale Unit for X")) {
+          store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
+        }
+        else if (key.equals("Scale Unit for Y")) {
+          store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+        }
+        else if (key.equals("Scale Unit for Z")) {
+          store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
+        }
+        else if (key.startsWith("Emission Wavelength")) {
+          if (cIndex != -1) {
+            store.setLogicalChannelEmWave(new Integer(value), 0, cIndex);
+          }
+        }
+        else if (key.startsWith("Excitation Wavelength")) {
+          if (cIndex != -1) {
+            store.setLogicalChannelExWave(new Integer(value), 0, cIndex);
+          }
+        }
+        else if (key.startsWith("Channel Name")) {
+          if (cIndex != -1) store.setLogicalChannelName(value, 0, cIndex);
+        }
+        else if (key.startsWith("BlackValue")) {
+          if (cIndex != -1) {
+            // store.setGreyChannelBlackValue(new Float(value), 0);
+          }
+        }
+        else if (key.startsWith("WhiteValue")) {
+          if (cIndex != -1) {
+            // store.setGreyChannelWhiteValue(new Float(value), 0);
+          }
+        }
+        else if (key.startsWith("GammaValue")) {
+          if (cIndex != -1) {
+            // store.setGreyChannelGammaValue(new Float(value), 0);
+          }
+        }
+        else if (key.startsWith("Exposure Time [ms]")) {
+          if (cIndex != -1) exposureTime.put(new Integer(cIndex), value);
+        }
+        else if (key.startsWith("User Name")) {
+          String[] username = value.split(" ");
+          if (username.length >= 2) {
+            store.setExperimenterFirstName(username[0], 0);
+            store.setExperimenterLastName(username[username.length - 1], 0);
+          }
+        }
+        else if (key.equals("User company")) {
+          store.setExperimenterInstitution(value, 0);
+        }
+        else if (key.startsWith("Objective Magnification")) {
+          store.setObjectiveNominalMagnification(new Integer(value), 0, 0);
+        }
+        else if (key.startsWith("Objective ID")) {
+          store.setObjectiveID(value, 0, 0);
+        }
+        else if (key.startsWith("Objective N.A.")) {
+          store.setObjectiveLensNA(new Float(value), 0, 0);
+        }
+        else if (key.startsWith("Objective Name")) {
+          store.setObjectiveModel(value, 0, 0);
+        }
+        else if (key.startsWith("Objective Working Distance")) {
+          store.setObjectiveWorkingDistance(new Float(value), 0, 0);
+        }
+        else if (key.startsWith("Objective Immersion Type")) {
+          String immersion = null;
+          switch (Integer.parseInt(value)) {
+            // case 1: no immersion
+            case 2:
+              immersion = "oil";
+              break;
+            case 3:
+              immersion = "water";
+              break;
+          }
+          if (immersion != null) store.setObjectiveImmersion(immersion, 0, 0);
+        }
+        else if (key.startsWith("Parfocal Correction")) {
+          store.setObjectiveCorrection(value, 0, 0);
+        }
+        else if (key.indexOf("Stage Position X") != -1) {
+          for (int q=0; q<getImageCount(); q++) {
+            store.setStagePositionPositionX(new Float(value), 0, 0, q);
+          }
+        }
+        else if (key.indexOf("Stage Position Y") != -1) {
+          for (int q=0; q<getImageCount(); q++) {
+            store.setStagePositionPositionY(new Float(value), 0, 0, q);
+          }
+        }
+        else if (key.startsWith("Orca Analog Gain")) {
+          store.setDetectorSettingsGain(new Float(value), 0, cIndex);
+        }
+        else if (key.startsWith("Orca Analog Offset")) {
+          store.setDetectorSettingsOffset(new Float(value), 0, cIndex);
+        }
+        else if (key.startsWith("Comments")) {
+          store.setImageDescription(value, 0);
+        }
+        else if (key.startsWith("Acquisition Date")) {
+          if (image >= 0) {
+            timestamps.put(new Integer(image), value);
+            addMeta("Timestamp " + image, value);
+          }
         }
       }
-      else if (key.startsWith("BlackValue")) {
-        if (cIndex != -1) blackValue.put(new Integer(cIndex), value);
-      }
-      else if (key.startsWith("WhiteValue")) {
-        if (cIndex != -1) whiteValue.put(new Integer(cIndex), value);
-      }
-      else if (key.startsWith("GammaValue")) {
-        if (cIndex != -1) gammaValue.put(new Integer(cIndex), value);
-      }
-      else if (key.startsWith("Exposure Time [ms]")) {
-        if (cIndex != -1) exposureTime.put(new Integer(cIndex), value);
-      }
-      else if (key.startsWith("User Name")) {
-        if (value != null && !value.trim().equals("")) userName = value;
-      }
-      else if (key.equals("User company")) userCompany = value;
-      else if (key.startsWith("Objective Magnification")) mag = value;
-      else if (key.startsWith("Objective N.A.")) na = value;
-      else if (key.startsWith("Objective Name")) objectiveName = value;
-      else if (key.startsWith("Objective Working Distance")) {
-        workingDistance = value;
-      }
-      else if (key.startsWith("Parfocal Correction")) correction = value;
-      else if (key.startsWith("Stage Position X") ||
-        key.startsWith("Original Stage Position X"))
-      {
-        stageX = value;
-      }
-      else if (key.startsWith("Stage Position Y") ||
-        key.startsWith("Original Stage Position Y"))
-      {
-        stageY = value;
-      }
-      else if (key.startsWith("Halogen Lamp Voltage")) voltage = value;
-      else if (key.startsWith("Orca Analog Gain")) gain = value;
-      else if (key.startsWith("Orca Analog Offset")) offset = value;
-      else if (key.startsWith("Comments")) comments = value;
-      else if (key.startsWith("External Filter Wheel")) filterName = value;
-      else if (key.startsWith("Acquisition Date")) {
-        if (image >= 0) {
-          timestamps.put(new Integer(image), value);
-          addMeta("Timestamp " + image, value);
-        }
-      }
+      catch (NumberFormatException e) { }
     }
   }
 
   private float getScaleUnit(String value) {
-    int v = 0;
-    try {
-      v = Integer.parseInt(value);
-    }
-    catch (NumberFormatException e) { }
+    int v = Integer.parseInt(value);
     switch (v) {
-      case 72:
-        // meters
+      case 72: // meters
         return 1000000f;
-      case 77:
-        // nanometers
+      case 77: // nanometers
         return 0.001f;
-      case 81:
-        // inches
+      case 81: // inches
         return 25400f;
     }
     return 1f;

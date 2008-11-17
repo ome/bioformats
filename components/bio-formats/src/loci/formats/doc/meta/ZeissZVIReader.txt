@@ -15,9 +15,8 @@ Of the 158 fields documented below:
 == Supported fields ==
 These fields are fully supported by the
 Bio-Formats Zeiss Vision Image (ZVI) format reader:
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Gain
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Offset
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Voltage
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_DetectorRef DetectorSettings]: Gain
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_DetectorRef DetectorSettings]: Offset
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeZ
@@ -41,6 +40,7 @@ Bio-Formats Zeiss Vision Image (ZVI) format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: PockelCellSetting
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Correction
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Immersion
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: LensNA
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: NominalMagnification
@@ -70,14 +70,15 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Arc Arc]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_ChannelComponent ChannelComponent]: ColorDomain
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Gain
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Manufacturer
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Model
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Offset
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: SerialNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Type
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Detector Detector]: Voltage
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_DetectorRef DetectorSettings]: Detector
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_DetectorRef DetectorSettings]: Gain
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_DetectorRef DetectorSettings]: Offset
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: TimeIncrement
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: WaveIncrement
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Pixels Dimensions]: WaveStart
@@ -125,7 +126,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_OTF OTF]: SizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: CalibratedMagnification
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: ID
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Immersion
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: Manufacturer
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Objective Objective]: SerialNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-02/ome.xsd.html#element_Plate Plate]: Description
