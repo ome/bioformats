@@ -45,9 +45,15 @@ public class JPEGCodec extends BaseCodec implements Codec {
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
   {
-    Object[] o = (Object[]) options;
-    boolean interleaved = ((Boolean) o[0]).booleanValue();
-    boolean littleEndian = ((Boolean) o[1]).booleanValue();
+	  boolean littleEndian = false, interleaved = false;
+	    if (options instanceof Boolean) {
+	      littleEndian = ((Boolean) options).booleanValue();
+	    }
+	    else {
+	      Object[] o = (Object[]) options;
+	      littleEndian = ((Boolean) o[0]).booleanValue();
+	      interleaved = ((Boolean) o[1]).booleanValue();
+	    }
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     BufferedImage img = AWTImageTools.makeImage(data, x, y, dims[0],
@@ -124,7 +130,7 @@ public class JPEGCodec extends BaseCodec implements Codec {
       }
     }
 
-    boolean littleEndian = false, interleaved = false;
+    boolean littleEndian = true, interleaved = true;
     if (options instanceof Boolean) {
       littleEndian = ((Boolean) options).booleanValue();
     }
