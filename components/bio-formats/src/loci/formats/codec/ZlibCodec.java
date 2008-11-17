@@ -49,9 +49,8 @@ public class ZlibCodec extends BaseCodec implements Codec {
     deflater.finish();
     byte[] buf = new byte[8192];
     ByteVector bytes = new ByteVector();
-    while (true) {
-      int r = deflater.deflate(buf, 0, buf.length);
-      if (r == -1) break; // eof
+    int r=0;
+    while ((r = deflater.deflate(buf, 0, buf.length))>0) {//compress until eof reached
       bytes.add(buf, 0, r);
     }
     return bytes.toByteArray();
@@ -64,9 +63,8 @@ public class ZlibCodec extends BaseCodec implements Codec {
     InflaterInputStream i = new InflaterInputStream(in);
     ByteVector bytes = new ByteVector();
     byte[] buf = new byte[8192];
-    while (true) {
-      int r = i.read(buf, 0, buf.length);
-      if (r <= 0) break; // eof
+    int r=0;
+    while ((r=i.read(buf, 0, buf.length))>0) {//read until eof reached
       bytes.add(buf, 0, r);
     }
     return bytes.toByteArray();
