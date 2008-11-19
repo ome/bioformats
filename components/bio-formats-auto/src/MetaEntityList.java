@@ -183,7 +183,7 @@ public class MetaEntityList extends EntityList {
         break;
       }
     }
-    return new String(c).replaceAll("\\+", "");
+    return new String(c).replaceAll("[^\\w]", "");
   }
 
   /** Converts the given type from Java to Slice syntax. */

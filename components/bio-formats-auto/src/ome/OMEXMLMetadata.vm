@@ -175,25 +175,26 @@ public class $q.className() extends OMEXMLMetadata {
 #foreach ($path in $q.unique())
 #set ($last = $q.last($path))
 #set ($lastVar = $q.var($last))
+#set ($pathVar = $q.var($path))
 #set ($indices = $q.indices($path))
 
   // $path
-  private ${last}Node ${lastVar}Node = null;
+  private ${last}Node ${pathVar}Node = null;
 #foreach ($index in $indices)
-  private int ${lastVar}Node${index}Index = -1;
+  private int ${pathVar}Node${index}Index = -1;
 #end##foreach $index
   private ${last}Node get${last}Node($q.argsList($path), boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
 #foreach ($index in $indices)
 #set ($indexVar = $q.var($index))
-    if (${lastVar}Node${index}Index != ${indexVar}Index) match = false;
+    if (${pathVar}Node${index}Index != ${indexVar}Index) match = false;
 #end##foreach $index
-    if (match) return ${lastVar}Node;
-    ${lastVar}Node = null;
+    if (match) return ${pathVar}Node;
+    ${pathVar}Node = null;
 #foreach ($index in $indices)
 #set ($indexVar = $q.var($index))
-    ${lastVar}Node${index}Index = ${indexVar}Index;
+    ${pathVar}Node${index}Index = ${indexVar}Index;
 #end##foreach $index
 
 #set ($slash = $path.lastIndexOf("/"))
@@ -221,7 +222,7 @@ public class $q.className() extends OMEXMLMetadata {
     if (!create && count <= ${lastVar}Index) return null;
     for (int i=count; i<=${lastVar}Index; i++) new ${last}Node($nodeVar);
     List list = ${nodeVar}.get${last}List();
-    ${lastVar}Node = (${last}Node) list.get(${lastVar}Index);
+    ${pathVar}Node = (${last}Node) list.get(${lastVar}Index);
 #else
     // get $last node
     ${last}Node $lastVar = ${nodeVar}.get$last();
@@ -229,21 +230,20 @@ public class $q.className() extends OMEXMLMetadata {
       if (create) $lastVar = new ${last}Node($nodeVar);
       else return null;
     }
-    ${lastVar}Node = $lastVar;
+    ${pathVar}Node = $lastVar;
 #end##if $multi
-    return ${lastVar}Node;
+    return ${pathVar}Node;
   }
 #end##foreach $path
 
   private void clearCachedNodes() {
 #foreach ($path in $q.unique())
-#set ($last = $q.last($path))
-#set ($lastVar = $q.var($last))
+#set ($pathVar = $q.var($path))
 #set ($indices = $q.indices($path))
     // $path
-    ${lastVar}Node = null;
+    ${pathVar}Node = null;
 #foreach ($index in $indices)
-    ${lastVar}Node${index}Index = -1;
+    ${pathVar}Node${index}Index = -1;
 #end##foreach $index
 #end##foreach $path
   }

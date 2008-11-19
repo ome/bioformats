@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2008 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 17, 2008 1:25:59 AM CDT
+ * Created by curtis via MetadataAutogen on Nov 19, 2008 10:52:54 AM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -2518,18 +2518,18 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   }
 
   // Experimenter+/GroupRef+
-  private GroupRefNode groupRefNode = null;
-  private int groupRefNodeExperimenterIndex = -1;
-  private int groupRefNodeGroupRefIndex = -1;
+  private GroupRefNode experimenterGroupRefNode = null;
+  private int experimenterGroupRefNodeExperimenterIndex = -1;
+  private int experimenterGroupRefNodeGroupRefIndex = -1;
   private GroupRefNode getGroupRefNode(int experimenterIndex, int groupRefIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (groupRefNodeExperimenterIndex != experimenterIndex) match = false;
-    if (groupRefNodeGroupRefIndex != groupRefIndex) match = false;
-    if (match) return groupRefNode;
-    groupRefNode = null;
-    groupRefNodeExperimenterIndex = experimenterIndex;
-    groupRefNodeGroupRefIndex = groupRefIndex;
+    if (experimenterGroupRefNodeExperimenterIndex != experimenterIndex) match = false;
+    if (experimenterGroupRefNodeGroupRefIndex != groupRefIndex) match = false;
+    if (match) return experimenterGroupRefNode;
+    experimenterGroupRefNode = null;
+    experimenterGroupRefNodeExperimenterIndex = experimenterIndex;
+    experimenterGroupRefNodeGroupRefIndex = groupRefIndex;
 
     // get Experimenter+ node
     ExperimenterNode experimenter = getExperimenterNode(experimenterIndex, create);
@@ -2539,8 +2539,8 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= groupRefIndex) return null;
     for (int i=count; i<=groupRefIndex; i++) new GroupRefNode(experimenter);
     List list = experimenter.getGroupRefList();
-    groupRefNode = (GroupRefNode) list.get(groupRefIndex);
-    return groupRefNode;
+    experimenterGroupRefNode = (GroupRefNode) list.get(groupRefIndex);
+    return experimenterGroupRefNode;
   }
 
   // Image+
@@ -2565,15 +2565,15 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   }
 
   // Image+/DisplayOptions
-  private DisplayOptionsNode displayOptionsNode = null;
-  private int displayOptionsNodeImageIndex = -1;
+  private DisplayOptionsNode imageDisplayOptionsNode = null;
+  private int imageDisplayOptionsNodeImageIndex = -1;
   private DisplayOptionsNode getDisplayOptionsNode(int imageIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (displayOptionsNodeImageIndex != imageIndex) match = false;
-    if (match) return displayOptionsNode;
-    displayOptionsNode = null;
-    displayOptionsNodeImageIndex = imageIndex;
+    if (imageDisplayOptionsNodeImageIndex != imageIndex) match = false;
+    if (match) return imageDisplayOptionsNode;
+    imageDisplayOptionsNode = null;
+    imageDisplayOptionsNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -2584,20 +2584,20 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) displayOptions = new DisplayOptionsNode(image);
       else return null;
     }
-    displayOptionsNode = displayOptions;
-    return displayOptionsNode;
+    imageDisplayOptionsNode = displayOptions;
+    return imageDisplayOptionsNode;
   }
 
   // Image+/DisplayOptions/Projection
-  private ProjectionNode projectionNode = null;
-  private int projectionNodeImageIndex = -1;
+  private ProjectionNode imageDisplayOptionsProjectionNode = null;
+  private int imageDisplayOptionsProjectionNodeImageIndex = -1;
   private ProjectionNode getProjectionNode(int imageIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (projectionNodeImageIndex != imageIndex) match = false;
-    if (match) return projectionNode;
-    projectionNode = null;
-    projectionNodeImageIndex = imageIndex;
+    if (imageDisplayOptionsProjectionNodeImageIndex != imageIndex) match = false;
+    if (match) return imageDisplayOptionsProjectionNode;
+    imageDisplayOptionsProjectionNode = null;
+    imageDisplayOptionsProjectionNodeImageIndex = imageIndex;
 
     // get Image+/DisplayOptions node
     DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
@@ -2608,23 +2608,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) projection = new ProjectionNode(displayOptions);
       else return null;
     }
-    projectionNode = projection;
-    return projectionNode;
+    imageDisplayOptionsProjectionNode = projection;
+    return imageDisplayOptionsProjectionNode;
   }
 
   // Image+/DisplayOptions/ROI+
-  private ROINode roiNode = null;
-  private int roiNodeImageIndex = -1;
-  private int roiNodeROIIndex = -1;
+  private ROINode imageDisplayOptionsROINode = null;
+  private int imageDisplayOptionsROINodeImageIndex = -1;
+  private int imageDisplayOptionsROINodeROIIndex = -1;
   private ROINode getROINode(int imageIndex, int roiIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (roiNodeImageIndex != imageIndex) match = false;
-    if (roiNodeROIIndex != roiIndex) match = false;
-    if (match) return roiNode;
-    roiNode = null;
-    roiNodeImageIndex = imageIndex;
-    roiNodeROIIndex = roiIndex;
+    if (imageDisplayOptionsROINodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROINodeROIIndex != roiIndex) match = false;
+    if (match) return imageDisplayOptionsROINode;
+    imageDisplayOptionsROINode = null;
+    imageDisplayOptionsROINodeImageIndex = imageIndex;
+    imageDisplayOptionsROINodeROIIndex = roiIndex;
 
     // get Image+/DisplayOptions node
     DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
@@ -2634,20 +2634,20 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= roiIndex) return null;
     for (int i=count; i<=roiIndex; i++) new ROINode(displayOptions);
     List list = displayOptions.getROIList();
-    roiNode = (ROINode) list.get(roiIndex);
-    return roiNode;
+    imageDisplayOptionsROINode = (ROINode) list.get(roiIndex);
+    return imageDisplayOptionsROINode;
   }
 
   // Image+/DisplayOptions/Time
-  private TimeNode timeNode = null;
-  private int timeNodeImageIndex = -1;
+  private TimeNode imageDisplayOptionsTimeNode = null;
+  private int imageDisplayOptionsTimeNodeImageIndex = -1;
   private TimeNode getTimeNode(int imageIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (timeNodeImageIndex != imageIndex) match = false;
-    if (match) return timeNode;
-    timeNode = null;
-    timeNodeImageIndex = imageIndex;
+    if (imageDisplayOptionsTimeNodeImageIndex != imageIndex) match = false;
+    if (match) return imageDisplayOptionsTimeNode;
+    imageDisplayOptionsTimeNode = null;
+    imageDisplayOptionsTimeNodeImageIndex = imageIndex;
 
     // get Image+/DisplayOptions node
     DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
@@ -2658,20 +2658,20 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) time = new TimeNode(displayOptions);
       else return null;
     }
-    timeNode = time;
-    return timeNode;
+    imageDisplayOptionsTimeNode = time;
+    return imageDisplayOptionsTimeNode;
   }
 
   // Image+/ImagingEnvironment
-  private ImagingEnvironmentNode imagingEnvironmentNode = null;
-  private int imagingEnvironmentNodeImageIndex = -1;
+  private ImagingEnvironmentNode imageImagingEnvironmentNode = null;
+  private int imageImagingEnvironmentNodeImageIndex = -1;
   private ImagingEnvironmentNode getImagingEnvironmentNode(int imageIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (imagingEnvironmentNodeImageIndex != imageIndex) match = false;
-    if (match) return imagingEnvironmentNode;
-    imagingEnvironmentNode = null;
-    imagingEnvironmentNodeImageIndex = imageIndex;
+    if (imageImagingEnvironmentNodeImageIndex != imageIndex) match = false;
+    if (match) return imageImagingEnvironmentNode;
+    imageImagingEnvironmentNode = null;
+    imageImagingEnvironmentNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -2682,23 +2682,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) imagingEnvironment = new ImagingEnvironmentNode(image);
       else return null;
     }
-    imagingEnvironmentNode = imagingEnvironment;
-    return imagingEnvironmentNode;
+    imageImagingEnvironmentNode = imagingEnvironment;
+    return imageImagingEnvironmentNode;
   }
 
   // Image+/LogicalChannel+
-  private LogicalChannelNode logicalChannelNode = null;
-  private int logicalChannelNodeImageIndex = -1;
-  private int logicalChannelNodeLogicalChannelIndex = -1;
+  private LogicalChannelNode imageLogicalChannelNode = null;
+  private int imageLogicalChannelNodeImageIndex = -1;
+  private int imageLogicalChannelNodeLogicalChannelIndex = -1;
   private LogicalChannelNode getLogicalChannelNode(int imageIndex, int logicalChannelIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (logicalChannelNodeImageIndex != imageIndex) match = false;
-    if (logicalChannelNodeLogicalChannelIndex != logicalChannelIndex) match = false;
-    if (match) return logicalChannelNode;
-    logicalChannelNode = null;
-    logicalChannelNodeImageIndex = imageIndex;
-    logicalChannelNodeLogicalChannelIndex = logicalChannelIndex;
+    if (imageLogicalChannelNodeImageIndex != imageIndex) match = false;
+    if (imageLogicalChannelNodeLogicalChannelIndex != logicalChannelIndex) match = false;
+    if (match) return imageLogicalChannelNode;
+    imageLogicalChannelNode = null;
+    imageLogicalChannelNodeImageIndex = imageIndex;
+    imageLogicalChannelNodeLogicalChannelIndex = logicalChannelIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -2708,26 +2708,26 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= logicalChannelIndex) return null;
     for (int i=count; i<=logicalChannelIndex; i++) new LogicalChannelNode(image);
     List list = image.getLogicalChannelList();
-    logicalChannelNode = (LogicalChannelNode) list.get(logicalChannelIndex);
-    return logicalChannelNode;
+    imageLogicalChannelNode = (LogicalChannelNode) list.get(logicalChannelIndex);
+    return imageLogicalChannelNode;
   }
 
   // Image+/LogicalChannel+/ChannelComponent+
-  private ChannelComponentNode channelComponentNode = null;
-  private int channelComponentNodeImageIndex = -1;
-  private int channelComponentNodeLogicalChannelIndex = -1;
-  private int channelComponentNodeChannelComponentIndex = -1;
+  private ChannelComponentNode imageLogicalChannelChannelComponentNode = null;
+  private int imageLogicalChannelChannelComponentNodeImageIndex = -1;
+  private int imageLogicalChannelChannelComponentNodeLogicalChannelIndex = -1;
+  private int imageLogicalChannelChannelComponentNodeChannelComponentIndex = -1;
   private ChannelComponentNode getChannelComponentNode(int imageIndex, int logicalChannelIndex, int channelComponentIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (channelComponentNodeImageIndex != imageIndex) match = false;
-    if (channelComponentNodeLogicalChannelIndex != logicalChannelIndex) match = false;
-    if (channelComponentNodeChannelComponentIndex != channelComponentIndex) match = false;
-    if (match) return channelComponentNode;
-    channelComponentNode = null;
-    channelComponentNodeImageIndex = imageIndex;
-    channelComponentNodeLogicalChannelIndex = logicalChannelIndex;
-    channelComponentNodeChannelComponentIndex = channelComponentIndex;
+    if (imageLogicalChannelChannelComponentNodeImageIndex != imageIndex) match = false;
+    if (imageLogicalChannelChannelComponentNodeLogicalChannelIndex != logicalChannelIndex) match = false;
+    if (imageLogicalChannelChannelComponentNodeChannelComponentIndex != channelComponentIndex) match = false;
+    if (match) return imageLogicalChannelChannelComponentNode;
+    imageLogicalChannelChannelComponentNode = null;
+    imageLogicalChannelChannelComponentNodeImageIndex = imageIndex;
+    imageLogicalChannelChannelComponentNodeLogicalChannelIndex = logicalChannelIndex;
+    imageLogicalChannelChannelComponentNodeChannelComponentIndex = channelComponentIndex;
 
     // get Image+/LogicalChannel+ node
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
@@ -2737,23 +2737,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= channelComponentIndex) return null;
     for (int i=count; i<=channelComponentIndex; i++) new ChannelComponentNode(logicalChannel);
     List list = logicalChannel.getChannelComponentList();
-    channelComponentNode = (ChannelComponentNode) list.get(channelComponentIndex);
-    return channelComponentNode;
+    imageLogicalChannelChannelComponentNode = (ChannelComponentNode) list.get(channelComponentIndex);
+    return imageLogicalChannelChannelComponentNode;
   }
 
   // Image+/LogicalChannel+/DetectorRef
-  private DetectorRefNode detectorRefNode = null;
-  private int detectorRefNodeImageIndex = -1;
-  private int detectorRefNodeLogicalChannelIndex = -1;
+  private DetectorRefNode imageLogicalChannelDetectorRefNode = null;
+  private int imageLogicalChannelDetectorRefNodeImageIndex = -1;
+  private int imageLogicalChannelDetectorRefNodeLogicalChannelIndex = -1;
   private DetectorRefNode getDetectorRefNode(int imageIndex, int logicalChannelIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (detectorRefNodeImageIndex != imageIndex) match = false;
-    if (detectorRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
-    if (match) return detectorRefNode;
-    detectorRefNode = null;
-    detectorRefNodeImageIndex = imageIndex;
-    detectorRefNodeLogicalChannelIndex = logicalChannelIndex;
+    if (imageLogicalChannelDetectorRefNodeImageIndex != imageIndex) match = false;
+    if (imageLogicalChannelDetectorRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
+    if (match) return imageLogicalChannelDetectorRefNode;
+    imageLogicalChannelDetectorRefNode = null;
+    imageLogicalChannelDetectorRefNodeImageIndex = imageIndex;
+    imageLogicalChannelDetectorRefNodeLogicalChannelIndex = logicalChannelIndex;
 
     // get Image+/LogicalChannel+ node
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
@@ -2764,23 +2764,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) detectorRef = new DetectorRefNode(logicalChannel);
       else return null;
     }
-    detectorRefNode = detectorRef;
-    return detectorRefNode;
+    imageLogicalChannelDetectorRefNode = detectorRef;
+    return imageLogicalChannelDetectorRefNode;
   }
 
   // Image+/LogicalChannel+/LightSourceRef
-  private LightSourceRefNode lightSourceRefNode = null;
-  private int lightSourceRefNodeImageIndex = -1;
-  private int lightSourceRefNodeLogicalChannelIndex = -1;
+  private LightSourceRefNode imageLogicalChannelLightSourceRefNode = null;
+  private int imageLogicalChannelLightSourceRefNodeImageIndex = -1;
+  private int imageLogicalChannelLightSourceRefNodeLogicalChannelIndex = -1;
   private LightSourceRefNode getLightSourceRefNode(int imageIndex, int logicalChannelIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (lightSourceRefNodeImageIndex != imageIndex) match = false;
-    if (lightSourceRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
-    if (match) return lightSourceRefNode;
-    lightSourceRefNode = null;
-    lightSourceRefNodeImageIndex = imageIndex;
-    lightSourceRefNodeLogicalChannelIndex = logicalChannelIndex;
+    if (imageLogicalChannelLightSourceRefNodeImageIndex != imageIndex) match = false;
+    if (imageLogicalChannelLightSourceRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
+    if (match) return imageLogicalChannelLightSourceRefNode;
+    imageLogicalChannelLightSourceRefNode = null;
+    imageLogicalChannelLightSourceRefNodeImageIndex = imageIndex;
+    imageLogicalChannelLightSourceRefNodeLogicalChannelIndex = logicalChannelIndex;
 
     // get Image+/LogicalChannel+ node
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
@@ -2791,23 +2791,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) lightSourceRef = new LightSourceRefNode(logicalChannel);
       else return null;
     }
-    lightSourceRefNode = lightSourceRef;
-    return lightSourceRefNode;
+    imageLogicalChannelLightSourceRefNode = lightSourceRef;
+    return imageLogicalChannelLightSourceRefNode;
   }
 
   // Image+/LogicalChannel+/OTFRef
-  private OTFRefNode otfRefNode = null;
-  private int otfRefNodeImageIndex = -1;
-  private int otfRefNodeLogicalChannelIndex = -1;
+  private OTFRefNode imageLogicalChannelOTFRefNode = null;
+  private int imageLogicalChannelOTFRefNodeImageIndex = -1;
+  private int imageLogicalChannelOTFRefNodeLogicalChannelIndex = -1;
   private OTFRefNode getOTFRefNode(int imageIndex, int logicalChannelIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (otfRefNodeImageIndex != imageIndex) match = false;
-    if (otfRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
-    if (match) return otfRefNode;
-    otfRefNode = null;
-    otfRefNodeImageIndex = imageIndex;
-    otfRefNodeLogicalChannelIndex = logicalChannelIndex;
+    if (imageLogicalChannelOTFRefNodeImageIndex != imageIndex) match = false;
+    if (imageLogicalChannelOTFRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
+    if (match) return imageLogicalChannelOTFRefNode;
+    imageLogicalChannelOTFRefNode = null;
+    imageLogicalChannelOTFRefNodeImageIndex = imageIndex;
+    imageLogicalChannelOTFRefNodeLogicalChannelIndex = logicalChannelIndex;
 
     // get Image+/LogicalChannel+ node
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
@@ -2818,23 +2818,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) otfRef = new OTFRefNode(logicalChannel);
       else return null;
     }
-    otfRefNode = otfRef;
-    return otfRefNode;
+    imageLogicalChannelOTFRefNode = otfRef;
+    return imageLogicalChannelOTFRefNode;
   }
 
   // Image+/Pixels+
-  private PixelsNode pixelsNode = null;
-  private int pixelsNodeImageIndex = -1;
-  private int pixelsNodePixelsIndex = -1;
+  private PixelsNode imagePixelsNode = null;
+  private int imagePixelsNodeImageIndex = -1;
+  private int imagePixelsNodePixelsIndex = -1;
   private PixelsNode getPixelsNode(int imageIndex, int pixelsIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (pixelsNodeImageIndex != imageIndex) match = false;
-    if (pixelsNodePixelsIndex != pixelsIndex) match = false;
-    if (match) return pixelsNode;
-    pixelsNode = null;
-    pixelsNodeImageIndex = imageIndex;
-    pixelsNodePixelsIndex = pixelsIndex;
+    if (imagePixelsNodeImageIndex != imageIndex) match = false;
+    if (imagePixelsNodePixelsIndex != pixelsIndex) match = false;
+    if (match) return imagePixelsNode;
+    imagePixelsNode = null;
+    imagePixelsNodeImageIndex = imageIndex;
+    imagePixelsNodePixelsIndex = pixelsIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -2844,26 +2844,26 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= pixelsIndex) return null;
     for (int i=count; i<=pixelsIndex; i++) new PixelsNode(image);
     List list = image.getPixelsList();
-    pixelsNode = (PixelsNode) list.get(pixelsIndex);
-    return pixelsNode;
+    imagePixelsNode = (PixelsNode) list.get(pixelsIndex);
+    return imagePixelsNode;
   }
 
   // Image+/Pixels+/Plane+
-  private PlaneNode planeNode = null;
-  private int planeNodeImageIndex = -1;
-  private int planeNodePixelsIndex = -1;
-  private int planeNodePlaneIndex = -1;
+  private PlaneNode imagePixelsPlaneNode = null;
+  private int imagePixelsPlaneNodeImageIndex = -1;
+  private int imagePixelsPlaneNodePixelsIndex = -1;
+  private int imagePixelsPlaneNodePlaneIndex = -1;
   private PlaneNode getPlaneNode(int imageIndex, int pixelsIndex, int planeIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (planeNodeImageIndex != imageIndex) match = false;
-    if (planeNodePixelsIndex != pixelsIndex) match = false;
-    if (planeNodePlaneIndex != planeIndex) match = false;
-    if (match) return planeNode;
-    planeNode = null;
-    planeNodeImageIndex = imageIndex;
-    planeNodePixelsIndex = pixelsIndex;
-    planeNodePlaneIndex = planeIndex;
+    if (imagePixelsPlaneNodeImageIndex != imageIndex) match = false;
+    if (imagePixelsPlaneNodePixelsIndex != pixelsIndex) match = false;
+    if (imagePixelsPlaneNodePlaneIndex != planeIndex) match = false;
+    if (match) return imagePixelsPlaneNode;
+    imagePixelsPlaneNode = null;
+    imagePixelsPlaneNodeImageIndex = imageIndex;
+    imagePixelsPlaneNodePixelsIndex = pixelsIndex;
+    imagePixelsPlaneNodePlaneIndex = planeIndex;
 
     // get Image+/Pixels+ node
     PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, create);
@@ -2873,26 +2873,26 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= planeIndex) return null;
     for (int i=count; i<=planeIndex; i++) new PlaneNode(pixels);
     List list = pixels.getPlaneList();
-    planeNode = (PlaneNode) list.get(planeIndex);
-    return planeNode;
+    imagePixelsPlaneNode = (PlaneNode) list.get(planeIndex);
+    return imagePixelsPlaneNode;
   }
 
   // Image+/Pixels+/Plane+/PlaneTiming
-  private PlaneTimingNode planeTimingNode = null;
-  private int planeTimingNodeImageIndex = -1;
-  private int planeTimingNodePixelsIndex = -1;
-  private int planeTimingNodePlaneIndex = -1;
+  private PlaneTimingNode imagePixelsPlanePlaneTimingNode = null;
+  private int imagePixelsPlanePlaneTimingNodeImageIndex = -1;
+  private int imagePixelsPlanePlaneTimingNodePixelsIndex = -1;
+  private int imagePixelsPlanePlaneTimingNodePlaneIndex = -1;
   private PlaneTimingNode getPlaneTimingNode(int imageIndex, int pixelsIndex, int planeIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (planeTimingNodeImageIndex != imageIndex) match = false;
-    if (planeTimingNodePixelsIndex != pixelsIndex) match = false;
-    if (planeTimingNodePlaneIndex != planeIndex) match = false;
-    if (match) return planeTimingNode;
-    planeTimingNode = null;
-    planeTimingNodeImageIndex = imageIndex;
-    planeTimingNodePixelsIndex = pixelsIndex;
-    planeTimingNodePlaneIndex = planeIndex;
+    if (imagePixelsPlanePlaneTimingNodeImageIndex != imageIndex) match = false;
+    if (imagePixelsPlanePlaneTimingNodePixelsIndex != pixelsIndex) match = false;
+    if (imagePixelsPlanePlaneTimingNodePlaneIndex != planeIndex) match = false;
+    if (match) return imagePixelsPlanePlaneTimingNode;
+    imagePixelsPlanePlaneTimingNode = null;
+    imagePixelsPlanePlaneTimingNodeImageIndex = imageIndex;
+    imagePixelsPlanePlaneTimingNodePixelsIndex = pixelsIndex;
+    imagePixelsPlanePlaneTimingNodePlaneIndex = planeIndex;
 
     // get Image+/Pixels+/Plane+ node
     PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, create);
@@ -2903,26 +2903,26 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) planeTiming = new PlaneTimingNode(plane);
       else return null;
     }
-    planeTimingNode = planeTiming;
-    return planeTimingNode;
+    imagePixelsPlanePlaneTimingNode = planeTiming;
+    return imagePixelsPlanePlaneTimingNode;
   }
 
   // Image+/Pixels+/Plane+/StagePosition
-  private StagePositionNode stagePositionNode = null;
-  private int stagePositionNodeImageIndex = -1;
-  private int stagePositionNodePixelsIndex = -1;
-  private int stagePositionNodePlaneIndex = -1;
+  private StagePositionNode imagePixelsPlaneStagePositionNode = null;
+  private int imagePixelsPlaneStagePositionNodeImageIndex = -1;
+  private int imagePixelsPlaneStagePositionNodePixelsIndex = -1;
+  private int imagePixelsPlaneStagePositionNodePlaneIndex = -1;
   private StagePositionNode getStagePositionNode(int imageIndex, int pixelsIndex, int planeIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (stagePositionNodeImageIndex != imageIndex) match = false;
-    if (stagePositionNodePixelsIndex != pixelsIndex) match = false;
-    if (stagePositionNodePlaneIndex != planeIndex) match = false;
-    if (match) return stagePositionNode;
-    stagePositionNode = null;
-    stagePositionNodeImageIndex = imageIndex;
-    stagePositionNodePixelsIndex = pixelsIndex;
-    stagePositionNodePlaneIndex = planeIndex;
+    if (imagePixelsPlaneStagePositionNodeImageIndex != imageIndex) match = false;
+    if (imagePixelsPlaneStagePositionNodePixelsIndex != pixelsIndex) match = false;
+    if (imagePixelsPlaneStagePositionNodePlaneIndex != planeIndex) match = false;
+    if (match) return imagePixelsPlaneStagePositionNode;
+    imagePixelsPlaneStagePositionNode = null;
+    imagePixelsPlaneStagePositionNodeImageIndex = imageIndex;
+    imagePixelsPlaneStagePositionNodePixelsIndex = pixelsIndex;
+    imagePixelsPlaneStagePositionNodePlaneIndex = planeIndex;
 
     // get Image+/Pixels+/Plane+ node
     PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, create);
@@ -2933,26 +2933,26 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) stagePosition = new StagePositionNode(plane);
       else return null;
     }
-    stagePositionNode = stagePosition;
-    return stagePositionNode;
+    imagePixelsPlaneStagePositionNode = stagePosition;
+    return imagePixelsPlaneStagePositionNode;
   }
 
   // Image+/Pixels+/TiffData+
-  private TiffDataNode tiffDataNode = null;
-  private int tiffDataNodeImageIndex = -1;
-  private int tiffDataNodePixelsIndex = -1;
-  private int tiffDataNodeTiffDataIndex = -1;
+  private TiffDataNode imagePixelsTiffDataNode = null;
+  private int imagePixelsTiffDataNodeImageIndex = -1;
+  private int imagePixelsTiffDataNodePixelsIndex = -1;
+  private int imagePixelsTiffDataNodeTiffDataIndex = -1;
   private TiffDataNode getTiffDataNode(int imageIndex, int pixelsIndex, int tiffDataIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (tiffDataNodeImageIndex != imageIndex) match = false;
-    if (tiffDataNodePixelsIndex != pixelsIndex) match = false;
-    if (tiffDataNodeTiffDataIndex != tiffDataIndex) match = false;
-    if (match) return tiffDataNode;
-    tiffDataNode = null;
-    tiffDataNodeImageIndex = imageIndex;
-    tiffDataNodePixelsIndex = pixelsIndex;
-    tiffDataNodeTiffDataIndex = tiffDataIndex;
+    if (imagePixelsTiffDataNodeImageIndex != imageIndex) match = false;
+    if (imagePixelsTiffDataNodePixelsIndex != pixelsIndex) match = false;
+    if (imagePixelsTiffDataNodeTiffDataIndex != tiffDataIndex) match = false;
+    if (match) return imagePixelsTiffDataNode;
+    imagePixelsTiffDataNode = null;
+    imagePixelsTiffDataNodeImageIndex = imageIndex;
+    imagePixelsTiffDataNodePixelsIndex = pixelsIndex;
+    imagePixelsTiffDataNodeTiffDataIndex = tiffDataIndex;
 
     // get Image+/Pixels+ node
     PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, create);
@@ -2962,20 +2962,20 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= tiffDataIndex) return null;
     for (int i=count; i<=tiffDataIndex; i++) new TiffDataNode(pixels);
     List list = pixels.getTiffDataList();
-    tiffDataNode = (TiffDataNode) list.get(tiffDataIndex);
-    return tiffDataNode;
+    imagePixelsTiffDataNode = (TiffDataNode) list.get(tiffDataIndex);
+    return imagePixelsTiffDataNode;
   }
 
   // Image+/StageLabel
-  private StageLabelNode stageLabelNode = null;
-  private int stageLabelNodeImageIndex = -1;
+  private StageLabelNode imageStageLabelNode = null;
+  private int imageStageLabelNodeImageIndex = -1;
   private StageLabelNode getStageLabelNode(int imageIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (stageLabelNodeImageIndex != imageIndex) match = false;
-    if (match) return stageLabelNode;
-    stageLabelNode = null;
-    stageLabelNodeImageIndex = imageIndex;
+    if (imageStageLabelNodeImageIndex != imageIndex) match = false;
+    if (match) return imageStageLabelNode;
+    imageStageLabelNode = null;
+    imageStageLabelNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -2986,8 +2986,8 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) stageLabel = new StageLabelNode(image);
       else return null;
     }
-    stageLabelNode = stageLabel;
-    return stageLabelNode;
+    imageStageLabelNode = stageLabel;
+    return imageStageLabelNode;
   }
 
   // Instrument+
@@ -3012,18 +3012,18 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   }
 
   // Instrument+/Detector+
-  private DetectorNode detectorNode = null;
-  private int detectorNodeInstrumentIndex = -1;
-  private int detectorNodeDetectorIndex = -1;
+  private DetectorNode instrumentDetectorNode = null;
+  private int instrumentDetectorNodeInstrumentIndex = -1;
+  private int instrumentDetectorNodeDetectorIndex = -1;
   private DetectorNode getDetectorNode(int instrumentIndex, int detectorIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (detectorNodeInstrumentIndex != instrumentIndex) match = false;
-    if (detectorNodeDetectorIndex != detectorIndex) match = false;
-    if (match) return detectorNode;
-    detectorNode = null;
-    detectorNodeInstrumentIndex = instrumentIndex;
-    detectorNodeDetectorIndex = detectorIndex;
+    if (instrumentDetectorNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentDetectorNodeDetectorIndex != detectorIndex) match = false;
+    if (match) return instrumentDetectorNode;
+    instrumentDetectorNode = null;
+    instrumentDetectorNodeInstrumentIndex = instrumentIndex;
+    instrumentDetectorNodeDetectorIndex = detectorIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -3033,23 +3033,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= detectorIndex) return null;
     for (int i=count; i<=detectorIndex; i++) new DetectorNode(instrument);
     List list = instrument.getDetectorList();
-    detectorNode = (DetectorNode) list.get(detectorIndex);
-    return detectorNode;
+    instrumentDetectorNode = (DetectorNode) list.get(detectorIndex);
+    return instrumentDetectorNode;
   }
 
   // Instrument+/LightSource+
-  private LightSourceNode lightSourceNode = null;
-  private int lightSourceNodeInstrumentIndex = -1;
-  private int lightSourceNodeLightSourceIndex = -1;
+  private LightSourceNode instrumentLightSourceNode = null;
+  private int instrumentLightSourceNodeInstrumentIndex = -1;
+  private int instrumentLightSourceNodeLightSourceIndex = -1;
   private LightSourceNode getLightSourceNode(int instrumentIndex, int lightSourceIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (lightSourceNodeInstrumentIndex != instrumentIndex) match = false;
-    if (lightSourceNodeLightSourceIndex != lightSourceIndex) match = false;
-    if (match) return lightSourceNode;
-    lightSourceNode = null;
-    lightSourceNodeInstrumentIndex = instrumentIndex;
-    lightSourceNodeLightSourceIndex = lightSourceIndex;
+    if (instrumentLightSourceNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentLightSourceNodeLightSourceIndex != lightSourceIndex) match = false;
+    if (match) return instrumentLightSourceNode;
+    instrumentLightSourceNode = null;
+    instrumentLightSourceNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -3059,23 +3059,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= lightSourceIndex) return null;
     for (int i=count; i<=lightSourceIndex; i++) new LightSourceNode(instrument);
     List list = instrument.getLightSourceList();
-    lightSourceNode = (LightSourceNode) list.get(lightSourceIndex);
-    return lightSourceNode;
+    instrumentLightSourceNode = (LightSourceNode) list.get(lightSourceIndex);
+    return instrumentLightSourceNode;
   }
 
   // Instrument+/LightSource+/Arc
-  private ArcNode arcNode = null;
-  private int arcNodeInstrumentIndex = -1;
-  private int arcNodeLightSourceIndex = -1;
+  private ArcNode instrumentLightSourceArcNode = null;
+  private int instrumentLightSourceArcNodeInstrumentIndex = -1;
+  private int instrumentLightSourceArcNodeLightSourceIndex = -1;
   private ArcNode getArcNode(int instrumentIndex, int lightSourceIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (arcNodeInstrumentIndex != instrumentIndex) match = false;
-    if (arcNodeLightSourceIndex != lightSourceIndex) match = false;
-    if (match) return arcNode;
-    arcNode = null;
-    arcNodeInstrumentIndex = instrumentIndex;
-    arcNodeLightSourceIndex = lightSourceIndex;
+    if (instrumentLightSourceArcNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentLightSourceArcNodeLightSourceIndex != lightSourceIndex) match = false;
+    if (match) return instrumentLightSourceArcNode;
+    instrumentLightSourceArcNode = null;
+    instrumentLightSourceArcNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceArcNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+/LightSource+ node
     LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, create);
@@ -3086,23 +3086,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) arc = new ArcNode(lightSource);
       else return null;
     }
-    arcNode = arc;
-    return arcNode;
+    instrumentLightSourceArcNode = arc;
+    return instrumentLightSourceArcNode;
   }
 
   // Instrument+/LightSource+/Filament
-  private FilamentNode filamentNode = null;
-  private int filamentNodeInstrumentIndex = -1;
-  private int filamentNodeLightSourceIndex = -1;
+  private FilamentNode instrumentLightSourceFilamentNode = null;
+  private int instrumentLightSourceFilamentNodeInstrumentIndex = -1;
+  private int instrumentLightSourceFilamentNodeLightSourceIndex = -1;
   private FilamentNode getFilamentNode(int instrumentIndex, int lightSourceIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (filamentNodeInstrumentIndex != instrumentIndex) match = false;
-    if (filamentNodeLightSourceIndex != lightSourceIndex) match = false;
-    if (match) return filamentNode;
-    filamentNode = null;
-    filamentNodeInstrumentIndex = instrumentIndex;
-    filamentNodeLightSourceIndex = lightSourceIndex;
+    if (instrumentLightSourceFilamentNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentLightSourceFilamentNodeLightSourceIndex != lightSourceIndex) match = false;
+    if (match) return instrumentLightSourceFilamentNode;
+    instrumentLightSourceFilamentNode = null;
+    instrumentLightSourceFilamentNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceFilamentNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+/LightSource+ node
     LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, create);
@@ -3113,23 +3113,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) filament = new FilamentNode(lightSource);
       else return null;
     }
-    filamentNode = filament;
-    return filamentNode;
+    instrumentLightSourceFilamentNode = filament;
+    return instrumentLightSourceFilamentNode;
   }
 
   // Instrument+/LightSource+/Laser
-  private LaserNode laserNode = null;
-  private int laserNodeInstrumentIndex = -1;
-  private int laserNodeLightSourceIndex = -1;
+  private LaserNode instrumentLightSourceLaserNode = null;
+  private int instrumentLightSourceLaserNodeInstrumentIndex = -1;
+  private int instrumentLightSourceLaserNodeLightSourceIndex = -1;
   private LaserNode getLaserNode(int instrumentIndex, int lightSourceIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (laserNodeInstrumentIndex != instrumentIndex) match = false;
-    if (laserNodeLightSourceIndex != lightSourceIndex) match = false;
-    if (match) return laserNode;
-    laserNode = null;
-    laserNodeInstrumentIndex = instrumentIndex;
-    laserNodeLightSourceIndex = lightSourceIndex;
+    if (instrumentLightSourceLaserNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentLightSourceLaserNodeLightSourceIndex != lightSourceIndex) match = false;
+    if (match) return instrumentLightSourceLaserNode;
+    instrumentLightSourceLaserNode = null;
+    instrumentLightSourceLaserNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceLaserNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+/LightSource+ node
     LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, create);
@@ -3140,23 +3140,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) laser = new LaserNode(lightSource);
       else return null;
     }
-    laserNode = laser;
-    return laserNode;
+    instrumentLightSourceLaserNode = laser;
+    return instrumentLightSourceLaserNode;
   }
 
   // Instrument+/OTF+
-  private OTFNode otfNode = null;
-  private int otfNodeInstrumentIndex = -1;
-  private int otfNodeOTFIndex = -1;
+  private OTFNode instrumentOTFNode = null;
+  private int instrumentOTFNodeInstrumentIndex = -1;
+  private int instrumentOTFNodeOTFIndex = -1;
   private OTFNode getOTFNode(int instrumentIndex, int otfIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (otfNodeInstrumentIndex != instrumentIndex) match = false;
-    if (otfNodeOTFIndex != otfIndex) match = false;
-    if (match) return otfNode;
-    otfNode = null;
-    otfNodeInstrumentIndex = instrumentIndex;
-    otfNodeOTFIndex = otfIndex;
+    if (instrumentOTFNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentOTFNodeOTFIndex != otfIndex) match = false;
+    if (match) return instrumentOTFNode;
+    instrumentOTFNode = null;
+    instrumentOTFNodeInstrumentIndex = instrumentIndex;
+    instrumentOTFNodeOTFIndex = otfIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -3166,23 +3166,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= otfIndex) return null;
     for (int i=count; i<=otfIndex; i++) new OTFNode(instrument);
     List list = instrument.getOTFList();
-    otfNode = (OTFNode) list.get(otfIndex);
-    return otfNode;
+    instrumentOTFNode = (OTFNode) list.get(otfIndex);
+    return instrumentOTFNode;
   }
 
   // Instrument+/OTF+/ObjectiveRef
-  private ObjectiveRefNode objectiveRefNode = null;
-  private int objectiveRefNodeInstrumentIndex = -1;
-  private int objectiveRefNodeOTFIndex = -1;
+  private ObjectiveRefNode instrumentOTFObjectiveRefNode = null;
+  private int instrumentOTFObjectiveRefNodeInstrumentIndex = -1;
+  private int instrumentOTFObjectiveRefNodeOTFIndex = -1;
   private ObjectiveRefNode getObjectiveRefNode(int instrumentIndex, int otfIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (objectiveRefNodeInstrumentIndex != instrumentIndex) match = false;
-    if (objectiveRefNodeOTFIndex != otfIndex) match = false;
-    if (match) return objectiveRefNode;
-    objectiveRefNode = null;
-    objectiveRefNodeInstrumentIndex = instrumentIndex;
-    objectiveRefNodeOTFIndex = otfIndex;
+    if (instrumentOTFObjectiveRefNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentOTFObjectiveRefNodeOTFIndex != otfIndex) match = false;
+    if (match) return instrumentOTFObjectiveRefNode;
+    instrumentOTFObjectiveRefNode = null;
+    instrumentOTFObjectiveRefNodeInstrumentIndex = instrumentIndex;
+    instrumentOTFObjectiveRefNodeOTFIndex = otfIndex;
 
     // get Instrument+/OTF+ node
     OTFNode otf = getOTFNode(instrumentIndex, otfIndex, create);
@@ -3193,23 +3193,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
       if (create) objectiveRef = new ObjectiveRefNode(otf);
       else return null;
     }
-    objectiveRefNode = objectiveRef;
-    return objectiveRefNode;
+    instrumentOTFObjectiveRefNode = objectiveRef;
+    return instrumentOTFObjectiveRefNode;
   }
 
   // Instrument+/Objective+
-  private ObjectiveNode objectiveNode = null;
-  private int objectiveNodeInstrumentIndex = -1;
-  private int objectiveNodeObjectiveIndex = -1;
+  private ObjectiveNode instrumentObjectiveNode = null;
+  private int instrumentObjectiveNodeInstrumentIndex = -1;
+  private int instrumentObjectiveNodeObjectiveIndex = -1;
   private ObjectiveNode getObjectiveNode(int instrumentIndex, int objectiveIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (objectiveNodeInstrumentIndex != instrumentIndex) match = false;
-    if (objectiveNodeObjectiveIndex != objectiveIndex) match = false;
-    if (match) return objectiveNode;
-    objectiveNode = null;
-    objectiveNodeInstrumentIndex = instrumentIndex;
-    objectiveNodeObjectiveIndex = objectiveIndex;
+    if (instrumentObjectiveNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentObjectiveNodeObjectiveIndex != objectiveIndex) match = false;
+    if (match) return instrumentObjectiveNode;
+    instrumentObjectiveNode = null;
+    instrumentObjectiveNodeInstrumentIndex = instrumentIndex;
+    instrumentObjectiveNodeObjectiveIndex = objectiveIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -3219,8 +3219,8 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= objectiveIndex) return null;
     for (int i=count; i<=objectiveIndex; i++) new ObjectiveNode(instrument);
     List list = instrument.getObjectiveList();
-    objectiveNode = (ObjectiveNode) list.get(objectiveIndex);
-    return objectiveNode;
+    instrumentObjectiveNode = (ObjectiveNode) list.get(objectiveIndex);
+    return instrumentObjectiveNode;
   }
 
   // Plate+
@@ -3245,18 +3245,18 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   }
 
   // Plate+/Well+
-  private WellNode wellNode = null;
-  private int wellNodePlateIndex = -1;
-  private int wellNodeWellIndex = -1;
+  private WellNode plateWellNode = null;
+  private int plateWellNodePlateIndex = -1;
+  private int plateWellNodeWellIndex = -1;
   private WellNode getWellNode(int plateIndex, int wellIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (wellNodePlateIndex != plateIndex) match = false;
-    if (wellNodeWellIndex != wellIndex) match = false;
-    if (match) return wellNode;
-    wellNode = null;
-    wellNodePlateIndex = plateIndex;
-    wellNodeWellIndex = wellIndex;
+    if (plateWellNodePlateIndex != plateIndex) match = false;
+    if (plateWellNodeWellIndex != wellIndex) match = false;
+    if (match) return plateWellNode;
+    plateWellNode = null;
+    plateWellNodePlateIndex = plateIndex;
+    plateWellNodeWellIndex = wellIndex;
 
     // get Plate+ node
     PlateNode plate = getPlateNode(plateIndex, create);
@@ -3266,26 +3266,26 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= wellIndex) return null;
     for (int i=count; i<=wellIndex; i++) new WellNode(plate);
     List list = plate.getWellList();
-    wellNode = (WellNode) list.get(wellIndex);
-    return wellNode;
+    plateWellNode = (WellNode) list.get(wellIndex);
+    return plateWellNode;
   }
 
   // Plate+/Well+/WellSample+
-  private WellSampleNode wellSampleNode = null;
-  private int wellSampleNodePlateIndex = -1;
-  private int wellSampleNodeWellIndex = -1;
-  private int wellSampleNodeWellSampleIndex = -1;
+  private WellSampleNode plateWellWellSampleNode = null;
+  private int plateWellWellSampleNodePlateIndex = -1;
+  private int plateWellWellSampleNodeWellIndex = -1;
+  private int plateWellWellSampleNodeWellSampleIndex = -1;
   private WellSampleNode getWellSampleNode(int plateIndex, int wellIndex, int wellSampleIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (wellSampleNodePlateIndex != plateIndex) match = false;
-    if (wellSampleNodeWellIndex != wellIndex) match = false;
-    if (wellSampleNodeWellSampleIndex != wellSampleIndex) match = false;
-    if (match) return wellSampleNode;
-    wellSampleNode = null;
-    wellSampleNodePlateIndex = plateIndex;
-    wellSampleNodeWellIndex = wellIndex;
-    wellSampleNodeWellSampleIndex = wellSampleIndex;
+    if (plateWellWellSampleNodePlateIndex != plateIndex) match = false;
+    if (plateWellWellSampleNodeWellIndex != wellIndex) match = false;
+    if (plateWellWellSampleNodeWellSampleIndex != wellSampleIndex) match = false;
+    if (match) return plateWellWellSampleNode;
+    plateWellWellSampleNode = null;
+    plateWellWellSampleNodePlateIndex = plateIndex;
+    plateWellWellSampleNodeWellIndex = wellIndex;
+    plateWellWellSampleNodeWellSampleIndex = wellSampleIndex;
 
     // get Plate+/Well+ node
     WellNode well = getWellNode(plateIndex, wellIndex, create);
@@ -3295,8 +3295,8 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= wellSampleIndex) return null;
     for (int i=count; i<=wellSampleIndex; i++) new WellSampleNode(well);
     List list = well.getWellSampleList();
-    wellSampleNode = (WellSampleNode) list.get(wellSampleIndex);
-    return wellSampleNode;
+    plateWellWellSampleNode = (WellSampleNode) list.get(wellSampleIndex);
+    return plateWellWellSampleNode;
   }
 
   // Screen+
@@ -3321,18 +3321,18 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   }
 
   // Screen+/PlateRef+
-  private PlateRefNode plateRefNode = null;
-  private int plateRefNodeScreenIndex = -1;
-  private int plateRefNodePlateRefIndex = -1;
+  private PlateRefNode screenPlateRefNode = null;
+  private int screenPlateRefNodeScreenIndex = -1;
+  private int screenPlateRefNodePlateRefIndex = -1;
   private PlateRefNode getPlateRefNode(int screenIndex, int plateRefIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (plateRefNodeScreenIndex != screenIndex) match = false;
-    if (plateRefNodePlateRefIndex != plateRefIndex) match = false;
-    if (match) return plateRefNode;
-    plateRefNode = null;
-    plateRefNodeScreenIndex = screenIndex;
-    plateRefNodePlateRefIndex = plateRefIndex;
+    if (screenPlateRefNodeScreenIndex != screenIndex) match = false;
+    if (screenPlateRefNodePlateRefIndex != plateRefIndex) match = false;
+    if (match) return screenPlateRefNode;
+    screenPlateRefNode = null;
+    screenPlateRefNodeScreenIndex = screenIndex;
+    screenPlateRefNodePlateRefIndex = plateRefIndex;
 
     // get Screen+ node
     ScreenNode screen = getScreenNode(screenIndex, create);
@@ -3342,23 +3342,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= plateRefIndex) return null;
     for (int i=count; i<=plateRefIndex; i++) new PlateRefNode(screen);
     List list = screen.getPlateRefList();
-    plateRefNode = (PlateRefNode) list.get(plateRefIndex);
-    return plateRefNode;
+    screenPlateRefNode = (PlateRefNode) list.get(plateRefIndex);
+    return screenPlateRefNode;
   }
 
   // Screen+/Reagent+
-  private ReagentNode reagentNode = null;
-  private int reagentNodeScreenIndex = -1;
-  private int reagentNodeReagentIndex = -1;
+  private ReagentNode screenReagentNode = null;
+  private int screenReagentNodeScreenIndex = -1;
+  private int screenReagentNodeReagentIndex = -1;
   private ReagentNode getReagentNode(int screenIndex, int reagentIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (reagentNodeScreenIndex != screenIndex) match = false;
-    if (reagentNodeReagentIndex != reagentIndex) match = false;
-    if (match) return reagentNode;
-    reagentNode = null;
-    reagentNodeScreenIndex = screenIndex;
-    reagentNodeReagentIndex = reagentIndex;
+    if (screenReagentNodeScreenIndex != screenIndex) match = false;
+    if (screenReagentNodeReagentIndex != reagentIndex) match = false;
+    if (match) return screenReagentNode;
+    screenReagentNode = null;
+    screenReagentNodeScreenIndex = screenIndex;
+    screenReagentNodeReagentIndex = reagentIndex;
 
     // get Screen+ node
     ScreenNode screen = getScreenNode(screenIndex, create);
@@ -3368,23 +3368,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= reagentIndex) return null;
     for (int i=count; i<=reagentIndex; i++) new ReagentNode(screen);
     List list = screen.getReagentList();
-    reagentNode = (ReagentNode) list.get(reagentIndex);
-    return reagentNode;
+    screenReagentNode = (ReagentNode) list.get(reagentIndex);
+    return screenReagentNode;
   }
 
   // Screen+/ScreenAcquisition+
-  private ScreenAcquisitionNode screenAcquisitionNode = null;
-  private int screenAcquisitionNodeScreenIndex = -1;
-  private int screenAcquisitionNodeScreenAcquisitionIndex = -1;
+  private ScreenAcquisitionNode screenScreenAcquisitionNode = null;
+  private int screenScreenAcquisitionNodeScreenIndex = -1;
+  private int screenScreenAcquisitionNodeScreenAcquisitionIndex = -1;
   private ScreenAcquisitionNode getScreenAcquisitionNode(int screenIndex, int screenAcquisitionIndex, boolean create) {
     // check whether indices match last request (i.e., node is cached)
     boolean match = true;
-    if (screenAcquisitionNodeScreenIndex != screenIndex) match = false;
-    if (screenAcquisitionNodeScreenAcquisitionIndex != screenAcquisitionIndex) match = false;
-    if (match) return screenAcquisitionNode;
-    screenAcquisitionNode = null;
-    screenAcquisitionNodeScreenIndex = screenIndex;
-    screenAcquisitionNodeScreenAcquisitionIndex = screenAcquisitionIndex;
+    if (screenScreenAcquisitionNodeScreenIndex != screenIndex) match = false;
+    if (screenScreenAcquisitionNodeScreenAcquisitionIndex != screenAcquisitionIndex) match = false;
+    if (match) return screenScreenAcquisitionNode;
+    screenScreenAcquisitionNode = null;
+    screenScreenAcquisitionNodeScreenIndex = screenIndex;
+    screenScreenAcquisitionNodeScreenAcquisitionIndex = screenAcquisitionIndex;
 
     // get Screen+ node
     ScreenNode screen = getScreenNode(screenIndex, create);
@@ -3394,8 +3394,8 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (!create && count <= screenAcquisitionIndex) return null;
     for (int i=count; i<=screenAcquisitionIndex; i++) new ScreenAcquisitionNode(screen);
     List list = screen.getScreenAcquisitionList();
-    screenAcquisitionNode = (ScreenAcquisitionNode) list.get(screenAcquisitionIndex);
-    return screenAcquisitionNode;
+    screenScreenAcquisitionNode = (ScreenAcquisitionNode) list.get(screenAcquisitionIndex);
+    return screenScreenAcquisitionNode;
   }
 
   private void clearCachedNodes() {
@@ -3406,138 +3406,138 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     experimenterNode = null;
     experimenterNodeExperimenterIndex = -1;
     // Experimenter+/GroupRef+
-    groupRefNode = null;
-    groupRefNodeExperimenterIndex = -1;
-    groupRefNodeGroupRefIndex = -1;
+    experimenterGroupRefNode = null;
+    experimenterGroupRefNodeExperimenterIndex = -1;
+    experimenterGroupRefNodeGroupRefIndex = -1;
     // Image+
     imageNode = null;
     imageNodeImageIndex = -1;
     // Image+/DisplayOptions
-    displayOptionsNode = null;
-    displayOptionsNodeImageIndex = -1;
+    imageDisplayOptionsNode = null;
+    imageDisplayOptionsNodeImageIndex = -1;
     // Image+/DisplayOptions/Projection
-    projectionNode = null;
-    projectionNodeImageIndex = -1;
+    imageDisplayOptionsProjectionNode = null;
+    imageDisplayOptionsProjectionNodeImageIndex = -1;
     // Image+/DisplayOptions/ROI+
-    roiNode = null;
-    roiNodeImageIndex = -1;
-    roiNodeROIIndex = -1;
+    imageDisplayOptionsROINode = null;
+    imageDisplayOptionsROINodeImageIndex = -1;
+    imageDisplayOptionsROINodeROIIndex = -1;
     // Image+/DisplayOptions/Time
-    timeNode = null;
-    timeNodeImageIndex = -1;
+    imageDisplayOptionsTimeNode = null;
+    imageDisplayOptionsTimeNodeImageIndex = -1;
     // Image+/ImagingEnvironment
-    imagingEnvironmentNode = null;
-    imagingEnvironmentNodeImageIndex = -1;
+    imageImagingEnvironmentNode = null;
+    imageImagingEnvironmentNodeImageIndex = -1;
     // Image+/LogicalChannel+
-    logicalChannelNode = null;
-    logicalChannelNodeImageIndex = -1;
-    logicalChannelNodeLogicalChannelIndex = -1;
+    imageLogicalChannelNode = null;
+    imageLogicalChannelNodeImageIndex = -1;
+    imageLogicalChannelNodeLogicalChannelIndex = -1;
     // Image+/LogicalChannel+/ChannelComponent+
-    channelComponentNode = null;
-    channelComponentNodeImageIndex = -1;
-    channelComponentNodeLogicalChannelIndex = -1;
-    channelComponentNodeChannelComponentIndex = -1;
+    imageLogicalChannelChannelComponentNode = null;
+    imageLogicalChannelChannelComponentNodeImageIndex = -1;
+    imageLogicalChannelChannelComponentNodeLogicalChannelIndex = -1;
+    imageLogicalChannelChannelComponentNodeChannelComponentIndex = -1;
     // Image+/LogicalChannel+/DetectorRef
-    detectorRefNode = null;
-    detectorRefNodeImageIndex = -1;
-    detectorRefNodeLogicalChannelIndex = -1;
+    imageLogicalChannelDetectorRefNode = null;
+    imageLogicalChannelDetectorRefNodeImageIndex = -1;
+    imageLogicalChannelDetectorRefNodeLogicalChannelIndex = -1;
     // Image+/LogicalChannel+/LightSourceRef
-    lightSourceRefNode = null;
-    lightSourceRefNodeImageIndex = -1;
-    lightSourceRefNodeLogicalChannelIndex = -1;
+    imageLogicalChannelLightSourceRefNode = null;
+    imageLogicalChannelLightSourceRefNodeImageIndex = -1;
+    imageLogicalChannelLightSourceRefNodeLogicalChannelIndex = -1;
     // Image+/LogicalChannel+/OTFRef
-    otfRefNode = null;
-    otfRefNodeImageIndex = -1;
-    otfRefNodeLogicalChannelIndex = -1;
+    imageLogicalChannelOTFRefNode = null;
+    imageLogicalChannelOTFRefNodeImageIndex = -1;
+    imageLogicalChannelOTFRefNodeLogicalChannelIndex = -1;
     // Image+/Pixels+
-    pixelsNode = null;
-    pixelsNodeImageIndex = -1;
-    pixelsNodePixelsIndex = -1;
+    imagePixelsNode = null;
+    imagePixelsNodeImageIndex = -1;
+    imagePixelsNodePixelsIndex = -1;
     // Image+/Pixels+/Plane+
-    planeNode = null;
-    planeNodeImageIndex = -1;
-    planeNodePixelsIndex = -1;
-    planeNodePlaneIndex = -1;
+    imagePixelsPlaneNode = null;
+    imagePixelsPlaneNodeImageIndex = -1;
+    imagePixelsPlaneNodePixelsIndex = -1;
+    imagePixelsPlaneNodePlaneIndex = -1;
     // Image+/Pixels+/Plane+/PlaneTiming
-    planeTimingNode = null;
-    planeTimingNodeImageIndex = -1;
-    planeTimingNodePixelsIndex = -1;
-    planeTimingNodePlaneIndex = -1;
+    imagePixelsPlanePlaneTimingNode = null;
+    imagePixelsPlanePlaneTimingNodeImageIndex = -1;
+    imagePixelsPlanePlaneTimingNodePixelsIndex = -1;
+    imagePixelsPlanePlaneTimingNodePlaneIndex = -1;
     // Image+/Pixels+/Plane+/StagePosition
-    stagePositionNode = null;
-    stagePositionNodeImageIndex = -1;
-    stagePositionNodePixelsIndex = -1;
-    stagePositionNodePlaneIndex = -1;
+    imagePixelsPlaneStagePositionNode = null;
+    imagePixelsPlaneStagePositionNodeImageIndex = -1;
+    imagePixelsPlaneStagePositionNodePixelsIndex = -1;
+    imagePixelsPlaneStagePositionNodePlaneIndex = -1;
     // Image+/Pixels+/TiffData+
-    tiffDataNode = null;
-    tiffDataNodeImageIndex = -1;
-    tiffDataNodePixelsIndex = -1;
-    tiffDataNodeTiffDataIndex = -1;
+    imagePixelsTiffDataNode = null;
+    imagePixelsTiffDataNodeImageIndex = -1;
+    imagePixelsTiffDataNodePixelsIndex = -1;
+    imagePixelsTiffDataNodeTiffDataIndex = -1;
     // Image+/StageLabel
-    stageLabelNode = null;
-    stageLabelNodeImageIndex = -1;
+    imageStageLabelNode = null;
+    imageStageLabelNodeImageIndex = -1;
     // Instrument+
     instrumentNode = null;
     instrumentNodeInstrumentIndex = -1;
     // Instrument+/Detector+
-    detectorNode = null;
-    detectorNodeInstrumentIndex = -1;
-    detectorNodeDetectorIndex = -1;
+    instrumentDetectorNode = null;
+    instrumentDetectorNodeInstrumentIndex = -1;
+    instrumentDetectorNodeDetectorIndex = -1;
     // Instrument+/LightSource+
-    lightSourceNode = null;
-    lightSourceNodeInstrumentIndex = -1;
-    lightSourceNodeLightSourceIndex = -1;
+    instrumentLightSourceNode = null;
+    instrumentLightSourceNodeInstrumentIndex = -1;
+    instrumentLightSourceNodeLightSourceIndex = -1;
     // Instrument+/LightSource+/Arc
-    arcNode = null;
-    arcNodeInstrumentIndex = -1;
-    arcNodeLightSourceIndex = -1;
+    instrumentLightSourceArcNode = null;
+    instrumentLightSourceArcNodeInstrumentIndex = -1;
+    instrumentLightSourceArcNodeLightSourceIndex = -1;
     // Instrument+/LightSource+/Filament
-    filamentNode = null;
-    filamentNodeInstrumentIndex = -1;
-    filamentNodeLightSourceIndex = -1;
+    instrumentLightSourceFilamentNode = null;
+    instrumentLightSourceFilamentNodeInstrumentIndex = -1;
+    instrumentLightSourceFilamentNodeLightSourceIndex = -1;
     // Instrument+/LightSource+/Laser
-    laserNode = null;
-    laserNodeInstrumentIndex = -1;
-    laserNodeLightSourceIndex = -1;
+    instrumentLightSourceLaserNode = null;
+    instrumentLightSourceLaserNodeInstrumentIndex = -1;
+    instrumentLightSourceLaserNodeLightSourceIndex = -1;
     // Instrument+/OTF+
-    otfNode = null;
-    otfNodeInstrumentIndex = -1;
-    otfNodeOTFIndex = -1;
+    instrumentOTFNode = null;
+    instrumentOTFNodeInstrumentIndex = -1;
+    instrumentOTFNodeOTFIndex = -1;
     // Instrument+/OTF+/ObjectiveRef
-    objectiveRefNode = null;
-    objectiveRefNodeInstrumentIndex = -1;
-    objectiveRefNodeOTFIndex = -1;
+    instrumentOTFObjectiveRefNode = null;
+    instrumentOTFObjectiveRefNodeInstrumentIndex = -1;
+    instrumentOTFObjectiveRefNodeOTFIndex = -1;
     // Instrument+/Objective+
-    objectiveNode = null;
-    objectiveNodeInstrumentIndex = -1;
-    objectiveNodeObjectiveIndex = -1;
+    instrumentObjectiveNode = null;
+    instrumentObjectiveNodeInstrumentIndex = -1;
+    instrumentObjectiveNodeObjectiveIndex = -1;
     // Plate+
     plateNode = null;
     plateNodePlateIndex = -1;
     // Plate+/Well+
-    wellNode = null;
-    wellNodePlateIndex = -1;
-    wellNodeWellIndex = -1;
+    plateWellNode = null;
+    plateWellNodePlateIndex = -1;
+    plateWellNodeWellIndex = -1;
     // Plate+/Well+/WellSample+
-    wellSampleNode = null;
-    wellSampleNodePlateIndex = -1;
-    wellSampleNodeWellIndex = -1;
-    wellSampleNodeWellSampleIndex = -1;
+    plateWellWellSampleNode = null;
+    plateWellWellSampleNodePlateIndex = -1;
+    plateWellWellSampleNodeWellIndex = -1;
+    plateWellWellSampleNodeWellSampleIndex = -1;
     // Screen+
     screenNode = null;
     screenNodeScreenIndex = -1;
     // Screen+/PlateRef+
-    plateRefNode = null;
-    plateRefNodeScreenIndex = -1;
-    plateRefNodePlateRefIndex = -1;
+    screenPlateRefNode = null;
+    screenPlateRefNodeScreenIndex = -1;
+    screenPlateRefNodePlateRefIndex = -1;
     // Screen+/Reagent+
-    reagentNode = null;
-    reagentNodeScreenIndex = -1;
-    reagentNodeReagentIndex = -1;
+    screenReagentNode = null;
+    screenReagentNodeScreenIndex = -1;
+    screenReagentNodeReagentIndex = -1;
     // Screen+/ScreenAcquisition+
-    screenAcquisitionNode = null;
-    screenAcquisitionNodeScreenIndex = -1;
-    screenAcquisitionNodeScreenAcquisitionIndex = -1;
+    screenScreenAcquisitionNode = null;
+    screenScreenAcquisitionNodeScreenIndex = -1;
+    screenScreenAcquisitionNodeScreenAcquisitionIndex = -1;
   }
 
 }
