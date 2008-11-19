@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Nov 19, 2008 10:52:54 AM CST
+ * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -183,6 +183,14 @@ public interface MetadataStore {
   // - DetectorSettings property storage -
 
   /**
+   * For a particular DetectorSettings, sets the detector binning.
+   * @param binning the detector binning
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex);
+
+  /**
    * For a particular DetectorSettings, sets the detector associated with this channel.
    * @param detector the detector associated with this channel
    * @param imageIndex index of the Image
@@ -205,6 +213,22 @@ public interface MetadataStore {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular DetectorSettings, sets TODO.
+   * @param readOutRate TODO
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular DetectorSettings, sets TODO.
+   * @param voltage TODO
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex);
 
   // - Dimensions property storage -
 
@@ -832,6 +856,36 @@ public interface MetadataStore {
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex);
+
+  // - ObjectiveSettings property storage -
+
+  /**
+   * For a particular ObjectiveSettings, sets unit-less setting of the adjustable correction collar.
+   * @param correctionCollar unit-less setting of the adjustable correction collar
+   * @param imageIndex index of the Image
+   */
+  void setObjectiveSettingsCorrectionCollar(Float correctionCollar, int imageIndex);
+
+  /**
+   * For a particular ObjectiveSettings, sets immersion medium for the lens.
+   * @param medium immersion medium for the lens
+   * @param imageIndex index of the Image
+   */
+  void setObjectiveSettingsMedium(String medium, int imageIndex);
+
+  /**
+   * For a particular ObjectiveSettings, sets the objective associated with this image.
+   * @param objective the objective associated with this image
+   * @param imageIndex index of the Image
+   */
+  void setObjectiveSettingsObjective(String objective, int imageIndex);
+
+  /**
+   * For a particular ObjectiveSettings, sets unit-less refractive index of the immersion medium.
+   * @param refractiveIndex unit-less refractive index of the immersion medium
+   * @param imageIndex index of the Image
+   */
+  void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex);
 
   // - Pixels property storage -
 

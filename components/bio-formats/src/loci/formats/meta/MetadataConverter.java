@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Nov 19, 2008 10:52:54 AM CST
+ * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -179,12 +179,18 @@ public final class MetadataConverter {
           Integer channelComponentIndexValue = src.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex);
           if (channelComponentIndexValue != null) dest.setChannelComponentIndex(channelComponentIndexValue, imageIndex, logicalChannelIndex, channelComponentIndex);
         }
+          String detectorSettingsBinningValue = src.getDetectorSettingsBinning(imageIndex, logicalChannelIndex);
+          if (detectorSettingsBinningValue != null) dest.setDetectorSettingsBinning(detectorSettingsBinningValue, imageIndex, logicalChannelIndex);
           String detectorSettingsDetectorValue = src.getDetectorSettingsDetector(imageIndex, logicalChannelIndex);
           if (detectorSettingsDetectorValue != null) dest.setDetectorSettingsDetector(detectorSettingsDetectorValue, imageIndex, logicalChannelIndex);
           Float detectorSettingsGainValue = src.getDetectorSettingsGain(imageIndex, logicalChannelIndex);
           if (detectorSettingsGainValue != null) dest.setDetectorSettingsGain(detectorSettingsGainValue, imageIndex, logicalChannelIndex);
           Float detectorSettingsOffsetValue = src.getDetectorSettingsOffset(imageIndex, logicalChannelIndex);
           if (detectorSettingsOffsetValue != null) dest.setDetectorSettingsOffset(detectorSettingsOffsetValue, imageIndex, logicalChannelIndex);
+          Float detectorSettingsReadOutRateValue = src.getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex);
+          if (detectorSettingsReadOutRateValue != null) dest.setDetectorSettingsReadOutRate(detectorSettingsReadOutRateValue, imageIndex, logicalChannelIndex);
+          Float detectorSettingsVoltageValue = src.getDetectorSettingsVoltage(imageIndex, logicalChannelIndex);
+          if (detectorSettingsVoltageValue != null) dest.setDetectorSettingsVoltage(detectorSettingsVoltageValue, imageIndex, logicalChannelIndex);
           Float lightSourceSettingsAttenuationValue = src.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex);
           if (lightSourceSettingsAttenuationValue != null) dest.setLightSourceSettingsAttenuation(lightSourceSettingsAttenuationValue, imageIndex, logicalChannelIndex);
           String lightSourceSettingsLightSourceValue = src.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex);
@@ -192,6 +198,14 @@ public final class MetadataConverter {
           Integer lightSourceSettingsWavelengthValue = src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex);
           if (lightSourceSettingsWavelengthValue != null) dest.setLightSourceSettingsWavelength(lightSourceSettingsWavelengthValue, imageIndex, logicalChannelIndex);
       }
+        Float objectiveSettingsCorrectionCollarValue = src.getObjectiveSettingsCorrectionCollar(imageIndex);
+        if (objectiveSettingsCorrectionCollarValue != null) dest.setObjectiveSettingsCorrectionCollar(objectiveSettingsCorrectionCollarValue, imageIndex);
+        String objectiveSettingsMediumValue = src.getObjectiveSettingsMedium(imageIndex);
+        if (objectiveSettingsMediumValue != null) dest.setObjectiveSettingsMedium(objectiveSettingsMediumValue, imageIndex);
+        String objectiveSettingsObjectiveValue = src.getObjectiveSettingsObjective(imageIndex);
+        if (objectiveSettingsObjectiveValue != null) dest.setObjectiveSettingsObjective(objectiveSettingsObjectiveValue, imageIndex);
+        Float objectiveSettingsRefractiveIndexValue = src.getObjectiveSettingsRefractiveIndex(imageIndex);
+        if (objectiveSettingsRefractiveIndexValue != null) dest.setObjectiveSettingsRefractiveIndex(objectiveSettingsRefractiveIndexValue, imageIndex);
       int pixelsCount = src.getPixelsCount(imageIndex);
       for (int pixelsIndex=0; pixelsIndex<pixelsCount; pixelsIndex++) {
         Float dimensionsPhysicalSizeXValue = src.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex);

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Nov 19, 2008 10:52:54 AM CST
+ * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -202,6 +202,13 @@ public interface MetadataRetrieve {
   // - DetectorSettings property retrieval -
 
   /**
+   * For a particular DetectorSettings, gets the detector binning.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex);
+
+  /**
    * For a particular DetectorSettings, gets the detector associated with this channel.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
@@ -221,6 +228,20 @@ public interface MetadataRetrieve {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular DetectorSettings, gets TODO.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  Float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular DetectorSettings, gets TODO.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  Float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
 
   // - Dimensions property retrieval -
 
@@ -771,6 +792,32 @@ public interface MetadataRetrieve {
    * @param objectiveIndex index of the Objective
    */
   Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
+
+  // - ObjectiveSettings property retrieval -
+
+  /**
+   * For a particular ObjectiveSettings, gets unit-less setting of the adjustable correction collar.
+   * @param imageIndex index of the Image
+   */
+  Float getObjectiveSettingsCorrectionCollar(int imageIndex);
+
+  /**
+   * For a particular ObjectiveSettings, gets immersion medium for the lens.
+   * @param imageIndex index of the Image
+   */
+  String getObjectiveSettingsMedium(int imageIndex);
+
+  /**
+   * For a particular ObjectiveSettings, gets the objective associated with this image.
+   * @param imageIndex index of the Image
+   */
+  String getObjectiveSettingsObjective(int imageIndex);
+
+  /**
+   * For a particular ObjectiveSettings, gets unit-less refractive index of the immersion medium.
+   * @param imageIndex index of the Image
+   */
+  Float getObjectiveSettingsRefractiveIndex(int imageIndex);
 
   // - Pixels property retrieval -
 

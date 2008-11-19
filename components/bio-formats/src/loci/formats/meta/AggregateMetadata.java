@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Nov 19, 2008 10:52:54 AM CST
+ * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -558,6 +558,19 @@ public class AggregateMetadata implements IMetadata {
 
   // - DetectorSettings property retrieval -
 
+  /* @see MetadataRetrieve#getDetectorSettingsBinning(int, int) */
+  public String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getDetectorSettingsBinning(imageIndex, logicalChannelIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getDetectorSettingsDetector(int, int) */
   public String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -591,6 +604,32 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Float result = retrieve.getDetectorSettingsOffset(imageIndex, logicalChannelIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDetectorSettingsReadOutRate(int, int) */
+  public Float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDetectorSettingsVoltage(int, int) */
+  public Float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getDetectorSettingsVoltage(imageIndex, logicalChannelIndex);
         if (result != null) return result;
       }
     }
@@ -1628,6 +1667,60 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Float result = retrieve.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - ObjectiveSettings property retrieval -
+
+  /* @see MetadataRetrieve#getObjectiveSettingsCorrectionCollar(int) */
+  public Float getObjectiveSettingsCorrectionCollar(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getObjectiveSettingsCorrectionCollar(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getObjectiveSettingsMedium(int) */
+  public String getObjectiveSettingsMedium(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getObjectiveSettingsMedium(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getObjectiveSettingsObjective(int) */
+  public String getObjectiveSettingsObjective(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getObjectiveSettingsObjective(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getObjectiveSettingsRefractiveIndex(int) */
+  public Float getObjectiveSettingsRefractiveIndex(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getObjectiveSettingsRefractiveIndex(imageIndex);
         if (result != null) return result;
       }
     }
@@ -2702,6 +2795,17 @@ public class AggregateMetadata implements IMetadata {
 
   // - DetectorSettings property storage -
 
+  /* @see MetadataStore#setDetectorSettingsBinning(String, int, int) */
+  public void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDetectorSettingsBinning(binning, imageIndex, logicalChannelIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setDetectorSettingsDetector(String, int, int) */
   public void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -2731,6 +2835,28 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setDetectorSettingsReadOutRate(Float, int, int) */
+  public void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setDetectorSettingsVoltage(Float, int, int) */
+  public void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex);
       }
     }
   }
@@ -3614,6 +3740,52 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex);
+      }
+    }
+  }
+
+  // - ObjectiveSettings property storage -
+
+  /* @see MetadataStore#setObjectiveSettingsCorrectionCollar(Float, int) */
+  public void setObjectiveSettingsCorrectionCollar(Float correctionCollar, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsMedium(String, int) */
+  public void setObjectiveSettingsMedium(String medium, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setObjectiveSettingsMedium(medium, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsObjective(String, int) */
+  public void setObjectiveSettingsObjective(String objective, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setObjectiveSettingsObjective(objective, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsRefractiveIndex(Float, int) */
+  public void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
       }
     }
   }

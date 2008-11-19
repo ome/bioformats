@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Nov 19, 2008 10:52:54 AM CST
+ * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -226,6 +226,10 @@ public class DummyMetadata implements IMetadata {
 
   // - DetectorSettings property retrieval -
 
+  /* @see MetadataRetrieve#getDetectorSettingsBinning(int, int) */
+  public String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getDetectorSettingsDetector(int, int) */
   public String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex) {
     return null;
@@ -236,6 +240,14 @@ public class DummyMetadata implements IMetadata {
   }
   /* @see MetadataRetrieve#getDetectorSettingsOffset(int, int) */
   public Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDetectorSettingsReadOutRate(int, int) */
+  public Float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDetectorSettingsVoltage(int, int) */
+  public Float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex) {
     return null;
   }
 
@@ -598,6 +610,25 @@ public class DummyMetadata implements IMetadata {
   }
   /* @see MetadataRetrieve#getObjectiveWorkingDistance(int, int) */
   public Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex) {
+    return null;
+  }
+
+  // - ObjectiveSettings property retrieval -
+
+  /* @see MetadataRetrieve#getObjectiveSettingsCorrectionCollar(int) */
+  public Float getObjectiveSettingsCorrectionCollar(int imageIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getObjectiveSettingsMedium(int) */
+  public String getObjectiveSettingsMedium(int imageIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getObjectiveSettingsObjective(int) */
+  public String getObjectiveSettingsObjective(int imageIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getObjectiveSettingsRefractiveIndex(int) */
+  public Float getObjectiveSettingsRefractiveIndex(int imageIndex) {
     return null;
   }
 
@@ -982,6 +1013,10 @@ public class DummyMetadata implements IMetadata {
 
   // - DetectorSettings property storage -
 
+  /* @see MetadataStore#setDetectorSettingsBinning(String, int, int) */
+  public void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex) {
+  }
+
   /* @see MetadataStore#setDetectorSettingsDetector(String, int, int) */
   public void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex) {
   }
@@ -992,6 +1027,14 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataStore#setDetectorSettingsOffset(Float, int, int) */
   public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex) {
+  }
+
+  /* @see MetadataStore#setDetectorSettingsReadOutRate(Float, int, int) */
+  public void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex) {
+  }
+
+  /* @see MetadataStore#setDetectorSettingsVoltage(Float, int, int) */
+  public void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex) {
   }
 
   // - Dimensions property storage -
@@ -1336,6 +1379,24 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataStore#setObjectiveWorkingDistance(Float, int, int) */
   public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex) {
+  }
+
+  // - ObjectiveSettings property storage -
+
+  /* @see MetadataStore#setObjectiveSettingsCorrectionCollar(Float, int) */
+  public void setObjectiveSettingsCorrectionCollar(Float correctionCollar, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsMedium(String, int) */
+  public void setObjectiveSettingsMedium(String medium, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsObjective(String, int) */
+  public void setObjectiveSettingsObjective(String objective, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsRefractiveIndex(Float, int) */
+  public void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex) {
   }
 
   // - Pixels property storage -

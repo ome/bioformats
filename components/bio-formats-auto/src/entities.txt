@@ -720,6 +720,43 @@ description = the ending timepoint
 
 ### Entities for Instrument settings for a particular Image ###
 
+## ObjectiveSettings ##
+
+[ObjectiveSettings]
+path = Image+/ObjectiveRef
+description = the objective associated with a particular image
+
+[ObjectiveSettings 200706]
+path = Image+/ObjectiveSettings
+description = TODO
+
+[ObjectiveSettings Objective]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = the objective associated with this image
+
+[ObjectiveSettings RefractiveIndex]
+type = Float
+description = unit-less refractive index of the immersion medium
+
+[ObjectiveSettings RefractiveIndex 2003FC]
+path = -
+
+[ObjectiveSettings CorrectionCollar]
+type = Float
+description = unit-less setting of the adjustable correction collar
+
+[ObjectiveSettings CorrectionCollar 2003FC]
+path = -
+
+[ObjectiveSettings Medium]
+type = String
+description = immersion medium for the lens
+
+[ObjectiveSettings Medium 2003FC]
+path = -
+
 ## DetectorSettings ##
 
 [DetectorSettings]
@@ -742,6 +779,27 @@ description = the detector offset
 [DetectorSettings Gain]
 type = Float
 description = the detector gain
+
+[DetectorSettings Binning]
+type = String
+description = the detector binning
+
+[DetectorSettings Binning 2003FC]
+path = -
+
+[DetectorSettings Voltage]
+type = Float
+description = TODO
+
+[DetectorSettings Voltage 2003FC]
+path = -
+
+[DetectorSettings ReadOutRate]
+type = Float
+description = TODO
+
+[DetectorSettings ReadOutRate 2003FC]
+path = -
 
 ## LightSourceSettings ##
 

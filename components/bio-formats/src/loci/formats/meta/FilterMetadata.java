@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Nov 19, 2008 10:52:54 AM CST
+ * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -151,6 +151,12 @@ public class FilterMetadata implements MetadataStore {
 
   // -- DetectorSettings property storage -
 
+  /* @see MetadataStore#setDetectorSettingsBinning(String, int, int) */
+  public void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex) {
+    String value = filter ? DataTools.sanitize(binning) : binning;
+    store.setDetectorSettingsBinning(value, imageIndex, logicalChannelIndex);
+  }
+
   /* @see MetadataStore#setDetectorSettingsDetector(String, int, int) */
   public void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex) {
     String value = filter ? DataTools.sanitize(detector) : detector;
@@ -165,6 +171,16 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setDetectorSettingsOffset(Float, int, int) */
   public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex) {
     store.setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex);
+  }
+
+  /* @see MetadataStore#setDetectorSettingsReadOutRate(Float, int, int) */
+  public void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex) {
+    store.setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex);
+  }
+
+  /* @see MetadataStore#setDetectorSettingsVoltage(Float, int, int) */
+  public void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex) {
+    store.setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex);
   }
 
   // -- Dimensions property storage -
@@ -629,6 +645,30 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setObjectiveWorkingDistance(Float, int, int) */
   public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex) {
     store.setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex);
+  }
+
+  // -- ObjectiveSettings property storage -
+
+  /* @see MetadataStore#setObjectiveSettingsCorrectionCollar(Float, int) */
+  public void setObjectiveSettingsCorrectionCollar(Float correctionCollar, int imageIndex) {
+    store.setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex);
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsMedium(String, int) */
+  public void setObjectiveSettingsMedium(String medium, int imageIndex) {
+    String value = filter ? DataTools.sanitize(medium) : medium;
+    store.setObjectiveSettingsMedium(value, imageIndex);
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsObjective(String, int) */
+  public void setObjectiveSettingsObjective(String objective, int imageIndex) {
+    String value = filter ? DataTools.sanitize(objective) : objective;
+    store.setObjectiveSettingsObjective(value, imageIndex);
+  }
+
+  /* @see MetadataStore#setObjectiveSettingsRefractiveIndex(Float, int) */
+  public void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex) {
+    store.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
   }
 
   // -- Pixels property storage -
