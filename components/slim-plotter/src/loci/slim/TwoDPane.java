@@ -425,6 +425,14 @@ public class TwoDPane extends JPanel
         }
       }
 
+      if (SlimPlotter.DEBUG) {
+        System.gc();
+        Runtime r = Runtime.getRuntime();
+        long total = r.totalMemory();
+        long free = r.freeMemory();
+        long used = (total - free) / 1024 / 1024;
+        System.out.println("Memory used: " + used + " MB");
+      }
       try {
         lifetimeFields[c].setSamples(curveImages[c]);
         imageRef.setData(lifetimeFields[c]);

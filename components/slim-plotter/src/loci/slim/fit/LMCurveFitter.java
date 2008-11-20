@@ -29,6 +29,7 @@ import jaolho.data.lma.LMAFunction;
 import jaolho.data.lma.implementations.JAMAMatrix;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Hashtable;
 
 /**
  * Levenberg-Marquardt curve fitter that uses L-M Fit package.
@@ -46,6 +47,15 @@ public class LMCurveFitter extends CurveFitter {
   protected static final ExpFunction[] EXP_FUNCTIONS = {
     new ExpFunction(1), new ExpFunction(2)
   };
+
+  protected static final JAMAMatrix[] EXP_MATRICES = {
+    new JAMAMatrix(3, 3),
+    new JAMAMatrix(5, 5)
+  };
+
+  // cached to save memory
+  protected static final Hashtable EXP_X_VALS = new Hashtable();
+  protected static final Hashtable EXP_WEIGHTS = new Hashtable();
 
   // -- Fields --
 
@@ -85,13 +95,24 @@ public class LMCurveFitter extends CurveFitter {
     super.estimate();
 
     int num = lastIndex - firstIndex + 1;
-    double[] xVals = new double[num];
+
+    Integer iNum = new Integer(num);
+    double[] xVals = (double[]) EXP_X_VALS.get(iNum);
+    double[] weights = (double[]) EXP_WEIGHTS.get(iNum);
+    if (xVals == null) {
+      xVals = new double[num];
+      weights = new double[num];
+      EXP_X_VALS.put(iNum, xVals);
+      EXP_WEIGHTS.put(iNum, weights);
+      for (int i=0, q=firstIndex; i<num; i++, q++) {
+        xVals[i] = i;
+        weights[i] = 1; // no weighting
+      }
+    }
+
     double[] yVals = new double[num];
-    double[] weights = new double[num];
     for (int i=0, q=firstIndex; i<num; i++, q++) {
-      xVals[i] = i;
       yVals[i] = curveData[q];
-      weights[i] = 1; // no weighting
     }
 
     double[] params = new double[2 * components + 1];
@@ -104,7 +125,7 @@ public class LMCurveFitter extends CurveFitter {
 
     lma = new LMA(EXP_FUNCTIONS[components - 1], params,
       new double[][] {xVals, yVals}, weights,
-      new JAMAMatrix(params.length, params.length));
+      EXP_MATRICES[components - 1]);
     lma.maxIterations = 1;
   }
 

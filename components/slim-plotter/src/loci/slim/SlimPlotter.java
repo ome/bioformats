@@ -61,7 +61,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Constants --
 
-  private static final boolean DEBUG = false;
+  protected static final boolean DEBUG = false;
 
   /** Number of iterations to perform for regional lifetime curve fitting. */
   private static final int NUM_ITERATIONS = 250;
