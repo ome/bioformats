@@ -173,6 +173,20 @@ public abstract class CurveFitter implements ICurveFitter {
 
   /** Initializes the curve fitter with a starting curve estimate. */
   public void estimate() {
+/*
+    // incredibly lame guess
+    int num = lastIndex - firstIndex + 1;
+    int peak = 1;
+    for (int i=0, q=firstIndex; i<num; i++, q++) {
+      if (curveData[q] > peak) peak = curveData[q];
+    }
+    final double[] guess = {num / 10.0, num / 5.0};
+    for (int i=0; i<components; i++) {
+      curveEstimate[i][0] = (double) peak / components;
+      curveEstimate[i][1] = guess[i];
+      curveEstimate[i][2] = 0;
+    }
+*/
     if (DEBUG) {
       System.out.println("****** DATA ******");
       for (int i = 0; i < curveData.length; i++) {
@@ -291,10 +305,8 @@ public abstract class CurveFitter implements ICurveFitter {
           if (guessA < lowA) lowA = guessA;
         }
       }
-      /*
-      if (10.0 > lowA) lowA = 10.0;
-      if (20.0 > highA) highA = 20.0;
-      */
+      //if (10.0 > lowA) lowA = 10.0;
+      //if (20.0 > highA) highA = 20.0;
       curveEstimate[0][0] = highA - lowA;
       curveEstimate[1][0] = lowA;
       // It seems like the low estimates are pretty good, usually.
@@ -443,6 +455,7 @@ public abstract class CurveFitter implements ICurveFitter {
         }
       }
     }
+
     // To update currentRCSE.
     currentRCSE = getReducedChiSquaredError();
     if (DEBUG) {

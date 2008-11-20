@@ -223,6 +223,10 @@ public class BurnInRenderer extends CurveRenderer {
         }
         totalRCSE = totalVal;
       }
+
+      // HACK - workaround for probable bug
+      if (worstY < 0 || worstX < 0) worstX = worstY = 0;
+
       double worst = rcseCache[worstY][worstX];
       if (stallCount == 0) worstRCSE = worst; // update global worst RCSE value
       currentX = worstX;

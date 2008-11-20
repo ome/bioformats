@@ -49,11 +49,8 @@ public class LMCurveFitter extends CurveFitter {
 
   // -- Fields --
 
-  protected int maxVal;
-  protected double[] xVals, yVals, weights;
-  protected int iterCount;
-  
   protected LMA lma;
+  protected int iterCount;
 
   // -- Constructor --
 
@@ -71,7 +68,6 @@ public class LMCurveFitter extends CurveFitter {
   public void iterate() {
     iterCount++;
     lma.fit();
-    //log("\t\titerations=" + lma.iterationCount);
 
     // store parameters into curve array
     for (int i=0; i<components; i++) {
@@ -84,28 +80,28 @@ public class LMCurveFitter extends CurveFitter {
 
   public int getIterations() { return iterCount; }
 
-  public void setData(int[] data, int first, int last) {
-    super.setData(data, first, last);
+  /* @see CurveFitter#estimate() */
+  public void estimate() {
+    super.estimate();
 
     int num = lastIndex - firstIndex + 1;
-    xVals = new double[num];
-    yVals = new double[num];
-    weights = new double[num];
-    maxVal = 0;
+    double[] xVals = new double[num];
+    double[] yVals = new double[num];
+    double[] weights = new double[num];
     for (int i=0, q=firstIndex; i<num; i++, q++) {
-      if (curveData[q] > maxVal) maxVal = curveData[q];
       xVals[i] = i;
       yVals[i] = curveData[q];
       weights[i] = 1; // no weighting
     }
 
-    final double[] guess = {num / 10, num / 5};
     double[] params = new double[2 * components + 1];
     for (int i=0; i<components; i++) {
       int e = 2 * i;
-      params[e] = maxVal / components;
-      params[e + 1] = guess[i]; // ?
+      params[e] = curveEstimate[i][0];
+      params[e + 1] = curveEstimate[i][1];
     }
+    params[2 * components] = curveEstimate[0][2];
+
     lma = new LMA(EXP_FUNCTIONS[components - 1], params,
       new double[][] {xVals, yVals}, weights,
       new JAMAMatrix(params.length, params.length));
