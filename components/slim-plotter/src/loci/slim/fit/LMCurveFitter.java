@@ -51,7 +51,8 @@ public class LMCurveFitter extends CurveFitter {
 
   protected int maxVal;
   protected double[] xVals, yVals, weights;
-
+  protected int iterCount;
+  
   protected LMA lma;
 
   // -- Constructor --
@@ -68,6 +69,7 @@ public class LMCurveFitter extends CurveFitter {
 
   /** HACK - performs the actual fit. */
   public void iterate() {
+    iterCount++;
     lma.fit();
     //log("\t\titerations=" + lma.iterationCount);
 
@@ -80,7 +82,7 @@ public class LMCurveFitter extends CurveFitter {
     curveEstimate[0][2] = lma.parameters[2 * components]; // c
   }
 
-  public int getIterations() { return lma.iterationCount; }
+  public int getIterations() { return iterCount; }
 
   public void setData(int[] data, int first, int last) {
     super.setData(data, first, last);
@@ -107,6 +109,7 @@ public class LMCurveFitter extends CurveFitter {
     lma = new LMA(EXP_FUNCTIONS[components - 1], params,
       new double[][] {xVals, yVals}, weights,
       new JAMAMatrix(params.length, params.length));
+    lma.maxIterations = 1;
   }
 
   // -- Helper classes --
@@ -137,11 +140,13 @@ public class LMCurveFitter extends CurveFitter {
       if (parameterIndex == 2 * numExp) return 1; // c
       int e = parameterIndex / 2;
       int off = parameterIndex % 2;
+      double aTerm = a[2 * e];
+      double bTerm = a[2 * e + 1];
       switch (off) {
         case 0:
-          return Math.exp(-a[e + 1] * x); // a
+            return Math.exp(-bTerm * x); // a
         case 1:
-          return -a[e] * x * Math.exp(-a[e + 1] * x); // b
+          return -aTerm * x * Math.exp(-bTerm * x); // b
       }
       throw new RuntimeException("No such parameter index: " +
         parameterIndex);
