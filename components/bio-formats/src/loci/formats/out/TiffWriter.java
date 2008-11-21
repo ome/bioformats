@@ -173,13 +173,15 @@ public class TiffWriter extends FormatWriter {
   {
     Hashtable h = new Hashtable();
     if (compression == null) compression = "";
-    Integer compressType= new Integer(TiffTools.UNCOMPRESSED);   
-    if(compression.equals("LZW")) compressType=new Integer(TiffTools.LZW);
+    Integer compressType = new Integer(TiffTools.UNCOMPRESSED);
+    if (compression.equals("LZW")) compressType = new Integer(TiffTools.LZW);
 
-    else if(compression.equals("J2K"))
-    	compressType=new Integer(TiffTools.JPEG_2000);
-    else if(compression.equals("JPEG"))
-    	compressType=new Integer(TiffTools.JPEG);
+    else if (compression.equals("J2K")) {
+      compressType = new Integer(TiffTools.JPEG_2000);
+    }
+    else if (compression.equals("JPEG")) {
+      compressType = new Integer(TiffTools.JPEG);
+    }
     h.put(new Integer(TiffTools.COMPRESSION), compressType);
     saveImage(image, h, series, lastInSeries, last);
   }

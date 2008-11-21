@@ -47,7 +47,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
   // -- Constants --
 
   private static final String NO_J2K_MSG =
-    "The JAI Image I/O Tools are required to read JPEG-2000 files.  Please " +
+    "The JAI Image I/O Tools are required to read JPEG-2000 files. Please " +
     "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats-library.html";
 
   private static final String J2K_READER =
@@ -107,9 +107,12 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
       // register J2KImageReader with IIORegistry
       registerClass(J2K_READER);
-      
-      if (noJ2k) throw new FormatException("Could not compress JPEG-2000 data.\r\n"+NO_J2K_MSG);
-      
+
+      if (noJ2k) {
+        throw new FormatException("Could not compress JPEG-2000 data.\n" +
+          NO_J2K_MSG);
+      }
+
       IIORegistry registry = IIORegistry.getDefaultInstance();
 
       // obtain J2KImageReaderSpi instance from IIORegistry
@@ -142,15 +145,15 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
   public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
     throws FormatException
   {
-	    boolean littleEndian = false, interleaved = false;
-	    if (options instanceof Boolean) {
-	      littleEndian = ((Boolean) options).booleanValue();
-	    }
-	    else {
-	      Object[] o = (Object[]) options;
-	      littleEndian = ((Boolean) o[0]).booleanValue();
-	      interleaved = ((Boolean) o[1]).booleanValue();
-	    }
+    boolean littleEndian = false, interleaved = false;
+    if (options instanceof Boolean) {
+      littleEndian = ((Boolean) options).booleanValue();
+    }
+    else {
+      Object[] o = (Object[]) options;
+      littleEndian = ((Boolean) o[0]).booleanValue();
+      interleaved = ((Boolean) o[1]).booleanValue();
+    }
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
 

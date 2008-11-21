@@ -91,29 +91,28 @@ public class OMEXMLWriter extends FormatWriter {
     }
     boolean littleEndian=!retrieve.getPixelsBigEndian(series, 0).booleanValue();
     BufferedImage buffImage=AWTImageTools.makeBuffered(image);
-  	int width = buffImage.getWidth();
-	int height = buffImage.getHeight();
-    byte[][] pix = AWTImageTools.getPixelBytes(buffImage,littleEndian);
-    buffImage=null;
-	//TODO: Write decompress to use LittleEndian option
-    Object[] options= {Boolean.TRUE,Boolean.TRUE};//{Boolean.TRUE, Boolean(littleEndian);
+    int width = buffImage.getWidth();
+    int height = buffImage.getHeight();
+    byte[][] pix = AWTImageTools.getPixelBytes(buffImage, littleEndian);
+    buffImage = null;
+    // TODO: Write decompress to use LittleEndian option
+    Object[] options = {Boolean.TRUE, Boolean.TRUE};
     for (int i = 0; i < pix.length; i++) {
-        //TODO: Create a Method compress to take into account all compression methods
-		int bytes = pix[i].length / (width * height);
-		int[] dims = new int[] { 1, bytes }; // one channels compressed at a time
-		if (compression.equals("J2K")) {
-			pix[i] = new JPEG2000Codec().compress(pix[i], width, height,
-				dims, options);
-		}
-		else if (compression.equals("JPEG")) {
-			pix[i] = new JPEGCodec().compress(pix[i], width, height,
-				dims, options);
-		}
-		else if (compression.equals("zlib")) {
-	    	pix[i] = new ZlibCodec().compress(pix[i], 0, 0, null, null);
-	    }
+      // TODO: Create a method compress to handle all compression methods
+      int bytes = pix[i].length / (width * height);
+      int[] dims = new int[] {1, bytes}; // one channels compressed at a time
+      if (compression.equals("J2K")) {
+        pix[i] = new JPEG2000Codec().compress(pix[i], width, height,
+          dims, options);
+      }
+      else if (compression.equals("JPEG")) {
+        pix[i] = new JPEGCodec().compress(pix[i], width, height,
+          dims, options);
+      }
+      else if (compression.equals("zlib")) {
+        pix[i] = new ZlibCodec().compress(pix[i], 0, 0, null, null);
+      }
       byte[] encodedPix = new Base64Codec().compress(pix[i], 0, 0, null, null);
-
 
       StringBuffer plane = new StringBuffer("\n<Bin:BinData Length=\"");
       plane.append(encodedPix.length);

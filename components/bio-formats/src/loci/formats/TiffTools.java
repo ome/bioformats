@@ -2266,10 +2266,11 @@ public final class TiffTools {
 
     // create pixel output buffers
     int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
-    boolean fullImageCompression=false;
-    if(compression==JPEG_2000 || compression==JPEG)
-    	fullImageCompression=true;
-    int pixels=fullImageCompression?width*height:width;
+    boolean fullImageCompression = false;
+    if (compression == JPEG_2000 || compression == JPEG) {
+      fullImageCompression = true;
+    }
+    int pixels = fullImageCompression ? width * height : width;
     int stripSize = Math.max(8192, pixels * bytesPerPixel * values.length);
     int rowsPerStrip = stripSize / (width * bytesPerPixel * values.length);
     int stripsPerImage = (height + rowsPerStrip - 1) / rowsPerStrip;
@@ -2488,11 +2489,11 @@ public final class TiffTools {
   }
 
   /**
-   * Retrieves strip byte counts for the image (TIFF tag StripByteCounts) from a
-   * given TIFF IFD.
+   * Retrieves strip byte counts for the image (TIFF tag StripByteCounts) from
+   * a given TIFF IFD.
    * @param ifd a TIFF IFD hashtable.
-   * @return the byte counts for each strip. The length of the array is equal to
-   *   the number of strips per image. <i>StripsPerImage =
+   * @return the byte counts for each strip. The length of the array is equal
+   *   to the number of strips per image. <i>StripsPerImage =
    *   floor((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    * @see #getStripOffsets(Hashtable)
@@ -2519,25 +2520,26 @@ public final class TiffTools {
     public static byte[] compress(byte[] input, Hashtable ifd)
     throws FormatException, IOException
   {
-	int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
-	int width =(int) getImageWidth(ifd);
-	int height =(int) getImageLength(ifd);
-	int bytes=(int) Math.floor((double)((int[]) getIFDValue(ifd, BITS_PER_SAMPLE))[0]/(double)8);
-	int[] dims = {getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1),bytes};
-	//TODO: Change the decompression to use littleEndian
-	Object[] options = {Boolean.TRUE, Boolean.TRUE};//{Boolean.FALSE,new Boolean(isLittleEndian(ifd))};	
+    int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
+    int width =(int) getImageWidth(ifd);
+    int height =(int) getImageLength(ifd);
+    int bytes = (int) Math.floor((double)
+      ((int[]) getIFDValue(ifd, BITS_PER_SAMPLE))[0] / 8.0);
+    int[] dims = {getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1), bytes};
+    // TODO: Change the decompression to use littleEndian
+    Object[] options = {Boolean.TRUE, Boolean.TRUE};
     if (compression == UNCOMPRESSED) return input;
     else if (compression == JPEG) {
-     		  return new JPEGCodec().compress(input, width, height, dims, options);
+      return new JPEGCodec().compress(input, width, height, dims, options);
     }
     else if (compression == JPEG_2000) {
-        return new JPEG2000Codec().compress(input, width, height, dims, options);
-      }
+      return new JPEG2000Codec().compress(input, width, height, dims, options);
+    }
     else {
       return compress(input, compression);
     }
   }
- 
+
   /** Encodes a strip of data with the given compression scheme. */
   public static byte[] compress(byte[] input, int compression)
     throws FormatException, IOException
