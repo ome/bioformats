@@ -523,7 +523,13 @@ public class ZeissLSMReader extends BaseTiffReader {
               store.setImageDescription(value.toString(), 0);
               break;
             case RECORDING_ENTRY_OBJECTIVE:
-              store.setObjectiveModel(value.toString(), 0, 0);
+              String[] tokens = value.toString().split(" ");
+              store.setObjectiveModel(tokens[0], 0, 0);
+              store.setObjectiveImmersion(tokens[2], 0, 0);
+              String mag = tokens[1].substring(0, tokens[1].indexOf("/") - 1);
+              String na = tokens[1].substring(tokens[1].indexOf("/") + 1);
+              store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+              store.setObjectiveLensNA(new Float(na), 0, 0);
               break;
             case TRACK_ENTRY_TIME_BETWEEN_STACKS:
               store.setDimensionsTimeIncrement(
