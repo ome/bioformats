@@ -125,8 +125,10 @@ Objective.LensNA = Yes
 Objective.Correction = Yes
 StagePosition = Yes
 Detector.Model = Yes
-Detector.Gain = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Binning = Yes
 ImagingEnvironment.Temperature = Yes
+LightSourceSettings.Wavelength = Yes
 
 [DicomReader]
 Pixels = Yes since r920

@@ -345,6 +345,7 @@ public class DeltavisionReader extends FormatReader {
           new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
         store.setLogicalChannelNdFilter(
           new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
+        store.setLightSourceSettingsWavelength(new Integer(waves[w]), 0, w);
       }
     }
 
@@ -466,13 +467,18 @@ public class DeltavisionReader extends FormatReader {
           store.setDimensionsPhysicalSizeY(y, 0, 0);
           store.setDimensionsPhysicalSizeZ(z, 0, 0);
         }
+        else if (key.equals("Binning")) {
+          for (int c=0; c<getSizeC(); c++) {
+            store.setDetectorSettingsBinning(value, 0, c);
+          }
+        }
         // Camera properties
         else if (key.equals("Type")) {
           store.setDetectorModel(value, 0, 0);
         }
         else if (key.equals("Gain")) {
           value = value.replaceAll("X", "");
-          store.setDetectorGain(new Float(value), 0, 0);
+          store.setDetectorSettingsGain(new Float(value), 0, 0);
         }
         //else if (key.equals("Speed")) { }
         else if (key.equals("Temp Setting")) {
