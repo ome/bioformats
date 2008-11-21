@@ -376,8 +376,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       if (timeStampOffset != 0) {
-        if ((timeStampOffset % 2) == 1) in.seek(timeStampOffset + 7);
-        else in.seek(timeStampOffset - 248);
+        in.seek(timeStampOffset + 8);
         for (int i=0; i<getSizeT(); i++) {
           double stamp = in.readDouble();
           put("TimeStamp" + i, stamp);
@@ -524,12 +523,23 @@ public class ZeissLSMReader extends BaseTiffReader {
               break;
             case RECORDING_ENTRY_OBJECTIVE:
               String[] tokens = value.toString().split(" ");
-              store.setObjectiveModel(tokens[0], 0, 0);
-              store.setObjectiveImmersion(tokens[2], 0, 0);
-              String mag = tokens[1].substring(0, tokens[1].indexOf("/") - 1);
-              String na = tokens[1].substring(tokens[1].indexOf("/") + 1);
-              store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
-              store.setObjectiveLensNA(new Float(na), 0, 0);
+              StringBuffer model = new StringBuffer();
+              int next = 0;
+              for (; next<tokens.length; next++) {
+                if (tokens[next].indexOf("/") != -1) break;
+                model.append(tokens[next]);
+              }
+              store.setObjectiveModel(model.toString(), 0, 0);
+              if (next < tokens.length) {
+                String p = tokens[next++];
+                String mag = p.substring(0, p.indexOf("/") - 1);
+                String na = p.substring(p.indexOf("/") + 1);
+                store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+                store.setObjectiveLensNA(new Float(na), 0, 0);
+              }
+              if (next < tokens.length) {
+                store.setObjectiveImmersion(tokens[next++], 0, 0);
+              }
               break;
             case TRACK_ENTRY_TIME_BETWEEN_STACKS:
               store.setDimensionsTimeIncrement(
@@ -676,7 +686,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (zct[2] < timestamps.size()) {
         float thisStamp = ((Double) timestamps.get(zct[2])).floatValue();
         store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp), 0, 0, i);
-        float nextStamp = i < getSizeT() - 1 ?
+        float nextStamp = zct[2] < getSizeT() - 1 ?
           ((Double) timestamps.get(zct[2] + 1)).floatValue() : thisStamp;
         if (i == getSizeT() - 1 && zct[2] > 0) {
           thisStamp = ((Double) timestamps.get(zct[2] - 1)).floatValue();
