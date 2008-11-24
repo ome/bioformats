@@ -416,6 +416,10 @@ public class FluoviewReader extends BaseTiffReader {
       if (offsets[i] != null) {
         store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
       }
+
+      // link DetectorSettings to an actual Detector
+      store.setDetectorID("Detector:" + i, 0, i);
+      store.setDetectorSettingsDetector("Detector:" + i, 0, i);
     }
 
     // populate Objective data

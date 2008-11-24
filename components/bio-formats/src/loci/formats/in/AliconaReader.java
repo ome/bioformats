@@ -199,6 +199,10 @@ public class AliconaReader extends FormatReader {
     // used when the dataset was acquired, i.e. detector settings.
     if (voltage != null) {
       store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
+
+      // link DetectorSettings to an actual Detector
+      store.setDetectorID("Detector:0", 0, 0);
+      store.setDetectorSettingsDetector("Detector:0", 0, 0);
     }
 
     // populate Objective data

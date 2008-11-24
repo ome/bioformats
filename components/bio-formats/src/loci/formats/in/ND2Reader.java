@@ -716,12 +716,12 @@ public class ND2Reader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     // populate Image data
-    for (int i=0; i<numSeries; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName(currentId, i);
     }
 
     // populate Dimensions data
-    for (int i=0; i<numSeries; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
       store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
@@ -732,6 +732,10 @@ public class ND2Reader extends FormatReader {
     if (voltage != null) {
       store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
     }
+
+    // link DetectorSettings to an actual Detector
+    store.setDetectorID("Detector:0", 0, 0);
+    store.setDetectorSettingsDetector("Detector:0", 0, 0);
 
     // populate Objective
     if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);

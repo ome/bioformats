@@ -480,6 +480,11 @@ public class BioRadReader extends FormatReader {
                     store.setDetectorSettingsGain(
                       new Float(value), 0, detector);
                   }
+
+                  // link DetectorSettings to an actual Detector
+                  store.setDetectorID("Detector:" + detector, 0, detector);
+                  store.setDetectorSettingsDetector("Detector:" + detector, 0,
+                    detector);
                 }
               }
             }

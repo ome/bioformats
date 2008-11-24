@@ -443,6 +443,12 @@ public class ZeissZVIReader extends FormatReader {
       parseTags(keys[i].intValue(), s, store);
       s.close();
     }
+
+    // link DetectorSettings to an actual Detector
+    for (int i=0; i<getSizeC(); i++) {
+      store.setDetectorID("Detector:" + i, 0, i);
+      store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+    }
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {

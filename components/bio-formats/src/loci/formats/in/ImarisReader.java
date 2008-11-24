@@ -213,6 +213,10 @@ public class ImarisReader extends FormatReader {
         store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
       }
       store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
+
+      // link DetectorSettings to an actual Detector
+      store.setDetectorID("Detector:" + i, 0, i);
+      store.setDetectorSettingsDetector("Detector:" + i, 0, i);
     }
 
     // CTR CHECK
