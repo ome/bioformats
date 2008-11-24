@@ -804,4 +804,22 @@ public final class DataTools {
     return f.format(d);
   }
 
+  // -- Array handling --
+
+  /** Returns true if the given value is contained in the given array. */
+  public static boolean containsValue(int[] array, int value) {
+    return indexOf(array, value) != -1;
+  }
+
+  /**
+   * Returns the index of the first occurence of the given value in the given
+   * array.  If the value is not in the array, returns -1.
+   */
+  public static int indexOf(int[] array, int value) {
+    for (int i=0; i<array.length; i++) {
+      if (array[i] == value) return i;
+    }
+    return -1;
+  }
+
 }
