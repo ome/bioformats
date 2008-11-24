@@ -179,11 +179,11 @@ public class LegacyND2Reader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     for (int i=0; i<core.length; i++) {
       store.setImageName("Series " + i, i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
-    MetadataTools.populatePixels(store, this);
   }
 
   // -- Native methods --

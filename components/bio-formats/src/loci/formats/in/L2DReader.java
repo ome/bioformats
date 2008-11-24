@@ -218,11 +218,14 @@ public class L2DReader extends FormatReader {
           core[i].pixelType = reader.getPixelType();
         }
       }
-      store.setImageName("", i);
-      MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     MetadataTools.populatePixels(store, this);
+
+    for (int i=0; i<scans.size(); i++) {
+      store.setImageName("", i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
+    }
   }
 
   // -- Helper methods --

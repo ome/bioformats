@@ -547,10 +547,8 @@ public class DicomReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-
-    // populate OME-XML node
     MetadataTools.populatePixels(store, this);
+    store.setImageName("", 0);
 
     String stamp = null;
 

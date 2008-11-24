@@ -200,9 +200,6 @@ public class MicromanagerReader extends FormatReader {
       s = s.substring(s.indexOf("\n", start), end).trim();
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
     StringTokenizer st = new StringTokenizer(s, "\n");
     int[] slice = new int[3];
     while (st.hasMoreTokens()) {
@@ -291,9 +288,11 @@ public class MicromanagerReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    MetadataTools.populatePixels(store, this);
   }
 
 }

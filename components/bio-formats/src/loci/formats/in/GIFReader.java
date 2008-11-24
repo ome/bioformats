@@ -345,15 +345,15 @@ public class GIFReader extends FormatReader {
     core[0].metadataComplete = true;
     core[0].indexed = true;
     core[0].falseColor = false;
+    core[0].pixelType = FormatTools.UINT8;
 
     // populate metadata store
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    core[0].pixelType = FormatTools.UINT8;
-    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --

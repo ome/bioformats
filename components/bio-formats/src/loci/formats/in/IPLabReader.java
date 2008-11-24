@@ -49,6 +49,8 @@ public class IPLabReader extends FormatReader {
   /** Total number of pixel bytes. */
   private int dataSize;
 
+  private Float pixelSize, timeIncrement;
+
   // -- Constructor --
 
   /** Constructs a new IPLab reader. */
@@ -189,8 +191,6 @@ public class IPLabReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
     MetadataTools.populatePixels(store, this, true);
 
     status("Reading tags");
@@ -324,11 +324,7 @@ public class IPLabReader extends FormatReader {
               break;
           }
 
-          if (i == 0) {
-            Float pixelSize = new Float(unitsPerPixel);
-            store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-            store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
-          }
+          if (i == 0) pixelSize = new Float(unitsPerPixel);
 
           addMeta("UnitName" + i, xUnitName);
         }
@@ -350,6 +346,8 @@ public class IPLabReader extends FormatReader {
         addMeta("Notes", notes);
 
         store.setImageDescription(notes, 0);
+        store.setImageName("", 0);
+        MetadataTools.setDefaultCreationDate(store, id, 0);
       }
       else if (tagBytes[0] == 0x1a && tagBytes[1] == (byte) 0xd9 &&
         tagBytes[2] == (byte) 0x8b && tagBytes[3] == (byte) 0xef)
@@ -383,7 +381,7 @@ public class IPLabReader extends FormatReader {
             }
           }
           if (i == 1) {
-            store.setDimensionsTimeIncrement(new Float(timepoint), 0, 0);
+            timeIncrement = new Float(timepoint);
           }
         }
       }
@@ -399,6 +397,14 @@ public class IPLabReader extends FormatReader {
       if (in.getFilePointer() >= in.length() && !tag.equals("fini")) {
         tag = "fini";
       }
+    }
+
+    if (pixelSize != null) {
+      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+    }
+    if (timeIncrement != null) {
+      store.setDimensionsTimeIncrement(timeIncrement, 0, 0);
     }
   }
 

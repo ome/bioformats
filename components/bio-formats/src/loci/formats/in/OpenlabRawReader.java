@@ -174,11 +174,6 @@ public class OpenlabRawReader extends FormatReader {
     core[0].indexed = false;
     core[0].falseColor = false;
 
-    // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-
     switch (bytesPerPixel) {
       case 1:
       case 3:
@@ -191,8 +186,12 @@ public class OpenlabRawReader extends FormatReader {
         core[0].pixelType = FormatTools.FLOAT;
     }
 
-    store.setImageCreationDate(stamp, 0);
+    // The metadata store we're working with.
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageCreationDate(stamp, 0);
   }
 
 }

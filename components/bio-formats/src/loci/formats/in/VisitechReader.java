@@ -259,11 +259,11 @@ public class VisitechReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     for (int i=0; i<numSeries; i++) {
       store.setImageName("Position " + i, i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
-    MetadataTools.populatePixels(store, this);
   }
 
 }

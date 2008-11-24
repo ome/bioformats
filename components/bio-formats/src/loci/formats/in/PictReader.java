@@ -271,9 +271,9 @@ public class PictReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --

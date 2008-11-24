@@ -119,8 +119,6 @@ public class APNGReader extends FormatReader {
     ByteVector stream = new ByteVector();
     stream.add(PNG_SIGNATURE);
 
-    byte[] len = new byte[4];
-
     boolean fdatValid = false;
     int fctlCount = 0;
 
@@ -131,16 +129,15 @@ public class APNGReader extends FormatReader {
       if (!block.type.equals("IDAT") && !block.type.equals("fdAT") &&
         !block.type.equals("acTL") && !block.type.equals("fcTL"))
       {
-        DataTools.unpackBytes(block.length, len, 0, 4, isLittleEndian());
-        stream.add(len);
-        byte[] b = new byte[block.length + 8];
+        byte[] b = new byte[block.length + 12];
+        DataTools.unpackBytes(block.length, b, 0, 4, isLittleEndian());
         byte[] typeBytes = block.type.getBytes();
-        System.arraycopy(typeBytes, 0, b, 0, 4);
+        System.arraycopy(typeBytes, 0, b, 4, 4);
         in.seek(block.offset);
-        in.read(b, 4, b.length - 8);
+        in.read(b, 8, b.length - 12);
         if (block.type.equals("IHDR")) {
-          DataTools.unpackBytes(coords[2], b, 4, 4, isLittleEndian());
-          DataTools.unpackBytes(coords[3], b, 8, 4, isLittleEndian());
+          DataTools.unpackBytes(coords[2], b, 8, 4, isLittleEndian());
+          DataTools.unpackBytes(coords[3], b, 12, 4, isLittleEndian());
         }
         int crc = (int) computeCRC(b, b.length - 4);
         DataTools.unpackBytes(crc, b, b.length - 4, 4, isLittleEndian());
@@ -154,14 +151,13 @@ public class APNGReader extends FormatReader {
       else if (block.type.equals("fdAT")) {
         in.seek(block.offset + 4);
         if (fdatValid) {
-          DataTools.unpackBytes(block.length - 4, len, 0, 4, isLittleEndian());
-          stream.add(len);
-          byte[] b = new byte[block.length + 4];
-          b[0] = 'I';
-          b[1] = 'D';
-          b[2] = 'A';
-          b[3] = 'T';
-          in.read(b, 4, b.length - 8);
+          byte[] b = new byte[block.length + 8];
+          DataTools.unpackBytes(block.length - 4, b, 0, 4, isLittleEndian());
+          b[4] = 'I';
+          b[5] = 'D';
+          b[6] = 'A';
+          b[7] = 'T';
+          in.read(b, 8, b.length - 12);
           int crc = (int) computeCRC(b, b.length - 4);
           DataTools.unpackBytes(crc, b, b.length - 4, 4, isLittleEndian());
           stream.add(b);
@@ -278,9 +274,9 @@ public class APNGReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --

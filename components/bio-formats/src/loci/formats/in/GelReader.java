@@ -115,7 +115,7 @@ public class GelReader extends BaseTiffReader {
       }
     }
 
-    super.initMetadata();
+    super.initStandardMetadata();
 
     long fmt = TiffTools.getIFDLongValue(ifds[0], MD_FILETAG, true, LINEAR);
     if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
@@ -147,6 +147,7 @@ public class GelReader extends BaseTiffReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     store.setImageName("", 0);
     store.setImageDescription(info, 0);
 
@@ -160,7 +161,6 @@ public class GelReader extends BaseTiffReader {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
-    MetadataTools.populatePixels(store, this);
     Float pixelSize = new Float(scale.floatValue());
     store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
     store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);

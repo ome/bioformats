@@ -706,13 +706,14 @@ public class PerkinElmerReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
+    MetadataTools.populatePixels(store, this, true);
 
     // populate Dimensions element
     store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
 
     // populate Image element
+    store.setImageName("", 0);
     if (finishTime != null) {
       SimpleDateFormat parse = new SimpleDateFormat("HH:mm:ss (MM/dd/yyyy)");
       Date date = parse.parse(finishTime, new ParsePosition(0));
@@ -721,9 +722,6 @@ public class PerkinElmerReader extends FormatReader {
       store.setImageCreationDate(finishTime, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
-
-    // populate Pixels element
-    MetadataTools.populatePixels(store, this, true);
 
     // populate LogicalChannel element
     for (int i=0; i<getSizeC(); i++) {
@@ -735,7 +733,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    // populate plane info
+    // populate PlaneTiming
 
     long start = 0, end = 0;
     if (startTime != null) {
@@ -748,6 +746,7 @@ public class PerkinElmerReader extends FormatReader {
       Date date = parse.parse(finishTime, new ParsePosition(0));
       end = date.getTime();
     }
+
     long range = end - start;
     float msPerPlane = (float) range / getImageCount();
 
@@ -759,24 +758,22 @@ public class PerkinElmerReader extends FormatReader {
             0, 0, plane);
           store.setPlaneTimingExposureTime(
             (Float) exposureTimes.get(ci), 0, 0, plane);
-          if (zi < zPositions.size()) {
-            store.setStagePositionPositionX(new Float(0.0), 0, 0, plane);
-            store.setStagePositionPositionY(new Float(0.0), 0, 0, plane);
-            store.setStagePositionPositionZ((Float) zPositions.get(zi),
-              0, 0, plane);
-          }
           plane++;
         }
       }
     }
 
-    // populate StageLabel element
-    /*
-    store.setStageLabelX(new Float(originX), 0);
-    store.setStageLabelY(new Float(originY), 0);
-    store.setStageLabelZ(new Float(originZ), 0);
-    */
+    // populate StagePosition
 
+    for (int i=0; i<getImageCount(); i++) {
+      int[] zct = getZCTCoords(i);
+      if (zct[0] < zPositions.size()) {
+        store.setStagePositionPositionX(new Float(0.0), 0, 0, plane);
+        store.setStagePositionPositionY(new Float(0.0), 0, 0, plane);
+        store.setStagePositionPositionZ((Float) zPositions.get(zct[0]),
+          0, 0, plane);
+      }
+    }
   }
 
   // -- Helper methods --

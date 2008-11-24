@@ -205,21 +205,8 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Column axis sequence", in.readInt());
     addMeta("Row axis sequence", in.readInt());
     addMeta("Section axis sequence", in.readInt());
-    readWavelength(0, store);
-    addMeta("Wavelength 1 mean intensity", in.readFloat());
-    addMeta("Space group number", in.readInt());
 
-    extSize = in.readInt();
-
-    in.seek(128);
-    numIntsPerSection = in.readShort();
-    numFloatsPerSection = in.readShort();
-
-    addMeta("Number of Sub-resolution sets", in.readShort());
-    addMeta("Z axis reduction quotient", in.readShort());
-    readWavelength(1, store);
-    readWavelength(2, store);
-    readWavelength(3, store);
+    in.seek(160);
 
     int type = in.readShort();
     String imageType =
@@ -229,9 +216,7 @@ public class DeltavisionReader extends FormatReader {
     int lensID = in.readShort();
     addMeta("Lens ID Number", lensID);
 
-    in.seek(172);
-    readWavelength(4, store);
-
+    in.seek(180);
     core[0].sizeT = in.readShort();
     addMeta("Number of timepoints", getSizeT());
 
@@ -273,6 +258,8 @@ public class DeltavisionReader extends FormatReader {
     core[0].indexed = false;
     core[0].falseColor = false;
 
+    MetadataTools.populatePixels(store, this, true);
+
     short[] waves = new short[5];
     for (int i=0; i<waves.length; i++) {
       waves[i] = in.readShort();
@@ -284,7 +271,6 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Z origin (in um)", in.readFloat());
 
     // The metadata store we're working with.
-    store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setObjectiveID(String.valueOf(lensID), 0, 0);
 
@@ -297,19 +283,42 @@ public class DeltavisionReader extends FormatReader {
       addMeta("Title " + i, title);
     }
 
+    long fp = in.getFilePointer();
+
+    in.seek(76);
+    readWavelength(0, store);
+    addMeta("Wavelength 1 mean intensity", in.readFloat());
+    addMeta("Space group number", in.readInt());
+
+    extSize = in.readInt();
+
+    in.seek(128);
+    numIntsPerSection = in.readShort();
+    numFloatsPerSection = in.readShort();
+
+    addMeta("Number of Sub-resolution sets", in.readShort());
+    addMeta("Z axis reduction quotient", in.readShort());
+    readWavelength(1, store);
+    readWavelength(2, store);
+    readWavelength(3, store);
+
+    in.seek(172);
+    readWavelength(4, store);
+
     // ----- The Extended Header data handler begins here ------
 
     status("Reading extended header");
 
+    in.seek(fp);
+
     setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
     extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
-
-    MetadataTools.populatePixels(store, this, true);
 
     store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(pixZ), 0, 0);
 
+    store.setImageName("", 0);
     if (title == null) title = "";
     title = title.length() == 0 ? null : title;
     store.setImageDescription(title, 0);

@@ -636,8 +636,6 @@ public class FV1000Reader extends FormatReader {
 
     String tiffPath = null;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     pinholeSizes = new Vector();
 
     for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
@@ -740,6 +738,8 @@ public class FV1000Reader extends FormatReader {
 
     // calculate axis sizes
 
+    float sizeZ = 1f, sizeT = 1f;
+
     int realChannels = 0;
     for (int i=0; i<9; i++) {
       int ss = Integer.parseInt(size[i]);
@@ -751,13 +751,11 @@ public class FV1000Reader extends FormatReader {
       else if (code[i].equals("Z")) {
         core[0].sizeZ = ss;
         // Z size stored in nm
-        store.setDimensionsPhysicalSizeZ(
-          new Float(pixel.floatValue() * 0.001), 0, 0);
+        sizeZ = (float) (pixel.floatValue() * 0.001);
       }
       else if (code[i].equals("T")) {
         core[0].sizeT = ss;
-        pixel = new Float(pixel.floatValue() / 1000);
-        store.setDimensionsTimeIncrement(pixel, 0, 0);
+        sizeT = pixel.floatValue() / 1000;
       }
       else if (ss > 0) {
         if (getSizeC() == 0) core[0].sizeC = ss;
@@ -858,6 +856,11 @@ public class FV1000Reader extends FormatReader {
 
     // populate MetadataStore
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
+    MetadataTools.populatePixels(store, this);
+
     if (creationDate != null) {
       creationDate = creationDate.replaceAll("'", "");
       SimpleDateFormat parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -866,10 +869,13 @@ public class FV1000Reader extends FormatReader {
       creationDate = fmt.format(date);
     }
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
+      // populate Image data
       store.setImageName("Series " + i, i);
       if (creationDate != null) store.setImageCreationDate(creationDate, i);
       else MetadataTools.setDefaultCreationDate(store, id, i);
+
+      // populate Dimensions data
 
       if (pixelSizeX != null) {
         store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
@@ -877,11 +883,11 @@ public class FV1000Reader extends FormatReader {
       if (pixelSizeY != null) {
         store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
       }
-    }
+      store.setDimensionsPhysicalSizeZ(new Float(sizeZ), i, 0);
+      store.setDimensionsTimeIncrement(new Float(sizeT), i, 0);
 
-    MetadataTools.populatePixels(store, this);
+      // populate LogicalChannel data
 
-    for (int i=0; i<core.length; i++) {
       for (int c=0; c<core[i].sizeC; c++) {
         if (c < channelNames.size()) {
           store.setLogicalChannelName((String) channelNames.get(c), i, c);
@@ -899,15 +905,21 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
+    // populate Laser data
+
     int nLasers = (int) Math.min(dyeNames.size(), wavelengths.size());
     for (int i=0; i<nLasers; i++) {
       store.setLaserLaserMedium((String) dyeNames.get(i), 0, i);
       store.setLaserWavelength((Integer) wavelengths.get(i), 0, i);
     }
 
+    // populate Detector data
+
     store.setDetectorGain(new Float(gain), 0, 0);
     store.setDetectorOffset(new Float(offset), 0, 0);
     store.setDetectorVoltage(new Float(voltage), 0, 0);
+
+    // populate Objective data
 
     store.setObjectiveLensNA(new Float(lensNA), 0, 0);
     store.setObjectiveModel(objectiveName, 0, 0);

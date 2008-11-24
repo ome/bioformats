@@ -480,10 +480,15 @@ public class ND2Reader extends FormatReader {
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());
       MetadataTools.populatePixels(store, this);
+
+      // populate Image data
       for (int i=0; i<core.length; i++) {
         store.setImageName("Series " + i, i);
         MetadataTools.setDefaultCreationDate(store, id, i);
+      }
 
+      // populate PlaneTiming data
+      for (int i=0; i<core.length; i++) {
         if (tsT.size() > 0) {
           setSeries(i);
           for (int n=0; n<getImageCount(); n++) {
@@ -710,29 +715,29 @@ public class ND2Reader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
+    // populate Image data
     for (int i=0; i<numSeries; i++) {
       store.setImageName(currentId, i);
+    }
 
+    // populate Dimensions data
+    for (int i=0; i<numSeries; i++) {
       store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
       store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
     }
 
-    /*
     // populate DetectorSettings
     if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
-
-    // populate Detector
-    // CTR CHECK
-    if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
+    if (voltage != null) {
+      store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
+    }
 
     // populate Objective
-    // CTR CHECK
     if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);
     if (mag != null) {
       store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     }
-    */
   }
 
   // -- Helper class --

@@ -120,6 +120,10 @@ public class TillVisionReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    Vector imageNames = new Vector();
+    Vector waves = new Vector();
+    Vector types = new Vector();
+    Vector dates = new Vector();
     int nImages = 0;
 
     for (int i=0; i<documents.size(); i++) {
@@ -178,8 +182,7 @@ public class TillVisionReader extends FormatReader {
           s.skipBytes(3);
           int len = s.readShort();
           if (len <= 0) continue;
-          String imageName = s.readString(len);
-          store.setImageName(imageName, nImages);
+          imageNames.add(s.readString(len));
           s.skipBytes(6);
           s.order(true);
           len = s.readShort();
@@ -211,14 +214,13 @@ public class TillVisionReader extends FormatReader {
                 exposureTimes.put(new Integer(nImages), new Float(value));
               }
               else if (key.equals("Image type")) {
-                store.setExperimentType(value, nImages);
+                types.add(value);
               }
               else if (key.equals("Monochromator wavelength [nm]")) {
 
               }
               else if (key.equals("Monochromator wavelength increment[nm]")) {
-                store.setDimensionsWaveIncrement(new Integer(value),
-                  nImages, 0);
+                waves.add(value);
               }
             }
           }
@@ -236,10 +238,7 @@ public class TillVisionReader extends FormatReader {
               }
               catch (NullPointerException e) { }
             }
-            if (success) {
-              store.setImageCreationDate(dateTime, nImages);
-            }
-            else MetadataTools.setDefaultCreationDate(store, id, nImages);
+            dates.add(success ? dateTime : "");
           }
           nImages++;
         }
@@ -356,16 +355,40 @@ public class TillVisionReader extends FormatReader {
       core[i].rgb = false;
       core[i].littleEndian = true;
       core[i].dimensionOrder = "XYCZT";
+    }
+
+    MetadataTools.populatePixels(store, this, true);
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      // populate Image data
+      store.setImageName((String) imageNames.get(i), i);
+      String date = i < dates.size() ? (String) dates.get(i) : "";
+      if (!date.equals("")) {
+        store.setImageCreationDate(date, i);
+      }
+      else MetadataTools.setDefaultCreationDate(store, id, i);
+
+      // populate PlaneTiming data
 
       for (int q=0; q<core[i].imageCount; q++) {
         store.setPlaneTimingExposureTime(
           (Float) exposureTimes.get(new Integer(i)), i, 0, q);
       }
+
+      // populate Dimensions data
+
+      if (i < waves.size()) {
+        store.setDimensionsWaveIncrement(
+          new Integer((String) waves.get(i)), i, 0);
+      }
+
+      // populate Experiment data
+
+      if (i < types.size()) {
+        store.setExperimentType((String) types.get(i), i);
+      }
     }
-
-    MetadataTools.populatePixels(store, this, true);
   }
-
 
   // -- Helper methods --
 

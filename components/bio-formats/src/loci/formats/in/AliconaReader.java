@@ -186,26 +186,32 @@ public class AliconaReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageName("", 0);
     MetadataTools.populatePixels(store, this);
 
-    // CTR CHECK
+    // populate Image data
+
+    MetadataTools.setDefaultCreationDate(store, id, 0);
+    store.setImageName("", 0);
+
+    // populate Detector data
 
     // According to the spec, the voltage and magnification values are those
     // used when the dataset was acquired, i.e. detector settings.
-    /*
     if (voltage != null) {
-      store.setDetectorVoltage(new Float(voltage), 0, 0);
-    }
-    if (magnification != null) {
-      store.setObjectiveCalibratedMagnification(
-        new Float(magnification), 0, 0);
+      store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
     }
 
-    store.setObjectiveWorkingDistance(
-      new Float(workingDistance), 0, 0);
-    */
+    // populate Objective data
+
+    if (magnification != null) {
+      store.setObjectiveCalibratedMagnification(new Float(magnification), 0, 0);
+    }
+
+    if (workingDistance != null) {
+      store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+    }
+
+    // populate Dimensions data
 
     if (pntX != null && pntY != null) {
       float pixelSizeX = Float.parseFloat(pntX) / 1000000;
@@ -214,7 +220,6 @@ public class AliconaReader extends FormatReader {
       store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     }
-
   }
 
 }

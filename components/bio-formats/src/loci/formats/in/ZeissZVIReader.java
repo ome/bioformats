@@ -65,6 +65,8 @@ public class ZeissZVIReader extends FormatReader {
 
   private POITools poi;
 
+  private Hashtable tagsToParse;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -205,6 +207,7 @@ public class ZeissZVIReader extends FormatReader {
     isTiled = isJPEG = false;
     if (poi != null) poi.close();
     poi = null;
+    tagsToParse = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -217,6 +220,7 @@ public class ZeissZVIReader extends FormatReader {
     timestamps = new Hashtable();
     exposureTime = new Hashtable();
     poi = new POITools(Location.getMappedId(id));
+    tagsToParse = new Hashtable();
 
     // count number of images
 
@@ -269,9 +273,7 @@ public class ZeissZVIReader extends FormatReader {
         RandomAccessStream s = poi.getDocumentStream(name);
         s.order(true);
         int imageNum = getImageNumber(name, -1);
-        try { parseTags(imageNum, s, store); }
-        catch (EOFException e) { }
-        s.close();
+        tagsToParse.put(new Integer(imageNum), s);
       }
       else if (dirName.equals("Image") ||
         dirName.toUpperCase().indexOf("ITEM") != -1)
@@ -403,13 +405,11 @@ public class ZeissZVIReader extends FormatReader {
       core[0].dimensionOrder += "T";
     }
 
+    MetadataTools.populatePixels(store, this, true);
     store.setImageName("", 0);
-    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core[0].pixelType = FormatTools.UINT16;
-
-    MetadataTools.populatePixels(store, this, true);
 
     long firstStamp = 0;
     if (timestamps.size() > 0) {
@@ -418,6 +418,7 @@ public class ZeissZVIReader extends FormatReader {
       store.setImageCreationDate(DataTools.convertDate(
         (long) (firstStamp / 1600), DataTools.ZVI), 0);
     }
+    else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     for (int plane=0; plane<getImageCount(); plane++) {
       int[] zct = getZCTCoords(plane);
@@ -434,6 +435,13 @@ public class ZeissZVIReader extends FormatReader {
         stamp -= firstStamp;
         store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
       }
+    }
+
+    Integer[] keys = (Integer[]) tagsToParse.keySet().toArray(new Integer[0]);
+    for (int i=0; i<keys.length; i++) {
+      RandomAccessStream s = (RandomAccessStream) tagsToParse.get(keys[i]);
+      parseTags(keys[i].intValue(), s, store);
+      s.close();
     }
   }
 

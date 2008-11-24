@@ -178,14 +178,19 @@ public class ImarisReader extends FormatReader {
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
+    core[0].pixelType = FormatTools.UINT8;
 
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
+
+    // populate Image data
+
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    core[0].pixelType = FormatTools.UINT8;
-    MetadataTools.populatePixels(store, this);
+
+    // populate Dimensions data
 
     store.setDimensionsPhysicalSizeX(new Float(dx), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(dy), 0, 0);
@@ -193,15 +198,21 @@ public class ImarisReader extends FormatReader {
     store.setDimensionsTimeIncrement(new Float(1), 0, 0);
     store.setDimensionsWaveIncrement(new Integer(1), 0, 0);
 
-    // CTR CHECK
+    // populate LogicalChannel data
+
     for (int i=0; i<getSizeC(); i++) {
       if (pinholes[i] > 0) {
         store.setLogicalChannelPinholeSize(new Float(pinholes[i]), 0, i);
       }
-      //if (gains[i] > 0) {
-      //  store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
-      //}
-      //store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
+    }
+
+    // populate Detector data
+
+    for (int i=0; i<getSizeC(); i++) {
+      if (gains[i] > 0) {
+        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+      }
+      store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
     }
 
     // CTR CHECK

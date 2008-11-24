@@ -348,11 +348,11 @@ public class MetamorphReader extends BaseTiffReader {
     }
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     for (int i=0; i<core.length; i++) {
       MetadataTools.setDefaultCreationDate(store, id, i);
       store.setImageName("", i);
     }
-    MetadataTools.populatePixels(store, this);
   }
 
   // -- Internal BaseTiffReader API methods --

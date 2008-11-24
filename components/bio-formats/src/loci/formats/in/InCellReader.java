@@ -152,7 +152,7 @@ public class InCellReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    DefaultHandler handler = new InCellHandler(store);
+    DefaultHandler handler = new MinimalInCellHandler();
     DataTools.parseXML(b, handler);
 
     core[0].sizeZ = fieldCount * zCount;
@@ -185,19 +185,30 @@ public class InCellReader extends FormatReader {
       core[i].rgb = tiffReader.isRGB();
       core[i].pixelType = tiffReader.getPixelType();
       core[i].littleEndian = tiffReader.isLittleEndian();
+    }
+
+    MetadataTools.populatePixels(store, this, true);
+
+    handler = new InCellHandler(store);
+    DataTools.parseXML(b, handler);
+
+    // populate Image data
+
+    for (int i=0; i<seriesCount; i++) {
       store.setImageName("", i);
       store.setImageCreationDate(creationDate, i);
+    }
+
+    // populate PlaneTiming data
+
+    for (int i=0; i<seriesCount; i++) {
       for (int q=0; q<core[i].imageCount; q++) {
         store.setPlaneTimingDeltaT((Float) timings.get(nextTiming++), i, 0, q);
         store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
       }
-
-      int row = (int) ((Point) wellCoordinates.get(i)).x - startRow;
-      int col = (int) ((Point) wellCoordinates.get(i)).y - startCol;
-      store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
     }
 
-    MetadataTools.populatePixels(store, this, true);
+    // populate LogicalChannel data
 
     for (int i=0; i<seriesCount; i++) {
       for (int q=0; q<emWaves.size(); q++) {
@@ -205,9 +216,48 @@ public class InCellReader extends FormatReader {
         store.setLogicalChannelExWave((Integer) exWaves.get(q), i, q);
       }
     }
+
+    // populate Well data
+
+    for (int i=0; i<seriesCount; i++) {
+      int row = (int) ((Point) wellCoordinates.get(i)).x - startRow;
+      int col = (int) ((Point) wellCoordinates.get(i)).y - startCol;
+      store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
+    }
   }
 
-  // -- Helper class --
+  // -- Helper classes --
+
+  class MinimalInCellHandler extends DefaultHandler {
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (qName.equals("Images")) {
+        totalImages = Integer.parseInt(attributes.getValue("number"));
+      }
+      else if (qName.equals("Image")) {
+        String file = attributes.getValue("filename");
+        String thumb = attributes.getValue("thumbnail");
+        Location current = new Location(currentId).getAbsoluteFile();
+
+        if (new Location(current.getParentFile(), file).exists()) {
+          tiffs.add(
+            new Location(current.getParentFile(), file).getAbsolutePath());
+        }
+        else tiffs.add(file);
+      }
+      else if (qName.equals("Identifier")) {
+        int field = Integer.parseInt(attributes.getValue("field_index")) + 1;
+        int z = Integer.parseInt(attributes.getValue("z_index")) + 1;
+        int c = Integer.parseInt(attributes.getValue("wave_index")) + 1;
+        int t = Integer.parseInt(attributes.getValue("time_index")) + 1;
+        fieldCount = (int) Math.max(fieldCount, field);
+        zCount = (int) Math.max(zCount, z);
+        core[0].sizeC = (int) Math.max(getSizeC(), c);
+        core[0].sizeT = (int) Math.max(getSizeT(), t);
+      }
+    }
+  }
 
   /** SAX handler for parsing XML. */
   class InCellHandler extends DefaultHandler {
@@ -244,30 +294,8 @@ public class InCellReader extends FormatReader {
         addMeta(qName + " - " + attributes.getQName(i), attributes.getValue(i));
       }
 
-      if (qName.equals("Images")) {
-        totalImages = Integer.parseInt(attributes.getValue("number"));
-      }
-      else if (qName.equals("Image")) {
-        String file = attributes.getValue("filename");
-        String thumb = attributes.getValue("thumbnail");
-        Location current = new Location(currentId).getAbsoluteFile();
-
-        if (new Location(current.getParentFile(), file).exists()) {
-          tiffs.add(
-            new Location(current.getParentFile(), file).getAbsolutePath());
-        }
-        else tiffs.add(file);
+      if (qName.equals("Image")) {
         timings.add(new Float(attributes.getValue("acquisition_time_ms")));
-      }
-      else if (qName.equals("Identifier")) {
-        int field = Integer.parseInt(attributes.getValue("field_index")) + 1;
-        int z = Integer.parseInt(attributes.getValue("z_index")) + 1;
-        int c = Integer.parseInt(attributes.getValue("wave_index")) + 1;
-        int t = Integer.parseInt(attributes.getValue("time_index")) + 1;
-        fieldCount = (int) Math.max(fieldCount, field);
-        zCount = (int) Math.max(zCount, z);
-        core[0].sizeC = (int) Math.max(getSizeC(), c);
-        core[0].sizeT = (int) Math.max(getSizeT(), t);
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd

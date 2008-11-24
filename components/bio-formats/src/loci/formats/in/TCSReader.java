@@ -28,8 +28,7 @@ import java.text.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.*;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -195,8 +194,7 @@ public class TCSReader extends FormatReader {
 
     if (checkSuffix(id, XML_SUFFIX)) {
       in = new RandomAccessStream(id);
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      MetadataStore store = new DummyMetadata();
 
       // parse XML metadata
 
@@ -294,18 +292,20 @@ public class TCSReader extends FormatReader {
         core[i].falseColor = true;
       }
 
+      store = new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      MetadataTools.populatePixels(store, this, true);
+
       for (int i=0; i<x.size(); i++) {
         store.setImageName((String) seriesNames.get(i), i);
         MetadataTools.setDefaultCreationDate(store, id, i);
       }
-
-      MetadataTools.populatePixels(store, this, true);
 
       for (int i=0; i<x.size(); i++) {
         store.setDimensionsPhysicalSizeX((Float) xcal.get(i), i, 0);
         store.setDimensionsPhysicalSizeY((Float) ycal.get(i), i, 0);
         store.setDimensionsPhysicalSizeZ((Float) zcal.get(i), i, 0);
       }
+      DataTools.parseXML(xml, new LeicaHandler(store));
     }
     else {
       tiffs = new Vector();

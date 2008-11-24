@@ -169,7 +169,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initMetadata() */
-  protected void initMetadata() {
+  protected void initMetadata() throws FormatException, IOException {
     if (!thumbnailsRemoved) return;
     Hashtable ifd = ifds[0];
 
@@ -178,455 +178,120 @@ public class ZeissLSMReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    try {
-      super.initStandardMetadata();
+    super.initStandardMetadata();
 
-      // get TIF_CZ_LSMINFO structure
-      short[] s = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
-      byte[] cz = new byte[s.length];
-      for (int i=0; i<s.length; i++) {
-        cz[i] = (byte) s[i];
-      }
-
-      RandomAccessStream ras = new RandomAccessStream(cz);
-      ras.order(isLittleEndian());
-
-      put("MagicNumber", ras.readInt());
-      put("StructureSize", ras.readInt());
-      put("DimensionX", ras.readInt());
-      put("DimensionY", ras.readInt());
-
-      core[0].sizeZ = ras.readInt();
-      ras.skipBytes(4);
-      core[0].sizeT = ras.readInt();
-
-      int dataType = ras.readInt();
-      switch (dataType) {
-        case 2:
-          put("DataType", "12 bit unsigned integer");
-          break;
-        case 5:
-          put("DataType", "32 bit float");
-          break;
-        case 0:
-          put("DataType", "varying data types");
-          break;
-        default:
-          put("DataType", "8 bit unsigned integer");
-      }
-
-      put("ThumbnailX", ras.readInt());
-      put("ThumbnailY", ras.readInt());
-
-      // pixel sizes are stored in meters, we need them in microns
-      pixelSizeX = ras.readDouble() * 1000000;
-      pixelSizeY = ras.readDouble() * 1000000;
-      pixelSizeZ = ras.readDouble() * 1000000;
-
-      put("VoxelSizeX", new Double(pixelSizeX));
-      put("VoxelSizeY", new Double(pixelSizeY));
-      put("VoxelSizeZ", new Double(pixelSizeZ));
-
-      put("OriginX", ras.readDouble());
-      put("OriginY", ras.readDouble());
-      put("OriginZ", ras.readDouble());
-
-      int scanType = ras.readShort();
-      switch (scanType) {
-        case 0:
-          put("ScanType", "x-y-z scan");
-          core[0].dimensionOrder = "XYZCT";
-          break;
-        case 1:
-          put("ScanType", "z scan (x-z plane)");
-          core[0].dimensionOrder = "XYZCT";
-          break;
-        case 2:
-          put("ScanType", "line scan");
-          core[0].dimensionOrder = "XYZCT";
-          break;
-        case 3:
-          put("ScanType", "time series x-y");
-          core[0].dimensionOrder = "XYTCZ";
-          break;
-        case 4:
-          put("ScanType", "time series x-z");
-          core[0].dimensionOrder = "XYZTC";
-          break;
-        case 5:
-          put("ScanType", "time series 'Mean of ROIs'");
-          core[0].dimensionOrder = "XYTCZ";
-          break;
-        case 6:
-          put("ScanType", "time series x-y-z");
-          core[0].dimensionOrder = "XYZTC";
-          break;
-        case 7:
-          put("ScanType", "spline scan");
-          core[0].dimensionOrder = "XYCTZ";
-          break;
-        case 8:
-          put("ScanType", "spline scan x-z");
-          core[0].dimensionOrder = "XYCZT";
-          break;
-        case 9:
-          put("ScanType", "time series spline plane x-z");
-          core[0].dimensionOrder = "XYTCZ";
-          break;
-        case 10:
-          put("ScanType", "point mode");
-          core[0].dimensionOrder = "XYZCT";
-          break;
-        default:
-          put("ScanType", "x-y-z scan");
-          core[0].dimensionOrder = "XYZCT";
-      }
-
-      store.setImageName("", 0);
-      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
-
-      int spectralScan = ras.readShort();
-      if (spectralScan != 1) put("SpectralScan", "no spectral scan");
-      else put("SpectralScan", "acquired with spectral scan");
-
-      int type = ras.readInt();
-      switch (type) {
-        case 1:
-          put("DataType2", "calculated data");
-          break;
-        case 2:
-          put("DataType2", "animation");
-          break;
-        default:
-          put("DataType2", "original scan data");
-      }
-
-      long[] overlayOffsets = new long[9];
-      String[] overlayKeys = new String[] {"VectorOverlay", "InputLut",
-        "OutputLut", "ROI", "BleachROI", "MeanOfRoisOverlay",
-        "TopoIsolineOverlay", "TopoProfileOverlay", "LinescanOverlay"};
-
-      overlayOffsets[0] = ras.readInt();
-      overlayOffsets[1] = ras.readInt();
-      overlayOffsets[2] = ras.readInt();
-
-      long channelColorsOffset = ras.readInt();
-
-      put("TimeInterval", ras.readDouble());
-      ras.skipBytes(4);
-      long scanInformationOffset = ras.readInt();
-      ras.skipBytes(4);
-      long timeStampOffset = ras.readInt();
-      long eventListOffset = ras.readInt();
-      overlayOffsets[3] = ras.readInt();
-      overlayOffsets[4] = ras.readInt();
-      ras.skipBytes(4);
-
-      put("DisplayAspectX", ras.readDouble());
-      put("DisplayAspectY", ras.readDouble());
-      put("DisplayAspectZ", ras.readDouble());
-      put("DisplayAspectTime", ras.readDouble());
-
-      overlayOffsets[5] = ras.readInt();
-      overlayOffsets[6] = ras.readInt();
-      overlayOffsets[7] = ras.readInt();
-      overlayOffsets[8] = ras.readInt();
-
-      for (int i=0; i<overlayOffsets.length; i++) {
-        parseOverlays(overlayOffsets[i], overlayKeys[i]);
-      }
-
-      put("ToolbarFlags", ras.readInt());
-      ras.close();
-
-      // read referenced structures
-
-      core[0].indexed = lut != null && getSizeC() == 1;
-      if (isIndexed()) {
-        core[0].sizeC = 1;
-        core[0].rgb = false;
-      }
-      if (getSizeC() == 0) core[0].sizeC = 1;
-
-      if (isRGB()) {
-        // shuffle C to front of order string
-        core[0].dimensionOrder = getDimensionOrder().replaceAll("C", "");
-        core[0].dimensionOrder = getDimensionOrder().replaceAll("XY", "XYC");
-      }
-
-      put("DimensionZ", getSizeZ());
-      put("DimensionChannels", getSizeC());
-
-      if (channelColorsOffset != 0) {
-        in.seek(channelColorsOffset + 16);
-        int namesOffset = in.readInt();
-
-        // read in the intensity value for each color
-
-        if (namesOffset > 0) {
-          in.skipBytes(namesOffset - 16);
-
-          for (int i=0; i<getSizeC(); i++) {
-            if (in.getFilePointer() >= in.length() - 1) break;
-            // we want to read until we find a null char
-            String name = in.readCString();
-            if (name.length() <= 128) put("ChannelName" + i, name);
-          }
-        }
-      }
-
-      if (timeStampOffset != 0) {
-        in.seek(timeStampOffset + 8);
-        for (int i=0; i<getSizeT(); i++) {
-          double stamp = in.readDouble();
-          put("TimeStamp" + i, stamp);
-          timestamps.add(new Double(stamp));
-        }
-      }
-
-      if (eventListOffset != 0) {
-        in.seek(eventListOffset + 4);
-        int numEvents = in.readInt();
-        in.seek(in.getFilePointer() - 4);
-        in.order(!in.isLittleEndian());
-        int tmpEvents = in.readInt();
-        if (numEvents < 0) numEvents = tmpEvents;
-        else numEvents = (int) Math.min(numEvents, tmpEvents);
-        in.order(!in.isLittleEndian());
-
-        if (numEvents > 65535) numEvents = 0;
-
-        for (int i=0; i<numEvents; i++) {
-          if (in.getFilePointer() + 16 <= in.length()) {
-            int size = in.readInt();
-            double eventTime = in.readDouble();
-            int eventType = in.readInt();
-            put("Event" + i + " Time", eventTime);
-            put("Event" + i + " Type", eventType);
-            long fp = in.getFilePointer();
-            int len = size - 16;
-            if (len > 65536) len = 65536;
-            if (len < 0) len = 0;
-            put("Event" + i + " Description", in.readString(len));
-            in.seek(fp + size - 16);
-            if (in.getFilePointer() < 0) break;
-          }
-        }
-      }
-
-      if (scanInformationOffset != 0) {
-        in.seek(scanInformationOffset);
-
-        Stack prefix = new Stack();
-        int count = 1;
-
-        Object value = null;
-
-        boolean done = false;
-        int nextLaserMedium = 0, nextLaserType = 0, nextGain = 0;
-        int nextPinhole = 0, nextEmWave = 0, nextExWave = 0;
-        int nextChannelName = 0;
-
-        while (!done) {
-          int entry = in.readInt();
-          int blockType = in.readInt();
-          int dataSize = in.readInt();
-
-          switch (blockType) {
-            case TYPE_SUBBLOCK:
-              switch (entry) {
-                case SUBBLOCK_RECORDING:
-                  prefix.push("Recording");
-                  break;
-                case SUBBLOCK_LASERS:
-                  prefix.push("Lasers");
-                  break;
-                case SUBBLOCK_LASER:
-                  prefix.push("Laser " + count);
-                  count++;
-                  break;
-                case SUBBLOCK_TRACKS:
-                  prefix.push("Tracks");
-                  break;
-                case SUBBLOCK_TRACK:
-                  prefix.push("Track " + count);
-                  count++;
-                  break;
-                case SUBBLOCK_DETECTION_CHANNELS:
-                  prefix.push("Detection Channels");
-                  break;
-                case SUBBLOCK_DETECTION_CHANNEL:
-                  prefix.push("Detection Channel " + count);
-                  count++;
-                  validChannels = count;
-                  break;
-                case SUBBLOCK_ILLUMINATION_CHANNELS:
-                  prefix.push("Illumination Channels");
-                  break;
-                case SUBBLOCK_ILLUMINATION_CHANNEL:
-                  prefix.push("Illumination Channel " + count);
-                  count++;
-                  break;
-                case SUBBLOCK_BEAM_SPLITTERS:
-                  prefix.push("Beam Splitters");
-                  break;
-                case SUBBLOCK_BEAM_SPLITTER:
-                  prefix.push("Beam Splitter " + count);
-                  count++;
-                  break;
-                case SUBBLOCK_DATA_CHANNELS:
-                  prefix.push("Data Channels");
-                  break;
-                case SUBBLOCK_DATA_CHANNEL:
-                  prefix.push("Data Channel " + count);
-                  count++;
-                  break;
-                case SUBBLOCK_TIMERS:
-                  prefix.push("Timers");
-                  break;
-                case SUBBLOCK_TIMER:
-                  prefix.push("Timer " + count);
-                  count++;
-                  break;
-                case SUBBLOCK_MARKERS:
-                  prefix.push("Markers");
-                  break;
-                case SUBBLOCK_MARKER:
-                  prefix.push("Marker " + count);
-                  count++;
-                  break;
-                case SUBBLOCK_END:
-                  count = 1;
-                  if (prefix.size() > 0) prefix.pop();
-                  if (prefix.size() == 0) done = true;
-                  break;
-              }
-              break;
-            case TYPE_LONG:
-              value = new Long(in.readInt());
-              break;
-            case TYPE_RATIONAL:
-              value = new Double(in.readDouble());
-              break;
-            case TYPE_ASCII:
-              value = in.readString(dataSize);
-              break;
-          }
-          String key = getKey(prefix, entry).trim();
-          if (value instanceof String) value = ((String) value).trim();
-          if (key != null) addMeta(key, value);
-
-          float n;
-          switch (entry) {
-            case RECORDING_ENTRY_DESCRIPTION:
-              store.setImageDescription(value.toString(), 0);
-              break;
-            case RECORDING_ENTRY_OBJECTIVE:
-              String[] tokens = value.toString().split(" ");
-              StringBuffer model = new StringBuffer();
-              int next = 0;
-              for (; next<tokens.length; next++) {
-                if (tokens[next].indexOf("/") != -1) break;
-                model.append(tokens[next]);
-              }
-              store.setObjectiveModel(model.toString(), 0, 0);
-              if (next < tokens.length) {
-                String p = tokens[next++];
-                String mag = p.substring(0, p.indexOf("/") - 1);
-                String na = p.substring(p.indexOf("/") + 1);
-                store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
-                store.setObjectiveLensNA(new Float(na), 0, 0);
-              }
-              if (next < tokens.length) {
-                store.setObjectiveImmersion(tokens[next++], 0, 0);
-              }
-              break;
-            case TRACK_ENTRY_TIME_BETWEEN_STACKS:
-              store.setDimensionsTimeIncrement(
-                new Float(value.toString()), 0, 0);
-              break;
-            case LASER_ENTRY_NAME:
-              String medium = value.toString();
-              String laserType = null;
-
-              if (medium.startsWith("HeNe")) {
-                medium = "HeNe";
-                laserType = "Gas";
-              }
-              else if (medium.startsWith("Argon")) {
-                medium = "Ar";
-                laserType = "Gas";
-              }
-              else if (medium.equals("Titanium:Sapphire") ||
-                medium.equals("Mai Tai"))
-              {
-                medium = "TiSapphire";
-                laserType = "SolidState";
-              }
-              else if (medium.equals("YAG")) {
-                medium = null;
-                laserType = "SolidState";
-              }
-              else if (medium.equals("Ar/Kr")) {
-                medium = null;
-                laserType = "Gas";
-              }
-              else if (medium.equals("Enterprise")) medium = null;
-
-              if (medium != null && laserType != null) {
-                store.setLaserLaserMedium(medium, 0, nextLaserMedium++);
-                store.setLaserType(laserType, 0, nextLaserType++);
-              }
-
-              break;
-            //case LASER_POWER:
-              // TODO: this is a setting, not a fixed value
-              //n = Float.parseFloat(value.toString());
-              //store.setLaserPower(new Float(n), 0, count - 1);
-              //break;
-            case CHANNEL_ENTRY_DETECTOR_GAIN:
-              //n = Float.parseFloat(value.toString());
-              //store.setDetectorSettingsGain(new Float(n), 0, nextGain++);
-              break;
-            case CHANNEL_ENTRY_PINHOLE_DIAMETER:
-              n = Float.parseFloat(value.toString());
-              store.setLogicalChannelPinholeSize(new Float(n), 0,
-                nextPinhole++);
-              break;
-            case ILLUM_CHANNEL_WAVELENGTH:
-              n = Float.parseFloat(value.toString());
-              if (nextEmWave < getSizeC()) {
-                store.setLogicalChannelEmWave(new Integer((int) n), 0,
-                  nextEmWave++);
-              }
-              if (nextExWave < getSizeC()) {
-                store.setLogicalChannelExWave(new Integer((int) n), 0,
-                  nextExWave++);
-              }
-              break;
-            case START_TIME:
-              // date/time on which the first pixel was acquired, in days
-              // since 30 December 1899
-              double time = Double.parseDouble(value.toString());
-              store.setImageCreationDate(DataTools.convertDate(
-                (long) (time * 86400000), DataTools.MICROSOFT), 0);
-
-              break;
-            case DATA_CHANNEL_NAME:
-              store.setLogicalChannelName(value.toString(),
-                0, nextChannelName++);
-              break;
-          }
-
-          if (!done) done = in.getFilePointer() >= in.length() - 12;
-        }
-      }
+    // get TIF_CZ_LSMINFO structure
+    short[] s = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
+    byte[] cz = new byte[s.length];
+    for (int i=0; i<s.length; i++) {
+      cz[i] = (byte) s[i];
     }
-    catch (FormatException exc) {
-      if (debug) trace(exc);
+
+    RandomAccessStream ras = new RandomAccessStream(cz);
+    ras.order(isLittleEndian());
+
+    put("MagicNumber", ras.readInt());
+    put("StructureSize", ras.readInt());
+    put("DimensionX", ras.readInt());
+    put("DimensionY", ras.readInt());
+
+    core[0].sizeZ = ras.readInt();
+    ras.skipBytes(4);
+    core[0].sizeT = ras.readInt();
+
+    int dataType = ras.readInt();
+    switch (dataType) {
+      case 2:
+        put("DataType", "12 bit unsigned integer");
+        break;
+      case 5:
+        put("DataType", "32 bit float");
+        break;
+      case 0:
+        put("DataType", "varying data types");
+        break;
+      default:
+        put("DataType", "8 bit unsigned integer");
     }
-    catch (IOException exc) {
-      if (debug) trace(exc);
+
+    put("ThumbnailX", ras.readInt());
+    put("ThumbnailY", ras.readInt());
+
+    // pixel sizes are stored in meters, we need them in microns
+    pixelSizeX = ras.readDouble() * 1000000;
+    pixelSizeY = ras.readDouble() * 1000000;
+    pixelSizeZ = ras.readDouble() * 1000000;
+
+    put("VoxelSizeX", new Double(pixelSizeX));
+    put("VoxelSizeY", new Double(pixelSizeY));
+    put("VoxelSizeZ", new Double(pixelSizeZ));
+
+    put("OriginX", ras.readDouble());
+    put("OriginY", ras.readDouble());
+    put("OriginZ", ras.readDouble());
+
+    int scanType = ras.readShort();
+    switch (scanType) {
+      case 0:
+        put("ScanType", "x-y-z scan");
+        core[0].dimensionOrder = "XYZCT";
+        break;
+      case 1:
+        put("ScanType", "z scan (x-z plane)");
+        core[0].dimensionOrder = "XYZCT";
+        break;
+      case 2:
+        put("ScanType", "line scan");
+        core[0].dimensionOrder = "XYZCT";
+        break;
+      case 3:
+        put("ScanType", "time series x-y");
+        core[0].dimensionOrder = "XYTCZ";
+        break;
+      case 4:
+        put("ScanType", "time series x-z");
+        core[0].dimensionOrder = "XYZTC";
+        break;
+      case 5:
+        put("ScanType", "time series 'Mean of ROIs'");
+        core[0].dimensionOrder = "XYTCZ";
+        break;
+      case 6:
+        put("ScanType", "time series x-y-z");
+        core[0].dimensionOrder = "XYZTC";
+        break;
+      case 7:
+        put("ScanType", "spline scan");
+        core[0].dimensionOrder = "XYCTZ";
+        break;
+      case 8:
+        put("ScanType", "spline scan x-z");
+        core[0].dimensionOrder = "XYCZT";
+        break;
+      case 9:
+        put("ScanType", "time series spline plane x-z");
+        core[0].dimensionOrder = "XYTCZ";
+        break;
+      case 10:
+        put("ScanType", "point mode");
+        core[0].dimensionOrder = "XYZCT";
+        break;
+      default:
+        put("ScanType", "x-y-z scan");
+        core[0].dimensionOrder = "XYZCT";
+    }
+
+    core[0].indexed = lut != null && getSizeC() == 1;
+    if (isIndexed()) {
+      core[0].sizeC = 1;
+      core[0].rgb = false;
+    }
+    if (getSizeC() == 0) core[0].sizeC = 1;
+
+    if (isRGB()) {
+      // shuffle C to front of order string
+      core[0].dimensionOrder = getDimensionOrder().replaceAll("C", "");
+      core[0].dimensionOrder = getDimensionOrder().replaceAll("XY", "XYC");
     }
 
     if (isIndexed()) core[0].rgb = false;
@@ -656,6 +321,332 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (getSizeT() == 0) core[0].sizeT = getImageCount() / getSizeZ();
 
     MetadataTools.populatePixels(store, this, true);
+    store.setImageName("", 0);
+    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
+
+    int spectralScan = ras.readShort();
+    if (spectralScan != 1) put("SpectralScan", "no spectral scan");
+    else put("SpectralScan", "acquired with spectral scan");
+
+    int type = ras.readInt();
+    switch (type) {
+      case 1:
+        put("DataType2", "calculated data");
+        break;
+      case 2:
+        put("DataType2", "animation");
+        break;
+      default:
+        put("DataType2", "original scan data");
+    }
+
+    long[] overlayOffsets = new long[9];
+    String[] overlayKeys = new String[] {"VectorOverlay", "InputLut",
+      "OutputLut", "ROI", "BleachROI", "MeanOfRoisOverlay",
+      "TopoIsolineOverlay", "TopoProfileOverlay", "LinescanOverlay"};
+
+    overlayOffsets[0] = ras.readInt();
+    overlayOffsets[1] = ras.readInt();
+    overlayOffsets[2] = ras.readInt();
+
+    long channelColorsOffset = ras.readInt();
+
+    put("TimeInterval", ras.readDouble());
+    ras.skipBytes(4);
+    long scanInformationOffset = ras.readInt();
+    ras.skipBytes(4);
+    long timeStampOffset = ras.readInt();
+    long eventListOffset = ras.readInt();
+    overlayOffsets[3] = ras.readInt();
+    overlayOffsets[4] = ras.readInt();
+    ras.skipBytes(4);
+
+    put("DisplayAspectX", ras.readDouble());
+    put("DisplayAspectY", ras.readDouble());
+    put("DisplayAspectZ", ras.readDouble());
+    put("DisplayAspectTime", ras.readDouble());
+
+    overlayOffsets[5] = ras.readInt();
+    overlayOffsets[6] = ras.readInt();
+    overlayOffsets[7] = ras.readInt();
+    overlayOffsets[8] = ras.readInt();
+
+    for (int i=0; i<overlayOffsets.length; i++) {
+      parseOverlays(overlayOffsets[i], overlayKeys[i]);
+    }
+
+    put("ToolbarFlags", ras.readInt());
+    ras.close();
+
+    // read referenced structures
+
+    put("DimensionZ", getSizeZ());
+    put("DimensionChannels", getSizeC());
+
+    if (channelColorsOffset != 0) {
+      in.seek(channelColorsOffset + 16);
+      int namesOffset = in.readInt();
+
+      // read in the intensity value for each color
+
+      if (namesOffset > 0) {
+        in.skipBytes(namesOffset - 16);
+
+        for (int i=0; i<getSizeC(); i++) {
+          if (in.getFilePointer() >= in.length() - 1) break;
+          // we want to read until we find a null char
+          String name = in.readCString();
+          if (name.length() <= 128) put("ChannelName" + i, name);
+        }
+      }
+    }
+
+    if (timeStampOffset != 0) {
+      in.seek(timeStampOffset + 8);
+      for (int i=0; i<getSizeT(); i++) {
+        double stamp = in.readDouble();
+        put("TimeStamp" + i, stamp);
+        timestamps.add(new Double(stamp));
+      }
+    }
+
+    if (eventListOffset != 0) {
+      in.seek(eventListOffset + 4);
+      int numEvents = in.readInt();
+      in.seek(in.getFilePointer() - 4);
+      in.order(!in.isLittleEndian());
+      int tmpEvents = in.readInt();
+      if (numEvents < 0) numEvents = tmpEvents;
+      else numEvents = (int) Math.min(numEvents, tmpEvents);
+      in.order(!in.isLittleEndian());
+
+      if (numEvents > 65535) numEvents = 0;
+
+      for (int i=0; i<numEvents; i++) {
+        if (in.getFilePointer() + 16 <= in.length()) {
+          int size = in.readInt();
+          double eventTime = in.readDouble();
+          int eventType = in.readInt();
+          put("Event" + i + " Time", eventTime);
+          put("Event" + i + " Type", eventType);
+          long fp = in.getFilePointer();
+          int len = size - 16;
+          if (len > 65536) len = 65536;
+          if (len < 0) len = 0;
+          put("Event" + i + " Description", in.readString(len));
+          in.seek(fp + size - 16);
+          if (in.getFilePointer() < 0) break;
+        }
+      }
+    }
+
+    if (scanInformationOffset != 0) {
+      in.seek(scanInformationOffset);
+
+      Stack prefix = new Stack();
+      int count = 1;
+
+      Object value = null;
+
+      boolean done = false;
+      int nextLaserMedium = 0, nextLaserType = 0, nextGain = 0;
+      int nextPinhole = 0, nextEmWave = 0, nextExWave = 0;
+      int nextChannelName = 0;
+
+      while (!done) {
+        int entry = in.readInt();
+        int blockType = in.readInt();
+        int dataSize = in.readInt();
+
+        switch (blockType) {
+          case TYPE_SUBBLOCK:
+            switch (entry) {
+              case SUBBLOCK_RECORDING:
+                prefix.push("Recording");
+                break;
+              case SUBBLOCK_LASERS:
+                prefix.push("Lasers");
+                break;
+              case SUBBLOCK_LASER:
+                prefix.push("Laser " + count);
+                count++;
+                break;
+              case SUBBLOCK_TRACKS:
+                prefix.push("Tracks");
+                break;
+              case SUBBLOCK_TRACK:
+                prefix.push("Track " + count);
+                count++;
+                break;
+              case SUBBLOCK_DETECTION_CHANNELS:
+                prefix.push("Detection Channels");
+                break;
+              case SUBBLOCK_DETECTION_CHANNEL:
+                prefix.push("Detection Channel " + count);
+                count++;
+                validChannels = count;
+                break;
+              case SUBBLOCK_ILLUMINATION_CHANNELS:
+                prefix.push("Illumination Channels");
+                break;
+              case SUBBLOCK_ILLUMINATION_CHANNEL:
+                prefix.push("Illumination Channel " + count);
+                count++;
+                break;
+              case SUBBLOCK_BEAM_SPLITTERS:
+                prefix.push("Beam Splitters");
+                break;
+              case SUBBLOCK_BEAM_SPLITTER:
+                prefix.push("Beam Splitter " + count);
+                count++;
+                break;
+              case SUBBLOCK_DATA_CHANNELS:
+                prefix.push("Data Channels");
+                break;
+              case SUBBLOCK_DATA_CHANNEL:
+                prefix.push("Data Channel " + count);
+                count++;
+                break;
+              case SUBBLOCK_TIMERS:
+                prefix.push("Timers");
+                break;
+              case SUBBLOCK_TIMER:
+                prefix.push("Timer " + count);
+                count++;
+                break;
+              case SUBBLOCK_MARKERS:
+                prefix.push("Markers");
+                break;
+              case SUBBLOCK_MARKER:
+                prefix.push("Marker " + count);
+                count++;
+                break;
+              case SUBBLOCK_END:
+                count = 1;
+                if (prefix.size() > 0) prefix.pop();
+                if (prefix.size() == 0) done = true;
+                break;
+            }
+            break;
+          case TYPE_LONG:
+            value = new Long(in.readInt());
+            break;
+          case TYPE_RATIONAL:
+            value = new Double(in.readDouble());
+            break;
+          case TYPE_ASCII:
+            value = in.readString(dataSize);
+            break;
+        }
+        String key = getKey(prefix, entry).trim();
+        if (value instanceof String) value = ((String) value).trim();
+        if (key != null) addMeta(key, value);
+
+        float n;
+        switch (entry) {
+          case RECORDING_ENTRY_DESCRIPTION:
+            store.setImageDescription(value.toString(), 0);
+            break;
+          case RECORDING_ENTRY_OBJECTIVE:
+            String[] tokens = value.toString().split(" ");
+            StringBuffer model = new StringBuffer();
+            int next = 0;
+            for (; next<tokens.length; next++) {
+              if (tokens[next].indexOf("/") != -1) break;
+              model.append(tokens[next]);
+            }
+            store.setObjectiveModel(model.toString(), 0, 0);
+            if (next < tokens.length) {
+              String p = tokens[next++];
+              String mag = p.substring(0, p.indexOf("/") - 1);
+              String na = p.substring(p.indexOf("/") + 1);
+              store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+              store.setObjectiveLensNA(new Float(na), 0, 0);
+            }
+            if (next < tokens.length) {
+              store.setObjectiveImmersion(tokens[next++], 0, 0);
+            }
+            break;
+          case TRACK_ENTRY_TIME_BETWEEN_STACKS:
+            store.setDimensionsTimeIncrement(
+              new Float(value.toString()), 0, 0);
+            break;
+          case LASER_ENTRY_NAME:
+            String medium = value.toString();
+            String laserType = null;
+
+            if (medium.startsWith("HeNe")) {
+              medium = "HeNe";
+              laserType = "Gas";
+            }
+            else if (medium.startsWith("Argon")) {
+              medium = "Ar";
+              laserType = "Gas";
+            }
+            else if (medium.equals("Titanium:Sapphire") ||
+              medium.equals("Mai Tai"))
+            {
+              medium = "TiSapphire";
+              laserType = "SolidState";
+            }
+            else if (medium.equals("YAG")) {
+              medium = null;
+              laserType = "SolidState";
+            }
+            else if (medium.equals("Ar/Kr")) {
+              medium = null;
+              laserType = "Gas";
+            }
+            else if (medium.equals("Enterprise")) medium = null;
+
+            if (medium != null && laserType != null) {
+              store.setLaserLaserMedium(medium, 0, nextLaserMedium++);
+              store.setLaserType(laserType, 0, nextLaserType++);
+            }
+
+            break;
+          //case LASER_POWER:
+            // TODO: this is a setting, not a fixed value
+            //n = Float.parseFloat(value.toString());
+            //store.setLaserPower(new Float(n), 0, count - 1);
+            //break;
+          case CHANNEL_ENTRY_DETECTOR_GAIN:
+            //n = Float.parseFloat(value.toString());
+            //store.setDetectorSettingsGain(new Float(n), 0, nextGain++);
+            break;
+          case CHANNEL_ENTRY_PINHOLE_DIAMETER:
+            n = Float.parseFloat(value.toString());
+            store.setLogicalChannelPinholeSize(new Float(n), 0,
+              nextPinhole++);
+            break;
+          case ILLUM_CHANNEL_WAVELENGTH:
+            n = Float.parseFloat(value.toString());
+            if (nextEmWave < getSizeC()) {
+              store.setLogicalChannelEmWave(new Integer((int) n), 0,
+                nextEmWave++);
+            }
+            if (nextExWave < getSizeC()) {
+              store.setLogicalChannelExWave(new Integer((int) n), 0,
+                nextExWave++);
+            }
+            break;
+          case START_TIME:
+            // date/time on which the first pixel was acquired, in days
+            // since 30 December 1899
+            double time = Double.parseDouble(value.toString());
+            store.setImageCreationDate(DataTools.convertDate(
+              (long) (time * 86400000), DataTools.MICROSOFT), 0);
+
+            break;
+          case DATA_CHANNEL_NAME:
+            store.setLogicalChannelName(value.toString(),
+              0, nextChannelName++);
+            break;
+        }
+
+        if (!done) done = in.getFilePointer() >= in.length() - 12;
+      }
+    }
 
     Float pixX = new Float((float) pixelSizeX);
     Float pixY = new Float((float) pixelSizeY);

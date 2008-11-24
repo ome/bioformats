@@ -432,10 +432,20 @@ public class SlidebookReader extends FormatReader {
 
     int index = 0;
 
+    // populate Objective data
+
     store.setObjectiveModel(objective, 0, 0);
+
+    // populate Image data
 
     for (int i=0; i<core.length; i++) {
       store.setImageName(imageNames[i], i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
+    }
+
+    // populate Dimensions data
+
+    for (int i=0; i<core.length; i++) {
       store.setDimensionsPhysicalSizeX(new Float(pixelSize), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSize), i, 0);
       int idx = 0;
@@ -446,7 +456,11 @@ public class SlidebookReader extends FormatReader {
       if (idx < pixelSizeZ.size()) {
         store.setDimensionsPhysicalSizeZ((Float) pixelSizeZ.get(idx), i, 0);
       }
-      MetadataTools.setDefaultCreationDate(store, id, i);
+    }
+
+    // populate LogicalChannel data
+
+    for (int i=0; i<core.length; i++) {
       for (int c=0; c<core[i].sizeC; c++) {
         if (index < channelNames.size()) {
           store.setLogicalChannelName((String) channelNames.get(index++), i, c);

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.zip.*;
 import loci.common.*;
 import loci.formats.*;
@@ -119,6 +119,11 @@ public class ICSReader extends FormatReader {
   private boolean gzip;
 
   private boolean invertY;
+
+  private String imageName, date, magnification, lastName, description;
+  private String objectiveModel, immersion, lensNA, workingDistance;
+  private Hashtable gains, wavelengths, pinholes, channelNames;
+  private String[] stagePos;
 
   // -- Constructor --
 
@@ -220,6 +225,10 @@ public class ICSReader extends FormatReader {
     versionTwo = false;
     gzip = false;
     invertY = false;
+    imageName = date = objectiveModel = immersion = lensNA = null;
+    workingDistance = magnification = lastName = description = null;
+    gains = wavelengths = pinholes = channelNames = null;
+    stagePos = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -288,9 +297,6 @@ public class ICSReader extends FormatReader {
 
     StringBuffer textBlock = new StringBuffer();
     String[] sizes = null, labels = null, lengths= null;
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     while (line != null && !line.trim().equals("end")) {
       String[] tokens = null;
@@ -366,12 +372,10 @@ public class ICSReader extends FormatReader {
             textBlock.append("\n");
             metadata.remove(k);
           }
-          else if (k.equalsIgnoreCase("filename")) {
-            store.setImageName(v, 0);
-          }
+          else if (k.equalsIgnoreCase("filename")) imageName = v;
           else if (k.equalsIgnoreCase("history date")) {
             if (v.indexOf(" ") == -1) continue;
-            String date = v.substring(0, v.lastIndexOf(" "));
+            date = v.substring(0, v.lastIndexOf(" "));
             String[] formats = new String[] {"EEEE, MMMM dd, yyyy HH:mm:ss",
               "EEE dd MMMM yyyy HH:mm:ss", "EEE MMM dd HH:mm:ss yyyy",
               "EE dd MMM yyyy HH:mm:ss z"};
@@ -386,52 +390,49 @@ public class ICSReader extends FormatReader {
               catch (NullPointerException e) { }
             }
 
-            if (success) store.setImageCreationDate(date, 0);
-            else MetadataTools.setDefaultCreationDate(store, currentId, 0);
+            if (!success) date = null;
           }
           else if (k.startsWith("history gain")) {
             int n = 0;
             if (k.indexOf(" ", 12) > 0) {
               n = Integer.parseInt(k.substring(12, k.indexOf(" ", 12)));
             }
-            store.setDetectorSettingsGain(new Float(v), 0, n);
+            if (gains == null) gains = new Hashtable();
+            gains.put(new Integer(n), v);
           }
           else if (k.startsWith("history laser") && k.endsWith("wavelength")) {
             int laser = Integer.parseInt(k.substring(13, k.indexOf(" ", 13)));
             v = v.replaceAll("nm", "").trim();
-            store.setLaserWavelength(new Integer(v), 0, laser);
+            if (wavelengths == null) wavelengths = new Hashtable();
+            wavelengths.put(new Integer(laser), v);
           }
           else if (k.equalsIgnoreCase("history objective")) {
-            store.setObjectiveModel(v, 0, 0);
+            objectiveModel = v;
           }
           else if (k.equalsIgnoreCase("history objective immersion")) {
-            store.setObjectiveImmersion(v, 0, 0);
+            immersion = v;
           }
           else if (k.equalsIgnoreCase("history objective NA")) {
-            store.setObjectiveLensNA(new Float(v), 0, 0);
+            lensNA = v;
           }
           else if (k.equalsIgnoreCase("history objective WorkingDistance")) {
-            store.setObjectiveWorkingDistance(new Float(v), 0, 0);
+            workingDistance = v;
           }
           else if (k.equalsIgnoreCase("history objective magnification")) {
-            store.setObjectiveNominalMagnification(
-              new Integer((int) Float.parseFloat(v)), 0, 0);
+            magnification = v;
           }
           else if (k.equalsIgnoreCase("sensor s_params PinholeRadius")) {
-            String[] pinholes = v.split(" ");
+            String[] pins = v.split(" ");
             int channel = 0;
-            for (int n=0; n<pinholes.length; n++) {
-              if (pinholes[n].trim().equals("")) continue;
-              store.setLogicalChannelPinholeSize(
-                new Float(pinholes[n]), 0, channel++);
+            if (pinholes == null) pinholes = new Hashtable();
+            for (int n=0; n<pins.length; n++) {
+              if (pins[n].trim().equals("")) continue;
+              pinholes.put(new Integer(channel++), pins[n]);
             }
           }
-          else if (k.equalsIgnoreCase("history author")) {
-            store.setExperimenterLastName(v, 0);
-          }
+          else if (k.equalsIgnoreCase("history author")) lastName = v;
           else if (k.equalsIgnoreCase("history created on")) {
-            store.setImageCreationDate(
-              DataTools.formatDate(v, "HH:mm:ss dd-MM-yyyy"), 0);
+            date = DataTools.formatDate(v, "HH:mm:ss dd-MM-yyyy");
           }
           else if (k.equalsIgnoreCase("history extents")) {
             sizes = v.split(" ");
@@ -443,23 +444,15 @@ public class ICSReader extends FormatReader {
             labels = v.split(" ");
           }
           else if (k.equalsIgnoreCase("history stage_xyzum")) {
-            String[] stagePos = v.split(" ");
-            if (stagePos.length > 0) {
-              store.setStageLabelX(new Float(stagePos[0]), 0);
-            }
-            if (stagePos.length > 1) {
-              store.setStageLabelY(new Float(stagePos[1]), 0);
-            }
-            if (stagePos.length > 2) {
-              store.setStageLabelZ(new Float(stagePos[2]), 0);
-            }
+            stagePos = v.split(" ");
           }
           else if (k.equalsIgnoreCase("history other text")) {
-            store.setImageDescription(v, 0);
+            description = v;
           }
           else if (k.startsWith("history step") && k.endsWith("name")) {
-            int n = Integer.parseInt(k.substring(12, k.indexOf(" ", 12)));
-            store.setLogicalChannelName(v, 0, n);
+            Integer n = new Integer(k.substring(12, k.indexOf(" ", 12)));
+            if (channelNames == null) channelNames = new Hashtable();
+            channelNames.put(n, v);
           }
         }
         else {
@@ -531,30 +524,6 @@ public class ICSReader extends FormatReader {
     if (getSizeC() == 0) core[0].sizeC = 1;
     if (getSizeT() == 0) core[0].sizeT = 1;
 
-    if (labels != null && (lengths != null || sizes != null)) {
-      for (int i=0; i<labels.length; i++) {
-        labels[i] = labels[i].toLowerCase().trim();
-        float size = lengths != null && i < lengths.length ?
-          Float.parseFloat(lengths[i]) : Float.parseFloat(sizes[i]);
-        if (labels[i].equals("x")) {
-          store.setDimensionsPhysicalSizeX(new Float(size / getSizeX()), 0, 0);
-        }
-        else if (labels[i].equals("y")) {
-          store.setDimensionsPhysicalSizeY(new Float(size / getSizeY()), 0, 0);
-        }
-        else if (labels[i].equals("z")) {
-          store.setDimensionsPhysicalSizeZ(new Float(size / getSizeZ()), 0, 0);
-        }
-        else if (labels[i].equals("t")) {
-          store.setDimensionsTimeIncrement(new Float(size / getSizeT()), 0, 0);
-        }
-        else if (labels[i].equals("c")) {
-          store.setDimensionsWaveIncrement(
-            new Integer((int) (size / getSizeC())), 0, 0);
-        }
-      }
-    }
-
     if (getImageCount() == 0) core[0].imageCount = 1;
     core[0].rgb = isRGB() && getSizeC() > 1;
     core[0].interleaved = isRGB();
@@ -612,11 +581,6 @@ public class ICSReader extends FormatReader {
 
     status("Populating metadata");
 
-    // Populate metadata store
-
-    store.setImageName("", 0);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-
     // populate Pixels element
 
     String fmt = rFormat;
@@ -649,7 +613,22 @@ public class ICSReader extends FormatReader {
       throw new RuntimeException("Unknown pixel format: " + fmt);
     }
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     MetadataTools.populatePixels(store, this);
+
+    // populate Image data
+
+    store.setImageName(imageName, 0);
+    if (date != null) {
+      store.setImageCreationDate(date, 0);
+    }
+    else MetadataTools.setDefaultCreationDate(store, id, 0);
+
+    store.setImageDescription(description, 0);
+
+    // populate Dimensions data
 
     String pixelSizes = scale;
     String o = layoutOrder;
@@ -678,21 +657,81 @@ public class ICSReader extends FormatReader {
       store.setDimensionsWaveIncrement(pixC, 0, 0);
     }
 
-    int[] emWave = new int[getSizeC()];
-    int[] exWave = new int[getSizeC()];
+    // populate LogicalChannel data
+
     if (em != null) {
-      StringTokenizer emTokens = new StringTokenizer(em);
-      for (int i=0; i<getSizeC(); i++) {
-        if (emTokens.hasMoreTokens()) {
-          emWave[i] = (int) Float.parseFloat(emTokens.nextToken().trim());
-        }
+      String[] emTokens = em.split(" ");
+      for (int i=0; i<emTokens.length; i++) {
+        store.setLogicalChannelEmWave(
+          new Integer((int) Float.parseFloat(emTokens[i])), 0, i);
       }
     }
     if (ex != null) {
-      StringTokenizer exTokens = new StringTokenizer(ex);
+      String[] exTokens = ex.split(" ");
+      for (int i=0; i<exTokens.length; i++) {
+        store.setLogicalChannelExWave(
+          new Integer((int) Float.parseFloat(exTokens[i])), 0, i);
+      }
+    }
+
+    for (int i=0; i<getSizeC(); i++) {
+      Integer channel = new Integer(i);
+      if (channelNames != null) {
+        String name = (String) channelNames.get(channel);
+        store.setLogicalChannelName(name, 0, i);
+      }
+      if (pinholes != null) {
+        String pinhole = (String) pinholes.get(channel);
+        store.setLogicalChannelPinholeSize(new Float(pinhole), 0, i);
+      }
+    }
+
+    // populate Laser data
+
+    if (wavelengths != null) {
       for (int i=0; i<getSizeC(); i++) {
-        if (exTokens.hasMoreTokens()) {
-          exWave[i] = (int) Float.parseFloat(exTokens.nextToken().trim());
+        String wavelength = (String) wavelengths.get(new Integer(i));
+        if (wavelength != null) {
+          store.setLaserWavelength(new Integer(wavelength), 0, i);
+        }
+      }
+    }
+
+    // populate Objective data
+
+    if (objectiveModel != null) store.setObjectiveModel(objectiveModel, 0, 0);
+    if (immersion != null) store.setObjectiveImmersion(immersion, 0, 0);
+    if (lensNA != null) store.setObjectiveLensNA(new Float(lensNA), 0, 0);
+    if (workingDistance != null) {
+      store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+    }
+    if (magnification != null) {
+      store.setObjectiveCalibratedMagnification(new Float(magnification), 0, 0);
+    }
+
+    if (gains != null) {
+      for (int i=0; i<gains.size(); i++) {
+        store.setDetectorGain(
+          new Float((String) gains.get(new Integer(i))), 0, i);
+      }
+    }
+
+    // populate Experimenter data
+
+    store.setExperimenterLastName(lastName, 0);
+
+    // populate StagePosition data
+
+    if (stagePos != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        if (stagePos.length > 0) {
+          store.setStagePositionPositionX(new Float(stagePos[0]), 0, 0, i);
+        }
+        if (stagePos.length > 1) {
+          store.setStagePositionPositionY(new Float(stagePos[1]), 0, 0, i);
+        }
+        if (stagePos.length > 2) {
+          store.setStagePositionPositionZ(new Float(stagePos[2]), 0, 0, i);
         }
       }
     }
@@ -707,6 +746,5 @@ public class ICSReader extends FormatReader {
 
     return text.startsWith(pattern.substring(0, pattern.length() - 1));
   }
-
 
 }

@@ -27,8 +27,7 @@ import java.io.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.*;
 
 /**
  * LIFReader is the file format reader for Leica LIF files.
@@ -64,13 +63,7 @@ public class LIFReader extends FormatReader {
   private static final byte[][][] BYTE_LUTS = createByteLUTs();
 
   private static byte[][][] createByteLUTs() {
-    byte[][][] lut = new byte[9][][];
-    lut[0] = new byte[3][256];
-    lut[1] = new byte[3][256];
-    lut[2] = new byte[3][256];
-    lut[3] = new byte[3][256];
-    lut[4] = new byte[3][256];
-    lut[5] = new byte[3][256];
+    byte[][][] lut = new byte[6][3][256];
     for (int i=0; i<256; i++) {
       lut[0][0][i] = (byte) (i & 0xff);
       lut[1][1][i] = (byte) (i & 0xff);
@@ -91,13 +84,7 @@ public class LIFReader extends FormatReader {
   private static final short[][][] SHORT_LUTS = createShortLUTs();
 
   private static short[][][] createShortLUTs() {
-    short[][][] lut = new short[9][][];
-    lut[0] = new short[3][65536];
-    lut[1] = new short[3][65536];
-    lut[2] = new short[3][65536];
-    lut[3] = new short[3][65536];
-    lut[4] = new short[3][65536];
-    lut[5] = new short[3][65536];
+    short[][][] lut = new short[6][3][65536];
     for (int i=0; i<65536; i++) {
       lut[0][0][i] = (short) (i & 0xffff);
       lut[1][1][i] = (short) (i & 0xffff);
@@ -148,14 +135,14 @@ public class LIFReader extends FormatReader {
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT8 || lastChannel == -1) return null;
-    return BYTE_LUTS[lastChannel];
+    return lastChannel < BYTE_LUTS.length ? BYTE_LUTS[lastChannel] : null;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || lastChannel == -1) return null;
-    return SHORT_LUTS[lastChannel];
+    return lastChannel < SHORT_LUTS.length ? SHORT_LUTS[lastChannel] : null;
   }
 
   /**
@@ -171,7 +158,7 @@ public class LIFReader extends FormatReader {
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
       lastChannel = realChannel[series][pos[1]];
-      pos[1] = indexOf(pos[1], channelMap[series]);
+      pos[1] = DataTools.indexOf(channelMap[series], pos[1]);
       no = getIndex(pos[0], pos[1], pos[2]);
     }
 
@@ -310,7 +297,7 @@ public class LIFReader extends FormatReader {
   private void initMetadata(String xml) throws FormatException, IOException {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    LeicaHandler handler = new LeicaHandler(store);
+    LeicaHandler handler = new LeicaHandler(new DummyMetadata());
 
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
@@ -370,7 +357,7 @@ public class LIFReader extends FormatReader {
         int min = Integer.MAX_VALUE;
         int minIndex = -1;
         for (int n=0; n<channelMap[i].length; n++) {
-          if (realChannel[i][n] < min && !containsValue(sorted, n)) {
+          if (realChannel[i][n] < min && !DataTools.containsValue(sorted, n)) {
             min = realChannel[i][n];
             minIndex = n;
           }
@@ -389,6 +376,8 @@ public class LIFReader extends FormatReader {
     status("Populating metadata");
 
     core = new CoreMetadata[numDatasets];
+
+    // populate Pixels data
 
     for (int i=0; i<numDatasets; i++) {
       core[i] = new CoreMetadata();
@@ -434,14 +423,11 @@ public class LIFReader extends FormatReader {
           core[i].pixelType = FormatTools.FLOAT;
           break;
       }
+    }
+    MetadataTools.populatePixels(store, this, true);
 
-      String seriesName = (String) seriesNames.get(i);
-      if (seriesName == null || seriesName.trim().length() == 0) {
-        seriesName = "Series " + (i + 1);
-      }
-      store.setImageName(seriesName, i);
-      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
-
+    for (int i=0; i<numDatasets; i++) {
+      // populate Dimensions data
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
       Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
       Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
@@ -449,6 +435,15 @@ public class LIFReader extends FormatReader {
       store.setDimensionsPhysicalSizeX(xf, i, 0);
       store.setDimensionsPhysicalSizeY(yf, i, 0);
       store.setDimensionsPhysicalSizeZ(zf, i, 0);
+
+      // populate Image data
+
+      String seriesName = (String) seriesNames.get(i);
+      if (seriesName == null || seriesName.trim().length() == 0) {
+        seriesName = "Series " + (i + 1);
+      }
+      store.setImageName(seriesName, i);
+      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
 
       // CTR CHECK
 //      String zoom = (String) getMeta(seriesName + " - dblZoom");
@@ -460,23 +455,13 @@ public class LIFReader extends FormatReader {
       Enumeration keys = metadata.keys();
       while (keys.hasMoreElements()) {
         String k = (String) keys.nextElement();
-        if (k.startsWith((String) seriesNames.get(i) + " ")) {
+        if (k.startsWith(seriesName + " ")) {
           core[i].seriesMetadata.put(k, metadata.get(k));
         }
       }
     }
-    MetadataTools.populatePixels(store, this, true);
-  }
 
-  private boolean containsValue(int[] array, int value) {
-    return indexOf(value, array) != -1;
-  }
-
-  private int indexOf(int value, int[] array) {
-    for (int i=0; i<array.length; i++) {
-      if (array[i] == value) return i;
-    }
-    return -1;
+    DataTools.parseXML(xml, new LeicaHandler(store));
   }
 
 }

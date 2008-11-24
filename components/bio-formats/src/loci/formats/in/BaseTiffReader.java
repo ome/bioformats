@@ -503,9 +503,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // the metadata store we're working with
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-
-    // set the pixel values in the metadata store
     MetadataTools.populatePixels(store, this);
 
     // populate Experimenter
@@ -549,6 +546,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     // populate Image
 
+    store.setImageName("", 0);
     if (creationDate != null) {
       store.setImageCreationDate(creationDate, 0);
     }

@@ -110,7 +110,12 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    int[] channelIndexes = new int[3];
+    MetadataTools.populatePixels(store, this);
+
+    String description = null, creationDate = null;
+    Vector emWave = new Vector();
+    Vector exWave = new Vector();
+    Vector channelNames = new Vector();
 
     if (comment != null && comment.startsWith("[")) {
       // parse key/value pairs
@@ -124,35 +129,35 @@ public class ImarisTiffReader extends BaseTiffReader {
         addMeta(key, value);
 
         if (key.equals("Description")) {
-          store.setImageDescription(value, 0);
+          description = value;
         }
         else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
-          if (channelIndexes[1] < getSizeC()) {
-            store.setLogicalChannelEmWave(new Integer(value), 0,
-              channelIndexes[1]++);
-          }
+          emWave.add(new Integer(value));
         }
         else if (key.equals("LSMExcitationWavelength") && !value.equals("0")) {
-          if (channelIndexes[2] < getSizeC()) {
-            store.setLogicalChannelExWave(new Integer(value), 0,
-              channelIndexes[2]++);
-          }
+          exWave.add(new Integer(value));
         }
         else if (key.equals("Name") && !currentId.endsWith(value)) {
-          if (channelIndexes[0] < getSizeC()) {
-            store.setLogicalChannelName(value, 0, channelIndexes[0]++);
-          }
+          channelNames.add(value);
         }
         else if (key.equals("RecordingDate")) {
           value = value.replaceAll(" ", "T");
-          store.setImageCreationDate(value.substring(0, value.indexOf(".")), 0);
+          creationDate = value.substring(0, value.indexOf("."));
         }
       }
       metadata.remove("Comment");
     }
 
-    store.setImageName("", 0);
-    MetadataTools.populatePixels(store, this);
+    // populate Image data
+    store.setImageDescription(description, 0);
+    store.setImageCreationDate(creationDate, 0);
+
+    // populate LogicalChannel data
+    for (int i=0; i<emWave.size(); i++) {
+      store.setLogicalChannelEmWave((Integer) emWave.get(i), 0, i);
+      store.setLogicalChannelExWave((Integer) exWave.get(i), 0, i);
+      store.setLogicalChannelName((String) channelNames.get(i), 0, i);
+    }
   }
 
 }

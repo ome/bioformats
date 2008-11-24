@@ -212,9 +212,6 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     super.initMetadataStore();
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
-
     MetadataTools.populatePixels(store, this);
 
     store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);

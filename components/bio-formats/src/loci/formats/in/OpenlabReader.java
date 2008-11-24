@@ -94,6 +94,8 @@ public class OpenlabReader extends FormatReader {
   private Vector luts;
   private int lastPlane;
 
+  private String gain, detectorOffset, xPos, yPos, zPos;
+
   // -- Constructor --
 
   /** Constructs a new OpenlabReader. */
@@ -316,9 +318,6 @@ public class OpenlabReader extends FormatReader {
 
     int imagesFound = 0;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
     Vector representativePlanes = new Vector();
 
     while (in.getFilePointer() + 8 < in.length()) {
@@ -456,21 +455,11 @@ public class OpenlabReader extends FormatReader {
 
               addMeta(name, value);
 
-              if (name.equals("Gain")) {
-                //store.setDetectorSettingsGain(new Float(value), 0, 0);
-              }
-              else if (name.equals("Offset")) {
-                //store.setDetectorSettingsOffset(new Float(value), 0, 0);
-              }
-              else if (name.equals("X-Y Stage: X Position")) {
-                store.setStagePositionPositionX(new Float(value), 0, 0, 0);
-              }
-              else if (name.equals("X-Y Stage: Y Position")) {
-                store.setStagePositionPositionY(new Float(value), 0, 0, 0);
-              }
-              else if (name.equals("ZPosition")) {
-                store.setStagePositionPositionZ(new Float(value), 0, 0, 0);
-              }
+              if (name.equals("Gain")) gain = value;
+              else if (name.equals("Offset")) detectorOffset = value;
+              else if (name.equals("X-Y Stage: X Position")) xPos = value;
+              else if (name.equals("X-Y Stage: Y Position")) yPos = value;
+              else if (name.equals("ZPosition")) zPos = value;
             }
           }
         }
@@ -564,12 +553,22 @@ public class OpenlabReader extends FormatReader {
       core[i].seriesMetadata = getMetadata();
     }
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
+    MetadataTools.populatePixels(store, this);
+
     // populate MetadataStore
 
     store.setImageName("", 0);
-    MetadataTools.populatePixels(store, this);
     store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
+
+    store.setDetectorSettingsGain(new Float(gain), 0, 0);
+    store.setDetectorSettingsOffset(new Float(detectorOffset), 0, 0);
+    if (xPos != null) store.setStagePositionPositionX(new Float(xPos), 0, 0, 0);
+    if (yPos != null) store.setStagePositionPositionY(new Float(yPos), 0, 0, 0);
+    if (zPos != null) store.setStagePositionPositionZ(new Float(zPos), 0, 0, 0);
   }
 
   // -- Helper methods --

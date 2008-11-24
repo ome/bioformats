@@ -381,9 +381,6 @@ public class FluoviewReader extends BaseTiffReader {
     super.initMetadataStore();
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-    store.setImageDescription(comment, 0);
-    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     // populate Dimensions
     store.setDimensionsPhysicalSizeX(new Float(voxelX), 0, 0);
@@ -394,32 +391,34 @@ public class FluoviewReader extends BaseTiffReader {
       store.setDimensionsWaveIncrement(new Integer((int) voxelC), 0, 0);
     }
 
+    // populate LogicalChannel data
+
     for (int i=0; i<getSizeC(); i++) {
       if (channelNames[i] != null) {
         store.setLogicalChannelName(channelNames[i].trim(), 0, i);
       }
-      if (lensNA[i] != null) {
-        store.setObjectiveLensNA(new Float(lensNA[i]), 0, i);
-      }
-      //if (gains[i] != null) {
-      //  store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
-      //}
-      //if (offsets[i] != null) {
-      //  store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
-      //}
     }
 
-    /*
-    for (int i=0; i<core[0].sizeC; i++) {
+    // populate Detector data
+
+    for (int i=0; i<getSizeC(); i++) {
       // CTR CHECK
 //      store.setDisplayChannel(new Integer(i), null, null,
 //        gamma == null ? null : new Float(gamma.floatValue()), null);
 
       if (voltages[i] != null) {
         if (detManu != null) store.setDetectorManufacturer(detManu, 0, 0);
-        store.setDetectorVoltage(new Float(voltages[i]), 0, 0);
+        store.setDetectorSettingsVoltage(new Float(voltages[i]), 0, 0);
+      }
+      if (gains[i] != null) {
+        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+      }
+      if (offsets[i] != null) {
+        store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
       }
     }
+
+    // populate Objective data
 
     if (mag != null && mag.toLowerCase().endsWith("x")) {
       mag = mag.substring(0, mag.length() - 1);
@@ -430,7 +429,13 @@ public class FluoviewReader extends BaseTiffReader {
     if (mag != null) {
       store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     }
-    */
+
+    for (int i=0; i<getSizeC(); i++) {
+      if (lensNA[i] != null) {
+        store.setObjectiveLensNA(new Float(lensNA[i]), 0, i);
+      }
+    }
+
   }
 
 }

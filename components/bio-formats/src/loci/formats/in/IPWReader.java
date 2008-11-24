@@ -44,9 +44,17 @@ public class IPWReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector imageFiles;
+  /** List of embedded image file names (one per image plane). */
+  private Hashtable imageFiles;
 
+  /** Helper reader - parses embedded files from the OLE document. */
   private POITools poi;
+
+  /** Image description. */
+  private String description;
+
+  /** Creation date of the images in this file. */
+  private String creationDate;
 
   // -- Constructor --
 
@@ -65,7 +73,7 @@ public class IPWReader extends FormatReader {
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessStream stream =
-      poi.getDocumentStream((String) imageFiles.get(0));
+      poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     int[] bits = TiffTools.getBitsPerSample(ifds[0]);
     if (bits[0] <= 8) {
@@ -97,7 +105,7 @@ public class IPWReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     RandomAccessStream stream =
-      poi.getDocumentStream((String) imageFiles.get(no));
+      poi.getDocumentStream((String) imageFiles.get(new Integer(no)));
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     TiffTools.getSamples(ifds[0], stream, buf, x, y, w, h);
     stream.close();
@@ -112,6 +120,9 @@ public class IPWReader extends FormatReader {
 
     if (poi != null) poi.close();
     poi = null;
+    imageFiles = null;
+    description = null;
+    creationDate = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -124,13 +135,9 @@ public class IPWReader extends FormatReader {
     in = new RandomAccessStream(id);
     poi = new POITools(Location.getMappedId(currentId));
 
-    imageFiles = new Vector();
+    imageFiles = new Hashtable();
 
     Vector fileList = poi.getDocumentList();
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
 
     for (int i=0; i<fileList.size(); i++) {
       String name = (String) fileList.get(i);
@@ -151,7 +158,7 @@ public class IPWReader extends FormatReader {
         }
       }
       else if (relativePath.equals("ImageInfo")) {
-        String description = new String(poi.getDocumentBytes(name)).trim();
+        description = new String(poi.getDocumentBytes(name)).trim();
         addMeta("Image Description", description);
 
         String timestamp = null;
@@ -180,7 +187,6 @@ public class IPWReader extends FormatReader {
             else if (label.equals("Timestamp")) timestamp = data;
           }
         }
-        store.setImageDescription(description, 0);
 
         if (timestamp != null) {
           if (timestamp.length() > 26) {
@@ -190,10 +196,7 @@ public class IPWReader extends FormatReader {
             new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS aa");
           Date d = fmt.parse(timestamp, new ParsePosition(0));
           fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-          store.setImageCreationDate(fmt.format(d), 0);
-        }
-        else {
-          MetadataTools.setDefaultCreationDate(store, id, 0);
+          creationDate = fmt.format(d);
         }
       }
       else if (relativePath.equals("ImageTIFF")) {
@@ -205,15 +208,7 @@ public class IPWReader extends FormatReader {
           idx = name.substring(21, name.indexOf(File.separator, 22));
         }
 
-        int n = Integer.parseInt(idx);
-        if (n < imageFiles.size()) imageFiles.setElementAt(name, n);
-        else {
-          int diff = n - imageFiles.size();
-          for (int q=0; q<diff; q++) {
-            imageFiles.add("");
-          }
-          imageFiles.add(name);
-        }
+        imageFiles.put(new Integer(idx), name);
         core[0].imageCount++;
       }
     }
@@ -221,7 +216,7 @@ public class IPWReader extends FormatReader {
     status("Populating metadata");
 
     RandomAccessStream stream =
-      poi.getDocumentStream((String) imageFiles.get(0));
+      poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     stream.close();
 
@@ -259,8 +254,7 @@ public class IPWReader extends FormatReader {
 
     if (isRGB()) core[0].sizeC *= 3;
 
-    int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.BITS_PER_SAMPLE);
+    int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
     int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
 
     while (bitsPerSample % 8 != 0) bitsPerSample++;
@@ -296,7 +290,15 @@ public class IPWReader extends FormatReader {
       }
     }
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageDescription(description, 0);
+    if (creationDate != null) {
+      store.setImageCreationDate(creationDate, 0);
+    }
+    else MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 
 }

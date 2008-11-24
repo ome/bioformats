@@ -53,6 +53,8 @@ public class NRRDReader extends FormatReader {
   /** Offset to pixel data. */
   private long offset;
 
+  private String[] pixelSizes;
+
   // -- Constructor --
 
   /** Constructs a new NRRD reader. */
@@ -114,6 +116,7 @@ public class NRRDReader extends FormatReader {
     helper = null;
     dataFile = encoding = null;
     offset = 0;
+    pixelSizes = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -135,9 +138,6 @@ public class NRRDReader extends FormatReader {
     core[0].sizeC = 1;
     core[0].sizeT = 1;
     core[0].dimensionOrder = "XYCZT";
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     while (!finished) {
       line = in.readLine().trim();
@@ -201,14 +201,7 @@ public class NRRDReader extends FormatReader {
           core[0].littleEndian = v.equals("little");
         }
         else if (key.equals("spacings")) {
-          StringTokenizer tokens = new StringTokenizer(v, " ");
-          int count = tokens.countTokens();
-          for (int i=0; i<count; i++) {
-            Float f = new Float(tokens.nextToken().trim());
-            if (i == 0) store.setDimensionsPhysicalSizeX(f, 0, 0);
-            else if (i == 1) store.setDimensionsPhysicalSizeY(f, 0, 0);
-            else if (i == 2) store.setDimensionsPhysicalSizeZ(f, 0, 0);
-          }
+          pixelSizes = v.split(" ");
         }
       }
 
@@ -241,9 +234,18 @@ public class NRRDReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
     store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    MetadataTools.populatePixels(store, this);
+
+    for (int i=0; i<pixelSizes.length; i++) {
+      Float f = new Float(pixelSizes[i].trim());
+      if (i == 0) store.setDimensionsPhysicalSizeX(f, 0, 0);
+      else if (i == 1) store.setDimensionsPhysicalSizeY(f, 0, 0);
+      else if (i == 2) store.setDimensionsPhysicalSizeZ(f, 0, 0);
+    }
   }
 
 }

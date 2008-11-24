@@ -165,8 +165,6 @@ public class ImarisHDFReader extends FormatReader {
     seriesCount = 0;
 
     previousImageNumber = -1;
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     // read all of the metadata key/value pairs
 
@@ -292,6 +290,8 @@ public class ImarisHDFReader extends FormatReader {
       core[i].indexed = false;
     }
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<seriesCount; i++) {
       float px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;

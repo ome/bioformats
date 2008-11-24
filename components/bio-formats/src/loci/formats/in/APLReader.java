@@ -153,9 +153,6 @@ public class APLReader extends FormatReader {
     xmlFiles = new String[seriesCount];
     tiffReaders = new MinimalTiffReader[seriesCount];
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
     String parentDirectory = mtb.substring(0, mtb.lastIndexOf(File.separator));
 
     for (int i=0; i<seriesCount; i++) {
@@ -208,6 +205,20 @@ public class APLReader extends FormatReader {
       core[i].indexed = tiffReaders[i].isIndexed();
       core[i].falseColor = tiffReaders[i].isFalseColor();
       core[i].imageCount = core[i].sizeZ * (core[i].rgb ? 1 : core[i].sizeC);
+    }
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
+
+    for (int i=0; i<seriesCount; i++) {
+      String[] row3 = (String[]) rows.get(i * 3 + 3);
+
+      // populate Image data
+      MetadataTools.setDefaultCreationDate(store, mtb, i);
+      store.setImageName(row3[imageName], i);
+
+      // populate Dimensions data
 
       // calculate physical X and Y sizes
 
@@ -227,12 +238,7 @@ public class APLReader extends FormatReader {
 
       store.setDimensionsPhysicalSizeX(new Float(px), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(py), i, 0);
-
-      MetadataTools.setDefaultCreationDate(store, mtb, i);
-      store.setImageName(row3[imageName], i);
     }
-
-    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --

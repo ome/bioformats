@@ -234,25 +234,23 @@ public class PrairieReader extends FormatReader {
 
         MetadataStore store =
           new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-        store.setImageName("", 0);
-
         MetadataTools.populatePixels(store, this);
+
         store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
         store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
         for (int i=0; i<getSizeC(); i++) {
           String gain = (String) gains.get(i);
           String offset = (String) offsets.get(i);
 
-          /*
           if (offset != null) {
             store.setDetectorSettingsOffset(new Float(offset), 0, i);
           }
           if (gain != null) {
             store.setDetectorSettingsGain(new Float(gain), 0, i);
           }
-          */
         }
 
+        store.setImageName("", 0);
         if (date != null) {
           SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
           Date d = parse.parse(date, new ParsePosition(0));
