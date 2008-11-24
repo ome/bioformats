@@ -127,7 +127,7 @@ public class SVSReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + i, i);
     }
   }

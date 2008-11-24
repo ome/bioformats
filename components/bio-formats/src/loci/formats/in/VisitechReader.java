@@ -231,7 +231,7 @@ public class VisitechReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       core[i].rgb = false;
       core[i].dimensionOrder = "XYZTC";
       core[i].interleaved = false;

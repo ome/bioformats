@@ -286,9 +286,9 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsStream = new RandomAccessStream[core.length];
+    pixelsStream = new RandomAccessStream[getSeriesCount()];
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       if (!embeddedImages) {
         core[i] = new CoreMetadata();
 

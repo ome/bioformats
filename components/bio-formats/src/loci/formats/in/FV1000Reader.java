@@ -813,7 +813,7 @@ public class FV1000Reader extends FormatReader {
       thumb.close();
       Location.mapFile("thumbnail.bmp", new RABytes(b));
       thumbReader.setId("thumbnail.bmp");
-      for (int i=0; i<core.length; i++) {
+      for (int i=0; i<getSeriesCount(); i++) {
         core[i].thumbSizeX = thumbReader.getSizeX();
         core[i].thumbSizeY = thumbReader.getSizeY();
       }
@@ -845,7 +845,7 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       core[i].rgb = false;
       core[i].littleEndian = true;
       core[i].interleaved = false;

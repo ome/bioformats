@@ -244,11 +244,11 @@ public class ImarisHDFReader extends FormatReader {
       CoreMetadata oldCore = core[0];
       core = new CoreMetadata[seriesCount];
       core[0] = oldCore;
-      for (int i=1; i<seriesCount; i++) {
+      for (int i=1; i<getSeriesCount(); i++) {
         core[i] = new CoreMetadata();
       }
 
-      for (int i=1; i<seriesCount; i++) {
+      for (int i=1; i<getSeriesCount(); i++) {
         String groupPath =
           "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
         core[i].sizeX =
@@ -278,7 +278,7 @@ public class ImarisHDFReader extends FormatReader {
     else if (pix instanceof int[][][]) type = FormatTools.UINT32;
     else if (pix instanceof float[][][]) type = FormatTools.FLOAT;
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       core[i].pixelType = type;
       core[i].dimensionOrder = "XYZCT";
       core[i].rgb = false;
@@ -293,7 +293,7 @@ public class ImarisHDFReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    for (int i=0; i<seriesCount; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       float px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
       if (px == 1) px = (maxX - minX) / core[i].sizeX;
       if (py == 1) py = (maxY - minY) / core[i].sizeY;
@@ -304,7 +304,7 @@ public class ImarisHDFReader extends FormatReader {
     }
 
     int cIndex = 0;
-    for (int s=0; s<seriesCount; s++) {
+    for (int s=0; s<getSeriesCount(); s++) {
       store.setImageName("Resolution Level " + s, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
       for (int i=0; i<core[s].sizeC; i++) {

@@ -291,7 +291,7 @@ public class SlidebookReader extends FormatReader {
       }
       boolean little = isLittleEndian();
       core = new CoreMetadata[pixelOffsets.size()];
-      for (int i=0; i<core.length; i++) {
+      for (int i=0; i<getSeriesCount(); i++) {
         core[i] = new CoreMetadata();
         core[i].littleEndian = little;
       }
@@ -310,7 +310,7 @@ public class SlidebookReader extends FormatReader {
       pixelBytes += ((Long) pixelLengths.get(i)).longValue();
     }
 
-    String[] imageNames = new String[core.length];
+    String[] imageNames = new String[getSeriesCount()];
     Vector channelNames = new Vector();
     int nextName = 0;
 
@@ -404,7 +404,7 @@ public class SlidebookReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
       boolean x = true;
@@ -438,14 +438,14 @@ public class SlidebookReader extends FormatReader {
 
     // populate Image data
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName(imageNames[i], i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     // populate Dimensions data
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       store.setDimensionsPhysicalSizeX(new Float(pixelSize), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSize), i, 0);
       int idx = 0;
@@ -460,7 +460,7 @@ public class SlidebookReader extends FormatReader {
 
     // populate LogicalChannel data
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<core[i].sizeC; c++) {
         if (index < channelNames.size()) {
           store.setLogicalChannelName((String) channelNames.get(index++), i, c);

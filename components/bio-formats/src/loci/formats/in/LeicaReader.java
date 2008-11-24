@@ -493,8 +493,8 @@ public class LeicaReader extends FormatReader {
 
     numSeries -= invalidCount;
 
-    int[] count = new int[core.length];
-    for (int i=0; i<core.length; i++) {
+    int[] count = new int[getSeriesCount()];
+    for (int i=0; i<getSeriesCount(); i++) {
       count[i] = core[i].imageCount;
     }
 
