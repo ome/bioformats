@@ -590,31 +590,19 @@ public class ZeissLSMReader extends BaseTiffReader {
               break;
             case CHANNEL_ENTRY_PINHOLE_DIAMETER:
               n = Float.parseFloat(value.toString());
-              if (n > 0 && nextPinhole < getSizeC()) {
-                store.setLogicalChannelPinholeSize(new Float(n), 0,
-                  nextPinhole++);
-              }
-              break;
-            case CHANNEL_ENTRY_SPI_WAVELENGTH_START:
-              n = Float.parseFloat(value.toString());
-              store.setLogicalChannelEmWave(new Integer((int) n), 0,
-                (nextEmWave % getSizeC()));
-              nextEmWave++;
-              break;
-            case CHANNEL_ENTRY_SPI_WAVELENGTH_END:
-              n = Float.parseFloat(value.toString());
-              store.setLogicalChannelExWave(new Integer((int) n), 0,
-                (nextExWave % getSizeC()));
-              nextExWave++;
+              store.setLogicalChannelPinholeSize(new Float(n), 0,
+                nextPinhole++);
               break;
             case ILLUM_CHANNEL_WAVELENGTH:
               n = Float.parseFloat(value.toString());
-              store.setLogicalChannelEmWave(new Integer((int) n), 0,
-                (nextEmWave % getSizeC()));
-              store.setLogicalChannelExWave(new Integer((int) n), 0,
-                (nextExWave % getSizeC()));
-              nextEmWave++;
-              nextExWave++;
+              if (nextEmWave < getSizeC()) {
+                store.setLogicalChannelEmWave(new Integer((int) n), 0,
+                  nextEmWave++);
+              }
+              if (nextExWave < getSizeC()) {
+                store.setLogicalChannelExWave(new Integer((int) n), 0,
+                  nextExWave++);
+              }
               break;
             case START_TIME:
               // date/time on which the first pixel was acquired, in days
