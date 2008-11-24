@@ -41,7 +41,9 @@ public class NetcdfTools {
 
   private static final String NO_NETCDF_MSG =
     "NetCDF is required to read NetCDF/HDF variants.  Please obtain " +
-    "the necessary JAR files from http://loci.wisc.edu/ome/formats.html";
+    "the necessary JAR files from http://loci.wisc.edu/ome/formats.html.\n" +
+    "Required JAR files are netcdf-4.0.jar, bufr-1.1.00.jar, grib-5.1.03.jar " +
+    ", and slf4j-jdk14.jar.";
 
   // -- Fields --
 
@@ -53,7 +55,7 @@ public class NetcdfTools {
 
   // -- Constructor --
 
-  public NetcdfTools(String file) {
+  public NetcdfTools(String file) throws FormatException {
     this.currentFile = file;
     initialize();
   }
@@ -167,7 +169,7 @@ public class NetcdfTools {
 
   // -- Helper methods --
 
-  private void initialize() {
+  private void initialize() throws FormatException {
     r = null;
     try {
       r = new ReflectedUniverse();
@@ -179,11 +181,11 @@ public class NetcdfTools {
     }
     catch (ReflectException exc) {
       noNetCDF = true;
-      LogTools.trace(exc);
+      throw new FormatException(NO_NETCDF_MSG, exc);
     }
     catch (UnsupportedClassVersionError exc) {
       noNetCDF = true;
-      LogTools.trace(exc);
+      throw new FormatException(NO_NETCDF_MSG, exc);
     }
 
     // HACK - NetCDF prints a fair number of warning messages to stdout
