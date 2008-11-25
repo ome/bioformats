@@ -130,6 +130,27 @@ public class Exporter {
           store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
           store.setPixelsDimensionOrder("XYCZT", 0, 0);
         }
+
+        // NB: This handles a known deficiency in Image5D.
+        // getStackSize() on an Image5D ImagePlus will always return the
+        // number of slices, not the total number of planes.
+        if (imp.getStackSize() !=
+          imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
+        {
+          IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
+            "The number of planes in the stack (" + imp.getStackSize() +
+            ") does not match the number of expected planes (" +
+            (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
+            "\nThis is probably because you are exporting from an Image5D " +
+            "window.\nIf you select 'OK', only " + imp.getStackSize() +
+            " planes will be exported. If you wish to export all of the " +
+            "planes,\nselect 'Cancel' and convert the Image5D window " +
+            "to a stack.");
+          store.setPixelsSizeZ(new Integer(imp.getStackSize()), 0, 0);
+          store.setPixelsSizeC(new Integer(1), 0, 0);
+          store.setPixelsSizeT(new Integer(1), 0, 0);
+        }
+
         w.setMetadataRetrieve((MetadataRetrieve) store);
       }
 
