@@ -207,7 +207,7 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Obtains the specified image from the current file into a pre-allocated byte
-   * array of (sizeX * sizeY * bytesPerPixel).
+   * array of (sizeX * sizeY * bytesPerPixel * RGB channel count).
    * @param no the image index within the file.
    * @param buf a pre-allocated buffer.
    * @return the pre-allocated buffer <code>buf</code> for convenience.
