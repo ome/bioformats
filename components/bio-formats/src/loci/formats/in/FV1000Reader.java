@@ -916,6 +916,10 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<nLasers; i++) {
       store.setLaserLaserMedium((String) dyeNames.get(i), 0, i);
       store.setLaserWavelength((Integer) wavelengths.get(i), 0, i);
+
+      // link LightSource to Image
+      store.setLightSourceID("LightSource:" + i, 0, i);
+      store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
     }
 
     // populate Detector data
