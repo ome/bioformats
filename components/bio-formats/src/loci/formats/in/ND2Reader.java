@@ -742,6 +742,10 @@ public class ND2Reader extends FormatReader {
     if (mag != null) {
       store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     }
+
+    // link Objective to Image
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
   }
 
   // -- Helper class --

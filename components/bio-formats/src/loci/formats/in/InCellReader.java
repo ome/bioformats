@@ -308,6 +308,10 @@ public class InCellReader extends FormatReader {
         store.setObjectiveModel(attributes.getValue("objective_name"), 0, 0);
         store.setObjectiveLensNA(new Float(
           attributes.getValue("numerical_aperture")), 0, 0);
+
+        // link Objective to Image
+        store.setObjectiveID("Objective:0", 0, 0);
+        store.setObjectiveSettingsObjective("Objective:0", 0);
       }
       else if (qName.equals("ExcitationFilter")) {
         String wave = attributes.getValue("wavelength");

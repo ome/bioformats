@@ -937,6 +937,11 @@ public class LeicaReader extends FormatReader {
             else if (tokens[2].equals("HighVoltage")) {
               store.setDetectorVoltage(new Float(data), 0, detector);
             }
+
+            // link Detector to Image
+            store.setDetectorID("Detector:" + detector, 0, detector);
+            store.setDetectorSettingsDetector("Detector:" + detector, 0,
+              detector);
           }
           catch (NumberFormatException e) {
             if (debug) LogTools.trace(e);
@@ -955,6 +960,12 @@ public class LeicaReader extends FormatReader {
         }
         else if (tokens[2].equals("OrderNumber")) {
           store.setObjectiveSerialNumber(data, 0, objective);
+        }
+
+        // link Objective to Image
+        store.setObjectiveID("Objective:" + objective, 0, objective);
+        if (objective == 0) {
+          store.setObjectiveSettingsObjective("Objective:" + objective, 0);
         }
       }
       else if (tokens[0].startsWith("CSpectrophotometerUnit")) {

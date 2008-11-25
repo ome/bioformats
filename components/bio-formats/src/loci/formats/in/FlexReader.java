@@ -339,6 +339,10 @@ public class FlexReader extends BaseTiffReader {
       else if (qName.equals("Objective")) {
         parentQName = qName;
         nextObjective++;
+
+        // link Objective to Image using ObjectiveSettings
+        store.setObjectiveID("Objective:" + nextObjective, 0, 0);
+        store.setObjectiveSettingsObjective("Objective:" + nextObjective, 0);
       }
       else if (qName.equals("Sublayout")) {
         parentQName = qName;

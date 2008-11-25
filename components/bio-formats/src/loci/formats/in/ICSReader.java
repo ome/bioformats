@@ -79,7 +79,9 @@ public class ICSReader extends FormatReader {
     "direct turret", "desc exc turret", "desc emm turret", "cube",
     "stage_xyzum", "cube descriptio", "camera", "exposure", "bits/pixel",
     "black level", "binning", "left", "top", "cols", "rows", "gain",
-    "significant_channels", "allowedlinemodes"
+    "significant_channels", "allowedlinemodes", "real_significant_bits",
+    "sample_width", "range", "ch", "lower_limit", "higher_limit", "passcount",
+    "detector", "dateGMT", "RefrInxMedium", "RefrInxLensMedium"
   };
 
   /** Metadata field sub-subcategories. */
@@ -373,7 +375,9 @@ public class ICSReader extends FormatReader {
             metadata.remove(k);
           }
           else if (k.equalsIgnoreCase("filename")) imageName = v;
-          else if (k.equalsIgnoreCase("history date")) {
+          else if (k.equalsIgnoreCase("history date") ||
+            k.equalsIgnoreCase("history created on"))
+          {
             if (v.indexOf(" ") == -1) continue;
             date = v.substring(0, v.lastIndexOf(" "));
             String[] formats = new String[] {"EEEE, MMMM dd, yyyy HH:mm:ss",
@@ -393,10 +397,7 @@ public class ICSReader extends FormatReader {
             if (!success) date = null;
           }
           else if (k.startsWith("history gain")) {
-            int n = 0;
-            if (k.indexOf(" ", 12) > 0) {
-              n = Integer.parseInt(k.substring(12, k.indexOf(" ", 12)));
-            }
+            int n = Integer.parseInt(k.substring(12).trim());
             if (gains == null) gains = new Hashtable();
             gains.put(new Integer(n), v);
           }
@@ -406,7 +407,7 @@ public class ICSReader extends FormatReader {
             if (wavelengths == null) wavelengths = new Hashtable();
             wavelengths.put(new Integer(laser), v);
           }
-          else if (k.equalsIgnoreCase("history objective")) {
+          else if (k.equalsIgnoreCase("history objective type")) {
             objectiveModel = v;
           }
           else if (k.equalsIgnoreCase("history objective immersion")) {
@@ -431,9 +432,6 @@ public class ICSReader extends FormatReader {
             }
           }
           else if (k.equalsIgnoreCase("history author")) lastName = v;
-          else if (k.equalsIgnoreCase("history created on")) {
-            date = DataTools.formatDate(v, "HH:mm:ss dd-MM-yyyy");
-          }
           else if (k.equalsIgnoreCase("history extents")) {
             sizes = v.split(" ");
           }
@@ -453,6 +451,13 @@ public class ICSReader extends FormatReader {
             Integer n = new Integer(k.substring(12, k.indexOf(" ", 12)));
             if (channelNames == null) channelNames = new Hashtable();
             channelNames.put(n, v);
+          }
+          else if (k.equalsIgnoreCase("parameter ch")) {
+            String[] names = v.split(" ");
+            if (channelNames == null) channelNames = new Hashtable();
+            for (int n=0; n<names.length; n++) {
+              channelNames.put(new Integer(n), names[n].trim());
+            }
           }
         }
         else {
@@ -656,21 +661,38 @@ public class ICSReader extends FormatReader {
       store.setDimensionsTimeIncrement(pixT, 0, 0);
       store.setDimensionsWaveIncrement(pixC, 0, 0);
     }
+    else if (sizes != null) {
+      for (int i=0; i<sizes.length; i++) {
+        float size = Float.parseFloat(sizes[i].trim());
+        if (i == 0) {
+          size /= getSizeX();
+          store.setDimensionsPhysicalSizeX(new Float(size), 0, 0);
+        }
+        else if (i == 1) {
+          size /= getSizeY();
+          store.setDimensionsPhysicalSizeY(new Float(size), 0, 0);
+        }
+      }
+    }
 
     // populate LogicalChannel data
 
     if (em != null) {
       String[] emTokens = em.split(" ");
+      int channel = 0;
       for (int i=0; i<emTokens.length; i++) {
+        if (emTokens[i].trim().equals("")) continue;
         store.setLogicalChannelEmWave(
-          new Integer((int) Float.parseFloat(emTokens[i])), 0, i);
+          new Integer((int) Float.parseFloat(emTokens[i])), 0, channel++);
       }
     }
     if (ex != null) {
       String[] exTokens = ex.split(" ");
+      int channel = 0;
       for (int i=0; i<exTokens.length; i++) {
+        if (exTokens[i].trim().equals("")) continue;
         store.setLogicalChannelExWave(
-          new Integer((int) Float.parseFloat(exTokens[i])), 0, i);
+          new Integer((int) Float.parseFloat(exTokens[i])), 0, channel++);
       }
     }
 
@@ -689,10 +711,10 @@ public class ICSReader extends FormatReader {
     // populate Laser data
 
     if (wavelengths != null) {
-      for (int i=0; i<getSizeC(); i++) {
+      for (int i=1; i<=wavelengths.size(); i++) {
         String wavelength = (String) wavelengths.get(new Integer(i));
         if (wavelength != null) {
-          store.setLaserWavelength(new Integer(wavelength), 0, i);
+          store.setLaserWavelength(new Integer(wavelength), 0, i - 1);
         }
       }
     }
@@ -709,10 +731,16 @@ public class ICSReader extends FormatReader {
       store.setObjectiveCalibratedMagnification(new Float(magnification), 0, 0);
     }
 
+    // link Objective to Image
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
+
     if (gains != null) {
       for (int i=0; i<gains.size(); i++) {
-        store.setDetectorGain(
-          new Float((String) gains.get(new Integer(i))), 0, i);
+        store.setDetectorSettingsGain(
+          new Float((String) gains.get(new Integer(i + 1))), 0, i);
+        store.setDetectorID("Detector:" + i, 0, i);
+        store.setDetectorSettingsDetector("Detector:0", 0, i);
       }
     }
 

@@ -215,6 +215,11 @@ public class AliconaReader extends FormatReader {
       store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
     }
 
+    // link Objective to an Image using ObjectiveSettings
+
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
+
     // populate Dimensions data
 
     if (pntX != null && pntY != null) {

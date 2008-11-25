@@ -436,6 +436,10 @@ public class SlidebookReader extends FormatReader {
 
     store.setObjectiveModel(objective, 0, 0);
 
+    // link Objective to Image
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
+
     // populate Image data
 
     for (int i=0; i<getSeriesCount(); i++) {

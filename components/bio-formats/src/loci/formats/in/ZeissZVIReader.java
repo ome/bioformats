@@ -449,6 +449,10 @@ public class ZeissZVIReader extends FormatReader {
       store.setDetectorID("Detector:" + i, 0, i);
       store.setDetectorSettingsDetector("Detector:" + i, 0, i);
     }
+
+    // link Objective to Image
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {

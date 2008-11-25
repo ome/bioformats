@@ -273,6 +273,7 @@ public class DeltavisionReader extends FormatReader {
     // The metadata store we're working with.
     MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setObjectiveID(String.valueOf(lensID), 0, 0);
+    store.setObjectiveSettingsObjective(String.valueOf(lensID), 0);
 
     in.skipBytes(4);
 
@@ -467,6 +468,7 @@ public class DeltavisionReader extends FormatReader {
         }
         else if (key.equals("Lens ID")) {
           store.setObjectiveID(value, 0, 0);
+          store.setObjectiveSettingsObjective(value, 0);
         }
         //else if (key.equals("Aux Magn")) { }
         // Image properties

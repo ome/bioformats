@@ -440,6 +440,9 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
+    // link Objective to Image using ObjectiveSettings
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
   }
 
 }

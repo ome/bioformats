@@ -566,6 +566,11 @@ public class ZeissLSMReader extends BaseTiffReader {
             if (next < tokens.length) {
               store.setObjectiveImmersion(tokens[next++], 0, 0);
             }
+
+            // link Objective to Image
+            store.setObjectiveID("Objective:0", 0, 0);
+            store.setObjectiveSettingsObjective("Objective:0", 0);
+
             break;
           case TRACK_ENTRY_TIME_BETWEEN_STACKS:
             store.setDimensionsTimeIncrement(
