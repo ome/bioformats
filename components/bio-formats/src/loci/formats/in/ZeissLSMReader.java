@@ -444,6 +444,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
     }
 
+    Hashtable acquireChannels = new Hashtable();
+    Hashtable channelData = new Hashtable();
+
     if (scanInformationOffset != 0) {
       in.seek(scanInformationOffset);
 
@@ -526,8 +529,10 @@ public class ZeissLSMReader extends BaseTiffReader {
                 count++;
                 break;
               case SUBBLOCK_END:
-                count = 1;
-                if (prefix.size() > 0) prefix.pop();
+                if (prefix.size() > 0) {
+                  String p = (String) prefix.pop();
+                  if (p.endsWith("s")) count = 1;
+                }
                 if (prefix.size() == 0) done = true;
                 break;
             }
@@ -545,6 +550,12 @@ public class ZeissLSMReader extends BaseTiffReader {
         String key = getKey(prefix, entry).trim();
         if (value instanceof String) value = ((String) value).trim();
         if (key != null) addMeta(key, value);
+
+        if (key.endsWith("Acquire") && key.indexOf("Detection Channel") != -1)
+        {
+          acquireChannels.put(new Integer(count - 2),
+            new Integer(value.toString()));
+        }
 
         float n;
         switch (entry) {
@@ -631,19 +642,12 @@ public class ZeissLSMReader extends BaseTiffReader {
             break;
           case CHANNEL_ENTRY_PINHOLE_DIAMETER:
             n = Float.parseFloat(value.toString());
-            store.setLogicalChannelPinholeSize(new Float(n), 0,
-              nextPinhole++);
+            channelData.put("pinhole " + count, new Float(n));
             break;
           case ILLUM_CHANNEL_WAVELENGTH:
             n = Float.parseFloat(value.toString());
-            if (nextEmWave < getSizeC()) {
-              store.setLogicalChannelEmWave(new Integer((int) n), 0,
-                nextEmWave++);
-            }
-            if (nextExWave < getSizeC()) {
-              store.setLogicalChannelExWave(new Integer((int) n), 0,
-                nextExWave++);
-            }
+            channelData.put("em " + count, new Integer((int) n));
+            channelData.put("ex " + count, new Integer((int) n));
             break;
           case START_TIME:
             // date/time on which the first pixel was acquired, in days
@@ -654,13 +658,33 @@ public class ZeissLSMReader extends BaseTiffReader {
 
             break;
           case DATA_CHANNEL_NAME:
-            store.setLogicalChannelName(value.toString(),
-              0, nextChannelName++);
+            channelData.put("name " + count, value.toString());
             break;
         }
 
         if (!done) done = in.getFilePointer() >= in.length() - 12;
       }
+    }
+
+    // set channel data
+
+    int nextChannel = 0;
+
+    for (int i=0; i<acquireChannels.size(); i++) {
+      boolean acquire =
+        ((Integer) acquireChannels.get(new Integer(i + 1))).intValue() != 0;
+      if (!acquire) continue;
+
+      String name = (String) channelData.get("name " + (i + 3));
+      Integer ex = (Integer) channelData.get("ex " + (i + 3));
+      Integer em = (Integer) channelData.get("em " + (i + 3));
+      Float pinhole = (Float) channelData.get("pinhole " + (i + 3));
+
+      store.setLogicalChannelName(name, 0, nextChannel);
+      store.setLogicalChannelEmWave(em, 0, nextChannel);
+      store.setLogicalChannelExWave(ex, 0, nextChannel);
+      store.setLogicalChannelPinholeSize(pinhole, 0, nextChannel);
+      nextChannel++;
     }
 
     Float pixX = new Float((float) pixelSizeX);
