@@ -178,6 +178,10 @@ public class ZeissLSMReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     super.initStandardMetadata();
 
     // get TIF_CZ_LSMINFO structure

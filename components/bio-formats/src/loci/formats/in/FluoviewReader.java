@@ -382,6 +382,10 @@ public class FluoviewReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     // populate Dimensions
     store.setDimensionsPhysicalSizeX(new Float(voxelX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(voxelY), 0, 0);

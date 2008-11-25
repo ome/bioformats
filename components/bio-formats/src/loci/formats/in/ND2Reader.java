@@ -715,9 +715,14 @@ public class ND2Reader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
+    store.setInstrumentID("Instrument:0", 0);
+
     // populate Image data
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName(currentId, i);
+
+      // link Instrument and Image
+      store.setImageInstrumentRef("Instrument:0", 0);
     }
 
     // populate Dimensions data

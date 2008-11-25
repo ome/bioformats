@@ -426,6 +426,8 @@ public class LIFReader extends FormatReader {
     }
     MetadataTools.populatePixels(store, this, true);
 
+    store.setInstrumentID("Instrument:0", 0);
+
     for (int i=0; i<numDatasets; i++) {
       // populate Dimensions data
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
@@ -444,6 +446,9 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(seriesName, i);
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
+
+      // link Instrument and Image
+      store.setImageInstrumentRef("Instrument:0", i);
 
       // CTR CHECK
 //      String zoom = (String) getMeta(seriesName + " - dblZoom");

@@ -135,6 +135,7 @@ public class FlexReader extends BaseTiffReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    store.setInstrumentID("Instrument:0", 0);
 
     Vector n = new Vector();
     Vector f = new Vector();
@@ -431,6 +432,10 @@ public class FlexReader extends BaseTiffReader {
           addMeta("Image " + nextImage + " " + attributes.getQName(i),
             attributes.getValue(i));
         }
+
+        // link Instrument and Image
+        store.setImageInstrumentRef("Instrument:0", nextImage);
+
         nextImage++;
 
         String x = attributes.getValue("CameraBinningX");

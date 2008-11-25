@@ -869,11 +869,16 @@ public class FV1000Reader extends FormatReader {
       creationDate = fmt.format(date);
     }
 
+    store.setInstrumentID("Instrument:0", 0);
+
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
       store.setImageName("Series " + i, i);
       if (creationDate != null) store.setImageCreationDate(creationDate, i);
       else MetadataTools.setDefaultCreationDate(store, id, i);
+
+      // link Instrument and Image
+      store.setImageInstrumentRef("Instrument:0", i);
 
       // populate Dimensions data
 

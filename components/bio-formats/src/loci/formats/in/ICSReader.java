@@ -633,6 +633,10 @@ public class ICSReader extends FormatReader {
 
     store.setImageDescription(description, 0);
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     // populate Dimensions data
 
     String pixelSizes = scale;

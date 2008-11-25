@@ -430,6 +430,10 @@ public class SlidebookReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     int index = 0;
 
     // populate Objective data

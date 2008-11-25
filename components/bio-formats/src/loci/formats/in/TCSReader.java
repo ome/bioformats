@@ -295,9 +295,14 @@ public class TCSReader extends FormatReader {
       store = new FilterMetadata(getMetadataStore(), isMetadataFiltered());
       MetadataTools.populatePixels(store, this, true);
 
+      store.setInstrumentID("Instrument:0", 0);
+
       for (int i=0; i<x.size(); i++) {
         store.setImageName((String) seriesNames.get(i), i);
         MetadataTools.setDefaultCreationDate(store, id, i);
+
+        // link Instrument and Image
+        store.setImageInstrumentRef("Instrument:0", 0);
       }
 
       for (int i=0; i<x.size(); i++) {

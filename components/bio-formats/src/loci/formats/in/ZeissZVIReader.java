@@ -420,6 +420,10 @@ public class ZeissZVIReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     for (int plane=0; plane<getImageCount(); plane++) {
       int[] zct = getZCTCoords(plane);
       String exposure = (String) exposureTime.get(new Integer(zct[1]));

@@ -723,6 +723,10 @@ public class PerkinElmerReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     // populate LogicalChannel element
     for (int i=0; i<getSizeC(); i++) {
       if (i < emWaves.size()) {

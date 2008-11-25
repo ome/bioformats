@@ -825,6 +825,8 @@ public class LeicaReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
+    store.setInstrumentID("Instrument:0", 0);
+
     for (int i=0; i<numSeries; i++) {
       long firstPlane = 0;
 
@@ -844,6 +846,10 @@ public class LeicaReader extends FormatReader {
 
       store.setImageName((String) seriesNames.get(i), i);
       store.setImageDescription((String) seriesDescriptions.get(i), i);
+
+      // link Instrument and Image
+      store.setImageInstrumentRef("Instrument:0", 0);
+
       store.setDimensionsPhysicalSizeX(new Float(physicalSizes[i][0]), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(physicalSizes[i][1]), i, 0);
       store.setDimensionsPhysicalSizeZ(new Float(physicalSizes[i][2]), i, 0);

@@ -270,8 +270,12 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Y origin (in um)", in.readFloat());
     addMeta("Z origin (in um)", in.readFloat());
 
-    // The metadata store we're working with.
     MetadataTools.setDefaultCreationDate(store, id, 0);
+
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     store.setObjectiveID(String.valueOf(lensID), 0, 0);
     store.setObjectiveSettingsObjective(String.valueOf(lensID), 0);
 

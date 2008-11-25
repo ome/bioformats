@@ -564,6 +564,10 @@ public class OpenlabReader extends FormatReader {
     store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
     if (detectorOffset != null) {
       store.setDetectorSettingsOffset(new Float(detectorOffset), 0, 0);
