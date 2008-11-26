@@ -743,7 +743,8 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getZCTCoords(int) */
   public int[] getZCTCoords(int index) {
     FormatTools.assertId(currentId, true, 2);
-    return FormatTools.getZCTCoords(core[getSeries()].dimensionOrder,
+    return noStitch ? reader.getZCTCoords(index) :
+      FormatTools.getZCTCoords(core[getSeries()].dimensionOrder,
       getSizeZ(), getEffectiveSizeC(), getSizeT(), getImageCount(), index);
   }
 

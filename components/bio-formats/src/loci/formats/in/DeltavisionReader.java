@@ -1,4 +1,4 @@
-//
+////
 // DeltavisionReader.java
 //
 
@@ -328,6 +328,10 @@ public class DeltavisionReader extends FormatReader {
     title = title.length() == 0 ? null : title;
     store.setImageDescription(title, 0);
 
+    // if matching log file exists, extract key/value pairs from it
+    boolean logFound = parseLogFile(store);
+    parseDeconvolutionLog(store);
+
     // Run through every image and fill in the
     // Extended Header information array for that image
     int offset = HEADER_LENGTH + numIntsPerSection * 4;
@@ -340,38 +344,40 @@ public class DeltavisionReader extends FormatReader {
       extHdrFields[z][w][t] = new DVExtHdrFields(in);
 
       // plane timing
-      store.setPlaneTimingDeltaT(
-        new Float(extHdrFields[z][w][t].getTimeStampSeconds()), 0, 0, i);
+      if (!logFound) {
+        store.setPlaneTimingDeltaT(
+          new Float(extHdrFields[z][w][t].getTimeStampSeconds()), 0, 0, i);
+      }
       store.setPlaneTimingExposureTime(
         new Float(extHdrFields[z][w][t].getExpTime() / 1000), 0, 0, i);
 
       // stage position
-      store.setStagePositionPositionX(
-        new Float(extHdrFields[z][w][t].getStageXCoord()), 0, 0, i);
-      store.setStagePositionPositionY(
-        new Float(extHdrFields[z][w][t].getStageYCoord()), 0, 0, i);
-      store.setStagePositionPositionZ(
-        new Float(extHdrFields[z][w][t].getStageZCoord()), 0, 0, i);
-
-      if (z == 0 && t == 0) {
-        store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
-        store.setLogicalChannelExWave(
-          new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
-        store.setLogicalChannelNdFilter(
-          new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
-        store.setLightSourceSettingsWavelength(new Integer(waves[w]), 0, w);
-
-        // link LightSourceSettings to an actual LightSource
-        store.setLightSourceID("LightSource:" + w, 0, w);
-        store.setLightSourceSettingsLightSource("LightSource:" + w, 0, w);
+      if (!logFound) {
+        store.setStagePositionPositionX(
+          new Float(extHdrFields[z][w][t].getStageXCoord()), 0, 0, i);
+        store.setStagePositionPositionY(
+          new Float(extHdrFields[z][w][t].getStageYCoord()), 0, 0, i);
+        store.setStagePositionPositionZ(
+          new Float(extHdrFields[z][w][t].getStageZCoord()), 0, 0, i);
       }
     }
 
-    status("Populating metadata");
+    for (int w=0; w<getSizeC(); w++) {
+      store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
+      store.setLogicalChannelExWave(
+        new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
+      if (!logFound) {
+        store.setLogicalChannelNdFilter(
+          new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
+      }
+      store.setLightSourceSettingsWavelength(new Integer(waves[w]), 0, w);
 
-    // if matching log file exists, extract key/value pairs from it
-    parseLogFile(store);
-    parseDeconvolutionLog(store);
+      // link LightSourceSettings to an actual LightSource
+      store.setLightSourceID("LightSource:" + w, 0, w);
+      store.setLightSourceSettingsLightSource("LightSource:" + w, 0, w);
+    }
+
+    status("Populating metadata");
   }
 
   // -- Helper methods --
@@ -424,10 +430,10 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /** Extract metadata from associated log file, if it exists. */
-  private void parseLogFile(MetadataStore store) throws IOException {
+  private boolean parseLogFile(MetadataStore store) throws IOException {
     // see if log file exists
     String logFile = getCurrentFile() + ".log";
-    if (!new Location(logFile).exists()) return;
+    if (!new Location(logFile).exists()) return false;
 
     RandomAccessStream s = new RandomAccessStream(logFile);
 
@@ -553,6 +559,7 @@ public class DeltavisionReader extends FormatReader {
     }
 
     s.close();
+    return true;
   }
 
   /** Parse deconvolution output, if it exists. */

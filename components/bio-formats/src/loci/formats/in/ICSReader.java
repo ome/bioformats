@@ -397,7 +397,11 @@ public class ICSReader extends FormatReader {
             if (!success) date = null;
           }
           else if (k.startsWith("history gain")) {
-            int n = Integer.parseInt(k.substring(12).trim());
+            int n = 0;
+            try {
+              n = Integer.parseInt(k.substring(12).trim());
+            }
+            catch (NumberFormatException e) { }
             if (gains == null) gains = new Hashtable();
             gains.put(new Integer(n), v);
           }
@@ -741,10 +745,12 @@ public class ICSReader extends FormatReader {
 
     if (gains != null) {
       for (int i=0; i<gains.size(); i++) {
-        store.setDetectorSettingsGain(
-          new Float((String) gains.get(new Integer(i + 1))), 0, i);
-        store.setDetectorID("Detector:" + i, 0, i);
-        store.setDetectorSettingsDetector("Detector:0", 0, i);
+        if (gains.containsKey(new Integer(i + 1))) {
+          store.setDetectorSettingsGain(
+            new Float((String) gains.get(new Integer(i + 1))), 0, i);
+          store.setDetectorID("Detector:" + i, 0, i);
+          store.setDetectorSettingsDetector("Detector:0", 0, i);
+        }
       }
     }
 

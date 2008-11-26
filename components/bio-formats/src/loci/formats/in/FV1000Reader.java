@@ -388,6 +388,8 @@ public class FV1000Reader extends FormatReader {
     previewNames = new Vector();
     boolean laserEnabled = true;
 
+    String ptyStart = null, ptyEnd = null, ptyPattern = null;
+
     Vector channels = new Vector();
     Vector lutNames = new Vector();
     Hashtable filenames = new Hashtable();
@@ -418,6 +420,9 @@ public class FV1000Reader extends FormatReader {
           }
           filenames.put(new Integer(key.substring(11)), value.trim());
         }
+        else if (key.equals("PtyFileNameS")) ptyStart = value;
+        else if (key.equals("PtyFileNameE")) ptyEnd = value;
+        else if (key.equals("PtyFileNameT2")) ptyPattern = value;
         else if (key.indexOf("Thumb") != -1) {
           value = value.replaceAll("/", File.separator);
           value = value.replace('\\', File.separatorChar);
@@ -533,6 +538,66 @@ public class FV1000Reader extends FormatReader {
           line = line.substring(2, line.length());
         }
         prefix = line + " - ";
+      }
+    }
+
+    // if this is a version 2 file, the .pty files have not yet been
+    // added to the file list
+    if (ptyStart != null && ptyEnd != null && ptyPattern != null) {
+      // FV1000 version 2 gives the first .pty file, the last .pty and
+      // the file name pattern.  Version 1 lists each .pty file individually.
+
+      // pattern is typically 's_C%03dT%03d.pty'
+
+      // build list of block indexes
+
+      String[] prefixes = ptyPattern.split("%03d");
+
+      // get first number for each block
+      int[] first = new int[prefixes.length - 1];
+      int index = 0;
+      for (int i=0; i<first.length; i++) {
+        index += prefixes[i].length();
+        first[i] = Integer.parseInt(ptyStart.substring(index, index + 3));
+        index += 3;
+      }
+
+      // get last number for each block
+      int[] last = new int[prefixes.length - 1];
+      index = 0;
+      for (int i=0; i<last.length; i++) {
+        index += prefixes[i].length();
+        last[i] = Integer.parseInt(ptyEnd.substring(index, index + 3));
+        index += 3;
+      }
+
+      int[] lengths = new int[first.length];
+      for (int i=0; i<lengths.length; i++) {
+        lengths[i] = last[i] - first[i] + 1;
+      }
+
+      // add each .pty file
+
+      int totalFiles = 1;
+      for (int i=0; i<lengths.length; i++) {
+        totalFiles *= lengths[i];
+      }
+
+      for (int file=0; file<totalFiles; file++) {
+        int[] pos = FormatTools.rasterToPosition(lengths, file);
+        StringBuffer pty = new StringBuffer();
+        for (int block=0; block<prefixes.length; block++) {
+          pty.append(prefixes[block]);
+
+          if (block < pos.length) {
+            String num = String.valueOf(pos[block] + 1);
+            for (int q=0; q<3 - num.length(); q++) {
+              pty.append("0");
+            }
+            pty.append(num);
+          }
+        }
+        filenames.put(new Integer(file), pty.toString());
       }
     }
 
@@ -924,9 +989,9 @@ public class FV1000Reader extends FormatReader {
 
     // populate Detector data
 
-    store.setDetectorGain(new Float(gain), 0, 0);
-    store.setDetectorOffset(new Float(offset), 0, 0);
-    store.setDetectorVoltage(new Float(voltage), 0, 0);
+    if (gain != null) store.setDetectorGain(new Float(gain), 0, 0);
+    if (offset != null) store.setDetectorOffset(new Float(offset), 0, 0);
+    if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
 
     // link Detector to Image using DetectorSettings
 
@@ -935,11 +1000,15 @@ public class FV1000Reader extends FormatReader {
 
     // populate Objective data
 
-    store.setObjectiveLensNA(new Float(lensNA), 0, 0);
+    if (lensNA != null) store.setObjectiveLensNA(new Float(lensNA), 0, 0);
     store.setObjectiveModel(objectiveName, 0, 0);
-    store.setObjectiveNominalMagnification(
-      new Integer((int) Float.parseFloat(magnification)), 0, 0);
-    store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+    if (magnification != null) {
+      store.setObjectiveNominalMagnification(
+        new Integer((int) Float.parseFloat(magnification)), 0, 0);
+    }
+    if (workingDistance != null) {
+      store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+    }
 
     // link Objective to Image using ObjectiveSettings
 
