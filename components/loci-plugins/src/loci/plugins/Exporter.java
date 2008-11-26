@@ -131,22 +131,18 @@ public class Exporter {
           store.setPixelsDimensionOrder("XYCZT", 0, 0);
         }
 
-        // NB: This handles a known deficiency in Image5D.
-        // getStackSize() on an Image5D ImagePlus will always return the
-        // number of slices, not the total number of planes.
-        if (imp.getStackSize() !=
+        if (imp.getImageStackSize() !=
           imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
         {
           IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
-            "The number of planes in the stack (" + imp.getStackSize() +
+            "The number of planes in the stack (" + imp.getImageStackSize() +
             ") does not match the number of expected planes (" +
             (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
-            "\nThis is probably because you are exporting from an Image5D " +
-            "window.\nIf you select 'OK', only " + imp.getStackSize() +
+            "\nIf you select 'OK', only " + imp.getImageStackSize() +
             " planes will be exported. If you wish to export all of the " +
             "planes,\nselect 'Cancel' and convert the Image5D window " +
             "to a stack.");
-          store.setPixelsSizeZ(new Integer(imp.getStackSize()), 0, 0);
+          store.setPixelsSizeZ(new Integer(imp.getImageStackSize()), 0, 0);
           store.setPixelsSizeC(new Integer(1), 0, 0);
           store.setPixelsSizeT(new Integer(1), 0, 0);
         }
@@ -159,7 +155,7 @@ public class Exporter {
       // prompt for options
 
       String[] codecs = w.getCompressionTypes();
-      ImageProcessor proc = imp.getStack().getProcessor(1);
+      ImageProcessor proc = imp.getImageStack().getProcessor(1);
       Image firstImage = proc.createImage();
       firstImage = AWTImageTools.makeBuffered(firstImage, proc.getColorModel());
       int thisType = AWTImageTools.getPixelType((BufferedImage) firstImage);
@@ -195,8 +191,8 @@ public class Exporter {
       boolean fakeRGB = imp.getClass().equals(c);
       int n = fakeRGB ? imp.getNChannels() : 1;
 
-      ImageStack is = imp.getStack();
-      int size = is.getSize();
+      int size = imp.getImageStackSize();
+      ImageStack is = imp.getImageStack();
       boolean doStack = w.canDoStacks() && size > 1;
       int start = doStack ? 0 : imp.getCurrentSlice() - 1;
       int end = doStack ? size : start + 1;
