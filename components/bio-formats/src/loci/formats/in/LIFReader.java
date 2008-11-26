@@ -407,8 +407,8 @@ public class LIFReader extends FormatReader {
       core[i].interleaved = core[i].rgb;
       core[i].imageCount = core[i].sizeZ * core[i].sizeT;
       if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
-      core[i].indexed = BYTE_LUTS[realChannel[i][0]] != null ||
-        SHORT_LUTS[realChannel[i][0]] != null;
+      core[i].indexed = realChannel[i][0] < BYTE_LUTS.length ||
+        realChannel[i][0] < SHORT_LUTS.length;
       core[i].falseColor = true;
 
       while (bitsPerPixel[i] % 8 != 0) bitsPerPixel[i]++;
