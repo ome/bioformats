@@ -30,8 +30,7 @@ import java.util.*;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.JPEGCodec;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.*;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -274,6 +273,9 @@ public class ZeissZVIReader extends FormatReader {
         s.order(true);
         int imageNum = getImageNumber(name, -1);
         tagsToParse.put(new Integer(imageNum), s);
+        if (imageNum == -1) {
+          parseTags(imageNum, s, new DummyMetadata());
+        }
       }
       else if (dirName.equals("Image") ||
         dirName.toUpperCase().indexOf("ITEM") != -1)
@@ -352,30 +354,28 @@ public class ZeissZVIReader extends FormatReader {
     core[0].rgb = (bpp % 3) == 0;
     if (isRGB()) core[0].sizeC *= 3;
 
-    if (isTiled) {
-      // calculate tile dimensions and number of tiles
-      int totalTiles = offsets.length / getImageCount();
+    // calculate tile dimensions and number of tiles
+    int totalTiles = offsets.length / getImageCount();
 
-      tileRows = (realHeight / getSizeY()) + 1;
-      tileColumns = (realWidth / getSizeX()) + 1;
+    tileRows = (realHeight / getSizeY()) + 1;
+    tileColumns = (realWidth / getSizeX()) + 1;
 
-      if (totalTiles <= 1) {
-        tileRows = 1;
-        tileColumns = 1;
-        totalTiles = 1;
-        isTiled = false;
-      }
+    if (totalTiles <= 1) {
+      tileRows = 1;
+      tileColumns = 1;
+      totalTiles = 1;
+      isTiled = false;
+    }
 
-      if (tileRows == 0) tileRows = 1;
-      if (tileColumns == 0) tileColumns = 1;
+    if (tileRows == 0) tileRows = 1;
+    if (tileColumns == 0) tileColumns = 1;
 
-      if (tileColumns == 1 && tileRows == 1) isTiled = false;
-      else {
-        tileWidth = getSizeX();
-        tileHeight = getSizeY();
-        core[0].sizeX = tileWidth * tileColumns;
-        core[0].sizeY = tileHeight * tileRows;
-      }
+    if (tileColumns == 1 && tileRows == 1) isTiled = false;
+    else {
+      tileWidth = getSizeX();
+      tileHeight = getSizeY();
+      core[0].sizeX = tileWidth * tileColumns;
+      core[0].sizeY = tileHeight * tileRows;
     }
 
     core[0].dimensionOrder = "XY";
@@ -519,7 +519,7 @@ public class ZeissZVIReader extends FormatReader {
   private void parseTags(int image, RandomAccessStream s, MetadataStore store)
     throws IOException
   {
-    s.skipBytes(8);
+    s.seek(8);
 
     int count = s.readInt();
 
@@ -552,7 +552,6 @@ public class ZeissZVIReader extends FormatReader {
           if (realHeight == 0 || v > realHeight) realHeight = v;
         }
 
-        if (key.indexOf("ImageTile") != -1) isTiled = true;
         if (cIndex != -1) key += " " + cIndex;
         addMeta(key, value);
 
