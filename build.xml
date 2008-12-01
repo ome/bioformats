@@ -437,27 +437,16 @@ Apache XML-RPC
   <!-- Non-core ant tasks -->
 
   <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-    classpath="jar/ant-contrib-1.0b1.jar"/>
+    classpath="${shared-lib.dir}/ant-contrib-1.0b1.jar"/>
   <!-- HACK - some environments do not install the antcontrib tasks properly
   from antcontrib.properties above; also load them from antlib.xml -->
   <taskdef resource="net/sf/antcontrib/antlib.xml"
-    classpath="jar/ant-contrib-1.0b1.jar"/>
+    classpath="${shared-lib.dir}/ant-contrib-1.0b1.jar"/>
 
   <!-- Global build targets -->
 
-  <target name="compile"
-    depends="compile-common, compile-ome-xml,
-      compile-jai, compile-poi-loci, compile-mdbtools,
-      compile-formats, compile-formats-auto, compile-formats-ice,
-      compile-loci-plugins, compile-ome-io, compile-ome-plugins,
-      compile-visbio, compile-slim, compile-flow,
-      compile-checks, compile-tests,
-      compile-jvmlink, compile-multi-lut,
-      compile-ome-notes, compile-ome-editor"
-    description="compile classes for LOCI software packages"/>
-
   <target name="jars"
-    depends="jar-common, jar-ome-xml,
+    depends="copy-jars, jar-common, jar-ome-xml,
       jar-jai, jar-poi-loci, jar-mdbtools,
       jar-formats, jar-formats-auto, jar-formats-ice,
       jar-loci-plugins, jar-ome-io, jar-ome-plugins,
@@ -477,7 +466,7 @@ Apache XML-RPC
       clean-jvmlink, clean-multi-lut,
       clean-ome-notes, clean-ome-editor"
     description="remove all build files">
-    <delete dir="artifacts"/>
+    <delete dir="${shared-artifact.dir}"/>
     <delete dir="build"/>
   </target>
 
@@ -501,6 +490,14 @@ Apache XML-RPC
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
       <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
     </javadoc>
+  </target>
+
+  <target name="copy-jars">
+    <!-- copy third party JARs into artifacts folder -->
+    <!-- necessary for runtime classpath dependencies to function properly -->
+    <copy todir="${shared-artifact.dir}" preservelastmodified="true">
+      <fileset dir="${shared-lib.dir}"/>
+    </copy>
   </target>
 
   <!-- LOCI common library -->
