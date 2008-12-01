@@ -379,7 +379,7 @@ public class LZWCodec extends BaseCodec {
             currCodeLength = 12;
             break;
         }
-      } while(true);
+      } while(currOutPos < output.length);
     }
     catch (ArrayIndexOutOfBoundsException e) {
       throw new FormatException("Invalid LZW data", e);
