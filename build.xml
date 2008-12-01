@@ -923,29 +923,17 @@ Apache XML-RPC
 
   <!-- Tool bundles -->
 
-  <target name="tools" depends="jar-common,
+  <target name="tools" depends="copy-jars, jar-common,
     jar-jai, jar-poi-loci, jar-mdbtools,
     jar-ome-xml, jar-formats, jar-loci-plugins"
     description="create JAR file encompassing several LOCI tools">
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
-        <for list="${jar.dirs}" param="jardir" delimiter=" " trim="true">
-          <sequential>
-            <available file="@{jardir}/@{jar}"
-              property="@{jardir}.@{jar}.present"/>
-            <if>
-              <equals arg1="${@{jardir}.@{jar}.present}" arg2="true" />
-              <then>
-                <unjar src="@{jardir}/@{jar}"
-                  dest="${loci-tools.dir}">
-                  <patternset>
-                    <exclude name="META-INF/**"/>
-                  </patternset>
-                </unjar>
-              </then>
-            </if>
-          </sequential>
-        </for>
+        <unjar src="${shared-artifact.dir}/@{jar}" dest="${loci-tools.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
       </sequential>
     </for>
     <jar jarfile="${loci-tools.jar}" basedir="${loci-tools.dir}">
@@ -960,23 +948,11 @@ Apache XML-RPC
     description="create JAR file encompassing several OME tools">
     <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
-        <for list="${jar.dirs}" param="jardir" delimiter=" " trim="true">
-          <sequential>
-            <available file="@{jardir}/@{jar}"
-              property="@{jardir}.@{jar}.present"/>
-            <if>
-              <equals arg1="${@{jardir}.@{jar}.present}" arg2="true" />
-              <then>
-                <unjar src="@{jardir}/@{jar}"
-                  dest="${ome-tools.dir}">
-                  <patternset>
-                    <exclude name="META-INF/**"/>
-                  </patternset>
-                </unjar>
-              </then>
-            </if>
-          </sequential>
-        </for>
+        <unjar src="${shared-artifact.dir}/@{jar}" dest="${ome-tools.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
       </sequential>
     </for>
     <jar jarfile="${ome-tools.jar}" basedir="${ome-tools.dir}">
