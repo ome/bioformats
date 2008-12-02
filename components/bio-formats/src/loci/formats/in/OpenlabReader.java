@@ -568,10 +568,16 @@ public class OpenlabReader extends FormatReader {
     store.setInstrumentID("Instrument:0", 0);
     store.setImageInstrumentRef("Instrument:0", 0);
 
-    if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
-    if (detectorOffset != null) {
-      store.setDetectorSettingsOffset(new Float(detectorOffset), 0, 0);
+    try {
+      if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
     }
+    catch (NumberFormatException e) { }
+    try {
+      if (detectorOffset != null) {
+        store.setDetectorSettingsOffset(new Float(detectorOffset), 0, 0);
+      }
+    }
+    catch (NumberFormatException e) { }
 
     // link DetectorSettings to an actual Detector
     store.setDetectorID("Detector:0", 0, 0);

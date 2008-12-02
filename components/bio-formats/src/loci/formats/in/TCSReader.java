@@ -99,6 +99,11 @@ public class TCSReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
     // check for Leica TCS IFD directory entries
@@ -405,6 +410,10 @@ public class TCSReader extends FormatReader {
         metadata.remove("Comment");
       }
       core = tiffReaders[0].getCoreMetadata();
+
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      MetadataTools.populatePixels(store, this, true);
     }
   }
 

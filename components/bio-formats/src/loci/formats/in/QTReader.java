@@ -281,9 +281,12 @@ public class QTReader extends FormatReader {
     if (pad > 0) {
       t = new byte[prevPixels.length - getSizeY()*pad];
 
+      int bytes = bitsPerPixel < 40 ? bitsPerPixel / 8 :
+        (bitsPerPixel - 32) / 8;
+
       for (int row=0; row<getSizeY(); row++) {
-        System.arraycopy(prevPixels, row*(getSizeX() + pad), t,
-          row*getSizeX(), getSizeX());
+        System.arraycopy(prevPixels, bytes * row * (getSizeX() + pad), t,
+          row * getSizeX() * bytes, getSizeX());
       }
     }
 
@@ -293,8 +296,11 @@ public class QTReader extends FormatReader {
     for (int row=0; row<h; row++) {
       if (bitsPerPixel == 32) {
         for (int col=0; col<w; col++) {
-          System.arraycopy(t, row*getSizeX()*bpp*4 + (x + col)*bpp*4 + 1,
-            buf, row*destRowLen + col*bpp*3, 3);
+          int src = row * getSizeX() * bpp * 4 + (x + col) * bpp * 4 + 1;
+          int dst = row * destRowLen + col * bpp * 3;
+          if (src + 3 <= t.length && dst + 3 <= buf.length) {
+            System.arraycopy(t, src, buf, dst, 3);
+          }
         }
       }
       else {

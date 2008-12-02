@@ -76,7 +76,7 @@ public class RPZACodec extends BaseCodec implements Codec {
 
     totalBlocks = ((x + 3) / 4) * ((y + 3) / 4);
 
-    while (in.getFilePointer() < in.length()) {
+    while (in.getFilePointer() + 2 < in.length()) {
       opcode = in.readByte();
       nBlocks = (opcode & 0x1f) + 1;
 
@@ -104,6 +104,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           }
           break;
         case 0xa0:
+          if (in.getFilePointer() + 2 >= in.length()) break;
           colorA = in.readShort();
           while (nBlocks-- > 0) {
             blockPtr = rowPtr + pixelPtr;
@@ -128,6 +129,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           break;
         case 0xc0:
         case 0x20:
+          if (in.getFilePointer() + 2 >= in.length()) break;
           if ((opcode & 0xe0) == 0xc0) {
             colorA = in.readShort();
           }
@@ -183,6 +185,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           for (pixelY=0; pixelY<4; pixelY++) {
             for (pixelX=0; pixelX<4; pixelX++) {
               if ((pixelY != 0) || (pixelX != 0)) {
+                if (in.getFilePointer() + 2 >= in.length()) break;
                 colorA = in.readShort();
               }
               if (blockPtr >= pixels.length) break;
