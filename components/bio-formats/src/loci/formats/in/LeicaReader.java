@@ -848,7 +848,7 @@ public class LeicaReader extends FormatReader {
       store.setImageDescription((String) seriesDescriptions.get(i), i);
 
       // link Instrument and Image
-      store.setImageInstrumentRef("Instrument:0", 0);
+      store.setImageInstrumentRef("Instrument:0", i);
 
       store.setDimensionsPhysicalSizeX(new Float(physicalSizes[i][0]), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(physicalSizes[i][1]), i, 0);
@@ -895,6 +895,16 @@ public class LeicaReader extends FormatReader {
     stream.skipBytes(8);
     int nElements = stream.readInt();
     stream.skipBytes(4);
+
+    Vector[] channelNames = new Vector[getSeriesCount()];
+    Vector[] emWaves = new Vector[getSeriesCount()];
+    Vector[] exWaves = new Vector[getSeriesCount()];
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      channelNames[i] = new Vector();
+      emWaves[i] = new Vector();
+      exWaves[i] = new Vector();
+    }
 
     for (int j=0; j<nElements; j++) {
       stream.seek(24 + j * cbElements);
@@ -943,11 +953,14 @@ public class LeicaReader extends FormatReader {
             else if (tokens[2].equals("HighVoltage")) {
               store.setDetectorVoltage(new Float(data), 0, detector);
             }
-
-            // link Detector to Image
-            store.setDetectorID("Detector:" + detector, 0, detector);
-            store.setDetectorSettingsDetector("Detector:" + detector, 0,
-              detector);
+            else if (tokens[2].equals("State")) {
+              if (data.equals("Active")) {
+                // link Detector to Image, if the detector was actually used
+                store.setDetectorID("Detector:" + detector, 0, detector);
+                store.setDetectorSettingsDetector("Detector:" + detector, 0,
+                  detector);
+              }
+            }
           }
           catch (NumberFormatException e) {
             if (debug) LogTools.trace(e);
@@ -962,7 +975,33 @@ public class LeicaReader extends FormatReader {
           store.setObjectiveLensNA(new Float(data), 0, objective);
         }
         else if (tokens[2].equals("Objective")) {
-          store.setObjectiveModel(data, 0, objective);
+          String[] objectiveData = data.split(" ");
+          StringBuffer model = new StringBuffer();
+          String mag = null, na = null;
+          StringBuffer correction = new StringBuffer();
+          for (int i=0; i<objectiveData.length; i++) {
+            if (objectiveData[i].indexOf("x") != -1 && mag == null &&
+              na == null)
+            {
+              int xIndex = objectiveData[i].indexOf("x");
+              mag = objectiveData[i].substring(0, xIndex).trim();
+              na = objectiveData[i].substring(xIndex + 1).trim();
+            }
+            else if (mag == null && na == null) {
+              model.append(objectiveData[i]);
+              model.append(" ");
+            }
+            else {
+              correction.append(objectiveData[i]);
+              correction.append(" ");
+            }
+          }
+          store.setObjectiveCorrection(correction.toString().trim(), 0,
+            objective);
+          store.setObjectiveModel(model.toString().trim(), 0, objective);
+          store.setObjectiveLensNA(new Float(na), 0, objective);
+          store.setObjectiveNominalMagnification(
+            new Integer((int) Float.parseFloat(mag)), 0, objective);
         }
         else if (tokens[2].equals("OrderNumber")) {
           store.setObjectiveSerialNumber(data, 0, objective);
@@ -980,14 +1019,14 @@ public class LeicaReader extends FormatReader {
         if (tokens[2].equals("Wavelength")) {
           Integer wavelength = new Integer((int) Float.parseFloat(data));
           if (tokens[3].equals("0")) {
-            store.setLogicalChannelEmWave(wavelength, series, channel);
+            emWaves[series].add(wavelength);
           }
           else if (tokens[3].equals("1")) {
-            store.setLogicalChannelExWave(wavelength, series, channel);
+            exWaves[series].add(wavelength);
           }
         }
         else if (tokens[2].equals("Stain")) {
-          store.setLogicalChannelName(data, series, channel);
+          channelNames[series].add(data);
         }
       }
       else if (tokens[0].startsWith("CXYZStage")) {
@@ -1021,6 +1060,25 @@ public class LeicaReader extends FormatReader {
       addMeta("Series " + series + " " + contentID, data);
     }
     stream.close();
+
+    // populate saved LogicalChannel data
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      int nextChannel = 0;
+      for (int channel=0; channel<channelNames[i].size(); channel++) {
+        String name = (String) channelNames[i].get(channel);
+        if (name == null || name.trim().equals("")) continue;
+
+        store.setLogicalChannelName(name, i, nextChannel);
+        store.setLogicalChannelEmWave((Integer) emWaves[i].get(channel),
+          i, nextChannel);
+        store.setLogicalChannelExWave((Integer) exWaves[i].get(channel),
+          i, nextChannel);
+
+        nextChannel++;
+      }
+    }
+
   }
 
   private boolean usedFile(String s) {

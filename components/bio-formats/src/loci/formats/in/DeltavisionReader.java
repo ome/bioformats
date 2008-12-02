@@ -1,4 +1,4 @@
-////
+//
 // DeltavisionReader.java
 //
 
@@ -370,11 +370,6 @@ public class DeltavisionReader extends FormatReader {
         store.setLogicalChannelNdFilter(
           new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
       }
-      store.setLightSourceSettingsWavelength(new Integer(waves[w]), 0, w);
-
-      // link LightSourceSettings to an actual LightSource
-      store.setLightSourceID("LightSource:" + w, 0, w);
-      store.setLightSourceSettingsLightSource("LightSource:" + w, 0, w);
     }
 
     status("Populating metadata");

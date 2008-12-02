@@ -447,6 +447,9 @@ public class ZeissLSMReader extends BaseTiffReader {
     Hashtable acquireChannels = new Hashtable();
     Hashtable channelData = new Hashtable();
 
+    Hashtable acquireLasers = new Hashtable();
+    Hashtable laserData = new Hashtable();
+
     if (scanInformationOffset != 0) {
       in.seek(scanInformationOffset);
 
@@ -551,10 +554,15 @@ public class ZeissLSMReader extends BaseTiffReader {
         if (value instanceof String) value = ((String) value).trim();
         if (key != null) addMeta(key, value);
 
-        if (key.endsWith("Acquire") && key.indexOf("Detection Channel") != -1)
-        {
-          acquireChannels.put(new Integer(count - 2),
-            new Integer(value.toString()));
+        if (key.endsWith("Acquire")) {
+          Integer index = new Integer(count - 2);
+          Integer acquire = new Integer(value.toString());
+          if (key.indexOf("Detection Channel") != -1) {
+            acquireChannels.put(index, acquire);
+          }
+          else if (key.indexOf("Laser") != -1) {
+            acquireLasers.put(index, acquire);
+          }
         }
 
         float n;
@@ -619,16 +627,13 @@ public class ZeissLSMReader extends BaseTiffReader {
             }
             else if (medium.equals("Enterprise")) medium = null;
 
-            if (medium != null && laserType != null) {
-              // link LightSource to Image
-              store.setLightSourceID("LightSource:" + nextLaserType, 0,
-                nextLaserType);
-              store.setLightSourceSettingsLightSource(
-                "LightSource:" + nextLaserType, 0, nextLaserType);
+            laserData.put("medium " + nextLaserMedium,
+              medium == null ? "" : medium);
+            laserData.put("type " + nextLaserType,
+              laserType == null ? "" : laserType);
 
-              store.setLaserLaserMedium(medium, 0, nextLaserMedium++);
-              store.setLaserType(laserType, 0, nextLaserType++);
-            }
+            nextLaserMedium++;
+            nextLaserType++;
 
             break;
           //case LASER_POWER:
@@ -663,6 +668,31 @@ public class ZeissLSMReader extends BaseTiffReader {
         }
 
         if (!done) done = in.getFilePointer() >= in.length() - 12;
+      }
+    }
+
+    // set laser data
+
+    int nextLaser = 0;
+
+    for (int i=0; i<acquireLasers.size(); i++) {
+      boolean acquire =
+        ((Integer) acquireLasers.get(new Integer(i))).intValue() != 0;
+      if (!acquire) continue;
+
+      String medium = (String) laserData.get("medium " + i);
+      String laserType = (String) laserData.get("type " + i);
+
+      if (!medium.equals("") && !laserType.equals("")) {
+        store.setLaserLaserMedium(medium, 0, nextLaser);
+        store.setLaserType(laserType, 0, nextLaser);
+
+        // link Laser (LightSource) to Image
+        store.setLightSourceID("LightSource:" + nextLaser, 0, nextLaser);
+        store.setLightSourceSettingsLightSource("LightSource:" + nextLaser,
+          0, nextLaser);
+
+        nextLaser++;
       }
     }
 
