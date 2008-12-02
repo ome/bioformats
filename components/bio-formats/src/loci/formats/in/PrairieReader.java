@@ -209,6 +209,10 @@ public class PrairieReader extends FormatReader {
       is.read(b);
       is.close();
 
+      if (checkSuffix(id, XML_SUFFIX)) {
+        core[0].imageCount = 0;
+      }
+
       DefaultHandler handler = new PrairieHandler();
       DataTools.parseXML(b, handler);
 
@@ -243,8 +247,8 @@ public class PrairieReader extends FormatReader {
         store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
         store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
         for (int i=0; i<getSizeC(); i++) {
-          String gain = (String) gains.get(i);
-          String offset = (String) offsets.get(i);
+          String gain = i < gains.size() ? (String) gains.get(i) : null;
+          String offset = i < offsets.size() ? (String) offsets.get(i) : null;
 
           if (offset != null) {
             store.setDetectorSettingsOffset(new Float(offset), 0, i);
