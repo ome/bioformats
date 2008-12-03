@@ -454,22 +454,26 @@ public class DeltavisionReader extends FormatReader {
         // Objective properties
         if (key.equals("Objective")) {
           // assume first word is the manufacturer's name
-          String manufacturer = value.substring(0, value.indexOf(" "));
-          String extra = value.substring(value.indexOf(" ") + 1);
+          int space = value.indexOf(" ");
+          if (space != -1) {
+            String manufacturer = value.substring(0, space);
+            String extra = value.substring(space + 1);
 
-          String[] tokens = extra.split(",");
+            String[] tokens = extra.split(",");
 
-          store.setObjectiveManufacturer(manufacturer, 0, 0);
+            store.setObjectiveManufacturer(manufacturer, 0, 0);
 
-          String magnification = tokens[0].substring(0, tokens[0].indexOf("X"));
-          String na = tokens[0].substring(tokens[0].indexOf("/") + 1);
+            String magnification =
+              tokens[0].substring(0, tokens[0].indexOf("X"));
+            String na = tokens[0].substring(tokens[0].indexOf("/") + 1);
 
-          store.setObjectiveNominalMagnification(new Integer(magnification),
-            0, 0);
-          store.setObjectiveLensNA(new Float(na), 0, 0);
-          store.setObjectiveCorrection(tokens[1], 0, 0);
-          // TODO:  Token #2 is the microscope model name.
-          if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
+            store.setObjectiveNominalMagnification(new Integer(magnification),
+              0, 0);
+            store.setObjectiveLensNA(new Float(na), 0, 0);
+            store.setObjectiveCorrection(tokens[1], 0, 0);
+            // TODO:  Token #2 is the microscope model name.
+            if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
+          }
         }
         else if (key.equals("Lens ID")) {
           store.setObjectiveID(value, 0, 0);
