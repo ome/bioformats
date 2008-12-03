@@ -145,7 +145,7 @@ public class ND2Reader extends FormatReader {
 
       for (int row=0; row<h; row++) {
         int offset = (row + y) * effectiveX * pixel + x * pixel;
-        if (offset < t.length) {
+        if (offset + w * pixel <= t.length) {
           System.arraycopy(t, offset, buf, row * w * pixel, w * pixel);
         }
       }

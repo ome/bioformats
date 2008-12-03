@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 import loci.common.RandomAccessStream;
@@ -66,7 +66,10 @@ public class ZlibCodec extends BaseCodec implements Codec {
     byte[] buf = new byte[8192];
     int r = 0;
     // read until eof reached
-    while ((r = i.read(buf, 0, buf.length)) > 0) bytes.add(buf, 0, r);
+    try {
+      while ((r = i.read(buf, 0, buf.length)) > 0) bytes.add(buf, 0, r);
+    }
+    catch (EOFException e) { }
     return bytes.toByteArray();
   }
 
