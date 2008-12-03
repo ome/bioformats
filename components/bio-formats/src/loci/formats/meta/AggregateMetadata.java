@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
+ * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -1589,6 +1589,19 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getObjectiveImmersion(instrumentIndex, objectiveIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getObjectiveIris(int, int) */
+  public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Boolean result = retrieve.getObjectiveIris(instrumentIndex, objectiveIndex);
         if (result != null) return result;
       }
     }
@@ -3674,6 +3687,17 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setObjectiveImmersion(immersion, instrumentIndex, objectiveIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setObjectiveIris(Boolean, int, int) */
+  public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setObjectiveIris(iris, instrumentIndex, objectiveIndex);
       }
     }
   }

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
+ * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -813,6 +813,12 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   public String getObjectiveImmersion(int instrumentIndex, int objectiveIndex) {
     ObjectiveNode objective = getObjectiveNode(instrumentIndex, objectiveIndex, false);
     return objective == null ? null : objective.getImmersion();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getObjectiveIris(int, int) */
+  public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex) {
+    // NB: Iris unsupported for schema version 2007-06
+    return null;
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getObjectiveLensNA(int, int) */
@@ -2001,6 +2007,11 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (immersion == null) return;
     ObjectiveNode objectiveNode = getObjectiveNode(instrumentIndex, objectiveIndex, true);
     objectiveNode.setImmersion(immersion);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setObjectiveIris(Boolean, int, int) */
+  public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex) {
+    // NB: Iris unsupported for schema version 2007-06
   }
 
   /* @see loci.formats.meta.MetadataStore#setObjectiveLensNA(Float, int, int) */

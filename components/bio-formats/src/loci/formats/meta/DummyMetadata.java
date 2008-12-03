@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
+ * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -586,6 +586,10 @@ public class DummyMetadata implements IMetadata {
   }
   /* @see MetadataRetrieve#getObjectiveImmersion(int, int) */
   public String getObjectiveImmersion(int instrumentIndex, int objectiveIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getObjectiveIris(int, int) */
+  public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getObjectiveLensNA(int, int) */
@@ -1355,6 +1359,10 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataStore#setObjectiveImmersion(String, int, int) */
   public void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex) {
+  }
+
+  /* @see MetadataStore#setObjectiveIris(Boolean, int, int) */
+  public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex) {
   }
 
   /* @see MetadataStore#setObjectiveLensNA(Float, int, int) */

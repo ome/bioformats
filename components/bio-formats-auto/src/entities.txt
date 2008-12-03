@@ -1067,6 +1067,23 @@ description = TODO
 [Objective WorkingDistance 2003FC]
 path = -
 
+# NB: This will be added in the next OME-XML release.
+[Objective Iris]
+type = Boolean
+description = TODO
+
+[Objective Iris 200809]
+path = -
+
+[Objective Iris 200802]
+path = -
+
+[Objective Iris 200706]
+path = -
+
+[Objective Iris 2003FC]
+path = -
+
 #TODO figure out how to reconcile the two filter models
 
 #http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd

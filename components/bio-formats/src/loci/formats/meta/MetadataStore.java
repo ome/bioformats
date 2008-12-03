@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Nov 19, 2008 11:18:16 AM PST
+ * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
  *
  *-----------------------------------------------------------------------------
  */
@@ -808,6 +808,14 @@ public interface MetadataStore {
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex);
+
+  /**
+   * For a particular Objective, sets TODO.
+   * @param iris TODO
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex);
 
   /**
    * For a particular Objective, sets TODO.
