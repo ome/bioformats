@@ -589,6 +589,11 @@ public class ZeissLSMReader extends BaseTiffReader {
             if (next < tokens.length) {
               store.setObjectiveImmersion(tokens[next++], 0, 0);
             }
+            boolean iris = false;
+            if (next < tokens.length) {
+              iris = tokens[next++].trim().equalsIgnoreCase("iris");
+            }
+            store.setObjectiveIris(new Boolean(iris), 0, 0);
 
             // link Objective to Image
             store.setObjectiveID("Objective:0", 0, 0);
