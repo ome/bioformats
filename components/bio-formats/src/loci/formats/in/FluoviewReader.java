@@ -47,9 +47,6 @@ public class FluoviewReader extends BaseTiffReader {
 
   // -- Constants --
 
-  /** Maximum number of bytes to check for Fluoview header information. */
-  private static final int BLOCK_CHECK_LEN = 16384;
-
   /** String identifying a Fluoview file. */
   private static final String FLUOVIEW_MAGIC_STRING = "FLUOVIEW";
 
