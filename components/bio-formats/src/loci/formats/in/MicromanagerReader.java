@@ -54,7 +54,6 @@ public class MicromanagerReader extends FormatReader {
 
   private String metadataFile;
 
-  private String base;
   private String[] channels;
 
   // -- Constructor --
@@ -113,8 +112,7 @@ public class MicromanagerReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     int[] coords = getZCTCoords(no);
-    tiffReader.setId(base + coords[0] + "_" + channels[coords[1]] + "_" +
-      coords[2] + ".tif");
+    tiffReader.setId((String) tiffs.get(no));
     return tiffReader.openBytes(0, buf, x, y, w, h);
   }
 
@@ -163,20 +161,17 @@ public class MicromanagerReader extends FormatReader {
 
     status("Finding image file names");
 
-    // first find the name of each TIFF file
+    // find the name of a TIFF file
+    String baseTiff = null;
     tiffs = new Vector();
     int pos = 0;
     while (true) {
       pos = s.indexOf("FileName", pos);
       if (pos == -1 || pos >= in.length()) break;
       String name = s.substring(s.indexOf(":", pos), s.indexOf(",", pos));
-      tiffs.add(0, parent + name.substring(3, name.length() - 1));
+      baseTiff = parent + name.substring(3, name.length() - 1);
       pos++;
     }
-
-    base = (String) tiffs.get(0);
-    base = base.substring(0, base.indexOf("_",
-      base.lastIndexOf(File.separator)) + 1);
 
     // now parse the rest of the metadata
 
@@ -224,9 +219,12 @@ public class MicromanagerReader extends FormatReader {
           value = valueBuffer.toString();
           value = value.replaceAll("\n", "");
         }
-        else {
-          value = token.substring(token.indexOf("[") + 1, token.indexOf("]"));
-        }
+
+        int startIndex = value.indexOf("[");
+        int endIndex = value.indexOf("]");
+        if (endIndex == -1) endIndex = value.length();
+
+        value = value.substring(startIndex + 1, endIndex);
         value = value.trim();
         value = value.substring(0, value.length() - 1);
         addMeta(key, value);
@@ -271,6 +269,49 @@ public class MicromanagerReader extends FormatReader {
       }
 
     }
+
+    // build list of TIFF files
+
+    String prefix = "";
+    if (baseTiff.indexOf(File.separator) != -1) {
+      prefix = baseTiff.substring(0, baseTiff.lastIndexOf(File.separator) + 1);
+      baseTiff = baseTiff.substring(baseTiff.lastIndexOf(File.separator) + 1);
+    }
+
+    String[] blocks = baseTiff.split("_");
+    StringBuffer filename = new StringBuffer();
+    for (int t=0; t<getSizeT(); t++) {
+      for (int c=0; c<getSizeC(); c++) {
+        for (int z=0; z<getSizeZ(); z++) {
+          // file names are of format:
+          // img_<T>_<channel name>_<T>.tif
+          filename.append(prefix);
+          filename.append(blocks[0]);
+          filename.append("_");
+
+          int zeros = blocks[1].length() - String.valueOf(t).length();
+          for (int q=0; q<zeros; q++) {
+            filename.append("0");
+          }
+          filename.append(t);
+          filename.append("_");
+
+          filename.append(channels[c]);
+          filename.append("_");
+
+          zeros = blocks[3].length() - String.valueOf(z).length() - 4;
+          for (int q=0; q<zeros; q++) {
+            filename.append("0");
+          }
+          filename.append(z);
+          filename.append(".tif");
+
+          tiffs.add(filename.toString());
+          filename.delete(0, filename.length());
+        }
+      }
+    }
+
     tiffReader.setId((String) tiffs.get(0));
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
@@ -283,7 +324,7 @@ public class MicromanagerReader extends FormatReader {
     core[0].rgb = tiffReader.isRGB();
     core[0].interleaved = false;
     core[0].littleEndian = tiffReader.isLittleEndian();
-    core[0].imageCount = tiffs.size();
+    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
