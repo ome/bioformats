@@ -147,6 +147,7 @@ public class LeicaHandler extends DefaultHandler {
       if (bps.size() < numDatasets) bps.add(new Integer(8));
 
       numChannels = 0;
+      extras = 1;
     }
   }
 
