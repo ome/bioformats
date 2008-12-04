@@ -53,6 +53,16 @@ public final class ImageInfo {
    * A utility method for reading a file from the command line,
    * and displaying the results in a simple display.
    */
+  public static boolean testRead(String[] args)
+    throws FormatException, IOException
+  {
+    return testRead(new ImageReader(), args);
+  }
+
+  /**
+   * A utility method for reading a file from the command line, and
+   * displaying the results in a simple display, using the given reader.
+   */
   public static boolean testRead(IFormatReader reader, String[] args)
     throws FormatException, IOException
   {
@@ -640,7 +650,7 @@ public final class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    if (!testRead(new ImageReader(), args)) System.exit(1);
+    if (!testRead(args)) System.exit(1);
   }
 
   // -- Helper classes --
