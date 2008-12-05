@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -95,7 +97,17 @@ public class MNGReader extends FormatReader {
     b[6] = 0x1a;
     b[7] = 0x0a;
 
-    return ImageIO.read(new ByteArrayInputStream(b)).getSubimage(x, y, w, h);
+    BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+    img = img.getSubimage(x, y, w, h);
+
+    // reconstruct the image to use an appropriate raster
+    // ImageIO often returns images that cannot be scaled because a
+    // BytePackedRaster is used
+    byte[][] pix = AWTImageTools.getPixelBytes(img, isLittleEndian());
+    img = AWTImageTools.makeImage(pix, w, h,
+      FormatTools.getBytesPerPixel(getPixelType()), isLittleEndian());
+
+    return img;
   }
 
   // -- IFormatHandler API methods --
