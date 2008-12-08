@@ -819,6 +819,18 @@ public class ZeissLSMReader extends BaseTiffReader {
     ifds = (Hashtable[]) newIFDs.toArray(new Hashtable[0]);
     thumbnailsRemoved = true;
 
+    // fix the offsets for > 4 GB files
+    for (int i=1; i<ifds.length; i++) {
+      long thisOffset = TiffTools.getStripOffsets(ifds[i])[0] & 0xffffffffL;
+      long prevOffset = TiffTools.getStripOffsets(ifds[i - 1])[0];
+      if (prevOffset < 0) prevOffset &= 0xffffffffL;
+
+      if (prevOffset > thisOffset) {
+        thisOffset += 0xffffffffL;
+        ifds[i].put(new Integer(TiffTools.STRIP_OFFSETS), new Long(thisOffset));
+      }
+    }
+
     initMetadata();
     core[0].littleEndian = !isLittleEndian();
   }
