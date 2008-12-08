@@ -512,7 +512,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       // can only read from the input stream
 
       if (afp < fp) {
-        dis.close();
+        if (dis != null) dis.close();
 
         BufferedInputStream bis = new BufferedInputStream(
           new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
@@ -660,7 +660,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
       String path = f.getPath().toLowerCase();
 
-      dis.close();
+      if (dis != null) dis.close();
 
       if (path.endsWith(".gz")) {
         dis = new DataInputStream(new GZIPInputStream(bis));
