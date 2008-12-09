@@ -247,15 +247,17 @@ public class JPEG2000Codec extends BaseCodec {
     byte[][] single = null, half = null;
     BufferedImage b = null;
     Exception exception = null;
-    //long fp = in.getFilePointer();
+    long fp = in.getFilePointer();
     try {
-      //if (maxFP == 0) maxFP = in.length();
-      //byte[] buf = new byte[(int) (maxFP - fp)];
-      //in.read(buf);
+      byte[] buf = null;
+      if (options.maxBytes == 0) {
+        buf = new byte[(int) (in.length() - fp)];
+      }
+      else buf = new byte[(int) (options.maxBytes - fp)];
+      in.read(buf);
 
-      //ByteArrayInputStream bis = new ByteArrayInputStream(buf);
-      //MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
-      MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
+      ByteArrayInputStream bis = new ByteArrayInputStream(buf);
+      MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
 
       r.setVar("mciis", mciis);
       r.exec("j2kReader.setInput(mciis)");
@@ -263,9 +265,9 @@ public class JPEG2000Codec extends BaseCodec {
       b = (BufferedImage) r.exec("j2kReader.read(zero)");
       single = AWTImageTools.getPixelBytes(b, options.littleEndian);
 
-      //bis.close();
+      bis.close();
       mciis.close();
-      //buf = null;
+      buf = null;
       b = null;
     }
     catch (ReflectException exc) {

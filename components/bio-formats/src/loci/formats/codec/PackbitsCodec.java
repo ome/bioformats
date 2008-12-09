@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import loci.common.RandomAccessStream;
 import loci.formats.FormatException;
@@ -57,7 +58,7 @@ public class PackbitsCodec extends BaseCodec {
     throws FormatException, IOException
   {
     // Adapted from the TIFF 6.0 specification, page 42.
-    ByteVector output = new ByteVector(1024);
+    ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
     while (output.size() < options.maxBytes &&
       in.getFilePointer() < in.length())
     {
@@ -65,13 +66,13 @@ public class PackbitsCodec extends BaseCodec {
       if (n >= 0) { // 0 <= n <= 127
         byte[] b = new byte[n + 1];
         in.read(b);
-        output.add(b);
+        output.write(b);
         b = null;
       }
       else if (n != -128) { // -127 <= n <= -1
         int len = -n + 1;
         byte inp = in.readByte();
-        for (int i=0; i<len; i++) output.add(inp);
+        for (int i=0; i<len; i++) output.write(inp);
       }
     }
     return output.toByteArray();

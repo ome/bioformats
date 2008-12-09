@@ -144,10 +144,10 @@ public class DicomReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.INT8 &&
       getPixelType() != FormatTools.UINT8)
-   {
+    {
       return null;
-   }
-   return lut;
+    }
+    return lut;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
@@ -179,26 +179,41 @@ public class DicomReader extends FormatReader {
     if (isRLE) {
       // plane is compressed using run-length encoding
       CodecOptions options = new CodecOptions();
-      options.maxBytes = bytes / ec;
+      options.maxBytes = getSizeX() * getSizeY();
       for (int c=0; c<ec; c++) {
         PackbitsCodec codec = new PackbitsCodec();
-        byte[] t = codec.decompress(in, options);
-        if (t.length < (bytes / ec)) {
-          byte[] tmp = t;
-          t = new byte[bytes / ec];
-          System.arraycopy(tmp, 0, t, 0, tmp.length);
-        }
+        byte[] t = null;
 
         if (bpp > 1) {
           int plane = bytes / (bpp * ec);
-          byte[][] tmp = new byte[bpp][plane];
+          byte[][] tmp = new byte[bpp][];
           for (int i=0; i<bpp; i++) {
-            System.arraycopy(t, i*plane, tmp[i], 0, plane);
+            tmp[i] = codec.decompress(in, options);
+            if (no < getImageCount() - 1 || i < bpp - 1) {
+              while (in.read() == 0);
+              in.seek(in.getFilePointer() - 1);
+            }
           }
+          t = new byte[bytes / ec];
           for (int i=0; i<plane; i++) {
             for (int j=0; j<bpp; j++) {
-              t[i*bpp + j] = isLittleEndian() ? tmp[bpp - j - 1][i] : tmp[j][i];
+              int byteIndex = isLittleEndian() ? bpp - j - 1 : j;
+              if (i < tmp[byteIndex].length) {
+                t[i * bpp + j] = tmp[byteIndex][i];
+              }
             }
+          }
+        }
+        else {
+          t = codec.decompress(in, options);
+          if (t.length < (bytes / ec)) {
+            byte[] tmp = t;
+            t = new byte[bytes / ec];
+            System.arraycopy(tmp, 0, t, 0, tmp.length);
+          }
+          if (no < getImageCount() - 1 || c < ec - 1) {
+            while (in.read() == 0);
+            in.seek(in.getFilePointer() - 1);
           }
         }
 
@@ -214,9 +229,6 @@ public class DicomReader extends FormatReader {
           if (len < 0) break;
           System.arraycopy(t, src, buf, dest, len);
         }
-
-        while (in.read() == 0);
-        in.seek(in.getFilePointer() - 1);
       }
     }
     else if (isJPEG || isJP2K) {
@@ -441,7 +453,7 @@ public class DicomReader extends FormatReader {
           addInfo(tag, in.readString(elementLength));
           break;
         case PIXEL_DATA:
-        case 0xfffee000:
+        case ITEM:
           if (elementLength != 0) {
             baseOffset = in.getFilePointer();
             addInfo(tag, location);
@@ -484,8 +496,8 @@ public class DicomReader extends FormatReader {
         break;
     }
 
-    int plane = getSizeX() * getSizeY() * (lut == null ? getSizeC() : 1) *
-      FormatTools.getBytesPerPixel(getPixelType());
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int plane = getSizeX() * getSizeY() * (lut == null ? getSizeC() : 1) * bpp;
 
     status("Calculating image offsets");
 
@@ -498,8 +510,12 @@ public class DicomReader extends FormatReader {
         else {
           in.seek(offsets[i - 1]);
           CodecOptions options = new CodecOptions();
-          options.maxBytes = plane;
-          new PackbitsCodec().decompress(in, options);
+          options.maxBytes = plane / bpp;
+          for (int q=0; q<bpp; q++) {
+            new PackbitsCodec().decompress(in, options);
+            while (in.read() == 0);
+            in.seek(in.getFilePointer() - 1);
+          }
         }
         in.skipBytes(i == 0 ? 64 : 53);
         while (in.read() == 0);
