@@ -38,7 +38,7 @@ import loci.formats.FormatException;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class Base64Codec extends BaseCodec implements Codec {
+public class Base64Codec extends BaseCodec {
 
   // Base64 alphabet and codes
 
@@ -71,9 +71,9 @@ public class Base64Codec extends BaseCodec implements Codec {
     lookupBase64Alphabet[63] = (byte) '/';
   }
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] input, int x, int y, int[] dims,
-    Object options) throws FormatException
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] input, CodecOptions options)
+    throws FormatException
   {
     int dataBits = input.length * 8;
     int fewerThan24 = dataBits % 24;
@@ -146,8 +146,8 @@ public class Base64Codec extends BaseCodec implements Codec {
     return encoded;
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     // TODO: Add checks for invalid data.

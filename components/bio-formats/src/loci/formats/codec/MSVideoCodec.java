@@ -37,37 +37,42 @@ import loci.formats.FormatException;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/MSVideoCodec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/codec/MSVideoCodec.java">SVN</a></dd></dl>
  */
-public class MSVideoCodec extends BaseCodec implements Codec {
+public class MSVideoCodec extends BaseCodec {
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
     throw new FormatException("MS Video 1 compression not supported.");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#previousImage previousImage}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (options == null || !(options instanceof Object[])) return null;
-    Object[] optionsArray = (Object[]) options;
-    int bitsPerPixel = ((Integer) optionsArray[0]).intValue();
-    int width = ((Integer) optionsArray[1]).intValue();
-    int height = ((Integer) optionsArray[2]).intValue();
-    byte[] lastImage = (byte[]) optionsArray[3];
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
     in.order(true);
 
     int row = 0;
     int column = 0;
 
-    byte[] bytes = new byte[width * height];
-    short[] shorts = new short[width * height];
+    int plane = options.width * options.height;
+
+    byte[] bytes = new byte[plane];
+    short[] shorts = new short[plane];
 
     while (true) {
-      if (in.getFilePointer() >= in.length() || row >= width ||
-        column >= height)
+      if (in.getFilePointer() >= in.length() || row >= options.width ||
+        column >= options.height)
       {
         break;
       }
@@ -79,20 +84,21 @@ public class MSVideoCodec extends BaseCodec implements Codec {
 
         int skip = (b - 0x84) * 256 + a;
         for (int i=0; i<skip; i++) {
-          if (lastImage != null) {
+          if (options.previousImage != null) {
             for (int y=0; y<4; y++) {
               for (int x=0; x<4; x++) {
-                if (row + x >= width) break;
-                if (column + y >= height) break;
-                int ndx = width*(column + y) + row + x;
-                int oldNdx = width*(height - 1 - y - column) + row + x;
-                if (bitsPerPixel == 8) {
-                  bytes[ndx] = lastImage[oldNdx];
+                if (row + x >= options.width) break;
+                if (column + y >= options.height) break;
+                int ndx = options.width*(column + y) + row + x;
+                int oldNdx =
+                  options.width*(options.height - 1 - y - column) + row + x;
+                if (options.bitsPerSample == 8) {
+                  bytes[ndx] = options.previousImage[oldNdx];
                 }
                 else {
-                  byte red = lastImage[oldNdx];
-                  byte green = lastImage[oldNdx + width*height];
-                  byte blue = lastImage[oldNdx + 2*width*height];
+                  byte red = options.previousImage[oldNdx];
+                  byte green = options.previousImage[oldNdx + plane];
+                  byte blue = options.previousImage[oldNdx + 2*plane];
                   shorts[ndx] = (short) (((blue & 0x1f) << 10) |
                     ((green & 0x1f) << 5) | (red & 0x1f));
                 }
@@ -101,20 +107,20 @@ public class MSVideoCodec extends BaseCodec implements Codec {
           }
 
           row += 4;
-          if (row >= width) {
+          if (row >= options.width) {
             row = 0;
             column += 4;
           }
         }
       }
       else if (b >= 0 && b < 0x80) {
-        if (bitsPerPixel == 8) {
+        if (options.bitsPerSample == 8) {
           byte colorA = in.readByte();
           byte colorB = in.readByte();
 
           for (int y=0; y<4; y++) {
             for (int x=3; x>=0; x--) {
-              int ndx = width*(column + y) + row + x;
+              int ndx = options.width*(column + y) + row + x;
               short flag = y < 2 ? b : a;
               int shift = 4 - 4*(y % 2) + x;
               int cmp = 1 << shift;
@@ -140,7 +146,7 @@ public class MSVideoCodec extends BaseCodec implements Codec {
 
             for (int y=0; y<4; y++) {
               for (int x=3; x>= 0; x--) {
-                int ndx = width*(column + y) + row + x;
+                int ndx = options.width*(column + y) + row + x;
 
                 short colorA =
                   x < 2 ? (y < 2 ? q3a : q1a) : (y < 2 ? q4a : q2a);
@@ -163,7 +169,7 @@ public class MSVideoCodec extends BaseCodec implements Codec {
 
             for (int y=0; y<4; y++) {
               for (int x=3; x>=0; x--) {
-                int ndx = width*(column + y) + row + x;
+                int ndx = options.width*(column + y) + row + x;
                 if (ndx >= shorts.length) break;
                 short flag = y < 2 ? b : a;
                 int shift = 4 - 4*(y % 2) + x;
@@ -176,18 +182,18 @@ public class MSVideoCodec extends BaseCodec implements Codec {
         }
 
         row += 4;
-        if (row >= width) {
+        if (row >= options.width) {
           row = 0;
           column += 4;
         }
       }
-      else if (bitsPerPixel == 8 && 0x90 < b) {
+      else if (options.bitsPerSample == 8 && 0x90 < b) {
         byte[] colors = new byte[8];
         in.read(colors);
 
         for (int y=0; y<4; y++) {
           for (int x=3; x>=0; x--) {
-            int ndx = width*(column + y) + row + x;
+            int ndx = options.width*(column + y) + row + x;
             byte colorA = y < 2 ? (x < 2 ? colors[4] : colors[6]) :
               (x < 2 ? colors[0] : colors[2]);
             byte colorB = y < 2 ? (x < 2 ? colors[5] : colors[7]) :
@@ -204,37 +210,38 @@ public class MSVideoCodec extends BaseCodec implements Codec {
       else {
         for (int y=0; y<4; y++) {
           for (int x=0; x<4; x++) {
-            int ndx = width*(column + y) + row + x;
-            if (bitsPerPixel == 8) bytes[ndx] = (byte) (a & 0xff);
+            int ndx = options.width*(column + y) + row + x;
+            if (options.bitsPerSample == 8) bytes[ndx] = (byte) (a & 0xff);
             else shorts[ndx] = (short) (((b << 8) | a) & 0xffff);
           }
         }
         row += 4;
-        if (row >= width) {
+        if (row >= options.width) {
           row = 0;
           column += 4;
         }
       }
     }
 
-    if (bitsPerPixel == 8) {
+    if (options.bitsPerSample == 8) {
       byte[] tmp = bytes;
       bytes = new byte[tmp.length];
-      for (int y=0; y<height; y++) {
-        System.arraycopy(tmp, y*width, bytes, (height-y-1)*width, width);
+      for (int y=0; y<options.height; y++) {
+        System.arraycopy(tmp, y*options.width, bytes,
+          (options.height-y-1)*options.width, options.width);
       }
       return bytes;
     }
 
-    byte[] b = new byte[width * height * 3];
+    byte[] b = new byte[plane * 3];
     // expand RGB 5-5-5 to 3 byte tuple
 
-    for (int y=0; y<height; y++) {
-      for (int x=0; x<width; x++) {
-        int off = y*width + x;
-        int dest = (height - y - 1)*width + x;
-        b[dest + 2*width*height] = (byte) ((shorts[off] & 0x7c00) >> 10);
-        b[dest + width*height] = (byte) ((shorts[off] & 0x3e0) >> 5);
+    for (int y=0; y<options.height; y++) {
+      for (int x=0; x<options.width; x++) {
+        int off = y*options.width + x;
+        int dest = (options.height - y - 1)*options.width + x;
+        b[dest + 2*plane] = (byte) ((shorts[off] & 0x7c00) >> 10);
+        b[dest + plane] = (byte) ((shorts[off] & 0x3e0) >> 5);
         b[dest] = (byte) (shorts[off] & 0x1f);
       }
     }

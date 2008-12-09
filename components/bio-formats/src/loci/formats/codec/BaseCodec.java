@@ -63,7 +63,7 @@ public abstract class BaseCodec implements Codec {
     LogTools.println("Generating random data");
     r.nextBytes(testdata);
     LogTools.println("Compressing data");
-    byte[] compressed = compress(testdata, 0, 0, null, null);
+    byte[] compressed = compress(testdata, null);
     LogTools.println("Compressed size: " + compressed.length);
     LogTools.println("Decompressing data");
     byte[] decompressed = decompress(compressed);
@@ -93,7 +93,7 @@ public abstract class BaseCodec implements Codec {
     for (int i = 0; i < 100; i++) {
       System.arraycopy(testdata, 500*i, twoDtest[i], 0, 500);
     }
-    byte[] twoDcompressed = compress(twoDtest, 0, 0, null, null);
+    byte[] twoDcompressed = compress(twoDtest, null);
     LogTools.print("Comparing compressed data... ");
     if (twoDcompressed.length != compressed.length) {
       LogTools.println("1D and 2D compressed data not same length");
@@ -124,16 +124,13 @@ public abstract class BaseCodec implements Codec {
    * a 1D block of data, then calls the 1D version of compress.
    *
    * @param data The data to be compressed.
-   * @param x Length of the x dimension of the image data, if appropriate.
-   * @param y Length of the y dimension of the image data, if appropriate.
-   * @param dims The dimensions of the image data, if appropriate.
    * @param options Options to be used during compression, if appropriate.
    * @return The compressed data.
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
-  public byte[] compress(byte[][] data, int x, int y,
-    int[] dims, Object options) throws FormatException
+  public byte[] compress(byte[][] data, CodecOptions options)
+    throws FormatException
   {
     int len = 0;
     for (int i = 0; i < data.length; i++) {
@@ -145,7 +142,7 @@ public abstract class BaseCodec implements Codec {
       System.arraycopy(data[i], 0, toCompress, curPos, data[i].length);
       curPos += data[i].length;
     }
-    return compress(toCompress, x, y, dims, options);
+    return compress(toCompress, options);
   }
 
   /* @see Codec#decompress(byte[]) */
@@ -158,10 +155,8 @@ public abstract class BaseCodec implements Codec {
     return decompress(data, null);
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  //public abstract byte[] decompress(byte[] data, Object options)
-  //  throws FormatException;
-  public byte[] decompress(byte[] data, Object options)
+  /* @see Codec#decompress(byte[], CodecOptions) */
+  public byte[] decompress(byte[] data, CodecOptions options)
     throws FormatException
   {
     try {
@@ -175,18 +170,8 @@ public abstract class BaseCodec implements Codec {
     }
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  //public byte[] decompress(RandomAccessStream in, Object options)
-  //  throws FormatException
-  //{
-  //  try {
-  //    byte[] b = new byte[(int) in.length()];
-  //    in.read(b);
-  //    return decompress(b, options);
-  //  }
-  //  catch (IOException exc) { throw new FormatException(exc); }
-  //}
-  public abstract byte[] decompress(RandomAccessStream in, Object options)
+  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
+  public abstract byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException;
 
   /**
@@ -199,7 +184,7 @@ public abstract class BaseCodec implements Codec {
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
-  public byte[] decompress(byte[][] data, Object options)
+  public byte[] decompress(byte[][] data, CodecOptions options)
     throws FormatException
   {
     int len = 0;

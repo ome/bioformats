@@ -37,21 +37,21 @@ import loci.formats.FormatException;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class LZOCodec extends BaseCodec implements Codec {
+public class LZOCodec extends BaseCodec {
 
   // LZO compression codes
   private static final int LZO_OVERRUN = -6;
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y,
-      int[] dims, Object options) throws FormatException
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
+    throws FormatException
   {
     // TODO: Add LZO compression support.
     throw new FormatException("LZO Compression not currently supported");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     // Adapted from LZO for Java, available at

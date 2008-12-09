@@ -1292,6 +1292,10 @@ public final class TiffTools {
       jpegTable = (byte[]) TiffTools.getIFDValue(ifd, JPEG_TABLES);
     }
 
+    CodecOptions options = new CodecOptions();
+    options.interleaved = true;
+    options.littleEndian = littleEndian;
+
     if (isTiled) {
       long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
       long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
@@ -1324,13 +1328,14 @@ public final class TiffTools {
           in.read(tile);
 
           int size = (int) (tileWidth * tileLength * pixel * channels);
+          options.maxBytes = size;
           if (jpegTable != null) {
             byte[] q = new byte[jpegTable.length + tile.length - 4];
             System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
             System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
-            tile = uncompress(q, compression, size);
+            tile = uncompress(q, compression, options);
           }
-          else tile = uncompress(tile, compression, size);
+          else tile = uncompress(tile, compression, options);
 
           undifference(tile, bitsPerSample, tileWidth, planarConfig, predictor,
             littleEndian);
@@ -1404,14 +1409,15 @@ public final class TiffTools {
           }
           byte[] bytes = new byte[(int) stripByteCounts[strip]];
           in.read(bytes);
+          options.maxBytes = size;
           if (jpegTable != null) {
             byte[] q = new byte[jpegTable.length + bytes.length - 4];
             System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
             System.arraycopy(bytes, 2, q, jpegTable.length - 2,
               bytes.length - 2);
-            bytes = uncompress(q, compression, size);
+            bytes = uncompress(q, compression, options);
           }
-          else bytes = uncompress(bytes, compression, size);
+          else bytes = uncompress(bytes, compression, options);
 
           undifference(bytes, bitsPerSample,
             imageWidth, planarConfig, predictor, littleEndian);
@@ -1717,7 +1723,8 @@ public final class TiffTools {
   // -- Decompression methods --
 
   /** Decodes a strip of data compressed with the given compression scheme. */
-  public static byte[] uncompress(byte[] input, int compression, int size)
+  public static byte[] uncompress(byte[] input, int compression,
+    CodecOptions options)
     throws FormatException, IOException
   {
     if (compression < 0) compression += 65536;
@@ -1737,31 +1744,29 @@ public final class TiffTools {
         "(Group 4 Fax) compression mode is not supported");
     }
     else if (compression == LZW) {
-      return new LZWCodec().decompress(input, new Integer(size));
+      return new LZWCodec().decompress(input, options);
     }
     else if (compression == JPEG || compression == ALT_JPEG) {
-      return new JPEGCodec().decompress(input,
-        new Object[] {Boolean.TRUE, Boolean.TRUE});
+      return new JPEGCodec().decompress(input, options);
     }
     else if (compression == JPEG_2000) {
-      return new JPEG2000Codec().decompress(input,
-        new Object[] {Boolean.TRUE, Boolean.TRUE, new Long(size)});
+      return new JPEG2000Codec().decompress(input, options);
     }
     else if (compression == PACK_BITS) {
-      return new PackbitsCodec().decompress(input, new Integer(size));
+      return new PackbitsCodec().decompress(input, options);
     }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      return new ZlibCodec().decompress(input);
+      return new ZlibCodec().decompress(input, options);
     }
     else if (compression == THUNDERSCAN) {
       throw new FormatException("Sorry, " +
         "Thunderscan compression mode is not supported");
     }
     else if (compression == NIKON) {
-      return new NikonCodec().decompress(input, new Integer(size));
+      return new NikonCodec().decompress(input, options);
     }
     else if (compression == LURAWAVE) {
-      return new LuraWaveCodec().decompress(input, new Integer(size));
+      return new LuraWaveCodec().decompress(input, options);
     }
     else {
       throw new FormatException(
@@ -2521,19 +2526,21 @@ public final class TiffTools {
     throws FormatException, IOException
   {
     int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
-    int width =(int) getImageWidth(ifd);
-    int height =(int) getImageLength(ifd);
-    int bytes = (int) Math.floor((double)
-      ((int[]) getIFDValue(ifd, BITS_PER_SAMPLE))[0] / 8.0);
-    int[] dims = {getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1), bytes};
-    // TODO: Change the decompression to use littleEndian
-    Object[] options = {Boolean.TRUE, Boolean.TRUE};
+
+    CodecOptions options = new CodecOptions();
+    options.width = (int) getImageWidth(ifd);
+    options.height = (int) getImageLength(ifd);
+    options.bitsPerSample = getBitsPerSample(ifd)[0];
+    options.channels = getSamplesPerPixel(ifd);
+    options.littleEndian = isLittleEndian(ifd);
+    options.interleaved = true;
+
     if (compression == UNCOMPRESSED) return input;
     else if (compression == JPEG) {
-      return new JPEGCodec().compress(input, width, height, dims, options);
+      return new JPEGCodec().compress(input, options);
     }
     else if (compression == JPEG_2000) {
-      return new JPEG2000Codec().compress(input, width, height, dims, options);
+      return new JPEG2000Codec().compress(input, options);
     }
     else {
       return compress(input, compression);
@@ -2560,7 +2567,7 @@ public final class TiffTools {
     }
     else if (compression == LZW) {
       LZWCodec c = new LZWCodec();
-      return c.compress(input, 0, 0, null, null);
+      return c.compress(input, null);
       // return Compression.lzwCompress(input);
     }
 

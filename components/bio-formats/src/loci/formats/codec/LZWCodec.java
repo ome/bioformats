@@ -93,8 +93,8 @@ public class LZWCodec extends BaseCodec {
   private static final int[] DECOMPR_MASKS =
     {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f};
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] input, int x, int y, int[] dims, Object options)
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] input, CodecOptions options)
     throws FormatException
   {
     if (input == null || input.length == 0) return input;
@@ -240,20 +240,20 @@ public class LZWCodec extends BaseCodec {
     return result;
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#maxBytes maxBytes}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     if (in == null || in.length() == 0) return null;
-    if (options == null) {
-      throw new FormatException("Options must be the maximum number of " +
-        "decompressed bytes.");
-    }
-
-    int outSize = ((Integer) options).intValue();
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
     // Output buffer
-    byte[] output = new byte[outSize];
+    byte[] output = new byte[options.maxBytes];
     // Position in output buffer to write next byte to
     int currOutPos = 0;
 

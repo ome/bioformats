@@ -26,7 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.PackbitsCodec;
+import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -96,13 +96,17 @@ public class PSDReader extends FormatReader {
         }
       }
 
+      CodecOptions options = new CodecOptions();
+      options.maxBytes = getSizeX() * bpp;
+
+      int len = w * bpp;
+
       for (int c=0; c<getSizeC(); c++) {
         for (int row=0; row<getSizeY(); row++) {
           if (row < y || row >= (y + h)) in.skipBytes(lens[c][row]);
           else {
-            byte[] b = codec.decompress(in, new Integer(getSizeX() * bpp));
-            System.arraycopy(b, x * bpp, buf,
-              c * h * bpp * w + (row - y) * bpp * w, w * bpp);
+            byte[] b = codec.decompress(in, options);
+            System.arraycopy(b, x*bpp, buf, c * h * len + (row - y) * len, len);
           }
         }
       }

@@ -674,28 +674,29 @@ public class QTReader extends FormatReader {
   private byte[] uncompress(byte[] pixs, String code)
     throws FormatException, IOException
   {
+    CodecOptions options = new MJPBCodecOptions();
+    options.width = getSizeX();
+    options.height = getSizeY();
+    options.bitsPerSample = bitsPerPixel;
+    options.channels = bitsPerPixel < 40 ? bitsPerPixel / 8 :
+      (bitsPerPixel - 32) / 8;
+    options.previousImage = canUsePrevious ? prevPixels : null;
+    options.littleEndian = isLittleEndian();
+    options.interleaved = false;
+
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) {
-      Object[] options = new Object[2];
-      options[0] = new int[] {getSizeX(), getSizeY(),
-        bitsPerPixel < 40 ? bitsPerPixel / 8 : (bitsPerPixel - 32) / 8};
-      options[1] = canUsePrevious ? prevPixels : null;
       return new QTRLECodec().decompress(pixs, options);
     }
     else if (code.equals("rpza")) {
-      int[] options = new int[] {getSizeX(), getSizeY()};
       return new RPZACodec().decompress(pixs, options);
     }
     else if (code.equals("mjpb")) {
-      int[] options = new int[4];
-      options[0] = getSizeX();
-      options[1] = getSizeY();
-      options[2] = bitsPerPixel;
-      options[3] = interlaced ? 1 : 0;
+      ((MJPBCodecOptions) options).interlaced = interlaced;
       return new MJPBCodec().decompress(pixs, options);
     }
     else if (code.equals("jpeg")) {
-      return new JPEGCodec().decompress(pixs, new Boolean(isLittleEndian()));
+      return new JPEGCodec().decompress(pixs, options);
     }
     else throw new FormatException("Unsupported codec : " + code);
   }

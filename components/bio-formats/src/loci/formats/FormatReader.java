@@ -252,7 +252,7 @@ public abstract class FormatReader extends FormatHandler
   protected byte[] readPlane(RandomAccessStream s, int x, int y, int w, int h,
     byte[] buf) throws IOException
   {
-    int c = getSizeC();
+    int c = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY()) {
       s.read(buf);

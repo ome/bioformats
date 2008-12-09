@@ -37,24 +37,30 @@ import loci.formats.FormatException;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class PackbitsCodec extends BaseCodec implements Codec {
+public class PackbitsCodec extends BaseCodec {
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y,
-      int[] dims, Object options) throws FormatException
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
+    throws FormatException
   {
     // TODO: Add compression support.
     throw new FormatException("Packbits Compression not currently supported");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#maxBytes maxBytes}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     // Adapted from the TIFF 6.0 specification, page 42.
-    int expected = ((Integer) options).intValue();
     ByteVector output = new ByteVector(1024);
-    while (output.size() < expected && in.getFilePointer() < in.length()) {
+    while (output.size() < options.maxBytes &&
+      in.getFilePointer() < in.length())
+    {
       byte n = in.readByte();
       if (n >= 0) { // 0 <= n <= 127
         byte[] b = new byte[n + 1];

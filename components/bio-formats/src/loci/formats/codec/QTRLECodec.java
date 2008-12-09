@@ -34,17 +34,17 @@ import loci.formats.*;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/QTRLECodec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/codec/QTRLECodec.java">SVN</a></dd></dl>
  */
-public class QTRLECodec extends BaseCodec implements Codec {
+public class QTRLECodec extends BaseCodec {
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
     throw new FormatException("QTRLE compression not supported.");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
@@ -52,21 +52,26 @@ public class QTRLECodec extends BaseCodec implements Codec {
     return decompress(b, options);
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] data, Object options) throws FormatException {
-    if (options == null || !(options instanceof Object[])) return null;
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#previousImage previousImage}
+   *
+   * @see Codec#decompress(byte[], CodecOptions)
+   */
+  public byte[] decompress(byte[] data, CodecOptions options)
+    throws FormatException
+  {
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
-    Object[] o = (Object[]) options;
-    byte[] prev = (byte[]) o[1];
-    int[] dims = (int[]) o[0];
-    int x = dims[0];
-    int y = dims[1];
-    int bpp = dims[2];
-    int numLines = y;
+    int numLines = options.height;
 
-    if (data.length < 8) return prev;
+    if (data.length < 8) return options.previousImage;
 
-    int line = x * bpp;
+    int bpp = options.bitsPerSample / 8;
+    int line = options.width * bpp;
 
     try {
       RABytes s = new RABytes(data);
@@ -76,7 +81,7 @@ public class QTRLECodec extends BaseCodec implements Codec {
       int off = 0;
       int start = 0;
 
-      byte[] output = new byte[y * line];
+      byte[] output = new byte[options.height * line];
 
       if ((header & 8) == 8) {
         start = s.readShort();
@@ -84,17 +89,17 @@ public class QTRLECodec extends BaseCodec implements Codec {
         numLines = s.readShort();
         s.skipBytes(2);
 
-        if (prev != null) {
+        if (options.previousImage != null) {
           for (int i=0; i<start; i++) {
-            System.arraycopy(prev, off, output, off, line);
+            System.arraycopy(options.previousImage, off, output, off, line);
             off += line;
           }
         }
 
-        if (prev != null) {
+        if (options.previousImage != null) {
           off = line * (start + numLines);
-          for (int i=start+numLines; i<y; i++) {
-            System.arraycopy(prev, off, output, off, line);
+          for (int i=start+numLines; i<options.height; i++) {
+            System.arraycopy(options.previousImage, off, output, off, line);
             off += line;
           }
         }
@@ -112,10 +117,10 @@ public class QTRLECodec extends BaseCodec implements Codec {
         skip = s.read();
         if (skip < 0) skip += 256;
 
-        if (prev != null) {
+        if (options.previousImage != null) {
           try {
-            System.arraycopy(prev, rowPointer, output, rowPointer,
-              (skip - 1) * bpp);
+            System.arraycopy(options.previousImage, rowPointer, output,
+              rowPointer, (skip - 1) * bpp);
           }
           catch (ArrayIndexOutOfBoundsException e) { }
         }
@@ -127,9 +132,10 @@ public class QTRLECodec extends BaseCodec implements Codec {
           if (rle == 0) {
             skip = s.read();
 
-            if (prev != null) {
+            if (options.previousImage != null) {
               try {
-                System.arraycopy(prev, off, output, off, (skip - 1) * bpp);
+                System.arraycopy(options.previousImage, off, output, off,
+                  (skip - 1) * bpp);
               }
               catch (ArrayIndexOutOfBoundsException e) { }
             }
@@ -137,8 +143,9 @@ public class QTRLECodec extends BaseCodec implements Codec {
             off += (skip - 1) * bpp;
           }
           else if (rle == -1) {
-            if (off < (rowPointer + line) && prev != null) {
-              System.arraycopy(prev, off, output, off, rowPointer + line - off);
+            if (off < (rowPointer + line) && options.previousImage != null) {
+              System.arraycopy(options.previousImage, off, output, off,
+                rowPointer + line - off);
             }
             break;
           }

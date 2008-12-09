@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.Vector;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.LZOCodec;
+import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -150,8 +150,14 @@ public class OpenlabReader extends FormatReader {
         in.skipBytes(16);
         int bytes = bpp * getRGBChannelCount();
         in.read(b);
-        b = new LZOCodec().decompress(b,
-          new Integer(getSizeX() * getSizeY() * bytes));
+
+        CodecOptions options = new CodecOptions();
+        options.width = getSizeX();
+        options.height = getSizeY();
+        options.bitsPerSample = bytes * 8;
+        options.maxBytes = getSizeX() * getSizeY() * bytes;
+        b = new LZOCodec().decompress(b, options);
+
         if (getSizeX() * getSizeY() * 4 <= b.length) {
           for (int yy=y; yy<h + y; yy++) {
             for (int xx=x; xx<w + x; xx++) {

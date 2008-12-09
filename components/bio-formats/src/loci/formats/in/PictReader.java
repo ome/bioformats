@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.PackbitsCodec;
+import loci.formats.codec.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -487,7 +487,9 @@ public class PictReader extends FormatReader {
         }
         else {
           PackbitsCodec c = new PackbitsCodec();
-          uBuf = c.decompress(buf, new Integer(getSizeX() * 4));
+          CodecOptions options = new CodecOptions();
+          options.maxBytes = getSizeX() * 4;
+          uBuf = c.decompress(buf, options);
         }
 
         if (pixelSize < 8) {

@@ -125,10 +125,13 @@ public class ND2Reader extends FormatReader {
     long maxFP = no == getImageCount() - 1 ?
       in.length() : offsets[series][no + 1];
 
+    CodecOptions options = new CodecOptions();
+    options.littleEndian = isLittleEndian();
+    options.interleaved = isInterleaved();
+    options.maxBytes = (int) maxFP;
+
     if (isJPEG) {
-      byte[] tmp = new JPEG2000Codec().decompress(in, new Object[] {
-        new Boolean(isLittleEndian()),
-        new Boolean(isInterleaved()), new Long(maxFP)});
+      byte[] tmp = new JPEG2000Codec().decompress(in, options);
       for (int row=y; row<h+y; row++) {
         System.arraycopy(tmp, pixel * row * getSizeX(), buf,
           pixel * w * (row - y), pixel * w);
@@ -141,7 +144,7 @@ public class ND2Reader extends FormatReader {
 
       int effectiveX = getSizeX();
       if ((getSizeX() % 2) != 0) effectiveX++;
-      byte[] t = new ZlibCodec().decompress(in, null);
+      byte[] t = new ZlibCodec().decompress(in, options);
 
       for (int row=0; row<h; row++) {
         int offset = (row + y) * effectiveX * pixel + x * pixel;

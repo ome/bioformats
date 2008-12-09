@@ -35,28 +35,36 @@ import loci.formats.FormatException;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/RPZACodec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/codec/RPZACodec.java">SVN</a></dd></dl>
  */
-public class RPZACodec extends BaseCodec implements Codec {
+public class RPZACodec extends BaseCodec {
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] input, int x, int y, int[] dims,
-    Object options) throws FormatException
+  // -- Fields --
+
+  private int totalBlocks, pixelPtr, rowPtr, stride;
+
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] input, CodecOptions options)
+    throws FormatException
   {
     throw new FormatException("RPZA compression not supported.");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (options == null || !(options instanceof int[])) return null;
-
-    int[] o = (int[]) options;
-    int x = o[0];
-    int y = o[1];
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
     in.skipBytes(8);
 
-    int stride = x;
+    int plane = options.width * options.height;
+
+    stride = options.width;
     int rowInc = stride - 4;
     short opcode;
     int nBlocks;
@@ -64,17 +72,17 @@ public class RPZACodec extends BaseCodec implements Codec {
     int[] color4 = new int[4];
     int index, idx;
     int ta, tb;
-    int rowPtr = 0, pixelPtr = 0, blockPtr = 0;
+    int blockPtr = 0;
+    rowPtr = pixelPtr = 0;
     int pixelX, pixelY;
-    int totalBlocks;
 
-    int[] pixels = new int[x * y];
-    byte[] rtn = new byte[x * y * 3];
+    int[] pixels = new int[plane];
+    byte[] rtn = new byte[plane * 3];
 
     while (in.read() != (byte) 0xe1);
     in.skipBytes(3);
 
-    totalBlocks = ((x + 3) / 4) * ((y + 3) / 4);
+    totalBlocks = ((options.width + 3) / 4) * ((options.height + 3) / 4);
 
     while (in.getFilePointer() + 2 < in.length()) {
       opcode = in.readByte();
@@ -95,12 +103,7 @@ public class RPZACodec extends BaseCodec implements Codec {
       switch (opcode & 0xe0) {
         case 0x80:
           while (nBlocks-- > 0) {
-            pixelPtr += 4;
-            if (pixelPtr >= x) {
-              pixelPtr = 0;
-              rowPtr += stride * 4;
-            }
-            totalBlocks--;
+            updateBlock(options.width);
           }
           break;
         case 0xa0:
@@ -119,12 +122,7 @@ public class RPZACodec extends BaseCodec implements Codec {
               }
               blockPtr += rowInc;
             }
-            pixelPtr += 4;
-            if (pixelPtr >= x) {
-              pixelPtr = 0;
-              rowPtr += stride * 4;
-            }
-            totalBlocks--;
+            updateBlock(options.width);
           }
           break;
         case 0xc0:
@@ -172,12 +170,7 @@ public class RPZACodec extends BaseCodec implements Codec {
               }
               blockPtr += rowInc;
             }
-            pixelPtr += 4;
-            if (pixelPtr >= x) {
-              pixelPtr = 0;
-              rowPtr += stride * 4;
-            }
-            totalBlocks--;
+            updateBlock(options.width);
           }
           break;
         case 0x00:
@@ -197,12 +190,7 @@ public class RPZACodec extends BaseCodec implements Codec {
             }
             blockPtr += rowInc;
           }
-          pixelPtr += 4;
-          if (pixelPtr >= x) {
-            pixelPtr = 0;
-            rowPtr += stride * 4;
-          }
-          totalBlocks--;
+          updateBlock(options.width);
           break;
       }
     }
@@ -216,4 +204,14 @@ public class RPZACodec extends BaseCodec implements Codec {
     array[offset + len] = (byte) (255 - ((s & 0x3e0) >> 5));
     array[offset + 2*len] = (byte) (255 - (s & 0x1f));
   }
+
+  private void updateBlock(int width) {
+    pixelPtr += 4;
+    if (pixelPtr >= width) {
+      pixelPtr = 0;
+      rowPtr += stride * 4;
+    }
+    totalBlocks--;
+  }
+
 }

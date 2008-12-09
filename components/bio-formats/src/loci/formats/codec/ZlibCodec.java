@@ -38,11 +38,11 @@ import loci.formats.FormatException;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class ZlibCodec extends BaseCodec implements Codec {
+public class ZlibCodec extends BaseCodec {
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y,
-    int[] dims, Object options) throws FormatException
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
+    throws FormatException
   {
     Deflater deflater = new Deflater();
     deflater.setInput(data);
@@ -57,8 +57,8 @@ public class ZlibCodec extends BaseCodec implements Codec {
     return bytes.toByteArray();
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     InflaterInputStream i = new InflaterInputStream(in);

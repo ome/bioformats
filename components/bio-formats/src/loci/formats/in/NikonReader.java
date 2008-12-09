@@ -27,9 +27,7 @@ import java.io.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.BitBuffer;
-import loci.formats.codec.ByteVector;
-import loci.formats.codec.NikonCodec;
+import loci.formats.codec.*;
 
 /**
  * NikonReader is the file format reader for Nikon NEF (TIFF) files.
@@ -177,8 +175,6 @@ public class NikonReader extends BaseTiffReader {
     long[] offsets = TiffTools.getStripOffsets(ifds[no]);
     long[] rowsPerStrip = TiffTools.getRowsPerStrip(ifds[no]);
 
-    ByteVector src = new ByteVector();
-
     float bytesPerSample = (float) dataSize / 8;
     boolean maybeCompressed =
       TiffTools.getCompression(ifds[no]) == TiffTools.NIKON;
@@ -186,28 +182,32 @@ public class NikonReader extends BaseTiffReader {
 
     if (!maybeCompressed && dataSize == 14) dataSize = 16;
 
+    ByteArrayOutputStream src = new ByteArrayOutputStream();
+
     for (int i=0; i<byteCounts.length; i++) {
       byte[] t = new byte[(int) byteCounts[i]];
 
       in.seek(offsets[i]);
       in.read(t);
       if (compressed) {
-        Object[] options = new Object[8];
-        options[0] = curve;
-        options[1] = new Integer(dataSize);
-        options[2] = new Integer((int) byteCounts[i]);
-        options[3] = new Integer(getSizeX());
-        options[4] = new Integer(getSizeY());
-        options[5] = vPredictor;
-        options[6] = new Boolean(lossyCompression);
-        options[7] = new Integer(split);
+        NikonCodecOptions options = new NikonCodecOptions();
+        options.width = getSizeX();
+        options.height = getSizeY();
+        options.bitsPerSample = dataSize;
+        options.curve = curve;
+        options.vPredictor = vPredictor;
+        options.lossy = lossyCompression;
+        options.split = split;
+        options.maxBytes = (int) byteCounts[i];
         t = new NikonCodec().decompress(t, options);
       }
-      src.add(t);
+      src.write(t);
     }
 
     BitBuffer bb = new BitBuffer(src.toByteArray());
     short[] pix = new short[getSizeX() * getSizeY() * 3];
+
+    src.close();
 
     int[] colorMap = new int[4];
     short[] s = (short[]) ifds[no].get(new Integer(33422));

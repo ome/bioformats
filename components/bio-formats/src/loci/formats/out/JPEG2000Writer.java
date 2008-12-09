@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 
 /**
@@ -79,9 +80,16 @@ public class JPEG2000Writer extends FormatWriter {
       FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
 
     out = new RandomAccessFile(currentId, "rw");
-    byte[] compressedData = new JPEG2000Codec().compress(stream, img.getWidth(),
-      img.getHeight(), new int[] {img.getRaster().getNumBands(), bytesPerPixel},
-      new Boolean[] {Boolean.TRUE, Boolean.FALSE});
+
+    CodecOptions options = new CodecOptions();
+    options.width = img.getWidth();
+    options.height = img.getHeight();
+    options.channels = img.getRaster().getNumBands();
+    options.bitsPerSample = bytesPerPixel * 8;
+    options.littleEndian = true;
+    options.interleaved = false;
+
+    byte[] compressedData = new JPEG2000Codec().compress(stream, options);
     out.write(compressedData);
     out.close();
   }

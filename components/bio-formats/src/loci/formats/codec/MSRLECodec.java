@@ -34,40 +34,42 @@ import loci.formats.FormatException;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/MSRLECodec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/codec/MSRLECodec.java">SVN</a></dd></dl>
  */
-public class MSRLECodec extends BaseCodec implements Codec {
+public class MSRLECodec extends BaseCodec {
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
     throw new FormatException("MSRLE compression not supported.");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *  {@link CodecOptions#previousImage previousImage}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (options == null || !(options instanceof Object[])) return null;
-
-    Object[] o = (Object[]) options;
-    byte[] prev = (byte[]) o[1];
-    int[] dims = (int[]) o[0];
-    int x = dims[0];
-    int y = dims[1];
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
     int code = 0;
     short extra = 0;
     int stream = 0;
 
     int pixelPt = 0;
-    int row = x;
-    int rowPt = (y - 1) * row;
-    int frameSize = y * row;
+    int rowPt = (options.height - 1) * options.width;
+    int frameSize = options.height * options.width;
 
-    if (prev == null) prev = new byte[frameSize];
+    if (options.previousImage == null) {
+      options.previousImage = new byte[frameSize];
+    }
 
     while (rowPt >= 0 && in.getFilePointer() < in.length() &&
-      pixelPt < prev.length)
+      pixelPt < options.previousImage.length)
     {
       stream = in.read() & 0xff;
       code = stream;
@@ -75,28 +77,28 @@ public class MSRLECodec extends BaseCodec implements Codec {
       if (code == 0) {
         stream = in.read() & 0xff;
         if (stream == 0) {
-          rowPt -= row;
+          rowPt -= options.width;
           pixelPt = 0;
         }
-        else if (stream == 1) return prev;
+        else if (stream == 1) return options.previousImage;
         else if (stream == 2) {
           stream = in.read() & 0xff;
           pixelPt += stream;
           stream = in.read() & 0xff;
-          rowPt -= stream * row;
+          rowPt -= stream * options.width;
         }
         else {
           if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
-            return prev;
+            return options.previousImage;
           }
 
           code = stream;
           extra = (short) (stream & 0x01);
-          if (stream + code + extra > in.length()) return prev;
+          if (stream + code + extra > in.length()) return options.previousImage;
 
           while (code-- > 0) {
             stream = in.read();
-            prev[rowPt + pixelPt] = (byte) stream;
+            options.previousImage[rowPt + pixelPt] = (byte) stream;
             pixelPt++;
           }
           if (extra != 0) in.skipBytes(1);
@@ -104,19 +106,19 @@ public class MSRLECodec extends BaseCodec implements Codec {
       }
       else {
         if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
-          return prev;
+          return options.previousImage;
         }
 
         stream = in.read();
 
         while (code-- > 0) {
-          prev[rowPt + pixelPt] = (byte) stream;
+          options.previousImage[rowPt + pixelPt] = (byte) stream;
           pixelPt++;
         }
       }
     }
 
-    return prev;
+    return options.previousImage;
   }
 
 }

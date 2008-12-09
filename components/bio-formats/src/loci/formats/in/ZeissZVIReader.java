@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.*;
 import loci.formats.meta.*;
 
 /**
@@ -95,6 +95,10 @@ public class ZeissZVIReader extends FormatReader {
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bytes * getRGBChannelCount();
 
+    CodecOptions options = new CodecOptions();
+    options.littleEndian = isLittleEndian();
+    options.interleaved = isInterleaved();
+
     if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
       RandomAccessStream s = poi.getDocumentStream(imageFiles[no]);
       s.seek(offsets[no]);
@@ -102,8 +106,7 @@ public class ZeissZVIReader extends FormatReader {
       int len = w * pixel;
 
       if (isJPEG) {
-        byte[] t = new JPEGCodec().decompress(s, new Object[] {
-          new Boolean(isLittleEndian()), new Boolean(isInterleaved())});
+        byte[] t = new JPEGCodec().decompress(s, options);
 
         int row = getSizeX() * pixel;
 
@@ -155,9 +158,7 @@ public class ZeissZVIReader extends FormatReader {
               s.seek(offsets[ii]);
               s.read(tile);
               if (isJPEG) {
-                tile = new JPEGCodec().decompress(tile,
-                  new Object[] {new Boolean(isLittleEndian()),
-                  new Boolean(isInterleaved())});
+                tile = new JPEGCodec().decompress(tile, options);
               }
               s.close();
 

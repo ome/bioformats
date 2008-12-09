@@ -39,7 +39,7 @@ import loci.formats.FormatException;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class LuraWaveCodec extends BaseCodec implements Codec {
+public class LuraWaveCodec extends BaseCodec {
 
   // -- Constants --
 
@@ -89,15 +89,15 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
 
   // -- Codec API methods --
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y,
-    int[] dims, Object options) throws FormatException
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
+    throws FormatException
   {
     throw new FormatException("LuraWave compression not supported");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     byte[] buf = new byte[(int) in.length()];
@@ -105,10 +105,15 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
     return decompress(buf, options);
   }
 
-  /* @see Codec#decompress(byte[], Object) */
-  public byte[] decompress(byte[] buf, Object options) throws FormatException {
-    int maxBytes = ((Integer) options).intValue();
-
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#maxBytes maxBytes}
+   *
+   * @see Codec#decompress(byte[], CodecOptions)
+   */
+  public byte[] decompress(byte[] buf, CodecOptions options)
+    throws FormatException
+  {
     if (noLuraWave) throw new FormatException(NO_LURAWAVE_MSG);
     licenseCode = System.getProperty(LICENSE_PROPERTY);
     if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);
@@ -132,7 +137,7 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
       throw new FormatException("Could not retrieve image dimensions", exc);
     }
 
-    int nbits = 8 * (maxBytes / (w * h));
+    int nbits = 8 * (options.maxBytes / (w * h));
 
     if (nbits == 8) {
       byte[] image8 = new byte[w * h];

@@ -35,7 +35,7 @@ import loci.formats.FormatException;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/MJPBCodec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/codec/MJPBCodec.java">SVN</a></dd></dl>
  */
-public class MJPBCodec extends BaseCodec implements Codec {
+public class MJPBCodec extends BaseCodec {
 
   // -- Constants --
 
@@ -46,23 +46,33 @@ public class MJPBCodec extends BaseCodec implements Codec {
 
   // -- Codec API methods --
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
     throw new FormatException("Motion JPEG-B compression not supported.");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter must be an instance of {@link MJPBCodecOptions},
+   * and should have the following fields set:
+   *  {@link MJPBCodecOptions#interlaced interlaced}
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#littleEndian littleEndian}
+   *  {@link CodecOptions#interleaved interleaved}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (options == null || !(options instanceof int[])) return null;
-    int[] o = (int[]) options;
-    int x = o[0];
-    int y = o[1];
-    int bits = o[2];
-    boolean interlaced = o[3] == 1;
+    if (options == null) options = CodecOptions.getDefaultOptions();
+    if (!(options instanceof MJPBCodecOptions)) {
+      throw new FormatException("Options must be an instance of " +
+        "loci.formats.codec.MJPBCodecOptions");
+    }
 
     byte[] raw = null;
     byte[] raw2 = null;
@@ -222,28 +232,30 @@ public class MJPBCodec extends BaseCodec implements Codec {
       v.add((byte) 0xff);
       v.add((byte) 0xc0);
 
-      length = (bits >= 40) ? 11 : 17;
+      length = (options.bitsPerSample >= 40) ? 11 : 17;
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
 
-      int fieldHeight = y;
-      if (interlaced) fieldHeight /= 2;
-      if (y % 2 == 1) fieldHeight++;
+      int fieldHeight = options.height;
+      if (((MJPBCodecOptions) options).interlaced) fieldHeight /= 2;
+      if (options.height % 2 == 1) fieldHeight++;
 
-      int c = bits == 24 ? 3 : (bits == 32 ? 4 : 1);
+      int c = options.bitsPerSample == 24 ? 3 :
+        (options.bitsPerSample == 32 ? 4 : 1);
 
-      v.add(bits >= 40 ? (byte) (bits - 32) : (byte) (bits / c));
+      v.add(options.bitsPerSample >= 40 ? (byte) (options.bitsPerSample - 32) :
+        (byte) (options.bitsPerSample / c));
       v.add((byte) ((fieldHeight >>> 8) & 0xff));
       v.add((byte) (fieldHeight & 0xff));
-      v.add((byte) ((x >>> 8) & 0xff));
-      v.add((byte) (x & 0xff));
-      v.add((bits >= 40) ? (byte) 1 : (byte) 3);
+      v.add((byte) ((options.width >>> 8) & 0xff));
+      v.add((byte) (options.width & 0xff));
+      v.add((options.bitsPerSample >= 40) ? (byte) 1 : (byte) 3);
 
       v.add((byte) 1);
       v.add((byte) 33);
       v.add((byte) 0);
 
-      if (bits < 40) {
+      if (options.bitsPerSample < 40) {
         v.add((byte) 2);
         v.add((byte) 17);
         v.add((byte) 1);
@@ -255,15 +267,15 @@ public class MJPBCodec extends BaseCodec implements Codec {
       v.add((byte) 0xff);
       v.add((byte) 0xda);
 
-      length = (bits >= 40) ? 8 : 12;
+      length = (options.bitsPerSample >= 40) ? 8 : 12;
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
 
-      v.add((bits >= 40) ? (byte) 1 : (byte) 3);
+      v.add((options.bitsPerSample >= 40) ? (byte) 1 : (byte) 3);
       v.add((byte) 1);
       v.add((byte) 0);
 
-      if (bits < 40) {
+      if (options.bitsPerSample < 40) {
         v.add((byte) 2);
         v.add((byte) 1);
         v.add((byte) 3);
@@ -274,7 +286,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
       v.add((byte) 0x3f);
       v.add((byte) 0);
 
-      if (interlaced) {
+      if (((MJPBCodecOptions) options).interlaced) {
         ByteVector v2 = new ByteVector(v.size());
         v2.add(v.toByteArray());
 
@@ -286,23 +298,26 @@ public class MJPBCodec extends BaseCodec implements Codec {
         v2.add((byte) 0xd9);
 
         JPEGCodec jpeg = new JPEGCodec();
-        byte[] top = jpeg.decompress(v.toByteArray(), Boolean.FALSE);
-        byte[] bottom = jpeg.decompress(v2.toByteArray(), Boolean.FALSE);
+        byte[] top = jpeg.decompress(v.toByteArray(), options);
+        byte[] bottom = jpeg.decompress(v2.toByteArray(), options);
 
-        int bpp = bits < 40 ? bits / 8 : (bits - 32) / 8;
-        int ch = bits < 40 ? 3 : 1;
-        byte[] result = new byte[x * y * bpp * ch];
+        int bpp = options.bitsPerSample < 40 ? options.bitsPerSample / 8 :
+          (options.bitsPerSample - 32) / 8;
+        int ch = options.bitsPerSample < 40 ? 3 : 1;
+        byte[] result = new byte[options.width * options.height * bpp * ch];
 
         int topNdx = 0;
         int bottomNdx = 0;
 
-        for (int yy=0; yy<y; yy++) {
+        int row = options.width * bpp;
+
+        for (int yy=0; yy<options.height; yy++) {
           if (yy % 2 == 0) {
-            System.arraycopy(top, topNdx*x*bpp, result, yy*x*bpp, x*bpp);
+            System.arraycopy(top, topNdx*row, result, yy*row, row);
             topNdx++;
           }
           else {
-            System.arraycopy(bottom, bottomNdx*x*bpp, result, yy*x*bpp, x*bpp);
+            System.arraycopy(bottom, bottomNdx*row, result, yy*row, row);
             bottomNdx++;
           }
         }
@@ -312,7 +327,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
         v.add(b.toByteArray());
         v.add((byte) 0xff);
         v.add((byte) 0xd9);
-        return new JPEGCodec().decompress(v.toByteArray(), Boolean.FALSE);
+        return new JPEGCodec().decompress(v.toByteArray(), options);
       }
     }
     catch (IOException e) {

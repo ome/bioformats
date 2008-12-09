@@ -42,7 +42,7 @@ import loci.formats.FormatException;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class NikonCodec extends BaseCodec implements Codec {
+public class NikonCodec extends BaseCodec {
 
   private static final int[] DEFAULT_LINEARIZATION_TABLE = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -131,64 +131,79 @@ public class NikonCodec extends BaseCodec implements Codec {
 
   private Decoder decoder;
 
-  private int[] vPredictor = new int[4];
   private static int leafCounter;
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y,
-    int[] dims, Object options) throws FormatException
+  /* @see Codec#compress(byte[], CodecOptions) */
+  public byte[] compress(byte[] data, CodecOptions options)
+    throws FormatException
   {
     // TODO: Add compression support.
     throw new FormatException("Nikon Compression not currently supported");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter must be an instance of
+   * {@link NikonCodecOptions}, and should have the following fields set:
+   *  {@link NikonCodecOptions#lossy lossy}
+   *  {@link NikonCodecOptions#vPredictor vPredictor}
+   *  {@link NikonCodecOptions#curve curve}
+   *  {@link NikonCodecOptions#split split}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#maxBytes maxBytes}
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    Object[] o = (Object[]) options;
-    int[] curve = (int[]) o[0];
-    int bps = ((Integer) o[1]).intValue();
-    int availableBytes = ((Integer) o[2]).intValue();
-    int width = ((Integer) o[3]).intValue();
-    int height = ((Integer) o[4]).intValue();
-    vPredictor = (int[]) o[5];
-    boolean lossy = ((Boolean) o[6]).booleanValue();
-    int split = ((Integer) o[7]).intValue();
+    if (options == null) options = CodecOptions.getDefaultOptions();
+    if (!(options instanceof NikonCodecOptions)) {
+      throw new FormatException("Options must be an instanceof " +
+        "loci.formats.codec.NikonCodecOptions.");
+    }
 
-    if (lossy) {
-      if (bps == 12) decoder = new Decoder(LOSSY_DECODER_CONFIGURATION_12);
+    NikonCodecOptions nikon = (NikonCodecOptions) options;
+
+    if (nikon.lossy) {
+      if (nikon.bitsPerSample == 12) {
+        decoder = new Decoder(LOSSY_DECODER_CONFIGURATION_12);
+      }
       else decoder = new Decoder(LOSSY_DECODER_CONFIGURATION_14);
     }
     else {
-      if (bps == 12) decoder = new Decoder(LOSSLESS_DECODER_CONFIGURATION_12);
+      if (nikon.bitsPerSample == 12) {
+        decoder = new Decoder(LOSSLESS_DECODER_CONFIGURATION_12);
+      }
       else decoder = new Decoder(LOSSLESS_DECODER_CONFIGURATION_14);
     }
 
-    if (vPredictor == null) {
-      vPredictor = new int[] {0, 0, 0, 0};
+    if (nikon.vPredictor == null) {
+      nikon.vPredictor = new int[] {0, 0, 0, 0};
     }
 
-    byte[] pix = new byte[availableBytes];
+    byte[] pix = new byte[nikon.maxBytes];
     in.read(pix);
 
     BitBuffer bb = new BitBuffer(pix);
     BitWriter out = new BitWriter();
 
     int[] hPredictor = new int[2];
-    int[] table = curve == null ? DEFAULT_LINEARIZATION_TABLE : curve;
+    int[] table = nikon.curve == null ? DEFAULT_LINEARIZATION_TABLE :
+      nikon.curve;
 
-    for (int row=0; row<height; row++) {
-      if (row == split) {
-        if (lossy) {
-          if (bps == 12) {
+    for (int row=0; row<nikon.height; row++) {
+      if (row == nikon.split) {
+        if (nikon.lossy) {
+          if (nikon.bitsPerSample == 12) {
             decoder = new Decoder(SPLIT_LOSSY_DECODER_CONFIGURATION_12);
           }
           else decoder = new Decoder(SPLIT_LOSSY_DECODER_CONFIGURATION_14);
           Arrays.fill(hPredictor, 0);
         }
       }
-      for (int col=0; col<width; col++) {
+      for (int col=0; col<nikon.width; col++) {
         int cfaIndex = (2 * (row & 1)) + (col & 1);
         int bitsCount = decoder.decode(bb);
         int diff = bb.getBits(bitsCount);
@@ -197,8 +212,8 @@ public class NikonCodec extends BaseCodec implements Codec {
         }
 
         if (col < 2) {
-          vPredictor[cfaIndex] += diff;
-          hPredictor[col & 1] = vPredictor[cfaIndex];
+          nikon.vPredictor[cfaIndex] += diff;
+          hPredictor[col & 1] = nikon.vPredictor[cfaIndex];
         }
         else {
           hPredictor[col & 1] += diff;
@@ -208,7 +223,7 @@ public class NikonCodec extends BaseCodec implements Codec {
         if (index >= table.length) {
           index = table.length - 1;
         }
-        out.write(table[index], bps);
+        out.write(table[index], options.bitsPerSample);
       }
     }
 

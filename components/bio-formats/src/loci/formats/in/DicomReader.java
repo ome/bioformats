@@ -178,9 +178,11 @@ public class DicomReader extends FormatReader {
 
     if (isRLE) {
       // plane is compressed using run-length encoding
+      CodecOptions options = new CodecOptions();
+      options.maxBytes = bytes / ec;
       for (int c=0; c<ec; c++) {
         PackbitsCodec codec = new PackbitsCodec();
-        byte[] t = codec.decompress(in, new Integer(bytes / ec));
+        byte[] t = codec.decompress(in, options);
         if (t.length < (bytes / ec)) {
           byte[] tmp = t;
           t = new byte[bytes / ec];
@@ -230,10 +232,12 @@ public class DicomReader extends FormatReader {
         b = tmp;
       }
       Codec codec = null;
+      CodecOptions options = new CodecOptions();
+      options.littleEndian = isLittleEndian();
+      options.interleaved = isInterleaved();
       if (isJPEG) codec = new JPEGCodec();
       else codec = new JPEG2000Codec();
-      b = codec.decompress(b, new Object[] {new Boolean(isLittleEndian()),
-        new Boolean(isInterleaved())});
+      b = codec.decompress(b, options);
 
       int rowLen = w * bpp;
       int srcRowLen = getSizeX() * bpp;
@@ -493,7 +497,9 @@ public class DicomReader extends FormatReader {
         if (i == 0) in.seek(baseOffset);
         else {
           in.seek(offsets[i - 1]);
-          new PackbitsCodec().decompress(in, new Integer(plane));
+          CodecOptions options = new CodecOptions();
+          options.maxBytes = plane;
+          new PackbitsCodec().decompress(in, options);
         }
         in.skipBytes(i == 0 ? 64 : 53);
         while (in.read() == 0);

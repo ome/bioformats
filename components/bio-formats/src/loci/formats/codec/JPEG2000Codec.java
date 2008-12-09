@@ -42,7 +42,7 @@ import loci.formats.*;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/JPEG2000Codec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/JPEGCodec.java">SVN</a></dd></dl>
  */
-public class JPEG2000Codec extends BaseCodec implements Codec {
+public class JPEG2000Codec extends BaseCodec {
 
   // -- Constants --
 
@@ -141,22 +141,23 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
   // -- Codec API methods --
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y, int[] dims, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#channels channels}
+   *  {@link CodecOptions#interleaved interleaved}
+   *  {@link CodecOptions#littleEndian littleEndian}
+   *
+   * @see Codec#compress(byte[], CodecOptions)
+   */
+  public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    boolean littleEndian = false, interleaved = false;
-    if (options instanceof Boolean) {
-      littleEndian = ((Boolean) options).booleanValue();
-    }
-    else {
-      Object[] o = (Object[]) options;
-      littleEndian = ((Boolean) o[0]).booleanValue();
-      interleaved = ((Boolean) o[1]).booleanValue();
-    }
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-
     BufferedImage img = null;
 
     int next = 0;
@@ -168,45 +169,49 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     // DataBuffer.TYPE_INT (so a single int is used to store all of the
     // channels for a specific pixel).
 
-    if (dims[1] == 1) {
-      byte[][] b = new byte[dims[0]][x * y];
-      if (interleaved) {
-        for (int q=0; q<x*y; q++) {
-          for (int c=0; c<dims[0]; c++) {
+    int plane = options.width * options.height;
+
+    if (options.bitsPerSample == 8) {
+      byte[][] b = new byte[options.channels][plane];
+      if (options.interleaved) {
+        for (int q=0; q<plane; q++) {
+          for (int c=0; c<options.channels; c++) {
             b[c][q] = data[next++];
           }
         }
       }
       else {
-        for (int c=0; c<dims[0]; c++) {
-          System.arraycopy(data, c * x * y, b[c], 0, x * y);
+        for (int c=0; c<options.channels; c++) {
+          System.arraycopy(data, c * plane, b[c], 0, plane);
         }
       }
-      DataBuffer buffer = new DataBufferByte(b, x * y);
-      img = AWTImageTools.constructImage(b.length, DataBuffer.TYPE_BYTE, x, y,
-        false, true, buffer);
+      DataBuffer buffer = new DataBufferByte(b, plane);
+      img = AWTImageTools.constructImage(b.length, DataBuffer.TYPE_BYTE,
+        options.width, options.height, false, true, buffer);
     }
-    else if (dims[1] == 2) {
-      short[][] s = new short[dims[0]][x * y];
-      if (interleaved) {
-        for (int q=0; q<x*y; q++) {
-          for (int c=0; c<dims[0]; c++) {
-            s[c][q] = DataTools.bytesToShort(data, next, 2, littleEndian);
+    else if (options.bitsPerSample == 16) {
+      short[][] s = new short[options.channels][plane];
+      if (options.interleaved) {
+        for (int q=0; q<plane; q++) {
+          for (int c=0; c<options.channels; c++) {
+            s[c][q] =
+              DataTools.bytesToShort(data, next, 2, options.littleEndian);
             next += 2;
           }
         }
       }
       else {
-        for (int c=0; c<dims[0]; c++) {
-          for (int q=0; q<x*y; q++) {
-            s[c][q] = DataTools.bytesToShort(data, next, 2, littleEndian);
+        for (int c=0; c<options.channels; c++) {
+          for (int q=0; q<plane; q++) {
+            s[c][q] =
+              DataTools.bytesToShort(data, next, 2, options.littleEndian);
             next += 2;
           }
         }
       }
-      DataBuffer buffer = new DataBufferUShort(s, x * y);
-      img = AWTImageTools.constructImage(s.length, DataBuffer.TYPE_USHORT, x, y,
-        false, true, buffer);
+      DataBuffer buffer = new DataBufferUShort(s, plane);
+      img = AWTImageTools.constructImage(s.length, DataBuffer.TYPE_USHORT,
+        options.width, options.height, false, true, buffer);
     }
 
     try {
@@ -227,43 +232,40 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     return out.toByteArray();
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#interleaved interleaved}
+   *  {@link CodecOptions#littleEndian littleEndian}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    boolean littleEndian = false, interleaved = false;
-    long maxFP = 0;
-    if (options instanceof Boolean) {
-      littleEndian = ((Boolean) options).booleanValue();
-    }
-    else {
-      Object[] o = (Object[]) options;
-      littleEndian = ((Boolean) o[0]).booleanValue();
-      interleaved = ((Boolean) o[1]).booleanValue();
-      if (o.length == 3) maxFP = ((Long) o[2]).longValue();
-    }
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
     byte[][] single = null, half = null;
     BufferedImage b = null;
     Exception exception = null;
-    long fp = in.getFilePointer();
+    //long fp = in.getFilePointer();
     try {
-      if (maxFP == 0) maxFP = in.length();
-      byte[] buf = new byte[(int) (maxFP - fp)];
-      in.read(buf);
+      //if (maxFP == 0) maxFP = in.length();
+      //byte[] buf = new byte[(int) (maxFP - fp)];
+      //in.read(buf);
 
-      ByteArrayInputStream bis = new ByteArrayInputStream(buf);
-      MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
+      //ByteArrayInputStream bis = new ByteArrayInputStream(buf);
+      //MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
+      MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
 
       r.setVar("mciis", mciis);
       r.exec("j2kReader.setInput(mciis)");
       r.setVar("zero", 0);
       b = (BufferedImage) r.exec("j2kReader.read(zero)");
-      single = AWTImageTools.getPixelBytes(b, littleEndian);
+      single = AWTImageTools.getPixelBytes(b, options.littleEndian);
 
-      bis.close();
+      //bis.close();
       mciis.close();
-      buf = null;
+      //buf = null;
       b = null;
     }
     catch (ReflectException exc) {
@@ -280,7 +282,7 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
 
     if (single.length == 1) return single[0];
     byte[] rtn = new byte[single.length * single[0].length];
-    if (interleaved) {
+    if (options.interleaved) {
       int next = 0;
       for (int i=0; i<single[0].length; i++) {
         for (int j=0; j<single.length; j++) {

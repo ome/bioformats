@@ -54,31 +54,23 @@ public interface Codec {
    * Compresses a block of data.
    *
    * @param data The data to be compressed.
-   * @param x Length of the x dimension of the image data, if appropriate.
-   * @param y Length of the y dimension of the image data, if appropriate.
-   * @param dims The dimensions of the image data, if appropriate.
    * @param options Options to be used during compression, if appropriate.
    * @return The compressed data.
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
-  byte[] compress(byte[] data, int x, int y,
-      int[] dims, Object options) throws FormatException;
+  byte[] compress(byte[] data, CodecOptions options) throws FormatException;
 
   /**
    * Compresses a block of data.
    *
    * @param data The data to be compressed.
-   * @param x Length of the x dimension of the image data, if appropriate.
-   * @param y Length of the y dimension of the image data, if appropriate.
-   * @param dims The dimensions of the image data, if appropriate.
    * @param options Options to be used during compression, if appropriate.
    * @return The compressed data.
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
-  byte[] compress(byte[][] data, int x, int y,
-      int[] dims, Object options) throws FormatException;
+  byte[] compress(byte[][] data, CodecOptions options) throws FormatException;
 
   /**
    * Decompresses a block of data.
@@ -88,7 +80,7 @@ public interface Codec {
    * @return the decompressed data.
    * @throws FormatException If data is not valid.
    */
-  byte[] decompress(byte[] data, Object options) throws FormatException;
+  byte[] decompress(byte[] data, CodecOptions options) throws FormatException;
 
   /**
    * Decompresses a block of data.
@@ -98,7 +90,7 @@ public interface Codec {
    * @return the decompressed data.
    * @throws FormatException If data is not valid.
    */
-  byte[] decompress(byte[][] data, Object options) throws FormatException;
+  byte[] decompress(byte[][] data, CodecOptions options) throws FormatException;
 
   /**
    * Decompresses a block of data.
@@ -129,7 +121,7 @@ public interface Codec {
    * @throws FormatException If data is not valid compressed data for this
    *   decompressor.
    */
-  byte[] decompress(RandomAccessStream in, Object options)
+  byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException;
 
 }

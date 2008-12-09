@@ -39,25 +39,28 @@ import loci.formats.*;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/JPEGCodec.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/codec/JPEGCodec.java">SVN</a></dd></dl>
  */
-public class JPEGCodec extends BaseCodec implements Codec {
+public class JPEGCodec extends BaseCodec {
 
-  /* @see Codec#compress(byte[], int, int, int[], Object) */
-  public byte[] compress(byte[] data, int x, int y,
-      int[] dims, Object options) throws FormatException
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
+   *  {@link CodecOptions#channels channels}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#interleaved interleaved}
+   *  {@link CodecOptions#littleEndian littleEndian}
+   *
+   * @see Codec#compress(byte[], CodecOptions)
+   */
+  public byte[] compress(byte[] data, CodecOptions options)
+    throws FormatException
   {
-    boolean littleEndian = false, interleaved = false;
-    if (options instanceof Boolean) {
-      littleEndian = ((Boolean) options).booleanValue();
-    }
-    else {
-      Object[] o = (Object[]) options;
-      littleEndian = ((Boolean) o[0]).booleanValue();
-      interleaved = ((Boolean) o[1]).booleanValue();
-    }
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    BufferedImage img = AWTImageTools.makeImage(data, x, y, dims[0],
-      interleaved, dims[1], littleEndian);
+    BufferedImage img = AWTImageTools.makeImage(data, options.width,
+      options.height, options.channels, options.interleaved,
+      options.bitsPerSample / 8, options.littleEndian);
 
     try {
       ImageIO.write(img, "jpeg", out);
@@ -68,8 +71,14 @@ public class JPEGCodec extends BaseCodec implements Codec {
     return out.toByteArray();
   }
 
-  /* @see Codec#decompress(RandomAccessStream, Object) */
-  public byte[] decompress(RandomAccessStream in, Object options)
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   *  {@link CodecOptions#interleaved interleaved}
+   *  {@link CodecOptions#littleEndian littleEndian}
+   *
+   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   */
+  public byte[] decompress(RandomAccessStream in, CodecOptions options)
     throws FormatException, IOException
   {
     BufferedImage b;
@@ -130,21 +139,13 @@ public class JPEGCodec extends BaseCodec implements Codec {
       }
     }
 
-    boolean littleEndian = true, interleaved = true;
-    if (options instanceof Boolean) {
-      littleEndian = ((Boolean) options).booleanValue();
-    }
-    else {
-      Object[] o = (Object[]) options;
-      littleEndian = ((Boolean) o[0]).booleanValue();
-      interleaved = ((Boolean) o[1]).booleanValue();
-    }
+    if (options == null) options = CodecOptions.getDefaultOptions();
 
-    byte[][] buf = AWTImageTools.getPixelBytes(b, littleEndian);
+    byte[][] buf = AWTImageTools.getPixelBytes(b, options.littleEndian);
     byte[] rtn = new byte[buf.length * buf[0].length];
     if (buf.length == 1) rtn = buf[0];
     else {
-      if (interleaved) {
+      if (options.interleaved) {
         int next = 0;
         for (int i=0; i<buf[0].length; i++) {
           for (int j=0; j<buf.length; j++) {

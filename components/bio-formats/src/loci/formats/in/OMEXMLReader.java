@@ -27,10 +27,7 @@ import java.io.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.Base64Codec;
-import loci.formats.codec.JPEG2000Codec;
-import loci.formats.codec.JPEGCodec;
-import loci.formats.codec.ZlibCodec;
+import loci.formats.codec.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
@@ -144,7 +141,16 @@ public class OMEXMLReader extends FormatReader {
     int depth = FormatTools.getBytesPerPixel(getPixelType());
     int planeSize = getSizeX() * getSizeY() * depth;
 
-    byte[] pixels = new Base64Codec().decompress(in, new Integer(planeSize));
+    CodecOptions options = new CodecOptions();
+    options.width = getSizeX();
+    options.height = getSizeY();
+    options.bitsPerSample = depth * 8;
+    options.channels = getRGBChannelCount();
+    options.maxBytes = planeSize;
+    options.littleEndian = isLittleEndian();
+    options.interleaved = isInterleaved();
+
+    byte[] pixels = new Base64Codec().decompress(in, options);
     // TODO: Create a method uncompress to handle all compression methods
     if (compress.equals("bzip2")) {
       byte[] tempPixels = pixels;
@@ -161,14 +167,12 @@ public class OMEXMLReader extends FormatReader {
       bzip = null;
     }
     else if (compress.equals("zlib")) {
-      pixels = new ZlibCodec().decompress(pixels, null);
+      pixels = new ZlibCodec().decompress(pixels, options);
     }
     else if (compress.equals("J2K")) {
-      Object[] options = {Boolean.TRUE,Boolean.TRUE,new Long(planeSize)};
       pixels = new JPEG2000Codec().decompress(pixels, options);
     }
     else if (compress.equals("JPEG")) {
-      Object[] options = {Boolean.TRUE,Boolean.TRUE};
       pixels = new JPEGCodec().decompress(pixels, options);
     }
 
