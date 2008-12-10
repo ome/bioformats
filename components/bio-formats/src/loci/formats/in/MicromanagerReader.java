@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
@@ -55,6 +56,10 @@ public class MicromanagerReader extends FormatReader {
   private String metadataFile;
 
   private String[] channels;
+
+  private String comment, time;
+  private Float exposureTime, sliceThickness, pixelSize;
+  private Float[] timestamps;
 
   // -- Constructor --
 
@@ -132,6 +137,9 @@ public class MicromanagerReader extends FormatReader {
     if (tiffReader != null) tiffReader.close();
     tiffReader = null;
     tiffs = null;
+    comment = time = null;
+    exposureTime = sliceThickness = pixelSize = null;
+    timestamps = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -195,6 +203,8 @@ public class MicromanagerReader extends FormatReader {
       s = s.substring(s.indexOf("\n", start), end).trim();
     }
 
+    Vector stamps = new Vector();
+
     StringTokenizer st = new StringTokenizer(s, "\n");
     int[] slice = new int[3];
     while (st.hasMoreTokens()) {
@@ -243,6 +253,14 @@ public class MicromanagerReader extends FormatReader {
         else if (key.equals("Slices")) {
           core[0].sizeZ = Integer.parseInt(value);
         }
+        else if (key.equals("PixelSize_um")) {
+          pixelSize = new Float(value);
+        }
+        else if (key.equals("z-step_um")) {
+          sliceThickness = new Float(value);
+        }
+        else if (key.equals("Time")) time = value;
+        else if (key.equals("Comment")) comment = value;
       }
 
       if (token.trim().startsWith("\"FrameKey")) {
@@ -264,11 +282,21 @@ public class MicromanagerReader extends FormatReader {
           value = token.substring(colon + 1, token.length() - 1).trim();
 
           addMeta(key, value);
+
+          if (key.equals("Exposure-ms")) {
+            exposureTime = new Float(value);
+          }
+          else if (key.equals("ElapsedTime-ms")) {
+            stamps.add(new Float(value));
+          }
+
           token = st.nextToken().trim();
         }
       }
-
     }
+
+    timestamps = (Float[]) stamps.toArray(new Float[0]);
+    Arrays.sort(timestamps);
 
     // build list of TIFF files
 
@@ -331,9 +359,36 @@ public class MicromanagerReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
     store.setImageName("", 0);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
+    store.setImageDescription(comment, 0);
+    if (time != null) {
+      SimpleDateFormat parser =
+        new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+      try {
+        long stamp = parser.parse(time).getTime();
+        store.setImageCreationDate(
+          DataTools.convertDate(stamp, DataTools.UNIX), 0);
+      }
+      catch (ParseException e) {
+        MetadataTools.setDefaultCreationDate(store, id, 0);
+      }
+    }
+    else MetadataTools.setDefaultCreationDate(store, id, 0);
+
+    for (int i=0; i<channels.length; i++) {
+      store.setLogicalChannelName(channels[i], 0, i);
+    }
+
+    store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+    store.setDimensionsPhysicalSizeZ(sliceThickness, 0, 0);
+
+    for (int i=0; i<getImageCount(); i++) {
+      store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
+      // TODO : timestamps not correctly parsed
+      //store.setPlaneTimingDeltaT(timestamps[i], 0, 0, i);
+    }
   }
 
 }
