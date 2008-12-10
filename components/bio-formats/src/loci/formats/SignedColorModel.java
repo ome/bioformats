@@ -96,7 +96,97 @@ public class SignedColorModel extends ColorModel {
     return rescale(red);
   }
 
+  /* @see java.awt.image.ColorModel#getAlpha(Object) */
+  public int getAlpha(Object data) {
+    int max = (int) Math.pow(2, pixelBits) - 1;
+    if (data instanceof byte[]) {
+      byte[] b = (byte[]) data;
+      if (b.length == 1) return getAlpha(b[0]);
+      return rescale(b.length == 4 ? b[0] : max, max);
+    }
+    else if (data instanceof short[]) {
+      short[] s = (short[]) data;
+      if (s.length == 1) return getAlpha(s[0]);
+      return rescale(s.length == 4 ? s[0] : max, max);
+    }
+    else if (data instanceof int[]) {
+      int[] i = (int[]) data;
+      if (i.length == 1) return getAlpha(i[0]);
+      return rescale(i.length == 4 ? i[0] : max, max);
+    }
+    return 0;
+  }
+
+  /* @see java.awt.image.ColorModel#getRed(Object) */
+  public int getRed(Object data) {
+    int max = (int) Math.pow(2, pixelBits) - 1;
+    if (data instanceof byte[]) {
+      byte[] b = (byte[]) data;
+      if (b.length == 1) return getRed(b[0]);
+      return rescale(b.length != 4 ? b[0] : b[1]);
+    }
+    else if (data instanceof short[]) {
+      short[] s = (short[]) data;
+      if (s.length == 1) return getRed(s[0]);
+      return rescale(s.length != 4 ? s[0] : s[1], max);
+    }
+    else if (data instanceof int[]) {
+      int[] i = (int[]) data;
+      if (i.length == 1) return getRed(i[0]);
+      return rescale(i.length != 4 ? i[0] : i[1], max);
+    }
+    return 0;
+  }
+
+  /* @see java.awt.image.ColorModel#getGreen(Object) */
+  public int getGreen(Object data) {
+    int max = (int) Math.pow(2, pixelBits) - 1;
+    if (data instanceof byte[]) {
+      byte[] b = (byte[]) data;
+      if (b.length == 1) return getGreen(b[0]);
+      return rescale(b.length != 4 ? b[1] : b[2]);
+    }
+    else if (data instanceof short[]) {
+      short[] s = (short[]) data;
+      if (s.length == 1) return getGreen(s[0]);
+      return rescale(s.length != 4 ? s[1] : s[2], max);
+    }
+    else if (data instanceof int[]) {
+      int[] i = (int[]) data;
+      if (i.length == 1) return getGreen(i[0]);
+      return rescale(i.length != 4 ? i[1] : i[2], max);
+    }
+    return 0;
+  }
+
+  /* @see java.awt.image.ColorModel#getBlue(Object) */
+  public int getBlue(Object data) {
+    int max = (int) Math.pow(2, pixelBits) - 1;
+    if (data instanceof byte[]) {
+      byte[] b = (byte[]) data;
+      if (b.length == 1) return getBlue(b[0]);
+      return rescale(b.length > 2 ? b[b.length - 1] : 0);
+    }
+    else if (data instanceof short[]) {
+      short[] s = (short[]) data;
+      if (s.length == 1) return getBlue(s[0]);
+      return rescale(s.length > 2 ? s[s.length - 1] : 0, max);
+    }
+    else if (data instanceof int[]) {
+      int[] i = (int[]) data;
+      if (i.length == 1) return getBlue(i[0]);
+      return rescale(i.length > 2 ? i[i.length - 1] : 0, max);
+    }
+    return 0;
+  }
+
   // -- Helper methods --
+
+  private int rescale(int value, int max) {
+    float v = (float) value / (float) max;
+    v *= 255;
+    return rescale((int) v);
+  }
 
   private int rescale(int value) {
     if (value < 128) {

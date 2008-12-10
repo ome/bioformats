@@ -474,6 +474,11 @@ public final class TiffTools {
       if (count < 0) return null; // invalid data
       Object value = null;
 
+      if (type < 0 || type >= BYTES_PER_ELEMENT.length) {
+        // invalid data
+        return null;
+      }
+
       if (count > threshhold / BYTES_PER_ELEMENT[type]) {
         long pointer = bigTiff ? in.readLong() :
           (long) (in.readInt() & 0xffffffffL);
@@ -2221,13 +2226,6 @@ public final class TiffTools {
 
     int width = img.getWidth();
     int height = img.getHeight();
-
-    if (values.length == 2) {
-      // pad values with extra set of zeroes
-      values = new byte[][] {
-        values[0], values[1], new byte[values[0].length]
-      };
-    }
 
     int bytesPerPixel = values[0].length / (width * height);
 

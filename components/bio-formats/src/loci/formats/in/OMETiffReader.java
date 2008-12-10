@@ -200,6 +200,7 @@ public class OMETiffReader extends FormatReader {
         }
         String order = meta.getPixelsDimensionOrder(i, p);
         int effSizeC = meta.getPixelsSizeC(i, p).intValue() / samples;
+        if (effSizeC == 0) effSizeC = 1;
         int sizeT = meta.getPixelsSizeT(i, p).intValue();
         int sizeZ = meta.getPixelsSizeZ(i, p).intValue();
         int num = effSizeC * sizeT * sizeZ;
