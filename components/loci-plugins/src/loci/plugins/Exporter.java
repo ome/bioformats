@@ -259,6 +259,7 @@ public class Exporter {
         }
         else w.saveImage(img, i == end - 1);
       }
+      w.close();
     }
     catch (FormatException e) {
       e.printStackTrace();
