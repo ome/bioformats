@@ -197,21 +197,17 @@ public class MicromanagerReader extends FormatReader {
 
     status("Populating metadata");
 
-    int start = s.indexOf("Summary");
-    int end = s.indexOf("}", start);
-    if (start != -1 && end > start) {
-      s = s.substring(s.indexOf("\n", start), end).trim();
-    }
-
     Vector stamps = new Vector();
 
     StringTokenizer st = new StringTokenizer(s, "\n");
     int[] slice = new int[3];
     while (st.hasMoreTokens()) {
-      String token = st.nextToken();
+      String token = st.nextToken().trim();
       boolean open = token.indexOf("[") != -1;
       boolean closed = token.indexOf("]") != -1;
-      if (open || (!open && !closed)) {
+      if (open || (!open && !closed && !token.equals("{") &&
+        !token.startsWith("}")))
+      {
         int quote = token.indexOf("\"") + 1;
         String key = token.substring(quote, token.indexOf("\"", quote));
         String value = null;
@@ -263,14 +259,14 @@ public class MicromanagerReader extends FormatReader {
         else if (key.equals("Comment")) comment = value;
       }
 
-      if (token.trim().startsWith("\"FrameKey")) {
+      if (token.startsWith("\"FrameKey")) {
         int dash = token.indexOf("-") + 1;
-        slice[2] = Integer.parseInt(token.substring(dash,
-          token.indexOf("-", dash)));
-        dash = token.indexOf("-", dash);
-        slice[1] = Integer.parseInt(token.substring(dash,
-          token.indexOf("-", dash)));
-        dash = token.indexOf("-", dash);
+        int nextDash = token.indexOf("-", dash);
+        slice[2] = Integer.parseInt(token.substring(dash, nextDash));
+        dash = nextDash + 1;
+        nextDash = token.indexOf("-", dash);
+        slice[1] = Integer.parseInt(token.substring(dash, nextDash));
+        dash = nextDash + 1;
         slice[0] = Integer.parseInt(token.substring(dash,
           token.indexOf("\"", dash)));
 
@@ -281,13 +277,17 @@ public class MicromanagerReader extends FormatReader {
           key = token.substring(1, colon).trim();
           value = token.substring(colon + 1, token.length() - 1).trim();
 
+          key = key.replaceAll("\"", "");
+
           addMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
-            exposureTime = new Float(value);
+            float t = Float.parseFloat(value);
+            exposureTime = new Float(t / 1000);
           }
           else if (key.equals("ElapsedTime-ms")) {
-            stamps.add(new Float(value));
+            float t = Float.parseFloat(value);
+            stamps.add(new Float(t / 1000));
           }
 
           token = st.nextToken().trim();
@@ -386,8 +386,9 @@ public class MicromanagerReader extends FormatReader {
 
     for (int i=0; i<getImageCount(); i++) {
       store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
-      // TODO : timestamps not correctly parsed
-      //store.setPlaneTimingDeltaT(timestamps[i], 0, 0, i);
+      if (i < timestamps.length) {
+        store.setPlaneTimingDeltaT(timestamps[i], 0, 0, i);
+      }
     }
   }
 
