@@ -183,6 +183,8 @@ public class MetamorphReader extends BaseTiffReader {
 
     if (checkSuffix(id, ND_SUFFIX)) ndfile = new Location(id);
 
+    String creationTime = null;
+
     if (ndfile != null && ndfile.exists() &&
       (fileGroupOption(id) == FormatTools.MUST_GROUP || isGroupFiles()))
     {
@@ -211,6 +213,9 @@ public class MetamorphReader extends BaseTiffReader {
         }
         else if (key.startsWith("WaveName")) {
           waveNames.add(value);
+        }
+        else if (key.startsWith("StartTime")) {
+          creationTime = value;
         }
 
         line = ndStream.readLine().trim();
@@ -294,7 +299,6 @@ public class MetamorphReader extends BaseTiffReader {
                 l = new Location(ndfile.getParent(), stks[s][f]);
                 if (!l.exists()) {
                   stks = null;
-                  return;
                 }
               }
             }
@@ -306,12 +310,13 @@ public class MetamorphReader extends BaseTiffReader {
               l = new Location(ndfile.getParent(), stks[s][f]);
               if (!l.exists()) {
                 stks = null;
-                return;
               }
             }
           }
-          stks[s][f] = l.getAbsolutePath();
+          if (stks != null) stks[s][f] = l.getAbsolutePath();
+          else break;
         }
+        if (stks == null) break;
       }
 
       core[0].sizeZ = zc;
@@ -320,7 +325,7 @@ public class MetamorphReader extends BaseTiffReader {
       core[0].imageCount = zc * tc * cc;
       core[0].dimensionOrder = "XYZCT";
 
-      if (stks.length > 1) {
+      if (stks != null && stks.length > 1) {
         CoreMetadata[] newCore = new CoreMetadata[stks.length];
         for (int i=0; i<stks.length; i++) {
           newCore[i] = new CoreMetadata();
@@ -350,7 +355,11 @@ public class MetamorphReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<getSeriesCount(); i++) {
-      MetadataTools.setDefaultCreationDate(store, id, i);
+      if (creationTime != null) {
+        store.setImageCreationDate(DataTools.formatDate(creationTime,
+          "yyyyMMdd HH:mm:ss"), 0);
+      }
+      else if (i > 0) MetadataTools.setDefaultCreationDate(store, id, i);
       store.setImageName("", i);
     }
   }
