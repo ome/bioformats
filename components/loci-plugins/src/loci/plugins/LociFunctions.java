@@ -261,6 +261,33 @@ public class LociFunctions extends MacroFunctions {
     seriesName[0] = retrieve.getImageName(r.getSeries());
   }
 
+  public void getImageCreationDate(String[] creationDate) {
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    creationDate[0] = retrieve.getImageCreationDate(r.getSeries());
+  }
+
+  public void getPlaneTimingDeltaT(Double[] deltaT, Double no) {
+    int imageIndex = r.getSeries();
+    int planeIndex = getPlaneIndex(r, no.intValue());
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    Float val = null;
+    if (planeIndex >= 0) {
+      val = retrieve.getPlaneTimingDeltaT(imageIndex, 0, planeIndex);
+    }
+    deltaT[0] = new Double(val == null ? Double.NaN : val.doubleValue());
+  }
+
+  public void getPlaneTimingExposureTime(Double[] exposureTime, Double no) {
+    int imageIndex = r.getSeries();
+    int planeIndex = getPlaneIndex(r, no.intValue());
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    Float val = null;
+    if (planeIndex >= 0) {
+      val = retrieve.getPlaneTimingExposureTime(imageIndex, 0, planeIndex);
+    }
+    exposureTime[0] = new Double(val == null ? Double.NaN : val.doubleValue());
+  }
+
   // -- PlugIn API methods --
 
   public void run(String arg) {
@@ -417,11 +444,42 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("-- Obtains the specified metadata field's value.");
       IJ.write("Ext.getSeriesName(seriesName)");
       IJ.write("-- Obtains the name of the current series.");
+      IJ.write("Ext.getImageCreationDate(creationDate)");
+      IJ.write("-- Obtains the creation date of the dataset");
+      IJ.write("-- in ISO 8601 format.");
+      IJ.write("Ext.getPlaneTimingDeltaT(deltaT, no)");
+      IJ.write("-- Obtains the time offset (seconds since the beginning ");
+      IJ.write("-- of the experiment) for the no'th plane, or NaN if none.");
+      IJ.write("Ext.getPlaneTimingExposureTime(exposureTime, no)");
+      IJ.write("-- Obtains the exposure time (in seconds) for the no'th");
+      IJ.write("-- plane, or NaN if none.");
       IJ.write("");
-      IJ.write("For more information, see the online Javadocs for the");
-      IJ.write("loci.formats.IFormatReader interface, available at:");
+      IJ.write("For more information, see the online Javadocs");
+      IJ.write("for the loci.formats.IFormatReader and ");
+      IJ.write("loci.formats.meta.MetadataRetrieve interfaces:");
       IJ.write("http://www.loci.wisc.edu/software/docs/");
     }
+  }
+
+  // -- Utility methods --
+
+  /** Finds the Plane index corresponding to the given image plane number. */
+  private static int getPlaneIndex(IFormatReader r, int no) {
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    int imageIndex = r.getSeries();
+    int planeCount = retrieve.getPlaneCount(imageIndex, 0);
+    int[] zct = r.getZCTCoords(no);
+    for (int i=0; i<planeCount; i++) {
+      Integer theC = retrieve.getPlaneTheC(imageIndex, 0, i);
+      Integer theT = retrieve.getPlaneTheT(imageIndex, 0, i);
+      Integer theZ = retrieve.getPlaneTheZ(imageIndex, 0, i);
+      if (zct[0] == theZ.intValue() && zct[1] == theC.intValue() &&
+        zct[2] == theT.intValue())
+      {
+        return i;
+      }
+    }
+    return -1;
   }
 
 }
