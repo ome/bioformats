@@ -347,9 +347,9 @@ public class SlidebookReader extends FormatReader {
                 int checkX = in.readShort();
                 int checkY = in.readShort();
                 int div = in.readShort();
-                core[j].sizeX /= div;
+                core[j].sizeX /= (div == 0 ? 1 : div);
                 div = in.readShort();
-                core[j].sizeY /= div;
+                core[j].sizeY /= (div == 0 ? 1 : div);
               }
               if (prevSeries != j) {
                 iCount = 1;
@@ -384,6 +384,16 @@ public class SlidebookReader extends FormatReader {
             in.skipBytes(10);
             if (nextName < imageNames.length) {
               imageNames[nextName++] = in.readCString().trim();
+            }
+            if (core[nextName - 1].sizeX == 0 || core[nextName - 1].sizeY == 0)
+            {
+              in.skipBytes(123);
+              core[nextName - 1].sizeX = in.readInt();
+              core[nextName - 1].sizeY = in.readInt();
+              int div = in.readInt();
+              core[nextName - 1].sizeX /= (div == 0 ? 1 : div);
+              div = in.readInt();
+              core[nextName - 1].sizeY /= (div == 0 ? 1 : div);
             }
           }
         }
