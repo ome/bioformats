@@ -305,7 +305,7 @@ public final class AWTImageTools {
   public static BufferedImage makeImage(byte[] data, int w, int h, int c,
     boolean interleaved, int bpp, boolean little)
   {
-    return makeImage(data, w, h, c, interleaved, bpp, false, little);
+    return makeImage(data, w, h, c, interleaved, bpp, false, little, false);
   }
 
   /**
@@ -325,10 +325,10 @@ public final class AWTImageTools {
    * @param little Whether byte array is in little-endian order.
    */
   public static BufferedImage makeImage(byte[] data, int w, int h, int c,
-    boolean interleaved, int bpp, boolean fp, boolean little)
+    boolean interleaved, int bpp, boolean fp, boolean little, boolean signed)
   {
     Object pixels = DataTools.makeDataArray(data,
-      bpp % 3 == 0 ? bpp / 3 : bpp, fp, little);
+      bpp % 3 == 0 ? bpp / 3 : bpp, fp, little, signed);
 
     if (pixels instanceof byte[]) {
       return makeImage((byte[]) pixels, w, h, c, interleaved);
@@ -361,7 +361,7 @@ public final class AWTImageTools {
   public static BufferedImage makeImage(byte[][] data,
     int w, int h, int bpp, boolean little)
   {
-    return makeImage(data, w, h, bpp, false, little);
+    return makeImage(data, w, h, bpp, false, little, false);
   }
 
   /**
@@ -376,13 +376,13 @@ public final class AWTImageTools {
    * @param little Whether byte array is in little-endian order.
    */
   public static BufferedImage makeImage(byte[][] data,
-    int w, int h, int bpp, boolean fp, boolean little)
+    int w, int h, int bpp, boolean fp, boolean little, boolean signed)
   {
     int c = data.length;
     Object v = null;
     for (int i=0; i<c; i++) {
       Object pixels = DataTools.makeDataArray(data[i],
-        bpp % 3 == 0 ? bpp / 3 : bpp, fp, little);
+        bpp % 3 == 0 ? bpp / 3 : bpp, fp, little, signed);
       if (pixels instanceof byte[]) {
         if (v == null) v = new byte[c][];
         ((byte[][]) v)[i] = (byte[]) pixels;
@@ -559,14 +559,14 @@ public final class AWTImageTools {
   {
     int pixelType = r.getPixelType();
     if (pixelType == FormatTools.FLOAT) {
-      float[] f =
-        (float[]) DataTools.makeDataArray(buf, 4, true, r.isLittleEndian());
+      float[] f = (float[]) DataTools.makeDataArray(buf, 4, true,
+        r.isLittleEndian(), false);
       if (r.isNormalized()) f = DataTools.normalizeFloats(f);
       return makeImage(f, w, h, r.getRGBChannelCount(), r.isInterleaved());
     }
     else if (pixelType == FormatTools.DOUBLE) {
-      double[] d =
-        (double[]) DataTools.makeDataArray(buf, 8, true, r.isLittleEndian());
+      double[] d = (double[]) DataTools.makeDataArray(buf, 8, true,
+        r.isLittleEndian(), false);
       if (r.isNormalized()) d = DataTools.normalizeDoubles(d);
       return makeImage(d, w, h, r.getRGBChannelCount(), r.isInterleaved());
     }
@@ -593,7 +593,8 @@ public final class AWTImageTools {
 
     BufferedImage b = makeImage(buf, w, h,
       r.isIndexed() ? 1 : r.getRGBChannelCount(), r.isInterleaved(),
-      FormatTools.getBytesPerPixel(r.getPixelType()), r.isLittleEndian());
+      FormatTools.getBytesPerPixel(r.getPixelType()), false,
+      r.isLittleEndian(), signed);
 
     if (r.isIndexed()) {
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {

@@ -511,15 +511,33 @@ public final class DataTools {
    * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
    * @param little Whether byte array is in little-endian order.
    */
-  public static Object makeDataArray(byte[] b,
-    int bpp, boolean fp, boolean little)
+  public static Object makeDataArray(byte[] b, int bpp, boolean fp,
+    boolean little)
   {
-    if (bpp == 1) return b;
+    return makeDataArray(b, bpp, fp, little, false);
+  }
+
+  /**
+   * Convert a byte array to the appropriate primitive type array.
+   * @param b Byte array to convert.
+   * @param bpp Denotes the number of bytes in the returned primitive type
+   *   (e.g. if bpp == 2, we should return an array of type short).
+   * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
+   * @param little Whether byte array is in little-endian order.
+   */
+  public static Object makeDataArray(byte[] b,
+    int bpp, boolean fp, boolean little, boolean signed)
+  {
+    if (bpp == 1) {
+      if (signed) b = makeSigned(b);
+      return b;
+    }
     else if (bpp == 2) {
       short[] s = new short[b.length / 2];
       for (int i=0; i<s.length; i++) {
         s[i] = bytesToShort(b, i*2, 2, little);
       }
+      if (signed) s = makeSigned(s);
       return s;
     }
     else if (bpp == 4 && fp) {
@@ -534,6 +552,7 @@ public final class DataTools {
       for (int j=0; j<i.length; j++) {
         i[j] = bytesToInt(b, j*4, 4, little);
       }
+      if (signed) i = makeSigned(i);
       return i;
     }
     else if (bpp == 8 && fp) {
@@ -820,6 +839,29 @@ public final class DataTools {
       if (array[i] == value) return i;
     }
     return -1;
+  }
+
+  // -- Signed data conversion --
+
+  public static byte[] makeSigned(byte[] b) {
+    for (int i=0; i<b.length; i++) {
+      b[i] = (byte) (b[i] + 128);
+    }
+    return b;
+  }
+
+  public static short[] makeSigned(short[] s) {
+    for (int i=0; i<s.length; i++) {
+      s[i] = (short) (s[i] + 32768);
+    }
+    return s;
+  }
+
+  public static int[] makeSigned(int[] i) {
+    for (int j=0; j<i.length; j++) {
+      i[j] = (int) (i[j] + 2147483648L);
+    }
+    return i;
   }
 
 }

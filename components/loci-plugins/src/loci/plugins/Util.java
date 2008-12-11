@@ -149,6 +149,8 @@ public final class Util {
     // convert byte array to appropriate primitive array type
     boolean isFloat = type == FormatTools.FLOAT || type == FormatTools.DOUBLE;
     boolean isLittle = r.isLittleEndian();
+    boolean isSigned = type == FormatTools.INT8 || type == FormatTools.INT16 ||
+      type == FormatTools.INT32;
 
     IndexColorModel cm = null;
     Index16ColorModel model = null;
@@ -173,6 +175,7 @@ public final class Util {
           q = new byte[w * h];
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
+        if (isSigned) q = DataTools.makeSigned(q);
 
         ip[i] = new ByteProcessor(w, h, q, null);
         if (cm != null) ip[i].setColorModel(cm);
@@ -184,6 +187,7 @@ public final class Util {
           q = new short[w * h];
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
+        if (isSigned) q = DataTools.makeSigned(q);
 
         ip[i] = new ShortProcessor(w, h, q, model);
       }
