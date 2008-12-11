@@ -290,12 +290,19 @@ public class DicomReader extends FormatReader {
       }
     }
 
-    // apply rescale function
+    // apply rescale function, if the data is signed
+    // we don't apply the rescale function to unsigned data because it can
+    // result in negative values (which cannot be properly handled if the
+    // data is unsigned)
 
-    for (int i=0; i<w * h; i++) {
-      int pixel = DataTools.bytesToInt(buf, i * bpp, bpp, isLittleEndian());
-      pixel = (int) (pixel * rescaleSlope + rescaleIntercept);
-      DataTools.unpackBytes(pixel, buf, i * bpp, bpp, isLittleEndian());
+    if (getPixelType() == FormatTools.INT8 ||
+      getPixelType() == FormatTools.INT16)
+    {
+      for (int i=0; i<w * h; i++) {
+        int pixel = DataTools.bytesToInt(buf, i * bpp, bpp, isLittleEndian());
+        pixel = (int) (pixel * rescaleSlope + rescaleIntercept);
+        DataTools.unpackBytes(pixel, buf, i * bpp, bpp, isLittleEndian());
+      }
     }
 
     return buf;
