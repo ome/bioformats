@@ -84,9 +84,13 @@ public class MicromanagerReader extends FormatReader {
       }
     }
     if (!open) return false; // not allowed to touch the file system
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    Location metaFile = new Location(parent, METADATA);
-    return metaFile.exists() && metaFile.length() > 0;
+    try {
+      Location parent = new Location(name).getAbsoluteFile().getParentFile();
+      Location metaFile = new Location(parent, METADATA);
+      return metaFile.exists() && metaFile.length() > 0;
+    }
+    catch (NullPointerException e) { }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

@@ -108,15 +108,19 @@ public class FV1000Reader extends FormatReader {
 
     if (!open) return false; // not allowed to touch the file system
 
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    String path = parent.getPath();
-    path = path.substring(path.lastIndexOf(File.separator) + 1);
-    if (path.indexOf(".") != -1) {
-      path = path.substring(0, path.lastIndexOf("."));
-    }
+    try {
+      Location parent = new Location(name).getAbsoluteFile().getParentFile();
+      String path = parent.getPath();
+      path = path.substring(path.lastIndexOf(File.separator) + 1);
+      if (path.indexOf(".") != -1) {
+        path = path.substring(0, path.lastIndexOf("."));
+      }
 
-    Location oif = new Location(parent.getParentFile(), path);
-    return oif.exists() && !oif.isDirectory();
+      Location oif = new Location(parent.getParentFile(), path);
+      return oif.exists() && !oif.isDirectory();
+    }
+    catch (NullPointerException e) { }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
