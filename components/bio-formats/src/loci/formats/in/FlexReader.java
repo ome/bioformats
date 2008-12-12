@@ -261,18 +261,18 @@ public class FlexReader extends BaseTiffReader {
         if (currentQName.equals("DateTime")) {
           store.setImageCreationDate(value, nextImage - 1);
         }
-        else if (currentQName.equals("ImageResolutionX")) {
-          store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
-        }
-        else if (currentQName.equals("ImageResolutionY")) {
-          store.setDimensionsPhysicalSizeY(new Float(value), nextImage - 1, 0);
-        }
         else if (currentQName.equals("CameraBinningX")) {
           binX = Integer.parseInt(value);
         }
         else if (currentQName.equals("CameraBinningY")) {
           binY = Integer.parseInt(value);
         }
+      }
+      else if (parentQName.equals("ImageResolutionX")) {
+        store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
+      }
+      else if (parentQName.equals("ImageResolutionY")) {
+        store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
       }
       else if (parentQName.equals("Well")) {
         addMeta("Well " + (nextWell - 1) + " " + currentQName, value);
@@ -437,7 +437,8 @@ public class FlexReader extends BaseTiffReader {
         store.setImageInstrumentRef("Instrument:0", nextImage);
 
         nextImage++;
-
+        
+        //Implemented for FLEX v1.7 and bellow
         String x = attributes.getValue("CameraBinningX");
         String y = attributes.getValue("CameraBinningY");
         if (x != null) binX = Integer.parseInt(x);
@@ -459,6 +460,20 @@ public class FlexReader extends BaseTiffReader {
       }
       else if (qName.equals("Status")) {
         addMeta("Status", attributes.getValue("StatusString"));
+      }
+      else if(qName.equals("ImageResolutionX")) {
+        parentQName = qName;
+      //TODO: definition of the dimension type and unit Where to store?
+        for (int i=0; i<attributes.getLength(); i++) {
+          //addMeta("Image " + nextImage + " " + attributes.getQName(i), attributes.getValue(i));
+        }        
+      }
+      else if(qName.equals("ImageResolutionY")) {
+        parentQName = qName;
+        //TODO: definition of the dimension type and unit Where to store?
+        for (int i=0; i<attributes.getLength(); i++) {
+          //addMeta("Image " + nextImage + " " + attributes.getQName(i),attributes.getValue(i));
+        }        
       }
     }
   }
