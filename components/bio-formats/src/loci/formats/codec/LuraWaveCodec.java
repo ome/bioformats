@@ -49,11 +49,11 @@ public class LuraWaveCodec extends BaseCodec {
   /** Message displayed if the LuraWave LWF decoder library is not found. */
   public static final String NO_LURAWAVE_MSG =
     "The LuraWave decoding library, lwf_jsdk2.6.jar, is required to decode " +
-    "this file. Please make sure it is present in your classpath.";
+    "this file.\r\nPlease make sure it is present in your classpath.";
 
   /** Message to display if no LuraWave license code is given. */
   public static final String NO_LICENSE_MSG =
-    "No LuraWave license code was specified. Please set one in the " +
+    "No LuraWave license code was specified.\r\nPlease set one in the " +
     LICENSE_PROPERTY + " system property (e.g., with -D" + LICENSE_PROPERTY +
     "=XXXX from the command line).";
 
