@@ -1,0 +1,61 @@
+<!--
+build.xml
+
+Ant build file for bfjace, the Bio-Formats Jace C++ bindings.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="formats-jace" default="jar" basedir=".">
+  <description>
+    Build file for Bio-Formats Jace C++ bindings
+  </description>
+  <property file="base.properties"/>
+  <import file="${root.dir}/common.xml"/>
+  <property file="build.properties"/>
+
+  <!--
+  Guess where the java runtime classes are for Jace
+  Stolen from:
+  http://forums.gamegardens.com/discussion/mvnforum/viewthread?thread=324
+  -->
+  <!-- if Mac OS X -->
+  <property name="jre.macosx.classes"
+    value="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar"/>
+  <property name="jre.macosx.ui"
+    value="/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar"/>
+  <condition property="jre.runtime"
+    value="${jre.macosx.classes}:${jre.macosx.ui}">
+    <and>
+      <os family="mac"/>
+      <os family="unix"/>
+    </and>
+  </condition>
+  <!-- Default for Unix -->
+  <property name="jre.runtime" value="${java.home}/jre/lib/rt.jar"/>
+
+  <target name="gen-proxies"
+    description="generate Jace proxies from C++ source code">
+    <delete dir="proxies"/>
+    <java classname="jace.autoproxy.AutoProxy">
+      <arg path="include"/>
+      <arg path="source"/>
+      <arg path="proxies/include"/>
+      <arg path="proxies/source"/>
+      <arg path="${jre.runtime}:${artifact.dir}/bio-formats.jar"/>
+      <classpath>
+        <fileset dir="jace/lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+      <arg value="-mindep"/>
+    </java>
+  </target>
+
+  <target name="clean-gen">
+    <delete dir="temp_build"/>
+    <delete dir="classes"/>
+    <delete dir="release"/>
+  </target>
+
+</project>

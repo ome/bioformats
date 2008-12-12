@@ -1,0 +1,140 @@
+
+
+BEGIN_NAMESPACE ( jace )
+
+/**
+ * Contains the definitions for the template specializations of the template class, ElementProxy.
+ *
+ * This file is internal to the JACE library.
+ *
+ */
+template <> inline
+ElementProxy< ::jace::proxy::types::JBoolean>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JBoolean( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JBoolean& ElementProxy< ::jace::proxy::types::JBoolean>::operator=( const ::jace::proxy::types::JBoolean& type ) {
+  JNIEnv* env = helper::attach();
+  jbooleanArray array = static_cast<jbooleanArray>( parent );
+  jboolean val = type.getJavaJniValue().z;
+  env->SetBooleanArrayRegion( array, mIndex, 1, &val );
+  return *this;
+}
+
+template <> inline
+ElementProxy< ::jace::proxy::types::JByte>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JByte( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JByte& ElementProxy< ::jace::proxy::types::JByte>::operator=( const ::jace::proxy::types::JByte& type ) {
+  JNIEnv* env = helper::attach();
+  jbyteArray array = static_cast<jbyteArray>( parent );
+  jbyte byte = type.getJavaJniValue().b;
+  env->SetByteArrayRegion( array, mIndex, 1, &byte );
+  return *this;
+}
+
+template <> inline
+ElementProxy< ::jace::proxy::types::JChar>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JChar( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JChar& ElementProxy< ::jace::proxy::types::JChar>::operator=( const ::jace::proxy::types::JChar& type ) {
+  JNIEnv* env = helper::attach();
+  jcharArray array = static_cast<jcharArray>( parent );
+  jchar val = type.getJavaJniValue().c;
+  env->SetCharArrayRegion( array, mIndex, 1, &val );
+  return *this;
+}
+
+template <> inline
+ElementProxy< ::jace::proxy::types::JDouble>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JDouble( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JDouble& ElementProxy< ::jace::proxy::types::JDouble>::operator=( const ::jace::proxy::types::JDouble& type ) {
+  JNIEnv* env = helper::attach();
+  jdoubleArray array = static_cast<jdoubleArray>( parent );
+  jdouble val = type.getJavaJniValue().d;
+  env->SetDoubleArrayRegion( array, mIndex, 1, &val );
+  return *this;
+}
+
+template <> inline
+ElementProxy< ::jace::proxy::types::JFloat>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JFloat( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JFloat& ElementProxy< ::jace::proxy::types::JFloat>::operator=( const ::jace::proxy::types::JFloat& type ) {
+  JNIEnv* env = helper::attach();
+  jfloatArray array = static_cast<jfloatArray>( parent );
+  jfloat val = type.getJavaJniValue().f;
+  env->SetFloatArrayRegion( array, mIndex, 1, &val );
+  return *this;
+}
+
+template <> inline
+ElementProxy< ::jace::proxy::types::JInt>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JInt( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JInt& ElementProxy< ::jace::proxy::types::JInt>::operator=( const ::jace::proxy::types::JInt& type ) {
+  JNIEnv* env = helper::attach();
+  jintArray array = static_cast<jintArray>( parent );
+  jint val = type.getJavaJniValue().i;
+  env->SetIntArrayRegion( array, mIndex, 1, &val );
+  return *this;
+}
+
+template <> inline
+ElementProxy< ::jace::proxy::types::JLong>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JLong( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JLong& ElementProxy< ::jace::proxy::types::JLong>::operator=( const ::jace::proxy::types::JLong& type ) {
+  JNIEnv* env = helper::attach();
+  jlongArray array = static_cast<jlongArray>( parent );
+  jlong val = type.getJavaJniValue().j;
+  env->SetLongArrayRegion( array, mIndex, 1, &val );
+  return *this;
+}
+
+template <> inline
+ElementProxy< ::jace::proxy::types::JShort>::ElementProxy( jarray array, jvalue element, int index ) : 
+  ::jace::proxy::types::JShort( element ), mIndex( index ) {
+  JNIEnv* env = ::jace::helper::attach();
+  parent = static_cast<jarray>( ::jace::helper::newGlobalRef( env, array ) );
+}
+
+template <> inline
+::jace::proxy::types::JShort& ElementProxy< ::jace::proxy::types::JShort>::operator=( const ::jace::proxy::types::JShort& type ) {
+  JNIEnv* env = helper::attach();
+  jshortArray array = static_cast<jshortArray>( parent );
+  jshort val = type.getJavaJniValue().s;
+  env->SetShortArrayRegion( array, mIndex, 1, &val );
+  return *this;
+}
+
+END_NAMESPACE ( jace )
+

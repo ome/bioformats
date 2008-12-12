@@ -1,0 +1,558 @@
+
+
+/**
+ * Contains the definitions for the template specializations of the template class, JFieldProxy.
+ *
+ * This file is internal to the JACE library.
+ *
+ */
+
+BEGIN_NAMESPACE( jace )
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JBoolean>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JBoolean( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JBoolean>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JBoolean( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JBoolean>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JBoolean>& object ) :
+  ::jace::proxy::types::JBoolean( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JBoolean& JFieldProxy< ::jace::proxy::types::JBoolean>::operator=( const ::jace::proxy::types::JBoolean& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticBooleanField( fieldClass, fieldID, type.getBoolean() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetBooleanField( parent, fieldID, type.getBoolean() );
+  }
+
+  return *this;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JByte>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JByte( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JByte>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JByte( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JByte>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JByte>& object ) :
+  ::jace::proxy::types::JByte( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JByte& JFieldProxy< ::jace::proxy::types::JByte>::operator=( const ::jace::proxy::types::JByte& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticByteField( fieldClass, fieldID, type.getByte() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetByteField( parent, fieldID, type.getByte() );
+  }
+
+  return *this;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JChar>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JChar( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JChar>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JChar( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JChar>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JChar>& object ) :
+  ::jace::proxy::types::JChar( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JChar& JFieldProxy< ::jace::proxy::types::JChar>::operator=( const ::jace::proxy::types::JChar& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticCharField( fieldClass, fieldID, type.getChar() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetCharField( parent, fieldID, type.getChar() );
+  }
+
+  return *this;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JShort>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JShort( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JShort>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JShort( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JShort>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JShort>& object ) :
+  ::jace::proxy::types::JShort( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JShort& JFieldProxy< ::jace::proxy::types::JShort>::operator=( const ::jace::proxy::types::JShort& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticShortField( fieldClass, fieldID, type.getShort() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetShortField( parent, fieldID, type.getShort() );
+  }
+
+  return *this;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JInt>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JInt( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JInt>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JInt( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JInt>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JInt>& object ) :
+  ::jace::proxy::types::JInt( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JInt& JFieldProxy< ::jace::proxy::types::JInt>::operator=( const ::jace::proxy::types::JInt& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticIntField( fieldClass, fieldID, type.getInt() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetIntField( parent, fieldID, type.getInt() );
+  }
+
+  return *this;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JLong>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JLong( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JLong>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JLong( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JLong>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JLong>& object ) :
+  ::jace::proxy::types::JLong( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JLong& JFieldProxy< ::jace::proxy::types::JLong>::operator=( const ::jace::proxy::types::JLong& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticLongField( fieldClass, fieldID, type.getLong() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetLongField( parent, fieldID, type.getLong() );
+  }
+
+  return *this;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JFloat>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JFloat( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JFloat>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JFloat( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JFloat>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JFloat>& object ) :
+  ::jace::proxy::types::JFloat( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JFloat& JFieldProxy< ::jace::proxy::types::JFloat>::operator=( const ::jace::proxy::types::JFloat& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticFloatField( fieldClass, fieldID, type.getFloat() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetFloatField( parent, fieldID, type.getFloat() );
+  }
+
+  return *this;
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JDouble>::JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
+  ::jace::proxy::types::JDouble( value ), fieldID( fieldID_ ) {
+
+  if ( parent_ ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, parent_ ); 
+  }
+  else {
+    parent = parent_;
+  }
+  
+  parentClass = 0;
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JDouble>::JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
+  ::jace::proxy::types::JDouble( value ), fieldID( fieldID_ ) {
+
+  parent = 0;
+  JNIEnv* env = ::jace::helper::attach();
+  parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, parentClass_ ) ); 
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JDouble>::JFieldProxy( const JFieldProxy< ::jace::proxy::types::JDouble>& object ) :
+  ::jace::proxy::types::JDouble( object.getJavaJniValue() ), fieldID( object.fieldID ) {
+
+  if ( object.parent ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parent = ::jace::helper::newGlobalRef( env, object.parent ); 
+  }
+  else {
+    parent = 0;
+  }
+
+  if ( object.parentClass ) {
+    JNIEnv* env = ::jace::helper::attach();
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass ) );
+  }
+  else {
+    parentClass = 0;
+  }
+}
+
+template <> inline
+jace::proxy::types::JDouble& JFieldProxy< ::jace::proxy::types::JDouble>::operator=( const ::jace::proxy::types::JDouble& type ) {
+
+  JNIEnv* env = helper::attach();
+  jvalue value = type.getJavaJniValue();
+  setJavaJniValue( value );
+
+  /* If we don't have a parent object, we are a static field member.
+   */
+  if ( ! parent ) {
+    jclass fieldClass = parentClass;
+    env->SetStaticDoubleField( fieldClass, fieldID, type.getDouble() );
+  }
+  /* Otherwise, we are an instance member.
+   */
+  else {
+    env->SetDoubleField( parent, fieldID, type.getDouble() );
+  }
+
+  return *this;
+}
+
+
+END_NAMESPACE( jace )
+

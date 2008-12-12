@@ -1,0 +1,2 @@
+
+#include "jace/JClass.h"

@@ -1,0 +1,530 @@
+
+/**
+ * Contains the definitions for the template specializations of the template class, JMethod.
+ *
+ * This file is internal to the JACE library.
+ *
+ */
+
+BEGIN_NAMESPACE( jace )
+
+template <> inline
+::jace::proxy::types::JBoolean JMethod< ::jace::proxy::types::JBoolean>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jboolean result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallStaticBooleanMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallStaticBooleanMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JBoolean( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JBoolean JMethod< ::jace::proxy::types::JBoolean>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jboolean result;
+  
+  if ( arguments.asList().size() > 0 )
+	result = env->CallBooleanMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallBooleanMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JBoolean( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JByte JMethod< ::jace::proxy::types::JByte>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jbyte result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallStaticByteMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallStaticByteMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JByte( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JByte JMethod< ::jace::proxy::types::JByte>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jbyte result;
+  
+  if ( arguments.asList().size() > 0 )
+	result = env->CallByteMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallByteMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JByte( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JChar JMethod< ::jace::proxy::types::JChar>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jchar result;
+  
+  if ( arguments.asList().size() > 0 )
+	result = env->CallStaticCharMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallStaticCharMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JChar( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JChar JMethod< ::jace::proxy::types::JChar>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jchar result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallCharMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallCharMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JChar( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JDouble JMethod< ::jace::proxy::types::JDouble>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jdouble result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallStaticDoubleMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallStaticDoubleMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JDouble( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JDouble JMethod< ::jace::proxy::types::JDouble>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jdouble result;
+  
+  if ( arguments.asList().size() > 0 )
+	result = env->CallDoubleMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallDoubleMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JDouble( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JFloat JMethod< ::jace::proxy::types::JFloat>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jfloat result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallStaticFloatMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallStaticFloatMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JFloat( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JFloat JMethod< ::jace::proxy::types::JFloat>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jfloat result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallFloatMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallFloatMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JFloat( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JInt JMethod< ::jace::proxy::types::JInt>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jint result;
+  
+  if ( arguments.asList().size() > 0 )
+	result = env->CallStaticIntMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallStaticIntMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JInt( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JInt JMethod< ::jace::proxy::types::JInt>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jint result;
+  
+  if ( arguments.asList().size() > 0 )
+	result = env->CallIntMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+	result = env->CallIntMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JInt( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JLong JMethod< ::jace::proxy::types::JLong>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jlong result;
+  
+  if ( arguments.asList().size() > 0 )
+	result = env->CallStaticLongMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+	result = env->CallStaticLongMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JLong( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JLong JMethod< ::jace::proxy::types::JLong>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jlong result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallLongMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallLongMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JLong( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JShort JMethod< ::jace::proxy::types::JShort>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jshort result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallStaticShortMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallStaticShortMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JShort( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JShort JMethod< ::jace::proxy::types::JShort>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  jshort result;
+  
+  if ( arguments.asList().size() > 0 )
+    result = env->CallShortMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    result = env->CallShortMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JShort( result );
+}
+
+
+template <> inline
+::jace::proxy::types::JVoid JMethod< ::jace::proxy::types::JVoid>::invoke( const JClass* jClass, const JArguments& arguments ) {
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( jClass, arguments, true );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+  
+  if ( arguments.asList().size() > 0 )
+    env->CallStaticVoidMethodA( jClass->getClass(), methodID, &toVector( arguments )[ 0 ] );
+  else
+    env->CallStaticVoidMethod( jClass->getClass(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  return ::jace::proxy::types::JVoid();
+}
+
+template <> inline
+::jace::proxy::types::JVoid JMethod< ::jace::proxy::types::JVoid>::invoke( const ::jace::proxy::JObject& object, const JArguments& arguments ) {
+
+  #ifdef JACE_CHECK_NULLS
+    if ( object.isNull() ) {
+      throw JNIException( "[JMethod.invoke] Can not invoke an instance method on a null object." );
+    }
+  #endif
+
+  /* Get the methodID for the method matching the given arguments.
+   */
+  jmethodID methodID = getMethodID( object.getJavaJniClass(), arguments );
+
+  /* Call the method.
+   */
+  JNIEnv* env = helper::attach();
+
+  if ( arguments.asList().size() > 0 )
+	env->CallVoidMethodA( object.getJavaJniObject(), methodID, &toVector( arguments )[ 0 ] );
+  else
+	env->CallVoidMethod( object.getJavaJniObject(), methodID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */
+  helper::catchAndThrow();
+  
+  return ::jace::proxy::types::JVoid();
+}
+
+END_NAMESPACE( jace )
+

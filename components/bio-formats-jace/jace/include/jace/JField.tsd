@@ -1,0 +1,443 @@
+
+BEGIN_NAMESPACE( jace )
+
+/**
+ * Contains the definitions for the template specializations of the template class, JField.
+ *
+ * This file is internal to the JACE library.
+ *
+ */
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JBoolean> JField< ::jace::proxy::types::JBoolean>::get( ::jace::proxy::JObject& object ) {
+ 
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jboolean result = env->GetBooleanField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.z = result;
+
+  return ::jace::JFieldProxy< ::jace::proxy::types::JBoolean>( fieldID, value, object.getJavaJniObject() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JBoolean> JField< ::jace::proxy::types::JBoolean>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jboolean result = env->GetStaticBooleanField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.z = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JBoolean>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JBoolean>( fieldID, value, jClass->getClass() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JByte> JField< ::jace::proxy::types::JByte>::get( ::jace::proxy::JObject& object ) {
+
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jbyte result = env->GetByteField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.b = result;
+
+  return JFieldProxy< ::jace::proxy::types::JByte>( fieldID, value, object.getJavaJniObject() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JByte> JField< ::jace::proxy::types::JByte>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jbyte result = env->GetStaticByteField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.b = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JByte>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JByte>( fieldID, value, jClass->getClass() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JChar> JField< ::jace::proxy::types::JChar>::get( ::jace::proxy::JObject& object ) {
+
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jchar result = env->GetCharField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.c = result;
+
+  return JFieldProxy< ::jace::proxy::types::JChar>( fieldID, value, object.getJavaJniObject() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JChar> JField< ::jace::proxy::types::JChar>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jchar result = env->GetStaticCharField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.c = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JChar>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JChar>( fieldID, value, jClass->getClass() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JShort> JField< ::jace::proxy::types::JShort>::get( ::jace::proxy::JObject& object ) {
+
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jshort result = env->GetShortField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.s = result;
+
+  return JFieldProxy< ::jace::proxy::types::JShort>( fieldID, value, object.getJavaJniObject() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JShort> JField< ::jace::proxy::types::JShort>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jshort result = env->GetStaticShortField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.s = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JShort>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JShort>( fieldID, value, jClass->getClass() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JInt> JField< ::jace::proxy::types::JInt>::get( ::jace::proxy::JObject& object ) {
+
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jint result = env->GetIntField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.i = result;
+
+  return JFieldProxy< ::jace::proxy::types::JInt>( fieldID, value, object.getJavaJniObject() );
+}
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JInt> JField< ::jace::proxy::types::JInt>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jint result = env->GetStaticIntField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.i = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JInt>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JInt>( fieldID, value, jClass->getClass() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JLong> JField< ::jace::proxy::types::JLong>::get( ::jace::proxy::JObject& object ) {
+
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jlong result = env->GetLongField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.j = result;
+
+  return JFieldProxy< ::jace::proxy::types::JLong>( fieldID, value, object.getJavaJniObject() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JLong> JField< ::jace::proxy::types::JLong>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jlong result = env->GetStaticLongField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.j = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JLong>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JLong>( fieldID, value, jClass->getClass() );
+}
+
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JFloat> JField< ::jace::proxy::types::JFloat>::get( ::jace::proxy::JObject& object ) {
+
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jfloat result = env->GetFloatField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.f = result;
+
+  return JFieldProxy< ::jace::proxy::types::JFloat>( fieldID, value, object.getJavaJniObject() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JFloat> JField< ::jace::proxy::types::JFloat>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jfloat result = env->GetStaticFloatField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.f = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JFloat>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JFloat>( fieldID, value, jClass->getClass() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JDouble> JField< ::jace::proxy::types::JDouble>::get( ::jace::proxy::JObject& object ) {
+
+  /* Get the fieldID for the field belonging to the given object.
+   */
+  const JClass* parentClass = object.getJavaJniClass();
+  jfieldID fieldID = getFieldID( parentClass );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jdouble result = env->GetDoubleField( object.getJavaJniObject(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.d = result;
+
+  return JFieldProxy< ::jace::proxy::types::JDouble>( fieldID, value, object.getJavaJniObject() );
+}
+
+
+template <> inline
+JFieldProxy< ::jace::proxy::types::JDouble> JField< ::jace::proxy::types::JDouble>::get( const JClass* jClass ) {
+
+  /* Get the fieldID for the field belonging to the given class.
+   */
+  jfieldID fieldID = getFieldID( jClass, true );
+
+  /* Get the field value.
+   */
+  JNIEnv* env = helper::attach();
+  jdouble result = env->GetStaticDoubleField( jClass->getClass(), fieldID );
+
+  /* Catch any java exception that occured during the method call,
+   * and throw it as a C++ exception.
+   */ 
+  helper::catchAndThrow();
+
+  jvalue value;
+  value.d = result;
+
+  /* The following call should work, but for some reason, Visual C++
+   * thinks it is ambiguous.
+   */
+  // return JFieldProxy< ::jace::proxy::types::JDouble>( fieldID, value );
+
+  return JFieldProxy< ::jace::proxy::types::JDouble>( fieldID, value, jClass->getClass() );
+}
+
+END_NAMESPACE( jace )
+
