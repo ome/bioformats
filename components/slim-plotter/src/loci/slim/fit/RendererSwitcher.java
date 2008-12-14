@@ -141,6 +141,16 @@ public class RendererSwitcher implements ICurveRenderer {
     }
   }
 
+  public void setMask(boolean[][] mask) {
+    for (int i=0; i<renderers.length; i++) {
+      renderers[c].setMask(mask);
+    }
+  }
+
+  public boolean[][] getMask() {
+    return renderers[c].getMask();
+  }
+
   public int getImageX() {
     return renderers[c].getImageX();
   }

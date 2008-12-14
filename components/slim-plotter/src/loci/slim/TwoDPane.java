@@ -508,6 +508,11 @@ public class TwoDPane extends JPanel
             // plot single-pixel region with rescale and refit (i.e., not fast)
             doCursor(pixelToCursor(iPlot, e.getX(), e.getY()), false, false);
             iPlot.reAutoScale();
+
+            // update renderer to improve entire image
+            for (int c=0; c<curveRenderers.length; c++) {
+              curveRenderers[c].setMask(null);
+            }
           }
           else {
             roiRef.setData(roiSet);
@@ -528,6 +533,11 @@ public class TwoDPane extends JPanel
             roiPercent = 100000 * roiCount /
               (data.width * data.height) / 1000.0;
             slim.plotRegion(true, true, true);
+
+            // update renderer to improve only selected region
+            for (int c=0; c<curveRenderers.length; c++) {
+              curveRenderers[c].setMask(roiMask);
+            }
           }
         }
         catch (VisADException exc) {

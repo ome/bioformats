@@ -36,6 +36,7 @@ import java.util.Arrays;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/BurnInRenderer.java">SVN</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class BurnInRenderer extends CurveRenderer {
 
@@ -49,6 +50,8 @@ public class BurnInRenderer extends CurveRenderer {
   protected ICurveFitter[][] currentCurves = null;
   protected int currentDim;
   protected double[][] image;
+  protected boolean[][] mask;
+  protected int maskCount;
   protected int maxDim;
   private boolean estimated;
   private boolean improving;
@@ -87,6 +90,7 @@ public class BurnInRenderer extends CurveRenderer {
     rcseCache = new double[maxDim][maxDim];
     stalled = new boolean[maxDim][maxDim];
     stallCount = 0;
+    setMask(null);
   }
 
   // -- BurnInRenderer methods --
@@ -214,7 +218,9 @@ public class BurnInRenderer extends CurveRenderer {
         for (int x = 0; x < maxDim; x++) {
           for (int y = 0; y < maxDim; y++) {
             totalVal += rcseCache[y][x];
-            if (!stalled[y][x] && rcseCache[y][x] > worstVal) {
+            if ((mask == null || mask[y][x]) && !stalled[y][x] &&
+              rcseCache[y][x] > worstVal)
+            {
               worstVal = rcseCache[y][x];
               worstX = x;
               worstY = y;
@@ -260,7 +266,7 @@ public class BurnInRenderer extends CurveRenderer {
           worstIter = 0;
           stalled[currentY][currentX] = true;
           stallCount++;
-          if (stallCount == maxDim * maxDim) {
+          if (stallCount >= maskCount) {
             // every pixel is stalled; retry everything
             for (int y=0; y<maxDim; y++) Arrays.fill(stalled[y], false);
             stallCount = 0;
@@ -280,6 +286,42 @@ public class BurnInRenderer extends CurveRenderer {
     numExponentials = numExp;
     image = new double[numExponentials][maxDim*maxDim];
     curveData.setComponentCount(numExponentials);
+  }
+
+  public void setMask(boolean[][] mask) {
+    if (mask == null) {
+      this.mask = null;
+      maskCount = maxDim * maxDim;
+    }
+    else {
+      if (mask.length < maxDim) {
+        throw new IllegalArgumentException("Invalid mask: mask.length=" +
+          mask.length + ", maxDim=" + maxDim);
+      }
+      int count = 0;
+      for (int i=0; i<maxDim; i++) {
+        if (mask[i].length < maxDim) {
+          throw new IllegalArgumentException("Invalid mask: mask[" + i +
+            "].length=" + mask[i].length + ", maxDim=" + maxDim);
+        }
+        for (int j=0; j<maxDim; j++) if (mask[i][j]) count++;
+      }
+      this.mask = mask;
+      maskCount = count;
+    }
+    // recount stalled pixels
+    int count = 0;
+    for (int y=0; y<maxDim; y++) {
+      Arrays.fill(stalled[y], false);
+      for (int x=0; x<maxDim; x++) {
+        if (stalled[y][x]) count++;
+      }
+    }
+    stallCount = count;
+  }
+
+  public boolean[][] getMask() {
+    return mask;
   }
 
   public int getImageX() {

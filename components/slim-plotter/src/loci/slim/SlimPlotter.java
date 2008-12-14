@@ -993,8 +993,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // curve fitting
       double[][] fitResults = null;
       int[] fitFirst = null, fitLast = null, fitIter = null;
-      double[] fitA1 = null, fitT1 = null;
-      double[] fitA2 = null, fitT2 = null;
+      double[] fitA1 = null, fitB1 = null;
+      double[] fitA2 = null, fitB2 = null;
       double[] fitC = null, fitChi2 = null;
       if (data.allowCurveFit && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
@@ -1004,9 +1004,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         fitLast = new int[data.channels];
         fitIter = new int[data.channels];
         fitA1 = new double[data.channels];
-        fitT1 = new double[data.channels];
+        fitB1 = new double[data.channels];
         fitA2 = new double[data.channels];
-        fitT2 = new double[data.channels];
+        fitB2 = new double[data.channels];
         fitC = new double[data.channels];
         fitChi2 = new double[data.channels];
         tau = new float[data.channels][data.numExp];
@@ -1077,10 +1077,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           fitIter[c] = curveFitter.getIterations();
           fitChi2[c] = curveFitter.getReducedChiSquaredError();
           fitA1[c] = results[0][0];
-          fitT1[c] = results[0][1];
+          fitB1[c] = results[0][1];
           if (data.numExp > 1) {
             fitA2[c] = results[1][0];
-            fitT2[c] = results[1][1];
+            fitB2[c] = results[1][1];
           }
           fitC[c] = fitResults[c][2 * data.numExp];
 
@@ -1163,10 +1163,17 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // update Numbers fields
       // CTR TEMP - this is crap; refactor to MVC
       int activeC = twoDPane.getActiveC();
-      a1Param.setText("" + fitA1[activeC]);
-      t1Param.setText("" + fitT1[activeC]);
-      a2Param.setText("" + fitA2[activeC]);
-      t2Param.setText("" + fitT2[activeC]);
+      double aTotal = fitA1[activeC] + fitA2[activeC];
+      double a1 = 100 * fitA1[activeC] / aTotal;
+      double a2 = 100 * fitA2[activeC] / aTotal;
+      a1Param.setText(a1 + "%");
+      a2Param.setText(a2 + "%");
+      double b1 = fitB1[activeC];
+      double b2 = fitB2[activeC];
+      float t1 = b1 > 0 ? data.binsToPico((float) (1 / b1)) : Float.NaN;
+      float t2 = b2 > 0 ? data.binsToPico((float) (1 / b2)) : Float.NaN;
+      t1Param.setText("" + t1);
+      t2Param.setText("" + t2);
       cParam.setText("" + fitC[activeC]);
       chi2.setText("" + fitChi2[activeC]);
 

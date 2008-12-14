@@ -118,6 +118,10 @@ public abstract class CurveRenderer implements ICurveRenderer {
     numExponentials = numExp;
   }
 
+  public abstract void setMask(boolean[][] mask);
+
+  public abstract boolean[][] getMask();
+
   public abstract int getImageX();
 
   public abstract int getImageY();
