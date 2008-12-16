@@ -380,6 +380,10 @@ public class MicromanagerReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     for (int i=0; i<channels.length; i++) {
       store.setLogicalChannelName(channels[i], 0, i);
     }
