@@ -24,7 +24,8 @@ message("  jni.h         : ${JAVA_INCLUDE_PATH}")
 message("  jni_md.h      : ${JAVA_INCLUDE_PATH2}")
 message("  jawt.h        : ${JAVA_AWT_INCLUDE_PATH}")
 
-include_directories(jace/include proxies/include)
+include_directories(jace/include proxies/include
+  ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
 
 ### build Jace C++ library ###
 
