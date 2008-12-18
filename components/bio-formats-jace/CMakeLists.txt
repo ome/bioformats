@@ -18,8 +18,8 @@ message("Configuration:")
 #message("  jar           : ${JAVA_ARCHIVE}")
 
 find_package(JNI)
-message("  jawt lib      : ${JAVA_AWT_LIB_PATH}")
-message("  jvm lib       : ${JAVA_JVM_LIB_PATH}")
+message("  jawt lib      : ${JAVA_AWT_LIBRARY}")
+message("  jvm lib       : ${JAVA_JVM_LIBRARY}")
 message("  jni.h         : ${JAVA_INCLUDE_PATH}")
 message("  jni_md.h      : ${JAVA_INCLUDE_PATH2}")
 message("  jawt.h        : ${JAVA_AWT_INCLUDE_PATH}")
@@ -48,4 +48,12 @@ target_link_libraries(bfjace jace)
 
 add_executable(showinf source/showinf.cpp)
 
-target_link_libraries(showinf bfjace jace)
+target_link_libraries(showinf bfjace jace ${JAVA_JVM_LIBRARY})
+
+### TEMP - build some Jace examples for testing ###
+
+add_executable(example1 source/example1.cpp)
+target_link_libraries(example1 bfjace jace ${JAVA_JVM_LIBRARY})
+
+add_executable(array_example source/array_example.cpp)
+target_link_libraries(array_example bfjace jace ${JAVA_JVM_LIBRARY})

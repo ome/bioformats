@@ -19,6 +19,9 @@ using jace::JNIException;
 #include "jace/proxy/types/JBoolean.h"
 using jace::proxy::types::JBoolean;
 
+#include "jace/proxy/types/JByte.h"
+using jace::proxy::types::JByte;
+
 #include "jace/proxy/java/lang/String.h"
 #include "jace/proxy/java/io/IOException.h"
 #include "jace/proxy/loci/formats/FormatException.h"
@@ -46,21 +49,36 @@ int main(int argc, const char *argv[]) {
     cout << "Creating JVM..." << endl;
     StaticVmLoader loader(JNI_VERSION_1_4);
     OptionList list;
-    list.push_back(jace::ClassPath("jace-runtime.jar"));
-    list.push_back(jace::ClassPath("bio-formats.jar"));
+    list.push_back( jace::ClassPath( "jace-runtime.jar:bio-formats.jar" ) );
     list.push_back(jace::CustomOption("-Xcheck:jni"));
     list.push_back(jace::CustomOption("-Xmx256m"));
     jace::helper::createVm(loader, list, false);
     cout << "JVM created." << endl;
 
-    //ImageReader r();
-    JArray<String> args(argc);
-    for (int i=0; i<argc; i++) args[i] = argv[i];
-    JBoolean result = ImageInfo::testRead(args);
-    //ImageReader r();
-    //JBoolean result = ImageInfo::testRead(r, args);
+    cout << "Arguments:" << endl;
+    for (int i=0; i<argc; i++) cout << "\t#" << i << ": " << argv[i] << endl;
 
-    return result ? 0 : 1;
+    //typedef JArray<String> StringArray;
+    //StringArray args(argc - 1);
+    //for (int i=1; i<argc; i++) args[i - 1] = argv[i];
+    //JBoolean result = ImageInfo::testRead(args);
+
+    if (argc < 2) {
+      cout << "Please specify a filename on the command line." << endl;
+    }
+    else {
+      String id = argv[1];
+      cout << "Initializing " << id << endl;
+      //ImageReader r();
+      //r.setId(id);
+      //int w = r.getWidth();
+      //int h = r.getHeight();
+      //cout << "Image planes are " << w << " x " << h << endl;
+      //r.openBytes(0);
+      //JBoolean result = ImageInfo::testRead(r, args);
+
+      //return result ? 0 : 1;
+    }
   }
   catch (FormatException& fe) {
     cout << fe << endl;
