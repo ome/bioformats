@@ -40,7 +40,7 @@ add_library(bfjace SHARED ${BFJACE_SRC})
 
 set_target_properties(bfjace PROPERTIES
   COMPILE_FLAGS "-Wall -fpermissive"
-  LINK_FLAGS "-mthread -fPIC")
+  LINK_FLAGS "-mthread")
 
 target_link_libraries(bfjace jace)
 

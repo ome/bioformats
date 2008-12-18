@@ -20,4 +20,4 @@ add_library(jace SHARED ${JACE_SRC})
 
 set_target_properties(jace PROPERTIES
   COMPILE_FLAGS "-Wall -fpermissive"
-  LINK_FLAGS "-mthread -fPIC")
+  LINK_FLAGS "-mthread")
