@@ -62,6 +62,7 @@ public class AVIReader extends FormatReader {
   private String fcc = "error";
   private int size = -1;
   private long pos;
+  private int bytesPerPlane;
 
   // Stream Format chunk fields
 
@@ -185,8 +186,8 @@ public class AVIReader extends FormatReader {
       }
     }
 
-    if (bmpBitsPerPixel == 16) {
-      // channels are separated, need to swap them
+    if (bmpBitsPerPixel == 16 && isRGB()) {
+      // channels are stored as BGR, need to swap them
       byte[] r = new byte[getSizeX() * getSizeY() * 2];
       System.arraycopy(buf, 2 * (buf.length / 3), r, 0, r.length);
       System.arraycopy(buf, 0, buf, 2 * (buf.length / 3), r.length);
@@ -326,7 +327,8 @@ public class AVIReader extends FormatReader {
                 in.skipBytes(40);
 
                 addMeta("Stream quality", in.readInt());
-                addMeta("Stream sample size", in.readInt());
+                bytesPerPlane = in.readInt();
+                addMeta("Stream sample size", bytesPerPlane);
 
                 if (spos + size <= in.length()) {
                   in.seek(spos + size);
@@ -488,10 +490,7 @@ public class AVIReader extends FormatReader {
         }
         else {
           // skipping unknown block
-          try {
-            in.skipBytes(8 + size);
-          }
-          catch (IllegalArgumentException iae) { }
+          if (size + 8 >= 0) in.skipBytes(8 + size);
         }
       }
       else {
@@ -508,13 +507,21 @@ public class AVIReader extends FormatReader {
 
     core[0].imageCount = offsets.size();
 
-    core[0].rgb = (bmpBitsPerPixel > 8 || (bmpCompression != 0)) && lut == null;
     core[0].indexed = lut != null;
     core[0].sizeZ = 1;
     core[0].sizeT = getImageCount();
     core[0].littleEndian = true;
     core[0].interleaved = bmpBitsPerPixel != 16;
-    core[0].sizeC = isRGB() ? 3 : 1;
+    if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
+      core[0].rgb =
+        (bmpBitsPerPixel > 8 || (bmpCompression != 0)) && lut == null;
+      core[0].sizeC = isRGB() ? 3 : 1;
+    }
+    else {
+      core[0].sizeC = bytesPerPlane /
+        (getSizeX() * getSizeY() * (bmpBitsPerPixel / 8));
+      core[0].rgb = getSizeC() > 1;
+    }
     core[0].dimensionOrder = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
     core[0].falseColor = false;
     core[0].metadataComplete = true;
