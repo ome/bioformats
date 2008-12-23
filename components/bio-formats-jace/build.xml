@@ -32,7 +32,7 @@ Type "ant -p" for a list of targets.
     </and>
   </condition>
   <!-- Default for Unix -->
-  <property name="jre.runtime" value="${java.home}/jre/lib/rt.jar"/>
+  <property name="jre.runtime" value="${java.home}/lib/rt.jar"/>
 
   <target name="gen-proxies"
     description="generate Jace proxies from C++ source code">
