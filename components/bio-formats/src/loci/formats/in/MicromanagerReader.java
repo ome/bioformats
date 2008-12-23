@@ -234,9 +234,10 @@ public class MicromanagerReader extends FormatReader {
         int endIndex = value.indexOf("]");
         if (endIndex == -1) endIndex = value.length();
 
-        value = value.substring(startIndex + 1, endIndex);
-        value = value.trim();
+        value = value.substring(startIndex + 1, endIndex).trim();
         value = value.substring(0, value.length() - 1);
+        value = value.replaceAll("\"", "");
+        if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
         addMeta(key, value);
         if (key.equals("Channels")) core[0].sizeC = Integer.parseInt(value);
         else if (key.equals("ChNames")) {
@@ -282,6 +283,7 @@ public class MicromanagerReader extends FormatReader {
           value = token.substring(colon + 1, token.length() - 1).trim();
 
           key = key.replaceAll("\"", "");
+          value = value.replaceAll("\"", "");
 
           addMeta(key, value);
 
