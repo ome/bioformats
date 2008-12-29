@@ -1,0 +1,100 @@
+<!--
+build.xml
+
+Ant build file for LOCI testing framework project.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="tests" default="jar" basedir=".">
+  <description>
+    Build file for LOCI testing framework project
+  </description>
+  <property file="base.properties"/>
+  <import file="${root.dir}/common.xml"/>
+  <property file="build.properties"/>
+
+  <taskdef name="testng" classpath="${component.classpath}"
+    classname="org.testng.TestNGAntTask"/>
+
+  <target name="test-all" depends="compile"
+    description="run all automated tests">
+    <testng sourcedir="${dest.dir}"
+      classpath="${classes.dir}:${component.classpath}"
+      annotations="Javadoc" groups="all" testname="All tests"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-config" depends="compile"
+    description="generate config files for automated test suite">
+    <testng sourcedir="${dest.dir}"
+      classpath="${classes.dir}:${component.classpath}"
+      annotations="Javadoc" groups="config" testname="Config generation"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-fast" depends="compile"
+    description="run automated tests in group 'fast'">
+    <testng sourcedir="${dest.dir}"
+      classpath="${classes.dir}:${component.classpath}"
+      annotations="Javadoc" groups="fast" testname="Fast tests"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-pixels" depends="compile"
+    description="run automated tests in group 'pixels'">
+    <testng sourcedir="${dest.dir}"
+      classpath="${classes.dir}:${component.classpath}"
+      annotations="Javadoc" groups="pixels" testname="Pixels tests"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-xml" depends="compile"
+    description="run automated tests in group 'xml'">
+    <testng sourcedir="${dest.dir}"
+      classpath="${classes.dir}:${component.classpath}"
+      annotations="Javadoc" groups="xml" testname="XML tests"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+</project>
