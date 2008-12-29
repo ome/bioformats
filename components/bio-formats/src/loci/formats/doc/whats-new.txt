@@ -1,3 +1,23 @@
+2008 December 29:
+* Improved metadata support for Deltavision, Zeiss LSM, MicroManager, and Leica LEI
+* Restructured code base/build system to be component-driven
+* Added support for JPEG and JPEG-2000 codecs within TIFF, OME-TIFF and OME-XML
+* Added support for 16-bit compressed Flex files
+* Added support for writing JPEG-2000 files
+* Added support for Minolta MRW format
+* Added support for the 2008-09 release of OME-XML
+* Removed dependency on JMagick
+* Re-added caching support to data browser plugin
+* Updated loci.formats.Codec API to be more user-friendly
+* Expanded loci.formats.MetadataStore API to better represent the OME-XML model
+* Improved support for Nikon NEF
+* Improved support for TillVision files
+* Improved ImageJ import options dialog
+* Fixed bugs with Zeiss LSM files larger than 4 GB
+* Fixed minor bugs in most readers
+* Fixed bugs with exporting from an Image5D window
+* Fixed several problems with virtual stacks in ImageJ
+
 2008 August 30:
 * Fixed bugs in many file format readers
 * Fixed several bugs with swapping dimensions
