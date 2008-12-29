@@ -101,11 +101,12 @@ public class AVIWriter extends FormatWriter {
       throw new FormatException("Image is null");
     }
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
-    //if ((img.getColorModel() instanceof IndexColorModel) ||
-    //  (img.getColorModel() instanceof Index16ColorModel))
-    //{
-    //  img = ImageTools.indexedToRGB(img, false);
-    //}
+    int type = AWTImageTools.getPixelType(img);
+    if (!DataTools.containsValue(getPixelTypes(), type)) {
+      throw new FormatException("Unsupported image type '" +
+        FormatTools.getPixelTypeString(type) + "'.");
+    }
+
     byte[][] byteData = AWTImageTools.getBytes(img);
     byte[][] lut = null;
 

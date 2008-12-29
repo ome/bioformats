@@ -279,14 +279,13 @@ public class QTReader extends FormatReader {
     if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
 
     if (pad > 0) {
-      t = new byte[prevPixels.length - getSizeY()*pad];
-
       int bytes = bitsPerPixel < 40 ? bitsPerPixel / 8 :
         (bitsPerPixel - 32) / 8;
+      t = new byte[prevPixels.length - getSizeY()*pad*bytes];
 
       for (int row=0; row<getSizeY(); row++) {
         System.arraycopy(prevPixels, bytes * row * (getSizeX() + pad), t,
-          row * getSizeX() * bytes, getSizeX());
+          row * getSizeX() * bytes, getSizeX() * bytes);
       }
     }
 
@@ -440,7 +439,7 @@ public class QTReader extends FormatReader {
 
     core[0].rgb = bitsPerPixel < 40;
     core[0].sizeC = isRGB() ? 3 : 1;
-    core[0].interleaved = bitsPerPixel == 32;
+    core[0].interleaved = isRGB();
     core[0].sizeT = getImageCount();
 
     // The metadata store we're working with.

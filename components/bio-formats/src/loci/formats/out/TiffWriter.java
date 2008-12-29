@@ -63,7 +63,7 @@ public class TiffWriter extends FormatWriter {
   public TiffWriter(String format, String[] exts) {
     super(format, exts);
     lastOffset = 0;
-    compressionTypes = new String[] {"Uncompressed", "LZW","J2K","JPEG"};
+    compressionTypes = new String[] {"Uncompressed", "LZW", "J2K", "JPEG"};
     isBigTiff = false;
   }
 

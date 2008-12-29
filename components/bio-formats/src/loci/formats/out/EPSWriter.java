@@ -62,6 +62,11 @@ public class EPSWriter extends FormatWriter {
     out = new RandomAccessFile(currentId, "rw");
 
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    int type = AWTImageTools.getPixelType(img);
+    if (!DataTools.containsValue(getPixelTypes(), type)) {
+      throw new FormatException("Unsupported image type '" +
+        FormatTools.getPixelTypeString(type) + "'.");
+    }
 
     // get the width and height of the image
     int width = img.getWidth();

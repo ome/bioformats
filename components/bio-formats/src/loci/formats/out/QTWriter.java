@@ -197,10 +197,10 @@ public class QTWriter extends FormatWriter {
     byteData = new byte[temp.length][temp[0].length + height*pad];
 
     int rowLength = width * bytesPerPixel;
-    for (int oldScanline=0; oldScanline<height; oldScanline++) {
-      for (int k=0; k<temp.length; k++) {
-        System.arraycopy(temp[k], oldScanline*rowLength, byteData[k],
-          oldScanline*(rowLength + pad), rowLength);
+    for (int c=0; c<temp.length; c++) {
+      for (int row=0; row<height; row++) {
+        System.arraycopy(temp[c], row * rowLength, byteData[c],
+          row * (rowLength + pad), rowLength);
       }
     }
 
@@ -213,6 +213,13 @@ public class QTWriter extends FormatWriter {
         for (int k=0; k<byteData[0].length; k++) {
           byteData[i][k] = (byte) (255 - byteData[i][k]);
         }
+      }
+    }
+
+    byte[] buffer = new byte[byteData.length * byteData[0].length];
+    for (int i=0; i<byteData[0].length; i++) {
+      for (int j=0; j<byteData.length; j++) {
+        buffer[i * byteData.length + j] = byteData[j][i];
       }
     }
 
@@ -233,7 +240,7 @@ public class QTWriter extends FormatWriter {
       out = new RandomAccessFile(currentId, "rw");
       created = (int) System.currentTimeMillis();
       numWritten = 0;
-      numBytes = byteData.length * byteData[0].length;
+      numBytes = buffer.length;
       byteCountOffset = 8;
 
       if (out.length() == 0) {
@@ -248,16 +255,14 @@ public class QTWriter extends FormatWriter {
       else {
         out.seek(byteCountOffset);
         numBytes = (int) DataTools.read4UnsignedBytes(out, false) - 8;
-        numWritten = numBytes / (byteData[0].length * byteData.length);
-
-        numBytes += byteData.length * byteData[0].length;
+        numWritten = numBytes / buffer.length;
+        numBytes += buffer.length;
 
         out.seek(byteCountOffset);
         DataTools.writeInt(out, numBytes + 8, false);
 
         for (int i=0; i<numWritten; i++) {
-          offsets.add(
-            new Integer(16 + i * byteData.length * byteData[0].length));
+          offsets.add(new Integer(16 + i * buffer.length));
         }
 
         out.seek(out.length());
@@ -269,23 +274,19 @@ public class QTWriter extends FormatWriter {
 
       numWritten++;
 
-      for (int i=0; i<byteData.length; i++) {
-        out.write(byteData[i]);
-      }
+      out.write(buffer);
     }
     else {
       // update the number of pixel bytes written
       int planeOffset = numBytes;
-      numBytes += (byteData.length * byteData[0].length);
+      numBytes += buffer.length;
       out.seek(byteCountOffset);
       DataTools.writeInt(out, numBytes + 8, false);
 
       // write this plane's pixel data
       out.seek(out.length());
 
-      for (int i=0; i<byteData.length; i++) {
-        out.write(byteData[i]);
-      }
+      out.write(buffer);
 
       offsets.add(new Integer(planeOffset + 16));
       numWritten++;
@@ -296,6 +297,9 @@ public class QTWriter extends FormatWriter {
       int duration = numWritten * (timeScale / fps);
       int bitsPerPixel = (byteData.length > 1) ? bytesPerPixel * 24 :
         bytesPerPixel * 8 + 32;
+      if (bytesPerPixel == 2) {
+        bitsPerPixel = byteData.length > 1 ? 16 : 40;
+      }
       int channels = (bitsPerPixel >= 40) ? 1 : 3;
 
       // -- write moov atom --

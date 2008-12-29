@@ -264,6 +264,7 @@ public class ImageWriter implements IFormatWriter {
     boolean ok = false;
     for (int i=0; i<writers.length; i++) {
       String[] s = writers[i].getCompressionTypes();
+      if (s == null) continue;
       for (int j=0; j<s.length; j++) {
         if (s[j].equals(compress)) {
           // valid compression type for this format

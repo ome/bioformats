@@ -51,6 +51,7 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     String in = null, out = null;
+    String compression = null;
     boolean stitch = false, separate = false, merge = false, fill = false;
     boolean bigtiff = false;
     int series = -1;
@@ -63,6 +64,7 @@ public final class ImageConverter {
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-fill")) fill = true;
           else if (args[i].equals("-bigtiff")) bigtiff = true;
+          else if (args[i].equals("-compression")) compression = args[++i];
           else if (args[i].equals("-series")) {
             try {
               series = Integer.parseInt(args[++i]);
@@ -121,6 +123,7 @@ public final class ImageConverter {
       }
     }
     writer.setId(out);
+    if (compression != null) writer.setCompression(compression);
 
     LogTools.print("[" + writer.getFormat() + "] ");
     long mid = System.currentTimeMillis();

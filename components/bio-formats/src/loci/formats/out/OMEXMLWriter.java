@@ -53,7 +53,8 @@ public class OMEXMLWriter extends FormatWriter {
 
   public OMEXMLWriter() {
     super("OME-XML", new String[] {"ome"});
-    compressionTypes = new String[] {"none", "zlib","J2K","JPEG"};
+    compressionTypes =
+      new String[] {"Uncompressed", "zlib", "J2K", "JPEG"};
     compression = compressionTypes[0];
   }
 
@@ -88,9 +89,8 @@ public class OMEXMLWriter extends FormatWriter {
     }
     boolean littleEndian =
       !retrieve.getPixelsBigEndian(series, 0).booleanValue();
-    BufferedImage buffImage=AWTImageTools.makeBuffered(image);
+    BufferedImage buffImage = AWTImageTools.makeBuffered(image);
     byte[][] pix = AWTImageTools.getPixelBytes(buffImage, littleEndian);
-    buffImage = null;
 
     CodecOptions options = new CodecOptions();
     options.width = buffImage.getWidth();
@@ -98,6 +98,8 @@ public class OMEXMLWriter extends FormatWriter {
     options.channels = 1;
     options.interleaved = false;
     options.littleEndian = littleEndian;
+
+    buffImage = null;
 
     for (int i = 0; i < pix.length; i++) {
       // TODO: Create a method compress to handle all compression methods
@@ -118,7 +120,7 @@ public class OMEXMLWriter extends FormatWriter {
       StringBuffer plane = new StringBuffer("\n<Bin:BinData Length=\"");
       plane.append(encodedPix.length);
       plane.append("\"");
-      if (compression != null && !compression.equals("none")) {
+      if (compression != null && !compression.equals("Uncompressed")) {
         plane.append(" Compression=\"");
         plane.append(compression);
         plane.append("\"");
@@ -135,6 +137,7 @@ public class OMEXMLWriter extends FormatWriter {
     }
   }
 
+  /* @see loci.formats.IFormatWriter#canDoStacks() */
   public boolean canDoStacks() { return true; }
 
   // -- Helper class --

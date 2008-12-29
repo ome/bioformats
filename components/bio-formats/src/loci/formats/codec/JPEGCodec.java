@@ -57,6 +57,10 @@ public class JPEGCodec extends BaseCodec {
   {
     if (options == null) options = CodecOptions.getDefaultOptions();
 
+    if (options.bitsPerSample > 8) {
+      throw new FormatException("> 8 bit data cannot be compressed with JPEG.");
+    }
+
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     BufferedImage img = AWTImageTools.makeImage(data, options.width,
       options.height, options.channels, options.interleaved,
@@ -84,8 +88,13 @@ public class JPEGCodec extends BaseCodec {
     BufferedImage b;
     long fp = in.getFilePointer();
     try {
-      while (in.read() != (byte) 0xff || in.read() != (byte) 0xd8);
-      in.seek(in.getFilePointer() - 2);
+      try {
+        while (in.read() != (byte) 0xff || in.read() != (byte) 0xd8);
+        in.seek(in.getFilePointer() - 2);
+      }
+      catch (EOFException e) {
+        in.seek(fp);
+      }
 
       Iterator it = ImageIO.getImageReadersBySuffix("jpg");
       javax.imageio.ImageReader r = null;
@@ -107,6 +116,7 @@ public class JPEGCodec extends BaseCodec {
       r.dispose();
     }
     catch (IOException exc) {
+      /* debug */ exc.printStackTrace();
       try {
         // NB: the following comment facilitates dependency detection:
         // import com.sun.media.imageioimpl.plugins.jpeg

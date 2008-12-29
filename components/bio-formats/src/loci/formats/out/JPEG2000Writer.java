@@ -30,6 +30,7 @@ import loci.common.*;
 import loci.formats.*;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * JPEG2000Writer is the file format writer for JPEG2000 files.
@@ -61,7 +62,9 @@ public class JPEG2000Writer extends FormatWriter {
     }
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
 
-    byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    boolean littleEndian = !retrieve.getPixelsBigEndian(0, 0).booleanValue();
+    byte[][] byteData = AWTImageTools.getPixelBytes(img, littleEndian);
     byte[] stream =
       new byte[byteData.length * byteData[0].length];
     int next = 0;
@@ -76,8 +79,8 @@ public class JPEG2000Writer extends FormatWriter {
         }
       }
     }
-    int bytesPerPixel =
-      FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
+
+    int bytesPerPixel = byteData[0].length / (img.getWidth() * img.getHeight());
 
     out = new RandomAccessFile(currentId, "rw");
 
@@ -86,8 +89,8 @@ public class JPEG2000Writer extends FormatWriter {
     options.height = img.getHeight();
     options.channels = img.getRaster().getNumBands();
     options.bitsPerSample = bytesPerPixel * 8;
-    options.littleEndian = true;
-    options.interleaved = false;
+    options.littleEndian = littleEndian;
+    options.interleaved = true;
 
     byte[] compressedData = new JPEG2000Codec().compress(stream, options);
     out.write(compressedData);
