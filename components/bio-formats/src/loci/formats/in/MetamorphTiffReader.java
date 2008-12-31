@@ -46,16 +46,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class MetamorphTiffReader extends BaseTiffReader {
 
-  // -- Fields --
-
-  private float pixelSizeX, pixelSizeY;
-  private float[] zPositions;
-  private int[] wavelengths;
-  private int zpPointer, wavePointer;
-  private float temperature;
-  private String date, imageName;
-  private Vector timestamps;
-
   // -- Constructor --
 
   /** Constructs a new Metamorph TIFF reader. */
@@ -96,17 +86,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
     if (debug) debug("MetamorphTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
-    timestamps = new Vector();
-
     String[] comments = new String[ifds.length];
-    zPositions = new float[ifds.length];
-    wavelengths = new int[ifds.length];
-    zpPointer = 0;
-    wavePointer = 0;
 
     // parse XML comment
 
-    DefaultHandler handler = new MetamorphHandler();
+    MetamorphHandler handler = new MetamorphHandler(getMetadata());
     for (int i=0; i<comments.length; i++) {
       comments[i] = TiffTools.getComment(ifds[i]);
       DataTools.parseXML(comments[i], handler);
@@ -114,11 +98,15 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     core[0].sizeC = 0;
 
+    Vector timestamps = handler.getTimestamps();
+    Vector wavelengths = handler.getWavelengths();
+    Vector zPositions = handler.getZPositions();
+
     // calculate axis sizes
 
     Vector uniqueC = new Vector();
-    for (int i=0; i<zPositions.length; i++) {
-      Integer c = new Integer(wavelengths[i]);
+    for (int i=0; i<zPositions.size(); i++) {
+      Integer c = (Integer) wavelengths.get(i);
       if (!uniqueC.contains(c)) {
         uniqueC.add(c);
         core[0].sizeC++;
@@ -132,11 +120,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
-    store.setImageName(imageName, 0);
+    store.setImageName(handler.getImageName(), 0);
     store.setImageDescription("", 0);
 
     SimpleDateFormat parse = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
-    Date d = parse.parse(date, new ParsePosition(0));
+    Date d = parse.parse(handler.getDate(), new ParsePosition(0));
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     SimpleDateFormat tsfmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
@@ -164,91 +152,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     store.setImageCreationDate(fmt.format(d), 0);
 
-    store.setImagingEnvironmentTemperature(new Float(temperature), 0);
-    store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+    store.setImagingEnvironmentTemperature(
+      new Float(handler.getTemperature()), 0);
+    store.setDimensionsPhysicalSizeX(new Float(handler.getPixelSizeX()), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(handler.getPixelSizeY()), 0, 0);
   }
-
-  // -- Helper class --
-
-  /** SAX handler for parsing XML. */
-  class MetamorphHandler extends DefaultHandler {
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      String id = attributes.getValue("id");
-      String value = attributes.getValue("value");
-      String delim = "&#13;&#10;";
-      if (id != null && value != null) {
-        if (id.equals("Description")) {
-          metadata.remove("Comment");
-
-          String k = null, v = null;
-
-          if (value.indexOf(delim) != -1) {
-            int currentIndex = -delim.length();
-            while (currentIndex != -1) {
-              currentIndex += delim.length();
-              int nextIndex = value.indexOf(delim, currentIndex);
-
-              String line = null;
-              if (nextIndex == -1) {
-                line = value.substring(currentIndex, value.length());
-              }
-              else {
-                line = value.substring(currentIndex, nextIndex);
-              }
-              currentIndex = nextIndex;
-
-              int colon = line.indexOf(":");
-              if (colon != -1) {
-                k = line.substring(0, colon).trim();
-                v = line.substring(colon + 1).trim();
-                addMeta(k, v);
-                if (k.equals("Temperature")) {
-                  temperature = Float.parseFloat(v.trim());
-                }
-              }
-            }
-          }
-          else {
-            int colon = value.indexOf(":");
-            while (colon != -1) {
-              k = value.substring(0, colon);
-              int space = value.lastIndexOf(" ", value.indexOf(":", colon + 1));
-              if (space == -1) space = value.length();
-              v = value.substring(colon + 1, space);
-              addMeta(k, v);
-              value = value.substring(space).trim();
-              colon = value.indexOf(":");
-
-              if (k.equals("Temperature")) {
-                temperature = Float.parseFloat(v.trim());
-              }
-            }
-          }
-        }
-        else addMeta(id, value);
-
-        if (id.equals("spatial-calibration-x")) {
-          pixelSizeX = Float.parseFloat(value);
-        }
-        else if (id.equals("spatial-calibration-y")) {
-          pixelSizeY = Float.parseFloat(value);
-        }
-        else if (id.equals("z-position")) {
-          zPositions[zpPointer++] = Float.parseFloat(value);
-        }
-        else if (id.equals("wavelength")) {
-          wavelengths[wavePointer++] = Integer.parseInt(value);
-        }
-        else if (id.equals("acquisition-time-local")) {
-          date = value;
-          timestamps.add(date);
-        }
-        else if (id.equals("image-name")) imageName = value;
-      }
-    }
-  }
-
 }

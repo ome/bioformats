@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
-import java.text.DecimalFormat;
+import java.text.*;
 import java.util.*;
 import loci.common.*;
 import loci.formats.*;
@@ -351,17 +351,59 @@ public class MetamorphReader extends BaseTiffReader {
         core = newCore;
       }
     }
+
+    String comment = TiffTools.getComment(ifds[0]);
+    MetamorphHandler handler = new MetamorphHandler(getMetadata());
+    if (comment != null && comment.startsWith("<MetaData>")) {
+      DataTools.parseXML(comment, handler);
+    }
+
+    Vector timestamps = handler.getTimestamps();
+
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
     for (int i=0; i<getSeriesCount(); i++) {
       if (creationTime != null) {
         store.setImageCreationDate(DataTools.formatDate(creationTime,
           "yyyyMMdd HH:mm:ss"), 0);
       }
       else if (i > 0) MetadataTools.setDefaultCreationDate(store, id, i);
-      store.setImageName("", i);
+      if (i == 0) store.setImageName(handler.getImageName(), 0);
+      else store.setImageName("", i);
+      store.setImageDescription("", i);
     }
+
+    SimpleDateFormat parse = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    SimpleDateFormat tsfmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+    Date td;
+    for (int i=0; i<timestamps.size(); i++) {
+      td = parse.parse((String) timestamps.get(i), new ParsePosition(0));
+      addMeta("timestamp " + i, tsfmt.format(td));
+    }
+
+    long startDate = 0;
+    if (timestamps.size() > 0) {
+      startDate =
+        parse.parse((String) timestamps.get(0), new ParsePosition(0)).getTime();
+    }
+
+    for (int i=0; i<getImageCount(); i++) {
+      int[] coords = getZCTCoords(i);
+      if (coords[2] < timestamps.size()) {
+        String stamp = (String) timestamps.get(coords[2]);
+        long ms = parse.parse(stamp, new ParsePosition(0)).getTime();
+        store.setPlaneTimingDeltaT(new Float(ms - startDate), 0, 0, i);
+        store.setPlaneTimingExposureTime(new Float(0), 0, 0, i);
+      }
+    }
+
+    store.setImagingEnvironmentTemperature(
+      new Float(handler.getTemperature()), 0);
+    store.setDimensionsPhysicalSizeX(new Float(handler.getPixelSizeX()), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(handler.getPixelSizeY()), 0, 0);
   }
 
   // -- Internal BaseTiffReader API methods --
