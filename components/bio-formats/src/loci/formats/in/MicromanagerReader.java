@@ -61,6 +61,12 @@ public class MicromanagerReader extends FormatReader {
   private Float exposureTime, sliceThickness, pixelSize;
   private Float[] timestamps;
 
+  private int gain;
+  private String binning, detectorID, detectorModel, detectorManufacturer;
+  private float temperature;
+  private Vector voltage;
+  private String cameraRef;
+
   // -- Constructor --
 
   /** Constructs a new Micromanager reader. */
@@ -202,6 +208,7 @@ public class MicromanagerReader extends FormatReader {
     status("Populating metadata");
 
     Vector stamps = new Vector();
+    Vector voltage = new Vector();
 
     StringTokenizer st = new StringTokenizer(s, "\n");
     int[] slice = new int[3];
@@ -294,6 +301,24 @@ public class MicromanagerReader extends FormatReader {
           else if (key.equals("ElapsedTime-ms")) {
             float t = Float.parseFloat(value);
             stamps.add(new Float(t / 1000));
+          }
+          else if (key.equals("Core-Camera")) cameraRef = value;
+          else if (key.equals(cameraRef + "-Binning")) {
+            binning = value;
+          }
+          else if (key.equals(cameraRef + "-CameraID")) detectorID = value;
+          else if (key.equals(cameraRef + "-CameraName")) detectorModel = value;
+          else if (key.equals(cameraRef + "-Gain")) {
+            gain = Integer.parseInt(value);
+          }
+          else if (key.equals(cameraRef + "-Name")) {
+            detectorManufacturer = value;
+          }
+          else if (key.equals(cameraRef + "-Temperature")) {
+            temperature = Float.parseFloat(value);
+          }
+          else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
+            voltage.add(new Float(value));
           }
 
           token = st.nextToken().trim();
@@ -400,6 +425,19 @@ public class MicromanagerReader extends FormatReader {
         store.setPlaneTimingDeltaT(timestamps[i], 0, 0, i);
       }
     }
+
+    for (int i=0; i<channels.length; i++) {
+      store.setDetectorSettingsBinning(binning, 0, i);
+      store.setDetectorSettingsGain(new Float(gain), 0, i);
+      store.setDetectorSettingsVoltage((Float) voltage.get(i), 0, i);
+      store.setDetectorSettingsDetector(detectorID, 0, i);
+    }
+
+    store.setDetectorID(detectorID, 0, 0);
+    store.setDetectorModel(detectorModel, 0, 0);
+    store.setDetectorManufacturer(detectorManufacturer, 0, 0);
+
+    store.setImagingEnvironmentTemperature(new Float(temperature), 0);
   }
 
 }
