@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import ij.Prefs;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.lang.reflect.Field;
@@ -37,6 +38,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import loci.plugins.ImporterOptions;
 
 /**
  * A window for managing configuration of the LOCI plugins.
@@ -61,7 +63,9 @@ public class ConfigWindow extends JFrame
   private JList formatsList;
   private JPanel formatInfo;
   private JTextField extensions;
-  private JCheckBox enabledBox, windowlessBox;
+  private JCheckBox enabledBox, windowlessBox, upgradeBox;
+
+  private ImporterOptions options;
 
   private DefaultListModel libsListModel;
   private JList libsList;
@@ -161,6 +165,23 @@ public class ConfigWindow extends JFrame
 
     // TODO - "How to install" for each library?
 
+    JPanel upgradePanel = new JPanel();
+    tabs.addTab("Upgrade", upgradePanel);
+
+    upgradePanel.setLayout(new SpringLayout());
+
+    JLabel upgradeLabel =
+      new JLabel("Automatically check for a new version of Bio-Formats");
+    upgradePanel.add(upgradeLabel);
+
+    options = new ImporterOptions();
+    options.loadPreferences();
+    upgradeBox = new JCheckBox("", options.doUpgradeCheck());
+    upgradeBox.addItemListener(this);
+    upgradePanel.add(upgradeBox);
+
+    SpringUtilities.makeCompactGrid(upgradePanel, 1, 2, PAD, PAD, PAD, PAD);
+
     JPanel logPanel = new JPanel();
     tabs.addTab("Log", logPanel);
 
@@ -191,11 +212,17 @@ public class ConfigWindow extends JFrame
   // -- ItemListener API methods --
 
   public void itemStateChanged(ItemEvent e) {
+    Object src = e.getSource();
+    if (src == upgradeBox) {
+      options.setUpgradeCheck(upgradeBox.isSelected());
+      Prefs.set(ImporterOptions.PREF_UPGRADE, upgradeBox.isSelected());
+      return;
+    }
+
     Object value = formatsList.getSelectedValue();
     if (!(value instanceof FormatEntry)) return;
     FormatEntry entry = (FormatEntry) value;
 
-    Object src = e.getSource();
     if (src == enabledBox) {
       setReaderEnabled(entry, enabledBox.isSelected());
     }

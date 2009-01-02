@@ -70,11 +70,25 @@ public class Importer {
 
   /** Executes the plugin. */
   public void run(String arg) {
-    // -- Step 1: parse core options --
+
+    // -- Step 0: parse core options --
 
     ImporterOptions options = new ImporterOptions();
     options.loadPreferences();
     options.parseArg(arg);
+
+    // -- Step 1: check if new version is available --
+
+    if (options.doUpgradeCheck()) {
+      IJ.showStatus("Checking for new version...");
+      if (Util.newVersionAvailable()) {
+        IJ.showMessage("A new stable version of the Bio-Formats plugin is " +
+          "available.\nYou can download the latest version from " +
+          "http://loci.wisc.edu/ome/formats-download.html");
+      }
+    }
+
+    // -- Step 2: construct reader and check id --
 
     int status = options.promptLocation();
     if (!statusOk(status)) return;
@@ -87,8 +101,6 @@ public class Importer {
     Location idLoc = options.getIdLocation();
     String idName = options.getIdName();
     String idType = options.getIdType();
-
-    // -- Step 2: construct reader and check id --
 
     IFormatReader r = null;
     if (options.isLocal() || options.isHTTP()) {

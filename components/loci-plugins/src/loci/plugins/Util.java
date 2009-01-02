@@ -64,6 +64,8 @@ public final class Util {
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
 
+  public static final String VERSION = "4.0.0";
+
   // -- Constructor --
 
   private Util() { }
@@ -597,6 +599,55 @@ public final class Util {
     }
     if (IJ.getInstance() != null) new TextWindow("Exception", s, 350, 250);
     else IJ.log(s);
+  }
+
+  /** Check if a new stable version is available. */
+  public static boolean newVersionAvailable() {
+    // connect to the registry
+
+    StringBuffer query =
+      new StringBuffer("http://upgrade.openmicroscopy.org.uk/");
+    String[] properties = new String[] {"version", "os.name", "os.version",
+      "os.arch", "java.runtime.version", "java.vm.vendor"};
+    for (int i=0; i<properties.length; i++) {
+      if (i == 0) query.append("?");
+      else query.append(";");
+      query.append(properties[i]);
+      query.append("=");
+      if (i == 0) query.append(VERSION);
+      else {
+        try {
+          query.append(
+            URLEncoder.encode(System.getProperty(properties[i]), "UTF-8"));
+        }
+        catch (UnsupportedEncodingException e) { }
+      }
+    }
+
+    try {
+      URLConnection conn = new URL(query.toString()).openConnection();
+      conn.setUseCaches(false);
+      conn.addRequestProperty("User-Agent", "OMERO.imagej");
+      conn.connect();
+
+      // retrieve latest version number from the registry
+
+      InputStream in = conn.getInputStream();
+      StringBuffer latestVersion = new StringBuffer();
+      while (true) {
+        int data = in.read();
+        if (data == -1) break;
+        latestVersion.append((char) data);
+      }
+      in.close();
+
+      // TODO : registry does not yet return the latest version number
+      //return !latestVersion.toString().equals(VERSION);
+      return false;
+    }
+    catch (IOException e) {
+      return false;
+    }
   }
 
   // -- Helper methods --

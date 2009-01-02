@@ -123,6 +123,8 @@ public class ImporterOptions
   public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
   public static final String PREF_SWAP = "bioformats.swapDimensions";
 
+  public static final String PREF_UPGRADE = "bioformats.upgradeCheck";
+
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
   public static final String LABEL_ORDER = "Stack_order: ";
@@ -375,6 +377,7 @@ public class ImporterOptions
   private boolean record;
   private boolean openAllSeries;
   private boolean swapDimensions;
+  private boolean upgradeCheck;
 
   private String mergeOption;
   private boolean windowless;
@@ -414,6 +417,7 @@ public class ImporterOptions
   public boolean openAllSeries() { return openAllSeries; }
   public boolean doCrop() { return crop; }
   public boolean isSwapDimensions() { return swapDimensions; }
+  public boolean doUpgradeCheck() { return upgradeCheck; }
 
   public String getMergeOption() { return mergeOption; }
 
@@ -462,6 +466,7 @@ public class ImporterOptions
   public void setOpenAllSeries(boolean b) { openAllSeries = b; }
   public void setCrop(boolean b) { crop = b; }
   public void setSwapDimensions(boolean b) { swapDimensions = b; }
+  public void setUpgradeCheck(boolean b) { upgradeCheck = b; }
 
   // -- ImporterOptions methods --
 
@@ -485,6 +490,14 @@ public class ImporterOptions
     record = Prefs.get(PREF_RECORD, true);
     openAllSeries = Prefs.get(PREF_ALL_SERIES, false);
     swapDimensions = Prefs.get(PREF_SWAP, false);
+    upgradeCheck = Prefs.get(PREF_UPGRADE, false);
+
+    if (Prefs.get(PREF_UPGRADE, null) == null) {
+      IJ.showMessage("The Bio-Formats plugin for ImageJ can automatically " +
+        "check for\nupgrades. By default, this feature is enabled, but you " +
+        "can disable\nit in the 'Upgrade' tab of the LOCI plugins " +
+        "configuration window.");
+    }
 
     mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
     windowless = Prefs.get(PREF_WINDOWLESS, false);
@@ -514,6 +527,9 @@ public class ImporterOptions
     Prefs.set(PREF_RECORD, record);
     Prefs.set(PREF_ALL_SERIES, openAllSeries);
     Prefs.set(PREF_SWAP, swapDimensions);
+
+    if (Prefs.get(PREF_UPGRADE, null) == null) upgradeCheck = true;
+    Prefs.set(PREF_UPGRADE, upgradeCheck);
 
     Prefs.set(PREF_MERGE_OPTION, mergeOption);
     Prefs.set(PREF_WINDOWLESS, windowless);
