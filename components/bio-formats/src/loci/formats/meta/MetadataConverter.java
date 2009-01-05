@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2008 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2009 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
+ * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,14 +60,41 @@ public final class MetadataConverter {
    * (source) into a metadata store (destination).
    */
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
+    int datasetCount = src.getDatasetCount();
+    for (int datasetIndex=0; datasetIndex<datasetCount; datasetIndex++) {
+      String datasetDescriptionValue = src.getDatasetDescription(datasetIndex);
+      if (datasetDescriptionValue != null) dest.setDatasetDescription(datasetDescriptionValue, datasetIndex);
+      String datasetExperimenterRefValue = src.getDatasetExperimenterRef(datasetIndex);
+      if (datasetExperimenterRefValue != null) dest.setDatasetExperimenterRef(datasetExperimenterRefValue, datasetIndex);
+      String datasetGroupRefValue = src.getDatasetGroupRef(datasetIndex);
+      if (datasetGroupRefValue != null) dest.setDatasetGroupRef(datasetGroupRefValue, datasetIndex);
+      String datasetIDValue = src.getDatasetID(datasetIndex);
+      if (datasetIDValue != null) dest.setDatasetID(datasetIDValue, datasetIndex);
+      Boolean datasetLockedValue = src.getDatasetLocked(datasetIndex);
+      if (datasetLockedValue != null) dest.setDatasetLocked(datasetLockedValue, datasetIndex);
+      String datasetNameValue = src.getDatasetName(datasetIndex);
+      if (datasetNameValue != null) dest.setDatasetName(datasetNameValue, datasetIndex);
+      int projectRefCount = src.getProjectRefCount(datasetIndex);
+      for (int projectRefIndex=0; projectRefIndex<projectRefCount; projectRefIndex++) {
+        String projectRefIDValue = src.getProjectRefID(datasetIndex, projectRefIndex);
+        if (projectRefIDValue != null) dest.setProjectRefID(projectRefIDValue, datasetIndex, projectRefIndex);
+      }
+    }
     int experimentCount = src.getExperimentCount();
     for (int experimentIndex=0; experimentIndex<experimentCount; experimentIndex++) {
       String experimentDescriptionValue = src.getExperimentDescription(experimentIndex);
       if (experimentDescriptionValue != null) dest.setExperimentDescription(experimentDescriptionValue, experimentIndex);
+      String experimentExperimenterRefValue = src.getExperimentExperimenterRef(experimentIndex);
+      if (experimentExperimenterRefValue != null) dest.setExperimentExperimenterRef(experimentExperimenterRefValue, experimentIndex);
       String experimentIDValue = src.getExperimentID(experimentIndex);
       if (experimentIDValue != null) dest.setExperimentID(experimentIDValue, experimentIndex);
       String experimentTypeValue = src.getExperimentType(experimentIndex);
       if (experimentTypeValue != null) dest.setExperimentType(experimentTypeValue, experimentIndex);
+      int microbeamManipulationRefCount = src.getMicrobeamManipulationRefCount(experimentIndex);
+      for (int microbeamManipulationRefIndex=0; microbeamManipulationRefIndex<microbeamManipulationRefCount; microbeamManipulationRefIndex++) {
+        String microbeamManipulationRefIDValue = src.getMicrobeamManipulationRefID(experimentIndex, microbeamManipulationRefIndex);
+        if (microbeamManipulationRefIDValue != null) dest.setMicrobeamManipulationRefID(microbeamManipulationRefIDValue, experimentIndex, microbeamManipulationRefIndex);
+      }
     }
     int experimenterCount = src.getExperimenterCount();
     for (int experimenterIndex=0; experimenterIndex<experimenterCount; experimenterIndex++) {
@@ -81,34 +108,72 @@ public final class MetadataConverter {
       if (experimenterInstitutionValue != null) dest.setExperimenterInstitution(experimenterInstitutionValue, experimenterIndex);
       String experimenterLastNameValue = src.getExperimenterLastName(experimenterIndex);
       if (experimenterLastNameValue != null) dest.setExperimenterLastName(experimenterLastNameValue, experimenterIndex);
+      String experimenterOMENameValue = src.getExperimenterOMEName(experimenterIndex);
+      if (experimenterOMENameValue != null) dest.setExperimenterOMEName(experimenterOMENameValue, experimenterIndex);
       int groupRefCount = src.getGroupRefCount(experimenterIndex);
       for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++) {
         String experimenterMembershipGroupValue = src.getExperimenterMembershipGroup(experimenterIndex, groupRefIndex);
         if (experimenterMembershipGroupValue != null) dest.setExperimenterMembershipGroup(experimenterMembershipGroupValue, experimenterIndex, groupRefIndex);
       }
     }
+    int groupCount = src.getGroupCount();
+    for (int groupIndex=0; groupIndex<groupCount; groupIndex++) {
+      String groupNameValue = src.getGroupName(groupIndex);
+      if (groupNameValue != null) dest.setGroupName(groupNameValue, groupIndex);
+      String contactExperimenterValue = src.getContactExperimenter(groupIndex);
+      if (contactExperimenterValue != null) dest.setContactExperimenter(contactExperimenterValue, groupIndex);
+    }
     int imageCount = src.getImageCount();
     for (int imageIndex=0; imageIndex<imageCount; imageIndex++) {
+      String imageAcquiredPixelsValue = src.getImageAcquiredPixels(imageIndex);
+      if (imageAcquiredPixelsValue != null) dest.setImageAcquiredPixels(imageAcquiredPixelsValue, imageIndex);
       String imageCreationDateValue = src.getImageCreationDate(imageIndex);
       if (imageCreationDateValue != null) dest.setImageCreationDate(imageCreationDateValue, imageIndex);
       String imageDefaultPixelsValue = src.getImageDefaultPixels(imageIndex);
       if (imageDefaultPixelsValue != null) dest.setImageDefaultPixels(imageDefaultPixelsValue, imageIndex);
       String imageDescriptionValue = src.getImageDescription(imageIndex);
       if (imageDescriptionValue != null) dest.setImageDescription(imageDescriptionValue, imageIndex);
+      String imageExperimentRefValue = src.getImageExperimentRef(imageIndex);
+      if (imageExperimentRefValue != null) dest.setImageExperimentRef(imageExperimentRefValue, imageIndex);
+      String imageExperimenterRefValue = src.getImageExperimenterRef(imageIndex);
+      if (imageExperimenterRefValue != null) dest.setImageExperimenterRef(imageExperimenterRefValue, imageIndex);
+      String imageGroupRefValue = src.getImageGroupRef(imageIndex);
+      if (imageGroupRefValue != null) dest.setImageGroupRef(imageGroupRefValue, imageIndex);
       String imageIDValue = src.getImageID(imageIndex);
       if (imageIDValue != null) dest.setImageID(imageIDValue, imageIndex);
       String imageInstrumentRefValue = src.getImageInstrumentRef(imageIndex);
       if (imageInstrumentRefValue != null) dest.setImageInstrumentRef(imageInstrumentRefValue, imageIndex);
       String imageNameValue = src.getImageName(imageIndex);
       if (imageNameValue != null) dest.setImageName(imageNameValue, imageIndex);
-      String displayOptionsIDValue = src.getDisplayOptionsID(imageIndex);
-      if (displayOptionsIDValue != null) dest.setDisplayOptionsID(displayOptionsIDValue, imageIndex);
-      Float displayOptionsZoomValue = src.getDisplayOptionsZoom(imageIndex);
-      if (displayOptionsZoomValue != null) dest.setDisplayOptionsZoom(displayOptionsZoomValue, imageIndex);
-      Integer displayOptionsProjectionZStartValue = src.getDisplayOptionsProjectionZStart(imageIndex);
-      if (displayOptionsProjectionZStartValue != null) dest.setDisplayOptionsProjectionZStart(displayOptionsProjectionZStartValue, imageIndex);
-      Integer displayOptionsProjectionZStopValue = src.getDisplayOptionsProjectionZStop(imageIndex);
-      if (displayOptionsProjectionZStopValue != null) dest.setDisplayOptionsProjectionZStop(displayOptionsProjectionZStopValue, imageIndex);
+      String imageObjectiveValue = src.getImageObjective(imageIndex);
+      if (imageObjectiveValue != null) dest.setImageObjective(imageObjectiveValue, imageIndex);
+      int datasetRefCount = src.getDatasetRefCount(imageIndex);
+      for (int datasetRefIndex=0; datasetRefIndex<datasetRefCount; datasetRefIndex++) {
+        String datasetRefIDValue = src.getDatasetRefID(imageIndex, datasetRefIndex);
+        if (datasetRefIDValue != null) dest.setDatasetRefID(datasetRefIDValue, imageIndex, datasetRefIndex);
+      }
+        String displayOptionsDisplayValue = src.getDisplayOptionsDisplay(imageIndex);
+        if (displayOptionsDisplayValue != null) dest.setDisplayOptionsDisplay(displayOptionsDisplayValue, imageIndex);
+        String displayOptionsIDValue = src.getDisplayOptionsID(imageIndex);
+        if (displayOptionsIDValue != null) dest.setDisplayOptionsID(displayOptionsIDValue, imageIndex);
+        Float displayOptionsZoomValue = src.getDisplayOptionsZoom(imageIndex);
+        if (displayOptionsZoomValue != null) dest.setDisplayOptionsZoom(displayOptionsZoomValue, imageIndex);
+        Float greyChannelBlackLevelValue = src.getGreyChannelBlackLevel(imageIndex);
+        if (greyChannelBlackLevelValue != null) dest.setGreyChannelBlackLevel(greyChannelBlackLevelValue, imageIndex);
+        Integer greyChannelChannelNumberValue = src.getGreyChannelChannelNumber(imageIndex);
+        if (greyChannelChannelNumberValue != null) dest.setGreyChannelChannelNumber(greyChannelChannelNumberValue, imageIndex);
+        Float greyChannelGammaValue = src.getGreyChannelGamma(imageIndex);
+        if (greyChannelGammaValue != null) dest.setGreyChannelGamma(greyChannelGammaValue, imageIndex);
+        Float greyChannelWhiteLevelValue = src.getGreyChannelWhiteLevel(imageIndex);
+        if (greyChannelWhiteLevelValue != null) dest.setGreyChannelWhiteLevel(greyChannelWhiteLevelValue, imageIndex);
+        Boolean greyChannelisOnValue = src.getGreyChannelisOn(imageIndex);
+        if (greyChannelisOnValue != null) dest.setGreyChannelisOn(greyChannelisOnValue, imageIndex);
+        String greyChannelMapColorMapValue = src.getGreyChannelMapColorMap(imageIndex);
+        if (greyChannelMapColorMapValue != null) dest.setGreyChannelMapColorMap(greyChannelMapColorMapValue, imageIndex);
+        Integer displayOptionsProjectionZStartValue = src.getDisplayOptionsProjectionZStart(imageIndex);
+        if (displayOptionsProjectionZStartValue != null) dest.setDisplayOptionsProjectionZStart(displayOptionsProjectionZStartValue, imageIndex);
+        Integer displayOptionsProjectionZStopValue = src.getDisplayOptionsProjectionZStop(imageIndex);
+        if (displayOptionsProjectionZStopValue != null) dest.setDisplayOptionsProjectionZStop(displayOptionsProjectionZStopValue, imageIndex);
       int roiCount = src.getROICount(imageIndex);
       for (int roiIndex=0; roiIndex<roiCount; roiIndex++) {
         String roiidValue = src.getROIID(imageIndex, roiIndex);
@@ -129,6 +194,107 @@ public final class MetadataConverter {
         if (roiZ0Value != null) dest.setROIZ0(roiZ0Value, imageIndex, roiIndex);
         Integer roiZ1Value = src.getROIZ1(imageIndex, roiIndex);
         if (roiZ1Value != null) dest.setROIZ1(roiZ1Value, imageIndex, roiIndex);
+        int shapeCount = src.getShapeCount(imageIndex, roiIndex);
+        for (int shapeIndex=0; shapeIndex<shapeCount; shapeIndex++) {
+          String shapeIDValue = src.getShapeID(imageIndex, roiIndex, shapeIndex);
+          if (shapeIDValue != null) dest.setShapeID(shapeIDValue, imageIndex, roiIndex, shapeIndex);
+          Integer shapetheTValue = src.getShapetheT(imageIndex, roiIndex, shapeIndex);
+          if (shapetheTValue != null) dest.setShapetheT(shapetheTValue, imageIndex, roiIndex, shapeIndex);
+          Integer shapetheZValue = src.getShapetheZ(imageIndex, roiIndex, shapeIndex);
+          if (shapetheZValue != null) dest.setShapetheZ(shapetheZValue, imageIndex, roiIndex, shapeIndex);
+          String circleIDValue = src.getCircleID(imageIndex, roiIndex, shapeIndex);
+          if (circleIDValue != null) dest.setCircleID(circleIDValue, imageIndex, roiIndex, shapeIndex);
+          String circlecxValue = src.getCirclecx(imageIndex, roiIndex, shapeIndex);
+          if (circlecxValue != null) dest.setCirclecx(circlecxValue, imageIndex, roiIndex, shapeIndex);
+          String circlecyValue = src.getCirclecy(imageIndex, roiIndex, shapeIndex);
+          if (circlecyValue != null) dest.setCirclecy(circlecyValue, imageIndex, roiIndex, shapeIndex);
+          String circlerValue = src.getCircler(imageIndex, roiIndex, shapeIndex);
+          if (circlerValue != null) dest.setCircler(circlerValue, imageIndex, roiIndex, shapeIndex);
+          String circletransformValue = src.getCircletransform(imageIndex, roiIndex, shapeIndex);
+          if (circletransformValue != null) dest.setCircletransform(circletransformValue, imageIndex, roiIndex, shapeIndex);
+          String ellipseIDValue = src.getEllipseID(imageIndex, roiIndex, shapeIndex);
+          if (ellipseIDValue != null) dest.setEllipseID(ellipseIDValue, imageIndex, roiIndex, shapeIndex);
+          String ellipsecxValue = src.getEllipsecx(imageIndex, roiIndex, shapeIndex);
+          if (ellipsecxValue != null) dest.setEllipsecx(ellipsecxValue, imageIndex, roiIndex, shapeIndex);
+          String ellipsecyValue = src.getEllipsecy(imageIndex, roiIndex, shapeIndex);
+          if (ellipsecyValue != null) dest.setEllipsecy(ellipsecyValue, imageIndex, roiIndex, shapeIndex);
+          String ellipserxValue = src.getEllipserx(imageIndex, roiIndex, shapeIndex);
+          if (ellipserxValue != null) dest.setEllipserx(ellipserxValue, imageIndex, roiIndex, shapeIndex);
+          String ellipseryValue = src.getEllipsery(imageIndex, roiIndex, shapeIndex);
+          if (ellipseryValue != null) dest.setEllipsery(ellipseryValue, imageIndex, roiIndex, shapeIndex);
+          String ellipsetransformValue = src.getEllipsetransform(imageIndex, roiIndex, shapeIndex);
+          if (ellipsetransformValue != null) dest.setEllipsetransform(ellipsetransformValue, imageIndex, roiIndex, shapeIndex);
+          String lineIDValue = src.getLineID(imageIndex, roiIndex, shapeIndex);
+          if (lineIDValue != null) dest.setLineID(lineIDValue, imageIndex, roiIndex, shapeIndex);
+          String linetransformValue = src.getLinetransform(imageIndex, roiIndex, shapeIndex);
+          if (linetransformValue != null) dest.setLinetransform(linetransformValue, imageIndex, roiIndex, shapeIndex);
+          String linex1Value = src.getLinex1(imageIndex, roiIndex, shapeIndex);
+          if (linex1Value != null) dest.setLinex1(linex1Value, imageIndex, roiIndex, shapeIndex);
+          String linex2Value = src.getLinex2(imageIndex, roiIndex, shapeIndex);
+          if (linex2Value != null) dest.setLinex2(linex2Value, imageIndex, roiIndex, shapeIndex);
+          String liney1Value = src.getLiney1(imageIndex, roiIndex, shapeIndex);
+          if (liney1Value != null) dest.setLiney1(liney1Value, imageIndex, roiIndex, shapeIndex);
+          String liney2Value = src.getLiney2(imageIndex, roiIndex, shapeIndex);
+          if (liney2Value != null) dest.setLiney2(liney2Value, imageIndex, roiIndex, shapeIndex);
+          String maskIDValue = src.getMaskID(imageIndex, roiIndex, shapeIndex);
+          if (maskIDValue != null) dest.setMaskID(maskIDValue, imageIndex, roiIndex, shapeIndex);
+          String maskheightValue = src.getMaskheight(imageIndex, roiIndex, shapeIndex);
+          if (maskheightValue != null) dest.setMaskheight(maskheightValue, imageIndex, roiIndex, shapeIndex);
+          String masktransformValue = src.getMasktransform(imageIndex, roiIndex, shapeIndex);
+          if (masktransformValue != null) dest.setMasktransform(masktransformValue, imageIndex, roiIndex, shapeIndex);
+          String maskwidthValue = src.getMaskwidth(imageIndex, roiIndex, shapeIndex);
+          if (maskwidthValue != null) dest.setMaskwidth(maskwidthValue, imageIndex, roiIndex, shapeIndex);
+          String maskxValue = src.getMaskx(imageIndex, roiIndex, shapeIndex);
+          if (maskxValue != null) dest.setMaskx(maskxValue, imageIndex, roiIndex, shapeIndex);
+          String maskyValue = src.getMasky(imageIndex, roiIndex, shapeIndex);
+          if (maskyValue != null) dest.setMasky(maskyValue, imageIndex, roiIndex, shapeIndex);
+          Boolean maskPixelsBigEndianValue = src.getMaskPixelsBigEndian(imageIndex, roiIndex, shapeIndex);
+          if (maskPixelsBigEndianValue != null) dest.setMaskPixelsBigEndian(maskPixelsBigEndianValue, imageIndex, roiIndex, shapeIndex);
+          String maskPixelsBinDataValue = src.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex);
+          if (maskPixelsBinDataValue != null) dest.setMaskPixelsBinData(maskPixelsBinDataValue, imageIndex, roiIndex, shapeIndex);
+          String maskPixelsExtendedPixelTypeValue = src.getMaskPixelsExtendedPixelType(imageIndex, roiIndex, shapeIndex);
+          if (maskPixelsExtendedPixelTypeValue != null) dest.setMaskPixelsExtendedPixelType(maskPixelsExtendedPixelTypeValue, imageIndex, roiIndex, shapeIndex);
+          String maskPixelsIDValue = src.getMaskPixelsID(imageIndex, roiIndex, shapeIndex);
+          if (maskPixelsIDValue != null) dest.setMaskPixelsID(maskPixelsIDValue, imageIndex, roiIndex, shapeIndex);
+          Integer maskPixelsSizeXValue = src.getMaskPixelsSizeX(imageIndex, roiIndex, shapeIndex);
+          if (maskPixelsSizeXValue != null) dest.setMaskPixelsSizeX(maskPixelsSizeXValue, imageIndex, roiIndex, shapeIndex);
+          Integer maskPixelsSizeYValue = src.getMaskPixelsSizeY(imageIndex, roiIndex, shapeIndex);
+          if (maskPixelsSizeYValue != null) dest.setMaskPixelsSizeY(maskPixelsSizeYValue, imageIndex, roiIndex, shapeIndex);
+          String pointIDValue = src.getPointID(imageIndex, roiIndex, shapeIndex);
+          if (pointIDValue != null) dest.setPointID(pointIDValue, imageIndex, roiIndex, shapeIndex);
+          String pointcxValue = src.getPointcx(imageIndex, roiIndex, shapeIndex);
+          if (pointcxValue != null) dest.setPointcx(pointcxValue, imageIndex, roiIndex, shapeIndex);
+          String pointcyValue = src.getPointcy(imageIndex, roiIndex, shapeIndex);
+          if (pointcyValue != null) dest.setPointcy(pointcyValue, imageIndex, roiIndex, shapeIndex);
+          String pointrValue = src.getPointr(imageIndex, roiIndex, shapeIndex);
+          if (pointrValue != null) dest.setPointr(pointrValue, imageIndex, roiIndex, shapeIndex);
+          String pointtransformValue = src.getPointtransform(imageIndex, roiIndex, shapeIndex);
+          if (pointtransformValue != null) dest.setPointtransform(pointtransformValue, imageIndex, roiIndex, shapeIndex);
+          String polygonIDValue = src.getPolygonID(imageIndex, roiIndex, shapeIndex);
+          if (polygonIDValue != null) dest.setPolygonID(polygonIDValue, imageIndex, roiIndex, shapeIndex);
+          String polygonpointsValue = src.getPolygonpoints(imageIndex, roiIndex, shapeIndex);
+          if (polygonpointsValue != null) dest.setPolygonpoints(polygonpointsValue, imageIndex, roiIndex, shapeIndex);
+          String polygontransformValue = src.getPolygontransform(imageIndex, roiIndex, shapeIndex);
+          if (polygontransformValue != null) dest.setPolygontransform(polygontransformValue, imageIndex, roiIndex, shapeIndex);
+          String polylineIDValue = src.getPolylineID(imageIndex, roiIndex, shapeIndex);
+          if (polylineIDValue != null) dest.setPolylineID(polylineIDValue, imageIndex, roiIndex, shapeIndex);
+          String polylinepointsValue = src.getPolylinepoints(imageIndex, roiIndex, shapeIndex);
+          if (polylinepointsValue != null) dest.setPolylinepoints(polylinepointsValue, imageIndex, roiIndex, shapeIndex);
+          String polylinetransformValue = src.getPolylinetransform(imageIndex, roiIndex, shapeIndex);
+          if (polylinetransformValue != null) dest.setPolylinetransform(polylinetransformValue, imageIndex, roiIndex, shapeIndex);
+          String rectIDValue = src.getRectID(imageIndex, roiIndex, shapeIndex);
+          if (rectIDValue != null) dest.setRectID(rectIDValue, imageIndex, roiIndex, shapeIndex);
+          String rectheightValue = src.getRectheight(imageIndex, roiIndex, shapeIndex);
+          if (rectheightValue != null) dest.setRectheight(rectheightValue, imageIndex, roiIndex, shapeIndex);
+          String recttransformValue = src.getRecttransform(imageIndex, roiIndex, shapeIndex);
+          if (recttransformValue != null) dest.setRecttransform(recttransformValue, imageIndex, roiIndex, shapeIndex);
+          String rectwidthValue = src.getRectwidth(imageIndex, roiIndex, shapeIndex);
+          if (rectwidthValue != null) dest.setRectwidth(rectwidthValue, imageIndex, roiIndex, shapeIndex);
+          String rectxValue = src.getRectx(imageIndex, roiIndex, shapeIndex);
+          if (rectxValue != null) dest.setRectx(rectxValue, imageIndex, roiIndex, shapeIndex);
+          String rectyValue = src.getRecty(imageIndex, roiIndex, shapeIndex);
+          if (rectyValue != null) dest.setRecty(rectyValue, imageIndex, roiIndex, shapeIndex);
+        }
       }
         Integer displayOptionsTimeTStartValue = src.getDisplayOptionsTimeTStart(imageIndex);
         if (displayOptionsTimeTStartValue != null) dest.setDisplayOptionsTimeTStart(displayOptionsTimeTStartValue, imageIndex);
@@ -146,16 +312,22 @@ public final class MetadataConverter {
       for (int logicalChannelIndex=0; logicalChannelIndex<logicalChannelCount; logicalChannelIndex++) {
         String logicalChannelContrastMethodValue = src.getLogicalChannelContrastMethod(imageIndex, logicalChannelIndex);
         if (logicalChannelContrastMethodValue != null) dest.setLogicalChannelContrastMethod(logicalChannelContrastMethodValue, imageIndex, logicalChannelIndex);
+        String logicalChannelDetectorValue = src.getLogicalChannelDetector(imageIndex, logicalChannelIndex);
+        if (logicalChannelDetectorValue != null) dest.setLogicalChannelDetector(logicalChannelDetectorValue, imageIndex, logicalChannelIndex);
         Integer logicalChannelEmWaveValue = src.getLogicalChannelEmWave(imageIndex, logicalChannelIndex);
         if (logicalChannelEmWaveValue != null) dest.setLogicalChannelEmWave(logicalChannelEmWaveValue, imageIndex, logicalChannelIndex);
         Integer logicalChannelExWaveValue = src.getLogicalChannelExWave(imageIndex, logicalChannelIndex);
         if (logicalChannelExWaveValue != null) dest.setLogicalChannelExWave(logicalChannelExWaveValue, imageIndex, logicalChannelIndex);
+        String logicalChannelFilterSetValue = src.getLogicalChannelFilterSet(imageIndex, logicalChannelIndex);
+        if (logicalChannelFilterSetValue != null) dest.setLogicalChannelFilterSet(logicalChannelFilterSetValue, imageIndex, logicalChannelIndex);
         String logicalChannelFluorValue = src.getLogicalChannelFluor(imageIndex, logicalChannelIndex);
         if (logicalChannelFluorValue != null) dest.setLogicalChannelFluor(logicalChannelFluorValue, imageIndex, logicalChannelIndex);
         String logicalChannelIDValue = src.getLogicalChannelID(imageIndex, logicalChannelIndex);
         if (logicalChannelIDValue != null) dest.setLogicalChannelID(logicalChannelIDValue, imageIndex, logicalChannelIndex);
         String logicalChannelIlluminationTypeValue = src.getLogicalChannelIlluminationType(imageIndex, logicalChannelIndex);
         if (logicalChannelIlluminationTypeValue != null) dest.setLogicalChannelIlluminationType(logicalChannelIlluminationTypeValue, imageIndex, logicalChannelIndex);
+        String logicalChannelLightSourceValue = src.getLogicalChannelLightSource(imageIndex, logicalChannelIndex);
+        if (logicalChannelLightSourceValue != null) dest.setLogicalChannelLightSource(logicalChannelLightSourceValue, imageIndex, logicalChannelIndex);
         String logicalChannelModeValue = src.getLogicalChannelMode(imageIndex, logicalChannelIndex);
         if (logicalChannelModeValue != null) dest.setLogicalChannelMode(logicalChannelModeValue, imageIndex, logicalChannelIndex);
         String logicalChannelNameValue = src.getLogicalChannelName(imageIndex, logicalChannelIndex);
@@ -172,12 +344,18 @@ public final class MetadataConverter {
         if (logicalChannelPockelCellSettingValue != null) dest.setLogicalChannelPockelCellSetting(logicalChannelPockelCellSettingValue, imageIndex, logicalChannelIndex);
         Integer logicalChannelSamplesPerPixelValue = src.getLogicalChannelSamplesPerPixel(imageIndex, logicalChannelIndex);
         if (logicalChannelSamplesPerPixelValue != null) dest.setLogicalChannelSamplesPerPixel(logicalChannelSamplesPerPixelValue, imageIndex, logicalChannelIndex);
+        String logicalChannelSecondaryEmissionFilterValue = src.getLogicalChannelSecondaryEmissionFilter(imageIndex, logicalChannelIndex);
+        if (logicalChannelSecondaryEmissionFilterValue != null) dest.setLogicalChannelSecondaryEmissionFilter(logicalChannelSecondaryEmissionFilterValue, imageIndex, logicalChannelIndex);
+        String logicalChannelSecondaryExcitationFilterValue = src.getLogicalChannelSecondaryExcitationFilter(imageIndex, logicalChannelIndex);
+        if (logicalChannelSecondaryExcitationFilterValue != null) dest.setLogicalChannelSecondaryExcitationFilter(logicalChannelSecondaryExcitationFilterValue, imageIndex, logicalChannelIndex);
         int channelComponentCount = src.getChannelComponentCount(imageIndex, logicalChannelIndex);
         for (int channelComponentIndex=0; channelComponentIndex<channelComponentCount; channelComponentIndex++) {
           String channelComponentColorDomainValue = src.getChannelComponentColorDomain(imageIndex, logicalChannelIndex, channelComponentIndex);
           if (channelComponentColorDomainValue != null) dest.setChannelComponentColorDomain(channelComponentColorDomainValue, imageIndex, logicalChannelIndex, channelComponentIndex);
           Integer channelComponentIndexValue = src.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex);
           if (channelComponentIndexValue != null) dest.setChannelComponentIndex(channelComponentIndexValue, imageIndex, logicalChannelIndex, channelComponentIndex);
+          String channelComponentPixelsValue = src.getChannelComponentPixels(imageIndex, logicalChannelIndex, channelComponentIndex);
+          if (channelComponentPixelsValue != null) dest.setChannelComponentPixels(channelComponentPixelsValue, imageIndex, logicalChannelIndex, channelComponentIndex);
         }
           String detectorSettingsBinningValue = src.getDetectorSettingsBinning(imageIndex, logicalChannelIndex);
           if (detectorSettingsBinningValue != null) dest.setDetectorSettingsBinning(detectorSettingsBinningValue, imageIndex, logicalChannelIndex);
@@ -197,6 +375,29 @@ public final class MetadataConverter {
           if (lightSourceSettingsLightSourceValue != null) dest.setLightSourceSettingsLightSource(lightSourceSettingsLightSourceValue, imageIndex, logicalChannelIndex);
           Integer lightSourceSettingsWavelengthValue = src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex);
           if (lightSourceSettingsWavelengthValue != null) dest.setLightSourceSettingsWavelength(lightSourceSettingsWavelengthValue, imageIndex, logicalChannelIndex);
+      }
+      int microbeamManipulationCount = src.getMicrobeamManipulationCount(imageIndex);
+      for (int microbeamManipulationIndex=0; microbeamManipulationIndex<microbeamManipulationCount; microbeamManipulationIndex++) {
+        String microbeamManipulationExperimenterRefValue = src.getMicrobeamManipulationExperimenterRef(imageIndex, microbeamManipulationIndex);
+        if (microbeamManipulationExperimenterRefValue != null) dest.setMicrobeamManipulationExperimenterRef(microbeamManipulationExperimenterRefValue, imageIndex, microbeamManipulationIndex);
+        String microbeamManipulationIDValue = src.getMicrobeamManipulationID(imageIndex, microbeamManipulationIndex);
+        if (microbeamManipulationIDValue != null) dest.setMicrobeamManipulationID(microbeamManipulationIDValue, imageIndex, microbeamManipulationIndex);
+        String microbeamManipulationTypeValue = src.getMicrobeamManipulationType(imageIndex, microbeamManipulationIndex);
+        if (microbeamManipulationTypeValue != null) dest.setMicrobeamManipulationType(microbeamManipulationTypeValue, imageIndex, microbeamManipulationIndex);
+        int lightSourceRefCount = src.getLightSourceRefCount(imageIndex, microbeamManipulationIndex);
+        for (int lightSourceRefIndex=0; lightSourceRefIndex<lightSourceRefCount; lightSourceRefIndex++) {
+          Float lightSourceRefAttenuationValue = src.getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+          if (lightSourceRefAttenuationValue != null) dest.setLightSourceRefAttenuation(lightSourceRefAttenuationValue, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+          String lightSourceRefLightSourceValue = src.getLightSourceRefLightSource(imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+          if (lightSourceRefLightSourceValue != null) dest.setLightSourceRefLightSource(lightSourceRefLightSourceValue, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+          Integer lightSourceRefWavelengthValue = src.getLightSourceRefWavelength(imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+          if (lightSourceRefWavelengthValue != null) dest.setLightSourceRefWavelength(lightSourceRefWavelengthValue, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+        }
+        int roiRefCount = src.getROIRefCount(imageIndex, microbeamManipulationIndex);
+        for (int roiRefIndex=0; roiRefIndex<roiRefCount; roiRefIndex++) {
+          String roiRefIDValue = src.getROIRefID(imageIndex, microbeamManipulationIndex, roiRefIndex);
+          if (roiRefIDValue != null) dest.setROIRefID(roiRefIDValue, imageIndex, microbeamManipulationIndex, roiRefIndex);
+        }
       }
         Float objectiveSettingsCorrectionCollarValue = src.getObjectiveSettingsCorrectionCollar(imageIndex);
         if (objectiveSettingsCorrectionCollarValue != null) dest.setObjectiveSettingsCorrectionCollar(objectiveSettingsCorrectionCollarValue, imageIndex);
@@ -240,6 +441,10 @@ public final class MetadataConverter {
         if (pixelsSizeZValue != null) dest.setPixelsSizeZ(pixelsSizeZValue, imageIndex, pixelsIndex);
         int planeCount = src.getPlaneCount(imageIndex, pixelsIndex);
         for (int planeIndex=0; planeIndex<planeCount; planeIndex++) {
+          String planeHashSHA1Value = src.getPlaneHashSHA1(imageIndex, pixelsIndex, planeIndex);
+          if (planeHashSHA1Value != null) dest.setPlaneHashSHA1(planeHashSHA1Value, imageIndex, pixelsIndex, planeIndex);
+          String planeIDValue = src.getPlaneID(imageIndex, pixelsIndex, planeIndex);
+          if (planeIDValue != null) dest.setPlaneID(planeIDValue, imageIndex, pixelsIndex, planeIndex);
           Integer planeTheCValue = src.getPlaneTheC(imageIndex, pixelsIndex, planeIndex);
           if (planeTheCValue != null) dest.setPlaneTheC(planeTheCValue, imageIndex, pixelsIndex, planeIndex);
           Integer planeTheTValue = src.getPlaneTheT(imageIndex, pixelsIndex, planeIndex);
@@ -275,6 +480,15 @@ public final class MetadataConverter {
           if (tiffDataUUIDValue != null) dest.setTiffDataUUID(tiffDataUUIDValue, imageIndex, pixelsIndex, tiffDataIndex);
         }
       }
+      int regionCount = src.getRegionCount(imageIndex);
+      for (int regionIndex=0; regionIndex<regionCount; regionIndex++) {
+        String regionIDValue = src.getRegionID(imageIndex, regionIndex);
+        if (regionIDValue != null) dest.setRegionID(regionIDValue, imageIndex, regionIndex);
+        String regionNameValue = src.getRegionName(imageIndex, regionIndex);
+        if (regionNameValue != null) dest.setRegionName(regionNameValue, imageIndex, regionIndex);
+        String regionTagValue = src.getRegionTag(imageIndex, regionIndex);
+        if (regionTagValue != null) dest.setRegionTag(regionTagValue, imageIndex, regionIndex);
+      }
         String stageLabelNameValue = src.getStageLabelName(imageIndex);
         if (stageLabelNameValue != null) dest.setStageLabelName(stageLabelNameValue, imageIndex);
         Float stageLabelXValue = src.getStageLabelX(imageIndex);
@@ -283,6 +497,12 @@ public final class MetadataConverter {
         if (stageLabelYValue != null) dest.setStageLabelY(stageLabelYValue, imageIndex);
         Float stageLabelZValue = src.getStageLabelZ(imageIndex);
         if (stageLabelZValue != null) dest.setStageLabelZ(stageLabelZValue, imageIndex);
+        String thumbnailIDValue = src.getThumbnailID(imageIndex);
+        if (thumbnailIDValue != null) dest.setThumbnailID(thumbnailIDValue, imageIndex);
+        String thumbnailMIMEtypeValue = src.getThumbnailMIMEtype(imageIndex);
+        if (thumbnailMIMEtypeValue != null) dest.setThumbnailMIMEtype(thumbnailMIMEtypeValue, imageIndex);
+        String thumbnailhrefValue = src.getThumbnailhref(imageIndex);
+        if (thumbnailhrefValue != null) dest.setThumbnailhref(thumbnailhrefValue, imageIndex);
     }
     int instrumentCount = src.getInstrumentCount();
     for (int instrumentIndex=0; instrumentIndex<instrumentCount; instrumentIndex++) {
@@ -290,6 +510,8 @@ public final class MetadataConverter {
       if (instrumentIDValue != null) dest.setInstrumentID(instrumentIDValue, instrumentIndex);
       int detectorCount = src.getDetectorCount(instrumentIndex);
       for (int detectorIndex=0; detectorIndex<detectorCount; detectorIndex++) {
+        Float detectorAmplificationGainValue = src.getDetectorAmplificationGain(instrumentIndex, detectorIndex);
+        if (detectorAmplificationGainValue != null) dest.setDetectorAmplificationGain(detectorAmplificationGainValue, instrumentIndex, detectorIndex);
         Float detectorGainValue = src.getDetectorGain(instrumentIndex, detectorIndex);
         if (detectorGainValue != null) dest.setDetectorGain(detectorGainValue, instrumentIndex, detectorIndex);
         String detectorIDValue = src.getDetectorID(instrumentIndex, detectorIndex);
@@ -306,6 +528,71 @@ public final class MetadataConverter {
         if (detectorTypeValue != null) dest.setDetectorType(detectorTypeValue, instrumentIndex, detectorIndex);
         Float detectorVoltageValue = src.getDetectorVoltage(instrumentIndex, detectorIndex);
         if (detectorVoltageValue != null) dest.setDetectorVoltage(detectorVoltageValue, instrumentIndex, detectorIndex);
+        Float detectorZoomValue = src.getDetectorZoom(instrumentIndex, detectorIndex);
+        if (detectorZoomValue != null) dest.setDetectorZoom(detectorZoomValue, instrumentIndex, detectorIndex);
+      }
+      int dichroicCount = src.getDichroicCount(instrumentIndex);
+      for (int dichroicIndex=0; dichroicIndex<dichroicCount; dichroicIndex++) {
+        String dichroicLotNumberValue = src.getDichroicLotNumber(instrumentIndex, dichroicIndex);
+        if (dichroicLotNumberValue != null) dest.setDichroicLotNumber(dichroicLotNumberValue, instrumentIndex, dichroicIndex);
+        String dichroicManufacturerValue = src.getDichroicManufacturer(instrumentIndex, dichroicIndex);
+        if (dichroicManufacturerValue != null) dest.setDichroicManufacturer(dichroicManufacturerValue, instrumentIndex, dichroicIndex);
+        String dichroicModelValue = src.getDichroicModel(instrumentIndex, dichroicIndex);
+        if (dichroicModelValue != null) dest.setDichroicModel(dichroicModelValue, instrumentIndex, dichroicIndex);
+      }
+      int filterCount = src.getFilterCount(instrumentIndex);
+      for (int filterIndex=0; filterIndex<filterCount; filterIndex++) {
+        String filterFilterWheelValue = src.getFilterFilterWheel(instrumentIndex, filterIndex);
+        if (filterFilterWheelValue != null) dest.setFilterFilterWheel(filterFilterWheelValue, instrumentIndex, filterIndex);
+        String filterLotNumberValue = src.getFilterLotNumber(instrumentIndex, filterIndex);
+        if (filterLotNumberValue != null) dest.setFilterLotNumber(filterLotNumberValue, instrumentIndex, filterIndex);
+        String filterManufacturerValue = src.getFilterManufacturer(instrumentIndex, filterIndex);
+        if (filterManufacturerValue != null) dest.setFilterManufacturer(filterManufacturerValue, instrumentIndex, filterIndex);
+        String filterModelValue = src.getFilterModel(instrumentIndex, filterIndex);
+        if (filterModelValue != null) dest.setFilterModel(filterModelValue, instrumentIndex, filterIndex);
+        String filterTypeValue = src.getFilterType(instrumentIndex, filterIndex);
+        if (filterTypeValue != null) dest.setFilterType(filterTypeValue, instrumentIndex, filterIndex);
+        String emFilterLotNumberValue = src.getEmFilterLotNumber(instrumentIndex, filterIndex);
+        if (emFilterLotNumberValue != null) dest.setEmFilterLotNumber(emFilterLotNumberValue, instrumentIndex, filterIndex);
+        String emFilterManufacturerValue = src.getEmFilterManufacturer(instrumentIndex, filterIndex);
+        if (emFilterManufacturerValue != null) dest.setEmFilterManufacturer(emFilterManufacturerValue, instrumentIndex, filterIndex);
+        String emFilterModelValue = src.getEmFilterModel(instrumentIndex, filterIndex);
+        if (emFilterModelValue != null) dest.setEmFilterModel(emFilterModelValue, instrumentIndex, filterIndex);
+        String emFilterTypeValue = src.getEmFilterType(instrumentIndex, filterIndex);
+        if (emFilterTypeValue != null) dest.setEmFilterType(emFilterTypeValue, instrumentIndex, filterIndex);
+        String exFilterLotNumberValue = src.getExFilterLotNumber(instrumentIndex, filterIndex);
+        if (exFilterLotNumberValue != null) dest.setExFilterLotNumber(exFilterLotNumberValue, instrumentIndex, filterIndex);
+        String exFilterManufacturerValue = src.getExFilterManufacturer(instrumentIndex, filterIndex);
+        if (exFilterManufacturerValue != null) dest.setExFilterManufacturer(exFilterManufacturerValue, instrumentIndex, filterIndex);
+        String exFilterModelValue = src.getExFilterModel(instrumentIndex, filterIndex);
+        if (exFilterModelValue != null) dest.setExFilterModel(exFilterModelValue, instrumentIndex, filterIndex);
+        String exFilterTypeValue = src.getExFilterType(instrumentIndex, filterIndex);
+        if (exFilterTypeValue != null) dest.setExFilterType(exFilterTypeValue, instrumentIndex, filterIndex);
+        Integer transmittanceRangeCutInValue = src.getTransmittanceRangeCutIn(instrumentIndex, filterIndex);
+        if (transmittanceRangeCutInValue != null) dest.setTransmittanceRangeCutIn(transmittanceRangeCutInValue, instrumentIndex, filterIndex);
+        Integer transmittanceRangeCutInToleranceValue = src.getTransmittanceRangeCutInTolerance(instrumentIndex, filterIndex);
+        if (transmittanceRangeCutInToleranceValue != null) dest.setTransmittanceRangeCutInTolerance(transmittanceRangeCutInToleranceValue, instrumentIndex, filterIndex);
+        Integer transmittanceRangeCutOutValue = src.getTransmittanceRangeCutOut(instrumentIndex, filterIndex);
+        if (transmittanceRangeCutOutValue != null) dest.setTransmittanceRangeCutOut(transmittanceRangeCutOutValue, instrumentIndex, filterIndex);
+        Integer transmittanceRangeCutOutToleranceValue = src.getTransmittanceRangeCutOutTolerance(instrumentIndex, filterIndex);
+        if (transmittanceRangeCutOutToleranceValue != null) dest.setTransmittanceRangeCutOutTolerance(transmittanceRangeCutOutToleranceValue, instrumentIndex, filterIndex);
+        Integer transmittanceRangeTransmittanceValue = src.getTransmittanceRangeTransmittance(instrumentIndex, filterIndex);
+        if (transmittanceRangeTransmittanceValue != null) dest.setTransmittanceRangeTransmittance(transmittanceRangeTransmittanceValue, instrumentIndex, filterIndex);
+      }
+      int filterSetCount = src.getFilterSetCount(instrumentIndex);
+      for (int filterSetIndex=0; filterSetIndex<filterSetCount; filterSetIndex++) {
+        String filterSetDichroicValue = src.getFilterSetDichroic(instrumentIndex, filterSetIndex);
+        if (filterSetDichroicValue != null) dest.setFilterSetDichroic(filterSetDichroicValue, instrumentIndex, filterSetIndex);
+        String filterSetEmFilterValue = src.getFilterSetEmFilter(instrumentIndex, filterSetIndex);
+        if (filterSetEmFilterValue != null) dest.setFilterSetEmFilter(filterSetEmFilterValue, instrumentIndex, filterSetIndex);
+        String filterSetExFilterValue = src.getFilterSetExFilter(instrumentIndex, filterSetIndex);
+        if (filterSetExFilterValue != null) dest.setFilterSetExFilter(filterSetExFilterValue, instrumentIndex, filterSetIndex);
+        String filterSetLotNumberValue = src.getFilterSetLotNumber(instrumentIndex, filterSetIndex);
+        if (filterSetLotNumberValue != null) dest.setFilterSetLotNumber(filterSetLotNumberValue, instrumentIndex, filterSetIndex);
+        String filterSetManufacturerValue = src.getFilterSetManufacturer(instrumentIndex, filterSetIndex);
+        if (filterSetManufacturerValue != null) dest.setFilterSetManufacturer(filterSetManufacturerValue, instrumentIndex, filterSetIndex);
+        String filterSetModelValue = src.getFilterSetModel(instrumentIndex, filterSetIndex);
+        if (filterSetModelValue != null) dest.setFilterSetModel(filterSetModelValue, instrumentIndex, filterSetIndex);
       }
       int lightSourceCount = src.getLightSourceCount(instrumentIndex);
       for (int lightSourceIndex=0; lightSourceIndex<lightSourceCount; lightSourceIndex++) {
@@ -327,17 +614,35 @@ public final class MetadataConverter {
         if (laserFrequencyMultiplicationValue != null) dest.setLaserFrequencyMultiplication(laserFrequencyMultiplicationValue, instrumentIndex, lightSourceIndex);
         String laserLaserMediumValue = src.getLaserLaserMedium(instrumentIndex, lightSourceIndex);
         if (laserLaserMediumValue != null) dest.setLaserLaserMedium(laserLaserMediumValue, instrumentIndex, lightSourceIndex);
+        Boolean laserPockelCellValue = src.getLaserPockelCell(instrumentIndex, lightSourceIndex);
+        if (laserPockelCellValue != null) dest.setLaserPockelCell(laserPockelCellValue, instrumentIndex, lightSourceIndex);
         String laserPulseValue = src.getLaserPulse(instrumentIndex, lightSourceIndex);
         if (laserPulseValue != null) dest.setLaserPulse(laserPulseValue, instrumentIndex, lightSourceIndex);
+        Boolean laserRepetitionRateValue = src.getLaserRepetitionRate(instrumentIndex, lightSourceIndex);
+        if (laserRepetitionRateValue != null) dest.setLaserRepetitionRate(laserRepetitionRateValue, instrumentIndex, lightSourceIndex);
         Boolean laserTuneableValue = src.getLaserTuneable(instrumentIndex, lightSourceIndex);
         if (laserTuneableValue != null) dest.setLaserTuneable(laserTuneableValue, instrumentIndex, lightSourceIndex);
         String laserTypeValue = src.getLaserType(instrumentIndex, lightSourceIndex);
         if (laserTypeValue != null) dest.setLaserType(laserTypeValue, instrumentIndex, lightSourceIndex);
         Integer laserWavelengthValue = src.getLaserWavelength(instrumentIndex, lightSourceIndex);
         if (laserWavelengthValue != null) dest.setLaserWavelength(laserWavelengthValue, instrumentIndex, lightSourceIndex);
+        String pumpLightSourceValue = src.getPumpLightSource(instrumentIndex, lightSourceIndex);
+        if (pumpLightSourceValue != null) dest.setPumpLightSource(pumpLightSourceValue, instrumentIndex, lightSourceIndex);
       }
+        String microscopeIDValue = src.getMicroscopeID(instrumentIndex);
+        if (microscopeIDValue != null) dest.setMicroscopeID(microscopeIDValue, instrumentIndex);
+        String microscopeManufacturerValue = src.getMicroscopeManufacturer(instrumentIndex);
+        if (microscopeManufacturerValue != null) dest.setMicroscopeManufacturer(microscopeManufacturerValue, instrumentIndex);
+        String microscopeModelValue = src.getMicroscopeModel(instrumentIndex);
+        if (microscopeModelValue != null) dest.setMicroscopeModel(microscopeModelValue, instrumentIndex);
+        String microscopeSerialNumberValue = src.getMicroscopeSerialNumber(instrumentIndex);
+        if (microscopeSerialNumberValue != null) dest.setMicroscopeSerialNumber(microscopeSerialNumberValue, instrumentIndex);
+        String microscopeTypeValue = src.getMicroscopeType(instrumentIndex);
+        if (microscopeTypeValue != null) dest.setMicroscopeType(microscopeTypeValue, instrumentIndex);
       int otfCount = src.getOTFCount(instrumentIndex);
       for (int otfIndex=0; otfIndex<otfCount; otfIndex++) {
+        String otfBinaryFileValue = src.getOTFBinaryFile(instrumentIndex, otfIndex);
+        if (otfBinaryFileValue != null) dest.setOTFBinaryFile(otfBinaryFileValue, instrumentIndex, otfIndex);
         String otfidValue = src.getOTFID(instrumentIndex, otfIndex);
         if (otfidValue != null) dest.setOTFID(otfidValue, instrumentIndex, otfIndex);
         String otfObjectiveValue = src.getOTFObjective(instrumentIndex, otfIndex);
@@ -389,6 +694,11 @@ public final class MetadataConverter {
       if (plateNameValue != null) dest.setPlateName(plateNameValue, plateIndex);
       String plateStatusValue = src.getPlateStatus(plateIndex);
       if (plateStatusValue != null) dest.setPlateStatus(plateStatusValue, plateIndex);
+      int screenRefCount = src.getScreenRefCount(plateIndex);
+      for (int screenRefIndex=0; screenRefIndex<screenRefCount; screenRefIndex++) {
+        String screenRefIDValue = src.getScreenRefID(plateIndex, screenRefIndex);
+        if (screenRefIDValue != null) dest.setScreenRefID(screenRefIDValue, plateIndex, screenRefIndex);
+      }
       int wellCount = src.getWellCount(plateIndex);
       for (int wellIndex=0; wellIndex<wellCount; wellIndex++) {
         Integer wellColumnValue = src.getWellColumn(plateIndex, wellIndex);
@@ -399,6 +709,8 @@ public final class MetadataConverter {
         if (wellExternalIdentifierValue != null) dest.setWellExternalIdentifier(wellExternalIdentifierValue, plateIndex, wellIndex);
         String wellIDValue = src.getWellID(plateIndex, wellIndex);
         if (wellIDValue != null) dest.setWellID(wellIDValue, plateIndex, wellIndex);
+        String wellReagentValue = src.getWellReagent(plateIndex, wellIndex);
+        if (wellReagentValue != null) dest.setWellReagent(wellReagentValue, plateIndex, wellIndex);
         Integer wellRowValue = src.getWellRow(plateIndex, wellIndex);
         if (wellRowValue != null) dest.setWellRow(wellRowValue, plateIndex, wellIndex);
         String wellTypeValue = src.getWellType(plateIndex, wellIndex);
@@ -407,6 +719,8 @@ public final class MetadataConverter {
         for (int wellSampleIndex=0; wellSampleIndex<wellSampleCount; wellSampleIndex++) {
           String wellSampleIDValue = src.getWellSampleID(plateIndex, wellIndex, wellSampleIndex);
           if (wellSampleIDValue != null) dest.setWellSampleID(wellSampleIDValue, plateIndex, wellIndex, wellSampleIndex);
+          String wellSampleImageRefValue = src.getWellSampleImageRef(plateIndex, wellIndex, wellSampleIndex);
+          if (wellSampleImageRefValue != null) dest.setWellSampleImageRef(wellSampleImageRefValue, plateIndex, wellIndex, wellSampleIndex);
           Integer wellSampleIndexValue = src.getWellSampleIndex(plateIndex, wellIndex, wellSampleIndex);
           if (wellSampleIndexValue != null) dest.setWellSampleIndex(wellSampleIndexValue, plateIndex, wellIndex, wellSampleIndex);
           Float wellSamplePosXValue = src.getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex);
@@ -418,8 +732,25 @@ public final class MetadataConverter {
         }
       }
     }
+    int projectCount = src.getProjectCount();
+    for (int projectIndex=0; projectIndex<projectCount; projectIndex++) {
+      String projectDescriptionValue = src.getProjectDescription(projectIndex);
+      if (projectDescriptionValue != null) dest.setProjectDescription(projectDescriptionValue, projectIndex);
+      String projectExperimenterRefValue = src.getProjectExperimenterRef(projectIndex);
+      if (projectExperimenterRefValue != null) dest.setProjectExperimenterRef(projectExperimenterRefValue, projectIndex);
+      String projectGroupRefValue = src.getProjectGroupRef(projectIndex);
+      if (projectGroupRefValue != null) dest.setProjectGroupRef(projectGroupRefValue, projectIndex);
+      String projectIDValue = src.getProjectID(projectIndex);
+      if (projectIDValue != null) dest.setProjectID(projectIDValue, projectIndex);
+      String projectNameValue = src.getProjectName(projectIndex);
+      if (projectNameValue != null) dest.setProjectName(projectNameValue, projectIndex);
+    }
     int screenCount = src.getScreenCount();
     for (int screenIndex=0; screenIndex<screenCount; screenIndex++) {
+      String screenDescriptionValue = src.getScreenDescription(screenIndex);
+      if (screenDescriptionValue != null) dest.setScreenDescription(screenDescriptionValue, screenIndex);
+      String screenExternValue = src.getScreenExtern(screenIndex);
+      if (screenExternValue != null) dest.setScreenExtern(screenExternValue, screenIndex);
       String screenIDValue = src.getScreenID(screenIndex);
       if (screenIDValue != null) dest.setScreenID(screenIDValue, screenIndex);
       String screenNameValue = src.getScreenName(screenIndex);
@@ -430,12 +761,18 @@ public final class MetadataConverter {
       if (screenProtocolIdentifierValue != null) dest.setScreenProtocolIdentifier(screenProtocolIdentifierValue, screenIndex);
       String screenReagentSetDescriptionValue = src.getScreenReagentSetDescription(screenIndex);
       if (screenReagentSetDescriptionValue != null) dest.setScreenReagentSetDescription(screenReagentSetDescriptionValue, screenIndex);
+      String screenReagentSetIdentifierValue = src.getScreenReagentSetIdentifier(screenIndex);
+      if (screenReagentSetIdentifierValue != null) dest.setScreenReagentSetIdentifier(screenReagentSetIdentifierValue, screenIndex);
       String screenTypeValue = src.getScreenType(screenIndex);
       if (screenTypeValue != null) dest.setScreenType(screenTypeValue, screenIndex);
       int plateRefCount = src.getPlateRefCount(screenIndex);
       for (int plateRefIndex=0; plateRefIndex<plateRefCount; plateRefIndex++) {
         String plateRefIDValue = src.getPlateRefID(screenIndex, plateRefIndex);
         if (plateRefIDValue != null) dest.setPlateRefID(plateRefIDValue, screenIndex, plateRefIndex);
+        Integer plateRefSampleValue = src.getPlateRefSample(screenIndex, plateRefIndex);
+        if (plateRefSampleValue != null) dest.setPlateRefSample(plateRefSampleValue, screenIndex, plateRefIndex);
+        String plateRefWellValue = src.getPlateRefWell(screenIndex, plateRefIndex);
+        if (plateRefWellValue != null) dest.setPlateRefWell(plateRefWellValue, screenIndex, plateRefIndex);
       }
       int reagentCount = src.getReagentCount(screenIndex);
       for (int reagentIndex=0; reagentIndex<reagentCount; reagentIndex++) {
@@ -456,6 +793,11 @@ public final class MetadataConverter {
         if (screenAcquisitionIDValue != null) dest.setScreenAcquisitionID(screenAcquisitionIDValue, screenIndex, screenAcquisitionIndex);
         String screenAcquisitionStartTimeValue = src.getScreenAcquisitionStartTime(screenIndex, screenAcquisitionIndex);
         if (screenAcquisitionStartTimeValue != null) dest.setScreenAcquisitionStartTime(screenAcquisitionStartTimeValue, screenIndex, screenAcquisitionIndex);
+        int wellSampleRefCount = src.getWellSampleRefCount(screenIndex, screenAcquisitionIndex);
+        for (int wellSampleRefIndex=0; wellSampleRefIndex<wellSampleRefCount; wellSampleRefIndex++) {
+          String wellSampleRefIDValue = src.getWellSampleRefID(screenIndex, screenAcquisitionIndex, wellSampleRefIndex);
+          if (wellSampleRefIDValue != null) dest.setWellSampleRefID(wellSampleRefIDValue, screenIndex, screenAcquisitionIndex, wellSampleRefIndex);
+        }
       }
     }
   }

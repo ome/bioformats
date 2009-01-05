@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2008 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2009 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
+ * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -102,7 +102,103 @@ public class FilterMetadata implements MetadataStore {
     store.setChannelComponentIndex(index, imageIndex, logicalChannelIndex, channelComponentIndex);
   }
 
+  /* @see MetadataStore#setChannelComponentPixels(String, int, int, int) */
+  public void setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    String value = filter ? DataTools.sanitize(pixels) : pixels;
+    store.setChannelComponentPixels(value, imageIndex, logicalChannelIndex, channelComponentIndex);
+  }
+
+  // -- Circle property storage -
+
+  /* @see MetadataStore#setCircleID(String, int, int, int) */
+  public void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setCircleID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setCirclecx(String, int, int, int) */
+  public void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cx) : cx;
+    store.setCirclecx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setCirclecy(String, int, int, int) */
+  public void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cy) : cy;
+    store.setCirclecy(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setCircler(String, int, int, int) */
+  public void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(r) : r;
+    store.setCircler(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setCircletransform(String, int, int, int) */
+  public void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setCircletransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- Contact property storage -
+
+  /* @see MetadataStore#setContactExperimenter(String, int) */
+  public void setContactExperimenter(String experimenter, int groupIndex) {
+    String value = filter ? DataTools.sanitize(experimenter) : experimenter;
+    store.setContactExperimenter(value, groupIndex);
+  }
+
+  // -- Dataset property storage -
+
+  /* @see MetadataStore#setDatasetDescription(String, int) */
+  public void setDatasetDescription(String description, int datasetIndex) {
+    String value = filter ? DataTools.sanitize(description) : description;
+    store.setDatasetDescription(value, datasetIndex);
+  }
+
+  /* @see MetadataStore#setDatasetExperimenterRef(String, int) */
+  public void setDatasetExperimenterRef(String experimenterRef, int datasetIndex) {
+    String value = filter ? DataTools.sanitize(experimenterRef) : experimenterRef;
+    store.setDatasetExperimenterRef(value, datasetIndex);
+  }
+
+  /* @see MetadataStore#setDatasetGroupRef(String, int) */
+  public void setDatasetGroupRef(String groupRef, int datasetIndex) {
+    String value = filter ? DataTools.sanitize(groupRef) : groupRef;
+    store.setDatasetGroupRef(value, datasetIndex);
+  }
+
+  /* @see MetadataStore#setDatasetID(String, int) */
+  public void setDatasetID(String id, int datasetIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setDatasetID(value, datasetIndex);
+  }
+
+  /* @see MetadataStore#setDatasetLocked(Boolean, int) */
+  public void setDatasetLocked(Boolean locked, int datasetIndex) {
+    store.setDatasetLocked(locked, datasetIndex);
+  }
+
+  /* @see MetadataStore#setDatasetName(String, int) */
+  public void setDatasetName(String name, int datasetIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setDatasetName(value, datasetIndex);
+  }
+
+  // -- DatasetRef property storage -
+
+  /* @see MetadataStore#setDatasetRefID(String, int, int) */
+  public void setDatasetRefID(String id, int imageIndex, int datasetRefIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setDatasetRefID(value, imageIndex, datasetRefIndex);
+  }
+
   // -- Detector property storage -
+
+  /* @see MetadataStore#setDetectorAmplificationGain(Float, int, int) */
+  public void setDetectorAmplificationGain(Float amplificationGain, int instrumentIndex, int detectorIndex) {
+    store.setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex);
+  }
 
   /* @see MetadataStore#setDetectorGain(Float, int, int) */
   public void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex) {
@@ -149,6 +245,11 @@ public class FilterMetadata implements MetadataStore {
     store.setDetectorVoltage(voltage, instrumentIndex, detectorIndex);
   }
 
+  /* @see MetadataStore#setDetectorZoom(Float, int, int) */
+  public void setDetectorZoom(Float zoom, int instrumentIndex, int detectorIndex) {
+    store.setDetectorZoom(zoom, instrumentIndex, detectorIndex);
+  }
+
   // -- DetectorSettings property storage -
 
   /* @see MetadataStore#setDetectorSettingsBinning(String, int, int) */
@@ -181,6 +282,26 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setDetectorSettingsVoltage(Float, int, int) */
   public void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex) {
     store.setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex);
+  }
+
+  // -- Dichroic property storage -
+
+  /* @see MetadataStore#setDichroicLotNumber(String, int, int) */
+  public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex) {
+    String value = filter ? DataTools.sanitize(lotNumber) : lotNumber;
+    store.setDichroicLotNumber(value, instrumentIndex, dichroicIndex);
+  }
+
+  /* @see MetadataStore#setDichroicManufacturer(String, int, int) */
+  public void setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex) {
+    String value = filter ? DataTools.sanitize(manufacturer) : manufacturer;
+    store.setDichroicManufacturer(value, instrumentIndex, dichroicIndex);
+  }
+
+  /* @see MetadataStore#setDichroicModel(String, int, int) */
+  public void setDichroicModel(String model, int instrumentIndex, int dichroicIndex) {
+    String value = filter ? DataTools.sanitize(model) : model;
+    store.setDichroicModel(value, instrumentIndex, dichroicIndex);
   }
 
   // -- Dimensions property storage -
@@ -217,6 +338,12 @@ public class FilterMetadata implements MetadataStore {
 
   // -- DisplayOptions property storage -
 
+  /* @see MetadataStore#setDisplayOptionsDisplay(String, int) */
+  public void setDisplayOptionsDisplay(String display, int imageIndex) {
+    String value = filter ? DataTools.sanitize(display) : display;
+    store.setDisplayOptionsDisplay(value, imageIndex);
+  }
+
   /* @see MetadataStore#setDisplayOptionsID(String, int) */
   public void setDisplayOptionsID(String id, int imageIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
@@ -252,12 +379,108 @@ public class FilterMetadata implements MetadataStore {
     store.setDisplayOptionsTimeTStop(tStop, imageIndex);
   }
 
+  // -- Ellipse property storage -
+
+  /* @see MetadataStore#setEllipseID(String, int, int, int) */
+  public void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setEllipseID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setEllipsecx(String, int, int, int) */
+  public void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cx) : cx;
+    store.setEllipsecx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setEllipsecy(String, int, int, int) */
+  public void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cy) : cy;
+    store.setEllipsecy(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setEllipserx(String, int, int, int) */
+  public void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(rx) : rx;
+    store.setEllipserx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setEllipsery(String, int, int, int) */
+  public void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(ry) : ry;
+    store.setEllipsery(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setEllipsetransform(String, int, int, int) */
+  public void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setEllipsetransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- EmFilter property storage -
+
+  /* @see MetadataStore#setEmFilterLotNumber(String, int, int) */
+  public void setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(lotNumber) : lotNumber;
+    store.setEmFilterLotNumber(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setEmFilterManufacturer(String, int, int) */
+  public void setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(manufacturer) : manufacturer;
+    store.setEmFilterManufacturer(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setEmFilterModel(String, int, int) */
+  public void setEmFilterModel(String model, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(model) : model;
+    store.setEmFilterModel(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setEmFilterType(String, int, int) */
+  public void setEmFilterType(String type, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setEmFilterType(value, instrumentIndex, filterIndex);
+  }
+
+  // -- ExFilter property storage -
+
+  /* @see MetadataStore#setExFilterLotNumber(String, int, int) */
+  public void setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(lotNumber) : lotNumber;
+    store.setExFilterLotNumber(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setExFilterManufacturer(String, int, int) */
+  public void setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(manufacturer) : manufacturer;
+    store.setExFilterManufacturer(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setExFilterModel(String, int, int) */
+  public void setExFilterModel(String model, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(model) : model;
+    store.setExFilterModel(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setExFilterType(String, int, int) */
+  public void setExFilterType(String type, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setExFilterType(value, instrumentIndex, filterIndex);
+  }
+
   // -- Experiment property storage -
 
   /* @see MetadataStore#setExperimentDescription(String, int) */
   public void setExperimentDescription(String description, int experimentIndex) {
     String value = filter ? DataTools.sanitize(description) : description;
     store.setExperimentDescription(value, experimentIndex);
+  }
+
+  /* @see MetadataStore#setExperimentExperimenterRef(String, int) */
+  public void setExperimentExperimenterRef(String experimenterRef, int experimentIndex) {
+    String value = filter ? DataTools.sanitize(experimenterRef) : experimenterRef;
+    store.setExperimentExperimenterRef(value, experimentIndex);
   }
 
   /* @see MetadataStore#setExperimentID(String, int) */
@@ -304,6 +527,12 @@ public class FilterMetadata implements MetadataStore {
     store.setExperimenterLastName(value, experimenterIndex);
   }
 
+  /* @see MetadataStore#setExperimenterOMEName(String, int) */
+  public void setExperimenterOMEName(String omeName, int experimenterIndex) {
+    String value = filter ? DataTools.sanitize(omeName) : omeName;
+    store.setExperimenterOMEName(value, experimenterIndex);
+  }
+
   // -- ExperimenterMembership property storage -
 
   /* @see MetadataStore#setExperimenterMembershipGroup(String, int, int) */
@@ -320,9 +549,128 @@ public class FilterMetadata implements MetadataStore {
     store.setFilamentType(value, instrumentIndex, lightSourceIndex);
   }
 
+  // -- Filter property storage -
+
+  /* @see MetadataStore#setFilterFilterWheel(String, int, int) */
+  public void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(filterWheel) : filterWheel;
+    store.setFilterFilterWheel(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setFilterLotNumber(String, int, int) */
+  public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(lotNumber) : lotNumber;
+    store.setFilterLotNumber(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setFilterManufacturer(String, int, int) */
+  public void setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(manufacturer) : manufacturer;
+    store.setFilterManufacturer(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setFilterModel(String, int, int) */
+  public void setFilterModel(String model, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(model) : model;
+    store.setFilterModel(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setFilterType(String, int, int) */
+  public void setFilterType(String type, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setFilterType(value, instrumentIndex, filterIndex);
+  }
+
+  // -- FilterSet property storage -
+
+  /* @see MetadataStore#setFilterSetDichroic(String, int, int) */
+  public void setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex) {
+    String value = filter ? DataTools.sanitize(dichroic) : dichroic;
+    store.setFilterSetDichroic(value, instrumentIndex, filterSetIndex);
+  }
+
+  /* @see MetadataStore#setFilterSetEmFilter(String, int, int) */
+  public void setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex) {
+    String value = filter ? DataTools.sanitize(emFilter) : emFilter;
+    store.setFilterSetEmFilter(value, instrumentIndex, filterSetIndex);
+  }
+
+  /* @see MetadataStore#setFilterSetExFilter(String, int, int) */
+  public void setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex) {
+    String value = filter ? DataTools.sanitize(exFilter) : exFilter;
+    store.setFilterSetExFilter(value, instrumentIndex, filterSetIndex);
+  }
+
+  /* @see MetadataStore#setFilterSetLotNumber(String, int, int) */
+  public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex) {
+    String value = filter ? DataTools.sanitize(lotNumber) : lotNumber;
+    store.setFilterSetLotNumber(value, instrumentIndex, filterSetIndex);
+  }
+
+  /* @see MetadataStore#setFilterSetManufacturer(String, int, int) */
+  public void setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex) {
+    String value = filter ? DataTools.sanitize(manufacturer) : manufacturer;
+    store.setFilterSetManufacturer(value, instrumentIndex, filterSetIndex);
+  }
+
+  /* @see MetadataStore#setFilterSetModel(String, int, int) */
+  public void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex) {
+    String value = filter ? DataTools.sanitize(model) : model;
+    store.setFilterSetModel(value, instrumentIndex, filterSetIndex);
+  }
+
+  // -- GreyChannel property storage -
+
+  /* @see MetadataStore#setGreyChannelBlackLevel(Float, int) */
+  public void setGreyChannelBlackLevel(Float blackLevel, int imageIndex) {
+    store.setGreyChannelBlackLevel(blackLevel, imageIndex);
+  }
+
+  /* @see MetadataStore#setGreyChannelChannelNumber(Integer, int) */
+  public void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex) {
+    store.setGreyChannelChannelNumber(channelNumber, imageIndex);
+  }
+
+  /* @see MetadataStore#setGreyChannelGamma(Float, int) */
+  public void setGreyChannelGamma(Float gamma, int imageIndex) {
+    store.setGreyChannelGamma(gamma, imageIndex);
+  }
+
+  /* @see MetadataStore#setGreyChannelWhiteLevel(Float, int) */
+  public void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex) {
+    store.setGreyChannelWhiteLevel(whiteLevel, imageIndex);
+  }
+
+  /* @see MetadataStore#setGreyChannelisOn(Boolean, int) */
+  public void setGreyChannelisOn(Boolean isOn, int imageIndex) {
+    store.setGreyChannelisOn(isOn, imageIndex);
+  }
+
+  // -- GreyChannelMap property storage -
+
+  /* @see MetadataStore#setGreyChannelMapColorMap(String, int) */
+  public void setGreyChannelMapColorMap(String colorMap, int imageIndex) {
+    String value = filter ? DataTools.sanitize(colorMap) : colorMap;
+    store.setGreyChannelMapColorMap(value, imageIndex);
+  }
+
+  // -- Group property storage -
+
+  /* @see MetadataStore#setGroupName(String, int) */
+  public void setGroupName(String name, int groupIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setGroupName(value, groupIndex);
+  }
+
   // -- GroupRef property storage -
 
   // -- Image property storage -
+
+  /* @see MetadataStore#setImageAcquiredPixels(String, int) */
+  public void setImageAcquiredPixels(String acquiredPixels, int imageIndex) {
+    String value = filter ? DataTools.sanitize(acquiredPixels) : acquiredPixels;
+    store.setImageAcquiredPixels(value, imageIndex);
+  }
 
   /* @see MetadataStore#setImageCreationDate(String, int) */
   public void setImageCreationDate(String creationDate, int imageIndex) {
@@ -342,6 +690,24 @@ public class FilterMetadata implements MetadataStore {
     store.setImageDescription(value, imageIndex);
   }
 
+  /* @see MetadataStore#setImageExperimentRef(String, int) */
+  public void setImageExperimentRef(String experimentRef, int imageIndex) {
+    String value = filter ? DataTools.sanitize(experimentRef) : experimentRef;
+    store.setImageExperimentRef(value, imageIndex);
+  }
+
+  /* @see MetadataStore#setImageExperimenterRef(String, int) */
+  public void setImageExperimenterRef(String experimenterRef, int imageIndex) {
+    String value = filter ? DataTools.sanitize(experimenterRef) : experimenterRef;
+    store.setImageExperimenterRef(value, imageIndex);
+  }
+
+  /* @see MetadataStore#setImageGroupRef(String, int) */
+  public void setImageGroupRef(String groupRef, int imageIndex) {
+    String value = filter ? DataTools.sanitize(groupRef) : groupRef;
+    store.setImageGroupRef(value, imageIndex);
+  }
+
   /* @see MetadataStore#setImageID(String, int) */
   public void setImageID(String id, int imageIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
@@ -358,6 +724,12 @@ public class FilterMetadata implements MetadataStore {
   public void setImageName(String name, int imageIndex) {
     String value = filter ? DataTools.sanitize(name) : name;
     store.setImageName(value, imageIndex);
+  }
+
+  /* @see MetadataStore#setImageObjective(String, int) */
+  public void setImageObjective(String objective, int imageIndex) {
+    String value = filter ? DataTools.sanitize(objective) : objective;
+    store.setImageObjective(value, imageIndex);
   }
 
   // -- ImagingEnvironment property storage -
@@ -403,10 +775,20 @@ public class FilterMetadata implements MetadataStore {
     store.setLaserLaserMedium(value, instrumentIndex, lightSourceIndex);
   }
 
+  /* @see MetadataStore#setLaserPockelCell(Boolean, int, int) */
+  public void setLaserPockelCell(Boolean pockelCell, int instrumentIndex, int lightSourceIndex) {
+    store.setLaserPockelCell(pockelCell, instrumentIndex, lightSourceIndex);
+  }
+
   /* @see MetadataStore#setLaserPulse(String, int, int) */
   public void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex) {
     String value = filter ? DataTools.sanitize(pulse) : pulse;
     store.setLaserPulse(value, instrumentIndex, lightSourceIndex);
+  }
+
+  /* @see MetadataStore#setLaserRepetitionRate(Boolean, int, int) */
+  public void setLaserRepetitionRate(Boolean repetitionRate, int instrumentIndex, int lightSourceIndex) {
+    store.setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex);
   }
 
   /* @see MetadataStore#setLaserTuneable(Boolean, int, int) */
@@ -456,6 +838,24 @@ public class FilterMetadata implements MetadataStore {
     store.setLightSourceSerialNumber(value, instrumentIndex, lightSourceIndex);
   }
 
+  // -- LightSourceRef property storage -
+
+  /* @see MetadataStore#setLightSourceRefAttenuation(Float, int, int, int) */
+  public void setLightSourceRefAttenuation(Float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    store.setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  }
+
+  /* @see MetadataStore#setLightSourceRefLightSource(String, int, int, int) */
+  public void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    String value = filter ? DataTools.sanitize(lightSource) : lightSource;
+    store.setLightSourceRefLightSource(value, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  }
+
+  /* @see MetadataStore#setLightSourceRefWavelength(Integer, int, int, int) */
+  public void setLightSourceRefWavelength(Integer wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    store.setLightSourceRefWavelength(wavelength, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  }
+
   // -- LightSourceSettings property storage -
 
   /* @see MetadataStore#setLightSourceSettingsAttenuation(Float, int, int) */
@@ -474,12 +874,56 @@ public class FilterMetadata implements MetadataStore {
     store.setLightSourceSettingsWavelength(wavelength, imageIndex, logicalChannelIndex);
   }
 
+  // -- Line property storage -
+
+  /* @see MetadataStore#setLineID(String, int, int, int) */
+  public void setLineID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setLineID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setLinetransform(String, int, int, int) */
+  public void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setLinetransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setLinex1(String, int, int, int) */
+  public void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(x1) : x1;
+    store.setLinex1(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setLinex2(String, int, int, int) */
+  public void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(x2) : x2;
+    store.setLinex2(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setLiney1(String, int, int, int) */
+  public void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(y1) : y1;
+    store.setLiney1(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setLiney2(String, int, int, int) */
+  public void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(y2) : y2;
+    store.setLiney2(value, imageIndex, roiIndex, shapeIndex);
+  }
+
   // -- LogicalChannel property storage -
 
   /* @see MetadataStore#setLogicalChannelContrastMethod(String, int, int) */
   public void setLogicalChannelContrastMethod(String contrastMethod, int imageIndex, int logicalChannelIndex) {
     String value = filter ? DataTools.sanitize(contrastMethod) : contrastMethod;
     store.setLogicalChannelContrastMethod(value, imageIndex, logicalChannelIndex);
+  }
+
+  /* @see MetadataStore#setLogicalChannelDetector(String, int, int) */
+  public void setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex) {
+    String value = filter ? DataTools.sanitize(detector) : detector;
+    store.setLogicalChannelDetector(value, imageIndex, logicalChannelIndex);
   }
 
   /* @see MetadataStore#setLogicalChannelEmWave(Integer, int, int) */
@@ -490,6 +934,12 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setLogicalChannelExWave(Integer, int, int) */
   public void setLogicalChannelExWave(Integer exWave, int imageIndex, int logicalChannelIndex) {
     store.setLogicalChannelExWave(exWave, imageIndex, logicalChannelIndex);
+  }
+
+  /* @see MetadataStore#setLogicalChannelFilterSet(String, int, int) */
+  public void setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex) {
+    String value = filter ? DataTools.sanitize(filterSet) : filterSet;
+    store.setLogicalChannelFilterSet(value, imageIndex, logicalChannelIndex);
   }
 
   /* @see MetadataStore#setLogicalChannelFluor(String, int, int) */
@@ -508,6 +958,12 @@ public class FilterMetadata implements MetadataStore {
   public void setLogicalChannelIlluminationType(String illuminationType, int imageIndex, int logicalChannelIndex) {
     String value = filter ? DataTools.sanitize(illuminationType) : illuminationType;
     store.setLogicalChannelIlluminationType(value, imageIndex, logicalChannelIndex);
+  }
+
+  /* @see MetadataStore#setLogicalChannelLightSource(String, int, int) */
+  public void setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex) {
+    String value = filter ? DataTools.sanitize(lightSource) : lightSource;
+    store.setLogicalChannelLightSource(value, imageIndex, logicalChannelIndex);
   }
 
   /* @see MetadataStore#setLogicalChannelMode(String, int, int) */
@@ -554,7 +1010,158 @@ public class FilterMetadata implements MetadataStore {
     store.setLogicalChannelSamplesPerPixel(samplesPerPixel, imageIndex, logicalChannelIndex);
   }
 
+  /* @see MetadataStore#setLogicalChannelSecondaryEmissionFilter(String, int, int) */
+  public void setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex) {
+    String value = filter ? DataTools.sanitize(secondaryEmissionFilter) : secondaryEmissionFilter;
+    store.setLogicalChannelSecondaryEmissionFilter(value, imageIndex, logicalChannelIndex);
+  }
+
+  /* @see MetadataStore#setLogicalChannelSecondaryExcitationFilter(String, int, int) */
+  public void setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex) {
+    String value = filter ? DataTools.sanitize(secondaryExcitationFilter) : secondaryExcitationFilter;
+    store.setLogicalChannelSecondaryExcitationFilter(value, imageIndex, logicalChannelIndex);
+  }
+
+  // -- Mask property storage -
+
+  /* @see MetadataStore#setMaskID(String, int, int, int) */
+  public void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setMaskID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskheight(String, int, int, int) */
+  public void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(height) : height;
+    store.setMaskheight(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMasktransform(String, int, int, int) */
+  public void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setMasktransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskwidth(String, int, int, int) */
+  public void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(width) : width;
+    store.setMaskwidth(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskx(String, int, int, int) */
+  public void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(x) : x;
+    store.setMaskx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMasky(String, int, int, int) */
+  public void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(y) : y;
+    store.setMasky(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- MaskPixels property storage -
+
+  /* @see MetadataStore#setMaskPixelsBigEndian(Boolean, int, int, int) */
+  public void setMaskPixelsBigEndian(Boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setMaskPixelsBigEndian(bigEndian, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskPixelsBinData(String, int, int, int) */
+  public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(binData) : binData;
+    store.setMaskPixelsBinData(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskPixelsExtendedPixelType(String, int, int, int) */
+  public void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(extendedPixelType) : extendedPixelType;
+    store.setMaskPixelsExtendedPixelType(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskPixelsID(String, int, int, int) */
+  public void setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setMaskPixelsID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskPixelsSizeX(Integer, int, int, int) */
+  public void setMaskPixelsSizeX(Integer sizeX, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setMaskPixelsSizeX(sizeX, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setMaskPixelsSizeY(Integer, int, int, int) */
+  public void setMaskPixelsSizeY(Integer sizeY, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setMaskPixelsSizeY(sizeY, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- MicrobeamManipulation property storage -
+
+  /* @see MetadataStore#setMicrobeamManipulationExperimenterRef(String, int, int) */
+  public void setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex) {
+    String value = filter ? DataTools.sanitize(experimenterRef) : experimenterRef;
+    store.setMicrobeamManipulationExperimenterRef(value, imageIndex, microbeamManipulationIndex);
+  }
+
+  /* @see MetadataStore#setMicrobeamManipulationID(String, int, int) */
+  public void setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setMicrobeamManipulationID(value, imageIndex, microbeamManipulationIndex);
+  }
+
+  /* @see MetadataStore#setMicrobeamManipulationType(String, int, int) */
+  public void setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setMicrobeamManipulationType(value, imageIndex, microbeamManipulationIndex);
+  }
+
+  // -- MicrobeamManipulationRef property storage -
+
+  /* @see MetadataStore#setMicrobeamManipulationRefID(String, int, int) */
+  public void setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setMicrobeamManipulationRefID(value, experimentIndex, microbeamManipulationRefIndex);
+  }
+
+  // -- Microscope property storage -
+
+  /* @see MetadataStore#setMicroscopeID(String, int) */
+  public void setMicroscopeID(String id, int instrumentIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setMicroscopeID(value, instrumentIndex);
+  }
+
+  /* @see MetadataStore#setMicroscopeManufacturer(String, int) */
+  public void setMicroscopeManufacturer(String manufacturer, int instrumentIndex) {
+    String value = filter ? DataTools.sanitize(manufacturer) : manufacturer;
+    store.setMicroscopeManufacturer(value, instrumentIndex);
+  }
+
+  /* @see MetadataStore#setMicroscopeModel(String, int) */
+  public void setMicroscopeModel(String model, int instrumentIndex) {
+    String value = filter ? DataTools.sanitize(model) : model;
+    store.setMicroscopeModel(value, instrumentIndex);
+  }
+
+  /* @see MetadataStore#setMicroscopeSerialNumber(String, int) */
+  public void setMicroscopeSerialNumber(String serialNumber, int instrumentIndex) {
+    String value = filter ? DataTools.sanitize(serialNumber) : serialNumber;
+    store.setMicroscopeSerialNumber(value, instrumentIndex);
+  }
+
+  /* @see MetadataStore#setMicroscopeType(String, int) */
+  public void setMicroscopeType(String type, int instrumentIndex) {
+    String value = filter ? DataTools.sanitize(type) : type;
+    store.setMicroscopeType(value, instrumentIndex);
+  }
+
   // -- OTF property storage -
+
+  /* @see MetadataStore#setOTFBinaryFile(String, int, int) */
+  public void setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex) {
+    String value = filter ? DataTools.sanitize(binaryFile) : binaryFile;
+    store.setOTFBinaryFile(value, instrumentIndex, otfIndex);
+  }
 
   /* @see MetadataStore#setOTFID(String, int, int) */
   public void setOTFID(String id, int instrumentIndex, int otfIndex) {
@@ -728,6 +1335,18 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Plane property storage -
 
+  /* @see MetadataStore#setPlaneHashSHA1(String, int, int, int) */
+  public void setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex) {
+    String value = filter ? DataTools.sanitize(hashSHA1) : hashSHA1;
+    store.setPlaneHashSHA1(value, imageIndex, pixelsIndex, planeIndex);
+  }
+
+  /* @see MetadataStore#setPlaneID(String, int, int, int) */
+  public void setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setPlaneID(value, imageIndex, pixelsIndex, planeIndex);
+  }
+
   /* @see MetadataStore#setPlaneTheC(Integer, int, int, int) */
   public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex) {
     store.setPlaneTheC(theC, imageIndex, pixelsIndex, planeIndex);
@@ -795,6 +1414,137 @@ public class FilterMetadata implements MetadataStore {
     store.setPlateRefID(value, screenIndex, plateRefIndex);
   }
 
+  /* @see MetadataStore#setPlateRefSample(Integer, int, int) */
+  public void setPlateRefSample(Integer sample, int screenIndex, int plateRefIndex) {
+    store.setPlateRefSample(sample, screenIndex, plateRefIndex);
+  }
+
+  /* @see MetadataStore#setPlateRefWell(String, int, int) */
+  public void setPlateRefWell(String well, int screenIndex, int plateRefIndex) {
+    String value = filter ? DataTools.sanitize(well) : well;
+    store.setPlateRefWell(value, screenIndex, plateRefIndex);
+  }
+
+  // -- Point property storage -
+
+  /* @see MetadataStore#setPointID(String, int, int, int) */
+  public void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setPointID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPointcx(String, int, int, int) */
+  public void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cx) : cx;
+    store.setPointcx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPointcy(String, int, int, int) */
+  public void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cy) : cy;
+    store.setPointcy(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPointr(String, int, int, int) */
+  public void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(r) : r;
+    store.setPointr(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPointtransform(String, int, int, int) */
+  public void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setPointtransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- Polygon property storage -
+
+  /* @see MetadataStore#setPolygonID(String, int, int, int) */
+  public void setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setPolygonID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPolygonpoints(String, int, int, int) */
+  public void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(points) : points;
+    store.setPolygonpoints(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPolygontransform(String, int, int, int) */
+  public void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setPolygontransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- Polyline property storage -
+
+  /* @see MetadataStore#setPolylineID(String, int, int, int) */
+  public void setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setPolylineID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPolylinepoints(String, int, int, int) */
+  public void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(points) : points;
+    store.setPolylinepoints(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPolylinetransform(String, int, int, int) */
+  public void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setPolylinetransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- Project property storage -
+
+  /* @see MetadataStore#setProjectDescription(String, int) */
+  public void setProjectDescription(String description, int projectIndex) {
+    String value = filter ? DataTools.sanitize(description) : description;
+    store.setProjectDescription(value, projectIndex);
+  }
+
+  /* @see MetadataStore#setProjectExperimenterRef(String, int) */
+  public void setProjectExperimenterRef(String experimenterRef, int projectIndex) {
+    String value = filter ? DataTools.sanitize(experimenterRef) : experimenterRef;
+    store.setProjectExperimenterRef(value, projectIndex);
+  }
+
+  /* @see MetadataStore#setProjectGroupRef(String, int) */
+  public void setProjectGroupRef(String groupRef, int projectIndex) {
+    String value = filter ? DataTools.sanitize(groupRef) : groupRef;
+    store.setProjectGroupRef(value, projectIndex);
+  }
+
+  /* @see MetadataStore#setProjectID(String, int) */
+  public void setProjectID(String id, int projectIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setProjectID(value, projectIndex);
+  }
+
+  /* @see MetadataStore#setProjectName(String, int) */
+  public void setProjectName(String name, int projectIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setProjectName(value, projectIndex);
+  }
+
+  // -- ProjectRef property storage -
+
+  /* @see MetadataStore#setProjectRefID(String, int, int) */
+  public void setProjectRefID(String id, int datasetIndex, int projectRefIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setProjectRefID(value, datasetIndex, projectRefIndex);
+  }
+
+  // -- Pump property storage -
+
+  /* @see MetadataStore#setPumpLightSource(String, int, int) */
+  public void setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex) {
+    String value = filter ? DataTools.sanitize(lightSource) : lightSource;
+    store.setPumpLightSource(value, instrumentIndex, lightSourceIndex);
+  }
+
   // -- ROI property storage -
 
   /* @see MetadataStore#setROIID(String, int, int) */
@@ -843,6 +1593,14 @@ public class FilterMetadata implements MetadataStore {
     store.setROIZ1(z1, imageIndex, roiIndex);
   }
 
+  // -- ROIRef property storage -
+
+  /* @see MetadataStore#setROIRefID(String, int, int, int) */
+  public void setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setROIRefID(value, imageIndex, microbeamManipulationIndex, roiRefIndex);
+  }
+
   // -- Reagent property storage -
 
   /* @see MetadataStore#setReagentDescription(String, int, int) */
@@ -869,7 +1627,77 @@ public class FilterMetadata implements MetadataStore {
     store.setReagentReagentIdentifier(value, screenIndex, reagentIndex);
   }
 
+  // -- Rect property storage -
+
+  /* @see MetadataStore#setRectID(String, int, int, int) */
+  public void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setRectID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setRectheight(String, int, int, int) */
+  public void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(height) : height;
+    store.setRectheight(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setRecttransform(String, int, int, int) */
+  public void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(transform) : transform;
+    store.setRecttransform(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setRectwidth(String, int, int, int) */
+  public void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(width) : width;
+    store.setRectwidth(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setRectx(String, int, int, int) */
+  public void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(x) : x;
+    store.setRectx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setRecty(String, int, int, int) */
+  public void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(y) : y;
+    store.setRecty(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  // -- Region property storage -
+
+  /* @see MetadataStore#setRegionID(String, int, int) */
+  public void setRegionID(String id, int imageIndex, int regionIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setRegionID(value, imageIndex, regionIndex);
+  }
+
+  /* @see MetadataStore#setRegionName(String, int, int) */
+  public void setRegionName(String name, int imageIndex, int regionIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setRegionName(value, imageIndex, regionIndex);
+  }
+
+  /* @see MetadataStore#setRegionTag(String, int, int) */
+  public void setRegionTag(String tag, int imageIndex, int regionIndex) {
+    String value = filter ? DataTools.sanitize(tag) : tag;
+    store.setRegionTag(value, imageIndex, regionIndex);
+  }
+
   // -- Screen property storage -
+
+  /* @see MetadataStore#setScreenDescription(String, int) */
+  public void setScreenDescription(String description, int screenIndex) {
+    String value = filter ? DataTools.sanitize(description) : description;
+    store.setScreenDescription(value, screenIndex);
+  }
+
+  /* @see MetadataStore#setScreenExtern(String, int) */
+  public void setScreenExtern(String extern, int screenIndex) {
+    String value = filter ? DataTools.sanitize(extern) : extern;
+    store.setScreenExtern(value, screenIndex);
+  }
 
   /* @see MetadataStore#setScreenID(String, int) */
   public void setScreenID(String id, int screenIndex) {
@@ -901,6 +1729,12 @@ public class FilterMetadata implements MetadataStore {
     store.setScreenReagentSetDescription(value, screenIndex);
   }
 
+  /* @see MetadataStore#setScreenReagentSetIdentifier(String, int) */
+  public void setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex) {
+    String value = filter ? DataTools.sanitize(reagentSetIdentifier) : reagentSetIdentifier;
+    store.setScreenReagentSetIdentifier(value, screenIndex);
+  }
+
   /* @see MetadataStore#setScreenType(String, int) */
   public void setScreenType(String type, int screenIndex) {
     String value = filter ? DataTools.sanitize(type) : type;
@@ -925,6 +1759,32 @@ public class FilterMetadata implements MetadataStore {
   public void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex) {
     String value = filter ? DataTools.sanitize(startTime) : startTime;
     store.setScreenAcquisitionStartTime(value, screenIndex, screenAcquisitionIndex);
+  }
+
+  // -- ScreenRef property storage -
+
+  /* @see MetadataStore#setScreenRefID(String, int, int) */
+  public void setScreenRefID(String id, int plateIndex, int screenRefIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setScreenRefID(value, plateIndex, screenRefIndex);
+  }
+
+  // -- Shape property storage -
+
+  /* @see MetadataStore#setShapeID(String, int, int, int) */
+  public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setShapeID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapetheT(Integer, int, int, int) */
+  public void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapetheT(theT, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapetheZ(Integer, int, int, int) */
+  public void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapetheZ(theZ, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- StageLabel property storage -
@@ -967,6 +1827,26 @@ public class FilterMetadata implements MetadataStore {
     store.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex);
   }
 
+  // -- Thumbnail property storage -
+
+  /* @see MetadataStore#setThumbnailID(String, int) */
+  public void setThumbnailID(String id, int imageIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setThumbnailID(value, imageIndex);
+  }
+
+  /* @see MetadataStore#setThumbnailMIMEtype(String, int) */
+  public void setThumbnailMIMEtype(String mimEtype, int imageIndex) {
+    String value = filter ? DataTools.sanitize(mimEtype) : mimEtype;
+    store.setThumbnailMIMEtype(value, imageIndex);
+  }
+
+  /* @see MetadataStore#setThumbnailhref(String, int) */
+  public void setThumbnailhref(String href, int imageIndex) {
+    String value = filter ? DataTools.sanitize(href) : href;
+    store.setThumbnailhref(value, imageIndex);
+  }
+
   // -- TiffData property storage -
 
   /* @see MetadataStore#setTiffDataFileName(String, int, int, int) */
@@ -1006,6 +1886,33 @@ public class FilterMetadata implements MetadataStore {
     store.setTiffDataUUID(value, imageIndex, pixelsIndex, tiffDataIndex);
   }
 
+  // -- TransmittanceRange property storage -
+
+  /* @see MetadataStore#setTransmittanceRangeCutIn(Integer, int, int) */
+  public void setTransmittanceRangeCutIn(Integer cutIn, int instrumentIndex, int filterIndex) {
+    store.setTransmittanceRangeCutIn(cutIn, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setTransmittanceRangeCutInTolerance(Integer, int, int) */
+  public void setTransmittanceRangeCutInTolerance(Integer cutInTolerance, int instrumentIndex, int filterIndex) {
+    store.setTransmittanceRangeCutInTolerance(cutInTolerance, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setTransmittanceRangeCutOut(Integer, int, int) */
+  public void setTransmittanceRangeCutOut(Integer cutOut, int instrumentIndex, int filterIndex) {
+    store.setTransmittanceRangeCutOut(cutOut, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setTransmittanceRangeCutOutTolerance(Integer, int, int) */
+  public void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex) {
+    store.setTransmittanceRangeCutOutTolerance(cutOutTolerance, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setTransmittanceRangeTransmittance(Integer, int, int) */
+  public void setTransmittanceRangeTransmittance(Integer transmittance, int instrumentIndex, int filterIndex) {
+    store.setTransmittanceRangeTransmittance(transmittance, instrumentIndex, filterIndex);
+  }
+
   // -- Well property storage -
 
   /* @see MetadataStore#setWellColumn(Integer, int, int) */
@@ -1031,6 +1938,12 @@ public class FilterMetadata implements MetadataStore {
     store.setWellID(value, plateIndex, wellIndex);
   }
 
+  /* @see MetadataStore#setWellReagent(String, int, int) */
+  public void setWellReagent(String reagent, int plateIndex, int wellIndex) {
+    String value = filter ? DataTools.sanitize(reagent) : reagent;
+    store.setWellReagent(value, plateIndex, wellIndex);
+  }
+
   /* @see MetadataStore#setWellRow(Integer, int, int) */
   public void setWellRow(Integer row, int plateIndex, int wellIndex) {
     store.setWellRow(row, plateIndex, wellIndex);
@@ -1048,6 +1961,12 @@ public class FilterMetadata implements MetadataStore {
   public void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
     store.setWellSampleID(value, plateIndex, wellIndex, wellSampleIndex);
+  }
+
+  /* @see MetadataStore#setWellSampleImageRef(String, int, int, int) */
+  public void setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex) {
+    String value = filter ? DataTools.sanitize(imageRef) : imageRef;
+    store.setWellSampleImageRef(value, plateIndex, wellIndex, wellSampleIndex);
   }
 
   /* @see MetadataStore#setWellSampleIndex(Integer, int, int, int) */
@@ -1068,6 +1987,14 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int, int) */
   public void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex) {
     store.setWellSampleTimepoint(timepoint, plateIndex, wellIndex, wellSampleIndex);
+  }
+
+  // -- WellSampleRef property storage -
+
+  /* @see MetadataStore#setWellSampleRefID(String, int, int, int) */
+  public void setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setWellSampleRefID(value, screenIndex, screenAcquisitionIndex, wellSampleRefIndex);
   }
 
 }

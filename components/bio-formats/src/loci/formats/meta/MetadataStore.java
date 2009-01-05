@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2008 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2009 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
+ * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,8 +87,8 @@ public interface MetadataStore {
   // - Arc property storage -
 
   /**
-   * For a particular Arc, sets TODO.
-   * @param type TODO
+   * For a particular Arc, sets the type of arc.
+   * @param type the type of arc
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -114,11 +114,138 @@ public interface MetadataStore {
    */
   void setChannelComponentIndex(Integer index, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
 
+  /**
+   * For a particular ChannelComponent, sets the pixels to which this channel component corresponds.
+   * @param pixels the pixels to which this channel component corresponds
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   * @param channelComponentIndex index of the ChannelComponent
+   */
+  void setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  // - Circle property storage -
+
+  /**
+   * For a particular Circle, sets unique label identifying the circle.
+   * @param id unique label identifying the circle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, sets X coordinate of the center of the circle.
+   * @param cx X coordinate of the center of the circle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, sets Y coordinate of the center of the circle.
+   * @param cy Y coordinate of the center of the circle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, sets radius of the circle, in pixels.
+   * @param r radius of the circle, in pixels
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Contact property storage -
+
+  /**
+   * For a particular Contact, sets unique label identifying the experimenter who is the group contact.
+   * @param experimenter unique label identifying the experimenter who is the group contact
+   * @param groupIndex index of the Group
+   */
+  void setContactExperimenter(String experimenter, int groupIndex);
+
+  // - Dataset property storage -
+
+  /**
+   * For a particular Dataset, sets description of the dataset.
+   * @param description description of the dataset
+   * @param datasetIndex index of the Dataset
+   */
+  void setDatasetDescription(String description, int datasetIndex);
+
+  /**
+   * For a particular Dataset, sets reference to the experimenter who owns the dataset.
+   * @param experimenterRef reference to the experimenter who owns the dataset
+   * @param datasetIndex index of the Dataset
+   */
+  void setDatasetExperimenterRef(String experimenterRef, int datasetIndex);
+
+  /**
+   * For a particular Dataset, sets reference to the group that owns the dataset.
+   * @param groupRef reference to the group that owns the dataset
+   * @param datasetIndex index of the Dataset
+   */
+  void setDatasetGroupRef(String groupRef, int datasetIndex);
+
+  /**
+   * For a particular Dataset, sets unique label identifying the dataset.
+   * @param id unique label identifying the dataset
+   * @param datasetIndex index of the Dataset
+   */
+  void setDatasetID(String id, int datasetIndex);
+
+  /**
+   * For a particular Dataset, sets indicates whether the images in the dataset can be altered.
+   * @param locked indicates whether the images in the dataset can be altered
+   * @param datasetIndex index of the Dataset
+   */
+  void setDatasetLocked(Boolean locked, int datasetIndex);
+
+  /**
+   * For a particular Dataset, sets name of the dataset.
+   * @param name name of the dataset
+   * @param datasetIndex index of the Dataset
+   */
+  void setDatasetName(String name, int datasetIndex);
+
+  // - DatasetRef property storage -
+
+  /**
+   * For a particular DatasetRef, sets TODO.
+   * @param id TODO
+   * @param imageIndex index of the Image
+   * @param datasetRefIndex index of the DatasetRef
+   */
+  void setDatasetRefID(String id, int imageIndex, int datasetRefIndex);
+
   // - Detector property storage -
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param gain TODO
+   * For a particular Detector, sets amplification gain of the detector.
+   * @param amplificationGain amplification gain of the detector
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  void setDetectorAmplificationGain(Float amplificationGain, int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, sets the gain of the detector.
+   * @param gain the gain of the detector
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -133,52 +260,60 @@ public interface MetadataStore {
   void setDetectorID(String id, int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param manufacturer TODO
+   * For a particular Detector, sets name of the detector manufacturer.
+   * @param manufacturer name of the detector manufacturer
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param model TODO
+   * For a particular Detector, sets model name/number of the detector.
+   * @param model model name/number of the detector
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   void setDetectorModel(String model, int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param offset TODO
+   * For a particular Detector, sets the offset of the detector.
+   * @param offset the offset of the detector
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   void setDetectorOffset(Float offset, int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param serialNumber TODO
+   * For a particular Detector, sets serial number of the detector.
+   * @param serialNumber serial number of the detector
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param type TODO
+   * For a particular Detector, sets the detector type, e.g. CCD, PMT.
+   * @param type the detector type, e.g. CCD, PMT
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   void setDetectorType(String type, int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, sets TODO.
-   * @param voltage TODO
+   * For a particular Detector, sets the voltage of the detector.
+   * @param voltage the voltage of the detector
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   void setDetectorVoltage(Float voltage, int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, sets optional zoom value of the detector.
+   * @param zoom optional zoom value of the detector
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  void setDetectorZoom(Float zoom, int instrumentIndex, int detectorIndex);
 
   // - DetectorSettings property storage -
 
@@ -215,20 +350,46 @@ public interface MetadataStore {
   void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular DetectorSettings, sets TODO.
-   * @param readOutRate TODO
+   * For a particular DetectorSettings, sets the speed at which the detector can count pixels, in MHz.
+   * @param readOutRate the speed at which the detector can count pixels, in MHz
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular DetectorSettings, sets TODO.
-   * @param voltage TODO
+   * For a particular DetectorSettings, sets the detector voltage.
+   * @param voltage the detector voltage
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex);
+
+  // - Dichroic property storage -
+
+  /**
+   * For a particular Dichroic, sets TODO.
+   * @param lotNumber TODO
+   * @param instrumentIndex index of the Instrument
+   * @param dichroicIndex index of the Dichroic
+   */
+  void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex);
+
+  /**
+   * For a particular Dichroic, sets TODO.
+   * @param manufacturer TODO
+   * @param instrumentIndex index of the Instrument
+   * @param dichroicIndex index of the Dichroic
+   */
+  void setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex);
+
+  /**
+   * For a particular Dichroic, sets TODO.
+   * @param model TODO
+   * @param instrumentIndex index of the Instrument
+   * @param dichroicIndex index of the Dichroic
+   */
+  void setDichroicModel(String model, int instrumentIndex, int dichroicIndex);
 
   // - Dimensions property storage -
 
@@ -283,6 +444,13 @@ public interface MetadataStore {
   // - DisplayOptions property storage -
 
   /**
+   * For a particular DisplayOptions, sets specifies to display the image as grayscale or RGB.
+   * @param display specifies to display the image as grayscale or RGB
+   * @param imageIndex index of the Image
+   */
+  void setDisplayOptionsDisplay(String display, int imageIndex);
+
+  /**
    * For a particular DisplayOptions, sets unique label identifying the display options.
    * @param id unique label identifying the display options
    * @param imageIndex index of the Image
@@ -328,14 +496,145 @@ public interface MetadataStore {
    */
   void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex);
 
+  // - Ellipse property storage -
+
+  /**
+   * For a particular Ellipse, sets unique label identifying the ellipse.
+   * @param id unique label identifying the ellipse
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, sets X coordinate of the center of the ellipse.
+   * @param cx X coordinate of the center of the ellipse
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, sets Y coordinate of the center of the ellipse.
+   * @param cy Y coordinate of the center of the ellipse
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, sets horizontal radius of the ellipse.
+   * @param rx horizontal radius of the ellipse
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, sets vertical radius of the ellipse.
+   * @param ry vertical radius of the ellipse
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - EmFilter property storage -
+
+  /**
+   * For a particular EmFilter, sets TODO.
+   * @param lotNumber TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular EmFilter, sets TODO.
+   * @param manufacturer TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular EmFilter, sets TODO.
+   * @param model TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setEmFilterModel(String model, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular EmFilter, sets TODO.
+   * @param type TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setEmFilterType(String type, int instrumentIndex, int filterIndex);
+
+  // - ExFilter property storage -
+
+  /**
+   * For a particular ExFilter, sets TODO.
+   * @param lotNumber TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular ExFilter, sets TODO.
+   * @param manufacturer TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular ExFilter, sets TODO.
+   * @param model TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setExFilterModel(String model, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular ExFilter, sets TODO.
+   * @param type TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setExFilterType(String type, int instrumentIndex, int filterIndex);
+
   // - Experiment property storage -
 
   /**
-   * For a particular Experiment, sets TODO.
-   * @param description TODO
+   * For a particular Experiment, sets description of the experiment.
+   * @param description description of the experiment
    * @param experimentIndex index of the Experiment
    */
   void setExperimentDescription(String description, int experimentIndex);
+
+  /**
+   * For a particular Experiment, sets ID of the experimenter who conducted the experiment.
+   * @param experimenterRef ID of the experimenter who conducted the experiment
+   * @param experimentIndex index of the Experiment
+   */
+  void setExperimentExperimenterRef(String experimenterRef, int experimentIndex);
 
   /**
    * For a particular Experiment, sets unique label identifying the experiment.
@@ -345,8 +644,8 @@ public interface MetadataStore {
   void setExperimentID(String id, int experimentIndex);
 
   /**
-   * For a particular Experiment, sets TODO.
-   * @param type TODO
+   * For a particular Experiment, sets type of experiment, e.g. FRET, TimeLapse.
+   * @param type type of experiment, e.g. FRET, TimeLapse
    * @param experimentIndex index of the Experiment
    */
   void setExperimentType(String type, int experimentIndex);
@@ -388,6 +687,13 @@ public interface MetadataStore {
    */
   void setExperimenterLastName(String lastName, int experimenterIndex);
 
+  /**
+   * For a particular Experimenter, sets OME user name of the experimenter.
+   * @param omeName OME user name of the experimenter
+   * @param experimenterIndex index of the Experimenter
+   */
+  void setExperimenterOMEName(String omeName, int experimenterIndex);
+
   // - ExperimenterMembership property storage -
 
   /**
@@ -401,16 +707,170 @@ public interface MetadataStore {
   // - Filament property storage -
 
   /**
-   * For a particular Filament, sets TODO.
-   * @param type TODO
+   * For a particular Filament, sets the type of filament.
+   * @param type the type of filament
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setFilamentType(String type, int instrumentIndex, int lightSourceIndex);
 
+  // - Filter property storage -
+
+  /**
+   * For a particular Filter, sets TODO.
+   * @param filterWheel TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, sets TODO.
+   * @param lotNumber TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, sets TODO.
+   * @param manufacturer TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, sets TODO.
+   * @param model TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setFilterModel(String model, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, sets TODO.
+   * @param type TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setFilterType(String type, int instrumentIndex, int filterIndex);
+
+  // - FilterSet property storage -
+
+  /**
+   * For a particular FilterSet, sets TODO.
+   * @param dichroic TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  void setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, sets TODO.
+   * @param emFilter TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  void setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, sets TODO.
+   * @param exFilter TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  void setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, sets TODO.
+   * @param lotNumber TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, sets TODO.
+   * @param manufacturer TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  void setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, sets TODO.
+   * @param model TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex);
+
+  // - GreyChannel property storage -
+
+  /**
+   * For a particular GreyChannel, sets dimmest pixel value; anything below this will be set to 0.
+   * @param blackLevel dimmest pixel value; anything below this will be set to 0
+   * @param imageIndex index of the Image
+   */
+  void setGreyChannelBlackLevel(Float blackLevel, int imageIndex);
+
+  /**
+   * For a particular GreyChannel, sets actual channel number, indexed from 0.
+   * @param channelNumber actual channel number, indexed from 0
+   * @param imageIndex index of the Image
+   */
+  void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex);
+
+  /**
+   * For a particular GreyChannel, sets gamma value for this channel.
+   * @param gamma gamma value for this channel
+   * @param imageIndex index of the Image
+   */
+  void setGreyChannelGamma(Float gamma, int imageIndex);
+
+  /**
+   * For a particular GreyChannel, sets brightest pixel value; anything above this will be set to 255.
+   * @param whiteLevel brightest pixel value; anything above this will be set to 255
+   * @param imageIndex index of the Image
+   */
+  void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex);
+
+  /**
+   * For a particular GreyChannel, sets TODO.
+   * @param isOn TODO
+   * @param imageIndex index of the Image
+   */
+  void setGreyChannelisOn(Boolean isOn, int imageIndex);
+
+  // - GreyChannelMap property storage -
+
+  /**
+   * For a particular GreyChannelMap, sets describes color mapping function - Greyscale, Spectrum, or Blackbody.
+   * @param colorMap describes color mapping function - Greyscale, Spectrum, or Blackbody
+   * @param imageIndex index of the Image
+   */
+  void setGreyChannelMapColorMap(String colorMap, int imageIndex);
+
+  // - Group property storage -
+
+  /**
+   * For a particular Group, sets the name of the group.
+   * @param name the name of the group
+   * @param groupIndex index of the Group
+   */
+  void setGroupName(String name, int groupIndex);
+
   // - GroupRef property storage -
 
   // - Image property storage -
+
+  /**
+   * For a particular Image, sets acquired pixels set for the image.
+   * @param acquiredPixels acquired pixels set for the image
+   * @param imageIndex index of the Image
+   */
+  void setImageAcquiredPixels(String acquiredPixels, int imageIndex);
 
   /**
    * For a particular Image, sets the creation date of the image.
@@ -434,6 +894,27 @@ public interface MetadataStore {
   void setImageDescription(String description, int imageIndex);
 
   /**
+   * For a particular Image, sets reference to the experiment to which this image belongs.
+   * @param experimentRef reference to the experiment to which this image belongs
+   * @param imageIndex index of the Image
+   */
+  void setImageExperimentRef(String experimentRef, int imageIndex);
+
+  /**
+   * For a particular Image, sets reference to the experimenter who created this image.
+   * @param experimenterRef reference to the experimenter who created this image
+   * @param imageIndex index of the Image
+   */
+  void setImageExperimenterRef(String experimenterRef, int imageIndex);
+
+  /**
+   * For a particular Image, sets reference to the group that owns this image.
+   * @param groupRef reference to the group that owns this image
+   * @param imageIndex index of the Image
+   */
+  void setImageGroupRef(String groupRef, int imageIndex);
+
+  /**
    * For a particular Image, sets unique label identifying the image.
    * @param id unique label identifying the image
    * @param imageIndex index of the Image
@@ -454,32 +935,39 @@ public interface MetadataStore {
    */
   void setImageName(String name, int imageIndex);
 
+  /**
+   * For a particular Image, sets reference to the objective used when acquiring this image.
+   * @param objective reference to the objective used when acquiring this image
+   * @param imageIndex index of the Image
+   */
+  void setImageObjective(String objective, int imageIndex);
+
   // - ImagingEnvironment property storage -
 
   /**
-   * For a particular ImagingEnvironment, sets TODO.
-   * @param airPressure TODO
+   * For a particular ImagingEnvironment, sets air pressure, in millibars.
+   * @param airPressure air pressure, in millibars
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex);
 
   /**
-   * For a particular ImagingEnvironment, sets TODO.
-   * @param cO2Percent TODO
+   * For a particular ImagingEnvironment, sets CO2 level, in percent fractions from 0.0 to 1.0.
+   * @param cO2Percent CO2 level, in percent fractions from 0.0 to 1.0
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex);
 
   /**
-   * For a particular ImagingEnvironment, sets TODO.
-   * @param humidity TODO
+   * For a particular ImagingEnvironment, sets humidity, in percent fractions from 0.0 to 1.0.
+   * @param humidity humidity, in percent fractions from 0.0 to 1.0
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentHumidity(Float humidity, int imageIndex);
 
   /**
-   * For a particular ImagingEnvironment, sets TODO.
-   * @param temperature TODO
+   * For a particular ImagingEnvironment, sets temperature of the imaging environment, in Celsius.
+   * @param temperature temperature of the imaging environment, in Celsius
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentTemperature(Float temperature, int imageIndex);
@@ -496,20 +984,28 @@ public interface MetadataStore {
   // - Laser property storage -
 
   /**
-   * For a particular Laser, sets TODO.
-   * @param frequencyMultiplication TODO
+   * For a particular Laser, sets value by which frequency is multiplied.
+   * @param frequencyMultiplication value by which frequency is multiplied
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLaserFrequencyMultiplication(Integer frequencyMultiplication, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular Laser, sets TODO.
-   * @param laserMedium TODO
+   * For a particular Laser, sets lasing medium for the laser.
+   * @param laserMedium lasing medium for the laser
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLaserLaserMedium(String laserMedium, int instrumentIndex, int lightSourceIndex);
+
+  /**
+   * For a particular Laser, sets TODO.
+   * @param pockelCell TODO
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  void setLaserPockelCell(Boolean pockelCell, int instrumentIndex, int lightSourceIndex);
 
   /**
    * For a particular Laser, sets TODO.
@@ -520,24 +1016,32 @@ public interface MetadataStore {
   void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular Laser, sets TODO.
-   * @param tuneable TODO
+   * For a particular Laser, sets rate in Hz at which the laser pulses.
+   * @param repetitionRate rate in Hz at which the laser pulses
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  void setLaserRepetitionRate(Boolean repetitionRate, int instrumentIndex, int lightSourceIndex);
+
+  /**
+   * For a particular Laser, sets indicates whether or not the laser can be tuned.
+   * @param tuneable indicates whether or not the laser can be tuned
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLaserTuneable(Boolean tuneable, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular Laser, sets TODO.
-   * @param type TODO
+   * For a particular Laser, sets type of laser - Excimer, Gas, MetalVapor, SolidState, Dye, SemiConductor, FreeElectron, or Unknown.
+   * @param type type of laser - Excimer, Gas, MetalVapor, SolidState, Dye, SemiConductor, FreeElectron, or Unknown
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLaserType(String type, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular Laser, sets TODO.
-   * @param wavelength TODO
+   * For a particular Laser, sets wavelength of the laser, in nm.
+   * @param wavelength wavelength of the laser, in nm
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -554,36 +1058,65 @@ public interface MetadataStore {
   void setLightSourceID(String id, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, sets TODO.
-   * @param manufacturer TODO
+   * For a particular LightSource, sets manufacturer of the light source.
+   * @param manufacturer manufacturer of the light source
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLightSourceManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, sets TODO.
-   * @param model TODO
+   * For a particular LightSource, sets model number of the light source.
+   * @param model model number of the light source
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, sets TODO.
-   * @param power TODO
+   * For a particular LightSource, sets the light source power, in watts.
+   * @param power the light source power, in watts
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLightSourcePower(Float power, int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, sets TODO.
-   * @param serialNumber TODO
+   * For a particular LightSource, sets serial number of the light source.
+   * @param serialNumber serial number of the light source
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
+
+  // - LightSourceRef property storage -
+
+  /**
+   * For a particular LightSourceRef, sets the primary light source attenuation.
+   * @param attenuation the primary light source attenuation
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param lightSourceRefIndex index of the LightSourceRef
+   */
+  void setLightSourceRefAttenuation(Float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+
+  /**
+   * For a particular LightSourceRef, sets TODO.
+   * @param lightSource TODO
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param lightSourceRefIndex index of the LightSourceRef
+   */
+  void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+
+  /**
+   * For a particular LightSourceRef, sets the primary light source wavelength.
+   * @param wavelength the primary light source wavelength
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param lightSourceRefIndex index of the LightSourceRef
+   */
+  void setLightSourceRefWavelength(Integer wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
   // - LightSourceSettings property storage -
 
@@ -611,6 +1144,62 @@ public interface MetadataStore {
    */
   void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex);
 
+  // - Line property storage -
+
+  /**
+   * For a particular Line, sets unique label identifying the line.
+   * @param id unique label identifying the line
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setLineID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, sets X coordinate of the first endpoint of the line.
+   * @param x1 X coordinate of the first endpoint of the line
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, sets X coordinate of the second endpoint of the line.
+   * @param x2 X coordinate of the second endpoint of the line
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, sets Y coordinate of the first endpoint of the line.
+   * @param y1 Y coordinate of the first endpoint of the line
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, sets Y coordinate of the second endpoint of the line.
+   * @param y2 Y coordinate of the second endpoint of the line
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex);
+
   // - LogicalChannel property storage -
 
   /**
@@ -620,6 +1209,14 @@ public interface MetadataStore {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setLogicalChannelContrastMethod(String contrastMethod, int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, sets reference to the detector used to acquire this logical channel.
+   * @param detector reference to the detector used to acquire this logical channel
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, sets the emission wavelength.
@@ -636,6 +1233,14 @@ public interface MetadataStore {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setLogicalChannelExWave(Integer exWave, int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, sets reference to the filter set associated with this channel.
+   * @param filterSet reference to the filter set associated with this channel
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, sets the fluorescence type.
@@ -660,6 +1265,14 @@ public interface MetadataStore {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setLogicalChannelIlluminationType(String illuminationType, int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, sets reference to the light source used to acquire this logical channel.
+   * @param lightSource reference to the light source used to acquire this logical channel
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, sets the acquisition mode.
@@ -718,14 +1331,223 @@ public interface MetadataStore {
   void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular LogicalChannel, sets TODO.
-   * @param samplesPerPixel TODO
+   * For a particular LogicalChannel, sets number of channel components in the logical channel.
+   * @param samplesPerPixel number of channel components in the logical channel
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setLogicalChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int logicalChannelIndex);
 
+  /**
+   * For a particular LogicalChannel, sets TODO.
+   * @param secondaryEmissionFilter TODO
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, sets TODO.
+   * @param secondaryExcitationFilter TODO
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex);
+
+  // - Mask property storage -
+
+  /**
+   * For a particular Mask, sets unique label identifying the mask.
+   * @param id unique label identifying the mask
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, sets TODO.
+   * @param height TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, sets TODO.
+   * @param width TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, sets TODO.
+   * @param x TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, sets TODO.
+   * @param y TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - MaskPixels property storage -
+
+  /**
+   * For a particular MaskPixels, sets TODO.
+   * @param bigEndian TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskPixelsBigEndian(Boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, sets TODO.
+   * @param binData TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, sets TODO.
+   * @param extendedPixelType TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, sets unique label identifying the mask's pixels.
+   * @param id unique label identifying the mask's pixels
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, sets TODO.
+   * @param sizeX TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskPixelsSizeX(Integer sizeX, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, sets TODO.
+   * @param sizeY TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskPixelsSizeY(Integer sizeY, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - MicrobeamManipulation property storage -
+
+  /**
+   * For a particular MicrobeamManipulation, sets reference to the experimenter who applied this manipulation.
+   * @param experimenterRef reference to the experimenter who applied this manipulation
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   */
+  void setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex);
+
+  /**
+   * For a particular MicrobeamManipulation, sets unique label identifying the microbeam manipulation.
+   * @param id unique label identifying the microbeam manipulation
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   */
+  void setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex);
+
+  /**
+   * For a particular MicrobeamManipulation, sets type of operation - FRAP, Photoablation, Photoactivation, Uncaging, OpticalTrapping, or Other.
+   * @param type type of operation - FRAP, Photoablation, Photoactivation, Uncaging, OpticalTrapping, or Other
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   */
+  void setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex);
+
+  // - MicrobeamManipulationRef property storage -
+
+  /**
+   * For a particular MicrobeamManipulationRef, sets TODO.
+   * @param id TODO
+   * @param experimentIndex index of the Experiment
+   * @param microbeamManipulationRefIndex index of the MicrobeamManipulationRef
+   */
+  void setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex);
+
+  // - Microscope property storage -
+
+  /**
+   * For a particular Microscope, sets unique label identifying the microscope.
+   * @param id unique label identifying the microscope
+   * @param instrumentIndex index of the Instrument
+   */
+  void setMicroscopeID(String id, int instrumentIndex);
+
+  /**
+   * For a particular Microscope, sets manufacturer of the microscope.
+   * @param manufacturer manufacturer of the microscope
+   * @param instrumentIndex index of the Instrument
+   */
+  void setMicroscopeManufacturer(String manufacturer, int instrumentIndex);
+
+  /**
+   * For a particular Microscope, sets model number of the microscope.
+   * @param model model number of the microscope
+   * @param instrumentIndex index of the Instrument
+   */
+  void setMicroscopeModel(String model, int instrumentIndex);
+
+  /**
+   * For a particular Microscope, sets serial number of the microscope.
+   * @param serialNumber serial number of the microscope
+   * @param instrumentIndex index of the Instrument
+   */
+  void setMicroscopeSerialNumber(String serialNumber, int instrumentIndex);
+
+  /**
+   * For a particular Microscope, sets microscope type - Upright, Inverted, Dissection, Electrophysiology, or Unknown.
+   * @param type microscope type - Upright, Inverted, Dissection, Electrophysiology, or Unknown
+   * @param instrumentIndex index of the Instrument
+   */
+  void setMicroscopeType(String type, int instrumentIndex);
+
   // - OTF property storage -
+
+  /**
+   * For a particular OTF, sets the Base64-encoded optical transfer function, or the path to a file containing it.
+   * @param binaryFile the Base64-encoded optical transfer function, or the path to a file containing it
+   * @param instrumentIndex index of the Instrument
+   * @param otfIndex index of the OTF
+   */
+  void setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex);
 
   /**
    * For a particular OTF, sets unique label identifying the optical transfer function.
@@ -744,32 +1566,32 @@ public interface MetadataStore {
   void setOTFObjective(String objective, int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, sets TODO.
-   * @param opticalAxisAveraged TODO
+   * For a particular OTF, sets indicates whether or not optical axis averaging was performed.
+   * @param opticalAxisAveraged indicates whether or not optical axis averaging was performed
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, sets TODO.
-   * @param pixelType TODO
+   * For a particular OTF, sets the pixel type of the optical transfer function.
+   * @param pixelType the pixel type of the optical transfer function
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   void setOTFPixelType(String pixelType, int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, sets TODO.
-   * @param sizeX TODO
+   * For a particular OTF, sets width of the optical transfer function.
+   * @param sizeX width of the optical transfer function
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   void setOTFSizeX(Integer sizeX, int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, sets TODO.
-   * @param sizeY TODO
+   * For a particular OTF, sets height of the optical transfer function.
+   * @param sizeY height of the optical transfer function
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -778,16 +1600,16 @@ public interface MetadataStore {
   // - Objective property storage -
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param calibratedMagnification TODO
+   * For a particular Objective, sets the measured magnification of the objective.
+   * @param calibratedMagnification the measured magnification of the objective
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param correction TODO
+   * For a particular Objective, sets type of correction coating applied to the objective lens.
+   * @param correction type of correction coating applied to the objective lens
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -802,8 +1624,8 @@ public interface MetadataStore {
   void setObjectiveID(String id, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param immersion TODO
+   * For a particular Objective, sets immersion medium used with the objective lens.
+   * @param immersion immersion medium used with the objective lens
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -818,48 +1640,48 @@ public interface MetadataStore {
   void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param lensNA TODO
+   * For a particular Objective, sets numerical aperture of the lens.
+   * @param lensNA numerical aperture of the lens
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveLensNA(Float lensNA, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param manufacturer TODO
+   * For a particular Objective, sets the name of the objective's manufacturer.
+   * @param manufacturer the name of the objective's manufacturer
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param model TODO
+   * For a particular Objective, sets model name/number of the objective.
+   * @param model model name/number of the objective
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveModel(String model, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param nominalMagnification TODO
+   * For a particular Objective, sets the specified magnification of the objective.
+   * @param nominalMagnification the specified magnification of the objective
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param serialNumber TODO
+   * For a particular Objective, sets serial number of the objective.
+   * @param serialNumber serial number of the objective
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, sets TODO.
-   * @param workingDistance TODO
+   * For a particular Objective, sets working distance of the objective, in um.
+   * @param workingDistance working distance of the objective, in um
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -972,6 +1794,24 @@ public interface MetadataStore {
   // - Plane property storage -
 
   /**
+   * For a particular Plane, sets the SHA1 hash of this plane's pixels.
+   * @param hashSHA1 the SHA1 hash of this plane's pixels
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * For a particular Plane, sets unique label identifying this plane.
+   * @param id unique label identifying this plane
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
    * For a particular Plane, sets the channel index.
    * @param theC the channel index
    * @param imageIndex index of the Image
@@ -1021,15 +1861,15 @@ public interface MetadataStore {
   // - Plate property storage -
 
   /**
-   * For a particular Plate, sets identifies a plate within a screen.
-   * @param description identifies a plate within a screen
+   * For a particular Plate, sets description of the plate.
+   * @param description description of the plate
    * @param plateIndex index of the Plate
    */
   void setPlateDescription(String description, int plateIndex);
 
   /**
-   * For a particular Plate, sets reference to this plate in an external database.
-   * @param externalIdentifier reference to this plate in an external database
+   * For a particular Plate, sets reference to the plate in an external database.
+   * @param externalIdentifier reference to the plate in an external database
    * @param plateIndex index of the Plate
    */
   void setPlateExternalIdentifier(String externalIdentifier, int plateIndex);
@@ -1058,12 +1898,190 @@ public interface MetadataStore {
   // - PlateRef property storage -
 
   /**
-   * For a particular PlateRef, sets label reference for the associated plate.
-   * @param id label reference for the associated plate
+   * For a particular PlateRef, sets TODO.
+   * @param id TODO
    * @param screenIndex index of the Screen
    * @param plateRefIndex index of the PlateRef
    */
   void setPlateRefID(String id, int screenIndex, int plateRefIndex);
+
+  /**
+   * For a particular PlateRef, sets TODO.
+   * @param sample TODO
+   * @param screenIndex index of the Screen
+   * @param plateRefIndex index of the PlateRef
+   */
+  void setPlateRefSample(Integer sample, int screenIndex, int plateRefIndex);
+
+  /**
+   * For a particular PlateRef, sets TODO.
+   * @param well TODO
+   * @param screenIndex index of the Screen
+   * @param plateRefIndex index of the PlateRef
+   */
+  void setPlateRefWell(String well, int screenIndex, int plateRefIndex);
+
+  // - Point property storage -
+
+  /**
+   * For a particular Point, sets unique label identifying the point.
+   * @param id unique label identifying the point
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, sets X coordinate of the center of the point.
+   * @param cx X coordinate of the center of the point
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, sets Y coordinate of the center of the point.
+   * @param cy Y coordinate of the center of the point
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, sets radius of the point, in pixels.
+   * @param r radius of the point, in pixels
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Polygon property storage -
+
+  /**
+   * For a particular Polygon, sets unique label identifying the polygon.
+   * @param id unique label identifying the polygon
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polygon, sets TODO.
+   * @param points TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polygon, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Polyline property storage -
+
+  /**
+   * For a particular Polyline, sets unique label identifying the polyline.
+   * @param id unique label identifying the polyline
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polyline, sets TODO.
+   * @param points TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polyline, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Project property storage -
+
+  /**
+   * For a particular Project, sets description of the project.
+   * @param description description of the project
+   * @param projectIndex index of the Project
+   */
+  void setProjectDescription(String description, int projectIndex);
+
+  /**
+   * For a particular Project, sets reference to the experimenter who owns the project.
+   * @param experimenterRef reference to the experimenter who owns the project
+   * @param projectIndex index of the Project
+   */
+  void setProjectExperimenterRef(String experimenterRef, int projectIndex);
+
+  /**
+   * For a particular Project, sets reference to the group that owns the project.
+   * @param groupRef reference to the group that owns the project
+   * @param projectIndex index of the Project
+   */
+  void setProjectGroupRef(String groupRef, int projectIndex);
+
+  /**
+   * For a particular Project, sets unique label identifying the project.
+   * @param id unique label identifying the project
+   * @param projectIndex index of the Project
+   */
+  void setProjectID(String id, int projectIndex);
+
+  /**
+   * For a particular Project, sets name of the project.
+   * @param name name of the project
+   * @param projectIndex index of the Project
+   */
+  void setProjectName(String name, int projectIndex);
+
+  // - ProjectRef property storage -
+
+  /**
+   * For a particular ProjectRef, sets unique label identifying the project.
+   * @param id unique label identifying the project
+   * @param datasetIndex index of the Dataset
+   * @param projectRefIndex index of the ProjectRef
+   */
+  void setProjectRefID(String id, int datasetIndex, int projectRefIndex);
+
+  // - Pump property storage -
+
+  /**
+   * For a particular Pump, sets unique label identifying the light source to be used as a pump.
+   * @param lightSource unique label identifying the light source to be used as a pump
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  void setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex);
 
   // - ROI property storage -
 
@@ -1139,6 +2157,17 @@ public interface MetadataStore {
    */
   void setROIZ1(Integer z1, int imageIndex, int roiIndex);
 
+  // - ROIRef property storage -
+
+  /**
+   * For a particular ROIRef, sets reference to an ROI associated with the microbeam manipulation.
+   * @param id reference to an ROI associated with the microbeam manipulation
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param roiRefIndex index of the ROIRef
+   */
+  void setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex);
+
   // - Reagent property storage -
 
   /**
@@ -1166,14 +2195,110 @@ public interface MetadataStore {
   void setReagentName(String name, int screenIndex, int reagentIndex);
 
   /**
-   * For a particular Reagent, sets reference to this reagent in an external database.
-   * @param reagentIdentifier reference to this reagent in an external database
+   * For a particular Reagent, sets reference to the reagent in an external database.
+   * @param reagentIdentifier reference to the reagent in an external database
    * @param screenIndex index of the Screen
    * @param reagentIndex index of the Reagent
    */
   void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex);
 
+  // - Rect property storage -
+
+  /**
+   * For a particular Rect, sets unique label identifying the rectangle.
+   * @param id unique label identifying the rectangle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, sets height of the rectangle, in pixels.
+   * @param height height of the rectangle, in pixels
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, sets TODO.
+   * @param transform TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, sets width of the rectangle, in pixels.
+   * @param width width of the rectangle, in pixels
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, sets X coordinate of the upper left corner of the rectangle.
+   * @param x X coordinate of the upper left corner of the rectangle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, sets Y coordinate of the upper left corner of the rectangle.
+   * @param y Y coordinate of the upper left corner of the rectangle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Region property storage -
+
+  /**
+   * For a particular Region, sets TODO.
+   * @param id TODO
+   * @param imageIndex index of the Image
+   * @param regionIndex index of the Region
+   */
+  void setRegionID(String id, int imageIndex, int regionIndex);
+
+  /**
+   * For a particular Region, sets TODO.
+   * @param name TODO
+   * @param imageIndex index of the Image
+   * @param regionIndex index of the Region
+   */
+  void setRegionName(String name, int imageIndex, int regionIndex);
+
+  /**
+   * For a particular Region, sets TODO.
+   * @param tag TODO
+   * @param imageIndex index of the Image
+   * @param regionIndex index of the Region
+   */
+  void setRegionTag(String tag, int imageIndex, int regionIndex);
+
   // - Screen property storage -
+
+  /**
+   * For a particular Screen, sets description of the screen.
+   * @param description description of the screen
+   * @param screenIndex index of the Screen
+   */
+  void setScreenDescription(String description, int screenIndex);
+
+  /**
+   * For a particular Screen, sets TODO.
+   * @param extern TODO
+   * @param screenIndex index of the Screen
+   */
+  void setScreenExtern(String extern, int screenIndex);
 
   /**
    * For a particular Screen, sets unique label identifying the screen.
@@ -1211,6 +2336,13 @@ public interface MetadataStore {
   void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex);
 
   /**
+   * For a particular Screen, sets reference to an externally defined set of reagents.
+   * @param reagentSetIdentifier reference to an externally defined set of reagents
+   * @param screenIndex index of the Screen
+   */
+  void setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex);
+
+  /**
    * For a particular Screen, sets human-readable screen type, e.g. RNAi, cDNA.
    * @param type human-readable screen type, e.g. RNAi, cDNA
    * @param screenIndex index of the Screen
@@ -1242,6 +2374,45 @@ public interface MetadataStore {
    * @param screenAcquisitionIndex index of the ScreenAcquisition
    */
   void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex);
+
+  // - ScreenRef property storage -
+
+  /**
+   * For a particular ScreenRef, sets label reference to a screen.
+   * @param id label reference to a screen
+   * @param plateIndex index of the Plate
+   * @param screenRefIndex index of the ScreenRef
+   */
+  void setScreenRefID(String id, int plateIndex, int screenRefIndex);
+
+  // - Shape property storage -
+
+  /**
+   * For a particular Shape, sets unique label identifying the shape.
+   * @param id unique label identifying the shape
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets T position of the shape.
+   * @param theT T position of the shape
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets Z position of the shape.
+   * @param theZ Z position of the shape
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex);
 
   // - StageLabel property storage -
 
@@ -1302,11 +2473,34 @@ public interface MetadataStore {
    */
   void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
 
+  // - Thumbnail property storage -
+
+  /**
+   * For a particular Thumbnail, sets unique label identifying the thumbnail.
+   * @param id unique label identifying the thumbnail
+   * @param imageIndex index of the Image
+   */
+  void setThumbnailID(String id, int imageIndex);
+
+  /**
+   * For a particular Thumbnail, sets MIME-type of the thumbnail; must be set to 'SVG' if thumbnail data is embedded.
+   * @param mimEtype MIME-type of the thumbnail; must be set to 'SVG' if thumbnail data is embedded
+   * @param imageIndex index of the Image
+   */
+  void setThumbnailMIMEtype(String mimEtype, int imageIndex);
+
+  /**
+   * For a particular Thumbnail, sets external URI referring to the thumbnail.
+   * @param href external URI referring to the thumbnail
+   * @param imageIndex index of the Image
+   */
+  void setThumbnailhref(String href, int imageIndex);
+
   // - TiffData property storage -
 
   /**
-   * For a particular TiffData, sets TODO.
-   * @param fileName TODO
+   * For a particular TiffData, sets the name of the file containing these IFDs.
+   * @param fileName the name of the file containing these IFDs
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1314,8 +2508,8 @@ public interface MetadataStore {
   void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, sets TODO.
-   * @param firstC TODO
+   * For a particular TiffData, sets C position of the image plane at the specified IFD, indexed from 0.
+   * @param firstC C position of the image plane at the specified IFD, indexed from 0
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1323,8 +2517,8 @@ public interface MetadataStore {
   void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, sets TODO.
-   * @param firstT TODO
+   * For a particular TiffData, sets T position of the image plane at the specified IFD, indexed from 0.
+   * @param firstT T position of the image plane at the specified IFD, indexed from 0
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1332,8 +2526,8 @@ public interface MetadataStore {
   void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, sets TODO.
-   * @param firstZ TODO
+   * For a particular TiffData, sets Z position of the image plane at the specified IFD, indexed from 0.
+   * @param firstZ Z position of the image plane at the specified IFD, indexed from 0
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1341,8 +2535,8 @@ public interface MetadataStore {
   void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, sets TODO.
-   * @param ifd TODO
+   * For a particular TiffData, sets first IFD for which this element is applicable, indexed from 0.
+   * @param ifd first IFD for which this element is applicable, indexed from 0
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1350,8 +2544,8 @@ public interface MetadataStore {
   void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, sets TODO.
-   * @param numPlanes TODO
+   * For a particular TiffData, sets Number of IFDs for which this element is applicable; default is the number of planes (if no IFD is specified), or 1 (if an IFD is specified)..
+   * @param numPlanes Number of IFDs for which this element is applicable; default is the number of planes (if no IFD is specified), or 1 (if an IFD is specified).
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1359,13 +2553,55 @@ public interface MetadataStore {
   void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, sets TODO.
-   * @param uuid TODO
+   * For a particular TiffData, sets unique identifier indicating which file contains these IFDs.
+   * @param uuid unique identifier indicating which file contains these IFDs
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
    */
   void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  // - TransmittanceRange property storage -
+
+  /**
+   * For a particular TransmittanceRange, sets TODO.
+   * @param cutIn TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setTransmittanceRangeCutIn(Integer cutIn, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, sets TODO.
+   * @param cutInTolerance TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setTransmittanceRangeCutInTolerance(Integer cutInTolerance, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, sets TODO.
+   * @param cutOut TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setTransmittanceRangeCutOut(Integer cutOut, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, sets TODO.
+   * @param cutOutTolerance TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, sets TODO.
+   * @param transmittance TODO
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  void setTransmittanceRangeTransmittance(Integer transmittance, int instrumentIndex, int filterIndex);
 
   // - Well property storage -
 
@@ -1378,16 +2614,16 @@ public interface MetadataStore {
   void setWellColumn(Integer column, int plateIndex, int wellIndex);
 
   /**
-   * For a particular Well, sets description of the externally defined ID for this plate.
-   * @param externalDescription description of the externally defined ID for this plate
+   * For a particular Well, sets description of the externally defined ID for the well.
+   * @param externalDescription description of the externally defined ID for the well
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
   void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex);
 
   /**
-   * For a particular Well, sets reference to this well in an external database.
-   * @param externalIdentifier reference to this well in an external database
+   * For a particular Well, sets reference to the well in an external database.
+   * @param externalIdentifier reference to the well in an external database
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
@@ -1400,6 +2636,14 @@ public interface MetadataStore {
    * @param wellIndex index of the Well
    */
   void setWellID(String id, int plateIndex, int wellIndex);
+
+  /**
+   * For a particular Well, sets label reference for the associated reagent.
+   * @param reagent label reference for the associated reagent
+   * @param plateIndex index of the Plate
+   * @param wellIndex index of the Well
+   */
+  void setWellReagent(String reagent, int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, sets row index of the well, where top-left is 0.
@@ -1427,6 +2671,15 @@ public interface MetadataStore {
    * @param wellSampleIndex index of the WellSample
    */
   void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, sets label reference for the associated image.
+   * @param imageRef label reference for the associated image
+   * @param plateIndex index of the Plate
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  void setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, sets link to the Image element.
@@ -1463,5 +2716,16 @@ public interface MetadataStore {
    * @param wellSampleIndex index of the WellSample
    */
   void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
+
+  // - WellSampleRef property storage -
+
+  /**
+   * For a particular WellSampleRef, sets TODO.
+   * @param id TODO
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   * @param wellSampleRefIndex index of the WellSampleRef
+   */
+  void setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex);
 
 }

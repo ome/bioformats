@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2008 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2009 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
+ * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -65,13 +65,25 @@ public interface MetadataRetrieve {
 
   int getChannelComponentCount(int imageIndex, int logicalChannelIndex);
 
+  int getDatasetCount();
+
+  int getDatasetRefCount(int imageIndex);
+
   int getDetectorCount(int instrumentIndex);
+
+  int getDichroicCount(int instrumentIndex);
 
   int getExperimentCount();
 
   int getExperimenterCount();
 
   int getExperimenterMembershipCount(int experimenterIndex);
+
+  int getFilterCount(int instrumentIndex);
+
+  int getFilterSetCount(int instrumentIndex);
+
+  int getGroupCount();
 
   int getGroupRefCount(int experimenterIndex);
 
@@ -81,7 +93,13 @@ public interface MetadataRetrieve {
 
   int getLightSourceCount(int instrumentIndex);
 
+  int getLightSourceRefCount(int imageIndex, int microbeamManipulationIndex);
+
   int getLogicalChannelCount(int imageIndex);
+
+  int getMicrobeamManipulationCount(int imageIndex);
+
+  int getMicrobeamManipulationRefCount(int experimentIndex);
 
   int getOTFCount(int instrumentIndex);
 
@@ -95,19 +113,33 @@ public interface MetadataRetrieve {
 
   int getPlateRefCount(int screenIndex);
 
+  int getProjectCount();
+
+  int getProjectRefCount(int datasetIndex);
+
   int getROICount(int imageIndex);
 
+  int getROIRefCount(int imageIndex, int microbeamManipulationIndex);
+
   int getReagentCount(int screenIndex);
+
+  int getRegionCount(int imageIndex);
 
   int getScreenCount();
 
   int getScreenAcquisitionCount(int screenIndex);
+
+  int getScreenRefCount(int plateIndex);
+
+  int getShapeCount(int imageIndex, int roiIndex);
 
   int getTiffDataCount(int imageIndex, int pixelsIndex);
 
   int getWellCount(int plateIndex);
 
   int getWellSampleCount(int plateIndex, int wellIndex);
+
+  int getWellSampleRefCount(int screenIndex, int screenAcquisitionIndex);
 
   // - Entity retrieval -
 
@@ -117,7 +149,7 @@ public interface MetadataRetrieve {
   // - Arc property retrieval -
 
   /**
-   * For a particular Arc, gets TODO.
+   * For a particular Arc, gets the type of arc.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -141,10 +173,122 @@ public interface MetadataRetrieve {
    */
   Integer getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
 
+  /**
+   * For a particular ChannelComponent, gets the pixels to which this channel component corresponds.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   * @param channelComponentIndex index of the ChannelComponent
+   */
+  String getChannelComponentPixels(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  // - Circle property retrieval -
+
+  /**
+   * For a particular Circle, gets unique label identifying the circle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getCircleID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, gets X coordinate of the center of the circle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getCirclecx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, gets Y coordinate of the center of the circle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getCirclecy(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, gets radius of the circle, in pixels.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getCircler(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getCircletransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Contact property retrieval -
+
+  /**
+   * For a particular Contact, gets unique label identifying the experimenter who is the group contact.
+   * @param groupIndex index of the Group
+   */
+  String getContactExperimenter(int groupIndex);
+
+  // - Dataset property retrieval -
+
+  /**
+   * For a particular Dataset, gets description of the dataset.
+   * @param datasetIndex index of the Dataset
+   */
+  String getDatasetDescription(int datasetIndex);
+
+  /**
+   * For a particular Dataset, gets reference to the experimenter who owns the dataset.
+   * @param datasetIndex index of the Dataset
+   */
+  String getDatasetExperimenterRef(int datasetIndex);
+
+  /**
+   * For a particular Dataset, gets reference to the group that owns the dataset.
+   * @param datasetIndex index of the Dataset
+   */
+  String getDatasetGroupRef(int datasetIndex);
+
+  /**
+   * For a particular Dataset, gets unique label identifying the dataset.
+   * @param datasetIndex index of the Dataset
+   */
+  String getDatasetID(int datasetIndex);
+
+  /**
+   * For a particular Dataset, gets indicates whether the images in the dataset can be altered.
+   * @param datasetIndex index of the Dataset
+   */
+  Boolean getDatasetLocked(int datasetIndex);
+
+  /**
+   * For a particular Dataset, gets name of the dataset.
+   * @param datasetIndex index of the Dataset
+   */
+  String getDatasetName(int datasetIndex);
+
+  // - DatasetRef property retrieval -
+
+  /**
+   * For a particular DatasetRef, gets TODO.
+   * @param imageIndex index of the Image
+   * @param datasetRefIndex index of the DatasetRef
+   */
+  String getDatasetRefID(int imageIndex, int datasetRefIndex);
+
   // - Detector property retrieval -
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets amplification gain of the detector.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  Float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets the gain of the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -158,46 +302,53 @@ public interface MetadataRetrieve {
   String getDetectorID(int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets name of the detector manufacturer.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorManufacturer(int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets model name/number of the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorModel(int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets the offset of the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   Float getDetectorOffset(int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets serial number of the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorSerialNumber(int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets the detector type, e.g. CCD, PMT.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorType(int instrumentIndex, int detectorIndex);
 
   /**
-   * For a particular Detector, gets TODO.
+   * For a particular Detector, gets the voltage of the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   Float getDetectorVoltage(int instrumentIndex, int detectorIndex);
+
+  /**
+   * For a particular Detector, gets optional zoom value of the detector.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  Float getDetectorZoom(int instrumentIndex, int detectorIndex);
 
   // - DetectorSettings property retrieval -
 
@@ -230,18 +381,41 @@ public interface MetadataRetrieve {
   Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular DetectorSettings, gets TODO.
+   * For a particular DetectorSettings, gets the speed at which the detector can count pixels, in MHz.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   Float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular DetectorSettings, gets TODO.
+   * For a particular DetectorSettings, gets the detector voltage.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   Float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
+
+  // - Dichroic property retrieval -
+
+  /**
+   * For a particular Dichroic, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param dichroicIndex index of the Dichroic
+   */
+  String getDichroicLotNumber(int instrumentIndex, int dichroicIndex);
+
+  /**
+   * For a particular Dichroic, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param dichroicIndex index of the Dichroic
+   */
+  String getDichroicManufacturer(int instrumentIndex, int dichroicIndex);
+
+  /**
+   * For a particular Dichroic, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param dichroicIndex index of the Dichroic
+   */
+  String getDichroicModel(int instrumentIndex, int dichroicIndex);
 
   // - Dimensions property retrieval -
 
@@ -290,6 +464,12 @@ public interface MetadataRetrieve {
   // - DisplayOptions property retrieval -
 
   /**
+   * For a particular DisplayOptions, gets specifies to display the image as grayscale or RGB.
+   * @param imageIndex index of the Image
+   */
+  String getDisplayOptionsDisplay(int imageIndex);
+
+  /**
    * For a particular DisplayOptions, gets unique label identifying the display options.
    * @param imageIndex index of the Image
    */
@@ -329,13 +509,129 @@ public interface MetadataRetrieve {
    */
   Integer getDisplayOptionsTimeTStop(int imageIndex);
 
+  // - Ellipse property retrieval -
+
+  /**
+   * For a particular Ellipse, gets unique label identifying the ellipse.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipseID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, gets X coordinate of the center of the ellipse.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipsecx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, gets Y coordinate of the center of the ellipse.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipsecy(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, gets horizontal radius of the ellipse.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipserx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, gets vertical radius of the ellipse.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipsery(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipsetransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - EmFilter property retrieval -
+
+  /**
+   * For a particular EmFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getEmFilterLotNumber(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular EmFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getEmFilterManufacturer(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular EmFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getEmFilterModel(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular EmFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getEmFilterType(int instrumentIndex, int filterIndex);
+
+  // - ExFilter property retrieval -
+
+  /**
+   * For a particular ExFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getExFilterLotNumber(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular ExFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getExFilterManufacturer(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular ExFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getExFilterModel(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular ExFilter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getExFilterType(int instrumentIndex, int filterIndex);
+
   // - Experiment property retrieval -
 
   /**
-   * For a particular Experiment, gets TODO.
+   * For a particular Experiment, gets description of the experiment.
    * @param experimentIndex index of the Experiment
    */
   String getExperimentDescription(int experimentIndex);
+
+  /**
+   * For a particular Experiment, gets ID of the experimenter who conducted the experiment.
+   * @param experimentIndex index of the Experiment
+   */
+  String getExperimentExperimenterRef(int experimentIndex);
 
   /**
    * For a particular Experiment, gets unique label identifying the experiment.
@@ -344,7 +640,7 @@ public interface MetadataRetrieve {
   String getExperimentID(int experimentIndex);
 
   /**
-   * For a particular Experiment, gets TODO.
+   * For a particular Experiment, gets type of experiment, e.g. FRET, TimeLapse.
    * @param experimentIndex index of the Experiment
    */
   String getExperimentType(int experimentIndex);
@@ -381,6 +677,12 @@ public interface MetadataRetrieve {
    */
   String getExperimenterLastName(int experimenterIndex);
 
+  /**
+   * For a particular Experimenter, gets OME user name of the experimenter.
+   * @param experimenterIndex index of the Experimenter
+   */
+  String getExperimenterOMEName(int experimenterIndex);
+
   // - ExperimenterMembership property retrieval -
 
   /**
@@ -393,15 +695,150 @@ public interface MetadataRetrieve {
   // - Filament property retrieval -
 
   /**
-   * For a particular Filament, gets TODO.
+   * For a particular Filament, gets the type of filament.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getFilamentType(int instrumentIndex, int lightSourceIndex);
 
+  // - Filter property retrieval -
+
+  /**
+   * For a particular Filter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getFilterFilterWheel(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getFilterLotNumber(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getFilterManufacturer(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getFilterModel(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular Filter, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  String getFilterType(int instrumentIndex, int filterIndex);
+
+  // - FilterSet property retrieval -
+
+  /**
+   * For a particular FilterSet, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  String getFilterSetDichroic(int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  String getFilterSetEmFilter(int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  String getFilterSetExFilter(int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  String getFilterSetManufacturer(int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  String getFilterSetModel(int instrumentIndex, int filterSetIndex);
+
+  // - GreyChannel property retrieval -
+
+  /**
+   * For a particular GreyChannel, gets dimmest pixel value; anything below this will be set to 0.
+   * @param imageIndex index of the Image
+   */
+  Float getGreyChannelBlackLevel(int imageIndex);
+
+  /**
+   * For a particular GreyChannel, gets actual channel number, indexed from 0.
+   * @param imageIndex index of the Image
+   */
+  Integer getGreyChannelChannelNumber(int imageIndex);
+
+  /**
+   * For a particular GreyChannel, gets gamma value for this channel.
+   * @param imageIndex index of the Image
+   */
+  Float getGreyChannelGamma(int imageIndex);
+
+  /**
+   * For a particular GreyChannel, gets brightest pixel value; anything above this will be set to 255.
+   * @param imageIndex index of the Image
+   */
+  Float getGreyChannelWhiteLevel(int imageIndex);
+
+  /**
+   * For a particular GreyChannel, gets TODO.
+   * @param imageIndex index of the Image
+   */
+  Boolean getGreyChannelisOn(int imageIndex);
+
+  // - GreyChannelMap property retrieval -
+
+  /**
+   * For a particular GreyChannelMap, gets describes color mapping function - Greyscale, Spectrum, or Blackbody.
+   * @param imageIndex index of the Image
+   */
+  String getGreyChannelMapColorMap(int imageIndex);
+
+  // - Group property retrieval -
+
+  /**
+   * For a particular Group, gets the name of the group.
+   * @param groupIndex index of the Group
+   */
+  String getGroupName(int groupIndex);
+
   // - GroupRef property retrieval -
 
   // - Image property retrieval -
+
+  /**
+   * For a particular Image, gets acquired pixels set for the image.
+   * @param imageIndex index of the Image
+   */
+  String getImageAcquiredPixels(int imageIndex);
 
   /**
    * For a particular Image, gets the creation date of the image.
@@ -422,6 +859,24 @@ public interface MetadataRetrieve {
   String getImageDescription(int imageIndex);
 
   /**
+   * For a particular Image, gets reference to the experiment to which this image belongs.
+   * @param imageIndex index of the Image
+   */
+  String getImageExperimentRef(int imageIndex);
+
+  /**
+   * For a particular Image, gets reference to the experimenter who created this image.
+   * @param imageIndex index of the Image
+   */
+  String getImageExperimenterRef(int imageIndex);
+
+  /**
+   * For a particular Image, gets reference to the group that owns this image.
+   * @param imageIndex index of the Image
+   */
+  String getImageGroupRef(int imageIndex);
+
+  /**
    * For a particular Image, gets unique label identifying the image.
    * @param imageIndex index of the Image
    */
@@ -439,28 +894,34 @@ public interface MetadataRetrieve {
    */
   String getImageName(int imageIndex);
 
+  /**
+   * For a particular Image, gets reference to the objective used when acquiring this image.
+   * @param imageIndex index of the Image
+   */
+  String getImageObjective(int imageIndex);
+
   // - ImagingEnvironment property retrieval -
 
   /**
-   * For a particular ImagingEnvironment, gets TODO.
+   * For a particular ImagingEnvironment, gets air pressure, in millibars.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentAirPressure(int imageIndex);
 
   /**
-   * For a particular ImagingEnvironment, gets TODO.
+   * For a particular ImagingEnvironment, gets CO2 level, in percent fractions from 0.0 to 1.0.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentCO2Percent(int imageIndex);
 
   /**
-   * For a particular ImagingEnvironment, gets TODO.
+   * For a particular ImagingEnvironment, gets humidity, in percent fractions from 0.0 to 1.0.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentHumidity(int imageIndex);
 
   /**
-   * For a particular ImagingEnvironment, gets TODO.
+   * For a particular ImagingEnvironment, gets temperature of the imaging environment, in Celsius.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentTemperature(int imageIndex);
@@ -476,14 +937,14 @@ public interface MetadataRetrieve {
   // - Laser property retrieval -
 
   /**
-   * For a particular Laser, gets TODO.
+   * For a particular Laser, gets value by which frequency is multiplied.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   Integer getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular Laser, gets TODO.
+   * For a particular Laser, gets lasing medium for the laser.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -494,24 +955,38 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  String getLaserPulse(int instrumentIndex, int lightSourceIndex);
+  Boolean getLaserPockelCell(int instrumentIndex, int lightSourceIndex);
 
   /**
    * For a particular Laser, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  String getLaserPulse(int instrumentIndex, int lightSourceIndex);
+
+  /**
+   * For a particular Laser, gets rate in Hz at which the laser pulses.
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  Boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
+
+  /**
+   * For a particular Laser, gets indicates whether or not the laser can be tuned.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   Boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular Laser, gets TODO.
+   * For a particular Laser, gets type of laser - Excimer, Gas, MetalVapor, SolidState, Dye, SemiConductor, FreeElectron, or Unknown.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLaserType(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular Laser, gets TODO.
+   * For a particular Laser, gets wavelength of the laser, in nm.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -527,32 +1002,58 @@ public interface MetadataRetrieve {
   String getLightSourceID(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, gets TODO.
+   * For a particular LightSource, gets manufacturer of the light source.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLightSourceManufacturer(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, gets TODO.
+   * For a particular LightSource, gets model number of the light source.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLightSourceModel(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, gets TODO.
+   * For a particular LightSource, gets the light source power, in watts.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   Float getLightSourcePower(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * For a particular LightSource, gets TODO.
+   * For a particular LightSource, gets serial number of the light source.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex);
+
+  // - LightSourceRef property retrieval -
+
+  /**
+   * For a particular LightSourceRef, gets the primary light source attenuation.
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param lightSourceRefIndex index of the LightSourceRef
+   */
+  Float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+
+  /**
+   * For a particular LightSourceRef, gets TODO.
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param lightSourceRefIndex index of the LightSourceRef
+   */
+  String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+
+  /**
+   * For a particular LightSourceRef, gets the primary light source wavelength.
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param lightSourceRefIndex index of the LightSourceRef
+   */
+  Integer getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
   // - LightSourceSettings property retrieval -
 
@@ -577,6 +1078,56 @@ public interface MetadataRetrieve {
    */
   Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex);
 
+  // - Line property retrieval -
+
+  /**
+   * For a particular Line, gets unique label identifying the line.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getLineID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getLinetransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, gets X coordinate of the first endpoint of the line.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getLinex1(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, gets X coordinate of the second endpoint of the line.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getLinex2(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, gets Y coordinate of the first endpoint of the line.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getLiney1(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Line, gets Y coordinate of the second endpoint of the line.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getLiney2(int imageIndex, int roiIndex, int shapeIndex);
+
   // - LogicalChannel property retrieval -
 
   /**
@@ -585,6 +1136,13 @@ public interface MetadataRetrieve {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   String getLogicalChannelContrastMethod(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, gets reference to the detector used to acquire this logical channel.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getLogicalChannelDetector(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, gets the emission wavelength.
@@ -599,6 +1157,13 @@ public interface MetadataRetrieve {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   Integer getLogicalChannelExWave(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, gets reference to the filter set associated with this channel.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getLogicalChannelFilterSet(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, gets the fluorescence type.
@@ -620,6 +1185,13 @@ public interface MetadataRetrieve {
    * @param logicalChannelIndex index of the LogicalChannel
    */
   String getLogicalChannelIlluminationType(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, gets reference to the light source used to acquire this logical channel.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getLogicalChannelLightSource(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, gets the acquisition mode.
@@ -671,13 +1243,198 @@ public interface MetadataRetrieve {
   Integer getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex);
 
   /**
-   * For a particular LogicalChannel, gets TODO.
+   * For a particular LogicalChannel, gets number of channel components in the logical channel.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   Integer getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex);
 
+  /**
+   * For a particular LogicalChannel, gets TODO.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getLogicalChannelSecondaryEmissionFilter(int imageIndex, int logicalChannelIndex);
+
+  /**
+   * For a particular LogicalChannel, gets TODO.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getLogicalChannelSecondaryExcitationFilter(int imageIndex, int logicalChannelIndex);
+
+  // - Mask property retrieval -
+
+  /**
+   * For a particular Mask, gets unique label identifying the mask.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskheight(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMasktransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskwidth(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Mask, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMasky(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - MaskPixels property retrieval -
+
+  /**
+   * For a particular MaskPixels, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Boolean getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, gets unique label identifying the mask's pixels.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskPixelsID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getMaskPixelsSizeX(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular MaskPixels, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getMaskPixelsSizeY(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - MicrobeamManipulation property retrieval -
+
+  /**
+   * For a particular MicrobeamManipulation, gets reference to the experimenter who applied this manipulation.
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   */
+  String getMicrobeamManipulationExperimenterRef(int imageIndex, int microbeamManipulationIndex);
+
+  /**
+   * For a particular MicrobeamManipulation, gets unique label identifying the microbeam manipulation.
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   */
+  String getMicrobeamManipulationID(int imageIndex, int microbeamManipulationIndex);
+
+  /**
+   * For a particular MicrobeamManipulation, gets type of operation - FRAP, Photoablation, Photoactivation, Uncaging, OpticalTrapping, or Other.
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   */
+  String getMicrobeamManipulationType(int imageIndex, int microbeamManipulationIndex);
+
+  // - MicrobeamManipulationRef property retrieval -
+
+  /**
+   * For a particular MicrobeamManipulationRef, gets TODO.
+   * @param experimentIndex index of the Experiment
+   * @param microbeamManipulationRefIndex index of the MicrobeamManipulationRef
+   */
+  String getMicrobeamManipulationRefID(int experimentIndex, int microbeamManipulationRefIndex);
+
+  // - Microscope property retrieval -
+
+  /**
+   * For a particular Microscope, gets unique label identifying the microscope.
+   * @param instrumentIndex index of the Instrument
+   */
+  String getMicroscopeID(int instrumentIndex);
+
+  /**
+   * For a particular Microscope, gets manufacturer of the microscope.
+   * @param instrumentIndex index of the Instrument
+   */
+  String getMicroscopeManufacturer(int instrumentIndex);
+
+  /**
+   * For a particular Microscope, gets model number of the microscope.
+   * @param instrumentIndex index of the Instrument
+   */
+  String getMicroscopeModel(int instrumentIndex);
+
+  /**
+   * For a particular Microscope, gets serial number of the microscope.
+   * @param instrumentIndex index of the Instrument
+   */
+  String getMicroscopeSerialNumber(int instrumentIndex);
+
+  /**
+   * For a particular Microscope, gets microscope type - Upright, Inverted, Dissection, Electrophysiology, or Unknown.
+   * @param instrumentIndex index of the Instrument
+   */
+  String getMicroscopeType(int instrumentIndex);
+
   // - OTF property retrieval -
+
+  /**
+   * For a particular OTF, gets the Base64-encoded optical transfer function, or the path to a file containing it.
+   * @param instrumentIndex index of the Instrument
+   * @param otfIndex index of the OTF
+   */
+  String getOTFBinaryFile(int instrumentIndex, int otfIndex);
 
   /**
    * For a particular OTF, gets unique label identifying the optical transfer function.
@@ -694,28 +1451,28 @@ public interface MetadataRetrieve {
   String getOTFObjective(int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, gets TODO.
+   * For a particular OTF, gets indicates whether or not optical axis averaging was performed.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, gets TODO.
+   * For a particular OTF, gets the pixel type of the optical transfer function.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   String getOTFPixelType(int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, gets TODO.
+   * For a particular OTF, gets width of the optical transfer function.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   Integer getOTFSizeX(int instrumentIndex, int otfIndex);
 
   /**
-   * For a particular OTF, gets TODO.
+   * For a particular OTF, gets height of the optical transfer function.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -724,14 +1481,14 @@ public interface MetadataRetrieve {
   // - Objective property retrieval -
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets the measured magnification of the objective.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets type of correction coating applied to the objective lens.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -745,7 +1502,7 @@ public interface MetadataRetrieve {
   String getObjectiveID(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets immersion medium used with the objective lens.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -759,42 +1516,42 @@ public interface MetadataRetrieve {
   Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets numerical aperture of the lens.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets the name of the objective's manufacturer.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets model name/number of the objective.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveModel(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets the specified magnification of the objective.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets serial number of the objective.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
 
   /**
-   * For a particular Objective, gets TODO.
+   * For a particular Objective, gets working distance of the objective, in um.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -894,6 +1651,22 @@ public interface MetadataRetrieve {
   // - Plane property retrieval -
 
   /**
+   * For a particular Plane, gets the SHA1 hash of this plane's pixels.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  String getPlaneHashSHA1(int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * For a particular Plane, gets unique label identifying this plane.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  String getPlaneID(int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
    * For a particular Plane, gets the channel index.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
@@ -938,13 +1711,13 @@ public interface MetadataRetrieve {
   // - Plate property retrieval -
 
   /**
-   * For a particular Plate, gets identifies a plate within a screen.
+   * For a particular Plate, gets description of the plate.
    * @param plateIndex index of the Plate
    */
   String getPlateDescription(int plateIndex);
 
   /**
-   * For a particular Plate, gets reference to this plate in an external database.
+   * For a particular Plate, gets reference to the plate in an external database.
    * @param plateIndex index of the Plate
    */
   String getPlateExternalIdentifier(int plateIndex);
@@ -970,11 +1743,169 @@ public interface MetadataRetrieve {
   // - PlateRef property retrieval -
 
   /**
-   * For a particular PlateRef, gets label reference for the associated plate.
+   * For a particular PlateRef, gets TODO.
    * @param screenIndex index of the Screen
    * @param plateRefIndex index of the PlateRef
    */
   String getPlateRefID(int screenIndex, int plateRefIndex);
+
+  /**
+   * For a particular PlateRef, gets TODO.
+   * @param screenIndex index of the Screen
+   * @param plateRefIndex index of the PlateRef
+   */
+  Integer getPlateRefSample(int screenIndex, int plateRefIndex);
+
+  /**
+   * For a particular PlateRef, gets TODO.
+   * @param screenIndex index of the Screen
+   * @param plateRefIndex index of the PlateRef
+   */
+  String getPlateRefWell(int screenIndex, int plateRefIndex);
+
+  // - Point property retrieval -
+
+  /**
+   * For a particular Point, gets unique label identifying the point.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPointID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, gets X coordinate of the center of the point.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPointcx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, gets Y coordinate of the center of the point.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPointcy(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, gets radius of the point, in pixels.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPointr(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPointtransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Polygon property retrieval -
+
+  /**
+   * For a particular Polygon, gets unique label identifying the polygon.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPolygonID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polygon, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPolygonpoints(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polygon, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPolygontransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Polyline property retrieval -
+
+  /**
+   * For a particular Polyline, gets unique label identifying the polyline.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPolylineID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polyline, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPolylinepoints(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Polyline, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPolylinetransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Project property retrieval -
+
+  /**
+   * For a particular Project, gets description of the project.
+   * @param projectIndex index of the Project
+   */
+  String getProjectDescription(int projectIndex);
+
+  /**
+   * For a particular Project, gets reference to the experimenter who owns the project.
+   * @param projectIndex index of the Project
+   */
+  String getProjectExperimenterRef(int projectIndex);
+
+  /**
+   * For a particular Project, gets reference to the group that owns the project.
+   * @param projectIndex index of the Project
+   */
+  String getProjectGroupRef(int projectIndex);
+
+  /**
+   * For a particular Project, gets unique label identifying the project.
+   * @param projectIndex index of the Project
+   */
+  String getProjectID(int projectIndex);
+
+  /**
+   * For a particular Project, gets name of the project.
+   * @param projectIndex index of the Project
+   */
+  String getProjectName(int projectIndex);
+
+  // - ProjectRef property retrieval -
+
+  /**
+   * For a particular ProjectRef, gets unique label identifying the project.
+   * @param datasetIndex index of the Dataset
+   * @param projectRefIndex index of the ProjectRef
+   */
+  String getProjectRefID(int datasetIndex, int projectRefIndex);
+
+  // - Pump property retrieval -
+
+  /**
+   * For a particular Pump, gets unique label identifying the light source to be used as a pump.
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  String getPumpLightSource(int instrumentIndex, int lightSourceIndex);
 
   // - ROI property retrieval -
 
@@ -1041,6 +1972,16 @@ public interface MetadataRetrieve {
    */
   Integer getROIZ1(int imageIndex, int roiIndex);
 
+  // - ROIRef property retrieval -
+
+  /**
+   * For a particular ROIRef, gets reference to an ROI associated with the microbeam manipulation.
+   * @param imageIndex index of the Image
+   * @param microbeamManipulationIndex index of the MicrobeamManipulation
+   * @param roiRefIndex index of the ROIRef
+   */
+  String getROIRefID(int imageIndex, int microbeamManipulationIndex, int roiRefIndex);
+
   // - Reagent property retrieval -
 
   /**
@@ -1065,13 +2006,98 @@ public interface MetadataRetrieve {
   String getReagentName(int screenIndex, int reagentIndex);
 
   /**
-   * For a particular Reagent, gets reference to this reagent in an external database.
+   * For a particular Reagent, gets reference to the reagent in an external database.
    * @param screenIndex index of the Screen
    * @param reagentIndex index of the Reagent
    */
   String getReagentReagentIdentifier(int screenIndex, int reagentIndex);
 
+  // - Rect property retrieval -
+
+  /**
+   * For a particular Rect, gets unique label identifying the rectangle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getRectID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, gets height of the rectangle, in pixels.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getRectheight(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getRecttransform(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, gets width of the rectangle, in pixels.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getRectwidth(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, gets X coordinate of the upper left corner of the rectangle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getRectx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Rect, gets Y coordinate of the upper left corner of the rectangle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getRecty(int imageIndex, int roiIndex, int shapeIndex);
+
+  // - Region property retrieval -
+
+  /**
+   * For a particular Region, gets TODO.
+   * @param imageIndex index of the Image
+   * @param regionIndex index of the Region
+   */
+  String getRegionID(int imageIndex, int regionIndex);
+
+  /**
+   * For a particular Region, gets TODO.
+   * @param imageIndex index of the Image
+   * @param regionIndex index of the Region
+   */
+  String getRegionName(int imageIndex, int regionIndex);
+
+  /**
+   * For a particular Region, gets TODO.
+   * @param imageIndex index of the Image
+   * @param regionIndex index of the Region
+   */
+  String getRegionTag(int imageIndex, int regionIndex);
+
   // - Screen property retrieval -
+
+  /**
+   * For a particular Screen, gets description of the screen.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenDescription(int screenIndex);
+
+  /**
+   * For a particular Screen, gets TODO.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenExtern(int screenIndex);
 
   /**
    * For a particular Screen, gets unique label identifying the screen.
@@ -1104,6 +2130,12 @@ public interface MetadataRetrieve {
   String getScreenReagentSetDescription(int screenIndex);
 
   /**
+   * For a particular Screen, gets reference to an externally defined set of reagents.
+   * @param screenIndex index of the Screen
+   */
+  String getScreenReagentSetIdentifier(int screenIndex);
+
+  /**
    * For a particular Screen, gets human-readable screen type, e.g. RNAi, cDNA.
    * @param screenIndex index of the Screen
    */
@@ -1131,6 +2163,41 @@ public interface MetadataRetrieve {
    * @param screenAcquisitionIndex index of the ScreenAcquisition
    */
   String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex);
+
+  // - ScreenRef property retrieval -
+
+  /**
+   * For a particular ScreenRef, gets label reference to a screen.
+   * @param plateIndex index of the Plate
+   * @param screenRefIndex index of the ScreenRef
+   */
+  String getScreenRefID(int plateIndex, int screenRefIndex);
+
+  // - Shape property retrieval -
+
+  /**
+   * For a particular Shape, gets unique label identifying the shape.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets T position of the shape.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getShapetheT(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets Z position of the shape.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getShapetheZ(int imageIndex, int roiIndex, int shapeIndex);
 
   // - StageLabel property retrieval -
 
@@ -1184,10 +2251,30 @@ public interface MetadataRetrieve {
    */
   Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
 
+  // - Thumbnail property retrieval -
+
+  /**
+   * For a particular Thumbnail, gets unique label identifying the thumbnail.
+   * @param imageIndex index of the Image
+   */
+  String getThumbnailID(int imageIndex);
+
+  /**
+   * For a particular Thumbnail, gets MIME-type of the thumbnail; must be set to 'SVG' if thumbnail data is embedded.
+   * @param imageIndex index of the Image
+   */
+  String getThumbnailMIMEtype(int imageIndex);
+
+  /**
+   * For a particular Thumbnail, gets external URI referring to the thumbnail.
+   * @param imageIndex index of the Image
+   */
+  String getThumbnailhref(int imageIndex);
+
   // - TiffData property retrieval -
 
   /**
-   * For a particular TiffData, gets TODO.
+   * For a particular TiffData, gets the name of the file containing these IFDs.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1195,7 +2282,7 @@ public interface MetadataRetrieve {
   String getTiffDataFileName(int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, gets TODO.
+   * For a particular TiffData, gets C position of the image plane at the specified IFD, indexed from 0.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1203,7 +2290,7 @@ public interface MetadataRetrieve {
   Integer getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, gets TODO.
+   * For a particular TiffData, gets T position of the image plane at the specified IFD, indexed from 0.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1211,7 +2298,7 @@ public interface MetadataRetrieve {
   Integer getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, gets TODO.
+   * For a particular TiffData, gets Z position of the image plane at the specified IFD, indexed from 0.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1219,7 +2306,7 @@ public interface MetadataRetrieve {
   Integer getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, gets TODO.
+   * For a particular TiffData, gets first IFD for which this element is applicable, indexed from 0.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1227,7 +2314,7 @@ public interface MetadataRetrieve {
   Integer getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, gets TODO.
+   * For a particular TiffData, gets Number of IFDs for which this element is applicable; default is the number of planes (if no IFD is specified), or 1 (if an IFD is specified)..
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
@@ -1235,12 +2322,49 @@ public interface MetadataRetrieve {
   Integer getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex);
 
   /**
-   * For a particular TiffData, gets TODO.
+   * For a particular TiffData, gets unique identifier indicating which file contains these IFDs.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    * @param tiffDataIndex index of the TiffData
    */
   String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+  // - TransmittanceRange property retrieval -
+
+  /**
+   * For a particular TransmittanceRange, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  Integer getTransmittanceRangeCutIn(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  Integer getTransmittanceRangeCutInTolerance(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  Integer getTransmittanceRangeCutOut(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  Integer getTransmittanceRangeCutOutTolerance(int instrumentIndex, int filterIndex);
+
+  /**
+   * For a particular TransmittanceRange, gets TODO.
+   * @param instrumentIndex index of the Instrument
+   * @param filterIndex index of the Filter
+   */
+  Integer getTransmittanceRangeTransmittance(int instrumentIndex, int filterIndex);
 
   // - Well property retrieval -
 
@@ -1252,14 +2376,14 @@ public interface MetadataRetrieve {
   Integer getWellColumn(int plateIndex, int wellIndex);
 
   /**
-   * For a particular Well, gets description of the externally defined ID for this plate.
+   * For a particular Well, gets description of the externally defined ID for the well.
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
   String getWellExternalDescription(int plateIndex, int wellIndex);
 
   /**
-   * For a particular Well, gets reference to this well in an external database.
+   * For a particular Well, gets reference to the well in an external database.
    * @param plateIndex index of the Plate
    * @param wellIndex index of the Well
    */
@@ -1271,6 +2395,13 @@ public interface MetadataRetrieve {
    * @param wellIndex index of the Well
    */
   String getWellID(int plateIndex, int wellIndex);
+
+  /**
+   * For a particular Well, gets label reference for the associated reagent.
+   * @param plateIndex index of the Plate
+   * @param wellIndex index of the Well
+   */
+  String getWellReagent(int plateIndex, int wellIndex);
 
   /**
    * For a particular Well, gets row index of the well, where top-left is 0.
@@ -1295,6 +2426,14 @@ public interface MetadataRetrieve {
    * @param wellSampleIndex index of the WellSample
    */
   String getWellSampleID(int plateIndex, int wellIndex, int wellSampleIndex);
+
+  /**
+   * For a particular WellSample, gets label reference for the associated image.
+   * @param plateIndex index of the Plate
+   * @param wellIndex index of the Well
+   * @param wellSampleIndex index of the WellSample
+   */
+  String getWellSampleImageRef(int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, gets link to the Image element.
@@ -1327,5 +2466,15 @@ public interface MetadataRetrieve {
    * @param wellSampleIndex index of the WellSample
    */
   Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
+
+  // - WellSampleRef property retrieval -
+
+  /**
+   * For a particular WellSampleRef, gets TODO.
+   * @param screenIndex index of the Screen
+   * @param screenAcquisitionIndex index of the ScreenAcquisition
+   * @param wellSampleRefIndex index of the WellSampleRef
+   */
+  String getWellSampleRefID(int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex);
 
 }

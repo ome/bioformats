@@ -25,6 +25,97 @@
 # Path elements ending in plus (+) have maxOccurs > 1 and generate an
 # index parameter to allow differentiation between them.
 
+## Project ##
+
+[Project]
+countable = true
+path = Project+
+description = a project in the metadata store
+
+[Project ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the project
+
+[Project Description]
+type = String
+description = description of the project
+
+[Project ExperimenterRef]
+type = String
+description = reference to the experimenter who owns the project
+
+[Project GroupRef]
+type = String
+description = reference to the group that owns the project
+
+[Project Name]
+type = String
+description = name of the project
+
+## ProjectRef ##
+
+[ProjectRef]
+countable = true
+path = Dataset+/ProjectRef+
+description = reference to a project
+
+[ProjectRef ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the project
+
+## Dataset ##
+
+[Dataset]
+countable = true
+path = Dataset+
+description = a dataset in the metadata store
+
+[Dataset ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the dataset
+
+[Dataset Locked]
+type = Boolean
+description = indicates whether the images in the dataset can be altered
+
+[Dataset Description]
+type = String
+description = description of the dataset
+
+[Dataset ExperimenterRef]
+type = String
+description = reference to the experimenter who owns the dataset
+
+[Dataset GroupRef]
+type = String
+description = reference to the group that owns the dataset
+
+[Dataset Name]
+type = String
+description = name of the dataset
+
+## DatasetRef ##
+
+[DatasetRef]
+countable = true
+path = Image+/DatasetRef+
+description = TODO
+
+[DatasetRef 2003FC]
+path = -
+
+[DatasetRef ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
 ### Entities for 5D Image information ###
 
 ## Image ##
@@ -52,13 +143,45 @@ description = the creation date of the image
 type = String
 description = the full description of the image
 
+[Image ExperimenterRef]
+type = String
+description = reference to the experimenter who created this image
+
 [Image InstrumentRef]
 type = String
 description = label reference for the associated instrument
 
+[Image GroupRef]
+type = String
+description = reference to the group that owns this image
+
+[Image Objective]
+path = Image+/ObjectiveRef
+type = String
+getter = getNodeID
+setter = setNodeID
+description = reference to the objective used when acquiring this image
+
+[Image Objective 200706]
+path = -
+
+[Image ExperimentRef]
+type = String
+description = reference to the experiment to which this image belongs
+
 [Image DefaultPixels]
 type = String
 description = default pixels set for the image
+
+[Image AcquiredPixels]
+type = String
+description = acquired pixels set for the image
+
+[Image AcquiredPixels 200706]
+path = -
+
+[Image AcquiredPixels 2003FC]
+path = -
 
 ## Pixels ##
 
@@ -105,39 +228,63 @@ description = endianness of the pixels set
 type = String
 description = the dimension order of the pixels set
 
+## Thumbnail ##
+
+[Thumbnail]
+path = Image+/Thumbnail
+description = an embedded or external thumbnail for an image
+
+[Thumbnail ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the thumbnail
+
+[Thumbnail MIMEtype]
+type = String
+description = MIME-type of the thumbnail; must be set to 'SVG' if thumbnail \
+              data is embedded
+
+[Thumbnail href]
+type = String
+description = external URI referring to the thumbnail
+
 ## TiffData ##
 
 [TiffData]
 countable = true
 path = Image+/Pixels+/TiffData+
-description = TODO
+description = describes the location and organization of pixel data within a \
+              TIFF file
 
 [TiffData FirstZ]
 type = Integer
-description = TODO
+description = Z position of the image plane at the specified IFD, indexed from 0
 
 [TiffData FirstT]
 type = Integer
-description = TODO
+description = T position of the image plane at the specified IFD, indexed from 0
 
 [TiffData FirstC]
 type = Integer
-description = TODO
+description = C position of the image plane at the specified IFD, indexed from 0
 
 [TiffData IFD]
 type = Integer
-description = TODO
+description = first IFD for which this element is applicable, indexed from 0
 
 [TiffData NumPlanes]
 type = Integer
-description = TODO
+description = Number of IFDs for which this element is applicable; default is \
+              the number of planes (if no IFD is specified), or 1 (if an IFD \
+              is specified).
 
 [TiffData UUID]
 path = Image+/Pixels+/TiffData+/UUID
 type = String
 getter = getCData
 setter = setCData
-description = TODO
+description = unique identifier indicating which file contains these IFDs
 
 [TiffData UUID 200706]
 path = -
@@ -148,7 +295,7 @@ path = -
 [TiffData FileName]
 path = Image+/Pixels+/TiffData+/UUID
 type = String
-description = TODO
+description = the name of the file containing these IFDs
 
 [TiffData FileName 200706]
 path = -
@@ -202,6 +349,30 @@ description = the starting wavelength in nanometers
 type = Integer
 description = the distance between adjacent wavelengths in nanometers
 
+## Region ##
+
+[Region]
+countable = true
+path = Image+/Region+
+description = TODO
+
+[Region ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = TODO
+
+[Region 2003FC]
+path = -
+
+[Region Tag]
+type = String
+description = TODO
+
+[Region Name]
+type = String
+description = TODO
+
 ## ImagingEnvironment ##
 
 [ImagingEnvironment]
@@ -210,19 +381,19 @@ description = the imaging environment for a particular image
 
 [ImagingEnvironment Temperature]
 type = Float
-description = TODO
+description = temperature of the imaging environment, in Celsius
 
 [ImagingEnvironment AirPressure]
 type = Float
-description = TODO
+description = air pressure, in millibars
 
 [ImagingEnvironment Humidity]
 type = Float
-description = TODO
+description = humidity, in percent fractions from 0.0 to 1.0
 
 [ImagingEnvironment CO2Percent]
 type = Float
-description = TODO
+description = CO2 level, in percent fractions from 0.0 to 1.0
 
 ## Plane ##
 
@@ -235,6 +406,12 @@ description = the plane information for a specific X-Y plane (section) \
 [Plane 2003FC]
 path = -
 
+[Plane ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying this plane
+
 [Plane TheZ]
 type = Integer
 description = the optical section index
@@ -246,6 +423,13 @@ description = the channel index
 [Plane TheT]
 type = Integer
 description = the timepoint
+
+[Plane HashSHA1]
+type = String
+description = the SHA1 hash of this plane's pixels
+
+[Plane HashSHA1 200706]
+path = -
 
 ## PlaneTiming ##
 
@@ -287,6 +471,48 @@ description = the Y coordinate of the stage position
 type = Float
 description = the Z coordinate of the stage position
 
+## MicrobeamManipulation ##
+
+[MicrobeamManipulation]
+countable = true
+path = Image+/MicrobeamManipulation+
+description = defines a microbeam operation and the region of the image to \
+              which it was applied
+
+[MicrobeamManipulation 2003FC]
+path = -
+
+[MicrobeamManipulation ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the microbeam manipulation
+
+[MicrobeamManipulation Type]
+type = String
+description = type of operation - FRAP, Photoablation, Photoactivation, \
+              Uncaging, OpticalTrapping, or Other
+
+[MicrobeamManipulation ExperimenterRef]
+type = String
+description = reference to the experimenter who applied this manipulation
+
+## MicrobeamManipulationRef ##
+
+[MicrobeamManipulationRef]
+countable = true
+path = Experiment+/MicrobeamManipulationRef+
+description = TODO
+
+[MicrobeamManipulationRef 2003FC]
+path = -
+
+[MicrobeamManipulationRef ID]
+getter = getNodeID
+setter = setNodeID
+type = String
+description = TODO
+
 ### Entities for channel information for a particular Image ###
 
 ## LogicalChannel ##
@@ -312,7 +538,7 @@ description = the logical channel's name
 
 [LogicalChannel SamplesPerPixel]
 type = Integer
-description = TODO
+description = number of channel components in the logical channel
 
 [LogicalChannel IlluminationType]
 type = String
@@ -380,6 +606,50 @@ description = the OTF associated with the logical channel
 [LogicalChannel OTF 2003FC]
 path = Image+/ChannelInfo+/OTFRef
 
+[LogicalChannel Detector]
+type = String
+path = Image+/LogicalChannel+/DetectorRef
+getter = getNodeID
+setter = setNodeID
+description = reference to the detector used to acquire this logical channel
+
+[LogicalChannel Detector 2003FC]
+path = Image+/ChannelInfo+/DetectorRef
+
+[LogicalChannel LightSource]
+type = String
+path = Image+/LogicalChannel+/LightSourceRef
+getter = getNodeID
+setter = setNodeID
+description = reference to the light source used to acquire this logical channel
+
+[LogicalChannel LightSource 2003FC]
+path = Image+/ChannelInfo+/LightSourceRef
+
+[LogicalChannel SecondaryExcitationFilter]
+type = String
+description = TODO
+
+[LogicalChannel SecondaryExcitationFilter 2003FC]
+path = -
+
+[LogicalChannel SecondaryEmissionFilter]
+type = String
+description = TODO
+
+[LogicalChannel SecondaryEmissionFilter 2003FC]
+path = -
+
+[LogicalChannel FilterSet]
+type = String
+path = Image+/LogicalChannel+/FilterSetRef
+getter = getNodeID
+setter = setNodeID
+description = reference to the filter set associated with this channel
+
+[LogicalChannel FilterSet 2003FC]
+path = -
+
 ## ChannelComponent ##
 
 [ChannelComponent]
@@ -400,10 +670,9 @@ type = String
 description = which color channel this ChannelComponent belongs to \
               (for example, 'R' for an 'RGB' PhotometricInterpretation)
 
-# FIXME xsd-fu needs to include get/setPixels methods in ChannelComponentNode?
-#[ChannelComponent Pixels]
-#type = String
-#description = the pixels to which this channel component corresponds
+[ChannelComponent Pixels]
+type = String
+description = the pixels to which this channel component corresponds
 
 ## DisplayOptions ##
 
@@ -425,6 +694,10 @@ description = unique label identifying the display options
 [DisplayOptions Zoom]
 type = Float
 description = zoom factor for use in the display (NOT THE LENS ZOOM)
+
+[DisplayOptions Display]
+type = String
+description = specifies to display the image as grayscale or RGB
 
 ## RedChannel ##
 
@@ -575,47 +848,57 @@ description = zoom factor for use in the display (NOT THE LENS ZOOM)
 
 ## GreyChannel ##
 
-# FIXME xsd-fu needs to include GreyChannelNode
-#[GreyChannel]
-#path = Image+/DisplayOptions/GreyChannel
-#description = information about the grey channel for a particular image
+[GreyChannel]
+path = Image+/DisplayOptions/GreyChannel
+description = information about the grey channel for a particular image
 #
 # FIXME the 2003FC path below will cause compilation errors because
 # GreyChannel is not of type GreyChannelNode, but DisplayChannelNode; need a
 # notation to specify the distinction between node type and method getter name
 #[GreyChannel 2003FC]
 #path = Image+/CA/DisplayOptions/GreyChannel
-#
-#[GreyChannel ChannelNumber]
-#type = Integer
-#description = TODO
-#
-#[GreyChannel WhiteLevel]
-#type = Float
-#description = TODO
-#
-#[GreyChannel BlackLevel]
-#type = Float
-#description = TODO
-#
-#[GreyChannel Gamma]
-#type = Float
-#description = TODO
+[GreyChannel 2003FC]
+path = -
+
+[GreyChannel ChannelNumber]
+type = Integer
+description = actual channel number, indexed from 0
+
+[GreyChannel WhiteLevel]
+type = Float
+description = brightest pixel value; anything above this will be set to 255
+
+[GreyChannel BlackLevel]
+type = Float
+description = dimmest pixel value; anything below this will be set to 0
+
+[GreyChannel Gamma]
+type = Float
+description = gamma value for this channel
+
+[GreyChannel isOn]
+type = Boolean
+description = TODO
+
+[GreyChannel isOn 2003FC]
+path = -
 
 ## GreyChannelMap ##
 
-# FIXME xsd-fu needs to include GreyChannelNode
-#[GreyChannelMap]
-#path = Image+/DisplayOptions/GreyChannel
-#description = color map setting for a particular image's grey channel
-#
+[GreyChannelMap]
+path = Image+/DisplayOptions/GreyChannel
+description = color map setting for a particular image's grey channel
+
 #[GreyChannelMap 2003FC]
 #path = Image+/CA/DisplayOptions
-#
-#[GreyChannelMap ColorMap]
-#type = String
-#description = TODO
-#
+[GreyChannelMap 2003FC]
+path = -
+
+[GreyChannelMap ColorMap]
+type = String
+description = describes color mapping function - Greyscale, Spectrum, or \
+              Blackbody
+
 # FIXME need to implement this conversion method in OMEXMLNode
 #[GreyChannelMap ColorMap 2003FC]
 #type = Boolean
@@ -677,9 +960,6 @@ path = Image+/DisplayOptions/ROI+
 description = a 5D bounding box region of interest in the metadata store \
               with a particular index
 
-[ROI 200809]
-path = -
-
 [ROI ID]
 type = String
 getter = getNodeID
@@ -690,33 +970,440 @@ description = unique label identifying the 5D bounding box ROI
 type = Integer
 description = the starting X coordinate
 
+[ROI X0 200809]
+path = -
+
 [ROI Y0]
 type = Integer
 description = the starting Y coordinate
+
+[ROI Y0 200809]
+path = -
 
 [ROI X1]
 type = Integer
 description = the ending X coordinate
 
+[ROI X1 200809]
+path = -
+
 [ROI Y1]
 type = Integer
 description = the ending Y coordinate
+
+[ROI Y1 200809]
+path = -
 
 [ROI Z0]
 type = Integer
 description = the starting Z coordinate
 
+[ROI Z0 200809]
+path = -
+
 [ROI Z1]
 type = Integer
 description = the ending Z coordinate
+
+[ROI Z1 200809]
+path = -
 
 [ROI T0]
 type = Integer
 description = the starting timepoint
 
+[ROI T0 200809]
+path = -
+
 [ROI T1]
 type = Integer
 description = the ending timepoint
+
+[ROI T1 200809]
+path = -
+
+## ROIRef ##
+
+[ROIRef]
+countable = true
+path = Image+/MicrobeamManipulation+/ROIRef+
+description = reference to an ROI
+
+[ROIRef 2003FC]
+path = -
+
+[ROIRef ID]
+getter = getNodeID
+setter = setNodeID
+type = String
+description = reference to an ROI associated with the microbeam manipulation
+
+## Shape ##
+
+[Shape]
+countable = true
+path = Image+/DisplayOptions/ROI+/Union/Shape+
+description = arbitrary shape in an ROI
+
+[Shape 2003FC]
+path = -
+
+[Shape 200706]
+path = -
+
+[Shape 200802]
+path = -
+
+[Shape ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the shape
+
+[Shape theZ]
+type = Integer
+description = Z position of the shape
+
+[Shape theT]
+type = Integer
+description = T position of the shape
+
+## Rect ##
+
+[Rect]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Rect
+description = describes a rectangle
+
+[Rect 2003FC]
+path = -
+
+[Rect 200706]
+path = -
+
+[Rect 200802]
+path = -
+
+[Rect ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the rectangle
+
+[Rect y]
+type = String
+description = Y coordinate of the upper left corner of the rectangle
+
+[Rect x]
+type = String
+description = X coordinate of the upper left corner of the rectangle
+
+[Rect width]
+type = String
+description = width of the rectangle, in pixels
+
+[Rect height]
+type = String
+description = height of the rectangle, in pixels
+
+[Rect transform]
+type = String
+description = TODO
+
+## Circle ##
+
+[Circle]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Circle
+description = describes a circle
+
+[Circle 2003FC]
+path = -
+
+[Circle 200706]
+path = -
+
+[Circle 200802]
+path = -
+
+[Circle ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the circle
+
+[Circle cy]
+type = String
+description = Y coordinate of the center of the circle
+
+[Circle cx]
+type = String
+description = X coordinate of the center of the circle
+
+[Circle r]
+type = String
+description = radius of the circle, in pixels
+
+[Circle transform]
+type = String
+description = TODO
+
+## Ellipse ##
+
+[Ellipse]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Ellipse
+description = describes an ellipse
+
+[Ellipse 2003FC]
+path = -
+
+[Ellipse 200706]
+path = -
+
+[Ellipse 200802]
+path = -
+
+[Ellipse ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the ellipse
+
+[Ellipse cy]
+type = String
+description = Y coordinate of the center of the ellipse
+
+[Ellipse cx]
+type = String
+description = X coordinate of the center of the ellipse
+
+[Ellipse rx]
+type = String
+description = horizontal radius of the ellipse
+
+[Ellipse ry]
+type = String
+description = vertical radius of the ellipse
+
+[Ellipse transform]
+type = String
+description = TODO
+
+## Line ##
+
+[Line]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Line
+description = describes a line
+
+[Line 2003FC]
+path = -
+
+[Line 200706]
+path = -
+
+[Line 200802]
+path = -
+
+[Line ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the line
+
+[Line y1]
+type = String
+description = Y coordinate of the first endpoint of the line
+
+[Line y2]
+type = String
+description = Y coordinate of the second endpoint of the line
+
+[Line x1]
+type = String
+description = X coordinate of the first endpoint of the line
+
+[Line x2]
+type = String
+description = X coordinate of the second endpoint of the line
+
+[Line transform]
+type = String
+description = TODO
+
+## Point ##
+
+[Point]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Point
+description = describes a point (filled circle)
+
+[Point 2003FC]
+path = -
+
+[Point 200706]
+path = -
+
+[Point 200802]
+path = -
+
+[Point ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the point
+
+[Point cy]
+type = String
+description = Y coordinate of the center of the point
+
+[Point cx]
+type = String
+description = X coordinate of the center of the point
+
+[Point r]
+type = String
+description = radius of the point, in pixels
+
+[Point transform]
+type = String
+description = TODO
+
+## Polygon ##
+
+[Polygon]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Polygon
+description = describes a polygon
+
+[Polygon 2003FC]
+path = -
+
+[Polygon 200706]
+path = -
+
+[Polygon 200802]
+path = -
+
+[Polygon ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the polygon
+
+[Polygon points]
+type = String
+description = TODO
+
+[Polygon transform]
+type = String
+description = TODO
+
+## Polyline ##
+
+[Polyline]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Polyline
+description = describes a set of lines
+
+[Polyline 2003FC]
+path = -
+
+[Polyline 200706]
+path = -
+
+[Polyline 200802]
+path = -
+
+[Polyline ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the polyline
+
+[Polyline points]
+type = String
+description = TODO
+
+[Polyline transform]
+type = String
+description = TODO
+
+## Mask ##
+
+[Mask]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Mask
+description = TODO
+
+[Mask 2003FC]
+path = -
+
+[Mask 200706]
+path = -
+
+[Mask 200802]
+path = -
+
+[Mask ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the mask
+
+[Mask y]
+type = String
+description = TODO
+
+[Mask x]
+type = String
+description = TODO
+
+[Mask width]
+type = String
+description = TODO
+
+[Mask height]
+type = String
+description = TODO
+
+[Mask transform]
+type = String
+description = TODO
+
+## MaskPixels ##
+
+[MaskPixels]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Mask/MaskPixels
+description = TODO
+
+[MaskPixels 2003FC]
+path = -
+
+[MaskPixels 200706]
+path = -
+
+[MaskPixels 200802]
+path = -
+
+[MaskPixels ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the mask's pixels
+
+[MaskPixels ExtendedPixelType]
+type = String
+description = TODO
+
+[MaskPixels SizeX]
+type = Integer
+description = TODO
+
+[MaskPixels SizeY]
+type = Integer
+description = TODO
+
+[MaskPixels BigEndian]
+type = Boolean
+description = TODO
+
+[MaskPixels BinData]
+type = String
+description = TODO
 
 ### Entities for Instrument settings for a particular Image ###
 
@@ -728,7 +1415,7 @@ description = the objective associated with a particular image
 
 [ObjectiveSettings 200706]
 path = Image+/ObjectiveSettings
-description = TODO
+description = the objective associated with a particular image
 
 [ObjectiveSettings Objective]
 type = String
@@ -789,14 +1476,14 @@ path = -
 
 [DetectorSettings Voltage]
 type = Float
-description = TODO
+description = the detector voltage
 
 [DetectorSettings Voltage 2003FC]
 path = -
 
 [DetectorSettings ReadOutRate]
 type = Float
-description = TODO
+description = the speed at which the detector can count pixels, in MHz
 
 [DetectorSettings ReadOutRate 2003FC]
 path = -
@@ -821,6 +1508,30 @@ type = Float
 description = the primary light source attenuation
 
 [LightSourceSettings Wavelength]
+type = Integer
+description = the primary light source wavelength
+
+## LightSourceRef ##
+
+[LightSourceRef]
+countable = true
+path = Image+/MicrobeamManipulation+/LightSourceRef+
+description = TODO
+
+[LightSourceRef 2003FC]
+path = -
+
+[LightSourceRef LightSource]
+getter = getNodeID
+setter = setNodeID
+type = String
+description = TODO
+
+[LightSourceRef Attenuation]
+type = Float
+description = the primary light source attenuation
+
+[LightSourceRef Wavelength]
 type = Integer
 description = the primary light source wavelength
 
@@ -863,6 +1574,35 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the instrument
 
+## Microscope ##
+
+[Microscope]
+path = Instrument+/Microscope
+description = information about a microscope
+
+[Microscope ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the microscope
+
+[Microscope Type]
+type = String
+description = microscope type - Upright, Inverted, Dissection, \
+                                Electrophysiology, or Unknown
+
+[Microscope Model]
+type = String
+description = model number of the microscope
+
+[Microscope SerialNumber]
+type = String
+description = serial number of the microscope
+
+[Microscope Manufacturer]
+type = String
+description = manufacturer of the microscope
+
 ## LightSource ##
 
 [LightSource]
@@ -878,19 +1618,19 @@ description = unique label identifying the light source
 
 [LightSource Manufacturer]
 type = String
-description = TODO
+description = manufacturer of the light source
 
 [LightSource Model]
 type = String
-description = TODO
+description = model number of the light source
 
 [LightSource SerialNumber]
 type = String
-description = TODO
+description = serial number of the light source
 
 [LightSource Power]
 type = Float
-description = TODO
+description = the light source power, in watts
 
 [LightSource Power 200706]
 path = -
@@ -906,11 +1646,12 @@ description = a laser for a particular instrument
 
 [Laser Type]
 type = String
-description = TODO
+description = type of laser - Excimer, Gas, MetalVapor, SolidState, Dye, \
+              SemiConductor, FreeElectron, or Unknown
 
 [Laser LaserMedium]
 type = String
-description = TODO
+description = lasing medium for the laser
 
 [Laser LaserMedium 2003FC]
 getter = getMedium
@@ -918,11 +1659,11 @@ setter = setMedium
 
 [Laser Wavelength]
 type = Integer
-description = TODO
+description = wavelength of the laser, in nm
 
 [Laser FrequencyMultiplication]
 type = Integer
-description = TODO
+description = value by which frequency is multiplied
 
 [Laser FrequencyMultiplication 2003FC]
 type = Boolean
@@ -931,7 +1672,7 @@ setter = setFrequencyDoubled
 
 [Laser Tuneable]
 type = Boolean
-description = TODO
+description = indicates whether or not the laser can be tuned
 
 [Laser Tuneable 2003FC]
 getter = getTunable
@@ -941,6 +1682,32 @@ setter = setTunable
 type = String
 description = TODO
 
+[Laser PockelCell]
+type = Boolean
+description = TODO
+
+[Laser PockelCell 2003FC]
+path = -
+
+[Laser RepetitionRate]
+type = Boolean
+description = rate in Hz at which the laser pulses
+
+[Laser RepetitionRate 2003FC]
+path = -
+
+## Pump ##
+
+[Pump]
+path = Instrument+/LightSource+/Laser/Pump
+description = the pump for a particular laser
+
+[Pump LightSource]
+getter = getNodeID
+setter = setNodeID
+type = String
+description = unique label identifying the light source to be used as a pump
+
 ## Filament ##
 
 [Filament]
@@ -949,7 +1716,7 @@ description = a filament for a particular instrument
 
 [Filament Type]
 type = String
-description = TODO
+description = the type of filament
 
 ## Arc ##
 
@@ -959,7 +1726,7 @@ description = an arc for a particular instrument
 
 [Arc Type]
 type = String
-description = TODO
+description = the type of arc
 
 ## Detector ##
 
@@ -976,31 +1743,45 @@ description = unique label identifying the detector
 
 [Detector Manufacturer]
 type = String
-description = TODO
+description = name of the detector manufacturer
 
 [Detector Model]
 type = String
-description = TODO
+description = model name/number of the detector
 
 [Detector SerialNumber]
 type = String
-description = TODO
+description = serial number of the detector
 
 [Detector Type]
 type = String
-description = TODO
+description = the detector type, e.g. CCD, PMT
 
 [Detector Gain]
 type = Float
-description = TODO
+description = the gain of the detector
 
 [Detector Voltage]
 type = Float
-description = TODO
+description = the voltage of the detector
 
 [Detector Offset]
 type = Float
-description = TODO
+description = the offset of the detector
+
+[Detector Zoom]
+type = Float
+description = optional zoom value of the detector
+
+[Detector Zoom 2003FC]
+path = -
+
+[Detector AmplificationGain]
+type = Float
+description = amplification gain of the detector
+
+[Detector AmplificationGain 2003FC]
+path = -
 
 ## Objective ##
 
@@ -1017,44 +1798,44 @@ description = unique label identifying the objective
 
 [Objective Manufacturer]
 type = String
-description = TODO
+description = the name of the objective's manufacturer
 
 [Objective Model]
 type = String
-description = TODO
+description = model name/number of the objective
 
 [Objective SerialNumber]
 type = String
-description = TODO
+description = serial number of the objective
 
 [Objective Correction]
 type = String
-description = TODO
+description = type of correction coating applied to the objective lens
 
 [Objective Correction 2003FC]
 path = -
 
 [Objective Immersion]
 type = String
-description = TODO
+description = immersion medium used with the objective lens
 
 [Objective Immersion 2003FC]
 path = -
 
 [Objective LensNA]
 type = Float
-description = TODO
+description = numerical aperture of the lens
 
 [Objective NominalMagnification]
 type = Integer
-description = TODO
+description = the specified magnification of the objective
 
 [Objective NominalMagnification 2003FC]
 path = -
 
 [Objective CalibratedMagnification]
 type = Float
-description = TODO
+description = the measured magnification of the objective
 
 [Objective CalibratedMagnification 2003FC]
 getter = getMagnification
@@ -1062,7 +1843,7 @@ setter = setMagnification
 
 [Objective WorkingDistance]
 type = Float
-description = TODO
+description = working distance of the objective, in um
 
 [Objective WorkingDistance 2003FC]
 path = -
@@ -1092,97 +1873,209 @@ path = -
 #http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd
 #http://openmicroscopy.org/api/xml/OME/ome-instrument.html
 
-## ExcitationFilter ##
+## Filter ##
 
-#[ExcitationFilter]
-#path = ?
-#description = an excitation filter for a particular instrument
-#
-#[ExcitationFilter 2003FC]
-#path = CA/ExcitationFilter+
-#
-#[ExcitationFilter Manufacturer]
-#type = String
-#description = TODO
-#
-#[ExcitationFilter Model]
-#type = String
-#description = TODO
-#
-#[ExcitationFilter LotNumber]
-#type = String
-#description = TODO
-#
-#[ExcitationFilter Type]
-#type = String
-#description = TODO
+[Filter]
+countable = true
+path = Instrument+/Filter+
+description = TODO
+
+[Filter Type]
+type = String
+description = TODO
+
+[Filter Type 2003FC]
+path = -
+
+[Filter FilterWheel]
+type = String
+description = TODO
+
+[Filter FilterWheel 2003FC]
+path = -
+
+[Filter Manufacturer]
+type = String
+description = TODO
+
+[Filter Manufacturer 2003FC]
+path = -
+
+[Filter Model]
+type = String
+description = TODO
+
+[Filter Model 2003FC]
+path = -
+
+[Filter LotNumber]
+type = String
+description = TODO
+
+[Filter LotNumber 2003FC]
+path = -
+
+## ExFilter ##
+
+[ExFilter]
+path = Instrument+/Filter+/ExFilter
+description = an excitation filter for a particular instrument
+
+[ExFilter 200706]
+path = -
+
+[ExFilter 200802]
+path = -
+
+[ExFilter 200809]
+path = -
+
+[ExFilter Manufacturer]
+type = String
+description = TODO
+
+[ExFilter Model]
+type = String
+description = TODO
+
+[ExFilter LotNumber]
+type = String
+description = TODO
+
+[ExFilter Type]
+type = String
+description = TODO
 
 ## Dichroic ##
 
-#[Dichroic]
-#path = ?
-#description = a dichroic for a particular instrument
-#
-#[Dichroic 2003FC]
-#path = CA/Dichroic+
-#
-#[Dichroic Manufacturer]
-#type = String
-#description = TODO
-#
-#[Dichroic Model]
-#type = String
-#description = TODO
-#
-#[Dichroic LotNumber]
-#type = String
-#description = TODO
+[Dichroic]
+countable = true
+path = Instrument+/Dichroic+
+description = a dichroic for a particular instrument
 
-## EmissionFilter ##
+[Dichroic 2003FC]
+path = Instrument+/Filter+/Dichroic
 
-#[EmissionFilter]
-#path = ?
-#description = an emission filter for a particular instrument
-#
-#[EmissionFilter 2003FC]
-#path = CA/EmissionFilter+
-#
-#[EmissionFilter Manufacturer]
-#type = String
-#description = TODO
-#
-#[EmissionFilter Model]
-#type = String
-#description = TODO
-#
-#[EmissionFilter LotNumber]
-#type = String
-#description = TODO
-#
-#[EmissionFilter Type]
-#type = String
-#description = TODO
+[Dichroic Manufacturer]
+type = String
+description = TODO
+
+[Dichroic Model]
+type = String
+description = TODO
+
+[Dichroic LotNumber]
+type = String
+description = TODO
+
+## EmFilter ##
+
+[EmFilter]
+path = Instrument+/Filter+/EmFilter
+description = an emission filter for a particular instrument
+
+[EmFilter 200706]
+path = -
+
+[EmFilter 200802]
+path = -
+
+[EmFilter 200809]
+path = -
+
+[EmFilter Manufacturer]
+type = String
+description = TODO
+
+[EmFilter Model]
+type = String
+description = TODO
+
+[EmFilter LotNumber]
+type = String
+description = TODO
+
+[EmFilter Type]
+type = String
+description = TODO
 
 ## FilterSet ##
 
-#[FilterSet]
-#path = ?
-#description = a filter set for a particular instrument
-#
-#[FilterSet 2003FC]
-#path = CA/FilterSet+
-#
-#[FilterSet Manufacturer]
-#type = String
-#description = TODO
-#
-#[FilterSet Model]
-#type = String
-#description = TODO
-#
-#[FilterSet LotNumber]
-#type = String
-#description = TODO
+[FilterSet]
+countable = true
+path = Instrument+/FilterSet+
+description = a filter set for a particular instrument
+
+[FilterSet 2003FC]
+path = Instrument+/Filter+/FilterSet
+
+[FilterSet Manufacturer]
+type = String
+description = TODO
+
+[FilterSet Model]
+type = String
+description = TODO
+
+[FilterSet LotNumber]
+type = String
+description = TODO
+
+[FilterSet ExFilter]
+type = String
+getter = getExFilterRef
+setter = setExFilterRef
+description = TODO
+
+[FilterSet ExFilter 2003FC]
+path = -
+
+[FilterSet EmFilter]
+type = String
+getter = getEmFilterRef
+setter = setEmFilterRef
+description = TODO
+
+[FilterSet EmFilter 2003FC]
+path = -
+
+[FilterSet Dichroic]
+type = String
+getter = getDichroicRef
+setter = setDichroicRef
+description = TODO
+
+[FilterSet Dichroic 2003FC]
+path = -
+
+## TransmittanceRange ##
+
+[TransmittanceRange]
+path = Instrument+/Filter+/TransmittanceRange
+description = TODO
+
+[TransmittanceRange 2003FC]
+path = -
+
+[TransmittanceRange CutIn]
+type = Integer
+description = TODO
+
+[TransmittanceRange Transmittance]
+type = Integer
+description = TODO
+
+[TransmittanceRange CutOut]
+type = Integer
+description = TODO
+
+[TransmittanceRange CutInTolerance]
+type = Integer
+description = TODO
+
+[TransmittanceRange CutOutTolerance]
+type = Integer
+description = TODO
 
 ## OTF ##
 
@@ -1199,30 +2092,45 @@ description = unique label identifying the optical transfer function
 
 [OTF SizeX]
 type = Integer
-description = TODO
+description = width of the optical transfer function
 
 [OTF SizeY]
 type = Integer
-description = TODO
+description = height of the optical transfer function
 
 [OTF PixelType]
 type = String
-description = TODO
+description = the pixel type of the optical transfer function
 
 [OTF OpticalAxisAveraged]
 type = Boolean
-description = TODO
+description = indicates whether or not optical axis averaging was performed
 
 [OTF OpticalAxisAveraged 2003FC]
 getter = getOpticalAxisAvrg
 setter = setOpticalAxisAvrg
 
 [OTF Objective]
-path = Instrument+/OTF+/ObjectiveRef
 type = String
+path = Instrument+/OTF+/ObjectiveRef
 getter = getNodeID
 setter = setNodeID
 description = objective described by the optical transfer function
+
+#[OTF FilterSet]
+#type = String
+#path = Instrument+/OTF+/FilterSetRef
+#getter = getNodeID
+#setter = setNodeID
+#description = filter set associated with the optical transfer function
+
+#[OTF FilterSet 2003FC]
+#path = -
+
+[OTF BinaryFile]
+type = String
+description = the Base64-encoded optical transfer function, or the path to a \
+              file containing it
 
 ### Entities for Experiment & Experimenter details ###
 
@@ -1241,14 +2149,15 @@ description = unique label identifying the experiment
 
 [Experiment Description]
 type = String
-description = TODO
+description = description of the experiment
 
 [Experiment Type]
 type = String
-description = TODO
+description = type of experiment, e.g. FRET, TimeLapse
 
-#[Experiment Experimenter]
-#TODO - need Experiment.setExperimenter in OME-XML Java library
+[Experiment ExperimenterRef]
+type = String
+description = ID of the experimenter who conducted the experiment
 
 ## Experimenter ##
 
@@ -1267,17 +2176,47 @@ description = unique label identifying the experimenter
 type = String
 description = the first name of the experimenter
 
+[Experimenter FirstName 2003FC]
+path = -
+
 [Experimenter LastName]
 type = String
 description = the last name of the experimenter
+
+[Experimenter LastName 2003FC]
+path = -
 
 [Experimenter Email]
 type = String
 description = the e-mail address of the experimenter
 
+[Experimenter Email 2003FC]
+path = -
+
 [Experimenter Institution]
 type = String
 description = the institution to which the experimenter belongs
+
+[Experimenter Institution 2003FC]
+path = -
+
+[Experimenter OMEName]
+type = String
+description = OME user name of the experimenter
+
+[Experimenter OMEName 2003FC]
+path = -
+
+## Group ##
+
+[Group]
+countable = true
+path = Group+
+description = a group of experimenters
+
+[Group Name]
+type = String
+description = the name of the group
 
 ## GroupRef ##
 
@@ -1285,6 +2224,31 @@ description = the institution to which the experimenter belongs
 countable = true
 path = Experimenter+/GroupRef+
 description = HACK - force creation of MetadataRetrieve.getGroupRefCount(int)
+
+## Contact ##
+
+[Contact]
+path = Group+/Contact
+description = a group contact
+
+[Contact Experimenter]
+getter = getNodeID
+setter = setNodeID
+type = String
+description = unique label identifying the experimenter who is the group contact
+
+## Leader ##
+
+# TODO: xsd-fu needs to return a LeaderNode when Group.getLeader() is called
+#[Leader]
+#path = Group+/Leader
+#description = TODO
+
+#[Leader Experimenter]
+#getter = getNodeID
+#setter = setNodeID
+#type = String
+#description = TODO
 
 ## ExperimenterMembership ##
 
@@ -1308,18 +2272,11 @@ countable = true
 path = Plate+
 description = identifies a plate within a screen
 
-[Plate 2003FC]
-path = -
-
 [Plate ID]
 type = String
 getter = getNodeID
 setter = setNodeID
 description = unique label identifying the plate
-
-#[Plate ScreenRef]
-#type =
-#description = TODO
 
 [Plate Name]
 type = String
@@ -1327,30 +2284,68 @@ description = the plate's name
 
 [Plate Description]
 type = String
+description = description of the plate
+
+[Plate Description 2003FC]
+path = -
 
 [Plate Status]
 type = String
-description = current state of the plate with respect to the experiment work-flow
+description = current state of the plate with respect to the experiment \
+              work-flow
+
+[Plate Status 2003FC]
+path = -
 
 [Plate ExternalIdentifier]
 type = String
-description = reference to this plate in an external database
+description = reference to the plate in an external database
+
+[Plate ExternalIdentifier 2003FC]
+getter = getExternRef
+setter = setExternRef
 
 ## PlateRef ##
 
 [PlateRef]
 countable = true
 path = Screen+/PlateRef+
-description = reference to a Plate element
+description = TODO
 
 [PlateRef 2003FC]
-path = -
+path = Image+/PlateRef
 
 [PlateRef ID]
-type = String
 getter = getNodeID
 setter = setNodeID
-description = label reference for the associated plate
+type = String
+description = TODO
+
+[PlateRef Sample]
+type = Integer
+description = TODO
+
+[PlateRef Sample 200706]
+path = -
+
+[PlateRef Sample 200802]
+path = -
+
+[PlateRef Sample 200809]
+path = -
+
+[PlateRef Well]
+type = String
+description = TODO
+
+[PlateRef Well 200706]
+path = -
+
+[PlateRef Well 200802]
+path = -
+
+[PlateRef Well 200809]
+path = -
 
 ## Reagent ##
 
@@ -1378,23 +2373,7 @@ description = the reagent's name
 
 [Reagent ReagentIdentifier]
 type = String
-description = reference to this reagent in an external database
-
-## ReagentRef ##
-
-#[ReagentRef]
-#countable = true
-#path = Screen+/ReagentRef+
-#description = reference to a Reagent
-
-#[ReagentRef 2003FC]
-#path = -
-
-#[ReagentRef ID]
-#type = String
-#getter = getNodeID
-#setter = setNodeID
-#description = label reference for the associated reagent
+description = reference to the reagent in an external database
 
 ## Screen ##
 
@@ -1402,13 +2381,6 @@ description = reference to this reagent in an external database
 countable = true
 path = Screen+
 description = description of a screen (grouping of plates)
-
-[Screen 2003FC]
-path = -
-
-#[Screen PlateRef]
-#type = String
-#description = label reference for the associated plate
 
 [Screen ID]
 type = String
@@ -1424,37 +2396,68 @@ description = the screen's name
 type = String
 description = reference to an externally defined protocol
 
+[Screen ProtocolIdentifier 2003FC]
+path = -
+
 [Screen ProtocolDescription]
 type = String
 description = description of the screen's protocol
+
+[Screen ProtocolDescription 2003FC]
+path = -
 
 [Screen ReagentSetDescription]
 type = String
 description = description of a set of reagents
 
-#[Screen ReagentSetidentifier]
-#type = String
-#description = reference to an externally defined set of reagents
+[Screen ReagentSetDescription 2003FC]
+path = -
+
+[Screen ReagentSetIdentifier]
+type = String
+description = reference to an externally defined set of reagents
+
+[Screen ReagentSetIdentifier 2003FC]
+path = -
 
 [Screen Type]
 type = String
 description = human-readable screen type, e.g. RNAi, cDNA
 
+[Screen Type 2003FC]
+path = -
+
+[Screen Description]
+type = String
+description = description of the screen
+
+[Screen Extern]
+type = String
+getter = getExternRef
+setter = setExternRef
+description = TODO
+
+[Screen Extern 200706]
+path = -
+
+[Screen Extern 200802]
+path = -
+
+[Screen Extern 200809]
+path = -
+
 ## ScreenRef ##
 
-#[ScreenRef]
-#countable = true
-#path = Screen+/ScreenRef+
-#description = reference to a Screen element
+[ScreenRef]
+countable = true
+path = Plate+/ScreenRef+
+description = TODO
 
-#[ScreenRef 2003FC]
-#path = -
-
-#[ScreenRef ID]
-#type = String
-#getter = getNodeID
-#setter = setNodeID
-#description = label reference for the associated screen
+[ScreenRef ID]
+getter = getNodeID
+setter = setNodeID
+type = String
+description = label reference to a screen
 
 ## ScreenAcquisition ##
 
@@ -1465,8 +2468,6 @@ description = describes an acquisition run for a screen
 
 [ScreenAcquisition 2003FC]
 path = -
-
-#[ScreenAcquisition WellSampleRef]
 
 [ScreenAcquisition ID]
 type = String
@@ -1492,9 +2493,15 @@ description = describes a Well (part of a plate)
 [Well 2003FC]
 path = -
 
-#[Well ReagentRef]
-#type = String
-#description = label reference for the associated reagent
+[Well Reagent]
+type = String
+path = Plate+/Well+/ReagentRef
+getter = getNodeID
+setter = setNodeID
+description = label reference for the associated reagent
+
+[Well Reagent 2003FC]
+path = -
 
 [Well ID]
 type = String
@@ -1508,11 +2515,11 @@ description = column index of the well, where top-left is 0
 
 [Well ExternalDescription]
 type = String
-description = description of the externally defined ID for this plate
+description = description of the externally defined ID for the well
 
 [Well ExternalIdentifier]
 type = String
-description = reference to this well in an external database
+description = reference to the well in an external database
 
 [Well Row]
 type = Integer
@@ -1520,7 +2527,8 @@ description = row index of the well, where top-left is 0
 
 [Well Type]
 type = String
-description = human-readable identifier of the screen status, e.g. empty, control
+description = human-readable identifier of the screen status, e.g. empty, \
+              control
 
 ## WellSample ##
 
@@ -1532,9 +2540,9 @@ description = individual image within a Well
 [WellSample 2003FC]
 path = -
 
-#[WellSample ImageRef]
-#type = String
-#description = label reference for the associated image
+[WellSample ImageRef]
+type = String
+description = label reference for the associated image
 
 [WellSample ID]
 type = String
@@ -1558,34 +2566,18 @@ description = Y position of the image within the well
 type = Integer
 description = time-point at which the image started to be collected
 
-## ImageRef ##
-
-#[ImageRef]
-#countable = true
-#path = ImageRef+
-#description = reference to an Image element
-
-#[ImageRef 2003FC]
-#path = -
-
-#[ImageRef ID]
-#type = String
-#getter = getNodeID
-#setter = setNodeID
-#description = TODO
-
 ## WellSampleRef ##
 
-#[WellSampleRef]
-#countable = true
-#path = WellSampleRef+
-#description = reference to a WellSample element
+[WellSampleRef]
+countable = true
+path = Screen+/ScreenAcquisition+/WellSampleRef+
+description = TODO
 
-#[WellSampleRef 2003FC]
-#path = -
+[WellSampleRef 2003FC]
+path = -
 
-#[WellSampleRef ID]
-#type = String
-#getter = getNodeID
-#setter = setNodeID
-#description = TODO
+[WellSampleRef ID]
+getter = getNodeID
+setter = setNodeID
+type = String
+description = TODO

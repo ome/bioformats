@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2008 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2009 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Dec 3, 2008 5:11:46 PM PST
+ * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -63,10 +63,34 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetCount() */
+  public int getDatasetCount() {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getDatasetNode(i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetRefCount(int) */
+  public int getDatasetRefCount(int imageIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getDatasetRefNode(imageIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getDetectorCount(int) */
   public int getDetectorCount(int instrumentIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getDetectorNode(instrumentIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDichroicCount(int) */
+  public int getDichroicCount(int instrumentIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getDichroicNode(instrumentIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -91,6 +115,30 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public int getExperimenterMembershipCount(int experimenterIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getGroupRefNode(experimenterIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterCount(int) */
+  public int getFilterCount(int instrumentIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getFilterNode(instrumentIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetCount(int) */
+  public int getFilterSetCount(int instrumentIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getFilterSetNode(instrumentIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGroupCount() */
+  public int getGroupCount() {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getGroupNode(i, false) == null) return i;
     }
     return -1;
   }
@@ -127,10 +175,34 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getLightSourceRefCount(int, int) */
+  public int getLightSourceRefCount(int imageIndex, int microbeamManipulationIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getLightSourceRefNode(imageIndex, microbeamManipulationIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelCount(int) */
   public int getLogicalChannelCount(int imageIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getLogicalChannelNode(imageIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicrobeamManipulationCount(int) */
+  public int getMicrobeamManipulationCount(int imageIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getMicrobeamManipulationNode(imageIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicrobeamManipulationRefCount(int) */
+  public int getMicrobeamManipulationRefCount(int experimentIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getMicrobeamManipulationRefNode(experimentIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -183,9 +255,35 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectCount() */
+  public int getProjectCount() {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getProjectNode(i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectRefCount(int) */
+  public int getProjectRefCount(int datasetIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getProjectRefNode(datasetIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getROICount(int) */
   public int getROICount(int imageIndex) {
-    // NB: ROI unsupported for schema version 2008-09
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getROINode(imageIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getROIRefCount(int, int) */
+  public int getROIRefCount(int imageIndex, int microbeamManipulationIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getROIRefNode(imageIndex, microbeamManipulationIndex, i, false) == null) return i;
+    }
     return -1;
   }
 
@@ -193,6 +291,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public int getReagentCount(int screenIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getReagentNode(screenIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRegionCount(int) */
+  public int getRegionCount(int imageIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getRegionNode(imageIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -209,6 +315,22 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public int getScreenAcquisitionCount(int screenIndex) {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getScreenAcquisitionNode(screenIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenRefCount(int) */
+  public int getScreenRefCount(int plateIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getScreenRefNode(plateIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeCount(int, int) */
+  public int getShapeCount(int imageIndex, int roiIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getShapeNode(imageIndex, roiIndex, i, false) == null) return i;
     }
     return -1;
   }
@@ -237,6 +359,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return -1;
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleRefCount(int, int) */
+  public int getWellSampleRefCount(int screenIndex, int screenAcquisitionIndex) {
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (getWellSampleRefNode(screenIndex, screenAcquisitionIndex, i, false) == null) return i;
+    }
+    return -1;
+  }
+
   // - Entity retrieval -
 
   // - Arc property retrieval -
@@ -261,7 +391,109 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return channelComponent == null ? null : channelComponent.getIndex();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getChannelComponentPixels(int, int, int) */
+  public String getChannelComponentPixels(int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    ChannelComponentNode channelComponent = getChannelComponentNode(imageIndex, logicalChannelIndex, channelComponentIndex, false);
+    return channelComponent == null ? null : channelComponent.getPixels();
+  }
+
+  // - Circle property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getCircleID(int, int, int) */
+  public String getCircleID(int imageIndex, int roiIndex, int shapeIndex) {
+    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
+    return circle == null ? null : circle.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getCirclecx(int, int, int) */
+  public String getCirclecx(int imageIndex, int roiIndex, int shapeIndex) {
+    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
+    return circle == null ? null : circle.getcx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getCirclecy(int, int, int) */
+  public String getCirclecy(int imageIndex, int roiIndex, int shapeIndex) {
+    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
+    return circle == null ? null : circle.getcy();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getCircler(int, int, int) */
+  public String getCircler(int imageIndex, int roiIndex, int shapeIndex) {
+    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
+    return circle == null ? null : circle.getr();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getCircletransform(int, int, int) */
+  public String getCircletransform(int imageIndex, int roiIndex, int shapeIndex) {
+    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
+    return circle == null ? null : circle.gettransform();
+  }
+
+  // - Contact property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getContactExperimenter(int) */
+  public String getContactExperimenter(int groupIndex) {
+    ContactNode contact = getContactNode(groupIndex, false);
+    return contact == null ? null : contact.getNodeID();
+  }
+
+  // - Dataset property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetDescription(int) */
+  public String getDatasetDescription(int datasetIndex) {
+    DatasetNode dataset = getDatasetNode(datasetIndex, false);
+    return dataset == null ? null : dataset.getDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetExperimenterRef(int) */
+  public String getDatasetExperimenterRef(int datasetIndex) {
+    DatasetNode dataset = getDatasetNode(datasetIndex, false);
+    ExperimenterNode node = dataset.getExperimenter();
+    if (node == null) return null;
+    return node.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetGroupRef(int) */
+  public String getDatasetGroupRef(int datasetIndex) {
+    DatasetNode dataset = getDatasetNode(datasetIndex, false);
+    GroupNode node = dataset.getGroup();
+    if (node == null) return null;
+    return node.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetID(int) */
+  public String getDatasetID(int datasetIndex) {
+    DatasetNode dataset = getDatasetNode(datasetIndex, false);
+    return dataset == null ? null : dataset.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetLocked(int) */
+  public Boolean getDatasetLocked(int datasetIndex) {
+    DatasetNode dataset = getDatasetNode(datasetIndex, false);
+    return dataset == null ? null : dataset.getLocked();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetName(int) */
+  public String getDatasetName(int datasetIndex) {
+    DatasetNode dataset = getDatasetNode(datasetIndex, false);
+    return dataset == null ? null : dataset.getName();
+  }
+
+  // - DatasetRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDatasetRefID(int, int) */
+  public String getDatasetRefID(int imageIndex, int datasetRefIndex) {
+    DatasetRefNode datasetRef = getDatasetRefNode(imageIndex, datasetRefIndex, false);
+    return datasetRef == null ? null : datasetRef.getNodeID();
+  }
+
   // - Detector property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDetectorAmplificationGain(int, int) */
+  public Float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex) {
+    DetectorNode detector = getDetectorNode(instrumentIndex, detectorIndex, false);
+    return detector == null ? null : detector.getAmplificationGain();
+  }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDetectorGain(int, int) */
   public Float getDetectorGain(int instrumentIndex, int detectorIndex) {
@@ -311,6 +543,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return detector == null ? null : detector.getVoltage();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getDetectorZoom(int, int) */
+  public Float getDetectorZoom(int instrumentIndex, int detectorIndex) {
+    DetectorNode detector = getDetectorNode(instrumentIndex, detectorIndex, false);
+    return detector == null ? null : detector.getZoom();
+  }
+
   // - DetectorSettings property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getDetectorSettingsBinning(int, int) */
@@ -347,6 +585,26 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public Float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex) {
     DetectorRefNode detectorRef = getDetectorRefNode(imageIndex, logicalChannelIndex, false);
     return detectorRef == null ? null : detectorRef.getVoltage();
+  }
+
+  // - Dichroic property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDichroicLotNumber(int, int) */
+  public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex) {
+    DichroicNode dichroic = getDichroicNode(instrumentIndex, dichroicIndex, false);
+    return dichroic == null ? null : dichroic.getLotNumber();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDichroicManufacturer(int, int) */
+  public String getDichroicManufacturer(int instrumentIndex, int dichroicIndex) {
+    DichroicNode dichroic = getDichroicNode(instrumentIndex, dichroicIndex, false);
+    return dichroic == null ? null : dichroic.getManufacturer();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDichroicModel(int, int) */
+  public String getDichroicModel(int instrumentIndex, int dichroicIndex) {
+    DichroicNode dichroic = getDichroicNode(instrumentIndex, dichroicIndex, false);
+    return dichroic == null ? null : dichroic.getModel();
   }
 
   // - Dimensions property retrieval -
@@ -389,6 +647,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - DisplayOptions property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsDisplay(int) */
+  public String getDisplayOptionsDisplay(int imageIndex) {
+    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, false);
+    return displayOptions == null ? null : displayOptions.getDisplay();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsID(int) */
   public String getDisplayOptionsID(int imageIndex) {
     DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, false);
@@ -429,12 +693,110 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return time == null ? null : time.getTStop();
   }
 
+  // - Ellipse property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipseID(int, int, int) */
+  public String getEllipseID(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipsecx(int, int, int) */
+  public String getEllipsecx(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.getcx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipsecy(int, int, int) */
+  public String getEllipsecy(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.getcy();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipserx(int, int, int) */
+  public String getEllipserx(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.getrx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipsery(int, int, int) */
+  public String getEllipsery(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.getry();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipsetransform(int, int, int) */
+  public String getEllipsetransform(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.gettransform();
+  }
+
+  // - EmFilter property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEmFilterLotNumber(int, int) */
+  public String getEmFilterLotNumber(int instrumentIndex, int filterIndex) {
+    // NB: LotNumber unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEmFilterManufacturer(int, int) */
+  public String getEmFilterManufacturer(int instrumentIndex, int filterIndex) {
+    // NB: Manufacturer unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEmFilterModel(int, int) */
+  public String getEmFilterModel(int instrumentIndex, int filterIndex) {
+    // NB: Model unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEmFilterType(int, int) */
+  public String getEmFilterType(int instrumentIndex, int filterIndex) {
+    // NB: Type unsupported for schema version 2008-09
+    return null;
+  }
+
+  // - ExFilter property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getExFilterLotNumber(int, int) */
+  public String getExFilterLotNumber(int instrumentIndex, int filterIndex) {
+    // NB: LotNumber unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getExFilterManufacturer(int, int) */
+  public String getExFilterManufacturer(int instrumentIndex, int filterIndex) {
+    // NB: Manufacturer unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getExFilterModel(int, int) */
+  public String getExFilterModel(int instrumentIndex, int filterIndex) {
+    // NB: Model unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getExFilterType(int, int) */
+  public String getExFilterType(int instrumentIndex, int filterIndex) {
+    // NB: Type unsupported for schema version 2008-09
+    return null;
+  }
+
   // - Experiment property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getExperimentDescription(int) */
   public String getExperimentDescription(int experimentIndex) {
     ExperimentNode experiment = getExperimentNode(experimentIndex, false);
     return experiment == null ? null : experiment.getDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getExperimentExperimenterRef(int) */
+  public String getExperimentExperimenterRef(int experimentIndex) {
+    ExperimentNode experiment = getExperimentNode(experimentIndex, false);
+    ExperimenterNode node = experiment.getExperimenter();
+    if (node == null) return null;
+    return node.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getExperimentID(int) */
@@ -481,6 +843,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return experimenter == null ? null : experimenter.getLastName();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getExperimenterOMEName(int) */
+  public String getExperimenterOMEName(int experimenterIndex) {
+    ExperimenterNode experimenter = getExperimenterNode(experimenterIndex, false);
+    return experimenter == null ? null : experimenter.getOMEName();
+  }
+
   // - ExperimenterMembership property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getExperimenterMembershipGroup(int, int) */
@@ -497,9 +865,133 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return filament == null ? null : filament.getType();
   }
 
+  // - Filter property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterFilterWheel(int, int) */
+  public String getFilterFilterWheel(int instrumentIndex, int filterIndex) {
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
+    return filter == null ? null : filter.getFilterWheel();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterLotNumber(int, int) */
+  public String getFilterLotNumber(int instrumentIndex, int filterIndex) {
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
+    return filter == null ? null : filter.getLotNumber();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterManufacturer(int, int) */
+  public String getFilterManufacturer(int instrumentIndex, int filterIndex) {
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
+    return filter == null ? null : filter.getManufacturer();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterModel(int, int) */
+  public String getFilterModel(int instrumentIndex, int filterIndex) {
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
+    return filter == null ? null : filter.getModel();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterType(int, int) */
+  public String getFilterType(int instrumentIndex, int filterIndex) {
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
+    return filter == null ? null : filter.getType();
+  }
+
+  // - FilterSet property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetDichroic(int, int) */
+  public String getFilterSetDichroic(int instrumentIndex, int filterSetIndex) {
+    FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
+    return filterSet == null ? null : filterSet.getDichroicRef();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetEmFilter(int, int) */
+  public String getFilterSetEmFilter(int instrumentIndex, int filterSetIndex) {
+    FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
+    return filterSet == null ? null : filterSet.getEmFilterRef();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetExFilter(int, int) */
+  public String getFilterSetExFilter(int instrumentIndex, int filterSetIndex) {
+    FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
+    return filterSet == null ? null : filterSet.getExFilterRef();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetLotNumber(int, int) */
+  public String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex) {
+    FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
+    return filterSet == null ? null : filterSet.getLotNumber();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetManufacturer(int, int) */
+  public String getFilterSetManufacturer(int instrumentIndex, int filterSetIndex) {
+    FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
+    return filterSet == null ? null : filterSet.getManufacturer();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetModel(int, int) */
+  public String getFilterSetModel(int instrumentIndex, int filterSetIndex) {
+    FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
+    return filterSet == null ? null : filterSet.getModel();
+  }
+
+  // - GreyChannel property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelBlackLevel(int) */
+  public Float getGreyChannelBlackLevel(int imageIndex) {
+    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
+    return greyChannel == null ? null : greyChannel.getBlackLevel();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelChannelNumber(int) */
+  public Integer getGreyChannelChannelNumber(int imageIndex) {
+    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
+    return greyChannel == null ? null : greyChannel.getChannelNumber();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelGamma(int) */
+  public Float getGreyChannelGamma(int imageIndex) {
+    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
+    return greyChannel == null ? null : greyChannel.getGamma();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelWhiteLevel(int) */
+  public Float getGreyChannelWhiteLevel(int imageIndex) {
+    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
+    return greyChannel == null ? null : greyChannel.getWhiteLevel();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelisOn(int) */
+  public Boolean getGreyChannelisOn(int imageIndex) {
+    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
+    return greyChannel == null ? null : greyChannel.getisOn();
+  }
+
+  // - GreyChannelMap property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelMapColorMap(int) */
+  public String getGreyChannelMapColorMap(int imageIndex) {
+    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
+    return greyChannel == null ? null : greyChannel.getColorMap();
+  }
+
+  // - Group property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getGroupName(int) */
+  public String getGroupName(int groupIndex) {
+    GroupNode group = getGroupNode(groupIndex, false);
+    return group == null ? null : group.getName();
+  }
+
   // - GroupRef property retrieval -
 
   // - Image property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getImageAcquiredPixels(int) */
+  public String getImageAcquiredPixels(int imageIndex) {
+    ImageNode image = getImageNode(imageIndex, false);
+    return image == null ? null : image.getAcquiredPixels();
+  }
 
   /* @see loci.formats.meta.MetadataRetrieve#getImageCreationDate(int) */
   public String getImageCreationDate(int imageIndex) {
@@ -517,6 +1009,30 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getImageDescription(int imageIndex) {
     ImageNode image = getImageNode(imageIndex, false);
     return image == null ? null : image.getDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getImageExperimentRef(int) */
+  public String getImageExperimentRef(int imageIndex) {
+    ImageNode image = getImageNode(imageIndex, false);
+    ExperimentNode node = image.getExperiment();
+    if (node == null) return null;
+    return node.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getImageExperimenterRef(int) */
+  public String getImageExperimenterRef(int imageIndex) {
+    ImageNode image = getImageNode(imageIndex, false);
+    ExperimenterNode node = image.getExperimenter();
+    if (node == null) return null;
+    return node.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getImageGroupRef(int) */
+  public String getImageGroupRef(int imageIndex) {
+    ImageNode image = getImageNode(imageIndex, false);
+    GroupNode node = image.getGroup();
+    if (node == null) return null;
+    return node.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getImageID(int) */
@@ -537,6 +1053,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getImageName(int imageIndex) {
     ImageNode image = getImageNode(imageIndex, false);
     return image == null ? null : image.getName();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getImageObjective(int) */
+  public String getImageObjective(int imageIndex) {
+    ObjectiveRefNode objectiveRef = getObjectiveRefNode(imageIndex, false);
+    return objectiveRef == null ? null : objectiveRef.getNodeID();
   }
 
   // - ImagingEnvironment property retrieval -
@@ -587,10 +1109,22 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return laser == null ? null : laser.getLaserMedium();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getLaserPockelCell(int, int) */
+  public Boolean getLaserPockelCell(int instrumentIndex, int lightSourceIndex) {
+    LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, false);
+    return laser == null ? null : laser.getPockelCell();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getLaserPulse(int, int) */
   public String getLaserPulse(int instrumentIndex, int lightSourceIndex) {
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, false);
     return laser == null ? null : laser.getPulse();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLaserRepetitionRate(int, int) */
+  public Boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex) {
+    LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, false);
+    return laser == null ? null : laser.getRepetitionRate();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLaserTuneable(int, int) */
@@ -643,6 +1177,26 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return lightSource == null ? null : lightSource.getSerialNumber();
   }
 
+  // - LightSourceRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLightSourceRefAttenuation(int, int, int) */
+  public Float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    LightSourceRefNode lightSourceRef = getLightSourceRefNode(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, false);
+    return lightSourceRef == null ? null : lightSourceRef.getAttenuation();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLightSourceRefLightSource(int, int, int) */
+  public String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    LightSourceRefNode lightSourceRef = getLightSourceRefNode(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, false);
+    return lightSourceRef == null ? null : lightSourceRef.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLightSourceRefWavelength(int, int, int) */
+  public Integer getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    LightSourceRefNode lightSourceRef = getLightSourceRefNode(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, false);
+    return lightSourceRef == null ? null : lightSourceRef.getWavelength();
+  }
+
   // - LightSourceSettings property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getLightSourceSettingsAttenuation(int, int) */
@@ -663,12 +1217,56 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return lightSourceRef == null ? null : lightSourceRef.getWavelength();
   }
 
+  // - Line property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLineID(int, int, int) */
+  public String getLineID(int imageIndex, int roiIndex, int shapeIndex) {
+    LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
+    return line == null ? null : line.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLinetransform(int, int, int) */
+  public String getLinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+    LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
+    return line == null ? null : line.gettransform();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLinex1(int, int, int) */
+  public String getLinex1(int imageIndex, int roiIndex, int shapeIndex) {
+    LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
+    return line == null ? null : line.getx1();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLinex2(int, int, int) */
+  public String getLinex2(int imageIndex, int roiIndex, int shapeIndex) {
+    LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
+    return line == null ? null : line.getx2();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLiney1(int, int, int) */
+  public String getLiney1(int imageIndex, int roiIndex, int shapeIndex) {
+    LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
+    return line == null ? null : line.gety1();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLiney2(int, int, int) */
+  public String getLiney2(int imageIndex, int roiIndex, int shapeIndex) {
+    LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
+    return line == null ? null : line.gety2();
+  }
+
   // - LogicalChannel property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelContrastMethod(int, int) */
   public String getLogicalChannelContrastMethod(int imageIndex, int logicalChannelIndex) {
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
     return logicalChannel == null ? null : logicalChannel.getContrastMethod();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelDetector(int, int) */
+  public String getLogicalChannelDetector(int imageIndex, int logicalChannelIndex) {
+    DetectorRefNode detectorRef = getDetectorRefNode(imageIndex, logicalChannelIndex, false);
+    return detectorRef == null ? null : detectorRef.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelEmWave(int, int) */
@@ -681,6 +1279,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public Integer getLogicalChannelExWave(int imageIndex, int logicalChannelIndex) {
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
     return logicalChannel == null ? null : logicalChannel.getExWave();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelFilterSet(int, int) */
+  public String getLogicalChannelFilterSet(int imageIndex, int logicalChannelIndex) {
+    FilterSetRefNode filterSetRef = getFilterSetRefNode(imageIndex, logicalChannelIndex, false);
+    return filterSetRef == null ? null : filterSetRef.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelFluor(int, int) */
@@ -699,6 +1303,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getLogicalChannelIlluminationType(int imageIndex, int logicalChannelIndex) {
     LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
     return logicalChannel == null ? null : logicalChannel.getIlluminationType();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelLightSource(int, int) */
+  public String getLogicalChannelLightSource(int imageIndex, int logicalChannelIndex) {
+    LightSourceRefNode lightSourceRef = getLightSourceRefNode(imageIndex, logicalChannelIndex, false);
+    return lightSourceRef == null ? null : lightSourceRef.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelMode(int, int) */
@@ -749,7 +1359,163 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return logicalChannel == null ? null : logicalChannel.getSamplesPerPixel();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelSecondaryEmissionFilter(int, int) */
+  public String getLogicalChannelSecondaryEmissionFilter(int imageIndex, int logicalChannelIndex) {
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getSecondaryEmissionFilter();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLogicalChannelSecondaryExcitationFilter(int, int) */
+  public String getLogicalChannelSecondaryExcitationFilter(int imageIndex, int logicalChannelIndex) {
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, false);
+    return logicalChannel == null ? null : logicalChannel.getSecondaryExcitationFilter();
+  }
+
+  // - Mask property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskID(int, int, int) */
+  public String getMaskID(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
+    return mask == null ? null : mask.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskheight(int, int, int) */
+  public String getMaskheight(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
+    return mask == null ? null : mask.getheight();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMasktransform(int, int, int) */
+  public String getMasktransform(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
+    return mask == null ? null : mask.gettransform();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskwidth(int, int, int) */
+  public String getMaskwidth(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
+    return mask == null ? null : mask.getwidth();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskx(int, int, int) */
+  public String getMaskx(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
+    return mask == null ? null : mask.getx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMasky(int, int, int) */
+  public String getMasky(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
+    return mask == null ? null : mask.gety();
+  }
+
+  // - MaskPixels property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskPixelsBigEndian(int, int, int) */
+  public Boolean getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskPixelsNode maskPixels = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, false);
+    return maskPixels == null ? null : maskPixels.getBigEndian();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskPixelsBinData(int, int, int) */
+  public String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskPixelsNode maskPixels = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, false);
+    return maskPixels == null ? null : maskPixels.getBinData();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskPixelsExtendedPixelType(int, int, int) */
+  public String getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskPixelsNode maskPixels = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, false);
+    return maskPixels == null ? null : maskPixels.getExtendedPixelType();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskPixelsID(int, int, int) */
+  public String getMaskPixelsID(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskPixelsNode maskPixels = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, false);
+    return maskPixels == null ? null : maskPixels.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskPixelsSizeX(int, int, int) */
+  public Integer getMaskPixelsSizeX(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskPixelsNode maskPixels = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, false);
+    return maskPixels == null ? null : maskPixels.getSizeX();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskPixelsSizeY(int, int, int) */
+  public Integer getMaskPixelsSizeY(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskPixelsNode maskPixels = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, false);
+    return maskPixels == null ? null : maskPixels.getSizeY();
+  }
+
+  // - MicrobeamManipulation property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicrobeamManipulationExperimenterRef(int, int) */
+  public String getMicrobeamManipulationExperimenterRef(int imageIndex, int microbeamManipulationIndex) {
+    MicrobeamManipulationNode microbeamManipulation = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, false);
+    ExperimenterNode node = microbeamManipulation.getExperimenter();
+    if (node == null) return null;
+    return node.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicrobeamManipulationID(int, int) */
+  public String getMicrobeamManipulationID(int imageIndex, int microbeamManipulationIndex) {
+    MicrobeamManipulationNode microbeamManipulation = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, false);
+    return microbeamManipulation == null ? null : microbeamManipulation.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicrobeamManipulationType(int, int) */
+  public String getMicrobeamManipulationType(int imageIndex, int microbeamManipulationIndex) {
+    MicrobeamManipulationNode microbeamManipulation = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, false);
+    return microbeamManipulation == null ? null : microbeamManipulation.getType();
+  }
+
+  // - MicrobeamManipulationRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicrobeamManipulationRefID(int, int) */
+  public String getMicrobeamManipulationRefID(int experimentIndex, int microbeamManipulationRefIndex) {
+    MicrobeamManipulationRefNode microbeamManipulationRef = getMicrobeamManipulationRefNode(experimentIndex, microbeamManipulationRefIndex, false);
+    return microbeamManipulationRef == null ? null : microbeamManipulationRef.getNodeID();
+  }
+
+  // - Microscope property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicroscopeID(int) */
+  public String getMicroscopeID(int instrumentIndex) {
+    MicroscopeNode microscope = getMicroscopeNode(instrumentIndex, false);
+    return microscope == null ? null : microscope.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicroscopeManufacturer(int) */
+  public String getMicroscopeManufacturer(int instrumentIndex) {
+    MicroscopeNode microscope = getMicroscopeNode(instrumentIndex, false);
+    return microscope == null ? null : microscope.getManufacturer();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicroscopeModel(int) */
+  public String getMicroscopeModel(int instrumentIndex) {
+    MicroscopeNode microscope = getMicroscopeNode(instrumentIndex, false);
+    return microscope == null ? null : microscope.getModel();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicroscopeSerialNumber(int) */
+  public String getMicroscopeSerialNumber(int instrumentIndex) {
+    MicroscopeNode microscope = getMicroscopeNode(instrumentIndex, false);
+    return microscope == null ? null : microscope.getSerialNumber();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getMicroscopeType(int) */
+  public String getMicroscopeType(int instrumentIndex) {
+    MicroscopeNode microscope = getMicroscopeNode(instrumentIndex, false);
+    return microscope == null ? null : microscope.getType();
+  }
+
   // - OTF property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getOTFBinaryFile(int, int) */
+  public String getOTFBinaryFile(int instrumentIndex, int otfIndex) {
+    OTFNode otf = getOTFNode(instrumentIndex, otfIndex, false);
+    return otf == null ? null : otf.getBinaryFile();
+  }
 
   /* @see loci.formats.meta.MetadataRetrieve#getOTFID(int, int) */
   public String getOTFID(int instrumentIndex, int otfIndex) {
@@ -939,6 +1705,18 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Plane property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getPlaneHashSHA1(int, int, int) */
+  public String getPlaneHashSHA1(int imageIndex, int pixelsIndex, int planeIndex) {
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, false);
+    return plane == null ? null : plane.getHashSHA1();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlaneID(int, int, int) */
+  public String getPlaneID(int imageIndex, int pixelsIndex, int planeIndex) {
+    PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, false);
+    return plane == null ? null : plane.getNodeID();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getPlaneTheC(int, int, int) */
   public Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex) {
     PlaneNode plane = getPlaneNode(imageIndex, pixelsIndex, planeIndex, false);
@@ -1011,12 +1789,148 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return plateRef == null ? null : plateRef.getNodeID();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateRefSample(int, int) */
+  public Integer getPlateRefSample(int screenIndex, int plateRefIndex) {
+    // NB: Sample unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateRefWell(int, int) */
+  public String getPlateRefWell(int screenIndex, int plateRefIndex) {
+    // NB: Well unsupported for schema version 2008-09
+    return null;
+  }
+
+  // - Point property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPointID(int, int, int) */
+  public String getPointID(int imageIndex, int roiIndex, int shapeIndex) {
+    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
+    return point == null ? null : point.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPointcx(int, int, int) */
+  public String getPointcx(int imageIndex, int roiIndex, int shapeIndex) {
+    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
+    return point == null ? null : point.getcx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPointcy(int, int, int) */
+  public String getPointcy(int imageIndex, int roiIndex, int shapeIndex) {
+    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
+    return point == null ? null : point.getcy();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPointr(int, int, int) */
+  public String getPointr(int imageIndex, int roiIndex, int shapeIndex) {
+    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
+    return point == null ? null : point.getr();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPointtransform(int, int, int) */
+  public String getPointtransform(int imageIndex, int roiIndex, int shapeIndex) {
+    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
+    return point == null ? null : point.gettransform();
+  }
+
+  // - Polygon property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPolygonID(int, int, int) */
+  public String getPolygonID(int imageIndex, int roiIndex, int shapeIndex) {
+    PolygonNode polygon = getPolygonNode(imageIndex, roiIndex, shapeIndex, false);
+    return polygon == null ? null : polygon.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPolygonpoints(int, int, int) */
+  public String getPolygonpoints(int imageIndex, int roiIndex, int shapeIndex) {
+    PolygonNode polygon = getPolygonNode(imageIndex, roiIndex, shapeIndex, false);
+    return polygon == null ? null : polygon.getpoints();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPolygontransform(int, int, int) */
+  public String getPolygontransform(int imageIndex, int roiIndex, int shapeIndex) {
+    PolygonNode polygon = getPolygonNode(imageIndex, roiIndex, shapeIndex, false);
+    return polygon == null ? null : polygon.gettransform();
+  }
+
+  // - Polyline property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPolylineID(int, int, int) */
+  public String getPolylineID(int imageIndex, int roiIndex, int shapeIndex) {
+    PolylineNode polyline = getPolylineNode(imageIndex, roiIndex, shapeIndex, false);
+    return polyline == null ? null : polyline.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPolylinepoints(int, int, int) */
+  public String getPolylinepoints(int imageIndex, int roiIndex, int shapeIndex) {
+    PolylineNode polyline = getPolylineNode(imageIndex, roiIndex, shapeIndex, false);
+    return polyline == null ? null : polyline.getpoints();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPolylinetransform(int, int, int) */
+  public String getPolylinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+    PolylineNode polyline = getPolylineNode(imageIndex, roiIndex, shapeIndex, false);
+    return polyline == null ? null : polyline.gettransform();
+  }
+
+  // - Project property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectDescription(int) */
+  public String getProjectDescription(int projectIndex) {
+    ProjectNode project = getProjectNode(projectIndex, false);
+    return project == null ? null : project.getDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectExperimenterRef(int) */
+  public String getProjectExperimenterRef(int projectIndex) {
+    ProjectNode project = getProjectNode(projectIndex, false);
+    ExperimenterNode node = project.getExperimenter();
+    if (node == null) return null;
+    return node.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectGroupRef(int) */
+  public String getProjectGroupRef(int projectIndex) {
+    ProjectNode project = getProjectNode(projectIndex, false);
+    GroupNode node = project.getGroup();
+    if (node == null) return null;
+    return node.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectID(int) */
+  public String getProjectID(int projectIndex) {
+    ProjectNode project = getProjectNode(projectIndex, false);
+    return project == null ? null : project.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectName(int) */
+  public String getProjectName(int projectIndex) {
+    ProjectNode project = getProjectNode(projectIndex, false);
+    return project == null ? null : project.getName();
+  }
+
+  // - ProjectRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getProjectRefID(int, int) */
+  public String getProjectRefID(int datasetIndex, int projectRefIndex) {
+    ProjectRefNode projectRef = getProjectRefNode(datasetIndex, projectRefIndex, false);
+    return projectRef == null ? null : projectRef.getNodeID();
+  }
+
+  // - Pump property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPumpLightSource(int, int) */
+  public String getPumpLightSource(int instrumentIndex, int lightSourceIndex) {
+    PumpNode pump = getPumpNode(instrumentIndex, lightSourceIndex, false);
+    return pump == null ? null : pump.getNodeID();
+  }
+
   // - ROI property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getROIID(int, int) */
   public String getROIID(int imageIndex, int roiIndex) {
-    // NB: ID unsupported for schema version 2008-09
-    return null;
+    ROINode roi = getROINode(imageIndex, roiIndex, false);
+    return roi == null ? null : roi.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getROIT0(int, int) */
@@ -1067,6 +1981,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return null;
   }
 
+  // - ROIRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getROIRefID(int, int, int) */
+  public String getROIRefID(int imageIndex, int microbeamManipulationIndex, int roiRefIndex) {
+    ROIRefNode roiRef = getROIRefNode(imageIndex, microbeamManipulationIndex, roiRefIndex, false);
+    return roiRef == null ? null : roiRef.getNodeID();
+  }
+
   // - Reagent property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getReagentDescription(int, int) */
@@ -1093,7 +2015,77 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return reagent == null ? null : reagent.getReagentIdentifier();
   }
 
+  // - Rect property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRectID(int, int, int) */
+  public String getRectID(int imageIndex, int roiIndex, int shapeIndex) {
+    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
+    return rect == null ? null : rect.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRectheight(int, int, int) */
+  public String getRectheight(int imageIndex, int roiIndex, int shapeIndex) {
+    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
+    return rect == null ? null : rect.getheight();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRecttransform(int, int, int) */
+  public String getRecttransform(int imageIndex, int roiIndex, int shapeIndex) {
+    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
+    return rect == null ? null : rect.gettransform();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRectwidth(int, int, int) */
+  public String getRectwidth(int imageIndex, int roiIndex, int shapeIndex) {
+    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
+    return rect == null ? null : rect.getwidth();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRectx(int, int, int) */
+  public String getRectx(int imageIndex, int roiIndex, int shapeIndex) {
+    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
+    return rect == null ? null : rect.getx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRecty(int, int, int) */
+  public String getRecty(int imageIndex, int roiIndex, int shapeIndex) {
+    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
+    return rect == null ? null : rect.gety();
+  }
+
+  // - Region property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRegionID(int, int) */
+  public String getRegionID(int imageIndex, int regionIndex) {
+    RegionNode region = getRegionNode(imageIndex, regionIndex, false);
+    return region == null ? null : region.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRegionName(int, int) */
+  public String getRegionName(int imageIndex, int regionIndex) {
+    RegionNode region = getRegionNode(imageIndex, regionIndex, false);
+    return region == null ? null : region.getName();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRegionTag(int, int) */
+  public String getRegionTag(int imageIndex, int regionIndex) {
+    RegionNode region = getRegionNode(imageIndex, regionIndex, false);
+    return region == null ? null : region.getTag();
+  }
+
   // - Screen property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenDescription(int) */
+  public String getScreenDescription(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getDescription();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenExtern(int) */
+  public String getScreenExtern(int screenIndex) {
+    // NB: Extern unsupported for schema version 2008-09
+    return null;
+  }
 
   /* @see loci.formats.meta.MetadataRetrieve#getScreenID(int) */
   public String getScreenID(int screenIndex) {
@@ -1125,6 +2117,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return screen == null ? null : screen.getReagentSetDescription();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenReagentSetIdentifier(int) */
+  public String getScreenReagentSetIdentifier(int screenIndex) {
+    ScreenNode screen = getScreenNode(screenIndex, false);
+    return screen == null ? null : screen.getReagentSetIdentifier();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getScreenType(int) */
   public String getScreenType(int screenIndex) {
     ScreenNode screen = getScreenNode(screenIndex, false);
@@ -1149,6 +2147,34 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex) {
     ScreenAcquisitionNode screenAcquisition = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, false);
     return screenAcquisition == null ? null : screenAcquisition.getStartTime();
+  }
+
+  // - ScreenRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getScreenRefID(int, int) */
+  public String getScreenRefID(int plateIndex, int screenRefIndex) {
+    ScreenRefNode screenRef = getScreenRefNode(plateIndex, screenRefIndex, false);
+    return screenRef == null ? null : screenRef.getNodeID();
+  }
+
+  // - Shape property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeID(int, int, int) */
+  public String getShapeID(int imageIndex, int roiIndex, int shapeIndex) {
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, false);
+    return shape == null ? null : shape.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapetheT(int, int, int) */
+  public Integer getShapetheT(int imageIndex, int roiIndex, int shapeIndex) {
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, false);
+    return shape == null ? null : shape.gettheT();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapetheZ(int, int, int) */
+  public Integer getShapetheZ(int imageIndex, int roiIndex, int shapeIndex) {
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, false);
+    return shape == null ? null : shape.gettheZ();
   }
 
   // - StageLabel property retrieval -
@@ -1197,6 +2223,26 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return stagePosition == null ? null : stagePosition.getPositionZ();
   }
 
+  // - Thumbnail property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getThumbnailID(int) */
+  public String getThumbnailID(int imageIndex) {
+    ThumbnailNode thumbnail = getThumbnailNode(imageIndex, false);
+    return thumbnail == null ? null : thumbnail.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getThumbnailMIMEtype(int) */
+  public String getThumbnailMIMEtype(int imageIndex) {
+    ThumbnailNode thumbnail = getThumbnailNode(imageIndex, false);
+    return thumbnail == null ? null : thumbnail.getMIMEtype();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getThumbnailhref(int) */
+  public String getThumbnailhref(int imageIndex) {
+    ThumbnailNode thumbnail = getThumbnailNode(imageIndex, false);
+    return thumbnail == null ? null : thumbnail.gethref();
+  }
+
   // - TiffData property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getTiffDataFileName(int, int, int) */
@@ -1241,6 +2287,38 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return uuid == null ? null : uuid.getCData();
   }
 
+  // - TransmittanceRange property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getTransmittanceRangeCutIn(int, int) */
+  public Integer getTransmittanceRangeCutIn(int instrumentIndex, int filterIndex) {
+    TransmittanceRangeNode transmittanceRange = getTransmittanceRangeNode(instrumentIndex, filterIndex, false);
+    return transmittanceRange == null ? null : transmittanceRange.getCutIn();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getTransmittanceRangeCutInTolerance(int, int) */
+  public Integer getTransmittanceRangeCutInTolerance(int instrumentIndex, int filterIndex) {
+    TransmittanceRangeNode transmittanceRange = getTransmittanceRangeNode(instrumentIndex, filterIndex, false);
+    return transmittanceRange == null ? null : transmittanceRange.getCutInTolerance();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getTransmittanceRangeCutOut(int, int) */
+  public Integer getTransmittanceRangeCutOut(int instrumentIndex, int filterIndex) {
+    TransmittanceRangeNode transmittanceRange = getTransmittanceRangeNode(instrumentIndex, filterIndex, false);
+    return transmittanceRange == null ? null : transmittanceRange.getCutOut();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getTransmittanceRangeCutOutTolerance(int, int) */
+  public Integer getTransmittanceRangeCutOutTolerance(int instrumentIndex, int filterIndex) {
+    TransmittanceRangeNode transmittanceRange = getTransmittanceRangeNode(instrumentIndex, filterIndex, false);
+    return transmittanceRange == null ? null : transmittanceRange.getCutOutTolerance();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getTransmittanceRangeTransmittance(int, int) */
+  public Integer getTransmittanceRangeTransmittance(int instrumentIndex, int filterIndex) {
+    TransmittanceRangeNode transmittanceRange = getTransmittanceRangeNode(instrumentIndex, filterIndex, false);
+    return transmittanceRange == null ? null : transmittanceRange.getTransmittance();
+  }
+
   // - Well property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getWellColumn(int, int) */
@@ -1267,6 +2345,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return well == null ? null : well.getNodeID();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getWellReagent(int, int) */
+  public String getWellReagent(int plateIndex, int wellIndex) {
+    ReagentRefNode reagentRef = getReagentRefNode(plateIndex, wellIndex, false);
+    return reagentRef == null ? null : reagentRef.getNodeID();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getWellRow(int, int) */
   public Integer getWellRow(int plateIndex, int wellIndex) {
     WellNode well = getWellNode(plateIndex, wellIndex, false);
@@ -1285,6 +2369,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getWellSampleID(int plateIndex, int wellIndex, int wellSampleIndex) {
     WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
     return wellSample == null ? null : wellSample.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleImageRef(int, int, int) */
+  public String getWellSampleImageRef(int plateIndex, int wellIndex, int wellSampleIndex) {
+    WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
+    ImageNode node = wellSample.getImage();
+    if (node == null) return null;
+    return node.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getWellSampleIndex(int, int, int) */
@@ -1309,6 +2401,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex) {
     WellSampleNode wellSample = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, false);
     return wellSample == null ? null : wellSample.getTimepoint();
+  }
+
+  // - WellSampleRef property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getWellSampleRefID(int, int, int) */
+  public String getWellSampleRefID(int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex) {
+    WellSampleRefNode wellSampleRef = getWellSampleRefNode(screenIndex, screenAcquisitionIndex, wellSampleRefIndex, false);
+    return wellSampleRef == null ? null : wellSampleRef.getNodeID();
   }
 
   // -- MetadataStore API methods --
@@ -1362,7 +2462,144 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     channelComponentNode.setIndex(index);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setChannelComponentPixels(String, int, int, int) */
+  public void setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    if (pixels == null) return;
+    ChannelComponentNode channelComponentNode = getChannelComponentNode(imageIndex, logicalChannelIndex, channelComponentIndex, true);
+    channelComponentNode.setPixels(pixels);
+  }
+
+  // - Circle property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setCircleID(String, int, int, int) */
+  public void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
+    circleNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setCirclecx(String, int, int, int) */
+  public void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cx == null) return;
+    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
+    circleNode.setcx(cx);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setCirclecy(String, int, int, int) */
+  public void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cy == null) return;
+    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
+    circleNode.setcy(cy);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setCircler(String, int, int, int) */
+  public void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex) {
+    if (r == null) return;
+    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
+    circleNode.setr(r);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setCircletransform(String, int, int, int) */
+  public void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
+    circleNode.settransform(transform);
+  }
+
+  // - Contact property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setContactExperimenter(String, int) */
+  public void setContactExperimenter(String experimenter, int groupIndex) {
+    if (experimenter == null) return;
+    ContactNode contactNode = getContactNode(groupIndex, true);
+    contactNode.setNodeID(experimenter);
+  }
+
+  // - Dataset property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setDatasetDescription(String, int) */
+  public void setDatasetDescription(String description, int datasetIndex) {
+    if (description == null) return;
+    DatasetNode datasetNode = getDatasetNode(datasetIndex, true);
+    datasetNode.setDescription(description);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setDatasetExperimenterRef(String, int) */
+  public void setDatasetExperimenterRef(String experimenterRef, int datasetIndex) {
+    if (experimenterRef == null) return;
+    DatasetNode datasetNode = getDatasetNode(datasetIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getExperimenterList();
+    ExperimenterNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(experimenterRef)) node = (ExperimenterNode) o;
+    }
+    if (node == null) {
+      node = new ExperimenterNode(ome);
+      node.setNodeID(experimenterRef);
+    }
+    ExperimenterRefNode ref = new ExperimenterRefNode(datasetNode);
+    ref.setExperimenterNode(node);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setDatasetGroupRef(String, int) */
+  public void setDatasetGroupRef(String groupRef, int datasetIndex) {
+    if (groupRef == null) return;
+    DatasetNode datasetNode = getDatasetNode(datasetIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getGroupList();
+    GroupNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(groupRef)) node = (GroupNode) o;
+    }
+    if (node == null) {
+      node = new GroupNode(ome);
+      node.setNodeID(groupRef);
+    }
+    GroupRefNode ref = new GroupRefNode(datasetNode);
+    ref.setGroupNode(node);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setDatasetID(String, int) */
+  public void setDatasetID(String id, int datasetIndex) {
+    if (id == null) return;
+    DatasetNode datasetNode = getDatasetNode(datasetIndex, true);
+    datasetNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setDatasetLocked(Boolean, int) */
+  public void setDatasetLocked(Boolean locked, int datasetIndex) {
+    if (locked == null) return;
+    DatasetNode datasetNode = getDatasetNode(datasetIndex, true);
+    datasetNode.setLocked(locked);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setDatasetName(String, int) */
+  public void setDatasetName(String name, int datasetIndex) {
+    if (name == null) return;
+    DatasetNode datasetNode = getDatasetNode(datasetIndex, true);
+    datasetNode.setName(name);
+  }
+
+  // - DatasetRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setDatasetRefID(String, int, int) */
+  public void setDatasetRefID(String id, int imageIndex, int datasetRefIndex) {
+    if (id == null) return;
+    DatasetRefNode datasetRefNode = getDatasetRefNode(imageIndex, datasetRefIndex, true);
+    datasetRefNode.setNodeID(id);
+  }
+
   // - Detector property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setDetectorAmplificationGain(Float, int, int) */
+  public void setDetectorAmplificationGain(Float amplificationGain, int instrumentIndex, int detectorIndex) {
+    if (amplificationGain == null) return;
+    DetectorNode detectorNode = getDetectorNode(instrumentIndex, detectorIndex, true);
+    detectorNode.setAmplificationGain(amplificationGain);
+  }
 
   /* @see loci.formats.meta.MetadataStore#setDetectorGain(Float, int, int) */
   public void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex) {
@@ -1420,6 +2657,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     detectorNode.setVoltage(voltage);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setDetectorZoom(Float, int, int) */
+  public void setDetectorZoom(Float zoom, int instrumentIndex, int detectorIndex) {
+    if (zoom == null) return;
+    DetectorNode detectorNode = getDetectorNode(instrumentIndex, detectorIndex, true);
+    detectorNode.setZoom(zoom);
+  }
+
   // - DetectorSettings property storage -
 
   /* @see loci.formats.meta.MetadataStore#setDetectorSettingsBinning(String, int, int) */
@@ -1462,6 +2706,29 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (voltage == null) return;
     DetectorRefNode detectorRefNode = getDetectorRefNode(imageIndex, logicalChannelIndex, true);
     detectorRefNode.setVoltage(voltage);
+  }
+
+  // - Dichroic property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setDichroicLotNumber(String, int, int) */
+  public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex) {
+    if (lotNumber == null) return;
+    DichroicNode dichroicNode = getDichroicNode(instrumentIndex, dichroicIndex, true);
+    dichroicNode.setLotNumber(lotNumber);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setDichroicManufacturer(String, int, int) */
+  public void setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex) {
+    if (manufacturer == null) return;
+    DichroicNode dichroicNode = getDichroicNode(instrumentIndex, dichroicIndex, true);
+    dichroicNode.setManufacturer(manufacturer);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setDichroicModel(String, int, int) */
+  public void setDichroicModel(String model, int instrumentIndex, int dichroicIndex) {
+    if (model == null) return;
+    DichroicNode dichroicNode = getDichroicNode(instrumentIndex, dichroicIndex, true);
+    dichroicNode.setModel(model);
   }
 
   // - Dimensions property storage -
@@ -1510,6 +2777,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - DisplayOptions property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsDisplay(String, int) */
+  public void setDisplayOptionsDisplay(String display, int imageIndex) {
+    if (display == null) return;
+    DisplayOptionsNode displayOptionsNode = getDisplayOptionsNode(imageIndex, true);
+    displayOptionsNode.setDisplay(display);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setDisplayOptionsID(String, int) */
   public void setDisplayOptionsID(String id, int imageIndex) {
     if (id == null) return;
@@ -1556,6 +2830,94 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     timeNode.setTStop(tStop);
   }
 
+  // - Ellipse property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setEllipseID(String, int, int, int) */
+  public void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEllipsecx(String, int, int, int) */
+  public void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cx == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.setcx(cx);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEllipsecy(String, int, int, int) */
+  public void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cy == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.setcy(cy);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEllipserx(String, int, int, int) */
+  public void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
+    if (rx == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.setrx(rx);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEllipsery(String, int, int, int) */
+  public void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex) {
+    if (ry == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.setry(ry);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEllipsetransform(String, int, int, int) */
+  public void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.settransform(transform);
+  }
+
+  // - EmFilter property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setEmFilterLotNumber(String, int, int) */
+  public void setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex) {
+    // NB: LotNumber unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEmFilterManufacturer(String, int, int) */
+  public void setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex) {
+    // NB: Manufacturer unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEmFilterModel(String, int, int) */
+  public void setEmFilterModel(String model, int instrumentIndex, int filterIndex) {
+    // NB: Model unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEmFilterType(String, int, int) */
+  public void setEmFilterType(String type, int instrumentIndex, int filterIndex) {
+    // NB: Type unsupported for schema version 2008-09
+  }
+
+  // - ExFilter property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setExFilterLotNumber(String, int, int) */
+  public void setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex) {
+    // NB: LotNumber unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setExFilterManufacturer(String, int, int) */
+  public void setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex) {
+    // NB: Manufacturer unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setExFilterModel(String, int, int) */
+  public void setExFilterModel(String model, int instrumentIndex, int filterIndex) {
+    // NB: Model unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setExFilterType(String, int, int) */
+  public void setExFilterType(String type, int instrumentIndex, int filterIndex) {
+    // NB: Type unsupported for schema version 2008-09
+  }
+
   // - Experiment property storage -
 
   /* @see loci.formats.meta.MetadataStore#setExperimentDescription(String, int) */
@@ -1563,6 +2925,25 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (description == null) return;
     ExperimentNode experimentNode = getExperimentNode(experimentIndex, true);
     experimentNode.setDescription(description);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setExperimentExperimenterRef(String, int) */
+  public void setExperimentExperimenterRef(String experimenterRef, int experimentIndex) {
+    if (experimenterRef == null) return;
+    ExperimentNode experimentNode = getExperimentNode(experimentIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getExperimenterList();
+    ExperimenterNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(experimenterRef)) node = (ExperimenterNode) o;
+    }
+    if (node == null) {
+      node = new ExperimenterNode(ome);
+      node.setNodeID(experimenterRef);
+    }
+    ExperimenterRefNode ref = new ExperimenterRefNode(experimentNode);
+    ref.setExperimenterNode(node);
   }
 
   /* @see loci.formats.meta.MetadataStore#setExperimentID(String, int) */
@@ -1616,6 +2997,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     experimenterNode.setLastName(lastName);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setExperimenterOMEName(String, int) */
+  public void setExperimenterOMEName(String omeName, int experimenterIndex) {
+    if (omeName == null) return;
+    ExperimenterNode experimenterNode = getExperimenterNode(experimenterIndex, true);
+    experimenterNode.setOMEName(omeName);
+  }
+
   // - ExperimenterMembership property storage -
 
   /* @see loci.formats.meta.MetadataStore#setExperimenterMembershipGroup(String, int, int) */
@@ -1634,9 +3022,152 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     filamentNode.setType(type);
   }
 
+  // - Filter property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setFilterFilterWheel(String, int, int) */
+  public void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex) {
+    if (filterWheel == null) return;
+    FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
+    filterNode.setFilterWheel(filterWheel);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterLotNumber(String, int, int) */
+  public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex) {
+    if (lotNumber == null) return;
+    FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
+    filterNode.setLotNumber(lotNumber);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterManufacturer(String, int, int) */
+  public void setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex) {
+    if (manufacturer == null) return;
+    FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
+    filterNode.setManufacturer(manufacturer);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterModel(String, int, int) */
+  public void setFilterModel(String model, int instrumentIndex, int filterIndex) {
+    if (model == null) return;
+    FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
+    filterNode.setModel(model);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterType(String, int, int) */
+  public void setFilterType(String type, int instrumentIndex, int filterIndex) {
+    if (type == null) return;
+    FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
+    filterNode.setType(type);
+  }
+
+  // - FilterSet property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setFilterSetDichroic(String, int, int) */
+  public void setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex) {
+    if (dichroic == null) return;
+    FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
+    filterSetNode.setDichroicRef(dichroic);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterSetEmFilter(String, int, int) */
+  public void setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex) {
+    if (emFilter == null) return;
+    FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
+    filterSetNode.setEmFilterRef(emFilter);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterSetExFilter(String, int, int) */
+  public void setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex) {
+    if (exFilter == null) return;
+    FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
+    filterSetNode.setExFilterRef(exFilter);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterSetLotNumber(String, int, int) */
+  public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex) {
+    if (lotNumber == null) return;
+    FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
+    filterSetNode.setLotNumber(lotNumber);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterSetManufacturer(String, int, int) */
+  public void setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex) {
+    if (manufacturer == null) return;
+    FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
+    filterSetNode.setManufacturer(manufacturer);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterSetModel(String, int, int) */
+  public void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex) {
+    if (model == null) return;
+    FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
+    filterSetNode.setModel(model);
+  }
+
+  // - GreyChannel property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setGreyChannelBlackLevel(Float, int) */
+  public void setGreyChannelBlackLevel(Float blackLevel, int imageIndex) {
+    if (blackLevel == null) return;
+    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
+    greyChannelNode.setBlackLevel(blackLevel);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setGreyChannelChannelNumber(Integer, int) */
+  public void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex) {
+    if (channelNumber == null) return;
+    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
+    greyChannelNode.setChannelNumber(channelNumber);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setGreyChannelGamma(Float, int) */
+  public void setGreyChannelGamma(Float gamma, int imageIndex) {
+    if (gamma == null) return;
+    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
+    greyChannelNode.setGamma(gamma);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setGreyChannelWhiteLevel(Float, int) */
+  public void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex) {
+    if (whiteLevel == null) return;
+    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
+    greyChannelNode.setWhiteLevel(whiteLevel);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setGreyChannelisOn(Boolean, int) */
+  public void setGreyChannelisOn(Boolean isOn, int imageIndex) {
+    if (isOn == null) return;
+    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
+    greyChannelNode.setisOn(isOn);
+  }
+
+  // - GreyChannelMap property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setGreyChannelMapColorMap(String, int) */
+  public void setGreyChannelMapColorMap(String colorMap, int imageIndex) {
+    if (colorMap == null) return;
+    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
+    greyChannelNode.setColorMap(colorMap);
+  }
+
+  // - Group property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setGroupName(String, int) */
+  public void setGroupName(String name, int groupIndex) {
+    if (name == null) return;
+    GroupNode groupNode = getGroupNode(groupIndex, true);
+    groupNode.setName(name);
+  }
+
   // - GroupRef property storage -
 
   // - Image property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setImageAcquiredPixels(String, int) */
+  public void setImageAcquiredPixels(String acquiredPixels, int imageIndex) {
+    if (acquiredPixels == null) return;
+    ImageNode imageNode = getImageNode(imageIndex, true);
+    imageNode.setAcquiredPixels(acquiredPixels);
+  }
 
   /* @see loci.formats.meta.MetadataStore#setImageCreationDate(String, int) */
   public void setImageCreationDate(String creationDate, int imageIndex) {
@@ -1657,6 +3188,63 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (description == null) return;
     ImageNode imageNode = getImageNode(imageIndex, true);
     imageNode.setDescription(description);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setImageExperimentRef(String, int) */
+  public void setImageExperimentRef(String experimentRef, int imageIndex) {
+    if (experimentRef == null) return;
+    ImageNode imageNode = getImageNode(imageIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getExperimentList();
+    ExperimentNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(experimentRef)) node = (ExperimentNode) o;
+    }
+    if (node == null) {
+      node = new ExperimentNode(ome);
+      node.setNodeID(experimentRef);
+    }
+    ExperimentRefNode ref = new ExperimentRefNode(imageNode);
+    ref.setExperimentNode(node);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setImageExperimenterRef(String, int) */
+  public void setImageExperimenterRef(String experimenterRef, int imageIndex) {
+    if (experimenterRef == null) return;
+    ImageNode imageNode = getImageNode(imageIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getExperimenterList();
+    ExperimenterNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(experimenterRef)) node = (ExperimenterNode) o;
+    }
+    if (node == null) {
+      node = new ExperimenterNode(ome);
+      node.setNodeID(experimenterRef);
+    }
+    ExperimenterRefNode ref = new ExperimenterRefNode(imageNode);
+    ref.setExperimenterNode(node);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setImageGroupRef(String, int) */
+  public void setImageGroupRef(String groupRef, int imageIndex) {
+    if (groupRef == null) return;
+    ImageNode imageNode = getImageNode(imageIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getGroupList();
+    GroupNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(groupRef)) node = (GroupNode) o;
+    }
+    if (node == null) {
+      node = new GroupNode(ome);
+      node.setNodeID(groupRef);
+    }
+    GroupRefNode ref = new GroupRefNode(imageNode);
+    ref.setGroupNode(node);
   }
 
   /* @see loci.formats.meta.MetadataStore#setImageID(String, int) */
@@ -1690,6 +3278,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (name == null) return;
     ImageNode imageNode = getImageNode(imageIndex, true);
     imageNode.setName(name);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setImageObjective(String, int) */
+  public void setImageObjective(String objective, int imageIndex) {
+    if (objective == null) return;
+    ObjectiveRefNode objectiveRefNode = getObjectiveRefNode(imageIndex, true);
+    objectiveRefNode.setNodeID(objective);
   }
 
   // - ImagingEnvironment property storage -
@@ -1747,11 +3342,25 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     laserNode.setLaserMedium(laserMedium);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setLaserPockelCell(Boolean, int, int) */
+  public void setLaserPockelCell(Boolean pockelCell, int instrumentIndex, int lightSourceIndex) {
+    if (pockelCell == null) return;
+    LaserNode laserNode = getLaserNode(instrumentIndex, lightSourceIndex, true);
+    laserNode.setPockelCell(pockelCell);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setLaserPulse(String, int, int) */
   public void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex) {
     if (pulse == null) return;
     LaserNode laserNode = getLaserNode(instrumentIndex, lightSourceIndex, true);
     laserNode.setPulse(pulse);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLaserRepetitionRate(Boolean, int, int) */
+  public void setLaserRepetitionRate(Boolean repetitionRate, int instrumentIndex, int lightSourceIndex) {
+    if (repetitionRate == null) return;
+    LaserNode laserNode = getLaserNode(instrumentIndex, lightSourceIndex, true);
+    laserNode.setRepetitionRate(repetitionRate);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLaserTuneable(Boolean, int, int) */
@@ -1812,6 +3421,29 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     lightSourceNode.setSerialNumber(serialNumber);
   }
 
+  // - LightSourceRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setLightSourceRefAttenuation(Float, int, int, int) */
+  public void setLightSourceRefAttenuation(Float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    if (attenuation == null) return;
+    LightSourceRefNode lightSourceRefNode = getLightSourceRefNode(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, true);
+    lightSourceRefNode.setAttenuation(attenuation);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLightSourceRefLightSource(String, int, int, int) */
+  public void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    if (lightSource == null) return;
+    LightSourceRefNode lightSourceRefNode = getLightSourceRefNode(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, true);
+    lightSourceRefNode.setNodeID(lightSource);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLightSourceRefWavelength(Integer, int, int, int) */
+  public void setLightSourceRefWavelength(Integer wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+    if (wavelength == null) return;
+    LightSourceRefNode lightSourceRefNode = getLightSourceRefNode(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, true);
+    lightSourceRefNode.setWavelength(wavelength);
+  }
+
   // - LightSourceSettings property storage -
 
   /* @see loci.formats.meta.MetadataStore#setLightSourceSettingsAttenuation(Float, int, int) */
@@ -1835,6 +3467,50 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     lightSourceRefNode.setWavelength(wavelength);
   }
 
+  // - Line property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setLineID(String, int, int, int) */
+  public void setLineID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
+    lineNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLinetransform(String, int, int, int) */
+  public void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
+    lineNode.settransform(transform);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLinex1(String, int, int, int) */
+  public void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
+    if (x1 == null) return;
+    LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
+    lineNode.setx1(x1);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLinex2(String, int, int, int) */
+  public void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
+    if (x2 == null) return;
+    LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
+    lineNode.setx2(x2);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLiney1(String, int, int, int) */
+  public void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
+    if (y1 == null) return;
+    LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
+    lineNode.sety1(y1);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLiney2(String, int, int, int) */
+  public void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
+    if (y2 == null) return;
+    LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
+    lineNode.sety2(y2);
+  }
+
   // - LogicalChannel property storage -
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelContrastMethod(String, int, int) */
@@ -1842,6 +3518,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (contrastMethod == null) return;
     LogicalChannelNode logicalChannelNode = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
     logicalChannelNode.setContrastMethod(contrastMethod);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLogicalChannelDetector(String, int, int) */
+  public void setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex) {
+    if (detector == null) return;
+    DetectorRefNode detectorRefNode = getDetectorRefNode(imageIndex, logicalChannelIndex, true);
+    detectorRefNode.setNodeID(detector);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelEmWave(Integer, int, int) */
@@ -1856,6 +3539,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (exWave == null) return;
     LogicalChannelNode logicalChannelNode = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
     logicalChannelNode.setExWave(exWave);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLogicalChannelFilterSet(String, int, int) */
+  public void setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex) {
+    if (filterSet == null) return;
+    FilterSetRefNode filterSetRefNode = getFilterSetRefNode(imageIndex, logicalChannelIndex, true);
+    filterSetRefNode.setNodeID(filterSet);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelFluor(String, int, int) */
@@ -1877,6 +3567,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (illuminationType == null) return;
     LogicalChannelNode logicalChannelNode = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
     logicalChannelNode.setIlluminationType(illuminationType);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLogicalChannelLightSource(String, int, int) */
+  public void setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex) {
+    if (lightSource == null) return;
+    LightSourceRefNode lightSourceRefNode = getLightSourceRefNode(imageIndex, logicalChannelIndex, true);
+    lightSourceRefNode.setNodeID(lightSource);
   }
 
   /* @see loci.formats.meta.MetadataStore#setLogicalChannelMode(String, int, int) */
@@ -1935,7 +3632,197 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     logicalChannelNode.setSamplesPerPixel(samplesPerPixel);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setLogicalChannelSecondaryEmissionFilter(String, int, int) */
+  public void setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex) {
+    if (secondaryEmissionFilter == null) return;
+    LogicalChannelNode logicalChannelNode = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannelNode.setSecondaryEmissionFilter(secondaryEmissionFilter);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setLogicalChannelSecondaryExcitationFilter(String, int, int) */
+  public void setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex) {
+    if (secondaryExcitationFilter == null) return;
+    LogicalChannelNode logicalChannelNode = getLogicalChannelNode(imageIndex, logicalChannelIndex, true);
+    logicalChannelNode.setSecondaryExcitationFilter(secondaryExcitationFilter);
+  }
+
+  // - Mask property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setMaskID(String, int, int, int) */
+  public void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
+    maskNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskheight(String, int, int, int) */
+  public void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    if (height == null) return;
+    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
+    maskNode.setheight(height);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMasktransform(String, int, int, int) */
+  public void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
+    maskNode.settransform(transform);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskwidth(String, int, int, int) */
+  public void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+    if (width == null) return;
+    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
+    maskNode.setwidth(width);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskx(String, int, int, int) */
+  public void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+    if (x == null) return;
+    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
+    maskNode.setx(x);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMasky(String, int, int, int) */
+  public void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex) {
+    if (y == null) return;
+    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
+    maskNode.sety(y);
+  }
+
+  // - MaskPixels property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setMaskPixelsBigEndian(Boolean, int, int, int) */
+  public void setMaskPixelsBigEndian(Boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex) {
+    if (bigEndian == null) return;
+    MaskPixelsNode maskPixelsNode = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, true);
+    maskPixelsNode.setBigEndian(bigEndian);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskPixelsBinData(String, int, int, int) */
+  public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex) {
+    if (binData == null) return;
+    MaskPixelsNode maskPixelsNode = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, true);
+    maskPixelsNode.setBinData(binData);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskPixelsExtendedPixelType(String, int, int, int) */
+  public void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex) {
+    if (extendedPixelType == null) return;
+    MaskPixelsNode maskPixelsNode = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, true);
+    maskPixelsNode.setExtendedPixelType(extendedPixelType);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskPixelsID(String, int, int, int) */
+  public void setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    MaskPixelsNode maskPixelsNode = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, true);
+    maskPixelsNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskPixelsSizeX(Integer, int, int, int) */
+  public void setMaskPixelsSizeX(Integer sizeX, int imageIndex, int roiIndex, int shapeIndex) {
+    if (sizeX == null) return;
+    MaskPixelsNode maskPixelsNode = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, true);
+    maskPixelsNode.setSizeX(sizeX);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMaskPixelsSizeY(Integer, int, int, int) */
+  public void setMaskPixelsSizeY(Integer sizeY, int imageIndex, int roiIndex, int shapeIndex) {
+    if (sizeY == null) return;
+    MaskPixelsNode maskPixelsNode = getMaskPixelsNode(imageIndex, roiIndex, shapeIndex, true);
+    maskPixelsNode.setSizeY(sizeY);
+  }
+
+  // - MicrobeamManipulation property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setMicrobeamManipulationExperimenterRef(String, int, int) */
+  public void setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex) {
+    if (experimenterRef == null) return;
+    MicrobeamManipulationNode microbeamManipulationNode = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getExperimenterList();
+    ExperimenterNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(experimenterRef)) node = (ExperimenterNode) o;
+    }
+    if (node == null) {
+      node = new ExperimenterNode(ome);
+      node.setNodeID(experimenterRef);
+    }
+    ExperimenterRefNode ref = new ExperimenterRefNode(microbeamManipulationNode);
+    ref.setExperimenterNode(node);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMicrobeamManipulationID(String, int, int) */
+  public void setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex) {
+    if (id == null) return;
+    MicrobeamManipulationNode microbeamManipulationNode = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, true);
+    microbeamManipulationNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMicrobeamManipulationType(String, int, int) */
+  public void setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex) {
+    if (type == null) return;
+    MicrobeamManipulationNode microbeamManipulationNode = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, true);
+    microbeamManipulationNode.setType(type);
+  }
+
+  // - MicrobeamManipulationRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setMicrobeamManipulationRefID(String, int, int) */
+  public void setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex) {
+    if (id == null) return;
+    MicrobeamManipulationRefNode microbeamManipulationRefNode = getMicrobeamManipulationRefNode(experimentIndex, microbeamManipulationRefIndex, true);
+    microbeamManipulationRefNode.setNodeID(id);
+  }
+
+  // - Microscope property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setMicroscopeID(String, int) */
+  public void setMicroscopeID(String id, int instrumentIndex) {
+    if (id == null) return;
+    MicroscopeNode microscopeNode = getMicroscopeNode(instrumentIndex, true);
+    microscopeNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMicroscopeManufacturer(String, int) */
+  public void setMicroscopeManufacturer(String manufacturer, int instrumentIndex) {
+    if (manufacturer == null) return;
+    MicroscopeNode microscopeNode = getMicroscopeNode(instrumentIndex, true);
+    microscopeNode.setManufacturer(manufacturer);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMicroscopeModel(String, int) */
+  public void setMicroscopeModel(String model, int instrumentIndex) {
+    if (model == null) return;
+    MicroscopeNode microscopeNode = getMicroscopeNode(instrumentIndex, true);
+    microscopeNode.setModel(model);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMicroscopeSerialNumber(String, int) */
+  public void setMicroscopeSerialNumber(String serialNumber, int instrumentIndex) {
+    if (serialNumber == null) return;
+    MicroscopeNode microscopeNode = getMicroscopeNode(instrumentIndex, true);
+    microscopeNode.setSerialNumber(serialNumber);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setMicroscopeType(String, int) */
+  public void setMicroscopeType(String type, int instrumentIndex) {
+    if (type == null) return;
+    MicroscopeNode microscopeNode = getMicroscopeNode(instrumentIndex, true);
+    microscopeNode.setType(type);
+  }
+
   // - OTF property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setOTFBinaryFile(String, int, int) */
+  public void setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex) {
+    if (binaryFile == null) return;
+    OTFNode otfNode = getOTFNode(instrumentIndex, otfIndex, true);
+    otfNode.setBinaryFile(binaryFile);
+  }
 
   /* @see loci.formats.meta.MetadataStore#setOTFID(String, int, int) */
   public void setOTFID(String id, int instrumentIndex, int otfIndex) {
@@ -2153,6 +4040,20 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Plane property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setPlaneHashSHA1(String, int, int, int) */
+  public void setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex) {
+    if (hashSHA1 == null) return;
+    PlaneNode planeNode = getPlaneNode(imageIndex, pixelsIndex, planeIndex, true);
+    planeNode.setHashSHA1(hashSHA1);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlaneID(String, int, int, int) */
+  public void setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex) {
+    if (id == null) return;
+    PlaneNode planeNode = getPlaneNode(imageIndex, pixelsIndex, planeIndex, true);
+    planeNode.setNodeID(id);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setPlaneTheC(Integer, int, int, int) */
   public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex) {
     if (theC == null) return;
@@ -2236,11 +4137,185 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     plateRefNode.setNodeID(id);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setPlateRefSample(Integer, int, int) */
+  public void setPlateRefSample(Integer sample, int screenIndex, int plateRefIndex) {
+    // NB: Sample unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateRefWell(String, int, int) */
+  public void setPlateRefWell(String well, int screenIndex, int plateRefIndex) {
+    // NB: Well unsupported for schema version 2008-09
+  }
+
+  // - Point property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPointID(String, int, int, int) */
+  public void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
+    pointNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPointcx(String, int, int, int) */
+  public void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cx == null) return;
+    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
+    pointNode.setcx(cx);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPointcy(String, int, int, int) */
+  public void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cy == null) return;
+    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
+    pointNode.setcy(cy);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPointr(String, int, int, int) */
+  public void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex) {
+    if (r == null) return;
+    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
+    pointNode.setr(r);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPointtransform(String, int, int, int) */
+  public void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
+    pointNode.settransform(transform);
+  }
+
+  // - Polygon property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPolygonID(String, int, int, int) */
+  public void setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    PolygonNode polygonNode = getPolygonNode(imageIndex, roiIndex, shapeIndex, true);
+    polygonNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPolygonpoints(String, int, int, int) */
+  public void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+    if (points == null) return;
+    PolygonNode polygonNode = getPolygonNode(imageIndex, roiIndex, shapeIndex, true);
+    polygonNode.setpoints(points);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPolygontransform(String, int, int, int) */
+  public void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    PolygonNode polygonNode = getPolygonNode(imageIndex, roiIndex, shapeIndex, true);
+    polygonNode.settransform(transform);
+  }
+
+  // - Polyline property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPolylineID(String, int, int, int) */
+  public void setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    PolylineNode polylineNode = getPolylineNode(imageIndex, roiIndex, shapeIndex, true);
+    polylineNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPolylinepoints(String, int, int, int) */
+  public void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+    if (points == null) return;
+    PolylineNode polylineNode = getPolylineNode(imageIndex, roiIndex, shapeIndex, true);
+    polylineNode.setpoints(points);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPolylinetransform(String, int, int, int) */
+  public void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    PolylineNode polylineNode = getPolylineNode(imageIndex, roiIndex, shapeIndex, true);
+    polylineNode.settransform(transform);
+  }
+
+  // - Project property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setProjectDescription(String, int) */
+  public void setProjectDescription(String description, int projectIndex) {
+    if (description == null) return;
+    ProjectNode projectNode = getProjectNode(projectIndex, true);
+    projectNode.setDescription(description);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setProjectExperimenterRef(String, int) */
+  public void setProjectExperimenterRef(String experimenterRef, int projectIndex) {
+    if (experimenterRef == null) return;
+    ProjectNode projectNode = getProjectNode(projectIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getExperimenterList();
+    ExperimenterNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(experimenterRef)) node = (ExperimenterNode) o;
+    }
+    if (node == null) {
+      node = new ExperimenterNode(ome);
+      node.setNodeID(experimenterRef);
+    }
+    ExperimenterRefNode ref = new ExperimenterRefNode(projectNode);
+    ref.setExperimenterNode(node);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setProjectGroupRef(String, int) */
+  public void setProjectGroupRef(String groupRef, int projectIndex) {
+    if (groupRef == null) return;
+    ProjectNode projectNode = getProjectNode(projectIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getGroupList();
+    GroupNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(groupRef)) node = (GroupNode) o;
+    }
+    if (node == null) {
+      node = new GroupNode(ome);
+      node.setNodeID(groupRef);
+    }
+    GroupRefNode ref = new GroupRefNode(projectNode);
+    ref.setGroupNode(node);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setProjectID(String, int) */
+  public void setProjectID(String id, int projectIndex) {
+    if (id == null) return;
+    ProjectNode projectNode = getProjectNode(projectIndex, true);
+    projectNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setProjectName(String, int) */
+  public void setProjectName(String name, int projectIndex) {
+    if (name == null) return;
+    ProjectNode projectNode = getProjectNode(projectIndex, true);
+    projectNode.setName(name);
+  }
+
+  // - ProjectRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setProjectRefID(String, int, int) */
+  public void setProjectRefID(String id, int datasetIndex, int projectRefIndex) {
+    if (id == null) return;
+    ProjectRefNode projectRefNode = getProjectRefNode(datasetIndex, projectRefIndex, true);
+    projectRefNode.setNodeID(id);
+  }
+
+  // - Pump property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPumpLightSource(String, int, int) */
+  public void setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex) {
+    if (lightSource == null) return;
+    PumpNode pumpNode = getPumpNode(instrumentIndex, lightSourceIndex, true);
+    pumpNode.setNodeID(lightSource);
+  }
+
   // - ROI property storage -
 
   /* @see loci.formats.meta.MetadataStore#setROIID(String, int, int) */
   public void setROIID(String id, int imageIndex, int roiIndex) {
-    // NB: ID unsupported for schema version 2008-09
+    if (id == null) return;
+    ROINode roiNode = getROINode(imageIndex, roiIndex, true);
+    roiNode.setNodeID(id);
   }
 
   /* @see loci.formats.meta.MetadataStore#setROIT0(Integer, int, int) */
@@ -2283,6 +4358,15 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     // NB: Z1 unsupported for schema version 2008-09
   }
 
+  // - ROIRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setROIRefID(String, int, int, int) */
+  public void setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex) {
+    if (id == null) return;
+    ROIRefNode roiRefNode = getROIRefNode(imageIndex, microbeamManipulationIndex, roiRefIndex, true);
+    roiRefNode.setNodeID(id);
+  }
+
   // - Reagent property storage -
 
   /* @see loci.formats.meta.MetadataStore#setReagentDescription(String, int, int) */
@@ -2313,7 +4397,86 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     reagentNode.setReagentIdentifier(reagentIdentifier);
   }
 
+  // - Rect property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setRectID(String, int, int, int) */
+  public void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
+    rectNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRectheight(String, int, int, int) */
+  public void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    if (height == null) return;
+    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
+    rectNode.setheight(height);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRecttransform(String, int, int, int) */
+  public void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+    if (transform == null) return;
+    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
+    rectNode.settransform(transform);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRectwidth(String, int, int, int) */
+  public void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+    if (width == null) return;
+    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
+    rectNode.setwidth(width);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRectx(String, int, int, int) */
+  public void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+    if (x == null) return;
+    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
+    rectNode.setx(x);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRecty(String, int, int, int) */
+  public void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex) {
+    if (y == null) return;
+    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
+    rectNode.sety(y);
+  }
+
+  // - Region property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setRegionID(String, int, int) */
+  public void setRegionID(String id, int imageIndex, int regionIndex) {
+    if (id == null) return;
+    RegionNode regionNode = getRegionNode(imageIndex, regionIndex, true);
+    regionNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRegionName(String, int, int) */
+  public void setRegionName(String name, int imageIndex, int regionIndex) {
+    if (name == null) return;
+    RegionNode regionNode = getRegionNode(imageIndex, regionIndex, true);
+    regionNode.setName(name);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRegionTag(String, int, int) */
+  public void setRegionTag(String tag, int imageIndex, int regionIndex) {
+    if (tag == null) return;
+    RegionNode regionNode = getRegionNode(imageIndex, regionIndex, true);
+    regionNode.setTag(tag);
+  }
+
   // - Screen property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setScreenDescription(String, int) */
+  public void setScreenDescription(String description, int screenIndex) {
+    if (description == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setDescription(description);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setScreenExtern(String, int) */
+  public void setScreenExtern(String extern, int screenIndex) {
+    // NB: Extern unsupported for schema version 2008-09
+  }
 
   /* @see loci.formats.meta.MetadataStore#setScreenID(String, int) */
   public void setScreenID(String id, int screenIndex) {
@@ -2350,6 +4513,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     screenNode.setReagentSetDescription(reagentSetDescription);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setScreenReagentSetIdentifier(String, int) */
+  public void setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex) {
+    if (reagentSetIdentifier == null) return;
+    ScreenNode screenNode = getScreenNode(screenIndex, true);
+    screenNode.setReagentSetIdentifier(reagentSetIdentifier);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setScreenType(String, int) */
   public void setScreenType(String type, int screenIndex) {
     if (type == null) return;
@@ -2378,6 +4548,38 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (startTime == null) return;
     ScreenAcquisitionNode screenAcquisitionNode = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, true);
     screenAcquisitionNode.setStartTime(startTime);
+  }
+
+  // - ScreenRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setScreenRefID(String, int, int) */
+  public void setScreenRefID(String id, int plateIndex, int screenRefIndex) {
+    if (id == null) return;
+    ScreenRefNode screenRefNode = getScreenRefNode(plateIndex, screenRefIndex, true);
+    screenRefNode.setNodeID(id);
+  }
+
+  // - Shape property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setShapeID(String, int, int, int) */
+  public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    if (id == null) return;
+    ShapeNode shapeNode = getShapeNode(imageIndex, roiIndex, shapeIndex, true);
+    shapeNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapetheT(Integer, int, int, int) */
+  public void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
+    if (theT == null) return;
+    ShapeNode shapeNode = getShapeNode(imageIndex, roiIndex, shapeIndex, true);
+    shapeNode.settheT(theT);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapetheZ(Integer, int, int, int) */
+  public void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
+    if (theZ == null) return;
+    ShapeNode shapeNode = getShapeNode(imageIndex, roiIndex, shapeIndex, true);
+    shapeNode.settheZ(theZ);
   }
 
   // - StageLabel property storage -
@@ -2433,6 +4635,29 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     stagePositionNode.setPositionZ(positionZ);
   }
 
+  // - Thumbnail property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setThumbnailID(String, int) */
+  public void setThumbnailID(String id, int imageIndex) {
+    if (id == null) return;
+    ThumbnailNode thumbnailNode = getThumbnailNode(imageIndex, true);
+    thumbnailNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setThumbnailMIMEtype(String, int) */
+  public void setThumbnailMIMEtype(String mimEtype, int imageIndex) {
+    if (mimEtype == null) return;
+    ThumbnailNode thumbnailNode = getThumbnailNode(imageIndex, true);
+    thumbnailNode.setMIMEtype(mimEtype);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setThumbnailhref(String, int) */
+  public void setThumbnailhref(String href, int imageIndex) {
+    if (href == null) return;
+    ThumbnailNode thumbnailNode = getThumbnailNode(imageIndex, true);
+    thumbnailNode.sethref(href);
+  }
+
   // - TiffData property storage -
 
   /* @see loci.formats.meta.MetadataStore#setTiffDataFileName(String, int, int, int) */
@@ -2484,6 +4709,43 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     uuidNode.setCData(uuid);
   }
 
+  // - TransmittanceRange property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setTransmittanceRangeCutIn(Integer, int, int) */
+  public void setTransmittanceRangeCutIn(Integer cutIn, int instrumentIndex, int filterIndex) {
+    if (cutIn == null) return;
+    TransmittanceRangeNode transmittanceRangeNode = getTransmittanceRangeNode(instrumentIndex, filterIndex, true);
+    transmittanceRangeNode.setCutIn(cutIn);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setTransmittanceRangeCutInTolerance(Integer, int, int) */
+  public void setTransmittanceRangeCutInTolerance(Integer cutInTolerance, int instrumentIndex, int filterIndex) {
+    if (cutInTolerance == null) return;
+    TransmittanceRangeNode transmittanceRangeNode = getTransmittanceRangeNode(instrumentIndex, filterIndex, true);
+    transmittanceRangeNode.setCutInTolerance(cutInTolerance);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setTransmittanceRangeCutOut(Integer, int, int) */
+  public void setTransmittanceRangeCutOut(Integer cutOut, int instrumentIndex, int filterIndex) {
+    if (cutOut == null) return;
+    TransmittanceRangeNode transmittanceRangeNode = getTransmittanceRangeNode(instrumentIndex, filterIndex, true);
+    transmittanceRangeNode.setCutOut(cutOut);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setTransmittanceRangeCutOutTolerance(Integer, int, int) */
+  public void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex) {
+    if (cutOutTolerance == null) return;
+    TransmittanceRangeNode transmittanceRangeNode = getTransmittanceRangeNode(instrumentIndex, filterIndex, true);
+    transmittanceRangeNode.setCutOutTolerance(cutOutTolerance);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setTransmittanceRangeTransmittance(Integer, int, int) */
+  public void setTransmittanceRangeTransmittance(Integer transmittance, int instrumentIndex, int filterIndex) {
+    if (transmittance == null) return;
+    TransmittanceRangeNode transmittanceRangeNode = getTransmittanceRangeNode(instrumentIndex, filterIndex, true);
+    transmittanceRangeNode.setTransmittance(transmittance);
+  }
+
   // - Well property storage -
 
   /* @see loci.formats.meta.MetadataStore#setWellColumn(Integer, int, int) */
@@ -2514,6 +4776,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     wellNode.setNodeID(id);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setWellReagent(String, int, int) */
+  public void setWellReagent(String reagent, int plateIndex, int wellIndex) {
+    if (reagent == null) return;
+    ReagentRefNode reagentRefNode = getReagentRefNode(plateIndex, wellIndex, true);
+    reagentRefNode.setNodeID(reagent);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setWellRow(Integer, int, int) */
   public void setWellRow(Integer row, int plateIndex, int wellIndex) {
     if (row == null) return;
@@ -2535,6 +4804,25 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (id == null) return;
     WellSampleNode wellSampleNode = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, true);
     wellSampleNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleImageRef(String, int, int, int) */
+  public void setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex) {
+    if (imageRef == null) return;
+    WellSampleNode wellSampleNode = getWellSampleNode(plateIndex, wellIndex, wellSampleIndex, true);
+    OMENode ome = (OMENode) root;
+    List list = ome.getImageList();
+    ImageNode node = null;
+    for (int i=0; i<list.size(); i++) {
+      OMEXMLNode o = (OMEXMLNode) list.get(i);
+      if (o.getNodeID().equals(imageRef)) node = (ImageNode) o;
+    }
+    if (node == null) {
+      node = new ImageNode(ome);
+      node.setNodeID(imageRef);
+    }
+    ImageRefNode ref = new ImageRefNode(wellSampleNode);
+    ref.setImageNode(node);
   }
 
   /* @see loci.formats.meta.MetadataStore#setWellSampleIndex(Integer, int, int, int) */
@@ -2565,7 +4853,63 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     wellSampleNode.setTimepoint(timepoint);
   }
 
+  // - WellSampleRef property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setWellSampleRefID(String, int, int, int) */
+  public void setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex) {
+    if (id == null) return;
+    WellSampleRefNode wellSampleRefNode = getWellSampleRefNode(screenIndex, screenAcquisitionIndex, wellSampleRefIndex, true);
+    wellSampleRefNode.setNodeID(id);
+  }
+
   // -- Helper methods --
+
+  // Dataset+
+  private DatasetNode datasetNode = null;
+  private int datasetNodeDatasetIndex = -1;
+  private DatasetNode getDatasetNode(int datasetIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (datasetNodeDatasetIndex != datasetIndex) match = false;
+    if (match) return datasetNode;
+    datasetNode = null;
+    datasetNodeDatasetIndex = datasetIndex;
+
+    OMENode ome = (OMENode) root;
+    // get Dataset+ node
+    int count = ome.getDatasetCount();
+    if (!create && count <= datasetIndex) return null;
+    for (int i=count; i<=datasetIndex; i++) new DatasetNode(ome);
+    List list = ome.getDatasetList();
+    datasetNode = (DatasetNode) list.get(datasetIndex);
+    return datasetNode;
+  }
+
+  // Dataset+/ProjectRef+
+  private ProjectRefNode datasetProjectRefNode = null;
+  private int datasetProjectRefNodeDatasetIndex = -1;
+  private int datasetProjectRefNodeProjectRefIndex = -1;
+  private ProjectRefNode getProjectRefNode(int datasetIndex, int projectRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (datasetProjectRefNodeDatasetIndex != datasetIndex) match = false;
+    if (datasetProjectRefNodeProjectRefIndex != projectRefIndex) match = false;
+    if (match) return datasetProjectRefNode;
+    datasetProjectRefNode = null;
+    datasetProjectRefNodeDatasetIndex = datasetIndex;
+    datasetProjectRefNodeProjectRefIndex = projectRefIndex;
+
+    // get Dataset+ node
+    DatasetNode dataset = getDatasetNode(datasetIndex, create);
+    if (dataset == null) return null;
+    // get ProjectRef+ node
+    int count = dataset.getProjectRefCount();
+    if (!create && count <= projectRefIndex) return null;
+    for (int i=count; i<=projectRefIndex; i++) new ProjectRefNode(dataset);
+    List list = dataset.getProjectRefList();
+    datasetProjectRefNode = (ProjectRefNode) list.get(projectRefIndex);
+    return datasetProjectRefNode;
+  }
 
   // Experiment+
   private ExperimentNode experimentNode = null;
@@ -2586,6 +4930,32 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     List list = ome.getExperimentList();
     experimentNode = (ExperimentNode) list.get(experimentIndex);
     return experimentNode;
+  }
+
+  // Experiment+/MicrobeamManipulationRef+
+  private MicrobeamManipulationRefNode experimentMicrobeamManipulationRefNode = null;
+  private int experimentMicrobeamManipulationRefNodeExperimentIndex = -1;
+  private int experimentMicrobeamManipulationRefNodeMicrobeamManipulationRefIndex = -1;
+  private MicrobeamManipulationRefNode getMicrobeamManipulationRefNode(int experimentIndex, int microbeamManipulationRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (experimentMicrobeamManipulationRefNodeExperimentIndex != experimentIndex) match = false;
+    if (experimentMicrobeamManipulationRefNodeMicrobeamManipulationRefIndex != microbeamManipulationRefIndex) match = false;
+    if (match) return experimentMicrobeamManipulationRefNode;
+    experimentMicrobeamManipulationRefNode = null;
+    experimentMicrobeamManipulationRefNodeExperimentIndex = experimentIndex;
+    experimentMicrobeamManipulationRefNodeMicrobeamManipulationRefIndex = microbeamManipulationRefIndex;
+
+    // get Experiment+ node
+    ExperimentNode experiment = getExperimentNode(experimentIndex, create);
+    if (experiment == null) return null;
+    // get MicrobeamManipulationRef+ node
+    int count = experiment.getMicrobeamManipulationRefCount();
+    if (!create && count <= microbeamManipulationRefIndex) return null;
+    for (int i=count; i<=microbeamManipulationRefIndex; i++) new MicrobeamManipulationRefNode(experiment);
+    List list = experiment.getMicrobeamManipulationRefList();
+    experimentMicrobeamManipulationRefNode = (MicrobeamManipulationRefNode) list.get(microbeamManipulationRefIndex);
+    return experimentMicrobeamManipulationRefNode;
   }
 
   // Experimenter+
@@ -2635,6 +5005,51 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return experimenterGroupRefNode;
   }
 
+  // Group+
+  private GroupNode groupNode = null;
+  private int groupNodeGroupIndex = -1;
+  private GroupNode getGroupNode(int groupIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (groupNodeGroupIndex != groupIndex) match = false;
+    if (match) return groupNode;
+    groupNode = null;
+    groupNodeGroupIndex = groupIndex;
+
+    OMENode ome = (OMENode) root;
+    // get Group+ node
+    int count = ome.getGroupCount();
+    if (!create && count <= groupIndex) return null;
+    for (int i=count; i<=groupIndex; i++) new GroupNode(ome);
+    List list = ome.getGroupList();
+    groupNode = (GroupNode) list.get(groupIndex);
+    return groupNode;
+  }
+
+  // Group+/Contact
+  private ContactNode groupContactNode = null;
+  private int groupContactNodeGroupIndex = -1;
+  private ContactNode getContactNode(int groupIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (groupContactNodeGroupIndex != groupIndex) match = false;
+    if (match) return groupContactNode;
+    groupContactNode = null;
+    groupContactNodeGroupIndex = groupIndex;
+
+    // get Group+ node
+    GroupNode group = getGroupNode(groupIndex, create);
+    if (group == null) return null;
+    // get Contact node
+    ContactNode contact = group.getContact();
+    if (contact == null) {
+      if (create) contact = new ContactNode(group);
+      else return null;
+    }
+    groupContactNode = contact;
+    return groupContactNode;
+  }
+
   // Image+
   private ImageNode imageNode = null;
   private int imageNodeImageIndex = -1;
@@ -2654,6 +5069,32 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     List list = ome.getImageList();
     imageNode = (ImageNode) list.get(imageIndex);
     return imageNode;
+  }
+
+  // Image+/DatasetRef+
+  private DatasetRefNode imageDatasetRefNode = null;
+  private int imageDatasetRefNodeImageIndex = -1;
+  private int imageDatasetRefNodeDatasetRefIndex = -1;
+  private DatasetRefNode getDatasetRefNode(int imageIndex, int datasetRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDatasetRefNodeImageIndex != imageIndex) match = false;
+    if (imageDatasetRefNodeDatasetRefIndex != datasetRefIndex) match = false;
+    if (match) return imageDatasetRefNode;
+    imageDatasetRefNode = null;
+    imageDatasetRefNodeImageIndex = imageIndex;
+    imageDatasetRefNodeDatasetRefIndex = datasetRefIndex;
+
+    // get Image+ node
+    ImageNode image = getImageNode(imageIndex, create);
+    if (image == null) return null;
+    // get DatasetRef+ node
+    int count = image.getDatasetRefCount();
+    if (!create && count <= datasetRefIndex) return null;
+    for (int i=count; i<=datasetRefIndex; i++) new DatasetRefNode(image);
+    List list = image.getDatasetRefList();
+    imageDatasetRefNode = (DatasetRefNode) list.get(datasetRefIndex);
+    return imageDatasetRefNode;
   }
 
   // Image+/DisplayOptions
@@ -2680,6 +5121,30 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return imageDisplayOptionsNode;
   }
 
+  // Image+/DisplayOptions/GreyChannel
+  private GreyChannelNode imageDisplayOptionsGreyChannelNode = null;
+  private int imageDisplayOptionsGreyChannelNodeImageIndex = -1;
+  private GreyChannelNode getGreyChannelNode(int imageIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsGreyChannelNodeImageIndex != imageIndex) match = false;
+    if (match) return imageDisplayOptionsGreyChannelNode;
+    imageDisplayOptionsGreyChannelNode = null;
+    imageDisplayOptionsGreyChannelNodeImageIndex = imageIndex;
+
+    // get Image+/DisplayOptions node
+    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
+    if (displayOptions == null) return null;
+    // get GreyChannel node
+    GreyChannelNode greyChannel = displayOptions.getGreyChannel();
+    if (greyChannel == null) {
+      if (create) greyChannel = new GreyChannelNode(displayOptions);
+      else return null;
+    }
+    imageDisplayOptionsGreyChannelNode = greyChannel;
+    return imageDisplayOptionsGreyChannelNode;
+  }
+
   // Image+/DisplayOptions/Projection
   private ProjectionNode imageDisplayOptionsProjectionNode = null;
   private int imageDisplayOptionsProjectionNodeImageIndex = -1;
@@ -2702,6 +5167,358 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     }
     imageDisplayOptionsProjectionNode = projection;
     return imageDisplayOptionsProjectionNode;
+  }
+
+  // Image+/DisplayOptions/ROI+
+  private ROINode imageDisplayOptionsROINode = null;
+  private int imageDisplayOptionsROINodeImageIndex = -1;
+  private int imageDisplayOptionsROINodeROIIndex = -1;
+  private ROINode getROINode(int imageIndex, int roiIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROINodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROINodeROIIndex != roiIndex) match = false;
+    if (match) return imageDisplayOptionsROINode;
+    imageDisplayOptionsROINode = null;
+    imageDisplayOptionsROINodeImageIndex = imageIndex;
+    imageDisplayOptionsROINodeROIIndex = roiIndex;
+
+    // get Image+/DisplayOptions node
+    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
+    if (displayOptions == null) return null;
+    // get ROI+ node
+    int count = displayOptions.getROICount();
+    if (!create && count <= roiIndex) return null;
+    for (int i=count; i<=roiIndex; i++) new ROINode(displayOptions);
+    List list = displayOptions.getROIList();
+    imageDisplayOptionsROINode = (ROINode) list.get(roiIndex);
+    return imageDisplayOptionsROINode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union
+  private UnionNode imageDisplayOptionsROIUnionNode = null;
+  private int imageDisplayOptionsROIUnionNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionNodeROIIndex = -1;
+  private UnionNode getUnionNode(int imageIndex, int roiIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionNodeROIIndex != roiIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionNode;
+    imageDisplayOptionsROIUnionNode = null;
+    imageDisplayOptionsROIUnionNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionNodeROIIndex = roiIndex;
+
+    // get Image+/DisplayOptions/ROI+ node
+    ROINode roi = getROINode(imageIndex, roiIndex, create);
+    if (roi == null) return null;
+    // get Union node
+    UnionNode union = roi.getUnion();
+    if (union == null) {
+      if (create) union = new UnionNode(roi);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionNode = union;
+    return imageDisplayOptionsROIUnionNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+
+  private ShapeNode imageDisplayOptionsROIUnionShapeNode = null;
+  private int imageDisplayOptionsROIUnionShapeNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeNodeShapeIndex = -1;
+  private ShapeNode getShapeNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapeNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapeNode;
+    imageDisplayOptionsROIUnionShapeNode = null;
+    imageDisplayOptionsROIUnionShapeNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapeNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapeNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union node
+    UnionNode union = getUnionNode(imageIndex, roiIndex, create);
+    if (union == null) return null;
+    // get Shape+ node
+    int count = union.getShapeCount();
+    if (!create && count <= shapeIndex) return null;
+    for (int i=count; i<=shapeIndex; i++) new ShapeNode(union);
+    List list = union.getShapeList();
+    imageDisplayOptionsROIUnionShapeNode = (ShapeNode) list.get(shapeIndex);
+    return imageDisplayOptionsROIUnionShapeNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Circle
+  private CircleNode imageDisplayOptionsROIUnionShapeCircleNode = null;
+  private int imageDisplayOptionsROIUnionShapeCircleNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeCircleNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex = -1;
+  private CircleNode getCircleNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapeCircleNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeCircleNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapeCircleNode;
+    imageDisplayOptionsROIUnionShapeCircleNode = null;
+    imageDisplayOptionsROIUnionShapeCircleNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapeCircleNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Circle node
+    CircleNode circle = shape.getCircle();
+    if (circle == null) {
+      if (create) circle = new CircleNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapeCircleNode = circle;
+    return imageDisplayOptionsROIUnionShapeCircleNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Ellipse
+  private EllipseNode imageDisplayOptionsROIUnionShapeEllipseNode = null;
+  private int imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex = -1;
+  private EllipseNode getEllipseNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapeEllipseNode;
+    imageDisplayOptionsROIUnionShapeEllipseNode = null;
+    imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Ellipse node
+    EllipseNode ellipse = shape.getEllipse();
+    if (ellipse == null) {
+      if (create) ellipse = new EllipseNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapeEllipseNode = ellipse;
+    return imageDisplayOptionsROIUnionShapeEllipseNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Line
+  private LineNode imageDisplayOptionsROIUnionShapeLineNode = null;
+  private int imageDisplayOptionsROIUnionShapeLineNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeLineNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeLineNodeShapeIndex = -1;
+  private LineNode getLineNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapeLineNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeLineNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeLineNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapeLineNode;
+    imageDisplayOptionsROIUnionShapeLineNode = null;
+    imageDisplayOptionsROIUnionShapeLineNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapeLineNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapeLineNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Line node
+    LineNode line = shape.getLine();
+    if (line == null) {
+      if (create) line = new LineNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapeLineNode = line;
+    return imageDisplayOptionsROIUnionShapeLineNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Mask
+  private MaskNode imageDisplayOptionsROIUnionShapeMaskNode = null;
+  private int imageDisplayOptionsROIUnionShapeMaskNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeMaskNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex = -1;
+  private MaskNode getMaskNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapeMaskNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeMaskNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapeMaskNode;
+    imageDisplayOptionsROIUnionShapeMaskNode = null;
+    imageDisplayOptionsROIUnionShapeMaskNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapeMaskNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Mask node
+    MaskNode mask = shape.getMask();
+    if (mask == null) {
+      if (create) mask = new MaskNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapeMaskNode = mask;
+    return imageDisplayOptionsROIUnionShapeMaskNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Mask/MaskPixels
+  private MaskPixelsNode imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = null;
+  private int imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex = -1;
+  private MaskPixelsNode getMaskPixelsNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode;
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = null;
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+/Mask node
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, create);
+    if (mask == null) return null;
+    // get MaskPixels node
+    MaskPixelsNode maskPixels = mask.getMaskPixels();
+    if (maskPixels == null) {
+      if (create) maskPixels = new MaskPixelsNode(mask);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = maskPixels;
+    return imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Point
+  private PointNode imageDisplayOptionsROIUnionShapePointNode = null;
+  private int imageDisplayOptionsROIUnionShapePointNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapePointNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapePointNodeShapeIndex = -1;
+  private PointNode getPointNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapePointNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapePointNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapePointNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapePointNode;
+    imageDisplayOptionsROIUnionShapePointNode = null;
+    imageDisplayOptionsROIUnionShapePointNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapePointNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapePointNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Point node
+    PointNode point = shape.getPoint();
+    if (point == null) {
+      if (create) point = new PointNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapePointNode = point;
+    return imageDisplayOptionsROIUnionShapePointNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Polygon
+  private PolygonNode imageDisplayOptionsROIUnionShapePolygonNode = null;
+  private int imageDisplayOptionsROIUnionShapePolygonNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapePolygonNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex = -1;
+  private PolygonNode getPolygonNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapePolygonNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapePolygonNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapePolygonNode;
+    imageDisplayOptionsROIUnionShapePolygonNode = null;
+    imageDisplayOptionsROIUnionShapePolygonNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapePolygonNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Polygon node
+    PolygonNode polygon = shape.getPolygon();
+    if (polygon == null) {
+      if (create) polygon = new PolygonNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapePolygonNode = polygon;
+    return imageDisplayOptionsROIUnionShapePolygonNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Polyline
+  private PolylineNode imageDisplayOptionsROIUnionShapePolylineNode = null;
+  private int imageDisplayOptionsROIUnionShapePolylineNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapePolylineNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex = -1;
+  private PolylineNode getPolylineNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapePolylineNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapePolylineNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapePolylineNode;
+    imageDisplayOptionsROIUnionShapePolylineNode = null;
+    imageDisplayOptionsROIUnionShapePolylineNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapePolylineNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Polyline node
+    PolylineNode polyline = shape.getPolyline();
+    if (polyline == null) {
+      if (create) polyline = new PolylineNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapePolylineNode = polyline;
+    return imageDisplayOptionsROIUnionShapePolylineNode;
+  }
+
+  // Image+/DisplayOptions/ROI+/Union/Shape+/Rect
+  private RectNode imageDisplayOptionsROIUnionShapeRectNode = null;
+  private int imageDisplayOptionsROIUnionShapeRectNodeImageIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeRectNodeROIIndex = -1;
+  private int imageDisplayOptionsROIUnionShapeRectNodeShapeIndex = -1;
+  private RectNode getRectNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageDisplayOptionsROIUnionShapeRectNodeImageIndex != imageIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeRectNodeROIIndex != roiIndex) match = false;
+    if (imageDisplayOptionsROIUnionShapeRectNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageDisplayOptionsROIUnionShapeRectNode;
+    imageDisplayOptionsROIUnionShapeRectNode = null;
+    imageDisplayOptionsROIUnionShapeRectNodeImageIndex = imageIndex;
+    imageDisplayOptionsROIUnionShapeRectNodeROIIndex = roiIndex;
+    imageDisplayOptionsROIUnionShapeRectNodeShapeIndex = shapeIndex;
+
+    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Rect node
+    RectNode rect = shape.getRect();
+    if (rect == null) {
+      if (create) rect = new RectNode(shape);
+      else return null;
+    }
+    imageDisplayOptionsROIUnionShapeRectNode = rect;
+    return imageDisplayOptionsROIUnionShapeRectNode;
   }
 
   // Image+/DisplayOptions/Time
@@ -2834,6 +5651,33 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return imageLogicalChannelDetectorRefNode;
   }
 
+  // Image+/LogicalChannel+/FilterSetRef
+  private FilterSetRefNode imageLogicalChannelFilterSetRefNode = null;
+  private int imageLogicalChannelFilterSetRefNodeImageIndex = -1;
+  private int imageLogicalChannelFilterSetRefNodeLogicalChannelIndex = -1;
+  private FilterSetRefNode getFilterSetRefNode(int imageIndex, int logicalChannelIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageLogicalChannelFilterSetRefNodeImageIndex != imageIndex) match = false;
+    if (imageLogicalChannelFilterSetRefNodeLogicalChannelIndex != logicalChannelIndex) match = false;
+    if (match) return imageLogicalChannelFilterSetRefNode;
+    imageLogicalChannelFilterSetRefNode = null;
+    imageLogicalChannelFilterSetRefNodeImageIndex = imageIndex;
+    imageLogicalChannelFilterSetRefNodeLogicalChannelIndex = logicalChannelIndex;
+
+    // get Image+/LogicalChannel+ node
+    LogicalChannelNode logicalChannel = getLogicalChannelNode(imageIndex, logicalChannelIndex, create);
+    if (logicalChannel == null) return null;
+    // get FilterSetRef node
+    FilterSetRefNode filterSetRef = logicalChannel.getFilterSetRef();
+    if (filterSetRef == null) {
+      if (create) filterSetRef = new FilterSetRefNode(logicalChannel);
+      else return null;
+    }
+    imageLogicalChannelFilterSetRefNode = filterSetRef;
+    return imageLogicalChannelFilterSetRefNode;
+  }
+
   // Image+/LogicalChannel+/LightSourceRef
   private LightSourceRefNode imageLogicalChannelLightSourceRefNode = null;
   private int imageLogicalChannelLightSourceRefNodeImageIndex = -1;
@@ -2886,6 +5730,90 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     }
     imageLogicalChannelOTFRefNode = otfRef;
     return imageLogicalChannelOTFRefNode;
+  }
+
+  // Image+/MicrobeamManipulation+
+  private MicrobeamManipulationNode imageMicrobeamManipulationNode = null;
+  private int imageMicrobeamManipulationNodeImageIndex = -1;
+  private int imageMicrobeamManipulationNodeMicrobeamManipulationIndex = -1;
+  private MicrobeamManipulationNode getMicrobeamManipulationNode(int imageIndex, int microbeamManipulationIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageMicrobeamManipulationNodeImageIndex != imageIndex) match = false;
+    if (imageMicrobeamManipulationNodeMicrobeamManipulationIndex != microbeamManipulationIndex) match = false;
+    if (match) return imageMicrobeamManipulationNode;
+    imageMicrobeamManipulationNode = null;
+    imageMicrobeamManipulationNodeImageIndex = imageIndex;
+    imageMicrobeamManipulationNodeMicrobeamManipulationIndex = microbeamManipulationIndex;
+
+    // get Image+ node
+    ImageNode image = getImageNode(imageIndex, create);
+    if (image == null) return null;
+    // get MicrobeamManipulation+ node
+    int count = image.getMicrobeamManipulationCount();
+    if (!create && count <= microbeamManipulationIndex) return null;
+    for (int i=count; i<=microbeamManipulationIndex; i++) new MicrobeamManipulationNode(image);
+    List list = image.getMicrobeamManipulationList();
+    imageMicrobeamManipulationNode = (MicrobeamManipulationNode) list.get(microbeamManipulationIndex);
+    return imageMicrobeamManipulationNode;
+  }
+
+  // Image+/MicrobeamManipulation+/LightSourceRef+
+  private LightSourceRefNode imageMicrobeamManipulationLightSourceRefNode = null;
+  private int imageMicrobeamManipulationLightSourceRefNodeImageIndex = -1;
+  private int imageMicrobeamManipulationLightSourceRefNodeMicrobeamManipulationIndex = -1;
+  private int imageMicrobeamManipulationLightSourceRefNodeLightSourceRefIndex = -1;
+  private LightSourceRefNode getLightSourceRefNode(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageMicrobeamManipulationLightSourceRefNodeImageIndex != imageIndex) match = false;
+    if (imageMicrobeamManipulationLightSourceRefNodeMicrobeamManipulationIndex != microbeamManipulationIndex) match = false;
+    if (imageMicrobeamManipulationLightSourceRefNodeLightSourceRefIndex != lightSourceRefIndex) match = false;
+    if (match) return imageMicrobeamManipulationLightSourceRefNode;
+    imageMicrobeamManipulationLightSourceRefNode = null;
+    imageMicrobeamManipulationLightSourceRefNodeImageIndex = imageIndex;
+    imageMicrobeamManipulationLightSourceRefNodeMicrobeamManipulationIndex = microbeamManipulationIndex;
+    imageMicrobeamManipulationLightSourceRefNodeLightSourceRefIndex = lightSourceRefIndex;
+
+    // get Image+/MicrobeamManipulation+ node
+    MicrobeamManipulationNode microbeamManipulation = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, create);
+    if (microbeamManipulation == null) return null;
+    // get LightSourceRef+ node
+    int count = microbeamManipulation.getLightSourceRefCount();
+    if (!create && count <= lightSourceRefIndex) return null;
+    for (int i=count; i<=lightSourceRefIndex; i++) new LightSourceRefNode(microbeamManipulation);
+    List list = microbeamManipulation.getLightSourceRefList();
+    imageMicrobeamManipulationLightSourceRefNode = (LightSourceRefNode) list.get(lightSourceRefIndex);
+    return imageMicrobeamManipulationLightSourceRefNode;
+  }
+
+  // Image+/MicrobeamManipulation+/ROIRef+
+  private ROIRefNode imageMicrobeamManipulationROIRefNode = null;
+  private int imageMicrobeamManipulationROIRefNodeImageIndex = -1;
+  private int imageMicrobeamManipulationROIRefNodeMicrobeamManipulationIndex = -1;
+  private int imageMicrobeamManipulationROIRefNodeROIRefIndex = -1;
+  private ROIRefNode getROIRefNode(int imageIndex, int microbeamManipulationIndex, int roiRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageMicrobeamManipulationROIRefNodeImageIndex != imageIndex) match = false;
+    if (imageMicrobeamManipulationROIRefNodeMicrobeamManipulationIndex != microbeamManipulationIndex) match = false;
+    if (imageMicrobeamManipulationROIRefNodeROIRefIndex != roiRefIndex) match = false;
+    if (match) return imageMicrobeamManipulationROIRefNode;
+    imageMicrobeamManipulationROIRefNode = null;
+    imageMicrobeamManipulationROIRefNodeImageIndex = imageIndex;
+    imageMicrobeamManipulationROIRefNodeMicrobeamManipulationIndex = microbeamManipulationIndex;
+    imageMicrobeamManipulationROIRefNodeROIRefIndex = roiRefIndex;
+
+    // get Image+/MicrobeamManipulation+ node
+    MicrobeamManipulationNode microbeamManipulation = getMicrobeamManipulationNode(imageIndex, microbeamManipulationIndex, create);
+    if (microbeamManipulation == null) return null;
+    // get ROIRef+ node
+    int count = microbeamManipulation.getROIRefCount();
+    if (!create && count <= roiRefIndex) return null;
+    for (int i=count; i<=roiRefIndex; i++) new ROIRefNode(microbeamManipulation);
+    List list = microbeamManipulation.getROIRefList();
+    imageMicrobeamManipulationROIRefNode = (ROIRefNode) list.get(roiRefIndex);
+    return imageMicrobeamManipulationROIRefNode;
   }
 
   // Image+/ObjectiveRef
@@ -3086,6 +6014,32 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return imagePixelsTiffDataUUIDNode;
   }
 
+  // Image+/Region+
+  private RegionNode imageRegionNode = null;
+  private int imageRegionNodeImageIndex = -1;
+  private int imageRegionNodeRegionIndex = -1;
+  private RegionNode getRegionNode(int imageIndex, int regionIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageRegionNodeImageIndex != imageIndex) match = false;
+    if (imageRegionNodeRegionIndex != regionIndex) match = false;
+    if (match) return imageRegionNode;
+    imageRegionNode = null;
+    imageRegionNodeImageIndex = imageIndex;
+    imageRegionNodeRegionIndex = regionIndex;
+
+    // get Image+ node
+    ImageNode image = getImageNode(imageIndex, create);
+    if (image == null) return null;
+    // get Region+ node
+    int count = image.getRegionCount();
+    if (!create && count <= regionIndex) return null;
+    for (int i=count; i<=regionIndex; i++) new RegionNode(image);
+    List list = image.getRegionList();
+    imageRegionNode = (RegionNode) list.get(regionIndex);
+    return imageRegionNode;
+  }
+
   // Image+/StageLabel
   private StageLabelNode imageStageLabelNode = null;
   private int imageStageLabelNodeImageIndex = -1;
@@ -3108,6 +6062,30 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     }
     imageStageLabelNode = stageLabel;
     return imageStageLabelNode;
+  }
+
+  // Image+/Thumbnail
+  private ThumbnailNode imageThumbnailNode = null;
+  private int imageThumbnailNodeImageIndex = -1;
+  private ThumbnailNode getThumbnailNode(int imageIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageThumbnailNodeImageIndex != imageIndex) match = false;
+    if (match) return imageThumbnailNode;
+    imageThumbnailNode = null;
+    imageThumbnailNodeImageIndex = imageIndex;
+
+    // get Image+ node
+    ImageNode image = getImageNode(imageIndex, create);
+    if (image == null) return null;
+    // get Thumbnail node
+    ThumbnailNode thumbnail = image.getThumbnail();
+    if (thumbnail == null) {
+      if (create) thumbnail = new ThumbnailNode(image);
+      else return null;
+    }
+    imageThumbnailNode = thumbnail;
+    return imageThumbnailNode;
   }
 
   // Instrument+
@@ -3155,6 +6133,111 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     List list = instrument.getDetectorList();
     instrumentDetectorNode = (DetectorNode) list.get(detectorIndex);
     return instrumentDetectorNode;
+  }
+
+  // Instrument+/Dichroic+
+  private DichroicNode instrumentDichroicNode = null;
+  private int instrumentDichroicNodeInstrumentIndex = -1;
+  private int instrumentDichroicNodeDichroicIndex = -1;
+  private DichroicNode getDichroicNode(int instrumentIndex, int dichroicIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (instrumentDichroicNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentDichroicNodeDichroicIndex != dichroicIndex) match = false;
+    if (match) return instrumentDichroicNode;
+    instrumentDichroicNode = null;
+    instrumentDichroicNodeInstrumentIndex = instrumentIndex;
+    instrumentDichroicNodeDichroicIndex = dichroicIndex;
+
+    // get Instrument+ node
+    InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
+    if (instrument == null) return null;
+    // get Dichroic+ node
+    int count = instrument.getDichroicCount();
+    if (!create && count <= dichroicIndex) return null;
+    for (int i=count; i<=dichroicIndex; i++) new DichroicNode(instrument);
+    List list = instrument.getDichroicList();
+    instrumentDichroicNode = (DichroicNode) list.get(dichroicIndex);
+    return instrumentDichroicNode;
+  }
+
+  // Instrument+/Filter+
+  private FilterNode instrumentFilterNode = null;
+  private int instrumentFilterNodeInstrumentIndex = -1;
+  private int instrumentFilterNodeFilterIndex = -1;
+  private FilterNode getFilterNode(int instrumentIndex, int filterIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (instrumentFilterNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentFilterNodeFilterIndex != filterIndex) match = false;
+    if (match) return instrumentFilterNode;
+    instrumentFilterNode = null;
+    instrumentFilterNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterNodeFilterIndex = filterIndex;
+
+    // get Instrument+ node
+    InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
+    if (instrument == null) return null;
+    // get Filter+ node
+    int count = instrument.getFilterCount();
+    if (!create && count <= filterIndex) return null;
+    for (int i=count; i<=filterIndex; i++) new FilterNode(instrument);
+    List list = instrument.getFilterList();
+    instrumentFilterNode = (FilterNode) list.get(filterIndex);
+    return instrumentFilterNode;
+  }
+
+  // Instrument+/Filter+/TransmittanceRange
+  private TransmittanceRangeNode instrumentFilterTransmittanceRangeNode = null;
+  private int instrumentFilterTransmittanceRangeNodeInstrumentIndex = -1;
+  private int instrumentFilterTransmittanceRangeNodeFilterIndex = -1;
+  private TransmittanceRangeNode getTransmittanceRangeNode(int instrumentIndex, int filterIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (instrumentFilterTransmittanceRangeNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentFilterTransmittanceRangeNodeFilterIndex != filterIndex) match = false;
+    if (match) return instrumentFilterTransmittanceRangeNode;
+    instrumentFilterTransmittanceRangeNode = null;
+    instrumentFilterTransmittanceRangeNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterTransmittanceRangeNodeFilterIndex = filterIndex;
+
+    // get Instrument+/Filter+ node
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, create);
+    if (filter == null) return null;
+    // get TransmittanceRange node
+    TransmittanceRangeNode transmittanceRange = filter.getTransmittanceRange();
+    if (transmittanceRange == null) {
+      if (create) transmittanceRange = new TransmittanceRangeNode(filter);
+      else return null;
+    }
+    instrumentFilterTransmittanceRangeNode = transmittanceRange;
+    return instrumentFilterTransmittanceRangeNode;
+  }
+
+  // Instrument+/FilterSet+
+  private FilterSetNode instrumentFilterSetNode = null;
+  private int instrumentFilterSetNodeInstrumentIndex = -1;
+  private int instrumentFilterSetNodeFilterSetIndex = -1;
+  private FilterSetNode getFilterSetNode(int instrumentIndex, int filterSetIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (instrumentFilterSetNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentFilterSetNodeFilterSetIndex != filterSetIndex) match = false;
+    if (match) return instrumentFilterSetNode;
+    instrumentFilterSetNode = null;
+    instrumentFilterSetNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterSetNodeFilterSetIndex = filterSetIndex;
+
+    // get Instrument+ node
+    InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
+    if (instrument == null) return null;
+    // get FilterSet+ node
+    int count = instrument.getFilterSetCount();
+    if (!create && count <= filterSetIndex) return null;
+    for (int i=count; i<=filterSetIndex; i++) new FilterSetNode(instrument);
+    List list = instrument.getFilterSetList();
+    instrumentFilterSetNode = (FilterSetNode) list.get(filterSetIndex);
+    return instrumentFilterSetNode;
   }
 
   // Instrument+/LightSource+
@@ -3264,6 +6347,57 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return instrumentLightSourceLaserNode;
   }
 
+  // Instrument+/LightSource+/Laser/Pump
+  private PumpNode instrumentLightSourceLaserPumpNode = null;
+  private int instrumentLightSourceLaserPumpNodeInstrumentIndex = -1;
+  private int instrumentLightSourceLaserPumpNodeLightSourceIndex = -1;
+  private PumpNode getPumpNode(int instrumentIndex, int lightSourceIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (instrumentLightSourceLaserPumpNodeInstrumentIndex != instrumentIndex) match = false;
+    if (instrumentLightSourceLaserPumpNodeLightSourceIndex != lightSourceIndex) match = false;
+    if (match) return instrumentLightSourceLaserPumpNode;
+    instrumentLightSourceLaserPumpNode = null;
+    instrumentLightSourceLaserPumpNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceLaserPumpNodeLightSourceIndex = lightSourceIndex;
+
+    // get Instrument+/LightSource+/Laser node
+    LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, create);
+    if (laser == null) return null;
+    // get Pump node
+    PumpNode pump = laser.getPump();
+    if (pump == null) {
+      if (create) pump = new PumpNode(laser);
+      else return null;
+    }
+    instrumentLightSourceLaserPumpNode = pump;
+    return instrumentLightSourceLaserPumpNode;
+  }
+
+  // Instrument+/Microscope
+  private MicroscopeNode instrumentMicroscopeNode = null;
+  private int instrumentMicroscopeNodeInstrumentIndex = -1;
+  private MicroscopeNode getMicroscopeNode(int instrumentIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (instrumentMicroscopeNodeInstrumentIndex != instrumentIndex) match = false;
+    if (match) return instrumentMicroscopeNode;
+    instrumentMicroscopeNode = null;
+    instrumentMicroscopeNodeInstrumentIndex = instrumentIndex;
+
+    // get Instrument+ node
+    InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
+    if (instrument == null) return null;
+    // get Microscope node
+    MicroscopeNode microscope = instrument.getMicroscope();
+    if (microscope == null) {
+      if (create) microscope = new MicroscopeNode(instrument);
+      else return null;
+    }
+    instrumentMicroscopeNode = microscope;
+    return instrumentMicroscopeNode;
+  }
+
   // Instrument+/OTF+
   private OTFNode instrumentOTFNode = null;
   private int instrumentOTFNodeInstrumentIndex = -1;
@@ -3364,6 +6498,32 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return plateNode;
   }
 
+  // Plate+/ScreenRef+
+  private ScreenRefNode plateScreenRefNode = null;
+  private int plateScreenRefNodePlateIndex = -1;
+  private int plateScreenRefNodeScreenRefIndex = -1;
+  private ScreenRefNode getScreenRefNode(int plateIndex, int screenRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (plateScreenRefNodePlateIndex != plateIndex) match = false;
+    if (plateScreenRefNodeScreenRefIndex != screenRefIndex) match = false;
+    if (match) return plateScreenRefNode;
+    plateScreenRefNode = null;
+    plateScreenRefNodePlateIndex = plateIndex;
+    plateScreenRefNodeScreenRefIndex = screenRefIndex;
+
+    // get Plate+ node
+    PlateNode plate = getPlateNode(plateIndex, create);
+    if (plate == null) return null;
+    // get ScreenRef+ node
+    int count = plate.getScreenRefCount();
+    if (!create && count <= screenRefIndex) return null;
+    for (int i=count; i<=screenRefIndex; i++) new ScreenRefNode(plate);
+    List list = plate.getScreenRefList();
+    plateScreenRefNode = (ScreenRefNode) list.get(screenRefIndex);
+    return plateScreenRefNode;
+  }
+
   // Plate+/Well+
   private WellNode plateWellNode = null;
   private int plateWellNodePlateIndex = -1;
@@ -3388,6 +6548,33 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     List list = plate.getWellList();
     plateWellNode = (WellNode) list.get(wellIndex);
     return plateWellNode;
+  }
+
+  // Plate+/Well+/ReagentRef
+  private ReagentRefNode plateWellReagentRefNode = null;
+  private int plateWellReagentRefNodePlateIndex = -1;
+  private int plateWellReagentRefNodeWellIndex = -1;
+  private ReagentRefNode getReagentRefNode(int plateIndex, int wellIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (plateWellReagentRefNodePlateIndex != plateIndex) match = false;
+    if (plateWellReagentRefNodeWellIndex != wellIndex) match = false;
+    if (match) return plateWellReagentRefNode;
+    plateWellReagentRefNode = null;
+    plateWellReagentRefNodePlateIndex = plateIndex;
+    plateWellReagentRefNodeWellIndex = wellIndex;
+
+    // get Plate+/Well+ node
+    WellNode well = getWellNode(plateIndex, wellIndex, create);
+    if (well == null) return null;
+    // get ReagentRef node
+    ReagentRefNode reagentRef = well.getReagentRef();
+    if (reagentRef == null) {
+      if (create) reagentRef = new ReagentRefNode(well);
+      else return null;
+    }
+    plateWellReagentRefNode = reagentRef;
+    return plateWellReagentRefNode;
   }
 
   // Plate+/Well+/WellSample+
@@ -3417,6 +6604,27 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     List list = well.getWellSampleList();
     plateWellWellSampleNode = (WellSampleNode) list.get(wellSampleIndex);
     return plateWellWellSampleNode;
+  }
+
+  // Project+
+  private ProjectNode projectNode = null;
+  private int projectNodeProjectIndex = -1;
+  private ProjectNode getProjectNode(int projectIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (projectNodeProjectIndex != projectIndex) match = false;
+    if (match) return projectNode;
+    projectNode = null;
+    projectNodeProjectIndex = projectIndex;
+
+    OMENode ome = (OMENode) root;
+    // get Project+ node
+    int count = ome.getProjectCount();
+    if (!create && count <= projectIndex) return null;
+    for (int i=count; i<=projectIndex; i++) new ProjectNode(ome);
+    List list = ome.getProjectList();
+    projectNode = (ProjectNode) list.get(projectIndex);
+    return projectNode;
   }
 
   // Screen+
@@ -3518,10 +6726,50 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return screenScreenAcquisitionNode;
   }
 
+  // Screen+/ScreenAcquisition+/WellSampleRef+
+  private WellSampleRefNode screenScreenAcquisitionWellSampleRefNode = null;
+  private int screenScreenAcquisitionWellSampleRefNodeScreenIndex = -1;
+  private int screenScreenAcquisitionWellSampleRefNodeScreenAcquisitionIndex = -1;
+  private int screenScreenAcquisitionWellSampleRefNodeWellSampleRefIndex = -1;
+  private WellSampleRefNode getWellSampleRefNode(int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (screenScreenAcquisitionWellSampleRefNodeScreenIndex != screenIndex) match = false;
+    if (screenScreenAcquisitionWellSampleRefNodeScreenAcquisitionIndex != screenAcquisitionIndex) match = false;
+    if (screenScreenAcquisitionWellSampleRefNodeWellSampleRefIndex != wellSampleRefIndex) match = false;
+    if (match) return screenScreenAcquisitionWellSampleRefNode;
+    screenScreenAcquisitionWellSampleRefNode = null;
+    screenScreenAcquisitionWellSampleRefNodeScreenIndex = screenIndex;
+    screenScreenAcquisitionWellSampleRefNodeScreenAcquisitionIndex = screenAcquisitionIndex;
+    screenScreenAcquisitionWellSampleRefNodeWellSampleRefIndex = wellSampleRefIndex;
+
+    // get Screen+/ScreenAcquisition+ node
+    ScreenAcquisitionNode screenAcquisition = getScreenAcquisitionNode(screenIndex, screenAcquisitionIndex, create);
+    if (screenAcquisition == null) return null;
+    // get WellSampleRef+ node
+    int count = screenAcquisition.getWellSampleRefCount();
+    if (!create && count <= wellSampleRefIndex) return null;
+    for (int i=count; i<=wellSampleRefIndex; i++) new WellSampleRefNode(screenAcquisition);
+    List list = screenAcquisition.getWellSampleRefList();
+    screenScreenAcquisitionWellSampleRefNode = (WellSampleRefNode) list.get(wellSampleRefIndex);
+    return screenScreenAcquisitionWellSampleRefNode;
+  }
+
   private void clearCachedNodes() {
+    // Dataset+
+    datasetNode = null;
+    datasetNodeDatasetIndex = -1;
+    // Dataset+/ProjectRef+
+    datasetProjectRefNode = null;
+    datasetProjectRefNodeDatasetIndex = -1;
+    datasetProjectRefNodeProjectRefIndex = -1;
     // Experiment+
     experimentNode = null;
     experimentNodeExperimentIndex = -1;
+    // Experiment+/MicrobeamManipulationRef+
+    experimentMicrobeamManipulationRefNode = null;
+    experimentMicrobeamManipulationRefNodeExperimentIndex = -1;
+    experimentMicrobeamManipulationRefNodeMicrobeamManipulationRefIndex = -1;
     // Experimenter+
     experimenterNode = null;
     experimenterNodeExperimenterIndex = -1;
@@ -3529,15 +6777,86 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     experimenterGroupRefNode = null;
     experimenterGroupRefNodeExperimenterIndex = -1;
     experimenterGroupRefNodeGroupRefIndex = -1;
+    // Group+
+    groupNode = null;
+    groupNodeGroupIndex = -1;
+    // Group+/Contact
+    groupContactNode = null;
+    groupContactNodeGroupIndex = -1;
     // Image+
     imageNode = null;
     imageNodeImageIndex = -1;
+    // Image+/DatasetRef+
+    imageDatasetRefNode = null;
+    imageDatasetRefNodeImageIndex = -1;
+    imageDatasetRefNodeDatasetRefIndex = -1;
     // Image+/DisplayOptions
     imageDisplayOptionsNode = null;
     imageDisplayOptionsNodeImageIndex = -1;
+    // Image+/DisplayOptions/GreyChannel
+    imageDisplayOptionsGreyChannelNode = null;
+    imageDisplayOptionsGreyChannelNodeImageIndex = -1;
     // Image+/DisplayOptions/Projection
     imageDisplayOptionsProjectionNode = null;
     imageDisplayOptionsProjectionNodeImageIndex = -1;
+    // Image+/DisplayOptions/ROI+
+    imageDisplayOptionsROINode = null;
+    imageDisplayOptionsROINodeImageIndex = -1;
+    imageDisplayOptionsROINodeROIIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union
+    imageDisplayOptionsROIUnionNode = null;
+    imageDisplayOptionsROIUnionNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionNodeROIIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+
+    imageDisplayOptionsROIUnionShapeNode = null;
+    imageDisplayOptionsROIUnionShapeNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapeNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapeNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Circle
+    imageDisplayOptionsROIUnionShapeCircleNode = null;
+    imageDisplayOptionsROIUnionShapeCircleNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapeCircleNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Ellipse
+    imageDisplayOptionsROIUnionShapeEllipseNode = null;
+    imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Line
+    imageDisplayOptionsROIUnionShapeLineNode = null;
+    imageDisplayOptionsROIUnionShapeLineNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapeLineNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapeLineNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Mask
+    imageDisplayOptionsROIUnionShapeMaskNode = null;
+    imageDisplayOptionsROIUnionShapeMaskNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapeMaskNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Mask/MaskPixels
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = null;
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Point
+    imageDisplayOptionsROIUnionShapePointNode = null;
+    imageDisplayOptionsROIUnionShapePointNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapePointNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapePointNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Polygon
+    imageDisplayOptionsROIUnionShapePolygonNode = null;
+    imageDisplayOptionsROIUnionShapePolygonNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapePolygonNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Polyline
+    imageDisplayOptionsROIUnionShapePolylineNode = null;
+    imageDisplayOptionsROIUnionShapePolylineNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapePolylineNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex = -1;
+    // Image+/DisplayOptions/ROI+/Union/Shape+/Rect
+    imageDisplayOptionsROIUnionShapeRectNode = null;
+    imageDisplayOptionsROIUnionShapeRectNodeImageIndex = -1;
+    imageDisplayOptionsROIUnionShapeRectNodeROIIndex = -1;
+    imageDisplayOptionsROIUnionShapeRectNodeShapeIndex = -1;
     // Image+/DisplayOptions/Time
     imageDisplayOptionsTimeNode = null;
     imageDisplayOptionsTimeNodeImageIndex = -1;
@@ -3557,6 +6876,10 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     imageLogicalChannelDetectorRefNode = null;
     imageLogicalChannelDetectorRefNodeImageIndex = -1;
     imageLogicalChannelDetectorRefNodeLogicalChannelIndex = -1;
+    // Image+/LogicalChannel+/FilterSetRef
+    imageLogicalChannelFilterSetRefNode = null;
+    imageLogicalChannelFilterSetRefNodeImageIndex = -1;
+    imageLogicalChannelFilterSetRefNodeLogicalChannelIndex = -1;
     // Image+/LogicalChannel+/LightSourceRef
     imageLogicalChannelLightSourceRefNode = null;
     imageLogicalChannelLightSourceRefNodeImageIndex = -1;
@@ -3565,6 +6888,20 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     imageLogicalChannelOTFRefNode = null;
     imageLogicalChannelOTFRefNodeImageIndex = -1;
     imageLogicalChannelOTFRefNodeLogicalChannelIndex = -1;
+    // Image+/MicrobeamManipulation+
+    imageMicrobeamManipulationNode = null;
+    imageMicrobeamManipulationNodeImageIndex = -1;
+    imageMicrobeamManipulationNodeMicrobeamManipulationIndex = -1;
+    // Image+/MicrobeamManipulation+/LightSourceRef+
+    imageMicrobeamManipulationLightSourceRefNode = null;
+    imageMicrobeamManipulationLightSourceRefNodeImageIndex = -1;
+    imageMicrobeamManipulationLightSourceRefNodeMicrobeamManipulationIndex = -1;
+    imageMicrobeamManipulationLightSourceRefNodeLightSourceRefIndex = -1;
+    // Image+/MicrobeamManipulation+/ROIRef+
+    imageMicrobeamManipulationROIRefNode = null;
+    imageMicrobeamManipulationROIRefNodeImageIndex = -1;
+    imageMicrobeamManipulationROIRefNodeMicrobeamManipulationIndex = -1;
+    imageMicrobeamManipulationROIRefNodeROIRefIndex = -1;
     // Image+/ObjectiveRef
     imageObjectiveRefNode = null;
     imageObjectiveRefNodeImageIndex = -1;
@@ -3597,9 +6934,16 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     imagePixelsTiffDataUUIDNodeImageIndex = -1;
     imagePixelsTiffDataUUIDNodePixelsIndex = -1;
     imagePixelsTiffDataUUIDNodeTiffDataIndex = -1;
+    // Image+/Region+
+    imageRegionNode = null;
+    imageRegionNodeImageIndex = -1;
+    imageRegionNodeRegionIndex = -1;
     // Image+/StageLabel
     imageStageLabelNode = null;
     imageStageLabelNodeImageIndex = -1;
+    // Image+/Thumbnail
+    imageThumbnailNode = null;
+    imageThumbnailNodeImageIndex = -1;
     // Instrument+
     instrumentNode = null;
     instrumentNodeInstrumentIndex = -1;
@@ -3607,6 +6951,22 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     instrumentDetectorNode = null;
     instrumentDetectorNodeInstrumentIndex = -1;
     instrumentDetectorNodeDetectorIndex = -1;
+    // Instrument+/Dichroic+
+    instrumentDichroicNode = null;
+    instrumentDichroicNodeInstrumentIndex = -1;
+    instrumentDichroicNodeDichroicIndex = -1;
+    // Instrument+/Filter+
+    instrumentFilterNode = null;
+    instrumentFilterNodeInstrumentIndex = -1;
+    instrumentFilterNodeFilterIndex = -1;
+    // Instrument+/Filter+/TransmittanceRange
+    instrumentFilterTransmittanceRangeNode = null;
+    instrumentFilterTransmittanceRangeNodeInstrumentIndex = -1;
+    instrumentFilterTransmittanceRangeNodeFilterIndex = -1;
+    // Instrument+/FilterSet+
+    instrumentFilterSetNode = null;
+    instrumentFilterSetNodeInstrumentIndex = -1;
+    instrumentFilterSetNodeFilterSetIndex = -1;
     // Instrument+/LightSource+
     instrumentLightSourceNode = null;
     instrumentLightSourceNodeInstrumentIndex = -1;
@@ -3623,6 +6983,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     instrumentLightSourceLaserNode = null;
     instrumentLightSourceLaserNodeInstrumentIndex = -1;
     instrumentLightSourceLaserNodeLightSourceIndex = -1;
+    // Instrument+/LightSource+/Laser/Pump
+    instrumentLightSourceLaserPumpNode = null;
+    instrumentLightSourceLaserPumpNodeInstrumentIndex = -1;
+    instrumentLightSourceLaserPumpNodeLightSourceIndex = -1;
+    // Instrument+/Microscope
+    instrumentMicroscopeNode = null;
+    instrumentMicroscopeNodeInstrumentIndex = -1;
     // Instrument+/OTF+
     instrumentOTFNode = null;
     instrumentOTFNodeInstrumentIndex = -1;
@@ -3638,15 +7005,26 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     // Plate+
     plateNode = null;
     plateNodePlateIndex = -1;
+    // Plate+/ScreenRef+
+    plateScreenRefNode = null;
+    plateScreenRefNodePlateIndex = -1;
+    plateScreenRefNodeScreenRefIndex = -1;
     // Plate+/Well+
     plateWellNode = null;
     plateWellNodePlateIndex = -1;
     plateWellNodeWellIndex = -1;
+    // Plate+/Well+/ReagentRef
+    plateWellReagentRefNode = null;
+    plateWellReagentRefNodePlateIndex = -1;
+    plateWellReagentRefNodeWellIndex = -1;
     // Plate+/Well+/WellSample+
     plateWellWellSampleNode = null;
     plateWellWellSampleNodePlateIndex = -1;
     plateWellWellSampleNodeWellIndex = -1;
     plateWellWellSampleNodeWellSampleIndex = -1;
+    // Project+
+    projectNode = null;
+    projectNodeProjectIndex = -1;
     // Screen+
     screenNode = null;
     screenNodeScreenIndex = -1;
@@ -3662,6 +7040,11 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     screenScreenAcquisitionNode = null;
     screenScreenAcquisitionNodeScreenIndex = -1;
     screenScreenAcquisitionNodeScreenAcquisitionIndex = -1;
+    // Screen+/ScreenAcquisition+/WellSampleRef+
+    screenScreenAcquisitionWellSampleRefNode = null;
+    screenScreenAcquisitionWellSampleRefNodeScreenIndex = -1;
+    screenScreenAcquisitionWellSampleRefNodeScreenAcquisitionIndex = -1;
+    screenScreenAcquisitionWellSampleRefNodeWellSampleRefIndex = -1;
   }
 
 }
