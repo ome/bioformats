@@ -2,6 +2,27 @@
 // EditTiffG.java
 //
 
+/*
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.formats.tools;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,7 +31,15 @@ import javax.swing.*;
 import loci.formats.FormatException;
 import loci.formats.TiffTools;
 
-/** Provides a GUI for editing TIFF file comments. */
+/**
+ * Provides a GUI for editing TIFF file comments.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/tools/EditTiffG.java">Trac</a>
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/EditTiffG.java">SVN</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
 public class EditTiffG extends JFrame implements ActionListener {
 
   // -- Constants --
@@ -124,6 +153,12 @@ public class EditTiffG extends JFrame implements ActionListener {
       TITLE, JOptionPane.ERROR_MESSAGE);
   }
 
+  public static void openFile(String filename) {
+    EditTiffG etg = new EditTiffG();
+    File f = new File(filename);
+    if (f.exists()) etg.openFile(f);
+  }
+
   // -- ActionListener methods --
 
   public void actionPerformed(ActionEvent e) {
@@ -136,9 +171,7 @@ public class EditTiffG extends JFrame implements ActionListener {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    EditTiffG etg = new EditTiffG();
-    File f = new File(args[0]);
-    if (f.exists()) etg.openFile(f);
+    EditTiffG.openFile(args[0]);
   }
 
 }

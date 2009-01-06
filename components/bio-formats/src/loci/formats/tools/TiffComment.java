@@ -38,13 +38,24 @@ public class TiffComment {
 
   public static void main(String[] args) throws FormatException, IOException {
     if (args.length == 0) {
-      System.out.println("Usage: tiffcomment file1 [file2 ...]");
+      System.out.println("Usage: tiffcomment [-edit] file1 [file2 ...]");
       return;
     }
+    boolean edit = false;
     for (int i=0; i<args.length; i++) {
-      String comment = TiffTools.getComment(args[i]);
-      System.out.println(comment == null ?
-        args[i] + ": no TIFF comment found." : comment);
+      if (args[i].equals("-edit")) {
+        edit = true;
+        continue;
+      }
+
+      if (edit) {
+        EditTiffG.openFile(args[i]);
+      }
+      else {
+        String comment = TiffTools.getComment(args[i]);
+        System.out.println(comment == null ?
+          args[i] + ": no TIFF comment found." : comment);
+      }
     }
   }
 
