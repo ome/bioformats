@@ -41,16 +41,21 @@ public class TiffComment {
       System.out.println("Usage: tiffcomment [-edit] file1 [file2 ...]");
       return;
     }
+
+    // parse flags
     boolean edit = false;
     for (int i=0; i<args.length; i++) {
-      if (args[i].equals("-edit")) {
-        edit = true;
-        continue;
-      }
+      if (!args[i].startsWith("-")) continue;
 
-      if (edit) {
-        EditTiffG.openFile(args[i]);
-      }
+      if (args[i].equals("-edit")) edit = true;
+      else System.out.println("Warning: unknown flag: " + args[i]);
+    }
+
+    // process files
+    for (int i=0; i<args.length; i++) {
+      if (args[i].startsWith("-")) continue;
+
+      if (edit) EditTiffG.openFile(args[i]);
       else {
         String comment = TiffTools.getComment(args[i]);
         System.out.println(comment == null ?
