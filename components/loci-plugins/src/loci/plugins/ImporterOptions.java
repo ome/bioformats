@@ -101,6 +101,7 @@ public class ImporterOptions
   public static final String PREF_ORDER = "bioformats.stackOrder";
   public static final String PREF_MERGE = "bioformats.mergeChannels";
   public static final String PREF_COLORIZE = "bioformats.colorize";
+  public static final String PREF_COLORIZE_CUSTOM = "bioformats.customColorize";
   public static final String PREF_SPLIT_C = "bioformats.splitWindows";
   public static final String PREF_SPLIT_Z = "bioformats.splitFocalPlanes";
   public static final String PREF_SPLIT_T = "bioformats.splitTimepoints";
@@ -129,7 +130,9 @@ public class ImporterOptions
   public static final String LABEL_STACK = "View stack with: ";
   public static final String LABEL_ORDER = "Stack_order: ";
   public static final String LABEL_MERGE = "Merge_channels to RGB";
-  public static final String LABEL_COLORIZE = "Colorize channels";
+  public static final String LABEL_COLORIZE = "Colorize channels (RGB)";
+  public static final String LABEL_COLORIZE_CUSTOM =
+    "Colorize channels (custom colors)";
   public static final String LABEL_SPLIT_C = "Split_channels";
   public static final String LABEL_SPLIT_Z = "Split_focal planes";
   public static final String LABEL_SPLIT_T = "Split_timepoints";
@@ -217,7 +220,13 @@ public class ImporterOptions
     "than the normal grayscale." +
     "<br><br>The first channel is colorized red, the second channel is " +
     "green, and the third channel is blue. This option is not available " +
-    "when " + info(LABEL_MERGE) + " is set.";
+    "when " + info(LABEL_MERGE) + " or " + info(LABEL_COLORIZE_CUSTOM) +
+    " are set.";
+  public static final String INFO_COLORIZE_CUSTOM =
+    info(LABEL_COLORIZE_CUSTOM) + " - Each channel is assigned a pseudocolor " +
+    "table rather than the normal grayscale.<br><br>The color for each " +
+    "channel is chosen by the user. This option is not available when " +
+    info(LABEL_MERGE) + " or " + info(LABEL_COLORIZE) + " are set.";
   public static final String INFO_SPLIT_C = info(LABEL_SPLIT_C) +
     " - Each channel is opened as a separate stack." +
     "<br><br>This option is especially useful if you want to merge the " +
@@ -336,6 +345,7 @@ public class ImporterOptions
   private Choice orderChoice;
   private Checkbox mergeBox;
   private Checkbox colorizeBox;
+  private Checkbox customColorizeBox;
   private Checkbox splitCBox;
   private Checkbox splitZBox;
   private Checkbox splitTBox;
@@ -363,6 +373,7 @@ public class ImporterOptions
   private String stackOrder;
   private boolean mergeChannels;
   private boolean colorize;
+  private boolean customColorize;
   private boolean splitChannels;
   private boolean splitFocalPlanes;
   private boolean splitTimepoints;
@@ -401,6 +412,7 @@ public class ImporterOptions
   public String getStackOrder() { return stackOrder; }
   public boolean isMergeChannels() { return mergeChannels; }
   public boolean isColorize() { return colorize; }
+  public boolean isCustomColorize() { return customColorize; }
   public boolean isSplitChannels() { return splitChannels; }
   public boolean isSplitFocalPlanes() { return splitFocalPlanes; }
   public boolean isSplitTimepoints() { return splitTimepoints; }
@@ -450,6 +462,7 @@ public class ImporterOptions
   public void setStackOrder(String s) { stackOrder = s; }
   public void setMergeChannels(boolean b) { mergeChannels = b; }
   public void setColorize(boolean b) { colorize = b; }
+  public void setCustomColorize(boolean b) { customColorize = b; }
   public void setSplitChannels(boolean b) { splitChannels = b; }
   public void setSplitFocalPlanes(boolean b) { splitFocalPlanes = b; }
   public void setSplitTimepoints(boolean b) { splitTimepoints = b; }
@@ -476,6 +489,7 @@ public class ImporterOptions
     stackOrder = Prefs.get(PREF_ORDER, ORDER_DEFAULT);
     mergeChannels = Prefs.get(PREF_MERGE, false);
     colorize = Prefs.get(PREF_COLORIZE, true);
+    customColorize = Prefs.get(PREF_COLORIZE_CUSTOM, false);
     splitChannels = Prefs.get(PREF_SPLIT_C, true);
     splitFocalPlanes = Prefs.get(PREF_SPLIT_Z, false);
     splitTimepoints = Prefs.get(PREF_SPLIT_T, false);
@@ -513,6 +527,7 @@ public class ImporterOptions
     Prefs.set(PREF_ORDER, stackOrder);
     Prefs.set(PREF_MERGE, mergeChannels);
     Prefs.set(PREF_COLORIZE, colorize);
+    Prefs.set(PREF_COLORIZE_CUSTOM, customColorize);
     Prefs.set(PREF_SPLIT_C, splitChannels);
     Prefs.set(PREF_SPLIT_Z, splitFocalPlanes);
     Prefs.set(PREF_SPLIT_T, splitTimepoints);
@@ -568,6 +583,8 @@ public class ImporterOptions
       stackOrder = Macro.getValue(arg, LABEL_ORDER, stackOrder);
       mergeChannels = getMacroValue(arg, LABEL_MERGE, mergeChannels);
       colorize = getMacroValue(arg, LABEL_COLORIZE, colorize);
+      customColorize =
+        getMacroValue(arg, LABEL_COLORIZE_CUSTOM, customColorize);
       splitChannels = getMacroValue(arg, LABEL_SPLIT_C, splitChannels);
       splitFocalPlanes = getMacroValue(arg, LABEL_SPLIT_Z, splitFocalPlanes);
       splitTimepoints = getMacroValue(arg, LABEL_SPLIT_T, splitTimepoints);
@@ -781,6 +798,7 @@ public class ImporterOptions
     gd.addChoice(LABEL_ORDER, stackOrders, stackOrder);
     gd.addCheckbox(LABEL_MERGE, mergeChannels);
     gd.addCheckbox(LABEL_COLORIZE, colorize);
+    gd.addCheckbox(LABEL_COLORIZE_CUSTOM, customColorize);
     gd.addCheckbox(LABEL_SPLIT_C, splitChannels);
     gd.addCheckbox(LABEL_SPLIT_Z, splitFocalPlanes);
     gd.addCheckbox(LABEL_SPLIT_T, splitTimepoints);
@@ -829,20 +847,21 @@ public class ImporterOptions
     if (boxes != null) {
       mergeBox = (Checkbox) boxes.get(0);
       colorizeBox = (Checkbox) boxes.get(1);
-      splitCBox = (Checkbox) boxes.get(2);
-      splitZBox = (Checkbox) boxes.get(3);
-      splitTBox = (Checkbox) boxes.get(4);
-      cropBox = (Checkbox) boxes.get(5);
-      metadataBox = (Checkbox) boxes.get(6);
-      omexmlBox = (Checkbox) boxes.get(7);
-      groupBox = (Checkbox) boxes.get(8);
-      concatenateBox = (Checkbox) boxes.get(9);
-      rangeBox = (Checkbox) boxes.get(10);
-      autoscaleBox = (Checkbox) boxes.get(11);
-      virtualBox = (Checkbox) boxes.get(12);
-      recordBox = (Checkbox) boxes.get(13);
-      allSeriesBox = (Checkbox) boxes.get(14);
-      swapBox = (Checkbox) boxes.get(15);
+      customColorizeBox = (Checkbox) boxes.get(2);
+      splitCBox = (Checkbox) boxes.get(3);
+      splitZBox = (Checkbox) boxes.get(4);
+      splitTBox = (Checkbox) boxes.get(5);
+      cropBox = (Checkbox) boxes.get(6);
+      metadataBox = (Checkbox) boxes.get(7);
+      omexmlBox = (Checkbox) boxes.get(8);
+      groupBox = (Checkbox) boxes.get(9);
+      concatenateBox = (Checkbox) boxes.get(10);
+      rangeBox = (Checkbox) boxes.get(11);
+      autoscaleBox = (Checkbox) boxes.get(12);
+      virtualBox = (Checkbox) boxes.get(13);
+      recordBox = (Checkbox) boxes.get(14);
+      allSeriesBox = (Checkbox) boxes.get(15);
+      swapBox = (Checkbox) boxes.get(16);
       for (int i=0; i<boxes.size(); i++) {
         Checkbox item = (Checkbox) boxes.get(i);
         item.addFocusListener(this);
@@ -861,6 +880,7 @@ public class ImporterOptions
     infoTable.put(orderChoice, INFO_ORDER);
     infoTable.put(mergeBox, INFO_MERGE);
     infoTable.put(colorizeBox, INFO_COLORIZE);
+    infoTable.put(customColorizeBox, INFO_COLORIZE_CUSTOM);
     infoTable.put(splitCBox, INFO_SPLIT_C);
     infoTable.put(splitZBox, INFO_SPLIT_Z);
     infoTable.put(splitTBox, INFO_SPLIT_T);
@@ -890,7 +910,7 @@ public class ImporterOptions
       // Dataset organization | Memory management
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Color options        | Split into separate windows
-      "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Information
       "9dlu, pref, 3dlu, fill:100dlu";
 
@@ -931,6 +951,8 @@ public class ImporterOptions
     row += 2;
     builder.add(colorizeBox, xyw(cc, 1, row, 3));
     row += 2;
+    builder.add(customColorizeBox, xyw(cc, 1, row, 3));
+    row += 2;
     builder.add(autoscaleBox, xyw(cc, 1, row, 3));
     row += 2;
 
@@ -959,7 +981,7 @@ public class ImporterOptions
     builder.add(splitZBox, xyw(cc, 5, row, 1));
     row += 2;
     builder.add(splitTBox, xyw(cc, 5, row, 1));
-    row += 2;
+    row += 4;
 
     // information section
     builder.addSeparator("Information", cc.xyw(1, row, 5));
@@ -983,6 +1005,7 @@ public class ImporterOptions
     stackOrder = stackOrders[gd.getNextChoiceIndex()];
     mergeChannels = gd.getNextBoolean();
     colorize = gd.getNextBoolean();
+    customColorize = gd.getNextBoolean();
     splitChannels = gd.getNextBoolean();
     splitFocalPlanes = gd.getNextBoolean();
     splitTimepoints = gd.getNextBoolean();
@@ -1449,6 +1472,7 @@ public class ImporterOptions
     boolean orderEnabled = orderChoice.isEnabled();
     boolean mergeEnabled = mergeBox.isEnabled();
     boolean colorizeEnabled = colorizeBox.isEnabled();
+    boolean customColorizeEnabled = customColorizeBox.isEnabled();
     boolean splitCEnabled = splitCBox.isEnabled();
     boolean splitZEnabled = splitZBox.isEnabled();
     boolean splitTEnabled = splitTBox.isEnabled();
@@ -1482,6 +1506,7 @@ public class ImporterOptions
     String orderValue = orderChoice.getSelectedItem();
     boolean isMerge = mergeBox.getState();
     boolean isColorize = colorizeBox.getState();
+    boolean isCustomColorize = customColorizeBox.getState();
     boolean isSplitC = splitCBox.getState();
     boolean isSplitZ = splitZBox.getState();
     boolean isSplitT = splitTBox.getState();
@@ -1575,8 +1600,13 @@ public class ImporterOptions
 
     // colorizeBox
     colorizeEnabled = !isMerge && !isStackBrowser &&
-      !isStackImage5D && !isStackView5D;
+      !isStackImage5D && !isStackView5D && !isCustomColorize;
     if (!colorizeEnabled) isColorize = false;
+
+    // customColorizeBox
+    customColorizeEnabled = !isMerge && !isStackBrowser &&
+      !isStackImage5D && !isStackView5D && !isColorize;
+    if (!customColorizeEnabled) isCustomColorize = false;
 
     // autoscaleBox
     autoscaleEnabled = !isVirtual;
@@ -1606,6 +1636,7 @@ public class ImporterOptions
     orderChoice.setEnabled(orderEnabled);
     mergeBox.setEnabled(mergeEnabled);
     colorizeBox.setEnabled(colorizeEnabled);
+    customColorizeBox.setEnabled(customColorizeEnabled);
     splitCBox.setEnabled(splitCEnabled);
     splitZBox.setEnabled(splitZEnabled);
     splitTBox.setEnabled(splitTEnabled);
@@ -1625,6 +1656,7 @@ public class ImporterOptions
     orderChoice.select(orderValue);
     mergeBox.setState(isMerge);
     colorizeBox.setState(isColorize);
+    customColorizeBox.setState(isCustomColorize);
     splitCBox.setState(isSplitC);
     splitZBox.setState(isSplitZ);
     splitTBox.setState(isSplitT);
@@ -1649,6 +1681,7 @@ public class ImporterOptions
         orderChoice,
         mergeBox,
         colorizeBox,
+        customColorizeBox,
         splitCBox,
         splitZBox,
         splitTBox,

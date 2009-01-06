@@ -26,10 +26,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.*;
+import ij.gui.ColorChooser;
 import ij.gui.GenericDialog;
 import ij.measure.Calibration;
+import ij.plugin.ColorPicker;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
+import java.awt.Color;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -77,7 +80,7 @@ public class Colorizer implements PlugInFilter {
   private boolean merge;
   private boolean color;
   private boolean hyperstack;
-  private int colorNdx;
+  private byte[][] lut;
   private String mergeOption;
 
   // -- PlugInFilter API methods --
@@ -90,6 +93,8 @@ public class Colorizer implements PlugInFilter {
 
   public void run(ImageProcessor ip) {
     stackOrder = "XYCZT";
+
+    boolean doPrompt = false;
 
     if (arg == null || arg.trim().equals("")) {
       // prompt for colorizing options
@@ -112,12 +117,7 @@ public class Colorizer implements PlugInFilter {
       stackOrder = gd.getNextChoice();
       hyperstack = gd.getNextBoolean();
 
-      if (color) {
-        gd = new GenericDialog("Choose color...");
-        gd.addChoice("Color", new String[] {"Red", "Green", "Blue"}, "Red");
-        gd.showDialog();
-        colorNdx = gd.getNextChoiceIndex();
-      }
+      if (color) doPrompt = true;
     }
     else {
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
@@ -125,7 +125,16 @@ public class Colorizer implements PlugInFilter {
         Boolean.valueOf(Macro.getValue(arg, "merge", "true")).booleanValue();
       color = Boolean.valueOf(
         Macro.getValue(arg, "colorize", "false")).booleanValue();
-      colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "0"));
+      int colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "-1"));
+      if (color) {
+        if (colorNdx >= 0 && colorNdx < 3) {
+          lut = new byte[3][256];
+          for (int q=0; q<lut[colorNdx].length; q++) {
+            lut[colorNdx][q] = (byte) q;
+          }
+        }
+        else doPrompt = true;
+      }
       mergeOption = Macro.getValue(arg, "merge_option", null);
       hyperstack = Boolean.valueOf(
         Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
@@ -166,8 +175,20 @@ public class Colorizer implements PlugInFilter {
         // in case ImageJ version is too old
         try {
           r.setVar("imp", Util.reorder(imp, stackOrder, "XYCZT"));
-          newImp = (ImagePlus)
-            r.exec("new CompositeImage(imp, CompositeImage.COLOR)");
+          r.exec("composite = new CompositeImage(imp, CompositeImage.COLOR)");
+          r.setVar("1", 1);
+          for (int i=0; i<nChannels; i++) {
+            r.setVar("channel", i + 1);
+            r.exec("composite.setPosition(channel, 1, 1)");
+            if (doPrompt) {
+              promptForColor(i);
+              LUT channelLut = new LUT(lut[0], lut[1], lut[2]);
+              r.setVar("lut", channelLut);
+              r.exec("composite.setChannelLut(lut)");
+            }
+          }
+          newImp = (ImagePlus) r.getVar("composite");
+          newImp.setPosition(1, 1, 1);
         }
         catch (ReflectException exc) {
           ByteArrayOutputStream s = new ByteArrayOutputStream();
@@ -181,16 +202,9 @@ public class Colorizer implements PlugInFilter {
         for (int i=1; i<=stack.getSize(); i++) {
           newStack.addSlice(stack.getSliceLabel(i), stack.getProcessor(i));
         }
-        byte[] lut = new byte[256];
-        byte[] blank = new byte[256];
-        Arrays.fill(blank, (byte) 0);
-        for (int i=0; i<lut.length; i++) {
-          lut[i] = (byte) i;
-        }
 
-        IndexColorModel model = new IndexColorModel(8, 256,
-          colorNdx == 0 ? lut : blank, colorNdx == 1 ? lut : blank,
-          colorNdx == 2 ? lut : blank);
+        IndexColorModel model = new IndexColorModel(8, 256, lut[0], lut[1],
+          lut[2]);
         newStack.setColorModel(model);
         newImp.setStack(imp.getTitle(), newStack);
       }
@@ -354,6 +368,23 @@ public class Colorizer implements PlugInFilter {
 
     ip.setStack(ip.getTitle(), newStack);
     return ip;
+  }
+
+  private void promptForColor(int channel) {
+    ColorChooser chooser = new ColorChooser("Color Chooser - Channel " +
+      channel, Color.BLACK, false);
+
+    Color color = chooser.getColor();
+    double redIncrement = ((double) color.getRed()) / 255;
+    double greenIncrement = ((double) color.getGreen()) / 255;
+    double blueIncrement = ((double) color.getBlue()) / 255;
+
+    lut = new byte[3][256];
+    for (int i=0; i<256; i++) {
+      lut[0][i] = (byte) (i * redIncrement);
+      lut[1][i] = (byte) (i * greenIncrement);
+      lut[2][i] = (byte) (i * blueIncrement);
+    }
   }
 
 }

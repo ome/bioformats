@@ -733,6 +733,7 @@ public class Importer {
   {
     boolean mergeChannels = options.isMergeChannels();
     boolean colorize = options.isColorize();
+    boolean customColorize = options.isCustomColorize();
     boolean concatenate = options.isConcatenate();
     int nChannels = imp.getNChannels();
     int nSlices = imp.getNSlices();
@@ -826,7 +827,7 @@ public class Importer {
             " slice_c=" + splitC + " slice_t=" + splitT +
             " stack_order=" + stackOrder + " keep_original=false " +
             "hyper_stack=" + options.isViewHyperstack() + " ");
-          if (colorize) {
+          if (colorize || customColorize) {
             int[] openImages = WindowManager.getIDList();
             int nOpenImages = WindowManager.getImageCount();
             for (int i=0; i<nOpenImages; i++) {
@@ -839,18 +840,19 @@ public class Importer {
                 int channel =
                   Integer.parseInt(title.substring(title.indexOf("C=") + 2));
                 WindowManager.setCurrentWindow(p.getWindow());
+                int channelIndex = customColorize ? -1 : channel % 3;
                 IJ.runPlugIn("loci.plugins.Colorizer",
                   "stack_order=" + stackOrder + " merge=false colorize=true" +
-                  " ndx=" + (channel % 3) + " hyper_stack=" +
+                  " ndx=" + channelIndex + " hyper_stack=" +
                   options.isViewHyperstack() + " ");
               }
             }
           }
         }
-        else if (colorize && !options.isVirtual()) {
+        else if ((colorize || customColorize) && !options.isVirtual()) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-            " merge=false colorize=true ndx=0 hyper_stack=" +
-            options.isViewHyperstack() + " ");
+            " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
+            " hyper_stack=" + options.isViewHyperstack() + " ");
         }
       }
       else imps.add(imp);
