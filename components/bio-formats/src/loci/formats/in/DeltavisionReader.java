@@ -508,7 +508,11 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("X", "");
           store.setDetectorSettingsGain(new Float(value), 0, 0);
         }
-        //else if (key.equals("Speed")) { }
+        else if (key.equals("Speed")) {
+          value = value.replaceAll("KHz", "");
+          float mhz = Float.parseFloat(value) / 1000;
+          store.setDetectorSettingsReadOutRate(new Float(mhz), 0, 0);
+        }
         else if (key.equals("Temp Setting")) {
           value = value.replaceAll("C", "").trim();
           store.setImagingEnvironmentTemperature(new Float(value), 0);

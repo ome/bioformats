@@ -66,6 +66,7 @@ public class MicromanagerReader extends FormatReader {
   private float temperature;
   private Vector voltage;
   private String cameraRef;
+  private String cameraMode;
 
   // -- Constructor --
 
@@ -317,6 +318,9 @@ public class MicromanagerReader extends FormatReader {
           else if (key.equals(cameraRef + "-Temperature")) {
             temperature = Float.parseFloat(value);
           }
+          else if (key.equals(cameraRef + "-CCDMode")) {
+            cameraMode = value;
+          }
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
             voltage.add(new Float(value));
           }
@@ -436,6 +440,7 @@ public class MicromanagerReader extends FormatReader {
     store.setDetectorID(detectorID, 0, 0);
     store.setDetectorModel(detectorModel, 0, 0);
     store.setDetectorManufacturer(detectorManufacturer, 0, 0);
+    store.setDetectorType(cameraMode, 0, 0);
 
     store.setImagingEnvironmentTemperature(new Float(temperature), 0);
   }

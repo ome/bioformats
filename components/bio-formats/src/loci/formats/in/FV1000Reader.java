@@ -989,6 +989,9 @@ public class FV1000Reader extends FormatReader {
       // link LightSource to Image
       store.setLightSourceID("LightSource:" + i, 0, i);
       store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
+      if (i < exWaves.size()) {
+        store.setLightSourceSettingsWavelength((Integer) exWaves.get(i), 0, i);
+      }
     }
 
     // populate Detector data
