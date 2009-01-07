@@ -18,9 +18,13 @@ DIR=`dirname "$0"`
 if [ $LOCI_DEVEL ]
 then
   java -mx512m $PROG "$@"
-elif [ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]
+elif \
+  ([ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]) && \
+  [ -e "ij.jar" ]
 then
-  java -mx512m -cp "$DIR/bio-formats.jar":"$DIR/loci_tools.jar" $PROG "$@"
+  java -mx512m -cp \
+    "$DIR/bio-formats.jar":"$DIR/loci_tools.jar":"$DIR/ij.jar" \
+    $PROG "$@"
 else
   echo "Required JAR libraries not found. Please download:"
   echo "  loci_tools.jar"
