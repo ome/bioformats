@@ -62,6 +62,8 @@ public class FluoviewReader extends BaseTiffReader {
   /** First image. */
   private BufferedImage zeroImage = null;
 
+  private String dimensionOrder;
+
   // hardware settings
   private String[] gains, voltages, offsets, channelNames, lensNA;
   private String mag, detManu, objManu, comment;
@@ -110,14 +112,44 @@ public class FluoviewReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (getSizeY() == TiffTools.getImageLength(ifds[0])) {
-      return super.openBytes(no, buf, x, y, w, h);
+    // the 'series' axis can be in any position relative to Z, C and T
+    // we need to convert the plane number within the series into an IFD number
+    int[] lengths = new int[4];
+    int[] pos = getZCTCoords(no);
+    int[] realPos = new int[4];
+    for (int i=2; i<dimensionOrder.length(); i++) {
+      char axis = dimensionOrder.charAt(i);
+      if (axis == 'Z') {
+        lengths[i - 2] = getSizeZ();
+        realPos[i - 2] = pos[0];
+      }
+      else if (axis == 'C') {
+        lengths[i - 2] = getEffectiveSizeC();
+        realPos[i - 2] = pos[1];
+      }
+      else if (axis == 'T') {
+        lengths[i - 2] = getSizeT();
+        realPos[i - 2] = pos[2];
+      }
+      else if (axis == 'S') {
+        lengths[i - 2] = getSeriesCount();
+        realPos[i - 2] = getSeries();
+      }
     }
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    super.openBytes(0, buf, x, no, w, h);
+    int image = FormatTools.positionToRaster(lengths, realPos);
+
+    if (getSizeY() == TiffTools.getImageLength(ifds[0])) {
+      TiffTools.getSamples(ifds[image], in, buf, x, y, w, h);
+    }
+    else {
+      FormatTools.assertId(currentId, true, 1);
+      FormatTools.checkPlaneNumber(this, no);
+      FormatTools.checkBufferSize(this, buf.length, w, h);
+
+      TiffTools.getSamples(ifds[0], in, buf, x, image, w, 1);
+    }
+
     return buf;
   }
 
@@ -128,6 +160,7 @@ public class FluoviewReader extends BaseTiffReader {
     super.close();
     voxelX = voxelY = voxelZ = voxelC = voxelT = 1f;
     zeroImage = null;
+    dimensionOrder = null;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -227,9 +260,9 @@ public class FluoviewReader extends BaseTiffReader {
 
     // calculate the dimension order and axis sizes
 
+    dimensionOrder = "XY";
+    int seriesCount = 1;
     core[0].sizeZ = core[0].sizeC = core[0].sizeT = 1;
-    core[0].dimensionOrder = "XY";
-    core[0].metadataComplete = true;
 
     for (int i=0; i<10; i++) {
       String name = names[i];
@@ -240,43 +273,46 @@ public class FluoviewReader extends BaseTiffReader {
       if (name.length() == 0) continue;
 
       if (name.equals("x")) {
-        if (getSizeX() == 0) core[0].sizeX = size;
         voxelX = voxel;
       }
       else if (name.equals("y")) {
-        if (getSizeY() == 0) core[0].sizeY = size;
         voxelY = voxel;
       }
       else if (name.equals("z") || name.equals("event")) {
         core[0].sizeZ *= size;
-        if (getDimensionOrder().indexOf("Z") == -1) {
-          core[0].dimensionOrder += "Z";
+        if (dimensionOrder.indexOf("Z") == -1) {
+          dimensionOrder += "Z";
         }
         voxelZ = voxel;
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         core[0].sizeC *= size;
-        if (getDimensionOrder().indexOf("C") == -1) {
-          core[0].dimensionOrder += "C";
+        if (dimensionOrder.indexOf("C") == -1) {
+          dimensionOrder += "C";
         }
         voxelC = voxel;
       }
-      else {
+      else if (name.equals("time") || name.equals("t") || name.equals("animation")) {
         core[0].sizeT *= size;
-        if (getDimensionOrder().indexOf("T") == -1) {
-          core[0].dimensionOrder += "T";
+        if (dimensionOrder.indexOf("T") == -1) {
+          dimensionOrder += "T";
         }
         voxelT = voxel;
       }
+      else {
+        if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
+        seriesCount *= size;
+      }
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) core[0].dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("T") == -1) core[0].dimensionOrder += "T";
-    if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
+    if (dimensionOrder.indexOf("Z") == -1) dimensionOrder += "Z";
+    if (dimensionOrder.indexOf("T") == -1) dimensionOrder += "T";
+    if (dimensionOrder.indexOf("C") == -1) dimensionOrder += "C";
+    if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
 
-    core[0].imageCount = ifds.length;
-    if (getSizeZ() > ifds.length) core[0].sizeZ = ifds.length;
-    if (getSizeT() > ifds.length) core[0].sizeT = ifds.length;
+    core[0].imageCount = ifds.length / seriesCount;
+    if (getSizeZ() > getImageCount()) core[0].sizeZ = getImageCount();
+    if (getSizeT() > getImageCount()) core[0].sizeT = getImageCount();
 
     if (getImageCount() == 1 && (getSizeT() == getSizeY() ||
       getSizeZ() == getSizeY()) && (getSizeT() > getImageCount() ||
@@ -284,6 +320,15 @@ public class FluoviewReader extends BaseTiffReader {
     {
       core[0].sizeY = 1;
       core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    }
+    core[0].dimensionOrder = dimensionOrder.replaceAll("S", "");
+
+    if (seriesCount > 1) {
+      CoreMetadata oldCore = core[0];
+      core = new CoreMetadata[seriesCount];
+      for (int i=0; i<seriesCount; i++) {
+        core[i] = oldCore;
+      }
     }
 
     // cut up the comment, if necessary
