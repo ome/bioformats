@@ -158,8 +158,6 @@ public class LIFReader extends FormatReader {
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
       lastChannel = realChannel[series][pos[1]];
-      pos[1] = DataTools.indexOf(channelMap[series], pos[1]);
-      no = getIndex(pos[0], pos[1], pos[2]);
     }
 
     long offset = ((Long) offsets.get(series)).longValue();
