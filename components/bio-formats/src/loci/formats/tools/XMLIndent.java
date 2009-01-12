@@ -35,7 +35,9 @@ import loci.formats.XMLTools;
  */
 public class XMLIndent {
 
-  public static void process(BufferedReader in) throws IOException {
+  public static void process(BufferedReader in, boolean keepValid)
+    throws IOException
+  {
     StringBuffer sb = new StringBuffer();
     while (true) {
       String line = in.readLine();
@@ -43,18 +45,34 @@ public class XMLIndent {
       sb.append(line);
     }
     in.close();
-    System.out.println(XMLTools.indentXML(sb.toString()));
+    System.out.println(XMLTools.indentXML(sb.toString(), 3, keepValid));
   }
 
   public static void main(String[] args) throws Exception {
-    if (args.length == 0) {
+    // parse command line arguments
+    int numFiles = 0;
+    boolean keepValid = false;
+    for (int i=0; i<args.length; i++) {
+      if (args[i].startsWith("-")) {
+        if (args[i].equals("-valid")) keepValid = true;
+        else {
+          System.err.println("Warning: ignoring unknown command line flag \"" +
+            args[i] + "\"");
+        }
+      }
+      else numFiles++;
+    }
+
+    if (numFiles == 0) {
       // read from stdin
-      process(new BufferedReader(new InputStreamReader(System.in)));
+      process(new BufferedReader(new InputStreamReader(System.in)), keepValid);
     }
     else {
       // read from file(s)
       for (int i=0; i<args.length; i++) {
-        process(new BufferedReader(new FileReader(args[i])));
+        if (!args[i].startsWith("-")) {
+          process(new BufferedReader(new FileReader(args[i])), keepValid);
+        }
       }
     }
   }

@@ -152,15 +152,27 @@ public final class XMLTools {
   }
 
   /** Indents XML to be more readable. */
-  public static String indentXML(String xml) { return indentXML(xml, 3); }
+  public static String indentXML(String xml) {
+    return indentXML(xml, 3, false);
+  }
 
   /** Indents XML by the given spacing to be more readable. */
   public static String indentXML(String xml, int spacing) {
+    return indentXML(xml, spacing, false);
+  }
+
+  /**
+   * Indents XML by the given spacing to be more readable, avoiding any
+   * whitespace injection into CDATA if the preserveCData flag is set.
+   */
+  public static String indentXML(String xml, int spacing,
+    boolean preserveCData)
+  {
     if (xml == null) return null; // garbage in, garbage out
-    int indent = 0;
     StringBuffer sb = new StringBuffer();
     StringTokenizer st = new StringTokenizer(xml, "<>", true);
-    boolean element = false;
+    int indent = 0, noSpace = 0;
+    boolean first = true, element = false;
     while (st.hasMoreTokens()) {
       String token = st.nextToken().trim();
       if (token.equals("")) continue;
@@ -172,18 +184,43 @@ public final class XMLTools {
         element = false;
         continue;
       }
+
+      if (!element && preserveCData) noSpace = 2;
+
+      if (noSpace == 0) {
+        // advance to next line
+        if (first) first = false;
+        else sb.append("\n");
+      }
+
+      // adjust indent backwards
       if (element && token.startsWith("/")) indent -= spacing;
-      for (int j=0; j<indent; j++) sb.append(" ");
+
+      if (noSpace == 0) {
+        // apply indent
+        for (int j=0; j<indent; j++) sb.append(" ");
+      }
+
+      // output element contents
       if (element) sb.append("<");
       sb.append(token);
       if (element) sb.append(">");
-      sb.append("\n");
-      if (element && !token.startsWith("?") &&
-        !token.startsWith("/") && !token.endsWith("/"))
-      {
-        indent += spacing;
+
+      if (noSpace == 0) {
+        // adjust indent forwards
+        if (element &&
+          !token.startsWith("?") && // ?xml tag, probably
+          !token.startsWith("/") && // end element
+          !token.endsWith("/") && // standalone element
+          !token.startsWith("!")) // comment
+        {
+          indent += spacing;
+        }
       }
+
+      if (noSpace > 0) noSpace--;
     }
+    sb.append("\n");
     return sb.toString();
   }
 
