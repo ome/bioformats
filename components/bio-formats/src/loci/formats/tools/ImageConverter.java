@@ -84,8 +84,7 @@ public final class ImageConverter {
       LogTools.println("Debugging at level " + FormatHandler.debugLevel);
     }
     if (in == null || out == null) {
-      LogTools.println("To convert a file to " + writer.getFormat() +
-        " format, run:");
+      LogTools.println("To convert a file between formats, run:");
       LogTools.println("  bfconvert [-debug] in_file out_file");
       return false;
     }
@@ -101,7 +100,7 @@ public final class ImageConverter {
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
     MetadataStore store = MetadataTools.createOMEXMLMetadata();
-    if (store == null) LogTools.println("OME-Java library not found.");
+    if (store == null) LogTools.println("OME-XML Java library not found.");
     else reader.setMetadataStore(store);
 
     reader.setId(in);
