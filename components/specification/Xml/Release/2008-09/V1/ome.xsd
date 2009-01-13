@@ -38,7 +38,7 @@
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema February 2008 - Update Version 2 May 2008
+			OME XML Schema September 2008
 			Author:  Ilya G. Goldberg, Andrew J Patterson
 			Copyright 2002 - 2008 OME. All rights reserved.
 		</xsd:documentation>
