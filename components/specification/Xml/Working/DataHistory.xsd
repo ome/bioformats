@@ -16,13 +16,13 @@
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema
-	targetNamespace = "http://openmicroscopy.com/Schemas/DataHistory/2008-02"
-	 xmlns:DH = "http://openmicroscopy.com/Schemas/DataHistory/2008-02"
+	targetNamespace = "http://openmicroscopy.com/Schemas/DataHistory/2008-09"
+	 xmlns:DH = "http://openmicroscopy.com/Schemas/DataHistory/2008-09"
 	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	 xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-02"
+	 xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 	 version="1"
 	 elementFormDefault = "qualified">
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation = "http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation = "ome.xsd"/>
 	<xsd:element name = "Input"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>Identifies a set of attributes that satisfied a formal input.</xsd:documentation>
