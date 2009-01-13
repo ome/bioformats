@@ -1184,6 +1184,8 @@ public final class TiffTools {
     }
 
     long rowsPerStrip = rowsPerStripArray[0];
+    // rowsPerStrip should never be more than the total number of rows
+    rowsPerStrip = (long) Math.min(rowsPerStrip, imageLength);
     for (int i=1; i<rowsPerStripArray.length; i++) {
       if (rowsPerStrip != rowsPerStripArray[i]) {
         throw new FormatException(
