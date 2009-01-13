@@ -105,6 +105,7 @@ public class LeicaReader extends FormatReader {
   private int lastPlane = 0;
 
   private float[][] physicalSizes;
+  private float[] pinhole, exposureTime;
 
   private int[][] channelMap;
 
@@ -217,6 +218,7 @@ public class LeicaReader extends FormatReader {
       channelMap = null;
       physicalSizes = null;
       seriesDescriptions = null;
+      pinhole = exposureTime = null;
     }
   }
 
@@ -534,6 +536,8 @@ public class LeicaReader extends FormatReader {
     seriesDescriptions = new Vector();
 
     physicalSizes = new float[headerIFDs.length][5];
+    pinhole = new float[headerIFDs.length];
+    exposureTime = new float[headerIFDs.length];
 
     for (int i=0; i<headerIFDs.length; i++) {
       Object[] keys = headerIFDs[i].keySet().toArray();
@@ -750,7 +754,7 @@ public class LeicaReader extends FormatReader {
             addMeta(p + " description", getString(stream, false));
             addMeta(p + " filename", getString(stream, false));
             luts[j] = getString(stream, false);
-            addMeta(prefix + p + " name", luts[j]);
+            addMeta(p + " name", luts[j]);
             luts[j] = luts[j].toLowerCase();
             stream.skipBytes(8);
           }
@@ -857,16 +861,6 @@ public class LeicaReader extends FormatReader {
         new Integer((int) physicalSizes[i][3]), i, 0);
       store.setDimensionsTimeIncrement(new Float(physicalSizes[i][4]), i, 0);
 
-      for (int j=0; j<core[i].imageCount; j++) {
-        if (timestamps[i] != null && j < timestamps[i].length) {
-          SimpleDateFormat parse =
-            new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
-          Date date = parse.parse(timestamps[i][j], new ParsePosition(0));
-          float elapsedTime = (float) (date.getTime() - firstPlane) / 1000;
-          store.setPlaneTimingDeltaT(new Float(elapsedTime), i, 0, j);
-        }
-      }
-
       // parse instrument data
 
       Object[] keys = headerIFDs[i].keySet().toArray();
@@ -878,6 +872,17 @@ public class LeicaReader extends FormatReader {
           stream.order(isLittleEndian());
           parseInstrumentData(stream, store, i);
           stream.close();
+        }
+      }
+
+      for (int j=0; j<core[i].imageCount; j++) {
+        if (timestamps[i] != null && j < timestamps[i].length) {
+          SimpleDateFormat parse =
+            new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
+          Date date = parse.parse(timestamps[i][j], new ParsePosition(0));
+          float elapsedTime = (float) (date.getTime() - firstPlane) / 1000;
+          store.setPlaneTimingDeltaT(new Float(elapsedTime), i, 0, j);
+          store.setPlaneTimingExposureTime(new Float(exposureTime[i]), i, 0, j);
         }
       }
     }
@@ -979,6 +984,7 @@ public class LeicaReader extends FormatReader {
           StringBuffer model = new StringBuffer();
           String mag = null, na = null;
           StringBuffer correction = new StringBuffer();
+          String immersion = null;
           for (int i=0; i<objectiveData.length; i++) {
             if (objectiveData[i].indexOf("x") != -1 && mag == null &&
               na == null)
@@ -991,11 +997,15 @@ public class LeicaReader extends FormatReader {
               model.append(objectiveData[i]);
               model.append(" ");
             }
+            else if (immersion == null) {
+              immersion = objectiveData[i];
+            }
             else {
               correction.append(objectiveData[i]);
               correction.append(" ");
             }
           }
+          store.setObjectiveImmersion(immersion, 0, objective);
           store.setObjectiveCorrection(correction.toString().trim(), 0,
             objective);
           store.setObjectiveModel(model.toString().trim(), 0, objective);
@@ -1006,11 +1016,15 @@ public class LeicaReader extends FormatReader {
         else if (tokens[2].equals("OrderNumber")) {
           store.setObjectiveSerialNumber(data, 0, objective);
         }
+        else if (tokens[2].equals("RefractionIndex")) {
+          store.setObjectiveSettingsRefractiveIndex(new Float(data), series);
+        }
 
         // link Objective to Image
         store.setObjectiveID("Objective:" + objective, 0, objective);
         if (objective == 0) {
-          store.setObjectiveSettingsObjective("Objective:" + objective, 0);
+          store.setObjectiveSettingsObjective("Objective:" + objective, series);
+          store.setImageObjective("Objective:" + objective, series);
         }
       }
       else if (tokens[0].startsWith("CSpectrophotometerUnit")) {
@@ -1030,6 +1044,7 @@ public class LeicaReader extends FormatReader {
         }
       }
       else if (tokens[0].startsWith("CXYZStage")) {
+        // NB: there is only one stage position specified for each series
         if (tokens[2].equals("XPos")) {
           for (int q=0; q<core[series].imageCount; q++) {
             store.setStagePositionPositionX(new Float(data), series, 0, q);
@@ -1056,6 +1071,18 @@ public class LeicaReader extends FormatReader {
       else if (contentID.equals("dblVoxelZ")) {
         physicalSizes[series][2] = Float.parseFloat(data);
       }
+      else if (contentID.equals("dblPinhole")) {
+        pinhole[series] = Float.parseFloat(data);
+      }
+      else if (contentID.equals("dblZoom")) {
+        store.setDisplayOptionsZoom(new Float(data), series);
+      }
+      else if (contentID.startsWith("nDelayTime")) {
+        exposureTime[series] = Float.parseFloat(data);
+        if (contentID.endsWith("_ms")) {
+          exposureTime[series] /= 1000f;
+        }
+      }
 
       addMeta("Series " + series + " " + contentID, data);
     }
@@ -1074,6 +1101,8 @@ public class LeicaReader extends FormatReader {
           i, nextChannel);
         store.setLogicalChannelExWave((Integer) exWaves[i].get(channel),
           i, nextChannel);
+        store.setLogicalChannelPinholeSize(new Float(pinhole[i]), i,
+          nextChannel);
 
         nextChannel++;
       }
