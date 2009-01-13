@@ -57,6 +57,8 @@ public class LeicaHandler extends DefaultHandler {
 
   private MetadataStore store;
 
+  private Vector nextPlane;
+
   // -- Constructor --
 
   public LeicaHandler(MetadataStore store) {
@@ -77,6 +79,7 @@ public class LeicaHandler extends DefaultHandler {
     zcal = new Vector();
     bits = new Vector();
     lutNames = new Vector();
+    nextPlane = new Vector();
     this.store = store;
   }
 
@@ -195,6 +198,7 @@ public class LeicaHandler extends DefaultHandler {
       }
       if (fullSeries == null || fullSeries.equals("")) fullSeries = series;
       seriesNames.add(fullSeries);
+      nextPlane.add(new Integer(0));
     }
     else if (qName.equals("ChannelDescription")) {
       String prefix = "Channel " + count + " - ";
@@ -487,9 +491,12 @@ public class LeicaHandler extends DefaultHandler {
       String time = attributes.getValue("Time");
       metadata.put(fullSeries + qName + " - " + frame, time);
 
-      int planeNum = Integer.parseInt(frame.replaceAll("RelTimeStamp", ""));
+      int planeNum =
+        ((Integer) nextPlane.get(seriesNames.size() - 1)).intValue();
       store.setPlaneTimingDeltaT(new Float(time), seriesNames.size() - 1, 0,
         planeNum);
+      planeNum++;
+      nextPlane.setElementAt(new Integer(planeNum), seriesNames.size() - 1);
     }
     else count = 0;
   }
