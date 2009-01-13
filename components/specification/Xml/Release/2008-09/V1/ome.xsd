@@ -471,7 +471,7 @@
 				The total number of ChannelComponents for a set of pixels must equal SizeC.
 				The SamplesPerPixel attribute is the number of channel components in the logical channel.
 				The IlluminationType attribute is a string enumeration which may be set to 'Transmitted', 'Epifluorescence', 'Oblique', or 'NonLinear'.
-				The optional PinholeSize attribute allows specifying adjustable pin hole diameters for confocal microscopes.
+				The optional PinholeSize attribute allows specifying adjustable pin hole diameters for confocal microscopes (units um).
 				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
 				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
 				The Mode attribute describes the type of microscopy performed for each channel.  This may be set to:
@@ -834,7 +834,7 @@
 				LensNA: The numerical aperture of the lens (as a float)
 				NominalMagnification: The specified magnification e.g. x10
 				CalibratedMagnification: The measured magnification e.g. x10.3
-				WorkingDistance: WorkingDistance of the lense. The Units are um.
+				WorkingDistance: WorkingDistance of the lens. The Units are um.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
