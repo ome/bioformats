@@ -635,7 +635,8 @@ public final class ImageInfo {
       else {
         LogTools.println("The metadata could not be converted to OME-XML.");
         if (omexmlVersion == null) {
-          LogTools.println("The OME-Java library is probably not available.");
+          LogTools.println(
+            "The OME-XML Java library is probably not available.");
         }
         else {
           LogTools.println(omexmlVersion +
