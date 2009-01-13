@@ -15,30 +15,30 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-02" 
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-02" 
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" 
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09" 
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" 
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-09" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	version="2" 
+	version="1" 
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-02" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/2008-09/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/SA.xsd"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema February 2008 - Update Version 2 May 2008
+			OME XML Schema September 2008
 			Author:  Ilya G. Goldberg, Andrew J Patterson
 			Copyright 2002 - 2008 OME. All rights reserved.
 		</xsd:documentation>
@@ -471,7 +471,7 @@
 				The total number of ChannelComponents for a set of pixels must equal SizeC.
 				The SamplesPerPixel attribute is the number of channel components in the logical channel.
 				The IlluminationType attribute is a string enumeration which may be set to 'Transmitted', 'Epifluorescence', 'Oblique', or 'NonLinear'.
-				The optional PinholeSize attribute allows specifying adjustable pin hole diameters for confocal microscopes.
+				The optional PinholeSize attribute allows specifying adjustable pin hole diameters for confocal microscopes (units um).
 				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
 				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
 				The Mode attribute describes the type of microscopy performed for each channel.  This may be set to:
@@ -834,7 +834,7 @@
 				LensNA: The numerical aperture of the lens (as a float)
 				NominalMagnification: The specified magnification e.g. x10
 				CalibratedMagnification: The measured magnification e.g. x10.3
-				WorkingDistance: WorkingDistance of the lense. The Units are um.
+				WorkingDistance: WorkingDistance of the lens. The Units are um.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -848,6 +848,7 @@
 							<xsd:element ref="NominalMagnification" minOccurs="0" maxOccurs="1"/>
 							<xsd:element ref="CalibratedMagnification" minOccurs="0" maxOccurs="1"/>
 							<xsd:element ref="WorkingDistance" minOccurs="0" maxOccurs="1"/>
+							<xsd:element name="Iris" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
 						</xsd:sequence>
 					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="ObjectiveID"/>
