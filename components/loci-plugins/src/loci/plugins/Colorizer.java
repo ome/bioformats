@@ -203,6 +203,10 @@ public class Colorizer implements PlugInFilter {
           newStack.addSlice(stack.getSliceLabel(i), stack.getProcessor(i));
         }
 
+        if (doPrompt) {
+          promptForColor(0);
+        }
+
         IndexColorModel model = new IndexColorModel(8, 256, lut[0], lut[1],
           lut[2]);
         newStack.setColorModel(model);
