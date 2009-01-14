@@ -139,6 +139,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   // other GUI components
   private JFrame masterWindow;
   private OutputConsole console;
+  private JButton clearLog;
 
   // VisAD objects
   private SlimTypes types;
@@ -160,6 +161,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     console = new OutputConsole("Log");
     console.getTextArea().setColumns(54);
     console.getTextArea().setRows(10);
+    Font consoleFont = console.getTextArea().getFont().deriveFont(8f);
+    console.getTextArea().setFont(consoleFont);
 
     PrintStream err = new PrintStream(console);
 
@@ -498,6 +501,54 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       MouseBehaviorButtons mbButtons =
         new MouseBehaviorButtons(decayPlot, data.channels > 1, false);
 
+      JPanel numbers = new JPanel();
+      numbers.setBorder(new EmptyBorder(0, 0, 8, 8));
+      numbers.setLayout(new SpringLayout());
+
+      JLabel a1Label = new JLabel("a1");
+      a1Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(a1Label);
+      a1Param = new JTextField(9);
+      a1Param.setEditable(false);
+      numbers.add(a1Param);
+
+      JLabel t1Label = new JLabel("t1");
+      t1Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(t1Label);
+      t1Param = new JTextField(9);
+      t1Param.setEditable(false);
+      numbers.add(t1Param);
+
+      JLabel a2Label = new JLabel("a2");
+      a2Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(a2Label);
+      a2Param = new JTextField(9);
+      a2Param.setEditable(false);
+      numbers.add(a2Param);
+
+      JLabel t2Label = new JLabel("t2");
+      t2Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(t2Label);
+      t2Param = new JTextField(9);
+      t2Param.setEditable(false);
+      numbers.add(t2Param);
+
+      JLabel cLabel = new JLabel("c");
+      cLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(cLabel);
+      cParam = new JTextField(9);
+      cParam.setEditable(false);
+      numbers.add(cParam);
+
+      JLabel chi2Label = new JLabel("chi^2");
+      chi2Label.setHorizontalAlignment(SwingConstants.RIGHT);
+      numbers.add(chi2Label);
+      chi2 = new JTextField(9);
+      chi2.setEditable(false);
+      numbers.add(chi2);
+
+      SpringUtilities.makeCompactGrid(numbers, 6, 2, 0, 0, 4, 4);
+
       colorWidget = new ColorWidget(vMap, "Decay Color Mapping");
 
       zOverride = new JCheckBox("", false);
@@ -509,6 +560,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       zScaleValue.setEnabled(false);
       zScaleValue.getDocument().addDocumentListener(this);
 
+      clearLog = new JButton("Clear Log");
+      clearLog.setToolTipText("Clears the output log above");
+      clearLog.addActionListener(this);
+
       exportData = new JButton("Export");
       exportData.setToolTipText(
         "Exports the selected ROI's raw data to a text file");
@@ -516,120 +571,79 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       setProgress(progress, 990); // estimate: 99%
 
+      JPanel logButtons = new JPanel();
+      logButtons.setLayout(new BoxLayout(logButtons, BoxLayout.X_AXIS));
+      logButtons.add(clearLog);
+      logButtons.add(exportData);
+
+      JPanel logPane = new JPanel();
+      logPane.setLayout(new BoxLayout(logPane, BoxLayout.Y_AXIS));
+      logPane.add(console.getWindow().getContentPane());
+      logPane.add(logButtons);
+
       JPanel scalePanel = new JPanel();
       scalePanel.setBorder(new TitledBorder("Z Scale Override"));
       scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
       scalePanel.add(zOverride);
       scalePanel.add(zScaleValue);
 
-      JPanel numbers = new JPanel();
-      numbers.setBorder(new TitledBorder("Numbers"));
-      numbers.setLayout(new GridLayout(5, 5));
-
-      JLabel a1Label = new JLabel("a1 ");
-      a1Label.setHorizontalAlignment(SwingConstants.RIGHT);
-      numbers.add(a1Label);
-      a1Param = new JTextField(9);
-      a1Param.setEditable(false);
-      numbers.add(a1Param);
-      JLabel t1Label = new JLabel("t1 ");
-      t1Label.setHorizontalAlignment(SwingConstants.RIGHT);
-      numbers.add(t1Label);
-      t1Param = new JTextField(9);
-      t1Param.setEditable(false);
-      numbers.add(t1Param);
-      numbers.add(new JLabel(""));//TEMP
-
-      JLabel a2Label = new JLabel("a2 ");
-      a2Label.setHorizontalAlignment(SwingConstants.RIGHT);
-      numbers.add(a2Label);
-      a2Param = new JTextField(9);
-      a2Param.setEditable(false);
-      numbers.add(a2Param);
-      JLabel t2Label = new JLabel("t2 ");
-      t2Label.setHorizontalAlignment(SwingConstants.RIGHT);
-      numbers.add(t2Label);
-      t2Param = new JTextField(9);
-      t2Param.setEditable(false);
-      numbers.add(t2Param);
-      numbers.add(new JLabel(""));//TEMP
-
-      JLabel cLabel = new JLabel("c ");
-      cLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-      numbers.add(cLabel);
-      cParam = new JTextField(9);
-      cParam.setEditable(false);
-      numbers.add(cParam);
-      JLabel chi2Label = new JLabel("chi^2 ");
-      chi2Label.setHorizontalAlignment(SwingConstants.RIGHT);
-      numbers.add(chi2Label);
-      chi2 = new JTextField(9);
-      chi2.setEditable(false);
-      numbers.add(chi2);
-      numbers.add(new JLabel(""));//TEMP
-
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-      numbers.add(new JLabel(""));//TEMP
-
       JPanel miscRow = new JPanel();
       miscRow.setLayout(new BoxLayout(miscRow, BoxLayout.X_AXIS));
       miscRow.add(scalePanel);
       miscRow.add(Box.createHorizontalStrut(5));
-      miscRow.add(exportData);
-
-      JPanel miscPanel = new JPanel();
-      miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
-      miscPanel.add(numbers);
-      miscPanel.add(miscRow);
-
-      JPanel stuff = new JPanel();
-      stuff.setLayout(new BoxLayout(stuff, BoxLayout.X_AXIS));
-      stuff.add(colorWidget);
-      stuff.add(miscPanel);
 
       JPanel options = new JPanel();
       options.setLayout(new BoxLayout(options, BoxLayout.Y_AXIS));
-      options.add(mbButtons);
-      options.add(stuff);
+      options.add(numbers);
+      options.add(colorWidget);
+      options.add(miscRow);
       options.setBorder(new EmptyBorder(8, 5, 8, 5));
 
-      decayPane.add(options, BorderLayout.SOUTH);
+      JPanel decayWidgetsRow2 = new JPanel();
+      decayWidgetsRow2.setLayout(
+        new BoxLayout(decayWidgetsRow2, BoxLayout.X_AXIS));
+      decayWidgetsRow2.add(logPane);
+      decayWidgetsRow2.add(options);
+
+      JPanel decayWidgets = new JPanel();
+      decayWidgets.setLayout(new BoxLayout(decayWidgets, BoxLayout.Y_AXIS));
+      decayWidgets.add(mbButtons);
+      decayWidgets.add(decayWidgetsRow2);
+
+      decayPane.add(decayWidgets, BorderLayout.SOUTH);
+
       masterPane.add(decayPane, BorderLayout.CENTER);
 
-      JPanel rightPanel = new JPanel() {
+      JPanel fixedPanel = new JPanel() {
         public Dimension getMaximumSize() {
           Dimension pref = getPreferredSize();
           Dimension max = super.getMaximumSize();
           return new Dimension(pref.width, max.height);
         }
       };
-      rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-      rightPanel.add(twoDPane);
-      rightPanel.add(console.getWindow().getContentPane());
+      fixedPanel.setLayout(new BoxLayout(fixedPanel, BoxLayout.Y_AXIS));
+      fixedPanel.add(twoDPane);
+
       BreakawayPanel breakawayPanel = new BreakawayPanel(masterPane,
         "Intensity Data - " + file.getName(), false);
       breakawayPanel.setEdge(BorderLayout.WEST);
       breakawayPanel.setUpEnabled(false);
       breakawayPanel.setDownEnabled(false);
-      breakawayPanel.setContentPane(rightPanel);
+      breakawayPanel.setContentPane(fixedPanel);
 
       setProgress(progress, 999); // estimate: 99.9%
 
       // show window on screen
       masterWindow.pack();
       Dimension size = masterWindow.getSize();
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      masterWindow.setLocation((screen.width - size.width) / 2,
-        (screen.height - size.height) / 2);
+      Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
+      int maxWidth = ss.width - 16;
+      int maxHeight = ss.height - 48;
+      if (size.width > maxWidth) size.width = maxWidth;
+      if (size.height > maxHeight) size.height = maxHeight;
+      masterWindow.setSize(size);
+      masterWindow.setLocation((ss.width - size.width) / 2,
+        (ss.height - size.height) / 2);
       masterWindow.setVisible(true);
     }
     catch (Throwable t) {
@@ -755,6 +769,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           "There was a problem writing the file: " + exc.getMessage(),
           SlimData.TITLE, JOptionPane.ERROR_MESSAGE);
       }
+    }
+    else if (src == clearLog) {
+      console.getTextArea().setText("");
     }
   }
 
@@ -925,7 +942,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       // full width half maxes
       float[][][] fwhmLines = null;
       if (data.computeFWHMs) {
-        log("Calculating full width half maxes");
+        if (doRescale) log("Calculating full width half maxes");
         fwhmLines = new float[data.channels][3][2];
         int grandTotal = 0;
         for (int c=0, cc=0; c<data.channels; c++) {
@@ -976,18 +993,22 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             data.minWave + c * data.waveStep;
           if (doLog) half = linearToLog(half); // adjust for log scale
           fwhmLines[c][2][0] = fwhmLines[c][2][1] = half;
-          String s = "#" + (c + 1);
-          while (s.length() < 3) s = " " + s;
-          float h1 = 1000 * fwhm1, h2 = 1000 * fwhm2;
-          log("\tChannel " + s + ": fwhm = " + (h2 - h1) + " ps");
-          log("\t             counts = " + sumTotal);
-          log("\t             peak = " + maxSum);
-          log("\t             center = " + ((h1 + h2) / 2) + " ps");
-          log("\t             range = [" + h1 + ", " + h2 + "] ps");
+
+          // when doing an "expensive" plot, output FWHM values to log
+          if (doRescale) {
+            String s = "#" + (c + 1);
+            while (s.length() < 3) s = " " + s;
+            float h1 = 1000 * fwhm1, h2 = 1000 * fwhm2;
+            log("\tChannel " + s + ": fwhm = " + (h2 - h1) + " ps");
+            log("\t             counts = " + sumTotal);
+            log("\t             peak = " + maxSum);
+            log("\t             center = " + ((h1 + h2) / 2) + " ps");
+            log("\t             range = [" + h1 + ", " + h2 + "] ps");
+          }
           if (plotCanceled) break;
           cc++;
         }
-        log("\tTotal counts = " + grandTotal);
+        if (doRescale) log("\tTotal counts = " + grandTotal);
       }
 
       // curve fitting
@@ -1128,6 +1149,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         sb.append(twoDPane.getROIPercent());
         sb.append("%)");
       }
+      /*
       if (tauMin == tauMin && tauMax == tauMax) {
         sb.append("; ");
         sb.append(TAU);
@@ -1158,7 +1180,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
         sb.append("]");
       }
-      decayLabel.setText(sb.toString());
+      */
+      String decayText = sb.toString();
+      decayLabel.setText(decayText);
 
       // update Numbers fields
       // CTR TEMP - this is crap; refactor to MVC
@@ -1176,6 +1200,20 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       t2Param.setText("" + t2);
       cParam.setText("" + fitC[activeC]);
       chi2.setText("" + fitChi2[activeC]);
+
+      // when doing an "expensive" plot, output probe values to log
+      if (doProbe && doRescale) {
+        log(decayText);
+        log("\tchannel = " + activeC);
+        log("\tx = " + twoDPane.getROIX());
+        log("\ty = " + twoDPane.getROIY());
+        log("\ta1 = " + a1 + "%");
+        log("\tt1 = " + t1);
+        log("\ta2 = " + a2 + "%");
+        log("\tt2 = " + t2);
+        log("\tc = " + fitC[activeC]);
+        log("\tchi^2 = " + fitChi2[activeC]);
+      }
 
       try {
         // construct domain set for 3D surface plots

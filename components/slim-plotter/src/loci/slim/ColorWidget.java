@@ -73,6 +73,8 @@ public class ColorWidget extends JPanel
 
   private static final Color INVALID_COLOR = Color.red.brighter();
 
+  private static final int PREF_HEIGHT = 120;
+
   // -- Static fields --
 
   private static JFileChooser lutBox;
@@ -102,7 +104,7 @@ public class ColorWidget extends JPanel
 
     widget = new ColorMapWidget(map);
     Dimension prefSize = widget.getPreferredSize();
-    widget.setPreferredSize(new Dimension(prefSize.width, 0));
+    widget.setPreferredSize(new Dimension(prefSize.width, PREF_HEIGHT));
 
     cOverride = new JCheckBox("", false);
     cOverride.setToolTipText("Toggles manual override of color range");

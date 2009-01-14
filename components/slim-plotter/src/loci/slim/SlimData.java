@@ -305,7 +305,7 @@ public class SlimData implements ActionListener, CurveListener {
     JPanel paramPane = new JPanel();
     paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
     paramDialog.setContentPane(paramPane);
-    paramPane.setLayout(new GridLayout(14, 3));
+    paramPane.setLayout(new SpringLayout());
     // rows 1-7
     wField = addRow(paramPane, "Image width", width, "pixels");
     hField = addRow(paramPane, "Image height", height, "pixels");
@@ -367,7 +367,10 @@ public class SlimData implements ActionListener, CurveListener {
     paramDialog.getRootPane().setDefaultButton(ok);
     ok.addActionListener(this);
     paramPane.add(ok);
+    paramPane.add(new JLabel());
+
     // size dialog
+    SpringUtilities.makeCompactGrid(paramPane, 14, 3, 3, 3, 3, 3);
     paramDialog.pack();
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension ps = paramDialog.getSize();
