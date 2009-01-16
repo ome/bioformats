@@ -182,22 +182,23 @@ public final class MetadataTools {
     return null;
   }
 
+  public static IMetadata getOMEMetadata(MetadataRetrieve src) {
+    // check if the metadata is already an OME-XML metadata object
+    if (isOMEXMLMetadata(src)) return (IMetadata) src;
+
+    // populate a new OME-XML metadata object with metadata
+    // converted from the non-OME-XML metadata object
+    IMetadata omexmlMeta = createOMEXMLMetadata();
+    convertMetadata(src, omexmlMeta);
+    return omexmlMeta;
+  }
+
   /**
    * Extracts an OME-XML metadata string from the given metadata object,
    * by converting to an OME-XML metadata object if necessary.
    */
   public static String getOMEXML(MetadataRetrieve src) {
-    MetadataStore omexmlMeta;
-    if (isOMEXMLMetadata(src)) {
-      // the metadata is already an OME-XML metadata object
-      omexmlMeta = (MetadataStore) src;
-    }
-    else {
-      // populate a new OME-XML metadata object with metadata
-      // converted from the non-OME-XML metadata object
-      omexmlMeta = createOMEXMLMetadata();
-      MetadataTools.convertMetadata(src, omexmlMeta);
-    }
+    IMetadata omexmlMeta = getOMEMetadata(src);
     ReflectedUniverse r = new ReflectedUniverse();
     r.setVar("omexmlMeta", omexmlMeta);
     try {
@@ -237,6 +238,7 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
+      store.setImageDefaultPixels("Pixels:0", i);
       store.setPixelsSizeX(new Integer(r.getSizeX()), i, 0);
       store.setPixelsSizeY(new Integer(r.getSizeY()), i, 0);
       store.setPixelsSizeZ(new Integer(r.getSizeZ()), i, 0);

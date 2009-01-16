@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Vector;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.*;
 
 /**
  * OMETiffWriter is the file format writer for OME-TIFF files.
@@ -67,15 +67,7 @@ public class OMETiffWriter extends TiffWriter {
     if (currentId != null) {
       // extract OME-XML string from metadata object
       MetadataRetrieve retrieve = getMetadataRetrieve();
-      String xml = MetadataTools.getOMEXML(retrieve);
-
-      // CTR TODO - convert OME-XML to DOM
-      // rather than build from string, just dump from retrieve into latest
-      // OME-XML metadata store using MetadataTools
-
-      // inject TiffData elements
-      // use DOMUtil.findElementList(String, Document) to get list of Pixels
-      // each Pixels corresponds to one series, in order
+      IMetadata omeMeta = MetadataTools.getOMEMetadata(retrieve);
 
       // generate UUID and add to OME element
       // Use Java 1.5 method java.util.UUID.randomUUID() via reflection?
@@ -94,18 +86,11 @@ public class OMETiffWriter extends TiffWriter {
       //
       // finish thinking this through
 
-      // insert warning comment
-      String prefix = xml.substring(0, xml.indexOf(">") + 1);
-      String suffix = xml.substring(xml.indexOf(">") + 1);
-      xml = prefix + WARNING_COMMENT + suffix;
-
-      int previousPixelsIndex = 0;
-
-      for (int series=0; series<retrieve.getImageCount(); series++) {
-        String dimensionOrder = retrieve.getPixelsDimensionOrder(series, 0);
-        int sizeZ = retrieve.getPixelsSizeZ(series, 0).intValue();
-        int sizeC = retrieve.getPixelsSizeC(series, 0).intValue();
-        int sizeT = retrieve.getPixelsSizeT(series, 0).intValue();
+      for (int series=0; series<omeMeta.getImageCount(); series++) {
+        String dimensionOrder = omeMeta.getPixelsDimensionOrder(series, 0);
+        int sizeZ = omeMeta.getPixelsSizeZ(series, 0).intValue();
+        int sizeC = omeMeta.getPixelsSizeC(series, 0).intValue();
+        int sizeT = omeMeta.getPixelsSizeT(series, 0).intValue();
 
         int imageCount = 0;
         for (int q=0; q<seriesMap.size(); q++) {
@@ -117,42 +102,27 @@ public class OMETiffWriter extends TiffWriter {
           sizeC = imageCount / (sizeZ * sizeT);
         }
 
-        StringBuffer tiffData = new StringBuffer();
-        tiffData.append(">");
         int num = 0;
-        for (int q=0; q<imageCount; q++) {
+        for (int plane=0; plane<imageCount; plane++) {
           while (((Integer) seriesMap.get(num)).intValue() != series) {
             num++;
           }
-          int[] coordinates = FormatTools.getZCTCoords(dimensionOrder,
-            sizeZ, sizeC, sizeT, imageCount, q);
-          tiffData.append("<TiffData IFD=\"");
-          tiffData.append(num);
-          tiffData.append("\" FirstZ=\"");
-          tiffData.append(coordinates[0]);
-          tiffData.append("\" FirstC=\"");
-          tiffData.append(coordinates[1]);
-          tiffData.append("\" FirstT=\"");
-          tiffData.append(coordinates[2]);
-          tiffData.append("\" />");
-          num++;
+          int[] zct = FormatTools.getZCTCoords(dimensionOrder,
+            sizeZ, sizeC, sizeT, imageCount, plane);
+          omeMeta.setTiffDataFileName(currentId, series, 0, plane);
+          omeMeta.setTiffDataFirstZ(new Integer(zct[0]), series, 0, plane);
+          omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, 0, plane);
+          omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, 0, plane);
+          omeMeta.setTiffDataIFD(new Integer(num), series, 0, plane);
         }
-        tiffData.append("</Pixels>");
-
-        // insert TiffData element
-        int pix = xml.indexOf("<Pixels ", previousPixelsIndex);
-        int end = xml.indexOf("</Pixels", pix);
-        int len = 9;
-        if (end == -1) {
-          end = xml.indexOf("/>", pix);
-          len = 2;
-        }
-
-        prefix = xml.substring(0, end);
-        suffix = xml.substring(end + len);
-        xml = prefix + tiffData.toString() + suffix;
-        previousPixelsIndex = pix + 8;
       }
+
+      String xml = MetadataTools.getOMEXML(omeMeta);
+
+      // insert warning comment
+      String prefix = xml.substring(0, xml.indexOf(">") + 1);
+      String suffix = xml.substring(xml.indexOf(">") + 1);
+      xml = prefix + WARNING_COMMENT + suffix;
 
       // write OME-XML to the first IFD's comment
       try {
