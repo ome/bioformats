@@ -111,6 +111,10 @@ public class OMETiffReader extends FormatReader {
     int seriesCount = 0;
     int imageCount = meta.getImageCount();
     for (int i=0; i<imageCount; i++) seriesCount += meta.getPixelsCount(i);
+    core = new CoreMetadata[seriesCount];
+    for (int i=0; i<seriesCount; i++) {
+      core[i] = new CoreMetadata();
+    }
     info = new OMETiffPlane[seriesCount][];
 
     // compile list of file/UUID mappings
@@ -180,10 +184,6 @@ public class OMETiffReader extends FormatReader {
     Iterator iter = fileSet.iterator();
     for (int i=0; i<used.length; i++) used[i] = (String) iter.next();
 
-    // HACK - for efficiency, assume all IFDs of all
-    // constituent files have the same samples per pixel
-    int samples = TiffTools.getSamplesPerPixel(firstIFD);
-
     // process TiffData elements
     Hashtable readers = new Hashtable();
     int s = 0;
@@ -193,12 +193,13 @@ public class OMETiffReader extends FormatReader {
         debug("  id = " + meta.getImageID(i));
       }
       int pixelsCount = meta.getPixelsCount(i);
-      for (int p=0; p<pixelsCount; p++) {
+      for (int p=0; p<pixelsCount; p++, s++) {
         if (debug) {
           debug("  Pixels[" + p + "] {");
           debug("    id = " + meta.getPixelsID(i, p));
         }
         String order = meta.getPixelsDimensionOrder(i, p);
+        int samples = meta.getLogicalChannelSamplesPerPixel(i, 0).intValue();
         int effSizeC = meta.getPixelsSizeC(i, p).intValue() / samples;
         if (effSizeC == 0) effSizeC = 1;
         int sizeT = meta.getPixelsSizeT(i, p).intValue();

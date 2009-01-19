@@ -114,6 +114,8 @@ public class OMETiffWriter extends TiffWriter {
           omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, 0, plane);
           omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, 0, plane);
           omeMeta.setTiffDataIFD(new Integer(num), series, 0, plane);
+          omeMeta.setTiffDataNumPlanes(new Integer(1), series, 0, plane);
+          num++;
         }
       }
 
