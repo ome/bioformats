@@ -667,7 +667,7 @@ public class ICSReader extends FormatReader {
       store.setDimensionsPhysicalSizeY(pixY, 0, 0);
       store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
       store.setDimensionsTimeIncrement(pixT, 0, 0);
-      store.setDimensionsWaveIncrement(pixC, 0, 0);
+      if (pixC.intValue() > 0) store.setDimensionsWaveIncrement(pixC, 0, 0);
     }
     else if (sizes != null) {
       for (int i=0; i<sizes.length; i++) {
@@ -731,6 +731,7 @@ public class ICSReader extends FormatReader {
 
     if (objectiveModel != null) store.setObjectiveModel(objectiveModel, 0, 0);
     if (immersion != null) store.setObjectiveImmersion(immersion, 0, 0);
+    else store.setObjectiveImmersion("Unknown", 0, 0);
     if (lensNA != null) store.setObjectiveLensNA(new Float(lensNA), 0, 0);
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
@@ -738,6 +739,7 @@ public class ICSReader extends FormatReader {
     if (magnification != null) {
       store.setObjectiveCalibratedMagnification(new Float(magnification), 0, 0);
     }
+    store.setObjectiveCorrection("Unknown", 0, 0);
 
     // link Objective to Image
     store.setObjectiveID("Objective:0", 0, 0);
@@ -748,6 +750,7 @@ public class ICSReader extends FormatReader {
         if (gains.containsKey(new Integer(i + 1))) {
           store.setDetectorSettingsGain(
             new Float((String) gains.get(new Integer(i + 1))), 0, i);
+          store.setDetectorType("Unknown", 0, i);
           store.setDetectorID("Detector:" + i, 0, i);
           store.setDetectorSettingsDetector("Detector:0", 0, i);
         }

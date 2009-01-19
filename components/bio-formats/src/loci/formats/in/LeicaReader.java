@@ -857,8 +857,10 @@ public class LeicaReader extends FormatReader {
       store.setDimensionsPhysicalSizeX(new Float(physicalSizes[i][0]), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(physicalSizes[i][1]), i, 0);
       store.setDimensionsPhysicalSizeZ(new Float(physicalSizes[i][2]), i, 0);
-      store.setDimensionsWaveIncrement(
-        new Integer((int) physicalSizes[i][3]), i, 0);
+      if ((int) physicalSizes[i][3] > 0) {
+        store.setDimensionsWaveIncrement(
+          new Integer((int) physicalSizes[i][3]), i, 0);
+      }
       store.setDimensionsTimeIncrement(new Float(physicalSizes[i][4]), i, 0);
 
       // parse instrument data
@@ -951,6 +953,8 @@ public class LeicaReader extends FormatReader {
           try {
             int ndx = tokens[1].lastIndexOf(" ") + 1;
             int detector = Integer.parseInt(tokens[1].substring(ndx)) - 1;
+
+            store.setDetectorType("Unknown", 0, detector);
 
             if (tokens[2].equals("VideoOffset")) {
               store.setDetectorOffset(new Float(data), 0, detector);

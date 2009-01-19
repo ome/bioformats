@@ -248,10 +248,16 @@ public final class MetadataTools {
         FormatTools.getPixelTypeString(r.getPixelType()), i, 0);
       store.setPixelsBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
       store.setPixelsDimensionOrder(r.getDimensionOrder(), i, 0);
+      store.setDisplayOptionsDisplay(r.isRGB() ? "RGB" : "Grey", i);
       if (r.getSizeC() > 0) {
         Integer sampleCount = new Integer(r.getRGBChannelCount());
         for (int c=0; c<r.getEffectiveSizeC(); c++) {
           store.setLogicalChannelSamplesPerPixel(sampleCount, i, c);
+          for (int rgb=0; rgb<r.getRGBChannelCount(); rgb++) {
+            store.setChannelComponentIndex(
+              new Integer(c * r.getRGBChannelCount() + rgb), i, c, rgb);
+            store.setChannelComponentPixels("Pixels:0", i, c, rgb);
+          }
         }
       }
       if (doPlane) {

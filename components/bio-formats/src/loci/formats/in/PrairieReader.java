@@ -260,6 +260,7 @@ public class PrairieReader extends FormatReader {
           // link DetectorSettings to an actual Detector
           store.setDetectorID("Detector:" + i, 0, i);
           store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+          store.setDetectorType("Unknown", 0, i);
         }
 
         store.setImageName("", 0);

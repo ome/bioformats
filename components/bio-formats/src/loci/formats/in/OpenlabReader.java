@@ -589,6 +589,8 @@ public class OpenlabReader extends FormatReader {
     store.setDetectorID("Detector:0", 0, 0);
     store.setDetectorSettingsDetector("Detector:0", 0, 0);
 
+    store.setDetectorType("Unknown", 0, 0);
+
     if (xPos != null) store.setStagePositionPositionX(new Float(xPos), 0, 0, 0);
     if (yPos != null) store.setStagePositionPositionY(new Float(yPos), 0, 0, 0);
     if (zPos != null) store.setStagePositionPositionZ(new Float(zPos), 0, 0, 0);

@@ -453,6 +453,7 @@ public class ZeissZVIReader extends FormatReader {
     for (int i=0; i<getSizeC(); i++) {
       store.setDetectorID("Detector:" + i, 0, i);
       store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+      store.setDetectorType("Unknown", 0, i);
     }
 
     // link Objective to Image
@@ -644,8 +645,10 @@ public class ZeissZVIReader extends FormatReader {
             case 3:
               immersion = "water";
               break;
+            default:
+              immersion = "Unknown";
           }
-          if (immersion != null) store.setObjectiveImmersion(immersion, 0, 0);
+          store.setObjectiveImmersion(immersion, 0, 0);
         }
         else if (key.startsWith("Parfocal Correction")) {
           store.setObjectiveCorrection(value, 0, 0);

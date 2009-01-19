@@ -327,12 +327,16 @@ public class LeicaHandler extends DefaultHandler {
         if (name.equals("Variant")) {
           if (key.endsWith("NumericalAperture")) {
             store.setObjectiveLensNA(new Float(value), 0, 0);
+            store.setObjectiveCorrection("Unknown", 0, 0);
+            store.setObjectiveImmersion("Unknown", 0, 0);
           }
           else if (key.endsWith("HighVoltage")) {
             store.setDetectorVoltage(new Float(value), 0, 0);
+            store.setDetectorType("Unknown", 0, 0);
           }
           else if (key.endsWith("VideoOffset")) {
             store.setDetectorOffset(new Float(value), 0, 0);
+            store.setDetectorType("Unknown", 0, 0);
           }
         }
       }

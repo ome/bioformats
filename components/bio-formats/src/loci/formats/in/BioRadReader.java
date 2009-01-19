@@ -432,6 +432,8 @@ public class BioRadReader extends FormatReader {
 
     store.setObjectiveLensNA(new Float(lens), 0, 0);
     store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
 
     for (int q=0; q<noteStrings.size(); q++) {
       Note n = (Note) noteStrings.get(q);
@@ -489,6 +491,8 @@ public class BioRadReader extends FormatReader {
                     store.setDetectorSettingsGain(
                       new Float(value), 0, detector);
                   }
+
+                  store.setDetectorType("Unknown", 0, detector);
 
                   // link DetectorSettings to an actual Detector
                   store.setDetectorID("Detector:" + detector, 0, detector);

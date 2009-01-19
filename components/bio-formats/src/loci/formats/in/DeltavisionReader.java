@@ -473,6 +473,7 @@ public class DeltavisionReader extends FormatReader {
             store.setObjectiveCorrection(tokens[1], 0, 0);
             // TODO:  Token #2 is the microscope model name.
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
+            store.setObjectiveImmersion("Unknown", 0, 0);
           }
         }
         else if (key.equals("Lens ID")) {
@@ -494,6 +495,8 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("Binning")) {
           for (int c=0; c<getSizeC(); c++) {
             store.setDetectorSettingsBinning(value, 0, c);
+
+            store.setDetectorType("Unknown", 0, c);
 
             // link DetectorSettings to an actual Detector
             store.setDetectorID("Detector:" + c, 0, c);

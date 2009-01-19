@@ -462,6 +462,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (offsets[i] != null) {
         store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
       }
+      store.setDetectorType("Unknown", 0, i);
 
       // link DetectorSettings to an actual Detector
       store.setDetectorID("Detector:" + i, 0, i);
@@ -485,6 +486,8 @@ public class FluoviewReader extends BaseTiffReader {
         store.setObjectiveLensNA(new Float(lensNA[i]), 0, i);
       }
     }
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
 
     // link Objective to Image using ObjectiveSettings
     store.setObjectiveID("Objective:0", 0, 0);

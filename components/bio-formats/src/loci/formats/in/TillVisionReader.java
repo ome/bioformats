@@ -378,8 +378,10 @@ public class TillVisionReader extends FormatReader {
       // populate Dimensions data
 
       if (i < waves.size()) {
-        store.setDimensionsWaveIncrement(
-          new Integer((String) waves.get(i)), i, 0);
+        int waveIncrement = Integer.parseInt((String) waves.get(i));
+        if (waveIncrement > 0) {
+          store.setDimensionsWaveIncrement(new Integer(waveIncrement), i, 0);
+        }
       }
 
       // populate Experiment data

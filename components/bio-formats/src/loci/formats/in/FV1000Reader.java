@@ -999,9 +999,9 @@ public class FV1000Reader extends FormatReader {
     if (gain != null) store.setDetectorGain(new Float(gain), 0, 0);
     if (offset != null) store.setDetectorOffset(new Float(offset), 0, 0);
     if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
+    store.setDetectorType("Unknown", 0, 0);
 
     // link Detector to Image using DetectorSettings
-
     store.setDetectorID("Detector:0", 0, 0);
     store.setDetectorSettingsDetector("Detector:0", 0, 0);
 
@@ -1016,9 +1016,10 @@ public class FV1000Reader extends FormatReader {
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
     }
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
 
     // link Objective to Image using ObjectiveSettings
-
     store.setObjectiveID("Objective:0", 0, 0);
     store.setObjectiveSettingsObjective("Objective:0", 0);
   }

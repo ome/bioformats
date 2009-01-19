@@ -308,6 +308,8 @@ public class InCellReader extends FormatReader {
         store.setObjectiveModel(attributes.getValue("objective_name"), 0, 0);
         store.setObjectiveLensNA(new Float(
           attributes.getValue("numerical_aperture")), 0, 0);
+        store.setObjectiveCorrection("Unknown", 0, 0);
+        store.setObjectiveImmersion("Unknown", 0, 0);
 
         // link Objective to Image
         store.setObjectiveID("Objective:0", 0, 0);

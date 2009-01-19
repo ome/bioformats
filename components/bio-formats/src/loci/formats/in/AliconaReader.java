@@ -207,6 +207,9 @@ public class AliconaReader extends FormatReader {
       // link DetectorSettings to an actual Detector
       store.setDetectorID("Detector:0", 0, 0);
       store.setDetectorSettingsDetector("Detector:0", 0, 0);
+
+      // set required Detector type
+      store.setDetectorType("Unknown", 0, 0);
     }
 
     // populate Objective data
@@ -219,8 +222,10 @@ public class AliconaReader extends FormatReader {
       store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
     }
 
-    // link Objective to an Image using ObjectiveSettings
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
 
+    // link Objective to an Image using ObjectiveSettings
     store.setObjectiveID("Objective:0", 0, 0);
     store.setObjectiveSettingsObjective("Objective:0", 0);
 
