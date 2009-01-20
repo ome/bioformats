@@ -1007,37 +1007,9 @@ public final class TiffTools {
         (imageWidth * imageLength * (bitsPerSample[0] / 8)) &&
         compression == UNCOMPRESSED)
       {
-        for (int i=0; i<stripByteCounts.length; i++) {
-          stripByteCounts[i] =
-            imageWidth * imageLength * (bitsPerSample[i] / 8);
-          stripOffsets[0] = in.length() - stripByteCounts[0] - 48 * imageWidth;
-          if (i != 0) {
-            stripOffsets[i] = stripOffsets[i - 1] + stripByteCounts[i];
-          }
-
-          in.seek(stripOffsets[i]);
-          in.read(buf, (int) (i*imageWidth), (int) imageWidth);
-          boolean isZero = true;
-          for (int j=0; j<imageWidth; j++) {
-            if (buf[(int) (i*imageWidth + j)] != 0) {
-              isZero = false;
-              break;
-            }
-          }
-
-          while (isZero) {
-            stripOffsets[i] -= imageWidth;
-            in.seek(stripOffsets[i]);
-            in.read(buf, (int) (i*imageWidth), (int) imageWidth);
-            for (int j=0; j<imageWidth; j++) {
-              if (buf[(int) (i*imageWidth + j)] != 0) {
-                isZero = false;
-                stripOffsets[i] -= (stripByteCounts[i] - imageWidth);
-                break;
-              }
-            }
-          }
-        }
+        stripByteCounts = new long[] {
+          imageWidth * imageLength * (bitsPerSample[0] / 8)};
+        stripOffsets = new long[] {stripOffsets[0]};
       }
 
       for (int i=0; i<bitsPerSample.length; i++) {
