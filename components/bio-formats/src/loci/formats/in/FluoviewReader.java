@@ -424,6 +424,8 @@ public class FluoviewReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    store.setImageDescription(comment, 0);
+
     // link Instrument and Image
     store.setInstrumentID("Instrument:0", 0);
     store.setImageInstrumentRef("Instrument:0", 0);
@@ -476,7 +478,17 @@ public class FluoviewReader extends BaseTiffReader {
     }
     else if (mag == null) mag = "1";
 
-    if (objManu != null) store.setObjectiveManufacturer(objManu, 0, 0);
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
+
+    if (objManu != null) {
+      String[] objectiveData = objManu.split(" ");
+      store.setObjectiveModel(objectiveData[0], 0, 0);
+      if (objectiveData.length > 2) {
+        store.setObjectiveImmersion(objectiveData[2], 0, 0);
+      }
+    }
+
     if (mag != null) {
       store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     }
@@ -486,8 +498,6 @@ public class FluoviewReader extends BaseTiffReader {
         store.setObjectiveLensNA(new Float(lensNA[i]), 0, i);
       }
     }
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
 
     // link Objective to Image using ObjectiveSettings
     store.setObjectiveID("Objective:0", 0, 0);
