@@ -433,7 +433,9 @@ public class MicromanagerReader extends FormatReader {
     for (int i=0; i<channels.length; i++) {
       store.setDetectorSettingsBinning(binning, 0, i);
       store.setDetectorSettingsGain(new Float(gain), 0, i);
-      store.setDetectorSettingsVoltage((Float) voltage.get(i), 0, i);
+      if (i < voltage.size()) {
+        store.setDetectorSettingsVoltage((Float) voltage.get(i), 0, i);
+      }
       store.setDetectorSettingsDetector(detectorID, 0, i);
     }
 
