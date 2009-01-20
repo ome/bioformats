@@ -276,8 +276,11 @@ public class DeltavisionReader extends FormatReader {
     store.setInstrumentID("Instrument:0", 0);
     store.setImageInstrumentRef("Instrument:0", 0);
 
-    store.setObjectiveID(String.valueOf(lensID), 0, 0);
-    store.setObjectiveSettingsObjective(String.valueOf(lensID), 0);
+    String objectiveID = "Objective:" + String.valueOf(lensID);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
 
     in.skipBytes(4);
 
@@ -473,12 +476,11 @@ public class DeltavisionReader extends FormatReader {
             store.setObjectiveCorrection(tokens[1], 0, 0);
             // TODO:  Token #2 is the microscope model name.
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
-            store.setObjectiveImmersion("Unknown", 0, 0);
           }
         }
         else if (key.equals("Lens ID")) {
-          store.setObjectiveID(value, 0, 0);
-          store.setObjectiveSettingsObjective(value, 0);
+          store.setObjectiveID("Objective:" + value, 0, 0);
+          store.setObjectiveSettingsObjective("Objective:" + value, 0);
         }
         //else if (key.equals("Aux Magn")) { }
         // Image properties
