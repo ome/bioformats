@@ -99,6 +99,25 @@ public class ZeissLSMReader extends BaseTiffReader {
   private static final int START_TIME = 0x10000036;
   private static final int DATA_CHANNEL_NAME = 0xd0000001;
 
+  /** Drawing element types. */
+  private static final int DRAWING_ELEMENT_FLOAT_TEXT = 13;
+  private static final int DRAWING_ELEMENT_FLOAT_LINE = 14;
+  private static final int DRAWING_ELEMENT_FLOAT_SCALE_BAR = 15;
+  private static final int DRAWING_ELEMENT_FLOAT_OPEN_ARROW = 16;
+  private static final int DRAWING_ELEMENT_FLOAT_CLOSED_ARROW = 17;
+  private static final int DRAWING_ELEMENT_FLOAT_RECTANGLE = 18;
+  private static final int DRAWING_ELEMENT_FLOAT_ELLIPSE = 19;
+  private static final int DRAWING_ELEMENT_FLOAT_CLOSED_POLYLINE = 20;
+  private static final int DRAWING_ELEMENT_FLOAT_OPEN_POLYLINE = 21;
+  private static final int DRAWING_ELEMENT_FLOAT_CLOSED_BEZIER = 22;
+  private static final int DRAWING_ELEMENT_FLOAT_OPEN_BEZIER = 23;
+  private static final int DRAWING_ELEMENT_FLOAT_CIRCLE = 24;
+  private static final int DRAWING_ELEMENT_FLOAT_PALETTE = 25;
+  private static final int DRAWING_ELEMENT_FLOAT_POLYLINE_ARROW = 26;
+  private static final int DRAWING_ELEMENT_FLOAT_BEZIER_WITH_ARROW = 27;
+  private static final int DRAWING_ELEMENT_FLOAT_ANGLE = 28;
+  private static final int DRAWING_ELEMENT_FLOAT_CIRCLE_3POINT = 29;
+
   // -- Static fields --
 
   private static Hashtable metadataKeys = createKeys();
@@ -376,7 +395,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     overlayOffsets[8] = ras.readInt();
 
     for (int i=0; i<overlayOffsets.length; i++) {
-      parseOverlays(overlayOffsets[i], overlayKeys[i]);
+      parseOverlays(overlayOffsets[i], overlayKeys[i], store);
     }
 
     put("ToolbarFlags", ras.readInt());
@@ -551,12 +570,12 @@ public class ZeissLSMReader extends BaseTiffReader {
             break;
         }
         String key = getKey(prefix, entry).trim();
-        if (value instanceof String) value = ((String) value).trim();
         if (key != null) addMeta(key, value);
+        String v = value != null ? value.toString().trim() : "";
 
         if (key.endsWith("Acquire")) {
           Integer index = new Integer(count - 2);
-          Integer acquire = new Integer(value.toString());
+          Integer acquire = new Integer(v);
           if (key.indexOf("Detection Channel") != -1) {
             acquireChannels.put(index, acquire);
           }
@@ -565,13 +584,12 @@ public class ZeissLSMReader extends BaseTiffReader {
           }
         }
 
-        float n;
         switch (entry) {
           case RECORDING_ENTRY_DESCRIPTION:
-            store.setImageDescription(value.toString(), 0);
+            store.setImageDescription(v, 0);
             break;
           case RECORDING_ENTRY_OBJECTIVE:
-            String[] tokens = value.toString().split(" ");
+            String[] tokens = v.split(" ");
             StringBuffer model = new StringBuffer();
             int next = 0;
             for (; next<tokens.length; next++) {
@@ -583,17 +601,25 @@ public class ZeissLSMReader extends BaseTiffReader {
               String p = tokens[next++];
               String mag = p.substring(0, p.indexOf("/") - 1);
               String na = p.substring(p.indexOf("/") + 1);
-              store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
-              store.setObjectiveLensNA(new Float(na), 0, 0);
+              try {
+                store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+              }
+              catch (NumberFormatException e) { }
+              try {
+                store.setObjectiveLensNA(new Float(na), 0, 0);
+              }
+              catch (NumberFormatException e) { }
             }
             if (next < tokens.length) {
               store.setObjectiveImmersion(tokens[next++], 0, 0);
             }
+            else store.setObjectiveImmersion("Unknown", 0, 0);
             boolean iris = false;
             if (next < tokens.length) {
               iris = tokens[next++].trim().equalsIgnoreCase("iris");
             }
             store.setObjectiveIris(new Boolean(iris), 0, 0);
+            store.setObjectiveCorrection("Unknown", 0, 0);
 
             // link Objective to Image
             store.setObjectiveID("Objective:0", 0, 0);
@@ -601,11 +627,13 @@ public class ZeissLSMReader extends BaseTiffReader {
 
             break;
           case TRACK_ENTRY_TIME_BETWEEN_STACKS:
-            store.setDimensionsTimeIncrement(
-              new Float(value.toString()), 0, 0);
+            try {
+              store.setDimensionsTimeIncrement(new Float(v), 0, 0);
+            }
+            catch (NumberFormatException e) { }
             break;
           case LASER_ENTRY_NAME:
-            String medium = value.toString();
+            String medium = v;
             String laserType = null;
 
             if (medium.startsWith("HeNe")) {
@@ -643,32 +671,35 @@ public class ZeissLSMReader extends BaseTiffReader {
             break;
           //case LASER_POWER:
             // TODO: this is a setting, not a fixed value
-            //n = Float.parseFloat(value.toString());
-            //store.setLaserPower(new Float(n), 0, count - 1);
+            //store.setLaserPower(new Float(v), 0, count - 1);
             //break;
           case CHANNEL_ENTRY_DETECTOR_GAIN:
-            //n = Float.parseFloat(value.toString());
-            //store.setDetectorSettingsGain(new Float(n), 0, nextGain++);
+            //store.setDetectorSettingsGain(new Float(v), 0, nextGain++);
             break;
           case CHANNEL_ENTRY_PINHOLE_DIAMETER:
-            n = Float.parseFloat(value.toString());
-            channelData.put("pinhole " + count, new Float(n));
+            try {
+              channelData.put("pinhole " + count, new Float(v));
+            }
+            catch (NumberFormatException e) { }
             break;
           case ILLUM_CHANNEL_WAVELENGTH:
-            n = Float.parseFloat(value.toString());
-            channelData.put("em " + count, new Integer((int) n));
-            channelData.put("ex " + count, new Integer((int) n));
+            try {
+              Integer wave = new Integer((int) Float.parseFloat(v));
+              channelData.put("em " + count, wave);
+              channelData.put("ex " + count, wave);
+            }
+            catch (NumberFormatException e) { }
             break;
           case START_TIME:
             // date/time on which the first pixel was acquired, in days
             // since 30 December 1899
-            double time = Double.parseDouble(value.toString());
+            double time = Double.parseDouble(v);
             store.setImageCreationDate(DataTools.convertDate(
               (long) (time * 86400000), DataTools.MICROSOFT), 0);
 
             break;
           case DATA_CHANNEL_NAME:
-            channelData.put("name " + count, value.toString());
+            channelData.put("name " + count, v);
             break;
         }
 
@@ -803,7 +834,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     Vector newIFDs = new Vector();
     for (int i=0; i<ifds.length; i++) {
       long subFileType = TiffTools.getIFDLongValue(ifds[i],
-        TiffTools.NEW_SUBFILE_TYPE, true, 0);
+        TiffTools.NEW_SUBFILE_TYPE, false, 0);
 
       if (subFileType == 0) {
         // check that predictor is set to 1 if anything other
@@ -838,7 +869,9 @@ public class ZeissLSMReader extends BaseTiffReader {
   // -- Helper methods --
 
   /** Parses overlay-related fields. */
-  protected void parseOverlays(long data, String suffix) throws IOException {
+  protected void parseOverlays(long data, String suffix, MetadataStore store)
+    throws IOException
+  {
     if (data == 0) return;
 
     in.seek(data);
@@ -851,10 +884,10 @@ public class ZeissLSMReader extends BaseTiffReader {
     idata = in.readInt();
     put("Measure-" + suffix, idata);
     in.skipBytes(8);
-    put("ColorRed-" + suffix, in.read());
-    put("ColorGreen-" + suffix, in.read());
-    put("ColorBlue-" + suffix, in.read());
-    in.skipBytes(1);
+    int packedColor = in.readInt();
+    put("ColorRed-" + suffix, packedColor & 0xff);
+    put("ColorGreen-" + suffix, (packedColor & 0xff00) >> 8);
+    put("ColorBlue-" + suffix, (packedColor & 0xff0000) >> 16);
 
     put("Valid-" + suffix, in.readInt());
     put("KnotWidth-" + suffix, in.readInt());
@@ -887,19 +920,148 @@ public class ZeissLSMReader extends BaseTiffReader {
     put("Circle-" + suffix, in.read());
     put("Rectangle-" + suffix, in.read());
     put("Line-" + suffix, in.read());
+
+    in.skipBytes(28);
+
+    // read drawing elements and place them in the MetadataStore
+
     /*
-    try {
-      int drawingEl = (size - 194) / nde;
-      if (drawingEl <= 0) return;
-      if (DataTools.swap(nde) < nde) nde = DataTools.swap(nde);
-      for (int i=0; i<nde; i++) {
-        put("DrawingElement" + i + "-" + suffix, in.readString(drawingEl));
+    for (int i=0; i<nde; i++) {
+      int type = in.readInt();
+      in.skipBytes(4);
+      int lineWidth = in.readInt();
+      int measureFlags = in.readInt();
+      double textStartX = in.readDouble();
+      double textStartY = in.readDouble();
+      int color = in.readInt(); // ABGR
+      int valid = in.readInt();
+      int knotWidth = in.readInt();
+      in.skipBytes(4);
+      int fontHeight = in.readInt();
+      int fontWidth = in.readInt();
+      in.skipBytes(8);
+      boolean italicFont = in.readInt() != 0;
+      boolean underlineFont = in.readInt() != 0;
+      boolean strikeFont = in.readInt() != 0;
+      in.skipBytes(20);
+      String fontName = in.readString(64);
+      boolean enabled = in.readShort() == 0;
+      in.skipBytes(36);
+
+      switch (type) {
+        case DRAWING_ELEMENT_FLOAT_TEXT:
+          java.awt.geom.Point2D.Double origin = readPoint(in);
+          // String text
+          break;
+        case DRAWING_ELEMENT_FLOAT_LINE:
+        case DRAWING_ELEMENT_FLOAT_SCALE_BAR:
+        case DRAWING_ELEMENT_FLOAT_OPEN_ARROW:
+        case DRAWING_ELEMENT_FLOAT_CLOSED_ARROW:
+          in.skipBytes(4);
+          java.awt.geom.Point2D.Double start = readPoint(in);
+          java.awt.geom.Point2D.Double end = readPoint(in);
+
+          store.setLinex1(String.valueOf(start.x), 0, 0, i);
+          store.setLiney1(String.valueOf(start.y), 0, 0, i);
+          store.setLinex2(String.valueOf(end.x), 0, 0, i);
+          store.setLiney2(String.valueOf(end.y), 0, 0, i);
+
+          break;
+        case DRAWING_ELEMENT_FLOAT_RECTANGLE:
+        case DRAWING_ELEMENT_FLOAT_PALETTE:
+          in.skipBytes(4);
+          // two corners are diagonally arranged
+          java.awt.geom.Point2D.Double firstCorner = readPoint(in);
+          java.awt.geom.Point2D.Double secondCorner = readPoint(in);
+          double width = secondCorner.x - firstCorner.x;
+          double height = secondCorner.y - firstCorner.y;
+
+          store.setRectx(String.valueOf(firstCorner.x), 0, 0, i);
+          store.setRecty(String.valueOf(firstCorner.y), 0, 0, i);
+          store.setRectwidth(String.valueOf(width), 0, 0, i);
+          store.setRectheight(String.valueOf(height), 0, 0, i);
+          break;
+        case DRAWING_ELEMENT_FLOAT_ELLIPSE:
+          in.skipBytes(4);
+          java.awt.geom.Point2D.Double axisIntercept1 = readPoint(in);
+          java.awt.geom.Point2D.Double axisIntercept2 = readPoint(in);
+          java.awt.geom.Point2D.Double axisIntercept3 = readPoint(in);
+          java.awt.geom.Point2D.Double axisIntercept4 = readPoint(in);
+          // TODO
+          break;
+        case DRAWING_ELEMENT_FLOAT_CIRCLE:
+          in.skipBytes(4);
+          java.awt.geom.Point2D.Double center = readPoint(in);
+          java.awt.geom.Point2D.Double point = readPoint(in);
+
+          store.setCirclecx(String.valueOf(center.x), 0, 0, i);
+          store.setCirclecy(String.valueOf(center.y), 0, 0, i);
+          store.setCircler(String.valueOf(center.distance(point)), 0, 0, i);
+
+          break;
+        case DRAWING_ELEMENT_FLOAT_CIRCLE_3POINT:
+          in.skipBytes(4);
+          // coordinates of points on the perimeter
+          java.awt.geom.Point2D.Double a = readPoint(in);
+          java.awt.geom.Point2D.Double b = readPoint(in);
+          java.awt.geom.Point2D.Double c = readPoint(in);
+
+          double temp = b.x * b.x + b.y * b.y;
+          double ab = (a.x * a.x + a.y * a.y - temp) / 2.0;
+          double bc = (temp - c.x * c.x - c.y * c.y) / 2.0;
+          double determinant =
+            1 / ((a.x - b.x) * (b.y - c.y) - (b.x - c.x) * (a.y - b.y));
+          double centerX = (ab * (b.y - c.y) - bc * (a.y - b.y)) * determinant;
+          double centerY = ((a.x - b.x) * bc - (b.x - c.x) * ab) * determinant;
+          double radius =
+            Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+
+          store.setCirclecx(String.valueOf(centerX), 0, 0, i);
+          store.setCirclecy(String.valueOf(centerY), 0, 0, i);
+          store.setCircler(String.valueOf(radius), 0, 0, i);
+
+          break;
+        case DRAWING_ELEMENT_FLOAT_ANGLE:
+          in.skipBytes(4);
+          a = readPoint(in);
+          b = readPoint(in);
+          c = readPoint(in);
+          break;
+        case DRAWING_ELEMENT_FLOAT_CLOSED_POLYLINE:
+        case DRAWING_ELEMENT_FLOAT_OPEN_POLYLINE:
+        case DRAWING_ELEMENT_FLOAT_POLYLINE_ARROW:
+          int nKnots = in.readInt();
+          java.awt.geom.Point2D.Double[] vertices =
+            new java.awt.geom.Point2D.Double[nKnots];
+          for (int q=0; q<nKnots; q++) {
+            vertices[q] = readPoint(in);
+          }
+          break;
+        case DRAWING_ELEMENT_FLOAT_CLOSED_BEZIER:
+        case DRAWING_ELEMENT_FLOAT_OPEN_BEZIER:
+        case DRAWING_ELEMENT_FLOAT_BEZIER_WITH_ARROW:
+          nKnots = in.readInt();
+          // these are the endpoints of cubic Bezier segments
+          // the control points are calculated assuming equidistant
+          // parameterization of the curve
+          java.awt.geom.Point2D.Double[] endpoints =
+            new java.awt.geom.Point2D.Double[nKnots];
+          for (int q=0; q<nKnots; q++) {
+            endpoints[q] = readPoint(in);
+          }
+          break;
       }
     }
-    catch (ArithmeticException exc) {
-      if (debug) trace(exc);
-    }
     */
+  }
+
+  private java.awt.geom.Point2D.Double readPoint(RandomAccessStream in)
+    throws IOException
+  {
+    java.awt.geom.Point2D.Double p = new java.awt.geom.Point2D.Double();
+    p.x = in.readDouble();
+    p.y = in.readDouble();
+    return p;
   }
 
   /** Construct a metadata key from the given stack. */
