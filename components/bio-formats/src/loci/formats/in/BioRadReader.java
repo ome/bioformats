@@ -481,8 +481,8 @@ public class BioRadReader extends FormatReader {
               if (key.indexOf("_DET_") != -1) {
                 int index = key.indexOf("_DET_") + 5;
                 if (key.lastIndexOf("_") > index) {
-                  int detector = Integer.parseInt(
-                    key.substring(index, key.indexOf("_", index)));
+                  String idx = key.substring(index, key.indexOf("_", index));
+                  int detector = Integer.parseInt(idx) - 1;
                   if (key.endsWith("OFFSET")) {
                     store.setDetectorSettingsOffset(
                       new Float(value), 0, detector);
@@ -559,25 +559,20 @@ public class BioRadReader extends FormatReader {
                   addMeta("Gain for PMT " + (i + 1), values[i * 4 + 1]);
                   addMeta("Black level for PMT " + (i + 1), values[i * 4 + 2]);
                   addMeta("Emission filter for PMT " + (i+1), values[i*4] + 3);
+                  addMeta("Multiplier for channel " + (i+1), values[12 + i]);
                 }
-                addMeta("Multiplier for channel 1", values[12]);
-                addMeta("Multiplier for channel 2", values[13]);
-                addMeta("Multiplier for channel 3", values[14]);
                 break;
               case 4:
                 nLasers = Integer.parseInt(values[0]);
                 addMeta("Number of lasers", values[0]);
                 addMeta("Number of transmission detectors", values[1]);
                 addMeta("Number of PMTs", values[2]);
-                addMeta("Shutter present for laser 1", values[3]);
-                addMeta("Shutter present for laser 2", values[4]);
-                addMeta("Shutter present for laser 3", values[5]);
                 for (int i=1; i<=3; i++) {
-                  addMeta("Neutral density filter for laser " + i,
-                    values[(i + 1) * 3]);
-                  addMeta("Excitation filter for laser " + i,
-                    values[(i + 1) * 3 + 1]);
-                  addMeta("Use laser " + i, values[(i + 1) * 3 + 2]);
+                  int idx = (i + 1) * 3;
+                  addMeta("Shutter present for laser " + i, values[i + 2]);
+                  addMeta("Neutral density filter for laser " + i, values[idx]);
+                  addMeta("Excitation filter for laser " + i, values[idx + 1]);
+                  addMeta("Use laser " + i, values[idx + 2]);
                 }
                 for (int i=0; i<nLasers; i++) {
                   addMeta("Neutral density filter name - laser " + (i + 1),
@@ -596,15 +591,16 @@ public class BioRadReader extends FormatReader {
                 break;
               case 7:
                 for (int i=0; i<2; i++) {
-                  addMeta("Mixer " +i+ " - enhanced", values[i*7]);
-                  addMeta("Mixer " +i+ " - PMT 1 percentage", values[i*7 + 1]);
-                  addMeta("Mixer " +i+ " - PMT 2 percentage", values[i*7 + 2]);
-                  addMeta("Mixer " +i+ " - PMT 3 percentage", values[i*7 + 3]);
-                  addMeta("Mixer " +i+ " - Transmission 1 percentage",
+                  String prefix = "Mixer " + i;
+                  addMeta(prefix + " - enhanced", values[i*7]);
+                  addMeta(prefix + " - PMT 1 percentage", values[i*7 + 1]);
+                  addMeta(prefix + " - PMT 2 percentage", values[i*7 + 2]);
+                  addMeta(prefix + " - PMT 3 percentage", values[i*7 + 3]);
+                  addMeta(prefix + " - Transmission 1 percentage",
                     values[i * 7 + 4]);
-                  addMeta("Mixer " +i+ " - Transmission 2 percentage",
+                  addMeta(prefix + " - Transmission 2 percentage",
                     values[i * 7 + 5]);
-                  addMeta("Mixer " +i+ " - Transmission 3 percentage",
+                  addMeta(prefix + " - Transmission 3 percentage",
                     values[i * 7 + 6]);
                 }
                 addMeta("Mixer 0 - low signal on", values[14]);
@@ -630,6 +626,7 @@ public class BioRadReader extends FormatReader {
 
                   store.setDetectorOffset(new Float(values[i * 3]), 0, i);
                   store.setDetectorGain(new Float(values[i * 3 + 1]), 0, i);
+                  store.setDetectorType("Unknown", 0, i);
                 }
                 break;
               case 12:
@@ -671,40 +668,34 @@ public class BioRadReader extends FormatReader {
                 break;
               case 17:
                 int year = Integer.parseInt(values[5]) + 1900;
-                String month = values[4];
-                if (month.length() == 1) month = "0" + month;
-                String day = values[3];
-                if (day.length() == 1) day = "0" + day;
+                for (int i=0; i<5; i++) {
+                  if (values[i].length() == 1) values[i] = "0" + values[i];
+                }
 
                 // date is in yyyy-MM-dd'T'HH:mm:ss
-                String date = year + "-" + month + "-" + day + "T" +
+                String date = year + "-" + values[4] + "-" + values[3] + "T" +
                   values[2] + ":" + values[1] + ":" + values[0];
                 addMeta("Acquisition date", date);
                 store.setImageCreationDate(date, 0);
                 break;
               case 18:
                 addMeta("Mixer 3 - enhanced", values[0]);
-                addMeta("Mixer 3 - PMT 1 percentage", values[1]);
-                addMeta("Mixer 3 - PMT 2 percentage", values[2]);
-                addMeta("Mixer 3 - PMT 3 percentage", values[3]);
-                addMeta("Mixer 3 - Transmission 1 percentage", values[4]);
-                addMeta("Mixer 3 - Transmission 2 percentage", values[5]);
-                addMeta("Mixer 3 - Transmission 3 percentage", values[6]);
+                for (int i=1; i<=3; i++) {
+                  addMeta("Mixer 3 - PMT " + i + " percentage", values[i]);
+                  addMeta("Mixer 3 - Transmission " + i + " percentage",
+                    values[i + 3]);
+                  addMeta("Mixer 3 - photon counting " + i, values[i + 7]);
+                }
                 addMeta("Mixer 3 - low signal on", values[7]);
-                addMeta("Mixer 3 - photon counting 1", values[8]);
-                addMeta("Mixer 3 - photon counting 2", values[9]);
-                addMeta("Mixer 3 - photon counting 3", values[10]);
                 addMeta("Mixer 3 - mode", values[11]);
                 break;
               case 19:
                 for (int i=1; i<=2; i++) {
-                  addMeta("Mixer " + i + " - photon counting 1",
-                    values[i * 4 - 4]);
-                  addMeta("Mixer " + i + " - photon counting 2",
-                    values[i * 4 - 3]);
-                  addMeta("Mixer " + i + " - photon counting 3",
-                    values[i * 4 - 2]);
-                  addMeta("Mixer " + i + " - mode", values[i * 4 - 1]);
+                  String prefix = "Mixer " + i;
+                  addMeta(prefix + " - photon counting 1", values[i * 4 - 4]);
+                  addMeta(prefix + " - photon counting 2", values[i * 4 - 3]);
+                  addMeta(prefix + " - photon counting 3", values[i * 4 - 2]);
+                  addMeta(prefix + " - mode", values[i * 4 - 1]);
                 }
                 break;
               case 20:
@@ -719,15 +710,11 @@ public class BioRadReader extends FormatReader {
                 break;
               case 22:
                 addMeta("PIC file generated on Isoscan (lite)", values[0]);
-                addMeta("Photon counting used (PMT 1)", values[1]);
-                addMeta("Photon counting used (PMT 2)", values[2]);
-                addMeta("Photon counting used (PMT 3)", values[3]);
-                addMeta("Hot spot filter (polariser) used (PMT 1)", values[4]);
-                addMeta("Hot spot filter (polariser) used (PMT 2)", values[5]);
-                addMeta("Hot spot filter (polariser) used (PMT 3)", values[6]);
-                addMeta("Tx Selector (mirror) used (TX 1)", values[7]);
-                addMeta("Tx Selector (mirror) used (TX 2)", values[8]);
-                addMeta("Tx Selector (mirror) used (TX 3)", values[9]);
+                for (int i=1; i<=3; i++) {
+                  addMeta("Photon counting used (PMT " + i + ")", values[i]);
+                  addMeta("Hot spot filter used (PMT " + i + ")", values[i+3]);
+                  addMeta("Tx Selector used (TX " + i + ")", values[i + 6]);
+                }
                 break;
             }
           }

@@ -65,6 +65,7 @@ public class ZeissZVIReader extends FormatReader {
   private POITools poi;
 
   private Hashtable tagsToParse;
+  private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
 
   // -- Constructor --
 
@@ -208,6 +209,7 @@ public class ZeissZVIReader extends FormatReader {
     if (poi != null) poi.close();
     poi = null;
     tagsToParse = null;
+    nextEmWave = nextExWave = nextChName = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -406,11 +408,11 @@ public class ZeissZVIReader extends FormatReader {
       core[0].dimensionOrder += "T";
     }
 
-    MetadataTools.populatePixels(store, this, true);
-    store.setImageName("", 0);
-
     if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core[0].pixelType = FormatTools.UINT16;
+
+    MetadataTools.populatePixels(store, this, true);
+    store.setImageName("", 0);
 
     long firstStamp = 0;
     if (timestamps.size() > 0) {
@@ -450,7 +452,7 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     // link DetectorSettings to an actual Detector
-    for (int i=0; i<getSizeC(); i++) {
+    for (int i=0; i<getEffectiveSizeC(); i++) {
       store.setDetectorID("Detector:" + i, 0, i);
       store.setDetectorSettingsDetector("Detector:" + i, 0, i);
       store.setDetectorType("Unknown", 0, i);
@@ -525,9 +527,13 @@ public class ZeissZVIReader extends FormatReader {
 
     int count = s.readInt();
 
-    // limit count to 4096
-
     float pixelSizeX = 0f, pixelSizeY = 0f, pixelSizeZ = 0f;
+
+    int effectiveSizeC = 0;
+    try {
+      effectiveSizeC = getEffectiveSizeC();
+    }
+    catch (ArithmeticException e) { }
 
     for (int i=0; i<count; i++) {
       if (s.getFilePointer() + 2 >= s.length()) break;
@@ -580,17 +586,22 @@ public class ZeissZVIReader extends FormatReader {
           store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
         }
         else if (key.startsWith("Emission Wavelength")) {
-          if (cIndex != -1) {
-            store.setLogicalChannelEmWave(new Integer(value), 0, cIndex);
+          if (cIndex != -1 && nextEmWave < effectiveSizeC) {
+            store.setLogicalChannelEmWave(new Integer(value), 0, nextEmWave);
+            nextEmWave++;
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
-          if (cIndex != -1) {
-            store.setLogicalChannelExWave(new Integer(value), 0, cIndex);
+          if (cIndex != -1 && nextExWave < effectiveSizeC) {
+            store.setLogicalChannelExWave(new Integer(value), 0, nextExWave);
+            nextExWave++;
           }
         }
         else if (key.startsWith("Channel Name")) {
-          if (cIndex != -1) store.setLogicalChannelName(value, 0, cIndex);
+          if (cIndex != -1 && nextChName < effectiveSizeC) {
+            store.setLogicalChannelName(value, 0, nextChName);
+            nextChName++;
+          }
         }
         else if (key.startsWith("BlackValue")) {
           if (cIndex != -1) {
@@ -630,7 +641,29 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveLensNA(new Float(value), 0, 0);
         }
         else if (key.startsWith("Objective Name")) {
-          store.setObjectiveModel(value, 0, 0);
+          boolean foundMag = false;
+          String[] tokens = value.split(" ");
+          StringBuffer correction = new StringBuffer();
+          for (int q=0; q<tokens.length; q++) {
+            if (!foundMag) {
+              if (tokens[q].indexOf("/") != -1) {
+                foundMag = true;
+                String mag = tokens[q].substring(0, tokens[q].indexOf("/") - 1);
+                String na = tokens[q].substring(tokens[q].indexOf("/") + 1);
+                store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+                store.setObjectiveLensNA(new Float(na), 0, 0);
+              }
+              else {
+                correction.append(tokens[q]);
+                correction.append(" ");
+              }
+            }
+            else {
+              store.setObjectiveImmersion(tokens[q], 0, 0);
+              break;
+            }
+          }
+          store.setObjectiveCorrection(correction.toString().trim(), 0, 0);
         }
         else if (key.startsWith("Objective Working Distance")) {
           store.setObjectiveWorkingDistance(new Float(value), 0, 0);

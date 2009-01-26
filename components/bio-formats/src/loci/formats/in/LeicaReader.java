@@ -963,10 +963,10 @@ public class LeicaReader extends FormatReader {
               store.setDetectorVoltage(new Float(data), 0, detector);
             }
             else if (tokens[2].equals("State")) {
-              if (data.equals("Active")) {
-                // link Detector to Image, if the detector was actually used
-                store.setDetectorID("Detector:" + detector, 0, detector);
-                store.setDetectorSettingsDetector("Detector:" + detector, 0,
+              // link Detector to Image, if the detector was actually used
+              store.setDetectorID("Detector:" + detector, 0, detector);
+              for (int i=0; i<getSeriesCount(); i++) {
+                store.setDetectorSettingsDetector("Detector:" + detector, i,
                   detector);
               }
             }
