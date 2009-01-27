@@ -199,7 +199,11 @@ public class OMETiffReader extends FormatReader {
           debug("    id = " + meta.getPixelsID(i, p));
         }
         String order = meta.getPixelsDimensionOrder(i, p);
-        int samples = meta.getLogicalChannelSamplesPerPixel(i, 0).intValue();
+
+        Integer samplesPerPixel = meta.getLogicalChannelSamplesPerPixel(i, 0);
+        int samples = samplesPerPixel == null ?
+          TiffTools.getSamplesPerPixel(firstIFD) : samplesPerPixel.intValue();
+
         int effSizeC = meta.getPixelsSizeC(i, p).intValue() / samples;
         if (effSizeC == 0) effSizeC = 1;
         int sizeT = meta.getPixelsSizeT(i, p).intValue();
