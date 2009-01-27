@@ -65,8 +65,6 @@ public class ND2Reader extends FormatReader {
   /** Whether or not the pixel data is losslessly compressed. */
   private boolean isLossless;
 
-  private boolean adjustImageCount;
-
   private Vector zs = new Vector();
   private Vector ts = new Vector();
   private Vector tsT = new Vector();
@@ -74,7 +72,19 @@ public class ND2Reader extends FormatReader {
   private int numSeries;
 
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
-  private String gain, voltage, mag, na;
+  private String voltage, mag, na, objectiveModel, immersion;
+
+  private Vector channelNames;
+  private Vector binning;
+  private Vector speed;
+  private Vector gain;
+  private Vector temperature;
+  private Vector exposureTime;
+  private Vector modality;
+  private Vector exWave, emWave;
+  private Vector power;
+
+  private String cameraModel;
 
   private LegacyND2Reader legacyReader;
   private boolean legacy = false;
@@ -203,8 +213,23 @@ public class ND2Reader extends FormatReader {
     offsets = null;
     zs.clear();
     ts.clear();
-    adjustImageCount = isJPEG = isLossless = false;
+    isJPEG = isLossless = false;
     numSeries = 0;
+    tsT.clear();
+
+    pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
+    voltage = mag = na = objectiveModel = immersion = null;
+    channelNames = null;
+    binning = null;
+    speed = null;
+    gain = null;
+    temperature = null;
+    exposureTime = null;
+    modality = null;
+    exWave = null;
+    emWave = null;
+    power = null;
+    cameraModel = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -213,6 +238,17 @@ public class ND2Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ND2Reader.initFile(" + id + ")");
     super.initFile(id);
+
+    channelNames = new Vector();
+    binning = new Vector();
+    speed = new Vector();
+    gain = new Vector();
+    temperature = new Vector();
+    exposureTime = new Vector();
+    modality = new Vector();
+    exWave = new Vector();
+    emWave = new Vector();
+    power = new Vector();
 
     if (legacy) {
       legacyReader.close();
@@ -308,29 +344,6 @@ public class ND2Reader extends FormatReader {
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
       DataTools.parseXML(xmlString, handler);
-
-      // read first CustomData block
-
-      if (customDataOffsets.size() > 0) {
-        in.seek(((Long) customDataOffsets.get(0)).longValue());
-        Point p = (Point) customDataLengths.get(0);
-        int len = (int) (p.x + p.y);
-        byte[] b = new byte[len];
-        in.read(b);
-
-        // the acqtimecache is a undeliniated stream of doubles
-        int off = 0;
-        for (int i=0; i<len; i++) {
-          char c = (char) b[i];
-          if ((off == 0 && c == '!')) off = i + 1;
-        }
-        for (int j = off; j<len; j+=8) {
-          double time = DataTools.bytesToDouble(b, j, 8, true);
-          tsT.add(new Double(time));
-          addMeta("timestamp " + (tsT.size() - 1), time);
-        }
-        b = null;
-      }
 
       // rearrange image data offsets
 
@@ -459,53 +472,33 @@ public class ND2Reader extends FormatReader {
         core[i].indexed = false;
         core[i].falseColor = false;
         core[i].metadataComplete = true;
-      }
-
-      adjustImageCount = false;
-
-      for (int i=0; i<offsets.length; i++) {
-        for (int j=1; j<core[i].imageCount; j++) {
-          if (offsets[i][j] < offsets[i][j - 1]) {
-            adjustImageCount = true;
-            break;
-          }
-        }
-      }
-
-      if (getSizeC() > 1) {
-        for (int i=0; i<getSeriesCount(); i++) {
-          core[i].imageCount = getSizeT() * getSizeZ();
-        }
-      }
-
-      for (int i=0; i<getSeriesCount(); i++) {
         core[i].imageCount = core[i].sizeZ * core[i].sizeT;
         if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
       }
 
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-      MetadataTools.populatePixels(store, this);
+      // read first CustomData block
 
-      // populate Image data
-      for (int i=0; i<getSeriesCount(); i++) {
-        store.setImageName("Series " + i, i);
-        MetadataTools.setDefaultCreationDate(store, id, i);
-      }
+      if (customDataOffsets.size() > 0) {
+        in.seek(((Long) customDataOffsets.get(0)).longValue());
+        Point p = (Point) customDataLengths.get(0);
+        int len = (int) (p.x + p.y);
 
-      // populate PlaneTiming data
-      for (int i=0; i<getSeriesCount(); i++) {
-        if (tsT.size() > 0) {
-          setSeries(i);
-          for (int n=0; n<getImageCount(); n++) {
-            int[] coords = getZCTCoords(n);
-            float stamp = ((Double) tsT.get(coords[2])).floatValue();
-            store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
+        int timestampBytes = imageOffsets.size() * 8;
+        in.skipBytes(len - timestampBytes);
+
+        // the acqtimecache is a undeliniated stream of doubles
+
+        for (int series=0; series<getSeriesCount(); series++) {
+          for (int plane=0; plane<getImageCount(); plane++) {
+            // timestamps are stored in ms; we want them in seconds
+            double time = in.readDouble() / 1000;
+            tsT.add(new Double(time));
+            addMeta("series " + series + " timestamp " + plane, time);
           }
         }
       }
-      setSeries(0);
 
+      populateMetadataStore();
       return;
     }
     else in.seek(0);
@@ -680,56 +673,16 @@ public class ND2Reader extends FormatReader {
     if (numSeries == 0) numSeries = 1;
     offsets = new long[numSeries][getImageCount()];
 
+    int nplanes = getSizeZ() * getEffectiveSizeC();
     for (int i=0; i<getSizeT(); i++) {
       for (int j=0; j<numSeries; j++) {
-        for (int q=0; q<getSizeZ(); q++) {
-          for (int k=0; k<getEffectiveSizeC(); k++) {
-            offsets[j][i*getSizeZ()*getEffectiveSizeC() +
-              q*getEffectiveSizeC() + k] = ((Long) vs.remove(0)).longValue();
-          }
+        for (int q=0; q<nplanes; q++) {
+          offsets[j][i*nplanes + q] = ((Long) vs.remove(0)).longValue();
         }
       }
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
-    store.setInstrumentID("Instrument:0", 0);
-
-    // populate Image data
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(currentId, i);
-
-      // link Instrument and Image
-      store.setImageInstrumentRef("Instrument:0", 0);
-    }
-
-    // populate Dimensions data
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
-      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
-    }
-
-    // populate DetectorSettings
-    if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
-    if (voltage != null) {
-      store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
-    }
-
-    // link DetectorSettings to an actual Detector
-    store.setDetectorID("Detector:0", 0, 0);
-    store.setDetectorSettingsDetector("Detector:0", 0, 0);
-
-    // populate Objective
-    if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);
-    if (mag != null) {
-      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
-    }
-
-    // link Objective to Image
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    populateMetadataStore();
   }
 
   // -- Helper class --
@@ -749,11 +702,14 @@ public class ND2Reader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
+      String value = attributes.getValue("value");
       if (qName.equals("uiWidth")) {
-        core[0].sizeX = Integer.parseInt(attributes.getValue("value"));
+        core[0].sizeX = Integer.parseInt(value);
       }
-      else if (qName.equals("uiWidthBytes")) {
-        int bytes = Integer.parseInt(attributes.getValue("value")) / getSizeX();
+      else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
+        int div = qName.equals("uiWidthBytes") ? getSizeX() : 8;
+        int bytes = Integer.parseInt(value) / div;
+
         switch (bytes) {
           case 2:
             core[0].pixelType = FormatTools.UINT16;
@@ -764,42 +720,26 @@ public class ND2Reader extends FormatReader {
           default:
             core[0].pixelType = FormatTools.UINT8;
         }
+        parseKeyAndValue(qName, value);
       }
       else if (qName.startsWith("item_")) {
         int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
         if (v == numSeries) numSeries++;
       }
       else if (qName.equals("uiCompCount")) {
-        int v = Integer.parseInt(attributes.getValue("value"));
+        int v = Integer.parseInt(value);
         core[0].sizeC = (int) Math.max(getSizeC(), v);
       }
-      else if (qName.equals("uiBpcInMemory")) {
-        if (attributes.getValue("value") == null) return;
-        int bits = Integer.parseInt(attributes.getValue("value"));
-        int bytes = bits / 8;
-        switch (bytes) {
-          case 2:
-            core[0].pixelType = FormatTools.UINT16;
-            break;
-          case 4:
-            core[0].pixelType = FormatTools.UINT32;
-            break;
-          default:
-            core[0].pixelType = FormatTools.UINT8;
-        }
-        parseKeyAndValue(qName, attributes.getValue("value"));
-      }
       else if (qName.equals("uiHeight")) {
-        core[0].sizeY = Integer.parseInt(attributes.getValue("value"));
+        core[0].sizeY = Integer.parseInt(value);
       }
       else if (qName.startsWith("TextInfo")) {
         parseKeyAndValue(qName, attributes.getValue("Text"));
-        parseKeyAndValue(qName, attributes.getValue("value"));
+        parseKeyAndValue(qName, value);
       }
       else if (qName.equals("dCompressionParam")) {
-        int v = Integer.parseInt(attributes.getValue("value"));
-        isLossless = v > 0;
-        parseKeyAndValue(qName, attributes.getValue("value"));
+        isLossless = Integer.parseInt(value) > 0;
+        parseKeyAndValue(qName, value);
       }
       else if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
         prefix = qName + " " + attributes.getValue("_SEQUENCE_INDEX");
@@ -811,12 +751,120 @@ public class ND2Reader extends FormatReader {
           sb.append(" ");
         }
         sb.append(qName);
-        parseKeyAndValue(sb.toString(), attributes.getValue("value"));
+        parseKeyAndValue(sb.toString(), value);
       }
     }
   }
 
   // -- Helper methods --
+
+  private void populateMetadataStore() {
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this, true);
+
+    store.setInstrumentID("Instrument:0", 0);
+
+    // populate Image data
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageName("Series " + i, i);
+      MetadataTools.setDefaultCreationDate(store, currentId, i);
+
+      // link Instrument and Image
+      store.setImageInstrumentRef("Instrument:0", i);
+    }
+
+    // populate Dimensions data
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
+      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
+    }
+
+    // populate PlaneTiming data
+    for (int i=0; i<getSeriesCount(); i++) {
+      if (tsT.size() > 0) {
+        setSeries(i);
+        for (int n=0; n<getImageCount(); n++) {
+          int[] coords = getZCTCoords(n);
+          int stampIndex = coords[2];
+          if (tsT.size() == getImageCount()) stampIndex = n;
+          float stamp = ((Double) tsT.get(stampIndex)).floatValue();
+          store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
+
+          int index = i * getSizeC() + coords[1];
+          if (index < exposureTime.size()) {
+            store.setPlaneTimingExposureTime(
+              (Float) exposureTime.get(index), i, 0, n);
+          }
+        }
+      }
+    }
+
+    store.setDetectorID("Detector:0", 0, 0);
+    store.setDetectorModel(cameraModel, 0, 0);
+    store.setDetectorType("Unknown", 0, 0);
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      for (int c=0; c<getSizeC(); c++) {
+        int index = i * getSizeC() + c;
+        if (index < channelNames.size()) {
+          store.setLogicalChannelName((String) channelNames.get(index), i, c);
+        }
+        if (index < modality.size()) {
+          store.setLogicalChannelMode((String) modality.get(index), i, c);
+        }
+        if (index < emWave.size()) {
+          store.setLogicalChannelEmWave((Integer) emWave.get(index), i, c);
+        }
+        if (index < exWave.size()) {
+          store.setLogicalChannelExWave((Integer) exWave.get(index), i, c);
+        }
+        if (index < binning.size()) {
+          store.setDetectorSettingsBinning((String) binning.get(index), i, c);
+        }
+        if (index < gain.size()) {
+          store.setDetectorSettingsGain((Float) gain.get(index), i, c);
+        }
+        if (index < speed.size()) {
+          store.setDetectorSettingsReadOutRate((Float) speed.get(index), i, c);
+        }
+        store.setDetectorSettingsDetector("Detector:0", i, c);
+      }
+    }
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      if (i * getSizeC() < temperature.size()) {
+        Float temp = (Float) temperature.get(i * getSizeC());
+        store.setImagingEnvironmentTemperature(temp, i);
+      }
+    }
+
+    // populate DetectorSettings
+    if (voltage != null) {
+      store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
+    }
+
+    // populate Objective
+    if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);
+    if (mag != null) {
+      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+    }
+    if (objectiveModel != null) {
+      store.setObjectiveModel(objectiveModel, 0, 0);
+    }
+    if (immersion == null) immersion = "Unknown";
+    store.setObjectiveImmersion(immersion, 0, 0);
+    store.setObjectiveCorrection("Unknown", 0, 0);
+
+    // link Objective to Image
+    store.setObjectiveID("Objective:0", 0, 0);
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setObjectiveSettingsObjective("Objective:0", 0);
+    }
+
+    setSeries(0);
+  }
 
   private void parseKeyAndValue(String key, String value) {
     if (key == null || value == null) return;
@@ -826,10 +874,27 @@ public class ND2Reader extends FormatReader {
       pixelSizeY = pixelSizeX;
     }
     else if (key.endsWith("dAspect")) pixelSizeZ = Float.parseFloat(value);
-    else if (key.endsWith("dGain")) gain = value;
+    else if (key.endsWith("Gain")) gain.add(new Float(value));
     else if (key.endsWith("dLampVoltage")) voltage = value;
     else if (key.endsWith("dObjectiveMag")) mag = value;
     else if (key.endsWith("dObjectiveNA")) na = value;
+    else if (key.equals("sObjective") || key.equals("wsObjectiveName")) {
+      String[] tokens = value.split(" ");
+      int magIndex = -1;
+      for (int i=0; i<tokens.length; i++) {
+        if (tokens[i].endsWith("x")) {
+          magIndex = i;
+          break;
+        }
+      }
+      StringBuffer model = new StringBuffer();
+      for (int i=0; i<magIndex; i++) {
+        model.append(tokens[i]);
+        if (i < magIndex - 1) model.append(" ");
+      }
+      objectiveModel = model.toString();
+      immersion = tokens[magIndex + 1];
+    }
     else if (key.endsWith("dTimeMSec")) {
       long v = (long) Double.parseDouble(value);
       if (!ts.contains(new Long(v))) {
@@ -848,7 +913,13 @@ public class ND2Reader extends FormatReader {
         core[0].sizeT = Integer.parseInt(value);
       }
     }
+    else if (key.equals("VirtualComponents")) {
+      if (getSizeC() == 0) {
+        core[0].sizeC = Integer.parseInt(value);
+      }
+    }
     else if (key.startsWith("TextInfoItem") || key.endsWith("TextInfoItem")) {
+      metadata.remove(key);
       value = value.replaceAll("&#x000d;&#x000a;", "\n");
       StringTokenizer tokens = new StringTokenizer(value, "\n");
       while (tokens.hasMoreTokens()) {
@@ -884,32 +955,73 @@ public class ND2Reader extends FormatReader {
                 }
               }
             }
-            else if (dim.startsWith("T")) {
-              for (int i=0; i<getSeriesCount(); i++) {
-                core[i].sizeT = v;
-              }
-            }
-            else if (dim.startsWith("Z")) {
-              for (int i=0; i<getSeriesCount(); i++) {
-                core[i].sizeZ = v;
-              }
-            }
-            else {
-              for (int i=0; i<getSeriesCount(); i++) {
-                core[i].sizeC = v;
-              }
-            }
+            else if (dim.startsWith("T")) core[0].sizeT = v;
+            else if (dim.startsWith("Z")) core[0].sizeZ = v;
+            else core[0].sizeC = v;
           }
 
-          int count = getSizeZ() * getSizeC() * getSizeT();
-          for (int i=0; i<getSeriesCount(); i++) {
-            core[i].imageCount = count;
-          }
+          core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
         }
         else if (t.startsWith("Number of Picture Planes")) {
-          int v = Integer.parseInt(t.substring(t.indexOf(":") + 1).trim());
-          for (int i=0; i<getSeriesCount(); i++) {
-            core[i].sizeC = v;
+          core[0].sizeC = Integer.parseInt(t.replaceAll("\\D", ""));
+        }
+        else {
+          String[] v = t.split(":");
+          if (v.length == 2) {
+            if (v[0].equals("Name")) {
+              channelNames.add(v[1]);
+            }
+            else if (v[0].equals("Modality")) {
+              modality.add(v[1]);
+            }
+            else if (v[0].equals("Camera Type")) {
+              cameraModel = v[1];
+            }
+            else if (v[0].equals("Binning")) {
+              binning.add(v[1]);
+            }
+            else if (v[0].equals("Readout Speed")) {
+              int last = v[1].lastIndexOf(" ");
+              if (last != -1) v[1] = v[1].substring(0, last);
+              speed.add(new Float(v[1]));
+            }
+            else if (v[0].equals("Temperature")) {
+              String temp = v[1].replaceAll("[\\D&&[^-.]]", "");
+              temperature.add(new Float(temp));
+            }
+            else if (v[0].equals("Exposure")) {
+              String[] s = v[1].trim().split(" ");
+              try {
+                float time = Float.parseFloat(s[0]);
+                // TODO: check for other units
+                if (s[1].equals("ms")) time /= 1000;
+                exposureTime.add(new Float(time));
+              }
+              catch (NumberFormatException e) { }
+            }
+          }
+          else if (v[0].startsWith("- Step")) {
+            int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
+            int last = v[0].indexOf(" ", space + 1);
+            if (last == -1) last = v[0].length();
+            pixelSizeZ = Float.parseFloat(v[0].substring(space, last));
+          }
+          else if (v[0].equals("Line")) {
+            String[] values = t.split(";");
+            for (int q=0; q<values.length; q++) {
+              int colon = values[q].indexOf(":");
+              String nextKey = values[q].substring(0, colon).trim();
+              String nextValue = values[q].substring(colon + 1).trim();
+              if (nextKey.equals("Emission wavelength")) {
+                emWave.add(new Integer(nextValue));
+              }
+              else if (nextKey.equals("Excitation wavelength")) {
+                exWave.add(new Integer(nextValue));
+              }
+              else if (nextKey.equals("Power")) {
+                power.add(new Integer((int) Float.parseFloat(nextValue)));
+              }
+            }
           }
         }
       }
