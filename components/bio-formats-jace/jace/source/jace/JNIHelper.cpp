@@ -36,10 +36,6 @@ using ::jace::VmLoader;
 using std::cout;
 using std::endl;
 
-#if !defined(SUPPORTS_PTHREADS) && !defined(_WIN32)
-	#error Platform does not support pthreads or win32 thread-local storage
-#endif
-
 #ifdef SUPPORTS_SSTREAM
   #include <sstream>
   using std::stringstream;
@@ -61,23 +57,15 @@ using std::map;
 #include <string>
 using std::string;
 
-#ifdef SUPPORTS_PTHREADS
-#include <pthread.h>
-#include <errno.h>
-#elif _WIN32
-
-#ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
-#endif
-
-#include <windows.h>
-
-#endif
+#pragma warning(push)
+#pragma warning(disable: 4103 4244 4512)
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/tss.hpp>
+using boost::mutex;
+#pragma warning(pop)
 
 BEGIN_NAMESPACE_2( jace, helper )
 
-
-namespace {
 
 // A reference to the java virtual machine.
 // We're under the assumption that there will always only be one of these.
@@ -107,7 +95,11 @@ auto_ptr<VmLoader> globalLoader( 0 );
 // (currently 3.2.2).
 //
 //
-volatile bool globalHasShutdown = false;
+bool globalHasShutdown = false;
+/**
+ * Ensures that the JVM does not shut down while it is being used.
+ */
+boost::mutex shutdownMutex;
 
 // The map of all of the java class factories.
 //
@@ -120,7 +112,6 @@ FactoryMap* getFactoryMap() {
 
 // A quick hack to get a string representation for any value
 // This should probably go into some framework utility class
-//
 #ifdef SUPPORTS_SSTREAM
 
   template <class T> string toString( T value ) {
@@ -139,14 +130,32 @@ FactoryMap* getFactoryMap() {
 
 #endif
 
-#ifdef SUPPORTS_PTHREADS
-	pthread_key_t CLASSLOADER_KEY = 0;
-#elif _WIN32
-	DWORD CLASSLOADER_KEY = 0;
-#endif
+void classLoaderDestructor( jobject* value ) {
 
-} // namespace {
+	// Invoked by setClassLoader() or when the thread exits
+	if ( value == 0 )
+		return;
+	mutex::scoped_lock lock(shutdownMutex);
+	if ( hasShutdown() )
+		return;
 
+	// Read the thread state
+	JavaVM* jvm = getJavaVM();
+	::jace::VmLoader* loader = getVmLoader();
+	JNIEnv* env;
+	bool isDetached = jvm->GetEnv( (void**) &env, loader->version() ) == JNI_EDETACHED;
+	assert(!isDetached);
+
+	env = helper::attach();
+	helper::deleteGlobalRef( env, *value );
+	delete[] value;
+
+	// Restore the thread state
+	if (isDetached)
+		jace::helper::detach();
+}
+
+boost::thread_specific_ptr<jobject> threadClassLoader(classLoaderDestructor);
 
 std::string asString( JNIEnv* env, jstring str ) {
   const char* utfString = env->GetStringUTFChars( str, 0 );
@@ -169,11 +178,12 @@ void setVmLoader( const ::jace::VmLoader& loader ) {
   globalLoader = auto_ptr<VmLoader>( loader.clone() );
 }
 
+
 void createVm( const VmLoader& loader,
                const OptionList& options,
                bool ignoreUnrecognized ) {
 
-  globalLoader = auto_ptr<VmLoader>( loader.clone() );
+  setVmLoader( loader );
   globalLoader->loadVm();
 
   JavaVM* vm;
@@ -196,24 +206,28 @@ void createVm( const VmLoader& loader,
     string msg = "Unable to create the virtual machine. The error was " + toString( rc );
     throw JNIException( msg );
   }
+	registerShutdownHook( env );
+}
 
-  jclass runtimeClass = env->FindClass( "java/lang/Runtime" );
-  if ( ! runtimeClass ) {
-    string msg = "Assert failed: Unable to find the class, java.lang.Runtime.";
+
+void registerShutdownHook( JNIEnv *env ) {
+  jclass hookClass = env->FindClass( "jace/util/ShutdownHook" );
+  if ( ! hookClass ) {
+    string msg = "Assert failed: Unable to find the class, jace.util.ShutdownHook.";
     throw JNIException( msg );
   }
 
-  jmethodID runtimeGetRuntime = env->GetStaticMethodID( runtimeClass, "getRuntime", "()Ljava/lang/Runtime;" );
-  if ( ! runtimeGetRuntime ) {
-		deleteLocalRef( env, runtimeClass );
-    string msg = "Assert failed: Unable to find the method, Runtime.getRuntime().";
+  jmethodID hookGetInstance = env->GetStaticMethodID( hookClass, "getInstance", "()Ljace/util/ShutdownHook;" );
+  if ( ! hookGetInstance ) {
+		deleteLocalRef( env, hookClass );
+    string msg = "Assert failed: Unable to find the method, ShutdownHook.getInstance().";
     throw JNIException( msg );
   }
 
-	jobject runtimeObject = env->CallStaticObjectMethod( runtimeClass, runtimeGetRuntime );
-	if ( ! runtimeObject )	{
-		deleteLocalRef( env, runtimeClass );
-    string msg = "Unable to invoke Runtime.getRuntime()";
+	jobject hookObject = env->CallStaticObjectMethod( hookClass, hookGetInstance );
+	if ( ! hookObject )	{
+		deleteLocalRef( env, hookClass );
+    string msg = "Unable to invoke ShutdownHook.getInstance()";
 		try
 		{
 			helper::catchAndThrow();
@@ -226,72 +240,37 @@ void createVm( const VmLoader& loader,
     throw JNIException( msg );
 	}
 
-  jmethodID runtimeAddShutdownHook = env->GetMethodID( runtimeClass, "addShutdownHook", "(Ljava/lang/Thread;)V" );
-  if ( ! runtimeAddShutdownHook ) {
-		deleteLocalRef( env, runtimeObject );
-		deleteLocalRef( env, runtimeClass );
-    string msg = "Assert failed: Unable to find the method, Runtime.addShutdownHook().";
+  jmethodID hookRegisterIfNecessary = env->GetMethodID( hookClass, "registerIfNecessary", "()V" );
+  if ( ! hookRegisterIfNecessary ) {
+		deleteLocalRef( env, hookObject );
+		deleteLocalRef( env, hookClass );
+    string msg = "Assert failed: Unable to find the method, ShutdownHook.registerIfNecessary().";
     throw JNIException( msg );
   }
 
-  jclass shutdownHookClass = env->FindClass( "jace/util/ShutdownHook" );
-  if ( ! shutdownHookClass ) {
-		deleteLocalRef( env, runtimeObject );
-		deleteLocalRef( env, runtimeClass );
-    string msg = "Assert failed: Unable to find the class, jace.util.ShutdownHook. Did you forget to include "
-			"jace-runtime.jar in your classpath at runtime?";
-    throw JNIException( msg );
-  }
-
-  jmethodID shutdownHookGetInstance = env->GetStaticMethodID( shutdownHookClass, "getInstance", "()Ljace/util/ShutdownHook;" );
-  if ( ! shutdownHookGetInstance ) {
-		deleteLocalRef( env, runtimeObject );
-		deleteLocalRef( env, runtimeClass );
-		deleteLocalRef( env, shutdownHookClass );
-    string msg = "Assert failed: Unable to find the method, jace.util.ShutdownHook.getInstance()";
-    throw JNIException( msg );
-  }
-
-	jobject shutdownHookObject = env->CallStaticObjectMethod( shutdownHookClass, shutdownHookGetInstance );
-	if ( ! shutdownHookObject ) {
-		deleteLocalRef( env, runtimeObject );
-		deleteLocalRef( env, runtimeClass );
-		deleteLocalRef( env, shutdownHookClass );
-    string msg = "Unable to invoke jace.util.ShutdownHook.getInstance()";
-		try
-		{
-			helper::catchAndThrow();
-		}
-		catch (JNIException& e)
-		{
-			msg.append("\ncaused by:\n");
-			msg.append(e.what());
-		}
-    throw JNIException( msg );
-	}
-
-	env->CallStaticObjectMethodA( runtimeClass, runtimeAddShutdownHook, (jvalue*) &shutdownHookObject );
+	env->CallObjectMethodA( hookObject, hookRegisterIfNecessary, 0 );
 	try
 	{
 		helper::catchAndThrow();
 	}
 	catch (JNIException& e)
 	{
-		string msg = "Exception thrown invoking Runtime.addShutdownHook(shutdownHook)";
+		string msg = "Exception thrown invoking ShutdownHook.registerIfNecessary()";
 		msg.append("\ncaused by:\n");
 		msg.append(e.what());
 		throw JNIException( msg );
 	}
-	deleteLocalRef( env, runtimeObject );
-	deleteLocalRef( env, runtimeClass );
-	deleteLocalRef( env, shutdownHookClass );
+	deleteLocalRef( env, hookObject );
+	deleteLocalRef( env, hookClass );
 }
+
 
 /**
  * Invoked by jace.util.ShutdownHook on VM shutdown.
  */
-extern "C" JNIEXPORT void JNICALL Java_jace_util_ShutdownHook_signalVMShutdown(JNIEnv* env, jobject obj)
+extern "C" JNIEXPORT void JNICALL Java_jace_util_ShutdownHook_signalVMShutdown( JNIEnv*, jclass )
 {
+	mutex::scoped_lock lock(shutdownMutex);
 	globalHasShutdown = true;
 }
 
@@ -333,6 +312,7 @@ JavaVM* getJavaVM() throw ( JNIException ) {
 
 
 void shutdown() {
+	mutex::scoped_lock lock(shutdownMutex);
   globalHasShutdown = true;
 
 	// Currently (JDK 1.5) JVM unloading is not supported and DestroyJavaVM() always returns failure.
@@ -342,19 +322,52 @@ void shutdown() {
 
 
 /**
- * Attaches the current thread to the virtual machine
- * and returns the appropriate JNIEnv for the thread.
+ * Attaches the current thread to the virtual machine and returns the appropriate 
+ * JNIEnv for the thread. If the thread is already attached, this method method 
+ * does nothing.
  *
+ * This method is equivilent to attach(0, 0, false).
+ *
+ * @throws JNIException if an error occurs while trying to attach the current thread.
+ * @see AttachCurrentThread
+ * @see attach(const jobject, const char*, const bool)
  */
 JNIEnv* attach() throw ( JNIException ) {
 
-  if ( globalHasShutdown ) {
+	return attach(0, 0, false);
+}
+
+
+/**
+ * Attaches the current thread to the virtual machine
+ * and returns the appropriate JNIEnv for the thread.
+ * If the thread is already attached, this method method does nothing.
+ *
+ * @param threadGroup the ThreadGroup associated with the thread, or null
+ * @param name the thread name, or null
+ * @param daemon true if the thread should be attached as a daemon thread
+ * @throws JNIException if an error occurs while trying to attach the current thread.
+ * @see AttachCurrentThread
+ * @see AttachCurrentThreadAsDaemon
+ */
+JNIEnv* attach(const jobject threadGroup, const char* name, const bool daemon) throw ( JNIException ) {
+
+	mutex::scoped_lock lock(shutdownMutex);
+  if ( hasShutdown() ) {
     throw JNIException( "The VM has already been shutdown." );
   }
 
   JNIEnv* env;
-
-  jint result = getJavaVM()->AttachCurrentThread( reinterpret_cast<void**>( &env ), 0 );
+	JavaVMAttachArgs args = {0};
+	args.version = globalLoader->version();
+	args.group = threadGroup;
+	if (name != 0)
+		strcpy(args.name, name);
+  jint result;
+	if (!daemon)
+		result = getJavaVM()->AttachCurrentThread( reinterpret_cast<void**>( &env ), &args );
+	else
+		result = getJavaVM()->AttachCurrentThreadAsDaemon( reinterpret_cast<void**>( &env ), &args );
 
   if ( result != 0 ) {
     string msg = "JNIHelper::attach\n" \
@@ -417,6 +430,7 @@ jobject newLocalRef( JNIEnv* env, jobject ref ) {
 
 void deleteLocalRef( JNIEnv* env, jobject localRef ) {
 
+	mutex::scoped_lock lock(shutdownMutex);
   if ( hasShutdown() ) {
     return;
   }
@@ -440,6 +454,7 @@ jobject newGlobalRef( JNIEnv* env, jobject ref ) {
 
 void deleteGlobalRef( JNIEnv* env, jobject globalRef ) {
 
+	mutex::scoped_lock lock(shutdownMutex);
   if ( hasShutdown() ) {
     return;
   }
@@ -591,8 +606,7 @@ void catchAndThrow() {
       continue;
     }
 
-    /* Ask the factory to throw the exception.
-     */
+    // Ask the factory to throw the exception.
     // cout << "helper::catchAndThrow() - Throwing the exception " << endl;
     // print( jexception );
 
@@ -658,167 +672,34 @@ void catchAndThrow() {
   return peer;
 }
 
-namespace {
-
-	void classLoaderDestructor( void* value ) {
-
-#ifdef SUPPORTS_PTHREADS
-		// GILI: To my understanding, pthreads will call the destructor even if the slot contains NULL.
-		//       The win32 code will not.
-		if ( value == 0 )
-			return;
-#endif
-		JNIEnv* env = helper::attach();
-		jobject reference = static_cast<jobject> ( value );
-		helper::deleteGlobalRef( env, reference );
-	}
-}
-
 /**
  * Returns the ClassLoader being used by the current thread.
  *
  */
 jobject getClassLoader() {
-
-#ifdef SUPPORTS_PTHREADS
-	return static_cast<jobject> ( pthread_getspecific( CLASSLOADER_KEY ) );
-#elif _WIN32
-	return static_cast<jobject> ( TlsGetValue( CLASSLOADER_KEY ) );
-#endif
+	jobject* value = threadClassLoader.get();
+	if (value == 0)
+		return 0;
+	return value[0];
 }
-
-
-/**
- * Callback that initializes process-local variables. Should be called at most once per process.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
-void onProcessCreation() throw ( ::jace::JNIException ) {
-
-#ifdef SUPPORTS_PTHREADS
-	int rc = pthread_key_create( &CLASSLOADER_KEY, classLoaderDestructor );
-	switch ( rc )
-	{
-		case 0:
-			break;
-		case ENOMEM:
-		case EAGAIN: {
-			std::string msg = "Out of memory";
-			throw JNIException( msg );
-		}
-		default: {
-			std::string msg = "JNIHelper::setClassLoader()\n"
-				"phread_key_create() returned " + toString( rc ) + ".";
-			throw JNIException( msg );
-		}
-	}
-#elif _WIN32
-	CLASSLOADER_KEY = TlsAlloc();
-	if ( CLASSLOADER_KEY == TLS_OUT_OF_INDEXES ) {
-		std::string msg = "JNIHelper::setClassLoader()\n"
-			"TlsAlloc() returned " + toString( GetLastError() ) + ".";
-		throw JNIException( msg );
-	}
-#endif
-}
-
-/**
- * Callback that initializes thread-local variables. Should be called at most once per thread.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
-void onThreadCreation() throw ( ::jace::JNIException ) {
-}
-
-/**
- * Callback that frees thread-local variables. Should be called at most once per thread.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
-void onThreadDestruction() throw ( ::jace::JNIException ) {
-
-#ifdef _WIN32
-	if ( hasShutdown() )
-		return;
-	JavaVM* jvm = getJavaVM();
-	::jace::VmLoader* loader = getVmLoader();
-	jobject value = getClassLoader();
-	JNIEnv* env;
-
-	// We must ensure that the thread is detached when we leave this function.
-	bool mustDetachJVM = value != 0 || jvm->GetEnv( (void**) &env, loader->version() ) != JNI_EDETACHED;
-	if ( mustDetachJVM ) {
-		if ( value != 0 ) {
-			setClassLoader( 0 );
-		}
-		jace::helper::detach();
-	}
-#endif
-}
-
-/**
- * Callback that frees process-local variables. Should be called at most once per process.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
-void onProcessDestruction() throw ( ::jace::JNIException ) {
-
-#ifdef SUPPORTS_PTHREADS
-	int rc = pthread_key_delete( CLASSLOADER_KEY );
-	if ( rc != 0 ) {
-		std::string msg = "JNIHelper::setClassLoader()\n"
-			"thread_key_delete() returned " + toString( rc ) + ".";
-		throw JNIException( msg );
-	}
-#elif _WIN32
-	BOOL rc = TlsFree( CLASSLOADER_KEY );
-	if ( !rc ) {
-		std::string msg = "JNIHelper::setClassLoader()\n"
-			"TlsFree() returned " + toString( GetLastError() ) + ".";
-		throw JNIException( msg );
-	}
-#endif
-}
-
 
 void setClassLoader(jobject classLoader) {
 
 	JNIEnv* env = attach();
-  jobject oldRef = getClassLoader();
 
-#ifdef SUPPORTS_PTHREADS
-	int rc;
-#elif _WIN32
-	BOOL rc;
-#endif
-
-	// Set the new value
-	if ( classLoader != 0 ) {
-		classLoader = static_cast<jobject> ( newGlobalRef( env, classLoader ) );
+	// boost::thread_specific_ptr can only store a pointer to jobject, but someone needs to keep
+	// the underlying jobject alive so we use a dynamically-allocated array.
+	jobject* ptr = new jobject[1];
+	if ( classLoader != 0 )
+		ptr[0] = newGlobalRef( env, classLoader );
+	else
+		ptr[0] = 0;
+	try
+	{
+		threadClassLoader.reset(ptr);
 	}
-#ifdef SUPPORTS_PTHREADS
-	rc = pthread_setspecific( CLASSLOADER_KEY, classLoader );
-	if ( rc != 0 ) {
-		std::string msg = "JNIHelper::setClassLoader()\n"
-			"pthread_setspecific() returned " + toString( rc ) + ".";
-		throw JNIException( msg );
-	}
-#elif _WIN32
-	rc = TlsSetValue( CLASSLOADER_KEY, classLoader );
-	if ( !rc ) {
-		std::string msg = "JNIHelper::setClassLoader()\n"
-			"TlsSetValue() returned " + toString( GetLastError() ) + ".";
-		throw JNIException( msg );
-	}
-#endif
-
-	// Delete the old value if necessary
-	if ( oldRef != 0 ) {
-		classLoaderDestructor( oldRef );
+	catch ( boost::thread_resource_error& e) {
+		throw JNIException( e.what() );
 	}
 }
 

@@ -4,6 +4,7 @@ using ::jace::OptionList;
 using ::jace::Option;
 using ::jace::SystemProperty;
 using ::jace::Verbose;
+using ::jace::JavaAgent;
 using ::jace::CustomOption;
 using ::jace::Hook;
 using ::jace::VfprintfHook;
@@ -17,7 +18,6 @@ using std::string;
 
 #include <vector>
 using std::vector;
-typedef std::vector<OptionList::OptionPtr> OptionPtr;
 
 #ifdef JACE_BROKEN_USING_DECLARATION
   using std::vector<OptionList::OptionPtr>;
@@ -29,10 +29,6 @@ using std::copy;
 
 #include <iterator>
 using std::back_inserter;
-
-std::string Verbose::Gc( "gc" );
-std::string Verbose::Jni( "jni" );
-std::string Verbose::Class( "class" );
 
 OptionList::OptionList() : options() {
 }
@@ -46,12 +42,12 @@ size_t OptionList::size() const {
   return options.size();
 }
 
-OptionList::iterator OptionList::begin() const {
-  return iterator( options.begin() );
+std::vector<OptionList::OptionPtr>::const_iterator OptionList::begin() const {
+  return options.begin();
 }
  
-OptionList::iterator OptionList::end() const {
-  return iterator( options.end() );
+std::vector<OptionList::OptionPtr>::const_iterator OptionList::end() const {
+  return options.end();
 }
 
 namespace {
@@ -63,20 +59,12 @@ namespace {
   }
 }
 
-OptionList::iterator::iterator( vector<OptionPtr>::iterator it_ ) { it = it_; }
-OptionList::iterator OptionList::iterator::operator++() { return it++; }
-OptionList::iterator OptionList::iterator::operator++( int i ) { return ++it; }
-OptionList::iterator OptionList::iterator::operator--() { return it--; }
-OptionList::iterator OptionList::iterator::operator--( int i ) { return --it; }
-OptionList::OptionPtr OptionList::iterator::operator*() { return *it; }
-bool OptionList::iterator::operator!=( const OptionList::iterator& it_ ) { return it_.it != it; }
-
 JavaVMOption* OptionList::createJniOptions() const {
 
   JavaVMOption* jniOptions = new JavaVMOption[ size() ];
   
-  iterator it = begin();
-  iterator end_it = end();
+	std::vector<OptionPtr>::const_iterator it = begin();
+  std::vector<OptionPtr>::const_iterator end_it = end();
 
   for ( int i = 0; it != end_it; ++it, ++i ) {
     jniOptions[ i ].optionString = stringDup( (*it)->stringValue().c_str() );
@@ -97,18 +85,22 @@ void OptionList::destroyJniOptions( JavaVMOption* jniOptions ) const {
 }
 
 SystemProperty::SystemProperty( const std::string& name_, const std::string& value_ ) : 
-  mName( name_ ), mValue( value_ ) {
+  mName ( name_ ), mValue ( value_ ) {
 }
-  
-std::string SystemProperty::name() {
+
+SystemProperty::SystemProperty(const SystemProperty& other) :
+	mName ( other.mName ), mValue ( other.mValue ) {
+}
+
+const std::string SystemProperty::name() {
   return mName;
 }
   
-std::string SystemProperty::value() {
+const std::string SystemProperty::value() {
   return mValue;
 }
 
-std::string SystemProperty::stringValue() {
+const std::string SystemProperty::stringValue() const {
   return "-D" + mName + "=" + mValue;
 }
 
@@ -120,34 +112,55 @@ Option* SystemProperty::clone() const {
   return new SystemProperty( mName, mValue ); 
 }
 
-Verbose::Verbose( const std::string& option ) : options() {
-  options.push_back( option );
+std::string Verbose::toString(Verbose::ComponentType component) const
+{
+	switch (component)
+	{
+		case GC:
+			return "gc";
+		case JNI:
+			return "jni";
+		case CLASS:
+			return "class";
+		default:
+			throw JNIException("Unknown component: " + component);
+	}
 }
 
-Verbose::Verbose( const std::string& o1, const std::string& o2 ) : options() {
-  options.push_back( o1 );
-  options.push_back( o2 );
+Verbose::Verbose( ComponentType component ) : options( createVector( component ) ) {
 }
 
-Verbose::Verbose( const std::string& o1, const std::string& o2, const std::string& o3 ) : options() {
-  options.push_back( o1 );
-  options.push_back( o2 );
-  options.push_back( o3 );
+Verbose::Verbose( std::vector<ComponentType>::const_iterator begin,
+								  std::vector<ComponentType>::const_iterator end ) : 
+	options ( createVector( begin, end ) ) {
 }
 
-Verbose::Verbose( std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end ) {
-  std::copy( begin, end, back_inserter( options ) );
+Verbose::Verbose( const Verbose& other ) : 
+	options ( other.options ) {
 }
 
-std::string Verbose::stringValue() {
+std::vector<Verbose::ComponentType> Verbose::createVector( ComponentType& component ) {
+	std::vector<ComponentType> result;
+	result.push_back(component);
+	return result;
+}
+
+std::vector<Verbose::ComponentType> Verbose::createVector( std::vector<ComponentType>::const_iterator begin, 
+																													 std::vector<ComponentType>::const_iterator end ) {
+	std::vector<ComponentType> result;
+	std::copy( begin, end, back_inserter( result ) );
+	return result;
+}
+
+const std::string Verbose::stringValue() const {
 
   std::string buffer( "-verbose:" );
 
-  vector<string>::iterator it = options.begin();
-  vector<string>::iterator end = options.end();
+	vector<ComponentType>::const_iterator it = options.begin();
+  vector<ComponentType>::const_iterator end = options.end();
 
   for ( ; it != end; ++it ) {
-    buffer += *it;
+    buffer += toString(*it);
     if ( it + 1 != end ) {
       buffer += ",";
     }
@@ -164,10 +177,61 @@ Option* Verbose::clone() const {
   return new Verbose( options.begin(), options.end() );
 }
 
+JavaAgent::JavaAgent( const std::string& path_ ) :
+	mPath ( path_ ), mOptions ( "" ) {
+}
+
+JavaAgent::JavaAgent( const std::string& path_, const std::string& options_ ) :
+	mPath ( path_ ), mOptions ( trim(options_) ) {
+}
+
+JavaAgent::JavaAgent( const JavaAgent& other) :
+	mPath ( other.mPath ), mOptions ( other.mOptions ) {
+}
+
+std::string JavaAgent::trim( const std::string& text ) {
+	// Trim Both leading and trailing spaces  
+  size_t first = text.find_first_not_of(" \t"); // Find the first non-space character
+  size_t last = text.find_last_not_of(" \t"); // Find the last non-space character
+  
+  // if all spaces or empty return an empty string
+  if ( ( string::npos != first ) && ( string::npos != last ) )
+		return text.substr( first, last - first + 1 );
+	else
+		return string();
+}
+
+const std::string JavaAgent::path() {
+	return mPath;
+}
+
+const std::string JavaAgent::options() {
+	return mOptions;
+}
+
+const std::string JavaAgent::stringValue() const {
+	string result = "-javaagent:" + mPath;
+	if (mOptions != "")
+		result += "=" + mOptions;
+	return result;
+}
+
+void* JavaAgent::extraInfo() {
+  return 0;
+}
+
+Option* JavaAgent::clone() const {
+  return new JavaAgent( mPath, mOptions );
+}
+
 CustomOption::CustomOption( const std::string& value_ ) : value( value_ ) {
 }
 
-std::string CustomOption::stringValue() {
+CustomOption::CustomOption( const CustomOption& other ) :
+	value ( other.value ) {
+}
+
+const std::string CustomOption::stringValue() const {
   return value;
 }
 
@@ -183,7 +247,7 @@ Option* CustomOption::clone() const {
 VfprintfHook::VfprintfHook( vfprintf_t hook_ ) : hook( hook_ ) {
 }
 
-std::string VfprintfHook::stringValue() {
+const std::string VfprintfHook::stringValue() const {
   return "vfprintf";
 }
 
@@ -200,7 +264,7 @@ Option* VfprintfHook::clone() const {
 ExitHook::ExitHook( exit_t hook_ ) : hook( hook_ ) {
 }
 
-std::string ExitHook::stringValue() {
+const std::string ExitHook::stringValue() const {
   return "exit";
 }
 
@@ -217,7 +281,7 @@ Option* ExitHook::clone() const {
 AbortHook::AbortHook( abort_t hook_ ) : hook( hook_ ) {
 }
 
-std::string AbortHook::stringValue() {
+const std::string AbortHook::stringValue() const {
   return "abort";
 }
 

@@ -35,7 +35,7 @@ BEGIN_NAMESPACE_3( jace, proxy, types )
  * @author Toby Reyelts
  *
  */
-class JACE_API JVoid : public JValue {
+class JVoid : public JValue {
 
 
 public:
@@ -46,7 +46,7 @@ public:
  * @throw JNIException if an error occurs while trying to retrieve the class.
  *
  */
-virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
+JACE_API virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
 
 
 /**
@@ -55,7 +55,7 @@ virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIExcepti
  * @throw JNIException if an error occurs while trying to retrieve the class.
  *
  */
-static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
+JACE_API static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
 
 };
 

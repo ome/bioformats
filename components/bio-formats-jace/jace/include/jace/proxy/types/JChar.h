@@ -37,7 +37,7 @@ BEGIN_NAMESPACE_3( jace, proxy, types )
  * @author Toby Reyelts
  *
  */
-class JACE_API JChar : public JValue {
+class JChar : public JValue {
 
 
 public:
@@ -47,76 +47,76 @@ public:
  * Creates a new JChar with the given value.
  *
  */
-JChar( jvalue value );
+JACE_API JChar( jvalue value );
 
 
 /**
  * Creates a new JChar with the given value.
  *
  */
-JChar( jchar char_ );
+JACE_API JChar( jchar char_ );
 
 
 /**
  * Destroys the existing java object.
  *
  */
-virtual ~JChar();
+JACE_API virtual ~JChar();
 
 
 /**
  * Returns the char value of this java char.
  *
  */
-operator jchar() const;
+JACE_API operator jchar() const;
 
 /**
  * Returns the char value of this java char.
  *
  */
-jchar getChar() const;
+JACE_API jchar getChar() const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator==( const JChar& char_ ) const;
+JACE_API bool operator==( const JChar& char_ ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator!=( const JChar& char_ ) const;
+JACE_API bool operator!=( const JChar& char_ ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator==( jchar val ) const;
+JACE_API bool operator==( jchar val ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator!=( jchar val ) const;
+JACE_API bool operator!=( jchar val ) const;
 
 
 /**
  * Returns the JClass for this class.
  *
  */
-static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
+JACE_API static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
 
 
 /**
  * Returns the JClass for this instance.
  *
  */
-virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
+JACE_API virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
 
 /**
  * Support printing of characters.

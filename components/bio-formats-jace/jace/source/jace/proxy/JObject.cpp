@@ -81,7 +81,7 @@ JObject::JObject() {
  * All subclasses of JObject should provide this constructor
  * for their own subclasses.
  */
-JObject::JObject( const NoOp& noOp ) {
+JObject::JObject( const NoOp& ) {
 
   /* By default, all objects start out with a null reference,
    * so, in case of an exception, destruction will not fail on

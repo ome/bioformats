@@ -108,10 +108,10 @@ class Win32VmLoader : public ::jace::VmLoader {
 
 	JACE_API void loadVm() throw ( ::jace::JNIException );
   JACE_API void unloadVm();
-  ::jace::VmLoader* clone() const;
-  virtual jint version();
-  jint getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs );
-  jint createJavaVM( JavaVM **pvm, void **env, void *args );
+  JACE_API ::jace::VmLoader* clone() const;
+  JACE_API virtual jint version();
+  JACE_API jint getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs );
+  JACE_API jint createJavaVM( JavaVM **pvm, void **env, void *args );
 
   private:
 

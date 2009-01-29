@@ -81,14 +81,14 @@ class Peer {
    * of the Peer.
    *
    */  
-  jobject getGlobalRef();
+  JACE_API jobject getGlobalRef();
 
   /**
    * Releases the specified global reference that was allocated
    * by a call to getGlobalRef.
    *
    */
-  void releaseGlobalRef( jobject ref );
+  JACE_API void releaseGlobalRef( jobject ref );
  
   private:
 

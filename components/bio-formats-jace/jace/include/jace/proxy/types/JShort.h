@@ -35,7 +35,7 @@ BEGIN_NAMESPACE_3( jace, proxy, types )
  * @author Toby Reyelts
  *
  */
-class JACE_API JShort : public JValue {
+class JShort : public JValue {
 
 
 public:
@@ -45,77 +45,77 @@ public:
  * Creates a new instance with the given value.
  *
  */
-JShort( jvalue value );
+JACE_API JShort( jvalue value );
 
 
 /**
  * Creates a new instance with the given value.
  *
  */
-JShort( jshort value );
+JACE_API JShort( jshort value );
 
 
 /**
  * Destroys the existing java object.
  *
  */
-virtual ~JShort();
+JACE_API virtual ~JShort();
 
 
 /**
  * Returns the value of this instance.
  *
  */
-operator jshort() const;
+JACE_API operator jshort() const;
 
 
 /**
  * Returns the value of this instance.
  *
  */
-jshort getShort() const;
+JACE_API jshort getShort() const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator==( const JShort& value ) const;
+JACE_API bool operator==( const JShort& value ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator!=( const JShort& value ) const;
+JACE_API bool operator!=( const JShort& value ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator==( jshort value ) const;
+JACE_API bool operator==( jshort value ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator!=( jshort value ) const;
+JACE_API bool operator!=( jshort value ) const;
 
 
 /**
  * Returns the JClass for this class.
  *
  */
-static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
+JACE_API static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
 
 
 /**
  * Returns the JClass for this instance.
  *
  */
-virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
+JACE_API virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
 
 };
 

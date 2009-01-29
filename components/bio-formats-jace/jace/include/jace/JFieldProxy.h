@@ -14,10 +14,6 @@
 #include "jace/JNIHelper.h"
 #endif
 
-#ifndef JACE_JOBJECT_H
-#include "jace/proxy/JObject.h"
-#endif
-
 #ifndef JACE_JFIELD_PROXY_HELPER_H
 #include "JFieldProxyHelper.h"
 #endif
@@ -92,7 +88,7 @@ public:
  *
  */
 JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
-  FieldType( value ), FieldType::JObject( FieldType::JObject::NO_OP ), fieldID( fieldID_ ) {
+  FieldType( value ), fieldID( fieldID_ ) {
 
   JNIEnv* env = ::jace::helper::attach();
 
@@ -115,7 +111,7 @@ JFieldProxy( jfieldID fieldID_, jvalue value, jobject parent_ ) :
  *
  */
 JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
-  FieldType( value ), FieldType::JObject( FieldType::JObject::NO_OP ), fieldID( fieldID_ ) {
+  FieldType( value ), fieldID( fieldID_ ) {
 
   parent = 0;
   JNIEnv* env = ::jace::helper::attach();
@@ -131,7 +127,7 @@ JFieldProxy( jfieldID fieldID_, jvalue value, jclass parentClass_ ) :
  *
  */
 JFieldProxy( const JFieldProxy& object ) : 
-  FieldType( object.getJavaJniValue() ), FieldType::JObject( FieldType::JObject::NO_OP ) {
+  FieldType( object.getJavaJniValue() ) {
   JNIEnv* env = ::jace::helper::attach();
   if ( object.parent ) {
     parent = ::jace::helper::newGlobalRef( env, object.parent ); 
@@ -141,7 +137,7 @@ JFieldProxy( const JFieldProxy& object ) :
   }
 
   if ( object.parentClass ) {
-    parentClass = ::jace::helper::newGlobalRef( env, object.parentClass ); 
+    parentClass = static_cast<jclass>( ::jace::helper::newGlobalRef( env, object.parentClass )); 
   }
   else {
     parentClass = 0;
@@ -156,10 +152,7 @@ virtual ~JFieldProxy() throw() {
       JNIEnv* env = ::jace::helper::attach();
       ::jace::helper::deleteGlobalRef( env, parent );
     }
-    catch ( std::exception& e ) {
-      #ifdef JACE_UNUSED_LOCAL_VAR
-        e; // shut up the compiler
-      #endif
+    catch ( std::exception& ) {
     }
   }
 
@@ -168,10 +161,7 @@ virtual ~JFieldProxy() throw() {
       JNIEnv* env = ::jace::helper::attach();
       ::jace::helper::deleteGlobalRef( env, parentClass );
     }
-    catch ( std::exception& e ) {
-      #ifdef JACE_UNUSED_LOCAL_VAR
-        e; // shut up the compiler
-      #endif
+    catch ( std::exception& ) {
     }
   }
 }
@@ -184,10 +174,10 @@ virtual ~JFieldProxy() throw() {
 FieldType& operator=( const FieldType& field ) {
 
   if ( parent ) {
-    setJavaJniObject( JFieldProxyHelper::assign( field, parent, fieldID, FieldType::staticGetJavaJniClass() ) );
+    setJavaJniObject( JFieldProxyHelper::assign( field, parent, fieldID ) );
   }
   else {
-    setJavaJniObject( JFieldProxyHelper::assign( field, parentClass, fieldID, FieldType::staticGetJavaJniClass() ) );
+    setJavaJniObject( JFieldProxyHelper::assign( field, parentClass, fieldID ) );
   }
 
   return *this;

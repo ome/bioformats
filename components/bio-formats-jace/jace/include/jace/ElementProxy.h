@@ -69,7 +69,7 @@ BEGIN_NAMESPACE( jace )
  * @author Toby Reyelts
  *
  */
-template <class ElementType> class ElementProxy : public ElementType, public virtual ::jace::proxy::JObject {
+template <class ElementType> class ElementProxy : public virtual ::jace::proxy::JObject, public ElementType {
 
 
 public:
@@ -132,12 +132,9 @@ const ElementType& operator=( const ElementType& element ) const {
     JNIEnv* env = ::jace::helper::attach();
     ::jace::helper::deleteGlobalRef( env, parent );
   }
-  catch ( std::exception& e ) {
-    #ifdef JACE_UNUSED_LOCAL_VAR
-      e; // shut up the compiler warning
+  catch ( JNIException& ) {
       // It's possible that we're trying to attach when
       // the JVM has already been destroyed
-    #endif
   }
 }
 

@@ -69,6 +69,19 @@
    */
   #pragma warning( once : 4518 )
 
+  /**
+   * Turn off warnings about "conditional expression is constant" such as "while(true)".
+   *
+   */
+  #pragma warning( disable : 4127 )
+
+  /**
+   * Turn off warning to avoid a compiler bug triggered by the use of multiple inheritance.
+   * @see http://groups.google.com/group/microsoft.public.vsnet.general/browse_thread/thread/1ec41da52896031d
+   *
+   */
+  #pragma warning( disable : 4673 )
+
 	/**
 	 * Disable warning about non-safe C/C++ functions.
 	 *
@@ -111,13 +124,6 @@
   #endif
 
   /**
-   * Visual C++ gives warnings on some unused local variables
-   * that no other compilers give warnings on.
-   *
-   */
-  #define JACE_UNUSED_LOCAL_VAR
-
-  /**
    * VC++ 7.0 doesn't support exception specifications correctly, so it generates hundreds
    * of warnings.
    *
@@ -125,6 +131,14 @@
   #if _MSC_VER >= 1300
     #pragma warning( disable : 4290 )
   #endif
+
+	/**
+	 * VC++ 9.0 supports the new streaming library; though, I'm not sure which version of VC++
+	 * it was introduced at.
+	 */
+	#if _MSC_VER >= 1500
+		#define SUPPORTS_SSTREAM
+	#endif
 
 /**
  * Deal with g++'isms. Jace has only been tested with g++3.0+, but we'll just treat
@@ -156,11 +170,6 @@
    */
   #define SUPPORTS_SSTREAM
 
-  /**
-   * CTR - GNU GCC supports pthreads, right? :-)
-   */
-	#define SUPPORTS_PTHREADS
-
   #define NO_IMPLICIT_TYPENAME
 
 #else // We assume a generic compiler on a generic Unix box.
@@ -176,7 +185,6 @@
 	 */
 	#define JACE_TEMPLATE_EXTERN
 	#define SUPPORTS_SSTREAM
-	#define SUPPORTS_PTHREADS
 
 #endif
 

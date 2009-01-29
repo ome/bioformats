@@ -543,6 +543,23 @@ Iterator end() {
   return Iterator( this, length(), length() );
 }
 
+protected:
+
+/**
+ * Creates a new JArray that does not yet refer
+ * to any java array.
+ *
+ * This constructor is provided for subclasses which
+ * need to do their own initialization.
+ *
+ * @param noOp - A dummy argument that signifies that
+ * this constructor should not do any work.
+ *
+ * All subclasses of JArray should provide this constructor
+ * for their own subclasses.
+ */
+JACE_API JArray( const NoOp& noOp );
+
 private:
 
 /**

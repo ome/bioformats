@@ -36,6 +36,10 @@ class JFieldHelper {
   JACE_API jfieldID getFieldID();
 
   private:
+	/**
+	 * Prevent copying.
+	 */
+	JFieldHelper& operator=(JFieldHelper&);
 
   jfieldID mFieldID;
   const std::string mName;

@@ -159,7 +159,7 @@ protected:
  */
 class NoOp {
   public:
-  JACE_API NoOp() {}
+  NoOp() {}
 };
 
 
@@ -176,7 +176,7 @@ JACE_API static const NoOp NO_OP;
  */
 class CopyConstructorSpecifier {
   public:
-  JACE_API CopyConstructorSpecifier() {}
+  CopyConstructorSpecifier() {}
 };
 
 

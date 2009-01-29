@@ -48,7 +48,7 @@ public:
  * with the Visual C++ compiler, this doesn't work.
  */
 #if 0
-  virtual auto_ptr<JValue> create( jvalue val ) = 0;
+  JACE_API virtual auto_ptr<JValue> create( jvalue val ) = 0;
 #endif
 
 JACE_API virtual ::jace::proxy::JValue* create( jvalue val ) = 0;

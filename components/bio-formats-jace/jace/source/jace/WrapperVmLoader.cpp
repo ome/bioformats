@@ -5,6 +5,10 @@ using ::jace::VmLoader;
 using ::jace::WrapperVmLoader;
 using ::jace::JNIException;
 
+BEGIN_NAMESPACE_2( jace, helper )
+extern JavaVM* javaVM;
+END_NAMESPACE_2( jace, helper )
+
 #include <string>
 using std::string;
 
@@ -40,7 +44,7 @@ using std::string;
 
 WrapperVmLoader::WrapperVmLoader( JNIEnv* env ) { 
 
-  jint result = env->GetJavaVM( &javaVM );
+	jint result = env->GetJavaVM( &::jace::helper::javaVM );
 
   if ( result != 0 ) {
     string msg = string( "WrapperVmLoader::WrapperVmLoader\n" ) +
@@ -52,16 +56,16 @@ WrapperVmLoader::WrapperVmLoader( JNIEnv* env ) {
 	jniVersion = env->GetVersion();
 }
 
-WrapperVmLoader::WrapperVmLoader( JavaVM* javaVM ) { 
+WrapperVmLoader::WrapperVmLoader( ) { 
 
-	if ( javaVM == 0 ) {
+	if ( ::jace::helper::javaVM == 0 ) {
     string msg = string( "WrapperVmLoader::WrapperVmLoader\n" ) +
                   "javaVM must be non-null";
     throw JNIException( msg );
 	}
 
   JNIEnv* env;
-  jint result = javaVM->AttachCurrentThread( reinterpret_cast<void**>( &env ), 0 );
+  jint result = ::jace::helper::javaVM->AttachCurrentThread( reinterpret_cast<void**>( &env ), 0 );
 
   if ( result != 0 ) {
     string msg = "JNIHelper::attach\n" \
@@ -70,7 +74,6 @@ WrapperVmLoader::WrapperVmLoader( JavaVM* javaVM ) {
     throw JNIException( msg );
   }
 	
-	this->javaVM = javaVM;
 	jniVersion = env->GetVersion();
 }
 
@@ -86,12 +89,12 @@ jint WrapperVmLoader::version() {
 	return jniVersion;
 }
 
-jint WrapperVmLoader::createJavaVM( JavaVM **pvm, void **env, void *args ) {
+jint WrapperVmLoader::createJavaVM( JavaVM **pvm, void **env, void * ) {
 
 	if ( pvm == 0 || env == 0 )
 		return JNI_EINVAL;
 	*env = helper::attach();
-	*pvm = javaVM;
+	*pvm = ::jace::helper::javaVM;
 	return JNI_OK;
 }
 
@@ -99,13 +102,13 @@ jint WrapperVmLoader::getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nV
 	
 	if ( bufLen < 1 || vmBuf == 0 )
 		return JNI_EINVAL;
-	*vmBuf = javaVM;
+	*vmBuf = ::jace::helper::javaVM;
 	*nVMs = 1;
 
   return JNI_OK;
 }
 
 VmLoader* WrapperVmLoader::clone() const {
-	return new WrapperVmLoader( javaVM );
+	return new WrapperVmLoader();
 }
 

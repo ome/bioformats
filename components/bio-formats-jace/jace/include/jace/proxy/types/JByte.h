@@ -35,7 +35,7 @@ BEGIN_NAMESPACE_3( jace, proxy, types )
  * @author Toby Reyelts
  *
  */
-class JACE_API JByte : public ::jace::proxy::JValue {
+class JByte : public ::jace::proxy::JValue {
 
 
 public:
@@ -45,77 +45,77 @@ public:
  * Creates a new JByte with the given value.
  *
  */
-JByte( jvalue value );
+JACE_API JByte( jvalue value );
 
 
 /**
  * Creates a new JByte with the given value.
  *
  */
-JByte( jbyte byte );
+JACE_API JByte( jbyte byte );
 
 
 /**
  * Destroys the existing java object.
  *
  */
-virtual ~JByte();
+JACE_API virtual ~JByte();
 
 
 /**
  * Returns the byte value of this java byte.
  *
  */
-operator jbyte() const;
+JACE_API operator jbyte() const;
 
 
 /**
  * Returns the byte value of this java byte.
  *
  */
-jbyte getByte() const;
+JACE_API jbyte getByte() const;
 
 
 /**
  * Compares this JByte to another.
  *
  */
-bool operator==( const JByte& byte_ ) const;
+JACE_API bool operator==( const JByte& byte_ ) const;
 
 
 /**
  * Compares this JByte to another.
  *
  */
-bool operator!=( const JByte& byte_ ) const;
+JACE_API bool operator!=( const JByte& byte_ ) const;
 
 
 /**
  * Compares this JByte to a jbyte.
  *
  */
-bool operator==( jbyte val ) const;
+JACE_API bool operator==( jbyte val ) const;
 
 
 /**
  * Compares this JByte to a jbyte.
  *
  */
-bool operator!=( jbyte val ) const;
+JACE_API bool operator!=( jbyte val ) const;
 
 
 /**
  * Returns the JClass for this class.
  *
  */
-static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
+JACE_API static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
 
 
 /**
  * Returns the JClass for this instance.
  *
  */
-virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
+JACE_API virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
 
 };
 

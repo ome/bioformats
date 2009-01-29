@@ -57,7 +57,7 @@ BEGIN_NAMESPACE_2( jace, proxy )
  * @author Toby Reyelts
  *
  */
-class JACE_API JValue {
+class JValue {
 
 public:
 
@@ -65,21 +65,21 @@ public:
  * Constructs a new JValue.
  *
  */
-JValue();
+JACE_API JValue();
 
 
 /**
  * Destroys the existing JValue.
  *
  */
-virtual ~JValue();
+JACE_API virtual ~JValue();
 
 
 /** 
  * Returns the underlying JNI jvalue for this JValue.
  *
  */
-jvalue getJavaJniValue();
+JACE_API jvalue getJavaJniValue();
 
 
 /** 
@@ -92,7 +92,7 @@ jvalue getJavaJniValue();
  * Visual C++ which requires us to make this public.
  *
  */
-jvalue getJavaJniValue() const;
+JACE_API jvalue getJavaJniValue() const;
 
 
 /**
@@ -101,7 +101,7 @@ jvalue getJavaJniValue() const;
  * @throw JNIException if an error occurs while trying to retrieve the class.
  *
  */
-virtual const ::jace::JClass* getJavaJniClass() const = 0;
+JACE_API virtual const ::jace::JClass* getJavaJniClass() const = 0;
 
 
 protected:
@@ -119,7 +119,7 @@ protected:
  *   a new global reference.
  *
  */
-virtual void setJavaJniValue( jvalue value ) throw ( ::jace::JNIException );
+JACE_API virtual void setJavaJniValue( jvalue value ) throw ( ::jace::JNIException );
 
 
 private:

@@ -57,7 +57,6 @@ public:
   typedef X* pointer_type;
   typedef size_t size_type;
 
-public:
   explicit counted_ptr(X* p=0) : ptr(p)
   {
     count=new size_type(1);
@@ -97,7 +96,6 @@ protected:
   X* ptr;
   size_type *count;
 
-protected:
   void release()
   {
     if (count && --(*count)==0)
@@ -137,7 +135,6 @@ public:
   typedef X* pointer_type;
   typedef size_t size_type;
 
-public:
   explicit counted_array_ptr(X* p = NULL) : ptr(p)
   {
     count=new size_type;

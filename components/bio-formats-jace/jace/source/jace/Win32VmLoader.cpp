@@ -6,6 +6,7 @@ using ::jace::VmLoader;
 using ::jace::Win32VmLoader;
 using ::jace::JNIException;
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include <string>
@@ -81,7 +82,7 @@ void Win32VmLoader::specifyVm( Win32VmLoader::JVMVendor jvmVendor, Win32VmLoader
 	{
 		case JVMV_SUN:
 		{
-			/* Get current version */
+			// Get current version
 			if ( version.empty() )
 			{
 				if ( !getRegistryValue("Software\\JavaSoft\\Java Runtime Environment\\CurrentVersion", version) )
@@ -89,7 +90,7 @@ void Win32VmLoader::specifyVm( Win32VmLoader::JVMVendor jvmVendor, Win32VmLoader
 					throw JNIException("No default Sun JRE found");
 				}
 			}
-			/* Search Registry for PATH to Sun runtime */
+			// Search Registry for PATH to Sun runtime
 			switch ( jvmType )
 			{
  				case JVMT_DEFAULT:

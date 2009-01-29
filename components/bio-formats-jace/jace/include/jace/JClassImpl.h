@@ -50,7 +50,6 @@ public:
  * For example, "Ljava/lang/Object;"
  *
  */
-// JClassImpl( const std::string& name, const std::string& nameAsType );
 JACE_API JClassImpl( const std::string name, const std::string nameAsType );
 
 

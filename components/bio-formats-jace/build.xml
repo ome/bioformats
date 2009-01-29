@@ -37,6 +37,8 @@ Type "ant -p" for a list of targets.
   <target name="gen-proxies"
     description="generate Jace proxies from C++ source code">
     <delete dir="proxies"/>
+    <mkdir dir="proxies/include"/>
+    <mkdir dir="proxies/source"/>
     <java classname="jace.autoproxy.AutoProxy">
       <arg path="include"/>
       <arg path="source"/>

@@ -36,7 +36,7 @@ BEGIN_NAMESPACE_3( jace, proxy, types )
  * @author Toby Reyelts
  *
  */
-class JACE_API JBoolean : public ::jace::proxy::JValue {
+class JBoolean : public ::jace::proxy::JValue {
 
 
 public:
@@ -46,76 +46,76 @@ public:
  * Creates a new instance with the given value.
  *
  */
-JBoolean( jvalue value );
+JACE_API JBoolean( jvalue value );
 
 
 /**
  * Creates a new instance with the given value.
  *
  */
-JBoolean( jboolean value );
+JACE_API JBoolean( jboolean value );
 
 
 /**
  * Destroys the existing java object.
  *
  */
-virtual ~JBoolean();
+JACE_API virtual ~JBoolean();
 
 
 /**
  * Returns the value of this instance.
  *
  */
-operator jboolean() const;
+JACE_API operator jboolean() const;
 
 /**
  * Returns the value of this instance.
  *
  */
-jboolean getBoolean() const;
+JACE_API jboolean getBoolean() const;
 
 
 /**
  * Compares this JBoolean to another.
  *
  */
-bool operator==( const JBoolean& boolean_ ) const;
+JACE_API bool operator==( const JBoolean& boolean_ ) const;
 
 
 /**
  * Compares this JBoolean to another.
  *
  */
-bool operator!=( const JBoolean& boolean_ ) const;
+JACE_API bool operator!=( const JBoolean& boolean_ ) const;
 
 
 /**
  * Compares this JBoolean to a jboolean.
  *
  */
-bool operator==( jboolean val ) const;
+JACE_API bool operator==( jboolean val ) const;
 
 
 /**
  * Compares this JBoolean to a jboolean.
  *
  */
-bool operator!=( jboolean val ) const;
+JACE_API bool operator!=( jboolean val ) const;
 
 
 /**
  * Returns the JClass for this class.
  *
  */
-static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
+JACE_API static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
 
 
 /**
  * Returns the JClass for this instance.
  *
  */
-virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
+JACE_API virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
 
 };
 

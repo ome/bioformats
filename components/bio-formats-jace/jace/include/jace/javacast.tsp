@@ -17,7 +17,8 @@ BEGIN_NAMESPACE( jace )
  *  jobject jObj = java_cast<jobject>( obj );
  *
  */
-template <> inline jobject java_cast<jobject>( const ::jace::proxy::JObject& obj );
+template <> inline
+JACE_API jobject java_cast<jobject>( const ::jace::proxy::JObject& obj );
 
 END_NAMESPACE( jace )
 

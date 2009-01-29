@@ -47,14 +47,14 @@ class UnixVmLoader : public ::jace::VmLoader {
    * JNI_VERSION_1_4.
    *
    */
-  UnixVmLoader( std::string path_, jint jniVersion );
+  JACE_API UnixVmLoader( std::string path_, jint jniVersion );
 
-  void loadVm() throw ( ::jace::JNIException );
-  void unloadVm();
-  jint createJavaVM( JavaVM **pvm, void **env, void *args );
-  jint getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs );
-  ::jace::VmLoader* clone() const;
-  jint version();
+  JACE_API void loadVm() throw ( ::jace::JNIException );
+  JACE_API void unloadVm();
+  JACE_API jint createJavaVM( JavaVM **pvm, void **env, void *args );
+  JACE_API jint getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs );
+  JACE_API ::jace::VmLoader* clone() const;
+  JACE_API jint version();
 
   private:
 

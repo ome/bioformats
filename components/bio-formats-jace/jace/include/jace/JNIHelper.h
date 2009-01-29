@@ -73,6 +73,13 @@ JACE_API ::jace::VmLoader* getVmLoader();
 JACE_API void setVmLoader( const ::jace::VmLoader& loader );
 
 /**
+ * Registers the ShutdownHook using Runtime.addShutdownHook().
+ *
+ * @param env the JNI environment
+ */
+JACE_API void registerShutdownHook( JNIEnv* env );
+
+/**
  * Returns the current java virtual machine.
  *
  * @throws JNIException if an error occurs while trying to retrieve
@@ -83,47 +90,32 @@ JACE_API JavaVM* getJavaVM() throw ( ::jace::JNIException );
 
 
 /**
- * Callback that initializes process-local variables. Should be called at most once per process.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
+ * Attaches the current thread to the virtual machine and returns the appropriate 
+ * JNIEnv for the thread. If the thread is already attached, this method method 
+ * does nothing.
  *
- */
-JACE_API void onProcessCreation() throw ( ::jace::JNIException );
-
-/**
- * Callback that initializes thread-local variables. Should be called at most once per thread.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
+ * This method is equivilent to attach(0, 0, false).
  *
- */
-JACE_API void onThreadCreation() throw ( ::jace::JNIException );
-
-/**
- * Callback that frees thread-local variables. Should be called at most once per thread.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
-JACE_API void onThreadDestruction() throw ( ::jace::JNIException );
-
-/**
- * Callback that frees process-local variables. Should be called at most once per process.
- * This is invoked automatically when Jace is built as a dynamic library but must be invoked manually
- * if static linking is used.
- *
- */
-JACE_API void onProcessDestruction() throw ( ::jace::JNIException );
-
-/**
- * Attaches the current thread to the virtual machine 
- * and returns the appropriate JNIEnv for the thread. 
- *
- * @throws JNIException if an error occurs while trying to
- * attach the current thread.
- *
- * @see AttachCurrentThread.
+ * @throws JNIException if an error occurs while trying to attach the current thread.
+ * @see AttachCurrentThread
+ * @see attach(const jobject, const char*, const bool)
  */
 JACE_API JNIEnv* attach() throw ( ::jace::JNIException );
+
+
+/**
+ * Attaches the current thread to the virtual machine
+ * and returns the appropriate JNIEnv for the thread.
+ * If the thread is already attached, this method method does nothing.
+ *
+ * @param threadGroup the ThreadGroup associated with the thread, or null
+ * @param name the thread name, or null
+ * @param daemon true if the thread should be attached as a daemon thread
+ * @throws JNIException if an error occurs while trying to attach the current thread.
+ * @see AttachCurrentThread
+ * @see AttachCurrentThreadAsDaemon
+ */
+JACE_API JNIEnv* attach(const jobject threadGroup, const char* name, const bool daemon) throw ( ::jace::JNIException );
 
 
 /**

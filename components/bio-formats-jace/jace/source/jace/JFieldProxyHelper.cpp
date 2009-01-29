@@ -11,7 +11,7 @@ using jace::JClass;
 BEGIN_NAMESPACE_2( jace, JFieldProxyHelper )
 
 
-jobject assign( const JObject& field, jobject parent, jfieldID fieldID, const JClass* classType ) {
+jobject assign( const JObject& field, jobject parent, jfieldID fieldID ) {
 
   JNIEnv* env = helper::attach();
   jobject object = field.getJavaJniObject();
@@ -21,7 +21,7 @@ jobject assign( const JObject& field, jobject parent, jfieldID fieldID, const JC
 }
 
 
-jobject assign( const JObject& field, jclass parentClass, jfieldID fieldID, const JClass* classType ) {
+jobject assign( const JObject& field, jclass parentClass, jfieldID fieldID ) {
 
   JNIEnv* env = helper::attach();
   jobject object = field.getJavaJniObject();

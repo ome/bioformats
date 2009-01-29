@@ -84,7 +84,7 @@ class VmLoader {
    */
   JACE_API virtual jint getCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs ) = 0;
 
-  JACE_API virtual ~VmLoader() {
+  virtual ~VmLoader() {
   }
 
 };

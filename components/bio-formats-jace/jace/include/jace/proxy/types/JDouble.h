@@ -35,7 +35,7 @@ BEGIN_NAMESPACE_3( jace, proxy, types )
  * @author Toby Reyelts
  *
  */
-class JACE_API JDouble : public JValue {
+class JDouble : public JValue {
 
 
 public:
@@ -45,76 +45,76 @@ public:
  * Creates a new JDouble with the given value.
  *
  */
-JDouble( jvalue value );
+JACE_API JDouble( jvalue value );
 
 
 /**
  * Creates a new JDouble with the given value.
  *
  */
-JDouble( jdouble value );
+JACE_API JDouble( jdouble value );
 
 
 /**
  * Destroys the existing java object.
  *
  */
-virtual ~JDouble();
+JACE_API virtual ~JDouble();
 
 /**
  * Returns the value of this instance.
  *
  */
-operator jdouble() const;
+JACE_API operator jdouble() const;
 
 
 /**
  * Returns the value of this instance.
  *
  */
-jdouble getDouble() const;
+JACE_API jdouble getDouble() const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator==( const JDouble& value ) const;
+JACE_API bool operator==( const JDouble& value ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator!=( const JDouble& value ) const;
+JACE_API bool operator!=( const JDouble& value ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator==( jdouble value ) const;
+JACE_API bool operator==( jdouble value ) const;
 
 
 /**
  * Compares this instance to another.
  *
  */
-bool operator!=( jdouble value ) const;
+JACE_API bool operator!=( jdouble value ) const;
 
 
 /**
  * Returns the JClass for this class.
  *
  */
-static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
+JACE_API static const ::jace::JClass* staticGetJavaJniClass() throw ( ::jace::JNIException );
 
 
 /**
  * Returns the JClass for this instance.
  *
  */
-virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
+JACE_API virtual const ::jace::JClass* getJavaJniClass() const throw ( ::jace::JNIException );
 
 };
 
