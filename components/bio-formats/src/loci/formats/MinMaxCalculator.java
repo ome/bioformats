@@ -303,10 +303,12 @@ public class MinMaxCalculator extends ReaderWrapper {
       for (int y=0; y<b.getHeight(); y++) {
         for (int c=0; c<numRGB; c++) {
           double v = pixels.getSampleDouble(x, y, c);
+          /*
           if (signed) {
             long threshold = (long) Math.pow(2, bytes * 8 - 1);
             v -= threshold;
           }
+          */
 
           if (v > chanMax[series][cBase + c]) {
             chanMax[series][cBase + c] = v;
@@ -374,10 +376,12 @@ public class MinMaxCalculator extends ReaderWrapper {
       for (int c=0; c<numRGB; c++) {
         int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
         long bits = DataTools.bytesToLong(b, idx, bytes, little);
+        /*
         if (signed) {
           long threshold = (long) Math.pow(2, bytes * 8 - 1);
           if (bits >= threshold) bits -= 2*threshold;
         }
+        */
         double v = (double) bits;
         if (pixelType == FormatTools.FLOAT) {
           v = Float.intBitsToFloat((int) bits);

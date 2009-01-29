@@ -529,7 +529,6 @@ public final class DataTools {
     int bpp, boolean fp, boolean little, boolean signed)
   {
     if (bpp == 1) {
-      if (signed) b = makeSigned(b);
       return b;
     }
     else if (bpp == 2) {
@@ -537,7 +536,6 @@ public final class DataTools {
       for (int i=0; i<s.length; i++) {
         s[i] = bytesToShort(b, i*2, 2, little);
       }
-      if (signed) s = makeSigned(s);
       return s;
     }
     else if (bpp == 4 && fp) {
@@ -552,7 +550,6 @@ public final class DataTools {
       for (int j=0; j<i.length; j++) {
         i[j] = bytesToInt(b, j*4, 4, little);
       }
-      if (signed) i = makeSigned(i);
       return i;
     }
     else if (bpp == 8 && fp) {
