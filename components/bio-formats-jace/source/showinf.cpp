@@ -35,7 +35,7 @@ using namespace jace::proxy::java::io;
 #include "jace/proxy/loci/formats/ChannelMerger.h"
 #include "jace/proxy/loci/formats/ChannelSeparator.h"
 #include "jace/proxy/loci/formats/ClassList.h"
-#include "jace/proxy/loci/formats/CoreMetadata.h"
+//#include "jace/proxy/loci/formats/CoreMetadata.h"
 #include "jace/proxy/loci/formats/DimensionSwapper.h"
 #include "jace/proxy/loci/formats/FilePattern.h"
 #include "jace/proxy/loci/formats/FileStitcher.h"
@@ -249,10 +249,11 @@ int main(int argc, const char *argv[]) {
     cout << "Creating JVM..." << endl;
     StaticVmLoader loader(JNI_VERSION_1_4);
     OptionList list;
-    list.push_back( jace::ClassPath( "jace-runtime.jar:bio-formats.jar" ) );
+    list.push_back(jace::ClassPath(
+      "jace-runtime.jar:bio-formats.jar:loci_tools.jar"));
     list.push_back(jace::CustomOption("-Xcheck:jni"));
     list.push_back(jace::CustomOption("-Xmx256m"));
-    list.push_back(jace::CustomOption("-verbose:jni"));
+    //list.push_back(jace::CustomOption("-verbose:jni"));
     jace::helper::createVm(loader, list, false);
     cout << "JVM created." << endl;
 

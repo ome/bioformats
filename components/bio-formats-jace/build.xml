@@ -34,16 +34,15 @@ Type "ant -p" for a list of targets.
   <!-- Default for Unix -->
   <property name="jre.runtime" value="${java.home}/lib/rt.jar"/>
 
-  <target name="gen-proxies"
+  <target name="gen-proxies" depends="clean-gen"
     description="generate Jace proxies from C++ source code">
-    <delete dir="proxies"/>
-    <mkdir dir="proxies/include"/>
-    <mkdir dir="proxies/source"/>
+    <mkdir dir="${jace.proxy-dir}/include"/>
+    <mkdir dir="${jace.proxy-dir}/source"/>
     <java classname="jace.autoproxy.AutoProxy">
       <arg path="include"/>
       <arg path="source"/>
-      <arg path="proxies/include"/>
-      <arg path="proxies/source"/>
+      <arg path="${jace.proxy-dir}/include"/>
+      <arg path="${jace.proxy-dir}/source"/>
       <arg path="${jre.runtime}:${artifact.dir}/bio-formats.jar"/>
       <classpath>
         <fileset dir="jace/lib">
@@ -54,10 +53,24 @@ Type "ant -p" for a list of targets.
     </java>
   </target>
 
-  <target name="clean-gen">
-    <delete dir="temp_build"/>
-    <delete dir="classes"/>
-    <delete dir="release"/>
+  <target name="clean-gen" description="clean Jace proxies">
+    <delete dir="${jace.proxy-dir}"/>
+  </target>
+
+  <target name="build" depends="gen-proxies"
+    description="Build Bio-Formats Jace C++ library">
+    <mkdir dir="${cmake.build-dir}"/>
+    <exec executable="cmake" dir="${cmake.build-dir}">
+      <arg value=".."/>
+    </exec>
+    <exec executable="make" dir="${cmake.build-dir}"/>
+    <copy file="${cmake.build-dir}/jace/libjace.so" todir="${cmake.build-dir}"/>
+    <copy file="jace/lib/jace-runtime.jar" todir="${cmake.build-dir}"/>
+    <copy file="${artifact.dir}/loci_tools.jar" todir="${cmake.build-dir}"/>
+  </target>
+
+  <target name="clean-build" description="clean bfjace build files">
+    <delete dir="${cmake.build-dir}"/>
   </target>
 
 </project>
