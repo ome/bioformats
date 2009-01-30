@@ -820,6 +820,12 @@ public final class DataTools {
     return f.format(d);
   }
 
+  public static long getTime(String date, String format) {
+    SimpleDateFormat f = new SimpleDateFormat(format);
+    Date d = f.parse(date, new ParsePosition(0));
+    return d.getTime();
+  }
+
   // -- Array handling --
 
   /** Returns true if the given value is contained in the given array. */

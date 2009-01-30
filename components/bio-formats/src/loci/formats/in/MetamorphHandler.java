@@ -52,6 +52,10 @@ public class MetamorphHandler extends DefaultHandler {
   private Vector zPositions;
   private float pixelSizeX, pixelSizeY;
   private float temperature;
+  private String binning;
+  private float readOutRate, zoom;
+  private float positionX, positionY;
+  private float exposure;
 
   // -- Constructor --
 
@@ -80,6 +84,18 @@ public class MetamorphHandler extends DefaultHandler {
   public float getPixelSizeY() { return pixelSizeY; }
 
   public float getTemperature() { return temperature; }
+
+  public String getBinning() { return binning; }
+
+  public float getReadOutRate() { return readOutRate; }
+
+  public float getZoom() { return zoom; }
+
+  public float getStagePositionX() { return positionX; }
+
+  public float getStagePositionY() { return positionY; }
+
+  public float getExposure() { return exposure; }
 
   // -- DefaultHandler API methods --
 
@@ -115,9 +131,7 @@ public class MetamorphHandler extends DefaultHandler {
               k = line.substring(0, colon).trim();
               v = line.substring(colon + 1).trim();
               metadata.put(k, v);
-              if (k.equals("Temperature")) {
-                temperature = Float.parseFloat(v.trim());
-              }
+              checkKey(k, v);
             }
           }
         }
@@ -127,36 +141,69 @@ public class MetamorphHandler extends DefaultHandler {
             k = value.substring(0, colon);
             int space = value.lastIndexOf(" ", value.indexOf(":", colon + 1));
             if (space == -1) space = value.length();
-            v = value.substring(colon + 1, space);
+            v = value.substring(colon + 1, space).trim();
             metadata.put(k, v);
             value = value.substring(space).trim();
             colon = value.indexOf(":");
-
-            if (k.equals("Temperature")) {
-              temperature = Float.parseFloat(v.trim());
-            }
+            checkKey(k, v);
           }
         }
       }
-      else metadata.put(id, value);
-
-      if (id.equals("spatial-calibration-x")) {
-        pixelSizeX = Float.parseFloat(value);
+      else {
+        metadata.put(id, value);
+        checkKey(id, value);
       }
-      else if (id.equals("spatial-calibration-y")) {
-        pixelSizeY = Float.parseFloat(value);
-      }
-      else if (id.equals("z-position")) {
-        zPositions.add(new Float(value));
-      }
-      else if (id.equals("wavelength")) {
-        wavelengths.add(new Integer(value));
-      }
-      else if (id.equals("acquisition-time-local")) {
-        date = value;
-        timestamps.add(date);
-      }
-      else if (id.equals("image-name")) imageName = value;
     }
   }
+
+  // -- Helper methods --
+
+  /** Check if the value needs to be saved. */
+  private void checkKey(String key, String value) {
+    if (key.equals("Temperature")) {
+      temperature = Float.parseFloat(value);
+    }
+    else if (key.equals("spatial-calibration-x")) {
+      pixelSizeX = Float.parseFloat(value);
+    }
+    else if (key.equals("spatial-calibration-y")) {
+      pixelSizeY = Float.parseFloat(value);
+    }
+    else if (key.equals("z-position")) {
+      zPositions.add(new Float(value));
+    }
+    else if (key.equals("wavelength")) {
+      wavelengths.add(new Integer(value));
+    }
+    else if (key.equals("acquisition-time-local")) {
+      date = value;
+      timestamps.add(date);
+    }
+    else if (key.equals("image-name")) imageName = value;
+    else if (key.equals("Binning")) {
+      binning = value;
+    }
+    else if (key.equals("Readout Frequency")) {
+      readOutRate = Float.parseFloat(value);
+    }
+    else if (key.equals("zoom-percent")) {
+      zoom = Float.parseFloat(value);
+    }
+    else if (key.equals("stage-position-x")) {
+      positionX = Float.parseFloat(value);
+    }
+    else if (key.equals("stage-position-y")) {
+      positionY = Float.parseFloat(value);
+    }
+    else if (key.equals("Speed")) {
+      readOutRate = Float.parseFloat(value);
+    }
+    else if (key.equals("Exposure")) {
+      if (value.indexOf(" ") != -1) {
+        value = value.substring(0, value.indexOf(" "));
+      }
+      exposure = Float.parseFloat(value);
+    }
+  }
+
 }
