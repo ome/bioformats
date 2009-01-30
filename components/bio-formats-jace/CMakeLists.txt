@@ -16,7 +16,7 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREAD ON)
 find_package(Boost COMPONENTS thread)
 
-include_directories(jace/include proxies/include
+include_directories(include jace/include proxies/include
   ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${Boost_INCLUDE_DIR})
 
 ### build Jace C++ library ###
