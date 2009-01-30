@@ -238,6 +238,7 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
+      store.setPixelsID("Pixels:0", i, 0);
       store.setImageDefaultPixels("Pixels:0", i);
       store.setPixelsSizeX(new Integer(r.getSizeX()), i, 0);
       store.setPixelsSizeY(new Integer(r.getSizeY()), i, 0);
