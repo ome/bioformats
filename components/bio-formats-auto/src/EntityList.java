@@ -48,7 +48,7 @@ import java.util.*;
  *    |--+ Pixels
  *    |  ...
  *    |--+ Dimensions
- *    |  |--+ attributes
+ *    |  |--+ properties
  *    |  |   \- path = Image+/Pixels+
  *    |  |   \- description = A set of pixel dimensions in the metadata store.
  *    |  |--+ entity version overrides
@@ -56,7 +56,7 @@ import java.util.*;
  *    |  |      \- path = Image+/CA/Dimensions
  *    |  |--+ properties
  *    |     |--+ PhysicalSizeX
- *    |     |  |--+ attributes
+ *    |     |  |--+ properties
  *    |     |  |   \- type = Float
  *    |     |  |   \- description = Width of each pixel in microns.
  *    |     |  |--+ property version overrides
@@ -64,7 +64,7 @@ import java.util.*;
  *    |     |        \- getter = getPixelSizeX
  *    |     |        \- setter = setPixelSizeX
  *    |     |--+ PhysicalSizeY
- *    |     |  |--+ attributes
+ *    |     |  |--+ properties
  *    |     |  |   \- type = Float
  *    |     |  |   \- description = Height of each pixel in microns.
  *    |     |  |--+ property version overrides
@@ -72,7 +72,7 @@ import java.util.*;
  *    |     |        \- getter = getPixelSizeY
  *    |     |        \- setter = setPixelSizeY
  *    |     |--+ PhysicalSizeZ
- *    |     |  |--+ attributes
+ *    |     |  |--+ properties
  *    |     |  |   \- type = Float
  *    |     |  |   \- description = Distance between focal planes in microns.
  *    |     |  |--+ property version overrides
@@ -80,7 +80,7 @@ import java.util.*;
  *    |     |        \- getter = getPixelSizeZ
  *    |     |        \- setter = setPixelSizeZ
  *    |     |--+ TimeIncrement
- *    |     |  |--+ attributes
+ *    |     |  |--+ properties
  *    |     |  |   \- type = Float
  *    |     |  |   \- description = Distance between time points in seconds.
  *    |     |  |--+ property version overrides
@@ -88,14 +88,14 @@ import java.util.*;
  *    |     |        \- getter = getPixelSizeT
  *    |     |        \- setter = setPixelSizeT
  *    |     |--+ WaveStart
- *    |     |  |--+ attributes
+ *    |     |  |--+ properties
  *    |     |  |   \- type = Integer
  *    |     |  |   \- description = Starting wavelength in nanometers.
  *    |     |  |--+ property version overrides
  *    |     |     |-+ 2003FC
  *    |     |        \- available = false
  *    |     |--+ WaveIncrement
- *    |        |--+ attributes
+ *    |        |--+ properties
  *    |        |   \- type = Integer
  *    |        |   \- description = Distance between wavelengths in nanometers.
  *    |        |--+ property version overrides
@@ -126,7 +126,7 @@ public class EntityList {
 
   /** List of entities. */
   protected Hashtable<String, Entity> entities =
-    new Hashtable<String, Entity>(); 
+    new Hashtable<String, Entity>();
 
   /** The active version. */
   protected String ver;
@@ -292,7 +292,7 @@ public class EntityList {
   /** Gets the attribute value for the header key. */
   public String name() { return value(IniParser.HEADER_KEY); }
 
-  /** 
+  /**
    * Queries the attribute value for the given key, for the active version,
    * property and entity.
    */
