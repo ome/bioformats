@@ -429,12 +429,24 @@ Pixels = Yes since r639
 Experimenter = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.Name = Yes
 Plane = Yes
 PlaneTiming = Yes
 Image.CreationDate = Yes
 Image.Description = Yes
 ImagingEnvironment.Temperature = Yes
+StagePosition.PositionX = Yes
+StagePosition.PositionY = Yes
+ImagingEnvironment.Temperature = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.ReadOutRate = Yes
+DetectorSettings.Detector = Yes
+LightSourceSettings.LightSource = Yes
+LightSourceSettings.Wavelength = Yes
+Detector.Zoom = Yes
+Detector.Type = Missing
 
 [MetamorphTiffReader]
 Pixels = Yes since r3700

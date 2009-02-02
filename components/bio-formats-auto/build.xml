@@ -21,6 +21,15 @@ Type "ant -p" for a list of targets.
       fork="true" dir="${root.dir}/components/bio-formats/src/loci/formats"/>
   </target>
 
+  <target name="gen-meta-support" depends="compile"
+    description="generate documentation for Bio-Formats' metadata support">
+    <java classname="${component.meta-support-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${root.dir}/components/bio-formats/">
+        <arg value="${omexml.version}"/>
+    </java>
+  </target>
+
   <target name="gen-ice" depends="compile"
     description="generate code for Bio-Formats Ice framework">
     <java classname="${component.main-class}"
