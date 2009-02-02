@@ -78,6 +78,8 @@ public class DeltavisionReader extends FormatReader {
   /** Initialize an array of Extended Header Field structures. */
   protected DVExtHdrFields[][][] extHdrFields = null;
 
+  private Float[] ndFilters;
+
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
@@ -331,6 +333,8 @@ public class DeltavisionReader extends FormatReader {
     title = title.length() == 0 ? null : title;
     store.setImageDescription(title, 0);
 
+    ndFilters = new Float[getSizeC()];
+
     // if matching log file exists, extract key/value pairs from it
     boolean logFound = parseLogFile(store);
     parseDeconvolutionLog(store);
@@ -352,7 +356,7 @@ public class DeltavisionReader extends FormatReader {
           new Float(extHdrFields[z][w][t].getTimeStampSeconds()), 0, 0, i);
       }
       store.setPlaneTimingExposureTime(
-        new Float(extHdrFields[z][w][t].getExpTime() / 1000), 0, 0, i);
+        new Float(extHdrFields[z][w][t].getExpTime()), 0, 0, i);
 
       // stage position
       if (!logFound) {
@@ -368,11 +372,11 @@ public class DeltavisionReader extends FormatReader {
     for (int w=0; w<getSizeC(); w++) {
       store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
       store.setLogicalChannelExWave(
-        new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
-      if (!logFound) {
-        store.setLogicalChannelNdFilter(
-          new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
+        new Integer((int) extHdrFields[0][w][0].getExWavelen()), 0, w);
+      if (ndFilters[w] == null) {
+        ndFilters[w] = new Float(extHdrFields[0][w][0].getNdFilter());
       }
+      store.setLogicalChannelNdFilter(ndFilters[w], 0, w);
     }
 
     status("Populating metadata");
@@ -536,9 +540,10 @@ public class DeltavisionReader extends FormatReader {
         }
         else if (key.equals("ND filter")) {
           try {
-            Float nd = new Float(value);
+            float nd = Float.parseFloat(value.replaceAll("%", ""));
+            nd = (float) Math.pow(10, -1 * nd);
             int cIndex = getZCTCoords(currentImage)[1];
-            store.setLogicalChannelNdFilter(nd, 0, cIndex);
+            ndFilters[cIndex] = new Float(nd);
           }
           catch (NumberFormatException exc) { }
         }
@@ -771,6 +776,8 @@ public class DeltavisionReader extends FormatReader {
 
     protected DVExtHdrFields(RandomAccessStream in) {
       try {
+        // NB: this is consistent with the Deltavision Opener plugin
+        // for ImageJ (http://rsb.info.nih.gov/ij/plugins/track/delta.html)
         photosensorReading = in.readFloat();
         timeStampSeconds = in.readFloat();
         stageXCoord = in.readFloat();
@@ -778,16 +785,10 @@ public class DeltavisionReader extends FormatReader {
         stageZCoord = in.readFloat();
         minInten = in.readFloat();
         maxInten = in.readFloat();
-        expTime = in.readFloat();
         in.skipBytes(4);
+        expTime = in.readFloat();
 
-        // DV files store the ND (neutral density) Filter
-        // (normally expressed as a %T (transmittance)) as an OD
-        // (optical density) rating.
-        // To convert from one to the other the formula is %T = 10^(-OD) X 100.
-        ndFilter = (float) Math.pow(10.0, -1 * in.readFloat());
-        exFilter = in.readFloat();
-        emFilter = in.readFloat();
+        ndFilter = in.readFloat();
         exWavelen = in.readFloat();
         emWavelen = in.readFloat();
         intenScaling = in.readFloat();
@@ -809,8 +810,6 @@ public class DeltavisionReader extends FormatReader {
     public float getMeanInten() { return meanInten; }
     public float getExpTime() { return expTime; }
     public float getNdFilter() { return ndFilter; }
-    public float getExFilter() { return exFilter; }
-    public float getEmFilter() { return emFilter; }
     public float getExWavelen() { return exWavelen; }
     public float getEmWavelen() { return emWavelen; }
     public float getIntenScaling() { return intenScaling; }
