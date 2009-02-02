@@ -432,7 +432,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
     store.setDimensionsPhysicalSizeZ(new Float(stepSize), 0, 0);
 
-    for (int i=0; i<getSizeC(); i++) {
+    for (int i=0; i<getEffectiveSizeC(); i++) {
       if (waveNames != null && i < waveNames.size()) {
         store.setLogicalChannelName((String) waveNames.get(i), 0, i);
       }
@@ -452,8 +452,10 @@ public class MetamorphReader extends BaseTiffReader {
       store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
 
       int index = getIndex(0, i, 0);
-      store.setLightSourceSettingsWavelength(
-        new Integer((int) wave[index]), 0, i);
+      if (index < wave.length && (int) wave[index] >= 1) {
+        store.setLightSourceSettingsWavelength(
+          new Integer((int) wave[index]), 0, i);
+      }
     }
     store.setDetectorID("Detector:0", 0, 0);
     store.setDetectorZoom(new Float(zoom), 0, 0);
