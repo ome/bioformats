@@ -126,10 +126,10 @@ public class POITools {
   private void initialize(String file) throws FormatException, IOException {
     try {
       r = new ReflectedUniverse();
-      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
-      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import loci.poi.poifs.filesystem.POIFSFileSystem");
+      r.exec("import loci.poi.poifs.filesystem.DirectoryEntry");
+      r.exec("import loci.poi.poifs.filesystem.DocumentEntry");
+      r.exec("import loci.poi.poifs.filesystem.DocumentInputStream");
       r.exec("import loci.common.RandomAccessStream");
       r.exec("import java.util.Iterator");
     }

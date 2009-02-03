@@ -43,7 +43,7 @@ import loci.visbio.state.OptionManager;
 import loci.visbio.state.SpreadsheetLaunchOption;
 import loci.visbio.state.SpreadsheetOptionStrategy;
 import loci.visbio.util.*;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import loci.poi.hssf.usermodel.HSSFWorkbook;
 import visad.util.Util;
 
 /**

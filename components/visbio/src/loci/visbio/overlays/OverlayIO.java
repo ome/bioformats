@@ -36,8 +36,8 @@ import loci.visbio.state.OptionManager;
 import loci.visbio.util.*;
 import loci.visbio.VisBio;
 import loci.visbio.VisBioFrame;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.Region;
+import loci.poi.hssf.usermodel.*;
+import loci.poi.hssf.util.Region;
 
 /**
  * Utility methods for saving and loading overlays to and from disk.

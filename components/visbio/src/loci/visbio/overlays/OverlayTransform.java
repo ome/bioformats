@@ -37,7 +37,7 @@ import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.TransformLink;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import loci.poi.hssf.usermodel.HSSFWorkbook;
 import visad.*;
 import visad.util.CursorUtil;
 
