@@ -4,9 +4,9 @@
 
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
+import loci.common.Location;
+import loci.common.RandomAccessStream;
 import loci.formats.FilePattern;
-import loci.formats.Location;
-import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 import loci.formats.in.TiffReader;
 import loci.formats.out.TiffWriter;

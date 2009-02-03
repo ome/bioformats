@@ -4,7 +4,7 @@
 
 import java.io.*;
 import java.util.Hashtable;
-import loci.formats.RandomAccessStream;
+import loci.common.RandomAccessStream;
 import loci.formats.TiffTools;
 
 /** Allows raw user TIFF comment editing for the given TIFF files. */
