@@ -194,6 +194,9 @@ public class InCellReader extends FormatReader {
 
     // populate Image data
 
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
     for (int i=0; i<seriesCount; i++) {
       store.setImageName("", i);
       store.setImageCreationDate(creationDate, i);
@@ -204,7 +207,7 @@ public class InCellReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       for (int q=0; q<core[i].imageCount; q++) {
         store.setPlaneTimingDeltaT((Float) timings.get(nextTiming++), i, 0, q);
-        store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
+        //store.setPlaneTimingExposureTime(new Float(0), i, 0, q);
       }
     }
 
@@ -223,6 +226,7 @@ public class InCellReader extends FormatReader {
       int row = (int) ((Point) wellCoordinates.get(i)).x - startRow;
       int col = (int) ((Point) wellCoordinates.get(i)).y - startCol;
       store.setWellSampleIndex(new Integer(i), 0, row*wellCols + col, 0);
+      store.setWellSampleImageRef("Image:" + i, 0, row * wellCols + col, 0);
     }
   }
 
@@ -295,7 +299,9 @@ public class InCellReader extends FormatReader {
       }
 
       if (qName.equals("Image")) {
-        timings.add(new Float(attributes.getValue("acquisition_time_ms")));
+        float timestamp =
+          Float.parseFloat(attributes.getValue("acquisition_time_ms"));
+        timings.add(new Float(timestamp / 1000));
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd
