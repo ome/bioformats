@@ -322,6 +322,9 @@ public class LIFReader extends FormatReader {
     Vector zcal = handler.getZCal();
     Vector bits = handler.getBits();
     Vector lutNames = handler.getLutNames();
+    Vector stageX = handler.getXPosition();
+    Vector stageY = handler.getYPosition();
+    Vector stageZ = handler.getZPosition();
 
     numDatasets = widths.size();
 
@@ -425,6 +428,8 @@ public class LIFReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     store.setInstrumentID("Instrument:0", 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
+    store.setObjectiveCorrection("Unknown", 0, 0);
 
     for (int i=0; i<numDatasets; i++) {
       // populate Dimensions data
@@ -444,6 +449,24 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(seriesName, i);
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
+
+      // populate StagePosition data
+
+      if (i < stageX.size()) {
+        for (int q=0; q<core[i].imageCount; q++) {
+          store.setStagePositionPositionX((Float) stageX.get(i), i, 0, q);
+        }
+      }
+      if (i < stageY.size()) {
+        for (int q=0; q<core[i].imageCount; q++) {
+          store.setStagePositionPositionY((Float) stageY.get(i), i, 0, q);
+        }
+      }
+      if (i < stageZ.size()) {
+        for (int q=0; q<core[i].imageCount; q++) {
+          store.setStagePositionPositionZ((Float) stageZ.get(i), i, 0, q);
+        }
+      }
 
       // link Instrument and Image
       store.setImageInstrumentRef("Instrument:0", i);

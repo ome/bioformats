@@ -58,6 +58,10 @@ public class LeicaHandler extends DefaultHandler {
   private MetadataStore store;
 
   private Vector nextPlane;
+  private int nextLaser, nextDetector;
+
+  private Vector laserNames, detectorNames;
+  private Vector xPosition, yPosition, zPosition;
 
   // -- Constructor --
 
@@ -80,6 +84,11 @@ public class LeicaHandler extends DefaultHandler {
     bits = new Vector();
     lutNames = new Vector();
     nextPlane = new Vector();
+    laserNames = new Vector();
+    detectorNames = new Vector();
+    xPosition = new Vector();
+    yPosition = new Vector();
+    zPosition = new Vector();
     this.store = store;
   }
 
@@ -119,6 +128,12 @@ public class LeicaHandler extends DefaultHandler {
 
   public Vector getLutNames() { return lutNames; }
 
+  public Vector getXPosition() { return xPosition; }
+
+  public Vector getYPosition() { return yPosition; }
+
+  public Vector getZPosition() { return zPosition; }
+
   // -- DefaultHandler API methods --
 
   public void endElement(String uri, String localName, String qName) {
@@ -151,6 +166,8 @@ public class LeicaHandler extends DefaultHandler {
 
       numChannels = 0;
       extras = 1;
+      nextLaser = 0;
+      nextDetector = 0;
     }
   }
 
@@ -313,8 +330,8 @@ public class LeicaHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("FilterSettingRecord")) {
-      String key = attributes.getValue("ObjectName") + " - " +
-        attributes.getValue("Description") + " - " +
+      String object = attributes.getValue("ObjectName");
+      String key = object + " - " + attributes.getValue("Description") + " - " +
         attributes.getValue("Attribute");
       if (fullSeries != null && !fullSeries.equals("")) {
         key = fullSeries + " - " + key;
@@ -327,16 +344,106 @@ public class LeicaHandler extends DefaultHandler {
         if (name.equals("Variant")) {
           if (key.endsWith("NumericalAperture")) {
             store.setObjectiveLensNA(new Float(value), 0, 0);
-            store.setObjectiveCorrection("Unknown", 0, 0);
-            store.setObjectiveImmersion("Unknown", 0, 0);
           }
           else if (key.endsWith("HighVoltage")) {
             store.setDetectorVoltage(new Float(value), 0, 0);
             store.setDetectorType("Unknown", 0, 0);
+
+            if (!detectorNames.contains(object)) {
+              detectorNames.add(object);
+            }
+            int detector = detectorNames.indexOf(object);
+            store.setDetectorSettingsDetector("Detector:" + detector,
+              seriesNames.size() - 1, nextDetector);
+
+            nextDetector++;
           }
           else if (key.endsWith("VideoOffset")) {
             store.setDetectorOffset(new Float(value), 0, 0);
             store.setDetectorType("Unknown", 0, 0);
+          }
+          else if (key.endsWith("OrderNumber")) {
+            store.setObjectiveSerialNumber(value, 0, 0);
+          }
+          else if (key.endsWith("Objective")) {
+            StringTokenizer tokens = new StringTokenizer(value, " ");
+            boolean foundMag = false;
+            StringBuffer model = new StringBuffer();
+            while (!foundMag) {
+              String token = tokens.nextToken();
+              if (token.indexOf("x") != -1) {
+                foundMag = true;
+
+                String mag = token.substring(0, token.indexOf("x"));
+                String na = token.substring(token.indexOf("x") + 1);
+
+                store.setObjectiveNominalMagnification(
+                  new Integer((int) Float.parseFloat(mag)), 0, 0);
+                store.setObjectiveLensNA(new Float(na), 0, 0);
+
+                break;
+              }
+              model.append(token);
+              model.append(" ");
+            }
+
+            if (tokens.hasMoreTokens()) {
+              store.setObjectiveImmersion(tokens.nextToken(), 0, 0);
+            }
+            if (tokens.countTokens() > 1) {
+              Float temperature = new Float(tokens.nextToken());
+              tokens.nextToken();
+            }
+            if (tokens.hasMoreTokens()) {
+              store.setObjectiveCorrection(tokens.nextToken(), 0, 0);
+            }
+
+            store.setObjectiveModel(model.toString(), 0, 0);
+          }
+          else if (key.endsWith("RefractionIndex")) {
+            store.setObjectiveID("Objective:0", 0, 0);
+            store.setObjectiveSettingsObjective("Objective:0",
+              seriesNames.size() - 1);
+            store.setObjectiveSettingsRefractiveIndex(new Float(value),
+              seriesNames.size() - 1);
+          }
+          else if (key.endsWith("Laser wavelength - Wavelength")) {
+            if (!laserNames.contains(object)) {
+              int index = laserNames.size();
+              store.setLightSourceID("LightSource:" + index, 0, index);
+              store.setLaserWavelength(new Integer(value), 0, index);
+              laserNames.add(object);
+            }
+          }
+          else if (key.endsWith("Laser output power - Output Power")) {
+            if (!laserNames.contains(object)) {
+              laserNames.add(object);
+            }
+
+            int laser = laserNames.indexOf(object);
+            store.setLightSourcePower(new Float(value), 0, laser);
+            store.setLightSourceSettingsLightSource("LightSource:" + laser,
+              seriesNames.size() - 1, nextLaser);
+
+            nextLaser++;
+          }
+          else if (key.endsWith("Stage Pos x - XPos")) {
+            while (xPosition.size() < seriesNames.size() - 1) {
+              xPosition.add(null);
+            }
+            xPosition.add(new Float(value));
+          }
+          else if (key.endsWith("Stage Pos y - YPos")) {
+            while (yPosition.size() < seriesNames.size() - 1) {
+              yPosition.add(null);
+            }
+            yPosition.add(new Float(value));
+          }
+          else if (key.endsWith("Stage Pos z - ZPos")) {
+            while (zPosition.size() < seriesNames.size() - 1) {
+              zPosition.add(null);
+            }
+            zPosition.add(new Float(value));
           }
         }
       }
@@ -493,10 +600,13 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("RelTimeStamp")) {
       String frame = attributes.getValue("Frame");
       String time = attributes.getValue("Time");
-      metadata.put(fullSeries + qName + " - " + frame, time);
+      metadata.put(fullSeries + " - " + qName + " - " + frame, time);
 
+      int originalPlane = Integer.parseInt(frame);
       int planeNum =
         ((Integer) nextPlane.get(seriesNames.size() - 1)).intValue();
+      if (originalPlane < planeNum) return;
+
       store.setPlaneTimingDeltaT(new Float(time), seriesNames.size() - 1, 0,
         planeNum);
       planeNum++;
