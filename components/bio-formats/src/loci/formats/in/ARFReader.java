@@ -76,12 +76,8 @@ public class ARFReader extends FormatReader {
     int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
     int sizeX = getSizeX();
     int sizeY = getSizeY();
-    in.seek(12 + 512 + bytesPerPixel * (x + sizeX * (y + sizeY * no)));
-    for (int q=0; q < h; q++) {
-      in.read(buf, q * y * bytesPerPixel, w * bytesPerPixel);
-      if (w < sizeX)
-        in.skipBytes((sizeX - w) * bytesPerPixel);
-    }
+    in.seek(14 + 510 + no * bytesPerPixel * sizeX * sizeY);
+    readPlane(in, x, y, w, h, buf);
 
     return buf;
   }
@@ -94,42 +90,61 @@ public class ARFReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    // parse file header
+
     status("Reading file header");
 
-    in.seek(0);
-    short endian1 = in.readByte();
-    short endian2 = in.readByte();
-    if (endian1 == 1 && endian2 == 0)
-      in.order(true);
-    else if (endian1 == 0 && endian2 == 1)
-      in.order(false);
-    else
-      throw new FormatException("Undefined endianness");
+    byte endian1 = in.readByte();
+    byte endian2 = in.readByte();
+    boolean little;
+    if (endian1 == 1 && endian2 == 0) little = true;
+    else if (endian1 == 0 && endian2 == 1) little = false;
+    else throw new FormatException("Undefined endianness");
+    in.order(little);
 
-    in.skipBytes(2);
-    short version = in.readShort();
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
+    in.skipBytes(2); // 'AR' signature
+    int version = in.readUnsignedShort();
+    int height = in.readUnsignedShort();
+    int width = in.readUnsignedShort();
+    int bitsPerPixel = in.readUnsignedShort();
+    int numImages = version == 2 ? in.readUnsignedShort() : 1;
+    // NB: The next 510 bytes are unused 'application dependent' data,
+    // followed by raw image data with no padding.
 
-    int bitsPerPixel = in.readShort();
-    if (bitsPerPixel > 32)
-      throw new FormatException("Too many bits per pixel: " + bitsPerPixel);
-    if (bitsPerPixel > 16)
-      core[0].pixelType = FormatTools.UINT32;
-    else if (bitsPerPixel > 7)
-      core[0].pixelType = FormatTools.UINT16;
-    else
-      core[0].pixelType = FormatTools.UINT8;
+    // populate core metadata
 
+    core[0].sizeX = width;
+    core[0].sizeY = height;
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
-    core[0].sizeT = version == 2 ? in.readShort() : 1;
-    core[0].imageCount = core[0].sizeT;
-    core[0].littleEndian = endian1 == 1;
-    core[0].rgb = false;
-    core[0].indexed = false;
-    core[0].interleaved = false;
+    core[0].sizeT = numImages;
+
+    if (bitsPerPixel > 32) {
+      throw new FormatException("Too many bits per pixel: " + bitsPerPixel);
+    }
+    else if (bitsPerPixel > 16) core[0].pixelType = FormatTools.UINT32;
+    else if (bitsPerPixel > 8) core[0].pixelType = FormatTools.UINT16;
+    else core[0].pixelType = FormatTools.UINT8;
+
+    core[0].imageCount = numImages;
     core[0].dimensionOrder = "XYCZT";
+    core[0].orderCertain = true;
+    core[0].littleEndian = little;
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].indexed = false;
+    core[0].metadataComplete = true;
+
+    // populate original metadata
+
+    addMeta("Endianness", little ? "little" : "big");
+    addMeta("Version", version);
+    addMeta("Width", width);
+    addMeta("Height", height);
+    addMeta("Bits per pixel", bitsPerPixel);
+    addMeta("Image count", numImages);
+
+    // populate OME metadata
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
