@@ -292,7 +292,7 @@ my %poi = (
   TITLE   => "Apache Jakarta POI",
   PATH    => "components/forks/poi",
   JAR     => "poi-loci.jar",
-  PACKAGE => "org.apache.poi",
+  PACKAGE => "loci.poi",
   DESC    => <<ZZ,
 Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
 ZZ

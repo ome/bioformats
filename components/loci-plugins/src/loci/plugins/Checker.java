@@ -81,7 +81,7 @@ public final class Checker {
         checkLibrary("loci.common.RandomAccessStream",
           "loci-common.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
-        checkLibrary("org.apache.poi.poifs.filesystem.POIFSDocument",
+        checkLibrary("loci.poi.poifs.filesystem.POIFSDocument",
           "poi-loci.jar", missing);
         checkLibrary("mdbtools.libmdb.MdbFile", "mdbtools-java.jar", missing);
         break;

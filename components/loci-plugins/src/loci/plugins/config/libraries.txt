@@ -227,7 +227,7 @@ notes = Used by Bio-Formats for HDF support (Imaris 5.5).
 
 [Apache Jakarta POI (LOCI version)]
 type = Java library
-class = org.apache.poi.poifs.filesystem.POIFSDocument
+class = loci.poi.poifs.filesystem.POIFSDocument
 url = http://jakarta.apache.org/poi/
 license = Apache
 notes = Used by Bio-Formats for OLE support in CXD, IPW, OIB and ZVI
