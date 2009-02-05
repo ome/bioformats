@@ -62,6 +62,7 @@ loci.formats.in.MINCReader            # mnc
 loci.formats.in.QTReader              # mov
 loci.formats.in.MRWReader             # mrw
 loci.formats.in.TillVisionReader      # vws
+loci.formats.in.ARFReader             # arf
 
 # multi-extension messes
 loci.formats.in.APLReader             # apl, mtb, tnb
