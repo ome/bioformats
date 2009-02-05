@@ -667,7 +667,9 @@ public class ICSReader extends FormatReader {
       store.setDimensionsPhysicalSizeY(pixY, 0, 0);
       store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
       store.setDimensionsTimeIncrement(pixT, 0, 0);
-      if (pixC.intValue() > 0) store.setDimensionsWaveIncrement(pixC, 0, 0);
+      if (pixC != null && pixC.intValue() > 0) {
+        store.setDimensionsWaveIncrement(pixC, 0, 0);
+      }
     }
     else if (sizes != null) {
       for (int i=0; i<sizes.length; i++) {
