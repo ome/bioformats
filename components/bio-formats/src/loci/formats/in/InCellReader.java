@@ -218,11 +218,12 @@ public class InCellReader extends FormatReader {
     // populate Image data
 
     store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
 
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i);
+      store.setImageID("Image:" + i, i);
+      store.setImageInstrumentRef("Instrument:0", i);
       store.setImageName("Well #" + well + ", Field #" + field, i);
       store.setImageCreationDate(creationDate, i);
     }
