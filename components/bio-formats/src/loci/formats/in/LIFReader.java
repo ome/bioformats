@@ -425,7 +425,7 @@ public class LIFReader extends FormatReader {
           break;
       }
     }
-    MetadataTools.populatePixels(store, this, true);
+    MetadataTools.populatePixels(store, this, false);
 
     store.setInstrumentID("Instrument:0", 0);
     store.setObjectiveImmersion("Unknown", 0, 0);

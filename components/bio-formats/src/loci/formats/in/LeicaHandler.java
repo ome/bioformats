@@ -364,7 +364,9 @@ public class LeicaHandler extends DefaultHandler {
             if (!laserNames.contains(object)) {
               int index = laserNames.size();
               store.setLightSourceID("LightSource:" + index, 0, index);
+              store.setLaserType("Unknown", 0, index);
               store.setLaserWavelength(new Integer(value), 0, index);
+              store.setLaserLaserMedium("Unknown", 0, index);
               laserNames.add(object);
             }
           }
@@ -560,6 +562,10 @@ public class LeicaHandler extends DefaultHandler {
         ((Integer) nextPlane.get(seriesNames.size() - 1)).intValue();
       if (originalPlane < planeNum) return;
 
+      store.setPlaneTheC(new Integer(0), seriesNames.size() - 1, 0, planeNum);
+      store.setPlaneTheZ(new Integer(0), seriesNames.size() - 1, 0, planeNum);
+      store.setPlaneTheT(new Integer(planeNum), seriesNames.size() - 1, 0,
+        planeNum);
       store.setPlaneTimingDeltaT(new Float(time), seriesNames.size() - 1, 0,
         planeNum);
       planeNum++;
