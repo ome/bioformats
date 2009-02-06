@@ -154,7 +154,7 @@ public class LeicaHandler extends DefaultHandler {
       if (widths.size() < numDatasets && heights.size() < numDatasets) {
         numDatasets--;
       }
-      else if (widths.size() > numDatasets && heights.size() > numDatasets) {
+      else if (widths.size() > numDatasets) {
         numDatasets = widths.size();
       }
 
@@ -274,54 +274,7 @@ public class LeicaHandler extends DefaultHandler {
         key = fullSeries + " - " + key;
       }
       metadata.put(key, attributes.getValue("Variant"));
-      if ("csScanMode".equals(identifier)) {
-        String order = attributes.getValue("Variant").toLowerCase();
-
-        if (order.indexOf("xy") == -1) {
-          // switch the axis sizes around, depending on the
-          // stored dimension order
-
-          int xPos = order.indexOf("x");
-          int yPos = order.indexOf("y");
-          int zPos = order.indexOf("z");
-          int tPos = order.indexOf("t");
-
-          if (xPos < 0) xPos = 0;
-          if (yPos < 0) yPos = 1;
-          if (zPos < 0) zPos = 2;
-          if (tPos < 0) tPos = 3;
-
-          int index = widths.size() - 1;
-
-          int x = ((Integer) widths.get(index)).intValue();
-          int y = index < heights.size() ?
-            ((Integer) heights.get(index)).intValue() : 1;
-          int z = index < zs.size() ? ((Integer) zs.get(index)).intValue() : 1;
-          int t = index < ts.size() ? ((Integer) ts.get(index)).intValue() : 1;
-
-          int[] dimensions = {x, y, z, t};
-
-          x = dimensions[xPos];
-          y = dimensions[yPos];
-          z = dimensions[zPos];
-          t = dimensions[tPos];
-
-          widths.setElementAt(new Integer(x), widths.size() - 1);
-          if (index < heights.size()) {
-            heights.setElementAt(new Integer(y), heights.size() - 1);
-          }
-          else heights.add(new Integer(y));
-          if (index < zs.size()) {
-            zs.setElementAt(new Integer(z), zs.size() - 1);
-          }
-          else zs.add(new Integer(z));
-          if (index < ts.size()) {
-            ts.setElementAt(new Integer(t), ts.size() - 1);
-          }
-          else ts.add(new Integer(t));
-        }
-      }
-      else if (identifier.startsWith("dblVoxel")) {
+      if (identifier.startsWith("dblVoxel")) {
         String size = attributes.getValue("Variant");
         float cal = Float.parseFloat(size) * 1000000;
         if (identifier.endsWith("X")) xcal.add(new Float(cal));
