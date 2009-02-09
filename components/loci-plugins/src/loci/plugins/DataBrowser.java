@@ -27,8 +27,7 @@ package loci.plugins;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import ij.ImagePlus;
-import ij.ImageStack;
+import ij.*;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import ij.io.FileInfo;
@@ -59,6 +58,8 @@ public class DataBrowser extends StackWindow implements ActionListener {
 
   // -- Fields --
 
+  protected volatile boolean done;
+
   protected JSpinner fpsSpin;
   protected Button animate, options, metadata;
   protected boolean anim = false;
@@ -72,6 +73,8 @@ public class DataBrowser extends StackWindow implements ActionListener {
 
   protected int[] cLengths;
   protected int[] cIndex;
+
+  private int slice;
 
   // -- Constructors --
 
@@ -121,9 +124,50 @@ public class DataBrowser extends StackWindow implements ActionListener {
     controls.setLayout(new FormLayout(cols, rows));
     controls.setBackground(Color.white);
 
-    boolean hasZ = sliceSelector != null;
-    boolean hasT = frameSelector != null;
-    boolean hasC = channelSelector != null;
+    int c = imp.getNChannels();
+    int z = imp.getNSlices();
+    int t = imp.getNFrames();
+
+    boolean hasZ = z > 1;
+    boolean hasC = c > 1;
+    boolean hasT = t > 1;
+
+    if (sliceSelector != null) remove(sliceSelector);
+    if (frameSelector != null) remove(frameSelector);
+    if (channelSelector != null) remove(channelSelector);
+
+    ImageJ ij = IJ.getInstance();
+
+    if (hasC) {
+      channelSelector = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, c + 1);
+      add(channelSelector);
+      if (ij != null) channelSelector.addKeyListener(ij);
+      channelSelector.addAdjustmentListener(this);
+      // prevents scroll bar from blinking on Windows
+      channelSelector.setFocusable(false);
+      channelSelector.setUnitIncrement(1);
+      channelSelector.setBlockIncrement(1);
+    }
+    if (hasZ) {
+      sliceSelector = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, z + 1);
+      add(sliceSelector);
+      if (ij != null) sliceSelector.addKeyListener(ij);
+      sliceSelector.addAdjustmentListener(this);
+      sliceSelector.setFocusable(false);
+      int blockIncrement = (int) Math.max(z / 10, 1);
+      sliceSelector.setUnitIncrement(1);
+      sliceSelector.setBlockIncrement(blockIncrement);
+    }
+    if (hasT) {
+      frameSelector = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, t + 1);
+      add(frameSelector);
+      if (ij != null) frameSelector.addKeyListener(ij);
+      frameSelector.addAdjustmentListener(this);
+      frameSelector.setFocusable(false);
+      int blockIncrement = (int) Math.max(t / 10, 1);
+      frameSelector.setUnitIncrement(1);
+      frameSelector.setBlockIncrement(blockIncrement);
+    }
 
     Label zLabel = new Label("Z-depth");
     zLabel.setEnabled(hasZ);
@@ -380,15 +424,40 @@ public class DataBrowser extends StackWindow implements ActionListener {
           super.adjustmentValueChanged(new AdjustmentEvent(channelSelector,
             AdjustmentEvent.ADJUSTMENT_VALUE_CHANGED, AdjustmentEvent.TRACK,
             channel));
+          updateSlice();
         }
         return;
       }
     }
     super.adjustmentValueChanged(e);
+    updateSlice();
   }
 
+  public void run() {
+    while (!done) {
+      synchronized (this) {
+        try {
+          wait();
+        }
+        catch (InterruptedException e) { }
+      }
+      if (done) return;
+      if (slice > 0 && slice != imp.getCurrentSlice()) {
+        imp.setSlice(slice);
+        slice = 0;
+      }
+    }
+  }
 
   // -- Helper methods --
+
+  private void updateSlice() {
+    int[] dims =
+      new int[] {imp.getNChannels(), imp.getNSlices(), imp.getNFrames()};
+    int[] pos =
+      new int[] {imp.getChannel() - 1, imp.getSlice() - 1, imp.getFrame() - 1};
+    slice = FormatTools.positionToRaster(dims, pos) + 1;
+  }
 
   protected static Scrollbar makeDummySlider() {
     Scrollbar scrollbar = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, 2);
