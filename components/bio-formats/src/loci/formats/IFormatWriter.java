@@ -39,12 +39,16 @@ public interface IFormatWriter extends IFormatHandler {
 
   /**
    * Saves the given image to the current file.
+   * Note that this method will append the image to the file; it will not
+   * overwrite previously saved images.
    * If this image is the last one in the file, the last flag must be set.
    */
   void saveImage(Image image, boolean last) throws FormatException, IOException;
 
   /**
    * Saves the given image to the given series in the current file.
+   * Note that this method will append the image to the file; it will not
+   * overwrite previously saved images.
    * If this image is the last one in the series, the lastInSeries flag
    * must be set.
    * If this image is the last one in the file, the last flag must be set.
@@ -54,6 +58,8 @@ public interface IFormatWriter extends IFormatHandler {
 
   /**
    * Saves the given byte array to the current file.
+   * Note that this method will append the byte array to the file; it will not
+   * overwrite previously saved byte arrays.
    * If this is the last array to be written, the last flag must be set.
    */
   void saveBytes(byte[] bytes, boolean last)
@@ -61,6 +67,8 @@ public interface IFormatWriter extends IFormatHandler {
 
   /**
    * Saves the given byte array to the given series in the current file.
+   * Note that this method will append the byte array to the file; it will not
+   * overwrite previously saved byte arrays.
    * If this is the last array in the series, the lastInSeries flag must be set.
    * If this is the last array to be written, the last flag must be set.
    */

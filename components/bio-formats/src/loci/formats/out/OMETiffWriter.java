@@ -142,6 +142,7 @@ public class OMETiffWriter extends TiffWriter {
 
   // -- IFormatWriter API methods --
 
+  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
   public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
