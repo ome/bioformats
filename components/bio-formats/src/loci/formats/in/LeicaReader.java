@@ -966,8 +966,10 @@ public class LeicaReader extends FormatReader {
               // link Detector to Image, if the detector was actually used
               store.setDetectorID("Detector:" + detector, 0, detector);
               for (int i=0; i<getSeriesCount(); i++) {
+                if (detector < core[i].sizeC) {
                 store.setDetectorSettingsDetector("Detector:" + detector, i,
                   detector);
+                }
               }
             }
           }
@@ -1096,7 +1098,8 @@ public class LeicaReader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       int nextChannel = 0;
-      for (int channel=0; channel<channelNames[i].size(); channel++) {
+      for (int channel=0; channel<getSizeC(); channel++) {
+        if (channel >= channelNames[i].size()) break;
         String name = (String) channelNames[i].get(channel);
         if (name == null || name.trim().equals("")) continue;
 
