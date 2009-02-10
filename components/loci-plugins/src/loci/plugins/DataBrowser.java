@@ -311,6 +311,8 @@ public class DataBrowser extends StackWindow implements ActionListener {
               int sizeT = tSlider.getMaximum() - 1;
               if (t > sizeT) t = 1;
               setPosition(c, z, t);
+              imp.setPosition(c, z, t);
+              updateSlice();
               int fps = ((Number) fpsSpin.getValue()).intValue();
               ms = 1000 / fps;
             }
