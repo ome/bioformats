@@ -299,13 +299,13 @@ public class LeicaHandler extends DefaultHandler {
             store.setObjectiveLensNA(new Float(value), 0, 0);
           }
           else if (key.endsWith("HighVoltage")) {
-            store.setDetectorVoltage(new Float(value), 0, 0);
-            store.setDetectorType("Unknown", 0, 0);
-
             if (!detectorNames.contains(object)) {
               detectorNames.add(object);
             }
             int detector = detectorNames.indexOf(object);
+            store.setDetectorID("Detector:" + detector, 0, detector);
+            store.setDetectorVoltage(new Float(value), 0, detector);
+            store.setDetectorType("Unknown", 0, detector);
             store.setDetectorSettingsDetector("Detector:" + detector,
               seriesNames.size() - 1, nextDetector);
 
