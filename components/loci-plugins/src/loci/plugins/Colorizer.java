@@ -80,7 +80,7 @@ public class Colorizer implements PlugInFilter {
   private boolean merge;
   private boolean color;
   private boolean hyperstack;
-  private byte[][] lut;
+  private byte[][][] lut;
   private String mergeOption;
 
   // -- PlugInFilter API methods --
@@ -117,7 +117,7 @@ public class Colorizer implements PlugInFilter {
       stackOrder = gd.getNextChoice();
       hyperstack = gd.getNextBoolean();
 
-      if (color) doPrompt = true;
+      if (color && lut == null) doPrompt = true;
     }
     else {
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
@@ -128,12 +128,15 @@ public class Colorizer implements PlugInFilter {
       int colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "-1"));
       if (color) {
         if (colorNdx >= 0 && colorNdx < 3) {
-          lut = new byte[3][256];
-          for (int q=0; q<lut[colorNdx].length; q++) {
-            lut[colorNdx][q] = (byte) q;
+          lut = new byte[imp.getNChannels()][3][256];
+          for (int channel=0; channel<lut.length; channel++) {
+            if (colorNdx + channel >= lut[channel].length) break;
+            for (int q=0; q<lut[channel][colorNdx + channel].length; q++) {
+              lut[channel][colorNdx + channel][q] = (byte) q;
+            }
           }
         }
-        else doPrompt = true;
+        else if (lut == null) doPrompt = true;
       }
       mergeOption = Macro.getValue(arg, "merge_option", null);
       hyperstack = Boolean.valueOf(
@@ -182,7 +185,9 @@ public class Colorizer implements PlugInFilter {
             r.exec("composite.setPosition(channel, 1, 1)");
             if (doPrompt) {
               promptForColor(i);
-              LUT channelLut = new LUT(lut[0], lut[1], lut[2]);
+            }
+            if (lut != null) {
+              LUT channelLut = new LUT(lut[i][0], lut[i][1], lut[i][2]);
               r.setVar("lut", channelLut);
               r.exec("composite.setChannelLut(lut)");
             }
@@ -207,8 +212,8 @@ public class Colorizer implements PlugInFilter {
           promptForColor(0);
         }
 
-        IndexColorModel model = new IndexColorModel(8, 256, lut[0], lut[1],
-          lut[2]);
+        IndexColorModel model = new IndexColorModel(8, 256, lut[0][0],
+          lut[0][1], lut[0][2]);
         newStack.setColorModel(model);
         newImp.setStack(imp.getTitle(), newStack);
       }
@@ -342,6 +347,16 @@ public class Colorizer implements PlugInFilter {
       newImp.show();
     }
     if (closeOriginal) imp.close();
+    lut = null;
+  }
+
+  // -- Colorizer API methods --
+
+  public void setLookupTable(byte[][] lut, int channel) {
+    if (this.lut == null) {
+      this.lut = new byte[imp.getNChannels()][][];
+    }
+    if (channel < this.lut.length) this.lut[channel] = lut;
   }
 
   // -- Helper methods --
@@ -383,11 +398,11 @@ public class Colorizer implements PlugInFilter {
     double greenIncrement = ((double) color.getGreen()) / 255;
     double blueIncrement = ((double) color.getBlue()) / 255;
 
-    lut = new byte[3][256];
+    if (lut == null) lut = new byte[imp.getNChannels()][3][256];
     for (int i=0; i<256; i++) {
-      lut[0][i] = (byte) (i * redIncrement);
-      lut[1][i] = (byte) (i * greenIncrement);
-      lut[2][i] = (byte) (i * blueIncrement);
+      lut[channel][0][i] = (byte) (i * redIncrement);
+      lut[channel][1][i] = (byte) (i * greenIncrement);
+      lut[channel][2][i] = (byte) (i * blueIncrement);
     }
   }
 

@@ -180,7 +180,7 @@ public final class Util {
         if (isSigned) q = DataTools.makeSigned(q);
 
         ip[i] = new ByteProcessor(w, h, q, null);
-        //if (cm != null) ip[i].setColorModel(cm);
+        if (cm != null) ip[i].setColorModel(cm);
       }
       else if (pixels instanceof short[]) {
         short[] q = (short[]) pixels;

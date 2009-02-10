@@ -27,8 +27,10 @@ package loci.plugins;
 
 import ij.*;
 import ij.io.FileInfo;
+import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.*;
 import java.awt.Rectangle;
+import java.awt.image.IndexColorModel;
 import java.io.*;
 import java.util.*;
 import loci.common.*;
@@ -59,6 +61,8 @@ public class Importer {
 
   private Vector imps = new Vector();
   private String stackOrder = null;
+
+  private IndexColorModel[] colorModels;
 
   // -- Constructor --
 
@@ -533,6 +537,8 @@ public class Importer {
           }
         }
         else {
+          if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
+
           for (int j=0; j<num[i]; j++) {
             if (!load[j]) continue;
 
@@ -547,7 +553,6 @@ public class Importer {
             IJ.showProgress((double) q++ / total);
 
             int ndx = j;
-            //int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
 
             String label = constructSliceLabel(ndx, r,
               omexmlMeta, i, zCount, cCount, tCount);
@@ -557,6 +562,11 @@ public class Importer {
             if (ip == null) {
               plugin.canceled = true;
               return;
+            }
+
+            int channel = r.getZCTCoords(ndx)[1];
+            if (colorModels != null) {
+              colorModels[channel] = (IndexColorModel) ip.getColorModel();
             }
 
             // add plane to image stack
@@ -853,6 +863,20 @@ public class Importer {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
             " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
             " hyper_stack=" + options.isViewHyperstack() + " ");
+        }
+        else if (colorModels != null && !options.isVirtual()) {
+          Colorizer colorizer = new Colorizer();
+          String arg = "stack_order=" + stackOrder + " merge=false " +
+            "colorize=true hyper_stack=" + options.isViewHyperstack() + " ";
+          colorizer.setup(arg, imp);
+          for (int channel=0; channel<colorModels.length; channel++) {
+            byte[][] lut = new byte[3][256];
+            colorModels[channel].getReds(lut[0]);
+            colorModels[channel].getGreens(lut[1]);
+            colorModels[channel].getBlues(lut[2]);
+            colorizer.setLookupTable(lut, channel);
+          }
+          new PlugInFilterRunner(colorizer, "", arg);
         }
       }
       else imps.add(imp);
