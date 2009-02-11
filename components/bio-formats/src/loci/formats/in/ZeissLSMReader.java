@@ -723,10 +723,12 @@ public class ZeissLSMReader extends BaseTiffReader {
         store.setLaserLaserMedium(medium, 0, nextLaser);
         store.setLaserType(laserType, 0, nextLaser);
 
-        // link Laser (LightSource) to Image
-        store.setLightSourceID("LightSource:" + nextLaser, 0, nextLaser);
-        store.setLightSourceSettingsLightSource("LightSource:" + nextLaser,
-          0, nextLaser);
+        if (nextLaser < getEffectiveSizeC()) {
+          // link Laser (LightSource) to Image
+          store.setLightSourceID("LightSource:" + nextLaser, 0, nextLaser);
+          store.setLightSourceSettingsLightSource("LightSource:" + nextLaser,
+            0, nextLaser);
+        }
 
         nextLaser++;
       }
