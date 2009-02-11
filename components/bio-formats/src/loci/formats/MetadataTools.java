@@ -238,8 +238,8 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
-      store.setPixelsID("Pixels:0", i, 0);
-      store.setImageDefaultPixels("Pixels:0", i);
+      store.setPixelsID("Pixels:" + i, i, 0);
+      store.setImageDefaultPixels("Pixels:" + i, i);
       store.setPixelsSizeX(new Integer(r.getSizeX()), i, 0);
       store.setPixelsSizeY(new Integer(r.getSizeY()), i, 0);
       store.setPixelsSizeZ(new Integer(r.getSizeZ()), i, 0);
@@ -257,7 +257,7 @@ public final class MetadataTools {
           for (int rgb=0; rgb<r.getRGBChannelCount(); rgb++) {
             store.setChannelComponentIndex(
               new Integer(c * r.getRGBChannelCount() + rgb), i, c, rgb);
-            store.setChannelComponentPixels("Pixels:0", i, c, rgb);
+            store.setChannelComponentPixels("Pixels:" + i, i, c, rgb);
           }
         }
       }
