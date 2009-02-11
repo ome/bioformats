@@ -415,10 +415,10 @@ public class MetamorphReader extends BaseTiffReader {
         store.setPlaneTimingDeltaT(new Float(delta / 1000f), 0, 0, i);
         store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
       }
-      if (i < stageX.length) {
+      if (stageX != null && i < stageX.length) {
         store.setStagePositionPositionX(new Float((float) stageX[i]), 0, 0, i);
       }
-      if (i < stageY.length) {
+      if (stageY != null && i < stageY.length) {
         store.setStagePositionPositionY(new Float((float) stageY[i]), 0, 0, i);
       }
     }
@@ -446,15 +446,14 @@ public class MetamorphReader extends BaseTiffReader {
       }
       store.setDetectorSettingsDetector("Detector:0", 0, i);
 
-
-      // link LightSource to Image
-      store.setLightSourceID("LightSource:" + i, 0, i);
-      store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
-
       int index = getIndex(0, i, 0);
       if (index < wave.length && (int) wave[index] >= 1) {
         store.setLightSourceSettingsWavelength(
           new Integer((int) wave[index]), 0, i);
+
+        // link LightSource to Image
+        store.setLightSourceID("LightSource:" + i, 0, i);
+        store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
       }
     }
     store.setDetectorID("Detector:0", 0, 0);
