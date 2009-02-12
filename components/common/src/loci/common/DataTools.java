@@ -514,20 +514,6 @@ public final class DataTools {
   public static Object makeDataArray(byte[] b, int bpp, boolean fp,
     boolean little)
   {
-    return makeDataArray(b, bpp, fp, little, false);
-  }
-
-  /**
-   * Convert a byte array to the appropriate primitive type array.
-   * @param b Byte array to convert.
-   * @param bpp Denotes the number of bytes in the returned primitive type
-   *   (e.g. if bpp == 2, we should return an array of type short).
-   * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
-   * @param little Whether byte array is in little-endian order.
-   */
-  public static Object makeDataArray(byte[] b,
-    int bpp, boolean fp, boolean little, boolean signed)
-  {
     if (bpp == 1) {
       return b;
     }
