@@ -215,11 +215,11 @@ public class Exporter {
             for (int j=0; j<n; j++) {
               b[j] = (byte[]) is.getProcessor(i + j + 1).getPixels();
             }
-            img = AWTImageTools.makeImage(b, x, y);
+            img = AWTImageTools.makeImage(b, x, y, false);
           }
           else {
             byte[] b = (byte[]) proc.getPixels();
-            img = AWTImageTools.makeImage(b, x, y);
+            img = AWTImageTools.makeImage(b, x, y, false);
           }
         }
         else if (proc instanceof ShortProcessor) {
@@ -228,11 +228,11 @@ public class Exporter {
             for (int j=0; j<n; j++) {
               s[j] = (short[]) is.getProcessor(i + j + 1).getPixels();
             }
-            img = AWTImageTools.makeImage(s, x, y);
+            img = AWTImageTools.makeImage(s, x, y, false);
           }
           else {
             short[] s = (short[]) proc.getPixels();
-            img = AWTImageTools.makeImage(s, x, y);
+            img = AWTImageTools.makeImage(s, x, y, false);
           }
         }
         else if (proc instanceof FloatProcessor) {
@@ -251,7 +251,7 @@ public class Exporter {
         else if (proc instanceof ColorProcessor) {
           byte[][] pix = new byte[3][x*y];
           ((ColorProcessor) proc).getRGB(pix[0], pix[1], pix[2]);
-          img = AWTImageTools.makeImage(pix, x, y);
+          img = AWTImageTools.makeImage(pix, x, y, false);
         }
 
         if (notSupportedType) {

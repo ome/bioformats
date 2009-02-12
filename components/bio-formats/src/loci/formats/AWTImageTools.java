@@ -37,8 +37,9 @@ import loci.common.DataTools;
  * To work with images in primitive array form,
  * use the {@link ImageTools} class.
  *
- * Much code was stolen and adapted from DrLaszloJamf's posts at:
- *   http://forum.java.sun.com/thread.jspa?threadID=522483
+ * Much code was stolen and adapted from
+ * <a href="http://forum.java.sun.com/thread.jspa?threadID=522483">DrLaszloJamf's posts</a>
+ * on the Java forums.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/AWTImageTools.java">Trac</a>,
@@ -61,36 +62,81 @@ public final class AWTImageTools {
 
   /**
    * Creates an image from the given single-channel unsigned byte data.
+   *
+   * @deprecated Use {@link #makeImage(byte[], int, int, boolean)} instead.
+   */
+  public static BufferedImage makeImage(byte[] data, int w, int h) {
+    return makeImage(data, w, h, false);
+  }
+
+  /**
+   * Creates an image from the given single-channel byte data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
+   * @param signed Whether the byte values should be treated as signed
+   *   (-128 to 127) instead of unsigned (0 to 255).
+   *   <b>** Only unsigned byte data is supported for now. **</b>
    */
-  public static BufferedImage makeImage(byte[] data, int w, int h) {
-    return makeImage(new byte[][] {data}, w, h);
+  public static BufferedImage makeImage(byte[] data,
+    int w, int h, boolean signed)
+  {
+    return makeImage(new byte[][] {data}, w, h, signed);
   }
 
   /**
    * Creates an image from the given single-channel unsigned short data.
+   *
+   * @deprecated Use {@link #makeImage(short[], int, int, boolean)} instead.
+   */
+  public static BufferedImage makeImage(short[] data, int w, int h) {
+    return makeImage(data, w, h, false);
+  }
+
+  /**
+   * Creates an image from the given single-channel short data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
+   * @param signed Whether the short values should be treated as signed
+   *   (-32768 to 32767) instead of unsigned (0 to 65535).
    */
-  public static BufferedImage makeImage(short[] data, int w, int h) {
-    return makeImage(new short[][] {data}, w, h);
+  public static BufferedImage makeImage(short[] data,
+    int w, int h, boolean signed)
+  {
+    return makeImage(new short[][] {data}, w, h, signed);
   }
 
   /**
    * Creates an image from the given single-channel signed int data.
+   *
+   * @deprecated Use {@link Use #makeImage(int[], int, int, boolean)} instead.
+   */
+  public static BufferedImage makeImage(int[] data, int w, int h) {
+    return makeImage(data, w, h, true);
+  }
+
+  /**
+   * Creates an image from the given single-channel int data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
+   * @param signed Whether the int values should be treated as signed
+   *   (-2^31 to 2^31-1) instead of unsigned (0 to 2^32-1).
+   *   <b>** Only signed int data is supported for now. **</b>
    */
-  public static BufferedImage makeImage(int[] data, int w, int h) {
-    return makeImage(new int[][] {data}, w, h);
+  public static BufferedImage makeImage(int[] data,
+    int w, int h, boolean signed)
+  {
+    return makeImage(new int[][] {data}, w, h, signed);
   }
 
   /**
    * Creates an image from the given single-channel float data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -101,6 +147,7 @@ public final class AWTImageTools {
 
   /**
    * Creates an image from the given single-channel double data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -113,6 +160,19 @@ public final class AWTImageTools {
 
   /**
    * Creates an image from the given unsigned byte data.
+   *
+   * @deprecated Use
+   *   {@link #makeImage(byte[], int, int, int, boolean, boolean)} instead.
+   */
+  public static BufferedImage makeImage(byte[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    return makeImage(data, w, h, c, interleaved, false);
+  }
+
+  /**
+   * Creates an image from the given byte data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -121,19 +181,44 @@ public final class AWTImageTools {
    *   otherwise they are assumed to be sequential.
    *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
    *   while "RRR...GGG...BBB..." is sequential.
+   * @param signed Whether the byte values should be treated as signed
+   *   (-128 to 127) instead of unsigned (0 to 255).
+   *   <b>** Only unsigned byte data is supported for now. **</b>
    */
   public static BufferedImage makeImage(byte[] data,
-    int w, int h, int c, boolean interleaved)
+    int w, int h, int c, boolean interleaved, boolean signed)
   {
     if (c == 1) return makeImage(data, w, h);
     if (c > 2) return makeRGBImage(data, c, w, h, interleaved);
-    int dataType = DataBuffer.TYPE_BYTE;
-    DataBuffer buffer = new DataBufferByte(data, c * w * h);
+    int dataType;
+    DataBuffer buffer;
+    if (signed) {
+      // NB: No built-in data buffer type for signed byte data.
+      throw new IllegalArgumentException(
+        "Support for int8 pixel type (signed bytes) is unimplemented");
+    }
+    else {
+      dataType = DataBuffer.TYPE_BYTE;
+      buffer = new DataBufferByte(data, c * w * h);
+    }
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
 
   /**
    * Creates an image from the given unsigned short data.
+   *
+   * @deprecated Use
+   *   {@link #makeImage(short[], int, int, int, boolean, boolean)} instead.
+   */
+  public static BufferedImage makeImage(short[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    return makeImage(data, w, h, c, interleaved, false);
+  }
+
+  /**
+   * Creates an image from the given short data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -142,18 +227,41 @@ public final class AWTImageTools {
    *   otherwise they are assumed to be sequential.
    *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
    *   while "RRR...GGG...BBB..." is sequential.
+   * @param signed Whether the short values should be treated as signed
+   *   (-32768 to 32767) instead of unsigned (0 to 65535).
    */
   public static BufferedImage makeImage(short[] data,
-    int w, int h, int c, boolean interleaved)
+    int w, int h, int c, boolean interleaved, boolean signed)
   {
     if (c == 1) return makeImage(data, w, h);
-    int dataType = DataBuffer.TYPE_USHORT;
-    DataBuffer buffer = new DataBufferUShort(data, c * w * h);
+    int dataType;
+    DataBuffer buffer;
+    if (signed) {
+      dataType = DataBuffer.TYPE_SHORT;
+      buffer = new DataBufferShort(data, c * w * h);
+    }
+    else {
+      dataType = DataBuffer.TYPE_USHORT;
+      buffer = new DataBufferUShort(data, c * w * h);
+    }
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
 
   /**
    * Creates an image from the given signed int data.
+   *
+   * @deprecated Use
+   *   {@link #makeImage(int[], int, int, int, boolean, boolean)} instead.
+   */
+  public static BufferedImage makeImage(int[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    return makeImage(data, w, h, c, interleaved, true);
+  }
+
+  /**
+   * Creates an image from the given int data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -162,18 +270,31 @@ public final class AWTImageTools {
    *   otherwise they are assumed to be sequential.
    *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
    *   while "RRR...GGG...BBB..." is sequential.
+   * @param signed Whether the int values should be treated as signed
+   *   (-2^31 to 2^31-1) instead of unsigned (0 to 2^32-1).
+   *   <b>** Only signed int data is supported for now. **</b>
    */
   public static BufferedImage makeImage(int[] data,
-    int w, int h, int c, boolean interleaved)
+    int w, int h, int c, boolean interleaved, boolean signed)
   {
     if (c == 1) return makeImage(data, w, h);
-    int dataType = DataBuffer.TYPE_INT;
-    DataBuffer buffer = new DataBufferInt(data, c * w * h);
+    int dataType;
+    DataBuffer buffer;
+    if (signed) {
+      dataType = DataBuffer.TYPE_INT;
+      buffer = new DataBufferInt(data, c * w * h);
+    }
+    else {
+      // NB: No built-in data buffer type for unsigned int data.
+      throw new IllegalArgumentException(
+        "Support for uint32 pixel type (unsigned ints) is unimplemented");
+    }
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
 
   /**
    * Creates an image from the given float data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -194,6 +315,7 @@ public final class AWTImageTools {
 
   /**
    * Creates an image from the given double data.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -216,49 +338,120 @@ public final class AWTImageTools {
 
   /**
    * Creates an image from the given unsigned byte data.
+   *
+   * @deprecated Use {@link #makeImage(byte[][], int, int, boolean)} instead.
+   */
+  public static BufferedImage makeImage(byte[][] data, int w, int h) {
+    return makeImage(data, w, h, false);
+  }
+
+  /**
+   * Creates an image from the given byte data.
+   *
    * @param data Array containing image data.
    *   It is assumed that each channel corresponds to one element of the array.
    *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
    * @param w Width of image plane.
    * @param h Height of image plane.
+   * @param signed Whether the byte values should be treated as signed
+   *   (-128 to 127) instead of unsigned (0 to 255).
+   *   <b>** Only unsigned byte data is supported for now. **</b>
    */
-  public static BufferedImage makeImage(byte[][] data, int w, int h) {
+  public static BufferedImage makeImage(byte[][] data,
+    int w, int h, boolean signed)
+  {
     if (data.length > 2) return makeRGBImage(data, w, h);
-    int dataType = DataBuffer.TYPE_BYTE;
-    DataBuffer buffer = new DataBufferByte(data, data[0].length);
+    int dataType;
+    DataBuffer buffer;
+    if (signed) {
+      // NB: No built-in data buffer type for signed byte data.
+      throw new IllegalArgumentException(
+        "Support for int8 pixel type (signed bytes) is unimplemented");
+    }
+    else {
+      dataType = DataBuffer.TYPE_BYTE;
+      buffer = new DataBufferByte(data, data[0].length);
+    }
     return constructImage(data.length, dataType, w, h, false, true, buffer);
   }
 
   /**
    * Creates an image from the given unsigned short data.
+   *
+   * @deprecated Use {@link #makeImage(short[][], int, int, boolean)} instead.
+   */
+  public static BufferedImage makeImage(short[][] data, int w, int h) {
+    return makeImage(data, w, h, false);
+  }
+
+  /**
+   * Creates an image from the given short data.
+   *
    * @param data Array containing image data.
    *   It is assumed that each channel corresponds to one element of the array.
    *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
    * @param w Width of image plane.
    * @param h Height of image plane.
+   * @param signed Whether the short values should be treated as signed
+   *   (-32768 to 32767) instead of unsigned (0 to 65535).
    */
-  public static BufferedImage makeImage(short[][] data, int w, int h) {
-    int dataType = DataBuffer.TYPE_USHORT;
-    DataBuffer buffer = new DataBufferUShort(data, data[0].length);
+  public static BufferedImage makeImage(short[][] data,
+    int w, int h, boolean signed)
+  {
+    int dataType;
+    DataBuffer buffer;
+    if (signed) {
+      dataType = DataBuffer.TYPE_SHORT;
+      buffer = new DataBufferShort(data, data[0].length);
+    }
+    else {
+      dataType = DataBuffer.TYPE_USHORT;
+      buffer = new DataBufferUShort(data, data[0].length);
+    }
     return constructImage(data.length, dataType, w, h, false, true, buffer);
   }
 
   /**
    * Creates an image from the given signed int data.
+   *
+   * @deprecated Use {@link #makeImage(int[][], int, int, boolean)} instead.
+   */
+  public static BufferedImage makeImage(int[][] data, int w, int h) {
+    return makeImage(data, w, h, true);
+  }
+
+  /**
+   * Creates an image from the given int data.
+   *
    * @param data Array containing image data.
    *   It is assumed that each channel corresponds to one element of the array.
    *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
    * @param w Width of image plane.
    * @param h Height of image plane.
+   * @param signed Whether the int values should be treated as signed
+   *   (-2^31 to 2^31-1) instead of unsigned (0 to 2^32-1).
+   *   <b>** Only signed int data is supported for now. **</b>
    */
-  public static BufferedImage makeImage(int[][] data, int w, int h) {
-    int dataType = DataBuffer.TYPE_INT;
-    DataBuffer buffer = new DataBufferInt(data, data[0].length);
+  public static BufferedImage makeImage(int[][] data,
+    int w, int h, boolean signed)
+  {
+    int dataType;
+    DataBuffer buffer;
+    if (signed) {
+      dataType = DataBuffer.TYPE_INT;
+      buffer = new DataBufferInt(data, data[0].length);
+    }
+    else {
+      // NB: No built-in data buffer type for unsigned int data.
+      throw new IllegalArgumentException(
+        "Support for uint32 pixel type (unsigned ints) is unimplemented");
+    }
     return constructImage(data.length, dataType, w, h, false, true, buffer);
   }
 
   /**
    * Creates an image from the given single-precision floating point data.
+   *
    * @param data Array containing image data.
    *   It is assumed that each channel corresponds to one element of the array.
    *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
@@ -273,6 +466,7 @@ public final class AWTImageTools {
 
   /**
    * Creates an image from the given double-precision floating point data.
+   *
    * @param data Array containing image data.
    *   It is assumed that each channel corresponds to one element of the array.
    *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
@@ -288,29 +482,22 @@ public final class AWTImageTools {
   // -- Image construction - with type conversion --
 
   /**
-   * Creates an image from the given data,
-   * performing type conversions as necessary.
-   * @param data Array containing image data.
-   * @param w Width of image plane.
-   * @param h Height of image plane.
-   * @param c Number of channels.
-   * @param interleaved If set, the channels are assumed to be interleaved;
-   *   otherwise they are assumed to be sequential.
-   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   *   while "RRR...GGG...BBB..." is sequential.
-   * @param bpp Denotes the number of bytes in the returned primitive type
-   *   (e.g. if bpp == 2, we should return an array of type short).
-   * @param little Whether byte array is in little-endian order.
+   * Creates an image from the given raw byte array,
+   * performing any necessary type conversions.
+   *
+   * @deprecated Use {@link #makeImage(byte[], int, int, int,
+   *    boolean, int, boolean, boolean, boolean)} instead.
    */
   public static BufferedImage makeImage(byte[] data, int w, int h, int c,
     boolean interleaved, int bpp, boolean little)
   {
-    return makeImage(data, w, h, c, interleaved, bpp, false, little, false);
+    return makeImage(data, w, h, c, interleaved, bpp, false, little, bpp >= 4);
   }
 
   /**
-   * Creates an image from the given data,
-   * performing type conversions as necessary.
+   * Creates an image from the given raw byte array,
+   * performing any necessary type conversions.
+   *
    * @param data Array containing image data.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -323,21 +510,23 @@ public final class AWTImageTools {
    *   (e.g. if bpp == 2, we should return an array of type short).
    * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
    * @param little Whether byte array is in little-endian order.
+   * @param signed Whether the data values should be treated as signed
+   *   instead of unsigned.
    */
   public static BufferedImage makeImage(byte[] data, int w, int h, int c,
     boolean interleaved, int bpp, boolean fp, boolean little, boolean signed)
   {
     Object pixels = DataTools.makeDataArray(data,
-      bpp % 3 == 0 ? bpp / 3 : bpp, fp, little, signed);
+      bpp % 3 == 0 ? bpp / 3 : bpp, fp, little);
 
     if (pixels instanceof byte[]) {
-      return makeImage((byte[]) pixels, w, h, c, interleaved);
+      return makeImage((byte[]) pixels, w, h, c, interleaved, signed);
     }
     else if (pixels instanceof short[]) {
-      return makeImage((short[]) pixels, w, h, c, interleaved);
+      return makeImage((short[]) pixels, w, h, c, interleaved, signed);
     }
     else if (pixels instanceof int[]) {
-      return makeImage((int[]) pixels, w, h, c, interleaved);
+      return makeImage((int[]) pixels, w, h, c, interleaved, signed);
     }
     else if (pixels instanceof float[]) {
       return makeImage((float[]) pixels, w, h, c, interleaved);
@@ -349,14 +538,11 @@ public final class AWTImageTools {
   }
 
   /**
-   * Creates an image from the given data,
-   * performing type conversions as necessary.
-   * @param data Array containing image data, one channel per element.
-   * @param w Width of image plane.
-   * @param h Height of image plane.
-   * @param bpp Denotes the number of bytes in the returned primitive type
-   *   (e.g. if bpp == 2, we should return an array of type short).
-   * @param little Whether byte array is in little-endian order.
+   * Creates an image from the given raw byte array,
+   * performing any necessary type conversions.
+   *
+   * @deprecated Use {@link #makeImage(byte[][], int, int, int,
+   *    boolean, boolean, boolean)} instead.
    */
   public static BufferedImage makeImage(byte[][] data,
     int w, int h, int bpp, boolean little)
@@ -365,8 +551,9 @@ public final class AWTImageTools {
   }
 
   /**
-   * Creates an image from the given data,
-   * performing type conversions as necessary.
+   * Creates an image from the given raw byte array,
+   * performing any necessary type conversions.
+   *
    * @param data Array containing image data, one channel per element.
    * @param w Width of image plane.
    * @param h Height of image plane.
@@ -374,6 +561,8 @@ public final class AWTImageTools {
    *   (e.g. if bpp == 2, we should return an array of type short).
    * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
    * @param little Whether byte array is in little-endian order.
+   * @param signed Whether the data values should be treated as signed
+   *   instead of unsigned.
    */
   public static BufferedImage makeImage(byte[][] data,
     int w, int h, int bpp, boolean fp, boolean little, boolean signed)
@@ -382,7 +571,7 @@ public final class AWTImageTools {
     Object v = null;
     for (int i=0; i<c; i++) {
       Object pixels = DataTools.makeDataArray(data[i],
-        bpp % 3 == 0 ? bpp / 3 : bpp, fp, little, signed);
+        bpp % 3 == 0 ? bpp / 3 : bpp, fp, little);
       if (pixels instanceof byte[]) {
         if (v == null) v = new byte[c][];
         ((byte[][]) v)[i] = (byte[]) pixels;
@@ -404,11 +593,21 @@ public final class AWTImageTools {
         ((double[][]) v)[i] = (double[]) pixels;
       }
     }
-    if (v instanceof byte[][]) return makeImage((byte[][]) v, w, h);
-    else if (v instanceof short[][]) return makeImage((short[][]) v, w, h);
-    else if (v instanceof int[][]) return makeImage((int[][]) v, w, h);
-    else if (v instanceof float[][]) return makeImage((float[][]) v, w, h);
-    else if (v instanceof double[][]) return makeImage((double[][]) v, w, h);
+    if (v instanceof byte[][]) {
+      return makeImage((byte[][]) v, w, h, signed);
+    }
+    else if (v instanceof short[][]) {
+      return makeImage((short[][]) v, w, h, signed);
+    }
+    else if (v instanceof int[][]) {
+      return makeImage((int[][]) v, w, h, signed);
+    }
+    else if (v instanceof float[][]) {
+      return makeImage((float[][]) v, w, h);
+    }
+    else if (v instanceof double[][]) {
+      return makeImage((double[][]) v, w, h);
+    }
     return null;
   }
 
@@ -456,12 +655,12 @@ public final class AWTImageTools {
    * @param h Height of image plane.
    * @param c Number of channels.
    * @param type One of the following types:<ul>
-   *   <li>FormatReader.INT8</li>
+   *   <li>FormatReader.INT8 <b>** unsupported for now **</b></li>
    *   <li>FormatReader.UINT8</li>
    *   <li>FormatReader.INT16</li>
    *   <li>FormatReader.UINT16</li>
    *   <li>FormatReader.INT32</li>
-   *   <li>FormatReader.UINT32</li>
+   *   <li>FormatReader.UINT32 <b>** unsupported for now **</b></li>
    *   <li>FormatReader.FLOAT</li>
    *   <li>FormatReader.DOUBLE</li>
    * </ul>
@@ -469,14 +668,17 @@ public final class AWTImageTools {
   public static BufferedImage blankImage(int w, int h, int c, int type) {
     switch (type) {
       case FormatTools.INT8:
+        return makeImage(new byte[c][w * h], w, h, true);
       case FormatTools.UINT8:
-        return makeImage(new byte[c][w * h], w, h);
+        return makeImage(new byte[c][w * h], w, h, false);
       case FormatTools.INT16:
+        return makeImage(new short[c][w * h], w, h, true);
       case FormatTools.UINT16:
-        return makeImage(new short[c][w * h], w, h);
+        return makeImage(new short[c][w * h], w, h, false);
       case FormatTools.INT32:
+        return makeImage(new int[c][w * h], w, h, true);
       case FormatTools.UINT32:
-        return makeImage(new int[c][w * h], w, h);
+        return makeImage(new int[c][w * h], w, h, false);
       case FormatTools.FLOAT:
         return makeImage(new float[c][w * h], w, h);
       case FormatTools.DOUBLE:
@@ -558,45 +760,43 @@ public final class AWTImageTools {
     int w, int h) throws FormatException, IOException
   {
     int pixelType = r.getPixelType();
+    boolean little = r.isLittleEndian();
+    boolean normal = r.isNormalized();
+    int rgbChanCount = r.getRGBChannelCount();
+    boolean interleaved = r.isInterleaved();
+    boolean indexed = r.isIndexed();
+
     if (pixelType == FormatTools.FLOAT) {
-      float[] f = (float[]) DataTools.makeDataArray(buf, 4, true,
-        r.isLittleEndian(), false);
-      if (r.isNormalized()) f = DataTools.normalizeFloats(f);
-      return makeImage(f, w, h, r.getRGBChannelCount(), r.isInterleaved());
+      float[] f = (float[]) DataTools.makeDataArray(buf, 4, true, little);
+      if (normal) f = DataTools.normalizeFloats(f);
+      return makeImage(f, w, h, rgbChanCount, interleaved);
     }
     else if (pixelType == FormatTools.DOUBLE) {
-      double[] d = (double[]) DataTools.makeDataArray(buf, 8, true,
-        r.isLittleEndian(), false);
-      if (r.isNormalized()) d = DataTools.normalizeDoubles(d);
-      return makeImage(d, w, h, r.getRGBChannelCount(), r.isInterleaved());
+      double[] d = (double[]) DataTools.makeDataArray(buf, 8, true, little);
+      if (normal) d = DataTools.normalizeDoubles(d);
+      return makeImage(d, w, h, rgbChanCount, interleaved);
     }
 
-    boolean signed = pixelType == FormatTools.INT8 ||
-      pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
-
+    boolean signed = FormatTools.isSigned(pixelType);
     ColorModel model = null;
 
     if (signed) {
       if (pixelType == FormatTools.INT8) {
-        model = new SignedColorModel(8, DataBuffer.TYPE_BYTE,
-          r.getRGBChannelCount());
+        model = new SignedColorModel(8, DataBuffer.TYPE_BYTE, rgbChanCount);
       }
       else if (pixelType == FormatTools.INT16) {
-        model = new SignedColorModel(16, DataBuffer.TYPE_USHORT,
-          r.getRGBChannelCount());
+        model = new SignedColorModel(16, DataBuffer.TYPE_SHORT, rgbChanCount);
       }
       else if (pixelType == FormatTools.INT32) {
-        model = new SignedColorModel(32, DataBuffer.TYPE_INT,
-          r.getRGBChannelCount());
+        model = new SignedColorModel(32, DataBuffer.TYPE_INT, rgbChanCount);
       }
     }
 
-    BufferedImage b = makeImage(buf, w, h,
-      r.isIndexed() ? 1 : r.getRGBChannelCount(), r.isInterleaved(),
-      FormatTools.getBytesPerPixel(r.getPixelType()), false,
-      r.isLittleEndian(), signed);
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+    BufferedImage b = makeImage(buf, w, h, indexed ? 1 : rgbChanCount,
+      interleaved, bpp, false, little, signed);
 
-    if (r.isIndexed()) {
+    if (indexed) {
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
         byte[][] table = r.get8BitLookupTable();
         if (table != null) {

@@ -440,6 +440,52 @@ public final class FormatTools {
     throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
   }
 
+  /**
+   * Determines whether the given pixel type is floating point or integer.
+   * @param pixelType the pixel type as retrieved from
+   *   {@link IFormatReader#getPixelType()}.
+   * @return true if the pixel type is floating point.
+   * @see IFormatReader#getPixelType()
+   */
+  public static boolean isFloatingPoint(int pixelType) {
+    switch (pixelType) {
+      case INT8:
+      case UINT8:
+      case INT16:
+      case UINT16:
+      case INT32:
+      case UINT32:
+        return false;
+      case FLOAT:
+      case DOUBLE:
+        return true;
+    }
+    throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
+  }
+
+  /**
+   * Determines whether the given pixel type is signed or unsigned.
+   * @param pixelType the pixel type as retrieved from
+   *   {@link IFormatReader#getPixelType()}.
+   * @return true if the pixel type is signed.
+   * @see IFormatReader#getPixelType()
+   */
+  public static boolean isSigned(int pixelType) {
+    switch (pixelType) {
+      case INT8:
+      case INT16:
+      case INT32:
+      case FLOAT:
+      case DOUBLE:
+        return true;
+      case UINT8:
+      case UINT16:
+      case UINT32:
+        return false;
+    }
+    throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
+  }
+
   // -- Utility methods - sanity checking
 
   /**

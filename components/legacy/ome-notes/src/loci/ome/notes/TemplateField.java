@@ -146,7 +146,7 @@ public class TemplateField {
     }
     else if (type.equals("thumbnail")) {
       ImageIcon icon =
-        new ImageIcon(AWTImageTools.makeImage(new byte[1][1], 1, 1));
+        new ImageIcon(AWTImageTools.makeImage(new byte[1][1], 1, 1, false));
       component = new JLabel(icon, SwingConstants.LEFT);
     }
     else if (type.equals("int")) {
@@ -192,7 +192,7 @@ public class TemplateField {
     }
     else if (type.equals("thumbnail")) {
       ImageIcon icon =
-        new ImageIcon(AWTImageTools.makeImage(new byte[1][1], 1, 1));
+        new ImageIcon(AWTImageTools.makeImage(new byte[1][1], 1, 1, false));
       comp = new JLabel(icon, SwingConstants.LEFT);
     }
     else if (type.equals("int")) {

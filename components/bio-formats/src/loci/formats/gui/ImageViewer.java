@@ -202,7 +202,7 @@ public class ImageViewer extends JFrame implements ActionListener,
     ztcPanel.add(Box.createHorizontalStrut(7));
 
     // image icon
-    BufferedImage dummy = AWTImageTools.makeImage(new byte[1][1], 1, 1);
+    BufferedImage dummy = AWTImageTools.makeImage(new byte[1][1], 1, 1, false);
     icon = new ImageIcon(dummy);
     iconLabel = new JLabel(icon, SwingConstants.LEFT);
     iconLabel.setVerticalAlignment(SwingConstants.TOP);

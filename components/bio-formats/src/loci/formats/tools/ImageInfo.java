@@ -491,11 +491,12 @@ public final class ImageInfo {
           byte[] b = thumbs ? reader.openThumbBytes(i) :
             reader.openBytes(i, xCoordinate, yCoordinate, width, height);
           Object pix = DataTools.makeDataArray(b,
-            FormatTools.getBytesPerPixel(reader.getPixelType()),
-            reader.getPixelType() == FormatTools.FLOAT,
+            FormatTools.getBytesPerPixel(pixelType),
+            FormatTools.isFloatingPoint(pixelType),
             reader.isLittleEndian());
           images[i - start] = AWTImageTools.makeImage(
-            ImageTools.make24Bits(pix, x, y, false, false), x, y);
+            ImageTools.make24Bits(pix, x, y, false, false), x, y,
+            FormatTools.isSigned(pixelType));
         }
 
         // check for pixel type mismatch

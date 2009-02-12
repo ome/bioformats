@@ -103,9 +103,13 @@ public class MNGReader extends FormatReader {
     // reconstruct the image to use an appropriate raster
     // ImageIO often returns images that cannot be scaled because a
     // BytePackedRaster is used
-    byte[][] pix = AWTImageTools.getPixelBytes(img, isLittleEndian());
+    int pixelType = getPixelType();
+    boolean little = isLittleEndian();
+    byte[][] pix = AWTImageTools.getPixelBytes(img, little);
     img = AWTImageTools.makeImage(pix, w, h,
-      FormatTools.getBytesPerPixel(getPixelType()), isLittleEndian());
+      FormatTools.getBytesPerPixel(pixelType),
+      FormatTools.isFloatingPoint(pixelType), little,
+      FormatTools.isSigned(pixelType));
 
     return img;
   }

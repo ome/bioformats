@@ -165,15 +165,18 @@ public class ImageTester extends JPanel implements WindowListener {
           }
         }
       }
-      bimg1[q] = AWTImageTools.makeImage(bdata1, w, h);
-      bimg2[q] = AWTImageTools.makeImage(bdata2, w, h, c, true);
-      bimg3[q] = AWTImageTools.makeImage(bdata3, w, h, c, false);
-      simg1[q] = AWTImageTools.makeImage(sdata1, w, h);
-      simg2[q] = AWTImageTools.makeImage(sdata2, w, h, c, true);
-      simg3[q] = AWTImageTools.makeImage(sdata3, w, h, c, false);
-//      iimg1[q] = AWTImageTools.makeImage(idata1, w, h);
-//      iimg2[q] = AWTImageTools.makeImage(idata2, w, h, c, true);
-//      iimg3[q] = AWTImageTools.makeImage(idata3, w, h, c, false);
+      boolean signedBytes = false;
+      bimg1[q] = AWTImageTools.makeImage(bdata1, w, h, signedBytes);
+      bimg2[q] = AWTImageTools.makeImage(bdata2, w, h, c, true, signedBytes);
+      bimg3[q] = AWTImageTools.makeImage(bdata3, w, h, c, false, signedBytes);
+      boolean signedShorts = false;
+      simg1[q] = AWTImageTools.makeImage(sdata1, w, h, signedShorts);
+      simg2[q] = AWTImageTools.makeImage(sdata2, w, h, c, true, signedShorts);
+      simg3[q] = AWTImageTools.makeImage(sdata3, w, h, c, false, signedShorts);
+//      boolean signedInts = true;
+//      iimg1[q] = AWTImageTools.makeImage(idata1, w, h, signedInts);
+//      iimg2[q] = AWTImageTools.makeImage(idata2, w, h, c, true, signedInts);
+//      iimg3[q] = AWTImageTools.makeImage(idata3, w, h, c, false, signedInts);
     }
 
     LogTools.println("Rows are: byte[][], byte[] (interleaved), " +
