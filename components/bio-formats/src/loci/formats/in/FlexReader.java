@@ -63,6 +63,9 @@ public class FlexReader extends BaseTiffReader {
 
   private Vector channelNames;
 
+  private Vector xPositions;
+  private Vector yPositions;
+
   // -- Constructor --
 
   /** Constructs a new Flex reader. */
@@ -135,6 +138,8 @@ public class FlexReader extends BaseTiffReader {
     core[0].sizeZ = 0;
 
     channelNames = new Vector();
+    xPositions = new Vector();
+    yPositions = new Vector();
 
     // parse factors from XML
     String xml = (String) TiffTools.getIFDValue(ifds[0],
@@ -149,7 +154,6 @@ public class FlexReader extends BaseTiffReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setInstrumentID("Instrument:0", 0);
 
     Vector n = new Vector();
     Vector f = new Vector();
@@ -233,6 +237,27 @@ public class FlexReader extends BaseTiffReader {
     }
 
     MetadataTools.populatePixels(store, this);
+    store.setInstrumentID("Instrument:0", 0);
+
+    int[] lengths = new int[] {plateCount, wellCount, fieldCount};
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      int[] pos = FormatTools.rasterToPosition(lengths, i);
+
+      store.setImageID("Image:" + i, i);
+      store.setImageInstrumentRef("Instrument:0", i);
+      store.setWellSampleIndex(new Integer(i), pos[0], pos[1], pos[2]);
+      store.setWellSampleImageRef("Image:" + i, pos[0], pos[1], pos[2]);
+      if (pos[2] < xPositions.size()) {
+        store.setWellSamplePosX((Float) xPositions.get(pos[2]), pos[0],
+          pos[1], pos[2]);
+      }
+      if (pos[2] < yPositions.size()) {
+        store.setWellSamplePosY((Float) yPositions.get(pos[2]), pos[0],
+          pos[1], pos[2]);
+      }
+    }
+
   }
 
   // -- Helper classes --
@@ -304,6 +329,9 @@ public class FlexReader extends BaseTiffReader {
       {
         addMeta("Sublayout " + (nextSublayout - 1) + " Field " +
           (nextField - 1) + " " + currentQName, value);
+        Float offset = new Float(value);
+        if (currentQName.equals("OffsetX")) xPositions.add(offset);
+        else yPositions.add(offset);
       }
       else if (currentQName.equals("OffsetZ")) {
         addMeta("Stack " + (nextStack - 1) + " Plane " + (nextPlane - 1) +
