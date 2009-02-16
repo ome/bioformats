@@ -17,6 +17,20 @@ Type "ant -p" for a list of targets.
   <taskdef name="testng" classpath="${component.classpath}"
     classname="org.testng.TestNGAntTask"/>
 
+  <target name="test-convert" depends="compile"
+    description="run automated tests on writers">
+    <testng sourcedir="${dest.dir}"
+      classpath="${classes.dir}:${component.classpath}"
+      annotations="Javadoc" groups="all" testname="Writer tests"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite">
+      <classfileset file="${classes.dir}/${writer-test.class}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
   <target name="test-all" depends="compile"
     description="run all automated tests">
     <testng sourcedir="${dest.dir}"

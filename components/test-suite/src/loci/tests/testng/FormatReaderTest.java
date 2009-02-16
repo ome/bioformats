@@ -328,7 +328,7 @@ public class FormatReaderTest {
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
       success = MetadataTools.isOMEXMLMetadata(retrieve);
-      if (!success) msg = shortClassName(retrieve);
+      if (!success) msg = TestTools.shortClassName(retrieve);
 
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
@@ -632,7 +632,7 @@ public class FormatReaderTest {
         reader.setSeries(i);
         config.setSeries(i);
 
-        String md5 = md5(reader.openBytes(0));
+        String md5 = TestTools.md5(reader.openBytes(0));
         String expected = config.getMD5();
 
         if (!md5.equals(expected)) {
@@ -697,11 +697,11 @@ public class FormatReaderTest {
             if (result != expected) {
               success = false;
               if (result) {
-                msg = shortClassName(readers[j]) + " flagged \"" +
-                  used[i] + "\" but so did " + shortClassName(r);
+                msg = TestTools.shortClassName(readers[j]) + " flagged \"" +
+                  used[i] + "\" but so did " + TestTools.shortClassName(r);
               }
               else {
-                msg = shortClassName(readers[j]) +
+                msg = TestTools.shortClassName(readers[j]) +
                   " skipped \"" + used[i] + "\"";
               }
               break;
@@ -755,7 +755,7 @@ public class FormatReaderTest {
         line.append(" little=" + reader.isLittleEndian());
         line.append(" indexed=" + reader.isIndexed());
         line.append(" falseColor=" + reader.isFalseColor());
-        line.append(" md5=" + md5(reader.openBytes(0)));
+        line.append(" md5=" + TestTools.md5(reader.openBytes(0)));
         line.append("]");
       }
 
@@ -825,7 +825,7 @@ public class FormatReaderTest {
       throw new SkipException(SKIP_MESSAGE);
     }
 
-    LogTools.print(timestamp() + "Initializing " + id + ": ");
+    LogTools.print(TestTools.timestamp() + "Initializing " + id + ": ");
     try {
       reader.setId(id);
       // remove used files
@@ -856,25 +856,6 @@ public class FormatReaderTest {
     return true;
   }
 
-  /** Calculate the MD5 of a byte array. */
-  private static String md5(byte[] b) {
-    try {
-      MessageDigest md = MessageDigest.getInstance("MD5");
-      md.reset();
-      md.update(b);
-      byte[] digest = md.digest();
-      StringBuffer sb = new StringBuffer();
-      for (int i=0; i<digest.length; i++) {
-        String a = Integer.toHexString(0xff & digest[i]);
-        if (a.length() == 1) a = "0" + a;
-        sb.append(a);
-      }
-      return sb.toString();
-    }
-    catch (NoSuchAlgorithmException e) { LogTools.trace(e); }
-    return null;
-  }
-
   /** Outputs test result and generates appropriate assertion. */
   private static void result(String testName, boolean success) {
     result(testName, success, null);
@@ -885,22 +866,10 @@ public class FormatReaderTest {
    * and generates appropriate assertion.
    */
   private static void result(String testName, boolean success, String msg) {
-    LogTools.println("\t" + timestamp() + ": " + testName + ": " +
+    LogTools.println("\t" + TestTools.timestamp() + ": " + testName + ": " +
       (success ? "PASSED" : "FAILED") + (msg == null ? "" : " (" + msg + ")"));
     if (msg == null) assert success;
     else assert success : msg;
-  }
-
-  /** Gets the class name sans package for the given object. */
-  private static String shortClassName(Object o) {
-    String name = o.getClass().getName();
-    int dot = name.lastIndexOf(".");
-    return dot < 0 ? name : name.substring(dot + 1);
-  }
-
-  /** Gets a timestamp for the current moment. */
-  private static String timestamp() {
-    return DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
   }
 
 }
