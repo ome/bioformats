@@ -225,7 +225,7 @@ public class PSDReader extends FormatReader {
       int layerLen = in.readInt();
       int layerCount = in.readShort();
 
-      if (layerCount <= 0) {
+      if (layerCount < 0) {
         throw new FormatException("Vector data is not supported.");
       }
 

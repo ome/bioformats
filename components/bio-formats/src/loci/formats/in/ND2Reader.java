@@ -661,7 +661,7 @@ public class ND2Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       core[i].sizeZ = getSizeZ();
       core[i].sizeT = getSizeT();
-      core[i].imageCount = getImageCount();
+      core[i].imageCount = getSizeZ() * getSizeT() * (isRGB() ? 1 : getSizeC());
       core[i].dimensionOrder = "XYCZT";
       core[i].sizeX = x;
       core[i].sizeY = y;

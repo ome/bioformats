@@ -71,8 +71,8 @@ public class TiffReader extends BaseTiffReader {
       put("ImageJ", nl < 0 ? comment.substring(7) : comment.substring(7, nl));
       metadata.remove("Comment");
 
-      core[0].sizeZ = 1;
-      core[0].sizeT = 1;
+      int z = 1, t = 1;
+      int c = getSizeC();
 
       // parse ZCT sizes
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -89,20 +89,24 @@ public class TiffReader extends BaseTiffReader {
           }
         }
 
-        if (token.startsWith("channels=")) {
-          core[0].sizeC = value;
-        }
-        else if (token.startsWith("slices=")) {
-          core[0].sizeZ = value;
-        }
-        else if (token.startsWith("frames=")) {
-          core[0].sizeT = value;
-        }
+        if (token.startsWith("channels=")) c = value;
+        else if (token.startsWith("slices=")) z = value;
+        else if (token.startsWith("frames=")) t = value;
       }
-      if (getSizeZ() * getSizeT() * getSizeC() == getSizeC()) {
-        core[0].sizeT = getImageCount();
+      if (z * c * t == c) {
+        t = getImageCount();
       }
       core[0].dimensionOrder = "XYCZT";
+
+      if (z * t * (isRGB() ? 1 : c) == ifds.length) {
+        core[0].sizeZ = z;
+        core[0].sizeT = t;
+        core[0].sizeC = c;
+      }
+      else {
+        core[0].sizeT = ifds.length;
+        core[0].imageCount = ifds.length;
+      }
     }
 
     // check for MetaMorph-style TIFF comment

@@ -324,7 +324,12 @@ public final class TiffTools {
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
       Hashtable ifd = getIFD(in, ifdNum, offset, bigTiff);
       if (ifd == null || ifd.size() <= 1) break;
-      v.add(ifd);
+      // if width or length entries are not present, the IFD is invalid
+      if (ifd.get(new Integer(IMAGE_WIDTH)) != null &&
+        ifd.get(new Integer(IMAGE_LENGTH)) != null)
+      {
+        v.add(ifd);
+      }
       offset = bigTiff ? in.readLong() : (long) (in.readInt() & 0xffffffffL);
       if (offset <= 0 || offset >= in.length()) break;
     }

@@ -104,8 +104,8 @@ public class ARFReader extends FormatReader {
 
     in.skipBytes(2); // 'AR' signature
     int version = in.readUnsignedShort();
-    int height = in.readUnsignedShort();
     int width = in.readUnsignedShort();
+    int height = in.readUnsignedShort();
     int bitsPerPixel = in.readUnsignedShort();
     int numImages = version == 2 ? in.readUnsignedShort() : 1;
     // NB: The next 510 bytes are unused 'application dependent' data,

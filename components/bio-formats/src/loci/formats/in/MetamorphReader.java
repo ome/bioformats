@@ -447,7 +447,7 @@ public class MetamorphReader extends BaseTiffReader {
       store.setDetectorSettingsDetector("Detector:0", 0, i);
 
       int index = getIndex(0, i, 0);
-      if (index < wave.length && (int) wave[index] >= 1) {
+      if (wave != null && index < wave.length && (int) wave[index] >= 1) {
         store.setLightSourceSettingsWavelength(
           new Integer((int) wave[index]), 0, i);
 

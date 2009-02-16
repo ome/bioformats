@@ -361,7 +361,9 @@ public class TillVisionReader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
-      store.setImageName((String) imageNames.get(i), i);
+      if (i < imageNames.size()) {
+        store.setImageName((String) imageNames.get(i), i);
+      }
       String date = i < dates.size() ? (String) dates.get(i) : "";
       if (!date.equals("")) {
         store.setImageCreationDate(date, i);
