@@ -121,7 +121,7 @@ public class FormatWriterTest {
         id.lastIndexOf("."));
       String suffix = "." + writer.getSuffixes()[0];
       File tmpFile = File.createTempFile(prefix, suffix);
-      //tmpFile.deleteOnExit();
+      tmpFile.deleteOnExit();
       String convertedFile = tmpFile.getAbsolutePath();
 
       IMetadata meta = (IMetadata) reader.getMetadataStore();
