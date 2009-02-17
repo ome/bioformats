@@ -832,7 +832,10 @@ public class Importer {
           if (options.isShowOMEXML()) dataBrowser.showMetadataWindow();
         }
         else imp.show();
-        if ((splitC || splitZ || splitT) && !options.isVirtual()) {
+
+        boolean virtual = options.isViewBrowser() || options.isVirtual();
+
+        if ((splitC || splitZ || splitT) && !virtual) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
             " slice_c=" + splitC + " slice_t=" + splitT +
             " stack_order=" + stackOrder + " keep_original=false " +
@@ -859,12 +862,12 @@ public class Importer {
             }
           }
         }
-        else if ((colorize || customColorize) && !options.isVirtual()) {
+        else if ((colorize || customColorize) && !virtual) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
             " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
             " hyper_stack=" + options.isViewHyperstack() + " ");
         }
-        else if (colorModels != null && !options.isVirtual()) {
+        else if (colorModels != null && !virtual) {
           Colorizer colorizer = new Colorizer();
           String arg = "stack_order=" + stackOrder + " merge=false " +
             "colorize=true hyper_stack=" + options.isViewHyperstack() + " ";

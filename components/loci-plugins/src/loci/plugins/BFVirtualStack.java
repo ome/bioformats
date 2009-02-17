@@ -237,6 +237,7 @@ public class BFVirtualStack extends VirtualStack {
   }
 
   public int getSize() {
+    if (reader.getCurrentFile() == null) return 0;
     reader.setSeries(series);
     if (merge) return new ChannelMerger(reader).getImageCount();
     return reader.getImageCount();
