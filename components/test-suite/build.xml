@@ -38,7 +38,7 @@ Type "ant -p" for a list of targets.
       annotations="Javadoc" groups="all" testname="All tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}"/>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -54,7 +54,7 @@ Type "ant -p" for a list of targets.
       annotations="Javadoc" groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}"/>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -70,7 +70,7 @@ Type "ant -p" for a list of targets.
       annotations="Javadoc" groups="fast" testname="Fast tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}"/>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -86,7 +86,7 @@ Type "ant -p" for a list of targets.
       annotations="Javadoc" groups="pixels" testname="Pixels tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}"/>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -102,7 +102,7 @@ Type "ant -p" for a list of targets.
       annotations="Javadoc" groups="xml" testname="XML tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
-      <classfileset dir="${classes.dir}"/>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
