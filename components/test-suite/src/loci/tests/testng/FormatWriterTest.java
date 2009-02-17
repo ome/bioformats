@@ -40,8 +40,7 @@ import java.util.*;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.out.*;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.*;
 import org.testng.SkipException;
 
 /**
@@ -101,10 +100,13 @@ public class FormatWriterTest {
    *              dataProvider = "getWriterList"
    */
   public void testWriterConsistency(IFormatWriter writer) {
-    if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName =
       TestTools.shortClassName(writer) + " testWriterConsistency";
+    if (!initFile()) {
+      result(testName, false, null);
+      return;
+    }
+    String file = reader.getCurrentFile();
     boolean success = true;
     String msg = null;
     try {
@@ -112,17 +114,21 @@ public class FormatWriterTest {
       if (!writer.isSupportedType(type)) {
         success = true;
         result(testName, success, msg);
+        return;
       }
 
       String prefix = id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf("."));
       String suffix = "." + writer.getSuffixes()[0];
       File tmpFile = File.createTempFile(prefix, suffix);
-      tmpFile.deleteOnExit();
-      String filename = tmpFile.getAbsolutePath();
+      //tmpFile.deleteOnExit();
+      String convertedFile = tmpFile.getAbsolutePath();
+
+      IMetadata meta = (IMetadata) reader.getMetadataStore();
+      writer.setMetadataRetrieve((MetadataRetrieve) meta);
 
       // convert the input file
-      writer.setId(filename);
+      writer.setId(convertedFile);
 
       int seriesCount = writer.canDoStacks() ? reader.getSeriesCount() : 1;
 
@@ -140,7 +146,7 @@ public class FormatWriterTest {
 
       // verify that the dimensions are accurate
 
-      reader.setId(filename);
+      reader.setId(convertedFile);
 
       boolean seriesMatch = reader.getSeriesCount() == config.getNumSeries();
       if (!seriesMatch && writer.canDoStacks()) {
@@ -185,9 +191,7 @@ public class FormatWriterTest {
           }
 
           success = msg == null;
-          if (!success) {
-            result(testName, success, msg);
-          }
+          if (!success) break;
         }
       }
       reader.close();
@@ -209,6 +213,9 @@ public class FormatWriterTest {
     }
     try {
       if (reader == null) reader = new ImageReader();
+      reader.close();
+      MetadataStore store = MetadataTools.createOMEXMLMetadata();
+      reader.setMetadataStore(store);
       reader.setId(id);
 
       File f = new File(id);
@@ -242,8 +249,8 @@ public class FormatWriterTest {
     String label)
   {
     if (s1.equals(s2)) return null;
-    return label + " mismatch (got " + s1 + ", expected " + s2 +
-      ") in series " + series;
+    return label + " mismatch [got " + s1 + ", expected " + s2 +
+      "] in series " + series;
   }
 
   /** Creates a new log file. */

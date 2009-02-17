@@ -191,6 +191,15 @@ public abstract class FormatReader extends FormatHandler
 
       // verify key contains at least one alphabetic character
       if (!key.matches(".*[a-zA-Z].*")) return;
+
+      // remove &lt;, &gt; and &amp; to prevent XML parsing errors
+      String[] invalidSequences = new String[] {
+        "&lt;", "&gt;", "&amp;", "<", ">", "&"
+      };
+      for (int i=0; i<invalidSequences.length; i++) {
+        key = key.replaceAll(invalidSequences[i], "");
+        val = val.replaceAll(invalidSequences[i], "");
+      }
     }
 
     if (saveOriginalMetadata) {
