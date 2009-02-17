@@ -86,9 +86,12 @@ public class Importer {
     if (options.doUpgradeCheck()) {
       IJ.showStatus("Checking for new version...");
       if (Util.newVersionAvailable()) {
-        IJ.showMessage("A new stable version of the Bio-Formats plugin is " +
-          "available.\nYou can download the latest version from " +
-          "http://loci.wisc.edu/ome/formats-download.html");
+        boolean doUpgrade = IJ.showMessageWithCancel("",
+          "A new stable version of Bio-Formats is available.\n" +
+          "Click 'OK' to upgrade.");
+        if (doUpgrade) {
+          Updater.install(Updater.STABLE_BUILD);
+        }
       }
     }
 

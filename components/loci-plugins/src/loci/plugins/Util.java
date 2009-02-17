@@ -66,6 +66,13 @@ public final class Util {
 
   public static final String VERSION = "4.0.0";
 
+  public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
+
+  public static final String[] REGISTRY_PROPERTIES = new String[] {
+    "version", "os.name", "os.version", "os.arch",
+    "java.runtime.version", "java.vm.vendor"
+  };
+
   // -- Constructor --
 
   private Util() { }
@@ -605,20 +612,17 @@ public final class Util {
   public static boolean newVersionAvailable() {
     // connect to the registry
 
-    StringBuffer query =
-      new StringBuffer("http://upgrade.openmicroscopy.org.uk/");
-    String[] properties = new String[] {"version", "os.name", "os.version",
-      "os.arch", "java.runtime.version", "java.vm.vendor"};
-    for (int i=0; i<properties.length; i++) {
+    StringBuffer query = new StringBuffer(REGISTRY);
+    for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
       if (i == 0) query.append("?");
       else query.append(";");
-      query.append(properties[i]);
+      query.append(REGISTRY_PROPERTIES[i]);
       query.append("=");
       if (i == 0) query.append(VERSION);
       else {
         try {
-          query.append(
-            URLEncoder.encode(System.getProperty(properties[i]), "UTF-8"));
+          query.append(URLEncoder.encode(
+            System.getProperty(REGISTRY_PROPERTIES[i]), "UTF-8"));
         }
         catch (UnsupportedEncodingException e) { }
       }
@@ -641,13 +645,25 @@ public final class Util {
       }
       in.close();
 
-      // TODO : registry does not yet return the latest version number
-      //return !latestVersion.toString().equals(VERSION);
-      return false;
+      // check to see if version reported by registry is greater than
+      // the current version - version number should be in "x.x.x" format
+
+      String[] version = latestVersion.toString().split("\\.");
+      String[] thisVersion = VERSION.split("\\.");
+      for (int i=0; i<thisVersion.length; i++) {
+        int subVersion = Integer.parseInt(thisVersion[i]);
+        try {
+          int registrySubVersion = Integer.parseInt(version[i]);
+          if (registrySubVersion > subVersion) return true;
+          if (registrySubVersion < subVersion) return false;
+        }
+        catch (NumberFormatException e) {
+          return false;
+        }
+      }
     }
-    catch (IOException e) {
-      return false;
-    }
+    catch (IOException e) { }
+    return false;
   }
 
   // -- Helper methods --
