@@ -728,7 +728,14 @@ public class BioRadReader extends FormatReader {
       // more thoroughly (see pg. 21 of the BioRad specs)
 
       if (n.p.indexOf("AXIS") != -1) {
-        String[] values = n.p.split(" ");
+        n.p = n.p.replaceAll("=", "");
+        Vector v = new Vector();
+        StringTokenizer tokens = new StringTokenizer(n.p, " ");
+        while (tokens.hasMoreTokens()) {
+          String token = tokens.nextToken().trim();
+          if (token.length() > 0) v.add(token);
+        }
+        String[] values = (String[]) v.toArray(new String[0]);
         String key = values[0];
         String noteType = values[1];
 
