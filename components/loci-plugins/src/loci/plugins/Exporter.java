@@ -257,7 +257,7 @@ public class Exporter {
         if (notSupportedType) {
           IJ.error("Pixel type not supported by this format.");
         }
-        else w.saveImage(img, i == end - 1);
+        else w.saveImage(img, i == end - n);
       }
       w.close();
     }

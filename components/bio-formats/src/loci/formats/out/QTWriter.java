@@ -186,11 +186,6 @@ public class QTWriter extends FormatWriter {
 
     int bytesPerPixel = byteData[0].length / (width * height);
 
-    if (bytesPerPixel > 1) {
-      throw new FormatException("Unsupported bits per pixel : " +
-        (8 * bytesPerPixel) + ".");
-    }
-
     pad *= bytesPerPixel;
 
     byte[][] temp = byteData;
@@ -585,7 +580,7 @@ public class QTWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes() {
-    return new int[] {FormatTools.UINT8, FormatTools.UINT16};
+    return new int[] {FormatTools.UINT8};
   }
 
   // -- IFormatHandler API methods --
