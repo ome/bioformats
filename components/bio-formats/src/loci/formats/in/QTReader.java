@@ -734,7 +734,9 @@ public class QTReader extends FormatReader {
   /** Creates a legacy QT reader. */
   private LegacyQTReader createLegacyReader() {
     // use the same id mappings that this reader does
-    return new LegacyQTReader();
+    LegacyQTReader reader = new LegacyQTReader();
+    reader.setMetadataStore(getMetadataStore());
+    return reader;
   }
 
 }

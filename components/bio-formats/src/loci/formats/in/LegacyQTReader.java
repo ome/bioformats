@@ -122,9 +122,7 @@ public class LegacyQTReader extends FormatReader {
       }
     }
     catch (ReflectException e) {
-      IOException io = new IOException("Close movie failed");
-      io.initCause(e);
-      throw io;
+      if (debug) trace(e);
     }
     if (!fileOnly) {
       currentId = null;
