@@ -305,6 +305,8 @@ public class BioRadReader extends FormatReader {
       n.y = in.readShort();
       n.p = in.readString(80);
 
+      /* debug */ System.out.println("(" + n.type + ") " + n.p);
+
       if (n.type < 0 || n.type >= NOTE_NAMES.length) {
         notes = false;
         brokenNotes = true;
@@ -322,7 +324,14 @@ public class BioRadReader extends FormatReader {
 
       n.p = n.p.substring(0, ndx).trim();
 
-      String[] tokens = n.p.split(" ");
+      n.p = n.p.replaceAll("=", "");
+      Vector v = new Vector();
+      StringTokenizer t = new StringTokenizer(n.p, " ");
+      while (t.hasMoreTokens()) {
+        String token = t.nextToken().trim();
+        if (token.length() > 0) v.add(token);
+      }
+      String[] tokens = (String[]) v.toArray(new String[0]);
       try {
         if (tokens.length > 1) {
           int noteType = Integer.parseInt(tokens[1]);
