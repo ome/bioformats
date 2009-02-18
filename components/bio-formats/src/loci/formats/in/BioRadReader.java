@@ -305,8 +305,6 @@ public class BioRadReader extends FormatReader {
       n.y = in.readShort();
       n.p = in.readString(80);
 
-      /* debug */ System.out.println("(" + n.type + ") " + n.p);
-
       if (n.type < 0 || n.type >= NOTE_NAMES.length) {
         notes = false;
         brokenNotes = true;
@@ -324,9 +322,9 @@ public class BioRadReader extends FormatReader {
 
       n.p = n.p.substring(0, ndx).trim();
 
-      n.p = n.p.replaceAll("=", "");
+      String value = n.p.replaceAll("=", "");
       Vector v = new Vector();
-      StringTokenizer t = new StringTokenizer(n.p, " ");
+      StringTokenizer t = new StringTokenizer(value, " ");
       while (t.hasMoreTokens()) {
         String token = t.nextToken().trim();
         if (token.length() > 0) v.add(token);
@@ -336,7 +334,7 @@ public class BioRadReader extends FormatReader {
         if (tokens.length > 1) {
           int noteType = Integer.parseInt(tokens[1]);
 
-          if (noteType == 2 && n.p.indexOf("AXIS_4") != -1) {
+          if (noteType == 2 && value.indexOf("AXIS_4") != -1) {
             core[0].sizeZ = 1;
             core[0].sizeT = getImageCount();
             core[0].orderCertain = true;
@@ -508,6 +506,31 @@ public class BioRadReader extends FormatReader {
                   store.setDetectorSettingsDetector("Detector:" + detector, 0,
                     detector);
                 }
+              }
+            }
+            else {
+              String[] values = value.split(" ");
+              if (values.length > 1) {
+                try {
+                  int type = Integer.parseInt(values[0]);
+                  if (type == 257 && values.length >= 3) {
+                    // found length of axis in um
+                    float start = Float.parseFloat(values[1]);
+                    float end = Float.parseFloat(values[2]);
+                    float axisLength = end - start;
+                    if (key.equals("AXIS_2")) {
+                      float pixelSize = axisLength / getSizeX();
+                      store.setDimensionsPhysicalSizeX(
+                        new Float(pixelSize), 0, 0);
+                    }
+                    else if (key.equals("AXIS_3")) {
+                      float pixelSize = axisLength / getSizeY();
+                      store.setDimensionsPhysicalSizeY(
+                        new Float(pixelSize), 0, 0);
+                    }
+                  }
+                }
+                catch (NumberFormatException e) { }
               }
             }
           }
