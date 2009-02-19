@@ -11,6 +11,6 @@ Type "ant -p" for a list of targets.
     Build file for LOCI Checkstyle checks project
   </description>
   <property file="base.properties"/>
-  <import file="${root.dir}/common.xml"/>
+  <import file="${root.dir}/java.xml"/>
   <property file="build.properties"/>
 </project>

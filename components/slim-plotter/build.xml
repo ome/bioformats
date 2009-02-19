@@ -11,7 +11,7 @@ Type "ant -p" for a list of targets.
     Build file for SLIM Plotter project
   </description>
   <property file="base.properties"/>
-  <import file="${root.dir}/common.xml"/>
+  <import file="${root.dir}/java.xml"/>
   <property file="build.properties"/>
 
   <target name="dist" if="isUnix" depends="jar"
@@ -39,7 +39,6 @@ Type "ant -p" for a list of targets.
         </for>
       </sequential>
     </for>
-
     <!-- HACK - copy does not preserve permissions; chmod them back -->
     <chmod perm="+x">
       <fileset dir="${slim.dist-dir}" includes="${slim.exec}"/>

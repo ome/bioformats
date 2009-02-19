@@ -11,7 +11,7 @@ Type "ant -p" for a list of targets.
     Build file for VisBio project
   </description>
   <property file="base.properties"/>
-  <import file="${root.dir}/common.xml"/>
+  <import file="${root.dir}/java.xml"/>
   <property file="build.properties"/>
 
   <!-- CTR TODO - fix dist targets -->
