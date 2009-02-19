@@ -119,6 +119,9 @@ public class FormatWriterTest {
 
       String prefix = id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf("."));
+      // prefix must be at least 3 chars, or File.createTempFile(String, String)
+      // will throw an exception
+      while (prefix.length() < 3) prefix = "x" + prefix;
       String suffix = "." + writer.getSuffixes()[0];
       File tmpFile = File.createTempFile(prefix, suffix);
       tmpFile.deleteOnExit();
