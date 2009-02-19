@@ -40,7 +40,7 @@ the Subversion repository using the command:
   </target>
 
   <target name="compile-jace" depends="check-jace"
-    description="compile Jace Java classes">
+    description="compile Jace Java classes and create libraries">
     <available file="${jace.home}/release/lib/jace.jar"
       property="jaceJarsExist"/>
     <if>
@@ -84,7 +84,7 @@ the Subversion repository using the command:
   </target>
 
   <target name="gen-makefile" depends="check-jace, gen-proxies"
-    description="Generate build system for Bio-Formats C++ bindings">
+    description="generate build system for Bio-Formats C++ bindings">
     <mkdir dir="${build.dir}"/>
     <exec executable="cmake" dir="${build.dir}" failonerror="true">
       <arg value="-DJACE_DIR=${jace.home}"/>
@@ -100,18 +100,18 @@ the Subversion repository using the command:
   </target>
 
   <target name="compile" depends="gen-makefile, copy-libs"
-    description="Build Bio-Formats C++ library">
+    description="build Bio-Formats C++ library">
     <exec executable="make" dir="${build.dir}" failonerror="true"/>
   </target>
 
   <target name="clean-jace" depends="check-jace"
-    description="clean Jace libraries">
+    description="remove Jace build files and libraries">
     <ant dir="${jace.home}/source/java" target="clean"/>
     <delete file="${jace.home}/release/lib/jace.jar"/>
     <delete file="${jace.home}/release/lib/jace-runtime.jar"/>
   </target>
 
-  <target name="clean-proxies" description="clean C++ proxies">
+  <target name="clean-proxies" description="remove generated C++ proxies">
     <delete dir="${proxies.dir}"/>
   </target>
 

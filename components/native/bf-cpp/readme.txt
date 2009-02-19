@@ -4,7 +4,7 @@ Bio-Formats C++ bindings
 This package provides language bindings for calling into the Bio-Formats Java
 library from C++ in a cross-platform manner. As of this writing the bindings
 are functional only on Linux, but work is actively being done to get them
-functional on Windows and Mac OS X systems.
+working on Windows and Mac OS X systems.
 
 
 LIST OF COMPILE-TIME DEPENDENCIES
@@ -66,7 +66,7 @@ Subversion client (e.g., TortoiseSVN).
 HOW TO COMPILE
 
 Once you have the required tools and libraries installed,
-cd to the components/bio-formats-jace directory and execute:
+cd to the components/native/bf-cpp directory and execute:
 
   ant -Djace.home=/path/to/jace
 
