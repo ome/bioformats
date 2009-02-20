@@ -116,4 +116,7 @@ public interface IFormatWriter extends IFormatHandler {
   /** Sets the current compression type. */
   void setCompression(String compress) throws FormatException;
 
+  /** Gets the current compression type. */
+  String getCompression();
+
 }

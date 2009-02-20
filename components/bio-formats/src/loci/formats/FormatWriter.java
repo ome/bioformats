@@ -155,6 +155,11 @@ public abstract class FormatWriter extends FormatHandler
     throw new FormatException("Invalid compression type: " + compress);
   }
 
+  /* @see IFormatWriter#getCompression() */
+  public String getCompression() {
+    return compression;
+  }
+
   /* @see IFormatWriter#getPixelTypes() */
   public int[] getPixelTypes() {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,

@@ -276,6 +276,11 @@ public class ImageWriter implements IFormatWriter {
     if (!ok) throw new FormatException("Invalid compression type: " + compress);
   }
 
+  /* @see IFormatWriter#getCompression() */
+  public String getCompression() {
+    return getWriter().getCompression();
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */
