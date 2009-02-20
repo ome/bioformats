@@ -65,8 +65,18 @@ Subversion client (e.g., TortoiseSVN).
 
 HOW TO COMPILE
 
-Once you have the required tools and libraries installed,
-cd to the components/native/bf-cpp directory and execute:
+Once you have the required tools and libraries installed, you must first build
+the loci_tools.jar library:
+
+1) Change to the root directory of the checkout;
+2) Execute the command:
+
+  ant tools
+
+Finally, you can compile the Bio-Formats C++ bindings:
+
+1) Change to the components/native/bf-cpp directory;
+2) Execute the command:
 
   ant -Djace.home=/path/to/jace
 
@@ -78,6 +88,8 @@ If all goes well, the build system will:
 2) Generate the Bio-Formats C++ proxy classes;
 3) Build the Bio-Formats C++ shared library;
 4) Build the showinf command line tool, for testing the functionality.
+
+Please be patient, as the build may require several minutes to complete.
 
 Afterwards, a new subdirectory called "build" will contain the following files:
 
@@ -95,3 +107,5 @@ If you prefer, instead of using the loci_tools.jar bundle, you can provide
 individual JAR files as appropriate for your application. For details, see:
 
   http://www.loci.wisc.edu/ome/formats-library.html
+
+Please direct questions to the Bio-Formats team at bioformats@loci.wisc.edu.
