@@ -25,20 +25,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins;
 
-import ij.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.Macro;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
+import ij.io.OpenDialog;
 import ij.io.SaveDialog;
+import ij.plugin.frame.Recorder;
 import ij.process.*;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
+import loci.formats.gui.ExtensionFileFilter;
+import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 
 /**
- * Core logic for the LOCI Exporter ImageJ plugin.
+ * Core logic for the Bio-Formats Exporter ImageJ plugin.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/Exporter.java">Trac</a>,
@@ -83,9 +96,76 @@ public class Exporter {
 
     if (outfile == null || outfile.length() == 0) {
       // open a dialog prompting for the filename to save
-      SaveDialog sd = new SaveDialog("LOCI Bio-Formats Exporter", "", "");
-      String dir = sd.getDirectory();
-      String name = sd.getFileName();
+
+      //SaveDialog sd = new SaveDialog("Bio-Formats Exporter", "", "");
+      //String dir = sd.getDirectory();
+      //String name = sd.getFileName();
+
+      // NB: Copied and adapted from ij.io.SaveDIalog.jSaveDispatchThread,
+      // so that the save dialog has a file filter for choosing output format.
+
+      String dir = null, name = null;
+      JFileChooser fc = GUITools.buildFileChooser(new ImageWriter(), false);
+      fc.setDialogTitle("Bio-Formats Exporter");
+      String defaultDir = OpenDialog.getDefaultDirectory();
+      if (defaultDir != null) fc.setCurrentDirectory(new File(defaultDir));
+
+      // set OME-TIFF as the default output format
+      FileFilter[] ff = fc.getChoosableFileFilters();
+      FileFilter defaultFilter = null;
+      for (int i=0; i<ff.length; i++) {
+        if (ff[i] instanceof ExtensionFileFilter) {
+          ExtensionFileFilter eff = (ExtensionFileFilter) ff[i];
+          if (i == 0 || eff.getExtension().equals("ome.tif")) {
+            defaultFilter = eff;
+            break;
+          }
+        }
+      }
+      if (defaultFilter != null) fc.setFileFilter(defaultFilter);
+
+      int returnVal = fc.showSaveDialog(IJ.getInstance());
+      if (returnVal != JFileChooser.APPROVE_OPTION) {
+        Macro.abort();
+        return;
+      }
+      File f = fc.getSelectedFile();
+      if (f.exists()) {
+        int ret = JOptionPane.showConfirmDialog(fc,
+          "The file " + f.getName() + " already exists. \n" +
+          "Would you like to replace it?", "Replace?",
+          JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (ret != JOptionPane.OK_OPTION) f = null;
+      }
+      if (f == null) Macro.abort();
+      else {
+        dir = fc.getCurrentDirectory().getPath() + File.separator;
+        name = fc.getName(f);
+
+        // ensure filename matches selected filter
+        FileFilter filter = fc.getFileFilter();
+        if (filter instanceof ExtensionFileFilter) {
+          ExtensionFileFilter eff = (ExtensionFileFilter) filter;
+          String[] ext = eff.getExtensions();
+          String lName = name.toLowerCase();
+          boolean hasExtension = false;
+          for (int i=0; i<ext.length; i++) {
+            if (lName.endsWith("." + ext[i])) {
+              hasExtension = true;
+              break;
+            }
+          }
+          if (!hasExtension && ext.length > 0) {
+            // append chosen extension
+            name = name + "." + ext[0];
+          }
+        }
+
+        // do some ImageJ bookkeeping
+        OpenDialog.setDefaultDirectory(dir);
+        if (Recorder.record) Recorder.recordPath("save", dir+name);
+      }
+
       if (dir == null || name == null) return;
       outfile = new File(dir, name).getAbsolutePath();
       if (outfile == null) return;
@@ -97,7 +177,7 @@ public class Exporter {
       String xml = fi == null ? null : fi.description == null ? null :
         fi.description.indexOf("xml") == -1 ? null : fi.description;
       MetadataStore store = MetadataTools.createOMEXMLMetadata(xml);
-      if (store == null) IJ.error("OME-Java library not found.");
+      if (store == null) IJ.error("OME-XML Java library not found.");
       else if (store instanceof MetadataRetrieve) {
         if (xml == null) {
           store.createRoot();
@@ -171,7 +251,7 @@ public class Exporter {
 
       if (codecs != null && codecs.length > 1) {
         GenericDialog gd =
-          new GenericDialog("LOCI Bio-Formats Exporter Options");
+          new GenericDialog("Bio-Formats Exporter Options");
         if (codecs != null) {
           gd.addChoice("Compression type: ", codecs, codecs[0]);
         }
