@@ -134,6 +134,7 @@ public class JVMLinkFlowCytometry {
   private static int areaUnit=0;
   private static boolean showParticles=false;
   private static boolean b_logY = false;
+  private static Vector<Particle> lastFrameParticles;
 
   private static Vector<Integer> sliceBegin, sliceEnd;
   // sliceBegin[i] is the minimum identifier of all particles on slice i
@@ -450,20 +451,20 @@ public class JVMLinkFlowCytometry {
     d = new Detector(resolutionWidth,
       intensityThreshold, areaThresholdInPixels);
     d.findParticles(stack.getProcessor(sliceNum));
-    Vector<Particle> thisParticles = d.crunchArray();
+    lastFrameParticles = d.crunchArray();
     if (showParticles) {
       System.out.println("Processing slice "+sliceNum);
       Detector.displayImage(d.getFloodArray());
     }
     Slice thisSlice = new Slice(nSlices);
-    if (thisParticles.size() > 0) {
+	if (lastFrameParticles.size() > 0) {
       thisSlice.hasParticles = true;
       thisSlice.begin = nParticles;
-      thisSlice.end = nParticles+thisParticles.size()-1;
+	  thisSlice.end = nParticles + lastFrameParticles.size() - 1;
     }
 
-    for (int i=0; i<thisParticles.size(); i++) {
-      Particle thisParticle = thisParticles.get(i);
+	for (int i = 0; i < lastFrameParticles.size(); i++) {
+      Particle thisParticle = lastFrameParticles.get(i);
       thisParticle.setNum(nParticles++);
       thisParticle.setSliceNum(nSlices);
       thisParticle.setPixelsPerMicron(pixelMicronSquared);
@@ -484,7 +485,16 @@ public class JVMLinkFlowCytometry {
     //for (int i=0; i<particles.size(); i++) particles.get(i).print();
   }
 
-  private static boolean addParticle(Particle particle) {
+	public static int[] getParticleMicronAreas() {
+		int[] micronAreas = new int[lastFrameParticles.size()];
+		for (int i = 0; i < micronAreas.length; i++) {
+			micronAreas[i] = lastFrameParticles.get(i).getMicronArea();
+		}
+		return micronAreas;
+	}
+
+	private static boolean addParticle(Particle particle)
+	{
     int particleIndex = particles.size()-1;
     if (particles.size() == 0) {
       particles.add(particle);
