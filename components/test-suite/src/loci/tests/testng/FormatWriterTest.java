@@ -86,9 +86,32 @@ public class FormatWriterTest {
   public Object[][] getWriterList() {
     createLogFile();
     IFormatWriter[] writers = new ImageWriter().getWriters();
-    IFormatWriter[][] writersToUse = new IFormatWriter[writers.length][1];
+    Vector tmp = new Vector();
     for (int i=0; i<writers.length; i++) {
-      writersToUse[i][0] = writers[i];
+      String[] compressionTypes = writers[i].getCompressionTypes();
+      if (compressionTypes == null) {
+        try {
+          IFormatWriter w = (IFormatWriter) writers[i].getClass().newInstance();
+          tmp.add(w);
+        }
+        catch (InstantiationException ie) { }
+        catch (IllegalAccessException iae) { }
+        continue;
+      }
+      for (int q=0; q<compressionTypes.length; q++) {
+        try {
+          IFormatWriter w = (IFormatWriter) writers[i].getClass().newInstance();
+          w.setCompression(compressionTypes[q]);
+          tmp.add(w);
+        }
+        catch (FormatException fe) { }
+        catch (InstantiationException ie) { }
+        catch (IllegalAccessException iae) { }
+      }
+    }
+    IFormatWriter[][] writersToUse = new IFormatWriter[tmp.size()][1];
+    for (int i=0; i<tmp.size(); i++) {
+      writersToUse[i][0] = (IFormatWriter) tmp.get(i);
     }
     return writersToUse;
   }
@@ -295,8 +318,17 @@ public class FormatWriterTest {
   }
 
   private static boolean isLosslessWriter(IFormatWriter writer) {
-    return !(writer instanceof JPEGWriter) &&
-      !(writer instanceof JPEG2000Writer);
+    if ((writer instanceof JPEGWriter) || (writer instanceof JPEG2000Writer)) {
+      return false;
+    }
+    String compression = writer.getCompression();
+    if (compression != null) compression = compression.toLowerCase();
+    if (compression == null || compression.equals("lzw") ||
+      compression.equals("zlib") || compression.equals("uncompressed"))
+    {
+      return true;
+    }
+    return false;
   }
 
 }
