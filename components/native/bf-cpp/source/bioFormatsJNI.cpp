@@ -24,6 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // An example of how to call Bio-Formats from C++ using raw JNI
 // (i.e., without the C++ bindings).
 
+// Compile on Mac OS X with:
+//   c++ bioFormatsJNI.cpp -o showinfJNI -framework JavaVM
+
+// Then copy loci_tools.jar to the same folder and then run:
+//   ./showinfJNI
+
 #include <jni.h>
 
 #include <iostream>
