@@ -71,7 +71,6 @@ public class AVIWriter extends FormatWriter {
   // strf and size. strn follows the end of this CHUNK.
   private long savestrfSize;
 
-  private byte[] text;
   private long savestrnPos;
   private long saveJUNKsignature;
   private int paddingBytes;
@@ -108,6 +107,12 @@ public class AVIWriter extends FormatWriter {
     }
 
     byte[][] byteData = AWTImageTools.getBytes(img);
+    if (byteData.length == 2) {
+      byte[][] tmpByteData = byteData;
+      byteData = new byte[3][tmpByteData[0].length];
+      byteData[0] = tmpByteData[0];
+      byteData[1] = tmpByteData[1];
+    }
     byte[][] lut = null;
 
     if (img.getColorModel() instanceof IndexColorModel) {
@@ -400,24 +405,7 @@ public class AVIWriter extends FormatWriter {
         // Use strn to provide zero terminated text string describing the stream
         DataTools.writeString(raFile, "strn");
         DataTools.writeInt(raFile, 16, true); // Write length of strn sub-CHUNK
-        text = new byte[16];
-        text[0] = 70; // F
-        text[1] = 105; // i
-        text[2] = 108; // l
-        text[3] = 101; // e
-        text[4] = 65; // A
-        text[5] = 86; // V
-        text[6] = 73; // I
-        text[7] = 32; // space
-        text[8] = 119; // w
-        text[9] = 114; // r
-        text[10] = 105; // i
-        text[11] = 116; // t
-        text[12] = 101; // e
-        text[13] = 32; // space
-        text[14] = 32; // space
-        text[15] = 0; // termination byte
-        raFile.write(text);
+        DataTools.writeString(raFile, "FileAVI write  ");
 
         raFile.seek(saveLIST1Size);
         DataTools.writeInt(raFile,

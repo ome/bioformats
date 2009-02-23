@@ -139,7 +139,7 @@ public final class ImageConverter {
         Image image = reader.openImage(i);
         long m = System.currentTimeMillis();
         writer.saveImage(image, q, i == numImages - 1,
-          q == num - 1 && i == numImages - 1);
+          q == last - 1 && i == numImages - 1);
         long e = System.currentTimeMillis();
         LogTools.print(".");
         read += m - s;
