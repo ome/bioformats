@@ -47,6 +47,7 @@ message("")
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREAD ON)
+set(Boost_ADDITIONAL_VERSIONS 1.38)
 find_package(Boost COMPONENTS thread REQUIRED)
 message("-- Boost:")
 if(EXISTS ${Boost_LIBRARIES})
