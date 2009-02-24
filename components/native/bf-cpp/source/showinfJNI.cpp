@@ -64,12 +64,15 @@ int main(int argc, char* argv[]) {
   JavaVMOption options[1];
   options[0].optionString = (char*) classpath.c_str();
   //options[1].optionString = "-verbose:jni";
-  vm_args.version = 0x00010004; // VM version 1.4
+  vm_args.version = JNI_VERSION_1_4; // VM version 1.4
   vm_args.options = options;
-  vm_args.nOptions = 2;
+  vm_args.nOptions = 1;
 
   // load and initialize a Java VM, return a JNI interface pointer in env
-  JNI_CreateJavaVM(&jvm, (void**) &env, &vm_args);
+  if (JNI_CreateJavaVM(&jvm, (void**) &env, &vm_args)) {
+    cout << "Failed to create the JVM" << endl;
+    exit(1);
+  }
 
   // invoke the ImageInfo.main(String[]) method using the JNI
   jclass imageInfoClass = env->FindClass("loci/formats/tools/ImageInfo");
