@@ -67,6 +67,10 @@ public interface ICurveRenderer extends Runnable {
 
   void setComponentCount(int numExp);
 
+  void setFixed(boolean[][] fixed);
+
+  boolean[][] getFixed();
+
   void setMask(boolean[][] mask);
 
   boolean[][] getMask();

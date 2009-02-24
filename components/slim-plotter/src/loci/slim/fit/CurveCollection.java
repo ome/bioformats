@@ -181,6 +181,20 @@ public class CurveCollection implements CurveReporter {
     }
   }
 
+  /** Sets which parameters should be fixed, versus allowed to converge. */
+  public void setFixed(boolean[][] fixed) {
+    for (int d=0; d<curves.length; d++) {
+      for (int y=0; y<curves[d].length; y++) {
+        for (int x=0; x<curves[d][y].length; x++) {
+          curves[d][y][x].setFixed(fixed);
+        }
+      }
+    }
+  }
+
+  /** Gets which parameters should be fixed, versus allowed to converge. */
+  public boolean[][] getFixed() { return curves[0][0][0].getFixed(); }
+
   // -- CurveReporter methods --
 
   protected Vector curveListeners = new Vector();

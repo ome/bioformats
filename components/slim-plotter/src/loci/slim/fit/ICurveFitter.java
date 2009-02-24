@@ -87,6 +87,18 @@ public interface ICurveFitter {
   /** Returns the number of exponentials to be fitted. */
   int getComponentCount();
 
+  /**
+   * For each parameter, sets whether it should be fixed at the current value,
+   * or allowed to iterate toward an optimal value.
+   */
+  void setFixed(boolean[][] fixed);
+
+  /**
+   * For each parameter, gets whether it should be fixed at the current value,
+   * or allowed to iterate toward an optimal value.
+   */
+  boolean[][] getFixed();
+
   /** Initializes the curve fitter with a starting curve estimate. */
   void estimate();
 

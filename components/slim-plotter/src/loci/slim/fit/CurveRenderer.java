@@ -118,6 +118,14 @@ public abstract class CurveRenderer implements ICurveRenderer {
     numExponentials = numExp;
   }
 
+  public void setFixed(boolean[][] fixed) {
+    curveData.setFixed(fixed);
+  }
+
+  public boolean[][] getFixed() {
+    return curveData.getFixed();
+  }
+
   public abstract void setMask(boolean[][] mask);
 
   public abstract boolean[][] getMask();

@@ -44,6 +44,7 @@ public abstract class CurveFitter implements ICurveFitter {
   protected int components;
   protected int[] curveData;
   protected double[][] curveEstimate;
+  protected boolean[][] curveFixed;
   protected int firstIndex;
   protected int lastIndex;
   protected double currentRCSE;
@@ -166,10 +167,26 @@ public abstract class CurveFitter implements ICurveFitter {
     }
     components = numExp;
     curveEstimate = new double[numExp][3];
+    curveFixed = new boolean[numExp][3];
   }
 
   /** Returns the number of exponentials to be fitted. */
   public int getComponentCount() { return components; }
+
+  /* @see ICurveFitter#setFixed(boolean[][]) */
+  public void setFixed(boolean[][] fixed) {
+    if (fixed.length != components) {
+      throw new IllegalArgumentException("Incorrect number of components.");
+    }
+    if (fixed[0].length != 3) {
+      throw new IllegalArgumentException(
+          "Incorrect number of elements per degree.");
+    }
+    curveFixed = fixed;
+  }
+
+  /* @see ICurveFitter#getFixed() */
+  public boolean[][] getFixed() { return curveFixed; }
 
   /** Initializes the curve fitter with a starting curve estimate. */
   public void estimate() {
@@ -182,9 +199,9 @@ public abstract class CurveFitter implements ICurveFitter {
     }
     final double[] guess = {num / 10.0, num / 5.0};
     for (int i=0; i<components; i++) {
-      curveEstimate[i][0] = (double) peak / components;
-      curveEstimate[i][1] = guess[i];
-      curveEstimate[i][2] = 0;
+      if (!curveFixed[i][0]) 2urveEstimate[i][0] = (double) peak / components;
+      if (!curveFixed[i][1]) curveEstimate[i][1] = guess[i];
+      if (!curveFixed[i][2]) curveEstimate[i][2] = 0;
     }
 */
     if (DEBUG) {
@@ -256,9 +273,9 @@ public abstract class CurveFitter implements ICurveFitter {
         }
       }
       double mult = den == 0 ? max : num / den;
-      curveEstimate[0][0] = mult;
-      curveEstimate[0][1] = exp;
-      curveEstimate[0][2] = guessC + gap;
+      if (!curveFixed[0][0]) curveEstimate[0][0] = mult;
+      if (!curveFixed[0][1]) curveEstimate[0][1] = exp;
+      if (!curveFixed[0][2]) curveEstimate[0][2] = guessC + gap;
       if (DEBUG) {
         if (mult != mult || exp != exp || guessC != guessC) {
           System.out.println("Corrupt estimate: mult=" + mult +
@@ -273,8 +290,8 @@ public abstract class CurveFitter implements ICurveFitter {
       for (int i = firstIndex; i <= lastIndex; i++) {
         if (curveData[i] < guessC) guessC = curveData[i];
       }
-      curveEstimate[0][2] = guessC;
-      curveEstimate[1][2] = 0;
+      if (!curveFixed[0][2]) curveEstimate[0][2] = guessC;
+      if (!curveFixed[1][2]) curveEstimate[1][2] = 0;
 
       // First, get a guess for the exponents.
       // To stabilize for error, do guesses over spans of 3 timepoints.
@@ -290,8 +307,8 @@ public abstract class CurveFitter implements ICurveFitter {
           if (guess < low) low = guess;
         }
       }
-      curveEstimate[0][1] = high;
-      curveEstimate[1][1] = low;
+      if (!curveFixed[0][1]) curveEstimate[0][1] = high;
+      if (!curveFixed[1][1]) curveEstimate[1][1] = low;
 
       double highA = 0.0d;
       double lowA = Double.MAX_VALUE;
@@ -307,8 +324,8 @@ public abstract class CurveFitter implements ICurveFitter {
       }
       //if (10.0 > lowA) lowA = 10.0;
       //if (20.0 > highA) highA = 20.0;
-      curveEstimate[0][0] = highA - lowA;
-      curveEstimate[1][0] = lowA;
+      if (!curveFixed[0][0]) curveEstimate[0][0] = highA - lowA;
+      if (!curveFixed[1][0]) curveEstimate[1][0] = lowA;
       // It seems like the low estimates are pretty good, usually.
       // It may be possible to get a better high estimate by subtracting out
       // the low estimate, and then recalculating as if it were single
@@ -353,9 +370,9 @@ public abstract class CurveFitter implements ICurveFitter {
         }
       }
       double mult = den == 0 ? max : num / den;
-      curveEstimate[0][0] = mult;
-      curveEstimate[0][1] = exp;
-      curveEstimate[0][2] = guessC;
+      if (!curveFixed[0][0]) curveEstimate[0][0] = mult;
+      if (!curveFixed[0][1]) curveEstimate[0][1] = exp;
+      if (!curveFixed[0][2]) curveEstimate[0][2] = guessC;
     }
 
     // Sometimes, if the curve looks strange, we'll get a negative estimate
@@ -434,17 +451,17 @@ public abstract class CurveFitter implements ICurveFitter {
           firstIndex + "  data: " + curveData[firstIndex]);
       }
       if (components == 1) {
-        curveEstimate[0][0] = maxData - minData;
-        curveEstimate[0][1] = expguess;
-        curveEstimate[0][2] = minData;
+        if (!curveFixed[0][0]) curveEstimate[0][0] = maxData - minData;
+        if (!curveFixed[0][1]) curveEstimate[0][1] = expguess;
+        if (!curveFixed[0][2]) curveEstimate[0][2] = minData;
       }
       else {
         // 2 components
-        curveEstimate[0][0] = maxData * .8;
-        curveEstimate[0][1] = expguess;
-        curveEstimate[1][0] = maxData * .2;
-        curveEstimate[1][1] = expguess;
-        curveEstimate[0][2] = minData;
+        if (!curveFixed[0][0]) curveEstimate[0][0] = maxData * .8;
+        if (!curveFixed[0][1]) curveEstimate[0][1] = expguess;
+        if (!curveFixed[1][0]) curveEstimate[1][0] = maxData * .2;
+        if (!curveFixed[1][1]) curveEstimate[1][1] = expguess;
+        if (!curveFixed[0][2]) curveEstimate[0][2] = minData;
       }
       if (DEBUG) {
         for (int i=0; i<curveEstimate.length; i++) {

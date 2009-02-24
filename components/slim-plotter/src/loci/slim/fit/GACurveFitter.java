@@ -157,6 +157,17 @@ public class GACurveFitter extends CurveFitter {
         }
       }
     }
+
+    // ensure that fixed parameters do not change
+    for (int i = 0; i < newGeneration.length; i++) {
+      for (int j = 0; j < components; j++) {
+        for (int k = 0; k < 3; k++) {
+          if (curveFixed[j][k]) newGeneration[i][j][k] = curveEstimate[j][k];
+        }
+      }
+    }
+
+    // compute best candidate
     geneticData = newGeneration;
     double total = 0.0d;
     double best = Double.POSITIVE_INFINITY;

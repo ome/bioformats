@@ -74,7 +74,7 @@ public class LMCurveFitter extends CurveFitter {
 
   // -- ICurveFitter methods --
 
-  /** HACK - performs the actual fit. */
+  /* @see ICurveFitter#iterate() */
   public void iterate() {
     iterCount++;
     lma.fit();
@@ -90,7 +90,7 @@ public class LMCurveFitter extends CurveFitter {
 
   public int getIterations() { return iterCount; }
 
-  /* @see CurveFitter#estimate() */
+  /* @see ICurveFitter#estimate() */
   public void estimate() {
     super.estimate();
 
@@ -145,25 +145,27 @@ public class LMCurveFitter extends CurveFitter {
 
     public double getY(double x, double[] a) {
       double sum = 0;
-      for (int i=0; i<numExp; i++) {
-        int e = 2 * i;
-        sum += a[e] * Math.exp(-a[e + 1] * x);
+      for (int e=0; e<numExp; e++) {
+        double aTerm = a[2 * e];
+        double bTerm = a[2 * e + 1];
+        sum += aTerm * Math.exp(-bTerm * x);
       }
-      sum += a[2 * numExp];
+      double cTerm = a[2 * numExp];
+      sum += cTerm;
       return sum;
     }
 
     public double getPartialDerivate(double x, double[] a, int parameterIndex) {
-      if (parameterIndex == 2 * numExp) return 1; // c
+      if (parameterIndex == 2 * numExp) return 1; // c term
       int e = parameterIndex / 2;
       int off = parameterIndex % 2;
       double aTerm = a[2 * e];
       double bTerm = a[2 * e + 1];
       switch (off) {
         case 0:
-            return Math.exp(-bTerm * x); // a
+            return Math.exp(-bTerm * x); // a term
         case 1:
-          return -aTerm * x * Math.exp(-bTerm * x); // b
+          return -aTerm * x * Math.exp(-bTerm * x); // b term
       }
       throw new RuntimeException("No such parameter index: " +
         parameterIndex);
