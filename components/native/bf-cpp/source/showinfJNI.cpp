@@ -33,19 +33,27 @@ Compile on 32-bit Linux with:
     -I $JAVA_HOME/include -I $JAVA_HOME/include/linux \
     -L $JAVA_HOME/jre/lib/i386/client -ljvm
 
+Depending on your flavor of 32-bit Linux, you may also need to execute:
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/i386/client
+
 Compile on 64-bit Linux with:
   c++ showinfJNI.cpp -o showinfJNI \
     -I $JAVA_HOME/include -I $JAVA_HOME/include/linux \
     -L $JAVA_HOME/jre/lib/amd64/server -ljvm
 
+Depending on your flavor of 64-bit Linux, you may also need to execute:
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64/server
+
 Then copy loci_tools.jar to the same folder and run:
   ./showinfJNI
 */
 
-#include <jni.h>
-
 #include <iostream>
 using namespace std;
+
+#include <stdlib.h>
+
+#include <jni.h>
 
 int main(int argc, char* argv[]) {
   JavaVM *jvm;
