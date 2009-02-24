@@ -1,5 +1,5 @@
 //
-// bioFormatsJNI.cpp
+// showinfJNI.cpp
 //
 
 /*
@@ -24,11 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // An example of how to call Bio-Formats from C++ using raw JNI
 // (i.e., without the C++ bindings).
 
-// Compile on Mac OS X with:
-//   c++ bioFormatsJNI.cpp -o showinfJNI -framework JavaVM
+/*
+Compile on Mac OS X with:
+  c++ showinfJNI.cpp -o showinfJNI -framework JavaVM
 
-// Then copy loci_tools.jar to the same folder and then run:
-//   ./showinfJNI
+Compile on 32-bit Linux with:
+  c++ showinfJNI.cpp -o showinfJNI \
+    -I $JAVA_HOME/include -I $JAVA_HOME/include/linux \
+    -L $JAVA_HOME/jre/lib/i386/client -ljvm
+
+Then copy loci_tools.jar to the same folder and run:
+  ./showinfJNI
+*/
 
 #include <jni.h>
 
