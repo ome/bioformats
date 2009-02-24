@@ -33,6 +33,11 @@ Compile on 32-bit Linux with:
     -I $JAVA_HOME/include -I $JAVA_HOME/include/linux \
     -L $JAVA_HOME/jre/lib/i386/client -ljvm
 
+Compile on 64-bit Linux with:
+  c++ showinfJNI.cpp -o showinfJNI \
+    -I $JAVA_HOME/include -I $JAVA_HOME/include/linux \
+    -L $JAVA_HOME/jre/lib/amd64/server -ljvm
+
 Then copy loci_tools.jar to the same folder and run:
   ./showinfJNI
 */
@@ -61,12 +66,13 @@ int main(int argc, char* argv[]) {
   // get the default initialization arguments and set the class path
   JavaVMInitArgs vm_args;
   JNI_GetDefaultJavaVMInitArgs(&vm_args);
-  JavaVMOption options[1];
+  const int numOptions = 1;
+  JavaVMOption options[numOptions];
   options[0].optionString = (char*) classpath.c_str();
   //options[1].optionString = "-verbose:jni";
   vm_args.version = JNI_VERSION_1_4; // VM version 1.4
   vm_args.options = options;
-  vm_args.nOptions = 1;
+  vm_args.nOptions = numOptions;
 
   // load and initialize a Java VM, return a JNI interface pointer in env
   if (JNI_CreateJavaVM(&jvm, (void**) &env, &vm_args)) {
