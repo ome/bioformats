@@ -30,9 +30,9 @@ Please set the jace.home property to point to
 your Jace installation directory. E.g.:
   ant -Djace.home=${user.home}/jace
 
-You can check out the latest Jace code from
-the Subversion repository using the command:
-  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk jace
+You can check out the latest known-to-work Jace code
+from the Subversion repository using the command:
+  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk jace -r 6
 </echo>
         <fail message="Jace not found."/>
       </else>

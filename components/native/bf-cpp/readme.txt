@@ -33,7 +33,7 @@ Thread module in order to handle C++ threads in a platform independent way.
 
 ==> Subversion -- http://subversion.tigris.org/
 Subversion is not strictly necessary, but is useful for checking out the
-latest Jace source code (see "Installing Compile-Time Dependencies" below).
+Jace source code (see "Installing Compile-Time Dependencies" below).
 
 ==> Java Runtime Environment -- http://java.sun.com/
 Since Bio-Formats is written in Java, the JRE is ultimately necessary to
@@ -46,13 +46,15 @@ INSTALLING COMPILE-TIME DEPENDENCIES -- ALL
 
 Regardless of your platform, you will need to check out the Jace source code:
 
-  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk /path/to/jace
+  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk /path/to/jace -r 6
 
 Where /path/to/jace is the desired location of your Jace source code checkout.
+The "-r 6" flag retrieves revision 6, which is the most recent known-to-work
+revision.
 
 The above command assumes you have the svn command line tool for Subversion
-installed. It should also work fine to plug in the above URL to any graphical
-Subversion client (e.g., TortoiseSVN).
+installed. It should also work fine to plug in the above information to any
+graphical Subversion client (e.g., TortoiseSVN).
 
 
 INSTALLING COMPILE-TIME DEPENDENCIES -- LINUX
