@@ -92,10 +92,8 @@ This will install Boost into a subdirectory of /usr/local; e.g.:
 
   /usr/local/include/boost-1_38
 
-7) Edit CMakeLists.txt to tweak the Boost_ADDITIONAL_VERSIONS variable to
-   match your installed version of Boost. [TODO: Eliminate this step.]
-
-8) Run ant
+7) Depending on your version of Boost, you may need to edit CMakeLists.txt to
+   tweak the Boost_ADDITIONAL_VERSIONS variable to include your version.
 
 
 INSTALLING COMPILE-TIME DEPENDENCIES -- WINDOWS
@@ -136,7 +134,7 @@ Please be patient, as the build may require several minutes to complete.
 
 Afterwards, a new subdirectory called "build" will contain the following files:
 
-1) libjace.so / libjace.dylib / jace.dll : Jace shared library
+1) libjace.so / libjace.jnilib / jace.dll : Jace shared library
 2) libbfjace.so / libbfjace.dylib / bfjace.dll : Bio-Formats C++ bindings
 3) jace-runtime.jar : Jace Java classes needed at runtime
 4) loci_tools.jar : Bio-Formats Java library needed at runtime
