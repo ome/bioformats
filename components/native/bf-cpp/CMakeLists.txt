@@ -76,9 +76,10 @@ message("")
 
 add_library(jace SHARED ${JACE_SRC})
 
+target_link_libraries(jace ${Boost_LIBRARIES})
+
 set_target_properties(jace PROPERTIES
-  COMPILE_FLAGS "-pthread -Wall -fpermissive"
-  LINK_FLAGS "-pthread")
+  COMPILE_FLAGS "-Wall -fpermissive")
 
 ### build Bio-Formats C++ bindings ###
 
@@ -90,8 +91,7 @@ message("")
 add_library(bfjace SHARED ${BFJACE_SRC})
 
 set_target_properties(bfjace PROPERTIES
-  COMPILE_FLAGS "-pthread -Wall -fpermissive"
-  LINK_FLAGS "-pthread")
+  COMPILE_FLAGS "-Wall -fpermissive")
 
 target_link_libraries(bfjace jace)
 
