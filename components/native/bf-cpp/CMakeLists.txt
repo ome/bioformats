@@ -76,10 +76,16 @@ message("")
 
 add_library(jace SHARED ${JACE_SRC})
 
-target_link_libraries(jace ${Boost_LIBRARIES})
+target_link_libraries(jace ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES})
 
 set_target_properties(jace PROPERTIES
   COMPILE_FLAGS "-Wall -fpermissive")
+
+# HACK - Mac OS X 10.4 and earlier requires .jnilib extension rather than
+#        .dylib when loading native code with System.loadLibrary(String).
+if(APPLE)
+  set_target_properties(jace PROPERTIES SUFFIX ".jnilib")
+endif(APPLE)
 
 ### build Bio-Formats C++ bindings ###
 
@@ -89,6 +95,8 @@ file(GLOB_RECURSE BFJACE_SRC proxies/source/*.cpp)
 message("")
 
 add_library(bfjace SHARED ${BFJACE_SRC})
+
+target_link_libraries(bfjace jace)
 
 set_target_properties(bfjace PROPERTIES
   COMPILE_FLAGS "-Wall -fpermissive")
@@ -100,16 +108,16 @@ target_link_libraries(bfjace jace)
 add_executable(showinf source/showinf.cpp)
 
 target_link_libraries(showinf bfjace jace
-  ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES})
+  ${JAVA_JVM_LIBRARY})
 
 ### TEMP - build some examples for testing ###
 
 add_executable(example1 source/example1.cpp)
 
 target_link_libraries(example1 bfjace jace
-  ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES})
+  ${JAVA_JVM_LIBRARY})
 
 add_executable(array_example source/array_example.cpp)
 
 target_link_libraries(array_example bfjace jace
-  ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES})
+  ${JAVA_JVM_LIBRARY})
