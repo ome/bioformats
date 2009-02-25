@@ -45,14 +45,15 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
 # Include dirs
 
 #TEMP:
-set(BF_JACE_DIR /home/curtis/svn/java/components/bio-formats-jace)
+set(JACE_DIR /home/curtis/svn/jace)
+set(BF_JACE_DIR /home/curtis/svn/java/components/native/bf-cpp)
 
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 #CTR
+  ${JACE_DIR}/source/c++/include
   ${BF_JACE_DIR}/include
-  ${BF_JACE_DIR}/jace/include
   ${BF_JACE_DIR}/proxies/include
   )
 
