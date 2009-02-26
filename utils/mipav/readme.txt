@@ -12,30 +12,27 @@ Steps to try out the plugin:
        PlugInBioFormatsImporter.java
    where "/path/to/mipav" is the location of your MIPAV installation.
 
-3) Put the PlugInBioFormatsImporter.class into your user mipav/plugins folder.
+3) Copy the resultant PlugInBioFormatsImporter*.class files into your user
+   mipav/plugins folder.
 
 4) Add loci_tools.jar to MIPAV's class path:
-     * How to do so is depends on your platform.
+     * How to do so depends on your platform.
      * E.g., in Mac OS X, edit the mipav.app/Contents/Info.plist file.
 
 5) Run MIPAV and a new "BioFormatsImporter - read image" menu item will appear
    in the Plugins > File submenu.
 
 -------------------------------------------------------------------------------
-The plugin mostly works, but there are a few problems and open questions:
+The plugin works, but there are a couple of problems and open questions:
 
-1) When the image appears onscreen, it looks very washed out, mostly white,
-   regardless of the input data. Probing the data yields the correct numerical
-   values. Does the LUT need to be configured somehow?
-
-2) For the dimensional extents, it seems like MIPAV specifically wants an int
+1) For the dimensional extents, it seems like MIPAV specifically wants an int
    array of <= size 4, arranged {width, height, numZSlices, numTimePoints}. Is
    this correct? The MIPAV API appears to support multidimensional data in
    general, but when I try to use a longer extents array an exception is
    thrown.  Also, must the order be XYZT? What about other types of dimensions?
    What are MIPAV's assumptions?
 
-3) Does MIPAV support multichannel data for weird numbers of channels? For
+2) Does MIPAV support multichannel data for weird numbers of channels? For
    example, if I have 12-channel data, how do I represent that using the
    ModelImage API? Due to this uncertainty, the Bio-Formats plugin supports
    only single-channel data at the moment.
