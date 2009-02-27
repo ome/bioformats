@@ -38,7 +38,11 @@ echo
 echo "Copying Bio-Formats Java libraries into ITK binaries directory..."
 cp -v ../../bf-cpp/build/*.jar "$ITK_DIR/bin"
 echo "Copying Bio-Formats C++ shared libraries into ITK binaries directory..."
-cp -v ../../bf-cpp/build/*.so "$ITK_DIR/bin"
+cp -v \
+  ../../bf-cpp/build/*.so \
+  ../../bf-cpp/build/*.dylib \
+  ../../bf-cpp/build/*.jnilib \
+  "$ITK_DIR/bin"
 
 # give some instructions on how to proceed
 echo
