@@ -413,7 +413,11 @@ public class DeltavisionReader extends FormatReader {
 
     store.setImageDescription(imageDesc, 0);
 
-    // ----- The Extended Header data handler begins here ------
+    // --- parse extended header ---
+
+    // TODO - Refactor this section into those above, to maintain
+    // the division between header I/O, core metadata population,
+    // original metadata population, and OME metadata population.
 
     status("Reading extended header");
 
@@ -436,35 +440,53 @@ public class DeltavisionReader extends FormatReader {
       int z = coords[0];
       int w = coords[1];
       int t = coords[2];
+
+      // -- read in the extended header data --
+
       in.seek(offset + getTotalOffset(z, w, t));
-      extHdrFields[z][w][t] = new DVExtHdrFields(in);
+      DVExtHdrFields hdr = new DVExtHdrFields(in);
+      extHdrFields[z][w][t] = hdr;
+
+      // -- record original metadata --
+
+      /* NB: Sloooow...
+      String prefix = "Extended header Z" + z + " W" + w + " T" + t;
+      addMeta(prefix + " - Photosensor reading", hdr.photosensorReading);
+      addMeta(prefix + " - Time stamp (in s)", hdr.timeStampSeconds);
+      addMeta(prefix + " - X stage coordinates", hdr.stageXCoord);
+      addMeta(prefix + " - Y stage coordinates", hdr.stageYCoord);
+      addMeta(prefix + " - Z stage coordinates", hdr.stageZCoord);
+      addMeta(prefix + " - Minimum intensity", hdr.minInten);
+      addMeta(prefix + " - Maximum intensity", hdr.maxInten);
+      addMeta(prefix + " - Exposure time (in ms)", hdr.expTime);
+      addMeta(prefix + " - Neutral density value", hdr.ndFilter);
+      addMeta(prefix + " - Excitation filter wavelength", hdr.exWavelen);
+      addMeta(prefix + " - Emission filter wavelength", hdr.emWavelen);
+      addMeta(prefix + " - Intensity scaling factor", hdr.intenScaling);
+      addMeta(prefix + " - Energy conversion factor", hdr.energyConvFactor);
+      */
+
+      // -- record OME metadata --
 
       // plane timing
       if (!logFound) {
-        store.setPlaneTimingDeltaT(
-          new Float(extHdrFields[z][w][t].timeStampSeconds), 0, 0, i);
+        store.setPlaneTimingDeltaT(new Float(hdr.timeStampSeconds), 0, 0, i);
       }
-      store.setPlaneTimingExposureTime(
-        new Float(extHdrFields[z][w][t].expTime), 0, 0, i);
+      store.setPlaneTimingExposureTime(new Float(hdr.expTime), 0, 0, i);
 
       // stage position
       if (!logFound) {
-        store.setStagePositionPositionX(
-          new Float(extHdrFields[z][w][t].stageXCoord), 0, 0, i);
-        store.setStagePositionPositionY(
-          new Float(extHdrFields[z][w][t].stageYCoord), 0, 0, i);
-        store.setStagePositionPositionZ(
-          new Float(extHdrFields[z][w][t].stageZCoord), 0, 0, i);
+        store.setStagePositionPositionX(new Float(hdr.stageXCoord), 0, 0, i);
+        store.setStagePositionPositionY(new Float(hdr.stageYCoord), 0, 0, i);
+        store.setStagePositionPositionZ(new Float(hdr.stageZCoord), 0, 0, i);
       }
     }
 
     for (int w=0; w<sizeC; w++) {
+      DVExtHdrFields hdrC = extHdrFields[0][w][0];
       store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
-      store.setLogicalChannelExWave(
-        new Integer((int) extHdrFields[0][w][0].exWavelen), 0, w);
-      if (ndFilters[w] == null) {
-        ndFilters[w] = new Float(extHdrFields[0][w][0].ndFilter);
-      }
+      store.setLogicalChannelExWave(new Integer((int) hdrC.exWavelen), 0, w);
+      if (ndFilters[w] == null) ndFilters[w] = new Float(hdrC.ndFilter);
       store.setLogicalChannelNdFilter(ndFilters[w], 0, w);
     }
   }
@@ -793,8 +815,8 @@ public class DeltavisionReader extends FormatReader {
     /** Maxiumum intensity. */
     private float maxInten;
 
-    /** Mean intesity. */
-    private float meanInten;
+    ///** Mean intesity. */
+    //private float meanInten;
 
     /** Exposure time in milliseconds. */
     private float expTime;
@@ -802,11 +824,11 @@ public class DeltavisionReader extends FormatReader {
     /** Neutral density value. */
     private float ndFilter;
 
-    /** Excitation filter number. */
-    private float exFilter;
+    ///** Excitation filter number. */
+    //private float exFilter;
 
-    /** Emiision filter number. */
-    private float emFilter;
+    ///** Emiision filter number. */
+    //private float emFilter;
 
     /** Excitation filter wavelength. */
     private float exWavelen;
@@ -840,16 +862,16 @@ public class DeltavisionReader extends FormatReader {
       sb.append(minInten);
       sb.append("\nmaxInten: ");
       sb.append(maxInten);
-      sb.append("\nmeanInten: ");
-      sb.append(meanInten);
+      //sb.append("\nmeanInten: ");
+      //sb.append(meanInten);
       sb.append("\nexpTime: ");
       sb.append(expTime);
       sb.append("\nndFilter: ");
       sb.append(ndFilter);
-      sb.append("\nexFilter: ");
-      sb.append(exFilter);
-      sb.append("\nemFilter: ");
-      sb.append(emFilter);
+      //sb.append("\nexFilter: ");
+      //sb.append(exFilter);
+      //sb.append("\nemFilter: ");
+      //sb.append(emFilter);
       sb.append("\nexWavelen: ");
       sb.append(exWavelen);
       sb.append("\nemWavelen: ");
