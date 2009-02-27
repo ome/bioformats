@@ -67,14 +67,8 @@ namespace itk
     PRINT("Creating JVM...");
     StaticVmLoader loader(JNI_VERSION_1_4);
     OptionList list;
-    // NB: Use full path for now, to ensure Java libraries can be found.
-    std::string jarPath =
-      "/home/curtis/src/itk/InsightToolkit-3.10.2/build/bin/";
-    //std::string jarPath = "";
     list.push_back(jace::ClassPath(
-      jarPath + "jace-runtime.jar:" +
-      jarPath + "bio-formats.jar:" +
-      jarPath + "loci_tools.jar"
+      "jace-runtime.jar:bio-formats.jar:loci_tools.jar"
     ));
     list.push_back(jace::CustomOption("-Xcheck:jni"));
     list.push_back(jace::CustomOption("-Xmx256m"));
