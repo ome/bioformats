@@ -79,7 +79,7 @@ public class PictReader extends FormatReader {
   protected boolean versionOne;
 
   /** Color lookup table for palette color images. */
-  protected short[][] lookup;
+  protected byte[][] lookup;
 
   /** Helper reader in case this one fails. */
   protected LegacyQTTools qtTools = new LegacyQTTools();
@@ -99,6 +99,15 @@ public class PictReader extends FormatReader {
   /** Control whether or not legacy reader (QT Java) is used. */
   public void setLegacy(boolean legacy) {
     this.legacy = legacy;
+  }
+
+
+  /**
+   * @see loci.formats.IFormatReader#get8BitLookupTable()
+   */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 0);
+    return lookup;
   }
 
   /**
@@ -135,29 +144,10 @@ public class PictReader extends FormatReader {
 
       byte[] row;
 
-      plane *= 2;
-
-      for (int i=0; i<getSizeY(); i++) {
+      for (int i=y; i<y+h; i++) {
         row = (byte[]) strips.get(i);
-
-        for (int j=0; j<row.length; j++) {
-          if (j < getSizeX()) {
-            int ndx = row[j];
-            if (ndx < 0) ndx += lookup[0].length;
-            ndx = ndx % lookup[0].length;
-
-            int outIndex = i*getSizeX()*2 + j*2;
-
-            if (2*plane + outIndex + 2 < buf.length) {
-              DataTools.unpackShort(lookup[0][ndx], buf, outIndex, false);
-              DataTools.unpackShort(lookup[1][ndx], buf, plane + outIndex,
-                false);
-              DataTools.unpackShort(lookup[2][ndx], buf, 2*plane + outIndex,
-                false);
-            }
-          }
-          else j = row.length;
-        }
+        int len = (int) Math.min(row.length, w);
+        System.arraycopy(row, x, buf, (i - y) * w, len);
       }
     }
     else if (getSizeY()*3 == strips.size() || getSizeY()*4 == strips.size()) {
@@ -215,15 +205,14 @@ public class PictReader extends FormatReader {
     core[0].sizeY = in.readShort();
     core[0].sizeX = in.readShort();
     core[0].sizeZ = 1;
-    core[0].sizeC = 3;
+    core[0].sizeC = 1;
     core[0].sizeT = 1;
     core[0].dimensionOrder = "XYCZT";
-    core[0].rgb = true;
     core[0].imageCount = 1;
-    core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
     core[0].interleaved = false;
+    core[0].pixelType = FormatTools.UINT8;
 
     strips = new Vector();
     rowBytes = 0;
@@ -266,7 +255,8 @@ public class PictReader extends FormatReader {
     }
     while (drivePictDecoder(opcode));
 
-    core[0].pixelType = lookup != null ? FormatTools.UINT16 : FormatTools.UINT8;
+    core[0].rgb = getSizeC() > 1;
+    core[0].indexed = !isRGB() && lookup != null;
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -373,14 +363,17 @@ public class PictReader extends FormatReader {
       int count = in.readShort();
 
       count++;
-      lookup = new short[3][count];
+      lookup = new byte[3][count];
 
       for (int i=0; i<count; i++) {
         int index = in.readShort();
         if ((flags & 0x8000) != 0) index = i;
-        lookup[0][index] = in.readShort();
-        lookup[1][index] = in.readShort();
-        lookup[2][index] = in.readShort();
+        lookup[0][index] = in.readByte();
+        in.skipBytes(1);
+        lookup[1][index] = in.readByte();
+        in.skipBytes(1);
+        lookup[2][index] = in.readByte();
+        in.skipBytes(1);
       }
     }
 
@@ -447,6 +440,7 @@ public class PictReader extends FormatReader {
               uBufI[i] = DataTools.bytesToShort(buf, i*2, 2, false);
             }
             strips.add(uBufI);
+            core[0].sizeC = 3;
             break;
           case 8:
             strips.add(buf);
@@ -484,6 +478,7 @@ public class PictReader extends FormatReader {
           uBufI = new int[getSizeX()];
           unpackBits(buf, uBufI);
           strips.add(uBufI);
+          core[0].sizeC = 3;
         }
         else {
           PackbitsCodec c = new PackbitsCodec();
@@ -496,7 +491,9 @@ public class PictReader extends FormatReader {
           expandPixels(pixelSize, uBuf, outBuf, outBuf.length);
           strips.add(outBuf);
         }
-        else if (pixelSize == 8) strips.add(uBuf);
+        else if (pixelSize == 8) {
+          strips.add(uBuf);
+        }
         else if (pixelSize == 24 || pixelSize == 32) {
           byte[] newBuf = null;
 
@@ -509,6 +506,7 @@ public class PictReader extends FormatReader {
             }
             strips.add(newBuf);
           }
+          core[0].sizeC = 3;
         }
       }
     }

@@ -195,24 +195,17 @@ public class OpenlabReader extends FormatReader {
         Location.mapFile("OPENLAB_PICT", new RABytes(b));
         pict.setId("OPENLAB_PICT");
 
-        if (FormatTools.getBytesPerPixel(pict.getPixelType()) == 2 &&
-          FormatTools.getBytesPerPixel(getPixelType()) == 1)
-        {
-          // Pixel counts don't match -- e.g. the Openlab file said 8 bit
-          // grey, but the PICTs inside contained a 16-bit lookup table
-          // and we now have 48-bit RGB planar.
-          // Reduce to 8 bit grey (or 24 bit RGB) by dropping every other byte.
-          byte[] tmpBuf2 = new byte[tmpBuf.length * 2];
-          pict.openBytes(0, tmpBuf2, x, y, w, h);
-          for (int i=0; i<tmpBuf.length; i++) {
-            tmpBuf[i] = tmpBuf2[i * 2];
-          }
-        }
-        else if (getPixelType() != pict.getPixelType()) {
+        if (getPixelType() != pict.getPixelType()) {
           throw new FormatException("Pixel type of inner PICT does not match " +
             "pixel type of Openlab file");
         }
-        else pict.openBytes(0, tmpBuf, x, y, w, h);
+
+        if (isIndexed()) {
+          luts.setElementAt(pict.get8BitLookupTable(),
+            planeOffsets[series][lastPlane]);
+        }
+
+        pict.openBytes(0, tmpBuf, x, y, w, h);
 
         if (getRGBChannelCount() == 1) {
           byte[] splitBuf = ImageTools.splitChannels(tmpBuf, 0, 3,
@@ -526,15 +519,10 @@ public class OpenlabReader extends FormatReader {
         case MAC_4_GREYS:
         case MAC_256_GREYS:
           core[i].pixelType = FormatTools.UINT8;
-          if (core[i].imageCount > 1 && (core[i].sizeX * core[i].sizeY <
-            (planes[planeOffsets[i][1]].planeOffset -
-            planes[planeOffsets[i][0]].planeOffset)))
-          {
-            core[i].pixelType = FormatTools.UINT16;
-          }
           core[i].rgb = false;
           core[i].sizeC = 1;
           core[i].interleaved = false;
+          core[i].indexed = planes[planeOffsets[i][0]].pict;
           break;
         case MAC_256_COLORS:
           core[i].pixelType = FormatTools.UINT8;
