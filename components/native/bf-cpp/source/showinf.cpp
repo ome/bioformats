@@ -23,26 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // A C++ version of the Bio-Formats showinf command line utility.
 
-#include "jace/JNIHelper.h"
-
-#include "jace/StaticVmLoader.h"
-using jace::StaticVmLoader;
-
-#include "jace/OptionList.h"
-using jace::OptionList;
-
-#include "jace/JArray.h"
-using jace::JArray;
-
-#include "jace/JNIException.h"
-using jace::JNIException;
-
-#include "jace/proxy/types/JBoolean.h"
-using jace::proxy::types::JBoolean;
-
-#include "jace/proxy/types/JByte.h"
-using jace::proxy::types::JByte;
-
 #include "bioformats.h"
 
 #include <string>

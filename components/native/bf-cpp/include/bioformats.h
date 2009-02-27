@@ -26,6 +26,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // TODO - eventually want to automatically generate this list
 
+#include "jace/JNIHelper.h"
+
+#include "jace/JArray.h"
+#include "jace/JNIException.h"
+#include "jace/OptionList.h"
+#include "jace/StaticVmLoader.h"
+using namespace jace;
+
+#include "jace/proxy/types/JBoolean.h"
+#include "jace/proxy/types/JByte.h"
+#include "jace/proxy/types/JChar.h"
+#include "jace/proxy/types/JDouble.h"
+#include "jace/proxy/types/JFloat.h"
+#include "jace/proxy/types/JInt.h"
+#include "jace/proxy/types/JLong.h"
+#include "jace/proxy/types/JShort.h"
+#include "jace/proxy/types/JVoid.h"
+using namespace jace::proxy::types;
+
 #include "jace/proxy/java/lang/String.h"
 using namespace jace::proxy::java::lang;
 
