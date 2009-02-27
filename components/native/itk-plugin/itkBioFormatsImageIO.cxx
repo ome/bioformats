@@ -43,29 +43,10 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #include <vnl/vnl_vector.h>
 #include <vnl/vnl_cross.h>
 
-#include "jace/StaticVmLoader.h"
-using jace::StaticVmLoader;
-
-#include "jace/OptionList.h"
-using jace::OptionList;
-
-#include "bioformats.h"
-
 #include <cmath>
 
 #include <stdio.h>
 #include <stdlib.h>
-
-//-------------------------------
-
-static
-std::string
-GetExtension( const std::string& filename)
-{
-  const std::string::size_type pos = filename.find_last_of(".");
-  std::string extension(filename, pos+1, filename.length());
-  return extension;
-}
 
 //--------------------------------------
 //
@@ -77,26 +58,45 @@ namespace itk
 
   BioFormatsImageIO::BioFormatsImageIO()
   {
-    this->SetNumberOfDimensions(3);
-    const unsigned int uzero = 0;
-    m_Dimensions[0] = uzero;
-    m_Dimensions[1] = uzero;
-    m_Dimensions[2] = uzero;
+    PRINT("BioFormatsImageIO constuctor");
+    m_PixelType = SCALAR;
+    m_FileType = Binary;
+    m_NumberOfComponents = 1; // NB: Always split channels for now.
 
-    if ( ByteSwapper<int>::SystemIsBigEndian())
-      m_ByteOrder = BigEndian;
-    else
-      m_ByteOrder = LittleEndian;
+    // initialize the Java virtual machine
+    PRINT("Creating JVM...");
+    StaticVmLoader loader(JNI_VERSION_1_4);
+    OptionList list;
+    // NB: Use full path for now, to ensure Java libraries can be found.
+    std::string jarPath =
+      "/home/curtis/src/itk/InsightToolkit-3.10.2/build/bin";
+    list.push_back(jace::ClassPath(
+      jarPath + "/jace-runtime.jar:" +
+      jarPath + "/bio-formats.jar:" +
+      jarPath + "/loci_tools.jar"
+    ));
+    list.push_back(jace::CustomOption("-Xcheck:jni"));
+    list.push_back(jace::CustomOption("-Xmx256m"));
+    //list.push_back(jace::CustomOption("-verbose:jni"));
+    jace::helper::createVm(loader, list, false);
+    PRINT("JVM created.");
+
+    PRINT("Creating Bio-Formats objects...");
+    reader = new ChannelSeparator;
+    writer = new ImageWriter;
+    PRINT("Created reader and writer.");
   }
 
   BioFormatsImageIO::~BioFormatsImageIO()
   {
+    delete reader;
+    delete writer;
   }
 
   bool
   BioFormatsImageIO::CanReadFile(const char* FileNameToRead)
   {
-    std::cout << "BioFormatsImageIO::CanReadFile: FileNameToRead=" << FileNameToRead << std::endl;//TEMP
+    PRINT("BioFormatsImageIO::CanReadFile: FileNameToRead=" << FileNameToRead);
     std::string filename(FileNameToRead);
 
     if ( filename == "" )
@@ -105,47 +105,179 @@ namespace itk
       return false;
     }
 
-    // check if the correct extension is given by the user
-    std::string extension = GetExtension(filename);
-    if ( extension == std::string("zvi") || extension == std::string("lif") )
-    {
-      return true;
-    }
+    // call Bio-Formats to check file type
 
-    return false;
+    // NB: Calling reader->isThisType() causes a symbol lookup error on:
+    //     _ZNK4jace5proxy5types8JBooleancvaEv
+    /*
+    bool isType = reader->isThisType(filename);
+    PRINT("BioFormatsImageIO::CanReadFile: isType=" << isType);
+    return isType;
+    */
+
+    return true;
   }
 
   void
   BioFormatsImageIO::ReadImageInformation()
   {
-    std::cout << "BioFormatsImageIO::ReadImageInformation" << std::endl;//TEMP
+    PRINT("BioFormatsImageIO::ReadImageInformation: m_FileName=" << m_FileName);
 
-    // initialize the Java virtual machine
-    std::cout << "Creating JVM..." << std::endl;//TEMP
-    StaticVmLoader loader(JNI_VERSION_1_4);
-    OptionList list;
-    list.push_back(jace::ClassPath(
-      "jace-runtime.jar:bio-formats.jar:loci_tools.jar"));
-    list.push_back(jace::CustomOption("-Xcheck:jni"));
-    list.push_back(jace::CustomOption("-Xmx256m"));
-    //list.push_back(jace::CustomOption("-verbose:jni"));
-    jace::helper::createVm(loader, list, false);
-    std::cout << "JVM created." << std::endl;
+    // attach OME metadata object
+    IMetadata omeMeta = MetadataTools::createOMEXMLMetadata();
+    reader->setMetadataStore(omeMeta);
 
-    //ImageReader r;
-    //std::cout << "Created ImageReader:" << r << std::endl;//TEMP
+    // initialize dataset
+    PRINT("Initializing...");
+    reader->setId(m_FileName);
+    PRINT("Initialized.");
+
+    int seriesCount = reader->getSeriesCount();
+    PRINT("\tSeriesCount = " << seriesCount);
+
+    // get byte order
+
+    // NB: Calling reader->isLittleEndian() causes a symbol lookup error on:
+    //     _ZNK4jace5proxy5types8JBooleancvaEv
+    /*
+    bool little = reader->isLittleEndian();
+    if (little) SetByteOrderToLittleEndian();
+    else SetByteOrderToBigEndian();
+    */
+    SetByteOrderToBigEndian(); // m_ByteOrder
+
+    // get component type
+
+    // NB: Calling FormatTools::UINT8() causes a symbol lookup error on:
+    //     _ZN4jace6helper15deleteGlobalRefEP10_Jv_JNIEnvP9__jobject
+    int pixelType = reader->getPixelType();
+    int bpp = FormatTools::getBytesPerPixel(pixelType);
+    PRINT("\tBytes per pixel = " << bpp);
+    /*
+    IOComponentType componentType;
+    if (pixelType == FormatTools::UINT8())
+      componentType = UCHAR;
+    else if (pixelType == FormatTools::INT8())
+      componentType = CHAR;
+    if (pixelType == FormatTools::UINT16())
+      componentType = USHORT;
+    else if (pixelType == FormatTools::INT16())
+      componentType = SHORT;
+    if (pixelType == FormatTools::UINT32())
+      componentType = UINT;
+    else if (pixelType == FormatTools::INT32())
+      componentType = INT;
+    if (pixelType == FormatTools::FLOAT())
+      componentType = FLOAT;
+    else if (pixelType == FormatTools::DOUBLE())
+      componentType = DOUBLE;
+    else
+      componentType = UNKNOWNCOMPONENTTYPE;
+    SetComponentType(componentType); // m_ComponentType
+    if (componentType == UNKNOWNCOMPONENTTYPE)
+    {
+      itkExceptionMacro(<<"Unknown pixel type: " << pixelType);
+    }
+    */
+
+    // TEMP - for now we assume 8-bit unsigned integer data
+    SetComponentType(UCHAR);
+
+    // get pixel resolution and dimensional extents
+    int sizeX = reader->getSizeX();
+    int sizeY = reader->getSizeY();
+    int sizeZ = reader->getSizeZ();
+    int sizeC = reader->getSizeC();
+    int sizeT = reader->getSizeT();
+
+    // NB: ITK does not seem to provide a facility for multidimensional
+    //     data beyond multichannel 3D? Need to investigate further.
+
+    int imageCount = reader->getImageCount();
+    SetNumberOfDimensions(imageCount > 1 ? 3 : 2);
+    m_Dimensions[0] = sizeX;
+    m_Dimensions[1] = sizeY;
+    if (imageCount > 1) m_Dimensions[2] = imageCount;
+
+    PRINT("\tSizeX = " << sizeX);
+    PRINT("\tSizeY = " << sizeY);
+    PRINT("\tSizeZ = " << sizeZ);
+    PRINT("\tSizeC = " << sizeC);
+    PRINT("\tSizeT = " << sizeT);
+    PRINT("\tImage Count = " << imageCount);
+
+    // get physical resolution
+
+    // NB: Jace interface proxies do not inherit from superinterfaces.
+    //     E.g., IMetadata does not possess methods from MetadataRetrieve.
+    //     Need to find a way around this, or improve Jace.
+    //float physX = omeMeta.getDimensionsPhysicalSizeX(0, 0);
+    //float physY = omeMeta.getDimensionsPhysicalSizeY(0, 0);
+    //m_Spacing[0] = physX;
+    //m_Spacing[1] = physY;
+    //if (imageCount > 1) m_Spacing[2] = 1;
+
+    //PRINT("\tPhysicalSizeX = " << physX);
+    //PRINT("\tPhysicalSizeY = " << physY);
   }
 
   void
   BioFormatsImageIO::Read(void* pData)
   {
-    std::cout << "BioFormatsImageIO::Read" << std::endl;//TEMP
+    char* data = (char*) pData;
+    PRINT("BioFormatsImageIO::Read");
+
+    typedef JArray<JByte> ByteArray;
+
+    int pixelType = reader->getPixelType();
+    int bpp = FormatTools::getBytesPerPixel(pixelType);
+
+    // check IO region to identify the planar extents desired
+    ImageIORegion region = GetIORegion();
+    int regionDim = region.GetImageDimension();
+    int xIndex = region.GetIndex(0);
+    int xCount = region.GetSize(0);
+    int yIndex = region.GetIndex(1);
+    int yCount = region.GetSize(1);
+    int pIndex = 0, pCount = 1;
+    if (regionDim > 2) {
+      pIndex = region.GetIndex(2);
+      pCount = region.GetSize(2);
+    }
+    int bytesPerSubPlane = xCount * yCount * bpp;
+
+    PRINT("\tRegion dimension = " << regionDim);
+    PRINT("\tX index = " << xIndex);
+    PRINT("\tX count = " << xCount);
+    PRINT("\tY index = " << yIndex);
+    PRINT("\tY count = " << yCount);
+    PRINT("\tPlane index = " << pIndex);
+    PRINT("\tPlane count = " << pCount);
+    PRINT("\tBytes per plane = " << bytesPerSubPlane);
+
+    int p = 0;
+    for (int no=pIndex; no<pIndex+pCount; no++)
+    {
+      PRINT("Reading image plane " <<
+        (no + 1) << "/" << reader->getImageCount());
+      ByteArray buf = reader->openBytes(no, xIndex, xCount, yIndex, yCount);
+
+      // NB: Using brackets with a JArray causes a symbol lookup error on:
+      //     _ZN4jace6helper12newGlobalRefEP10_Jv_JNIEnvP9__jobject
+      //for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
+
+      // TEMP - for now we populate the buffer with dummy data
+      for (int i=0; i<bytesPerSubPlane; i++) data[p++] = 255 - no;
+    }
+
+    reader->close();
+    PRINT("Done.");
   } // end Read function
 
   bool
   BioFormatsImageIO::CanWriteFile(const char* name)
   {
-    std::cout << "BioFormatsImageIO::CanWriteFile: name=" << name << std::endl;//TEMP
+    PRINT("BioFormatsImageIO::CanWriteFile: name=" << name);
     std::string filename(name);
 
     if ( filename == "" )
@@ -154,23 +286,25 @@ namespace itk
       return false;
     }
 
-    std::string extension = GetExtension(filename);
-    if ( extension != std::string("zvi") && extension != std::string("lif") )
-      return false;
+    // call Bio-Formats to check file type
+    ImageWriter writer;
+    bool isType = writer.isThisType(filename);
+    PRINT("BioFormatsImageIO::CanWriteFile: isType=" << isType);
 
-    return true;
+    return isType;
   }
 
   void
   BioFormatsImageIO::WriteImageInformation()
   {
-    std::cout << "BioFormatsImageIO::WriteImageInformation" << std::endl;//TEMP
+    PRINT("BioFormatsImageIO::WriteImageInformation");
   }
 
   void
   BioFormatsImageIO::Write(const void* buffer)
   {
-    std::cout << "BioFormatsImageIO::Write" << std::endl;//TEMP
-  }
+    PRINT("BioFormatsImageIO::Write");
+    // CTR TODO - implmeent Write function
+  } // end Write function
 
 } // end NAMESPACE ITK

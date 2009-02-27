@@ -44,6 +44,17 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 
 //#include "itkBioFormatsIOWin32Header.h"
 
+#include "bioformats.h"
+
+// for debugging
+#define BF_ITK_DEBUG
+#ifdef BF_ITK_DEBUG
+#define PRINT(x) \
+  std::cout << x << std::endl;
+#else
+#define PRINT(x)
+#endif
+
 namespace itk
 {
 
@@ -67,7 +78,6 @@ namespace itk
     virtual void Read(void* buffer);
 
     /**---------------Write the data------------------**/
-
     virtual bool CanWriteFile(const char* FileNameToWrite);
     /* Set the spacing and dimension information for the set file name */
     virtual void WriteImageInformation();
@@ -77,30 +87,10 @@ namespace itk
   protected:
     BioFormatsImageIO();
     ~BioFormatsImageIO();
-    /*
-    void PrintSelf(std::ostream& os, Indent indent) const;
-
-    void ReadVolumeHeader(gzFile fp);
 
   private:
-    // processes the actual data buffer
-    void SwapBytesIfNecessary(void* buffer, unsigned long numberOfPixels);
-    // examines the direction cosines and creates encapsulation data
-    //void MriDirCos();
-
-    void WriteUncompressedHeader();
-    void WriteCompressedHeader(gzFile fp);
-
-    void WriteUncompressedData(const void* buffer);
-    void WriteCompressedData(gzFile fp, const void* buffer);
-
-    void PermuteFrameValues(const void* buffer, char* tempmemory);
-
-    unsigned int GetComponentSize() const;
-
-    std::string GetOrientation( itk::Matrix< double > directions );
-    */
-
+    ChannelSeparator* reader;
+    ImageWriter* writer;
   };
 
 }
