@@ -286,14 +286,18 @@ public class Importer {
           }
         }
         seriesLabels[i] = sb.toString();
+        seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
       }
 
-      if (seriesCount > 1 && !options.openAllSeries()) {
+      if (seriesCount > 1 && !options.openAllSeries() && !options.isViewNone())
+      {
         status = options.promptSeries(r, seriesLabels, series);
         if (!statusOk(status)) return;
       }
 
-      if (options.openAllSeries()) Arrays.fill(series, true);
+      if (options.openAllSeries() || options.isViewNone()) {
+        Arrays.fill(series, true);
+      }
 
       // -- Step 4c: prompt for dimension swapping parameters, if necessary --
 
@@ -845,21 +849,27 @@ public class Importer {
             "hyper_stack=" + options.isViewHyperstack() + " ");
           if (colorize || customColorize) {
             int[] openImages = WindowManager.getIDList();
-            int nOpenImages = WindowManager.getImageCount();
-            for (int i=0; i<nOpenImages; i++) {
-              ImagePlus p =
-                WindowManager.getImage(WindowManager.getNthImageID(1));
+            for (int i=0; i<openImages.length; i++) {
+              ImagePlus p = WindowManager.getImage(openImages[i]);
+              if (p == null) continue;
               String title = p.getTitle();
-              if (title.startsWith(imp.getTitle()) &&
-                title.indexOf("C=") != -1)
-              {
+              if (!title.startsWith(imp.getTitle())) continue;
+
+              WindowManager.setTempCurrentImage(p);
+
+              if (p.getTitle().indexOf("C=") != -1) {
                 int channel =
                   Integer.parseInt(title.substring(title.indexOf("C=") + 2));
-                WindowManager.setCurrentWindow(p.getWindow());
                 int channelIndex = customColorize ? -1 : channel % 3;
                 IJ.runPlugIn("loci.plugins.Colorizer",
                   "stack_order=" + stackOrder + " merge=false colorize=true" +
                   " ndx=" + channelIndex + " hyper_stack=" +
+                  options.isViewHyperstack() + " ");
+              }
+              else {
+                IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" +
+                  stackOrder + " merge=false colorize=true ndx=" +
+                  (customColorize ? "-1" : "0") + " hyper_stack=" +
                   options.isViewHyperstack() + " ");
               }
             }

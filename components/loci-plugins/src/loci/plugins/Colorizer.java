@@ -211,6 +211,7 @@ public class Colorizer implements PlugInFilter {
         if (doPrompt) {
           promptForColor(0);
         }
+        if (lut == null) return;
 
         IndexColorModel model = new IndexColorModel(8, 256, lut[0][0],
           lut[0][1], lut[0][2]);
@@ -390,10 +391,11 @@ public class Colorizer implements PlugInFilter {
   }
 
   private void promptForColor(int channel) {
-    ColorChooser chooser = new ColorChooser("Color Chooser - Channel " +
-      channel, Color.BLACK, false);
+    ColorChooser chooser = new ColorChooser(
+      "Color Chooser - Channel " + channel, Color.BLACK, false);
 
     Color color = chooser.getColor();
+    if (color == null) return;
     double redIncrement = ((double) color.getRed()) / 255;
     double greenIncrement = ((double) color.getGreen()) / 255;
     double blueIncrement = ((double) color.getBlue()) / 255;

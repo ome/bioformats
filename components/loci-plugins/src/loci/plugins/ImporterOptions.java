@@ -130,9 +130,9 @@ public class ImporterOptions
   public static final String LABEL_STACK = "View stack with: ";
   public static final String LABEL_ORDER = "Stack_order: ";
   public static final String LABEL_MERGE = "Merge_channels to RGB";
-  public static final String LABEL_COLORIZE = "Colorize channels (RGB)";
+  public static final String LABEL_COLORIZE = "RGB_colorize channels";
   public static final String LABEL_COLORIZE_CUSTOM =
-    "Colorize channels (custom colors)";
+    "Custom_colorize channels";
   public static final String LABEL_SPLIT_C = "Split_channels";
   public static final String LABEL_SPLIT_Z = "Split_focal planes";
   public static final String LABEL_SPLIT_T = "Split_timepoints";
@@ -1374,10 +1374,8 @@ public class ImporterOptions
 
       gd.addMessage("Series " + n + ":\n");
 
-      int[] axisSizes = new int[] {r.getSizeZ(), r.getSizeC(), r.getSizeT()};
-
       for (int i=0; i<labels.length; i++) {
-        gd.addChoice(axisSizes[i] + "_planes", labels, labels[i]);
+        gd.addChoice(i + "_planes", labels, labels[i]);
       }
     }
     Util.addScrollBars(gd);
