@@ -222,6 +222,12 @@ public class OMEXMLReader extends FormatReader {
     MetadataRetrieve omexmlMeta = (MetadataRetrieve)
       MetadataTools.createOMEXMLMetadata(omexml);
 
+    if (omexmlMeta == null) {
+      throw new FormatException("ome-xml.jar is required to read " +
+        "OME-XML files. Please download it from " +
+        "http://loci.wisc.edu/ome/formats-library.html");
+    }
+
     int numDatasets = omexmlMeta.getImageCount();
 
     core = new CoreMetadata[numDatasets];

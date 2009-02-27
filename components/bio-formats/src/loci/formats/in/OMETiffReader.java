@@ -104,6 +104,14 @@ public class OMETiffReader extends FormatReader {
     ras.close();
     String xml = TiffTools.getComment(firstIFD);
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
+
+    if (meta == null) {
+      throw new FormatException("ome-xml.jar is required to read OME-TIFF " +
+        "files.  Please download it from " +
+        "http://loci.wisc.edu/ome/formats-library.html");
+    }
+
+
     String currentUUID = meta.getUUID();
     MetadataTools.convertMetadata(meta, metadataStore);
 
