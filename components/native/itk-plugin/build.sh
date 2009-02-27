@@ -27,6 +27,10 @@ fi
 # invoke CMake
 echo
 echo -------- STARTING BUILD --------
+if [ -e build ]
+then
+  rm -rf build
+fi
 mkdir build
 cd build
 cmake -D ITK_DIR=$ITK_DIR -D JACE_DIR=$JACE_DIR ..
