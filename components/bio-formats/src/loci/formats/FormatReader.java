@@ -174,8 +174,18 @@ public abstract class FormatReader extends FormatHandler
   /** Adds an entry to the metadata table. */
   protected void addMeta(String key, Object value) {
     if (key == null || value == null || !collectMetadata) return;
-    String val = value.toString();
+
+    boolean simple =
+      value instanceof String ||
+      value instanceof Number ||
+      value instanceof Boolean ||
+      value instanceof Character;
+    String val = simple ? value.toString() : null;
+
     if (filterMetadata) {
+      // filter out complex data types
+      if (val == null) return;
+
       // verify key & value are not empty
       if (key.length() == 0) return;
       if (val.length() == 0) return;
@@ -202,14 +212,14 @@ public abstract class FormatReader extends FormatHandler
       }
     }
 
-    if (saveOriginalMetadata) {
+    if (saveOriginalMetadata && val != null) {
       MetadataStore store = getMetadataStore();
       if (MetadataTools.isOMEXMLMetadata(store)) {
         MetadataTools.populateOriginalMetadata(store, key, val);
       }
     }
 
-    metadata.put(key, val);
+    metadata.put(key, val == null ? value : val);
   }
 
   /** Adds an entry to the metadata table. */
