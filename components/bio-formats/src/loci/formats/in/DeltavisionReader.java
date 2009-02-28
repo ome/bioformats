@@ -798,52 +798,52 @@ public class DeltavisionReader extends FormatReader {
     private float oDFilter;
 
     /** Photosensor reading. Typically in mV. */
-    private float photosensorReading;
+    public float photosensorReading;
 
     /** Time stamp in seconds since the experiment began. */
-    private float timeStampSeconds;
+    public float timeStampSeconds;
 
     /** X stage coordinates. */
-    private float stageXCoord;
+    public float stageXCoord;
 
     /** Y stage coordinates. */
-    private float stageYCoord;
+    public float stageYCoord;
 
     /** Z stage coordinates. */
-    private float stageZCoord;
+    public float stageZCoord;
 
     /** Minimum intensity */
-    private float minInten;
+    public float minInten;
 
     /** Maxiumum intensity. */
-    private float maxInten;
+    public float maxInten;
 
     ///** Mean intesity. */
-    //private float meanInten;
+    //public float meanInten;
 
     /** Exposure time in milliseconds. */
-    private float expTime;
+    public float expTime;
 
     /** Neutral density value. */
-    private float ndFilter;
+    public float ndFilter;
 
     ///** Excitation filter number. */
-    //private float exFilter;
+    //public float exFilter;
 
     ///** Emission filter number. */
-    //private float emFilter;
+    //public float emFilter;
 
     /** Excitation filter wavelength. */
-    private float exWavelen;
+    public float exWavelen;
 
     /** Emission filter wavelength. */
-    private float emWavelen;
+    public float emWavelen;
 
     /** Intensity scaling factor. Usually 1. */
-    private float intenScaling;
+    public float intenScaling;
 
     /** Energy conversion factor. Usually 1. */
-    private float energyConvFactor;
+    public float energyConvFactor;
 
     /**
      * Helper function which overrides toString, printing out the values in
@@ -886,7 +886,7 @@ public class DeltavisionReader extends FormatReader {
       return sb.toString();
     }
 
-    protected DVExtHdrFields(RandomAccessStream in) {
+    private DVExtHdrFields(RandomAccessStream in) {
       try {
         // NB: this is consistent with the Deltavision Opener plugin
         // for ImageJ (http://rsb.info.nih.gov/ij/plugins/track/delta.html)
