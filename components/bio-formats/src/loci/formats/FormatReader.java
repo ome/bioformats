@@ -175,29 +175,31 @@ public abstract class FormatReader extends FormatHandler
   protected void addMeta(String key, Object value) {
     if (key == null || value == null || !collectMetadata) return;
 
-    boolean simple =
-      value instanceof String ||
+    boolean string = value instanceof String;
+    boolean simple = string ||
       value instanceof Number ||
       value instanceof Boolean ||
       value instanceof Character;
-    String val = simple ? value.toString() : null;
+
+    // string value, if passed in value is a string
+    String val = string ? (String) value : null;
 
     if (filterMetadata) {
       // filter out complex data types
-      if (val == null) return;
+      if (!simple) return;
 
       // verify key & value are not empty
       if (key.length() == 0) return;
-      if (val.length() == 0) return;
+      if (string && val.length() == 0) return;
 
       // verify key & value are reasonable length
       int maxLen = 8192;
       if (key.length() > maxLen) return;
-      if (val.length() > maxLen) return;
+      if (string && val.length() > maxLen) return;
 
       // remove all non-printable characters
       key = DataTools.sanitize(key);
-      val = DataTools.sanitize(val);
+      if (string) val = DataTools.sanitize(val);
 
       // verify key contains at least one alphabetic character
       if (!key.matches(".*[a-zA-Z].*")) return;
@@ -208,14 +210,16 @@ public abstract class FormatReader extends FormatHandler
       };
       for (int i=0; i<invalidSequences.length; i++) {
         key = key.replaceAll(invalidSequences[i], "");
-        val = val.replaceAll(invalidSequences[i], "");
+        if (string) val = val.replaceAll(invalidSequences[i], "");
       }
+
+      if (string) value = val;
     }
 
-    if (saveOriginalMetadata && val != null) {
+    if (saveOriginalMetadata && simple) {
       MetadataStore store = getMetadataStore();
       if (MetadataTools.isOMEXMLMetadata(store)) {
-        MetadataTools.populateOriginalMetadata(store, key, val);
+        MetadataTools.populateOriginalMetadata(store, key, value.toString());
       }
     }
 
