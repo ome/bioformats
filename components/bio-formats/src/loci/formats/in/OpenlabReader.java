@@ -361,8 +361,6 @@ public class OpenlabReader extends FormatReader {
         long pointer = in.getFilePointer();
         planes[imagesFound].planeName = in.readCString().trim();
         in.skipBytes((int) (128 - in.getFilePointer() + pointer));
-        addMeta("Plane " + imagesFound + " Name",
-          planes[imagesFound].planeName);
 
         in.skipBytes(128);
 
@@ -490,17 +488,22 @@ public class OpenlabReader extends FormatReader {
     int nSeries = representativePlanes.size();
     planeOffsets = new int[nSeries][];
     Vector tmpOffsets = new Vector();
+    Vector names = new Vector();
     for (int i=0; i<nSeries; i++) {
       for (int q=0; q<planes.length; q++) {
         if (planes[q] != null && planes[q].series == i) {
           tmpOffsets.add(new Integer(q));
+          names.add(planes[q].planeName);
         }
       }
       planeOffsets[i] = new int[tmpOffsets.size()];
       for (int q=0; q<planeOffsets[i].length; q++) {
         planeOffsets[i][q] = ((Integer) tmpOffsets.get(q)).intValue();
+        addMeta("Series " + i + " Plane " + q + " Name",
+         names.get(q));
       }
       tmpOffsets.clear();
+      names.clear();
     }
 
     // populate core metadata
