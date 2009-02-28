@@ -1,3 +1,14 @@
+2009 March (4.0.0):
+
+* Improved OME data model population for Olympus FV1000, Nikon ND2, Metamorph STK, Leica LEI, Leica LIF, InCell 1000 and MicroManager
+* Added TestNG tests for format writers
+* Added option to ImageJ plugin to specify custom colors when customizing channels
+* Added ability to upgrade the ImageJ plugin from within ImageJ
+* Fixed bugs in Nikon ND2, Leica LIF, BioRad PIC, TIFF, PSD, and OME-TIFF
+* Fixed bugs in Data Browser and Exporter plugins
+* Added support for Axon Raw Format (ARF), courtesy of Johannes Schindelin
+* Added preliminary support for IPLab-Mac file format
+
 2008 December 29:
 * Improved metadata support for Deltavision, Zeiss LSM, MicroManager, and Leica LEI
 * Restructured code base/build system to be component-driven
