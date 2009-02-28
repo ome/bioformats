@@ -449,22 +449,25 @@ public class DeltavisionReader extends FormatReader {
 
       // -- record original metadata --
 
-      /* NB: Sloooow...
+      // NB: It adds a little overhead to record the extended headers into the
+      // original metadata table, but not as much as registering every header
+      // field individually. With this approach it is still easy to
+      // programmatically access any given extended header field.
       String prefix = "Extended header Z" + z + " W" + w + " T" + t;
-      addMeta(prefix + " - Photosensor reading", hdr.photosensorReading);
-      addMeta(prefix + " - Time stamp (in s)", hdr.timeStampSeconds);
-      addMeta(prefix + " - X stage coordinates", hdr.stageXCoord);
-      addMeta(prefix + " - Y stage coordinates", hdr.stageYCoord);
-      addMeta(prefix + " - Z stage coordinates", hdr.stageZCoord);
-      addMeta(prefix + " - Minimum intensity", hdr.minInten);
-      addMeta(prefix + " - Maximum intensity", hdr.maxInten);
-      addMeta(prefix + " - Exposure time (in ms)", hdr.expTime);
-      addMeta(prefix + " - Neutral density value", hdr.ndFilter);
-      addMeta(prefix + " - Excitation filter wavelength", hdr.exWavelen);
-      addMeta(prefix + " - Emission filter wavelength", hdr.emWavelen);
-      addMeta(prefix + " - Intensity scaling factor", hdr.intenScaling);
-      addMeta(prefix + " - Energy conversion factor", hdr.energyConvFactor);
-      */
+      addMeta(prefix, hdr);
+      //addMeta(prefix + " - Photosensor reading", hdr.photosensorReading);
+      //addMeta(prefix + " - Time stamp (in s)", hdr.timeStampSeconds);
+      //addMeta(prefix + " - X stage coordinates", hdr.stageXCoord);
+      //addMeta(prefix + " - Y stage coordinates", hdr.stageYCoord);
+      //addMeta(prefix + " - Z stage coordinates", hdr.stageZCoord);
+      //addMeta(prefix + " - Minimum intensity", hdr.minInten);
+      //addMeta(prefix + " - Maximum intensity", hdr.maxInten);
+      //addMeta(prefix + " - Exposure time (in ms)", hdr.expTime);
+      //addMeta(prefix + " - Neutral density value", hdr.ndFilter);
+      //addMeta(prefix + " - Excitation filter wavelength", hdr.exWavelen);
+      //addMeta(prefix + " - Emission filter wavelength", hdr.emWavelen);
+      //addMeta(prefix + " - Intensity scaling factor", hdr.intenScaling);
+      //addMeta(prefix + " - Energy conversion factor", hdr.energyConvFactor);
 
       // -- record OME metadata --
 
@@ -827,7 +830,7 @@ public class DeltavisionReader extends FormatReader {
     ///** Excitation filter number. */
     //private float exFilter;
 
-    ///** Emiision filter number. */
+    ///** Emission filter number. */
     //private float emFilter;
 
     /** Excitation filter wavelength. */
