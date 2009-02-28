@@ -69,6 +69,7 @@ public final class ImageInfo {
     String id = null;
     boolean pixels = true;
     boolean doMeta = true;
+    boolean filter = true;
     boolean thumbs = false;
     boolean minmax = false;
     boolean merge = false;
@@ -91,6 +92,7 @@ public final class ImageInfo {
         if (args[i].startsWith("-") && args.length > 1) {
           if (args[i].equals("-nopix")) pixels = false;
           else if (args[i].equals("-nometa")) doMeta = false;
+          else if (args[i].equals("-nofilter")) filter = false;
           else if (args[i].equals("-thumbs")) thumbs = true;
           else if (args[i].equals("-minmax")) minmax = true;
           else if (args[i].equals("-merge")) merge = true;
@@ -161,6 +163,7 @@ public final class ImageInfo {
         "      file: the image file to read",
         "    -nopix: read metadata only, not pixels",
         "   -nometa: output only core metadata",
+        " -nofilter: do not filter metadata fields",
         "   -thumbs: read thumbnails instead of normal pixels",
         "   -minmax: compute min/max statistics",
         "    -merge: combine separate channels into RGB image",
@@ -239,7 +242,7 @@ public final class ImageInfo {
 
     reader.close();
     reader.setNormalized(normalize);
-    reader.setMetadataFiltered(true);
+    reader.setMetadataFiltered(filter);
     reader.setMetadataCollected(doMeta);
     long s1 = System.currentTimeMillis();
     reader.setId(id);
