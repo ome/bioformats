@@ -1383,6 +1383,7 @@ public class ImporterOptions
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
     for (int n=0; n<r.getSeriesCount(); n++) {
+      if (!series[n]) continue;
       r.setSeries(n);
       String z = gd.getNextChoice();
       String c = gd.getNextChoice();

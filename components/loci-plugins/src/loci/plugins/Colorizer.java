@@ -32,11 +32,14 @@ import ij.measure.Calibration;
 import ij.plugin.ColorPicker;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
-import java.awt.Color;
+import ij.util.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Vector;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
@@ -83,6 +86,8 @@ public class Colorizer implements PlugInFilter {
   private byte[][][] lut;
   private String mergeOption;
 
+  private int series = 0;
+
   // -- PlugInFilter API methods --
 
   public int setup(String arg, ImagePlus imp) {
@@ -120,6 +125,7 @@ public class Colorizer implements PlugInFilter {
       if (color && lut == null) doPrompt = true;
     }
     else {
+      series = Integer.parseInt(Macro.getValue(arg, "series", "0"));
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
       merge =
         Boolean.valueOf(Macro.getValue(arg, "merge", "true")).booleanValue();
@@ -391,8 +397,8 @@ public class Colorizer implements PlugInFilter {
   }
 
   private void promptForColor(int channel) {
-    ColorChooser chooser = new ColorChooser(
-      "Color Chooser - Channel " + channel, Color.BLACK, false);
+    CustomColorChooser chooser = new CustomColorChooser(
+      "Color Chooser - Channel " + channel, null, series, channel);
 
     Color color = chooser.getColor();
     if (color == null) return;
@@ -406,6 +412,110 @@ public class Colorizer implements PlugInFilter {
       lut[channel][1][i] = (byte) (i * greenIncrement);
       lut[channel][2][i] = (byte) (i * blueIncrement);
     }
+  }
+
+  // -- Helper class --
+
+  /**
+   * Adapted from ij.gui.ColorChooser.  ColorChooser is not used because
+   * there is no way to change the slider labels - this means that we can't
+   * record macros in which custom colors are chosen for multiple channels.
+   */
+  class CustomColorChooser implements TextListener {
+    Vector colors;
+    ColorPanel panel;
+    Color initialColor;
+    int red, green, blue;
+    String title;
+
+    private int series, channel;
+
+    public CustomColorChooser(String title, Color initialColor, int series,
+      int channel)
+    {
+        this.title = title;
+        if (initialColor == null) initialColor = Color.BLACK;
+        this.initialColor = initialColor;
+        red = initialColor.getRed();
+        green = initialColor.getGreen();
+        blue = initialColor.getBlue();
+        this.series = series;
+        this.channel = channel;
+    }
+
+    // -- ColorChooser API methods --
+
+    /**
+     * Displays a color selection dialog and returns the color
+     *  selected by the user.
+     */
+    public Color getColor() {
+      GenericDialog gd = new GenericDialog(title);
+      gd.addSlider(makeLabel("Red:"), 0, 255, red);
+      gd.addSlider(makeLabel("Green:"), 0, 255, green);
+      gd.addSlider(makeLabel("Blue:"), 0, 255, blue);
+      panel = new ColorPanel(initialColor);
+      gd.addPanel(panel, GridBagConstraints.CENTER, new Insets(10, 0, 0, 0));
+      colors = gd.getNumericFields();
+      for (int i=0; i<colors.size(); i++) {
+        ((TextField) colors.elementAt(i)).addTextListener(this);
+      }
+      gd.showDialog();
+      if (gd.wasCanceled()) return null;
+      int red = (int) gd.getNextNumber();
+      int green = (int) gd.getNextNumber();
+      int blue = (int) gd.getNextNumber();
+      return new Color(red, green, blue);
+    }
+
+    public void textValueChanged(TextEvent e) {
+      int red = getColorValue(0);
+      int green = getColorValue(1);
+      int blue = getColorValue(2);
+      panel.setColor(new Color(red, green, blue));
+      panel.repaint();
+    }
+
+    // -- Helper methods --
+
+    private int getColorValue(int index) {
+      int color =
+        (int) Tools.parseDouble(((TextField) colors.get(index)).getText());
+      if (color < 0) color = 0;
+      if (color > 255) color = 255;
+      return color;
+    }
+
+    private String makeLabel(String baseLabel) {
+      return "Series_" + series + "_Channel_" + channel + "_" + baseLabel;
+    }
+  }
+
+  class ColorPanel extends Panel {
+    private static final int WIDTH = 100, HEIGHT = 50;
+    private Color c;
+
+    public ColorPanel(Color c) {
+      this.c = c;
+    }
+
+    public Dimension getPreferredSize() {
+      return new Dimension(WIDTH, HEIGHT);
+    }
+
+    void setColor(Color c) { this.c = c; }
+
+    public Dimension getMinimumSize() {
+      return new Dimension(WIDTH, HEIGHT);
+    }
+
+    public void paint(Graphics g) {
+      g.setColor(c);
+      g.fillRect(0, 0, WIDTH, HEIGHT);
+      g.setColor(Color.black);
+      g.drawRect(0, 0, WIDTH-1, HEIGHT-1);
+    }
+
   }
 
 }

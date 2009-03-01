@@ -773,11 +773,13 @@ public class Importer {
       if (mergeChannels && windowless) {
         IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
           " merge=true merge_option=[" + options.getMergeOption() + "] " +
-          "hyper_stack=" + options.isViewHyperstack() + " ");
+          "series=" + r.getSeries() + " hyper_stack=" +
+          options.isViewHyperstack() + " ");
       }
       else if (mergeChannels) {
         IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=true hyper_stack=" + options.isViewHyperstack() + " ");
+          " merge=true series=" + r.getSeries() + " hyper_stack=" +
+          options.isViewHyperstack() + " ");
       }
     }
 
@@ -863,14 +865,14 @@ public class Importer {
                 int channelIndex = customColorize ? -1 : channel % 3;
                 IJ.runPlugIn("loci.plugins.Colorizer",
                   "stack_order=" + stackOrder + " merge=false colorize=true" +
-                  " ndx=" + channelIndex + " hyper_stack=" +
-                  options.isViewHyperstack() + " ");
+                  " ndx=" + channelIndex + " series=" + r.getSeries() +
+                  " hyper_stack=" + options.isViewHyperstack() + " ");
               }
               else {
                 IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" +
                   stackOrder + " merge=false colorize=true ndx=" +
-                  (customColorize ? "-1" : "0") + " hyper_stack=" +
-                  options.isViewHyperstack() + " ");
+                  (customColorize ? "-1" : "0") + " series=" + r.getSeries() +
+                  " hyper_stack=" + options.isViewHyperstack() + " ");
               }
             }
           }
@@ -878,12 +880,14 @@ public class Importer {
         else if ((colorize || customColorize) && !virtual) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
             " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
-            " hyper_stack=" + options.isViewHyperstack() + " ");
+            " series=" + r.getSeries() + " hyper_stack=" +
+            options.isViewHyperstack() + " ");
         }
         else if (colorModels != null && !virtual) {
           Colorizer colorizer = new Colorizer();
           String arg = "stack_order=" + stackOrder + " merge=false " +
-            "colorize=true hyper_stack=" + options.isViewHyperstack() + " ";
+            "colorize=true series=" + r.getSeries() + " hyper_stack=" +
+            options.isViewHyperstack() + " ";
           colorizer.setup(arg, imp);
           for (int channel=0; channel<colorModels.length; channel++) {
             byte[][] lut = new byte[3][256];
