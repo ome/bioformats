@@ -58,6 +58,11 @@ Pixels = Yes since r647
 LogicalChannel.SamplesPerPixel = Yes
 Plane = Yes
 
+[ARFReader]
+Pixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
+
 [AVIReader]
 Pixels = Yes since r657
 LogicalChannel.SamplesPerPixel = Yes
@@ -199,6 +204,10 @@ Well.Column = Yes
 Experimenter = Yes
 LogicalChannel.SamplesPerPixel = Yes
 Plane = Yes
+WellSample.Index = Yes
+WellSample.ImageRef = Yes
+WellSample.PosX = Yes
+WellSample.PosY = Yes
 
 [FluoviewReader]
 Pixels = Yes since r639
@@ -208,6 +217,8 @@ LogicalChannel.SamplesPerPixel = Yes
 Objective.LensNA = Yes
 Objective.Manufacturer = Yes
 Objective.CalibratedMagnification = Yes
+Objective.Model = Yes
+Objective.Immersion = Yes
 DetectorSettings = No
 DisplayChannel = No
 Detector.Manufacturer = Yes
@@ -216,6 +227,7 @@ DetectorSettings.Gain = Yes
 DetectorSettings.Offset = Yes
 Experimenter = Yes
 Plane = Yes
+Image.Description = Yes
 
 [GIFReader]
 Pixels = Yes since r647
@@ -251,6 +263,7 @@ LogicalChannel.EmWave = Yes
 LogicalChannel.ExWave = Yes
 LogicalChannel.Name = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.PinholeSize = Yes
 Laser.Wavelength = Yes
 Objective.Model = Yes
 Objective.Immersion = Yes
@@ -261,11 +274,13 @@ DetectorSettings.Gain = Yes
 Experimenter.LastName = Yes
 Plane = Yes
 StagePosition = Yes
+Image.Name = Yes
+Image.CreationDate = Yes
 
 [IPLabReader]
 Pixels = Yes since r609
 Dimensions.PhysicalSizeX = Yes
-Dimensiosn.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeY = Yes
 Dimensions.TimeIncrement = Yes
 Image.Description = Yes
 ROI = No
@@ -327,6 +342,8 @@ Plane = Yes
 [InCellReader]
 Pixels = Yes since r3414
 WellSample.Index = Yes
+WellSample.PosX = Yes
+WellSample.PosY = Yes
 Image.CreationDate = Yes
 Image.Description = Yes
 Plane = Yes
@@ -334,12 +351,24 @@ PlaneTiming = Yes
 LogicalChannel.EmWave = Yes
 LogicalChannel.ExWave = Yes
 LogicalChannel.SamplesPerPixel = Yes
-Objective.CalibratedMagnification = Yes
+Objective.NominalMagnification = Yes
 Objective.Model = Yes
 Objective.LensNA = Yes
+ObjectiveSettings.RefractiveIndex = Yes
 Plate.Name = Yes
 Well.Row = Yes
 Well.Column = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Detector.Model = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Gain = Yes
+ImagingEnvironment.Temperature = Yes
+
+[IvisionReader]
+Pixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
 
 [JPEGReader]
 Pixels = Yes since r647
@@ -367,12 +396,19 @@ LogicalChannel.EmWave = Yes
 LogicalChannel.ExWave = Yes
 LogicalChannel.Name = Yes
 Objective.LensNA = Yes
+Objective.SerialNumber = Yes
+Objective.NominalMagnification = Yes
+Objective.Immersion = Yes
+Objective.Correction = Yes
+Objective.Model = Yes
+ObjectiveSettings.RefractiveIndex = Yes
 Detector.Voltage = Yes
 Detector.Offset = Yes
 StagePosition.PositionX = Yes
 StagePosition.PositionY = Yes
 StagePosition.PositionZ = Yes
 Laser.Wavelength = Yes
+LightSource.Power = Yes
 PlaneTiming.DeltaT = Yes
 Plane = Yes
 
@@ -436,6 +472,7 @@ Plane = Yes
 PlaneTiming = Yes
 Image.CreationDate = Yes
 Image.Description = Yes
+Image.Name = Yes
 ImagingEnvironment.Temperature = Yes
 StagePosition.PositionX = Yes
 StagePosition.PositionY = Yes
@@ -493,10 +530,19 @@ Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes
 Dimensions.PhysicalSizeZ = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.Mode = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
 DetectorSettings.Gain = Yes
 DetectorSettings.Voltage = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.ReadOutRate = Yes
 Objective.LensNA = Yes
 Objective.CalibratedMagnification = Yes
+Objective.Immersion = Yes
+Detector.Model = Yes
+ImagingEnvironment.Temperature = Yes
 
 [NRRDReader]
 Pixels = Yes since r2625
@@ -702,12 +748,17 @@ LogicalChannel.EmWave = Yes
 LogicalChannel.ExWave = Yes
 LogicalChannel.Name = Yes
 Objective.LensNA = Yes
+Objective.SerialNumber = Yes
+Objective.NominalMagnification = Yes
+Objective.Immersion = Yes
+Objective.Correction = Yes
+Objective.Model = Yes
+ObjectiveSettings.RefractiveIndex = Yes
 Detector.Voltage = Yes
 Detector.Offset = Yes
-StagePosition.PositionX = Yes
-StagePosition.PositionY = Yes
-StagePosition.PositionZ = Yes
+StagePosition = Yes
 Laser.Wavelength = Yes
+LightSource.Power = Yes
 PlaneTiming.DeltaT = Yes
 Plane = Yes
 

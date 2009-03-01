@@ -361,7 +361,7 @@ public class FlexReader extends BaseTiffReader {
         store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
       }
       else if (parentQName.equals("ImageResolutionY")) {
-        store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
+        store.setDimensionsPhysicalSizeY(new Float(value), nextImage - 1, 0);
       }
       else if (parentQName.equals("Well")) {
         addMeta("Well " + (nextWell - 1) + " " + currentQName, value);
