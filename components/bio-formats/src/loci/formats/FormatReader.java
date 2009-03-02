@@ -188,10 +188,6 @@ public abstract class FormatReader extends FormatHandler
       // filter out complex data types
       if (!simple) return;
 
-      // verify key & value are not empty
-      if (key.length() == 0) return;
-      if (string && val.length() == 0) return;
-
       // verify key & value are reasonable length
       int maxLen = 8192;
       if (key.length() > maxLen) return;
@@ -212,6 +208,10 @@ public abstract class FormatReader extends FormatHandler
         key = key.replaceAll(invalidSequences[i], "");
         if (string) val = val.replaceAll(invalidSequences[i], "");
       }
+
+      // verify key & value are not empty
+      if (key.length() == 0) return;
+      if (string && val.trim().length() == 0) return;
 
       if (string) value = val;
     }
