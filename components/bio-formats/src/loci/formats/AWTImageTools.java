@@ -785,7 +785,7 @@ public final class AWTImageTools {
         model = new SignedColorModel(8, DataBuffer.TYPE_BYTE, rgbChanCount);
       }
       else if (pixelType == FormatTools.INT16) {
-        model = new SignedColorModel(16, DataBuffer.TYPE_SHORT, rgbChanCount);
+        model = new SignedColorModel(16, DataBuffer.TYPE_USHORT, rgbChanCount);
       }
       else if (pixelType == FormatTools.INT32) {
         model = new SignedColorModel(32, DataBuffer.TYPE_INT, rgbChanCount);
