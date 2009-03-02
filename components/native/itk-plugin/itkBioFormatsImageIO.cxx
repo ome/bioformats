@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Adapted from the Slicer3 project: http://www.slicer.org/
 http://viewvc.slicer.org/viewcvs.cgi/trunk/Libs/MGHImageIO/
 
-See slicer-license.txt for licensing information.
+See slicer-license.txt for Slicer3's licensing information.
 
 For more information about the ITK Plugin IO mechanism, see:
 http://www.itk.org/Wiki/Plugin_IO_mechanisms
