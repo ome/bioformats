@@ -175,6 +175,8 @@ public abstract class FormatReader extends FormatHandler
   protected void addMeta(String key, Object value) {
     if (key == null || value == null || !collectMetadata) return;
 
+    key = key.trim();
+
     boolean string = value instanceof String;
     boolean simple = string ||
       value instanceof Number ||
