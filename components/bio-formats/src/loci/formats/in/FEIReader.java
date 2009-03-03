@@ -48,6 +48,7 @@ public class FEIReader extends FormatReader {
   public FEIReader() {
     super("FEI", "img");
     blockCheckLen = 2;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
