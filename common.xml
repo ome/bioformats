@@ -1,0 +1,88 @@
+<!--
+common.xml
+
+Ant build file for logic common to every component.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project>
+  <property file="${user.home}/.ant-global.properties"/>
+  <property file="${root.dir}/global.properties"/>
+  <property file="${root.dir}/common.properties"/>
+
+  <condition property="isUnix"><os family="unix"/></condition>
+
+  <!--
+  Guess location of the Java runtime classes, saving to jre.runtime property.
+  Stolen and adapted from:
+    http://forums.gamegardens.com/discussion/mvnforum/viewthread?thread=324
+  -->
+  <!-- if Mac OS X -->
+  <property name="jre.macosx.classes"
+    value="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar"/>
+  <property name="jre.macosx.ui"
+    value="/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar"/>
+  <condition property="jre.runtime"
+    value="${jre.macosx.classes}:${jre.macosx.ui}">
+    <and>
+      <os family="mac"/>
+      <os family="unix"/>
+    </and>
+  </condition>
+  <!-- Default for Unix -->
+  <property name="jre.runtime" value="${java.home}/lib/rt.jar"/>
+
+  <!-- Non-core ant tasks -->
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
+  <!-- HACK - some environments do not install the antcontrib tasks properly
+    from antcontrib.properties above; also load them from antlib.xml -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml"
+    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
+
+  <!-- Main build targets -->
+
+  <target name="clean" description="remove all build files except artifacts">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <!-- Internal build targets -->
+
+  <target name="init-timestamp">
+    <tstamp>
+      <format property="DATE" pattern="d MMMMM yyyy"/>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+  </target>
+
+  <target name="init-revision">
+    <!-- determine SVN revision number -->
+    <if>
+      <isset property="svn.revision"/>
+      <else>
+        <!--
+        Thanks to Chris Collins for this code snippet:
+          http://ccollins.wordpress.com/2008/01/30/
+            getting-subversion-revision-in-ant/
+        -->
+        <exec executable="svn" outputproperty="svn.log"
+          failifexecutionfails="false">
+          <arg line="info ${base.dir}"/>
+        </exec>
+        <if>
+          <isset property="svn.log"/>
+          <then>
+            <propertyregex property="svn.revision"
+              input="${svn.log}" select="\1">
+              <regexp pattern="Revision: ([0-9]*)"/>
+            </propertyregex>
+            <!--<echo>SVN revision: ${svn.revision}</echo>-->
+          </then>
+        </if>
+      </else>
+    </if>
+  </target>
+
+</project>

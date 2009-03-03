@@ -1,0 +1,42 @@
+<!--
+build.xml
+
+Ant build file for Bio-Formats code generator.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="formats-auto" default="jar" basedir=".">
+  <description>
+    Build file for Bio-Formats code generator
+  </description>
+  <property file="base.properties"/>
+  <import file="${root.dir}/java.xml"/>
+  <property file="build.properties"/>
+
+  <target name="gen-meta" depends="compile"
+    description="generate code for Bio-Formats metadata classes">
+    <java classname="${component.main-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${root.dir}/components/bio-formats/src/loci/formats"/>
+  </target>
+
+  <target name="gen-meta-support" depends="compile"
+    description="generate documentation for Bio-Formats' metadata support">
+    <java classname="${component.meta-support-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${root.dir}/components/bio-formats/">
+        <arg value="${omexml.version}"/>
+    </java>
+  </target>
+
+  <target name="gen-ice" depends="compile"
+    description="generate code for Bio-Formats Ice framework">
+    <java classname="${component.main-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${root.dir}/components/bio-formats-ice/src">
+      <arg value="-ice"/>
+    </java>
+  </target>
+
+</project>
