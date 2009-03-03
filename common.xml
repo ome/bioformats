@@ -11,7 +11,15 @@ Type "ant -p" for a list of targets.
   <property file="${root.dir}/global.properties"/>
   <property file="${root.dir}/common.properties"/>
 
-  <condition property="isUnix"><os family="unix"/></condition>
+  <condition property="isUnix">
+    <os family="unix"/>
+  </condition>
+  <condition property="isMac">
+    <and>
+      <os family="mac"/>
+      <os family="unix"/>
+    </and>
+  </condition>
 
   <!--
   Guess location of the Java runtime classes, saving to jre.runtime property.
@@ -25,10 +33,7 @@ Type "ant -p" for a list of targets.
     value="/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar"/>
   <condition property="jre.runtime"
     value="${jre.macosx.classes}:${jre.macosx.ui}">
-    <and>
-      <os family="mac"/>
-      <os family="unix"/>
-    </and>
+    <isset property="isMac"/>
   </condition>
   <!-- Default for Unix -->
   <property name="jre.runtime" value="${java.home}/lib/rt.jar"/>
