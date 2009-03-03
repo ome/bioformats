@@ -724,11 +724,14 @@ public class DeltavisionReader extends FormatReader {
           }
           values = (String[]) realValues.toArray(new String[0]);
 
-          int zz = Integer.parseInt(values[0].trim()) - 1;
-          int index = getIndex(zz, cc, tt);
-          for (int i=1; i<keys.length; i++) {
-            addMeta("Plane " + index + " " + keys[i], values[i]);
+          try {
+            int zz = Integer.parseInt(values[0].trim()) - 1;
+            int index = getIndex(zz, cc, tt);
+            for (int i=1; i<keys.length; i++) {
+              addMeta("Plane " + index + " " + keys[i], values[i]);
+            }
           }
+          catch (NumberFormatException e) { }
           line = s.readLine().trim();
         }
       }
