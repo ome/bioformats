@@ -48,6 +48,8 @@ public class AnalyzeReader extends FormatReader {
   /** File containing the pixel data. */
   private RandomAccessStream pixelFile;
 
+  private String pixelsFilename;
+
   // -- Constructor --
 
   /** Constructs a new Analyze reader. */
@@ -81,6 +83,20 @@ public class AnalyzeReader extends FormatReader {
     return buf;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    String[] s = new String[2];
+    s[0] = currentId;
+    s[1] = pixelsFilename;
+    return s;
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
@@ -110,7 +126,8 @@ public class AnalyzeReader extends FormatReader {
 
     super.initFile(id);
     in = new RandomAccessStream(id);
-    pixelFile = new RandomAccessStream(id.replaceAll(".hdr", ".img"));
+    pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
+    pixelFile = new RandomAccessStream(pixelsFilename);
 
     status("Reading header");
 
