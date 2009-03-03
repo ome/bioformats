@@ -402,8 +402,8 @@ public class TCSReader extends FormatReader {
           String token = st.nextToken();
           if (!token.startsWith("[")) {
             int eq = token.indexOf("=");
-            String key = token.substring(0, eq);
-            String value = token.substring(eq + 1);
+            String key = token.substring(0, eq).trim();
+            String value = token.substring(eq + 1).trim();
             addMeta(key, value);
           }
         }
