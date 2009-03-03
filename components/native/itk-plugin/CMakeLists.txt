@@ -44,6 +44,29 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
 # --------------------------------------------------------------------------
 # Include dirs
 
+find_package(JNI REQUIRED)
+message("-- Java Native Interface:")
+message("jawt lib         : ${JAVA_AWT_LIBRARY}")
+message("jvm lib          : ${JAVA_JVM_LIBRARY}")
+message("jni.h            : ${JAVA_INCLUDE_PATH}")
+message("jni_md.h         : ${JAVA_INCLUDE_PATH2}")
+message("jawt.h           : ${JAVA_AWT_INCLUDE_PATH}")
+message("")
+
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREAD ON)
+set(Boost_ADDITIONAL_VERSIONS "1.38" "1.38.0" "1.38.1" "1.39" "1.39.0" "1.39.1"
+  "1.40" "1.40.0" "1.40.1" "1.41" "1.41.0" "1.41.1" "1.42" "1.42.0" "1.42.1")
+find_package(Boost COMPONENTS thread REQUIRED)
+message("-- Boost:")
+if(EXISTS ${Boost_LIBRARIES})
+message("boost/thread.hpp : ${Boost_INCLUDE_DIR}")
+message("boost libs       : ${Boost_LIBRARIES}")
+message("")
+else(EXISTS ${Boost_LIBRARIES})
+  message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
+endif(EXISTS ${Boost_LIBRARIES})
+
 set(JACE_DIR NOTFOUND CACHE PATH "The path to toplevel directory of your Jace checkout")
 if(NOT JACE_DIR)
  message(FATAL_ERROR "Please set JACE_DIR to the toplevel directory of your Jace checkout")
@@ -51,13 +74,10 @@ endif()
 
 set(BF_JACE_DIR ${PROJECT_SOURCE_DIR}/../bf-cpp)
 
-find_package(JNI REQUIRED)
-
 set(include_dirs
  ${CMAKE_CURRENT_SOURCE_DIR}
  ${CMAKE_CURRENT_BINARY_DIR}
- ${JNI_INCLUDE_DIRS}
-#CTR
+ ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${Boost_INCLUDE_DIR}
  ${JACE_DIR}/source/c++/include
  ${BF_JACE_DIR}/include
  ${BF_JACE_DIR}/proxies/include
@@ -70,7 +90,6 @@ set(include_dirs
 
 include_directories(${include_dirs})
 
-#CTR
 link_directories(${BF_JACE_DIR}/build)
 
 configure_file(
@@ -103,9 +122,9 @@ add_library(${lib_name}
 
 target_link_libraries(${lib_name}
  ITKIO
-#CTR
  jace
  bfjace
+ ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES}
 )
 
 install(TARGETS ${lib_name}
@@ -138,9 +157,9 @@ set_target_properties(BioFormatsIOPlugin
  )
 target_link_libraries(BioFormatsIOPlugin
  ${lib_name}
-#CTR
  jace
  bfjace
+ ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES}
 )
 
 install(TARGETS BioFormatsIOPlugin

@@ -102,15 +102,11 @@ namespace itk
 
     // call Bio-Formats to check file type
 
-    // NB: Calling reader->isThisType() causes a symbol lookup error on:
-    //     _ZNK4jace5proxy5types8JBooleancvaEv
-    /*
+    // NB: On Linux, reader->isThisType() causes a symbol lookup error on:
+    //       _ZNK4jace5proxy5types8JBooleancvaEv
     bool isType = reader->isThisType(filename);
     PRINT("BioFormatsImageIO::CanReadFile: isType=" << isType);
     return isType;
-    */
-
-    return true;
   }
 
   void
@@ -132,37 +128,33 @@ namespace itk
 
     // get byte order
 
-    // NB: Calling reader->isLittleEndian() causes a symbol lookup error on:
-    //     _ZNK4jace5proxy5types8JBooleancvaEv
-    /*
+    // NB: On Linux, reader->isLittleEndian() causes a symbol lookup error on:
+    //       _ZNK4jace5proxy5types8JBooleancvaEv
     bool little = reader->isLittleEndian();
-    if (little) SetByteOrderToLittleEndian();
-    else SetByteOrderToBigEndian();
-    */
-    SetByteOrderToBigEndian(); // m_ByteOrder
+    if (little) SetByteOrderToLittleEndian(); // m_ByteOrder
+    else SetByteOrderToBigEndian(); // m_ByteOrder
 
     // get component type
 
-    // NB: Calling FormatTools::UINT8() causes a symbol lookup error on:
-    //     _ZN4jace6helper15deleteGlobalRefEP10_Jv_JNIEnvP9__jobject
+    // NB: On Linux, FormatTools::UINT8() causes a symbol lookup error on:
+    //       _ZN4jace6helper15deleteGlobalRefEP10_Jv_JNIEnvP9__jobject
     int pixelType = reader->getPixelType();
     int bpp = FormatTools::getBytesPerPixel(pixelType);
     PRINT("\tBytes per pixel = " << bpp);
-    /*
     IOComponentType componentType;
     if (pixelType == FormatTools::UINT8())
       componentType = UCHAR;
     else if (pixelType == FormatTools::INT8())
       componentType = CHAR;
-    if (pixelType == FormatTools::UINT16())
+    else if (pixelType == FormatTools::UINT16())
       componentType = USHORT;
     else if (pixelType == FormatTools::INT16())
       componentType = SHORT;
-    if (pixelType == FormatTools::UINT32())
+    else if (pixelType == FormatTools::UINT32())
       componentType = UINT;
     else if (pixelType == FormatTools::INT32())
       componentType = INT;
-    if (pixelType == FormatTools::FLOAT())
+    else if (pixelType == FormatTools::FLOAT())
       componentType = FLOAT;
     else if (pixelType == FormatTools::DOUBLE())
       componentType = DOUBLE;
@@ -173,10 +165,6 @@ namespace itk
     {
       itkExceptionMacro(<<"Unknown pixel type: " << pixelType);
     }
-    */
-
-    // TEMP - for now we assume 8-bit unsigned integer data
-    SetComponentType(UCHAR);
 
     // get pixel resolution and dimensional extents
     int sizeX = reader->getSizeX();
@@ -251,18 +239,27 @@ namespace itk
     PRINT("\tBytes per plane = " << bytesPerSubPlane);
 
     int p = 0;
+    //ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
     for (int no=pIndex; no<pIndex+pCount; no++)
     {
-      PRINT("Reading image plane " <<
-        (no + 1) << "/" << reader->getImageCount());
-      ByteArray buf = reader->openBytes(no, xIndex, xCount, yIndex, yCount);
+      PRINT("Reading image plane " << no <<
+        " (" << (no - pIndex + 1) << "/" << pCount <<
+        " of " << reader->getImageCount() << " available planes)");
+      const ByteArray& buf = reader->openBytes(no,
+        xIndex, yIndex, xCount, yCount);
+      if (buf.isNull())
+      {
+        itkExceptionMacro(<<"Image data is null.");
+      }
+      else if ((int) buf.length() != bytesPerSubPlane)
+      {
+        itkExceptionMacro(<<"Invalid image buffer size: " <<
+          buf.length() << " (expected " << bytesPerSubPlane << ")");
+      }
 
-      // NB: Using brackets with a JArray causes a symbol lookup error on:
-      //     _ZN4jace6helper12newGlobalRefEP10_Jv_JNIEnvP9__jobject
-      //for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
-
-      // TEMP - for now we populate the buffer with dummy data
-      for (int i=0; i<bytesPerSubPlane; i++) data[p++] = 255 - no;
+      // NB: On Linux, brackets with a JArray cause a symbol lookup error on:
+      //       _ZN4jace6helper12newGlobalRefEP10_Jv_JNIEnvP9__jobject
+      for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
     }
 
     reader->close();
