@@ -101,9 +101,6 @@ namespace itk
     }
 
     // call Bio-Formats to check file type
-
-    // NB: On Linux, reader->isThisType() causes a symbol lookup error on:
-    //       _ZNK4jace5proxy5types8JBooleancvaEv
     bool isType = reader->isThisType(filename);
     PRINT("BioFormatsImageIO::CanReadFile: isType=" << isType);
     return isType;
@@ -127,17 +124,11 @@ namespace itk
     PRINT("\tSeriesCount = " << seriesCount);
 
     // get byte order
-
-    // NB: On Linux, reader->isLittleEndian() causes a symbol lookup error on:
-    //       _ZNK4jace5proxy5types8JBooleancvaEv
     bool little = reader->isLittleEndian();
     if (little) SetByteOrderToLittleEndian(); // m_ByteOrder
     else SetByteOrderToBigEndian(); // m_ByteOrder
 
     // get component type
-
-    // NB: On Linux, FormatTools::UINT8() causes a symbol lookup error on:
-    //       _ZN4jace6helper15deleteGlobalRefEP10_Jv_JNIEnvP9__jobject
     int pixelType = reader->getPixelType();
     int bpp = FormatTools::getBytesPerPixel(pixelType);
     PRINT("\tBytes per pixel = " << bpp);
@@ -239,26 +230,13 @@ namespace itk
     PRINT("\tBytes per plane = " << bytesPerSubPlane);
 
     int p = 0;
-    //ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
+    ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
     for (int no=pIndex; no<pIndex+pCount; no++)
     {
       PRINT("Reading image plane " << no <<
         " (" << (no - pIndex + 1) << "/" << pCount <<
         " of " << reader->getImageCount() << " available planes)");
-      const ByteArray& buf = reader->openBytes(no,
-        xIndex, yIndex, xCount, yCount);
-      if (buf.isNull())
-      {
-        itkExceptionMacro(<<"Image data is null.");
-      }
-      else if ((int) buf.length() != bytesPerSubPlane)
-      {
-        itkExceptionMacro(<<"Invalid image buffer size: " <<
-          buf.length() << " (expected " << bytesPerSubPlane << ")");
-      }
-
-      // NB: On Linux, brackets with a JArray cause a symbol lookup error on:
-      //       _ZN4jace6helper12newGlobalRefEP10_Jv_JNIEnvP9__jobject
+      reader->openBytes(no, buf, xIndex, yIndex, xCount, yCount);
       for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
     }
 
