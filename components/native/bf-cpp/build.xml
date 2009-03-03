@@ -102,6 +102,14 @@ from the Subversion repository using the command:
   <target name="compile" depends="gen-makefile, copy-libs"
     description="build Bio-Formats C++ library">
     <exec executable="make" dir="${build.dir}" failonerror="true"/>
+    <if>
+      <isset property="isMac"/>
+      <then>
+        <copy file="${build.dir}/libjace.jnilib"
+          tofile="${build.dir}/libjace.dylib"/>
+        <chmod file="${build.dir}/libjace.dylib" perm="ugo+x"/>
+      </then>
+    </if>
   </target>
 
   <target name="clean-jace" depends="check-jace"
