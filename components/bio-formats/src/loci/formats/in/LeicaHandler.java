@@ -63,6 +63,8 @@ public class LeicaHandler extends DefaultHandler {
   private Vector laserNames, detectorNames;
   private Vector xPosition, yPosition, zPosition;
 
+  private Hashtable timestamps;
+
   // -- Constructor --
 
   public LeicaHandler(MetadataStore store) {
@@ -89,6 +91,7 @@ public class LeicaHandler extends DefaultHandler {
     xPosition = new Vector();
     yPosition = new Vector();
     zPosition = new Vector();
+    timestamps = new Hashtable();
     this.store = store;
   }
 
@@ -133,6 +136,8 @@ public class LeicaHandler extends DefaultHandler {
   public Vector getYPosition() { return yPosition; }
 
   public Vector getZPosition() { return zPosition; }
+
+  public Hashtable getTimestamps() { return timestamps; }
 
   // -- DefaultHandler API methods --
 
@@ -562,12 +567,8 @@ public class LeicaHandler extends DefaultHandler {
         ((Integer) nextPlane.get(seriesNames.size() - 1)).intValue();
       if (originalPlane < planeNum) return;
 
-      store.setPlaneTheC(new Integer(0), seriesNames.size() - 1, 0, planeNum);
-      store.setPlaneTheZ(new Integer(0), seriesNames.size() - 1, 0, planeNum);
-      store.setPlaneTheT(new Integer(planeNum), seriesNames.size() - 1, 0,
-        planeNum);
-      store.setPlaneTimingDeltaT(new Float(time), seriesNames.size() - 1, 0,
-        planeNum);
+      timestamps.put("Series " + (seriesNames.size() - 1) + " Plane " +
+        planeNum, new Float(time));
       planeNum++;
       nextPlane.setElementAt(new Integer(planeNum), seriesNames.size() - 1);
     }

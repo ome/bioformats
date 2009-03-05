@@ -325,6 +325,7 @@ public class LIFReader extends FormatReader {
     Vector stageX = handler.getXPosition();
     Vector stageY = handler.getYPosition();
     Vector stageZ = handler.getZPosition();
+    Hashtable timestamps = handler.getTimestamps();
 
     numDatasets = widths.size();
 
@@ -425,13 +426,14 @@ public class LIFReader extends FormatReader {
           break;
       }
     }
-    MetadataTools.populatePixels(store, this, false);
+    MetadataTools.populatePixels(store, this, true);
 
     store.setInstrumentID("Instrument:0", 0);
     store.setObjectiveImmersion("Unknown", 0, 0);
     store.setObjectiveCorrection("Unknown", 0, 0);
 
     for (int i=0; i<numDatasets; i++) {
+      setSeries(i);
       // populate Dimensions data
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
       Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
@@ -450,20 +452,40 @@ public class LIFReader extends FormatReader {
       store.setImageName(seriesName, i);
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
 
+      // populate Plane data
+
+      boolean timestampPerPlane = timestamps.get("Series " + i + " Plane " +
+        (getImageCount() - 1)) != null;
+
+      for (int plane=0; plane<getImageCount(); plane++) {
+        int[] coords = getZCTCoords(plane);
+        int index = -1;
+        if (timestampPerPlane) index = plane;
+        else if (coords[0] == 0 && coords[1] == 0) {
+          index = coords[2];
+        }
+
+        Float timestamp =
+          (Float) timestamps.get("Series " + i + " Plane " + index);
+        if (timestamp != null) {
+          store.setPlaneTimingDeltaT(timestamp, i, 0, plane);
+        }
+      }
+
       // populate StagePosition data
 
       if (i < stageX.size()) {
-        for (int q=0; q<core[i].imageCount; q++) {
+        for (int q=0; q<getImageCount(); q++) {
           store.setStagePositionPositionX((Float) stageX.get(i), i, 0, q);
         }
       }
       if (i < stageY.size()) {
-        for (int q=0; q<core[i].imageCount; q++) {
+        for (int q=0; q<getImageCount(); q++) {
           store.setStagePositionPositionY((Float) stageY.get(i), i, 0, q);
         }
       }
       if (i < stageZ.size()) {
-        for (int q=0; q<core[i].imageCount; q++) {
+        for (int q=0; q<getImageCount(); q++) {
           store.setStagePositionPositionZ((Float) stageZ.get(i), i, 0, q);
         }
       }
@@ -486,7 +508,7 @@ public class LIFReader extends FormatReader {
         }
       }
     }
-
+    setSeries(0);
     DataTools.parseXML(xml, new LeicaHandler(store));
   }
 
