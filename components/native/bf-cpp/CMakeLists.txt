@@ -25,82 +25,111 @@ cmake_minimum_required(VERSION 2.6)
 
 project(bfjace)
 
-### determine configuration ###
+### search for prerequisite libraries ###
 
 message("")
 
-#find_package(Java REQUIRED)
 #message("-- Java Runtime:")
-#message("java             : ${JAVA_RUNTIME}")
-#message("javac            : ${JAVA_COMPILE}")
-#message("jar              : ${JAVA_ARCHIVE}")
+#find_package(Java REQUIRED)
+#message("java          : ${JAVA_RUNTIME}")
+#message("javac         : ${JAVA_COMPILE}")
+#message("jar           : ${JAVA_ARCHIVE}")
 #message("")
 
-find_package(JNI REQUIRED)
 message("-- Java Native Interface:")
-message("jawt lib         : ${JAVA_AWT_LIBRARY}")
-message("jvm lib          : ${JAVA_JVM_LIBRARY}")
-message("jni.h            : ${JAVA_INCLUDE_PATH}")
-message("jni_md.h         : ${JAVA_INCLUDE_PATH2}")
-message("jawt.h           : ${JAVA_AWT_INCLUDE_PATH}")
+find_package(JNI REQUIRED)
+message("jawt lib      : ${JAVA_AWT_LIBRARY}")
+message("jvm lib       : ${JAVA_JVM_LIBRARY}")
+message("jni.h         : ${JAVA_INCLUDE_PATH}")
+message("jni_md.h      : ${JAVA_INCLUDE_PATH2}")
+message("jawt.h        : ${JAVA_AWT_INCLUDE_PATH}")
 message("")
 
+# HACK - CMake on Windows refuses to find the thread library unless BOOST_ROOT
+#        is set, even though it can locate the Boost directory tree.
+#        So we first look for base Boost, then set BOOST_ROOT and look again
+#        for Boost Thread specifically.
+
+message("-- Boost:")
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREAD ON)
-set(Boost_ADDITIONAL_VERSIONS "1.38" "1.38.0" "1.38.1" "1.39" "1.39.0" "1.39.1"
-  "1.40" "1.40.0" "1.40.1" "1.41" "1.41.0" "1.41.1" "1.42" "1.42.0" "1.42.1")
+set(Boost_ADDITIONAL_VERSIONS "1.37" "1.37.0" "1.37.1" "1.38" "1.38.0" "1.38.1"
+  "1.39" "1.39.0" "1.39.1" "1.40" "1.40.0" "1.40.1" "1.41" "1.41.0" "1.41.1"
+  "1.42" "1.42.0" "1.42.1" "1.43" "1.43.0" "1.43.1" "1.44" "1.44.0" "1.44.1")
+set(Boost_FIND_QUIETLY ON)
+find_package(Boost)
+if(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
+  message("boost headers : ${Boost_INCLUDE_DIR}")
+else(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
+  if(UNIX)
+    message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
+  else(UNIX)
+    message(FATAL_ERROR "Cannot build without Boost Thread library. Please install Boost from www.boost.org.")
+  endif(UNIX)
+endif(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
+set(Boost_FIND_QUIETLY OFF)
+if(WIN32)
+  set(BOOST_ROOT ${Boost_INCLUDE_DIR})
+endif(WIN32)
 find_package(Boost COMPONENTS thread REQUIRED)
-message("-- Boost:")
-if(EXISTS ${Boost_LIBRARIES})
-message("boost/thread.hpp : ${Boost_INCLUDE_DIR}")
-message("boost libs       : ${Boost_LIBRARIES}")
-message("")
-else(EXISTS ${Boost_LIBRARIES})
+
+# NB: Necessary on Windows to test for Boost thread when
+#     multiple semicolon-separated files are identified.
+string(REGEX REPLACE ".*;" "" Boost_THREAD_LIB_FILE "${Boost_THREAD_LIBRARY}")
+
+if(EXISTS "${Boost_THREAD_LIB_FILE}")
+  message("thread lib    : ${Boost_THREAD_LIBRARY}")
+else(EXISTS "${Boost_THREAD_LIB_FILE}")
   message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
-endif(EXISTS ${Boost_LIBRARIES})
+endif(EXISTS "${Boost_THREAD_LIB_FILE}")
+message("")
 
-if(IS_DIRECTORY ${JACE_DIR})
-else(IS_DIRECTORY ${JACE_DIR})
+message("-- Jace:")
+if(IS_DIRECTORY "${JACE_DIR}")
+  message("jace root     : ${JACE_DIR}")
+else(IS_DIRECTORY "${JACE_DIR}")
   message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
-endif(IS_DIRECTORY ${JACE_DIR})
+endif(IS_DIRECTORY "${JACE_DIR}")
 
-include_directories(include ${JACE_DIR}/source/c++/include proxies/include
-  ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${Boost_INCLUDE_DIR})
+include_directories(include "${JACE_DIR}/source/c++/include" "proxies/include"
+  "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
 
 ### build Jace C++ library ###
 
-message("-- Jace source files:")
-message("jace directory   : ${JACE_DIR}")
-file(GLOB_RECURSE JACE_SRC ${JACE_DIR}/source/c++/source/*.cpp)
-#message("jace source      : ${JACE_SRC}")
+file(GLOB_RECURSE JACE_SRC "${JACE_DIR}/source/c++/source/*.cpp")
+#message("jace source   : ${JACE_SRC}")
 message("")
 
 add_library(jace SHARED ${JACE_SRC})
 
-target_link_libraries(jace ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES})
+target_link_libraries(jace "${JAVA_JVM_LIBRARY}" "${Boost_THREAD_LIBRARY}")
 
-set_target_properties(jace PROPERTIES
-  COMPILE_FLAGS "-Wall -fpermissive")
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties(jace PROPERTIES
+    COMPILE_FLAGS "-fpermissive")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
-# HACK - Mac OS X 10.4 and earlier requires .jnilib extension rather than
-#        .dylib when loading native code with System.loadLibrary(String).
+# NB: Mac OS X 10.4 and earlier requires .jnilib extension rather than
+#     .dylib when loading native code with System.loadLibrary(String).
 if(APPLE)
   set_target_properties(jace PROPERTIES SUFFIX ".jnilib")
 endif(APPLE)
 
 ### build Bio-Formats C++ bindings ###
 
-message("-- Bio-Formats C++ source files:")
-file(GLOB_RECURSE BFJACE_SRC proxies/source/*.cpp)
-#message("  bfjace source : ${BFJACE_SRC}")
-message("")
+#message("-- Bio-Formats C++ bindings:")
+file(GLOB_RECURSE BFJACE_SRC "proxies/source/*.cpp")
+#message("bfjace source : ${BFJACE_SRC}")
+#message("")
 
 add_library(bfjace SHARED ${BFJACE_SRC})
 
 target_link_libraries(bfjace jace)
 
-set_target_properties(bfjace PROPERTIES
-  COMPILE_FLAGS "-Wall -fpermissive")
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties(bfjace PROPERTIES
+    COMPILE_FLAGS "-fpermissive")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 target_link_libraries(bfjace jace)
 
@@ -108,17 +137,14 @@ target_link_libraries(bfjace jace)
 
 add_executable(showinf source/showinf.cpp)
 
-target_link_libraries(showinf bfjace jace
-  ${JAVA_JVM_LIBRARY})
+target_link_libraries(showinf bfjace jace "${JAVA_JVM_LIBRARY}")
 
 ### TEMP - build some examples for testing ###
 
 add_executable(example1 source/example1.cpp)
 
-target_link_libraries(example1 bfjace jace
-  ${JAVA_JVM_LIBRARY})
+target_link_libraries(example1 bfjace jace "${JAVA_JVM_LIBRARY}")
 
 add_executable(array_example source/array_example.cpp)
 
-target_link_libraries(array_example bfjace jace
-  ${JAVA_JVM_LIBRARY})
+target_link_libraries(array_example bfjace jace "${JAVA_JVM_LIBRARY}")
