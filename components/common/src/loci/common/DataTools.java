@@ -160,7 +160,7 @@ public final class DataTools {
   public static void writeString(DataOutput out, String s)
     throws IOException
   {
-    byte[] b =  s.getBytes("UTF-8");
+    byte[] b = s.getBytes("UTF-8");
     out.write(b);
   }
 
@@ -175,25 +175,9 @@ public final class DataTools {
   public static void writeLong(DataOutput out, long v, boolean little)
     throws IOException
   {
-    if (little) {
-      out.write((int) (v & 0xff));
-      out.write((int) ((v >>> 8) & 0xff));
-      out.write((int) ((v >>> 16) & 0xff));
-      out.write((int) ((v >>> 24) & 0xff));
-      out.write((int) ((v >>> 32) & 0xff));
-      out.write((int) ((v >>> 40) & 0xff));
-      out.write((int) ((v >>> 48) & 0xff));
-      out.write((int) ((v >>> 56) & 0xff));
-    }
-    else {
-      out.write((int) ((v >>> 56) & 0xff));
-      out.write((int) ((v >>> 48) & 0xff));
-      out.write((int) ((v >>> 40) & 0xff));
-      out.write((int) ((v >>> 32) & 0xff));
-      out.write((int) ((v >>> 24) & 0xff));
-      out.write((int) ((v >>> 16) & 0xff));
-      out.write((int) ((v >>> 8) & 0xff));
-      out.write((int) (v & 0xff));
+    for (int i=0; i<8; i++) {
+      int shift = little ? i * 8 : 64 - (i + 1) * 8;
+      out.write((int) ((v >>> shift) & 0xff));
     }
   }
 
@@ -208,17 +192,9 @@ public final class DataTools {
   public static void writeInt(DataOutput out, int v, boolean little)
     throws IOException
   {
-    if (little) {
-      out.write(v & 0xFF);
-      out.write((v >>> 8) & 0xFF);
-      out.write((v >>> 16) & 0xFF);
-      out.write((v >>> 24) & 0xFF);
-    }
-    else {
-      out.write((v >>> 24) & 0xFF);
-      out.write((v >>> 16) & 0xFF);
-      out.write((v >>> 8) & 0xFF);
-      out.write(v & 0xFF);
+    for (int i=0; i<4; i++) {
+      int shift = little ? i * 8 : 32 - (i + 1) * 8;
+      out.write((int) ((v >>> shift) & 0xff));
     }
   }
 
@@ -226,13 +202,9 @@ public final class DataTools {
   public static void writeShort(DataOutput out, int v, boolean little)
     throws IOException
   {
-    if (little) {
-      out.write(v & 0xFF);
-      out.write((v >>> 8) & 0xFF);
-    }
-    else {
-      out.write((v >>> 8) & 0xFF);
-      out.write(v & 0xFF);
+    for (int i=0; i<2; i++) {
+      int shift = little ? i * 8 : 16 - (i + 1) * 8;
+      out.write((int) ((v >>> shift) & 0xff));
     }
   }
 

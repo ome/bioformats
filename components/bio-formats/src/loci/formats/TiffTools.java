@@ -324,12 +324,7 @@ public final class TiffTools {
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
       Hashtable ifd = getIFD(in, ifdNum, offset, bigTiff);
       if (ifd == null || ifd.size() <= 1) break;
-      // if width or length entries are not present, the IFD is invalid
-      if (ifd.get(new Integer(IMAGE_WIDTH)) != null &&
-        ifd.get(new Integer(IMAGE_LENGTH)) != null)
-      {
-        v.add(ifd);
-      }
+      v.add(ifd);
       offset = bigTiff ? in.readLong() : (long) (in.readInt() & 0xffffffffL);
       if (offset <= 0 || offset >= in.length()) break;
     }
@@ -453,12 +448,10 @@ public final class TiffTools {
     ifd.put(new Integer(BIG_TIFF), new Boolean(bigTiff));
 
     // read in directory entries for this IFD
-    if (DEBUG) {
-      debug("getIFDs: seeking IFD #" + ifdNum + " at " + offset);
-    }
+    debug("getIFDs: seeking IFD #" + ifdNum + " at " + offset);
     in.seek(offset);
     long numEntries = bigTiff ? in.readLong() : in.readShort() & 0xffff;
-    if (DEBUG) debug("getIFDs: " + numEntries + " directory entries to read");
+    debug("getIFDs: " + numEntries + " directory entries to read");
     if (numEntries == 0 || numEntries == 1) return ifd;
 
     int bytesPerEntry = bigTiff ? BIG_TIFF_BYTES_PER_ENTRY : BYTES_PER_ENTRY;
@@ -472,10 +465,8 @@ public final class TiffTools {
       // BigTIFF case is a slight hack
       int count = bigTiff ? (int) (in.readLong() & 0xffffffff) : in.readInt();
 
-      if (DEBUG) {
-        debug("getIFDs: read " + getIFDTagName(tag) +
-          " (type=" + getIFDTypeName(type) + "; count=" + count + ")");
-      }
+      debug("getIFDs: read " + getIFDTagName(tag) +
+        " (type=" + getIFDTypeName(type) + "; count=" + count + ")");
       if (count < 0) return null; // invalid data
       Object value = null;
 
@@ -890,16 +881,105 @@ public final class TiffTools {
     return getComment(ifd);
   }
 
+  /** Returns the width of an image tile. */
+  public static long getTileWidth(Hashtable ifd) throws FormatException {
+    long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, false, 0);
+    return tileWidth == 0 ? getImageWidth(ifd) : tileWidth;
+  }
+
+  /** Returns the length of an image tile. */
+  public static long getTileLength(Hashtable ifd) throws FormatException {
+    long tileLength = getIFDLongValue(ifd, TILE_LENGTH, false, 0);
+    return tileLength == 0 ? getRowsPerStrip(ifd)[0] : tileLength;
+  }
+
+  /** Returns the number of image tiles per row. */
+  public static long getTilesPerRow(Hashtable ifd) throws FormatException {
+    long tileWidth = getTileWidth(ifd);
+    long imageWidth = getImageWidth(ifd);
+    long nTiles = imageWidth / tileWidth;
+    if (nTiles * tileWidth < imageWidth) nTiles++;
+    return nTiles;
+  }
+
+  /** Returns the number of image tiles per column. */
+  public static long getTilesPerColumn(Hashtable ifd) throws FormatException {
+    long tileLength = getTileLength(ifd);
+    long imageLength = getImageLength(ifd);
+    long nTiles = imageLength / tileLength;
+    if (nTiles * tileLength < imageLength) nTiles++;
+    return nTiles;
+  }
+
   // -- Image reading methods --
+
+  public static byte[] getTile(Hashtable ifd, RandomAccessStream in,
+    int row, int col)
+    throws FormatException, IOException
+  {
+    int samplesPerPixel = getSamplesPerPixel(ifd);
+    if (getPlanarConfiguration(ifd) == 2) samplesPerPixel = 1;
+    int bpp = getBytesPerSample(ifd)[0];
+    int width = (int) getTileWidth(ifd);
+    int height = (int) getTileLength(ifd);
+    byte[] buf = new byte[width * height * samplesPerPixel * bpp];
+
+    return getTile(ifd, in, buf, row, col);
+  }
+
+  public static byte[] getTile(Hashtable ifd, RandomAccessStream in,
+    byte[] buf, int row, int col)
+    throws FormatException, IOException
+  {
+    byte[] jpegTable =
+      (byte[]) TiffTools.getIFDValue(ifd, JPEG_TABLES, false, null);
+
+    CodecOptions options = new CodecOptions();
+    options.interleaved = true;
+    options.littleEndian = isLittleEndian(ifd);
+
+    long tileWidth = getTileWidth(ifd);
+    long tileLength = getTileLength(ifd);
+    int samplesPerPixel = getSamplesPerPixel(ifd);
+    int planarConfig = getPlanarConfiguration(ifd);
+    int compression = getCompression(ifd);
+
+    long numTileCols = getTilesPerRow(ifd);
+
+    int pixel = getBytesPerSample(ifd)[0];
+    int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
+
+    long[] stripOffsets = getStripOffsets(ifd);
+    long[] stripByteCounts = getStripByteCounts(ifd);
+
+    int tileNumber = (int) (row * numTileCols + col);
+    byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
+    in.seek(stripOffsets[tileNumber] & 0xffffffffL);
+    in.read(tile);
+
+    int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
+    options.maxBytes = size;
+
+    if (jpegTable != null) {
+      byte[] q = new byte[jpegTable.length + tile.length - 4];
+      System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
+      System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
+      tile = uncompress(q, compression, options);
+    }
+    else tile = uncompress(tile, compression, options);
+
+    undifference(tile, ifd);
+    unpackBytes(buf, 0, tile, ifd);
+
+    return buf;
+  }
 
   /** Reads the image defined in the given IFD from the specified file. */
   public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in)
     throws FormatException, IOException
   {
     int samplesPerPixel = getSamplesPerPixel(ifd);
-    int bpp = getBitsPerSample(ifd)[0];
-    while ((bpp % 8) != 0) bpp++;
-    bpp /= 8;
+    int bpp = getBytesPerSample(ifd)[0];
     long width = getImageWidth(ifd);
     long length = getImageLength(ifd);
     byte[] b = new byte[(int) (width * length * samplesPerPixel * bpp)];
@@ -926,533 +1006,90 @@ public final class TiffTools {
     byte[] buf, int x, int y, long width, long height)
     throws FormatException, IOException
   {
-    if (DEBUG) debug("parsing IFD entries");
+    debug("parsing IFD entries");
 
     // get internal non-IFD entries
     boolean littleEndian = isLittleEndian(ifd);
     in.order(littleEndian);
 
     // get relevant IFD entries
-    long imageWidth = getImageWidth(ifd);
-    long imageLength = getImageLength(ifd);
-    int[] bitsPerSample = getBitsPerSample(ifd);
     int samplesPerPixel = getSamplesPerPixel(ifd);
-    int compression = getCompression(ifd);
-    int photoInterp = getPhotometricInterpretation(ifd);
-    long[] stripOffsets = getStripOffsets(ifd);
-    long[] stripByteCounts = getStripByteCounts(ifd);
-    long[] rowsPerStripArray = getRowsPerStrip(ifd);
+    long tileWidth = getTileWidth(ifd);
+    long tileLength = getTileLength(ifd);
+    long numTileRows = getTilesPerColumn(ifd);
+    long numTileCols = getTilesPerRow(ifd);
 
-    boolean fakeByteCounts = stripByteCounts == null;
-    boolean fakeRPS = rowsPerStripArray == null;
-    boolean isTiled = stripOffsets == null ||
-      ifd.get(new Integer(TILE_WIDTH)) != null;
+    int planarConfig = getPlanarConfiguration(ifd);
 
-    long[] maxes = getIFDLongArray(ifd, MAX_SAMPLE_VALUE, false);
-    long maxValue = maxes == null ? 0 : maxes[0];
+    printIFD(ifd);
 
-    if (isTiled) {
-      if (stripOffsets == null) {
-        stripOffsets = getIFDLongArray(ifd, TILE_OFFSETS, true);
-      }
-      if (stripByteCounts == null) {
-        stripByteCounts = getIFDLongArray(ifd, TILE_BYTE_COUNTS, true);
-      }
-      rowsPerStripArray = new long[] {imageLength};
-    }
-    else if (fakeByteCounts) {
-      // technically speaking, this shouldn't happen (since TIFF writers are
-      // required to write the StripByteCounts tag), but we'll support it
-      // anyway
-
-      // don't rely on RowsPerStrip, since it's likely that if the file doesn't
-      // have the StripByteCounts tag, it also won't have the RowsPerStrip tag
-      stripByteCounts = new long[stripOffsets.length];
-      if (stripByteCounts.length == 1) {
-        stripByteCounts[0] = imageWidth * imageLength * (bitsPerSample[0] / 8);
-      }
-      else {
-        stripByteCounts[0] = stripOffsets[0];
-        for (int i=1; i<stripByteCounts.length; i++) {
-          stripByteCounts[i] = stripOffsets[i] - stripByteCounts[i-1];
-        }
-      }
-    }
-
-    boolean lastBitsZero = bitsPerSample[bitsPerSample.length - 1] == 0;
-
-    if (fakeRPS && !isTiled) {
-      // create a false rowsPerStripArray if one is not present
-      // it's sort of a cheap hack, but here's how it's done:
-      // RowsPerStrip = stripByteCounts / (imageLength * bitsPerSample)
-      // since stripByteCounts and bitsPerSample are arrays, we have to
-      // iterate through each item
-
-      rowsPerStripArray = new long[bitsPerSample.length];
-
-      long temp = stripByteCounts[0];
-      stripByteCounts = new long[bitsPerSample.length];
-      Arrays.fill(stripByteCounts, temp);
-      temp = bitsPerSample[0];
-      if (temp == 0) temp = 8;
-      bitsPerSample = new int[bitsPerSample.length];
-      Arrays.fill(bitsPerSample, (int) temp);
-      temp = stripOffsets[0];
-
-      // we have two files that reverse the endianness for BitsPerSample,
-      // StripOffsets, and StripByteCounts
-
-      if (bitsPerSample[0] > 64) {
-        bitsPerSample[0] = DataTools.swap(bitsPerSample[0]);
-        stripOffsets[0] = DataTools.swap(stripOffsets[0]);
-        stripByteCounts[0] = DataTools.swap(stripByteCounts[0]);
-      }
-
-      if (rowsPerStripArray.length == 1 && stripByteCounts[0] !=
-        (imageWidth * imageLength * (bitsPerSample[0] / 8)) &&
-        compression == UNCOMPRESSED)
-      {
-        stripByteCounts = new long[] {
-          imageWidth * imageLength * (bitsPerSample[0] / 8)};
-        stripOffsets = new long[] {stripOffsets[0]};
-      }
-
-      for (int i=0; i<bitsPerSample.length; i++) {
-        // case 1: we're still within bitsPerSample array bounds
-        if (i < bitsPerSample.length) {
-          if (i == samplesPerPixel) {
-            bitsPerSample[i] = 0;
-            lastBitsZero = true;
-          }
-
-          // remember that the universe collapses when we divide by 0
-          if (bitsPerSample[i] != 0) {
-            rowsPerStripArray[i] = (long) stripByteCounts[i] /
-              (imageWidth * (bitsPerSample[i] / 8));
-          }
-          else if (bitsPerSample[i] == 0 && i > 0) {
-            rowsPerStripArray[i] = (long) stripByteCounts[i] /
-              (imageWidth * (bitsPerSample[i - 1] / 8));
-            bitsPerSample[i] = bitsPerSample[i - 1];
-          }
-          else {
-            throw new FormatException("BitsPerSample is 0");
-          }
-        }
-        // case 2: we're outside bitsPerSample array bounds
-        else if (i >= bitsPerSample.length) {
-          rowsPerStripArray[i] = (long) stripByteCounts[i] /
-            (imageWidth * (bitsPerSample[bitsPerSample.length - 1] / 8));
-        }
-      }
-
-      if (compression != UNCOMPRESSED) {
-        for (int i=0; i<stripByteCounts.length; i++) {
-          stripByteCounts[i] *= 2;
-        }
-      }
-    }
-
-    if (lastBitsZero) {
-      bitsPerSample[bitsPerSample.length - 1] = 0;
-    }
-
-    TiffRational xResolution = getIFDRationalValue(ifd, X_RESOLUTION, false);
-    TiffRational yResolution = getIFDRationalValue(ifd, Y_RESOLUTION, false);
-    int planarConfig = getIFDIntValue(ifd, PLANAR_CONFIGURATION, false, 1);
-    int resolutionUnit = getIFDIntValue(ifd, RESOLUTION_UNIT, false, 2);
-    if (xResolution == null || yResolution == null) resolutionUnit = 0;
-    int[] colorMap = getIFDIntArray(ifd, COLOR_MAP, false);
-    int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
-
-    if (DEBUG) {
-      StringBuffer sb = new StringBuffer();
-      sb.append("IFD directory entry values:");
-      sb.append("\n\tLittleEndian=");
-      sb.append(littleEndian);
-      sb.append("\n\tImageWidth=");
-      sb.append(imageWidth);
-      sb.append("\n\tImageLength=");
-      sb.append(imageLength);
-      sb.append("\n\tBitsPerSample=");
-      sb.append(bitsPerSample[0]);
-      for (int i=1; i<bitsPerSample.length; i++) {
-        sb.append(",");
-        sb.append(bitsPerSample[i]);
-      }
-      sb.append("\n\tSamplesPerPixel=");
-      sb.append(samplesPerPixel);
-      sb.append("\n\tCompression=");
-      sb.append(compression);
-      sb.append("\n\tPhotometricInterpretation=");
-      sb.append(photoInterp);
-      sb.append("\n\tStripOffsets=");
-      sb.append(stripOffsets[0]);
-      for (int i=1; i<stripOffsets.length; i++) {
-        sb.append(",");
-        sb.append(stripOffsets[i]);
-      }
-      sb.append("\n\tRowsPerStrip=");
-      sb.append(rowsPerStripArray[0]);
-      for (int i=1; i<rowsPerStripArray.length; i++) {
-        sb.append(",");
-        sb.append(rowsPerStripArray[i]);
-      }
-      sb.append("\n\tStripByteCounts=");
-      sb.append(stripByteCounts[0]);
-      for (int i=1; i<stripByteCounts.length; i++) {
-        sb.append(",");
-        sb.append(stripByteCounts[i]);
-      }
-      sb.append("\n\tXResolution=");
-      sb.append(xResolution);
-      sb.append("\n\tYResolution=");
-      sb.append(yResolution);
-      sb.append("\n\tPlanarConfiguration=");
-      sb.append(planarConfig);
-      sb.append("\n\tResolutionUnit=");
-      sb.append(resolutionUnit);
-      sb.append("\n\tColorMap=");
-      if (colorMap == null) sb.append("null");
-      else {
-        sb.append(colorMap[0]);
-        for (int i=1; i<colorMap.length; i++) {
-          sb.append(",");
-          sb.append(colorMap[i]);
-        }
-      }
-      sb.append("\n\tPredictor=");
-      sb.append(predictor);
-      debug(sb.toString());
-    }
-
-    for (int i=0; i<samplesPerPixel; i++) {
-      if (bitsPerSample[i] < 1) {
-        throw new FormatException("Illegal BitsPerSample (" +
-          bitsPerSample[i] + ")");
-      }
-      // don't support odd numbers of bits (except for 1)
-      else if (bitsPerSample[i] % 2 != 0 && bitsPerSample[i] != 1) {
-        throw new FormatException("Sorry, unsupported BitsPerSample (" +
-          bitsPerSample[i] + ")");
-      }
-    }
-
-    if (bitsPerSample.length < samplesPerPixel) {
-      throw new FormatException("BitsPerSample length (" +
-        bitsPerSample.length + ") does not match SamplesPerPixel (" +
-        samplesPerPixel + ")");
-    }
-    else if (photoInterp == TRANSPARENCY_MASK) {
-      throw new FormatException(
-        "Sorry, Transparency Mask PhotometricInterpretation is not supported");
-    }
-    else if (photoInterp == CIE_LAB) {
-      throw new FormatException(
-        "Sorry, CIELAB PhotometricInterpretation is not supported");
-    }
-    else if (photoInterp != WHITE_IS_ZERO &&
-      photoInterp != BLACK_IS_ZERO && photoInterp != RGB &&
-      photoInterp != RGB_PALETTE && photoInterp != CMYK &&
-      photoInterp != Y_CB_CR && photoInterp != CFA_ARRAY)
-    {
-      throw new FormatException("Unknown PhotometricInterpretation (" +
-        photoInterp + ")");
-    }
-
-    // rowsPerStrip should never be more than the total number of rows
-    for (int i=0; i<rowsPerStripArray.length; i++) {
-      rowsPerStripArray[i] = (long) Math.min(rowsPerStripArray[i], imageLength);
-    }
-
-    long rowsPerStrip = rowsPerStripArray[0];
-    for (int i=1; i<rowsPerStripArray.length; i++) {
-      if (rowsPerStrip != rowsPerStripArray[i]) {
-        throw new FormatException(
-          "Sorry, non-uniform RowsPerStrip is not supported");
-      }
-    }
-
-    if (compression == GROUP_3_FAX) Arrays.fill(bitsPerSample, 8);
-    else if (compression == JPEG) photoInterp = RGB;
-
-    long numStrips = (imageLength + rowsPerStrip - 1) / rowsPerStrip;
-
-    if (isTiled || fakeRPS) numStrips = stripOffsets.length;
-    if (planarConfig == 2) numStrips *= samplesPerPixel;
-
-    if (stripOffsets.length < numStrips && !fakeRPS) {
-      throw new FormatException("StripOffsets length (" +
-        stripOffsets.length + ") does not match expected " +
-        "number of strips (" + numStrips + ")");
-    }
-    else if (fakeRPS) numStrips = stripOffsets.length;
-
-    if (stripByteCounts.length < numStrips) {
-      throw new FormatException("StripByteCounts length (" +
-        stripByteCounts.length + ") does not match expected " +
-        "number of strips (" + numStrips + ")");
-    }
-
-    if (width > Integer.MAX_VALUE || height > Integer.MAX_VALUE ||
-      width * height > Integer.MAX_VALUE)
-    {
+    if (width * height > Integer.MAX_VALUE) {
       throw new FormatException("Sorry, ImageWidth x ImageLength > " +
         Integer.MAX_VALUE + " is not supported (" +
         width + " x " + height + ")");
     }
     int numSamples = (int) (width * height);
 
-    if (planarConfig != 1 && planarConfig != 2) {
-      throw new FormatException(
-        "Unknown PlanarConfiguration (" + planarConfig + ")");
-    }
-
     // read in image strips
-    if (DEBUG) {
-      debug("reading image data (samplesPerPixel=" +
-        samplesPerPixel + "; numSamples=" + numSamples + ")");
-    }
+    debug("reading image data (samplesPerPixel=" +
+      samplesPerPixel + "; numSamples=" + numSamples + ")");
 
-    if (photoInterp == CFA_ARRAY) {
-      if (colorMap == null) {
-        colorMap = getIFDIntArray(ifd, TiffTools.COLOR_MAP, false);
-        if (colorMap == null) {
-          colorMap = new int[4];
-          if (littleEndian) {
-            colorMap[0] = 2;
-            colorMap[1] = 0;
-            colorMap[2] = 2;
-            colorMap[3] = 0;
-          }
-          else {
-            colorMap[0] = 0;
-            colorMap[1] = 2;
-            colorMap[2] = 0;
-            colorMap[3] = 2;
-          }
-        }
-      }
-      int[] tempMap = new int[colorMap.length + 2];
-      System.arraycopy(colorMap, 0, tempMap, 0, colorMap.length);
-      tempMap[tempMap.length - 2] = (int) imageWidth;
-      tempMap[tempMap.length - 1] = (int) imageLength;
-      colorMap = tempMap;
-    }
-    else if (photoInterp == Y_CB_CR) {
-      colorMap = new int[5 + samplesPerPixel * 2];
-      int[] ref = getIFDIntArray(ifd, REFERENCE_BLACK_WHITE, false);
-      if (ref != null) System.arraycopy(ref, 0, colorMap, 0, ref.length);
-      else {
-        colorMap[0] = colorMap[2] = colorMap[4] = 0;
-        colorMap[1] = colorMap[3] = colorMap[5] = 255;
-      }
-      ref = getIFDIntArray(ifd, Y_CB_CR_SUB_SAMPLING, false);
-      if (ref == null) ref = new int[] {2, 2};
-      System.arraycopy(ref, 0, colorMap, samplesPerPixel * 2, ref.length);
-      TiffRational[] coeffs =
-        (TiffRational[]) getIFDValue(ifd, Y_CB_CR_COEFFICIENTS);
-      if (coeffs != null) {
-        for (int i=0; i<coeffs.length; i++) {
-          colorMap[colorMap.length - coeffs.length + i] = (int) (10000 *
-            ((float) coeffs[i].getNumerator() / coeffs[i].getDenominator()));
-        }
-      }
-      else {
-        colorMap[colorMap.length - 3] = 2990;
-        colorMap[colorMap.length - 2] = 5870;
-        colorMap[colorMap.length - 1] = 1140;
-      }
-    }
+    int pixel = getBytesPerSample(ifd)[0];
+    int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
+    long nrows = numTileRows;
+    if (planarConfig == 2) numTileRows *= samplesPerPixel;
 
-    if (stripOffsets.length > 1 && (stripOffsets[stripOffsets.length - 1] ==
-      stripOffsets[stripOffsets.length - 2]))
-    {
-      long[] tmp = stripOffsets;
-      stripOffsets = new long[tmp.length - 1];
-      System.arraycopy(tmp, 0, stripOffsets, 0, stripOffsets.length);
-      numStrips--;
-    }
+    Rectangle imageBounds = new Rectangle(x, y, (int) width,
+      (int) (height * (samplesPerPixel / effectiveChannels)));
 
-    byte[] jpegTable = null;
-    if (compression == JPEG) {
-      jpegTable = (byte[]) TiffTools.getIFDValue(ifd, JPEG_TABLES);
-    }
+    int endX = (int) width + x;
+    int endY = (int) height + y;
 
-    CodecOptions options = new CodecOptions();
-    options.interleaved = true;
-    options.littleEndian = littleEndian;
+    for (int row=0; row<numTileRows; row++) {
+      for (int col=0; col<numTileCols; col++) {
+        Rectangle tileBounds = new Rectangle(col * (int) tileWidth,
+          (int) (row * tileLength), (int) tileWidth,
+          (int) tileLength);
 
-    if (isTiled) {
-      long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
-      long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
+        if (!imageBounds.intersects(tileBounds)) continue;
 
-      int numTileRows = (int) (imageLength / tileLength);
-      if (numTileRows * tileLength < imageLength) numTileRows++;
-
-      int numTileCols = (int) (imageWidth / tileWidth);
-      if (numTileCols * tileWidth < imageWidth) numTileCols++;
-
-      Rectangle imageBounds = new Rectangle(x, y, (int) width, (int) height);
-      int endX = (int) width + x;
-      int endY = (int) height + y;
-      int pixel = (int) bitsPerSample[0] / 8;
-      int channels = 1;
-      if (planarConfig != 2) channels = samplesPerPixel;
-      else pixel *= samplesPerPixel;
-
-      for (int row=0; row<numTileRows; row++) {
-        for (int col=0; col<numTileCols; col++) {
-          Rectangle tileBounds = new Rectangle(col * (int) tileWidth,
-            row * (int) tileLength, (int) tileWidth, (int) tileLength);
-
-          if (!imageBounds.intersects(tileBounds)) continue;
-
-          int tileNumber = row * numTileCols + col;
-          byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
-
-          in.seek(stripOffsets[tileNumber] & 0xffffffffL);
-          in.read(tile);
-
-          int size = (int) (tileWidth * tileLength * pixel * channels);
-          options.maxBytes = size;
-          if (jpegTable != null) {
-            byte[] q = new byte[jpegTable.length + tile.length - 4];
-            System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
-            System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
-            tile = uncompress(q, compression, options);
-          }
-          else tile = uncompress(tile, compression, options);
-
-          undifference(tile, bitsPerSample, tileWidth, planarConfig, predictor,
-            littleEndian);
-          byte[] t = new byte[size];
-          unpackBytes(t, 0, tile, bitsPerSample, photoInterp, colorMap,
-            littleEndian, maxValue, planarConfig, 0, 1, tileWidth);
-
-          // adjust tile bounds, if necessary
-
-          int tileX = (int) Math.max(tileBounds.x, x);
-          int tileY = (int) Math.max(tileBounds.y, y);
-
-          int realX = tileX % (int) tileWidth;
-          int realY = tileY % (int) tileLength;
-
-          int twidth = (int) Math.min(endX - tileX, tileWidth - realX);
-          int theight = (int) Math.min(endY - tileY, tileLength - realY);
-
-          // copy appropriate portion of the tile to the output buffer
-
-          int rowLen = pixel * (int) tileWidth;
-          int copy = pixel * twidth;
-          int tileSize = (int) (tileWidth * tileLength * pixel);
-          int planeSize = (int) (width * height * pixel);
-          for (int q=0; q<channels; q++) {
-            for (int tileRow=0; tileRow<theight; tileRow++) {
-              int src = q * tileSize + (realY + tileRow) * rowLen +
-                realX * pixel;
-              int dest = (int) (q * planeSize +
-                (tileY - y + tileRow) * width * pixel + (tileX - x) * pixel);
-              System.arraycopy(t, src, buf, dest, copy);
-            }
-          }
-        }
-      }
-    }
-    else {
-      int offset = 0;
-
-      if (rowsPerStrip <= 0 || numStrips <= 0) {
-        numStrips = 1;
-        rowsPerStrip = (int) imageLength;
-      }
-
-      for (int strip=0, row=0; strip<numStrips; row+=rowsPerStrip, strip++) {
-        if (((row % imageLength) + rowsPerStrip < y) ||
-          ((row % imageLength) >= y + height))
-        {
-          continue;
+        if (planarConfig == 2) {
+          tileBounds.y = (int) ((row % nrows) * tileLength);
         }
 
-        try {
-          int size = (int) imageWidth * (bitsPerSample[0] / 8);
-          if (planarConfig != 2) size *= samplesPerPixel;
-          int nRows = (int) rowsPerStrip;
-          if ((row % imageLength) < y) nRows -= (y - (row % imageLength));
-          if ((row % imageLength) + rowsPerStrip > y + height) {
-            nRows -= ((row % imageLength) + rowsPerStrip - height - y);
-          }
-          size *= rowsPerStrip;
+        byte[] tile = getTile(ifd, in, row, col);
 
-          if (DEBUG) debug("reading image strip #" + strip);
-          if (stripOffsets[strip] < 0) {
-            stripOffsets[strip] = (long) (stripOffsets[strip] & 0xffffffffL);
-          }
-          in.seek(stripOffsets[strip]);
+        // adjust tile bounds, if necessary
 
-          if (stripByteCounts[strip] > Integer.MAX_VALUE) {
-            throw new FormatException("Sorry, StripByteCounts > " +
-              Integer.MAX_VALUE + " is not supported");
-          }
-          byte[] bytes = new byte[(int) stripByteCounts[strip]];
-          in.read(bytes);
-          options.maxBytes = size;
-          if (jpegTable != null) {
-            byte[] q = new byte[jpegTable.length + bytes.length - 4];
-            System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
-            System.arraycopy(bytes, 2, q, jpegTable.length - 2,
-              bytes.length - 2);
-            bytes = uncompress(q, compression, options);
-          }
-          else bytes = uncompress(bytes, compression, options);
+        int tileX = (int) Math.max(tileBounds.x, x);
+        int tileY = (int) Math.max(tileBounds.y, y);
+        int realX = tileX % (int) tileWidth;
+        int realY = tileY % (int) tileLength;
 
-          undifference(bytes, bitsPerSample,
-            imageWidth, planarConfig, predictor, littleEndian);
+        int twidth = (int) Math.min(endX - tileX, tileWidth - realX);
+        int theight = (int) Math.min(endY - tileY, tileLength - realY);
 
-          if (x != 0 || width != imageWidth || y != 0 ||
-            height != imageLength)
-          {
-            byte[] tmp = bytes;
-            int extra = (int) bitsPerSample[0] / 8;
-            if (planarConfig != 2) extra *= samplesPerPixel;
-            int rowLen = (int) width * extra;
-            int srcRowLen = (int) imageWidth * extra;
-            bytes = new byte[(int) (nRows * extra * width)];
+        // copy appropriate portion of the tile to the output buffer
 
-            int startRow = (row % imageLength) < y ?
-              (int) (y - (row % imageLength)) : 0;
-            int endRow = (int) ((row % imageLength) + rowsPerStrip >
-              y + height ?  y + height - (row % imageLength) : rowsPerStrip);
-            for (int n=startRow; n<endRow; n++) {
-              int srcOffset = n * srcRowLen + x * extra;
-              System.arraycopy(tmp, srcOffset, bytes,
-                (n - startRow) * rowLen, rowLen);
-            }
-            nRows = endRow - startRow;
+        int rowLen = pixel * (int) tileWidth;
+        int copy = pixel * twidth;
+        int tileSize = (int) (tileWidth * tileLength * pixel);
+        int planeSize = (int) (width * height * pixel);
+        int outputRowLen = (int) (pixel * width);
+
+        realX *= pixel;
+        realY *= rowLen;
+
+        for (int q=0; q<effectiveChannels; q++) {
+          int src = (int) (q * tileSize) + realX + realY;
+          int dest = (int) (q * planeSize) + pixel * (tileX - x) +
+            outputRowLen * (tileY - y);
+          if (planarConfig == 2) dest += (planeSize * (row / nrows));
+          for (int tileRow=0; tileRow<theight; tileRow++) {
+            System.arraycopy(tile, src, buf, dest, copy);
+            src += rowLen;
+            dest += outputRowLen;
           }
-
-          unpackBytes(buf, offset, bytes, bitsPerSample,
-            photoInterp, colorMap, littleEndian, maxValue, planarConfig,
-            strip, (int) numStrips, width);
-          int div = bitsPerSample[0] / 8;
-          if (div == 0) div = 1;
-          if (bitsPerSample[0] % 8 != 0) div++;
-          if (planarConfig != 2) div *= samplesPerPixel;
-          offset += bytes.length / div;
-        }
-        catch (Exception e) {
-          // CTR TODO - eliminate catch-all exception handling
-          if (strip == 0) {
-            if (e instanceof FormatException) throw (FormatException) e;
-            else throw new FormatException(e);
-          }
-          byte[] bytes = new byte[numSamples];
-          undifference(bytes, bitsPerSample, imageWidth, planarConfig,
-            predictor, littleEndian);
-          offset = (int) (imageWidth * row);
-          unpackBytes(buf, offset, bytes, bitsPerSample, photoInterp,
-            colorMap, littleEndian, maxValue, planarConfig,
-            strip, (int) numStrips, imageWidth);
         }
       }
     }
@@ -1468,32 +1105,24 @@ public final class TiffTools {
    * This method is tailored specifically for planar (separated) images.
    */
   public static void planarUnpack(byte[] samples, int startIndex,
-    byte[] bytes, int[] bitsPerSample, int photoInterp, boolean littleEndian,
-    int strip, int numStrips) throws FormatException
+    byte[] bytes, Hashtable ifd)
+    throws FormatException
   {
-    int numChannels = bitsPerSample.length;
-    int numSamples = samples.length / numChannels;
-    if (bitsPerSample[bitsPerSample.length - 1] == 0) numChannels--;
-
-    // determine which channel the strip belongs to
-
-    if (numStrips < numChannels) numStrips = numChannels;
-    int channelNum = strip / (numStrips / numChannels);
-
     BitBuffer bb = new BitBuffer(bytes);
 
-    int index = 0;
-    int counter = 0;
-    int numBytes = bitsPerSample[0] / 8;
-    if (bitsPerSample[0] % 8 != 0) numBytes++;
+    int numBytes = getBytesPerSample(ifd)[0];
     int realBytes = numBytes;
     if (numBytes == 3) numBytes++;
 
+    int bitsPerSample = getBitsPerSample(ifd)[0];
+    boolean littleEndian = isLittleEndian(ifd);
+    int photoInterp = getPhotometricInterpretation(ifd);
+
     for (int j=0; j<bytes.length / realBytes; j++) {
-      int value = bb.getBits(bitsPerSample[0]);
+      int value = bb.getBits(bitsPerSample);
 
       if (photoInterp == WHITE_IS_ZERO) {
-        value = (int) (Math.pow(2, bitsPerSample[0]) - 1 - value);
+        value = (int) (Math.pow(2, bitsPerSample) - 1 - value);
       }
       else if (photoInterp == CMYK) {
         value = Integer.MAX_VALUE - value;
@@ -1513,74 +1142,59 @@ public final class TiffTools {
    * No error checking is performed.
    */
   public static void unpackBytes(byte[] samples, int startIndex,
-    byte[] bytes, int[] bitsPerSample, int photoInterp, int[] colorMap,
-    boolean littleEndian, long maxValue, int planar, int strip, int numStrips,
-    long imageWidth) throws FormatException
+    byte[] bytes, Hashtable ifd)
+    throws FormatException
   {
-    if (planar == 2) {
-      planarUnpack(samples, startIndex, bytes, bitsPerSample, photoInterp,
-        littleEndian, strip, numStrips);
+    if (getPlanarConfiguration(ifd) == 2) {
+      planarUnpack(samples, startIndex, bytes, ifd);
       return;
     }
 
-    int nSamples = samples.length / bitsPerSample.length;
+    int photoInterp = getPhotometricInterpretation(ifd);
+    int[] bitsPerSample = getBitsPerSample(ifd);
     int nChannels = bitsPerSample.length;
+    int nSamples = samples.length / nChannels;
 
     int totalBits = 0;
-    for (int i=0; i<bitsPerSample.length; i++) totalBits += bitsPerSample[i];
+    for (int i=0; i<nChannels; i++) totalBits += bitsPerSample[i];
     int sampleCount = 8 * bytes.length / totalBits;
     if (photoInterp == Y_CB_CR) sampleCount *= 3;
 
-    if (DEBUG) {
-      debug("unpacking " + sampleCount + " samples (startIndex=" + startIndex +
-        "; totalBits=" + totalBits + "; numBytes=" + bytes.length + ")");
-    }
+    debug("unpacking " + sampleCount + " samples (startIndex=" + startIndex +
+      "; totalBits=" + totalBits + "; numBytes=" + bytes.length + ")");
+
+    long imageWidth = getImageWidth(ifd);
 
     int bps0 = bitsPerSample[0];
-    int numBytes = bps0 / 8;
+    int numBytes = getBytesPerSample(ifd)[0];
+
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
-    boolean bps16 = bps0 == 16;
 
-    if (photoInterp == CFA_ARRAY) {
-      imageWidth = colorMap[colorMap.length - 2];
-    }
+    int row = startIndex / (int) imageWidth;
+    int col = 0;
 
-    int row = 0, col = 0;
+    int cw = 0, ch = 0;
 
-    if (imageWidth != 0) row = startIndex / (int) imageWidth;
+    boolean littleEndian = isLittleEndian(ifd);
 
-    int cw = 0;
-    int ch = 0;
+    int[] reference = getIFDIntArray(ifd, REFERENCE_BLACK_WHITE, false);
+    int[] subsampling = getIFDIntArray(ifd, Y_CB_CR_SUB_SAMPLING, false);
+    TiffRational[] coefficients =
+      (TiffRational[]) getIFDValue(ifd, Y_CB_CR_COEFFICIENTS);
 
-    if (photoInterp == CFA_ARRAY) {
-      byte[] c = new byte[2];
-      c[0] = (byte) colorMap[0];
-      c[1] = (byte) colorMap[1];
-
-      cw = DataTools.bytesToInt(c, littleEndian);
-      c[0] = (byte) colorMap[2];
-      c[1] = (byte) colorMap[3];
-      ch = DataTools.bytesToInt(c, littleEndian);
-
-      int[] tmp = colorMap;
-      colorMap = new int[tmp.length - 6];
-      System.arraycopy(tmp, 6, colorMap, 0, colorMap.length);
-    }
-
-    int index = 0;
     int count = 0;
 
     BitBuffer bb = new BitBuffer(bytes);
 
-    byte[] copyByteArray = new byte[numBytes];
-
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<nChannels; i++) {
+        int index = numBytes * (j * nChannels + i);
         int ndx = startIndex + j;
-        if (i * nSamples + ndx >= (i + 1) * nSamples) {
+        if (ndx >= nSamples) {
           break;
         }
+        int outputIndex = i * nSamples + ndx * numBytes;
 
         if (noDiv8) {
           // bits per sample is not a multiple of 8
@@ -1600,39 +1214,40 @@ public final class TiffTools {
             s = (short) (Math.pow(2, bitsPerSample[0]) - 1 - s);
           }
 
-          if (i*nSamples + (ndx + 1)*(numBytes + 1) <= samples.length) {
-            DataTools.unpackBytes(s, samples,
-              i*nSamples + ndx*(numBytes + 1), numBytes + 1, littleEndian);
+          if (outputIndex + numBytes + 1 <= samples.length) {
+            DataTools.unpackBytes(s, samples, outputIndex,
+              numBytes + 1, littleEndian);
           }
         }
         else if (bps8) {
           // special case handles 8-bit data more quickly
 
-          if (i*nSamples + ndx >= samples.length) break;
+          if (outputIndex >= samples.length) break;
 
           if (photoInterp != Y_CB_CR) {
-            samples[i*nSamples + ndx] = (byte) (bytes[index++] & 0xff);
+            samples[outputIndex] = (byte) (bytes[index] & 0xff);
           }
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            samples[i*nSamples + ndx] =
-              (byte) (255 - samples[i*nSamples + ndx]);
+            samples[outputIndex] = (byte) (255 - samples[outputIndex]);
           }
           else if (photoInterp == CMYK) {
-            samples[i*nSamples + ndx] =
-              (byte) (Integer.MAX_VALUE - samples[i*nSamples + ndx]);
+            samples[outputIndex] =
+              (byte) (Integer.MAX_VALUE - samples[outputIndex]);
           }
           else if (photoInterp == Y_CB_CR) {
             if (i == bitsPerSample.length - 1) {
-              float lumaRed = (float) colorMap[colorMap.length - 3];
-              float lumaGreen = (float) colorMap[colorMap.length - 2];
-              float lumaBlue = (float) colorMap[colorMap.length - 1];
-              lumaRed /= 10000;
-              lumaGreen /= 10000;
-              lumaBlue /= 10000;
+              float lumaRed = 0.299f;
+              float lumaGreen = 0.587f;
+              float lumaBlue = 0.114f;
+              if (coefficients != null) {
+                lumaRed = coefficients[0].floatValue();
+                lumaGreen = coefficients[1].floatValue();
+                lumaBlue = coefficients[2].floatValue();
+              }
 
-              int subX = colorMap[colorMap.length - 5];
-              int subY = colorMap[colorMap.length - 4];
+              int subX = subsampling == null ? 2 : subsampling[0];
+              int subY = subsampling == null ? 2 : subsampling[1];
 
               int block = subX * subY;
               int lumaIndex = j + (2 * (j / block));
@@ -1642,15 +1257,16 @@ public final class TiffTools {
 
               int tile = ndx / block;
               int pixel = ndx % block;
-              long r = subY * (tile / (imageWidth / subX)) + (pixel / subX);
-              long c = subX * (tile % (imageWidth / subX)) + (pixel % subX);
+              int nTiles = (int) (imageWidth / subX);
+              long r = subY * (tile / nTiles) + (pixel / subX);
+              long c = subX * (tile % nTiles) + (pixel % subX);
 
               int idx = (int) (r * imageWidth + c);
 
               if (idx < nSamples) {
-                int y = (bytes[lumaIndex] & 0xff) - colorMap[0];
-                int cb = (bytes[chromaIndex] & 0xff) - colorMap[2];
-                int cr = (bytes[chromaIndex + 1] & 0xff) - colorMap[4];
+                int y = (bytes[lumaIndex] & 0xff) - reference[0];
+                int cb = (bytes[chromaIndex] & 0xff) - reference[2];
+                int cr = (bytes[chromaIndex + 1] & 0xff) - reference[4];
 
                 int red = (int) (cr * (2 - 2 * lumaRed) + y);
                 int blue = (int) (cb * (2 - 2 * lumaBlue) + y);
@@ -1664,36 +1280,13 @@ public final class TiffTools {
             }
           }
         }  // End if (bps8)
-        else if (bps16) {
-          int nioIndex =
-            numBytes + index < bytes.length ? index : bytes.length - numBytes;
-          short v = DataTools.bytesToShort(bytes, nioIndex, 2, littleEndian);
-          index += numBytes;
+        else {
+          int offset = numBytes + index < bytes.length ?
+            index : bytes.length - numBytes;
+          long v = DataTools.bytesToLong(bytes, offset, numBytes, littleEndian);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             long max = (long) Math.pow(2, numBytes * 8) - 1;
-            v = (short) (max - v);
-          }
-          else if (photoInterp == CMYK) {
-            v = (short) (Integer.MAX_VALUE - v);
-          }
-          if (ndx*2 >= nSamples) break;
-          DataTools.unpackShort(v, samples, i*nSamples + ndx*2, littleEndian);
-        }  // End if (bps16)
-        else {
-          if (numBytes + index < bytes.length) {
-            System.arraycopy(bytes, index, copyByteArray, 0, numBytes);
-          }
-          else {
-            System.arraycopy(bytes, bytes.length - numBytes, copyByteArray,
-              0, numBytes);
-          }
-          index += numBytes;
-          long v = DataTools.bytesToLong(copyByteArray, littleEndian);
-
-          if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            long max = 1;
-            for (int q=0; q<numBytes; q++) max *= 8;
             v = max - v;
           }
           else if (photoInterp == CMYK) {
@@ -1709,66 +1302,64 @@ public final class TiffTools {
 
   // -- Decompression methods --
 
+  /** Returns true if the given decompression scheme is supported. */
+  public static boolean isSupportedDecompression(int decompression) {
+    return decompression == UNCOMPRESSED || decompression == LZW ||
+      decompression == JPEG || decompression == ALT_JPEG ||
+      decompression == JPEG_2000 || decompression == PACK_BITS ||
+      decompression == PROPRIETARY_DEFLATE || decompression == DEFLATE ||
+      decompression == NIKON || decompression == LURAWAVE;
+  }
+
   /** Decodes a strip of data compressed with the given compression scheme. */
   public static byte[] uncompress(byte[] input, int compression,
     CodecOptions options)
     throws FormatException, IOException
   {
     if (compression < 0) compression += 65536;
+
+    if (!isSupportedDecompression(compression)) {
+      String compressionName = getCodecName(compression);
+      String message = null;
+      if (compressionName != null) {
+        message =
+          "Sorry, " + compressionName + " compression mode is not supported";
+      }
+      else message = "Unknown Compression type (" + compression + ")";
+      throw new FormatException(message);
+    }
+
+    Codec codec = null;
+
     if (compression == UNCOMPRESSED) return input;
-    else if (compression == CCITT_1D) {
-      throw new FormatException(
-        "Sorry, CCITT Group 3 1-Dimensional Modified Huffman " +
-        "run length encoding compression mode is not supported");
-    }
-    else if (compression == GROUP_3_FAX) {
-      //return new T4FaxCodec().decompress(input);
-      throw new FormatException("Sorry, CCITT T.4 bi-level encoding " +
-        "(Group 3 Fax) compression mode is not supported");
-    }
-    else if (compression == GROUP_4_FAX) {
-      throw new FormatException("Sorry, CCITT T.6 bi-level encoding " +
-        "(Group 4 Fax) compression mode is not supported");
-    }
-    else if (compression == LZW) {
-      return new LZWCodec().decompress(input, options);
-    }
+    else if (compression == LZW) codec = new LZWCodec();
     else if (compression == JPEG || compression == ALT_JPEG) {
-      return new JPEGCodec().decompress(input, options);
+      codec = new JPEGCodec();
     }
-    else if (compression == JPEG_2000) {
-      return new JPEG2000Codec().decompress(input, options);
-    }
-    else if (compression == PACK_BITS) {
-      return new PackbitsCodec().decompress(input, options);
-    }
+    else if (compression == JPEG_2000) codec = new JPEG2000Codec();
+    else if (compression == PACK_BITS) codec = new PackbitsCodec();
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      return new ZlibCodec().decompress(input, options);
+      codec = new ZlibCodec();
     }
-    else if (compression == THUNDERSCAN) {
-      throw new FormatException("Sorry, " +
-        "Thunderscan compression mode is not supported");
-    }
-    else if (compression == NIKON) {
-      return new NikonCodec().decompress(input, options);
-    }
-    else if (compression == LURAWAVE) {
-      return new LuraWaveCodec().decompress(input, options);
-    }
-    else {
-      throw new FormatException(
-        "Unknown Compression type (" + compression + ")");
-    }
+    else if (compression == NIKON) codec = new NikonCodec();
+    else if (compression == LURAWAVE) codec = new LuraWaveCodec();
+    if (codec != null) return codec.decompress(input, options);
+    throw new FormatException("Unhandled compression (" + compression + ")");
   }
 
   /** Undoes in-place differencing according to the given predictor value. */
-  public static void undifference(byte[] input, int[] bitsPerSample,
-    long width, int planarConfig, int predictor, boolean little)
+  public static void undifference(byte[] input, Hashtable ifd)
     throws FormatException
   {
+    int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
     if (predictor == 2) {
-      if (DEBUG) debug("reversing horizontal differencing");
+      debug("reversing horizontal differencing");
+      int[] bitsPerSample = getBitsPerSample(ifd);
       int len = bitsPerSample.length;
+      long width = getImageWidth(ifd);
+      boolean little = isLittleEndian(ifd);
+      int planarConfig = getPlanarConfiguration(ifd);
+
       if (planarConfig == 2 || bitsPerSample[len - 1] == 0) len = 1;
       if (bitsPerSample[0] <= 8) {
         for (int b=0; b<input.length; b++) {
@@ -2053,10 +1644,8 @@ public final class TiffTools {
   public static void overwriteIFDValue(RandomAccessFile raf,
     int ifd, int tag, Object value) throws FormatException, IOException
   {
-    if (DEBUG) {
-      debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag + "; value=" +
-        value + ")");
-    }
+    debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag + "; value=" +
+      value + ")");
     byte[] header = new byte[4];
     raf.seek(0);
     raf.readFully(header);
@@ -2121,18 +1710,16 @@ public final class TiffTools {
           newOffset = DataTools.bytesToInt(bytes, 8, little);
         }
         boolean terminate = false;
-        if (DEBUG) {
-          debug("overwriteIFDValue:\n\told: (tag=" + oldTag + "; type=" +
-            oldType + "; count=" + oldCount + "; offset=" + oldOffset +
-            ");\n\tnew: (tag=" + newTag + "; type=" + newType + "; count=" +
-            newCount + "; offset=" + newOffset + ")");
-        }
+        debug("overwriteIFDValue:\n\told: (tag=" + oldTag + "; type=" +
+          oldType + "; count=" + oldCount + "; offset=" + oldOffset +
+          ");\n\tnew: (tag=" + newTag + "; type=" + newType + "; count=" +
+          newCount + "; offset=" + newOffset + ")");
 
         // determine the best way to overwrite the old entry
         if (extra.length == 0) {
           // new entry is inline; if old entry wasn't, old data is orphaned
           // do not override new offset value since data is inline
-          if (DEBUG) debug("overwriteIFDValue: new entry is inline");
+          debug("overwriteIFDValue: new entry is inline");
         }
         else if (oldOffset +
           oldCount * BYTES_PER_ELEMENT[oldType] == raf.length())
@@ -2140,17 +1727,17 @@ public final class TiffTools {
           // old entry was already at EOF; overwrite it
           newOffset = oldOffset;
           terminate = true;
-          if (DEBUG) debug("overwriteIFDValue: old entry is at EOF");
+          debug("overwriteIFDValue: old entry is at EOF");
         }
         else if (newCount <= oldCount) {
           // new entry is as small or smaller than old entry; overwrite it
           newOffset = oldOffset;
-          if (DEBUG) debug("overwriteIFDValue: new entry is <= old entry");
+          debug("overwriteIFDValue: new entry is <= old entry");
         }
         else {
           // old entry was elsewhere; append to EOF, orphaning old entry
           newOffset = raf.length();
-          if (DEBUG) debug("overwriteIFDValue: old entry will be orphaned");
+          debug("overwriteIFDValue: old entry will be orphaned");
         }
 
         // overwrite old entry
@@ -2200,7 +1787,7 @@ public final class TiffTools {
     throws FormatException, IOException
   {
     if (img == null) throw new FormatException("Image is null");
-    if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
+    debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
     boolean little = isLittleEndian(ifd);
 
@@ -2282,7 +1869,7 @@ public final class TiffTools {
     }
 
     // compress strips according to given differencing and compression schemes
-    int planarConfig = getIFDIntValue(ifd, PLANAR_CONFIGURATION, false, 1);
+    int planarConfig = getPlanarConfiguration(ifd);
     int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
 
     byte[][] strips = new byte[stripsPerImage][];
@@ -2306,7 +1893,9 @@ public final class TiffTools {
     if (ifd.containsKey(new Integer(LITTLE_ENDIAN))) keyCount--;
     if (ifd.containsKey(new Integer(BIG_TIFF))) keyCount--;
 
-    int ifdBytes = (bigTiff ? 16 : 6) + (bigTiff ? 20 : 12) * keyCount;
+    int bytesPerEntry = bigTiff ? BIG_TIFF_BYTES_PER_ENTRY : BYTES_PER_ENTRY;
+    int ifdBytes = (bigTiff ? 16 : 6) + bytesPerEntry * keyCount;
+
     long pixelBytes = 0;
     for (int i=0; i<stripsPerImage; i++) {
       stripByteCounts[i] = strips[i].length;
@@ -2335,12 +1924,10 @@ public final class TiffTools {
       if (((Integer) key).intValue() == LITTLE_ENDIAN) continue;
       if (((Integer) key).intValue() == BIG_TIFF) continue;
       Object value = ifd.get(key);
-      if (DEBUG) {
-        String sk = getIFDTagName(((Integer) key).intValue());
-        String sv = value instanceof int[] ?
-          ("int[" + ((int[]) value).length + "]") : value.toString();
-        debug("writeImage: writing " + sk + " (value=" + sv + ")");
-      }
+      String sk = getIFDTagName(((Integer) key).intValue());
+      String sv = value instanceof int[] ?
+        ("int[" + ((int[]) value).length + "]") : value.toString();
+      debug("writeImage: writing " + sk + " (value=" + sv + ")");
       writeIFDValue(ifdOut, extraBuf, extraOut, offset,
         ((Integer) key).intValue(), value, bigTiff, little);
     }
@@ -2367,6 +1954,14 @@ public final class TiffTools {
     return numBytes;
   }
 
+  // -- Tag retrieval methods --
+
+  public static boolean isTiled(Hashtable ifd) throws FormatException {
+    Object offsets = ifd.get(new Integer(STRIP_OFFSETS));
+    Object tileWidth = ifd.get(new Integer(TILE_WIDTH));
+    return offsets == null || tileWidth != null;
+  }
+
   /**
    * Retrieves the image's width (TIFF tag ImageWidth) from a given TIFF IFD.
    * @param ifd a TIFF IFD hashtable.
@@ -2374,7 +1969,12 @@ public final class TiffTools {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public static long getImageWidth(Hashtable ifd) throws FormatException {
-    return getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
+    long width = getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
+    if (width > Integer.MAX_VALUE) {
+      throw new FormatException("Sorry, ImageWidth > " + Integer.MAX_VALUE +
+        " is not supported.");
+    }
+    return width;
   }
 
   /**
@@ -2384,7 +1984,12 @@ public final class TiffTools {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public static long getImageLength(Hashtable ifd) throws FormatException {
-    return getIFDLongValue(ifd, IMAGE_LENGTH, true, 0);
+    long length = getIFDLongValue(ifd, IMAGE_LENGTH, true, 0);
+    if (length > Integer.MAX_VALUE) {
+      throw new FormatException("Sorry, ImageLength > " + Integer.MAX_VALUE +
+        " is not supported.");
+    }
+    return length;
   }
 
   /**
@@ -2399,7 +2004,44 @@ public final class TiffTools {
   public static int[] getBitsPerSample(Hashtable ifd) throws FormatException {
     int[] bitsPerSample = getIFDIntArray(ifd, BITS_PER_SAMPLE, false);
     if (bitsPerSample == null) bitsPerSample = new int[] {1};
+
+    int samplesPerPixel = getSamplesPerPixel(ifd);
+    if (bitsPerSample.length < samplesPerPixel) {
+      throw new FormatException("BitsPerSample length (" +
+        bitsPerSample.length + ") does not match SamplesPerPixel (" +
+        samplesPerPixel + ")");
+    }
+    int nSamples = (int) Math.min(bitsPerSample.length, samplesPerPixel);
+    for (int i=0; i<nSamples; i++) {
+      if (bitsPerSample[i] < 1) {
+        throw new FormatException("Illegal BitsPerSample (" +
+          bitsPerSample[i] + ")");
+      }
+    }
+
     return bitsPerSample;
+  }
+
+  /**
+   * Retrieves the image's bytes per sample (derived from tag BitsPerSample)
+   * from a given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the image's bytes per sample.  The length of the array is equal to
+   *   the number of samples per pixel.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   * @see #getSamplesPerPixel(Hashtable)
+   * @see #getBitsPerSample(Hashtable)
+   */
+  public static int[] getBytesPerSample(Hashtable ifd) throws FormatException {
+    int[] bitsPerSample = getBitsPerSample(ifd);
+    int[] bps = new int[bitsPerSample.length];
+    for (int i=0; i<bitsPerSample.length; i++) {
+      bps[i] = bitsPerSample[i];
+      while ((bps[i] % 8) != 0) bps[i]++;
+      bps[i] /= 8;
+      if (bps[i] == 0) bps[i] = 1;
+    }
+    return bps;
   }
 
   /**
@@ -2455,14 +2097,53 @@ public final class TiffTools {
   public static int getPhotometricInterpretation(Hashtable ifd)
     throws FormatException
   {
-    return getIFDIntValue(ifd, PHOTOMETRIC_INTERPRETATION, true, 0);
+    int photoInterp = getIFDIntValue(ifd, PHOTOMETRIC_INTERPRETATION, true, 0);
+    if (photoInterp == TRANSPARENCY_MASK) {
+      throw new FormatException(
+        "Sorry, Transparency Mask PhotometricInterpretation is not supported");
+    }
+    else if (photoInterp == CIE_LAB) {
+      throw new FormatException(
+        "Sorry, CIELAB PhotometricInterpretation is not supported");
+    }
+    else if (photoInterp != WHITE_IS_ZERO &&
+      photoInterp != BLACK_IS_ZERO && photoInterp != RGB &&
+      photoInterp != RGB_PALETTE && photoInterp != CMYK &&
+      photoInterp != Y_CB_CR && photoInterp != CFA_ARRAY)
+    {
+      throw new FormatException("Unknown PhotometricInterpretation (" +
+        photoInterp + ")");
+    }
+    return photoInterp;
+  }
+
+  /**
+   * Retrieves the image's planar configuration (TIFF tag PlanarConfiguration)
+   * from a given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the image's planar configuration.  As of TIFF 6.0 this is one of:
+   * <ul>
+   *  <li>Chunky (1)</li>
+   *  <li>Planar (2)</li>
+   * </ul>
+   *
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public static int getPlanarConfiguration(Hashtable ifd) throws FormatException
+  {
+    int planarConfig = getIFDIntValue(ifd, PLANAR_CONFIGURATION, false, 1);
+    if (planarConfig != 1 && planarConfig != 2) {
+      throw new FormatException("Sorry, PlanarConfiguration (" + planarConfig +
+        ") not supported.");
+    }
+    return planarConfig;
   }
 
   /**
    * Retrieves the strip offsets for the image (TIFF tag StripOffsets) from a
    * given TIFF IFD.
    * @param ifd a TIFF IFD hashtable.
-   * @return the strip offsets for the image. The lenght of the array is equal
+   * @return the strip offsets for the image. The length of the array is equal
    *   to the number of strips per image. <i>StripsPerImage =
    *   floor ((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
    * @throws FormatException if there is a problem parsing the IFD metadata.
@@ -2470,7 +2151,17 @@ public final class TiffTools {
    * @see #getRowsPerStrip(Hashtable)
    */
   public static long[] getStripOffsets(Hashtable ifd) throws FormatException {
-    return getIFDLongArray(ifd, STRIP_OFFSETS, false);
+    int tag = isTiled(ifd) ? TILE_OFFSETS : STRIP_OFFSETS;
+    long[] offsets = getIFDLongArray(ifd, tag, false);
+    if (isTiled(ifd)) return offsets;
+    long rowsPerStrip = getRowsPerStrip(ifd)[0];
+    long numStrips = (getImageLength(ifd) + rowsPerStrip - 1) / rowsPerStrip;
+    if (getPlanarConfiguration(ifd) == 2) numStrips *= getSamplesPerPixel(ifd);
+    if (offsets.length < numStrips) {
+      throw new FormatException("StripOffsets length (" + offsets.length +
+        ") does not match expected " + "number of strips (" + numStrips + ")");
+    }
+    return offsets;
   }
 
   /**
@@ -2485,7 +2176,48 @@ public final class TiffTools {
    */
   public static long[] getStripByteCounts(Hashtable ifd) throws FormatException
   {
-    return getIFDLongArray(ifd, STRIP_BYTE_COUNTS, false);
+    int tag = isTiled(ifd) ? TILE_BYTE_COUNTS : STRIP_BYTE_COUNTS;
+    long[] byteCounts = getIFDLongArray(ifd, tag, false);
+    if (byteCounts == null) {
+      // technically speaking, this shouldn't happen (since TIFF writers are
+      // required to write the StripByteCounts tag), but we'll support it
+      // anyway
+
+      // don't rely on RowsPerStrip, since it's likely that if the file doesn't
+      // have the StripByteCounts tag, it also won't have the RowsPerStrip tag
+      long[] offsets = getStripOffsets(ifd);
+      int bytesPerSample = getBytesPerSample(ifd)[0];
+      long imageWidth = getImageWidth(ifd);
+      long imageLength = getImageLength(ifd);
+      byteCounts = new long[offsets.length];
+      int samples = getSamplesPerPixel(ifd);
+      long imageSize = imageWidth * imageLength * bytesPerSample *
+        (getPlanarConfiguration(ifd) == 2 ? 1 : samples);
+      long count = imageSize / byteCounts.length;
+      Arrays.fill(byteCounts, count);
+    }
+
+    long[] counts = new long[byteCounts.length];
+
+    if (getCompression(ifd) != UNCOMPRESSED) {
+      for (int i=0; i<byteCounts.length; i++) {
+        counts[i] = byteCounts[i] * 2;
+      }
+    }
+    else System.arraycopy(byteCounts, 0, counts, 0, counts.length);
+
+    if (isTiled(ifd)) return counts;
+
+    long rowsPerStrip = getRowsPerStrip(ifd)[0];
+    long numStrips = (getImageLength(ifd) + rowsPerStrip - 1) / rowsPerStrip;
+    if (getPlanarConfiguration(ifd) == 2) numStrips *= getSamplesPerPixel(ifd);
+
+    if (counts.length < numStrips) {
+      throw new FormatException("StripByteCounts length (" + counts.length +
+        ") does not match expected " + "number of strips (" + numStrips + ")");
+    }
+
+    return counts;
   }
 
   /**
@@ -2496,16 +2228,57 @@ public final class TiffTools {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public static long[] getRowsPerStrip(Hashtable ifd) throws FormatException {
-    return getIFDLongArray(ifd, ROWS_PER_STRIP, false);
+    if (isTiled(ifd)) {
+      return new long[] {getImageLength(ifd)};
+    }
+    long[] rowsPerStrip = getIFDLongArray(ifd, ROWS_PER_STRIP, false);
+    if (rowsPerStrip == null) {
+      // create a fake RowsPerStrip entry if one is not present
+      return new long[] {getImageLength(ifd)};
+    }
+
+    // rowsPerStrip should never be more than the total number of rows
+    long imageLength = getImageLength(ifd);
+    for (int i=0; i<rowsPerStrip.length; i++) {
+      rowsPerStrip[i] = (long) Math.min(rowsPerStrip[i], imageLength);
+    }
+
+    long rows = rowsPerStrip[0];
+    for (int i=1; i<rowsPerStrip.length; i++) {
+      if (rows != rowsPerStrip[i]) {
+        throw new FormatException(
+          "Sorry, non-uniform RowsPerStrip is not supported");
+      }
+    }
+
+    return rowsPerStrip;
   }
 
   // -- Compression methods --
 
+  /** Returns true if the given compression scheme is supported. */
+  public static boolean isSupportedCompression(int compression) {
+    return compression == UNCOMPRESSED || compression == LZW ||
+      compression == JPEG || compression == JPEG_2000;
+  }
+
   /** Encodes a strip of data with the given compression scheme. */
-    public static byte[] compress(byte[] input, Hashtable ifd)
+  public static byte[] compress(byte[] input, Hashtable ifd)
     throws FormatException, IOException
   {
     int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
+
+    if (!isSupportedCompression(compression)) {
+      String compressionName = getCodecName(compression);
+      if (compressionName != null) {
+        throw new FormatException("Sorry, " + compressionName +
+          " compression mode is not supported");
+      }
+      else {
+        throw new FormatException(
+          "Unknown Compression type (" + compression + ")");
+      }
+    }
 
     CodecOptions options = new CodecOptions();
     options.width = (int) getImageWidth(ifd);
@@ -2516,53 +2289,16 @@ public final class TiffTools {
     options.interleaved = true;
 
     if (compression == UNCOMPRESSED) return input;
+    else if (compression == LZW) {
+      return new LZWCodec().compress(input, options);
+    }
     else if (compression == JPEG) {
       return new JPEGCodec().compress(input, options);
     }
     else if (compression == JPEG_2000) {
       return new JPEG2000Codec().compress(input, options);
     }
-    else {
-      return compress(input, compression);
-    }
-  }
-
-  /** Encodes a strip of data with the given compression scheme. */
-  public static byte[] compress(byte[] input, int compression)
-    throws FormatException, IOException
-  {
-    if (compression == UNCOMPRESSED) return input;
-    else if (compression == CCITT_1D) {
-      throw new FormatException(
-        "Sorry, CCITT Group 3 1-Dimensional Modified Huffman " +
-        "run length encoding compression mode is not supported");
-    }
-    else if (compression == GROUP_3_FAX) {
-      throw new FormatException("Sorry, CCITT T.4 bi-level encoding " +
-        "(Group 3 Fax) compression mode is not supported");
-    }
-    else if (compression == GROUP_4_FAX) {
-      throw new FormatException("Sorry, CCITT T.6 bi-level encoding " +
-        "(Group 4 Fax) compression mode is not supported");
-    }
-    else if (compression == LZW) {
-      LZWCodec c = new LZWCodec();
-      return c.compress(input, null);
-      // return Compression.lzwCompress(input);
-    }
-
-    else if (compression == JPEG) {
-      throw new FormatException(
-        "Sorry, JPEG compression mode is not supported");
-    }
-    else if (compression == PACK_BITS) {
-      throw new FormatException(
-        "Sorry, PackBits compression mode is not supported");
-    }
-    else {
-      throw new FormatException(
-        "Unknown Compression type (" + compression + ")");
-    }
+    throw new FormatException("Unhandled compression (" + compression + ")");
   }
 
   /** Performs in-place differencing according to the given predictor value. */
@@ -2570,7 +2306,7 @@ public final class TiffTools {
     long width, int planarConfig, int predictor) throws FormatException
   {
     if (predictor == 2) {
-      if (DEBUG) debug("performing horizontal differencing");
+      debug("performing horizontal differencing");
       for (int b=input.length-1; b>=0; b--) {
         if (b / bitsPerSample.length % width == 0) continue;
         input[b] -= input[b - bitsPerSample.length];
@@ -2585,7 +2321,66 @@ public final class TiffTools {
 
   /** Prints a debugging message with current time. */
   public static void debug(String message) {
-    LogTools.println(System.currentTimeMillis() + ": " + message);
+    if (DEBUG) {
+      LogTools.println(System.currentTimeMillis() + ": " + message);
+    }
+  }
+
+  /** Prints the contents of an IFD. */
+  public static void printIFD(Hashtable ifd) {
+    StringBuffer sb = new StringBuffer();
+    sb.append("IFD directory entry values:");
+
+    Integer[] tags = (Integer[]) ifd.keySet().toArray(new Integer[0]);
+    for (int entry=0; entry<tags.length; entry++) {
+      sb.append("\n\t");
+      sb.append(getIFDTagName(tags[entry].intValue()));
+      sb.append("=");
+      Object value = ifd.get(tags[entry]);
+      if ((value instanceof Boolean) || (value instanceof Number) ||
+        (value instanceof String))
+      {
+        sb.append(value);
+      }
+      else {
+        // this is an array of primitive types, Strings, or TiffRationals
+        ReflectedUniverse r = new ReflectedUniverse();
+        r.setVar("value", value);
+        try {
+          int nElements = ((Integer) r.exec("value.length")).intValue();
+          for (int i=0; i<nElements; i++) {
+            r.setVar("index", i);
+            sb.append(r.exec("value[index]"));
+            if (i < nElements - 1) sb.append(",");
+          }
+        }
+        catch (ReflectException re) { }
+      }
+    }
+    debug(sb.toString());
+  }
+
+  /** Returns the name of the given codec. */
+  public static String getCodecName(int codec) {
+    switch (codec) {
+      case UNCOMPRESSED: return "Uncompressed";
+      case CCITT_1D: return "CCITT Group 3 1-Dimensional Modified Huffman";
+      case GROUP_3_FAX: return "CCITT T.4 bi-level encoding (Group 3 Fax)";
+      case GROUP_4_FAX: return "CCITT T.6 bi-level encoding (Group 4 Fax)";
+      case LZW: return "LZW";
+      case JPEG:
+      case ALT_JPEG:
+        return "JPEG";
+      case PACK_BITS: return "PackBits";
+      case DEFLATE:
+      case PROPRIETARY_DEFLATE:
+        return "Deflate (Zlib)";
+      case THUNDERSCAN: return "Thunderscan";
+      case JPEG_2000: return "JPEG-2000";
+      case NIKON: return "Nikon";
+      case LURAWAVE: return "LuraWave";
+    }
+    return null;
   }
 
 }
