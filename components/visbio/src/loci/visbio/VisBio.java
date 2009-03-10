@@ -56,8 +56,8 @@ public final class VisBio extends Thread {
     V.equals("@visbio" + ".version@") ? "(internal build)" :
     (V.substring(0, 1) + "." + V.substring(1));
 
-  /** Application author. */
-  public static final String AUTHOR = "Curtis Rueden, LOCI";
+  /** Application authors. */
+  public static final String AUTHOR = "Curtis Rueden and Abraham Sorber, LOCI";
 
   /** Application build date. */
   public static final String DATE = "@date@";
