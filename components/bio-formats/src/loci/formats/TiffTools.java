@@ -1150,7 +1150,10 @@ public final class TiffTools {
       return;
     }
 
+    int compression = getCompression(ifd);
     int photoInterp = getPhotometricInterpretation(ifd);
+    if (compression == JPEG) photoInterp = RGB;
+
     int[] bitsPerSample = getBitsPerSample(ifd);
     int nChannels = bitsPerSample.length;
     int nSamples = samples.length / nChannels;
@@ -1214,9 +1217,9 @@ public final class TiffTools {
             s = (short) (Math.pow(2, bitsPerSample[0]) - 1 - s);
           }
 
-          if (outputIndex + numBytes + 1 <= samples.length) {
-            DataTools.unpackBytes(s, samples, outputIndex,
-              numBytes + 1, littleEndian);
+          if (outputIndex + numBytes <= samples.length) {
+            DataTools.unpackBytes(s, samples, outputIndex, numBytes,
+              littleEndian);
           }
         }
         else if (bps8) {
@@ -2153,6 +2156,10 @@ public final class TiffTools {
   public static long[] getStripOffsets(Hashtable ifd) throws FormatException {
     int tag = isTiled(ifd) ? TILE_OFFSETS : STRIP_OFFSETS;
     long[] offsets = getIFDLongArray(ifd, tag, false);
+    if (isTiled(ifd) && offsets == null) {
+      offsets = getIFDLongArray(ifd, STRIP_OFFSETS, false);
+    }
+
     if (isTiled(ifd)) return offsets;
     long rowsPerStrip = getRowsPerStrip(ifd)[0];
     long numStrips = (getImageLength(ifd) + rowsPerStrip - 1) / rowsPerStrip;
@@ -2178,6 +2185,9 @@ public final class TiffTools {
   {
     int tag = isTiled(ifd) ? TILE_BYTE_COUNTS : STRIP_BYTE_COUNTS;
     long[] byteCounts = getIFDLongArray(ifd, tag, false);
+    if (isTiled(ifd) && byteCounts == null) {
+      byteCounts = getIFDLongArray(ifd, STRIP_BYTE_COUNTS, false);
+    }
     if (byteCounts == null) {
       // technically speaking, this shouldn't happen (since TIFF writers are
       // required to write the StripByteCounts tag), but we'll support it
