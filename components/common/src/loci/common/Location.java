@@ -136,6 +136,24 @@ public class Location {
     else idMap = new Hashtable();
   }
 
+  /**
+   * Gets an IRandomAccess object that can read from or write to the given file.
+   * @see IRandomAccess
+   */
+  public static IRandomAccess getHandle(String id) throws IOException {
+    File f = new File(getMappedId(id)).getAbsoluteFile();
+    if (getMappedFile(id) != null) return getMappedFile(id);
+
+    IRandomAccess handle = null;
+    if (id.startsWith("http://")) {
+      handle = new RAUrl(getMappedId(id), "r");
+    }
+    else {
+      handle = new RAFile(f, "r");
+    }
+    return handle;
+  }
+
   // -- File API methods --
 
   /* @see java.io.File#canRead() */

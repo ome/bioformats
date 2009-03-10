@@ -41,7 +41,7 @@ import loci.formats.*;
 public class EPSWriter extends FormatWriter {
 
   /** Current file. */
-  protected RandomAccessFile out;
+  protected IRandomAccess out;
 
   // -- Constructor --
 
@@ -59,7 +59,7 @@ public class EPSWriter extends FormatWriter {
       throw new FormatException("Image is null");
     }
 
-    out = new RandomAccessFile(currentId, "rw");
+    out = Location.getHandle(currentId);
 
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
     int type = AWTImageTools.getPixelType(img);
@@ -77,25 +77,23 @@ public class EPSWriter extends FormatWriter {
 
     // write the header
 
-    DataTools.writeString(out, "%!PS-Adobe-2.0 EPSF-1.2\n");
-    DataTools.writeString(out, "%%Title: " + currentId + "\n");
-    DataTools.writeString(out, "%%Creator: LOCI Bio-Formats\n");
-    DataTools.writeString(out, "%%Pages: 1\n");
-    DataTools.writeString(out, "%%BoundingBox: 0 0 " + width +
-      " " + height + "\n");
-    DataTools.writeString(out, "%%EndComments\n\n");
+    out.writeBytes("%!PS-Adobe-2.0 EPSF-1.2\n");
+    out.writeBytes("%%Title: " + currentId + "\n");
+    out.writeBytes("%%Creator: LOCI Bio-Formats\n");
+    out.writeBytes("%%Pages: 1\n");
+    out.writeBytes("%%BoundingBox: 0 0 " + width + " " + height + "\n");
+    out.writeBytes("%%EndComments\n\n");
 
-    DataTools.writeString(out, "/ld {load def} bind def\n");
-    DataTools.writeString(out, "/s /stroke ld /f /fill ld /m /moveto ld /l " +
+    out.writeBytes("/ld {load def} bind def\n");
+    out.writeBytes("/s /stroke ld /f /fill ld /m /moveto ld /l " +
       "/lineto ld /c /curveto ld /rgb {255 div 3 1 roll 255 div 3 1 " +
       "roll 255 div 3 1 roll setrgbcolor} def\n");
-    DataTools.writeString(out, "0 0 translate\n");
-    DataTools.writeString(out, ((float) width) + " " + ((float) height) +
-      " scale\n");
-    DataTools.writeString(out, "/picstr 40 string def\n");
+    out.writeBytes("0 0 translate\n");
+    out.writeBytes(((float) width) + " " + ((float) height) + " scale\n");
+    out.writeBytes("/picstr 40 string def\n");
     if (byteData.length == 1) {
-      DataTools.writeString(out, width + " " + height + " 8 [" + width +
-        " 0 0 " + (-1*height) + " 0 " + height + "] {currentfile picstr " +
+      out.writeBytes(width + " " + height + " 8 [" + width + " 0 0 " +
+        (-1*height) + " 0 " + height + "] {currentfile picstr " +
         "readhexstring pop} image\n");
 
       // write pixel data
@@ -108,18 +106,18 @@ public class EPSWriter extends FormatWriter {
           // only want last 2 characters of s
           if (s.length() > 1) s = s.substring(s.length() - 2);
           else s = "0" + s;
-          DataTools.writeString(out, s);
+          out.writeBytes(s);
           charCount++;
           if (charCount == 40) {
-            DataTools.writeString(out, "\n");
+            out.writeBytes("\n");
             charCount = 0;
           }
         }
       }
     }
     else {
-      DataTools.writeString(out, width + " " + height + " 8 [" + width +
-        " 0 0 " + (-1*height) + " 0 " + height + "] {currentfile picstr " +
+      out.writeBytes(width + " " + height + " 8 [" + width + " 0 0 " +
+        (-1*height) + " 0 " + height + "] {currentfile picstr " +
         "readhexstring pop} false 3 colorimage\n");
 
       // write pixel data
@@ -132,10 +130,10 @@ public class EPSWriter extends FormatWriter {
           // only want last 2 characters of s
           if (s.length() > 1) s = s.substring(s.length() - 2);
           else s = "0" + s;
-          DataTools.writeString(out, s);
+          out.writeBytes(s);
           charCount++;
           if (charCount == 40) {
-            DataTools.writeString(out, "\n");
+            out.writeBytes("\n");
             charCount = 0;
           }
         }
@@ -144,7 +142,7 @@ public class EPSWriter extends FormatWriter {
 
     // write footer
 
-    DataTools.writeString(out, "showpage\n");
+    out.writeBytes("showpage\n");
     out.close();
   }
 

@@ -44,7 +44,7 @@ public class ICSWriter extends FormatWriter {
 
   // -- Fields --
 
-  private RandomAccessFile out;
+  private IRandomAccess out;
 
   // -- Constructor --
 
@@ -66,7 +66,7 @@ public class ICSWriter extends FormatWriter {
 
     if (!initialized) {
       initialized = true;
-      out = new RandomAccessFile(currentId, "rw");
+      out = Location.getHandle(currentId);
       out.writeBytes("\t\n");
       out.writeBytes("ics_version\t2.0\n");
       out.writeBytes("filename\t" + currentId + "\n");

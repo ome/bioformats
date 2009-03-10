@@ -103,19 +103,18 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * around the given file.
    */
   public RandomAccessStream(String file) throws IOException {
-    File f = new File(Location.getMappedId(file));
-    f = f.getAbsoluteFile();
-    if (Location.getMappedFile(file) != null) {
-      raf = Location.getMappedFile(file);
-      length = raf.length();
+    String path = Location.getMappedId(file);
+    File f = new File(path).getAbsoluteFile();
+    raf = Location.getHandle(file);
+    length = raf.length();
+
+    if (raf == null) {
+      throw new IOException("File not found: " + file);
     }
-    else if (f.exists()) {
-      raf = new RAFile(f, "r");
 
+    if (f.exists()) {
       BufferedInputStream bis = new BufferedInputStream(
-        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
-
-      String path = f.getPath().toLowerCase();
+        new FileInputStream(path), MAX_OVERHEAD);
 
       if (path.endsWith(".gz")) {
         dis = new DataInputStream(new GZIPInputStream(bis));
@@ -128,12 +127,11 @@ public class RandomAccessStream extends InputStream implements DataInput {
           length += skip;
         }
 
-        bis = new BufferedInputStream(
-          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+        bis = new BufferedInputStream(new FileInputStream(path), MAX_OVERHEAD);
         dis = new DataInputStream(new GZIPInputStream(bis));
       }
       else if (path.endsWith(".zip")) {
-        ZipFile zf = new ZipFile(Location.getMappedId(file));
+        ZipFile zf = new ZipFile(path);
 
         // strip off .zip extension and directory prefix
         String innerId = path.substring(0, path.length() - 4);
@@ -176,26 +174,19 @@ public class RandomAccessStream extends InputStream implements DataInput {
           length += skip;
         }
 
-        bis = new BufferedInputStream(
-          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+        bis = new BufferedInputStream(new FileInputStream(path), MAX_OVERHEAD);
         bis.skip(2);
         dis = new DataInputStream(new CBZip2InputStream(bis));
       }
       else dis = new DataInputStream(bis);
 
       if (!compressed) {
-        length = raf.length();
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);
         nextMark = MAX_OVERHEAD;
       }
     }
-    else if (file.startsWith("http")) {
-      raf = new RAUrl(Location.getMappedId(file), "r");
-      length = raf.length();
-    }
-    else throw new IOException("File not found : " + file);
     this.file = file;
     fp = 0;
     afp = 0;
@@ -646,19 +637,17 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   /** Re-open a file that has been closed */
   private void reopen() throws IOException {
-    File f = new File(Location.getMappedId(file));
-    f = f.getAbsoluteFile();
-    if (Location.getMappedFile(file) != null) {
-      raf = Location.getMappedFile(file);
-      length = raf.length();
-    }
-    else if (f.exists()) {
-      raf = new RAFile(f, "r");
+    String path = Location.getMappedId(file);
+    File f = new File(path).getAbsoluteFile();
 
+    raf = Location.getHandle(file);
+    length = raf.length();
+
+    if (f.exists()) {
       BufferedInputStream bis = new BufferedInputStream(
         new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
 
-      String path = f.getPath().toLowerCase();
+      path = path.toLowerCase();
 
       if (dis != null) dis.close();
 
@@ -681,15 +670,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
       else dis = new DataInputStream(bis);
 
       if (!compressed) {
-        length = raf.length();
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);
       }
-    }
-    else if (file.startsWith("http")) {
-      raf = new RAUrl(Location.getMappedId(file), "r");
-      length = raf.length();
     }
     fileCache.put(this, Boolean.TRUE);
     openFiles++;

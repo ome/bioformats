@@ -84,7 +84,7 @@ public class QTWriter extends FormatWriter {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile out;
+  protected IRandomAccess out;
 
   /** The codec to use. */
   protected int codec = CODEC_RAW;
@@ -232,7 +232,7 @@ public class QTWriter extends FormatWriter {
       // -- write the header --
 
       offsets = new Vector();
-      out = new RandomAccessFile(currentId, "rw");
+      out = Location.getHandle(currentId);
       created = (int) System.currentTimeMillis();
       numWritten = 0;
       numBytes = buffer.length;
@@ -242,10 +242,10 @@ public class QTWriter extends FormatWriter {
         // -- write the first header --
 
         DataTools.writeInt(out, 8, false);
-        DataTools.writeString(out, "wide");
+        out.writeBytes("wide");
 
         DataTools.writeInt(out, numBytes + 8, false);
-        DataTools.writeString(out, "mdat");
+        out.writeBytes("mdat");
       }
       else {
         out.seek(byteCountOffset);
@@ -301,12 +301,12 @@ public class QTWriter extends FormatWriter {
 
       int atomLength = 685 + 8*numWritten;
       DataTools.writeInt(out, atomLength, false);
-      DataTools.writeString(out, "moov");
+      out.writeBytes("moov");
 
       // -- write mvhd atom --
 
       DataTools.writeInt(out, 108, false);
-      DataTools.writeString(out, "mvhd");
+      out.writeBytes("mvhd");
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
       DataTools.writeInt(out, created, false); // creation time
@@ -341,7 +341,7 @@ public class QTWriter extends FormatWriter {
 
       atomLength -= 116;
       DataTools.writeInt(out, atomLength, false);
-      DataTools.writeString(out, "trak");
+      out.writeBytes("trak");
 
       // -- write tkhd atom --
 
@@ -381,12 +381,12 @@ public class QTWriter extends FormatWriter {
       // -- write edts atom --
 
       DataTools.writeInt(out, 36, false);
-      DataTools.writeString(out, "edts");
+      out.writeBytes("edts");
 
       // -- write elst atom --
 
       DataTools.writeInt(out, 28, false);
-      DataTools.writeString(out, "elst");
+      out.writeBytes("elst");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
@@ -400,12 +400,12 @@ public class QTWriter extends FormatWriter {
 
       atomLength -= 136;
       DataTools.writeInt(out, atomLength, false);
-      DataTools.writeString(out, "mdia");
+      out.writeBytes("mdia");
 
       // -- write mdhd atom --
 
       DataTools.writeInt(out, 32, false);
-      DataTools.writeString(out, "mdhd");
+      out.writeBytes("mdhd");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
@@ -419,26 +419,26 @@ public class QTWriter extends FormatWriter {
       // -- write hdlr atom --
 
       DataTools.writeInt(out, 58, false);
-      DataTools.writeString(out, "hdlr");
+      out.writeBytes("hdlr");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeString(out, "mhlr");
-      DataTools.writeString(out, "vide");
-      DataTools.writeString(out, "appl");
+      out.writeBytes("mhlr");
+      out.writeBytes("vide");
+      out.writeBytes("appl");
       out.write(new byte[] {16, 0, 0, 0, 0, 1, 1, 11, 25});
-      DataTools.writeString(out, "Apple Video Media Handler");
+      out.writeBytes("Apple Video Media Handler");
 
       // -- write minf atom --
 
       atomLength -= 98;
       DataTools.writeInt(out, atomLength, false);
-      DataTools.writeString(out, "minf");
+      out.writeBytes("minf");
 
       // -- write vmhd atom --
 
       DataTools.writeInt(out, 20, false);
-      DataTools.writeString(out, "vmhd");
+      out.writeBytes("vmhd");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 1, false); // flags
@@ -450,32 +450,32 @@ public class QTWriter extends FormatWriter {
       // -- write hdlr atom --
 
       DataTools.writeInt(out, 57, false);
-      DataTools.writeString(out, "hdlr");
+      out.writeBytes("hdlr");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeString(out, "dhlr");
-      DataTools.writeString(out, "alis");
-      DataTools.writeString(out, "appl");
+      out.writeBytes("dhlr");
+      out.writeBytes("alis");
+      out.writeBytes("appl");
       out.write(new byte[] {16, 0, 0, 1, 0, 1, 1, 31, 24});
-      DataTools.writeString(out, "Apple Alias Data Handler");
+      out.writeBytes("Apple Alias Data Handler");
 
       // -- write dinf atom --
 
       DataTools.writeInt(out, 36, false);
-      DataTools.writeString(out, "dinf");
+      out.writeBytes("dinf");
 
       // -- write dref atom --
 
       DataTools.writeInt(out, 28, false);
-      DataTools.writeString(out, "dref");
+      out.writeBytes("dref");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
       DataTools.writeShort(out, 0, false); // version 2
       DataTools.writeShort(out, 1, false); // flags 2
       out.write(new byte[] {0, 0, 0, 12});
-      DataTools.writeString(out, "alis");
+      out.writeBytes("alis");
       DataTools.writeShort(out, 0, false); // version 3
       DataTools.writeShort(out, 1, false); // flags 3
 
@@ -483,23 +483,23 @@ public class QTWriter extends FormatWriter {
 
       atomLength -= 121;
       DataTools.writeInt(out, atomLength, false);
-      DataTools.writeString(out, "stbl");
+      out.writeBytes("stbl");
 
       // -- write stsd atom --
 
       DataTools.writeInt(out, 118, false);
-      DataTools.writeString(out, "stsd");
+      out.writeBytes("stsd");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
       DataTools.writeInt(out, 1, false); // number of entries in the table
       out.write(new byte[] {0, 0, 0, 102});
-      DataTools.writeString(out, "raw "); // codec
+      out.writeBytes("raw "); // codec
       out.write(new byte[] {0, 0, 0, 0, 0, 0});  // reserved
       DataTools.writeShort(out, 1, false); // data reference
       DataTools.writeShort(out, 1, false); // version
       DataTools.writeShort(out, 1, false); // revision
-      DataTools.writeString(out, "appl");
+      out.writeBytes("appl");
       DataTools.writeInt(out, 0, false); // temporal quality
       DataTools.writeInt(out, 768, false); // spatial quality
       DataTools.writeShort(out, width, false); // image width
@@ -509,7 +509,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeInt(out, 0, false); // data size
       DataTools.writeShort(out, 1, false); // frames per sample
       DataTools.writeShort(out, 12, false); // length of compressor name
-      DataTools.writeString(out, "Uncompressed"); // compressor name
+      out.writeBytes("Uncompressed"); // compressor name
       DataTools.writeInt(out, bitsPerPixel, false); // unknown
       DataTools.writeInt(out, bitsPerPixel, false); // unknown
       DataTools.writeInt(out, bitsPerPixel, false); // unknown
@@ -523,7 +523,7 @@ public class QTWriter extends FormatWriter {
       // -- write stts atom --
 
       DataTools.writeInt(out, 24, false);
-      DataTools.writeString(out, "stts");
+      out.writeBytes("stts");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
@@ -534,7 +534,7 @@ public class QTWriter extends FormatWriter {
       // -- write stsc atom --
 
       DataTools.writeInt(out, 28, false);
-      DataTools.writeString(out, "stsc");
+      out.writeBytes("stsc");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
@@ -546,7 +546,7 @@ public class QTWriter extends FormatWriter {
       // -- write stsz atom --
 
       DataTools.writeInt(out, 20 + 4*numWritten, false);
-      DataTools.writeString(out, "stsz");
+      out.writeBytes("stsz");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags
@@ -561,7 +561,7 @@ public class QTWriter extends FormatWriter {
       // -- write stco atom --
 
       DataTools.writeInt(out, 16 + 4*numWritten, false);
-      DataTools.writeString(out, "stco");
+      out.writeBytes("stco");
 
       DataTools.writeShort(out, 0, false); // version
       DataTools.writeShort(out, 0, false); // flags

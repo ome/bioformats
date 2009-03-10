@@ -1786,7 +1786,7 @@ public final class TiffTools {
    * @return total number of bytes written
    */
   public static long writeImage(BufferedImage img, Hashtable ifd,
-    OutputStream out, long offset, boolean last, boolean bigTiff)
+    IRandomAccess out, long offset, boolean last, boolean bigTiff)
     throws FormatException, IOException
   {
     if (img == null) throw new FormatException("Image is null");
@@ -1953,7 +1953,6 @@ public final class TiffTools {
       numBytes += strips[i].length;
     }
     out.write(extraArray);
-    out.flush();
     return numBytes;
   }
 

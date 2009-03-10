@@ -46,7 +46,7 @@ public class TiffWriter extends FormatWriter {
   protected long lastOffset;
 
   /** Current output stream. */
-  protected BufferedOutputStream out;
+  protected IRandomAccess out;
 
   /** Image counts for each open series. */
   protected Vector imageCounts;
@@ -99,32 +99,30 @@ public class TiffWriter extends FormatWriter {
     if (!initialized) {
       imageCounts = new Vector();
       initialized = true;
-      out =
-        new BufferedOutputStream(new FileOutputStream(currentId, true), 4096);
+      out = Location.getHandle(currentId);
 
       RandomAccessStream tmp = new RandomAccessStream(currentId);
       if (tmp.length() == 0) {
         // write TIFF header
-        DataOutputStream dataOut = new DataOutputStream(out);
         if (littleEndian) {
-          dataOut.writeByte(TiffTools.LITTLE);
-          dataOut.writeByte(TiffTools.LITTLE);
+          out.writeByte(TiffTools.LITTLE);
+          out.writeByte(TiffTools.LITTLE);
         }
         else {
-          dataOut.writeByte(TiffTools.BIG);
-          dataOut.writeByte(TiffTools.BIG);
+          out.writeByte(TiffTools.BIG);
+          out.writeByte(TiffTools.BIG);
         }
         if (isBigTiff) {
-          DataTools.writeShort(dataOut, TiffTools.BIG_TIFF_MAGIC_NUMBER,
+          DataTools.writeShort(out, TiffTools.BIG_TIFF_MAGIC_NUMBER,
             littleEndian);
         }
         else {
-          DataTools.writeShort(dataOut, TiffTools.MAGIC_NUMBER, littleEndian);
+          DataTools.writeShort(out, TiffTools.MAGIC_NUMBER, littleEndian);
         }
-        DataTools.writeInt(dataOut, 8, littleEndian); // offset to first IFD
+        DataTools.writeInt(out, 8, littleEndian); // offset to first IFD
         lastOffset = 8;
         if (isBigTiff) {
-          DataTools.writeLong(dataOut, 16, littleEndian);
+          DataTools.writeLong(out, 16, littleEndian);
           lastOffset = 16;
         }
       }

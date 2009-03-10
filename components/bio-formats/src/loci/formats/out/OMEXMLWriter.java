@@ -46,7 +46,7 @@ public class OMEXMLWriter extends FormatWriter {
   // -- Fields --
 
   private Vector xmlFragments;
-  private RandomAccessFile out;
+  private IRandomAccess out;
   private String currentFragment;
 
   // -- Constructor --
@@ -75,7 +75,7 @@ public class OMEXMLWriter extends FormatWriter {
   {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     if (!initialized) {
-      out = new RandomAccessFile(currentId, "rw");
+      out = Location.getHandle(currentId);
 
       String xml = MetadataTools.getOMEXML(retrieve);
 

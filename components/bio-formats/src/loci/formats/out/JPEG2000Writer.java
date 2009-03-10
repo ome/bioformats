@@ -43,7 +43,7 @@ public class JPEG2000Writer extends FormatWriter {
 
   // -- Fields --
 
-  private RandomAccessFile out;
+  private IRandomAccess out;
 
   // -- Constructor --
 
@@ -82,7 +82,7 @@ public class JPEG2000Writer extends FormatWriter {
 
     int bytesPerPixel = byteData[0].length / (img.getWidth() * img.getHeight());
 
-    out = new RandomAccessFile(currentId, "rw");
+    out = Location.getHandle(currentId);
 
     CodecOptions options = new CodecOptions();
     options.width = img.getWidth();
