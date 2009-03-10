@@ -16,34 +16,16 @@ Type "ant -p" for a list of targets.
 
   <target name="dist" if="isUnix" depends="jar"
     description="create distribution bundle for Slim Plotter">
-    <copy todir="${slim.dist-dir}" preservelastmodified="true">
+    <copy todir="${dist.dir}/SlimPlotter" preservelastmodified="true">
       <fileset dir="dist"/>
-      <fileset dir="${artifact.dir}" includes="${component.jar}"/>
+      <fileset dir="${artifact.dir}" includes=
+        "${component.jar} ${component.manifest-cp}"/>
     </copy>
-    <!-- copy JAR libraries in the classpath -->
-    <for list="${component.manifest-cp}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <for list="${jar.dirs}" param="jardir" delimiter=" " trim="true">
-          <sequential>
-            <available file="${root.dir}/@{jardir}/@{jar}"
-              property="@{jardir}.@{jar}.present"/>
-            <if>
-              <equals arg1="${@{jardir}.@{jar}.present}" arg2="true" />
-              <then>
-                <copy todir="${slim.dist-dir}" preservelastmodified="true">
-                  <fileset dir="${root.dir}/@{jardir}" includes="@{jar}"/>
-                </copy>
-              </then>
-            </if>
-          </sequential>
-        </for>
-      </sequential>
-    </for>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
     <chmod perm="+x">
-      <fileset dir="${slim.dist-dir}" includes="${slim.exec}"/>
+      <fileset dir="${dist.dir}/SlimPlotter" includes="${slim.exec}"/>
     </chmod>
-    <!--<zip destfile="${dist.dir}/slim.zip" basedir="${dist.dir}/slim"/>-->
+    <!--<zip destfile="slim.zip" basedir="${dist.dir}"/>-->
     <!-- HACK - zip does not preserve permissions; use exec instead -->
     <exec executable="zip" dir="${dist.dir}">
       <arg value="-r9"/>
