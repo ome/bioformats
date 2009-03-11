@@ -24,98 +24,49 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.Vector;
+import java.io.IOException;
 import loci.common.*;
 import loci.formats.*;
-import loci.formats.codec.*;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
  * QTReader is the file format reader for QuickTime movie files.
- * It does not require any external libraries to be installed.
+ * It does not read files directly, but chooses which QuickTime reader is
+ * more appropriate.
  *
- * Video codecs currently supported: raw, rle, jpeg, mjpb, rpza.
- * Additional video codecs will be added as time permits.
+ * @see NativeQTReader
+ * @see LegacyQTReader
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/QTReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/QTReader.java">SVN</a></dd></dl>
- *
- * @author Melissa Linkert linkert at wisc.edu
  */
 public class QTReader extends FormatReader {
-
-  // -- Constants --
-
-  /** List of identifiers for each container atom. */
-  private static final String[] CONTAINER_TYPES = {
-    "moov", "trak", "udta", "tref", "imap", "mdia", "minf", "stbl", "edts",
-    "mdra", "rmra", "imag", "vnrp", "dinf"
-  };
-
-  // -- Fields --
-
-  /** Offset to start of pixel data. */
-  private long pixelOffset;
-
-  /** Total number of bytes of pixel data. */
-  private long pixelBytes;
-
-  /** Pixel depth. */
-  private int bitsPerPixel;
-
-  /** Raw plane size, in bytes. */
-  private int rawSize;
-
-  /** Offsets to each plane's pixel data. */
-  private Vector offsets;
-
-  /** Pixel data for the previous image plane. */
-  private byte[] prevPixels;
-
-  /** Previous plane number. */
-  private int prevPlane;
-
-  /** Flag indicating whether we can safely use prevPixels. */
-  private boolean canUsePrevious;
-
-  /** Video codec used by this movie. */
-  private String codec;
-
-  /** Some movies use two video codecs -- this is the second codec. */
-  private String altCodec;
-
-  /** Number of frames that use the alternate codec. */
-  private int altPlanes;
-
-  /** An instance of the old QuickTime reader, in case this one fails. */
-  private LegacyQTReader legacy;
 
   /** Flag indicating whether to use legacy reader by default. */
   private boolean useLegacy;
 
-  /** Amount to subtract from each offset. */
-  private int scale;
+  /** Native QuickTime reader. */
+  private NativeQTReader nativeReader;
 
-  /** Number of bytes in each plane. */
-  private Vector chunkSizes;
+  /** Legacy QuickTime reader - requires QT Java. */
+  private LegacyQTReader legacyReader;
 
-  /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
-  private boolean interlaced;
+  /** Flag indicating that the native reader was successfully initialized. */
+  private boolean nativeReaderInitialized;
 
-  /** Flag indicating whether the resource and data fork are separated. */
-  private boolean spork;
-
-  private boolean flip;
+  /** Flag indicating that the legacy reader was successfully initialized. */
+  private boolean legacyReaderInitialized;
 
   // -- Constructor --
 
   /** Constructs a new QuickTime reader. */
   public QTReader() {
     super("QuickTime", "mov");
-    blockCheckLen = 64;
+    nativeReader = new NativeQTReader();
+    legacyReader = new LegacyQTReader();
+    nativeReaderInitialized = false;
+    legacyReaderInitialized = false;
   }
 
   // -- QTReader API methods --
@@ -127,46 +78,61 @@ public class QTReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true; // check extension
-
-    if (open) {
-      try {
-        RandomAccessStream s = new RandomAccessStream(name);
-        boolean isThisType = isThisType(s);
-        s.close();
-        return isThisType;
-      }
-      catch (IOException e) {
-        if (debug) LogTools.trace(e);
-        return false;
-      }
-    }
-    else { // not allowed to check the file contents
-      return name.indexOf(".") < 0; // file appears to have no extension
-    }
+    return nativeReader.isThisType(name, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
-    // use a crappy hack for now
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    String s = stream.readString(blockCheckLen);
-    for (int i=0; i<CONTAINER_TYPES.length; i++) {
-      if (s.indexOf(CONTAINER_TYPES[i]) >= 0 &&
-        !CONTAINER_TYPES[i].equals("imag"))
-      {
-        return true;
-      }
-    }
-    return s.indexOf("wide") >= 0 ||
-      s.indexOf("mdat") >= 0 || s.indexOf("ftypqt") >= 0;
+    return nativeReader.isThisType(stream);
+  }
+
+  /* @see loci.formats.IFormatReader#setSeries(int) */
+  public void setSeries(int no) {
+    super.setSeries(no);
+    if (nativeReaderInitialized) nativeReader.setSeries(no);
+    if (legacyReaderInitialized) legacyReader.setSeries(no);
+  }
+
+  /* @see loci.formats.IFormatReader#setNormalized(boolean) */
+  public void setNormalized(boolean normalize) {
+    super.setNormalized(normalize);
+    nativeReader.setNormalized(normalize);
+    legacyReader.setNormalized(normalize);
+  }
+
+  /* @see loci.formats.IFormatReader#setMetadataCollected(boolean) */
+  public void setMetadataCollected(boolean collect) {
+    super.setMetadataCollected(collect);
+    nativeReader.setMetadataCollected(collect);
+    legacyReader.setMetadataCollected(collect);
+  }
+
+  /* @see loci.formats.IFormatReader#setOriginalMetadataPopulated(boolean) */
+  public void setOriginalMetadataPopulated(boolean populate) {
+    super.setOriginalMetadataPopulated(populate);
+    nativeReader.setOriginalMetadataPopulated(populate);
+    legacyReader.setOriginalMetadataPopulated(populate);
+  }
+
+  /* @see loci.formats.IFormatReader#setGroupFiles(boolean) */
+  public void setGroupFiles(boolean group) {
+    super.setGroupFiles(group);
+    nativeReader.setGroupFiles(group);
+    legacyReader.setGroupFiles(group);
+  }
+
+  /* @see loci.formats.IFormatReader#setMetadataFiltered(boolean) */
+  public void setMetadataFiltered(boolean filter) {
+    super.setMetadataFiltered(filter);
+    nativeReader.setMetadataFiltered(filter);
+    legacyReader.setMetadataFiltered(filter);
   }
 
   /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 1);
     super.setMetadataStore(store);
-    if (useLegacy) legacy.setMetadataStore(store);
+    nativeReader.setMetadataStore(store);
+    legacyReader.setMetadataStore(store);
   }
 
   /**
@@ -175,27 +141,10 @@ public class QTReader extends FormatReader {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-
-    String code = codec;
-    if (no >= getImageCount() - altPlanes) code = altCodec;
-
-    boolean doLegacy = useLegacy;
-    if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
-      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
-    {
-      if (debug) {
-        debug("Unsupported codec (" + code + "); using QTJava reader");
-      }
-      doLegacy = true;
+    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
+      return legacyReader.openImage(no, x, y, w, h);
     }
-    if (doLegacy) {
-      if (legacy == null) legacy = createLegacyReader();
-      legacy.setId(currentId);
-      return legacy.openImage(no, x, y, w, h);
-    }
-    return super.openImage(no, x, y, w, h);
+    return nativeReader.openImage(no, x, y, w, h);
   }
 
   /**
@@ -204,117 +153,10 @@ public class QTReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
-
-    String code = codec;
-    if (no >= getImageCount() - altPlanes) code = altCodec;
-
-    boolean doLegacy = useLegacy;
-    if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
-      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
-    {
-      if (debug) {
-        debug("Unsupported codec (" + code + "); using QTJava reader");
-      }
-      doLegacy = true;
+    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
+      return legacyReader.openBytes(no, x, y, w, h);
     }
-    if (doLegacy) {
-      if (legacy == null) legacy = createLegacyReader();
-      legacy.setId(currentId);
-      return legacy.openBytes(no, buf, x, y, w, h);
-    }
-
-    int offset = ((Integer) offsets.get(no)).intValue();
-    int nextOffset = (int) pixelBytes;
-
-    scale = ((Integer) offsets.get(0)).intValue();
-    offset -= scale;
-
-    if (no < offsets.size() - 1) {
-      nextOffset = ((Integer) offsets.get(no + 1)).intValue();
-      nextOffset -= scale;
-    }
-
-    if ((nextOffset - offset) < 0) {
-      int temp = offset;
-      offset = nextOffset;
-      nextOffset = temp;
-    }
-
-    byte[] pixs = new byte[nextOffset - offset];
-
-    in.seek(pixelOffset + offset);
-    in.read(pixs);
-
-    canUsePrevious = (prevPixels != null) && (prevPlane == no - 1) &&
-      !code.equals(altCodec);
-
-    byte[] t = uncompress(pixs, code);
-    if (code.equals("rpza")) {
-      for (int i=0; i<t.length; i++) {
-        t[i] = (byte) (255 - t[i]);
-      }
-      prevPlane = no;
-      return buf;
-    }
-
-    // on rare occassions, we need to trim the data
-    if (canUsePrevious && (prevPixels.length < t.length)) {
-      byte[] temp = t;
-      t = new byte[prevPixels.length];
-      System.arraycopy(temp, 0, t, 0, t.length);
-    }
-
-    prevPixels = t;
-    prevPlane = no;
-
-    // determine whether we need to strip out any padding bytes
-
-    int pad = (4 - (getSizeX() % 4)) % 4;
-    if (codec.equals("mjpb")) pad = 0;
-
-    int size = getSizeX() * getSizeY();
-    if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
-
-    if (pad > 0) {
-      int bytes = bitsPerPixel < 40 ? bitsPerPixel / 8 :
-        (bitsPerPixel - 32) / 8;
-      t = new byte[prevPixels.length - getSizeY()*pad*bytes];
-
-      for (int row=0; row<getSizeY(); row++) {
-        System.arraycopy(prevPixels, bytes * row * (getSizeX() + pad), t,
-          row * getSizeX() * bytes, getSizeX() * bytes);
-      }
-    }
-
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int srcRowLen = getSizeX() * bpp * getSizeC();
-    int destRowLen = w * bpp * getSizeC();
-    for (int row=0; row<h; row++) {
-      if (bitsPerPixel == 32) {
-        for (int col=0; col<w; col++) {
-          int src = row * getSizeX() * bpp * 4 + (x + col) * bpp * 4 + 1;
-          int dst = row * destRowLen + col * bpp * 3;
-          if (src + 3 <= t.length && dst + 3 <= buf.length) {
-            System.arraycopy(t, src, buf, dst, 3);
-          }
-        }
-      }
-      else {
-        System.arraycopy(t, row*srcRowLen + x*bpp*getSizeC(), buf,
-          row*destRowLen, destRowLen);
-      }
-    }
-
-    if ((bitsPerPixel == 40 || bitsPerPixel == 8) && !code.equals("mjpb")) {
-      // invert the pixels
-      for (int i=0; i<buf.length; i++) {
-        buf[i] = (byte) (255 - buf[i]);
-      }
-    }
-    return buf;
+    return nativeReader.openBytes(no, x, y, w, h);
   }
 
   // -- IFormatHandler API methods --
@@ -322,421 +164,42 @@ public class QTReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    if (legacy != null) {
-      legacy.close();
-      legacy = null;
-    }
-    offsets = null;
-    prevPixels = null;
-    codec = altCodec = null;
-    pixelOffset = pixelBytes = bitsPerPixel = rawSize = 0;
-    prevPlane = altPlanes = 0;
-    canUsePrevious = useLegacy = false;
+    if (nativeReader != null) nativeReader.close();
+    if (legacyReader != null) legacyReader.close();
+    nativeReaderInitialized = legacyReaderInitialized = false;
   }
 
-  // -- Internal FormatReader API methods --
-
-  /* @see loci.formats.FormatReader#initFile(String) */
-  protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("QTReader.initFile(" + id + ")");
-    super.initFile(id);
-    in = new RandomAccessStream(id);
-
-    spork = true;
-    offsets = new Vector();
-    chunkSizes = new Vector();
-    status("Parsing tags");
-
-    Exception exc = null;
-    try { parse(0, 0, in.length()); }
-    catch (FormatException e) { exc = e; }
-    catch (IOException e) { exc = e; }
-    if (exc != null) {
-      if (debug) trace(exc);
-      useLegacy = true;
-      legacy = createLegacyReader();
-      legacy.setId(id);
-      core = legacy.getCoreMetadata();
-      return;
-    }
-
-    core[0].imageCount = offsets.size();
-    if (chunkSizes.size() < getImageCount() && chunkSizes.size() > 0) {
-      core[0].imageCount = chunkSizes.size();
-    }
-
-    status("Populating metadata");
-
-    int bytesPerPixel = (bitsPerPixel / 8) % 4;
-    core[0].pixelType =
-      bytesPerPixel == 2 ?  FormatTools.UINT16 : FormatTools.UINT8;
-
-    core[0].sizeZ = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].littleEndian = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-
-    // this handles the case where the data and resource forks have been
-    // separated
-    if (spork) {
-      // first we want to check if there is a resource fork present
-      // the resource fork will generally have the same name as the data fork,
-      // but will have either the prefix "._" or the suffix ".qtr"
-      // (or <filename>/rsrc on a Mac)
-
-      String base = null;
-      if (id.indexOf(".") != -1) {
-        base = id.substring(0, id.lastIndexOf("."));
+  /* @see loci.formats.IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+    if (useLegacy) {
+      try {
+        legacyReader.setId(id);
+        legacyReaderInitialized = true;
+        core = legacyReader.getCoreMetadata();
       }
-      else base = id;
-
-      Location f = new Location(base + ".qtr");
-      if (debug) debug("Searching for research fork:");
-      if (f.exists()) {
-        if (debug) debug("\t Found: " + f);
-        if (in != null) in.close();
-        in = new RandomAccessStream(f.getAbsolutePath());
-
-        stripHeader();
-        parse(0, 0, in.length());
-        core[0].imageCount = offsets.size();
-      }
-      else {
-        if (debug) debug("\tAbsent: " + f);
-        f = new Location(id.substring(0,
-          id.lastIndexOf(File.separator) + 1) + "._" +
-          id.substring(base.lastIndexOf(File.separator) + 1));
-        if (f.exists()) {
-          if (debug) debug("\t Found: " + f);
-          if (in != null) in.close();
-          in = new RandomAccessStream(f.getAbsolutePath());
-          stripHeader();
-          parse(0, in.getFilePointer(), in.length());
-          core[0].imageCount = offsets.size();
-        }
-        else {
-          if (debug) debug("\tAbsent: " + f);
-          f = new Location(id + "/..namedfork/rsrc");
-          if (f.exists()) {
-            if (debug) debug("\t Found: " + f);
-            if (in != null) in.close();
-            in = new RandomAccessStream(f.getAbsolutePath());
-            stripHeader();
-            parse(0, in.getFilePointer(), in.length());
-            core[0].imageCount = offsets.size();
-          }
-          else {
-            if (debug) debug("\tAbsent: " + f);
-            throw new FormatException("QuickTime resource fork not found. " +
-              " To avoid this issue, please flatten your QuickTime movies " +
-              "before importing with Bio-Formats.");
-          }
-        }
+      catch (FormatException e) {
+        if (debug) LogTools.trace(e);
+        nativeReader.setId(id);
+        nativeReaderInitialized = true;
+        core = nativeReader.getCoreMetadata();
       }
     }
-
-    core[0].rgb = bitsPerPixel < 40;
-    core[0].sizeC = isRGB() ? 3 : 1;
-    core[0].interleaved = isRGB();
-    core[0].sizeT = getImageCount();
-
-    // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-  }
-
-  // -- Helper methods --
-
-  /** Parse all of the atoms in the file. */
-  private void parse(int depth, long offset, long length)
-    throws FormatException, IOException
-  {
-    while (offset < length) {
-      in.seek(offset);
-
-      // first 4 bytes are the atom size
-      long atomSize = in.readInt() & 0xffffffff;
-
-      // read the atom type
-      String atomType = in.readString(4);
-
-      // if atomSize is 1, then there is an 8 byte extended size
-      if (atomSize == 1) {
-        atomSize = in.readLong();
+    else {
+      Exception exc = null;
+      try {
+        nativeReader.setId(id);
+        nativeReaderInitialized = true;
+        core = nativeReader.getCoreMetadata();
       }
-
-      if (atomSize < 0) {
-        LogTools.println("QTReader: invalid atom size: " + atomSize);
+      catch (FormatException e) { exc = e; }
+      catch (IOException e) { exc = e; }
+      if (exc != null) {
+        legacyReader.setId(id);
+        legacyReaderInitialized = true;
+        core = legacyReader.getCoreMetadata();
       }
-
-      if (debug) {
-        debug("Seeking to " + offset +
-          "; atomType=" + atomType + "; atomSize=" + atomSize);
-      }
-
-      // if this is a container atom, parse the children
-      if (isContainer(atomType)) {
-        parse(depth++, in.getFilePointer(), offset + atomSize);
-      }
-      else {
-        if (atomSize == 0) atomSize = in.length();
-        long oldpos = in.getFilePointer();
-
-        if (atomType.equals("mdat")) {
-          // we've found the pixel data
-          pixelOffset = in.getFilePointer();
-          pixelBytes = atomSize;
-
-          if (pixelBytes > (in.length() - pixelOffset)) {
-            pixelBytes = in.length() - pixelOffset;
-          }
-        }
-        else if (atomType.equals("tkhd")) {
-          // we've found the dimensions
-
-          in.skipBytes(38);
-          int[][] matrix = new int[3][3];
-
-          for (int i=0; i<matrix.length; i++) {
-            for (int j=0; j<matrix[0].length; j++) {
-              matrix[i][j] = in.readInt();
-            }
-          }
-
-          // The contents of the matrix we just read determine whether or not
-          // we should flip the width and height.  We can check the first two
-          // rows of the matrix - they should correspond to the first two rows
-          // of an identity matrix.
-
-          // TODO : adapt to use the value of flip
-          flip = matrix[0][0] == 0 && matrix[1][0] != 0;
-
-          if (getSizeX() == 0) core[0].sizeX = in.readInt();
-          if (getSizeY() == 0) core[0].sizeY = in.readInt();
-        }
-        else if (atomType.equals("cmov")) {
-          in.skipBytes(8);
-          if ("zlib".equals(in.readString(4))) {
-            atomSize = in.readInt();
-            in.skipBytes(4);
-            int uncompressedSize = in.readInt();
-
-            byte[] b = new byte[(int) (atomSize - 12)];
-            in.read(b);
-
-            byte[] output = new ZlibCodec().decompress(b, null);
-
-            RandomAccessStream oldIn = in;
-            in = new RandomAccessStream(output);
-            parse(0, 0, output.length);
-            in.close();
-            in = oldIn;
-          }
-          else throw new FormatException("Compressed header not supported.");
-        }
-        else if (atomType.equals("stco")) {
-          // we've found the plane offsets
-
-          if (offsets.size() > 0) break;
-          spork = false;
-          in.skipBytes(4);
-          int numPlanes = in.readInt();
-          if (numPlanes != getImageCount()) {
-            in.seek(in.getFilePointer() - 4);
-            int off = in.readInt();
-            offsets.add(new Integer(off));
-            for (int i=1; i<getImageCount(); i++) {
-              if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
-                rawSize = ((Integer) chunkSizes.get(i)).intValue();
-              }
-              else i = getImageCount();
-              off += rawSize;
-              offsets.add(new Integer(off));
-            }
-          }
-          else {
-            for (int i=0; i<numPlanes; i++) {
-              offsets.add(new Integer(in.readInt()));
-            }
-          }
-        }
-        else if (atomType.equals("stsd")) {
-          // found video codec and pixel depth information
-
-          in.skipBytes(4);
-          int numEntries = in.readInt();
-          in.skipBytes(4);
-
-          for (int i=0; i<numEntries; i++) {
-            if (i == 0) {
-              codec = in.readString(4);
-
-              if (!codec.equals("raw ") && !codec.equals("rle ") &&
-                !codec.equals("rpza") && !codec.equals("mjpb") &&
-                !codec.equals("jpeg"))
-              {
-                throw new FormatException("Unsupported codec: " + codec);
-              }
-
-              in.skipBytes(16);
-              if (in.readShort() == 0) {
-                in.skipBytes(56);
-
-                bitsPerPixel = in.readShort();
-                if (codec.equals("rpza")) bitsPerPixel = 8;
-                in.skipBytes(10);
-                interlaced = in.read() == 2;
-                addMeta("Codec", codec);
-                addMeta("Bits per pixel", bitsPerPixel);
-                in.skipBytes(9);
-              }
-            }
-            else {
-              altCodec = in.readString(4);
-              addMeta("Second codec", altCodec);
-            }
-          }
-        }
-        else if (atomType.equals("stsz")) {
-          // found the number of planes
-          in.skipBytes(4);
-          rawSize = in.readInt();
-          core[0].imageCount = in.readInt();
-
-          if (rawSize == 0) {
-            in.seek(in.getFilePointer() - 4);
-            for (int b=0; b<getImageCount(); b++) {
-              chunkSizes.add(new Integer(in.readInt()));
-            }
-          }
-        }
-        else if (atomType.equals("stsc")) {
-          in.skipBytes(4);
-
-          int numChunks = in.readInt();
-
-          if (altCodec != null) {
-            int prevChunk = 0;
-            for (int i=0; i<numChunks; i++) {
-              int chunk = in.readInt();
-              int planesPerChunk = in.readInt();
-              int id = in.readInt();
-
-              if (id == 2) altPlanes += planesPerChunk * (chunk - prevChunk);
-
-              prevChunk = chunk;
-            }
-          }
-        }
-        else if (atomType.equals("stts")) {
-          in.skipBytes(10);
-          int fps = in.readInt();
-          addMeta("Frames per second", fps);
-        }
-        if (oldpos + atomSize < in.length()) {
-          in.seek(oldpos + atomSize);
-        }
-        else break;
-      }
-
-      if (atomSize == 0) offset = in.length();
-      else offset += atomSize;
-
-      // if a 'udta' atom, skip ahead 4 bytes
-      if (atomType.equals("udta")) offset += 4;
-      if (debug) print(depth, atomSize, atomType);
     }
-  }
-
-  /** Checks if the given String is a container atom type. */
-  private boolean isContainer(String type) {
-    for (int i=0; i<CONTAINER_TYPES.length; i++) {
-      if (type.equals(CONTAINER_TYPES[i])) return true;
-    }
-    return false;
-  }
-
-  /** Debugging method; prints information on an atom. */
-  private void print(int depth, long size, String type) {
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<depth; i++) sb.append(" ");
-    sb.append(type + " : [" + size + "]");
-    debug(sb.toString());
-  }
-
-  /** Uncompresses an image plane according to the the codec identifier. */
-  private byte[] uncompress(byte[] pixs, String code)
-    throws FormatException, IOException
-  {
-    CodecOptions options = new MJPBCodecOptions();
-    options.width = getSizeX();
-    options.height = getSizeY();
-    options.bitsPerSample = bitsPerPixel;
-    options.channels = bitsPerPixel < 40 ? bitsPerPixel / 8 :
-      (bitsPerPixel - 32) / 8;
-    options.previousImage = canUsePrevious ? prevPixels : null;
-    options.littleEndian = isLittleEndian();
-    options.interleaved = false;
-
-    if (code.equals("raw ")) return pixs;
-    else if (code.equals("rle ")) {
-      return new QTRLECodec().decompress(pixs, options);
-    }
-    else if (code.equals("rpza")) {
-      return new RPZACodec().decompress(pixs, options);
-    }
-    else if (code.equals("mjpb")) {
-      ((MJPBCodecOptions) options).interlaced = interlaced;
-      return new MJPBCodec().decompress(pixs, options);
-    }
-    else if (code.equals("jpeg")) {
-      return new JPEGCodec().decompress(pixs, options);
-    }
-    else throw new FormatException("Unsupported codec : " + code);
-  }
-
-  /** Cut off header bytes from a resource fork file. */
-  private void stripHeader() throws IOException {
-    // seek to 4 bytes before first occurence of 'moov'
-
-    // read 8K at a time, for efficiency
-    long fp = in.getFilePointer();
-    byte[] buf = new byte[8192];
-    int index = -1;
-    while (true) {
-      int r = in.read(buf, 3, buf.length - 3);
-      if (r <= 0) break;
-      // search buffer for "moov"
-      for (int i=0; i<buf.length-3; i++) {
-        if (buf[i] == 'm' && buf[i+1] == 'o' &&
-          buf[i+2] == 'o' && buf[i+3] == 'v')
-        {
-          index = i - 3; // first three characters are zeroes or leftovers
-          break;
-        }
-      }
-      if (index >= 0) break;
-
-      // save last three bytes of buffer
-      fp += r;
-      buf[0] = buf[buf.length - 3];
-      buf[1] = buf[buf.length - 2];
-      buf[2] = buf[buf.length - 1];
-    }
-    if (index >= 0) in.seek(fp + index - 4);
-  }
-
-  /** Creates a legacy QT reader. */
-  private LegacyQTReader createLegacyReader() {
-    // use the same id mappings that this reader does
-    LegacyQTReader reader = new LegacyQTReader();
-    reader.setMetadataStore(getMetadataStore());
-    return reader;
   }
 
 }

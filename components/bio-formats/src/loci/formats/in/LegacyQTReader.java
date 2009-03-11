@@ -112,7 +112,7 @@ public class LegacyQTReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     try {
-      if (r.getVar("openMovieFile") != null) {
+      if (r != null && r.getVar("openMovieFile") != null) {
         r.exec("openMovieFile.close()");
         if (!fileOnly) {
           r.exec("m.disposeQTObject()");
