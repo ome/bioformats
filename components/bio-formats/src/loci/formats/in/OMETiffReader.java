@@ -54,13 +54,21 @@ public class OMETiffReader extends FormatReader {
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
     super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
+    suffixNecessary = false;
+    blockCheckLen = 1024 * 1024 * 5;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
-    return TiffTools.isValidHeader(stream);
+    boolean validHeader = TiffTools.isValidHeader(stream);
+    if (!validHeader) return false;
+    // look for OME-XML in first IFD's comment
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    String comment = TiffTools.getComment(ifd);
+    if (comment == null) return false;
+    return comment.trim().endsWith("</OME>");
   }
 
   /*
