@@ -358,13 +358,22 @@ public class FlexReader extends BaseTiffReader {
         }
       }
       else if (parentQName.equals("ImageResolutionX")) {
-        store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
+        try {
+          store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
+        }
+        catch (NumberFormatException e) { }
       }
       else if (parentQName.equals("ImageResolutionY")) {
-        store.setDimensionsPhysicalSizeY(new Float(value), nextImage - 1, 0);
+        try {
+          store.setDimensionsPhysicalSizeY(new Float(value), nextImage - 1, 0);
+        }
+        catch (NumberFormatException e) { }
       }
       else if (parentQName.equals("Well")) {
         addMeta("Well " + (nextWell - 1) + " " + currentQName, value);
+      }
+      else if (parentQName.equals("FLIM")) {
+        addMeta("FLIM " + nextImage + " " + currentQName, value);
       }
     }
 
@@ -572,7 +581,19 @@ public class FlexReader extends BaseTiffReader {
           //addMeta("Image " + nextImage + " " + attributes.getQName(i),attributes.getValue(i));
         }
       }
+      else if (qName.equals("FLIM")) {
+        parentQName = qName;
+        for (int i=0; i<attributes.getLength(); i++) {
+          addMeta("FLIM " + nextImage + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
+      }
     }
+
+    public void endElement(String uri, String localName, String qName) {
+      if (qName.equals(parentQName)) parentQName = "";
+    }
+
   }
 
 }
