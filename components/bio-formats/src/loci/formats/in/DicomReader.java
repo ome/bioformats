@@ -108,6 +108,13 @@ public class DicomReader extends FormatReader {
   private String date, time, imageType;
   private String pixelSizeX, pixelSizeY;
 
+  private Vector fileList;
+  private int imagesPerFile;
+
+  private String originalDate, originalTime, originalInstance;
+
+  private DicomReader helper;
+
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
@@ -161,6 +168,16 @@ public class DicomReader extends FormatReader {
     return shortLut;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    return fileList == null ? null : (String[]) fileList.toArray(new String[0]);
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return MUST_GROUP;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -170,6 +187,12 @@ public class DicomReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
+
+    if (fileList.size() > 1) {
+      int fileNumber = no / imagesPerFile;
+      no = no % imagesPerFile;
+      initFile((String) fileList.get(fileNumber));
+    }
 
     int ec = isIndexed() ? 1 : getSizeC();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -189,7 +212,7 @@ public class DicomReader extends FormatReader {
           byte[][] tmp = new byte[bpp][];
           for (int i=0; i<bpp; i++) {
             tmp[i] = codec.decompress(in, options);
-            if (no < getImageCount() - 1 || i < bpp - 1) {
+            if (no < imagesPerFile - 1 || i < bpp - 1) {
               while (in.read() == 0);
               in.seek(in.getFilePointer() - 1);
             }
@@ -211,7 +234,7 @@ public class DicomReader extends FormatReader {
             t = new byte[bytes / ec];
             System.arraycopy(tmp, 0, t, 0, tmp.length);
           }
-          if (no < getImageCount() - 1 || c < ec - 1) {
+          if (no < imagesPerFile - 1 || c < ec - 1) {
             while (in.read() == 0);
             in.seek(in.getFilePointer() - 1);
           }
@@ -322,6 +345,8 @@ public class DicomReader extends FormatReader {
     rescaleSlope = 1.0;
     rescaleIntercept = 0.0;
     pixelSizeX = pixelSizeY = null;
+    imagesPerFile = 0;
+    fileList = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -372,7 +397,7 @@ public class DicomReader extends FormatReader {
       if (in.getFilePointer() + 2 >= in.length()) {
         break;
       }
-      int tag = getNextTag();
+      int tag = getNextTag(in);
 
       if (elementLength == 0) continue;
 
@@ -399,7 +424,7 @@ public class DicomReader extends FormatReader {
           s = in.readString(elementLength);
           addInfo(tag, s);
           double frames = Double.parseDouble(s);
-          if (frames > 1.0) core[0].imageCount = (int) frames;
+          if (frames > 1.0) imagesPerFile = (int) frames;
           break;
         case SAMPLES_PER_PIXEL:
           addInfo(tag, in.readShort());
@@ -486,7 +511,7 @@ public class DicomReader extends FormatReader {
         decodingTags = false;
       }
     }
-    if (getImageCount() == 0) core[0].imageCount = 1;
+    if (imagesPerFile == 0) imagesPerFile = 1;
 
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
     if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
@@ -510,8 +535,8 @@ public class DicomReader extends FormatReader {
 
     // calculate the offset to each plane
 
-    offsets = new long[getImageCount()];
-    for (int i=0; i<getImageCount(); i++) {
+    offsets = new long[imagesPerFile];
+    for (int i=0; i<imagesPerFile; i++) {
       if (isRLE) {
         if (i == 0) in.seek(baseOffset);
         else {
@@ -562,9 +587,86 @@ public class DicomReader extends FormatReader {
       else offsets[i] = baseOffset + plane*i;
     }
 
+    status("Building file list");
+
+    if (fileList == null && originalInstance != null && originalDate != null &&
+      originalTime != null)
+    {
+      fileList = new Vector();
+
+      int instanceNumber = Integer.parseInt(originalInstance) - 1;
+      if (instanceNumber == 0) fileList.add(currentId);
+      else {
+        while (instanceNumber > fileList.size()) fileList.add(null);
+        fileList.add(currentId);
+      }
+
+      Location directory =
+        new Location(currentId).getAbsoluteFile().getParentFile();
+      String[] files = directory.list();
+      for (int i=0; i<files.length; i++) {
+        String file = new Location(directory, files[i]).getAbsolutePath();
+        if (!files[i].equals(currentId) && !file.equals(currentId) &&
+          isThisType(files[i]))
+        {
+          RandomAccessStream stream = new RandomAccessStream(file);
+          stream.order(true);
+
+          stream.seek(128);
+          if (!stream.readString(4).equals("DICM")) stream.seek(0);
+
+          String date = null, time = null, instance = null;
+          while (date == null || time == null || instance == null) {
+            long fp = stream.getFilePointer();
+            if (fp + 4 >= stream.length() || fp < 0) break;
+            int tag = getNextTag(stream);
+            String key = (String) TYPES.get(new Integer(tag));
+            if ("Instance Number".equals(key)) {
+              instance = stream.readString(elementLength).trim();
+              if (instance.length() == 0) instance = null;
+            }
+            else if ("Acquisition Time".equals(key)) {
+              time = stream.readString(elementLength);
+            }
+            else if ("Acquisition Date".equals(key)) {
+              date = stream.readString(elementLength);
+            }
+            else stream.skipBytes(elementLength);
+          }
+          stream.close();
+
+          if (date == null || time == null || instance == null) continue;
+
+          if (date.equals(originalDate) && time.equals(originalTime)) {
+            int position = Integer.parseInt(instance) - 1;
+            if (position < fileList.size()) {
+              fileList.setElementAt(file, position);
+            }
+            else {
+              while (position > fileList.size()) {
+                fileList.add(null);
+              }
+              fileList.add(file);
+            }
+          }
+        }
+      }
+
+      files = (String[]) fileList.toArray(new String[0]);
+      fileList.clear();
+      for (int i=0; i<files.length; i++) {
+        if (files[i] != null) fileList.add(files[i]);
+      }
+    }
+    else if (fileList == null) {
+      fileList = new Vector();
+      fileList.add(currentId);
+    }
+
     status("Populating metadata");
 
-    core[0].sizeZ = getImageCount();
+    core[0].sizeZ = imagesPerFile * fileList.size();
+    core[0].imageCount = getSizeZ();
     if (getSizeC() == 0) core[0].sizeC = 1;
     core[0].rgb = getSizeC() > 1;
     core[0].sizeT = 1;
@@ -639,6 +741,13 @@ public class DicomReader extends FormatReader {
         }
         else if (info.startsWith("MONOCHROME")) {
           inverted = info.endsWith("1");
+        }
+      }
+      else if (key.equals("Acquisition Date")) originalDate = info;
+      else if (key.equals("Acquisition Time")) originalTime = info;
+      else if (key.equals("Instance Number")) {
+        if (info.trim().length() > 0) {
+          originalInstance = info;
         }
       }
       else if (key.indexOf("Palette Color LUT Data") != -1) {
@@ -751,9 +860,9 @@ public class DicomReader extends FormatReader {
     else return value;
   }
 
-  private int getLength(int tag) throws IOException {
+  private int getLength(RandomAccessStream stream, int tag) throws IOException {
     byte[] b = new byte[4];
-    in.read(b);
+    stream.read(b);
 
     // We cannot know whether the VR is implicit or explicit
     // without the full DICOM Data Dictionary for public and
@@ -771,7 +880,7 @@ public class DicomReader extends FormatReader {
       case UN:
         // Explicit VR with 32-bit length if other two bytes are zero
         if ((b[2] == 0) || (b[3] == 0)) {
-          return in.readInt();
+          return stream.readInt();
         }
         vr = IMPLICIT_VR;
         return DataTools.bytesToInt(b, isLittleEndian());
@@ -813,21 +922,21 @@ public class DicomReader extends FormatReader {
     }
   }
 
-  private int getNextTag() throws IOException {
-    int groupWord = in.readShort();
+  private int getNextTag(RandomAccessStream stream) throws IOException {
+    int groupWord = stream.readShort();
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
       core[0].littleEndian = false;
       groupWord = 0x0008;
-      in.order(false);
+      stream.order(false);
     }
 
-    int elementWord = in.readShort();
+    int elementWord = stream.readShort();
     int tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
 
-    elementLength = getLength(tag);
+    elementLength = getLength(stream, tag);
 
     if (elementLength == 0 && groupWord == 0x7fe0) {
-      elementLength = getLength(tag);
+      elementLength = getLength(stream, tag);
     }
 
     // HACK - needed to read some GE files
