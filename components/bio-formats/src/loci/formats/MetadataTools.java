@@ -31,7 +31,7 @@ import loci.formats.meta.*;
  * including {@link MetadataStore}, {@link MetadataRetrieve},
  * and OME-XML strings.
  * Most of the methods require the optional {@link loci.formats.ome}
- * package, and optional ome-java.jar library, to be present at runtime.
+ * package, and optional ome-xml.jar library, to be present at runtime.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/MetadataTools.java">Trac</a>,

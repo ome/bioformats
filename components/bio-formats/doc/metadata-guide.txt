@@ -192,7 +192,7 @@ superclass of all concrete OME-XML metadata classes. OMEXMLMetadata implements
 both MetadataStore and MetadataRetrieve.
 
 TODO - Explain how we have isolated all dependencies on the OME Java library
-(in ome-java.jar) into the loci.formats.ome package, and made that package
+(in ome-xml.jar) into the loci.formats.ome package, and made that package
 optional at compile time, using Java reflection. The loci.formats.MetadataTools
 class provides a mechanism to work with OME-XML metadata objects without
 importing the loci.formats.ome classes directly.

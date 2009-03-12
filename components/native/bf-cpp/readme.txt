@@ -92,8 +92,9 @@ This will install Boost into a subdirectory of /usr/local; e.g.:
 
   /usr/local/include/boost-1_38
 
-7) Depending on your version of Boost, you may need to edit CMakeLists.txt to
-   tweak the Boost_ADDITIONAL_VERSIONS variable to include your version.
+7) Depending on your version of Boost, you may need to edit bf-cpp's
+   CMakeLists.txt to tweak the Boost_ADDITIONAL_VERSIONS variable to include
+   your version.
 
 
 INSTALLING COMPILE-TIME DEPENDENCIES -- WINDOWS

@@ -47,7 +47,7 @@ import org.testng.SkipException;
  * TestNG tester for Bio-Formats file format writers.
  * Details on failed tests are written to a log file, for easier processing.
  *
- * NB: {@link loci.formats.ome} and ome-java.jar
+ * NB: {@link loci.formats.ome} and ome-xml.jar
  * are required for some of the tests.
  *
  * To run tests:

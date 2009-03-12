@@ -48,7 +48,7 @@ public class OMEXMLReader extends FormatReader {
 
   private static final String NO_OME_JAVA_MSG =
     "The Java OME-XML library is required to read OME-XML files. Please " +
-    "obtain ome-java.jar from http://loci.wisc.edu/ome/formats.html";
+    "obtain ome-xml.jar from http://loci.wisc.edu/ome/formats.html";
 
   // -- Static fields --
 

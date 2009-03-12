@@ -46,7 +46,8 @@ public class OMEUtils {
     "http://www.loci.wisc.edu/ome/formats.html";
 
   private static final String NO_OME_MSG = "OME-Java library not found.  " +
-    "Please obtain ome-java.jar from http://www.loci.wisc.edu/ome/formats.html";
+    "Please obtain ome-java.jar from http://www.openmicroscopy.org/site/" +
+    "documents/data-management/ome-server/developer/java-api";
 
   // -- Static fields --
 
