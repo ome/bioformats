@@ -1,7 +1,7 @@
-= ND2Reader =
+= NativeQTReader =
 
 This page lists supported metadata fields for the
-Bio-Formats Nikon ND2 format reader.
+Bio-Formats QuickTime format reader.
 
 These fields are from the [http://www.ome-xml.org/ OME data model].
 Bio-Formats standardizes each format's original metadata to and from the OME
@@ -9,49 +9,31 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 313 fields documented below:
-  * The file format itself supports 33 of them (10%).
-  * Of those, Bio-Formats fully or partially converts 33 (100%).
+  * The file format itself supports 15 of them (4%).
+  * Of those, Bio-Formats fully or partially converts 15 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
-Bio-Formats Nikon ND2 format reader:
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Model
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Binning
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Gain
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: ReadOutRate
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Voltage
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeX
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeZ
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Image Image]: Name
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: Temperature
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: EmWave
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: ExWave
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: Mode
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
+Bio-Formats QuickTime format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: CalibratedMagnification
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: Immersion
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: LensNA
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: BigEndian - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: DimensionOrder - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: ID - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: PixelType - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeC - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeT - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeX - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeY - since r1777
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r1777
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: BigEndian - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: DimensionOrder - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: ID - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: PixelType - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeC - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeT - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeX - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeY - since r658
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r658
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Plane Plane]: HashSHA1
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Plane Plane]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Plane Plane]: TheC
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Plane Plane]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Plane Plane]: TheZ
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_PlaneTiming PlaneTiming]: DeltaT
-=== Total supported: 33 ===
+=== Total supported: 15 ===
 
 == Unknown or missing fields ==
-As far as we are aware, these fields are not supported by the Nikon ND2
+As far as we are aware, these fields are not supported by the QuickTime
 format. However, our knowledge of the format may be incomplete due to
 lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Arc Arc]: Type
@@ -75,16 +57,24 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Gain
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Manufacturer
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Offset
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: SerialNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Voltage
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Detector Detector]: Zoom
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Binning
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Detector
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Gain
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Offset
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: ReadOutRate
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_DetectorRef DetectorSettings]: Voltage
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Dichroic Dichroic]: LotNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Dichroic Dichroic]: Manufacturer
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Dichroic Dichroic]: Model
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeX
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: TimeIncrement
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: WaveIncrement
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Pixels Dimensions]: WaveStart
@@ -148,10 +138,12 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Image Image]: GroupRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Image Image]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Image Image]: InstrumentRef
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Image Image]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Image Image]: Objective
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: AirPressure
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: CO2Percent
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: Humidity
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: Temperature
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Instrument Instrument]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Laser Laser]: FrequencyMultiplication
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Laser Laser]: LaserMedium
@@ -180,11 +172,15 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Line Line]: y2
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: ContrastMethod
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: Detector
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: EmWave
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: ExWave
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: FilterSet
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: Fluor
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: IlluminationType
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: LightSource
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: Mode
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: NdFilter
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: OTF
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_LogicalChannel LogicalChannel]: PhotometricInterpretation
@@ -220,9 +216,12 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_OTF OTF]: PixelType
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_OTF OTF]: SizeX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_OTF OTF]: SizeY
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: CalibratedMagnification
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: Correction
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: Immersion
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: Iris
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: LensNA
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: Manufacturer
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Objective Objective]: NominalMagnification
@@ -232,6 +231,7 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ObjectiveRef ObjectiveSettings]: Medium
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ObjectiveRef ObjectiveSettings]: Objective
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_ObjectiveRef ObjectiveSettings]: RefractiveIndex
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_PlaneTiming PlaneTiming]: DeltaT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_PlaneTiming PlaneTiming]: ExposureTime
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Plate Plate]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_Plate Plate]: ExternalIdentifier
@@ -334,4 +334,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_WellSample WellSample]: PosY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_WellSample WellSample]: Timepoint
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-${omexml.version}/ome.xsd.html#element_WellSampleRef WellSampleRef]: ID
-=== Total unknown or missing: 280 ===
+=== Total unknown or missing: 298 ===
