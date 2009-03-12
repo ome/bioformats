@@ -119,7 +119,9 @@ public class PlugInBioFormatsImporter implements PlugInFile {
           IMetadata store = MetadataTools.createOMEXMLMetadata();
           reader.setMetadataStore(store);
           reader.setId(id);
-          reader.setOutputOrder("XYZTC"); // MIPAV assumes 4-D data in XYZT order
+
+          // MIPAV assumes 4-D data in XYZT order
+          reader.setOutputOrder("XYZTC");
 
           // harvest some core metadata
           int imageCount = reader.getImageCount();
@@ -175,9 +177,12 @@ public class PlugInBioFormatsImporter implements PlugInFile {
           Float dimPhysSizeY = store.getDimensionsPhysicalSizeY(0, 0);
           Float dimPhysSizeZ = store.getDimensionsPhysicalSizeZ(0, 0);
           Float dimTimeInc = store.getDimensionsTimeIncrement(0, 0);
-          float physSizeX = dimPhysSizeX == null ? 1.0f : dimPhysSizeX.floatValue();
-          float physSizeY = dimPhysSizeY == null ? 1.0f : dimPhysSizeY.floatValue();
-          float physSizeZ = dimPhysSizeZ == null ? 1.0f : dimPhysSizeZ.floatValue();
+          float physSizeX = dimPhysSizeX == null ?
+            1.0f : dimPhysSizeX.floatValue();
+          float physSizeY = dimPhysSizeY == null ?
+            1.0f : dimPhysSizeY.floatValue();
+          float physSizeZ = dimPhysSizeZ == null ?
+            1.0f : dimPhysSizeZ.floatValue();
           float timeInc = dimTimeInc == null ? 1.0f : dimTimeInc.floatValue();
 
           // compute dimensional extents
@@ -189,7 +194,8 @@ public class PlugInBioFormatsImporter implements PlugInFile {
           };
 
           // create MIPAV image object
-          ModelImage modelImage = new ModelImage(mipavType, dimExtents, imageName);
+          ModelImage modelImage =
+            new ModelImage(mipavType, dimExtents, imageName);
 
           // import planes into MIPAV image
           byte[] buf = new byte[bpp * sizeX * sizeY];
@@ -231,7 +237,7 @@ public class PlugInBioFormatsImporter implements PlugInFile {
           // create a FileInfo object for each image plane
           FileInfoBase[] fileInfo = new FileInfoBase[imageCount];
           for (int i=0; i<imageCount; i++) {
-            // HACK: Use FileInfoImageXML subclass since FileInfoBase is abstract.
+            // HACK: Use FileInfoImageXML since FileInfoBase is abstract.
             fileInfo[i] = new FileInfoImageXML(name, dir, FileUtility.XML);
             fileInfo[i].setExtents(dimExtents);
             fileInfo[i].setResolutions(res);

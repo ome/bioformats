@@ -136,7 +136,7 @@ public final class MDBParser {
             r.exec("Table.mdb_read_columns(table)");
           }
           catch (ReflectException e) {
-            e.printStackTrace();
+            if (FormatHandler.debug) LogTools.trace(e);
             break;
           }
           //r.exec("Data.mdb_rewind_table(table)");
@@ -160,7 +160,7 @@ public final class MDBParser {
           }
           catch (ReflectException e) {
             moreRows = false;
-            e.printStackTrace();
+            if (FormatHandler.debug) LogTools.trace(e);
           }
 
           while (moreRows) {
