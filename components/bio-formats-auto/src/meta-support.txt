@@ -521,7 +521,7 @@ Pixels = Yes since r4059
 LogicalChannel.SamplesPerPixel = Yes
 Plane = Yes
 
-[ND2Reader]
+[NativeND2Reader]
 Pixels = Yes since r1777
 Image.Name = Yes
 Plane = Yes
@@ -698,7 +698,7 @@ Laser.Power = No
 LogicalChannel.SamplesPerPixel = Yes
 Plane = Yes
 
-[QTReader]
+[NativeQTReader]
 Pixels = Yes since r658
 LogicalChannel.SamplesPerPixel = Yes
 Plane = Yes
