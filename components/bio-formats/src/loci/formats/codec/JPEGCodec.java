@@ -116,7 +116,6 @@ public class JPEGCodec extends BaseCodec {
       r.dispose();
     }
     catch (IOException exc) {
-      /* debug */ exc.printStackTrace();
       try {
         // NB: the following comment facilitates dependency detection:
         // import com.sun.media.imageioimpl.plugins.jpeg
