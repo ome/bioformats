@@ -137,19 +137,29 @@ public class Location {
   }
 
   /**
-   * Gets an IRandomAccess object that can read from or write to the given file.
+   * Gets an IRandomAccess object that can read from the given file.
    * @see IRandomAccess
    */
   public static IRandomAccess getHandle(String id) throws IOException {
+    return getHandle(id, false);
+  }
+
+  /**
+   * Gets an IRandomAccess object that can read from or write to the given file.
+   * @see IRandomAccess
+   */
+  public static IRandomAccess getHandle(String id, boolean writable)
+    throws IOException
+  {
     File f = new File(getMappedId(id)).getAbsoluteFile();
     if (getMappedFile(id) != null) return getMappedFile(id);
 
     IRandomAccess handle = null;
     if (id.startsWith("http://")) {
-      handle = new RAUrl(getMappedId(id), "r");
+      handle = new RAUrl(getMappedId(id), writable ? "rw" : "r");
     }
     else {
-      handle = new RAFile(f, "r");
+      handle = new RAFile(f, writable ? "rw" : "r");
     }
     return handle;
   }

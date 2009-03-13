@@ -48,7 +48,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   // -- Fields --
 
   protected String kind;
-  protected DataOutputStream out;
+  protected RandomAccessOutputStream out;
 
   // -- Constructors --
 
@@ -79,8 +79,7 @@ public abstract class ImageIOWriter extends FormatWriter {
     if (AWTImageTools.getPixelType(img) == FormatTools.FLOAT) {
       throw new FormatException("Floating point data not supported.");
     }
-    out = new DataOutputStream(new BufferedOutputStream(
-      new FileOutputStream(currentId), 4096));
+    out = new RandomAccessOutputStream(currentId);
     ImageIO.write(img, kind, out);
   }
 

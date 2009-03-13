@@ -1786,7 +1786,7 @@ public final class TiffTools {
    * @return total number of bytes written
    */
   public static long writeImage(BufferedImage img, Hashtable ifd,
-    IRandomAccess out, long offset, boolean last, boolean bigTiff)
+    RandomAccessOutputStream out, long offset, boolean last, boolean bigTiff)
     throws FormatException, IOException
   {
     if (img == null) throw new FormatException("Image is null");

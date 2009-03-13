@@ -46,7 +46,7 @@ public class TiffWriter extends FormatWriter {
   protected long lastOffset;
 
   /** Current output stream. */
-  protected IRandomAccess out;
+  protected RandomAccessOutputStream out;
 
   /** Image counts for each open series. */
   protected Vector imageCounts;
@@ -99,7 +99,7 @@ public class TiffWriter extends FormatWriter {
     if (!initialized) {
       imageCounts = new Vector();
       initialized = true;
-      out = Location.getHandle(currentId);
+      out = new RandomAccessOutputStream(currentId);
 
       RandomAccessStream tmp = new RandomAccessStream(currentId);
       if (tmp.length() == 0) {

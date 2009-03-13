@@ -41,7 +41,7 @@ import loci.formats.*;
 public class EPSWriter extends FormatWriter {
 
   /** Current file. */
-  protected IRandomAccess out;
+  protected RandomAccessOutputStream out;
 
   // -- Constructor --
 
@@ -59,7 +59,7 @@ public class EPSWriter extends FormatWriter {
       throw new FormatException("Image is null");
     }
 
-    out = Location.getHandle(currentId);
+    out = new RandomAccessOutputStream(currentId);
 
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
     int type = AWTImageTools.getPixelType(img);

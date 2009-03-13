@@ -47,7 +47,7 @@ public class APNGWriter extends FormatWriter {
 
   // -- Fields --
 
-  private IRandomAccess out;
+  private RandomAccessOutputStream out;
   private int numFrames = 0;
   private long numFramesPointer = 0;
   private int nextSequenceNumber;
@@ -89,7 +89,7 @@ public class APNGWriter extends FormatWriter {
       FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
 
     if (!initialized) {
-      out = Location.getHandle(currentId);
+      out = new RandomAccessOutputStream(currentId);
 
       // write 8-byte PNG signature
       out.write(PNG_SIG);

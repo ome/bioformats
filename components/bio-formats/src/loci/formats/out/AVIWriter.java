@@ -45,7 +45,7 @@ public class AVIWriter extends FormatWriter {
 
   // -- Fields --
 
-  private IRandomAccess out;
+  private RandomAccessOutputStream out;
 
   private int planesWritten = 0;
 
@@ -129,7 +129,7 @@ public class AVIWriter extends FormatWriter {
       planesWritten = 0;
       bytesPerPixel = byteData.length;
 
-      out = Location.getHandle(currentId);
+      out = new RandomAccessOutputStream(currentId);
       out.seek(out.length());
       saveFileSize = 4;
       saveLIST1Size = 16;

@@ -84,7 +84,7 @@ public class QTWriter extends FormatWriter {
   // -- Fields --
 
   /** Current file. */
-  protected IRandomAccess out;
+  protected RandomAccessOutputStream out;
 
   /** The codec to use. */
   protected int codec = CODEC_RAW;
@@ -232,7 +232,7 @@ public class QTWriter extends FormatWriter {
       // -- write the header --
 
       offsets = new Vector();
-      out = Location.getHandle(currentId);
+      out = new RandomAccessOutputStream(currentId);
       created = (int) System.currentTimeMillis();
       numWritten = 0;
       numBytes = buffer.length;
@@ -249,7 +249,12 @@ public class QTWriter extends FormatWriter {
       }
       else {
         out.seek(byteCountOffset);
-        numBytes = (int) DataTools.read4UnsignedBytes(out, false) - 8;
+
+        RandomAccessStream in = new RandomAccessStream(currentId);
+        in.seek(byteCountOffset);
+        numBytes = (int) DataTools.read4UnsignedBytes(in, false) - 8;
+        in.close();
+
         numWritten = numBytes / buffer.length;
         numBytes += buffer.length;
 
