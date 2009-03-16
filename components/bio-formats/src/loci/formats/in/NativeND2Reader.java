@@ -463,7 +463,10 @@ public class NativeND2Reader extends FormatReader {
     while (!lastBoxFound) {
       pos = in.getFilePointer();
       length = in.readInt();
-      if (pos + length >= in.length() || length == 0) lastBoxFound = true;
+      long nextPos = pos + length;
+      if (nextPos < 0 || nextPos >= in.length() || length == 0) {
+        lastBoxFound = true;
+      }
       box = in.readInt();
       pos = in.getFilePointer();
       length -= 8;
@@ -813,7 +816,7 @@ public class NativeND2Reader extends FormatReader {
       pixelSizeX = Float.parseFloat(value);
       pixelSizeY = pixelSizeX;
     }
-    else if (key.endsWith("dAspect")) pixelSizeZ = Float.parseFloat(value);
+    else if (key.endsWith("dZStep")) pixelSizeZ = Float.parseFloat(value);
     else if (key.endsWith("Gain")) gain.add(new Float(value));
     else if (key.endsWith("dLampVoltage")) voltage = value;
     else if (key.endsWith("dObjectiveMag")) mag = value;
