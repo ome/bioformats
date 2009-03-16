@@ -93,13 +93,17 @@ public abstract class FormatWriter extends FormatHandler
     if (r == null) throw new FormatException("MetadataRetrieve cannot be null");
     int width = r.getPixelsSizeX(series, 0).intValue();
     int height = r.getPixelsSizeY(series, 0).intValue();
-    int channels = r.getPixelsSizeC(series, 0).intValue();
     int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
     boolean littleEndian = !r.getPixelsBigEndian(series, 0).booleanValue();
 
-    BufferedImage img = AWTImageTools.makeImage(bytes, width, height, channels,
-      true, FormatTools.getBytesPerPixel(type),
-      FormatTools.isFloatingPoint(type), littleEndian,
+    int bpp = FormatTools.getBytesPerPixel(type);
+    int planeSize = width * height * bpp;
+
+    // calculate the number of channels per plane
+    int channels = bytes.length / planeSize;
+
+    BufferedImage img = AWTImageTools.makeImage(bytes, width, height,
+      channels, true, bpp, FormatTools.isFloatingPoint(type), littleEndian,
       FormatTools.isSigned(type));
     saveImage(img, series, lastInSeries, last);
   }
