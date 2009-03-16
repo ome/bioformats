@@ -184,12 +184,21 @@ public class DelegateReader extends FormatReader {
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
       if (exc != null) {
+        if (debug) LogTools.trace(exc);
         legacyReader.setId(id);
         legacyReaderInitialized = true;
       }
     }
-    if (nativeReaderInitialized) core = nativeReader.getCoreMetadata();
-    if (legacyReaderInitialized) core = legacyReader.getCoreMetadata();
+    if (nativeReaderInitialized) {
+      core = nativeReader.getCoreMetadata();
+      metadata = nativeReader.getMetadata();
+      metadataStore = nativeReader.getMetadataStore();
+    }
+    if (legacyReaderInitialized) {
+      core = legacyReader.getCoreMetadata();
+      metadata = legacyReader.getMetadata();
+      metadataStore = legacyReader.getMetadataStore();
+    }
   }
 
 }
