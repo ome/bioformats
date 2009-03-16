@@ -38,6 +38,11 @@ import java.io.*;
  */
 public class RABytes implements IRandomAccess {
 
+  // -- Constants --
+
+  /** Initial length of a new file. */
+  protected static final int INITIAL_LENGTH = 1000000;
+
   // -- Fields --
 
   /** The byte array backing this RABytes. */
@@ -45,6 +50,9 @@ public class RABytes implements IRandomAccess {
 
   /** The file pointer. */
   protected int fp;
+
+  /** File length. */
+  protected long length;
 
   // -- Constructors --
 
@@ -55,12 +63,24 @@ public class RABytes implements IRandomAccess {
   public RABytes(byte[] bytes) {
     array = bytes;
     fp = 0;
+    length = bytes.length;
+  }
+
+  /** Creates a random access byte stream to write to a byte array. */
+  public RABytes() {
+    fp = 0;
+    length = 0;
+    array = new byte[INITIAL_LENGTH];
   }
 
   // -- RABytes API methods --
 
   /** Gets the byte array backing this RAFile. */
-  public byte[] getBytes() { return array; }
+  public byte[] getBytes() {
+    byte[] file = new byte[(int) length];
+    System.arraycopy(array, 0, file, 0, file.length);
+    return file;
+  }
 
   // -- IRandomAccess API methods --
 
@@ -74,12 +94,12 @@ public class RABytes implements IRandomAccess {
 
   /* @see IRandomAccess.length() */
   public long length() {
-    return array.length;
+    return length;
   }
 
   /* @see IRandomAccess.read() */
   public int read() {
-    return fp < array.length ? array[fp++] : 0;
+    return fp < length() ? array[fp++] : 0;
   }
 
   /* @see IRandomAccess.read(byte[]) */
@@ -89,7 +109,7 @@ public class RABytes implements IRandomAccess {
 
   /* @see IRandomAccess.read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
-    if (fp + len > array.length) len = array.length - fp;
+    if (fp + len > length()) len = (int) (length() - fp);
     if (len > 0) System.arraycopy(array, fp, b, off, len);
     fp += len;
     return len;
@@ -107,10 +127,13 @@ public class RABytes implements IRandomAccess {
     if (newLength > Integer.MAX_VALUE) {
       throw new IOException("newLength is too large");
     }
-    int len = (int) newLength;
-    byte[] bytes = new byte[len];
+
+    length = newLength;
+    if (length < array.length) return;
+
+    byte[] bytes = new byte[(int) (length * 2)];
     System.arraycopy(array, 0, bytes, 0,
-      array.length < len ? array.length : len);
+      array.length < bytes.length ? array.length : bytes.length);
     array = bytes;
   }
 
@@ -123,13 +146,13 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataInput.readByte() */
   public byte readByte() throws IOException {
-    if (fp + 1 > array.length) throw new EOFException();
+    if (fp + 1 > length()) throw new EOFException();
     return array[fp++];
   }
 
   /* @see java.io.DataInput.readChar() */
   public char readChar() throws IOException {
-    if (fp + 2 > array.length) throw new EOFException();
+    if (fp + 2 > length()) throw new EOFException();
     char c = (char) DataTools.bytesToShort(array, fp, false);
     fp += 2;
     return c;
@@ -137,7 +160,7 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataInput.readDouble() */
   public double readDouble() throws IOException {
-    if (fp + 8 > array.length) throw new EOFException();
+    if (fp + 8 > length()) throw new EOFException();
     double d = Double.longBitsToDouble(DataTools.bytesToLong(array, fp, false));
     fp += 8;
     return d;
@@ -145,7 +168,7 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataInput.readFloat() */
   public float readFloat() throws IOException {
-    if (fp + 4 > array.length) throw new EOFException();
+    if (fp + 4 > length()) throw new EOFException();
     float f = Float.intBitsToFloat(DataTools.bytesToInt(array, fp, false));
     fp += 4;
     return f;
@@ -158,14 +181,14 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataInput.readFully(byte[], int, int) */
   public void readFully(byte[] b, int off, int len) throws IOException {
-    if (fp + len > array.length) throw new EOFException();
+    if (fp + len > length()) throw new EOFException();
     System.arraycopy(array, fp, b, off, len);
     fp += len;
   }
 
   /* @see java.io.DataInput.readInt() */
   public int readInt() throws IOException {
-    if (fp + 4 > array.length) throw new EOFException();
+    if (fp + 4 > length()) throw new EOFException();
     int i = DataTools.bytesToInt(array, fp, false);
     fp += 4;
     return i;
@@ -178,7 +201,7 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataInput.readLong() */
   public long readLong() throws IOException {
-    if (fp + 8 > array.length) throw new EOFException();
+    if (fp + 8 > length()) throw new EOFException();
     long l = DataTools.bytesToLong(array, fp, false);
     fp += 8;
     return l;
@@ -186,7 +209,7 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataInput.readShort() */
   public short readShort() throws IOException {
-    if (fp + 2 > array.length) throw new EOFException();
+    if (fp + 2 > length()) throw new EOFException();
     short s = DataTools.bytesToShort(array, fp, false);
     fp += 2;
     return s;
@@ -194,13 +217,13 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataInput.readUnsignedByte() */
   public int readUnsignedByte() throws IOException {
-    if (fp + 1 > array.length) throw new EOFException();
+    if (fp + 1 > length()) throw new EOFException();
     return DataTools.bytesToInt(array, fp++, 1, false);
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
   public int readUnsignedShort() throws IOException {
-    if (fp + 2 > array.length) throw new EOFException();
+    if (fp + 2 > length()) throw new EOFException();
     int i = DataTools.bytesToInt(array, fp, 2, false);
     fp += 2;
     return i;
@@ -214,7 +237,7 @@ public class RABytes implements IRandomAccess {
   /* @see java.io.DataInput.skipBytes(int) */
   public int skipBytes(int n) {
     if (n < 0) n = 0;
-    if (fp + n > array.length) n = array.length - fp;
+    if (fp + n > length()) n = (int) (length() - fp);
     fp += n;
     return n;
   }
@@ -228,14 +251,14 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataOutput.write(byte[], int, int) */
   public void write(byte[] b, int off, int len) throws IOException {
-    if (fp + len > array.length) setLength(fp + len);
+    if (fp + len > length()) setLength(fp + len);
     System.arraycopy(b, off, array, fp, len);
     fp += b.length;
   }
 
   /* @see java.io.DataOutput.write(int b) */
   public void write(int b) throws IOException {
-    if (fp + 1 > array.length) setLength(fp + 1);
+    if (fp + 1 > length()) setLength(fp + 1);
     array[fp++] = (byte) b;
   }
 
@@ -259,7 +282,7 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataOutput.writeChar(int) */
   public void writeChar(int v) throws IOException {
-    if (fp + 2 > array.length) setLength(fp + 2);
+    if (fp + 2 > length()) setLength(fp + 2);
     array[fp++] = (byte) (0xff & (v >> 8));
     array[fp++] = (byte) (0xff & v);
   }
@@ -267,7 +290,7 @@ public class RABytes implements IRandomAccess {
   /* @see java.io.DataOutput.writeChars(String) */
   public void writeChars(String s) throws IOException {
     int len = 2 * s.length();
-    if (fp + len > array.length) setLength(fp + len);
+    if (fp + len > length()) setLength(fp + len);
     char[] c = s.toCharArray();
     for (int i=0; i<c.length; i++) {
       char v = c[i];
@@ -288,31 +311,23 @@ public class RABytes implements IRandomAccess {
 
   /* @see java.io.DataOutput.writeInt(int) */
   public void writeInt(int v) throws IOException {
-    if (fp + 4 > array.length) setLength(fp + 4);
-    array[fp++] = (byte) (0xff & (v >> 24));
-    array[fp++] = (byte) (0xff & (v >> 16));
-    array[fp++] = (byte) (0xff & (v >> 8));
-    array[fp++] = (byte) (0xff & v);
+    if (fp + 4 > length()) setLength(fp + 4);
+    for (int i=0; i<4; i++) {
+      array[fp++] = (byte) (0xff & (v >> ((3 - i) * 8)));
+    }
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
   public void writeLong(long v) throws IOException {
-    if (fp + 8 > array.length) setLength(fp + 8);
-    array[fp++] = (byte) (0xff & (v >> 56));
-    array[fp++] = (byte) (0xff & (v >> 48));
-    array[fp++] = (byte) (0xff & (v >> 40));
-    array[fp++] = (byte) (0xff & (v >> 32));
-    array[fp++] = (byte) (0xff & (v >> 24));
-    array[fp++] = (byte) (0xff & (v >> 16));
-    array[fp++] = (byte) (0xff & (v >> 8));
-    array[fp++] = (byte) (0xff & v);
+    if (fp + 8 > length()) setLength(fp + 8);
+    for (int i=0; i<8; i++) {
+      array[fp++] = (byte) (0xff & (v >> ((7 - i) * 8)));
+    }
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
   public void writeShort(int v) throws IOException {
-    if (fp + 2 > array.length) setLength(fp + 2);
-    array[fp++] = (byte) (0xff & (v >> 24));
-    array[fp++] = (byte) (0xff & (v >> 16));
+    if (fp + 2 > length()) setLength(fp + 2);
     array[fp++] = (byte) (0xff & (v >> 8));
     array[fp++] = (byte) (0xff & v);
   }
