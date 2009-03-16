@@ -54,11 +54,16 @@ public class JPEG2000Reader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    stream.seek(4);
-    boolean validStart = stream.readInt() == 0x6a502020;
-    stream.seek(stream.length() - 2);
     int b1 = stream.read() & 0xff;
     int b2 = stream.read() & 0xff;
+    boolean validStart = b1 == 0xff && b2 == 0x4f;
+    if (!validStart) {
+      stream.skipBytes(2);
+      validStart = stream.readInt() == 0x6a502020;
+    }
+    stream.seek(stream.length() - 2);
+    b1 = stream.read() & 0xff;
+    b2 = stream.read() & 0xff;
     boolean validEnd = b1 == 0xff && b2 == 0xd9;
     return validStart && validEnd;
   }
@@ -120,7 +125,20 @@ public class JPEG2000Reader extends FormatReader {
           lastBoxFound = true;
         }
       }
-      if (!lastBoxFound && box != 0x6a703268) in.skipBytes(length);
+      else if ((length + 8) == 0xff4fff51) {
+        core[0].sizeX = in.readInt();
+        core[0].sizeY = in.readInt();
+        in.skipBytes(24);
+        core[0].sizeC = in.readShort();
+        int type = in.readInt();
+        if (type == 0xf070100 || type == 0xf070000) {
+          core[0].pixelType = FormatTools.UINT16;
+        }
+        else core[0].pixelType = FormatTools.UINT8;
+
+        lastBoxFound = true;
+      }
+      if (!lastBoxFound) in.seek(pos + length);
     }
 
     core[0].sizeZ = 1;
