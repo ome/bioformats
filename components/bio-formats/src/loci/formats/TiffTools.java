@@ -2212,7 +2212,7 @@ public final class TiffTools {
 
     long[] counts = new long[byteCounts.length];
 
-    if (getCompression(ifd) != UNCOMPRESSED) {
+    if (getCompression(ifd) == LZW) {
       for (int i=0; i<byteCounts.length; i++) {
         counts[i] = byteCounts[i] * 2;
       }
