@@ -49,6 +49,7 @@ public class JPEGCodec extends BaseCodec {
    *  {@link CodecOptions#bitsPerSample bitsPerSample}
    *  {@link CodecOptions#interleaved interleaved}
    *  {@link CodecOptions#littleEndian littleEndian}
+   *  {@link CodecOptions#signed signed}
    *
    * @see Codec#compress(byte[], CodecOptions)
    */
@@ -64,7 +65,7 @@ public class JPEGCodec extends BaseCodec {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     BufferedImage img = AWTImageTools.makeImage(data, options.width,
       options.height, options.channels, options.interleaved,
-      options.bitsPerSample / 8, options.littleEndian);
+      options.bitsPerSample / 8, false, options.littleEndian, options.signed);
 
     try {
       ImageIO.write(img, "jpeg", out);

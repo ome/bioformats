@@ -2296,6 +2296,7 @@ public final class TiffTools {
     options.channels = getSamplesPerPixel(ifd);
     options.littleEndian = isLittleEndian(ifd);
     options.interleaved = true;
+    options.signed = false;
 
     if (compression == UNCOMPRESSED) return input;
     else if (compression == LZW) {

@@ -92,12 +92,16 @@ public class OMEXMLWriter extends FormatWriter {
     BufferedImage buffImage = AWTImageTools.makeBuffered(image);
     byte[][] pix = AWTImageTools.getPixelBytes(buffImage, littleEndian);
 
+    String type = retrieve.getPixelsPixelType(series, 0);
+    int pixelType = FormatTools.pixelTypeFromString(type);
+
     CodecOptions options = new CodecOptions();
     options.width = buffImage.getWidth();
     options.height = buffImage.getHeight();
     options.channels = 1;
     options.interleaved = false;
     options.littleEndian = littleEndian;
+    options.signed = FormatTools.isSigned(pixelType);
 
     buffImage = null;
 

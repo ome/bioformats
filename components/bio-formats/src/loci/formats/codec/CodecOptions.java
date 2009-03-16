@@ -50,6 +50,9 @@ public class CodecOptions {
   /** Indicates whether or not channels are interleaved. */
   public boolean interleaved;
 
+  /** Indicates whether or not the pixel data is signed. */
+  public boolean signed;
+
   /**
    * If compressing, this is the maximum number of raw bytes to compress.
    * If decompressing, this is the maximum number of raw bytes to return.
