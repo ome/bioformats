@@ -343,10 +343,8 @@ public class MetadataPane extends JPanel
 
         if (originalTIFF.equals(file)) {
           //just rewrite image description of original file.
-          RandomAccessFile raf = new RandomAccessFile(file, "rw");
           xml = addTiffData(xml, file);
-          TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
-          raf.close();
+          TiffTools.overwriteComment(file.getAbsolutePath(), xml);
         }
         else {
           //create the new tiff file.

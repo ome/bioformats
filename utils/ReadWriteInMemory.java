@@ -63,9 +63,9 @@ public class ReadWriteInMemory {
 
     /*
     // map output id string to output byte array
-    String outId = "outBytes.ome.tif";
-    byte[] outBytes = new byte[10000000]; // TODO: how to decide this size?
-    Location.mapFile(outId, new RABytes(outBytes));
+    String outId = fileName + ".ome.tif";
+    RABytes outputFile = new RABytes();
+    Location.mapFile(outId, outputFile);
 
     // write data to byte array using ImageWriter
     System.out.println();
@@ -90,6 +90,9 @@ public class ReadWriteInMemory {
     reader.close();
     writer.close();
     System.out.println();
+
+    byte[] outBytes = outputFile.getBytes();
+    outputFile.close();
 
     // flush output byte array to disk
     System.out.println();

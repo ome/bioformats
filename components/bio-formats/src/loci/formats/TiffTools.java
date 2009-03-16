@@ -1644,12 +1644,14 @@ public final class TiffTools {
    * if the old data is already at the end of the file, it overwrites the old
    * data in place.
    */
-  public static void overwriteIFDValue(RandomAccessFile raf,
+  public static void overwriteIFDValue(String file,
     int ifd, int tag, Object value) throws FormatException, IOException
   {
     debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag + "; value=" +
       value + ")");
     byte[] header = new byte[4];
+
+    RandomAccessStream raf = new RandomAccessStream(file);
     raf.seek(0);
     raf.readFully(header);
     if (!isValidHeader(header)) {
@@ -1743,18 +1745,22 @@ public final class TiffTools {
           debug("overwriteIFDValue: old entry will be orphaned");
         }
 
+        long filePointer = raf.getFilePointer();
+        raf.close();
+
+        RandomAccessOutputStream out = new RandomAccessOutputStream(file);
+
         // overwrite old entry
-        raf.seek(raf.getFilePointer() - (bigTiff ? 18 : 10)); // jump back
-        DataTools.writeShort(raf, newType, little);
-        if (bigTiff) DataTools.writeLong(raf, newCount, little);
-        else DataTools.writeInt(raf, newCount, little);
-        if (bigTiff) DataTools.writeLong(raf, newOffset, little);
-        else DataTools.writeInt(raf, (int) newOffset, little);
+        out.seek(filePointer - (bigTiff ? 18 : 10)); // jump back
+        DataTools.writeShort(out, newType, little);
+        if (bigTiff) DataTools.writeLong(out, newCount, little);
+        else DataTools.writeInt(out, newCount, little);
+        if (bigTiff) DataTools.writeLong(out, newOffset, little);
+        else DataTools.writeInt(out, (int) newOffset, little);
         if (extra.length > 0) {
-          raf.seek(newOffset);
-          raf.write(extra);
+          out.seek(newOffset);
+          out.write(extra);
         }
-        if (terminate) raf.setLength(raf.getFilePointer());
         return;
       }
     }
@@ -1766,9 +1772,7 @@ public final class TiffTools {
   public static void overwriteComment(String id, Object value)
     throws FormatException, IOException
   {
-    RandomAccessFile raf = new RandomAccessFile(id, "rw");
-    overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, value);
-    raf.close();
+    overwriteIFDValue(id, 0, TiffTools.IMAGE_DESCRIPTION, value);
   }
 
   // -- Image writing methods --
