@@ -23,6 +23,11 @@
  * THE SOFTWARE.
  *
  */
+
+// Requires libxml2-dev package.
+// Compile on Linux with:
+//   gcc -lxml2 -I/usr/include/libxml2 example.c -o example
+
 #include <stdio.h>
 #include <string.h>
 #include <libxml/encoding.h>
@@ -147,7 +152,7 @@ main(int argc, char* argv[])
 			"%s", "2006-05-04T18:13:51.0Z");
 	if (rc < 0)
 	{
-		printf("Error at xmlTextWriterStartElement['ome:CreationDate'].\n");
+		printf("Error at xmlTextWriterFormatElement['ome:CreationDate'].\n");
 		return;
 	}
 
@@ -250,7 +255,7 @@ main(int argc, char* argv[])
 	rc = xmlTextWriterWriteBase64(writer, BAD_CAST "default", 0, 7);
 	if (rc < 0)
 	{
-		printf("Error at xmlTextWriterWriteCDATA['BinData']\n");
+		printf("Error at xmlTextWriterWriteBase64['BinData']\n");
 		return;
 	}
 
