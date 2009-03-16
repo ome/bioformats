@@ -63,6 +63,7 @@ loci.formats.in.QTReader              # mov
 loci.formats.in.MRWReader             # mrw
 loci.formats.in.TillVisionReader      # vws
 loci.formats.in.ARFReader             # arf
+loci.formats.in.JPEG2000Reader        # jp2, j2k
 
 # multi-extension messes
 loci.formats.in.NiftiReader           # hdr, img, nii
