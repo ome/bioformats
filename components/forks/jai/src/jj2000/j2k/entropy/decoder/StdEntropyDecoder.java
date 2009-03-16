@@ -623,7 +623,7 @@ public class StdEntropyDecoder extends EntropyDecoder
         if (DO_TIMING) {
             time = new long[src.getNumComps()];
             // If we are timing make sure that 'finalize' gets called.
-            System.runFinalizersOnExit(true);
+            //System.runFinalizersOnExit(true);
         }
 
         // Initialize internal variables
