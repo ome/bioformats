@@ -806,6 +806,18 @@ public class BioRadReader extends FormatReader {
             case 11:
               addMeta(key + " RGB type (X)", values[2]);
               addMeta(key + " RGB type (Y)", values[3]);
+
+              // NB: This logic has not been tested, so it may be broken.
+              if (key.equals("AXIS_4")) {
+                // this is a single section multi-channel dataset
+                core[0].sizeC = getSizeZ();
+                core[0].sizeZ = 1;
+              }
+              else {
+                // this is a multi-section multi-channel dataset
+                core[0].sizeC = 3;
+                core[0].sizeZ /= getSizeC();
+              }
               break;
             case 14:
               addMeta(key + " time course type (X)", values[2]);
