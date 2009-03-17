@@ -425,23 +425,6 @@ public class BioRadReader extends FormatReader {
     }
     else picFiles = null;
 
-    MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageName(name, 0);
-
-    // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
-
-    // link Objective to Image using ObjectiveSettings
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
-
-    store.setObjectiveLensNA(new Float(lens), 0, 0);
-    store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
-
     for (int q=0; q<noteStrings.size(); q++) {
       Note n = (Note) noteStrings.get(q);
 
@@ -847,6 +830,23 @@ public class BioRadReader extends FormatReader {
         }
       }
     }
+
+    MetadataTools.populatePixels(store, this);
+    MetadataTools.setDefaultCreationDate(store, id, 0);
+    store.setImageName(name, 0);
+
+    // link Instrument and Image
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
+    // link Objective to Image using ObjectiveSettings
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
+
+    store.setObjectiveLensNA(new Float(lens), 0, 0);
+    store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
   }
 
   // -- Helper classes --
