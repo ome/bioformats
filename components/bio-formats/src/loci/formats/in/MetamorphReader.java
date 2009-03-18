@@ -525,14 +525,15 @@ public class MetamorphReader extends BaseTiffReader {
         // now we need a StripOffsets entry - the original IFD doesn't have this
 
         long[] newOffsets = new long[stripsPerImage];
-        if (stripsPerImage * i < oldOffsets.length) {
+        if (stripsPerImage * (i + 1) <= oldOffsets.length) {
           System.arraycopy(oldOffsets, stripsPerImage * i, newOffsets, 0,
             stripsPerImage);
         }
         else {
+          System.arraycopy(oldOffsets, 0, newOffsets, 0, stripsPerImage);
+          long image = (stripByteCounts[0] / rowsPerStrip) * getSizeY();
           for (int q=0; q<stripsPerImage; q++) {
-            newOffsets[q] =
-              oldOffsets[stripsPerImage - 1] + q*stripByteCounts[0];
+            newOffsets[q] += i * image;
           }
         }
 
