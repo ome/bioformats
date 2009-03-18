@@ -64,6 +64,7 @@ loci.formats.in.MRWReader             # mrw
 loci.formats.in.TillVisionReader      # vws
 loci.formats.in.ARFReader             # arf
 loci.formats.in.JPEG2000Reader        # jp2, j2k
+loci.formats.in.CellomicsReader       # c01
 
 # multi-extension messes
 loci.formats.in.NiftiReader           # hdr, img, nii
