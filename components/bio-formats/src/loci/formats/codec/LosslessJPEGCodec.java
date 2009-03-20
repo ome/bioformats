@@ -315,7 +315,6 @@ public class LosslessJPEGCodec extends BaseCodec {
       buf = newBuf;
     }
 
-    /* debug */ System.out.println("returning " + buf.length + " bytes");
     return buf;
   }
 
