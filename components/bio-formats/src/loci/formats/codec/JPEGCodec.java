@@ -97,56 +97,12 @@ public class JPEGCodec extends BaseCodec {
         in.seek(fp);
       }
 
-      Iterator it = ImageIO.getImageReadersBySuffix("jpg");
-      javax.imageio.ImageReader r = null;
-      String cname = "com.sun.imageio.plugins.jpeg.JPEGImageReader";
-      while (it.hasNext()) {
-        Object tmp = it.next();
-        if (tmp.getClass().getName().equals(cname)) {
-          r = (javax.imageio.ImageReader) tmp;
-        }
-      }
-
-      if (r == null) throw new IOException("");
-
-      ImageInputStream ii =
-        ImageIO.createImageInputStream(new BufferedInputStream(in));
-      r.setInput(ii);
-      b = r.read(0);
-      ii.close();
-      r.dispose();
+      b = ImageIO.read(new DataInputStream(in));
     }
     catch (IOException exc) {
-      try {
-        // NB: the following comment facilitates dependency detection:
-        // import com.sun.media.imageioimpl.plugins.jpeg
-
-        Class jpegSpi = Class.forName(
-          "com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi");
-        IIORegistry registry = IIORegistry.getDefaultInstance();
-        Object jpeg = registry.getServiceProviderByClass(jpegSpi);
-
-        if (jpeg == null) {
-          throw new FormatException("Cannot locate JPEG decoder");
-        }
-        javax.imageio.ImageReader r =
-          ((ImageReaderSpi) jpeg).createReaderInstance();
-
-        in.seek(fp);
-        while (in.read() != (byte) 0xff || in.read() != (byte) 0xd8);
-        in.seek(in.getFilePointer() - 2);
-
-        ImageInputStream ii =
-          ImageIO.createImageInputStream(new BufferedInputStream(in));
-        r.setInput(ii);
-        b = r.read(0);
-        ii.close();
-        r.dispose();
-      }
-      catch (ClassNotFoundException e) {
-        throw new FormatException(
-          "An I/O error occurred while decompressing the image", e);
-      }
+      // probably a lossless JPEG; delegate to LosslessJPEGCodec
+      in.seek(fp);
+      return new LosslessJPEGCodec().decompress(in, options);
     }
 
     if (options == null) options = CodecOptions.getDefaultOptions();

@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Arrays;
 import loci.common.RandomAccessStream;
 import loci.formats.FormatException;
@@ -127,12 +126,6 @@ public class NikonCodec extends BaseCodec {
     3, 11, 12, 2, 0, 1, 13, 14
   };
 
-  private static final int LEAVES_OFFSET = 16;
-
-  private Decoder decoder;
-
-  private static int leafCounter;
-
   /* @see Codec#compress(byte[], CodecOptions) */
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
@@ -165,23 +158,29 @@ public class NikonCodec extends BaseCodec {
     }
 
     NikonCodecOptions nikon = (NikonCodecOptions) options;
+    HuffmanCodecOptions huffman = new HuffmanCodecOptions();
+    huffman.bitsPerSample = nikon.bitsPerSample;
+    huffman.maxBytes = nikon.maxBytes;
+
 
     if (nikon.lossy) {
       if (nikon.bitsPerSample == 12) {
-        decoder = new Decoder(LOSSY_DECODER_CONFIGURATION_12);
+        huffman.table = LOSSY_DECODER_CONFIGURATION_12;
       }
-      else decoder = new Decoder(LOSSY_DECODER_CONFIGURATION_14);
+      else huffman.table = LOSSY_DECODER_CONFIGURATION_14;
     }
     else {
       if (nikon.bitsPerSample == 12) {
-        decoder = new Decoder(LOSSLESS_DECODER_CONFIGURATION_12);
+        huffman.table = LOSSLESS_DECODER_CONFIGURATION_12;
       }
-      else decoder = new Decoder(LOSSLESS_DECODER_CONFIGURATION_14);
+      else huffman.table = LOSSLESS_DECODER_CONFIGURATION_14;
     }
 
     if (nikon.vPredictor == null) {
       nikon.vPredictor = new int[] {0, 0, 0, 0};
     }
+
+    HuffmanCodec huffmanCodec = new HuffmanCodec();
 
     byte[] pix = new byte[nikon.maxBytes];
     in.read(pix);
@@ -197,19 +196,15 @@ public class NikonCodec extends BaseCodec {
       if (row == nikon.split) {
         if (nikon.lossy) {
           if (nikon.bitsPerSample == 12) {
-            decoder = new Decoder(SPLIT_LOSSY_DECODER_CONFIGURATION_12);
+            huffman.table = SPLIT_LOSSY_DECODER_CONFIGURATION_12;
           }
-          else decoder = new Decoder(SPLIT_LOSSY_DECODER_CONFIGURATION_14);
+          else huffman.table = SPLIT_LOSSY_DECODER_CONFIGURATION_14;
           Arrays.fill(hPredictor, 0);
         }
       }
       for (int col=0; col<nikon.width; col++) {
         int cfaIndex = (2 * (row & 1)) + (col & 1);
-        int bitsCount = decoder.decode(bb);
-        int diff = bb.getBits(bitsCount);
-        if ((diff & (1 << (bitsCount - 1))) == 0) {
-          diff -= (1 << bitsCount) - 1;
-        }
+        int diff = huffmanCodec.getSample(bb, huffman);
 
         if (col < 2) {
           nikon.vPredictor[cfaIndex] += diff;
@@ -228,56 +223,6 @@ public class NikonCodec extends BaseCodec {
     }
 
     return out.toByteArray();
-  }
-
-  class Decoder {
-    public Decoder[] branch = new Decoder[2];
-    private int leafValue;
-
-    public Decoder() { }
-
-    public Decoder(short[] source) {
-      leafCounter = 0;
-      createDecoder(this, source, 0, 0);
-    }
-
-    private Decoder createDecoder(short[] source, int start, int level) {
-      Decoder dest = new Decoder();
-      createDecoder(dest, source, start, level);
-      return dest;
-    }
-
-    private void createDecoder(Decoder dest, short[] source,
-      int start, int level)
-    {
-      int next = 0;
-      int i = 0;
-      while (i <= leafCounter && next < LEAVES_OFFSET) {
-        i += source[start + next++] & 0xff;
-      }
-
-      if (level < next && next < 16) {
-        dest.branch[0] = createDecoder(source, start, level + 1);
-        dest.branch[1] = createDecoder(source, start, level + 1);
-      }
-      else {
-        i = start + LEAVES_OFFSET + leafCounter++;
-        if (i < source.length) {
-          dest.leafValue = source[i] & 0xff;
-        }
-      }
-    }
-
-    public int decode(BitBuffer bb) {
-      Decoder d = this;
-      while (d.branch[0] != null) {
-        int v = bb.getBits(1);
-        if (v >= 0) d = d.branch[v];
-        else break;
-      }
-      return d.leafValue;
-    }
-
   }
 
 }
