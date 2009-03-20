@@ -62,6 +62,8 @@ public class InCellReader extends FormatReader {
   private int firstRow, firstCol;
   private int lastCol;
 
+  private boolean[][] exclude;
+
   // -- Constructor --
 
   /** Constructs a new InCell 1000 reader. */
@@ -103,8 +105,11 @@ public class InCellReader extends FormatReader {
 
     int well = getWellFromSeries(getSeries());
     int field = getFieldFromSeries(getSeries());
-    tiffReader.setId(imageFiles[well][field][no].filename);
-    return tiffReader.openBytes(0, buf, x, y, w, h);
+    if (imageFiles[well][field][no] != null) {
+      tiffReader.setId(imageFiles[well][field][no].filename);
+      return tiffReader.openBytes(0, buf, x, y, w, h);
+    }
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -117,7 +122,9 @@ public class InCellReader extends FormatReader {
         int well = getWellFromSeries(series);
         int field = getFieldFromSeries(series);
         for (int plane=0; plane<getImageCount(); plane++) {
-          files[nextFile++] = imageFiles[well][field][plane].filename;
+          if (imageFiles[well][field][plane] != null) {
+            files[nextFile++] = imageFiles[well][field][plane].filename;
+          }
         }
       }
     }
@@ -144,6 +151,7 @@ public class InCellReader extends FormatReader {
     wellRows = wellCols = 0;
     startRow = startCol = 0;
     fieldCount = 0;
+    exclude = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -179,7 +187,18 @@ public class InCellReader extends FormatReader {
     if (getSizeC() == 0) core[0].sizeC = 1;
     if (getSizeT() == 0) core[0].sizeT = 1;
 
-    seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
+    Vector wells = new Vector();
+
+    if (exclude != null) {
+      for (int row=0; row<wellRows; row++) {
+        for (int col=0; col<wellCols; col++) {
+          if (!exclude[row][col]) {
+            seriesCount += imageFiles[row*wellCols + col].length;
+          }
+        }
+      }
+    }
+    else seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
     int z = getSizeZ();
     int c = getSizeC();
@@ -235,6 +254,7 @@ public class InCellReader extends FormatReader {
       int field = getFieldFromSeries(i);
       for (int q=0; q<core[i].imageCount; q++) {
         Image img = imageFiles[well][field][q];
+        if (img == null) continue;
         store.setPlaneTimingDeltaT(img.deltaT, i, 0, q);
         store.setPlaneTimingExposureTime(img.exposure, i, 0, q);
       }
@@ -296,6 +316,12 @@ public class InCellReader extends FormatReader {
       if (qName.equals("Plate")) {
         wellRows = Integer.parseInt(attributes.getValue("rows"));
         wellCols = Integer.parseInt(attributes.getValue("columns"));
+      }
+      else if (qName.equals("Exclude")) {
+        if (exclude == null) exclude = new boolean[wellRows][wellCols];
+        int row = Integer.parseInt(attributes.getValue("row")) - 1;
+        int col = Integer.parseInt(attributes.getValue("col")) - 1;
+        exclude[row][col] = true;
       }
       else if (qName.equals("Images")) {
         totalImages = Integer.parseInt(attributes.getValue("number"));
