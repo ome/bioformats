@@ -798,8 +798,13 @@ public class BioRadReader extends FormatReader {
               }
               else {
                 // this is a multi-section multi-channel dataset
+                int nplanes = getSizeZ();
                 core[0].sizeC = 3;
-                core[0].sizeZ /= getSizeC();
+                core[0].sizeZ = nplanes / getSizeC();
+                if (getSizeC() * getSizeZ() != nplanes) {
+                  core[0].sizeC = 1;
+                  core[0].sizeZ = nplanes;
+                }
               }
               break;
             case 14:
