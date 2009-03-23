@@ -747,8 +747,8 @@ public class DeltavisionReader extends FormatReader {
           }
 
           if (previousLine != null &&
-            previousLine.endsWith("Deconvolution Results:") ||
-            previousLine.endsWith("open OTF"))
+            (previousLine.endsWith("Deconvolution Results:") ||
+            previousLine.endsWith("open OTF")))
           {
             addMeta(previousLine + " " +  key, value);
           }
