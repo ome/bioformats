@@ -146,9 +146,9 @@ public class DelegateReader extends FormatReader {
     throws FormatException, IOException
   {
     if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
-      return legacyReader.openBytes(no, x, y, w, h);
+      return legacyReader.openBytes(no, buf, x, y, w, h);
     }
-    return nativeReader.openBytes(no, x, y, w, h);
+    return nativeReader.openBytes(no, buf, x, y, w, h);
   }
 
   // -- IFormatHandler API methods --
