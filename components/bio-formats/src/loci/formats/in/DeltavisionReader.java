@@ -85,13 +85,18 @@ public class DeltavisionReader extends FormatReader {
   /** Constructs a new Deltavision reader. */
   public DeltavisionReader() {
     super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d"});
+    suffixSufficient = false;
+    blockCheckLen = 98;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
-    return false;
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    stream.seek(96);
+    int magic = stream.readShort() & 0xffff;
+    return magic == 0xa0c0 || magic == 0xc0a0;
   }
 
   /**
