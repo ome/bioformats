@@ -28,6 +28,8 @@ import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * IvisionReader is the file format reader for IVision (.IPM) files.
@@ -46,6 +48,14 @@ public class IvisionReader extends FormatReader {
   private boolean squareRoot;
   private byte[] lut;
   private long imageOffset;
+
+  private String binX, binY;
+  private String creationDate;
+  private String exposureTime;
+  private String gain, offset;
+  private String deltaT;
+  private String magnification, lensNA, refractiveIndex;
+  private String wavelength;
 
   // -- Constructor --
 
@@ -96,6 +106,17 @@ public class IvisionReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
+    color16 = false;
+    squareRoot = false;
+    lut = null;
+    imageOffset = 0;
+    binX = binY = null;
+    creationDate = null;
+    exposureTime = null;
+    gain = offset = null;
+    deltaT = null;
+    magnification = lensNA = refractiveIndex = null;
+    wavelength = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -164,6 +185,32 @@ public class IvisionReader extends FormatReader {
 
     imageOffset = in.getFilePointer();
 
+    in.skipBytes(getSizeZ() * getSizeC() * getSizeT() * getSizeX() *
+      getSizeY() * FormatTools.getBytesPerPixel(getPixelType()));
+
+    // look for block of XML data
+    status("Looking for XML metadata");
+    boolean xmlFound = false;
+    while (!xmlFound && in.getFilePointer() < in.length()) {
+      int len = (int) Math.min(8192, in.length() - in.getFilePointer());
+      String check = in.readString(len);
+      int xmlIndex = check.indexOf("<?xml");
+      xmlFound = xmlIndex != -1;
+      if (xmlFound) {
+        in.seek(in.getFilePointer() - check.length() + xmlIndex);
+      }
+      else in.seek(in.getFilePointer() - 6);
+    }
+
+    if (xmlFound) {
+      String xml =
+        in.readString((int) (in.length() - in.getFilePointer())).trim();
+      xml = xml.substring(0, xml.lastIndexOf(">") + 1);
+      IvisionHandler handler = new IvisionHandler();
+      DataTools.parseXML(xml, handler);
+    }
+
+    status("Populating core metadata");
     core[0].rgb = getSizeC() > 1;
     core[0].dimensionOrder = "XYCZT";
     core[0].littleEndian = false;
@@ -171,10 +218,88 @@ public class IvisionReader extends FormatReader {
     core[0].indexed = false;
     core[0].imageCount = getSizeZ() * getSizeT();
 
-    // The metadata store we're working with.
+    status("Populating MetadataStore");
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
+
+    if (creationDate != null) {
+      String date =
+        DataTools.formatDate(creationDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+      store.setImageCreationDate(date, 0);
+    }
+    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
+
+    store.setInstrumentID("Instrument:0", 0);
+    store.setImageInstrumentRef("Instrument:0", 0);
+
+    if (deltaT != null) {
+      store.setDimensionsTimeIncrement(new Float(deltaT), 0, 0);
+    }
+
+    store.setObjectiveID("Objective:0", 0, 0);
+    store.setObjectiveSettingsObjective("Objective:0", 0);
+
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
+
+    if (lensNA != null) store.setObjectiveLensNA(new Float(lensNA), 0, 0);
+    if (magnification != null) {
+      store.setObjectiveNominalMagnification(new Integer(magnification), 0, 0);
+    }
+    if (refractiveIndex != null) {
+      store.setObjectiveSettingsRefractiveIndex(new Float(refractiveIndex), 0);
+    }
+
+    store.setDetectorID("Detector:0", 0, 0);
+    store.setDetectorSettingsDetector("Detector:0", 0, 0);
+
+    store.setDetectorType("Unknown", 0, 0);
+
+    store.setDetectorSettingsBinning(binX + "x" + binY, 0, 0);
+    if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
+  }
+
+  // -- Helper class --
+
+  class IvisionHandler extends DefaultHandler {
+
+    // -- Fields --
+
+    private String key, value;
+    private String currentElement;
+
+    // -- DefaultHandler API methods --
+
+    public void endElement(String uri, String localName, String qName) {
+      addMeta(key, value);
+      if ("iplab:Bin_X".equals(key)) binX = value;
+      else if ("iplab:Bin_Y".equals(key)) binY = value;
+      else if ("iplab:Capture_Date".equals(key)) creationDate = value;
+      else if ("iplab:Exposure".equals(key)) exposureTime = value;
+      else if ("iplab:Gain".equals(key)) gain = value;
+      else if ("iplab:Offset".equals(key)) offset = value;
+      else if ("iplab:Interval_T".equals(key)) deltaT = value;
+      else if ("iplab:Objective_Mag".equals(key)) magnification = value;
+      else if ("iplab:Objective_NA".equals(key)) lensNA = value;
+      else if ("iplab:Objective_RI".equals(key)) refractiveIndex = value;
+      else if ("iplab:Wavelength".equals(key)) wavelength = value;
+    }
+
+    public void characters(char[] ch, int start, int length) {
+      String v = new String(ch, start, length);
+      if ("key".equals(currentElement)) {
+        key = v;
+      }
+      else value = v;
+    }
+
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      currentElement = qName;
+    }
+
   }
 
 }
