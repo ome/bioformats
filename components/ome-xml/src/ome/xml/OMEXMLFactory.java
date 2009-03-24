@@ -115,6 +115,7 @@ public final class OMEXMLFactory {
     throws ParserConfigurationException, SAXException, IOException
   {
     String xml = null;
+    if (version == null) version = LATEST_VERSION;
     if (version.equals("2003-FC")) xml = LEGACY_SKELETON; // legacy schema
     else xml = SKELETON.replaceAll("VERSION", version); // modern schema
     return newOMENodeFromSource(xml);
@@ -124,6 +125,9 @@ public final class OMEXMLFactory {
   public static OMEXMLNode newOMENodeFromSource(File file)
     throws ParserConfigurationException, SAXException, IOException
   {
+    if (file == null) {
+      throw new IllegalArgumentException("File must not be null");
+    }
     return newOMENodeFromSource(parseOME(file));
   }
 
@@ -131,6 +135,9 @@ public final class OMEXMLFactory {
   public static OMEXMLNode newOMENodeFromSource(String xml)
     throws ParserConfigurationException, SAXException, IOException
   {
+    if (xml == null) {
+      throw new IllegalArgumentException("XML string must not be null");
+    }
     return newOMENodeFromSource(parseOME(xml));
   }
 
@@ -143,8 +150,12 @@ public final class OMEXMLFactory {
     String version = null;
 
     // parse schema version from xmlns attribute
-    String xmlns = DOMUtil.getAttribute("xmlns", el);
-    if (xmlns == null) return null;
+    String xmlns = DOMUtil.getAttribute("xmlns:ome", el);
+    if (xmlns == null) xmlns = DOMUtil.getAttribute("xmlns", el);
+    if (xmlns == null) {
+      throw new IllegalArgumentException(
+        "Document does not contain an xmlns:ome or xmlns attribute");
+    }
     xmlns = xmlns.trim();
     if (xmlns.startsWith(legacy)) {
       // legacy schema
@@ -157,7 +168,10 @@ public final class OMEXMLFactory {
       if (slash < 0) slash = xmlns.length();
       version = xmlns.substring(len, slash).replaceAll("\\W", "");
     }
-    else return null; // unknown schema
+    else {
+      throw new IllegalArgumentException(
+        "Document has unknown schema: " + xmlns);
+    }
 
     Object o = null;
     try {
@@ -171,7 +185,10 @@ public final class OMEXMLFactory {
     catch (InstantiationException exc) { }
     catch (IllegalAccessException exc) { }
     catch (InvocationTargetException exc) { }
-    if (o == null || !(o instanceof OMEXMLNode)) return null;
+    if (o == null || !(o instanceof OMEXMLNode)) {
+      throw new IllegalArgumentException(
+        "Unsupported schema version: " + version);
+    }
 
     return (OMEXMLNode) o;
   }
