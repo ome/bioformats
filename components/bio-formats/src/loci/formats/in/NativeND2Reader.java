@@ -321,6 +321,14 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
+      if (numSeries * getImageCount() == 1 && imageOffsets.size() > 1) {
+        for (int i=0; i<getSeriesCount(); i++) {
+          core[i].imageCount = imageOffsets.size() / getSeriesCount();
+          core[i].sizeZ = getImageCount();
+          core[i].sizeT = 1;
+        }
+      }
+
       offsets = new long[numSeries][getImageCount()];
 
       for (int i=0; i<imageOffsets.size(); i++) {
