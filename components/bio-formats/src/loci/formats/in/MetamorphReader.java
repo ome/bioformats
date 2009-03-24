@@ -169,21 +169,29 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, ND_SUFFIX)) {
+      status("Initializing " + id);
       // find an associated STK file
       String stkFile = id.substring(0, id.lastIndexOf("."));
       if (stkFile.indexOf(File.separator) != -1) {
         stkFile = stkFile.substring(stkFile.lastIndexOf(File.separator) + 1);
       }
-      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      Location parent =
+        new Location(id.substring(0, id.lastIndexOf(File.separator) + 1));
+      status("Looking for STK file in " + parent.getAbsolutePath());
       String[] dirList = parent.list();
       for (int i=0; i<dirList.length; i++) {
         if (dirList[i].indexOf(stkFile) != -1 &&
           checkSuffix(dirList[i], STK_SUFFIX))
         {
-          stkFile =
-            new Location(parent.getPath(), dirList[i]).getAbsolutePath();
+          stkFile = new Location(
+            parent.getAbsolutePath(), dirList[i]).getAbsolutePath();
           break;
         }
+      }
+
+      if (!checkSuffix(stkFile, STK_SUFFIX)) {
+        throw new FormatException("STK file not found in " +
+          parent.getAbsolutePath() + ".");
       }
 
       super.initFile(stkFile);
