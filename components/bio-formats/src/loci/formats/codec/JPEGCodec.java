@@ -97,7 +97,7 @@ public class JPEGCodec extends BaseCodec {
         in.seek(fp);
       }
 
-      b = ImageIO.read(new DataInputStream(in));
+      b = ImageIO.read(new BufferedInputStream(new DataInputStream(in), 8192));
     }
     catch (IOException exc) {
       // probably a lossless JPEG; delegate to LosslessJPEGCodec
