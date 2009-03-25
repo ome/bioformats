@@ -56,7 +56,7 @@ public class ZeissZVIReader extends FormatReader {
   private int cIndex = -1;
   private boolean isTiled;
   private int tileRows, tileColumns;
-  private boolean isJPEG;
+  private boolean isJPEG, isZlib;
 
   private String firstImageTile, secondImageTile;
   private int tileWidth, tileHeight;
@@ -105,12 +105,17 @@ public class ZeissZVIReader extends FormatReader {
       s.seek(offsets[no]);
 
       int len = w * pixel;
+      int row = getSizeX() * pixel;
 
       if (isJPEG) {
         byte[] t = new JPEGCodec().decompress(s, options);
 
-        int row = getSizeX() * pixel;
-
+        for (int yy=0; yy<h; yy++) {
+          System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
+        }
+      }
+      else if (isZlib) {
+        byte[] t = new ZlibCodec().decompress(s, options);
         for (int yy=0; yy<h; yy++) {
           System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
         }
@@ -128,7 +133,7 @@ public class ZeissZVIReader extends FormatReader {
       int rowOffset = 0;
       int colOffset = 0;
 
-      byte[] tile = new byte[tileWidth * tileHeight * bytes];
+      byte[] tile = new byte[tileWidth * tileHeight * pixel];
 
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileColumns; col++) {
@@ -157,15 +162,24 @@ public class ZeissZVIReader extends FormatReader {
 
               RandomAccessStream s = poi.getDocumentStream(imageFiles[ii]);
               s.seek(offsets[ii]);
-              s.read(tile);
+              int nread = s.read(tile);
+
               if (isJPEG) {
                 tile = new JPEGCodec().decompress(tile, options);
               }
+              else if (isZlib) {
+                tile = new ZlibCodec().decompress(tile, options);
+              }
               s.close();
+
+              int actualRowsInTile = tile.length / (tileWidth * pixel);
+              int blankRows = tileHeight - actualRowsInTile;
+              tileH -= blankRows;
 
               for (int r=tileY; r<tileY + tileH; r++) {
                 int src = pixel * (r * tileWidth + tileX);
-                int dest = pixel * (w * (rowOffset + r - tileY) + colOffset);
+                int dest =
+                  pixel * (w * (rowOffset + r - tileY + blankRows) + colOffset);
                 int len = pixel * tileW;
                 System.arraycopy(tile, src, buf, dest, len);
               }
@@ -205,7 +219,7 @@ public class ZeissZVIReader extends FormatReader {
     imageFiles = null;
     cIndex = -1;
     bpp = tileRows = tileColumns = 0;
-    isTiled = isJPEG = false;
+    isTiled = isJPEG = isZlib = false;
     if (poi != null) poi.close();
     poi = null;
     tagsToParse = null;
@@ -328,11 +342,16 @@ public class ZeissZVIReader extends FormatReader {
         s.skipBytes(4);
 
         int valid = s.readInt();
-        isJPEG = valid == 0 || valid == 1;
+
+        String check = s.readString(4).trim();
+        isZlib = (valid == 0 || valid == 1) && check.equals("WZL");
+        isJPEG = (valid == 0 || valid == 1) && !isZlib;
 
         // save the offset to the pixel data
 
-        offsets[imageNum] = (int) s.getFilePointer();
+        offsets[imageNum] = (int) s.getFilePointer() - 4;
+
+        if (isZlib) offsets[imageNum] += 8;
         coordinates[imageNum][0] = zidx;
         coordinates[imageNum][1] = cidx;
         coordinates[imageNum][2] = tidx;
