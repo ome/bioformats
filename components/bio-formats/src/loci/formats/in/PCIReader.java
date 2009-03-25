@@ -74,10 +74,20 @@ public class PCIReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     RandomAccessStream s = poi.getDocumentStream((String) imageFiles.get(no));
-    int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
-      FormatTools.getBytesPerPixel(getPixelType());
-    s.skipBytes((int) (s.length() - planeSize));
-    readPlane(s, x, y, w, h, buf);
+
+    // can be raw pixel data or an embedded TIFF file
+
+    if (TiffTools.isValidHeader(s)) {
+      Hashtable ifd = TiffTools.getFirstIFD(s);
+      TiffTools.getSamples(ifd, s, buf);
+    }
+    else {
+      s.seek(0);
+      int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+        FormatTools.getBytesPerPixel(getPixelType());
+      s.skipBytes((int) (s.length() - planeSize));
+      readPlane(s, x, y, w, h, buf);
+    }
     s.close();
 
     return buf;
