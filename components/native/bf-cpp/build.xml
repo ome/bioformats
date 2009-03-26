@@ -101,14 +101,30 @@ from the Subversion repository using the command:
 
   <target name="compile" depends="gen-makefile, copy-libs"
     description="build Bio-Formats C++ library">
-    <exec executable="make" dir="${build.dir}" failonerror="true"/>
     <if>
-      <isset property="isMac"/>
+      <isset property="isWindows"/>
       <then>
-        <copy file="${build.dir}/libjace.jnilib"
-          tofile="${build.dir}/libjace.dylib"/>
-        <chmod file="${build.dir}/libjace.dylib" perm="ugo+x"/>
+        <exec executable="cmd" dir="${build.dir}" failonerror="true">
+          <arg value="/c"/>
+          <arg value="start"/>
+          <arg value="bfjace.sln"/>
+        </exec>
+<echo>
+Please use Visual Studio to complete the build.
+Press F7, or select "Build solution" from the "Build" menu.
+</echo>
       </then>
+      <else>
+        <exec executable="make" dir="${build.dir}" failonerror="true"/>
+        <if>
+          <isset property="isMac"/>
+          <then>
+            <copy file="${build.dir}/libjace.jnilib"
+              tofile="${build.dir}/libjace.dylib"/>
+            <chmod file="${build.dir}/libjace.dylib" perm="ugo+x"/>
+          </then>
+        </if>
+      </else>
     </if>
   </target>
 

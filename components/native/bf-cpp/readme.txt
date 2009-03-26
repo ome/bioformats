@@ -3,8 +3,8 @@ Bio-Formats C++ bindings
 
 This package provides language bindings for calling into the Bio-Formats Java
 library from C++ in a cross-platform manner. As of this writing the bindings
-are functional only on Linux, but work is actively being done to get them
-working on Windows and Mac OS X systems.
+are functional with GCC on Linux and Mac OS X systems, and work is actively
+being done to get them working with Visual Studio on Windows as well.
 
 
 LIST OF COMPILE-TIME DEPENDENCIES
@@ -42,7 +42,7 @@ written in Java, so you must have a working Java installation both to compile
 the Bio-Formats C++ bindings, and to use them at runtime.
 
 
-INSTALLING COMPILE-TIME DEPENDENCIES -- ALL
+INSTALLING COMPILE-TIME DEPENDENCIES
 
 Regardless of your platform, you will need to check out the Jace source code:
 
@@ -50,59 +50,14 @@ Regardless of your platform, you will need to check out the Jace source code:
 
 Where /path/to/jace is the desired location of your Jace source code checkout.
 The "-r 6" flag retrieves revision 6, which is the most recent known-to-work
-revision.
+revision. (Revisions 7, 8 and 9 have known problems.)
 
 The above command assumes you have the svn command line tool for Subversion
 installed. It should also work fine to plug in the above information to any
 graphical Subversion client (e.g., TortoiseSVN).
 
-
-INSTALLING COMPILE-TIME DEPENDENCIES -- LINUX
-
-To install many of these dependencies on Debian-based Linux, execute:
-
-  sudo apt-get install ant cmake boost-thread-dev subversion sun-java6-jre
-
-Other Linux flavors may have similar packages available; check your package
-manager.
-
-
-INSTALLING COMPILE-TIME DEPENDENCIES -- MAC OS X
-
-Mac OS X users will need to visit the appropriate web sites and download and
-install the relevant binaries for Ant, CMake and Subversion.
-
-To install the Boost Thread library, follow these steps:
-
-1) Visit www.boost.org in your web browser.
-2) Click the "Getting Started Guide" link.
-3) Click the "Getting Started on Unix variants" link in the lower right corner.
-4) Download the Boost distribution using the link in the "1 Get Boost" section.
-5) Unpack the Boost distribution into a temporary directory; e.g.:
-
-  tar xjf boost_1_38_0.tar.bz2
-
-6) Build the source using the "Easy Build and Install"; e.g.:
-
-  cd boost_1_38_0
-  sudo ./configure
-  sudo make install
-
-This will install Boost into a subdirectory of /usr/local; e.g.:
-
-  /usr/local/include/boost-1_38
-
-7) Depending on your version of Boost, you may need to edit bf-cpp's
-   CMakeLists.txt to tweak the Boost_ADDITIONAL_VERSIONS variable to include
-   your version.
-
-
-INSTALLING COMPILE-TIME DEPENDENCIES -- WINDOWS
-
-Windows users will need to visit the appropriate web sites and download and
-install the relevant binaries.
-
-[TODO: Finish these instructions for Windows.]
+For more information on installing dependencies, see the readme file for your
+specific platform: readme-linux.txt, readme-macosx.txt or readme-windows.txt.
 
 
 HOW TO COMPILE

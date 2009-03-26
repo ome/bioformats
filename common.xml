@@ -20,6 +20,9 @@ Type "ant -p" for a list of targets.
       <os family="unix"/>
     </and>
   </condition>
+  <condition property="isWindows">
+    <os family="windows"/>
+  </condition>
 
   <!--
   Guess location of the Java runtime classes, saving to jre.runtime property.
