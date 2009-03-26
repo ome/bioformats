@@ -245,7 +245,7 @@ public class APLReader extends FormatReader {
 
   private int calculateIndex(String key, String[] array) {
     for (int i=0; i<array.length; i++) {
-      if (key.equals(array[i])) return i;
+      if (key.equals(array[i])) return i - 1;
     }
     return -1;
   }

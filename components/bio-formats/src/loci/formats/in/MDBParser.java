@@ -86,9 +86,7 @@ public final class MDBParser {
     try {
       // initialize
 
-      r.setVar("twoFiveSix", 256);
       r.exec("boundValues = new Vector()");
-      r.setVar("delimiter", ",");
 
       r.exec("mem.mdb_init()");
 
@@ -115,6 +113,8 @@ public final class MDBParser {
       }
       Vector[] rtn = new Vector[realCount];
 
+      int previousColumnCount = 0;
+
       int index = 0;
       for (int i=0; i<num; i++) {
         r.setVar("i", i);
@@ -139,12 +139,8 @@ public final class MDBParser {
             if (FormatHandler.debug) LogTools.trace(e);
             break;
           }
-          //r.exec("Data.mdb_rewind_table(table)");
 
-          r.setVar("numCols",
-            ((Integer) r.getVar("table.num_cols")).intValue());
-
-          int numCols = ((Integer) r.getVar("numCols")).intValue();
+          int numCols = ((Integer) r.getVar("table.num_cols")).intValue();
 
           for (int j=0; j<numCols; j++) {
             r.exec("blah = new Holder()");
@@ -166,11 +162,12 @@ public final class MDBParser {
           while (moreRows) {
             String[] row = new String[numCols];
             for (int j=0; j<numCols; j++) {
-              r.setVar("j", j);
-              r.setVar("columns", (List) r.getVar("table.columns"));
-              r.exec("col = columns.get(j)");
-              r.exec("blah = boundValues.get(j)");
-              row[j] = (String) r.getVar("blah.s");
+              r.setVar("j", j + previousColumnCount + 1);
+              try {
+                r.exec("blah = boundValues.get(j)");
+                row[j] = (String) r.getVar("blah.s");
+              }
+              catch (ReflectException e) { }
             }
             rtn[index - 1].add(row);
             try {
@@ -186,15 +183,17 @@ public final class MDBParser {
           // key is table name + column name, value is each value in the
           // column, separated by commas
 
+          r.setVar("columns", (List) r.getVar("table.columns"));
+
           String[] columnNames = new String[numCols + 1];
           columnNames[0] = objName;
           for (int j=1; j<numCols; j++) {
             r.setVar("j", j);
-            r.setVar("columns", (List) r.getVar("table.columns"));
             r.exec("col = columns.get(j)");
             columnNames[j] = (String) r.getVar("col.name");
           }
           rtn[index - 1].insertElementAt(columnNames, 0);
+          previousColumnCount += numCols;
         }
       }
       return rtn;

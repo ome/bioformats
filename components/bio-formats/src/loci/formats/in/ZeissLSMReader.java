@@ -797,11 +797,11 @@ public class ZeissLSMReader extends BaseTiffReader {
 
             for (int table=0; table<tables.length; table++) {
               String[] columnNames = (String[]) tables[table].get(0);
+              String tableName = columnNames[0];
               for (int row=1; row<tables[table].size(); row++) {
                 String[] tableRow = (String[]) tables[table].get(row);
-                String baseKey = columnNames[0] + " ";
                 for (int col=0; col<tableRow.length; col++) {
-                  addMeta(baseKey + columnNames[col + 1] + " " + row,
+                  addMeta(tableName + " " + columnNames[col + 1] + " " + row,
                     tableRow[col]);
                 }
               }
