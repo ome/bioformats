@@ -898,7 +898,7 @@ public class Data
     }
     else
     {
-      System.out.print("Unhandled ole field flags = " + ole_flags);
+      //System.out.print("Unhandled ole field flags = " + ole_flags);
 //      throw new RuntimeException("Unhandled ole field flags = " + ole_flags);
 //      fprintf(stderr,"Unhandled ole field flags = %04x\n", ole_flags);
       return 0;
