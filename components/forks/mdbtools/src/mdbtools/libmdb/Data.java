@@ -741,7 +741,7 @@ public class Data
         if(file.mdb_read_pg(mdb, lval_pg) != fmt.pg_size)
         {
           /* Failed to read */
-          throw new IOException("Failed to read");
+          return text;
         }
         if (memo_row != 0)
         {
@@ -756,8 +756,15 @@ public class Data
   //        printf("row num %d row start %d row stop %d\n", memo_row, row_start, row_stop);
   //      #endif
         len = row_stop - row_start;
-        text = text + new String(mdb.pg_buf,row_start+4,
-                text.length() + len - 4 > Constants.MDB_BIND_SIZE ?Constants.MDB_BIND_SIZE - text.length() : len - 4);
+
+        int strlen = text.length() + len - 4 > Constants.MDB_BIND_SIZE ?
+          Constants.MDB_BIND_SIZE - text.length() : len - 4;
+        if (strlen < 0) strlen = 0;
+        if (row_start + 4 >= mdb.pg_buf.length) {
+          row_start = mdb.pg_buf.length - strlen - 4;
+        }
+
+        text = text + new String(mdb.pg_buf,row_start+4, strlen);
 //        strncat(text, &mdb->pg_buf[row_start+4],
 //                strlen(text) + len - 4 > MDB_BIND_SIZE ?MDB_BIND_SIZE - strlen(text) : len - 4);
 
@@ -873,7 +880,10 @@ public class Data
         if (dest != null)
         {
           dest.ba = new byte[len];
-          System.arraycopy(mdb.pg_buf,row_start+4,dest.ba,cur,len-4);
+          try {
+            System.arraycopy(mdb.pg_buf,row_start+4,dest.ba,cur,len-4);
+          }
+          catch (ArrayIndexOutOfBoundsException e) { }
 //          memcpy(dest[cur], mdb.pg_buf[row_start+4],len - 4);
         }
         cur += len - 4;

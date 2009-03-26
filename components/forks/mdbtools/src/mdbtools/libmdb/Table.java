@@ -233,7 +233,13 @@ public class Table
           file.mdb_read_pg(mdb, file.mdb_get_int32(mdb,4));
           cur_name = 8 - (fmt.pg_size - cur_name);
           /* get the rest of the name */
-          pcol.name += new String(mdb.pg_buf,cur_name,name_sz - len);
+          int strlen = name_sz - len;
+          if (cur_name < 0) cur_name = 0;
+          if (strlen < 0) strlen = 0;
+          if (strlen + cur_name >= mdb.pg_buf.length) {
+            strlen = mdb.pg_buf.length - cur_name;
+          }
+          pcol.name += new String(mdb.pg_buf,cur_name,strlen);
 //          memcpy(&pcol.name[len], &mdb->pg_buf[cur_name], name_sz - len);
         }
 //        pcol->name[name_sz]='\0';

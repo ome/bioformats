@@ -111,6 +111,7 @@ public class file
     if (mdb.stats != null && mdb.stats.collect)
       mdb.stats.pg_reads++;
 
+    if (offset < 0) return 0;
     mdb.f.fd.seek(offset);
     len = mdb.f.fd.read(pg_buf,0,mdb.fmt.pg_size);
 //    System.out.println("page was read, offset: "+offset);
