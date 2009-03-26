@@ -102,7 +102,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].interleaved = false;
     core[0].rgb = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
-    core[0].pixelType = getPixelType(ifds[0]);
+    core[0].pixelType = TiffTools.getPixelType(ifds[0]);
 
     status("Parsing comment");
 

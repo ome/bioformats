@@ -112,7 +112,7 @@ public class SVSReader extends BaseTiffReader {
       core[s].indexed = p == TiffTools.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
       core[s].imageCount = 1;
-      core[s].pixelType = getPixelType(ifds[s]);
+      core[s].pixelType = TiffTools.getPixelType(ifds[s]);
       core[s].metadataComplete = true;
       core[s].interleaved = false;
       core[s].falseColor = false;

@@ -2029,6 +2029,39 @@ public final class TiffTools {
   }
 
   /**
+   * Retrieves the image's pixel type based on the BitsPerSample tag.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the pixel type.  This is one of:
+   *  <li>FormatTools.INT8</li>
+   *  <li>FormatTools.UINT8</li>
+   *  <li>FormatTools.INT16</li>
+   *  <li>FormatTools.UINT16</li>
+   *  <li>FormatTools.INT32</li>
+   *  <li>FormatTools.UINT32</li>
+   *  <li>FormatTools.FLOAT</li>
+   *  <li>FormatTools.DOUBLE</li>
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   * @see #getBitsPerSample(Hashtable)
+   */
+  public static int getPixelType(Hashtable ifd) throws FormatException {
+    int bps = getBitsPerSample(ifd)[0];
+    int bitFormat = getIFDIntValue(ifd, SAMPLE_FORMAT);
+
+    while (bps % 8 != 0) bps++;
+    if (bps == 24) bps = 32;
+
+    if (bitFormat == 3) return FormatTools.FLOAT;
+    switch (bps) {
+      case 16:
+        return bitFormat == 2 ? FormatTools.INT16 : FormatTools.UINT16;
+      case 32:
+        return bitFormat == 2 ? FormatTools.INT32 : FormatTools.UINT32;
+      default:
+        return bitFormat == 2 ? FormatTools.INT8 : FormatTools.UINT8;
+    }
+  }
+
+  /**
    * Retrieves the image's bytes per sample (derived from tag BitsPerSample)
    * from a given TIFF IFD.
    * @param ifd a TIFF IFD hashtable.

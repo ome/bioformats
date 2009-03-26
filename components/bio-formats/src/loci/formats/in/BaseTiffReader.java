@@ -485,7 +485,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
     core[0].falseColor = false;
     core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = getPixelType(ifds[0]);
+    core[0].pixelType = TiffTools.getPixelType(ifds[0]);
   }
 
   /**

@@ -168,7 +168,7 @@ public class MinimalTiffReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeC = isRGB() ? samples : 1;
     core[0].sizeT = ifds.length;
-    core[0].pixelType = getPixelType(ifds[0]);
+    core[0].pixelType = TiffTools.getPixelType(ifds[0]);
     core[0].metadataComplete = true;
     core[0].indexed = photo == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
@@ -179,38 +179,6 @@ public class MinimalTiffReader extends FormatReader {
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
     core[0].falseColor = false;
     core[0].dimensionOrder = "XYCZT";
-  }
-
-  // -- Helper methods --
-
-  protected int getPixelType(Hashtable ifd) throws FormatException {
-    int bps = TiffTools.getBitsPerSample(ifd)[0];
-    int bitFormat = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
-
-    while (bps % 8 != 0) bps++;
-    if (bps == 24) bps = 32;
-
-    if (bitFormat == 3) return FormatTools.FLOAT;
-    else if (bitFormat == 2) {
-      switch (bps) {
-        case 16:
-          return FormatTools.INT16;
-        case 32:
-          return FormatTools.INT32;
-        default:
-          return FormatTools.INT8;
-      }
-    }
-    else {
-      switch (bps) {
-        case 16:
-          return FormatTools.UINT16;
-        case 32:
-          return FormatTools.UINT32;
-        default:
-          return FormatTools.UINT8;
-      }
-    }
   }
 
 }

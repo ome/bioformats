@@ -320,7 +320,7 @@ public class NikonReader extends BaseTiffReader {
       core[0].sizeZ = 1;
       core[0].sizeC = isRGB() ? samples : 1;
       core[0].sizeT = ifds.length;
-      core[0].pixelType = getPixelType(ifds[0]);
+      core[0].pixelType = TiffTools.getPixelType(ifds[0]);
       core[0].indexed = false;
     }
 
