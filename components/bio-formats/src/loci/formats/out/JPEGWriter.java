@@ -60,7 +60,8 @@ public class JPEGWriter extends ImageIOWriter {
         return;
       }
     }
-    throw new FormatException("Unsupported data type");
+    throw new FormatException("Unsupported data type - > 8 bit images " +
+      "cannot be saved.");
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
