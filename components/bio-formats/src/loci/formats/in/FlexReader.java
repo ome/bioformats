@@ -24,8 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.*;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.*;
@@ -81,33 +80,35 @@ public class FlexReader extends BaseTiffReader {
   {
     FormatTools.assertId(currentId, true, 1);
 
-    int nBytes = TiffTools.getBitsPerSample(ifds[no])[0] / 8;
+    int ifdIndex = getSeries() * getImageCount() + no;
+
+    int nBytes = TiffTools.getBitsPerSample(ifds[ifdIndex])[0] / 8;
 
     // expand pixel values with multiplication by factor[no]
-    byte[] bytes = super.openBytes(no, buf, x, y, w, h);
+    byte[] bytes = TiffTools.getSamples(ifds[ifdIndex], in, buf, x, y, w, h);
 
     if (getPixelType() == FormatTools.UINT8) {
       int num = bytes.length;
       for (int i=num-1; i>=0; i--) {
-        int q = (int) ((bytes[i] & 0xff) * factors[no]);
+        int q = (int) ((bytes[i] & 0xff) * factors[ifdIndex]);
         bytes[i] = (byte) (q & 0xff);
       }
     }
     else if (getPixelType() == FormatTools.UINT16) {
       int num = bytes.length / 2;
       for (int i=num-1; i>=0; i--) {
-        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
+        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[ifdIndex]) :
           (int) (DataTools.bytesToInt(bytes, i*2, 2, isLittleEndian()) *
-          factors[no]);
+          factors[ifdIndex]);
         DataTools.unpackBytes(q, bytes, i * 2, 2, isLittleEndian());
       }
     }
     else if (getPixelType() == FormatTools.UINT32) {
       int num = bytes.length / 4;
       for (int i=num-1; i>=0; i--) {
-        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[no]) :
+        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[ifdIndex]) :
           (int) (DataTools.bytesToInt(bytes, i*4, nBytes,
-          isLittleEndian()) * factors[no]);
+          isLittleEndian()) * factors[ifdIndex]);
         DataTools.unpackBytes(q, bytes, i * 4, 4, isLittleEndian());
       }
     }
@@ -289,6 +290,9 @@ public class FlexReader extends BaseTiffReader {
     private int nextSliderRef = 0;
     private int nextFilterCombination = 0;
 
+    private Hashtable fieldCounts;
+    private String currentSublayout;
+
     private String parentQName;
     private String currentQName;
 
@@ -296,10 +300,16 @@ public class FlexReader extends BaseTiffReader {
       this.names = names;
       this.factors = factors;
       this.store = store;
+      fieldCounts = new Hashtable();
     }
 
     public void characters(char[] ch, int start, int length) {
       String value = new String(ch, start, length);
+
+      if (currentQName.equals("SublayoutRef")) {
+        fieldCount = ((Integer) fieldCounts.get(value)).intValue();
+      }
+
       if (currentQName.equals("PlateName")) {
         store.setPlateName(value, nextPlate - 1);
         addMeta("Plate " + (nextPlate - 1) + " Name", value);
@@ -452,6 +462,14 @@ public class FlexReader extends BaseTiffReader {
             attributes.getValue(i));
         }
         nextSublayout++;
+
+        String id = attributes.getValue("ID");
+        if (id != null) {
+          currentSublayout = id;
+          if (!fieldCounts.containsKey(currentSublayout)) {
+            fieldCounts.put(currentSublayout, new Integer(0));
+          }
+        }
       }
       else if (qName.equals("Field")) {
         parentQName = qName;
@@ -461,7 +479,9 @@ public class FlexReader extends BaseTiffReader {
         }
         nextField++;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        if (fieldNo > fieldCount) fieldCount++;
+        int count = ((Integer) fieldCounts.get(currentSublayout)).intValue();
+        if (fieldNo > count) count++;
+        fieldCounts.put(currentSublayout, new Integer(count));
       }
       else if (qName.equals("Stack")) {
         nextPlane = 0;
