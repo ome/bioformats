@@ -46,10 +46,17 @@ public class SignedColorModel extends ColorModel {
   public SignedColorModel(int pixelBits, int dataType, int nChannels)
     throws IOException
   {
-    super(pixelBits);
+    super(pixelBits, makeBitArray(nChannels, pixelBits),
+      AWTImageTools.makeColorSpace(nChannels), nChannels == 4, false,
+      ColorModel.TRANSLUCENT, dataType);
+
+    int type = dataType;
+    if (type == DataBuffer.TYPE_SHORT) {
+      type = DataBuffer.TYPE_USHORT;
+    }
 
     helper = new ComponentColorModel(AWTImageTools.makeColorSpace(nChannels),
-      nChannels == 4, false, ColorModel.TRANSLUCENT, dataType);
+      nChannels == 4, false, ColorModel.TRANSLUCENT, type);
 
     this.pixelBits = pixelBits;
     this.nChannels = nChannels;
@@ -64,7 +71,8 @@ public class SignedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#isCompatibleRaster(Raster) */
   public boolean isCompatibleRaster(Raster raster) {
-    return helper.isCompatibleRaster(raster);
+    return raster.getNumBands() == getNumComponents() &&
+      raster.getTransferType() == getTransferType();
   }
 
   /* @see java.awt.image.ColorModel#createCompatibleWritableRaster(int, int) */
@@ -196,6 +204,14 @@ public class SignedColorModel extends ColorModel {
       value -= 128; // [128, 255] -> [0, 127]
     }
     return value;
+  }
+
+  private static int[] makeBitArray(int nChannels, int nBits) {
+    int[] bits = new int[nChannels];
+    for (int i=0; i<bits.length; i++) {
+      bits[i] = nBits;
+    }
+    return bits;
   }
 
 }

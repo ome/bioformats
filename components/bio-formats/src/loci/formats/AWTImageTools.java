@@ -188,7 +188,7 @@ public final class AWTImageTools {
   public static BufferedImage makeImage(byte[] data,
     int w, int h, int c, boolean interleaved, boolean signed)
   {
-    if (c == 1) return makeImage(data, w, h);
+    if (c == 1) return makeImage(data, w, h, signed);
     if (c > 2) return makeRGBImage(data, c, w, h, interleaved);
     int dataType;
     DataBuffer buffer;
@@ -233,7 +233,7 @@ public final class AWTImageTools {
   public static BufferedImage makeImage(short[] data,
     int w, int h, int c, boolean interleaved, boolean signed)
   {
-    if (c == 1) return makeImage(data, w, h);
+    if (c == 1) return makeImage(data, w, h, signed);
     int dataType;
     DataBuffer buffer;
     if (signed) {
@@ -277,7 +277,7 @@ public final class AWTImageTools {
   public static BufferedImage makeImage(int[] data,
     int w, int h, int c, boolean interleaved, boolean signed)
   {
-    if (c == 1) return makeImage(data, w, h);
+    if (c == 1) return makeImage(data, w, h, signed);
     int dataType;
     DataBuffer buffer;
     if (signed) {
@@ -655,14 +655,14 @@ public final class AWTImageTools {
    * @param h Height of image plane.
    * @param c Number of channels.
    * @param type One of the following types:<ul>
-   *   <li>FormatReader.INT8 <b>** unsupported for now **</b></li>
-   *   <li>FormatReader.UINT8</li>
-   *   <li>FormatReader.INT16</li>
-   *   <li>FormatReader.UINT16</li>
-   *   <li>FormatReader.INT32</li>
-   *   <li>FormatReader.UINT32 <b>** unsupported for now **</b></li>
-   *   <li>FormatReader.FLOAT</li>
-   *   <li>FormatReader.DOUBLE</li>
+   *   <li>FormatTools.INT8 <b>** unsupported for now **</b></li>
+   *   <li>FormatTools.UINT8</li>
+   *   <li>FormatTools.INT16</li>
+   *   <li>FormatTools.UINT16</li>
+   *   <li>FormatTools.INT32</li>
+   *   <li>FormatTools.UINT32 <b>** unsupported for now **</b></li>
+   *   <li>FormatTools.FLOAT</li>
+   *   <li>FormatTools.DOUBLE</li>
    * </ul>
    */
   public static BufferedImage blankImage(int w, int h, int c, int type) {
@@ -785,7 +785,7 @@ public final class AWTImageTools {
         model = new SignedColorModel(8, DataBuffer.TYPE_BYTE, rgbChanCount);
       }
       else if (pixelType == FormatTools.INT16) {
-        model = new SignedColorModel(16, DataBuffer.TYPE_USHORT, rgbChanCount);
+        model = new SignedColorModel(16, DataBuffer.TYPE_SHORT, rgbChanCount);
       }
       else if (pixelType == FormatTools.INT32) {
         model = new SignedColorModel(32, DataBuffer.TYPE_INT, rgbChanCount);
