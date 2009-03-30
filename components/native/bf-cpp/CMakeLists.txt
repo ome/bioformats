@@ -75,13 +75,17 @@ find_package(Boost COMPONENTS thread REQUIRED)
 
 # NB: Necessary on Windows to test for Boost thread when
 #     multiple semicolon-separated files are identified.
-string(REGEX REPLACE ".*;" "" Boost_THREAD_LIB_FILE "${Boost_THREAD_LIBRARY}")
+string(REGEX REPLACE ".*;" ""
+  Boost_THREAD_LIB_CHECK "${Boost_THREAD_LIBRARY}")
+string(REGEX REPLACE "/[^/]*$" ""
+  Boost_STRIPPED_LIB_DIR "${Boost_THREAD_LIB_CHECK}")
 
-if(EXISTS "${Boost_THREAD_LIB_FILE}")
+if(EXISTS "${Boost_THREAD_LIB_CHECK}")
+  message("boost lib dir : ${Boost_STRIPPED_LIB_DIR}")
   message("thread lib    : ${Boost_THREAD_LIBRARY}")
-else(EXISTS "${Boost_THREAD_LIB_FILE}")
+else(EXISTS "${Boost_THREAD_LIB_CHECK}")
   message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
-endif(EXISTS "${Boost_THREAD_LIB_FILE}")
+endif(EXISTS "${Boost_THREAD_LIB_CHECK}")
 message("")
 
 message("-- Jace:")
@@ -91,8 +95,15 @@ else(IS_DIRECTORY "${JACE_DIR}")
   message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
 endif(IS_DIRECTORY "${JACE_DIR}")
 
-include_directories(include "${JACE_DIR}/source/c++/include" "proxies/include"
-  "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
+include_directories(include
+  "${JACE_DIR}/source/c++/include" "proxies/include"
+  "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}"
+  "${Boost_INCLUDE_DIR}")
+
+# HACK: Make linking to Boost work on Windows systems.
+if(WIN32)
+  link_directories(${Boost_STRIPPED_LIB_DIR})
+endif(WIN32)
 
 ### build Jace C++ library ###
 
@@ -102,11 +113,19 @@ message("")
 
 add_library(jace SHARED ${JACE_SRC})
 
-target_link_libraries(jace "${JAVA_JVM_LIBRARY}" "${Boost_THREAD_LIBRARY}")
+# HACK: Make linking to Boost work on Windows systems.
+if(WIN32)
+  target_link_libraries(jace "${JAVA_JVM_LIBRARY}")
+else(WIN32)
+  target_link_libraries(jace "${JAVA_JVM_LIBRARY}" ${Boost_THREAD_LIBRARY})
+endif(WIN32)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set_target_properties(jace PROPERTIES
     COMPILE_FLAGS "-fpermissive")
+else(CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties(jace PROPERTIES
+    DEFINE_SYMBOL JACE_EXPORTS)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # NB: Mac OS X 10.4 and earlier requires .jnilib extension rather than

@@ -8,4 +8,10 @@ free installer from BoostPro:
 
   http://www.boostpro.com/products/free
 
+When running the installer:
+
+  * Under "Compilers," check the version of Visual C++ matching your system.
+  * Under "Variants," check all eight boxes.
+  * When choosing components, check "Boost DateTime" and "Boost Thread."
+
 [TODO: Finish these instructions for Windows.]

@@ -111,7 +111,7 @@ from the Subversion repository using the command:
         </exec>
 <echo>
 Please use Visual Studio to complete the build.
-Press F7, or select "Build solution" from the "Build" menu.
+Select "Build solution" from the "Build" menu.
 </echo>
       </then>
       <else>
