@@ -78,6 +78,7 @@ from the Subversion repository using the command:
             </fileset>
           </classpath>
           <arg value="-mindep"/>
+          <arg value="-exportsymbols"/>
         </java>
       </else>
     </if>

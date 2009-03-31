@@ -73,7 +73,7 @@ if(WIN32)
 endif(WIN32)
 find_package(Boost COMPONENTS thread REQUIRED)
 
-# NB: Necessary on Windows to test for Boost thread when
+# NB: Necessary on Windows to test for Boost Thread when
 #     multiple semicolon-separated files are identified.
 string(REGEX REPLACE ".*;" ""
   Boost_THREAD_LIB_CHECK "${Boost_THREAD_LIBRARY}")
@@ -148,6 +148,9 @@ target_link_libraries(bfjace jace)
 if(CMAKE_COMPILER_IS_GNUCXX)
   set_target_properties(bfjace PROPERTIES
     COMPILE_FLAGS "-fpermissive")
+else(CMAKE_COMPILER_IS_GNUCXX)
+  set_target_properties(bfjace PROPERTIES
+    DEFINE_SYMBOL JACE_PROXY_EXPORTS)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 target_link_libraries(bfjace jace)
