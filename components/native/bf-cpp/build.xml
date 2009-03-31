@@ -98,6 +98,19 @@ from the Subversion repository using the command:
     <copy file="${artifact.dir}/loci_tools.jar" todir="${build.dir}"/>
     <copy file="${jace.home}/release/lib/jace-runtime.jar"
       todir="${build.dir}"/>
+    <if>
+      <isset property="isWindows"/>
+      <then>
+        <copy file="${build.dir}/jace-runtime.jar"
+          todir="${build.dir}/debug"/>
+        <copy file="${build.dir}/loci_tools.jar"
+          todir="${build.dir}/debug"/>
+        <copy file="${build.dir}/jace-runtime.jar"
+          todir="${build.dir}/release"/>
+        <copy file="${build.dir}/loci_tools.jar"
+          todir="${build.dir}/release"/>
+      </then>
+    </if>
   </target>
 
   <target name="compile" depends="gen-makefile, copy-libs"
