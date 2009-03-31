@@ -128,10 +128,25 @@ public class ZeissZVIReader extends FormatReader {
     else {
       // determine which tiles to read
 
-      int firstTile = no * tileRows * tileColumns;
-
       int rowOffset = 0;
       int colOffset = 0;
+
+      int count = 1;
+      String dimOrder = getDimensionOrder();
+      for (int i=2; i<dimOrder.length(); i++) {
+        if (dimOrder.charAt(i) == 'Z') {
+          count *= getSizeZ();
+        }
+        else if (dimOrder.charAt(i) == 'T') {
+          count *= getSizeT();
+        }
+        else if (dimOrder.charAt(i) == 'C') {
+          count *= getEffectiveSizeC();
+          break;
+        }
+      }
+      int firstTile = (no / count) * count * tileRows * tileColumns +
+        (no % count);
 
       byte[] tile = new byte[tileWidth * tileHeight * pixel];
 
@@ -154,11 +169,14 @@ public class ZeissZVIReader extends FormatReader {
               int tileH = rowIndex + tileHeight <= y + h ?
                 tileHeight - tileY : y + h - rowIndex - tileY;
 
-              int count = getSizeZ() * getSizeT() * getSizeC();
-              int ii = no + (row*tileColumns + col)*count;
-              if ((row % 2) == 1) {
-                ii = no + (row*tileColumns + (tileColumns - col - 1))*count;
+              int ii = row*tileColumns + col;
+              if (((row % 2) == 1 && getRGBChannelCount() == 1) ||
+                ((row % 2) == 0 && getRGBChannelCount() > 1))
+              {
+                ii = row*tileColumns + (tileColumns - col - 1);
               }
+              ii *= count;
+              ii += firstTile;
 
               RandomAccessStream s = poi.getDocumentStream(imageFiles[ii]);
               s.seek(offsets[ii]);
@@ -195,7 +213,7 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
-    if (isRGB()) {
+    if (isRGB() && !isJPEG) {
       // reverse bytes in groups of 3 to account for BGR storage
       byte[] bb = new byte[bytes];
       for (int i=0; i<buf.length; i+=bpp) {
@@ -367,7 +385,7 @@ public class ZeissZVIReader extends FormatReader {
     core[0].sizeC = cIndices.size();
 
     core[0].littleEndian = true;
-    core[0].interleaved = !isJPEG;
+    core[0].interleaved = true;
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
@@ -381,6 +399,11 @@ public class ZeissZVIReader extends FormatReader {
 
     tileRows = (realHeight / getSizeY()) + 1;
     tileColumns = (realWidth / getSizeX()) + 1;
+
+    while (totalTiles < tileRows * tileColumns && tileRows > 1) {
+      tileRows--;
+    }
+    tileColumns = totalTiles / tileRows;
 
     if (totalTiles <= 1) {
       tileRows = 1;
@@ -429,6 +452,7 @@ public class ZeissZVIReader extends FormatReader {
 
     if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core[0].pixelType = FormatTools.UINT16;
+    if (isJPEG) core[0].pixelType = FormatTools.UINT8;
 
     MetadataTools.populatePixels(store, this, true);
     store.setImageName("", 0);
