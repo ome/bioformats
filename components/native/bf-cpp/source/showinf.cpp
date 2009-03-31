@@ -35,6 +35,12 @@ using std::exception;
 using std::cout;
 using std::endl;
 
+#if defined (_WIN32)
+#define PATHSEP string(";")
+#else
+#define PATHSEP string(":")
+#endif
+
 int main(int argc, const char *argv[]) {
   try {
     // initialize the Java virtual machine
@@ -42,7 +48,9 @@ int main(int argc, const char *argv[]) {
     StaticVmLoader loader(JNI_VERSION_1_4);
     OptionList list;
     list.push_back(jace::ClassPath(
-      "jace-runtime.jar:bio-formats.jar:loci_tools.jar"));
+      "jace-runtime.jar" + PATHSEP +
+      "bio-formats.jar" + PATHSEP +
+      "loci_tools.jar"));
     list.push_back(jace::CustomOption("-Xcheck:jni"));
     list.push_back(jace::CustomOption("-Xmx256m"));
     //list.push_back(jace::CustomOption("-verbose:jni"));
