@@ -1098,7 +1098,7 @@ public class LeicaReader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       int nextChannel = 0;
-      for (int channel=0; channel<getSizeC(); channel++) {
+      for (int channel=0; channel<getEffectiveSizeC(); channel++) {
         if (channel >= channelNames[i].size()) break;
         String name = (String) channelNames[i].get(channel);
         if (name == null || name.trim().equals("")) continue;
