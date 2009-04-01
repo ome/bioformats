@@ -35,11 +35,13 @@ Thread module in order to handle C++ threads in a platform independent way.
 Subversion is not strictly necessary, but is useful for checking out the
 Jace source code (see "Installing Compile-Time Dependencies" below).
 
-==> Java Runtime Environment -- http://java.sun.com/
-Since Bio-Formats is written in Java, the JRE is ultimately necessary to
-execute the Bio-Formats code. In addition, the Jace proxy class generator is
-written in Java, so you must have a working Java installation both to compile
-the Bio-Formats C++ bindings, and to use them at runtime.
+==> Java Development Kit -- http://java.sun.com/
+At runtime, only the JRE is necessarry to execute the Bio-Formats code.
+However, at compile time, the full J2SE development kit is required for two
+reasons. First, the Jace proxy class generator is written in Java, so Ant needs
+a working Java compiler to compile Jace itself. Second, on Windows, only the
+JDK comes bundled with the JVM shared library (jvm.lib) necessary to link with
+Java.
 
 
 INSTALLING COMPILE-TIME DEPENDENCIES
@@ -78,6 +80,7 @@ Finally, you can compile the Bio-Formats C++ bindings:
   ant -Djace.home=/path/to/jace
 
 Where /path/to/jace is the location of your Jace source code checkout.
+Be sure to use forward slashes, even on Windows.
 
 If all goes well, the build system will:
 
@@ -88,7 +91,10 @@ If all goes well, the build system will:
 
 Please be patient, as the build may require several minutes to complete.
 
-Afterwards, a new subdirectory called "build" will contain the following files:
+
+BUILD RESULTS
+
+Afterwards, the build subdirectory will contain the following files:
 
 1) libjace.so / libjace.jnilib / jace.dll : Jace shared library
 2) libbfjace.so / libbfjace.dylib / bfjace.dll : Bio-Formats C++ bindings
