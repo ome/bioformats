@@ -25,9 +25,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // (i.e., without the C++ bindings).
 
 /*
+On all platforms, make sure the JAVA_HOME environment variable points to your
+top-level Java SDK installation directory.
+
+-------------------------------------------------------------------------------
+Compile on Windows using Visual C++ 8.0 with:
+  cl showinfJNI.cpp /EHsc
+    /I "%JAVA_HOME%\include" /I "%JAVA_HOME%\include\win32"
+    /link /libpath:"%JAVA_HOME%\lib" jvm.lib
+
+To enable the CL command, you may first need to execute:
+  "C:\Program Files\Microsoft Visual Studio 8\VC\bin\vcvars32.bat"
+
+To compile and run, you will also need to add the following directory to
+your PATH (Control Panel > System > Advanced > Environment Variables):
+  %JAVA_HOME%\jre\bin\client
+
+-------------------------------------------------------------------------------
 Compile on Mac OS X with:
   c++ showinfJNI.cpp -o showinfJNI -framework JavaVM
 
+-------------------------------------------------------------------------------
 Compile on 32-bit Linux with:
   c++ showinfJNI.cpp -o showinfJNI \
     -I $JAVA_HOME/include -I $JAVA_HOME/include/linux \
@@ -36,6 +54,7 @@ Compile on 32-bit Linux with:
 Depending on your flavor of 32-bit Linux, you may also need to execute:
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/i386/client
 
+-------------------------------------------------------------------------------
 Compile on 64-bit Linux with:
   c++ showinfJNI.cpp -o showinfJNI \
     -I $JAVA_HOME/include -I $JAVA_HOME/include/linux \
@@ -44,15 +63,20 @@ Compile on 64-bit Linux with:
 Depending on your flavor of 64-bit Linux, you may also need to execute:
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64/server
 
-Then copy loci_tools.jar to the same folder and run:
+-------------------------------------------------------------------------------
+Finally, copy loci_tools.jar to the same folder and run one of:
   ./showinfJNI
+  showinfJNI.exe
 */
 
 #include <iostream>
-using namespace std;
+using std::cout;
+using std::endl;
+
+#include <string>
+using std::string;
 
 #include <stdlib.h>
-
 #include <jni.h>
 
 int main(int argc, char* argv[]) {
@@ -69,7 +93,7 @@ int main(int argc, char* argv[]) {
     classpath += i == 0 ? "=" : ":";
     classpath += jars[i];
   }
-  cout << "Classpath = " + classpath << endl;
+  cout << "Classpath = " << classpath << endl;
 
   // get the default initialization arguments and set the class path
   JavaVMInitArgs vm_args;
