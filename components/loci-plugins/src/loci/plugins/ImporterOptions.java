@@ -115,6 +115,7 @@ public class ImporterOptions
   public static final String PREF_VIRTUAL = "bioformats.virtual";
   public static final String PREF_RECORD = "bioformats.record";
   public static final String PREF_ALL_SERIES = "bioformats.openAllSeries";
+  public static final String PREF_ROI = "bioformats.showROIs";
 
   public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
   public static final String PREF_WINDOWLESS = "bioformats.windowless";
@@ -150,6 +151,7 @@ public class ImporterOptions
     "Record_modifications_to_virtual_stack";
   public static final String LABEL_ALL_SERIES = "Open_all_series";
   public static final String LABEL_SWAP = "Swap_dimensions";
+  public static final String LABEL_ROI = "Display_ROIs";
 
   public static final String LABEL_MERGE_OPTION = "Merging Options";
   public static final String LABEL_WINDOWLESS = "windowless";
@@ -330,6 +332,8 @@ public class ImporterOptions
     "which dimensional axis the file numbering is supposed to represent. " +
     "It will take a guess, but in case it guesses wrong, you can use " +
     info(LABEL_SWAP) + " to reassign which dimensions are which.";
+  public static final String INFO_ROI = info(LABEL_ROI) +
+    " - Adds any ROIs in the file to ImageJ's ROI manager.";
 
   public static final String INFO_DEFAULT =
     "<i>Select an option for a detailed explanation. " +
@@ -360,6 +364,7 @@ public class ImporterOptions
   private Checkbox allSeriesBox;
   private Checkbox cropBox;
   private Checkbox swapBox;
+  private Checkbox roiBox;
 
   private Hashtable infoTable;
   private JEditorPane infoPane;
@@ -389,6 +394,7 @@ public class ImporterOptions
   private boolean openAllSeries;
   private boolean swapDimensions;
   private boolean upgradeCheck;
+  private boolean showROIs;
 
   private String mergeOption;
   private boolean windowless;
@@ -430,6 +436,7 @@ public class ImporterOptions
   public boolean doCrop() { return crop; }
   public boolean isSwapDimensions() { return swapDimensions; }
   public boolean doUpgradeCheck() { return upgradeCheck; }
+  public boolean showROIs() { return showROIs; }
 
   public String getMergeOption() { return mergeOption; }
 
@@ -480,6 +487,7 @@ public class ImporterOptions
   public void setCrop(boolean b) { crop = b; }
   public void setSwapDimensions(boolean b) { swapDimensions = b; }
   public void setUpgradeCheck(boolean b) { upgradeCheck = b; }
+  public void setShowROIs(boolean b) { showROIs = b; }
 
   // -- ImporterOptions methods --
 
@@ -505,6 +513,7 @@ public class ImporterOptions
     openAllSeries = Prefs.get(PREF_ALL_SERIES, false);
     swapDimensions = Prefs.get(PREF_SWAP, false);
     upgradeCheck = Prefs.get(PREF_UPGRADE, false);
+    showROIs = Prefs.get(PREF_ROI, false);
 
     if (Prefs.get(PREF_UPGRADE, null) == null) {
       IJ.showMessage("The Bio-Formats plugin for ImageJ can automatically " +
@@ -542,6 +551,7 @@ public class ImporterOptions
     Prefs.set(PREF_RECORD, record);
     Prefs.set(PREF_ALL_SERIES, openAllSeries);
     Prefs.set(PREF_SWAP, swapDimensions);
+    Prefs.set(PREF_ROI, showROIs);
 
     if (Prefs.get(PREF_UPGRADE, null) == null) upgradeCheck = true;
     Prefs.set(PREF_UPGRADE, upgradeCheck);
@@ -599,6 +609,7 @@ public class ImporterOptions
       record = getMacroValue(arg, LABEL_RECORD, record);
       openAllSeries = getMacroValue(arg, LABEL_ALL_SERIES, openAllSeries);
       swapDimensions = getMacroValue(arg, LABEL_SWAP, swapDimensions);
+      showROIs = getMacroValue(arg, LABEL_ROI, showROIs);
 
       mergeOption = Macro.getValue(arg, LABEL_MERGE_OPTION, mergeOption);
       windowless = getMacroValue(arg, LABEL_WINDOWLESS, windowless);
@@ -813,6 +824,7 @@ public class ImporterOptions
     gd.addCheckbox(LABEL_RECORD, record);
     gd.addCheckbox(LABEL_ALL_SERIES, openAllSeries);
     gd.addCheckbox(LABEL_SWAP, swapDimensions);
+    gd.addCheckbox(LABEL_ROI, showROIs);
 
     // extract GUI components from dialog and add listeners
 
@@ -862,6 +874,7 @@ public class ImporterOptions
       recordBox = (Checkbox) boxes.get(14);
       allSeriesBox = (Checkbox) boxes.get(15);
       swapBox = (Checkbox) boxes.get(16);
+      roiBox = (Checkbox) boxes.get(17);
       for (int i=0; i<boxes.size(); i++) {
         Checkbox item = (Checkbox) boxes.get(i);
         item.addFocusListener(this);
@@ -895,6 +908,7 @@ public class ImporterOptions
     infoTable.put(recordBox, INFO_RECORD);
     infoTable.put(allSeriesBox, INFO_ALL_SERIES);
     infoTable.put(swapBox, INFO_SWAP);
+    infoTable.put(roiBox, INFO_ROI);
 
     // rebuild dialog using FormLayout to organize things more nicely
 
@@ -906,7 +920,7 @@ public class ImporterOptions
 
     String rows =
       // Stack viewing        | Metadata viewing
-      "pref, 3dlu, pref, 3dlu, pref, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Dataset organization | Memory management
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Color options        | Split into separate windows
@@ -934,7 +948,7 @@ public class ImporterOptions
     row += 2;
     builder.add(orderLabel, cc.xy(1, row));
     builder.add(orderChoice, cc.xy(3, row));
-    row += 2;
+    row += 4;
     builder.addSeparator("Dataset organization", cc.xyw(1, row, 3));
     row += 2;
     builder.add(groupBox, xyw(cc, 1, row, 3));
@@ -963,6 +977,8 @@ public class ImporterOptions
     builder.add(metadataBox, xyw(cc, 5, row, 1));
     row += 2;
     builder.add(omexmlBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(roiBox, xyw(cc, 5, row, 1));
     row += 2;
     builder.addSeparator("Memory management", cc.xy(5, row));
     row += 2;
@@ -1020,6 +1036,7 @@ public class ImporterOptions
     record = gd.getNextBoolean();
     openAllSeries = gd.getNextBoolean();
     swapDimensions = gd.getNextBoolean();
+    showROIs = gd.getNextBoolean();
 
     return STATUS_OK;
   }

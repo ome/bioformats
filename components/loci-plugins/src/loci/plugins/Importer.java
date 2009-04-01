@@ -692,6 +692,13 @@ public class Importer {
         }
       }
 
+      // display ROIs, if necessary
+
+      if (options.showROIs()) {
+        ROIHandler.openROIs(omexmlMeta,
+          (ImagePlus[]) imps.toArray(new ImagePlus[0]));
+      }
+
       // -- Step 5: finish up --
 
       try {
@@ -899,7 +906,7 @@ public class Importer {
           new PlugInFilterRunner(colorizer, "", arg);
         }
       }
-      else imps.add(imp);
+      imps.add(imp);
     }
   }
 
