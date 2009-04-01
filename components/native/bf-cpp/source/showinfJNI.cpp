@@ -29,7 +29,8 @@ On all platforms, make sure the JAVA_HOME environment variable points to your
 top-level Java SDK installation directory.
 
 -------------------------------------------------------------------------------
-Compile on Windows using Visual C++ 8.0 with:
+Assuming you have Visual Studio 8.0 or similar installed,
+compile on Windows with (all on one line):
   cl showinfJNI.cpp /EHsc
     /I "%JAVA_HOME%\include" /I "%JAVA_HOME%\include\win32"
     /link /libpath:"%JAVA_HOME%\lib" jvm.lib
@@ -79,6 +80,12 @@ using std::string;
 #include <stdlib.h>
 #include <jni.h>
 
+#if defined (_WIN32)
+#define PATHSEP string(";")
+#else
+#define PATHSEP string(":")
+#endif
+
 int main(int argc, char* argv[]) {
   JavaVM *jvm;
   JNIEnv *env;
@@ -90,7 +97,7 @@ int main(int argc, char* argv[]) {
     "loci_tools.jar"
   };
   for (int i=0; i<numJars; i++) {
-    classpath += i == 0 ? "=" : ":";
+    classpath += i == 0 ? "=" : PATHSEP;
     classpath += jars[i];
   }
   cout << "Classpath = " << classpath << endl;
