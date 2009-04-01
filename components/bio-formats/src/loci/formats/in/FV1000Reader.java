@@ -51,6 +51,21 @@ public class FV1000Reader extends FormatReader {
 
   private static final int NUM_DIMENSIONS = 9;
 
+  /** ROI types. */
+  private static final int POINT = 2;
+  private static final int LINE = 3;
+  private static final int POLYLINE = 4;
+  private static final int RECTANGLE = 5;
+  private static final int CIRCLE = 6;
+  private static final int ELLIPSE = 7;
+  private static final int POLYGON = 8;
+  private static final int FREE_SHAPE = 9;
+  private static final int FREE_LINE = 10;
+  private static final int GRID = 11;
+  private static final int ARROW = 12;
+  private static final int COLOR_BAR = 13;
+  private static final int SCALE = 15;
+
   // -- Fields --
 
   /** Names of every TIFF file to open. */
@@ -184,24 +199,6 @@ public class FV1000Reader extends FormatReader {
     plane = null;
     return buf;
   }
-
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */
-  /*
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-
-    RandomAccessStream thumb = getFile(thumbId);
-    byte[] b = new byte[(int) thumb.length()];
-    thumb.read(b);
-    thumb.close();
-    Location.mapFile("thumbnail.bmp", new RABytes(b));
-    thumbReader.setId("thumbnail.bmp");
-    return thumbReader.openImage(0);
-  }
-  */
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
@@ -397,6 +394,7 @@ public class FV1000Reader extends FormatReader {
     Vector channels = new Vector();
     Vector lutNames = new Vector();
     Hashtable filenames = new Hashtable();
+    Hashtable roiFilenames = new Hashtable();
     String prefix = "";
     while (st.hasMoreTokens()) {
       line = DataTools.stripString(st.nextToken().trim());
@@ -423,6 +421,26 @@ public class FV1000Reader extends FormatReader {
             value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
           filenames.put(new Integer(key.substring(11)), value.trim());
+        }
+        else if (key.startsWith("RoiFileName") && key.indexOf("Thumb") == -1 &&
+          !isPreviewName(value))
+        {
+          value = value.replaceAll("/", File.separator);
+          value = value.replace('\\', File.separatorChar);
+          while (value.indexOf("GST") != -1) {
+            String first = value.substring(0, value.indexOf("GST"));
+            int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
+              value.length() : value.indexOf(File.separator);
+            String last = value.substring(value.lastIndexOf("=", ndx) + 1);
+            value = first + last;
+          }
+          if (mappedOIF) {
+            value = value.substring(value.lastIndexOf(File.separator) + 1);
+          }
+          try {
+            roiFilenames.put(new Integer(key.substring(11)), value.trim());
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("PtyFileNameS")) ptyStart = value;
         else if (key.equals("PtyFileNameE")) ptyEnd = value;
@@ -1022,6 +1040,153 @@ public class FV1000Reader extends FormatReader {
     // link Objective to Image using ObjectiveSettings
     store.setObjectiveID("Objective:0", 0, 0);
     store.setObjectiveSettingsObjective("Objective:0", 0);
+
+    int nextROI = -1;
+
+    // populate ROI data - there is one ROI file per plane
+    for (int i=0; i<roiFilenames.size(); i++) {
+      if (i >= getImageCount()) break;
+      int[] coordinates = getZCTCoords(i);
+      String filename = (String) roiFilenames.get(new Integer(i));
+      filename = sanitizeFile(filename, (isOIB || mappedOIF) ? "" : path);
+
+      RandomAccessStream stream = getFile(filename);
+      String data = stream.readString((int) stream.length());
+      stream.close();
+
+      String[] lines = data.split("\n");
+
+      boolean validROI = false;
+      int nextShape = -1;
+      int shapeType = -1;
+
+      String[] xc = null, yc = null;
+      int divide = 0;
+
+      for (int q=0; q<lines.length; q++) {
+        lines[q] = DataTools.stripString(lines[q]);
+
+        int eq = lines[q].indexOf("=");
+        if (eq == -1) continue;
+        key = lines[q].substring(0, eq).trim();
+        value = lines[q].substring(eq + 1).trim();
+
+        if (key.equals("Name")) {
+          value = value.replaceAll("\"", "");
+          try {
+            validROI = Integer.parseInt(value) > 1;
+          }
+          catch (NumberFormatException e) { validROI = false; }
+        }
+        if (!validROI) continue;
+
+        if (key.equals("SHAPE")) {
+          shapeType = Integer.parseInt(value);
+        }
+        else if (key.equals("DIVIDE")) {
+          divide = Integer.parseInt(value);
+        }
+        else if (key.equals("X")) {
+          xc = value.split(",");
+        }
+        else if (key.equals("Y")) {
+          yc = value.split(",");
+
+          int x = Integer.parseInt(xc[0]);
+          int width = xc.length > 1 ? Integer.parseInt(xc[1]) - x : 0;
+          int y = Integer.parseInt(yc[0]);
+          int height = yc.length > 1 ? Integer.parseInt(yc[1]) - y : 0;
+
+          if (width + x <= getSizeX() && height + y <= getSizeY()) {
+            nextShape++;
+            if (nextShape == 0) {
+              nextROI++;
+              store.setROIZ0(new Integer(coordinates[0]), 0, nextROI);
+              store.setROIZ1(new Integer(coordinates[0]), 0, nextROI);
+              store.setROIT0(new Integer(coordinates[2]), 0, nextROI);
+              store.setROIT1(new Integer(coordinates[2]), 0, nextROI);
+            }
+
+            store.setShapetheZ(new Integer(coordinates[0]), 0,
+              nextROI, nextShape);
+            store.setShapetheT(new Integer(coordinates[2]), 0,
+              nextROI, nextShape);
+
+            if (shapeType == POINT) {
+              store.setPointcx(xc[0], 0, nextROI, nextShape);
+              store.setPointcy(yc[0], 0, nextROI, nextShape);
+            }
+            else if (shapeType == RECTANGLE) {
+              store.setRectx(String.valueOf(x), 0, nextROI, nextShape);
+              store.setRectwidth(String.valueOf(width), 0, nextROI, nextShape);
+              store.setRecty(String.valueOf(y), 0, nextROI, nextShape);
+              store.setRectheight(String.valueOf(height), 0, nextROI,
+                nextShape);
+            }
+            else if (shapeType == GRID) {
+              width /= divide;
+              height /= divide;
+              for (int row=0; row<divide; row++) {
+                for (int col=0; col<divide; col++) {
+                  store.setRectx(String.valueOf(x + col*width), 0, nextROI,
+                    nextShape);
+                  store.setRecty(String.valueOf(y + row*height), 0, nextROI,
+                    nextShape);
+                  store.setRectwidth(String.valueOf(width), 0, nextROI,
+                    nextShape);
+                  store.setRectheight(String.valueOf(height), 0, nextROI,
+                    nextShape);
+                  if (row < divide - 1 || col < divide - 1) nextShape++;
+                }
+              }
+            }
+            else if (shapeType == LINE) {
+              store.setLinex1(String.valueOf(x), 0, nextROI, nextShape);
+              store.setLiney1(String.valueOf(y), 0, nextROI, nextShape);
+              store.setLinex2(String.valueOf(x + width), 0, nextROI, nextShape);
+              store.setLiney2(String.valueOf(y + height), 0, nextROI,
+                nextShape);
+            }
+            else if (shapeType == CIRCLE) {
+              int r = width / 2;
+              store.setCirclecx(String.valueOf(x + r), 0, nextROI, nextShape);
+              store.setCirclecy(String.valueOf(y + r), 0, nextROI, nextShape);
+              store.setCircler(String.valueOf(r), 0, nextROI, nextShape);
+            }
+            else if (shapeType == ELLIPSE) {
+              int rx = width / 2;
+              int ry = height / 2;
+              store.setEllipsecx(String.valueOf(x + rx), 0, nextROI, nextShape);
+              store.setEllipsecy(String.valueOf(y + ry), 0, nextROI, nextShape);
+              store.setEllipserx(String.valueOf(rx), 0, nextROI, nextShape);
+              store.setEllipsery(String.valueOf(ry), 0, nextROI, nextShape);
+            }
+            else if (shapeType == POLYGON || shapeType == FREE_SHAPE) {
+              StringBuffer points = new StringBuffer("(");
+              for (int point=0; point<xc.length; point++) {
+                points.append(xc[point]);
+                points.append(" ");
+                points.append(yc[point]);
+                if (point < xc.length - 1) points.append(", ");
+              }
+              points.append(")");
+              store.setPolygonpoints(points.toString(), 0, nextROI, nextShape);
+            }
+            else if (shapeType == POLYLINE || shapeType == FREE_LINE) {
+              StringBuffer points = new StringBuffer("(");
+              for (int point=0; point<xc.length; point++) {
+                points.append(xc[point]);
+                points.append(" ");
+                points.append(yc[point]);
+                if (point < xc.length - 1) points.append(", ");
+              }
+              points.append(")");
+              store.setPolylinepoints(points.toString(), 0, nextROI, nextShape);
+            }
+          }
+        }
+      }
+    }
   }
 
   // -- Helper methods --
