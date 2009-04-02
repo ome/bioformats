@@ -760,8 +760,10 @@ public class PerkinElmerReader extends FormatReader {
         for (int ci=0; ci<getSizeC(); ci++) {
           store.setPlaneTimingDeltaT(new Float((plane * msPerPlane) / 1000),
             0, 0, plane);
-          store.setPlaneTimingExposureTime(
-            (Float) exposureTimes.get(ci), 0, 0, plane);
+          if (ci < exposureTimes.size()) {
+            store.setPlaneTimingExposureTime(
+              (Float) exposureTimes.get(ci), 0, 0, plane);
+          }
           plane++;
         }
       }
