@@ -46,7 +46,7 @@ public class InCellReader extends FormatReader {
 
   // -- Fields --
 
-  private Image[][][] imageFiles;
+  private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
   private int seriesCount;
   private Vector emWaves, exWaves;
@@ -63,6 +63,10 @@ public class InCellReader extends FormatReader {
   private int lastCol;
 
   private boolean[][] exclude;
+
+  private Vector channelsPerTimepoint;
+  private boolean oneTimepointPerSeries;
+  private int totalChannels;
 
   // -- Constructor --
 
@@ -103,33 +107,37 @@ public class InCellReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
+    int[] coordinates = getZCTCoords(no);
+
     int well = getWellFromSeries(getSeries());
     int field = getFieldFromSeries(getSeries());
-    if (imageFiles[well][field][no] != null) {
-      tiffReader.setId(imageFiles[well][field][no].filename);
-      return tiffReader.openBytes(0, buf, x, y, w, h);
-    }
-    return buf;
+    int timepoint = oneTimepointPerSeries ?
+      getSeries() % channelsPerTimepoint.size() : coordinates[2];
+    int image = getIndex(coordinates[0], coordinates[1], 0);
+    tiffReader.setId(imageFiles[well][field][timepoint][image].filename);
+    return tiffReader.openBytes(0, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
-    String[] files = new String[getSeriesCount() * getImageCount() + 1];
-    int nextFile = 0;
+    Vector files = new Vector();
     if (imageFiles != null) {
-      for (int series=0; series<getSeriesCount(); series++) {
-        int well = getWellFromSeries(series);
-        int field = getFieldFromSeries(series);
-        for (int plane=0; plane<getImageCount(); plane++) {
-          if (imageFiles[well][field][plane] != null) {
-            files[nextFile++] = imageFiles[well][field][plane].filename;
+      for (int well=0; well<wellRows*wellCols; well++) {
+        for (int field=0; field<fieldCount; field++) {
+          for (int time=0; time<imageFiles[well][field].length; time++) {
+            for (int p=0; p<imageFiles[well][field][time].length; p++)
+            {
+              if (imageFiles[well][field][time][p] != null) {
+                files.add(imageFiles[well][field][time][p].filename);
+              }
+            }
           }
         }
       }
     }
-    files[files.length - 1] = currentId;
-    return files;
+    files.add(currentId);
+    return (String[]) files.toArray(new String[0]);
   }
 
   // -- IFormatHandler API methods --
@@ -168,6 +176,7 @@ public class InCellReader extends FormatReader {
 
     emWaves = new Vector();
     exWaves = new Vector();
+    channelsPerTimepoint = new Vector();
 
     wellCoordinates = new Hashtable();
     posX = new Vector();
@@ -188,6 +197,7 @@ public class InCellReader extends FormatReader {
     if (getSizeT() == 0) core[0].sizeT = 1;
 
     Vector wells = new Vector();
+    seriesCount = 0;
 
     if (exclude != null) {
       for (int row=0; row<wellRows; row++) {
@@ -200,12 +210,35 @@ public class InCellReader extends FormatReader {
     }
     else seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
+    totalChannels = getSizeC();
+
+    oneTimepointPerSeries = false;
+    for (int i=1; i<channelsPerTimepoint.size(); i++) {
+      if (!channelsPerTimepoint.get(i).equals(channelsPerTimepoint.get(i - 1)))
+      {
+        oneTimepointPerSeries = true;
+        break;
+      }
+    }
+    if (oneTimepointPerSeries) {
+      int imageCount = 0;
+      for (int i=0; i<channelsPerTimepoint.size(); i++) {
+        int c = ((Integer) channelsPerTimepoint.get(i)).intValue();
+        imageCount += c * getSizeZ();
+      }
+      seriesCount = (totalImages / imageCount) * getSizeT();
+    }
+
+    int sizeT = getSizeT();
+    int sizeC = getSizeC();
     int z = getSizeZ();
-    int c = getSizeC();
-    int t = getSizeT();
+    int t = oneTimepointPerSeries ? 1 : getSizeT();
 
     core = new CoreMetadata[seriesCount];
     for (int i=0; i<seriesCount; i++) {
+      int c = oneTimepointPerSeries ?
+        ((Integer) channelsPerTimepoint.get(i % sizeT)).intValue() : sizeC;
+
       core[i] = new CoreMetadata();
       core[i].sizeZ = z;
       core[i].sizeC = c;
@@ -216,7 +249,7 @@ public class InCellReader extends FormatReader {
 
     tiffReader = new MinimalTiffReader();
     tiffReader.setId(
-      imageFiles[getWellFromSeries(0)][getFieldFromSeries(0)][0].filename);
+      imageFiles[getWellFromSeries(0)][getFieldFromSeries(0)][0][0].filename);
 
     int nextTiming = 0;
     for (int i=0; i<seriesCount; i++) {
@@ -241,9 +274,18 @@ public class InCellReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i);
+      int timepoint = oneTimepointPerSeries ?
+        i % channelsPerTimepoint.size() : -1;
+
       store.setImageID("Image:" + i, i);
       store.setImageInstrumentRef("Instrument:0", i);
-      store.setImageName("Well #" + well + ", Field #" + field, i);
+
+      String imageName = "Well #" + well + ", Field #" + field;
+      if (timepoint >= 0) {
+        imageName += ", Timepoint #" + timepoint;
+      }
+
+      store.setImageName(imageName, i);
       store.setImageCreationDate(creationDate, i);
     }
 
@@ -252,11 +294,18 @@ public class InCellReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i);
-      for (int q=0; q<core[i].imageCount; q++) {
-        Image img = imageFiles[well][field][q];
-        if (img == null) continue;
-        store.setPlaneTimingDeltaT(img.deltaT, i, 0, q);
-        store.setPlaneTimingExposureTime(img.exposure, i, 0, q);
+      int timepoint = oneTimepointPerSeries ?
+        i % channelsPerTimepoint.size() : 0;
+      for (int time=0; time<getSizeT(); time++) {
+        if (!oneTimepointPerSeries) timepoint = time;
+        int c = ((Integer) channelsPerTimepoint.get(timepoint)).intValue();
+        for (int q=0; q<getSizeZ()*c; q++) {
+          Image img = imageFiles[well][field][timepoint][q];
+          if (img == null) continue;
+          int plane = time * getSizeZ() * c + q;
+          store.setPlaneTimingDeltaT(img.deltaT, i, 0, plane);
+          store.setPlaneTimingExposureTime(img.exposure, i, 0, plane);
+        }
       }
     }
 
@@ -287,10 +336,12 @@ public class InCellReader extends FormatReader {
   // -- Helper methods --
 
   private int getFieldFromSeries(int series) {
+    if (oneTimepointPerSeries) series /= channelsPerTimepoint.size();
     return series % fieldCount;
   }
 
   private int getWellFromSeries(int series) {
+    if (oneTimepointPerSeries) series /= channelsPerTimepoint.size();
     int well = series / fieldCount;
     int wellRow = well / (lastCol - firstCol + 1);
     int wellCol = well % (lastCol - firstCol + 1);
@@ -302,11 +353,23 @@ public class InCellReader extends FormatReader {
   class MinimalInCellHandler extends DefaultHandler {
     private String currentImageFile;
     private int wellRow, wellCol;
+    private int nChannels = 0;
 
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("PlateMap")) {
-        int imageCount = getSizeZ() * getSizeC() * getSizeT();
-        imageFiles = new Image[wellRows * wellCols][fieldCount][imageCount];
+        imageFiles = new Image[wellRows * wellCols][fieldCount][getSizeT()][];
+        for (int well=0; well<wellRows*wellCols; well++) {
+          for (int field=0; field<fieldCount; field++) {
+            for (int t=0; t<getSizeT(); t++) {
+              int channels = ((Integer) channelsPerTimepoint.get(t)).intValue();
+              imageFiles[well][field][t] = new Image[channels * getSizeZ()];
+            }
+          }
+        }
+      }
+      else if (qName.equals("TimePoint")) {
+        channelsPerTimepoint.add(new Integer(nChannels));
+        nChannels = 0;
       }
     }
 
@@ -332,22 +395,21 @@ public class InCellReader extends FormatReader {
         Location current = new Location(currentId).getAbsoluteFile();
 
         Location imageFile = new Location(current.getParentFile(), file);
-        if (imageFile.exists()) {
-          currentImageFile = imageFile.getAbsolutePath();
-        }
-        else currentImageFile = file;
+        currentImageFile = imageFile.getAbsolutePath();
       }
       else if (qName.equals("Identifier")) {
         int field = Integer.parseInt(attributes.getValue("field_index"));
         int z = Integer.parseInt(attributes.getValue("z_index"));
         int c = Integer.parseInt(attributes.getValue("wave_index"));
         int t = Integer.parseInt(attributes.getValue("time_index"));
-        core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-        int index = getIndex(z, c, t);
+        int channels = ((Integer) channelsPerTimepoint.get(t)).intValue();
+
+        int index = FormatTools.getIndex("XYZCT", getSizeZ(),
+          channels, 1, getSizeZ() * channels, z, c, 0);
 
         Image img = new Image();
         img.filename = currentImageFile;
-        imageFiles[wellRow * wellCols + wellCol][field][index] = img;
+        imageFiles[wellRow * wellCols + wellCol][field][t][index] = img;
       }
       else if (qName.equals("offset_point")) {
         fieldCount++;
@@ -357,6 +419,9 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Wavelength")) {
         core[0].sizeC++;
+      }
+      else if (qName.equals("AcqWave")) {
+        nChannels++;
       }
       else if (qName.equals("ZDimensionParameters")) {
         String nz = attributes.getValue("number_of_slices");
@@ -408,8 +473,10 @@ public class InCellReader extends FormatReader {
         openImage = false;
 
         int well = currentRow * wellCols + currentCol;
-        imageFiles[well][currentField][currentImage].deltaT = timestamp;
-        imageFiles[well][currentField][currentImage].exposure = exposure;
+        if (imageFiles[well][currentField][currentImage][0] != null) {
+          imageFiles[well][currentField][currentImage][0].deltaT = timestamp;
+          imageFiles[well][currentField][currentImage][0].exposure = exposure;
+        }
       }
     }
 
@@ -432,7 +499,7 @@ public class InCellReader extends FormatReader {
         int z = Integer.parseInt(attributes.getValue("z_index"));
         int c = Integer.parseInt(attributes.getValue("wave_index"));
         int t = Integer.parseInt(attributes.getValue("time_index"));
-        currentImage = getIndex(z, c, t);
+        currentImage = t;
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd
