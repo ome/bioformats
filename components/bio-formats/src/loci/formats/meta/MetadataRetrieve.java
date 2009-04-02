@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
+ * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -184,6 +184,22 @@ public interface MetadataRetrieve {
   // - Circle property retrieval -
 
   /**
+   * For a particular Circle, gets X coordinate of the center of the circle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getCircleCx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, gets Y coordinate of the center of the circle.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getCircleCy(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Circle, gets unique label identifying the circle.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
@@ -192,28 +208,12 @@ public interface MetadataRetrieve {
   String getCircleID(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Circle, gets X coordinate of the center of the circle.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getCirclecx(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Circle, gets Y coordinate of the center of the circle.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getCirclecy(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Circle, gets radius of the circle, in pixels.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getCircler(int imageIndex, int roiIndex, int shapeIndex);
+  String getCircleR(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Circle, gets TODO.
@@ -221,7 +221,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getCircletransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getCircleTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   // - Contact property retrieval -
 
@@ -512,6 +512,22 @@ public interface MetadataRetrieve {
   // - Ellipse property retrieval -
 
   /**
+   * For a particular Ellipse, gets X coordinate of the center of the ellipse.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, gets Y coordinate of the center of the ellipse.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getEllipseCy(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Ellipse, gets unique label identifying the ellipse.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
@@ -520,28 +536,12 @@ public interface MetadataRetrieve {
   String getEllipseID(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Ellipse, gets X coordinate of the center of the ellipse.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getEllipsecx(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Ellipse, gets Y coordinate of the center of the ellipse.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getEllipsecy(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Ellipse, gets horizontal radius of the ellipse.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getEllipserx(int imageIndex, int roiIndex, int shapeIndex);
+  String getEllipseRx(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Ellipse, gets vertical radius of the ellipse.
@@ -549,7 +549,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getEllipsery(int imageIndex, int roiIndex, int shapeIndex);
+  String getEllipseRy(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Ellipse, gets TODO.
@@ -557,7 +557,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getEllipsetransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getEllipseTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   // - EmFilter property retrieval -
 
@@ -1094,7 +1094,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getLinetransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getLineTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, gets X coordinate of the first endpoint of the line.
@@ -1102,7 +1102,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getLinex1(int imageIndex, int roiIndex, int shapeIndex);
+  String getLineX1(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, gets X coordinate of the second endpoint of the line.
@@ -1110,7 +1110,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getLinex2(int imageIndex, int roiIndex, int shapeIndex);
+  String getLineX2(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, gets Y coordinate of the first endpoint of the line.
@@ -1118,7 +1118,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getLiney1(int imageIndex, int roiIndex, int shapeIndex);
+  String getLineY1(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, gets Y coordinate of the second endpoint of the line.
@@ -1126,7 +1126,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getLiney2(int imageIndex, int roiIndex, int shapeIndex);
+  String getLineY2(int imageIndex, int roiIndex, int shapeIndex);
 
   // - LogicalChannel property retrieval -
 
@@ -1266,6 +1266,14 @@ public interface MetadataRetrieve {
   // - Mask property retrieval -
 
   /**
+   * For a particular Mask, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getMaskHeight(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Mask, gets unique label identifying the mask.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
@@ -1279,7 +1287,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getMaskheight(int imageIndex, int roiIndex, int shapeIndex);
+  String getMaskTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Mask, gets TODO.
@@ -1287,7 +1295,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getMasktransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getMaskWidth(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Mask, gets TODO.
@@ -1295,7 +1303,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getMaskwidth(int imageIndex, int roiIndex, int shapeIndex);
+  String getMaskX(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Mask, gets TODO.
@@ -1303,15 +1311,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getMaskx(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Mask, gets TODO.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getMasky(int imageIndex, int roiIndex, int shapeIndex);
+  String getMaskY(int imageIndex, int roiIndex, int shapeIndex);
 
   // - MaskPixels property retrieval -
 
@@ -1766,6 +1766,22 @@ public interface MetadataRetrieve {
   // - Point property retrieval -
 
   /**
+   * For a particular Point, gets X coordinate of the center of the point.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPointCx(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, gets Y coordinate of the center of the point.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPointCy(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Point, gets unique label identifying the point.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
@@ -1774,28 +1790,12 @@ public interface MetadataRetrieve {
   String getPointID(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Point, gets X coordinate of the center of the point.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getPointcx(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Point, gets Y coordinate of the center of the point.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getPointcy(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Point, gets radius of the point, in pixels.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getPointr(int imageIndex, int roiIndex, int shapeIndex);
+  String getPointR(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Point, gets TODO.
@@ -1803,7 +1803,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getPointtransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getPointTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   // - Polygon property retrieval -
 
@@ -1821,7 +1821,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getPolygonpoints(int imageIndex, int roiIndex, int shapeIndex);
+  String getPolygonPoints(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Polygon, gets TODO.
@@ -1829,7 +1829,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getPolygontransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getPolygonTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   // - Polyline property retrieval -
 
@@ -1847,7 +1847,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getPolylinepoints(int imageIndex, int roiIndex, int shapeIndex);
+  String getPolylinePoints(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Polyline, gets TODO.
@@ -1855,7 +1855,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getPolylinetransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getPolylineTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   // - Project property retrieval -
 
@@ -2015,6 +2015,14 @@ public interface MetadataRetrieve {
   // - Rect property retrieval -
 
   /**
+   * For a particular Rect, gets height of the rectangle, in pixels.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getRectHeight(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Rect, gets unique label identifying the rectangle.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
@@ -2023,20 +2031,12 @@ public interface MetadataRetrieve {
   String getRectID(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Rect, gets height of the rectangle, in pixels.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  String getRectheight(int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Rect, gets TODO.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getRecttransform(int imageIndex, int roiIndex, int shapeIndex);
+  String getRectTransform(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Rect, gets width of the rectangle, in pixels.
@@ -2044,7 +2044,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getRectwidth(int imageIndex, int roiIndex, int shapeIndex);
+  String getRectWidth(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Rect, gets X coordinate of the upper left corner of the rectangle.
@@ -2052,7 +2052,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getRectx(int imageIndex, int roiIndex, int shapeIndex);
+  String getRectX(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Rect, gets Y coordinate of the upper left corner of the rectangle.
@@ -2060,7 +2060,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  String getRecty(int imageIndex, int roiIndex, int shapeIndex);
+  String getRectY(int imageIndex, int roiIndex, int shapeIndex);
 
   // - Region property retrieval -
 
@@ -2189,7 +2189,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  Integer getShapetheT(int imageIndex, int roiIndex, int shapeIndex);
+  Integer getShapeTheT(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Shape, gets Z position of the shape.
@@ -2197,7 +2197,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  Integer getShapetheZ(int imageIndex, int roiIndex, int shapeIndex);
+  Integer getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex);
 
   // - StageLabel property retrieval -
 

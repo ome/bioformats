@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
+ * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -399,32 +399,32 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Circle property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getCircleCx(int, int, int) */
+  public String getCircleCx(int imageIndex, int roiIndex, int shapeIndex) {
+    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
+    return circle == null ? null : circle.getcx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getCircleCy(int, int, int) */
+  public String getCircleCy(int imageIndex, int roiIndex, int shapeIndex) {
+    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
+    return circle == null ? null : circle.getcy();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getCircleID(int, int, int) */
   public String getCircleID(int imageIndex, int roiIndex, int shapeIndex) {
     CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
     return circle == null ? null : circle.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getCirclecx(int, int, int) */
-  public String getCirclecx(int imageIndex, int roiIndex, int shapeIndex) {
-    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
-    return circle == null ? null : circle.getcx();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getCirclecy(int, int, int) */
-  public String getCirclecy(int imageIndex, int roiIndex, int shapeIndex) {
-    CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
-    return circle == null ? null : circle.getcy();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getCircler(int, int, int) */
-  public String getCircler(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getCircleR(int, int, int) */
+  public String getCircleR(int imageIndex, int roiIndex, int shapeIndex) {
     CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
     return circle == null ? null : circle.getr();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getCircletransform(int, int, int) */
-  public String getCircletransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getCircleTransform(int, int, int) */
+  public String getCircleTransform(int imageIndex, int roiIndex, int shapeIndex) {
     CircleNode circle = getCircleNode(imageIndex, roiIndex, shapeIndex, false);
     return circle == null ? null : circle.gettransform();
   }
@@ -695,38 +695,38 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Ellipse property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipseCx(int, int, int) */
+  public String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.getcx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipseCy(int, int, int) */
+  public String getEllipseCy(int imageIndex, int roiIndex, int shapeIndex) {
+    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
+    return ellipse == null ? null : ellipse.getcy();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getEllipseID(int, int, int) */
   public String getEllipseID(int imageIndex, int roiIndex, int shapeIndex) {
     EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
     return ellipse == null ? null : ellipse.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getEllipsecx(int, int, int) */
-  public String getEllipsecx(int imageIndex, int roiIndex, int shapeIndex) {
-    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
-    return ellipse == null ? null : ellipse.getcx();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getEllipsecy(int, int, int) */
-  public String getEllipsecy(int imageIndex, int roiIndex, int shapeIndex) {
-    EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
-    return ellipse == null ? null : ellipse.getcy();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getEllipserx(int, int, int) */
-  public String getEllipserx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipseRx(int, int, int) */
+  public String getEllipseRx(int imageIndex, int roiIndex, int shapeIndex) {
     EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
     return ellipse == null ? null : ellipse.getrx();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getEllipsery(int, int, int) */
-  public String getEllipsery(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipseRy(int, int, int) */
+  public String getEllipseRy(int imageIndex, int roiIndex, int shapeIndex) {
     EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
     return ellipse == null ? null : ellipse.getry();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getEllipsetransform(int, int, int) */
-  public String getEllipsetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getEllipseTransform(int, int, int) */
+  public String getEllipseTransform(int imageIndex, int roiIndex, int shapeIndex) {
     EllipseNode ellipse = getEllipseNode(imageIndex, roiIndex, shapeIndex, false);
     return ellipse == null ? null : ellipse.gettransform();
   }
@@ -1225,32 +1225,32 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return line == null ? null : line.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getLinetransform(int, int, int) */
-  public String getLinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getLineTransform(int, int, int) */
+  public String getLineTransform(int imageIndex, int roiIndex, int shapeIndex) {
     LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
     return line == null ? null : line.gettransform();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getLinex1(int, int, int) */
-  public String getLinex1(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getLineX1(int, int, int) */
+  public String getLineX1(int imageIndex, int roiIndex, int shapeIndex) {
     LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
     return line == null ? null : line.getx1();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getLinex2(int, int, int) */
-  public String getLinex2(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getLineX2(int, int, int) */
+  public String getLineX2(int imageIndex, int roiIndex, int shapeIndex) {
     LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
     return line == null ? null : line.getx2();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getLiney1(int, int, int) */
-  public String getLiney1(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getLineY1(int, int, int) */
+  public String getLineY1(int imageIndex, int roiIndex, int shapeIndex) {
     LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
     return line == null ? null : line.gety1();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getLiney2(int, int, int) */
-  public String getLiney2(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getLineY2(int, int, int) */
+  public String getLineY2(int imageIndex, int roiIndex, int shapeIndex) {
     LineNode line = getLineNode(imageIndex, roiIndex, shapeIndex, false);
     return line == null ? null : line.gety2();
   }
@@ -1373,38 +1373,38 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Mask property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskHeight(int, int, int) */
+  public String getMaskHeight(int imageIndex, int roiIndex, int shapeIndex) {
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
+    return mask == null ? null : mask.getheight();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getMaskID(int, int, int) */
   public String getMaskID(int imageIndex, int roiIndex, int shapeIndex) {
     MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
     return mask == null ? null : mask.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getMaskheight(int, int, int) */
-  public String getMaskheight(int imageIndex, int roiIndex, int shapeIndex) {
-    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
-    return mask == null ? null : mask.getheight();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getMasktransform(int, int, int) */
-  public String getMasktransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskTransform(int, int, int) */
+  public String getMaskTransform(int imageIndex, int roiIndex, int shapeIndex) {
     MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
     return mask == null ? null : mask.gettransform();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getMaskwidth(int, int, int) */
-  public String getMaskwidth(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskWidth(int, int, int) */
+  public String getMaskWidth(int imageIndex, int roiIndex, int shapeIndex) {
     MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
     return mask == null ? null : mask.getwidth();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getMaskx(int, int, int) */
-  public String getMaskx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskX(int, int, int) */
+  public String getMaskX(int imageIndex, int roiIndex, int shapeIndex) {
     MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
     return mask == null ? null : mask.getx();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getMasky(int, int, int) */
-  public String getMasky(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getMaskY(int, int, int) */
+  public String getMaskY(int imageIndex, int roiIndex, int shapeIndex) {
     MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, false);
     return mask == null ? null : mask.gety();
   }
@@ -1803,32 +1803,32 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Point property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getPointCx(int, int, int) */
+  public String getPointCx(int imageIndex, int roiIndex, int shapeIndex) {
+    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
+    return point == null ? null : point.getcx();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPointCy(int, int, int) */
+  public String getPointCy(int imageIndex, int roiIndex, int shapeIndex) {
+    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
+    return point == null ? null : point.getcy();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getPointID(int, int, int) */
   public String getPointID(int imageIndex, int roiIndex, int shapeIndex) {
     PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
     return point == null ? null : point.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getPointcx(int, int, int) */
-  public String getPointcx(int imageIndex, int roiIndex, int shapeIndex) {
-    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
-    return point == null ? null : point.getcx();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getPointcy(int, int, int) */
-  public String getPointcy(int imageIndex, int roiIndex, int shapeIndex) {
-    PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
-    return point == null ? null : point.getcy();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getPointr(int, int, int) */
-  public String getPointr(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getPointR(int, int, int) */
+  public String getPointR(int imageIndex, int roiIndex, int shapeIndex) {
     PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
     return point == null ? null : point.getr();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getPointtransform(int, int, int) */
-  public String getPointtransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getPointTransform(int, int, int) */
+  public String getPointTransform(int imageIndex, int roiIndex, int shapeIndex) {
     PointNode point = getPointNode(imageIndex, roiIndex, shapeIndex, false);
     return point == null ? null : point.gettransform();
   }
@@ -1841,14 +1841,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return polygon == null ? null : polygon.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getPolygonpoints(int, int, int) */
-  public String getPolygonpoints(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getPolygonPoints(int, int, int) */
+  public String getPolygonPoints(int imageIndex, int roiIndex, int shapeIndex) {
     PolygonNode polygon = getPolygonNode(imageIndex, roiIndex, shapeIndex, false);
     return polygon == null ? null : polygon.getpoints();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getPolygontransform(int, int, int) */
-  public String getPolygontransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getPolygonTransform(int, int, int) */
+  public String getPolygonTransform(int imageIndex, int roiIndex, int shapeIndex) {
     PolygonNode polygon = getPolygonNode(imageIndex, roiIndex, shapeIndex, false);
     return polygon == null ? null : polygon.gettransform();
   }
@@ -1861,14 +1861,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return polyline == null ? null : polyline.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getPolylinepoints(int, int, int) */
-  public String getPolylinepoints(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getPolylinePoints(int, int, int) */
+  public String getPolylinePoints(int imageIndex, int roiIndex, int shapeIndex) {
     PolylineNode polyline = getPolylineNode(imageIndex, roiIndex, shapeIndex, false);
     return polyline == null ? null : polyline.getpoints();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getPolylinetransform(int, int, int) */
-  public String getPolylinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getPolylineTransform(int, int, int) */
+  public String getPolylineTransform(int imageIndex, int roiIndex, int shapeIndex) {
     PolylineNode polyline = getPolylineNode(imageIndex, roiIndex, shapeIndex, false);
     return polyline == null ? null : polyline.gettransform();
   }
@@ -2017,38 +2017,38 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Rect property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getRectHeight(int, int, int) */
+  public String getRectHeight(int imageIndex, int roiIndex, int shapeIndex) {
+    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
+    return rect == null ? null : rect.getheight();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getRectID(int, int, int) */
   public String getRectID(int imageIndex, int roiIndex, int shapeIndex) {
     RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
     return rect == null ? null : rect.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getRectheight(int, int, int) */
-  public String getRectheight(int imageIndex, int roiIndex, int shapeIndex) {
-    RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
-    return rect == null ? null : rect.getheight();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getRecttransform(int, int, int) */
-  public String getRecttransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getRectTransform(int, int, int) */
+  public String getRectTransform(int imageIndex, int roiIndex, int shapeIndex) {
     RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
     return rect == null ? null : rect.gettransform();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getRectwidth(int, int, int) */
-  public String getRectwidth(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getRectWidth(int, int, int) */
+  public String getRectWidth(int imageIndex, int roiIndex, int shapeIndex) {
     RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
     return rect == null ? null : rect.getwidth();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getRectx(int, int, int) */
-  public String getRectx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getRectX(int, int, int) */
+  public String getRectX(int imageIndex, int roiIndex, int shapeIndex) {
     RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
     return rect == null ? null : rect.getx();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getRecty(int, int, int) */
-  public String getRecty(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getRectY(int, int, int) */
+  public String getRectY(int imageIndex, int roiIndex, int shapeIndex) {
     RectNode rect = getRectNode(imageIndex, roiIndex, shapeIndex, false);
     return rect == null ? null : rect.gety();
   }
@@ -2165,14 +2165,14 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return shape == null ? null : shape.getNodeID();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getShapetheT(int, int, int) */
-  public Integer getShapetheT(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeTheT(int, int, int) */
+  public Integer getShapeTheT(int imageIndex, int roiIndex, int shapeIndex) {
     ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, false);
     return shape == null ? null : shape.gettheT();
   }
 
-  /* @see loci.formats.meta.MetadataRetrieve#getShapetheZ(int, int, int) */
-  public Integer getShapetheZ(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeTheZ(int, int, int) */
+  public Integer getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex) {
     ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, false);
     return shape == null ? null : shape.gettheZ();
   }
@@ -2471,6 +2471,20 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Circle property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setCircleCx(String, int, int, int) */
+  public void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cx == null) return;
+    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
+    circleNode.setcx(cx);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setCircleCy(String, int, int, int) */
+  public void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cy == null) return;
+    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
+    circleNode.setcy(cy);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setCircleID(String, int, int, int) */
   public void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     if (id == null) return;
@@ -2478,29 +2492,15 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     circleNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setCirclecx(String, int, int, int) */
-  public void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
-    if (cx == null) return;
-    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
-    circleNode.setcx(cx);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setCirclecy(String, int, int, int) */
-  public void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-    if (cy == null) return;
-    CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
-    circleNode.setcy(cy);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setCircler(String, int, int, int) */
-  public void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setCircleR(String, int, int, int) */
+  public void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex) {
     if (r == null) return;
     CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
     circleNode.setr(r);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setCircletransform(String, int, int, int) */
-  public void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setCircleTransform(String, int, int, int) */
+  public void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     CircleNode circleNode = getCircleNode(imageIndex, roiIndex, shapeIndex, true);
     circleNode.settransform(transform);
@@ -2832,6 +2832,20 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Ellipse property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setEllipseCx(String, int, int, int) */
+  public void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cx == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.setcx(cx);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setEllipseCy(String, int, int, int) */
+  public void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cy == null) return;
+    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
+    ellipseNode.setcy(cy);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setEllipseID(String, int, int, int) */
   public void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     if (id == null) return;
@@ -2839,36 +2853,22 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     ellipseNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setEllipsecx(String, int, int, int) */
-  public void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
-    if (cx == null) return;
-    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
-    ellipseNode.setcx(cx);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setEllipsecy(String, int, int, int) */
-  public void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-    if (cy == null) return;
-    EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
-    ellipseNode.setcy(cy);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setEllipserx(String, int, int, int) */
-  public void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setEllipseRx(String, int, int, int) */
+  public void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
     if (rx == null) return;
     EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
     ellipseNode.setrx(rx);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setEllipsery(String, int, int, int) */
-  public void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setEllipseRy(String, int, int, int) */
+  public void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex) {
     if (ry == null) return;
     EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
     ellipseNode.setry(ry);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setEllipsetransform(String, int, int, int) */
-  public void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setEllipseTransform(String, int, int, int) */
+  public void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     EllipseNode ellipseNode = getEllipseNode(imageIndex, roiIndex, shapeIndex, true);
     ellipseNode.settransform(transform);
@@ -3476,36 +3476,36 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     lineNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setLinetransform(String, int, int, int) */
-  public void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setLineTransform(String, int, int, int) */
+  public void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
     lineNode.settransform(transform);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setLinex1(String, int, int, int) */
-  public void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setLineX1(String, int, int, int) */
+  public void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
     if (x1 == null) return;
     LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
     lineNode.setx1(x1);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setLinex2(String, int, int, int) */
-  public void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setLineX2(String, int, int, int) */
+  public void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
     if (x2 == null) return;
     LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
     lineNode.setx2(x2);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setLiney1(String, int, int, int) */
-  public void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setLineY1(String, int, int, int) */
+  public void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
     if (y1 == null) return;
     LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
     lineNode.sety1(y1);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setLiney2(String, int, int, int) */
-  public void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setLineY2(String, int, int, int) */
+  public void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
     if (y2 == null) return;
     LineNode lineNode = getLineNode(imageIndex, roiIndex, shapeIndex, true);
     lineNode.sety2(y2);
@@ -3648,6 +3648,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Mask property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setMaskHeight(String, int, int, int) */
+  public void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    if (height == null) return;
+    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
+    maskNode.setheight(height);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setMaskID(String, int, int, int) */
   public void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     if (id == null) return;
@@ -3655,36 +3662,29 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     maskNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setMaskheight(String, int, int, int) */
-  public void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
-    if (height == null) return;
-    MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
-    maskNode.setheight(height);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setMasktransform(String, int, int, int) */
-  public void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setMaskTransform(String, int, int, int) */
+  public void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
     maskNode.settransform(transform);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setMaskwidth(String, int, int, int) */
-  public void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setMaskWidth(String, int, int, int) */
+  public void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
     if (width == null) return;
     MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
     maskNode.setwidth(width);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setMaskx(String, int, int, int) */
-  public void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setMaskX(String, int, int, int) */
+  public void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex) {
     if (x == null) return;
     MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
     maskNode.setx(x);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setMasky(String, int, int, int) */
-  public void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setMaskY(String, int, int, int) */
+  public void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex) {
     if (y == null) return;
     MaskNode maskNode = getMaskNode(imageIndex, roiIndex, shapeIndex, true);
     maskNode.sety(y);
@@ -4149,6 +4149,20 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Point property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setPointCx(String, int, int, int) */
+  public void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cx == null) return;
+    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
+    pointNode.setcx(cx);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPointCy(String, int, int, int) */
+  public void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    if (cy == null) return;
+    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
+    pointNode.setcy(cy);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setPointID(String, int, int, int) */
   public void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     if (id == null) return;
@@ -4156,29 +4170,15 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     pointNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setPointcx(String, int, int, int) */
-  public void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
-    if (cx == null) return;
-    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
-    pointNode.setcx(cx);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setPointcy(String, int, int, int) */
-  public void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-    if (cy == null) return;
-    PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
-    pointNode.setcy(cy);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setPointr(String, int, int, int) */
-  public void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setPointR(String, int, int, int) */
+  public void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex) {
     if (r == null) return;
     PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
     pointNode.setr(r);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setPointtransform(String, int, int, int) */
-  public void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setPointTransform(String, int, int, int) */
+  public void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     PointNode pointNode = getPointNode(imageIndex, roiIndex, shapeIndex, true);
     pointNode.settransform(transform);
@@ -4193,15 +4193,15 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     polygonNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setPolygonpoints(String, int, int, int) */
-  public void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setPolygonPoints(String, int, int, int) */
+  public void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
     if (points == null) return;
     PolygonNode polygonNode = getPolygonNode(imageIndex, roiIndex, shapeIndex, true);
     polygonNode.setpoints(points);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setPolygontransform(String, int, int, int) */
-  public void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setPolygonTransform(String, int, int, int) */
+  public void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     PolygonNode polygonNode = getPolygonNode(imageIndex, roiIndex, shapeIndex, true);
     polygonNode.settransform(transform);
@@ -4216,15 +4216,15 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     polylineNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setPolylinepoints(String, int, int, int) */
-  public void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setPolylinePoints(String, int, int, int) */
+  public void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
     if (points == null) return;
     PolylineNode polylineNode = getPolylineNode(imageIndex, roiIndex, shapeIndex, true);
     polylineNode.setpoints(points);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setPolylinetransform(String, int, int, int) */
-  public void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setPolylineTransform(String, int, int, int) */
+  public void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     PolylineNode polylineNode = getPolylineNode(imageIndex, roiIndex, shapeIndex, true);
     polylineNode.settransform(transform);
@@ -4399,6 +4399,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Rect property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setRectHeight(String, int, int, int) */
+  public void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    if (height == null) return;
+    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
+    rectNode.setheight(height);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setRectID(String, int, int, int) */
   public void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     if (id == null) return;
@@ -4406,36 +4413,29 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     rectNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setRectheight(String, int, int, int) */
-  public void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
-    if (height == null) return;
-    RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
-    rectNode.setheight(height);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setRecttransform(String, int, int, int) */
-  public void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setRectTransform(String, int, int, int) */
+  public void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     if (transform == null) return;
     RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
     rectNode.settransform(transform);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setRectwidth(String, int, int, int) */
-  public void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setRectWidth(String, int, int, int) */
+  public void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
     if (width == null) return;
     RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
     rectNode.setwidth(width);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setRectx(String, int, int, int) */
-  public void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setRectX(String, int, int, int) */
+  public void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex) {
     if (x == null) return;
     RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
     rectNode.setx(x);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setRecty(String, int, int, int) */
-  public void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setRectY(String, int, int, int) */
+  public void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex) {
     if (y == null) return;
     RectNode rectNode = getRectNode(imageIndex, roiIndex, shapeIndex, true);
     rectNode.sety(y);
@@ -4568,15 +4568,15 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     shapeNode.setNodeID(id);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setShapetheT(Integer, int, int, int) */
-  public void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setShapeTheT(Integer, int, int, int) */
+  public void setShapeTheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
     if (theT == null) return;
     ShapeNode shapeNode = getShapeNode(imageIndex, roiIndex, shapeIndex, true);
     shapeNode.settheT(theT);
   }
 
-  /* @see loci.formats.meta.MetadataStore#setShapetheZ(Integer, int, int, int) */
-  public void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see loci.formats.meta.MetadataStore#setShapeTheZ(Integer, int, int, int) */
+  public void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
     if (theZ == null) return;
     ShapeNode shapeNode = getShapeNode(imageIndex, roiIndex, shapeIndex, true);
     shapeNode.settheZ(theZ);

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
+ * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -275,24 +275,24 @@ public class DummyMetadata implements IMetadata {
 
   // - Circle property retrieval -
 
+  /* @see MetadataRetrieve#getCircleCx(int, int, int) */
+  public String getCircleCx(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getCircleCy(int, int, int) */
+  public String getCircleCy(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getCircleID(int, int, int) */
   public String getCircleID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getCirclecx(int, int, int) */
-  public String getCirclecx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getCircleR(int, int, int) */
+  public String getCircleR(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getCirclecy(int, int, int) */
-  public String getCirclecy(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getCircler(int, int, int) */
-  public String getCircler(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getCircletransform(int, int, int) */
-  public String getCircletransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getCircleTransform(int, int, int) */
+  public String getCircleTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -488,28 +488,28 @@ public class DummyMetadata implements IMetadata {
 
   // - Ellipse property retrieval -
 
+  /* @see MetadataRetrieve#getEllipseCx(int, int, int) */
+  public String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getEllipseCy(int, int, int) */
+  public String getEllipseCy(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getEllipseID(int, int, int) */
   public String getEllipseID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getEllipsecx(int, int, int) */
-  public String getEllipsecx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getEllipseRx(int, int, int) */
+  public String getEllipseRx(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getEllipsecy(int, int, int) */
-  public String getEllipsecy(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getEllipseRy(int, int, int) */
+  public String getEllipseRy(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getEllipserx(int, int, int) */
-  public String getEllipserx(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getEllipsery(int, int, int) */
-  public String getEllipsery(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getEllipsetransform(int, int, int) */
-  public String getEllipsetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getEllipseTransform(int, int, int) */
+  public String getEllipseTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -868,24 +868,24 @@ public class DummyMetadata implements IMetadata {
   public String getLineID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getLinetransform(int, int, int) */
-  public String getLinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineTransform(int, int, int) */
+  public String getLineTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getLinex1(int, int, int) */
-  public String getLinex1(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineX1(int, int, int) */
+  public String getLineX1(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getLinex2(int, int, int) */
-  public String getLinex2(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineX2(int, int, int) */
+  public String getLineX2(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getLiney1(int, int, int) */
-  public String getLiney1(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineY1(int, int, int) */
+  public String getLineY1(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getLiney2(int, int, int) */
-  public String getLiney2(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineY2(int, int, int) */
+  public String getLineY2(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -970,28 +970,28 @@ public class DummyMetadata implements IMetadata {
 
   // - Mask property retrieval -
 
+  /* @see MetadataRetrieve#getMaskHeight(int, int, int) */
+  public String getMaskHeight(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getMaskID(int, int, int) */
   public String getMaskID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getMaskheight(int, int, int) */
-  public String getMaskheight(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskTransform(int, int, int) */
+  public String getMaskTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getMasktransform(int, int, int) */
-  public String getMasktransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskWidth(int, int, int) */
+  public String getMaskWidth(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getMaskwidth(int, int, int) */
-  public String getMaskwidth(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskX(int, int, int) */
+  public String getMaskX(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getMaskx(int, int, int) */
-  public String getMaskx(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getMasky(int, int, int) */
-  public String getMasky(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskY(int, int, int) */
+  public String getMaskY(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -1277,24 +1277,24 @@ public class DummyMetadata implements IMetadata {
 
   // - Point property retrieval -
 
+  /* @see MetadataRetrieve#getPointCx(int, int, int) */
+  public String getPointCx(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPointCy(int, int, int) */
+  public String getPointCy(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getPointID(int, int, int) */
   public String getPointID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPointcx(int, int, int) */
-  public String getPointcx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPointR(int, int, int) */
+  public String getPointR(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPointcy(int, int, int) */
-  public String getPointcy(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getPointr(int, int, int) */
-  public String getPointr(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getPointtransform(int, int, int) */
-  public String getPointtransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPointTransform(int, int, int) */
+  public String getPointTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -1304,12 +1304,12 @@ public class DummyMetadata implements IMetadata {
   public String getPolygonID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPolygonpoints(int, int, int) */
-  public String getPolygonpoints(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolygonPoints(int, int, int) */
+  public String getPolygonPoints(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPolygontransform(int, int, int) */
-  public String getPolygontransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolygonTransform(int, int, int) */
+  public String getPolygonTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -1319,12 +1319,12 @@ public class DummyMetadata implements IMetadata {
   public String getPolylineID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPolylinepoints(int, int, int) */
-  public String getPolylinepoints(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolylinePoints(int, int, int) */
+  public String getPolylinePoints(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPolylinetransform(int, int, int) */
-  public String getPolylinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolylineTransform(int, int, int) */
+  public String getPolylineTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -1432,28 +1432,28 @@ public class DummyMetadata implements IMetadata {
 
   // - Rect property retrieval -
 
+  /* @see MetadataRetrieve#getRectHeight(int, int, int) */
+  public String getRectHeight(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getRectID(int, int, int) */
   public String getRectID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getRectheight(int, int, int) */
-  public String getRectheight(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectTransform(int, int, int) */
+  public String getRectTransform(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getRecttransform(int, int, int) */
-  public String getRecttransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectWidth(int, int, int) */
+  public String getRectWidth(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getRectwidth(int, int, int) */
-  public String getRectwidth(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectX(int, int, int) */
+  public String getRectX(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getRectx(int, int, int) */
-  public String getRectx(int imageIndex, int roiIndex, int shapeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getRecty(int, int, int) */
-  public String getRecty(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectY(int, int, int) */
+  public String getRectY(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -1539,12 +1539,12 @@ public class DummyMetadata implements IMetadata {
   public String getShapeID(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getShapetheT(int, int, int) */
-  public Integer getShapetheT(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getShapeTheT(int, int, int) */
+  public Integer getShapeTheT(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getShapetheZ(int, int, int) */
-  public Integer getShapetheZ(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getShapeTheZ(int, int, int) */
+  public Integer getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -1757,24 +1757,24 @@ public class DummyMetadata implements IMetadata {
 
   // - Circle property storage -
 
+  /* @see MetadataStore#setCircleCx(String, int, int, int) */
+  public void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setCircleCy(String, int, int, int) */
+  public void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
   /* @see MetadataStore#setCircleID(String, int, int, int) */
   public void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setCirclecx(String, int, int, int) */
-  public void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setCircleR(String, int, int, int) */
+  public void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setCirclecy(String, int, int, int) */
-  public void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setCircler(String, int, int, int) */
-  public void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setCircletransform(String, int, int, int) */
-  public void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setCircleTransform(String, int, int, int) */
+  public void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - Contact property storage -
@@ -1959,28 +1959,28 @@ public class DummyMetadata implements IMetadata {
 
   // - Ellipse property storage -
 
+  /* @see MetadataStore#setEllipseCx(String, int, int, int) */
+  public void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setEllipseCy(String, int, int, int) */
+  public void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
   /* @see MetadataStore#setEllipseID(String, int, int, int) */
   public void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setEllipsecx(String, int, int, int) */
-  public void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseRx(String, int, int, int) */
+  public void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setEllipsecy(String, int, int, int) */
-  public void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseRy(String, int, int, int) */
+  public void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setEllipserx(String, int, int, int) */
-  public void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setEllipsery(String, int, int, int) */
-  public void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setEllipsetransform(String, int, int, int) */
-  public void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseTransform(String, int, int, int) */
+  public void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - EmFilter property storage -
@@ -2319,24 +2319,24 @@ public class DummyMetadata implements IMetadata {
   public void setLineID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setLinetransform(String, int, int, int) */
-  public void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineTransform(String, int, int, int) */
+  public void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setLinex1(String, int, int, int) */
-  public void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineX1(String, int, int, int) */
+  public void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setLinex2(String, int, int, int) */
-  public void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineX2(String, int, int, int) */
+  public void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setLiney1(String, int, int, int) */
-  public void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineY1(String, int, int, int) */
+  public void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setLiney2(String, int, int, int) */
-  public void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineY2(String, int, int, int) */
+  public void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - LogicalChannel property storage -
@@ -2419,28 +2419,28 @@ public class DummyMetadata implements IMetadata {
 
   // - Mask property storage -
 
+  /* @see MetadataStore#setMaskHeight(String, int, int, int) */
+  public void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
   /* @see MetadataStore#setMaskID(String, int, int, int) */
   public void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setMaskheight(String, int, int, int) */
-  public void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskTransform(String, int, int, int) */
+  public void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setMasktransform(String, int, int, int) */
-  public void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskWidth(String, int, int, int) */
+  public void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setMaskwidth(String, int, int, int) */
-  public void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskX(String, int, int, int) */
+  public void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setMaskx(String, int, int, int) */
-  public void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setMasky(String, int, int, int) */
-  public void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskY(String, int, int, int) */
+  public void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - MaskPixels property storage -
@@ -2713,24 +2713,24 @@ public class DummyMetadata implements IMetadata {
 
   // - Point property storage -
 
+  /* @see MetadataStore#setPointCx(String, int, int, int) */
+  public void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setPointCy(String, int, int, int) */
+  public void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
   /* @see MetadataStore#setPointID(String, int, int, int) */
   public void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setPointcx(String, int, int, int) */
-  public void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPointR(String, int, int, int) */
+  public void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setPointcy(String, int, int, int) */
-  public void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setPointr(String, int, int, int) */
-  public void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setPointtransform(String, int, int, int) */
-  public void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPointTransform(String, int, int, int) */
+  public void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - Polygon property storage -
@@ -2739,12 +2739,12 @@ public class DummyMetadata implements IMetadata {
   public void setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setPolygonpoints(String, int, int, int) */
-  public void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolygonPoints(String, int, int, int) */
+  public void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setPolygontransform(String, int, int, int) */
-  public void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolygonTransform(String, int, int, int) */
+  public void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - Polyline property storage -
@@ -2753,12 +2753,12 @@ public class DummyMetadata implements IMetadata {
   public void setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setPolylinepoints(String, int, int, int) */
-  public void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolylinePoints(String, int, int, int) */
+  public void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setPolylinetransform(String, int, int, int) */
-  public void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolylineTransform(String, int, int, int) */
+  public void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - Project property storage -
@@ -2859,28 +2859,28 @@ public class DummyMetadata implements IMetadata {
 
   // - Rect property storage -
 
+  /* @see MetadataStore#setRectHeight(String, int, int, int) */
+  public void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
   /* @see MetadataStore#setRectID(String, int, int, int) */
   public void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setRectheight(String, int, int, int) */
-  public void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectTransform(String, int, int, int) */
+  public void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setRecttransform(String, int, int, int) */
-  public void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectWidth(String, int, int, int) */
+  public void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setRectwidth(String, int, int, int) */
-  public void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectX(String, int, int, int) */
+  public void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setRectx(String, int, int, int) */
-  public void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex) {
-  }
-
-  /* @see MetadataStore#setRecty(String, int, int, int) */
-  public void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectY(String, int, int, int) */
+  public void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - Region property storage -
@@ -2961,12 +2961,12 @@ public class DummyMetadata implements IMetadata {
   public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setShapetheT(Integer, int, int, int) */
-  public void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setShapeTheT(Integer, int, int, int) */
+  public void setShapeTheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setShapetheZ(Integer, int, int, int) */
-  public void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setShapeTheZ(Integer, int, int, int) */
+  public void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - StageLabel property storage -

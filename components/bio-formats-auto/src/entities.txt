@@ -1060,13 +1060,17 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the shape
 
-[Shape theZ]
+[Shape TheZ]
 type = Integer
 description = Z position of the shape
+getter = gettheZ
+setter = settheZ
 
-[Shape theT]
+[Shape TheT]
 type = Integer
 description = T position of the shape
+getter = gettheT
+setter = settheT
 
 ## Rect ##
 
@@ -1089,25 +1093,35 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the rectangle
 
-[Rect y]
+[Rect Y]
 type = String
 description = Y coordinate of the upper left corner of the rectangle
+getter = gety
+setter = sety
 
-[Rect x]
+[Rect X]
 type = String
 description = X coordinate of the upper left corner of the rectangle
+getter = getx
+setter = setx
 
-[Rect width]
+[Rect Width]
 type = String
 description = width of the rectangle, in pixels
+getter = getwidth
+setter = setwidth
 
-[Rect height]
+[Rect Height]
 type = String
 description = height of the rectangle, in pixels
+getter = getheight
+setter = setheight
 
-[Rect transform]
+[Rect Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## Circle ##
 
@@ -1130,21 +1144,29 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the circle
 
-[Circle cy]
+[Circle Cy]
 type = String
 description = Y coordinate of the center of the circle
+getter = getcy
+setter = setcy
 
-[Circle cx]
+[Circle Cx]
 type = String
 description = X coordinate of the center of the circle
+getter = getcx
+setter = setcx
 
-[Circle r]
+[Circle R]
 type = String
 description = radius of the circle, in pixels
+getter = getr
+setter = setr
 
-[Circle transform]
+[Circle Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## Ellipse ##
 
@@ -1167,25 +1189,35 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the ellipse
 
-[Ellipse cy]
+[Ellipse Cy]
 type = String
 description = Y coordinate of the center of the ellipse
+getter = getcy
+setter = setcy
 
-[Ellipse cx]
+[Ellipse Cx]
 type = String
 description = X coordinate of the center of the ellipse
+getter = getcx
+setter = setcx
 
-[Ellipse rx]
+[Ellipse Rx]
 type = String
 description = horizontal radius of the ellipse
+getter = getrx
+setter = setrx
 
-[Ellipse ry]
+[Ellipse Ry]
 type = String
 description = vertical radius of the ellipse
+getter = getry
+setter = setry
 
-[Ellipse transform]
+[Ellipse Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## Line ##
 
@@ -1208,25 +1240,35 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the line
 
-[Line y1]
+[Line Y1]
 type = String
 description = Y coordinate of the first endpoint of the line
+getter = gety1
+setter = sety1
 
-[Line y2]
+[Line Y2]
 type = String
 description = Y coordinate of the second endpoint of the line
+getter = gety2
+setter = sety2
 
-[Line x1]
+[Line X1]
 type = String
 description = X coordinate of the first endpoint of the line
+getter = getx1
+setter = setx1
 
-[Line x2]
+[Line X2]
 type = String
 description = X coordinate of the second endpoint of the line
+getter = getx2
+setter = setx2
 
-[Line transform]
+[Line Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## Point ##
 
@@ -1249,21 +1291,29 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the point
 
-[Point cy]
+[Point Cy]
 type = String
 description = Y coordinate of the center of the point
+getter = getcy
+setter = setcy
 
-[Point cx]
+[Point Cx]
 type = String
 description = X coordinate of the center of the point
+getter = getcx
+setter = setcx
 
-[Point r]
+[Point R]
 type = String
 description = radius of the point, in pixels
+getter = getr
+setter = setr
 
-[Point transform]
+[Point Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## Polygon ##
 
@@ -1286,13 +1336,17 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the polygon
 
-[Polygon points]
+[Polygon Points]
 type = String
 description = TODO
+getter = getpoints
+setter = setpoints
 
-[Polygon transform]
+[Polygon Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## Polyline ##
 
@@ -1315,13 +1369,17 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the polyline
 
-[Polyline points]
+[Polyline Points]
 type = String
 description = TODO
+getter = getpoints
+setter = setpoints
 
-[Polyline transform]
+[Polyline Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## Mask ##
 
@@ -1344,25 +1402,35 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the mask
 
-[Mask y]
+[Mask Y]
 type = String
 description = TODO
+getter = gety
+setter = sety
 
-[Mask x]
+[Mask X]
 type = String
 description = TODO
+getter = getx
+setter = setx
 
-[Mask width]
+[Mask Width]
 type = String
 description = TODO
+getter = getwidth
+setter = setwidth
 
-[Mask height]
+[Mask Height]
 type = String
 description = TODO
+getter = getheight
+setter = setheight
 
-[Mask transform]
+[Mask Transform]
 type = String
 description = TODO
+getter = gettransform
+setter = settransform
 
 ## MaskPixels ##
 

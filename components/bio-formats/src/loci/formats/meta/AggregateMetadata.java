@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
+ * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -673,6 +673,32 @@ public class AggregateMetadata implements IMetadata {
 
   // - Circle property retrieval -
 
+  /* @see MetadataRetrieve#getCircleCx(int, int, int) */
+  public String getCircleCx(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getCircleCx(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getCircleCy(int, int, int) */
+  public String getCircleCy(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getCircleCy(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getCircleID(int, int, int) */
   public String getCircleID(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -686,52 +712,26 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getCirclecx(int, int, int) */
-  public String getCirclecx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getCircleR(int, int, int) */
+  public String getCircleR(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getCirclecx(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getCircleR(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getCirclecy(int, int, int) */
-  public String getCirclecy(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getCircleTransform(int, int, int) */
+  public String getCircleTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getCirclecy(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getCircler(int, int, int) */
-  public String getCircler(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getCircler(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getCircletransform(int, int, int) */
-  public String getCircletransform(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getCircletransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getCircleTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -1280,6 +1280,32 @@ public class AggregateMetadata implements IMetadata {
 
   // - Ellipse property retrieval -
 
+  /* @see MetadataRetrieve#getEllipseCx(int, int, int) */
+  public String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getEllipseCx(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getEllipseCy(int, int, int) */
+  public String getEllipseCy(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getEllipseCy(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getEllipseID(int, int, int) */
   public String getEllipseID(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1293,65 +1319,39 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getEllipsecx(int, int, int) */
-  public String getEllipsecx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getEllipseRx(int, int, int) */
+  public String getEllipseRx(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getEllipsecx(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getEllipseRx(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getEllipsecy(int, int, int) */
-  public String getEllipsecy(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getEllipseRy(int, int, int) */
+  public String getEllipseRy(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getEllipsecy(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getEllipseRy(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getEllipserx(int, int, int) */
-  public String getEllipserx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getEllipseTransform(int, int, int) */
+  public String getEllipseTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getEllipserx(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getEllipsery(int, int, int) */
-  public String getEllipsery(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getEllipsery(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getEllipsetransform(int, int, int) */
-  public String getEllipsetransform(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getEllipsetransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getEllipseTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -2360,65 +2360,65 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getLinetransform(int, int, int) */
-  public String getLinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineTransform(int, int, int) */
+  public String getLineTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getLinetransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getLineTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getLinex1(int, int, int) */
-  public String getLinex1(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineX1(int, int, int) */
+  public String getLineX1(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getLinex1(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getLineX1(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getLinex2(int, int, int) */
-  public String getLinex2(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineX2(int, int, int) */
+  public String getLineX2(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getLinex2(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getLineX2(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getLiney1(int, int, int) */
-  public String getLiney1(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineY1(int, int, int) */
+  public String getLineY1(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getLiney1(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getLineY1(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getLiney2(int, int, int) */
-  public String getLiney2(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getLineY2(int, int, int) */
+  public String getLineY2(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getLiney2(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getLineY2(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -2676,6 +2676,19 @@ public class AggregateMetadata implements IMetadata {
 
   // - Mask property retrieval -
 
+  /* @see MetadataRetrieve#getMaskHeight(int, int, int) */
+  public String getMaskHeight(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getMaskHeight(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getMaskID(int, int, int) */
   public String getMaskID(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -2689,65 +2702,52 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getMaskheight(int, int, int) */
-  public String getMaskheight(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskTransform(int, int, int) */
+  public String getMaskTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getMaskheight(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getMaskTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getMasktransform(int, int, int) */
-  public String getMasktransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskWidth(int, int, int) */
+  public String getMaskWidth(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getMasktransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getMaskWidth(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getMaskwidth(int, int, int) */
-  public String getMaskwidth(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskX(int, int, int) */
+  public String getMaskX(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getMaskwidth(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getMaskX(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getMaskx(int, int, int) */
-  public String getMaskx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getMaskY(int, int, int) */
+  public String getMaskY(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getMaskx(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getMasky(int, int, int) */
-  public String getMasky(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getMasky(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getMaskY(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -3573,6 +3573,32 @@ public class AggregateMetadata implements IMetadata {
 
   // - Point property retrieval -
 
+  /* @see MetadataRetrieve#getPointCx(int, int, int) */
+  public String getPointCx(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPointCx(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPointCy(int, int, int) */
+  public String getPointCy(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPointCy(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getPointID(int, int, int) */
   public String getPointID(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -3586,52 +3612,26 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getPointcx(int, int, int) */
-  public String getPointcx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPointR(int, int, int) */
+  public String getPointR(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPointcx(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getPointR(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getPointcy(int, int, int) */
-  public String getPointcy(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPointTransform(int, int, int) */
+  public String getPointTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPointcy(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getPointr(int, int, int) */
-  public String getPointr(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPointr(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getPointtransform(int, int, int) */
-  public String getPointtransform(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPointtransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getPointTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -3653,26 +3653,26 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getPolygonpoints(int, int, int) */
-  public String getPolygonpoints(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolygonPoints(int, int, int) */
+  public String getPolygonPoints(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPolygonpoints(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getPolygonPoints(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getPolygontransform(int, int, int) */
-  public String getPolygontransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolygonTransform(int, int, int) */
+  public String getPolygonTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPolygontransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getPolygonTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -3694,26 +3694,26 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getPolylinepoints(int, int, int) */
-  public String getPolylinepoints(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolylinePoints(int, int, int) */
+  public String getPolylinePoints(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPolylinepoints(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getPolylinePoints(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getPolylinetransform(int, int, int) */
-  public String getPolylinetransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getPolylineTransform(int, int, int) */
+  public String getPolylineTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getPolylinetransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getPolylineTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -4007,6 +4007,19 @@ public class AggregateMetadata implements IMetadata {
 
   // - Rect property retrieval -
 
+  /* @see MetadataRetrieve#getRectHeight(int, int, int) */
+  public String getRectHeight(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getRectHeight(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getRectID(int, int, int) */
   public String getRectID(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -4020,65 +4033,52 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getRectheight(int, int, int) */
-  public String getRectheight(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectTransform(int, int, int) */
+  public String getRectTransform(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getRectheight(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getRectTransform(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getRecttransform(int, int, int) */
-  public String getRecttransform(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectWidth(int, int, int) */
+  public String getRectWidth(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getRecttransform(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getRectWidth(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getRectwidth(int, int, int) */
-  public String getRectwidth(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectX(int, int, int) */
+  public String getRectX(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getRectwidth(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getRectX(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getRectx(int, int, int) */
-  public String getRectx(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getRectY(int, int, int) */
+  public String getRectY(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getRectx(imageIndex, roiIndex, shapeIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getRecty(int, int, int) */
-  public String getRecty(int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getRecty(imageIndex, roiIndex, shapeIndex);
+        String result = retrieve.getRectY(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -4316,26 +4316,26 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  /* @see MetadataRetrieve#getShapetheT(int, int, int) */
-  public Integer getShapetheT(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getShapeTheT(int, int, int) */
+  public Integer getShapeTheT(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getShapetheT(imageIndex, roiIndex, shapeIndex);
+        Integer result = retrieve.getShapeTheT(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
     return null;
   }
 
-  /* @see MetadataRetrieve#getShapetheZ(int, int, int) */
-  public Integer getShapetheZ(int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataRetrieve#getShapeTheZ(int, int, int) */
+  public Integer getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getShapetheZ(imageIndex, roiIndex, shapeIndex);
+        Integer result = retrieve.getShapeTheZ(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -4916,6 +4916,28 @@ public class AggregateMetadata implements IMetadata {
 
   // - Circle property storage -
 
+  /* @see MetadataStore#setCircleCx(String, int, int, int) */
+  public void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setCircleCx(cx, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setCircleCy(String, int, int, int) */
+  public void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setCircleCy(cy, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setCircleID(String, int, int, int) */
   public void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -4927,46 +4949,24 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setCirclecx(String, int, int, int) */
-  public void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setCircleR(String, int, int, int) */
+  public void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setCirclecx(cx, imageIndex, roiIndex, shapeIndex);
+        store.setCircleR(r, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setCirclecy(String, int, int, int) */
-  public void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setCircleTransform(String, int, int, int) */
+  public void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setCirclecy(cy, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setCircler(String, int, int, int) */
-  public void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setCircler(r, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setCircletransform(String, int, int, int) */
-  public void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setCircletransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setCircleTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -5433,6 +5433,28 @@ public class AggregateMetadata implements IMetadata {
 
   // - Ellipse property storage -
 
+  /* @see MetadataStore#setEllipseCx(String, int, int, int) */
+  public void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setEllipseCx(cx, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setEllipseCy(String, int, int, int) */
+  public void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setEllipseCy(cy, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setEllipseID(String, int, int, int) */
   public void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -5444,57 +5466,35 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setEllipsecx(String, int, int, int) */
-  public void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseRx(String, int, int, int) */
+  public void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setEllipsecx(cx, imageIndex, roiIndex, shapeIndex);
+        store.setEllipseRx(rx, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setEllipsecy(String, int, int, int) */
-  public void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseRy(String, int, int, int) */
+  public void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setEllipsecy(cy, imageIndex, roiIndex, shapeIndex);
+        store.setEllipseRy(ry, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setEllipserx(String, int, int, int) */
-  public void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseTransform(String, int, int, int) */
+  public void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setEllipserx(rx, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setEllipsery(String, int, int, int) */
-  public void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setEllipsery(ry, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setEllipsetransform(String, int, int, int) */
-  public void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setEllipsetransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setEllipseTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -6353,57 +6353,57 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setLinetransform(String, int, int, int) */
-  public void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineTransform(String, int, int, int) */
+  public void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setLinetransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setLineTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setLinex1(String, int, int, int) */
-  public void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineX1(String, int, int, int) */
+  public void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setLinex1(x1, imageIndex, roiIndex, shapeIndex);
+        store.setLineX1(x1, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setLinex2(String, int, int, int) */
-  public void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineX2(String, int, int, int) */
+  public void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setLinex2(x2, imageIndex, roiIndex, shapeIndex);
+        store.setLineX2(x2, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setLiney1(String, int, int, int) */
-  public void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineY1(String, int, int, int) */
+  public void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setLiney1(y1, imageIndex, roiIndex, shapeIndex);
+        store.setLineY1(y1, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setLiney2(String, int, int, int) */
-  public void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineY2(String, int, int, int) */
+  public void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setLiney2(y2, imageIndex, roiIndex, shapeIndex);
+        store.setLineY2(y2, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -6621,6 +6621,17 @@ public class AggregateMetadata implements IMetadata {
 
   // - Mask property storage -
 
+  /* @see MetadataStore#setMaskHeight(String, int, int, int) */
+  public void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setMaskHeight(height, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setMaskID(String, int, int, int) */
   public void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -6632,57 +6643,46 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setMaskheight(String, int, int, int) */
-  public void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskTransform(String, int, int, int) */
+  public void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setMaskheight(height, imageIndex, roiIndex, shapeIndex);
+        store.setMaskTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setMasktransform(String, int, int, int) */
-  public void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskWidth(String, int, int, int) */
+  public void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setMasktransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setMaskWidth(width, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setMaskwidth(String, int, int, int) */
-  public void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskX(String, int, int, int) */
+  public void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setMaskwidth(width, imageIndex, roiIndex, shapeIndex);
+        store.setMaskX(x, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setMaskx(String, int, int, int) */
-  public void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskY(String, int, int, int) */
+  public void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setMaskx(x, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setMasky(String, int, int, int) */
-  public void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setMasky(y, imageIndex, roiIndex, shapeIndex);
+        store.setMaskY(y, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -7384,6 +7384,28 @@ public class AggregateMetadata implements IMetadata {
 
   // - Point property storage -
 
+  /* @see MetadataStore#setPointCx(String, int, int, int) */
+  public void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPointCx(cx, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPointCy(String, int, int, int) */
+  public void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPointCy(cy, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setPointID(String, int, int, int) */
   public void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -7395,46 +7417,24 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setPointcx(String, int, int, int) */
-  public void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPointR(String, int, int, int) */
+  public void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setPointcx(cx, imageIndex, roiIndex, shapeIndex);
+        store.setPointR(r, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setPointcy(String, int, int, int) */
-  public void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPointTransform(String, int, int, int) */
+  public void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setPointcy(cy, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setPointr(String, int, int, int) */
-  public void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setPointr(r, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setPointtransform(String, int, int, int) */
-  public void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setPointtransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setPointTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -7452,24 +7452,24 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setPolygonpoints(String, int, int, int) */
-  public void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolygonPoints(String, int, int, int) */
+  public void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setPolygonpoints(points, imageIndex, roiIndex, shapeIndex);
+        store.setPolygonPoints(points, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setPolygontransform(String, int, int, int) */
-  public void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolygonTransform(String, int, int, int) */
+  public void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setPolygontransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setPolygonTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -7487,24 +7487,24 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setPolylinepoints(String, int, int, int) */
-  public void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolylinePoints(String, int, int, int) */
+  public void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setPolylinepoints(points, imageIndex, roiIndex, shapeIndex);
+        store.setPolylinePoints(points, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setPolylinetransform(String, int, int, int) */
-  public void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolylineTransform(String, int, int, int) */
+  public void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setPolylinetransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setPolylineTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -7754,6 +7754,17 @@ public class AggregateMetadata implements IMetadata {
 
   // - Rect property storage -
 
+  /* @see MetadataStore#setRectHeight(String, int, int, int) */
+  public void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setRectHeight(height, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setRectID(String, int, int, int) */
   public void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -7765,57 +7776,46 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setRectheight(String, int, int, int) */
-  public void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectTransform(String, int, int, int) */
+  public void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setRectheight(height, imageIndex, roiIndex, shapeIndex);
+        store.setRectTransform(transform, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setRecttransform(String, int, int, int) */
-  public void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectWidth(String, int, int, int) */
+  public void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setRecttransform(transform, imageIndex, roiIndex, shapeIndex);
+        store.setRectWidth(width, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setRectwidth(String, int, int, int) */
-  public void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectX(String, int, int, int) */
+  public void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setRectwidth(width, imageIndex, roiIndex, shapeIndex);
+        store.setRectX(x, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setRectx(String, int, int, int) */
-  public void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectY(String, int, int, int) */
+  public void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setRectx(x, imageIndex, roiIndex, shapeIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setRecty(String, int, int, int) */
-  public void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setRecty(y, imageIndex, roiIndex, shapeIndex);
+        store.setRectY(y, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -8017,24 +8017,24 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setShapetheT(Integer, int, int, int) */
-  public void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setShapeTheT(Integer, int, int, int) */
+  public void setShapeTheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setShapetheT(theT, imageIndex, roiIndex, shapeIndex);
+        store.setShapeTheT(theT, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
 
-  /* @see MetadataStore#setShapetheZ(Integer, int, int, int) */
-  public void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setShapeTheZ(Integer, int, int, int) */
+  public void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.setShapetheZ(theZ, imageIndex, roiIndex, shapeIndex);
+        store.setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex);
       }
     }
   }

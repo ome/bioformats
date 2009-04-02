@@ -1107,20 +1107,20 @@ public class FV1000Reader extends FormatReader {
               store.setROIT1(new Integer(coordinates[2]), 0, nextROI);
             }
 
-            store.setShapetheZ(new Integer(coordinates[0]), 0,
+            store.setShapeTheZ(new Integer(coordinates[0]), 0,
               nextROI, nextShape);
-            store.setShapetheT(new Integer(coordinates[2]), 0,
+            store.setShapeTheT(new Integer(coordinates[2]), 0,
               nextROI, nextShape);
 
             if (shapeType == POINT) {
-              store.setPointcx(xc[0], 0, nextROI, nextShape);
-              store.setPointcy(yc[0], 0, nextROI, nextShape);
+              store.setPointCx(xc[0], 0, nextROI, nextShape);
+              store.setPointCy(yc[0], 0, nextROI, nextShape);
             }
             else if (shapeType == RECTANGLE) {
-              store.setRectx(String.valueOf(x), 0, nextROI, nextShape);
-              store.setRectwidth(String.valueOf(width), 0, nextROI, nextShape);
-              store.setRecty(String.valueOf(y), 0, nextROI, nextShape);
-              store.setRectheight(String.valueOf(height), 0, nextROI,
+              store.setRectX(String.valueOf(x), 0, nextROI, nextShape);
+              store.setRectWidth(String.valueOf(width), 0, nextROI, nextShape);
+              store.setRectY(String.valueOf(y), 0, nextROI, nextShape);
+              store.setRectHeight(String.valueOf(height), 0, nextROI,
                 nextShape);
             }
             else if (shapeType == GRID) {
@@ -1128,38 +1128,38 @@ public class FV1000Reader extends FormatReader {
               height /= divide;
               for (int row=0; row<divide; row++) {
                 for (int col=0; col<divide; col++) {
-                  store.setRectx(String.valueOf(x + col*width), 0, nextROI,
+                  store.setRectX(String.valueOf(x + col*width), 0, nextROI,
                     nextShape);
-                  store.setRecty(String.valueOf(y + row*height), 0, nextROI,
+                  store.setRectY(String.valueOf(y + row*height), 0, nextROI,
                     nextShape);
-                  store.setRectwidth(String.valueOf(width), 0, nextROI,
+                  store.setRectWidth(String.valueOf(width), 0, nextROI,
                     nextShape);
-                  store.setRectheight(String.valueOf(height), 0, nextROI,
+                  store.setRectHeight(String.valueOf(height), 0, nextROI,
                     nextShape);
                   if (row < divide - 1 || col < divide - 1) nextShape++;
                 }
               }
             }
             else if (shapeType == LINE) {
-              store.setLinex1(String.valueOf(x), 0, nextROI, nextShape);
-              store.setLiney1(String.valueOf(y), 0, nextROI, nextShape);
-              store.setLinex2(String.valueOf(x + width), 0, nextROI, nextShape);
-              store.setLiney2(String.valueOf(y + height), 0, nextROI,
+              store.setLineX1(String.valueOf(x), 0, nextROI, nextShape);
+              store.setLineY1(String.valueOf(y), 0, nextROI, nextShape);
+              store.setLineX2(String.valueOf(x + width), 0, nextROI, nextShape);
+              store.setLineY2(String.valueOf(y + height), 0, nextROI,
                 nextShape);
             }
             else if (shapeType == CIRCLE) {
               int r = width / 2;
-              store.setCirclecx(String.valueOf(x + r), 0, nextROI, nextShape);
-              store.setCirclecy(String.valueOf(y + r), 0, nextROI, nextShape);
-              store.setCircler(String.valueOf(r), 0, nextROI, nextShape);
+              store.setCircleCx(String.valueOf(x + r), 0, nextROI, nextShape);
+              store.setCircleCy(String.valueOf(y + r), 0, nextROI, nextShape);
+              store.setCircleR(String.valueOf(r), 0, nextROI, nextShape);
             }
             else if (shapeType == ELLIPSE) {
               int rx = width / 2;
               int ry = height / 2;
-              store.setEllipsecx(String.valueOf(x + rx), 0, nextROI, nextShape);
-              store.setEllipsecy(String.valueOf(y + ry), 0, nextROI, nextShape);
-              store.setEllipserx(String.valueOf(rx), 0, nextROI, nextShape);
-              store.setEllipsery(String.valueOf(ry), 0, nextROI, nextShape);
+              store.setEllipseCx(String.valueOf(x + rx), 0, nextROI, nextShape);
+              store.setEllipseCy(String.valueOf(y + ry), 0, nextROI, nextShape);
+              store.setEllipseRx(String.valueOf(rx), 0, nextROI, nextShape);
+              store.setEllipseRy(String.valueOf(ry), 0, nextROI, nextShape);
             }
             else if (shapeType == POLYGON || shapeType == FREE_SHAPE) {
               StringBuffer points = new StringBuffer("(");
@@ -1170,7 +1170,7 @@ public class FV1000Reader extends FormatReader {
                 if (point < xc.length - 1) points.append(", ");
               }
               points.append(")");
-              store.setPolygonpoints(points.toString(), 0, nextROI, nextShape);
+              store.setPolygonPoints(points.toString(), 0, nextROI, nextShape);
             }
             else if (shapeType == POLYLINE || shapeType == FREE_LINE) {
               StringBuffer points = new StringBuffer("(");
@@ -1181,7 +1181,7 @@ public class FV1000Reader extends FormatReader {
                 if (point < xc.length - 1) points.append(", ");
               }
               points.append(")");
-              store.setPolylinepoints(points.toString(), 0, nextROI, nextShape);
+              store.setPolylinePoints(points.toString(), 0, nextROI, nextShape);
             }
           }
         }

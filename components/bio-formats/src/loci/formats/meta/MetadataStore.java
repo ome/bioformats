@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
+ * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -126,6 +126,24 @@ public interface MetadataStore {
   // - Circle property storage -
 
   /**
+   * For a particular Circle, sets X coordinate of the center of the circle.
+   * @param cx X coordinate of the center of the circle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Circle, sets Y coordinate of the center of the circle.
+   * @param cy Y coordinate of the center of the circle
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Circle, sets unique label identifying the circle.
    * @param id unique label identifying the circle
    * @param imageIndex index of the Image
@@ -135,31 +153,13 @@ public interface MetadataStore {
   void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Circle, sets X coordinate of the center of the circle.
-   * @param cx X coordinate of the center of the circle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Circle, sets Y coordinate of the center of the circle.
-   * @param cy Y coordinate of the center of the circle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Circle, sets radius of the circle, in pixels.
    * @param r radius of the circle, in pixels
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex);
+  void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Circle, sets TODO.
@@ -168,7 +168,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   // - Contact property storage -
 
@@ -499,6 +499,24 @@ public interface MetadataStore {
   // - Ellipse property storage -
 
   /**
+   * For a particular Ellipse, sets X coordinate of the center of the ellipse.
+   * @param cx X coordinate of the center of the ellipse
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Ellipse, sets Y coordinate of the center of the ellipse.
+   * @param cy Y coordinate of the center of the ellipse
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Ellipse, sets unique label identifying the ellipse.
    * @param id unique label identifying the ellipse
    * @param imageIndex index of the Image
@@ -508,31 +526,13 @@ public interface MetadataStore {
   void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Ellipse, sets X coordinate of the center of the ellipse.
-   * @param cx X coordinate of the center of the ellipse
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Ellipse, sets Y coordinate of the center of the ellipse.
-   * @param cy Y coordinate of the center of the ellipse
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Ellipse, sets horizontal radius of the ellipse.
    * @param rx horizontal radius of the ellipse
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex);
+  void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Ellipse, sets vertical radius of the ellipse.
@@ -541,7 +541,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex);
+  void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Ellipse, sets TODO.
@@ -550,7 +550,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   // - EmFilter property storage -
 
@@ -1162,7 +1162,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, sets X coordinate of the first endpoint of the line.
@@ -1171,7 +1171,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex);
+  void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, sets X coordinate of the second endpoint of the line.
@@ -1180,7 +1180,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex);
+  void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, sets Y coordinate of the first endpoint of the line.
@@ -1189,7 +1189,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex);
+  void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Line, sets Y coordinate of the second endpoint of the line.
@@ -1198,7 +1198,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex);
+  void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex);
 
   // - LogicalChannel property storage -
 
@@ -1357,6 +1357,15 @@ public interface MetadataStore {
   // - Mask property storage -
 
   /**
+   * For a particular Mask, sets TODO.
+   * @param height TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Mask, sets unique label identifying the mask.
    * @param id unique label identifying the mask
    * @param imageIndex index of the Image
@@ -1367,21 +1376,12 @@ public interface MetadataStore {
 
   /**
    * For a particular Mask, sets TODO.
-   * @param height TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Mask, sets TODO.
    * @param transform TODO
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Mask, sets TODO.
@@ -1390,7 +1390,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex);
+  void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Mask, sets TODO.
@@ -1399,7 +1399,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex);
+  void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Mask, sets TODO.
@@ -1408,7 +1408,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex);
+  void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex);
 
   // - MaskPixels property storage -
 
@@ -1924,6 +1924,24 @@ public interface MetadataStore {
   // - Point property storage -
 
   /**
+   * For a particular Point, sets X coordinate of the center of the point.
+   * @param cx X coordinate of the center of the point
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Point, sets Y coordinate of the center of the point.
+   * @param cy Y coordinate of the center of the point
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Point, sets unique label identifying the point.
    * @param id unique label identifying the point
    * @param imageIndex index of the Image
@@ -1933,31 +1951,13 @@ public interface MetadataStore {
   void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Point, sets X coordinate of the center of the point.
-   * @param cx X coordinate of the center of the point
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Point, sets Y coordinate of the center of the point.
-   * @param cy Y coordinate of the center of the point
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Point, sets radius of the point, in pixels.
    * @param r radius of the point, in pixels
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex);
+  void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Point, sets TODO.
@@ -1966,7 +1966,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   // - Polygon property storage -
 
@@ -1986,7 +1986,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex);
+  void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Polygon, sets TODO.
@@ -1995,7 +1995,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   // - Polyline property storage -
 
@@ -2015,7 +2015,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex);
+  void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Polyline, sets TODO.
@@ -2024,7 +2024,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   // - Project property storage -
 
@@ -2205,6 +2205,15 @@ public interface MetadataStore {
   // - Rect property storage -
 
   /**
+   * For a particular Rect, sets height of the rectangle, in pixels.
+   * @param height height of the rectangle, in pixels
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Rect, sets unique label identifying the rectangle.
    * @param id unique label identifying the rectangle
    * @param imageIndex index of the Image
@@ -2214,22 +2223,13 @@ public interface MetadataStore {
   void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
-   * For a particular Rect, sets height of the rectangle, in pixels.
-   * @param height height of the rectangle, in pixels
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
    * For a particular Rect, sets TODO.
    * @param transform TODO
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
+  void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Rect, sets width of the rectangle, in pixels.
@@ -2238,7 +2238,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex);
+  void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Rect, sets X coordinate of the upper left corner of the rectangle.
@@ -2247,7 +2247,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex);
+  void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Rect, sets Y coordinate of the upper left corner of the rectangle.
@@ -2256,7 +2256,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex);
+  void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex);
 
   // - Region property storage -
 
@@ -2403,7 +2403,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex);
+  void setShapeTheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Shape, sets Z position of the shape.
@@ -2412,7 +2412,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex);
+  void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex);
 
   // - StageLabel property storage -
 

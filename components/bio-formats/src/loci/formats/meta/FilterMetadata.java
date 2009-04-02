@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jan 5, 2009 1:43:34 PM CST
+ * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -110,34 +110,34 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Circle property storage -
 
+  /* @see MetadataStore#setCircleCx(String, int, int, int) */
+  public void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cx) : cx;
+    store.setCircleCx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setCircleCy(String, int, int, int) */
+  public void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cy) : cy;
+    store.setCircleCy(value, imageIndex, roiIndex, shapeIndex);
+  }
+
   /* @see MetadataStore#setCircleID(String, int, int, int) */
   public void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
     store.setCircleID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setCirclecx(String, int, int, int) */
-  public void setCirclecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(cx) : cx;
-    store.setCirclecx(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setCirclecy(String, int, int, int) */
-  public void setCirclecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(cy) : cy;
-    store.setCirclecy(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setCircler(String, int, int, int) */
-  public void setCircler(String r, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setCircleR(String, int, int, int) */
+  public void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(r) : r;
-    store.setCircler(value, imageIndex, roiIndex, shapeIndex);
+    store.setCircleR(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setCircletransform(String, int, int, int) */
-  public void setCircletransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setCircleTransform(String, int, int, int) */
+  public void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setCircletransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setCircleTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- Contact property storage -
@@ -381,40 +381,40 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Ellipse property storage -
 
+  /* @see MetadataStore#setEllipseCx(String, int, int, int) */
+  public void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cx) : cx;
+    store.setEllipseCx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setEllipseCy(String, int, int, int) */
+  public void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cy) : cy;
+    store.setEllipseCy(value, imageIndex, roiIndex, shapeIndex);
+  }
+
   /* @see MetadataStore#setEllipseID(String, int, int, int) */
   public void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
     store.setEllipseID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setEllipsecx(String, int, int, int) */
-  public void setEllipsecx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(cx) : cx;
-    store.setEllipsecx(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setEllipsecy(String, int, int, int) */
-  public void setEllipsecy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(cy) : cy;
-    store.setEllipsecy(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setEllipserx(String, int, int, int) */
-  public void setEllipserx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseRx(String, int, int, int) */
+  public void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(rx) : rx;
-    store.setEllipserx(value, imageIndex, roiIndex, shapeIndex);
+    store.setEllipseRx(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setEllipsery(String, int, int, int) */
-  public void setEllipsery(String ry, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseRy(String, int, int, int) */
+  public void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(ry) : ry;
-    store.setEllipsery(value, imageIndex, roiIndex, shapeIndex);
+    store.setEllipseRy(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setEllipsetransform(String, int, int, int) */
-  public void setEllipsetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setEllipseTransform(String, int, int, int) */
+  public void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setEllipsetransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setEllipseTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- EmFilter property storage -
@@ -882,34 +882,34 @@ public class FilterMetadata implements MetadataStore {
     store.setLineID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setLinetransform(String, int, int, int) */
-  public void setLinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineTransform(String, int, int, int) */
+  public void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setLinetransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setLineTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setLinex1(String, int, int, int) */
-  public void setLinex1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineX1(String, int, int, int) */
+  public void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(x1) : x1;
-    store.setLinex1(value, imageIndex, roiIndex, shapeIndex);
+    store.setLineX1(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setLinex2(String, int, int, int) */
-  public void setLinex2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineX2(String, int, int, int) */
+  public void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(x2) : x2;
-    store.setLinex2(value, imageIndex, roiIndex, shapeIndex);
+    store.setLineX2(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setLiney1(String, int, int, int) */
-  public void setLiney1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineY1(String, int, int, int) */
+  public void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(y1) : y1;
-    store.setLiney1(value, imageIndex, roiIndex, shapeIndex);
+    store.setLineY1(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setLiney2(String, int, int, int) */
-  public void setLiney2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setLineY2(String, int, int, int) */
+  public void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(y2) : y2;
-    store.setLiney2(value, imageIndex, roiIndex, shapeIndex);
+    store.setLineY2(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- LogicalChannel property storage -
@@ -1024,40 +1024,40 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Mask property storage -
 
+  /* @see MetadataStore#setMaskHeight(String, int, int, int) */
+  public void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(height) : height;
+    store.setMaskHeight(value, imageIndex, roiIndex, shapeIndex);
+  }
+
   /* @see MetadataStore#setMaskID(String, int, int, int) */
   public void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
     store.setMaskID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setMaskheight(String, int, int, int) */
-  public void setMaskheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(height) : height;
-    store.setMaskheight(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setMasktransform(String, int, int, int) */
-  public void setMasktransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskTransform(String, int, int, int) */
+  public void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setMasktransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setMaskTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setMaskwidth(String, int, int, int) */
-  public void setMaskwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskWidth(String, int, int, int) */
+  public void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(width) : width;
-    store.setMaskwidth(value, imageIndex, roiIndex, shapeIndex);
+    store.setMaskWidth(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setMaskx(String, int, int, int) */
-  public void setMaskx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskX(String, int, int, int) */
+  public void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(x) : x;
-    store.setMaskx(value, imageIndex, roiIndex, shapeIndex);
+    store.setMaskX(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setMasky(String, int, int, int) */
-  public void setMasky(String y, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskY(String, int, int, int) */
+  public void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(y) : y;
-    store.setMasky(value, imageIndex, roiIndex, shapeIndex);
+    store.setMaskY(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- MaskPixels property storage -
@@ -1427,34 +1427,34 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Point property storage -
 
+  /* @see MetadataStore#setPointCx(String, int, int, int) */
+  public void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cx) : cx;
+    store.setPointCx(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPointCy(String, int, int, int) */
+  public void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(cy) : cy;
+    store.setPointCy(value, imageIndex, roiIndex, shapeIndex);
+  }
+
   /* @see MetadataStore#setPointID(String, int, int, int) */
   public void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
     store.setPointID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setPointcx(String, int, int, int) */
-  public void setPointcx(String cx, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(cx) : cx;
-    store.setPointcx(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setPointcy(String, int, int, int) */
-  public void setPointcy(String cy, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(cy) : cy;
-    store.setPointcy(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setPointr(String, int, int, int) */
-  public void setPointr(String r, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPointR(String, int, int, int) */
+  public void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(r) : r;
-    store.setPointr(value, imageIndex, roiIndex, shapeIndex);
+    store.setPointR(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setPointtransform(String, int, int, int) */
-  public void setPointtransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPointTransform(String, int, int, int) */
+  public void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setPointtransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setPointTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- Polygon property storage -
@@ -1465,16 +1465,16 @@ public class FilterMetadata implements MetadataStore {
     store.setPolygonID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setPolygonpoints(String, int, int, int) */
-  public void setPolygonpoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolygonPoints(String, int, int, int) */
+  public void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(points) : points;
-    store.setPolygonpoints(value, imageIndex, roiIndex, shapeIndex);
+    store.setPolygonPoints(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setPolygontransform(String, int, int, int) */
-  public void setPolygontransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolygonTransform(String, int, int, int) */
+  public void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setPolygontransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setPolygonTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- Polyline property storage -
@@ -1485,16 +1485,16 @@ public class FilterMetadata implements MetadataStore {
     store.setPolylineID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setPolylinepoints(String, int, int, int) */
-  public void setPolylinepoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolylinePoints(String, int, int, int) */
+  public void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(points) : points;
-    store.setPolylinepoints(value, imageIndex, roiIndex, shapeIndex);
+    store.setPolylinePoints(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setPolylinetransform(String, int, int, int) */
-  public void setPolylinetransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setPolylineTransform(String, int, int, int) */
+  public void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setPolylinetransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setPolylineTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- Project property storage -
@@ -1629,40 +1629,40 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Rect property storage -
 
+  /* @see MetadataStore#setRectHeight(String, int, int, int) */
+  public void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(height) : height;
+    store.setRectHeight(value, imageIndex, roiIndex, shapeIndex);
+  }
+
   /* @see MetadataStore#setRectID(String, int, int, int) */
   public void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
     store.setRectID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setRectheight(String, int, int, int) */
-  public void setRectheight(String height, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(height) : height;
-    store.setRectheight(value, imageIndex, roiIndex, shapeIndex);
-  }
-
-  /* @see MetadataStore#setRecttransform(String, int, int, int) */
-  public void setRecttransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectTransform(String, int, int, int) */
+  public void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(transform) : transform;
-    store.setRecttransform(value, imageIndex, roiIndex, shapeIndex);
+    store.setRectTransform(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setRectwidth(String, int, int, int) */
-  public void setRectwidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectWidth(String, int, int, int) */
+  public void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(width) : width;
-    store.setRectwidth(value, imageIndex, roiIndex, shapeIndex);
+    store.setRectWidth(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setRectx(String, int, int, int) */
-  public void setRectx(String x, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectX(String, int, int, int) */
+  public void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(x) : x;
-    store.setRectx(value, imageIndex, roiIndex, shapeIndex);
+    store.setRectX(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setRecty(String, int, int, int) */
-  public void setRecty(String y, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setRectY(String, int, int, int) */
+  public void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(y) : y;
-    store.setRecty(value, imageIndex, roiIndex, shapeIndex);
+    store.setRectY(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- Region property storage -
@@ -1777,14 +1777,14 @@ public class FilterMetadata implements MetadataStore {
     store.setShapeID(value, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setShapetheT(Integer, int, int, int) */
-  public void setShapetheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
-    store.setShapetheT(theT, imageIndex, roiIndex, shapeIndex);
+  /* @see MetadataStore#setShapeTheT(Integer, int, int, int) */
+  public void setShapeTheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeTheT(theT, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setShapetheZ(Integer, int, int, int) */
-  public void setShapetheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
-    store.setShapetheZ(theZ, imageIndex, roiIndex, shapeIndex);
+  /* @see MetadataStore#setShapeTheZ(Integer, int, int, int) */
+  public void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- StageLabel property storage -
