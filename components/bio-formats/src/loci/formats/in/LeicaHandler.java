@@ -474,19 +474,20 @@ public class LeicaHandler extends DefaultHandler {
       }
       int s = seriesNames.size() - 1;
       int channel = Integer.parseInt(attributes.getValue("Channel")) - 1;
+      int channelCount = ((Integer) channels.get(s)).intValue();
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         String value = attributes.getValue(i);
         metadata.put(prefix + " - " + name, value);
-        if (name.equals("LeftWorld")) {
+        if (name.equals("LeftWorld") && channel < channelCount) {
           store.setLogicalChannelEmWave(
             new Integer((int) Float.parseFloat(value)), s, channel);
         }
-        else if (name.equals("RightWorld")) {
+        else if (name.equals("RightWorld") && channel < channelCount) {
           store.setLogicalChannelExWave(
             new Integer((int) Float.parseFloat(value)), s, channel);
         }
-        else if (name.equals("DyeName")) {
+        else if (name.equals("DyeName") && channel < channelCount) {
           store.setLogicalChannelName(value, s, channel);
         }
       }
