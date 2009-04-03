@@ -207,6 +207,8 @@ public class InCellReader extends FormatReader {
           }
         }
       }
+      int expectedSeries = totalImages / (getSizeZ() * getSizeC() * getSizeT());
+      seriesCount = (int) Math.min(seriesCount, expectedSeries);
     }
     else seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
