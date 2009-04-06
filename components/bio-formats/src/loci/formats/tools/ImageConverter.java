@@ -62,7 +62,7 @@ public final class ImageConverter {
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-merge")) merge = true;
-          else if (args[i].equals("-fill")) fill = true;
+          else if (args[i].equals("-expand")) fill = true;
           else if (args[i].equals("-bigtiff")) bigtiff = true;
           else if (args[i].equals("-compression")) compression = args[++i];
           else if (args[i].equals("-series")) {
@@ -84,8 +84,48 @@ public final class ImageConverter {
       LogTools.println("Debugging at level " + FormatHandler.debugLevel);
     }
     if (in == null || out == null) {
-      LogTools.println("To convert a file between formats, run:");
-      LogTools.println("  bfconvert [-debug] in_file out_file");
+      String[] s = {
+        "To convert a file between formats, run:",
+        "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
+        "    [-bigtiff] [-compression codec] [-series series] in_file out_file",
+        "",
+        "      -debug: turn on debugging output",
+        "     -stitch: stitch input files with similar names",
+        "   -separate: split RGB images into separate channels",
+        "      -merge: combine separate channels into RGB image",
+        "     -expand: expand indexed color to RGB",
+        "    -bigtiff: force BigTIFF files to be written",
+        "-compression: specify the codec to use when saving images",
+        "     -series: specify which image series to convert",
+        "",
+        "If any of the following patterns are present in out_file, they will",
+        "be replaced with the indicated metadata value from the input file.",
+        "",
+        "   Pattern:    Metadata value:",
+        "   ---------------------------",
+        "   " + FormatTools.SERIES_NUM + "          series index",
+        "   " + FormatTools.SERIES_NAME + "          series name",
+        "   " + FormatTools.CHANNEL_NUM + "          channel index",
+        "   " + FormatTools.CHANNEL_NAME +"          channel name",
+        "   " + FormatTools.Z_NUM + "          Z index",
+        "   " + FormatTools.T_NUM + "          T index",
+        "",
+        "If any of these patterns are present, then the images to be saved",
+        "will be split into multiple files.  For example, if the input file",
+        "contains 5 Z sections and 3 timepoints, and out_file is",
+        "'converted_Z%z_T%t.tiff'",
+        "then 15 files will be created, with the names",
+        "",
+        "  converted_Z0_T0.tiff",
+        "  converted_Z0_T1.tiff",
+        "  converted_Z0_T2.tiff",
+        "  converted_Z1_T0.tiff",
+        "  ...",
+        "  converted_Z4_T2.tiff",
+        "",
+        "Each file would have a single image plane."
+      };
+      for (int i=0; i<s.length; i++) LogTools.println(s[i]);
       return false;
     }
 
@@ -121,8 +161,6 @@ public final class ImageConverter {
         ((TiffWriter) w).setBigTiff(bigtiff);
       }
     }
-    writer.setId(out);
-    if (compression != null) writer.setCompression(compression);
 
     LogTools.print("[" + writer.getFormat() + "] ");
     long mid = System.currentTimeMillis();
@@ -135,6 +173,9 @@ public final class ImageConverter {
       reader.setSeries(q);
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
       for (int i=0; i<numImages; i++) {
+        writer.setId(FormatTools.getFilename(q, i, reader, out));
+        if (compression != null) writer.setCompression(compression);
+
         long s = System.currentTimeMillis();
         Image image = reader.openImage(i);
         long m = System.currentTimeMillis();
@@ -146,6 +187,7 @@ public final class ImageConverter {
         write += e - m;
       }
     }
+    writer.close();
     long end = System.currentTimeMillis();
     LogTools.println(" [done]");
 

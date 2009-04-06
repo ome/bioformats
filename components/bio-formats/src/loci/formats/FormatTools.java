@@ -23,8 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 import loci.common.*;
+import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * A utility class for format reader and writer implementations.
@@ -103,6 +108,14 @@ public final class FormatTools {
   public static final int MUST_GROUP = 0;
   public static final int CAN_GROUP = 1;
   public static final int CANNOT_GROUP = 2;
+
+  /** Patterns to be used when constructing a pattern for output filenames. */
+  public static final String SERIES_NUM = "%s";
+  public static final String SERIES_NAME = "%n";
+  public static final String CHANNEL_NUM = "%c";
+  public static final String CHANNEL_NAME = "%w";
+  public static final String Z_NUM = "%z";
+  public static final String T_NUM = "%t";
 
   // -- Constructor --
 
@@ -575,6 +588,66 @@ public final class FormatTools {
       }
     }
     return null;
+  }
+
+  // -- Utility methods -- export
+
+  public static String getFilename(int series, int image, IFormatReader r,
+    String pattern)
+    throws FormatException, IOException
+  {
+    MetadataStore store = r.getMetadataStore();
+    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
+      (MetadataRetrieve) store : new DummyMetadata();
+
+    String filename = pattern.replaceAll(SERIES_NUM, String.valueOf(series));
+
+    String imageName = retrieve.getImageName(series);
+    if (imageName == null) imageName = "Series" + series;
+    imageName = imageName.replaceAll(File.separator, "_");
+
+    filename = filename.replaceAll(SERIES_NAME, imageName);
+
+    r.setSeries(series);
+    int[] coordinates = r.getZCTCoords(image);
+
+    filename = filename.replaceAll(Z_NUM, String.valueOf(coordinates[0]));
+    filename = filename.replaceAll(T_NUM, String.valueOf(coordinates[2]));
+    filename = filename.replaceAll(CHANNEL_NUM, String.valueOf(coordinates[1]));
+
+    String channelName = retrieve.getLogicalChannelName(series, coordinates[1]);
+    if (channelName == null) channelName = String.valueOf(coordinates[1]);
+    channelName = channelName.replaceAll(File.separator, "_");
+
+    filename = filename.replaceAll(CHANNEL_NAME, channelName);
+    return filename;
+  }
+
+  public static String[] getFilenames(String pattern, IFormatReader r)
+    throws FormatException, IOException
+  {
+    Vector filenames = new Vector();
+    String filename = null;
+    for (int series=0; series<r.getSeriesCount(); series++) {
+      r.setSeries(series);
+      for (int image=0; image<r.getImageCount(); image++) {
+        filename = getFilename(series, image, r, pattern);
+        if (!filenames.contains(filename)) filenames.add(filename);
+      }
+    }
+    return (String[]) filenames.toArray(new String[0]);
+  }
+
+  public static int getImagesPerFile(String pattern, IFormatReader r)
+    throws FormatException, IOException
+  {
+    String[] filenames = getFilenames(pattern, r);
+    int totalPlanes = 0;
+    for (int series=0; series<r.getSeriesCount(); series++) {
+      r.setSeries(series);
+      totalPlanes += r.getImageCount();
+    }
+    return totalPlanes / filenames.length;
   }
 
 }
