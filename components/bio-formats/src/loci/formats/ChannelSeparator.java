@@ -55,6 +55,27 @@ public class ChannelSeparator extends ReaderWrapper {
   /** Constructs a ChannelSeparator with the given reader. */
   public ChannelSeparator(IFormatReader r) { super(r); }
 
+  // -- ChannelSeparator API methods --
+
+  /**
+   * Returns the image number in the original dataset that corresponds to the
+   * given image number.  For instance, if the original dataset was a single
+   * RGB image and the given image number is 2, the return value will be 0.
+   *
+   * @param no is an image number greater than or equal to 0 and less than
+   *   getImageCount()
+   * @return the corresponding image number in the original (unseparated) data.
+   */
+  public int getOriginalIndex(int no) throws FormatException, IOException {
+    int imageCount = getImageCount();
+    int originalCount = reader.getImageCount();
+
+    if (imageCount == originalCount) return no;
+    int[] coords = getZCTCoords(no);
+    coords[1] /= reader.getRGBChannelCount();
+    return reader.getIndex(coords[0], coords[1], coords[2]);
+  }
+
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#setId(String) */

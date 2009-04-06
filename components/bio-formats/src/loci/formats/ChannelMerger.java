@@ -52,6 +52,25 @@ public class ChannelMerger extends ReaderWrapper {
     return c > 1 && c <= 4 && !reader.isRGB();
   }
 
+  // -- ChannelMerger API methods --
+
+  /**
+   * Returns the image number in the original dataset that corresponds to the
+   * given image number.
+   *
+   * @param no is an image number greater than or equal to 0 and less than
+   *   getImageCount()
+   * @return the corresponding image number in the original (unmerged) data.
+   */
+  public int getOriginalIndex(int no) throws FormatException, IOException {
+    int imageCount = getImageCount();
+    int originalCount = reader.getImageCount();
+
+    if (imageCount == originalCount) return no;
+    int[] coords = getZCTCoords(no);
+    return reader.getIndex(coords[0], coords[1], coords[2]);
+  }
+
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getImageCount() */

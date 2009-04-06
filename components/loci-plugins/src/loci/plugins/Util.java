@@ -64,8 +64,6 @@ public final class Util {
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
 
-  public static final String VERSION = "4.0.0";
-
   public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
 
   public static final String[] REGISTRY_PROPERTIES = new String[] {
@@ -618,7 +616,7 @@ public final class Util {
       else query.append(";");
       query.append(REGISTRY_PROPERTIES[i]);
       query.append("=");
-      if (i == 0) query.append(VERSION);
+      if (i == 0) query.append(FormatTools.VERSION);
       else {
         try {
           query.append(URLEncoder.encode(
@@ -649,7 +647,7 @@ public final class Util {
       // the current version - version number should be in "x.x.x" format
 
       String[] version = latestVersion.toString().split("\\.");
-      String[] thisVersion = VERSION.split("\\.");
+      String[] thisVersion = FormatTools.VERSION.split("\\.");
       for (int i=0; i<thisVersion.length; i++) {
         int subVersion = Integer.parseInt(thisVersion[i]);
         try {
