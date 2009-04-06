@@ -159,6 +159,7 @@ public class TiffWriter extends FormatWriter {
 
     // write the image
     ifd.put(new Integer(TiffTools.LITTLE_ENDIAN), new Boolean(littleEndian));
+    out.seek(out.length());
     lastOffset +=
       TiffTools.writeImage(img, ifd, out, lastOffset, last, isBigTiff);
     if (last) close();
@@ -197,6 +198,8 @@ public class TiffWriter extends FormatWriter {
     currentId = null;
     initialized = false;
     lastOffset = 0;
+    imageCounts = null;
+    isBigTiff = false;
   }
 
   // -- TiffWriter API methods --
