@@ -34,6 +34,7 @@ public class Read_Image implements PlugIn {
         ImageProcessor ip = Util.openProcessors(r, i)[0];
         stack.addSlice("" + (i + 1), ip);
       }
+      r.close();
       IJ.showStatus("Constructing image");
       ImagePlus imp = new ImagePlus(name, stack);
       imp.show();
