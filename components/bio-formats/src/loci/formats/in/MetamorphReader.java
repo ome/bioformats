@@ -135,19 +135,21 @@ public class MetamorphReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (stks == null || stks[series].length == 1) {
+    if (stks == null) {
       return super.openBytes(no, buf, x, y, w, h);
     }
 
     int[] coords = FormatTools.getZCTCoords(this, no % getSizeZ());
     int ndx = no / getSizeZ();
+    if (stks[series].length == 1) ndx = 0;
     String file = stks[series][ndx];
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
     if (stkReader == null) stkReader = new MetamorphReader();
     stkReader.setId(file);
-    return stkReader.openBytes(coords[0], buf, x, y, w, h);
+    int plane = stks[series].length == 1 ? no : coords[0];
+    return stkReader.openBytes(plane, buf, x, y, w, h);
   }
 
   // -- IFormatHandler API methods --
@@ -175,8 +177,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (stkFile.indexOf(File.separator) != -1) {
         stkFile = stkFile.substring(stkFile.lastIndexOf(File.separator) + 1);
       }
-      Location parent =
-        new Location(id.substring(0, id.lastIndexOf(File.separator) + 1));
+      String parentPath = id.substring(0, id.lastIndexOf(File.separator) + 1);
+      Location parent = new Location(parentPath).getAbsoluteFile();
       status("Looking for STK file in " + parent.getAbsolutePath());
       String[] dirList = parent.list();
       for (int i=0; i<dirList.length; i++) {
@@ -320,7 +322,9 @@ public class MetamorphReader extends BaseTiffReader {
                   stks[s][f].lastIndexOf(".")) + ".TIF";
                 l = new Location(ndfile.getParent(), stks[s][f]);
                 if (!l.exists()) {
+                  String filename = stks[s][f];
                   stks = null;
+                  throw new FormatException("Missing STK file: " + filename);
                 }
               }
             }
@@ -331,7 +335,9 @@ public class MetamorphReader extends BaseTiffReader {
                 stks[s][f].lastIndexOf(".")) + ".TIF";
               l = new Location(ndfile.getParent(), stks[s][f]);
               if (!l.exists()) {
+                String filename = stks[s][f];
                 stks = null;
+                throw new FormatException("Missing STK file: " + filename);
               }
             }
           }
