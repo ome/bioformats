@@ -793,18 +793,9 @@ public class BioRadReader extends FormatReader {
               // NB: This logic has not been tested, so it may be broken.
               if (key.equals("AXIS_4")) {
                 // this is a single section multi-channel dataset
-                core[0].sizeC = getSizeZ();
+                core[0].sizeC = getImageCount();
                 core[0].sizeZ = 1;
-              }
-              else {
-                // this is a multi-section multi-channel dataset
-                int nplanes = getSizeZ();
-                core[0].sizeC = 3;
-                core[0].sizeZ = nplanes / getSizeC();
-                if (getSizeC() * getSizeZ() != nplanes) {
-                  core[0].sizeC = 1;
-                  core[0].sizeZ = nplanes;
-                }
+                core[0].sizeT = 1;
               }
               break;
             case 14:
