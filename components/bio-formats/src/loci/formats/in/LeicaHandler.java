@@ -346,7 +346,11 @@ public class LeicaHandler extends DefaultHandler {
             }
 
             if (tokens.hasMoreTokens()) {
-              store.setObjectiveImmersion(tokens.nextToken(), 0, 0);
+              String immersion = tokens.nextToken();
+              if (immersion == null || immersion.trim().equals("")) {
+                immersion = "Unknown";
+              }
+              store.setObjectiveImmersion(immersion, 0, 0);
             }
             if (tokens.countTokens() > 1) {
               Float temperature = new Float(tokens.nextToken());

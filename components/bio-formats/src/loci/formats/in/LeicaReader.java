@@ -1011,6 +1011,10 @@ public class LeicaReader extends FormatReader {
               correction.append(" ");
             }
           }
+          if (immersion == null || immersion.trim().equals("")) {
+            immersion = "Unknown";
+          }
+
           store.setObjectiveImmersion(immersion, 0, objective);
           store.setObjectiveCorrection(correction.toString().trim(), 0,
             objective);
