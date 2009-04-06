@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1239,6 +1239,10 @@ public class DummyMetadata implements IMetadata {
 
   // - Plate property retrieval -
 
+  /* @see MetadataRetrieve#getPlateColumnNamingConvention(int) */
+  public String getPlateColumnNamingConvention(int plateIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getPlateDescription(int) */
   public String getPlateDescription(int plateIndex) {
     return null;
@@ -1255,8 +1259,20 @@ public class DummyMetadata implements IMetadata {
   public String getPlateName(int plateIndex) {
     return null;
   }
+  /* @see MetadataRetrieve#getPlateRowNamingConvention(int) */
+  public String getPlateRowNamingConvention(int plateIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getPlateStatus(int) */
   public String getPlateStatus(int plateIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlateWellOriginX(int) */
+  public Double getPlateWellOriginX(int plateIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlateWellOriginY(int) */
+  public Double getPlateWellOriginY(int plateIndex) {
     return null;
   }
 
@@ -2677,6 +2693,10 @@ public class DummyMetadata implements IMetadata {
 
   // - Plate property storage -
 
+  /* @see MetadataStore#setPlateColumnNamingConvention(String, int) */
+  public void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex) {
+  }
+
   /* @see MetadataStore#setPlateDescription(String, int) */
   public void setPlateDescription(String description, int plateIndex) {
   }
@@ -2693,8 +2713,20 @@ public class DummyMetadata implements IMetadata {
   public void setPlateName(String name, int plateIndex) {
   }
 
+  /* @see MetadataStore#setPlateRowNamingConvention(String, int) */
+  public void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex) {
+  }
+
   /* @see MetadataStore#setPlateStatus(String, int) */
   public void setPlateStatus(String status, int plateIndex) {
+  }
+
+  /* @see MetadataStore#setPlateWellOriginX(Double, int) */
+  public void setPlateWellOriginX(Double wellOriginX, int plateIndex) {
+  }
+
+  /* @see MetadataStore#setPlateWellOriginY(Double, int) */
+  public void setPlateWellOriginY(Double wellOriginY, int plateIndex) {
   }
 
   // - PlateRef property storage -

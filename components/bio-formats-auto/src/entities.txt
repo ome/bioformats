@@ -2373,6 +2373,73 @@ description = reference to the plate in an external database
 getter = getExternRef
 setter = setExternRef
 
+# These entities are not currently present in the OME-XML schemas, but
+# they are likely to be added in future versions.
+
+[Plate ColumnNamingConvention]
+type = String
+description = name of the first column in the plate
+
+[Plate ColumnNamingConvention 200809]
+path = -
+
+[Plate ColumnNamingConvention 200802]
+path = -
+
+[Plate ColumnNamingConvention 200706]
+path = -
+
+[Plate ColumnNamingConvention 2003FC]
+path = -
+
+[Plate RowNamingConvention]
+type = String
+description = name of the first row in the plate
+
+[Plate RowNamingConvention 200809]
+path = -
+
+[Plate RowNamingConvention 200802]
+path = -
+
+[Plate RowNamingConvention 200706]
+path = -
+
+[Plate RowNamingConvention 2003FC]
+path = -
+
+[Plate WellOriginX]
+type = Double
+description = percent width offset from top left corner
+
+[Plate WellOriginX 200809]
+path = -
+
+[Plate WellOriginX 200802]
+path = -
+
+[Plate WellOriginX 200706]
+path = -
+
+[Plate WellOriginX 2003FC]
+path = -
+
+[Plate WellOriginY]
+type = Double
+description = percent height offset from top left corner
+
+[Plate WellOriginY 200809]
+path = -
+
+[Plate WellOriginY 200802]
+path = -
+
+[Plate WellOriginY 200706]
+path = -
+
+[Plate WellOriginY 2003FC]
+path = -
+
 ## PlateRef ##
 
 [PlateRef]

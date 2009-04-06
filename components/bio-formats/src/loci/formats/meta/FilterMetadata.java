@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1376,6 +1376,12 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Plate property storage -
 
+  /* @see MetadataStore#setPlateColumnNamingConvention(String, int) */
+  public void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex) {
+    String value = filter ? DataTools.sanitize(columnNamingConvention) : columnNamingConvention;
+    store.setPlateColumnNamingConvention(value, plateIndex);
+  }
+
   /* @see MetadataStore#setPlateDescription(String, int) */
   public void setPlateDescription(String description, int plateIndex) {
     String value = filter ? DataTools.sanitize(description) : description;
@@ -1400,10 +1406,26 @@ public class FilterMetadata implements MetadataStore {
     store.setPlateName(value, plateIndex);
   }
 
+  /* @see MetadataStore#setPlateRowNamingConvention(String, int) */
+  public void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex) {
+    String value = filter ? DataTools.sanitize(rowNamingConvention) : rowNamingConvention;
+    store.setPlateRowNamingConvention(value, plateIndex);
+  }
+
   /* @see MetadataStore#setPlateStatus(String, int) */
   public void setPlateStatus(String status, int plateIndex) {
     String value = filter ? DataTools.sanitize(status) : status;
     store.setPlateStatus(value, plateIndex);
+  }
+
+  /* @see MetadataStore#setPlateWellOriginX(Double, int) */
+  public void setPlateWellOriginX(Double wellOriginX, int plateIndex) {
+    store.setPlateWellOriginX(wellOriginX, plateIndex);
+  }
+
+  /* @see MetadataStore#setPlateWellOriginY(Double, int) */
+  public void setPlateWellOriginY(Double wellOriginY, int plateIndex) {
+    store.setPlateWellOriginY(wellOriginY, plateIndex);
   }
 
   // -- PlateRef property storage -

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1711,6 +1711,12 @@ public interface MetadataRetrieve {
   // - Plate property retrieval -
 
   /**
+   * For a particular Plate, gets name of the first column in the plate.
+   * @param plateIndex index of the Plate
+   */
+  String getPlateColumnNamingConvention(int plateIndex);
+
+  /**
    * For a particular Plate, gets description of the plate.
    * @param plateIndex index of the Plate
    */
@@ -1735,10 +1741,28 @@ public interface MetadataRetrieve {
   String getPlateName(int plateIndex);
 
   /**
+   * For a particular Plate, gets name of the first row in the plate.
+   * @param plateIndex index of the Plate
+   */
+  String getPlateRowNamingConvention(int plateIndex);
+
+  /**
    * For a particular Plate, gets current state of the plate with respect to the experiment work-flow.
    * @param plateIndex index of the Plate
    */
   String getPlateStatus(int plateIndex);
+
+  /**
+   * For a particular Plate, gets percent width offset from top left corner.
+   * @param plateIndex index of the Plate
+   */
+  Double getPlateWellOriginX(int plateIndex);
+
+  /**
+   * For a particular Plate, gets percent height offset from top left corner.
+   * @param plateIndex index of the Plate
+   */
+  Double getPlateWellOriginY(int plateIndex);
 
   // - PlateRef property retrieval -
 

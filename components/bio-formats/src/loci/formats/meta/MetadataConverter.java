@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -684,6 +684,8 @@ public final class MetadataConverter {
     }
     int plateCount = src.getPlateCount();
     for (int plateIndex=0; plateIndex<plateCount; plateIndex++) {
+      String plateColumnNamingConventionValue = src.getPlateColumnNamingConvention(plateIndex);
+      if (plateColumnNamingConventionValue != null) dest.setPlateColumnNamingConvention(plateColumnNamingConventionValue, plateIndex);
       String plateDescriptionValue = src.getPlateDescription(plateIndex);
       if (plateDescriptionValue != null) dest.setPlateDescription(plateDescriptionValue, plateIndex);
       String plateExternalIdentifierValue = src.getPlateExternalIdentifier(plateIndex);
@@ -692,8 +694,14 @@ public final class MetadataConverter {
       if (plateIDValue != null) dest.setPlateID(plateIDValue, plateIndex);
       String plateNameValue = src.getPlateName(plateIndex);
       if (plateNameValue != null) dest.setPlateName(plateNameValue, plateIndex);
+      String plateRowNamingConventionValue = src.getPlateRowNamingConvention(plateIndex);
+      if (plateRowNamingConventionValue != null) dest.setPlateRowNamingConvention(plateRowNamingConventionValue, plateIndex);
       String plateStatusValue = src.getPlateStatus(plateIndex);
       if (plateStatusValue != null) dest.setPlateStatus(plateStatusValue, plateIndex);
+      Double plateWellOriginXValue = src.getPlateWellOriginX(plateIndex);
+      if (plateWellOriginXValue != null) dest.setPlateWellOriginX(plateWellOriginXValue, plateIndex);
+      Double plateWellOriginYValue = src.getPlateWellOriginY(plateIndex);
+      if (plateWellOriginYValue != null) dest.setPlateWellOriginY(plateWellOriginYValue, plateIndex);
       int screenRefCount = src.getScreenRefCount(plateIndex);
       for (int screenRefIndex=0; screenRefIndex<screenRefCount; screenRefIndex++) {
         String screenRefIDValue = src.getScreenRefID(plateIndex, screenRefIndex);

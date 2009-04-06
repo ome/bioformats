@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -3465,6 +3465,19 @@ public class AggregateMetadata implements IMetadata {
 
   // - Plate property retrieval -
 
+  /* @see MetadataRetrieve#getPlateColumnNamingConvention(int) */
+  public String getPlateColumnNamingConvention(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateColumnNamingConvention(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getPlateDescription(int) */
   public String getPlateDescription(int plateIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -3517,6 +3530,19 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
+  /* @see MetadataRetrieve#getPlateRowNamingConvention(int) */
+  public String getPlateRowNamingConvention(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPlateRowNamingConvention(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getPlateStatus(int) */
   public String getPlateStatus(int plateIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -3524,6 +3550,32 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getPlateStatus(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlateWellOriginX(int) */
+  public Double getPlateWellOriginX(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Double result = retrieve.getPlateWellOriginX(plateIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlateWellOriginY(int) */
+  public Double getPlateWellOriginY(int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Double result = retrieve.getPlateWellOriginY(plateIndex);
         if (result != null) return result;
       }
     }
@@ -7292,6 +7344,17 @@ public class AggregateMetadata implements IMetadata {
 
   // - Plate property storage -
 
+  /* @see MetadataStore#setPlateColumnNamingConvention(String, int) */
+  public void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateColumnNamingConvention(columnNamingConvention, plateIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setPlateDescription(String, int) */
   public void setPlateDescription(String description, int plateIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -7336,6 +7399,17 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
+  /* @see MetadataStore#setPlateRowNamingConvention(String, int) */
+  public void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateRowNamingConvention(rowNamingConvention, plateIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setPlateStatus(String, int) */
   public void setPlateStatus(String status, int plateIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -7343,6 +7417,28 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setPlateStatus(status, plateIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPlateWellOriginX(Double, int) */
+  public void setPlateWellOriginX(Double wellOriginX, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateWellOriginX(wellOriginX, plateIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPlateWellOriginY(Double, int) */
+  public void setPlateWellOriginY(Double wellOriginY, int plateIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPlateWellOriginY(wellOriginY, plateIndex);
       }
     }
   }

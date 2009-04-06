@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1861,6 +1861,13 @@ public interface MetadataStore {
   // - Plate property storage -
 
   /**
+   * For a particular Plate, sets name of the first column in the plate.
+   * @param columnNamingConvention name of the first column in the plate
+   * @param plateIndex index of the Plate
+   */
+  void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex);
+
+  /**
    * For a particular Plate, sets description of the plate.
    * @param description description of the plate
    * @param plateIndex index of the Plate
@@ -1889,11 +1896,32 @@ public interface MetadataStore {
   void setPlateName(String name, int plateIndex);
 
   /**
+   * For a particular Plate, sets name of the first row in the plate.
+   * @param rowNamingConvention name of the first row in the plate
+   * @param plateIndex index of the Plate
+   */
+  void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex);
+
+  /**
    * For a particular Plate, sets current state of the plate with respect to the experiment work-flow.
    * @param status current state of the plate with respect to the experiment work-flow
    * @param plateIndex index of the Plate
    */
   void setPlateStatus(String status, int plateIndex);
+
+  /**
+   * For a particular Plate, sets percent width offset from top left corner.
+   * @param wellOriginX percent width offset from top left corner
+   * @param plateIndex index of the Plate
+   */
+  void setPlateWellOriginX(Double wellOriginX, int plateIndex);
+
+  /**
+   * For a particular Plate, sets percent height offset from top left corner.
+   * @param wellOriginY percent height offset from top left corner
+   * @param plateIndex index of the Plate
+   */
+  void setPlateWellOriginY(Double wellOriginY, int plateIndex);
 
   // - PlateRef property storage -
 

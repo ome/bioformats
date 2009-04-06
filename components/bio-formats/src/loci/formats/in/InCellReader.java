@@ -52,6 +52,7 @@ public class InCellReader extends FormatReader {
   private Vector emWaves, exWaves;
   private int totalImages;
   private String creationDate;
+  private String rowName, colName;
   private int startRow, startCol;
   private int fieldCount;
 
@@ -319,6 +320,11 @@ public class InCellReader extends FormatReader {
         store.setLogicalChannelExWave((Integer) exWaves.get(q), i, q);
       }
     }
+
+    // populate Plate data
+
+    store.setPlateRowNamingConvention(rowName, 0);
+    store.setPlateColumnNamingConvention(colName, 0);
 
     // populate Well data
 
@@ -592,21 +598,21 @@ public class InCellReader extends FormatReader {
         exposure = new Float(exp / 1000);
       }
       else if (qName.equals("NamingRows")) {
-        String row = attributes.getValue("begin");
+        rowName = attributes.getValue("begin");
         try {
-          startRow = Integer.parseInt(row);
+          startRow = Integer.parseInt(rowName);
         }
         catch (NumberFormatException e) {
-          startRow = row.charAt(0) - 'A' + 1;
+          startRow = rowName.charAt(0) - 'A' + 1;
         }
       }
       else if (qName.equals("NamingColumns")) {
-        String col = attributes.getValue("begin");
+        colName = attributes.getValue("begin");
         try {
-          startCol = Integer.parseInt(col);
+          startCol = Integer.parseInt(colName);
         }
         catch (NumberFormatException e) {
-          startCol = col.charAt(0) - 'A' + 1;
+          startCol = colName.charAt(0) - 'A' + 1;
         }
       }
       else if (qName.equals("offset_point")) {

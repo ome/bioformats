@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 2, 2009 9:17:34 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1751,6 +1751,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Plate property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateColumnNamingConvention(int) */
+  public String getPlateColumnNamingConvention(int plateIndex) {
+    // NB: ColumnNamingConvention unsupported for schema version 2008-09
+    return null;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getPlateDescription(int) */
   public String getPlateDescription(int plateIndex) {
     PlateNode plate = getPlateNode(plateIndex, false);
@@ -1775,10 +1781,28 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return plate == null ? null : plate.getName();
   }
 
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateRowNamingConvention(int) */
+  public String getPlateRowNamingConvention(int plateIndex) {
+    // NB: RowNamingConvention unsupported for schema version 2008-09
+    return null;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getPlateStatus(int) */
   public String getPlateStatus(int plateIndex) {
     PlateNode plate = getPlateNode(plateIndex, false);
     return plate == null ? null : plate.getStatus();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateWellOriginX(int) */
+  public Double getPlateWellOriginX(int plateIndex) {
+    // NB: WellOriginX unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPlateWellOriginY(int) */
+  public Double getPlateWellOriginY(int plateIndex) {
+    // NB: WellOriginY unsupported for schema version 2008-09
+    return null;
   }
 
   // - PlateRef property retrieval -
@@ -4093,6 +4117,11 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Plate property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setPlateColumnNamingConvention(String, int) */
+  public void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex) {
+    // NB: ColumnNamingConvention unsupported for schema version 2008-09
+  }
+
   /* @see loci.formats.meta.MetadataStore#setPlateDescription(String, int) */
   public void setPlateDescription(String description, int plateIndex) {
     if (description == null) return;
@@ -4121,11 +4150,26 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     plateNode.setName(name);
   }
 
+  /* @see loci.formats.meta.MetadataStore#setPlateRowNamingConvention(String, int) */
+  public void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex) {
+    // NB: RowNamingConvention unsupported for schema version 2008-09
+  }
+
   /* @see loci.formats.meta.MetadataStore#setPlateStatus(String, int) */
   public void setPlateStatus(String status, int plateIndex) {
     if (status == null) return;
     PlateNode plateNode = getPlateNode(plateIndex, true);
     plateNode.setStatus(status);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateWellOriginX(Double, int) */
+  public void setPlateWellOriginX(Double wellOriginX, int plateIndex) {
+    // NB: WellOriginX unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPlateWellOriginY(Double, int) */
+  public void setPlateWellOriginY(Double wellOriginY, int plateIndex) {
+    // NB: WellOriginY unsupported for schema version 2008-09
   }
 
   // - PlateRef property storage -
