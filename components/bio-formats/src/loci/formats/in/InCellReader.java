@@ -325,6 +325,8 @@ public class InCellReader extends FormatReader {
 
     store.setPlateRowNamingConvention(rowName, 0);
     store.setPlateColumnNamingConvention(colName, 0);
+    store.setPlateWellOriginX(new Double(0.5), 0);
+    store.setPlateWellOriginY(new Double(0.5), 0);
 
     // populate Well data
 
