@@ -241,6 +241,9 @@ public class ZeissLSMReader extends FormatReader {
       String[] fileList = parentFile.list();
       for (int i=0; i<fileList.length; i++) {
         if (checkSuffix(fileList[i], MDB_SUFFIX)) {
+          Location file =
+            new Location(parentFile, fileList[i]).getAbsoluteFile();
+          if (file.isDirectory()) continue;
           setId(new Location(parentFile, fileList[i]).getAbsolutePath());
           return;
         }
@@ -1143,7 +1146,8 @@ public class ZeissLSMReader extends FormatReader {
 
   /** Parse a .mdb file and return a list of referenced .lsm files. */
   private String[] parseMDB(String mdbFile) throws FormatException {
-    Location parent = new Location(mdbFile).getAbsoluteFile().getParentFile();
+    Location mdb = new Location(mdbFile).getAbsoluteFile();
+    Location parent = mdb.getParentFile();
     Vector[] tables = MDBParser.parseDatabase(mdbFile);
     Vector referencedLSMs = new Vector();
 
