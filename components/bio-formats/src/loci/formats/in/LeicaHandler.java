@@ -164,7 +164,7 @@ public class LeicaHandler extends DefaultHandler {
       }
 
       if (widths.size() < numDatasets) widths.add(new Integer(1));
-      if (heights.size() < numDatasets) heights.add(new Integer(1));
+      if (heights.size() < numDatasets) heights.add(new Integer(0));
       if (zs.size() < numDatasets) zs.add(new Integer(1));
       if (ts.size() < numDatasets) ts.add(new Integer(1));
       if (bps.size() < numDatasets) bps.add(new Integer(8));
@@ -259,13 +259,31 @@ public class LeicaHandler extends DefaultHandler {
           bits.add(new Integer(b * 8));
           break;
         case 2:
-          heights.add(new Integer(len));
+          if (widths.size() == heights.size()) {
+            if (zs.size() == heights.size()) {
+              zs.setElementAt(new Integer(len), zs.size() - 1);
+            }
+            else if (ts.size() == heights.size()) {
+              ts.setElementAt(new Integer(len), ts.size() - 1);
+            }
+          }
+          else heights.add(new Integer(len));
           break;
         case 3:
-          zs.add(new Integer(len));
+          if (heights.size() < widths.size()) {
+            // XZ scan - swap Y and Z
+            heights.add(new Integer(len));
+            zs.add(new Integer(1));
+          }
+          else zs.add(new Integer(len));
           break;
         case 4:
-          ts.add(new Integer(len));
+          if (heights.size() < widths.size()) {
+            // XT scan - swap Y and T
+            heights.add(new Integer(len));
+            ts.add(new Integer(1));
+          }
+          else ts.add(new Integer(len));
           break;
         default:
           extras *= len;
