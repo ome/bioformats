@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
+ * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -4491,6 +4491,19 @@ public class AggregateMetadata implements IMetadata {
 
   // - Thumbnail property retrieval -
 
+  /* @see MetadataRetrieve#getThumbnailHref(int) */
+  public String getThumbnailHref(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getThumbnailHref(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getThumbnailID(int) */
   public String getThumbnailID(int imageIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -4511,19 +4524,6 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getThumbnailMIMEtype(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getThumbnailhref(int) */
-  public String getThumbnailhref(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getThumbnailhref(imageIndex);
         if (result != null) return result;
       }
     }
@@ -8218,6 +8218,17 @@ public class AggregateMetadata implements IMetadata {
 
   // - Thumbnail property storage -
 
+  /* @see MetadataStore#setThumbnailHref(String, int) */
+  public void setThumbnailHref(String href, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setThumbnailHref(href, imageIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setThumbnailID(String, int) */
   public void setThumbnailID(String id, int imageIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -8236,17 +8247,6 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setThumbnailMIMEtype(mimEtype, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setThumbnailhref(String, int) */
-  public void setThumbnailhref(String href, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setThumbnailhref(href, imageIndex);
       }
     }
   }

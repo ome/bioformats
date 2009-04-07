@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
+ * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -497,12 +497,12 @@ public final class MetadataConverter {
         if (stageLabelYValue != null) dest.setStageLabelY(stageLabelYValue, imageIndex);
         Float stageLabelZValue = src.getStageLabelZ(imageIndex);
         if (stageLabelZValue != null) dest.setStageLabelZ(stageLabelZValue, imageIndex);
+        String thumbnailHrefValue = src.getThumbnailHref(imageIndex);
+        if (thumbnailHrefValue != null) dest.setThumbnailHref(thumbnailHrefValue, imageIndex);
         String thumbnailIDValue = src.getThumbnailID(imageIndex);
         if (thumbnailIDValue != null) dest.setThumbnailID(thumbnailIDValue, imageIndex);
         String thumbnailMIMEtypeValue = src.getThumbnailMIMEtype(imageIndex);
         if (thumbnailMIMEtypeValue != null) dest.setThumbnailMIMEtype(thumbnailMIMEtypeValue, imageIndex);
-        String thumbnailhrefValue = src.getThumbnailhref(imageIndex);
-        if (thumbnailhrefValue != null) dest.setThumbnailhref(thumbnailhrefValue, imageIndex);
     }
     int instrumentCount = src.getInstrumentCount();
     for (int instrumentIndex=0; instrumentIndex<instrumentCount; instrumentIndex++) {

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
+ * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -2504,6 +2504,13 @@ public interface MetadataStore {
   // - Thumbnail property storage -
 
   /**
+   * For a particular Thumbnail, sets external URI referring to the thumbnail.
+   * @param href external URI referring to the thumbnail
+   * @param imageIndex index of the Image
+   */
+  void setThumbnailHref(String href, int imageIndex);
+
+  /**
    * For a particular Thumbnail, sets unique label identifying the thumbnail.
    * @param id unique label identifying the thumbnail
    * @param imageIndex index of the Image
@@ -2516,13 +2523,6 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    */
   void setThumbnailMIMEtype(String mimEtype, int imageIndex);
-
-  /**
-   * For a particular Thumbnail, sets external URI referring to the thumbnail.
-   * @param href external URI referring to the thumbnail
-   * @param imageIndex index of the Image
-   */
-  void setThumbnailhref(String href, int imageIndex);
 
   // - TiffData property storage -
 

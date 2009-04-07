@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
+ * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -2278,6 +2278,12 @@ public interface MetadataRetrieve {
   // - Thumbnail property retrieval -
 
   /**
+   * For a particular Thumbnail, gets external URI referring to the thumbnail.
+   * @param imageIndex index of the Image
+   */
+  String getThumbnailHref(int imageIndex);
+
+  /**
    * For a particular Thumbnail, gets unique label identifying the thumbnail.
    * @param imageIndex index of the Image
    */
@@ -2288,12 +2294,6 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    */
   String getThumbnailMIMEtype(int imageIndex);
-
-  /**
-   * For a particular Thumbnail, gets external URI referring to the thumbnail.
-   * @param imageIndex index of the Image
-   */
-  String getThumbnailhref(int imageIndex);
 
   // - TiffData property retrieval -
 

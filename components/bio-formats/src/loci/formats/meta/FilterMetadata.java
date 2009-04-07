@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
+ * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1851,6 +1851,12 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Thumbnail property storage -
 
+  /* @see MetadataStore#setThumbnailHref(String, int) */
+  public void setThumbnailHref(String href, int imageIndex) {
+    String value = filter ? DataTools.sanitize(href) : href;
+    store.setThumbnailHref(value, imageIndex);
+  }
+
   /* @see MetadataStore#setThumbnailID(String, int) */
   public void setThumbnailID(String id, int imageIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
@@ -1861,12 +1867,6 @@ public class FilterMetadata implements MetadataStore {
   public void setThumbnailMIMEtype(String mimEtype, int imageIndex) {
     String value = filter ? DataTools.sanitize(mimEtype) : mimEtype;
     store.setThumbnailMIMEtype(value, imageIndex);
-  }
-
-  /* @see MetadataStore#setThumbnailhref(String, int) */
-  public void setThumbnailhref(String href, int imageIndex) {
-    String value = filter ? DataTools.sanitize(href) : href;
-    store.setThumbnailhref(value, imageIndex);
   }
 
   // -- TiffData property storage -

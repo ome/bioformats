@@ -245,9 +245,11 @@ type = String
 description = MIME-type of the thumbnail; must be set to 'SVG' if thumbnail \
               data is embedded
 
-[Thumbnail href]
+[Thumbnail Href]
 type = String
 description = external URI referring to the thumbnail
+getter = gethref
+setter = sethref
 
 ## TiffData ##
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
+ * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1600,16 +1600,16 @@ public class DummyMetadata implements IMetadata {
 
   // - Thumbnail property retrieval -
 
+  /* @see MetadataRetrieve#getThumbnailHref(int) */
+  public String getThumbnailHref(int imageIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getThumbnailID(int) */
   public String getThumbnailID(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getThumbnailMIMEtype(int) */
   public String getThumbnailMIMEtype(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getThumbnailhref(int) */
-  public String getThumbnailhref(int imageIndex) {
     return null;
   }
 
@@ -3035,16 +3035,16 @@ public class DummyMetadata implements IMetadata {
 
   // - Thumbnail property storage -
 
+  /* @see MetadataStore#setThumbnailHref(String, int) */
+  public void setThumbnailHref(String href, int imageIndex) {
+  }
+
   /* @see MetadataStore#setThumbnailID(String, int) */
   public void setThumbnailID(String id, int imageIndex) {
   }
 
   /* @see MetadataStore#setThumbnailMIMEtype(String, int) */
   public void setThumbnailMIMEtype(String mimEtype, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setThumbnailhref(String, int) */
-  public void setThumbnailhref(String href, int imageIndex) {
   }
 
   // - TiffData property storage -

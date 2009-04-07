@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 4, 2009 12:05:24 PM CDT
+ * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -2247,6 +2247,12 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
 
   // - Thumbnail property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getThumbnailHref(int) */
+  public String getThumbnailHref(int imageIndex) {
+    ThumbnailNode thumbnail = getThumbnailNode(imageIndex, false);
+    return thumbnail == null ? null : thumbnail.gethref();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getThumbnailID(int) */
   public String getThumbnailID(int imageIndex) {
     ThumbnailNode thumbnail = getThumbnailNode(imageIndex, false);
@@ -2257,12 +2263,6 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   public String getThumbnailMIMEtype(int imageIndex) {
     ThumbnailNode thumbnail = getThumbnailNode(imageIndex, false);
     return thumbnail == null ? null : thumbnail.getMIMEtype();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getThumbnailhref(int) */
-  public String getThumbnailhref(int imageIndex) {
-    ThumbnailNode thumbnail = getThumbnailNode(imageIndex, false);
-    return thumbnail == null ? null : thumbnail.gethref();
   }
 
   // - TiffData property retrieval -
@@ -4589,6 +4589,13 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
 
   // - Thumbnail property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setThumbnailHref(String, int) */
+  public void setThumbnailHref(String href, int imageIndex) {
+    if (href == null) return;
+    ThumbnailNode thumbnailNode = getThumbnailNode(imageIndex, true);
+    thumbnailNode.sethref(href);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setThumbnailID(String, int) */
   public void setThumbnailID(String id, int imageIndex) {
     if (id == null) return;
@@ -4601,13 +4608,6 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (mimEtype == null) return;
     ThumbnailNode thumbnailNode = getThumbnailNode(imageIndex, true);
     thumbnailNode.setMIMEtype(mimEtype);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setThumbnailhref(String, int) */
-  public void setThumbnailhref(String href, int imageIndex) {
-    if (href == null) return;
-    ThumbnailNode thumbnailNode = getThumbnailNode(imageIndex, true);
-    thumbnailNode.sethref(href);
   }
 
   // - TiffData property storage -
