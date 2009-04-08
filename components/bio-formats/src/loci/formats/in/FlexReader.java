@@ -65,6 +65,8 @@ public class FlexReader extends BaseTiffReader {
   private Vector xPositions;
   private Vector yPositions;
 
+  private Vector lightSourceIDs;
+
   // -- Constructor --
 
   /** Constructs a new Flex reader. */
@@ -141,6 +143,7 @@ public class FlexReader extends BaseTiffReader {
     channelNames = new Vector();
     xPositions = new Vector();
     yPositions = new Vector();
+    lightSourceIDs = new Vector();
 
     // parse factors from XML
     String xml = (String) TiffTools.getIFDValue(ifds[0],
@@ -178,6 +181,9 @@ public class FlexReader extends BaseTiffReader {
       core[0].sizeC = 1;
       core[0].sizeT = ifds.length / seriesCount;
     }
+    else if (getImageCount() == ifds.length) {
+      seriesCount = 1;
+    }
 
     CoreMetadata oldCore = core[0];
     core = new CoreMetadata[seriesCount];
@@ -214,7 +220,7 @@ public class FlexReader extends BaseTiffReader {
     // parse factor values
     factors = new double[totalPlanes];
     int max = 0;
-    for (int i=0; i<fsize; i++) {
+    for (int i=0; i<(int) Math.min(fsize, totalPlanes); i++) {
       String factor = (String) f.get(i);
       double q = 1;
       try {
@@ -228,7 +234,9 @@ public class FlexReader extends BaseTiffReader {
       factors[i] = q;
       if (q > factors[max]) max = i;
     }
-    Arrays.fill(factors, fsize, factors.length, 1);
+    if (fsize < factors.length) {
+      Arrays.fill(factors, fsize, factors.length, 1);
+    }
 
     // determine pixel type
     if (factors[max] > 256) core[0].pixelType = FormatTools.UINT32;
@@ -364,7 +372,9 @@ public class FlexReader extends BaseTiffReader {
           binY = Integer.parseInt(value);
         }
         else if (currentQName.equals("LightSourceCombinationRef")) {
-          if (!channelNames.contains(value)) channelNames.add(value);
+          if (!channelNames.contains(value) && lightSourceIDs.contains(value)) {
+            channelNames.add(value);
+          }
         }
       }
       else if (parentQName.equals("ImageResolutionX")) {
@@ -522,6 +532,7 @@ public class FlexReader extends BaseTiffReader {
             " " + attributes.getQName(i), attributes.getValue(i));
         }
         nextLightSourceCombination++;
+        lightSourceIDs.add(attributes.getValue("ID"));
       }
       else if (qName.equals("LightSourceRef")) {
         parentQName = qName;
