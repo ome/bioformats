@@ -77,7 +77,6 @@ public final class AWTImageTools {
    * @param h Height of image plane.
    * @param signed Whether the byte values should be treated as signed
    *   (-128 to 127) instead of unsigned (0 to 255).
-   *   <b>** Only unsigned byte data is supported for now. **</b>
    */
   public static BufferedImage makeImage(byte[] data,
     int w, int h, boolean signed)
@@ -183,7 +182,6 @@ public final class AWTImageTools {
    *   while "RRR...GGG...BBB..." is sequential.
    * @param signed Whether the byte values should be treated as signed
    *   (-128 to 127) instead of unsigned (0 to 255).
-   *   <b>** Only unsigned byte data is supported for now. **</b>
    */
   public static BufferedImage makeImage(byte[] data,
     int w, int h, int c, boolean interleaved, boolean signed)
@@ -192,13 +190,11 @@ public final class AWTImageTools {
     if (c > 2) return makeRGBImage(data, c, w, h, interleaved);
     int dataType;
     DataBuffer buffer;
+    dataType = DataBuffer.TYPE_BYTE;
     if (signed) {
-      // NB: No built-in data buffer type for signed byte data.
-      throw new IllegalArgumentException(
-        "Support for int8 pixel type (signed bytes) is unimplemented");
+      buffer = new SignedByteBuffer(data, c * w * h);
     }
     else {
-      dataType = DataBuffer.TYPE_BYTE;
       buffer = new DataBufferByte(data, c * w * h);
     }
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
@@ -355,7 +351,6 @@ public final class AWTImageTools {
    * @param h Height of image plane.
    * @param signed Whether the byte values should be treated as signed
    *   (-128 to 127) instead of unsigned (0 to 255).
-   *   <b>** Only unsigned byte data is supported for now. **</b>
    */
   public static BufferedImage makeImage(byte[][] data,
     int w, int h, boolean signed)
@@ -363,13 +358,11 @@ public final class AWTImageTools {
     if (data.length > 2) return makeRGBImage(data, w, h);
     int dataType;
     DataBuffer buffer;
+    dataType = DataBuffer.TYPE_BYTE;
     if (signed) {
-      // NB: No built-in data buffer type for signed byte data.
-      throw new IllegalArgumentException(
-        "Support for int8 pixel type (signed bytes) is unimplemented");
+      buffer = new SignedByteBuffer(data, data[0].length);
     }
     else {
-      dataType = DataBuffer.TYPE_BYTE;
       buffer = new DataBufferByte(data, data[0].length);
     }
     return constructImage(data.length, dataType, w, h, false, true, buffer);
@@ -720,7 +713,9 @@ public final class AWTImageTools {
 
     BufferedImage b = null;
 
-    if (c == 1 && type == DataBuffer.TYPE_BYTE) {
+    if (c == 1 && type == DataBuffer.TYPE_BYTE &&
+      !(buffer instanceof SignedByteBuffer))
+    {
       if (colorModel instanceof IndexColorModel) {
         b = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_INDEXED);
       }
@@ -816,7 +811,7 @@ public final class AWTImageTools {
 
     if (model != null) {
       WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
-        b.getData().getDataBuffer(), null);
+        b.getRaster().getDataBuffer(), null);
       b = new BufferedImage(model, raster, false, null);
     }
 
