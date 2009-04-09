@@ -49,8 +49,6 @@ public final class TiffTools {
 
   // -- Constants --
 
-  private static final boolean DEBUG = false;
-
   /** The number of bytes in each IFD entry. */
   public static final int BYTES_PER_ENTRY = 12;
 
@@ -2368,7 +2366,7 @@ public final class TiffTools {
 
   /** Prints a debugging message with current time. */
   public static void debug(String message) {
-    if (DEBUG) {
+    if (FormatHandler.debug && FormatHandler.debugLevel >= 3) {
       LogTools.println(System.currentTimeMillis() + ": " + message);
     }
   }
