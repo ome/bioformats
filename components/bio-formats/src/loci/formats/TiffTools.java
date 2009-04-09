@@ -324,7 +324,10 @@ public final class TiffTools {
       if (ifd == null || ifd.size() <= 1) break;
       v.add(ifd);
       offset = bigTiff ? in.readLong() : (long) (in.readInt() & 0xffffffffL);
-      if (offset <= 0 || offset >= in.length()) break;
+      if (offset <= 0 || offset >= in.length()) {
+        if (offset != 0) debug("getIFDs: invalid IFD offset: " + offset);
+        break;
+      }
     }
 
     Hashtable[] ifds = new Hashtable[v.size()];
