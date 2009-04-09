@@ -2366,8 +2366,11 @@ public final class TiffTools {
 
   /** Prints a debugging message with current time. */
   public static void debug(String message) {
-    if (FormatHandler.debug && FormatHandler.debugLevel >= 3) {
-      LogTools.println(System.currentTimeMillis() + ": " + message);
+    int debugLevel = FormatHandler.debug ? FormatHandler.debugLevel : 0;
+    if (debugLevel >= 3) {
+      String msg = System.currentTimeMillis() + ": " + message;
+      if (debugLevel > 3) LogTools.trace(msg);
+      else LogTools.println(msg);
     }
   }
 
