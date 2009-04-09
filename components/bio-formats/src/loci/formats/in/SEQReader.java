@@ -107,8 +107,8 @@ public class SEQReader extends BaseTiffReader {
         String data = token.substring(token.indexOf("=") + 1);
         addMeta(label, data);
         if (label.equals("channels")) core[0].sizeC = Integer.parseInt(data);
-        else if (label.equals("frames")) core[0].sizeZ = Integer.parseInt(data);
-        else if (label.equals("slices")) core[0].sizeT = Integer.parseInt(data);
+        else if (label.equals("frames")) core[0].sizeT = Integer.parseInt(data);
+        else if (label.equals("slices")) core[0].sizeZ = Integer.parseInt(data);
       }
     }
 

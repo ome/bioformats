@@ -177,9 +177,9 @@ public class IPWReader extends FormatReader {
             }
             else data = token.trim();
             addMeta(label, data);
-            if (label.equals("frames")) core[0].sizeZ = Integer.parseInt(data);
+            if (label.equals("frames")) core[0].sizeT = Integer.parseInt(data);
             else if (label.equals("slices")) {
-              core[0].sizeT = Integer.parseInt(data);
+              core[0].sizeZ = Integer.parseInt(data);
             }
             else if (label.equals("channels")) {
               core[0].sizeC = Integer.parseInt(data);
