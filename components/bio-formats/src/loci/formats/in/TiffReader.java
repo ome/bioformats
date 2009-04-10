@@ -103,6 +103,50 @@ public class TiffReader extends BaseTiffReader {
         core[0].sizeT = t;
         core[0].sizeC = c;
       }
+      else if (ifds.length == 1 && z * t > ifds.length &&
+        TiffTools.getCompression(ifds[0]) == TiffTools.UNCOMPRESSED)
+      {
+        // file is likely corrupt (missing end IFDs)
+        //
+        // ImageJ writes TIFF files like this:
+        // IFD #0
+        // comment
+        // all pixel data
+        // IFD #1
+        // IFD #2
+        // ...
+        //
+        // since we know where the pixel data is, we can create fake
+        // IFDs in an attempt to read the rest of the pixels
+
+        int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+          FormatTools.getBytesPerPixel(getPixelType());
+        long[] stripOffsets = TiffTools.getStripOffsets(ifds[0]);
+        long[] stripByteCounts = TiffTools.getStripByteCounts(ifds[0]);
+
+        long endOfFirstPlane = stripOffsets[stripOffsets.length - 1] +
+          stripByteCounts[stripByteCounts.length - 1];
+        long totalBytes = in.length() - endOfFirstPlane;
+        int totalPlanes = (int) (totalBytes / planeSize) + 1;
+
+        Hashtable ifd = ifds[0];
+        ifds = new Hashtable[totalPlanes];
+        ifds[0] = ifd;
+        for (int i=1; i<totalPlanes; i++) {
+          ifds[i] = new Hashtable(ifds[0]);
+          long[] prevOffsets = TiffTools.getStripOffsets(ifds[i - 1]);
+          long[] offsets = new long[stripOffsets.length];
+          offsets[0] = prevOffsets[prevOffsets.length - 1] +
+            stripByteCounts[stripByteCounts.length - 1];
+          for (int j=1; j<offsets.length; j++) {
+            offsets[j] = offsets[j - 1] + stripByteCounts[j - 1];
+          }
+          ifds[i].put(new Integer(TiffTools.STRIP_OFFSETS), offsets);
+        }
+
+        core[0].sizeZ = ifds.length;
+        core[0].imageCount = ifds.length;
+      }
       else {
         core[0].sizeT = ifds.length;
         core[0].imageCount = ifds.length;
