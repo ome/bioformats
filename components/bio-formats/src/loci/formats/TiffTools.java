@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -1805,6 +1806,7 @@ public final class TiffTools {
     int height = img.getHeight();
 
     int bytesPerPixel = values[0].length / (width * height);
+    boolean indexed = img.getColorModel() instanceof IndexColorModel;
 
     // populate required IFD directory entries (except strip information)
     if (ifd == null) ifd = new Hashtable();
@@ -1823,7 +1825,9 @@ public final class TiffTools {
       putIFDValue(ifd, COMPRESSION, UNCOMPRESSED);
     }
     if (getIFDValue(ifd, PHOTOMETRIC_INTERPRETATION) == null) {
-      putIFDValue(ifd, PHOTOMETRIC_INTERPRETATION, values.length == 1 ? 1 : 2);
+      int photometricInterpretation = indexed ? RGB_PALETTE :
+        values.length == 1 ? BLACK_IS_ZERO : RGB;
+      putIFDValue(ifd, PHOTOMETRIC_INTERPRETATION, photometricInterpretation);
     }
     if (getIFDValue(ifd, SAMPLES_PER_PIXEL) == null) {
       putIFDValue(ifd, SAMPLES_PER_PIXEL, values.length);
@@ -1842,6 +1846,20 @@ public final class TiffTools {
     }
     if (getIFDValue(ifd, IMAGE_DESCRIPTION) == null) {
       putIFDValue(ifd, IMAGE_DESCRIPTION, "");
+    }
+    if (indexed && getIFDValue(ifd, COLOR_MAP) == null) {
+      byte[][] lut = new byte[3][256];
+      IndexColorModel model = (IndexColorModel) img.getColorModel();
+      model.getReds(lut[0]);
+      model.getGreens(lut[1]);
+      model.getBlues(lut[2]);
+      int[] colorMap = new int[3 * 256];
+      for (int i=0; i<lut.length; i++) {
+        for (int j=0; j<lut[0].length; j++) {
+          colorMap[i * lut[0].length + j] = (int) ((lut[i][j] & 0xff) << 8);
+        }
+      }
+      putIFDValue(ifd, COLOR_MAP, colorMap);
     }
 
     // create pixel output buffers
