@@ -25,6 +25,7 @@ package loci.formats.out;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.*;
 import java.util.zip.*;
 import loci.common.*;
@@ -88,6 +89,8 @@ public class APNGWriter extends FormatWriter {
     int bytesPerPixel =
       FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
 
+    boolean indexed = img.getColorModel() instanceof IndexColorModel;
+
     if (!initialized) {
       out = new RandomAccessOutputStream(currentId);
 
@@ -105,7 +108,8 @@ public class APNGWriter extends FormatWriter {
       DataTools.unpackBytes(img.getWidth(), buf, 4, 4, false);
       DataTools.unpackBytes(img.getHeight(), buf, 8, 4, false);
       buf[12] = (byte) (bytesPerPixel * 8);
-      if (byteData.length == 1) buf[13] = (byte) 0;
+      if (indexed) buf[13] = (byte) 3;
+      else if (byteData.length == 1) buf[13] = (byte) 0;
       else if (byteData.length == 2) buf[13] = (byte) 4;
       else if (byteData.length == 3) buf[13] = (byte) 2;
       else if (byteData.length == 4) buf[13] = (byte) 6;
@@ -128,8 +132,10 @@ public class APNGWriter extends FormatWriter {
       // write fcTL chunk
       writeFCTL(img.getWidth(), img.getHeight());
 
-      // write IDAT chunk
+      // write PLTE chunk, if needed
+      writePLTE(img);
 
+      // write IDAT chunk
       writePixels("IDAT", stream);
       initialized = true;
     }
@@ -213,6 +219,32 @@ public class APNGWriter extends FormatWriter {
     DataTools.unpackBytes(fps, b, 26, 2, false);
     b[28] = (byte) 1;
     b[29] = (byte) 0;
+
+    out.write(b);
+    out.writeInt(crc(b));
+  }
+
+  private void writePLTE(BufferedImage img) throws IOException {
+    if (!(img.getColorModel() instanceof IndexColorModel)) return;
+
+    IndexColorModel model = (IndexColorModel) img.getColorModel();
+    byte[][] lut = new byte[3][256];
+    model.getReds(lut[0]);
+    model.getGreens(lut[1]);
+    model.getBlues(lut[2]);
+
+    out.writeInt(768);
+    byte[] b = new byte[772];
+    b[0] = 'P';
+    b[1] = 'L';
+    b[2] = 'T';
+    b[3] = 'E';
+
+    for (int i=0; i<lut[0].length; i++) {
+      for (int j=0; j<lut.length; j++) {
+        b[i*lut.length + j + 4] = lut[j][i];
+      }
+    }
 
     out.write(b);
     out.writeInt(crc(b));
