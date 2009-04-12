@@ -38,7 +38,7 @@ public abstract class FormatHandler implements IFormatHandler {
   // -- Constants --
 
   /** Suffixes for supported compression types. */
-  public static final String[] COMPRESSION_SUFFIXES = {"bz2", "gz", "zip"};
+  public static final String[] COMPRESSION_SUFFIXES = {"bz2", "gz"};
 
   // -- Static fields --
 

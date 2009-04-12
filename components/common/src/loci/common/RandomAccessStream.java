@@ -113,74 +113,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
 
     if (f.exists()) {
-      BufferedInputStream bis = new BufferedInputStream(
-        new FileInputStream(path), MAX_OVERHEAD);
+      compressed = raf instanceof CompressedRandomAccess;
+      if (compressed) {
+        BufferedInputStream bis = new BufferedInputStream(
+          new FileInputStream(path), MAX_OVERHEAD);
+        dis = new DataInputStream(bis);
 
-      if (path.endsWith(".gz")) {
-        dis = new DataInputStream(new GZIPInputStream(bis));
-        compressed = true;
-
-        length = 0;
-        while (true) {
-          int skip = dis.skipBytes(1024);
-          if (skip <= 0) break;
-          length += skip;
-        }
-
-        bis = new BufferedInputStream(new FileInputStream(path), MAX_OVERHEAD);
-        dis = new DataInputStream(new GZIPInputStream(bis));
-      }
-      else if (path.endsWith(".zip")) {
-        ZipFile zf = new ZipFile(path);
-
-        // strip off .zip extension and directory prefix
-        String innerId = path.substring(0, path.length() - 4);
-        int slash = innerId.lastIndexOf(File.separator);
-        if (slash < 0) slash = innerId.lastIndexOf("/");
-        if (slash >= 0) innerId = innerId.substring(slash + 1);
-
-        // look for zip entry with same prefix as the ZIP file
-        ZipEntry entry = null;
-        Enumeration en = zf.entries();
-        while (en.hasMoreElements()) {
-          ZipEntry ze = (ZipEntry) en.nextElement();
-          if (ze.getName().startsWith(innerId)) {
-            // found entry with matching name
-            entry = ze;
-            break;
-          }
-          else if (entry == null) entry = ze; // default to first entry
-        }
-        if (entry == null) {
-          throw new IOException("Zip file '" + file + "' has no entries");
-        }
-
-        compressed = true;
-
-        length = entry.getSize();
-
-        dis = new DataInputStream(new BufferedInputStream(
-          zf.getInputStream(entry), MAX_OVERHEAD));
-      }
-      else if (path.endsWith(".bz2")) {
-        bis.skip(2);
-        dis = new DataInputStream(new CBZip2InputStream(bis));
-        compressed = true;
-
-        length = 0;
-        while (true) {
-          int skip = dis.skipBytes(1024);
-          if (skip <= 0) break;
-          length += skip;
-        }
-
-        bis = new BufferedInputStream(new FileInputStream(path), MAX_OVERHEAD);
-        bis.skip(2);
-        dis = new DataInputStream(new CBZip2InputStream(bis));
-      }
-      else dis = new DataInputStream(bis);
-
-      if (!compressed) {
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);
@@ -245,6 +183,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   /** Closes the streams. */
   public void close() throws IOException {
+    if (Location.getMappedFile(file) != null) return;
     if (raf != null) raf.close();
     raf = null;
     if (dis != null) dis.close();
@@ -499,43 +438,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
   protected int checkEfficiency(int toRead) throws IOException {
     if (Boolean.FALSE.equals(fileCache.get(this))) reopen();
 
-    if (compressed) {
-      // can only read from the input stream
-
-      if (afp < fp) {
-        if (dis != null) dis.close();
-
-        BufferedInputStream bis = new BufferedInputStream(
-          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
-
-        String path = Location.getMappedId(file).toLowerCase();
-
-        if (path.endsWith(".gz")) {
-          dis = new DataInputStream(new GZIPInputStream(bis));
-        }
-        else if (path.endsWith(".zip")) {
-          ZipFile zf = new ZipFile(Location.getMappedId(file));
-          InputStream zip = new BufferedInputStream(zf.getInputStream(
-            (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
-          dis = new DataInputStream(zip);
-        }
-        else if (path.endsWith(".bz2")) {
-          bis.skip(2);
-          dis = new DataInputStream(new CBZip2InputStream(bis));
-        }
-        fp = 0;
-      }
-
-      int skip = 0;
-      do {
-        skip = dis.skipBytes((int) (afp - fp));
-        fp += skip;
-      }
-      while (fp < afp && skip > 0);
-
-      return DIS;
-    }
-
     if (dis != null && raf != null &&
       afp + toRead < MAX_OVERHEAD && afp + toRead < length() &&
       afp + toRead < buf.length)
@@ -651,25 +553,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
       if (dis != null) dis.close();
 
-      if (path.endsWith(".gz")) {
-        dis = new DataInputStream(new GZIPInputStream(bis));
-        compressed = true;
-      }
-      else if (path.endsWith(".zip")) {
-        ZipFile zf = new ZipFile(Location.getMappedId(file));
-        InputStream zip = new BufferedInputStream(zf.getInputStream(
-          (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
-        dis = new DataInputStream(zip);
-        compressed = true;
-      }
-      else if (path.endsWith(".bz2")) {
-        bis.skip(2);
-        dis = new DataInputStream(new CBZip2InputStream(bis));
-        compressed = true;
-      }
-      else dis = new DataInputStream(bis);
+      compressed = raf instanceof CompressedRandomAccess;
 
       if (!compressed) {
+        dis = new DataInputStream(bis);
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);

@@ -158,6 +158,15 @@ public class Location {
     if (id.startsWith("http://")) {
       handle = new RAUrl(getMappedId(id), writable ? "rw" : "r");
     }
+    else if (RAZip.isZipFile(id)) {
+      handle = new RAZip(getMappedId(id));
+    }
+    else if (RAGZip.isGZipFile(id)) {
+      handle = new RAGZip(getMappedId(id));
+    }
+    else if (RABZip2.isBZip2File(id)) {
+      handle = new RABZip2(getMappedId(id));
+    }
     else {
       handle = new RAFile(f, writable ? "rw" : "r");
     }
