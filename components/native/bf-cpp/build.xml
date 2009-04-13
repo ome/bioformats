@@ -80,6 +80,14 @@ from the Subversion repository using the command:
           <arg value="-mindep"/>
           <arg value="-exportsymbols"/>
         </java>
+        <!-- HACK - Insert missing export symbol for Windows builds. -->
+        <move file="${hack.object-header}" tofile="${hack.object-header}.old"/>
+        <copy file="${hack.object-header}.old" tofile="${hack.object-header}">
+          <filterset begintoken="f" endtoken="d" recurse="false">
+            <filter token="rien" value="JACE_PROXY_API friend"/>
+          </filterset>
+        </copy>
+        <delete file="${hack.object-header}.old"/>
       </else>
     </if>
   </target>

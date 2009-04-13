@@ -18,11 +18,6 @@ KNOWN GOTCHAS
    being set. You can fix the error by using cmake-gui to explicitly select
    Visual C++ 9.0 as the target compiler, then rerunning the ant command.
 
-2) The proxies generated include an Object.h with an operator<< implementation
-   not labeled for export with JACE_PROXY_API, resulting in a linker error
-   during build. To fix, add the JACE_PROXY_API declaration manually before
-   building in Visual Studio.
-
 
 INSTALLING COMPILE-TIME DEPENDENCIES -- WINDOWS
 
