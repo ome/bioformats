@@ -1162,25 +1162,23 @@ public class FV1000Reader extends FormatReader {
               store.setEllipseRy(String.valueOf(ry), 0, nextROI, nextShape);
             }
             else if (shapeType == POLYGON || shapeType == FREE_SHAPE) {
-              StringBuffer points = new StringBuffer("(");
+              StringBuffer points = new StringBuffer();
               for (int point=0; point<xc.length; point++) {
                 points.append(xc[point]);
-                points.append(" ");
+                points.append(",");
                 points.append(yc[point]);
-                if (point < xc.length - 1) points.append(", ");
+                if (point < xc.length - 1) points.append(" ");
               }
-              points.append(")");
               store.setPolygonPoints(points.toString(), 0, nextROI, nextShape);
             }
             else if (shapeType == POLYLINE || shapeType == FREE_LINE) {
-              StringBuffer points = new StringBuffer("(");
+              StringBuffer points = new StringBuffer();
               for (int point=0; point<xc.length; point++) {
                 points.append(xc[point]);
-                points.append(" ");
+                points.append(",");
                 points.append(yc[point]);
-                if (point < xc.length - 1) points.append(", ");
+                if (point < xc.length - 1) points.append(" ");
               }
-              points.append(")");
               store.setPolylinePoints(points.toString(), 0, nextROI, nextShape);
             }
           }

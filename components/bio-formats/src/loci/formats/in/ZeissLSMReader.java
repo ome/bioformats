@@ -100,23 +100,23 @@ public class ZeissLSMReader extends FormatReader {
   private static final int DATA_CHANNEL_NAME = 0xd0000001;
 
   /** Drawing element types. */
-  private static final int DRAWING_ELEMENT_FLOAT_TEXT = 13;
-  private static final int DRAWING_ELEMENT_FLOAT_LINE = 14;
-  private static final int DRAWING_ELEMENT_FLOAT_SCALE_BAR = 15;
-  private static final int DRAWING_ELEMENT_FLOAT_OPEN_ARROW = 16;
-  private static final int DRAWING_ELEMENT_FLOAT_CLOSED_ARROW = 17;
-  private static final int DRAWING_ELEMENT_FLOAT_RECTANGLE = 18;
-  private static final int DRAWING_ELEMENT_FLOAT_ELLIPSE = 19;
-  private static final int DRAWING_ELEMENT_FLOAT_CLOSED_POLYLINE = 20;
-  private static final int DRAWING_ELEMENT_FLOAT_OPEN_POLYLINE = 21;
-  private static final int DRAWING_ELEMENT_FLOAT_CLOSED_BEZIER = 22;
-  private static final int DRAWING_ELEMENT_FLOAT_OPEN_BEZIER = 23;
-  private static final int DRAWING_ELEMENT_FLOAT_CIRCLE = 24;
-  private static final int DRAWING_ELEMENT_FLOAT_PALETTE = 25;
-  private static final int DRAWING_ELEMENT_FLOAT_POLYLINE_ARROW = 26;
-  private static final int DRAWING_ELEMENT_FLOAT_BEZIER_WITH_ARROW = 27;
-  private static final int DRAWING_ELEMENT_FLOAT_ANGLE = 28;
-  private static final int DRAWING_ELEMENT_FLOAT_CIRCLE_3POINT = 29;
+  private static final int TEXT = 13;
+  private static final int LINE = 14;
+  private static final int SCALE_BAR = 15;
+  private static final int OPEN_ARROW = 16;
+  private static final int CLOSED_ARROW = 17;
+  private static final int RECTANGLE = 18;
+  private static final int ELLIPSE = 19;
+  private static final int CLOSED_POLYLINE = 20;
+  private static final int OPEN_POLYLINE = 21;
+  private static final int CLOSED_BEZIER = 22;
+  private static final int OPEN_BEZIER = 23;
+  private static final int CIRCLE = 24;
+  private static final int PALETTE = 25;
+  private static final int POLYLINE_ARROW = 26;
+  private static final int BEZIER_WITH_ARROW = 27;
+  private static final int ANGLE = 28;
+  private static final int CIRCLE_3POINT = 29;
 
   // -- Static fields --
 
@@ -943,192 +943,223 @@ public class ZeissLSMReader extends FormatReader {
 
     in.seek(data);
 
-    int nde = in.readInt();
-    addMeta(prefix + "NumberDrawingElements-" + suffix, nde);
+    int numberOfShapes = in.readInt();
     int size = in.readInt();
-    int idata = in.readInt();
-    addMeta(prefix + "LineWidth-" + suffix, idata);
-    idata = in.readInt();
-    addMeta(prefix + "Measure-" + suffix, idata);
-    in.skipBytes(8);
-    int packedColor = in.readInt();
-    addMeta(prefix + "ColorRed-" + suffix, packedColor & 0xff);
-    addMeta(prefix + "ColorGreen-" + suffix, (packedColor & 0xff00) >> 8);
-    addMeta(prefix + "ColorBlue-" + suffix, (packedColor & 0xff0000) >> 16);
+    if (size <= 194) return;
+    in.skipBytes(20);
 
-    addMeta(prefix + "Valid-" + suffix, in.readInt());
-    addMeta(prefix + "KnotWidth-" + suffix, in.readInt());
-    addMeta(prefix + "CatchArea-" + suffix, in.readInt());
+    boolean valid = in.readInt() == 1;
 
-    // some fields describing the font
-    addMeta(prefix + "FontHeight-" + suffix, in.readInt());
-    addMeta(prefix + "FontWidth-" + suffix, in.readInt());
-    addMeta(prefix + "FontEscapement-" + suffix, in.readInt());
-    addMeta(prefix + "FontOrientation-" + suffix, in.readInt());
-    addMeta(prefix + "FontWeight-" + suffix, in.readInt());
-    addMeta(prefix + "FontItalic-" + suffix, in.readInt());
-    addMeta(prefix + "FontUnderline-" + suffix, in.readInt());
-    addMeta(prefix + "FontStrikeOut-" + suffix, in.readInt());
-    addMeta(prefix + "FontCharSet-" + suffix, in.readInt());
-    addMeta(prefix + "FontOutPrecision-" + suffix, in.readInt());
-    addMeta(prefix + "FontClipPrecision-" + suffix, in.readInt());
-    addMeta(prefix + "FontQuality-" + suffix, in.readInt());
-    addMeta(prefix + "FontPitchAndFamily-" + suffix, in.readInt());
-    addMeta(prefix + "FontFaceName-" + suffix, in.readString(64));
+    in.skipBytes(164);
 
-    // some flags for measuring values of different drawing element types
-    addMeta(prefix + "ClosedPolyline-" + suffix, in.read());
-    addMeta(prefix + "OpenPolyline-" + suffix, in.read());
-    addMeta(prefix + "ClosedBezierCurve-" + suffix, in.read());
-    addMeta(prefix + "OpenBezierCurve-" + suffix, in.read());
-    addMeta(prefix + "ArrowWithClosedTip-" + suffix, in.read());
-    addMeta(prefix + "ArrowWithOpenTip-" + suffix, in.read());
-    addMeta(prefix + "Ellipse-" + suffix, in.read());
-    addMeta(prefix + "Circle-" + suffix, in.read());
-    addMeta(prefix + "Rectangle-" + suffix, in.read());
-    addMeta(prefix + "Line-" + suffix, in.read());
-
-    in.skipBytes(28);
-
-    // read drawing elements and place them in the MetadataStore
-
-    /*
-    for (int i=0; i<nde; i++) {
+    for (int i=0; i<numberOfShapes; i++) {
+      long offset = in.getFilePointer();
       int type = in.readInt();
-      in.skipBytes(4);
+      int blockLength = in.readInt();
       int lineWidth = in.readInt();
-      int measureFlags = in.readInt();
-      double textStartX = in.readDouble();
-      double textStartY = in.readDouble();
-      int color = in.readInt(); // ABGR
-      int valid = in.readInt();
+      int measurements = in.readInt();
+      double textOffsetX = in.readDouble();
+      double textOffsetY = in.readDouble();
+      int color = in.readInt();
+      boolean validShape = in.readInt() != 0;
       int knotWidth = in.readInt();
-      in.skipBytes(4);
+      int catchArea = in.readInt();
       int fontHeight = in.readInt();
       int fontWidth = in.readInt();
-      in.skipBytes(8);
-      boolean italicFont = in.readInt() != 0;
-      boolean underlineFont = in.readInt() != 0;
-      boolean strikeFont = in.readInt() != 0;
-      in.skipBytes(20);
-      String fontName = in.readString(64);
+      int fontEscapement = in.readInt();
+      int fontOrientation = in.readInt();
+      int fontWeight = in.readInt();
+      boolean fontItalic = in.readInt() != 0;
+      boolean fontUnderlined = in.readInt() != 0;
+      boolean fontStrikeout = in.readInt() != 0;
+      int fontCharSet = in.readInt();
+      int fontOutputPrecision = in.readInt();
+      int fontClipPrecision = in.readInt();
+      int fontQuality = in.readInt();
+      int fontPitchAndFamily = in.readInt();
+      String fontName = DataTools.stripString(in.readString(64));
       boolean enabled = in.readShort() == 0;
-      in.skipBytes(36);
+      boolean moveable = in.readInt() == 0;
+      in.skipBytes(34);
 
       switch (type) {
-        case DRAWING_ELEMENT_FLOAT_TEXT:
-          java.awt.geom.Point2D.Double origin = readPoint(in);
-          // String text
+        case TEXT:
+          double x = in.readDouble();
+          double y = in.readDouble();
+          String text = DataTools.stripString(in.readCString());
+          store.setShapeText(text, series, 0, i);
           break;
-        case DRAWING_ELEMENT_FLOAT_LINE:
-        case DRAWING_ELEMENT_FLOAT_SCALE_BAR:
-        case DRAWING_ELEMENT_FLOAT_OPEN_ARROW:
-        case DRAWING_ELEMENT_FLOAT_CLOSED_ARROW:
+        case LINE:
           in.skipBytes(4);
-          java.awt.geom.Point2D.Double start = readPoint(in);
-          java.awt.geom.Point2D.Double end = readPoint(in);
+          double startX = in.readDouble();
+          double startY = in.readDouble();
+          double endX = in.readDouble();
+          double endY = in.readDouble();
 
-          store.setLinex1(String.valueOf(start.x), 0, 0, i);
-          store.setLiney1(String.valueOf(start.y), 0, 0, i);
-          store.setLinex2(String.valueOf(end.x), 0, 0, i);
-          store.setLiney2(String.valueOf(end.y), 0, 0, i);
-
+          store.setLineX1(String.valueOf(startX), series, 0, i);
+          store.setLineY1(String.valueOf(startY), series, 0, i);
+          store.setLineX2(String.valueOf(endX), series, 0, i);
+          store.setLineY2(String.valueOf(endY), series, 0, i);
           break;
-        case DRAWING_ELEMENT_FLOAT_RECTANGLE:
-        case DRAWING_ELEMENT_FLOAT_PALETTE:
+        case SCALE_BAR:
+        case OPEN_ARROW:
+        case CLOSED_ARROW:
+        case PALETTE:
+          in.skipBytes(36);
+          break;
+        case RECTANGLE:
           in.skipBytes(4);
-          // two corners are diagonally arranged
-          java.awt.geom.Point2D.Double firstCorner = readPoint(in);
-          java.awt.geom.Point2D.Double secondCorner = readPoint(in);
-          double width = secondCorner.x - firstCorner.x;
-          double height = secondCorner.y - firstCorner.y;
+          double topX = in.readDouble();
+          double topY = in.readDouble();
+          double bottomX = in.readDouble();
+          double bottomY = in.readDouble();
+          double width = Math.abs(bottomX - topX);
+          double height = Math.abs(bottomY - topY);
 
-          store.setRectx(String.valueOf(firstCorner.x), 0, 0, i);
-          store.setRecty(String.valueOf(firstCorner.y), 0, 0, i);
-          store.setRectwidth(String.valueOf(width), 0, 0, i);
-          store.setRectheight(String.valueOf(height), 0, 0, i);
-          break;
-        case DRAWING_ELEMENT_FLOAT_ELLIPSE:
-          in.skipBytes(4);
-          java.awt.geom.Point2D.Double axisIntercept1 = readPoint(in);
-          java.awt.geom.Point2D.Double axisIntercept2 = readPoint(in);
-          java.awt.geom.Point2D.Double axisIntercept3 = readPoint(in);
-          java.awt.geom.Point2D.Double axisIntercept4 = readPoint(in);
-          // TODO
-          break;
-        case DRAWING_ELEMENT_FLOAT_CIRCLE:
-          in.skipBytes(4);
-          java.awt.geom.Point2D.Double center = readPoint(in);
-          java.awt.geom.Point2D.Double point = readPoint(in);
+          topX = Math.min(topX, bottomX);
+          topY = Math.min(topY, bottomY);
 
-          store.setCirclecx(String.valueOf(center.x), 0, 0, i);
-          store.setCirclecy(String.valueOf(center.y), 0, 0, i);
-          store.setCircler(String.valueOf(center.distance(point)), 0, 0, i);
+          store.setRectX(String.valueOf(topX), series, 0, i);
+          store.setRectY(String.valueOf(topY), series, 0, i);
+          store.setRectWidth(String.valueOf(width), series, 0, i);
+          store.setRectHeight(String.valueOf(height), series, 0, i);
 
           break;
-        case DRAWING_ELEMENT_FLOAT_CIRCLE_3POINT:
-          in.skipBytes(4);
-          // coordinates of points on the perimeter
-          java.awt.geom.Point2D.Double a = readPoint(in);
-          java.awt.geom.Point2D.Double b = readPoint(in);
-          java.awt.geom.Point2D.Double c = readPoint(in);
-
-          double temp = b.x * b.x + b.y * b.y;
-          double ab = (a.x * a.x + a.y * a.y - temp) / 2.0;
-          double bc = (temp - c.x * c.x - c.y * c.y) / 2.0;
-          double determinant =
-            1 / ((a.x - b.x) * (b.y - c.y) - (b.x - c.x) * (a.y - b.y));
-          double centerX = (ab * (b.y - c.y) - bc * (a.y - b.y)) * determinant;
-          double centerY = ((a.x - b.x) * bc - (b.x - c.x) * ab) * determinant;
-          double radius =
-            Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
-
-          store.setCirclecx(String.valueOf(centerX), 0, 0, i);
-          store.setCirclecy(String.valueOf(centerY), 0, 0, i);
-          store.setCircler(String.valueOf(radius), 0, 0, i);
-
-          break;
-        case DRAWING_ELEMENT_FLOAT_ANGLE:
-          in.skipBytes(4);
-          a = readPoint(in);
-          b = readPoint(in);
-          c = readPoint(in);
-          break;
-        case DRAWING_ELEMENT_FLOAT_CLOSED_POLYLINE:
-        case DRAWING_ELEMENT_FLOAT_OPEN_POLYLINE:
-        case DRAWING_ELEMENT_FLOAT_POLYLINE_ARROW:
-          int nKnots = in.readInt();
-          java.awt.geom.Point2D.Double[] vertices =
-            new java.awt.geom.Point2D.Double[nKnots];
-          for (int q=0; q<nKnots; q++) {
-            vertices[q] = readPoint(in);
+        case ELLIPSE:
+          int knots = in.readInt();
+          double[] xs = new double[knots];
+          double[] ys = new double[knots];
+          for (int j=0; j<xs.length; j++) {
+            xs[j] = in.readDouble();
+            ys[j] = in.readDouble();
           }
+
+          double rx = 0, ry = 0, centerX = 0, centerY = 0;
+
+          if (knots == 4) {
+            double r1x = Math.abs(xs[2] - xs[0]) / 2;
+            double r1y = Math.abs(ys[2] - ys[0]) / 2;
+            double r2x = Math.abs(xs[3] - xs[1]) / 2;
+            double r2y = Math.abs(ys[3] - ys[1]) / 2;
+
+            if (r1x > r2x) {
+              ry = r1y;
+              rx = r2x;
+              centerX = Math.min(xs[3], xs[1]) + rx;
+              centerY = Math.min(ys[2], ys[0]) + ry;
+            }
+            else {
+              ry = r2y;
+              rx = r1x;
+              centerX = Math.min(xs[2], xs[0]) + rx;
+              centerY = Math.min(ys[3], ys[1]) + ry;
+            }
+          }
+          else if (knots == 3) {
+            centerX = xs[0];
+            centerY = ys[0];
+
+            rx = Math.sqrt(Math.pow(xs[1] - xs[0], 2) +
+              Math.pow(ys[1] - ys[0], 2));
+            ry = Math.sqrt(Math.pow(xs[2] - xs[0], 2) +
+              Math.pow(ys[2] - ys[0], 2));
+
+            // TODO: calculate and store rotation angle
+          }
+
+          store.setEllipseCx(String.valueOf(centerX), series, 0, i);
+          store.setEllipseCy(String.valueOf(centerY), series, 0, i);
+          store.setEllipseRx(String.valueOf(rx), series, 0, i);
+          store.setEllipseRy(String.valueOf(ry), series, 0, i);
+
           break;
-        case DRAWING_ELEMENT_FLOAT_CLOSED_BEZIER:
-        case DRAWING_ELEMENT_FLOAT_OPEN_BEZIER:
-        case DRAWING_ELEMENT_FLOAT_BEZIER_WITH_ARROW:
+        case CIRCLE:
+          in.skipBytes(4);
+          centerX = in.readDouble();
+          centerY = in.readDouble();
+          double curveX = in.readDouble();
+          double curveY = in.readDouble();
+
+          double radius = Math.sqrt(Math.pow(curveX - centerX, 2) +
+            Math.pow(curveY - centerY, 2));
+
+          store.setCircleCx(String.valueOf(centerX), series, 0, i);
+          store.setCircleCy(String.valueOf(centerY), series, 0, i);
+          store.setCircleR(String.valueOf(radius), series, 0, i);
+
+          break;
+        case CIRCLE_3POINT:
+          in.skipBytes(4);
+          double[][] points = new double[3][2];
+          for (int j=0; j<points.length; j++) {
+            for (int k=0; k<points[j].length; k++) {
+              points[j][k] = in.readDouble();
+            }
+          }
+
+          // TODO : calculate center and radius from 3 points on perimeter
+
+          break;
+        case ANGLE:
+          in.skipBytes(4);
+          points = new double[3][2];
+          for (int j=0; j<points.length; j++) {
+            for (int k=0; k<points[j].length; k++) {
+              points[j][k] = in.readDouble();
+            }
+          }
+
+          StringBuffer p = new StringBuffer();
+          for (int j=0; j<points.length; j++) {
+            p.append(points[j][0]);
+            p.append(",");
+            p.append(points[j][1]);
+            if (j < points.length - 1) p.append(" ");
+          }
+
+          store.setPolylinePoints(p.toString(), series, 0, i);
+
+          break;
+        case CLOSED_POLYLINE:
+        case OPEN_POLYLINE:
+        case POLYLINE_ARROW:
+          int nKnots = in.readInt();
+          points = new double[nKnots][2];
+          for (int j=0; j<points.length; j++) {
+            for (int k=0; k<points[j].length; k++) {
+              points[j][k] = in.readDouble();
+            }
+          }
+
+          p = new StringBuffer();
+          for (int j=0; j<points.length; j++) {
+            p.append(points[j][0]);
+            p.append(",");
+            p.append(points[j][1]);
+            if (j < points.length - 1) p.append(" ");
+          }
+
+          if (type == CLOSED_POLYLINE) {
+            store.setPolygonPoints(p.toString(), series, 0, i);
+          }
+          else store.setPolylinePoints(p.toString(), series, 0, i);
+
+          break;
+        case CLOSED_BEZIER:
+        case OPEN_BEZIER:
+        case BEZIER_WITH_ARROW:
           nKnots = in.readInt();
-          // these are the endpoints of cubic Bezier segments
-          // the control points are calculated assuming equidistant
-          // parameterization of the curve
-          java.awt.geom.Point2D.Double[] endpoints =
-            new java.awt.geom.Point2D.Double[nKnots];
-          for (int q=0; q<nKnots; q++) {
-            endpoints[q] = readPoint(in);
+          points = new double[nKnots][2];
+          for (int j=0; j<points.length; j++) {
+            for (int k=0; k<points[j].length; k++) {
+              points[j][k] = in.readDouble();
+            }
           }
           break;
       }
-    }
-    */
-  }
 
-  private java.awt.geom.Point2D.Double readPoint(RandomAccessStream in)
-    throws IOException
-  {
-    java.awt.geom.Point2D.Double p = new java.awt.geom.Point2D.Double();
-    p.x = in.readDouble();
-    p.y = in.readDouble();
-    return p;
+      in.seek(offset + blockLength);
+    }
   }
 
   /** Construct a metadata key from the given stack. */

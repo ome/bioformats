@@ -77,34 +77,41 @@ public class ROIHandler {
           Roi roi = null;
 
           if (circle != null) {
-            int cx =
-              Integer.parseInt(retrieve.getCircleCx(image, roiNum, shape));
-            int cy =
-              Integer.parseInt(retrieve.getCircleCy(image, roiNum, shape));
-            int r = Integer.parseInt(retrieve.getCircleR(image, roiNum, shape));
+            int cx = (int) Double.parseDouble(retrieve.getCircleCx(
+              image, roiNum, shape));
+            int cy = (int) Double.parseDouble(retrieve.getCircleCy(
+              image, roiNum, shape));
+            int r = (int) Double.parseDouble(retrieve.getCircleR(
+              image, roiNum, shape));
             roi = new OvalRoi(cx - r, cy - r, r * 2, r * 2);
           }
           else if (ellipse != null) {
-            int cx =
-              Integer.parseInt(retrieve.getEllipseCx(image, roiNum, shape));
-            int cy =
-              Integer.parseInt(retrieve.getEllipseCy(image, roiNum, shape));
-            int rx =
-              Integer.parseInt(retrieve.getEllipseRx(image, roiNum, shape));
-            int ry =
-              Integer.parseInt(retrieve.getEllipseRy(image, roiNum, shape));
+            int cx = (int) Double.parseDouble(retrieve.getEllipseCx(
+              image, roiNum, shape));
+            int cy = (int) Double.parseDouble(retrieve.getEllipseCy(
+              image, roiNum, shape));
+            int rx = (int) Double.parseDouble(retrieve.getEllipseRx(
+              image, roiNum, shape));
+            int ry = (int) Double.parseDouble(retrieve.getEllipseRy(
+              image, roiNum, shape));
             roi = new OvalRoi(cx - rx, cy - ry, rx * 2, ry * 2);
           }
           else if (line != null) {
-            int x1 = Integer.parseInt(retrieve.getLineX1(image, roiNum, shape));
-            int x2 = Integer.parseInt(retrieve.getLineX2(image, roiNum, shape));
-            int y1 = Integer.parseInt(retrieve.getLineY1(image, roiNum, shape));
-            int y2 = Integer.parseInt(retrieve.getLineY2(image, roiNum, shape));
+            int x1 = (int) Double.parseDouble(retrieve.getLineX1(
+              image, roiNum, shape));
+            int x2 = (int) Double.parseDouble(retrieve.getLineX2(
+              image, roiNum, shape));
+            int y1 = (int) Double.parseDouble(retrieve.getLineY1(
+              image, roiNum, shape));
+            int y2 = (int) Double.parseDouble(retrieve.getLineY2(
+              image, roiNum, shape));
             roi = new Line(x1, y1, x2, y2);
           }
           else if (point != null) {
-            int x = Integer.parseInt(retrieve.getPointCx(image, roiNum, shape));
-            int y = Integer.parseInt(retrieve.getPointCy(image, roiNum, shape));
+            int x = (int) Double.parseDouble(retrieve.getPointCx(
+              image, roiNum, shape));
+            int y = (int) Double.parseDouble(retrieve.getPointCy(
+              image, roiNum, shape));
             roi = new OvalRoi(x, y, 0, 0);
           }
           else if (polygon != null) {
@@ -120,12 +127,14 @@ public class ROIHandler {
               coordinates[0].length, Roi.POLYLINE);
           }
           else if (rectangle != null) {
-            int x = Integer.parseInt(retrieve.getRectX(image, roiNum, shape));
-            int y = Integer.parseInt(retrieve.getRectY(image, roiNum, shape));
-            int w =
-              Integer.parseInt(retrieve.getRectWidth(image, roiNum, shape));
-            int h =
-              Integer.parseInt(retrieve.getRectHeight(image, roiNum, shape));
+            int x =
+              (int) Double.parseDouble(retrieve.getRectX(image, roiNum, shape));
+            int y =
+              (int) Double.parseDouble(retrieve.getRectY(image, roiNum, shape));
+            int w = (int) Double.parseDouble(retrieve.getRectWidth(
+              image, roiNum, shape));
+            int h = (int) Double.parseDouble(retrieve.getRectHeight(
+              image, roiNum, shape));
             roi = new Roi(x, y, w, h);
           }
 
@@ -204,14 +213,13 @@ public class ROIHandler {
     Rectangle bounds = roi.getBounds();
     int[] xCoordinates = roi.getXCoordinates();
     int[] yCoordinates = roi.getYCoordinates();
-    StringBuffer points = new StringBuffer("(");
+    StringBuffer points = new StringBuffer();
     for (int i=0; i<xCoordinates.length; i++) {
       points.append(xCoordinates[i] + bounds.x);
-      points.append(" ");
+      points.append(",");
       points.append(yCoordinates[i] + bounds.y);
-      if (i < xCoordinates.length - 1) points.append(", ");
+      if (i < xCoordinates.length - 1) points.append(" ");
     }
-    points.append(")");
     store.setPolygonPoints(points.toString(), image, roiNum, shape);
   }
 
@@ -229,16 +237,17 @@ public class ROIHandler {
    */
   private static int[][] parsePoints(String points) {
     // assuming points are stored like this:
-    // (x0 y0, x1 y1, x2 y2,...)
-    points = points.substring(1, points.length() - 1);
-    String[] pointList = points.split(",");
+    // x0,y0 x1,y1 x2,y2 ...
+    String[] pointList = points.split(" ");
     int[][] coordinates = new int[2][pointList.length];
 
     for (int q=0; q<pointList.length; q++) {
       pointList[q] = pointList[q].trim();
-      int space = pointList[q].indexOf(" ");
-      coordinates[0][q] = Integer.parseInt(pointList[q].substring(0, space));
-      coordinates[1][q] = Integer.parseInt(pointList[q].substring(space + 1));
+      int delim = pointList[q].indexOf(",");
+      coordinates[0][q] =
+        (int) Double.parseDouble(pointList[q].substring(0, delim));
+      coordinates[1][q] =
+        (int) Double.parseDouble(pointList[q].substring(delim + 1));
     }
     return coordinates;
   }
