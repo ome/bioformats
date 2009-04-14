@@ -29,11 +29,12 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
 /**
- * Automatically generates a report on 
- * Automatically generates code for the MetadataStore and MetadataRetrieve
- * interfaces, as well as the implementations for various flavors of OME-XML.
+ * Automatically generates a report on supported metadata fields
+ * for each file format reader in Bio-Formats.
  *
- * Uses data from the meta-groups.txt and meta-support.txt files.
+ * Uses data from the meta-support.txt file.
+ *
+ * TODO - Add support for group reporting using meta-groups.txt.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/auto/MetaSupportAutogen.java">Trac</a>,
