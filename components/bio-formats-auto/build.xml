@@ -23,11 +23,23 @@ Type "ant -p" for a list of targets.
 
   <target name="gen-meta-support" depends="compile"
     description="generate documentation for Bio-Formats' metadata support">
-    <java classname="${component.meta-support-class}"
-      classpath="${classes.dir}:${component.runtime-cp}"
-      fork="true" dir="${root.dir}/components/bio-formats/">
-        <arg value="${omexml.version}"/>
-    </java>
+    <if>
+      <isset property="omexml.version"/>
+      <then>
+        <java classname="${component.meta-support-class}"
+          classpath="${classes.dir}:${component.runtime-cp}"
+          fork="true" dir="${root.dir}/components/bio-formats/">
+            <arg value="${omexml.version}"/>
+        </java>
+      </then>
+      <else>
+<echo>
+Please set the omexml.version property to match
+the latest release of the OME-XML schema. E.g.:
+  ant -Domexml.version=2008-09 gen-meta-support
+</echo>
+      </else>
+    </if>
   </target>
 
   <target name="gen-ice" depends="compile"
