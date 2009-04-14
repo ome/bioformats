@@ -158,6 +158,11 @@ public class L2DReader extends FormatReader {
 
     core = new CoreMetadata[scans.size()];
 
+    Vector comments = new Vector();
+    Vector wavelengths = new Vector();
+    Vector dates = new Vector();
+    String model = null;
+
     for (int i=0; i<scans.size(); i++) {
       core[i] = new CoreMetadata();
       tiffs[i] = new Vector();
@@ -189,9 +194,24 @@ public class L2DReader extends FormatReader {
               tiffs[i].add(tiff);
             }
           }
+          else if (key.equals("Comments")) {
+            comments.add(value);
+          }
+          else if (key.equals("ScanDate")) {
+            dates.add(value);
+          }
+          else if (key.equals("ScannerName")) {
+            model = value;
+          }
+          else if (key.equals("ScanChannels")) {
+            wavelengths.add(value);
+          }
         }
         line = scan.readLine().trim();
       }
+      if (comments.size() == i) comments.add(null);
+      if (dates.size() == i) dates.add(null);
+      if (wavelengths.size() == i) wavelengths.add(null);
     }
 
     reader = new MinimalTiffReader();
@@ -222,10 +242,33 @@ public class L2DReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this);
 
+    store.setInstrumentID("Instrument:0", 0);
+
     for (int i=0; i<scans.size(); i++) {
-      store.setImageName("", i);
-      MetadataTools.setDefaultCreationDate(store, id, i);
+      store.setImageInstrumentRef("Instrument:0", i);
+
+      store.setImageName((String) scans.get(i), i);
+      store.setImageDescription((String) comments.get(i), i);
+
+      String date = (String) dates.get(i);
+      if (date != null) {
+        date = DataTools.formatDate(date, "yyyy, m, d");
+        store.setImageCreationDate(date, i);
+      }
+      else MetadataTools.setDefaultCreationDate(store, id, i);
+
+      String c = (String) wavelengths.get(i);
+      if (c != null) {
+        String[] waves = c.split(",");
+        for (int q=0; q<waves.length; q++) {
+          store.setLightSourceID("LightSource:0", 0, q);
+          store.setLaserWavelength(new Integer(waves[q].trim()), 0, q);
+          store.setLogicalChannelLightSource("LightSource:0", i, q);
+        }
+      }
     }
+
+    store.setMicroscopeModel(model, 0);
   }
 
   // -- Helper methods --
