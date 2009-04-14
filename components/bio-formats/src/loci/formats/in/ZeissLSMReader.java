@@ -987,7 +987,7 @@ public class ZeissLSMReader extends FormatReader {
           double x = in.readDouble();
           double y = in.readDouble();
           String text = DataTools.stripString(in.readCString());
-          store.setShapeText(text, series, 0, i);
+          //store.setShapeText(text, series, 0, i);
           break;
         case LINE:
           in.skipBytes(4);
