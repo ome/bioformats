@@ -275,10 +275,10 @@ public class InCellReader extends FormatReader {
     store.setInstrumentID("Instrument:0", 0);
 
     for (int i=0; i<seriesCount; i++) {
-      int well = getWellFromSeries(i);
-      int field = getFieldFromSeries(i);
+      int well = getWellFromSeries(i) + 1;
+      int field = getFieldFromSeries(i) + 1;
       int timepoint = oneTimepointPerSeries ?
-        i % channelsPerTimepoint.size() : -1;
+        (i % channelsPerTimepoint.size()) + 1 : -1;
 
       store.setImageID("Image:" + i, i);
       store.setImageInstrumentRef("Instrument:0", i);

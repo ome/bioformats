@@ -718,7 +718,7 @@ public class NativeND2Reader extends FormatReader {
 
     // populate Image data
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName("Series " + i, i);
+      store.setImageName("Series " + (i + 1), i);
       MetadataTools.setDefaultCreationDate(store, currentId, i);
 
       // link Instrument and Image

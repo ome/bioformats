@@ -267,7 +267,7 @@ public class MNGReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName("Series " + i, i);
+      store.setImageName("Series " + (i + 1), i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
   }

@@ -960,7 +960,7 @@ public class FV1000Reader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
-      store.setImageName("Series " + i, i);
+      store.setImageName("Series " + (i + 1), i);
       if (creationDate != null) store.setImageCreationDate(creationDate, i);
       else MetadataTools.setDefaultCreationDate(store, id, i);
 
