@@ -31,9 +31,10 @@ import java.io.*;
 import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import loci.formats.ChannelSeparator;
 import loci.formats.FormatException;
-import loci.formats.in.SDTInfo;
-import loci.formats.in.SDTReader;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import loci.common.DataTools;
 import loci.slim.fit.*;
 
@@ -104,18 +105,33 @@ public class SlimData implements ActionListener, CurveListener {
     this.progress = progress;
 
     // read SDT file header
-    SDTReader reader = new SDTReader();
+    IFormatReader reader = new ChannelSeparator();
     reader.setId(id);
     width = reader.getSizeX();
     height = reader.getSizeY();
-    timeBins = reader.getTimeBinCount();
-    channels = reader.getChannelCount();
-    SDTInfo info = reader.getInfo();
-    reader.close();
+    int[] cLengths = reader.getChannelDimLengths();
+    String[] cTypes = reader.getChannelDimTypes();
+    timeBins = channels = 1;
+    int lifetimeIndex = -1, spectraIndex = -1;
+    for (int i=0; i<cTypes.length; i++) {
+      if (cTypes[i].equals(FormatTools.LIFETIME)) {
+        timeBins = cLengths[i];
+        lifetimeIndex = i;
+      }
+      else if (cTypes[i].equals(FormatTools.SPECTRA)) {
+        channels = cLengths[i];
+        spectraIndex = i;
+      }
+    }
+    int pixelType = reader.getPixelType();
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+    if (bpp != 2) {
+      throw new FormatException(
+        "Only 16-bit integer data is supported.");
+    }
     timeRange = 12.5f;
     minWave = 400;
     waveStep = 10;
-    int offset = info.dataBlockOffs + 22;
     binRadius = 3;
 
     // show dialog confirming data parameters
@@ -124,45 +140,32 @@ public class SlimData implements ActionListener, CurveListener {
     maxWave = minWave + (channels - 1) * waveStep;
 
     // progress estimate:
-    // * Reading data - 40%
-    // * Constructing images - 8%
+    // * Reading data - 48%
     // * Adjusting peaks - 2%
     // * Subsampling data - 50%
 
-    // read pixel data
+    // read pixel data and convert to unsigned shorts
     progress.setNote("Reading data");
-    DataInputStream fin = new DataInputStream(new FileInputStream(id));
-    fin.skipBytes(offset); // skip to data
-    byte[] bytes = new byte[2 * channels * height * width * timeBins];
-    int blockSize = 65536;
-    for (int off=0; off<bytes.length; off+=blockSize) {
-      int len = bytes.length - off;
-      if (len > blockSize) len = blockSize;
-      fin.readFully(bytes, off, len);
-      SlimPlotter.setProgress(progress, 0, 400,
-        (double) (off + blockSize) / bytes.length);
-    }
-    fin.close();
-
-    // convert byte data to unsigned shorts
-    progress.setNote("Constructing images");
+    byte[] plane = new byte[bpp * height * width];
     data = new int[channels][height][width][timeBins];
-    for (int c=0; c<channels; c++) {
-      int oc = timeBins * width * height * c;
-      for (int h=0; h<height; h++) {
-        int oh = timeBins * width * h;
-        for (int w=0; w<width; w++) {
-          int ow = timeBins * w;
-          for (int t=0; t<timeBins; t++) {
-            int ndx = 2 * (oc + oh + ow + t);
-            int val = DataTools.bytesToInt(bytes, ndx, 2, true);
-            data[c][h][w][t] = val;
-          }
+    int imageCount = reader.getImageCount();
+    for (int i=0; i<imageCount; i++) {
+      int[] zct = reader.getZCTCoords(i);
+      if (zct[0] != 0 || zct[2] != 0) continue; // process only first Z and T
+      int[] sub = FormatTools.rasterToPosition(cLengths, zct[1]);
+      int c = spectraIndex < 0 ? 0 : sub[spectraIndex];
+      int t = lifetimeIndex < 0 ? 0 : sub[lifetimeIndex];
+      reader.openBytes(i, plane, 0, 0, width, height);
+      for (int y=0; y<height; y++) {
+        for (int x=0; x<width; x++) {
+          int index = bpp * (y * width + x);
+          int val = DataTools.bytesToInt(plane, index, 2, true);
+          data[c][y][x][t] = val;
         }
-        SlimPlotter.setProgress(progress, 400, 80,
-          (double) (height * c + h + 1) / (channels * height));
       }
+      SlimPlotter.setProgress(progress, 0, 480, (float) (i + 1) / imageCount);
     }
+    reader.close();
 
     // adjust peaks
     if (allowCurveFit && maxPeak == 0) {
