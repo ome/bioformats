@@ -275,7 +275,7 @@ public class InCellReader extends FormatReader {
     store.setInstrumentID("Instrument:0", 0);
 
     for (int i=0; i<seriesCount; i++) {
-      int well = getWellFromSeries(i) + 1;
+      int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i) + 1;
       int timepoint = oneTimepointPerSeries ?
         (i % channelsPerTimepoint.size()) + 1 : -1;
@@ -283,7 +283,25 @@ public class InCellReader extends FormatReader {
       store.setImageID("Image:" + i, i);
       store.setImageInstrumentRef("Instrument:0", i);
 
-      String imageName = "Well #" + well + ", Field #" + field;
+      int wellRow = well / wellCols;
+      int wellCol = well % wellCols;
+
+      char rowChar = rowName.charAt(rowName.length() - 1);
+      char colChar = colName.charAt(colName.length() - 1);
+      String row = rowName.substring(0, rowName.length() - 1);
+      String col = colName.substring(0, colName.length() - 1);
+
+      if (Character.isDigit(rowChar)) {
+        row += wellRow + Integer.parseInt(String.valueOf(rowChar));
+      }
+      else row += (char) (rowChar + wellRow);
+
+      if (Character.isDigit(colChar)) {
+        col += wellCol + Integer.parseInt(String.valueOf(colChar));
+      }
+      else col += (char) (colChar + wellCol);
+
+      String imageName = "Well " + row + "-" + col + ", Field #" + field;
       if (timepoint >= 0) {
         imageName += ", Timepoint #" + timepoint;
       }
