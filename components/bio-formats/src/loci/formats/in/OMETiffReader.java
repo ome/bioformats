@@ -218,7 +218,15 @@ public class OMETiffReader extends FormatReader {
 
         Integer samplesPerPixel = meta.getLogicalChannelSamplesPerPixel(i, 0);
         int samples = samplesPerPixel == null ?
-          TiffTools.getSamplesPerPixel(firstIFD) : samplesPerPixel.intValue();
+          -1 : samplesPerPixel.intValue();
+        int tiffSamples = TiffTools.getSamplesPerPixel(firstIFD);
+        if (samples != tiffSamples) {
+          if (debug) {
+            debug("Warning: SamplesPerPixel mismatch: " +
+              "OME=" + samples + ", TIFF=" + tiffSamples);
+          }
+          samples = tiffSamples;
+        }
 
         int effSizeC = meta.getPixelsSizeC(i, p).intValue() / samples;
         if (effSizeC == 0) effSizeC = 1;
