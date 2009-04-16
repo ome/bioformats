@@ -399,6 +399,17 @@ public class InCellReader extends FormatReader {
         channelsPerTimepoint.add(new Integer(nChannels));
         nChannels = 0;
       }
+      else if (qName.equals("Times")) {
+        if (channelsPerTimepoint.size() == 0) {
+          channelsPerTimepoint.add(new Integer(getSizeC()));
+        }
+        for (int i=0; i<channelsPerTimepoint.size(); i++) {
+          int c = ((Integer) channelsPerTimepoint.get(i)).intValue();
+          if (c == 0) {
+            channelsPerTimepoint.setElementAt(new Integer(getSizeC()), i);
+          }
+        }
+      }
     }
 
     public void startElement(String uri, String localName, String qName,
