@@ -122,6 +122,10 @@ public class SlimData implements ActionListener, CurveListener {
         channels = cLengths[i];
         spectraIndex = i;
       }
+      else if (lifetimeIndex < 0 && cTypes[i].equals(FormatTools.CHANNEL)) {
+        timeBins = cLengths[i];
+        lifetimeIndex = i;
+      }
     }
     int pixelType = reader.getPixelType();
     int bpp = FormatTools.getBytesPerPixel(pixelType);
