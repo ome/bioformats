@@ -102,6 +102,12 @@ public class OMETiffWriter extends TiffWriter {
           sizeC = imageCount / (sizeZ * sizeT);
         }
 
+        Integer samplesPerPixel =
+          new Integer((sizeZ * sizeC * sizeT) / imageCount);
+        for (int c=0; c<omeMeta.getLogicalChannelCount(series); c++) {
+          omeMeta.setLogicalChannelSamplesPerPixel(samplesPerPixel, series, c);
+        }
+
         int num = 0;
         for (int plane=0; plane<imageCount; plane++) {
           while (((Integer) seriesMap.get(num)).intValue() != series) {
