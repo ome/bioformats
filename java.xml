@@ -149,18 +149,20 @@ your FindBugs installation's lib directory. E.g.:
   </target>
 
   <target name="copy-source" depends="init">
-    <!-- copy binary resources without filtering -->
+    <!-- copy binary resources -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${component.resources-bin}"/>
     </copy>
     <!-- copy source files and text resources with filtering -->
-    <filter token="date" value="${DATE}"/>
-    <filter token="year" value="${YEAR}"/>
-    <filter token="svn.revision" value="${svn.revision}"/>
-    <filter token="visbio.version" value="${visbio.version}"/>
-    <copy todir="${dest.dir}" filtering="true" preservelastmodified="true">
+    <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}"
         includes="${component.source} ${component.resources-text}"/>
+      <filterset>
+        <filter token="date" value="${DATE}"/>
+        <filter token="year" value="${YEAR}"/>
+        <filter token="svn.revision" value="${svn.revision}"/>
+        <filter token="visbio.version" value="${visbio.version}"/>
+      </filterset>
     </copy>
     <!-- copy resources to classes folder -->
     <copy todir="${classes.dir}" preservelastmodified="true">
