@@ -1056,6 +1056,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
           else if (knots == 3) {
+            // we are given the center point and one cut point for each axis
             centerX = xs[0];
             centerY = ys[0];
 
@@ -1064,7 +1065,12 @@ public class ZeissLSMReader extends FormatReader {
             ry = Math.sqrt(Math.pow(xs[2] - xs[0], 2) +
               Math.pow(ys[2] - ys[0], 2));
 
-            // TODO: calculate and store rotation angle
+            // calculate rotation angle
+            double slope = (ys[2] - centerY) / (xs[2] - centerX);
+            double theta = Math.toDegrees(Math.atan(slope));
+
+            store.setEllipseTransform("rotate(" + theta + " " + centerX +
+              " " + centerY + ")", series, 0, i);
           }
 
           store.setEllipseCx(String.valueOf(centerX), series, 0, i);
@@ -1090,6 +1096,8 @@ public class ZeissLSMReader extends FormatReader {
           break;
         case CIRCLE_3POINT:
           in.skipBytes(4);
+          // given 3 points on the perimeter of the circle, we need to
+          // calculate the center and radius
           double[][] points = new double[3][2];
           for (int j=0; j<points.length; j++) {
             for (int k=0; k<points[j].length; k++) {
@@ -1097,7 +1105,25 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          // TODO : calculate center and radius from 3 points on perimeter
+          double s = 0.5 * ((points[1][0] - points[2][0]) *
+            (points[0][0] - points[2][0]) - (points[1][1] - points[2][1]) *
+            (points[2][1] - points[0][1]));
+          double div = (points[0][0] - points[1][0]) *
+            (points[2][1] - points[0][1]) - (points[1][1] - points[0][1]) *
+            (points[0][0] - points[2][0]);
+          s /= div;
+
+          double cx = 0.5 * (points[0][0] + points[1][0]) +
+            s * (points[1][1] - points[0][1]);
+          double cy = 0.5 * (points[0][1] + points[1][1]) +
+            s * (points[0][0] - points[1][0]);
+
+          double r = Math.sqrt(Math.pow(points[0][0] - cx, 2) +
+            Math.pow(points[0][1] - cy, 2));
+
+          store.setCircleCx(String.valueOf(cx), series, 0, i);
+          store.setCircleCy(String.valueOf(cy), series, 0, i);
+          store.setCircleR(String.valueOf(r), series, 0, i);
 
           break;
         case ANGLE:
