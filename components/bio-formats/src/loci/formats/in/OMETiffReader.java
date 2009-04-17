@@ -321,18 +321,46 @@ public class OMETiffReader extends FormatReader {
         info[s] = planes;
         try {
           core[s].sizeX = meta.getPixelsSizeX(i, p).intValue();
+          int tiffWidth = (int) TiffTools.getImageWidth(firstIFD);
+          if (core[s].sizeX != tiffWidth) {
+            if (debug) {
+              debug("Warning: SizeX mismatch: " +
+                "OME=" + core[s].sizeX + ", TIFF=" + tiffWidth);
+            }
+          }
           core[s].sizeY = meta.getPixelsSizeY(i, p).intValue();
+          int tiffHeight = (int) TiffTools.getImageLength(firstIFD);
+          if (core[s].sizeY != tiffHeight) {
+            if (debug) {
+              debug("Warning: SizeY mismatch: " +
+                "OME=" + core[s].sizeY + ", TIFF=" + tiffHeight);
+            }
+          }
           core[s].sizeZ = meta.getPixelsSizeZ(i, p).intValue();
           core[s].sizeC = meta.getPixelsSizeC(i, p).intValue();
           core[s].sizeT = meta.getPixelsSizeT(i, p).intValue();
           core[s].pixelType = FormatTools.pixelTypeFromString(
             meta.getPixelsPixelType(i, p));
+          int tiffPixelType = TiffTools.getPixelType(firstIFD);
+          if (core[s].pixelType != tiffPixelType) {
+            if (debug) {
+              debug("Warning: PixelType mismatch: " +
+                "OME=" + core[s].pixelType + ", TIFF=" + tiffPixelType);
+            }
+          }
           core[s].imageCount = num;
           core[s].dimensionOrder = meta.getPixelsDimensionOrder(i, p);
           core[s].orderCertain = true;
           int photo = TiffTools.getPhotometricInterpretation(firstIFD);
           core[s].rgb = samples > 1 || photo == TiffTools.RGB;
           core[s].littleEndian = !meta.getPixelsBigEndian(i, p).booleanValue();
+          boolean tiffLittleEndian = TiffTools.isLittleEndian(firstIFD);
+          if (core[s].littleEndian != tiffLittleEndian) {
+            if (debug) {
+              debug("Warning: BigEndian mismatch: " +
+                "OME=" + !core[s].littleEndian + ", TIFF=" + !tiffLittleEndian);
+            }
+          }
           core[s].interleaved = false;
           core[s].indexed = photo == TiffTools.RGB_PALETTE &&
             TiffTools.getIFDValue(firstIFD, TiffTools.COLOR_MAP) != null;
