@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1283,6 +1283,20 @@ public class FilterMetadata implements MetadataStore {
     store.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
   }
 
+  // -- Path property storage -
+
+  /* @see MetadataStore#setPathD(String, int, int, int) */
+  public void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(d) : d;
+    store.setPathD(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setPathID(String, int, int, int) */
+  public void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setPathID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
   // -- Pixels property storage -
 
   /* @see MetadataStore#setPixelsBigEndian(Boolean, int, int) */
@@ -1793,10 +1807,166 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Shape property storage -
 
+  /* @see MetadataStore#setShapeBaselineShift(String, int, int, int) */
+  public void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(baselineShift) : baselineShift;
+    store.setShapeBaselineShift(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeDirection(String, int, int, int) */
+  public void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(direction) : direction;
+    store.setShapeDirection(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFillColor(String, int, int, int) */
+  public void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fillColor) : fillColor;
+    store.setShapeFillColor(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFillOpacity(String, int, int, int) */
+  public void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fillOpacity) : fillOpacity;
+    store.setShapeFillOpacity(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFillRule(String, int, int, int) */
+  public void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fillRule) : fillRule;
+    store.setShapeFillRule(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFontFamily(String, int, int, int) */
+  public void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fontFamily) : fontFamily;
+    store.setShapeFontFamily(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFontSize(Integer, int, int, int) */
+  public void setShapeFontSize(Integer fontSize, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeFontSize(fontSize, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFontStretch(String, int, int, int) */
+  public void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fontStretch) : fontStretch;
+    store.setShapeFontStretch(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFontStyle(String, int, int, int) */
+  public void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fontStyle) : fontStyle;
+    store.setShapeFontStyle(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFontVariant(String, int, int, int) */
+  public void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fontVariant) : fontVariant;
+    store.setShapeFontVariant(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeFontWeight(String, int, int, int) */
+  public void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(fontWeight) : fontWeight;
+    store.setShapeFontWeight(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeG(String, int, int, int) */
+  public void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(g) : g;
+    store.setShapeG(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeGlyphOrientationVertical(Integer, int, int, int) */
+  public void setShapeGlyphOrientationVertical(Integer glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeGlyphOrientationVertical(glyphOrientationVertical, imageIndex, roiIndex, shapeIndex);
+  }
+
   /* @see MetadataStore#setShapeID(String, int, int, int) */
   public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     String value = filter ? DataTools.sanitize(id) : id;
     store.setShapeID(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeLocked(Boolean, int, int, int) */
+  public void setShapeLocked(Boolean locked, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeLocked(locked, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeAttribute(String, int, int, int) */
+  public void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(strokeAttribute) : strokeAttribute;
+    store.setShapeStrokeAttribute(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeColor(String, int, int, int) */
+  public void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(strokeColor) : strokeColor;
+    store.setShapeStrokeColor(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeDashArray(String, int, int, int) */
+  public void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(strokeDashArray) : strokeDashArray;
+    store.setShapeStrokeDashArray(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeLineCap(String, int, int, int) */
+  public void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(strokeLineCap) : strokeLineCap;
+    store.setShapeStrokeLineCap(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeLineJoin(String, int, int, int) */
+  public void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(strokeLineJoin) : strokeLineJoin;
+    store.setShapeStrokeLineJoin(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeMiterLimit(Integer, int, int, int) */
+  public void setShapeStrokeMiterLimit(Integer strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeOpacity(Float, int, int, int) */
+  public void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeStrokeWidth(Integer, int, int, int) */
+  public void setShapeStrokeWidth(Integer strokeWidth, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeStrokeWidth(strokeWidth, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeText(String, int, int, int) */
+  public void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(text) : text;
+    store.setShapeText(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeTextAnchor(String, int, int, int) */
+  public void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(textAnchor) : textAnchor;
+    store.setShapeTextAnchor(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeTextDecoration(String, int, int, int) */
+  public void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(textDecoration) : textDecoration;
+    store.setShapeTextDecoration(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeTextFill(String, int, int, int) */
+  public void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(textFill) : textFill;
+    store.setShapeTextFill(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeTextStroke(String, int, int, int) */
+  public void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(textStroke) : textStroke;
+    store.setShapeTextStroke(value, imageIndex, roiIndex, shapeIndex);
   }
 
   /* @see MetadataStore#setShapeTheT(Integer, int, int, int) */
@@ -1807,6 +1977,23 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#setShapeTheZ(Integer, int, int, int) */
   public void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
     store.setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeVectorEffect(String, int, int, int) */
+  public void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(vectorEffect) : vectorEffect;
+    store.setShapeVectorEffect(value, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeVisibility(Boolean, int, int, int) */
+  public void setShapeVisibility(Boolean visibility, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setShapeVisibility(visibility, imageIndex, roiIndex, shapeIndex);
+  }
+
+  /* @see MetadataStore#setShapeWritingMode(String, int, int, int) */
+  public void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex) {
+    String value = filter ? DataTools.sanitize(writingMode) : writingMode;
+    store.setShapeWritingMode(value, imageIndex, roiIndex, shapeIndex);
   }
 
   // -- StageLabel property storage -

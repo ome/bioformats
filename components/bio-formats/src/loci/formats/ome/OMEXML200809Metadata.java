@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1647,6 +1647,20 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return objectiveRef == null ? null : objectiveRef.getRefractiveIndex();
   }
 
+  // - Path property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPathD(int, int, int) */
+  public String getPathD(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: D unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getPathID(int, int, int) */
+  public String getPathID(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: ID unsupported for schema version 2008-09
+    return null;
+  }
+
   // - Pixels property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getPixelsBigEndian(int, int) */
@@ -2183,10 +2197,172 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Shape property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeBaselineShift(int, int, int) */
+  public String getShapeBaselineShift(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: BaselineShift unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeDirection(int, int, int) */
+  public String getShapeDirection(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Direction unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFillColor(int, int, int) */
+  public String getShapeFillColor(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FillColor unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFillOpacity(int, int, int) */
+  public String getShapeFillOpacity(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FillOpacity unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFillRule(int, int, int) */
+  public String getShapeFillRule(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FillRule unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFontFamily(int, int, int) */
+  public String getShapeFontFamily(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontFamily unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFontSize(int, int, int) */
+  public Integer getShapeFontSize(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontSize unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFontStretch(int, int, int) */
+  public String getShapeFontStretch(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontStretch unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFontStyle(int, int, int) */
+  public String getShapeFontStyle(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontStyle unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFontVariant(int, int, int) */
+  public String getShapeFontVariant(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontVariant unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeFontWeight(int, int, int) */
+  public String getShapeFontWeight(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontWeight unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeG(int, int, int) */
+  public String getShapeG(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: G unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeGlyphOrientationVertical(int, int, int) */
+  public Integer getShapeGlyphOrientationVertical(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: GlyphOrientationVertical unsupported for schema version 2008-09
+    return null;
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getShapeID(int, int, int) */
   public String getShapeID(int imageIndex, int roiIndex, int shapeIndex) {
     ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, false);
     return shape == null ? null : shape.getNodeID();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeLocked(int, int, int) */
+  public Boolean getShapeLocked(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Locked unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeAttribute(int, int, int) */
+  public String getShapeStrokeAttribute(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeAttribute unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeColor(int, int, int) */
+  public String getShapeStrokeColor(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeColor unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeDashArray(int, int, int) */
+  public String getShapeStrokeDashArray(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeDashArray unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeLineCap(int, int, int) */
+  public String getShapeStrokeLineCap(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeLineCap unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeLineJoin(int, int, int) */
+  public String getShapeStrokeLineJoin(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeLineJoin unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeMiterLimit(int, int, int) */
+  public Integer getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeMiterLimit unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeOpacity(int, int, int) */
+  public Float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeOpacity unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeStrokeWidth(int, int, int) */
+  public Integer getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeWidth unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeText(int, int, int) */
+  public String getShapeText(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Text unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeTextAnchor(int, int, int) */
+  public String getShapeTextAnchor(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextAnchor unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeTextDecoration(int, int, int) */
+  public String getShapeTextDecoration(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextDecoration unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeTextFill(int, int, int) */
+  public String getShapeTextFill(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextFill unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeTextStroke(int, int, int) */
+  public String getShapeTextStroke(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextStroke unsupported for schema version 2008-09
+    return null;
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getShapeTheT(int, int, int) */
@@ -2199,6 +2375,24 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public Integer getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex) {
     ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, false);
     return shape == null ? null : shape.gettheZ();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeVectorEffect(int, int, int) */
+  public String getShapeVectorEffect(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: VectorEffect unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeVisibility(int, int, int) */
+  public Boolean getShapeVisibility(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Visibility unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getShapeWritingMode(int, int, int) */
+  public String getShapeWritingMode(int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: WritingMode unsupported for schema version 2008-09
+    return null;
   }
 
   // - StageLabel property retrieval -
@@ -3997,6 +4191,18 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     objectiveRefNode.setRefractiveIndex(refractiveIndex);
   }
 
+  // - Path property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setPathD(String, int, int, int) */
+  public void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: D unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setPathID(String, int, int, int) */
+  public void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: ID unsupported for schema version 2008-09
+  }
+
   // - Pixels property storage -
 
   /* @see loci.formats.meta.MetadataStore#setPixelsBigEndian(Boolean, int, int) */
@@ -4605,11 +4811,146 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
 
   // - Shape property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setShapeBaselineShift(String, int, int, int) */
+  public void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: BaselineShift unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeDirection(String, int, int, int) */
+  public void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Direction unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFillColor(String, int, int, int) */
+  public void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FillColor unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFillOpacity(String, int, int, int) */
+  public void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FillOpacity unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFillRule(String, int, int, int) */
+  public void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FillRule unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFontFamily(String, int, int, int) */
+  public void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontFamily unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFontSize(Integer, int, int, int) */
+  public void setShapeFontSize(Integer fontSize, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontSize unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFontStretch(String, int, int, int) */
+  public void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontStretch unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFontStyle(String, int, int, int) */
+  public void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontStyle unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFontVariant(String, int, int, int) */
+  public void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontVariant unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeFontWeight(String, int, int, int) */
+  public void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: FontWeight unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeG(String, int, int, int) */
+  public void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: G unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeGlyphOrientationVertical(Integer, int, int, int) */
+  public void setShapeGlyphOrientationVertical(Integer glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: GlyphOrientationVertical unsupported for schema version 2008-09
+  }
+
   /* @see loci.formats.meta.MetadataStore#setShapeID(String, int, int, int) */
   public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     if (id == null) return;
     ShapeNode shapeNode = getShapeNode(imageIndex, roiIndex, shapeIndex, true);
     shapeNode.setNodeID(id);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeLocked(Boolean, int, int, int) */
+  public void setShapeLocked(Boolean locked, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Locked unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeAttribute(String, int, int, int) */
+  public void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeAttribute unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeColor(String, int, int, int) */
+  public void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeColor unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeDashArray(String, int, int, int) */
+  public void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeDashArray unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeLineCap(String, int, int, int) */
+  public void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeLineCap unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeLineJoin(String, int, int, int) */
+  public void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeLineJoin unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeMiterLimit(Integer, int, int, int) */
+  public void setShapeStrokeMiterLimit(Integer strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeMiterLimit unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeOpacity(Float, int, int, int) */
+  public void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeOpacity unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeStrokeWidth(Integer, int, int, int) */
+  public void setShapeStrokeWidth(Integer strokeWidth, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: StrokeWidth unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeText(String, int, int, int) */
+  public void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Text unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeTextAnchor(String, int, int, int) */
+  public void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextAnchor unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeTextDecoration(String, int, int, int) */
+  public void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextDecoration unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeTextFill(String, int, int, int) */
+  public void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextFill unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeTextStroke(String, int, int, int) */
+  public void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: TextStroke unsupported for schema version 2008-09
   }
 
   /* @see loci.formats.meta.MetadataStore#setShapeTheT(Integer, int, int, int) */
@@ -4624,6 +4965,21 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (theZ == null) return;
     ShapeNode shapeNode = getShapeNode(imageIndex, roiIndex, shapeIndex, true);
     shapeNode.settheZ(theZ);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeVectorEffect(String, int, int, int) */
+  public void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: VectorEffect unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeVisibility(Boolean, int, int, int) */
+  public void setShapeVisibility(Boolean visibility, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: Visibility unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setShapeWritingMode(String, int, int, int) */
+  public void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex) {
+    // NB: WritingMode unsupported for schema version 2008-09
   }
 
   // - StageLabel property storage -

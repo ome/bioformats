@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -3249,6 +3249,34 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
+  // - Path property retrieval -
+
+  /* @see MetadataRetrieve#getPathD(int, int, int) */
+  public String getPathD(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPathD(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPathID(int, int, int) */
+  public String getPathID(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPathID(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   // - Pixels property retrieval -
 
   /* @see MetadataRetrieve#getPixelsBigEndian(int, int) */
@@ -4355,6 +4383,175 @@ public class AggregateMetadata implements IMetadata {
 
   // - Shape property retrieval -
 
+  /* @see MetadataRetrieve#getShapeBaselineShift(int, int, int) */
+  public String getShapeBaselineShift(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeBaselineShift(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeDirection(int, int, int) */
+  public String getShapeDirection(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeDirection(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFillColor(int, int, int) */
+  public String getShapeFillColor(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFillColor(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFillOpacity(int, int, int) */
+  public String getShapeFillOpacity(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFillOpacity(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFillRule(int, int, int) */
+  public String getShapeFillRule(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFillRule(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFontFamily(int, int, int) */
+  public String getShapeFontFamily(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFontFamily(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFontSize(int, int, int) */
+  public Integer getShapeFontSize(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getShapeFontSize(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFontStretch(int, int, int) */
+  public String getShapeFontStretch(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFontStretch(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFontStyle(int, int, int) */
+  public String getShapeFontStyle(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFontStyle(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFontVariant(int, int, int) */
+  public String getShapeFontVariant(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFontVariant(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeFontWeight(int, int, int) */
+  public String getShapeFontWeight(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeFontWeight(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeG(int, int, int) */
+  public String getShapeG(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeG(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeGlyphOrientationVertical(int, int, int) */
+  public Integer getShapeGlyphOrientationVertical(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getShapeGlyphOrientationVertical(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getShapeID(int, int, int) */
   public String getShapeID(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -4362,6 +4559,188 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getShapeID(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeLocked(int, int, int) */
+  public Boolean getShapeLocked(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Boolean result = retrieve.getShapeLocked(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeAttribute(int, int, int) */
+  public String getShapeStrokeAttribute(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeStrokeAttribute(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeColor(int, int, int) */
+  public String getShapeStrokeColor(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeStrokeColor(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeDashArray(int, int, int) */
+  public String getShapeStrokeDashArray(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeStrokeDashArray(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeLineCap(int, int, int) */
+  public String getShapeStrokeLineCap(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeStrokeLineCap(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeLineJoin(int, int, int) */
+  public String getShapeStrokeLineJoin(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeStrokeLineJoin(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeMiterLimit(int, int, int) */
+  public Integer getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getShapeStrokeMiterLimit(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeOpacity(int, int, int) */
+  public Float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeStrokeWidth(int, int, int) */
+  public Integer getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getShapeStrokeWidth(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeText(int, int, int) */
+  public String getShapeText(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeText(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeTextAnchor(int, int, int) */
+  public String getShapeTextAnchor(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeTextAnchor(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeTextDecoration(int, int, int) */
+  public String getShapeTextDecoration(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeTextDecoration(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeTextFill(int, int, int) */
+  public String getShapeTextFill(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeTextFill(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeTextStroke(int, int, int) */
+  public String getShapeTextStroke(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeTextStroke(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -4388,6 +4767,45 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Integer result = retrieve.getShapeTheZ(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeVectorEffect(int, int, int) */
+  public String getShapeVectorEffect(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeVectorEffect(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeVisibility(int, int, int) */
+  public Boolean getShapeVisibility(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Boolean result = retrieve.getShapeVisibility(imageIndex, roiIndex, shapeIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getShapeWritingMode(int, int, int) */
+  public String getShapeWritingMode(int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getShapeWritingMode(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -7160,6 +7578,30 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
+  // - Path property storage -
+
+  /* @see MetadataStore#setPathD(String, int, int, int) */
+  public void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPathD(d, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setPathID(String, int, int, int) */
+  public void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPathID(id, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
   // - Pixels property storage -
 
   /* @see MetadataStore#setPixelsBigEndian(Boolean, int, int) */
@@ -8102,6 +8544,149 @@ public class AggregateMetadata implements IMetadata {
 
   // - Shape property storage -
 
+  /* @see MetadataStore#setShapeBaselineShift(String, int, int, int) */
+  public void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeBaselineShift(baselineShift, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeDirection(String, int, int, int) */
+  public void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeDirection(direction, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFillColor(String, int, int, int) */
+  public void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFillColor(fillColor, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFillOpacity(String, int, int, int) */
+  public void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFillOpacity(fillOpacity, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFillRule(String, int, int, int) */
+  public void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFillRule(fillRule, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFontFamily(String, int, int, int) */
+  public void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFontFamily(fontFamily, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFontSize(Integer, int, int, int) */
+  public void setShapeFontSize(Integer fontSize, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFontSize(fontSize, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFontStretch(String, int, int, int) */
+  public void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFontStretch(fontStretch, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFontStyle(String, int, int, int) */
+  public void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFontStyle(fontStyle, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFontVariant(String, int, int, int) */
+  public void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFontVariant(fontVariant, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeFontWeight(String, int, int, int) */
+  public void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeFontWeight(fontWeight, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeG(String, int, int, int) */
+  public void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeG(g, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeGlyphOrientationVertical(Integer, int, int, int) */
+  public void setShapeGlyphOrientationVertical(Integer glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeGlyphOrientationVertical(glyphOrientationVertical, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setShapeID(String, int, int, int) */
   public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -8109,6 +8694,160 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setShapeID(id, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeLocked(Boolean, int, int, int) */
+  public void setShapeLocked(Boolean locked, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeLocked(locked, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeAttribute(String, int, int, int) */
+  public void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeAttribute(strokeAttribute, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeColor(String, int, int, int) */
+  public void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeColor(strokeColor, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeDashArray(String, int, int, int) */
+  public void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeDashArray(strokeDashArray, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeLineCap(String, int, int, int) */
+  public void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeLineCap(strokeLineCap, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeLineJoin(String, int, int, int) */
+  public void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeLineJoin(strokeLineJoin, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeMiterLimit(Integer, int, int, int) */
+  public void setShapeStrokeMiterLimit(Integer strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeOpacity(Float, int, int, int) */
+  public void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeStrokeWidth(Integer, int, int, int) */
+  public void setShapeStrokeWidth(Integer strokeWidth, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeStrokeWidth(strokeWidth, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeText(String, int, int, int) */
+  public void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeText(text, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeTextAnchor(String, int, int, int) */
+  public void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeTextAnchor(textAnchor, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeTextDecoration(String, int, int, int) */
+  public void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeTextDecoration(textDecoration, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeTextFill(String, int, int, int) */
+  public void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeTextFill(textFill, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeTextStroke(String, int, int, int) */
+  public void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeTextStroke(textStroke, imageIndex, roiIndex, shapeIndex);
       }
     }
   }
@@ -8131,6 +8870,39 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeVectorEffect(String, int, int, int) */
+  public void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeVectorEffect(vectorEffect, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeVisibility(Boolean, int, int, int) */
+  public void setShapeVisibility(Boolean visibility, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeVisibility(visibility, imageIndex, roiIndex, shapeIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setShapeWritingMode(String, int, int, int) */
+  public void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setShapeWritingMode(writingMode, imageIndex, roiIndex, shapeIndex);
       }
     }
   }

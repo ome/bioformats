@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -196,12 +196,72 @@ public final class MetadataConverter {
         if (roiZ1Value != null) dest.setROIZ1(roiZ1Value, imageIndex, roiIndex);
         int shapeCount = src.getShapeCount(imageIndex, roiIndex);
         for (int shapeIndex=0; shapeIndex<shapeCount; shapeIndex++) {
+          String shapeBaselineShiftValue = src.getShapeBaselineShift(imageIndex, roiIndex, shapeIndex);
+          if (shapeBaselineShiftValue != null) dest.setShapeBaselineShift(shapeBaselineShiftValue, imageIndex, roiIndex, shapeIndex);
+          String shapeDirectionValue = src.getShapeDirection(imageIndex, roiIndex, shapeIndex);
+          if (shapeDirectionValue != null) dest.setShapeDirection(shapeDirectionValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFillColorValue = src.getShapeFillColor(imageIndex, roiIndex, shapeIndex);
+          if (shapeFillColorValue != null) dest.setShapeFillColor(shapeFillColorValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFillOpacityValue = src.getShapeFillOpacity(imageIndex, roiIndex, shapeIndex);
+          if (shapeFillOpacityValue != null) dest.setShapeFillOpacity(shapeFillOpacityValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFillRuleValue = src.getShapeFillRule(imageIndex, roiIndex, shapeIndex);
+          if (shapeFillRuleValue != null) dest.setShapeFillRule(shapeFillRuleValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFontFamilyValue = src.getShapeFontFamily(imageIndex, roiIndex, shapeIndex);
+          if (shapeFontFamilyValue != null) dest.setShapeFontFamily(shapeFontFamilyValue, imageIndex, roiIndex, shapeIndex);
+          Integer shapeFontSizeValue = src.getShapeFontSize(imageIndex, roiIndex, shapeIndex);
+          if (shapeFontSizeValue != null) dest.setShapeFontSize(shapeFontSizeValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFontStretchValue = src.getShapeFontStretch(imageIndex, roiIndex, shapeIndex);
+          if (shapeFontStretchValue != null) dest.setShapeFontStretch(shapeFontStretchValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFontStyleValue = src.getShapeFontStyle(imageIndex, roiIndex, shapeIndex);
+          if (shapeFontStyleValue != null) dest.setShapeFontStyle(shapeFontStyleValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFontVariantValue = src.getShapeFontVariant(imageIndex, roiIndex, shapeIndex);
+          if (shapeFontVariantValue != null) dest.setShapeFontVariant(shapeFontVariantValue, imageIndex, roiIndex, shapeIndex);
+          String shapeFontWeightValue = src.getShapeFontWeight(imageIndex, roiIndex, shapeIndex);
+          if (shapeFontWeightValue != null) dest.setShapeFontWeight(shapeFontWeightValue, imageIndex, roiIndex, shapeIndex);
+          String shapeGValue = src.getShapeG(imageIndex, roiIndex, shapeIndex);
+          if (shapeGValue != null) dest.setShapeG(shapeGValue, imageIndex, roiIndex, shapeIndex);
+          Integer shapeGlyphOrientationVerticalValue = src.getShapeGlyphOrientationVertical(imageIndex, roiIndex, shapeIndex);
+          if (shapeGlyphOrientationVerticalValue != null) dest.setShapeGlyphOrientationVertical(shapeGlyphOrientationVerticalValue, imageIndex, roiIndex, shapeIndex);
           String shapeIDValue = src.getShapeID(imageIndex, roiIndex, shapeIndex);
           if (shapeIDValue != null) dest.setShapeID(shapeIDValue, imageIndex, roiIndex, shapeIndex);
+          Boolean shapeLockedValue = src.getShapeLocked(imageIndex, roiIndex, shapeIndex);
+          if (shapeLockedValue != null) dest.setShapeLocked(shapeLockedValue, imageIndex, roiIndex, shapeIndex);
+          String shapeStrokeAttributeValue = src.getShapeStrokeAttribute(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeAttributeValue != null) dest.setShapeStrokeAttribute(shapeStrokeAttributeValue, imageIndex, roiIndex, shapeIndex);
+          String shapeStrokeColorValue = src.getShapeStrokeColor(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeColorValue != null) dest.setShapeStrokeColor(shapeStrokeColorValue, imageIndex, roiIndex, shapeIndex);
+          String shapeStrokeDashArrayValue = src.getShapeStrokeDashArray(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeDashArrayValue != null) dest.setShapeStrokeDashArray(shapeStrokeDashArrayValue, imageIndex, roiIndex, shapeIndex);
+          String shapeStrokeLineCapValue = src.getShapeStrokeLineCap(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeLineCapValue != null) dest.setShapeStrokeLineCap(shapeStrokeLineCapValue, imageIndex, roiIndex, shapeIndex);
+          String shapeStrokeLineJoinValue = src.getShapeStrokeLineJoin(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeLineJoinValue != null) dest.setShapeStrokeLineJoin(shapeStrokeLineJoinValue, imageIndex, roiIndex, shapeIndex);
+          Integer shapeStrokeMiterLimitValue = src.getShapeStrokeMiterLimit(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeMiterLimitValue != null) dest.setShapeStrokeMiterLimit(shapeStrokeMiterLimitValue, imageIndex, roiIndex, shapeIndex);
+          Float shapeStrokeOpacityValue = src.getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeOpacityValue != null) dest.setShapeStrokeOpacity(shapeStrokeOpacityValue, imageIndex, roiIndex, shapeIndex);
+          Integer shapeStrokeWidthValue = src.getShapeStrokeWidth(imageIndex, roiIndex, shapeIndex);
+          if (shapeStrokeWidthValue != null) dest.setShapeStrokeWidth(shapeStrokeWidthValue, imageIndex, roiIndex, shapeIndex);
+          String shapeTextValue = src.getShapeText(imageIndex, roiIndex, shapeIndex);
+          if (shapeTextValue != null) dest.setShapeText(shapeTextValue, imageIndex, roiIndex, shapeIndex);
+          String shapeTextAnchorValue = src.getShapeTextAnchor(imageIndex, roiIndex, shapeIndex);
+          if (shapeTextAnchorValue != null) dest.setShapeTextAnchor(shapeTextAnchorValue, imageIndex, roiIndex, shapeIndex);
+          String shapeTextDecorationValue = src.getShapeTextDecoration(imageIndex, roiIndex, shapeIndex);
+          if (shapeTextDecorationValue != null) dest.setShapeTextDecoration(shapeTextDecorationValue, imageIndex, roiIndex, shapeIndex);
+          String shapeTextFillValue = src.getShapeTextFill(imageIndex, roiIndex, shapeIndex);
+          if (shapeTextFillValue != null) dest.setShapeTextFill(shapeTextFillValue, imageIndex, roiIndex, shapeIndex);
+          String shapeTextStrokeValue = src.getShapeTextStroke(imageIndex, roiIndex, shapeIndex);
+          if (shapeTextStrokeValue != null) dest.setShapeTextStroke(shapeTextStrokeValue, imageIndex, roiIndex, shapeIndex);
           Integer shapeTheTValue = src.getShapeTheT(imageIndex, roiIndex, shapeIndex);
           if (shapeTheTValue != null) dest.setShapeTheT(shapeTheTValue, imageIndex, roiIndex, shapeIndex);
           Integer shapeTheZValue = src.getShapeTheZ(imageIndex, roiIndex, shapeIndex);
           if (shapeTheZValue != null) dest.setShapeTheZ(shapeTheZValue, imageIndex, roiIndex, shapeIndex);
+          String shapeVectorEffectValue = src.getShapeVectorEffect(imageIndex, roiIndex, shapeIndex);
+          if (shapeVectorEffectValue != null) dest.setShapeVectorEffect(shapeVectorEffectValue, imageIndex, roiIndex, shapeIndex);
+          Boolean shapeVisibilityValue = src.getShapeVisibility(imageIndex, roiIndex, shapeIndex);
+          if (shapeVisibilityValue != null) dest.setShapeVisibility(shapeVisibilityValue, imageIndex, roiIndex, shapeIndex);
+          String shapeWritingModeValue = src.getShapeWritingMode(imageIndex, roiIndex, shapeIndex);
+          if (shapeWritingModeValue != null) dest.setShapeWritingMode(shapeWritingModeValue, imageIndex, roiIndex, shapeIndex);
           String circleCxValue = src.getCircleCx(imageIndex, roiIndex, shapeIndex);
           if (circleCxValue != null) dest.setCircleCx(circleCxValue, imageIndex, roiIndex, shapeIndex);
           String circleCyValue = src.getCircleCy(imageIndex, roiIndex, shapeIndex);
@@ -260,6 +320,10 @@ public final class MetadataConverter {
           if (maskPixelsSizeXValue != null) dest.setMaskPixelsSizeX(maskPixelsSizeXValue, imageIndex, roiIndex, shapeIndex);
           Integer maskPixelsSizeYValue = src.getMaskPixelsSizeY(imageIndex, roiIndex, shapeIndex);
           if (maskPixelsSizeYValue != null) dest.setMaskPixelsSizeY(maskPixelsSizeYValue, imageIndex, roiIndex, shapeIndex);
+          String pathDValue = src.getPathD(imageIndex, roiIndex, shapeIndex);
+          if (pathDValue != null) dest.setPathD(pathDValue, imageIndex, roiIndex, shapeIndex);
+          String pathIDValue = src.getPathID(imageIndex, roiIndex, shapeIndex);
+          if (pathIDValue != null) dest.setPathID(pathIDValue, imageIndex, roiIndex, shapeIndex);
           String pointCxValue = src.getPointCx(imageIndex, roiIndex, shapeIndex);
           if (pointCxValue != null) dest.setPointCx(pointCxValue, imageIndex, roiIndex, shapeIndex);
           String pointCyValue = src.getPointCy(imageIndex, roiIndex, shapeIndex);

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1583,6 +1583,24 @@ public interface MetadataRetrieve {
    */
   Float getObjectiveSettingsRefractiveIndex(int imageIndex);
 
+  // - Path property retrieval -
+
+  /**
+   * For a particular Path, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPathD(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Path, gets unique label identifying the path.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getPathID(int imageIndex, int roiIndex, int shapeIndex);
+
   // - Pixels property retrieval -
 
   /**
@@ -2200,12 +2218,228 @@ public interface MetadataRetrieve {
   // - Shape property retrieval -
 
   /**
+   * For a particular Shape, gets vertical text shift, e.g. sup, sub, normal, -70%. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeBaselineShift(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets text direction, e.g. ltr. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeDirection(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets name of the color with which to fill this ROI. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFillColor(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets opacity (0-100) of the fill color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFillOpacity(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets rule for filling the ROI, e.g. even-odd, non-zero. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFillRule(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets the name of the font (e.g. "Arial"). This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFontFamily(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets size of the font. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getShapeFontSize(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets how the font should be stretched, e.g. normal, wider -  EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFontStretch(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets font style, e.g. normal, italic. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFontStyle(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets font variant, e.g. normal, small-caps. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFontVariant(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets font weight, e.g. normal, bold. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeFontWeight(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets group identifier. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeG(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getShapeGlyphOrientationVertical(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Shape, gets unique label identifying the shape.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
   String getShapeID(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets whether or not the ROI can be modified. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Boolean getShapeLocked(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets additional stroke information. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeStrokeAttribute(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets name of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeStrokeColor(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeStrokeDashArray(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeStrokeLineCap(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeStrokeLineJoin(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets opacity (0-100) of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Integer getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets text label associated with this shape. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeText(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets relative position of the text, e.g. start, middle. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeTextAnchor(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets text decoration, e.g. underline, line-through. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeTextDecoration(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets text color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeTextFill(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeTextStroke(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Shape, gets T position of the shape.
@@ -2222,6 +2456,30 @@ public interface MetadataRetrieve {
    * @param shapeIndex index of the Shape
    */
   Integer getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeVectorEffect(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets whether or not the ROI should be displayed. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  Boolean getShapeVisibility(int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, gets EXPERIMENTAL.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  String getShapeWritingMode(int imageIndex, int roiIndex, int shapeIndex);
 
   // - StageLabel property retrieval -
 

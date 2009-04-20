@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1717,6 +1717,26 @@ public interface MetadataStore {
    */
   void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex);
 
+  // - Path property storage -
+
+  /**
+   * For a particular Path, sets EXPERIMENTAL.
+   * @param d EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Path, sets unique label identifying the path.
+   * @param id unique label identifying the path
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
   // - Pixels property storage -
 
   /**
@@ -2416,6 +2436,123 @@ public interface MetadataStore {
   // - Shape property storage -
 
   /**
+   * For a particular Shape, sets vertical text shift, e.g. sup, sub, normal, -70%. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param baselineShift vertical text shift, e.g. sup, sub, normal, -70%. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets text direction, e.g. ltr. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param direction text direction, e.g. ltr. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets name of the color with which to fill this ROI. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fillColor name of the color with which to fill this ROI. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets opacity (0-100) of the fill color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fillOpacity opacity (0-100) of the fill color. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets rule for filling the ROI, e.g. even-odd, non-zero. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fillRule rule for filling the ROI, e.g. even-odd, non-zero. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets the name of the font (e.g. "Arial"). This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fontFamily the name of the font (e.g. "Arial"). This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets size of the font. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fontSize size of the font. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFontSize(Integer fontSize, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets how the font should be stretched, e.g. normal, wider -  EXPERIMENTAL.
+   * @param fontStretch how the font should be stretched, e.g. normal, wider -  EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets font style, e.g. normal, italic. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fontStyle font style, e.g. normal, italic. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets font variant, e.g. normal, small-caps. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fontVariant font variant, e.g. normal, small-caps. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets font weight, e.g. normal, bold. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param fontWeight font weight, e.g. normal, bold. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets group identifier. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param g group identifier. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param glyphOrientationVertical EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeGlyphOrientationVertical(Integer glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
    * For a particular Shape, sets unique label identifying the shape.
    * @param id unique label identifying the shape
    * @param imageIndex index of the Image
@@ -2423,6 +2560,132 @@ public interface MetadataStore {
    * @param shapeIndex index of the Shape
    */
   void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets whether or not the ROI can be modified. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param locked whether or not the ROI can be modified. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeLocked(Boolean locked, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets additional stroke information. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param strokeAttribute additional stroke information. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets name of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param strokeColor name of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param strokeDashArray EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param strokeLineCap EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param strokeLineJoin EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param strokeMiterLimit EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeMiterLimit(Integer strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets opacity (0-100) of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param strokeOpacity opacity (0-100) of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param strokeWidth width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeStrokeWidth(Integer strokeWidth, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets text label associated with this shape. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param text text label associated with this shape. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets relative position of the text, e.g. start, middle. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param textAnchor relative position of the text, e.g. start, middle. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets text decoration, e.g. underline, line-through. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param textDecoration text decoration, e.g. underline, line-through. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets text color. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param textFill text color. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param textStroke EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Shape, sets T position of the shape.
@@ -2441,6 +2704,33 @@ public interface MetadataStore {
    * @param shapeIndex index of the Shape
    */
   void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param vectorEffect EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets whether or not the ROI should be displayed. This attribute is experimental, and not present in the existing OME-XML schemas..
+   * @param visibility whether or not the ROI should be displayed. This attribute is experimental, and not present in the existing OME-XML schemas.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeVisibility(Boolean visibility, int imageIndex, int roiIndex, int shapeIndex);
+
+  /**
+   * For a particular Shape, sets EXPERIMENTAL.
+   * @param writingMode EXPERIMENTAL
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param shapeIndex index of the Shape
+   */
+  void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex);
 
   // - StageLabel property storage -
 

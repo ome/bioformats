@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 7, 2009 8:45:06 AM CDT
+ * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1164,6 +1164,17 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
 
+  // - Path property retrieval -
+
+  /* @see MetadataRetrieve#getPathD(int, int, int) */
+  public String getPathD(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPathID(int, int, int) */
+  public String getPathID(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+
   // - Pixels property retrieval -
 
   /* @see MetadataRetrieve#getPixelsBigEndian(int, int) */
@@ -1551,8 +1562,116 @@ public class DummyMetadata implements IMetadata {
 
   // - Shape property retrieval -
 
+  /* @see MetadataRetrieve#getShapeBaselineShift(int, int, int) */
+  public String getShapeBaselineShift(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeDirection(int, int, int) */
+  public String getShapeDirection(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFillColor(int, int, int) */
+  public String getShapeFillColor(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFillOpacity(int, int, int) */
+  public String getShapeFillOpacity(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFillRule(int, int, int) */
+  public String getShapeFillRule(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFontFamily(int, int, int) */
+  public String getShapeFontFamily(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFontSize(int, int, int) */
+  public Integer getShapeFontSize(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFontStretch(int, int, int) */
+  public String getShapeFontStretch(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFontStyle(int, int, int) */
+  public String getShapeFontStyle(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFontVariant(int, int, int) */
+  public String getShapeFontVariant(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeFontWeight(int, int, int) */
+  public String getShapeFontWeight(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeG(int, int, int) */
+  public String getShapeG(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeGlyphOrientationVertical(int, int, int) */
+  public Integer getShapeGlyphOrientationVertical(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getShapeID(int, int, int) */
   public String getShapeID(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeLocked(int, int, int) */
+  public Boolean getShapeLocked(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeAttribute(int, int, int) */
+  public String getShapeStrokeAttribute(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeColor(int, int, int) */
+  public String getShapeStrokeColor(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeDashArray(int, int, int) */
+  public String getShapeStrokeDashArray(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeLineCap(int, int, int) */
+  public String getShapeStrokeLineCap(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeLineJoin(int, int, int) */
+  public String getShapeStrokeLineJoin(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeMiterLimit(int, int, int) */
+  public Integer getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeOpacity(int, int, int) */
+  public Float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeStrokeWidth(int, int, int) */
+  public Integer getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeText(int, int, int) */
+  public String getShapeText(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeTextAnchor(int, int, int) */
+  public String getShapeTextAnchor(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeTextDecoration(int, int, int) */
+  public String getShapeTextDecoration(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeTextFill(int, int, int) */
+  public String getShapeTextFill(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeTextStroke(int, int, int) */
+  public String getShapeTextStroke(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getShapeTheT(int, int, int) */
@@ -1561,6 +1680,18 @@ public class DummyMetadata implements IMetadata {
   }
   /* @see MetadataRetrieve#getShapeTheZ(int, int, int) */
   public Integer getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeVectorEffect(int, int, int) */
+  public String getShapeVectorEffect(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeVisibility(int, int, int) */
+  public Boolean getShapeVisibility(int imageIndex, int roiIndex, int shapeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getShapeWritingMode(int, int, int) */
+  public String getShapeWritingMode(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
 
@@ -2621,6 +2752,16 @@ public class DummyMetadata implements IMetadata {
   public void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex) {
   }
 
+  // - Path property storage -
+
+  /* @see MetadataStore#setPathD(String, int, int, int) */
+  public void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setPathID(String, int, int, int) */
+  public void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
   // - Pixels property storage -
 
   /* @see MetadataStore#setPixelsBigEndian(Boolean, int, int) */
@@ -2989,8 +3130,116 @@ public class DummyMetadata implements IMetadata {
 
   // - Shape property storage -
 
+  /* @see MetadataStore#setShapeBaselineShift(String, int, int, int) */
+  public void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeDirection(String, int, int, int) */
+  public void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFillColor(String, int, int, int) */
+  public void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFillOpacity(String, int, int, int) */
+  public void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFillRule(String, int, int, int) */
+  public void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFontFamily(String, int, int, int) */
+  public void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFontSize(Integer, int, int, int) */
+  public void setShapeFontSize(Integer fontSize, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFontStretch(String, int, int, int) */
+  public void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFontStyle(String, int, int, int) */
+  public void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFontVariant(String, int, int, int) */
+  public void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeFontWeight(String, int, int, int) */
+  public void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeG(String, int, int, int) */
+  public void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeGlyphOrientationVertical(Integer, int, int, int) */
+  public void setShapeGlyphOrientationVertical(Integer glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
   /* @see MetadataStore#setShapeID(String, int, int, int) */
   public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeLocked(Boolean, int, int, int) */
+  public void setShapeLocked(Boolean locked, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeAttribute(String, int, int, int) */
+  public void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeColor(String, int, int, int) */
+  public void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeDashArray(String, int, int, int) */
+  public void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeLineCap(String, int, int, int) */
+  public void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeLineJoin(String, int, int, int) */
+  public void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeMiterLimit(Integer, int, int, int) */
+  public void setShapeStrokeMiterLimit(Integer strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeOpacity(Float, int, int, int) */
+  public void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeStrokeWidth(Integer, int, int, int) */
+  public void setShapeStrokeWidth(Integer strokeWidth, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeText(String, int, int, int) */
+  public void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeTextAnchor(String, int, int, int) */
+  public void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeTextDecoration(String, int, int, int) */
+  public void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeTextFill(String, int, int, int) */
+  public void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeTextStroke(String, int, int, int) */
+  public void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   /* @see MetadataStore#setShapeTheT(Integer, int, int, int) */
@@ -2999,6 +3248,18 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataStore#setShapeTheZ(Integer, int, int, int) */
   public void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeVectorEffect(String, int, int, int) */
+  public void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeVisibility(Boolean, int, int, int) */
+  public void setShapeVisibility(Boolean visibility, int imageIndex, int roiIndex, int shapeIndex) {
+  }
+
+  /* @see MetadataStore#setShapeWritingMode(String, int, int, int) */
+  public void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   // - StageLabel property storage -

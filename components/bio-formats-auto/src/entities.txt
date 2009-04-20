@@ -1074,6 +1074,521 @@ description = T position of the shape
 getter = gettheT
 setter = settheT
 
+# None of these Shape attributes are present in the OME-XML schemas.
+# They will be added to the next schema release, but may undergo some changes
+# before then.
+
+[Shape Locked]
+type = Boolean
+description = whether or not the ROI can be modified. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape Locked 200809]
+path = -
+
+[Shape Locked 200802]
+path = -
+
+[Shape Locked 200706]
+path = -
+
+[Shape Locked 2003FC]
+path = -
+
+[Shape Visibility]
+type = Boolean
+description = whether or not the ROI should be displayed. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape Visibility 200809]
+path = -
+
+[Shape Visibility 200802]
+path = -
+
+[Shape Visibility 200706]
+path = -
+
+[Shape Visibility 2003FC]
+path = -
+
+[Shape FontFamily]
+type = String
+description = the name of the font (e.g. "Arial"). This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FontFamily 200809]
+path = -
+
+[Shape FontFamily 200802]
+path = -
+
+[Shape FontFamily 200706]
+path = -
+
+[Shape FontFamily 2003FC]
+path = -
+
+[Shape FontSize]
+type = Integer
+description = size of the font. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FontSize 200809]
+path = -
+
+[Shape FontSize 200802]
+path = -
+
+[Shape FontSize 200706]
+path = -
+
+[Shape FontSize 2003FC]
+path = -
+
+[Shape FontStretch]
+type = String
+description = how the font should be stretched, e.g. normal, wider -  EXPERIMENTAL
+
+[Shape FontStretch 200809]
+path = -
+
+[Shape FontStretch 200802]
+path = -
+
+[Shape FontStretch 200702]
+path = -
+
+[Shape FontStretch 2003FC]
+path = -
+
+[Shape FontStyle]
+type = String
+description = font style, e.g. normal, italic. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FontStyle 200809]
+path = -
+
+[Shape FontStyle 200802]
+path = -
+
+[Shape FontStyle 200706]
+path = -
+
+[Shape FontStyle 2003FC]
+
+[Shape FontVariant]
+type = String
+description = font variant, e.g. normal, small-caps. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FontVariant 200809]
+path = -
+
+[Shape FontVariant 200802]
+path = -
+
+[Shape FontVariant 200706]
+path = -
+
+[Shape FontVariant 2003FC]
+path = -
+
+[Shape FontWeight]
+type = String
+description = font weight, e.g. normal, bold. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FontWeight 200809]
+path = -
+
+[Shape FontWeight 200802]
+path = -
+
+[Shape FontWeight 200706]
+path = -
+
+[Shape FontWeight 2003FC]
+path = -
+
+[Shape FillColor]
+type = String
+description = name of the color with which to fill this ROI. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FillColor 200809]
+path = -
+
+[Shape FillColor 200802]
+path = -
+
+[Shape FillColor 200706]
+path = -
+
+[Shape FillColor 2003FC]
+path = -
+
+[Shape FillOpacity]
+type = String
+description = opacity (0-100) of the fill color. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FillOpacity 200809]
+path = -
+
+[Shape FillOpacity 200802]
+path = -
+
+[Shape FillOpacity 200706]
+path = -
+
+[Shape FillOpacity 2003FC]
+path = -
+
+[Shape FillRule]
+type = String
+description = rule for filling the ROI, e.g. even-odd, non-zero. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape FillRule 200809]
+path = -
+
+[Shape FillRule 200802]
+path = -
+
+[Shape FillRule 200706]
+path = -
+
+[Shape FillRule 2003FC]
+path = -
+
+[Shape StrokeAttribute]
+type = String
+description = additional stroke information. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape StrokeAttribute 200809]
+path = -
+
+[Shape StrokeAttribute 200802]
+path = -
+
+[Shape StrokeAttribute 200706]
+path = -
+
+[Shape StrokeAttribute 2003FC]
+path = -
+
+[Shape StrokeColor]
+type = String
+description = name of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape StrokeColor 200809]
+path = -
+
+[Shape StrokeColor 200802]
+path = -
+
+[Shape StrokeColor 200706]
+path = -
+
+[Shape StrokeColor 2003FC]
+path = -
+
+[Shape StrokeDashArray]
+type = String
+description = EXPERIMENTAL
+
+[Shape StrokeDashArray 200809]
+path = -
+
+[Shape StrokeDashArray 200802]
+path = -
+
+[Shape StrokeDashArray 200706]
+path = -
+
+[Shape StrokeDashArray 2003FC]
+path = -
+
+[Shape StrokeLineCap]
+type = String
+description = EXPERIMENTAL
+
+[Shape StrokeLineCap 200809]
+path = -
+
+[Shape StrokeLineCap 200802]
+path = -
+
+[Shape StrokeLineCap 200706]
+path = -
+
+[Shape StrokeLineCap 2003FC]
+path = -
+
+[Shape StrokeLineJoin]
+type = String
+description = EXPERIMENTAL
+
+[Shape StrokeLineJoin 200809]
+path = -
+
+[Shape StrokeLineJoin 200802]
+path = -
+
+[Shape StrokeLineJoin 200706]
+path = -
+
+[Shape StrokeLineJoin 2003FC]
+path = -
+
+[Shape StrokeMiterLimit]
+type = Integer
+description = EXPERIMENTAL
+
+[Shape StrokeMiterLimit 200809]
+path = -
+
+[Shape StrokeMiterLimit 200802]
+path = -
+
+[Shape StrokeMiterLimit 200706]
+path = -
+
+[Shape StrokeMiterLimit 2003FC]
+path = -
+
+[Shape StrokeOpacity]
+type = Float
+description = opacity (0-100) of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape StrokeOpacity 200809]
+path = -
+
+[Shape StrokeOpacity 200802]
+path = -
+
+[Shape StrokeOpacity 200706]
+path = -
+
+[Shape StrokeOpacity 2003FC]
+path = -
+
+[Shape G]
+type = String
+description = group identifier. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape G 200809]
+path = -
+
+[Shape G 200802]
+path = -
+
+[Shape G 200706]
+path = -
+
+[Shape G 2003FC]
+path = -
+
+[Shape StrokeWidth]
+type = Integer
+description = width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape StrokeWidth 200809]
+path = -
+
+[Shape StrokeWidth 200802]
+path = -
+
+[Shape StrokeWidth 200706]
+path = -
+
+[Shape StrokeWidth 2003FC]
+path = -
+
+[Shape Text]
+type = String
+description = text label associated with this shape. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape Text 200809]
+path = -
+
+[Shape Text 200802]
+path = -
+
+[Shape Text 200706]
+path = -
+
+[Shape Text 2003FC]
+path = -
+
+[Shape TextAnchor]
+type = String
+description = relative position of the text, e.g. start, middle. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape TextAnchor 200809]
+path = -
+
+[Shape TextAnchor 200802]
+path = -
+
+[Shape TextAnchor 200706]
+path = -
+
+[Shape TextAnchor 2003FC]
+path = -
+
+[Shape TextDecoration]
+type = String
+description = text decoration, e.g. underline, line-through. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape TextDecoration 200809]
+path = -
+
+[Shape TextDecoration 200802]
+path = -
+
+[Shape TextDecoration 200706]
+path = -
+
+[Shape TextDecoration 2003FC]
+path = -
+
+[Shape TextFill]
+type = String
+description = text color. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape TextFill 200809]
+path = -
+
+[Shape TextFill 200802]
+path = -
+
+[Shape TextFill 200706]
+path = -
+
+[Shape TextFill 2003FC]
+path = -
+
+[Shape TextStroke]
+type = String
+description = EXPERIMENTAL
+
+[Shape TextStroke 200809]
+path = -
+
+[Shape TextStroke 200802]
+path = -
+
+[Shape TextStroke 200706]
+path = -
+
+[Shape TextStroke 2003FC]
+path = -
+
+[Shape BaselineShift]
+type = String
+description = vertical text shift, e.g. sup, sub, normal, -70%. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape BaselineShift 200809]
+path = -
+
+[Shape BaselineShift 200802]
+path = -
+
+[Shape BaselineShift 200706]
+path = -
+
+[Shape BaselineShift 2003FC]
+path = -
+
+[Shape GlyphOrientationVertical]
+type = Integer
+description = EXPERIMENTAL
+
+[Shape GlyphOrientationVertical 200809]
+path = -
+
+[Shape GlyphOrientationVertical 200802]
+path = -
+
+[Shape GlyphOrientationVertical 200706]
+path = -
+
+[Shape GlyphOrientationVertical 2003FC]
+path = -
+
+[Shape Direction]
+type = String
+description = text direction, e.g. ltr. This attribute is experimental, and not present in the existing OME-XML schemas.
+
+[Shape Direction 200809]
+path = -
+
+[Shape Direction 200802]
+path = -
+
+[Shape Direction 200706]
+path = -
+
+[Shape Direction 2003FC]
+path = -
+
+[Shape WritingMode]
+type = String
+description = EXPERIMENTAL
+
+[Shape WritingMode 200809]
+path = -
+
+[Shape WritingMode 200802]
+path = -
+
+[Shape WritingMode 200706]
+path = -
+
+[Shape WritingMode 2003FC]
+path = -
+
+[Shape VectorEffect]
+type = String
+description = EXPERIMENTAL
+
+[Shape VectorEffect 200809]
+path = -
+
+[Shape VectorEffect 200802]
+path = -
+
+[Shape VectorEffect 200706]
+path = -
+
+[Shape VectorEffect 2003FC]
+path = -
+
+## Path ##
+
+# The Path entity is not present in the OME-XML schemas.
+# They will be added to the next schema release, but may undergo some changes
+# before then.
+
+[Path]
+path = Image+/DisplayOptions/ROI+/Union/Shape+/Path
+description = describes a path
+
+[Path 200809]
+path = -
+
+[Path 200802]
+path = -
+
+[Path 200706]
+path = -
+
+[Path 2003FC]
+path = -
+
+[Path ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the path
+
+[Path D]
+type = String
+description = EXPERIMENTAL
+
 ## Rect ##
 
 [Rect]
