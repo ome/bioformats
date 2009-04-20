@@ -3,8 +3,8 @@ Bio-Formats C++ bindings
 
 This package provides language bindings for calling into the Bio-Formats Java
 library from C++ in a cross-platform manner. As of this writing the bindings
-are functional with GCC on Linux and Mac OS X systems, and work is actively
-being done to get them working with Visual Studio on Windows as well.
+are functional with GCC on Linux and Mac OS X systems, as well as with Visual
+C++ 2005 and Visual C++ 2008 on Windows.
 
 
 LIST OF COMPILE-TIME DEPENDENCIES
