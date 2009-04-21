@@ -67,6 +67,7 @@ public final class ImageInfo {
     throws FormatException, IOException
   {
     String id = null;
+    boolean printVersion = false;
     boolean pixels = true;
     boolean doMeta = true;
     boolean filter = true;
@@ -91,6 +92,7 @@ public final class ImageInfo {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
           if (args[i].equals("-nopix")) pixels = false;
+          else if (args[i].equals("-version")) printVersion = true;
           else if (args[i].equals("-nometa")) doMeta = false;
           else if (args[i].equals("-nofilter")) filter = false;
           else if (args[i].equals("-thumbs")) thumbs = true;
@@ -104,7 +106,7 @@ public final class ImageInfo {
           else if (args[i].equals("-fast")) fastBlit = true;
           else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
           else if (args[i].equals("-preload")) preload = true;
-          else if (args[i].equals("-version")) omexmlVersion = args[++i];
+          else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
           else if (args[i].equals("-crop")) {
             StringTokenizer st = new StringTokenizer(args[++i], ",");
             xCoordinate = Integer.parseInt(st.nextToken());
@@ -158,8 +160,9 @@ public final class ImageInfo {
         "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
         "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
         "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
-        "    [-version v] [-crop x,y,w,h]",
+        "    [-xmlversion v] [-crop x,y,w,h]",
         "",
+        "  -version: print the library version and exit",
         "      file: the image file to read",
         "    -nopix: read metadata only, not pixels",
         "   -nometa: output only core metadata",
@@ -182,7 +185,7 @@ public final class ImageInfo {
         "  -preload: pre-read entire file into a buffer; significantly",
         "            reduces the time required to read the images, but",
         "            requires more memory",
-        "  -version: specify which OME-XML version should be generated",
+        "  -xmlversion: specify which OME-XML version should be generated",
         "     -crop: crop images before displaying; argument is 'x,y,w,h'",
         "",
         "* = may result in loss of precision",
@@ -191,6 +194,14 @@ public final class ImageInfo {
       for (int i=0; i<s.length; i++) LogTools.println(s[i]);
       return false;
     }
+
+    if (printVersion) {
+      LogTools.println("Version: " + FormatTools.VERSION);
+      LogTools.println("SVN revision: " + FormatTools.SVN_REVISION);
+      LogTools.println("Build date: " + FormatTools.DATE);
+      return true;
+    }
+
     if (map != null) Location.mapId(id, map);
     else if (preload) {
       RandomAccessStream f = new RandomAccessStream(id);
