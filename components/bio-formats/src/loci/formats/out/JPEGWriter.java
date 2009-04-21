@@ -41,8 +41,7 @@ public class JPEGWriter extends ImageIOWriter {
   // -- Constructor --
 
   public JPEGWriter() {
-    super("Joint Photographic Experts Group",
-      new String[] {"jpg", "jpeg", "jpe"}, "jpeg");
+    super("JPEG", new String[] {"jpg", "jpeg", "jpe"}, "jpeg");
   }
 
   // -- IFormatWriter API methods --
