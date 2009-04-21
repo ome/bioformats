@@ -43,6 +43,19 @@ import loci.formats.meta.*;
  */
 public class ZeissZVIReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final long ROI_SIGNATURE = 0x21fff6977547000dL;
+
+  /** ROI types. */
+  private static final int ELLIPSE = 15;
+  private static final int CURVE = 12;
+  private static final int OUTLINE = 16;
+  private static final int RECTANGLE = 13;
+  private static final int LINE = 2;
+  private static final int TEXT = 17;
+  private static final int SCALE_BAR = 10;
+
   // -- Fields --
 
   /** Number of bytes per pixel. */
@@ -66,6 +79,7 @@ public class ZeissZVIReader extends FormatReader {
 
   private Hashtable tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
+  private float stageX = 0f, stageY = 0f;
 
   // -- Constructor --
 
@@ -296,6 +310,7 @@ public class ZeissZVIReader extends FormatReader {
 
     for (int i=0; i<files.length; i++) {
       String name = files[i];
+
       String relPath = name.substring(name.lastIndexOf(File.separator) + 1);
       if (!relPath.toUpperCase().equals("CONTENTS")) continue;
       String dirName = name.substring(0, name.lastIndexOf(File.separator));
@@ -310,6 +325,14 @@ public class ZeissZVIReader extends FormatReader {
         tagsToParse.put(new Integer(imageNum), s);
         if (imageNum == -1) {
           parseTags(imageNum, s, new DummyMetadata());
+        }
+      }
+      else if (dirName.equals("Shapes") && name.indexOf("Item") != -1) {
+        RandomAccessStream s = poi.getDocumentStream(name);
+        s.order(true);
+        int imageNum = getImageNumber(name, -1);
+        if (imageNum != -1) {
+          parseROIs(imageNum, s, store);
         }
       }
       else if (dirName.equals("Image") ||
@@ -485,6 +508,9 @@ public class ZeissZVIReader extends FormatReader {
         stamp -= firstStamp;
         store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
       }
+
+      store.setStagePositionPositionX(new Float(stageX), 0, 0, plane);
+      store.setStagePositionPositionY(new Float(stageY), 0, 0, plane);
     }
 
     Integer[] keys = (Integer[]) tagsToParse.keySet().toArray(new Integer[0]);
@@ -730,14 +756,10 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveCorrection(value, 0, 0);
         }
         else if (key.indexOf("Stage Position X") != -1) {
-          for (int q=0; q<getImageCount(); q++) {
-            store.setStagePositionPositionX(new Float(value), 0, 0, q);
-          }
+          stageX = Float.parseFloat(value);
         }
         else if (key.indexOf("Stage Position Y") != -1) {
-          for (int q=0; q<getImageCount(); q++) {
-            store.setStagePositionPositionY(new Float(value), 0, 0, q);
-          }
+          stageY = Float.parseFloat(value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
           store.setDetectorSettingsGain(new Float(value), 0, cIndex);
@@ -756,6 +778,85 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       catch (NumberFormatException e) { }
+    }
+  }
+
+  /**
+   * Parse ROI data from the given RandomAccessStream and store it in the
+   * given MetadataStore.
+   */
+  private void parseROIs(int imageNum, RandomAccessStream s,
+    MetadataStore store) throws IOException
+  {
+    s.seek(0);
+    int shape = 0;
+    while (s.getFilePointer() < s.length() - 8) {
+      // find next ROI signature
+      long signature = s.readLong() & 0xffffffffffffffffL;
+      while (signature != ROI_SIGNATURE) {
+        if (s.getFilePointer() >= s.length()) return;
+        s.seek(s.getFilePointer() - 6);
+        signature = s.readLong() & 0xffffffffffffffffL;
+      }
+      s.skipBytes(18);
+      int length = s.readInt();
+      s.skipBytes(length + 10);
+      int roiType = s.readInt();
+      s.skipBytes(8);
+
+      // read the bounding box
+      int x = s.readInt();
+      int y = s.readInt();
+      int w = s.readInt() - x;
+      int h = s.readInt() - y;
+
+      while (s.readShort() != 8);
+      while (s.readShort() != 8);
+
+      int fontLength = s.readInt();
+      String fontName = DataTools.stripString(s.readString(fontLength));
+      s.skipBytes(2);
+      int typeLength = s.readInt();
+      if (typeLength < 0) {
+        while (s.readShort() != 8);
+        fontLength = s.readInt();
+        fontName = DataTools.stripString(s.readString(fontLength));
+        s.skipBytes(2);
+        typeLength = s.readInt();
+      }
+      String roiName = DataTools.stripString(s.readString(typeLength)).trim();
+
+      store.setShapeText(roiName, 0, imageNum, shape);
+
+      if (roiType == ELLIPSE) {
+        store.setEllipseCx(String.valueOf(x + (w / 2)), 0, imageNum, shape);
+        store.setEllipseCy(String.valueOf(y + (h / 2)), 0, imageNum, shape);
+        store.setEllipseRx(String.valueOf(w / 2), 0, imageNum, shape);
+        store.setEllipseRy(String.valueOf(h / 2), 0, imageNum, shape);
+      }
+      else if (roiType == CURVE) {
+        // TODO
+      }
+      else if (roiType == OUTLINE) {
+        // TODO
+      }
+      else if (roiType == RECTANGLE) {
+        store.setRectX(String.valueOf(x), 0, imageNum, shape);
+        store.setRectY(String.valueOf(y), 0, imageNum, shape);
+        store.setRectWidth(String.valueOf(w), 0, imageNum, shape);
+        store.setRectHeight(String.valueOf(h), 0, imageNum, shape);
+      }
+      else if (roiType == LINE) {
+        // TODO
+      }
+      else if (roiType == TEXT) {
+        // TODO
+      }
+      else if (roiType == SCALE_BAR) {
+        // TODO
+      }
+
+      shape++;
     }
   }
 
