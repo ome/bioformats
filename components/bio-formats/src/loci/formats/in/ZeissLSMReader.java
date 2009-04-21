@@ -982,12 +982,25 @@ public class ZeissLSMReader extends FormatReader {
       boolean moveable = in.readInt() == 0;
       in.skipBytes(34);
 
+      // populate shape attributes
+
+      store.setShapeFontFamily(fontName, series, 0, i);
+      store.setShapeFontSize(new Integer(fontHeight), series, 0, i);
+      store.setShapeFontStyle(fontItalic ? "normal" : "italic", series, 0, i);
+      store.setShapeFontWeight(String.valueOf(fontWeight), series, 0, i);
+      store.setShapeLocked(new Boolean(moveable), series, 0, i);
+      store.setShapeStrokeColor(String.valueOf(color), series, 0, i);
+      store.setShapeStrokeWidth(new Integer(lineWidth), series, 0, i);
+      store.setShapeTextDecoration(fontUnderlined ? "underline" :
+        fontStrikeout ? "line-through" : "normal", series, 0, i);
+      store.setShapeVisibility(new Boolean(enabled), series, 0, i);
+
       switch (type) {
         case TEXT:
           double x = in.readDouble();
           double y = in.readDouble();
           String text = DataTools.stripString(in.readCString());
-          //store.setShapeText(text, series, 0, i);
+          store.setShapeText(text, series, 0, i);
           break;
         case LINE:
           in.skipBytes(4);

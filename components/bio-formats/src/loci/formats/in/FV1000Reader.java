@@ -1062,6 +1062,8 @@ public class FV1000Reader extends FormatReader {
 
       String[] xc = null, yc = null;
       int divide = 0;
+      int color = 0, fontSize = 0, lineWidth = 0, angle = 0;
+      String fontName = null, name = null;
 
       for (int q=0; q<lines.length; q++) {
         lines[q] = DataTools.stripString(lines[q]);
@@ -1085,6 +1087,23 @@ public class FV1000Reader extends FormatReader {
         }
         else if (key.equals("DIVIDE")) {
           divide = Integer.parseInt(value);
+        }
+        else if (key.equals("FONT")) {
+          String[] fontAttributes = value.split(",");
+          fontName = fontAttributes[0];
+          fontSize = Integer.parseInt(fontAttributes[1]);
+        }
+        else if (key.equals("LINEWIDTH")) {
+          lineWidth = Integer.parseInt(value);
+        }
+        else if (key.equals("FORECOLOR")) {
+          color = Integer.parseInt(value);
+        }
+        else if (key.equals("NAME")) {
+          name = value;
+        }
+        else if (key.equals("ANGLE")) {
+          angle = Integer.parseInt(value);
         }
         else if (key.equals("X")) {
           xc = value.split(",");
@@ -1112,6 +1131,15 @@ public class FV1000Reader extends FormatReader {
             store.setShapeTheT(new Integer(coordinates[2]), 0,
               nextROI, nextShape);
 
+            store.setShapeFontSize(new Integer(fontSize), 0, nextROI,
+              nextShape);
+            store.setShapeFontFamily(fontName, 0, nextROI, nextShape);
+            store.setShapeText(name, 0, nextROI, nextShape);
+            store.setShapeStrokeWidth(new Integer(lineWidth), 0, nextROI,
+              nextShape);
+            store.setShapeStrokeColor(String.valueOf(color), 0, nextROI,
+              nextShape);
+
             if (shapeType == POINT) {
               store.setPointCx(xc[0], 0, nextROI, nextShape);
               store.setPointCy(yc[0], 0, nextROI, nextShape);
@@ -1122,6 +1150,11 @@ public class FV1000Reader extends FormatReader {
               store.setRectY(String.valueOf(y), 0, nextROI, nextShape);
               store.setRectHeight(String.valueOf(height), 0, nextROI,
                 nextShape);
+
+              int centerX = x + (width / 2);
+              int centerY = y + (height / 2);
+              store.setRectTransform("rotate(" + angle + " " + centerX + " " +
+                centerY + ")", 0, nextROI, nextShape);
             }
             else if (shapeType == GRID) {
               width /= divide;
@@ -1136,6 +1169,13 @@ public class FV1000Reader extends FormatReader {
                     nextShape);
                   store.setRectHeight(String.valueOf(height), 0, nextROI,
                     nextShape);
+
+                  int centerX = x + col * width + (width / 2);
+                  int centerY = y + row * height + (height / 2);
+
+                  store.setRectTransform("rotate(" + angle + " " + centerX +
+                    " " + centerY + ")", 0, nextROI, nextShape);
+
                   if (row < divide - 1 || col < divide - 1) nextShape++;
                 }
               }
@@ -1146,6 +1186,12 @@ public class FV1000Reader extends FormatReader {
               store.setLineX2(String.valueOf(x + width), 0, nextROI, nextShape);
               store.setLineY2(String.valueOf(y + height), 0, nextROI,
                 nextShape);
+
+              int centerX = x + (width / 2);
+              int centerY = y + (height / 2);
+
+              store.setLineTransform("rotate(" + angle + " " + centerX + " " +
+                centerY + ")", 0, nextROI, nextShape);
             }
             else if (shapeType == CIRCLE) {
               int r = width / 2;
@@ -1160,6 +1206,8 @@ public class FV1000Reader extends FormatReader {
               store.setEllipseCy(String.valueOf(y + ry), 0, nextROI, nextShape);
               store.setEllipseRx(String.valueOf(rx), 0, nextROI, nextShape);
               store.setEllipseRy(String.valueOf(ry), 0, nextROI, nextShape);
+              store.setEllipseTransform("rotate(" + angle + " " + (x + rx) +
+                " " + (y + ry) + ")", 0, nextROI, nextShape);
             }
             else if (shapeType == POLYGON || shapeType == FREE_SHAPE) {
               StringBuffer points = new StringBuffer();
@@ -1170,6 +1218,8 @@ public class FV1000Reader extends FormatReader {
                 if (point < xc.length - 1) points.append(" ");
               }
               store.setPolygonPoints(points.toString(), 0, nextROI, nextShape);
+              store.setPolygonTransform("rotate(" + angle + ")", 0, nextROI,
+                nextShape);
             }
             else if (shapeType == POLYLINE || shapeType == FREE_LINE) {
               StringBuffer points = new StringBuffer();
@@ -1180,6 +1230,8 @@ public class FV1000Reader extends FormatReader {
                 if (point < xc.length - 1) points.append(" ");
               }
               store.setPolylinePoints(points.toString(), 0, nextROI, nextShape);
+              store.setPolylineTransform("rotate(" + angle + ")", 0, nextROI,
+                nextShape);
             }
           }
         }
