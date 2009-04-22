@@ -55,6 +55,7 @@ public class ZeissZVIReader extends FormatReader {
   private static final int LINE = 2;
   private static final int TEXT = 17;
   private static final int SCALE_BAR = 10;
+  private static final int OUTLINE_SPLINE = 50;
 
   // -- Fields --
 
@@ -788,17 +789,26 @@ public class ZeissZVIReader extends FormatReader {
   private void parseROIs(int imageNum, RandomAccessStream s,
     MetadataStore store) throws IOException
   {
+    // scan stream for offsets to each ROI
+
+    Vector roiOffsets = new Vector();
     s.seek(0);
-    int shape = 0;
     while (s.getFilePointer() < s.length() - 8) {
       // find next ROI signature
       long signature = s.readLong() & 0xffffffffffffffffL;
       while (signature != ROI_SIGNATURE) {
-        if (s.getFilePointer() >= s.length()) return;
+        if (s.getFilePointer() >= s.length()) break;
         s.seek(s.getFilePointer() - 6);
         signature = s.readLong() & 0xffffffffffffffffL;
       }
-      s.skipBytes(18);
+      if (s.getFilePointer() < s.length()) {
+        roiOffsets.add(new Long(s.getFilePointer()));
+      }
+    }
+
+    for (int shape=0; shape<roiOffsets.size(); shape++) {
+      s.seek(((Long) roiOffsets.get(shape)).longValue() + 18);
+
       int length = s.readInt();
       s.skipBytes(length + 10);
       int roiType = s.readInt();
@@ -810,23 +820,43 @@ public class ZeissZVIReader extends FormatReader {
       int w = s.readInt() - x;
       int h = s.readInt() - y;
 
-      while (s.readShort() != 8);
-      while (s.readShort() != 8);
+      // read text label and font data
+      long nextOffset = shape < roiOffsets.size() - 1 ?
+        ((Long) roiOffsets.get(shape + 1)).longValue() : s.length();
 
+      long nameBlock = s.getFilePointer();
+      long fontBlock = s.getFilePointer();
+      long lastBlock = s.getFilePointer();
+      while (s.getFilePointer() < nextOffset - 1) {
+        while (s.readShort() != 8) {
+          if (s.getFilePointer() >= nextOffset) break;
+        }
+        if (s.getFilePointer() >= nextOffset) break;
+        if (s.getFilePointer() - lastBlock > 64 && lastBlock != fontBlock) {
+          break;
+        }
+        nameBlock = fontBlock;
+        fontBlock = lastBlock;
+        lastBlock = s.getFilePointer();
+      }
+
+      s.seek(nameBlock);
+      String roiName = DataTools.stripString(s.readString(s.readInt()));
+
+      s.seek(fontBlock);
       int fontLength = s.readInt();
       String fontName = DataTools.stripString(s.readString(fontLength));
       s.skipBytes(2);
       int typeLength = s.readInt();
-      if (typeLength < 0) {
-        while (s.readShort() != 8);
-        fontLength = s.readInt();
-        fontName = DataTools.stripString(s.readString(fontLength));
-        s.skipBytes(2);
-        typeLength = s.readInt();
-      }
-      String roiName = DataTools.stripString(s.readString(typeLength)).trim();
+      s.skipBytes(typeLength);
 
       store.setShapeText(roiName, 0, imageNum, shape);
+      store.setShapeFontFamily(fontName, 0, imageNum, shape);
+
+      // read list of points that define this ROI
+      s.skipBytes(10);
+      int nPoints = s.readInt();
+      s.skipBytes(6);
 
       if (roiType == ELLIPSE) {
         store.setEllipseCx(String.valueOf(x + (w / 2)), 0, imageNum, shape);
@@ -835,28 +865,45 @@ public class ZeissZVIReader extends FormatReader {
         store.setEllipseRy(String.valueOf(h / 2), 0, imageNum, shape);
       }
       else if (roiType == CURVE) {
-        // TODO
+        StringBuffer points = new StringBuffer();
+        for (int p=0; p<nPoints; p++) {
+          double px = s.readDouble();
+          double py = s.readDouble();
+          points.append(px);
+          points.append(",");
+          points.append(py);
+          if (p < nPoints - 1) points.append(" ");
+        }
+        store.setPolylinePoints(points.toString(), 0, imageNum, shape);
       }
-      else if (roiType == OUTLINE) {
-        // TODO
+      else if (roiType == OUTLINE || roiType == OUTLINE_SPLINE) {
+        StringBuffer points = new StringBuffer();
+        for (int p=0; p<nPoints; p++) {
+          double px = s.readDouble();
+          double py = s.readDouble();
+          points.append(px);
+          points.append(",");
+          points.append(py);
+          if (p < nPoints - 1) points.append(" ");
+        }
+        store.setPolygonPoints(points.toString(), 0, imageNum, shape);
       }
-      else if (roiType == RECTANGLE) {
+      else if (roiType == RECTANGLE || roiType == TEXT) {
         store.setRectX(String.valueOf(x), 0, imageNum, shape);
         store.setRectY(String.valueOf(y), 0, imageNum, shape);
         store.setRectWidth(String.valueOf(w), 0, imageNum, shape);
         store.setRectHeight(String.valueOf(h), 0, imageNum, shape);
       }
-      else if (roiType == LINE) {
-        // TODO
+      else if (roiType == LINE || roiType == SCALE_BAR) {
+        double x1 = s.readDouble();
+        double y1 = s.readDouble();
+        double x2 = s.readDouble();
+        double y2 = s.readDouble();
+        store.setLineX1(String.valueOf(x1), 0, imageNum, shape);
+        store.setLineY1(String.valueOf(y1), 0, imageNum, shape);
+        store.setLineX2(String.valueOf(x2), 0, imageNum, shape);
+        store.setLineY2(String.valueOf(y2), 0, imageNum, shape);
       }
-      else if (roiType == TEXT) {
-        // TODO
-      }
-      else if (roiType == SCALE_BAR) {
-        // TODO
-      }
-
-      shape++;
     }
   }
 
