@@ -79,6 +79,7 @@ public class NativeND2Reader extends FormatReader {
   private Vector modality;
   private Vector exWave, emWave;
   private Vector power;
+  private Vector rois;
 
   private String cameraModel;
 
@@ -197,6 +198,7 @@ public class NativeND2Reader extends FormatReader {
     exWave = new Vector();
     emWave = new Vector();
     power = new Vector();
+    rois = new Vector();
 
     in = new RandomAccessStream(id);
 
@@ -283,6 +285,7 @@ public class NativeND2Reader extends FormatReader {
       String xmlString = new String(xml.toByteArray());
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
+
       DataTools.parseXML(xmlString, handler);
 
       // rearrange image data offsets
@@ -532,26 +535,32 @@ public class NativeND2Reader extends FormatReader {
     status("Parsing XML");
 
     if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
-      in.seek(off + 5);
-      String xml = in.readString((int) (in.length() - in.getFilePointer()));
-      StringTokenizer st = new StringTokenizer(xml, "\n");
-      StringBuffer sb = new StringBuffer();
+      in.seek(off + 4);
 
+      StringBuffer sb = new StringBuffer();
       // stored XML doesn't have a root node - add one, so that we can parse
       // using SAX
 
       sb.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><NIKON>");
 
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken().trim();
-        if (token.indexOf("<!--") != -1 || token.indexOf("VCAL") != -1) {
-          continue;
+      String s = null;
+      int blockLength = 0;
+
+      while (in.getFilePointer() < in.length()) {
+        blockLength = in.readShort();
+        if (blockLength < 2) break;
+        s = in.readString(blockLength - 2);
+        s = s.replaceAll("<!--.+?>", ""); // remove comments
+        int openBracket = s.indexOf("<");
+        if (openBracket == -1) continue;
+        s = s.substring(openBracket, s.lastIndexOf(">") + 1).trim();
+        if (s.indexOf("VCAL") == -1 && s.indexOf("jp2cLUNK") == -1) {
+          sb.append(s);
         }
-        if (token.startsWith("<")) sb.append(token);
       }
 
       sb.append("</NIKON>");
-      xml = sb.toString();
+      String xml = sb.toString();
 
       status("Finished assembling XML string");
 
@@ -569,7 +578,9 @@ public class NativeND2Reader extends FormatReader {
           b[i] = (byte) ' ';
         }
       }
-      DataTools.parseXML(new String(b, offset, len - offset), handler);
+
+      xml = new String(b, offset, len - offset);
+      DataTools.parseXML(xml, handler);
       xml = null;
     }
 
@@ -621,10 +632,13 @@ public class NativeND2Reader extends FormatReader {
       core[i].metadataComplete = true;
     }
 
+    int nplanes = getSizeZ() * getEffectiveSizeC();
     if (numSeries == 0) numSeries = 1;
+    if (numSeries * nplanes * getSizeT() > vs.size()) {
+      numSeries = vs.size() / (nplanes * getSizeT());
+    }
     offsets = new long[numSeries][getImageCount()];
 
-    int nplanes = getSizeZ() * getEffectiveSizeC();
     for (int i=0; i<getSizeT(); i++) {
       for (int j=0; j<numSeries; j++) {
         for (int q=0; q<nplanes; q++) {
@@ -694,6 +708,16 @@ public class NativeND2Reader extends FormatReader {
       }
       else if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
         prefix = qName + " " + attributes.getValue("_SEQUENCE_INDEX");
+      }
+      else if (qName.equals("HorizontalLine") || qName.equals("VerticalLine") ||
+        qName.equals("Text"))
+      {
+        Hashtable roi = new Hashtable();
+        roi.put("ROIType", qName);
+        for (int q=0; q<attributes.getLength(); q++) {
+          roi.put(attributes.getQName(q), attributes.getValue(q));
+        }
+        rois.add(roi);
       }
       else {
         StringBuffer sb = new StringBuffer();
@@ -815,6 +839,63 @@ public class NativeND2Reader extends FormatReader {
     }
 
     setSeries(0);
+
+    // populate ROI data
+
+    for (int r=0; r<rois.size(); r++) {
+      Hashtable roi = (Hashtable) rois.get(r);
+      String type = (String) roi.get("ROIType");
+
+      store.setShapeLocked(new Boolean((String) roi.get("locked")), 0, r, 0);
+      store.setShapeStrokeWidth(new Integer((String) roi.get("line-width")),
+        0, r, 0);
+      store.setShapeVisibility(new Boolean((String) roi.get("visible")),
+        0, r, 0);
+      store.setShapeStrokeColor((String) roi.get("color"), 0, r, 0);
+
+      if (type.equals("Text")) {
+        store.setShapeFontFamily((String) roi.get("fFaceName"), 0, r, 0);
+        store.setShapeFontSize(new Integer((String) roi.get("fHeight")),
+          0, r, 0);
+        store.setShapeText((String) roi.get("eval-text"), 0, r, 0);
+        store.setShapeFontWeight((String) roi.get("fWeight"), 0, r, 0);
+
+        boolean italic = Integer.parseInt((String) roi.get("fItalic")) != 0;
+        boolean underline =
+          Integer.parseInt((String) roi.get("fUnderline")) != 0;
+        boolean strikeOut =
+          Integer.parseInt((String) roi.get("fStrikeOut")) != 0;
+        store.setShapeFontStyle(italic ? "italic" : "normal", 0, r, 0);
+        store.setShapeTextDecoration(underline ? "underline" : strikeOut ?
+          "line-through" : "normal", 0, r, 0);
+
+        String rectangle = (String) roi.get("rectangle");
+        String[] p = rectangle.split(",");
+        double[] points = new double[p.length];
+        for (int i=0; i<p.length; i++) {
+          points[i] = Double.parseDouble(p[i]);
+        }
+
+        store.setRectX(p[0], 0, r, 0);
+        store.setRectY(p[1], 0, r, 0);
+        store.setRectWidth(String.valueOf(points[2] - points[0]), 0, r, 0);
+        store.setRectHeight(String.valueOf(points[3] - points[1]), 0, r, 0);
+      }
+      else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
+        String segments = (String) roi.get("segments");
+        segments = segments.replaceAll("\\[", "");
+        segments = segments.replaceAll("\\]", "");
+        String[] points = segments.split("\\)");
+
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<points.length; i++) {
+          points[i] = points[i].substring(points[i].indexOf(":") + 1);
+          sb.append(points[i]);
+          if (i < points.length - 1) sb.append(" ");
+        }
+        store.setPolylinePoints(sb.toString(), 0, r, 0);
+      }
+    }
   }
 
   private void parseKeyAndValue(String key, String value) {
