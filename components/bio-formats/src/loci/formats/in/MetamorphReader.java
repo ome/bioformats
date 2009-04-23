@@ -414,20 +414,26 @@ public class MetamorphReader extends BaseTiffReader {
 
     Float positionX = new Float(handler.getStagePositionX());
     Float positionY = new Float(handler.getStagePositionY());
-    if (exposureTime == null) exposureTime = new Float(handler.getExposure());
+    Vector exposureTimes = handler.getExposures();
+    if (exposureTimes.size() == 0) {
+      for (int i=0; i<getImageCount(); i++) {
+        exposureTimes.add(exposureTime);
+      }
+    }
 
     for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
       if (coords[2] < timestamps.size()) {
         String stamp = (String) timestamps.get(coords[2]);
         long ms = DataTools.getTime(stamp, DATE_FORMAT);
-        store.setPlaneTimingDeltaT(new Float(ms - startDate), 0, 0, i);
-        store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
+        store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
+          0, 0, i);
+        store.setPlaneTimingExposureTime((Float) exposureTimes.get(i), 0, 0, i);
       }
       else if (internalStamps != null && i < internalStamps.length) {
         long delta = internalStamps[i] - internalStamps[0];
         store.setPlaneTimingDeltaT(new Float(delta / 1000f), 0, 0, i);
-        store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
+        store.setPlaneTimingExposureTime((Float) exposureTimes.get(i), 0, 0, i);
       }
       if (stageX != null && i < stageX.length) {
         store.setStagePositionPositionX(new Float((float) stageX[i]), 0, 0, i);

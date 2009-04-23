@@ -146,7 +146,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
       if (coords[2] < timestamps.size()) {
         String stamp = (String) timestamps.get(coords[2]);
         long ms = parse.parse(stamp, new ParsePosition(0)).getTime();
-        store.setPlaneTimingDeltaT(new Float(ms - startDate), 0, 0, i);
+        store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
+          0, 0, i);
         store.setPlaneTimingExposureTime((Float) exposures.get(i), 0, 0, i);
       }
     }

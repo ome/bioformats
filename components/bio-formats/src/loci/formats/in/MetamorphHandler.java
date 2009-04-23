@@ -203,7 +203,8 @@ public class MetamorphHandler extends DefaultHandler {
       if (value.indexOf(" ") != -1) {
         value = value.substring(0, value.indexOf(" "));
       }
-      exposures.add(new Float(value));
+      // exposure times are stored in milliseconds, we want them in seconds
+      exposures.add(new Float(Float.parseFloat(value) / 1000));
     }
   }
 
