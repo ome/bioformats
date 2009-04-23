@@ -90,7 +90,7 @@ public final class ImageInfo {
     String map = null;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
-        if (args[i].startsWith("-") && args.length > 1) {
+        if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
           else if (args[i].equals("-version")) printVersion = true;
           else if (args[i].equals("-nometa")) doMeta = false;
@@ -148,9 +148,18 @@ public final class ImageInfo {
         }
       }
     }
+
+    if (printVersion) {
+      LogTools.println("Version: " + FormatTools.VERSION);
+      LogTools.println("SVN revision: " + FormatTools.SVN_REVISION);
+      LogTools.println("Build date: " + FormatTools.DATE);
+      return true;
+    }
+
     if (FormatHandler.debug) {
       LogTools.println("Debugging at level " + FormatHandler.debugLevel);
     }
+
     if (id == null) {
       String className = reader.getClass().getName();
       String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
@@ -193,13 +202,6 @@ public final class ImageInfo {
       };
       for (int i=0; i<s.length; i++) LogTools.println(s[i]);
       return false;
-    }
-
-    if (printVersion) {
-      LogTools.println("Version: " + FormatTools.VERSION);
-      LogTools.println("SVN revision: " + FormatTools.SVN_REVISION);
-      LogTools.println("Build date: " + FormatTools.DATE);
-      return true;
     }
 
     if (map != null) Location.mapId(id, map);
