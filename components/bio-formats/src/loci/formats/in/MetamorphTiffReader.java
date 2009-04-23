@@ -101,6 +101,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     Vector timestamps = handler.getTimestamps();
     Vector wavelengths = handler.getWavelengths();
     Vector zPositions = handler.getZPositions();
+    Vector exposures = handler.getExposures();
 
     // calculate axis sizes
 
@@ -146,7 +147,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
         String stamp = (String) timestamps.get(coords[2]);
         long ms = parse.parse(stamp, new ParsePosition(0)).getTime();
         store.setPlaneTimingDeltaT(new Float(ms - startDate), 0, 0, i);
-        store.setPlaneTimingExposureTime(new Float(0), 0, 0, i);
+        store.setPlaneTimingExposureTime((Float) exposures.get(i), 0, 0, i);
       }
     }
 

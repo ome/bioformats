@@ -55,7 +55,7 @@ public class MetamorphHandler extends DefaultHandler {
   private String binning;
   private float readOutRate, zoom;
   private float positionX, positionY;
-  private float exposure;
+  private Vector exposures;
 
   // -- Constructor --
 
@@ -65,6 +65,7 @@ public class MetamorphHandler extends DefaultHandler {
     timestamps = new Vector();
     wavelengths = new Vector();
     zPositions = new Vector();
+    exposures = new Vector();
   }
 
   // -- MetamorphHandler API methods --
@@ -95,7 +96,7 @@ public class MetamorphHandler extends DefaultHandler {
 
   public float getStagePositionY() { return positionY; }
 
-  public float getExposure() { return exposure; }
+  public Vector getExposures() { return exposures; }
 
   // -- DefaultHandler API methods --
 
@@ -202,7 +203,7 @@ public class MetamorphHandler extends DefaultHandler {
       if (value.indexOf(" ") != -1) {
         value = value.substring(0, value.indexOf(" "));
       }
-      exposure = Float.parseFloat(value);
+      exposures.add(new Float(value));
     }
   }
 
