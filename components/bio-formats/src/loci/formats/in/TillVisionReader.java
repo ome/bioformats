@@ -211,7 +211,8 @@ public class TillVisionReader extends FormatReader {
                 dateTime = value + " " + dateTime;
               }
               else if (key.equals("Exposure time [ms]")) {
-                exposureTimes.put(new Integer(nImages), new Float(value));
+                float exp = Float.parseFloat(value) / 1000;
+                exposureTimes.put(new Integer(nImages), new Float(exp));
               }
               else if (key.equals("Image type")) {
                 types.add(value);

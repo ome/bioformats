@@ -480,7 +480,7 @@ public class DeltavisionReader extends FormatReader {
       if (!logFound) {
         store.setPlaneTimingDeltaT(new Float(hdr.timeStampSeconds), 0, 0, i);
       }
-      store.setPlaneTimingExposureTime(new Float(hdr.expTime), 0, 0, i);
+      store.setPlaneTimingExposureTime(new Float(hdr.expTime / 1000f), 0, 0, i);
 
       // stage position
       if (!logFound) {

@@ -553,7 +553,7 @@ public class PerkinElmerReader extends FormatReader {
           if (exposure.endsWith(",")) {
             exposure = exposure.substring(0, exposure.length() - 1);
           }
-          exposureTimes.add(new Float(exposure));
+          exposureTimes.add(new Float(Float.parseFloat(exposure) / 1000));
 
           if (tokens[j].indexOf("nm") != -1) {
             int nmIndex = tokens[j].indexOf("nm");

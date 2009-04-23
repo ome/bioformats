@@ -134,6 +134,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
       td = parse.parse((String) timestamps.get(i), new ParsePosition(0));
       addMeta("timestamp " + i, tsfmt.format(td));
     }
+    for (int i=0; i<exposures.size(); i++) {
+      addMeta("exposure time " + i + " (ms)",
+        ((Float) exposures.get(i)).floatValue() * 1000);
+    }
 
     long startDate = 0;
     if (timestamps.size() > 0) {

@@ -689,7 +689,10 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
         else if (key.startsWith("Exposure Time [ms]")) {
-          if (cIndex != -1) exposureTime.put(new Integer(cIndex), value);
+          if (cIndex != -1) {
+            float exp = Float.parseFloat(value) / 1000;
+            exposureTime.put(new Integer(cIndex), new Float(exp));
+          }
         }
         else if (key.startsWith("User Name")) {
           String[] username = value.split(" ");
