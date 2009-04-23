@@ -602,8 +602,7 @@ public final class FormatTools {
   // -- Utility methods -- export
 
   public static String getFilename(int series, int image, IFormatReader r,
-    String pattern)
-    throws FormatException, IOException
+    String pattern) throws FormatException, IOException
   {
     MetadataStore store = r.getMetadataStore();
     MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
@@ -613,7 +612,8 @@ public final class FormatTools {
 
     String imageName = retrieve.getImageName(series);
     if (imageName == null) imageName = "Series" + series;
-    imageName = imageName.replaceAll(File.separator, "_");
+    imageName = imageName.replaceAll("/", "_");
+    imageName = imageName.replaceAll("\\\\", "_");
 
     filename = filename.replaceAll(SERIES_NAME, imageName);
 
@@ -626,7 +626,8 @@ public final class FormatTools {
 
     String channelName = retrieve.getLogicalChannelName(series, coordinates[1]);
     if (channelName == null) channelName = String.valueOf(coordinates[1]);
-    channelName = channelName.replaceAll(File.separator, "_");
+    channelName = channelName.replaceAll("/", "_");
+    channelName = channelName.replaceAll("\\\\", "_");
 
     filename = filename.replaceAll(CHANNEL_NAME, channelName);
     return filename;
