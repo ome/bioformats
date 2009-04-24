@@ -152,15 +152,27 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    tiff.setId((String) files[series].get(lastPlane));
-    return tiff.get8BitLookupTable();
+    try {
+      tiff.setId((String) files[series].get(lastPlane));
+      return tiff.get8BitLookupTable();
+    }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
+    return null;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    tiff.setId((String) files[series].get(lastPlane));
-    return tiff.get16BitLookupTable();
+    try {
+      tiff.setId((String) files[series].get(lastPlane));
+      return tiff.get16BitLookupTable();
+    }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
+    return null;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -180,7 +192,9 @@ public class LeicaReader extends FormatReader {
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
       pos[1] = DataTools.indexOf(channelMap[series], pos[1]);
-      if (pos[1] >= 0) no = getIndex(pos[0], pos[1], pos[2]);
+      if (pos[1] >= 0 && pos[1] < getSizeC()) {
+        no = getIndex(pos[0], pos[1], pos[2]);
+      }
     }
 
     lastPlane = no;
@@ -380,6 +394,13 @@ public class LeicaReader extends FormatReader {
         data.order(isLittleEndian());
       }
 
+      core[i].sizeX = data.readInt();
+      core[i].sizeY = data.readInt();
+      data.skipBytes(4);
+      int samplesPerPixel = data.readInt();
+      core[i].rgb = samplesPerPixel > 1;
+      core[i].sizeC = samplesPerPixel;
+
       File dirFile = new File(id).getAbsoluteFile();
       String[] listing = null;
       String dirPrefix = "";
@@ -402,8 +423,6 @@ public class LeicaReader extends FormatReader {
       }
 
       boolean tiffsExist = true;
-
-      data.seek(20);
 
       String prefix = "";
       for (int j=0; j<tempImages; j++) {
@@ -606,12 +625,20 @@ public class LeicaReader extends FormatReader {
 
           switch (bpp) {
             case 1:
-            case 3:
               core[i].pixelType = FormatTools.UINT8;
               break;
+            case 3:
+              core[i].pixelType = FormatTools.UINT8;
+              core[i].sizeC = 3;
+              core[i].rgb = true;
+              break;
             case 2:
+              core[i].pixelType = FormatTools.UINT16;
+              break;
             case 6:
               core[i].pixelType = FormatTools.UINT16;
+              core[i].sizeC = 3;
+              core[i].rgb = true;
               break;
             case 4:
               core[i].pixelType = FormatTools.UINT32;
@@ -665,7 +692,8 @@ public class LeicaReader extends FormatReader {
               physicalSizes[i][2] = physical;
             }
             else if (dimType.equals("channel")) {
-              core[i].sizeC = size;
+              if (core[i].sizeC == 0) core[i].sizeC = 1;
+              core[i].sizeC *= size;
               if (core[i].dimensionOrder.indexOf("C") == -1) {
                 core[i].dimensionOrder += "C";
               }
@@ -807,12 +835,7 @@ public class LeicaReader extends FormatReader {
         core[i].sizeZ = 1;
         core[i].sizeT = 1;
       }
-      tiff.setId((String) files[i].get(0));
-      core[i].sizeX = tiff.getSizeX();
-      core[i].sizeY = tiff.getSizeY();
-      core[i].rgb = tiff.isRGB();
-      core[i].indexed = tiff.isIndexed();
-      core[i].sizeC *= tiff.getSizeC();
+      if (isRGB()) core[i].indexed = false;
 
       if (getDimensionOrder().indexOf("C") == -1) {
         core[i].dimensionOrder += "C";
