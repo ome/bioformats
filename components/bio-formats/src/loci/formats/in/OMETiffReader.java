@@ -71,6 +71,28 @@ public class OMETiffReader extends FormatReader {
     return comment.trim().endsWith("</OME>");
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    if (info[series][0] == null || info[series][0].reader == null ||
+      info[series][0].id == null)
+    {
+      return null;
+    }
+    info[series][0].reader.setId(info[series][0].id);
+    return info[series][0].reader.get8BitLookupTable();
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    if (info[series][0] == null || info[series][0].reader == null ||
+      info[series][0].id == null)
+    {
+      return null;
+    }
+    info[series][0].reader.setId(info[series][0].id);
+    return info[series][0].reader.get16BitLookupTable();
+  }
+
   /*
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
