@@ -48,7 +48,10 @@ public class CurveCollection implements CurveReporter {
   // -- Fields --
 
   /** Full image resolution. */
-  protected int numRows;
+  protected int numRows, numCols;
+
+  /** Total number of samplings, counting full-resolution image. */
+  protected int depth;
 
   /** Curve fit data, dimensioned [maxDepth][numRows][numCols]. */
   protected ICurveFitter[][][] curves;
@@ -63,9 +66,6 @@ public class CurveCollection implements CurveReporter {
    *   use (e.g., loci.slim.fit.GACurveFitter or loci.slim.fit.LMCurveFitter).
    * @param binRadius Radius of neighboring pixels to bin,
    *   to improve signal-to-noise ratio.
-   *
-   * @throws IllegalArgumentException
-   *  if numRows or numCols is not a power of two or numRows != numCols
    */
   public CurveCollection(int[][][] data, Class curveFitterClass,
     int binRadius, int firstIndex, int lastIndex)
@@ -78,21 +78,13 @@ public class CurveCollection implements CurveReporter {
    * Creates an object to manage the given collection of curves.
    *
    * @param curveFitters Array of curve fitters dimensioned [numRows][numCols].
-   *
-   * @throws IllegalArgumentException
-   *  if numRows or numCols is not a power of two or numRows != numCols
    */
   public CurveCollection(ICurveFitter[][] curveFitters) {
     numRows = curveFitters.length;
-    int numCols = curveFitters[0].length;
-    if (numRows != numCols) {
-      throw new IllegalArgumentException("Row and column counts do not match");
-    }
-    double log = Math.log(numRows) / LOG2;
-    int depth = (int) log;
-    if (log != depth) {
-      throw new IllegalArgumentException("Row count is not a power of two");
-    }
+    numCols = curveFitters[0].length;
+    int max = numRows > numCols ? numRows : numCols;
+    double log = Math.log(max) / LOG2;
+    depth = (int) log;
     curves = new ICurveFitter[depth + 1][][];
     curves[0] = curveFitters;
   }
@@ -102,18 +94,36 @@ public class CurveCollection implements CurveReporter {
   /** Computes subsamplings. */
   public void computeCurves() {
     Class curveFitterClass = curves[0][0][0].getClass();
-    int depth = (int) (Math.log(numRows) / LOG2);
-    int res = numRows;
-    int value = 0, max = numRows * numRows / 3;
+    int numExp = curves[0][0][0].getComponentCount();
+    int xRes = numCols, yRes = numRows;
+    int value = 0, max = numCols * numRows / 3;
     for (int d=1; d<=depth; d++) {
-      res /= 2;
-      curves[d] = new ICurveFitter[res][res];
-      for (int y=0; y<res; y++) {
-        for (int x=0; x<res; x++) {
-          ICurveFitter cf0 = curves[d-1][2*y][2*x];
-          ICurveFitter cf1 = curves[d-1][2*y][2*x+1];
-          ICurveFitter cf2 = curves[d-1][2*y+1][2*x];
-          ICurveFitter cf3 = curves[d-1][2*y+1][2*x+1];
+      xRes /= 2;
+      yRes /= 2;
+      if (xRes < 1) xRes = 1;
+      if (yRes < 1) yRes = 1;
+      curves[d] = new ICurveFitter[yRes][xRes];
+      ICurveFitter[][] lastCurve = curves[d - 1];
+      for (int y=0; y<yRes; y++) {
+        int yy0 = 2 * y;
+        int yy1 = 2 * y + 1;
+        if (yy0 >= lastCurve.length) yy0 = lastCurve.length - 1;
+        if (yy1 >= lastCurve.length) yy1 = lastCurve.length - 1;
+        ICurveFitter[] lastCurve0 = lastCurve[yy0];
+        ICurveFitter[] lastCurve1 = lastCurve[yy1];
+        for (int x=0; x<xRes; x++) {
+          int xx0y0 = 2 * x;
+          int xx1y0 = 2 * x + 1;
+          int xx0y1 = 2 * x;
+          int xx1y1 = 2 * x + 1;
+          if (xx0y0 >= lastCurve0.length) xx0y0 = lastCurve0.length - 1;
+          if (xx0y1 >= lastCurve1.length) xx0y1 = lastCurve1.length - 1;
+          if (xx1y0 >= lastCurve0.length) xx1y0 = lastCurve0.length - 1;
+          if (xx1y1 >= lastCurve1.length) xx1y1 = lastCurve1.length - 1;
+          ICurveFitter cf0 = lastCurve0[xx0y0];
+          ICurveFitter cf1 = lastCurve0[xx1y0];
+          ICurveFitter cf2 = lastCurve1[xx0y1];
+          ICurveFitter cf3 = lastCurve1[xx1y1];
           int[] data0 = cf0.getData();
           int[] data1 = cf1.getData();
           int[] data2 = cf2.getData();
@@ -134,12 +144,19 @@ public class CurveCollection implements CurveReporter {
           int last = (last0 + last1 + last2 + last3) / 4;
           ICurveFitter cf = newCurveFitter(curveFitterClass);
           cf.setData(data, first, last);
+          cf.setComponentCount(numExp);
           curves[d][y][x] = cf;
           fireCurveEvent(new CurveEvent(this, value++, max, null));
         }
       }
     }
   }
+
+  /** Gets the full Y resolution. */
+  public int getNumRows() { return numRows; }
+
+  /** Gets the full X resolution. */
+  public int getNumCols() { return numCols; }
 
   /** Gets the collection of curves at full resolution. */
   public ICurveFitter[][] getCurves() { return getCurves(0); }
@@ -162,8 +179,8 @@ public class CurveCollection implements CurveReporter {
 
   /**
    * Gets the maximum subsampling depth of the curve collection. For example,
-   * for a 256 x 256 image, the depth is 8 because there exist subsamplings at
-   * 128 x 128, 64 x 64, 32 x 32, 16 x 16, 8 x 8, 4 x 4, 2 x 2 and 1 x 1.
+   * for a 250 x 200 image, the depth is 8 because there exist samplings at
+   * 250 x 200, 125 x 100, 62 x 50, 31 x 25, 15 x 12, 7 x 6, 3 x 3 and 1 x 1.
    */
   public int getSubsamplingDepth() { return curves.length - 1; }
 
@@ -173,7 +190,9 @@ public class CurveCollection implements CurveReporter {
    */
   public void setComponentCount(int numExp) {
     for (int d=0; d<curves.length; d++) {
+      if (curves[d] == null) continue;
       for (int y=0; y<curves[d].length; y++) {
+        if (curves[d][y] == null) continue;
         for (int x=0; x<curves[d][y].length; x++) {
           curves[d][y][x].setComponentCount(numExp);
         }

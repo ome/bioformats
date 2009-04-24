@@ -567,6 +567,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       set.addActionListener(this);
       numbers.add(set);
 
+      // TEMP: disable Fix and Fit widgets for now
+      a1Fix.setEnabled(false);
+      t1Fix.setEnabled(false);
+      a2Fix.setEnabled(false);
+      t2Fix.setEnabled(false);
+      cFix.setEnabled(false);
+      set.setEnabled(false);
+
       if (data.numExp < 2) {
         a2Label.setEnabled(false);
         a2Param.setEnabled(false);

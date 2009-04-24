@@ -48,11 +48,9 @@ public class BurnInRenderer extends CurveRenderer {
   // -- Fields --
 
   protected ICurveFitter[][] currentCurves = null;
-  protected int currentDim;
   protected double[][] image;
   protected boolean[][] mask;
   protected int maskCount;
-  protected int maxDim;
   private boolean estimated;
   private boolean improving;
   private double[][] rcseCache;
@@ -71,8 +69,6 @@ public class BurnInRenderer extends CurveRenderer {
     totalIterations = 0;
     currentIterations = 0;
     currProgress = 0;
-    maxDim = 1 << subsampleLevel; // 2^subsampleLevel
-    //maxProgress = 2 * maxDim * maxDim - 1;
     maxProgress = 0;
     int thislevel = 1;
     for (int i = subsampleLevel; i >= 0; i--) {
@@ -82,13 +78,12 @@ public class BurnInRenderer extends CurveRenderer {
     alive = false;
     maxIterations = 1;
     maxRCSE = 0.0d;
-    currentDim = 1;
     numExponentials = 1;
     estimated = false;
     improving = false;
     setComponentCount(1);
-    rcseCache = new double[maxDim][maxDim];
-    stalled = new boolean[maxDim][maxDim];
+    rcseCache = new double[numRows][numCols];
+    stalled = new boolean[numRows][numCols];
     stallCount = 0;
     setMask(null);
   }
@@ -105,8 +100,10 @@ public class BurnInRenderer extends CurveRenderer {
     // initial pass - estimates
     while (subsampleLevel >= 0 && alive && !estimated) {
       currentCurves = curveData.getCurves(subsampleLevel);
-      while (currentY < currentDim && alive) {
-        while (currentX < currentDim && alive) {
+      int maxY = currentCurves.length;
+      int maxX = currentCurves[0].length;
+      while (currentY < maxY && alive) {
+        while (currentX < maxX && alive) {
           //System.out.println("ssl: " + subsampleLevel + " x: " + currentX +
           //  " y: " + currentY);
           currentCurves[currentY][currentX].estimate();
@@ -125,19 +122,18 @@ public class BurnInRenderer extends CurveRenderer {
           }
           Arrays.sort(exponentials);
 
-          int pixelsize = maxDim / currentDim;
-          for (int x = 0; x < pixelsize; x++) {
-            for (int y = 0; y < pixelsize; y++) {
-              for (int c = 0; c < numExponentials; c++) {
-                int indexa = numExponentials - c - 1;
-                int indexb = ((currentY * pixelsize + y) * maxDim) +
-                  (currentX * pixelsize + x);
-                image[indexa][indexb] = exponentials[c];
-                //System.out.println("Setting image[" + indexa + "][" +
-                //  indexb + "] to " + exponentials[c]);
-                //int imageIndex = ((currentY * pixelsize + y) * maxDim) +
-                //  (currentX * pixelsize + x);
-                //image[numExponentials-c-1][imageIndex] = exponentials[c];
+          int sizeY = currentCurves.length;
+          int sizeX = currentCurves[0].length;
+          int imageX = getImageX();
+          int imageY = getImageY();
+          int widthY = numRows / sizeY;
+          int widthX = numCols / sizeX;
+          for (int c = 0; c < numExponentials; c++) {
+            int expIndex = numExponentials - c - 1;
+            for (int y = 0; y < widthY; y++) {
+              for (int x = 0; x < widthX; x++) {
+                int xyIndex = (imageY + y) * numCols + (imageX + x);
+                image[expIndex][xyIndex] = exponentials[c];
               }
             }
           }
@@ -154,7 +150,6 @@ public class BurnInRenderer extends CurveRenderer {
         if (subsampleLevel >= 0) {
           currentX = 0;
           currentY = 0;
-          currentDim *= 2;
         }
       }
     }
@@ -166,12 +161,12 @@ public class BurnInRenderer extends CurveRenderer {
         estimated = true;
         currentX = 0;
         currentY = 0;
-        maxProgress = maxDim * maxDim;
+        maxProgress = numRows * numCols;
       }
-      for (; currentY < maxDim; currentY++) {
-        for (; currentX < maxDim; currentX++) {
+      for (; currentY < numRows; currentY++) {
+        for (; currentX < numCols; currentX++) {
           currentIterations = 0;
-          currProgress = (currentY * maxDim) + currentX;
+          currProgress = (currentY * numCols) + currentX;
           while (currentIterations < maxIterations) {
             //System.out.println("x: " + currentX + " y: " + currentY +
             //  " iter: " + currentIterations);
@@ -194,7 +189,7 @@ public class BurnInRenderer extends CurveRenderer {
               }
               Arrays.sort(exponentials);
               for (int c = 0; c < numExponentials; c++) {
-                image[numExponentials-c-1][currentY * maxDim + currentX] =
+                image[numExponentials-c-1][currentY * numCols + currentX] =
                   exponentials[c];
               }
             }
@@ -215,8 +210,8 @@ public class BurnInRenderer extends CurveRenderer {
         // find new worst error
         worstX = worstY = -1;
         double totalVal = 0, worstVal = 0;
-        for (int x = 0; x < maxDim; x++) {
-          for (int y = 0; y < maxDim; y++) {
+        for (int x = 0; x < numCols; x++) {
+          for (int y = 0; y < numRows; y++) {
             totalVal += rcseCache[y][x];
             if ((mask == null || mask[y][x]) && !stalled[y][x] &&
               rcseCache[y][x] > worstVal)
@@ -252,9 +247,9 @@ public class BurnInRenderer extends CurveRenderer {
         }
         Arrays.sort(exponentials);
         for (int c = 0; c < numExponentials; c++) {
-          image[numExponentials-c-1][currentY * maxDim + currentX] =
+          image[numExponentials-c-1][currentY * numCols + currentX] =
             exponentials[c];
-          //image[numExponentials-c-1][currentY * maxDim + currentX] = 1;
+          //image[numExponentials-c-1][currentY * numCols + currentX] = 1;
         }
         worstIter = 0;
       }
@@ -268,7 +263,7 @@ public class BurnInRenderer extends CurveRenderer {
           stallCount++;
           if (stallCount >= maskCount) {
             // every pixel is stalled; retry everything
-            for (int y=0; y<maxDim; y++) Arrays.fill(stalled[y], false);
+            for (int y=0; y<numCols; y++) Arrays.fill(stalled[y], false);
             stallCount = 0;
           }
         }
@@ -284,36 +279,36 @@ public class BurnInRenderer extends CurveRenderer {
 
   public void setComponentCount(int numExp) {
     numExponentials = numExp;
-    image = new double[numExponentials][maxDim*maxDim];
+    image = new double[numExponentials][numRows * numCols];
     curveData.setComponentCount(numExponentials);
   }
 
   public void setMask(boolean[][] mask) {
     if (mask == null) {
       this.mask = null;
-      maskCount = maxDim * maxDim;
+      maskCount = numRows * numCols;
     }
     else {
-      if (mask.length < maxDim) {
+      if (mask.length < numRows) {
         throw new IllegalArgumentException("Invalid mask: mask.length=" +
-          mask.length + ", maxDim=" + maxDim);
+          mask.length + ", numRows=" + numRows);
       }
       int count = 0;
-      for (int i=0; i<maxDim; i++) {
-        if (mask[i].length < maxDim) {
+      for (int i=0; i<numRows; i++) {
+        if (mask[i].length < numCols) {
           throw new IllegalArgumentException("Invalid mask: mask[" + i +
-            "].length=" + mask[i].length + ", maxDim=" + maxDim);
+            "].length=" + mask[i].length + ", numCols=" + numCols);
         }
-        for (int j=0; j<maxDim; j++) if (mask[i][j]) count++;
+        for (int j=0; j<numCols; j++) if (mask[i][j]) count++;
       }
       this.mask = mask;
       maskCount = count;
     }
     // recount stalled pixels
     int count = 0;
-    for (int y=0; y<maxDim; y++) {
+    for (int y=0; y<numRows; y++) {
       Arrays.fill(stalled[y], false);
-      for (int x=0; x<maxDim; x++) {
+      for (int x=0; x<numCols; x++) {
         if (stalled[y][x]) count++;
       }
     }
@@ -325,11 +320,13 @@ public class BurnInRenderer extends CurveRenderer {
   }
 
   public int getImageX() {
-    return (currentX * (maxDim/currentDim)) + ((maxDim/currentDim) / 2);
+    int sizeX = currentCurves[0].length;
+    return currentX * numCols / sizeX;
   }
 
   public int getImageY() {
-    return (currentY * (maxDim/currentDim)) + ((maxDim/currentDim) / 2);
+    int sizeY = currentCurves.length;
+    return currentY * numRows / sizeY;
   }
 
   public double getTotalRCSE() {

@@ -48,12 +48,15 @@ public abstract class CurveRenderer implements ICurveRenderer {
   protected int currProgress;
   protected int maxProgress;
   protected CurveCollection curveData;
+  protected int numRows, numCols;
   protected int numExponentials;
 
   // -- Constructor --
 
   public CurveRenderer(CurveCollection cc) {
     curveData = cc;
+    numRows = curveData.getNumRows();
+    numCols = curveData.getNumCols();
   }
 
   // -- ICurveRenderer methods --
