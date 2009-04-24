@@ -82,6 +82,9 @@ public class ZeissZVIReader extends FormatReader {
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
   private float stageX = 0f, stageY = 0f;
 
+  private int[] channelColors;
+  private int lastPlane;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -98,6 +101,53 @@ public class ZeissZVIReader extends FormatReader {
     return stream.readInt() == 0xd0cf11e0;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    int pixelType = getPixelType();
+    if ((pixelType != FormatTools.INT8 && pixelType != FormatTools.UINT8) ||
+      !isIndexed())
+    {
+      return null;
+    }
+    byte[][] lut = new byte[3][256];
+    int color = channelColors[getZCTCoords(lastPlane)[1]];
+
+    float red = (color & 0xff) / 256f;
+    float green = ((color & 0xff00) >> 8) / 256f;
+    float blue = ((color & 0xff0000) >> 16) / 256f;
+
+    for (int i=0; i<lut[0].length; i++) {
+      lut[0][i] = (byte) (red * i);
+      lut[1][i] = (byte) (green * i);
+      lut[2][i] = (byte) (blue * i);
+    }
+
+    return lut;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    int pixelType = getPixelType();
+    if ((pixelType != FormatTools.INT16 && pixelType != FormatTools.UINT16) ||
+      !isIndexed())
+    {
+      return null;
+    }
+    short[][] lut = new short[3][65536];
+    int color = channelColors[getZCTCoords(lastPlane)[1]];
+
+    float red = (color & 0xff) / 256f;
+    float green = ((color & 0xff00) >> 8) / 256f;
+    float blue = ((color & 0xff0000) >> 16) / 256f;
+
+    for (int i=0; i<lut[0].length; i++) {
+      lut[0][i] = (short) DataTools.swap((int) (red * i));
+      lut[1][i] = (short) DataTools.swap((int) (green * i));
+      lut[2][i] = (short) DataTools.swap((int) (blue * i));
+    }
+    return lut;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -107,6 +157,8 @@ public class ZeissZVIReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
+
+    lastPlane = no;
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bytes * getRGBChannelCount();
@@ -410,8 +462,7 @@ public class ZeissZVIReader extends FormatReader {
 
     core[0].littleEndian = true;
     core[0].interleaved = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    core[0].falseColor = true;
     core[0].metadataComplete = true;
 
     core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
@@ -520,6 +571,7 @@ public class ZeissZVIReader extends FormatReader {
       parseTags(keys[i].intValue(), s, store);
       s.close();
     }
+    core[0].indexed = !isRGB() && channelColors != null;
 
     // link DetectorSettings to an actual Detector
     for (int i=0; i<getEffectiveSizeC(); i++) {
@@ -637,6 +689,16 @@ public class ZeissZVIReader extends FormatReader {
           firstImageTile = value;
         }
         else if (key.equals("ImageTile Index 1")) secondImageTile = value;
+        else if (key.startsWith("MultiChannel Color")) {
+          if (cIndex >= 0 && cIndex < effectiveSizeC) {
+            if (channelColors == null ||
+              effectiveSizeC > channelColors.length)
+            {
+              channelColors = new int[effectiveSizeC];
+            }
+            channelColors[cIndex] = Integer.parseInt(value);
+          }
+        }
         else if (key.equals("Scale Factor for X")) {
           pixelSizeX = Float.parseFloat(value);
         }
@@ -690,8 +752,11 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("Exposure Time [ms]")) {
           if (cIndex != -1) {
-            float exp = Float.parseFloat(value) / 1000;
-            exposureTime.put(new Integer(cIndex), new Float(exp));
+            try {
+              float exp = Float.parseFloat(value) / 1000;
+              exposureTime.put(new Integer(cIndex), String.valueOf(exp));
+            }
+            catch (NumberFormatException e) { }
           }
         }
         else if (key.startsWith("User Name")) {
