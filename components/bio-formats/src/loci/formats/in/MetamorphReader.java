@@ -509,8 +509,9 @@ public class MetamorphReader extends BaseTiffReader {
       long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
       core[0].imageCount = uic2.length;
 
-      TiffRational[] uic3 =
-        (TiffRational[]) TiffTools.getIFDValue(ifds[0], UIC3TAG);
+      Object entry = TiffTools.getIFDValue(ifds[0], UIC3TAG);
+      TiffRational[] uic3 = entry instanceof TiffRational[] ?
+        (TiffRational[]) entry : new TiffRational[] {(TiffRational) entry};
       wave = new double[uic3.length];
       for (int i=0; i<uic3.length; i++) {
         wave[i] = uic3[i].doubleValue();
