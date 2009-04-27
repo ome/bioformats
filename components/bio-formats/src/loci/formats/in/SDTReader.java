@@ -138,10 +138,19 @@ public class SDTReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
 
+    int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
+    int planeSize = paddedWidth * sizeY * timeBins * bpp;
+
     boolean direct = !intensity && x == 0 && y == 0 && w == sizeX && h == sizeY;
     byte[] b = direct ? buf : new byte[sizeY * sizeX * timeBins * bpp];
-    in.seek(off + no * b.length);
-    in.readFully(b);
+    in.seek(off + no * planeSize + y * paddedWidth * bpp * timeBins);
+
+    for (int row=0; row<h; row++) {
+      in.skipBytes(x * bpp * timeBins);
+      in.read(b, row * bpp * timeBins * w, w * timeBins * bpp);
+      in.skipBytes(bpp * timeBins * (paddedWidth - x - w));
+    }
+
     if (direct) return buf; // no cropping required
 
     int scan = intensity ? bpp : timeBins * bpp;
