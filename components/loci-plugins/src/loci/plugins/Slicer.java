@@ -30,6 +30,7 @@ import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import loci.common.*;
@@ -128,7 +129,6 @@ public class Slicer implements PlugInFilter {
       c = Class.forName("ij.CompositeImage");
     }
     catch (ClassNotFoundException e) { }
-    if (imp.getClass().equals(c)) return;
 
     int sizeZ = imp.getNSlices();
     int sizeC = imp.getNChannels();
@@ -157,20 +157,26 @@ public class Slicer implements PlugInFilter {
     }
 
     for (int i=0; i<newStacks.length; i++) {
-      String title = imp.getTitle();
-
       int[] zct = FormatTools.getZCTCoords(stackOrder, sliceZ ? sizeZ : 1,
         sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
 
-      if (sliceZ) title += " - Z=" + zct[0];
-      if (sliceT) {
-        if (sliceZ) title += " T=" + zct[2];
-        else title += " - T=" + zct[2];
+      if (imp.getClass().equals(c)) {
+        try {
+          ReflectedUniverse r = new ReflectedUniverse();
+          r.setVar("imp", imp);
+          r.setVar("channel", zct[1] + 1);
+          LUT lut = (LUT) r.exec("imp.getChannelLut(channel)");
+          newStacks[i].setColorModel(lut);
+        }
+        catch (ReflectException e) { }
       }
-      if (sliceC) {
-        if (sliceZ || sliceT) title += " C=" + zct[1];
-        else title += " - C=" + zct[1];
-      }
+
+      String title = imp.getTitle();
+
+      title += " -";
+      if (sliceZ) title += " Z=" + zct[0];
+      if (sliceT) title += " T=" + zct[2];
+      if (sliceC) title += " C=" + zct[1];
 
       ImagePlus p = new ImagePlus(title, newStacks[i]);
       p.setProperty("Info", imp.getProperty("Info"));

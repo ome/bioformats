@@ -851,40 +851,7 @@ public class Importer {
 
         boolean virtual = options.isViewBrowser() || options.isVirtual();
 
-        if ((splitC || splitZ || splitT) && !virtual) {
-          IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-            " slice_c=" + splitC + " slice_t=" + splitT +
-            " stack_order=" + stackOrder + " keep_original=false " +
-            "hyper_stack=" + options.isViewHyperstack() + " ");
-          if (colorize || customColorize) {
-            int[] openImages = WindowManager.getIDList();
-            for (int i=0; i<openImages.length; i++) {
-              ImagePlus p = WindowManager.getImage(openImages[i]);
-              if (p == null) continue;
-              String title = p.getTitle();
-              if (!title.startsWith(imp.getTitle())) continue;
-
-              WindowManager.setTempCurrentImage(p);
-
-              if (p.getTitle().indexOf("C=") != -1) {
-                int channel =
-                  Integer.parseInt(title.substring(title.indexOf("C=") + 2));
-                int channelIndex = customColorize ? -1 : channel % 3;
-                IJ.runPlugIn("loci.plugins.Colorizer",
-                  "stack_order=" + stackOrder + " merge=false colorize=true" +
-                  " ndx=" + channelIndex + " series=" + r.getSeries() +
-                  " hyper_stack=" + options.isViewHyperstack() + " ");
-              }
-              else {
-                IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" +
-                  stackOrder + " merge=false colorize=true ndx=" +
-                  (customColorize ? "-1" : "0") + " series=" + r.getSeries() +
-                  " hyper_stack=" + options.isViewHyperstack() + " ");
-              }
-            }
-          }
-        }
-        else if ((colorize || customColorize) && !virtual) {
+        if ((colorize || customColorize) && !virtual) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
             " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
             " series=" + r.getSeries() + " hyper_stack=" +
@@ -904,6 +871,13 @@ public class Importer {
             colorizer.setLookupTable(lut, channel);
           }
           new PlugInFilterRunner(colorizer, "", arg);
+        }
+
+        if ((splitC || splitZ || splitT) && !virtual) {
+          IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
+            " slice_c=" + splitC + " slice_t=" + splitT +
+            " stack_order=" + stackOrder + " keep_original=false " +
+            "hyper_stack=" + options.isViewHyperstack() + " ");
         }
       }
       imps.add(imp);
