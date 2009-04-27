@@ -112,9 +112,9 @@ public class ZeissZVIReader extends FormatReader {
     byte[][] lut = new byte[3][256];
     int color = channelColors[getZCTCoords(lastPlane)[1]];
 
-    float red = (color & 0xff) / 256f;
-    float green = ((color & 0xff00) >> 8) / 256f;
-    float blue = ((color & 0xff0000) >> 16) / 256f;
+    float red = (color & 0xff) / 255f;
+    float green = ((color & 0xff00) >> 8) / 255f;
+    float blue = ((color & 0xff0000) >> 16) / 255f;
 
     for (int i=0; i<lut[0].length; i++) {
       lut[0][i] = (byte) (red * i);
@@ -136,14 +136,14 @@ public class ZeissZVIReader extends FormatReader {
     short[][] lut = new short[3][65536];
     int color = channelColors[getZCTCoords(lastPlane)[1]];
 
-    float red = (color & 0xff) / 256f;
-    float green = ((color & 0xff00) >> 8) / 256f;
-    float blue = ((color & 0xff0000) >> 16) / 256f;
+    float red = (color & 0xff) / 255f;
+    float green = ((color & 0xff00) >> 8) / 255f;
+    float blue = ((color & 0xff0000) >> 16) / 255f;
 
     for (int i=0; i<lut[0].length; i++) {
-      lut[0][i] = (short) DataTools.swap((int) (red * i));
-      lut[1][i] = (short) DataTools.swap((int) (green * i));
-      lut[2][i] = (short) DataTools.swap((int) (blue * i));
+      lut[0][i] = (short) (red * i);
+      lut[1][i] = (short) (green * i);
+      lut[2][i] = (short) (blue * i);
     }
     return lut;
   }

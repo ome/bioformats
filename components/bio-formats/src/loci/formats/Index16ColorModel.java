@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.awt.image.*;
 import java.io.IOException;
+import loci.common.DataTools;
 
 /**
  * ColorModel that handles 16 bits per channel lookup tables.
@@ -41,13 +42,16 @@ public class Index16ColorModel extends ColorModel {
   private short[] redShort, greenShort, blueShort, alphaShort;
 
   private int pixelBits;
+  private boolean littleEndian;
 
   // -- Constructors --
 
-  public Index16ColorModel(int bits, int size, short[][] table)
-    throws IOException
+  public Index16ColorModel(int bits, int size, short[][] table,
+    boolean littleEndian) throws IOException
   {
     super(bits);
+
+    this.littleEndian = littleEndian;
 
     if (table == null) throw new IOException("LUT cannot be null");
     for (int i=0; i<table.length; i++) {
@@ -98,17 +102,20 @@ public class Index16ColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
   public int getBlue(int pixel) {
-    return blueShort[pixel] & 0xffff;
+    int blue = blueShort[pixel] & 0xffff;
+    return littleEndian ? DataTools.swap(blue) : blue;
   }
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
   public int getGreen(int pixel) {
-    return greenShort[pixel] & 0xffff;
+    int green = greenShort[pixel] & 0xffff;
+    return littleEndian ? DataTools.swap(green) : green;
   }
 
   /* @see java.awt.image.ColorModel#getRed(int) */
   public int getRed(int pixel) {
-    return redShort[pixel] & 0xffff;
+    int red = redShort[pixel] & 0xffff;
+    return littleEndian ? DataTools.swap(red) : red;
   }
 
 }

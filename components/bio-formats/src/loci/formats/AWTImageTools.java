@@ -804,7 +804,8 @@ public final class AWTImageTools {
       {
         short[][] table = r.get16BitLookupTable();
         if (table != null) {
-          model = new Index16ColorModel(16, table[0].length, table);
+          model = new Index16ColorModel(16, table[0].length, table,
+            r.isLittleEndian());
         }
       }
     }

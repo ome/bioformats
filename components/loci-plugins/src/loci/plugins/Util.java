@@ -160,10 +160,23 @@ public final class Util {
       type == FormatTools.INT32;
 
     IndexColorModel cm = null;
-    Index16ColorModel model = null;
     if (r.isIndexed()) {
       byte[][] byteTable = r.get8BitLookupTable();
       if (byteTable != null) {
+        cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],
+          byteTable[1], byteTable[2]);
+      }
+      short[][] shortTable = r.get16BitLookupTable();
+      if (shortTable != null) {
+        byteTable = new byte[3][256];
+
+        for (int i=0; i<byteTable[0].length; i++) {
+          int index = (int) (((float) i / byteTable[0].length) * 65535);
+          byteTable[0][i] = (byte) ((shortTable[0][index] / 65535f) * 255);
+          byteTable[1][i] = (byte) ((shortTable[1][index] / 65535f) * 255);
+          byteTable[2][i] = (byte) ((shortTable[2][index] / 65535f) * 255);
+        }
+
         cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],
           byteTable[1], byteTable[2]);
       }
@@ -196,7 +209,7 @@ public final class Util {
         }
         if (isSigned) q = DataTools.makeSigned(q);
 
-        ip[i] = new ShortProcessor(w, h, q, model);
+        ip[i] = new ShortProcessor(w, h, q, cm);
       }
       else if (pixels instanceof int[]) {
         int[] q = (int[]) pixels;
