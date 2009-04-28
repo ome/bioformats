@@ -184,16 +184,34 @@ public class FV1000Reader extends FormatReader {
         coords[1], coords[2]);
     }
 
-    String file =
-      (String) (series == 0 ? tiffs.get(planeNum) : previewNames.get(planeNum));
-    RandomAccessStream plane = getFile(file);
-    Hashtable ifd = TiffTools.getFirstIFD(plane);
+    int file = planeNum;
+    int image = 0;
+    String filename = null;
 
-    if (getSizeY() != TiffTools.getImageLength(ifd)) {
-      TiffTools.getSamples(ifd, plane, buf, x,
+    if (series == 0) {
+      file /= tiffs.size();
+      image = planeNum % (getImageCount() / tiffs.size());
+      if (file < tiffs.size()) filename = (String) tiffs.get(file);
+    }
+    else {
+      file /= previewNames.size();
+      image = planeNum % (getImageCount() / previewNames.size());
+      if (file < previewNames.size()) {
+        filename = (String) previewNames.get(file);
+      }
+    }
+
+    if (filename == null) return buf;
+
+    RandomAccessStream plane = getFile(filename);
+    Hashtable[] ifds = TiffTools.getIFDs(plane);
+    if (image >= ifds.length) return buf;
+
+    if (getSizeY() != TiffTools.getImageLength(ifds[image])) {
+      TiffTools.getSamples(ifds[image], plane, buf, x,
         getIndex(coords[0], 0, coords[2]), w, 1);
     }
-    else TiffTools.getSamples(ifd, plane, buf, x, y, w, h);
+    else TiffTools.getSamples(ifds[image], plane, buf, x, y, w, h);
 
     plane.close();
     plane = null;
@@ -680,12 +698,15 @@ public class FV1000Reader extends FormatReader {
       }
       previewNames = v;
       if (previewNames.size() > 0) {
-        String previewName = (String) previewNames.get(0);
         core = new CoreMetadata[2];
         core[0] = new CoreMetadata();
         core[1] = new CoreMetadata();
-        Hashtable[] ifds = TiffTools.getIFDs(getFile(previewName));
-        core[1].imageCount = ifds.length * previewNames.size();
+        Hashtable[] ifds = null;
+        for (int i=0; i<previewNames.size(); i++) {
+          String previewName = (String) previewNames.get(i);
+          ifds = TiffTools.getIFDs(getFile(previewName));
+          core[1].imageCount += ifds.length;
+        }
         core[1].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
         core[1].sizeY = (int) TiffTools.getImageLength(ifds[0]);
         core[1].sizeZ = 1;
@@ -793,6 +814,10 @@ public class FV1000Reader extends FormatReader {
           }
         }
       }
+    }
+
+    if (tiffs.size() != getImageCount()) {
+      core[0].imageCount = tiffs.size();
     }
 
     usedFiles = new Vector();
