@@ -220,7 +220,7 @@ public class OpenlabReader extends FormatReader {
       pict.close();
 
       if (exc != null) {
-        if (debug) LogTools.trace(exc);
+        if (debug) trace(exc);
         in.seek(planes[index].planeOffset - 298);
 
         if (in.readByte() == 1) in.skipBytes(128);
@@ -297,7 +297,7 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("OpenlabReader.initFile(" + id + ")");
+    debug("OpenlabReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 

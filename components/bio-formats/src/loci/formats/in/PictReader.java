@@ -192,7 +192,7 @@ public class PictReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("PictReader.initFile(" + id + ")");
+    debug("PictReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 
@@ -272,9 +272,7 @@ public class PictReader extends FormatReader {
   private boolean drivePictDecoder(int opcode)
     throws FormatException, IOException
   {
-    if (debug) {
-      debug("drivePictDecoder(" + opcode + ") @ " + in.getFilePointer());
-    }
+    debug("drivePictDecoder(" + opcode + ") @ " + in.getFilePointer());
 
     switch (opcode) {
       case PICT_BITSRGN:  // rowBytes must be < 8
@@ -336,7 +334,7 @@ public class PictReader extends FormatReader {
     throws FormatException, IOException
   {
     readImageHeader(opcode);
-    if (debug) debug("handlePixmap(" + opcode + ")");
+    debug("handlePixmap(" + opcode + ")");
 
     int pixelSize = in.readShort();
     int compCount = in.readShort();
@@ -389,10 +387,7 @@ public class PictReader extends FormatReader {
   private void handlePixmap(int rBytes, int pixelSize, int compCount)
     throws FormatException, IOException
   {
-    if (debug) {
-      debug("handlePixmap(" + rBytes + ", " +
-        pixelSize + ", " + compCount + ")");
-    }
+    debug("handlePixmap(" + rBytes + ", " + pixelSize + ", " + compCount + ")");
     int rawLen;
     byte[] buf;  // row raw bytes
     byte[] uBuf = null;  // row uncompressed data
@@ -427,9 +422,7 @@ public class PictReader extends FormatReader {
     }
 
     if (!compressed) {
-      if (debug) {
-        debug("Pixel data is uncompressed (pixelSize=" + pixelSize + ").");
-      }
+      debug("Pixel data is uncompressed (pixelSize=" + pixelSize + ").");
       buf = new byte[bufSize];
       for (int row=0; row<getSizeY(); row++) {
         in.read(buf, 0, rBytes);
@@ -452,10 +445,8 @@ public class PictReader extends FormatReader {
       }
     }
     else {
-      if (debug) {
-        debug("Pixel data is compressed (pixelSize=" +
-          pixelSize + "; compCount=" + compCount + ").");
-      }
+      debug("Pixel data is compressed (pixelSize=" +
+        pixelSize + "; compCount=" + compCount + ").");
       buf = new byte[bufSize + 1 + bufSize / 128];
       for (int row=0; row<getSizeY(); row++) {
         if (rBytes > 250) rawLen = in.readShort();
@@ -516,10 +507,8 @@ public class PictReader extends FormatReader {
   private void expandPixels(int bitSize, byte[] ib, byte[] ob, int outLen)
     throws FormatException
   {
-    if (debug) {
-      debug("expandPixels(" + bitSize + ", " +
-        ib.length + ", " + ob.length + ", " + outLen + ")");
-    }
+    debug("expandPixels(" + bitSize + ", " +
+      ib.length + ", " + ob.length + ", " + outLen + ")");
     if (bitSize == 1) {
       int remainder = outLen % 8;
       int max = outLen / 8;
@@ -570,7 +559,7 @@ public class PictReader extends FormatReader {
 
   /** PackBits variant that outputs an int array. */
   private void unpackBits(byte[] ib, int[] ob) {
-    if (debug) debug("unpackBits(" + ib + ", " + ob + ")");
+    debug("unpackBits(" + ib + ", " + ob + ")");
     int i = 0;
     int b;
     int rep;

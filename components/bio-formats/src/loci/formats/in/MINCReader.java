@@ -92,7 +92,7 @@ public class MINCReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("MINCReader.initFile(" + id + ")");
+    debug("MINCReader.initFile(" + id + ")");
     super.initFile(id);
 
     netcdf = new NetcdfTools(id);

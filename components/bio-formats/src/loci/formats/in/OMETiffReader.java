@@ -121,7 +121,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("OMETiffReader.initFile(" + id + ")");
+    debug("OMETiffReader.initFile(" + id + ")");
     // normalize file name
     super.initFile(normalizeFilename(null, id));
     id = currentId;
@@ -226,16 +226,12 @@ public class OMETiffReader extends FormatReader {
     Hashtable readers = new Hashtable();
     int s = 0;
     for (int i=0; i<imageCount; i++) {
-      if (debug) {
-        debug("Image[" + i + "] {");
-        debug("  id = " + meta.getImageID(i));
-      }
+      debug("Image[" + i + "] {");
+      debug("  id = " + meta.getImageID(i));
       int pixelsCount = meta.getPixelsCount(i);
       for (int p=0; p<pixelsCount; p++, s++) {
-        if (debug) {
-          debug("  Pixels[" + p + "] {");
-          debug("    id = " + meta.getPixelsID(i, p));
-        }
+        debug("  Pixels[" + p + "] {");
+        debug("    id = " + meta.getPixelsID(i, p));
         String order = meta.getPixelsDimensionOrder(i, p);
 
         Integer samplesPerPixel = meta.getLogicalChannelSamplesPerPixel(i, 0);
@@ -243,10 +239,8 @@ public class OMETiffReader extends FormatReader {
           -1 : samplesPerPixel.intValue();
         int tiffSamples = TiffTools.getSamplesPerPixel(firstIFD);
         if (samples != tiffSamples) {
-          if (debug) {
-            debug("Warning: SamplesPerPixel mismatch: " +
-              "OME=" + samples + ", TIFF=" + tiffSamples);
-          }
+          warn("SamplesPerPixel mismatch: OME=" + samples +
+            ", TIFF=" + tiffSamples);
           samples = tiffSamples;
         }
 
@@ -261,7 +255,7 @@ public class OMETiffReader extends FormatReader {
 
         int tiffDataCount = meta.getTiffDataCount(i, p);
         for (int td=0; td<tiffDataCount; td++) {
-          if (debug) debug("    TiffData[" + td + "] {");
+          debug("    TiffData[" + td + "] {");
           // extract TiffData parameters
           String filename = meta.getTiffDataFileName(i, p, td);
           String uuid = meta.getTiffDataUUID(i, p, td);
@@ -297,10 +291,8 @@ public class OMETiffReader extends FormatReader {
             planes[no].id = filename;
             planes[no].ifd = ifd + q;
             planes[no].certain = true;
-            if (debug) {
-              debug("      Plane[" + no + "]: file=" +
-                planes[no].id + ", IFD=" + planes[no].ifd);
-            }
+            debug("      Plane[" + no + "]: file=" +
+              planes[no].id + ", IFD=" + planes[no].ifd);
           }
           if (numPlanes == null) {
             // unknown number of planes; fill down
@@ -309,7 +301,7 @@ public class OMETiffReader extends FormatReader {
               planes[no].reader = r;
               planes[no].id = filename;
               planes[no].ifd = planes[no - 1].ifd + 1;
-              if (debug) debug("      Plane[" + no + "]: FILLED");
+              debug("      Plane[" + no + "]: FILLED");
             }
           }
           else {
@@ -319,25 +311,23 @@ public class OMETiffReader extends FormatReader {
               planes[no].reader = null;
               planes[no].id = null;
               planes[no].ifd = -1;
-              if (debug) debug("      Plane[" + no + "]: CLEARED");
+              debug("      Plane[" + no + "]: CLEARED");
             }
           }
-          if (debug) debug("    }");
+          debug("    }");
         }
 
         // verify that all planes are available
-        if (debug) debug("    --------------------------------");
+        debug("    --------------------------------");
         for (int no=0; no<num; no++) {
-          if (debug) {
-            debug("    Plane[" + no + "]: file=" +
-              planes[no].id + ", IFD=" + planes[no].ifd);
-          }
+          debug("    Plane[" + no + "]: file=" +
+            planes[no].id + ", IFD=" + planes[no].ifd);
           if (planes[no].reader == null) {
             throw new FormatException("Pixels ID '" +
               meta.getPixelsID(i, p) + "': missing plane #" + no);
           }
         }
-        if (debug) debug("  }");
+        debug("  }");
 
         // populate core metadata
         info[s] = planes;
@@ -345,18 +335,14 @@ public class OMETiffReader extends FormatReader {
           core[s].sizeX = meta.getPixelsSizeX(i, p).intValue();
           int tiffWidth = (int) TiffTools.getImageWidth(firstIFD);
           if (core[s].sizeX != tiffWidth) {
-            if (debug) {
-              debug("Warning: SizeX mismatch: " +
-                "OME=" + core[s].sizeX + ", TIFF=" + tiffWidth);
-            }
+            warn("SizeX mismatch: OME=" + core[s].sizeX +
+              ", TIFF=" + tiffWidth);
           }
           core[s].sizeY = meta.getPixelsSizeY(i, p).intValue();
           int tiffHeight = (int) TiffTools.getImageLength(firstIFD);
           if (core[s].sizeY != tiffHeight) {
-            if (debug) {
-              debug("Warning: SizeY mismatch: " +
-                "OME=" + core[s].sizeY + ", TIFF=" + tiffHeight);
-            }
+            warn("SizeY mismatch: OME=" + core[s].sizeY +
+              ", TIFF=" + tiffHeight);
           }
           core[s].sizeZ = meta.getPixelsSizeZ(i, p).intValue();
           core[s].sizeC = meta.getPixelsSizeC(i, p).intValue();
@@ -365,10 +351,8 @@ public class OMETiffReader extends FormatReader {
             meta.getPixelsPixelType(i, p));
           int tiffPixelType = TiffTools.getPixelType(firstIFD);
           if (core[s].pixelType != tiffPixelType) {
-            if (debug) {
-              debug("Warning: PixelType mismatch: " +
-                "OME=" + core[s].pixelType + ", TIFF=" + tiffPixelType);
-            }
+            warn("PixelType mismatch: OME=" + core[s].pixelType +
+              ", TIFF=" + tiffPixelType);
           }
           core[s].imageCount = num;
           core[s].dimensionOrder = meta.getPixelsDimensionOrder(i, p);
@@ -378,10 +362,8 @@ public class OMETiffReader extends FormatReader {
           core[s].littleEndian = !meta.getPixelsBigEndian(i, p).booleanValue();
           boolean tiffLittleEndian = TiffTools.isLittleEndian(firstIFD);
           if (core[s].littleEndian != tiffLittleEndian) {
-            if (debug) {
-              debug("Warning: BigEndian mismatch: " +
-                "OME=" + !core[s].littleEndian + ", TIFF=" + !tiffLittleEndian);
-            }
+            warn("BigEndian mismatch: OME=" + !core[s].littleEndian +
+              ", TIFF=" + !tiffLittleEndian);
           }
           core[s].interleaved = false;
           core[s].indexed = photo == TiffTools.RGB_PALETTE &&
@@ -397,7 +379,7 @@ public class OMETiffReader extends FormatReader {
           throw new FormatException("Incomplete Pixels metadata", exc);
         }
       }
-      if (debug) debug("}");
+      debug("}");
     }
   }
 

@@ -77,6 +77,11 @@ public abstract class FormatHandler implements IFormatHandler {
 
   // -- Internal FormatHandler API methods --
 
+  /** Fires a warning update event. */
+  protected void warn(String message) {
+    status(new StatusEvent("Warning: " + message, true));
+  }
+
   /** Fires a status update event. */
   protected void status(String message) {
     status(new StatusEvent(message));
@@ -93,8 +98,18 @@ public abstract class FormatHandler implements IFormatHandler {
     for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
   }
 
-  /** Issues a debugging statement. Convenience method for format handlers. */
-  protected void debug(String s) {
+  /**
+   * Issues a debugging statement if the debug flag is set.
+   * Convenience method for format handlers.
+   */
+  protected void debug(String s) { debug(s, 0); }
+
+  /**
+   * Issues a debugging statement if the debug flag is set and the
+   * debugging level is greater than or equal to the specified level.
+   */
+  protected void debug(String s, int minLevel) {
+    if (!debug || debugLevel < minLevel) return;
     String name = getClass().getName();
     String prefix = "loci.formats.";
     if (name.startsWith(prefix)) {

@@ -109,7 +109,7 @@ public class TillVisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("TillVisionReader.initFile(" + id + ")");
+    debug("TillVisionReader.initFile(" + id + ")");
     super.initFile(id);
 
     exposureTimes = new Hashtable();

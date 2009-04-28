@@ -431,7 +431,7 @@ public class NikonReader extends BaseTiffReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("NikonReader.initFile(" + id + ")");
+    debug("NikonReader.initFile(" + id + ")");
     super.initFile(id);
 
     in = new RandomAccessStream(id);

@@ -93,7 +93,7 @@ public abstract class ImageIOReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("ImageIOReader.initFile(" + id + ")");
+    debug("ImageIOReader.initFile(" + id + ")");
     super.initFile(id);
 
     status("Populating metadata");

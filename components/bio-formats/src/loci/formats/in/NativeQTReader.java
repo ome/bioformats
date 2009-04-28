@@ -126,7 +126,7 @@ public class NativeQTReader extends FormatReader {
         return isThisType;
       }
       catch (IOException e) {
-        if (debug) LogTools.trace(e);
+        if (debug) trace(e);
         return false;
       }
     }
@@ -272,7 +272,7 @@ public class NativeQTReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("QTReader.initFile(" + id + ")");
+    debug("QTReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 
@@ -316,9 +316,9 @@ public class NativeQTReader extends FormatReader {
       else base = id;
 
       Location f = new Location(base + ".qtr");
-      if (debug) debug("Searching for research fork:");
+      debug("Searching for research fork:");
       if (f.exists()) {
-        if (debug) debug("\t Found: " + f);
+        debug("\t Found: " + f);
         if (in != null) in.close();
         in = new RandomAccessStream(f.getAbsolutePath());
 
@@ -327,12 +327,12 @@ public class NativeQTReader extends FormatReader {
         core[0].imageCount = offsets.size();
       }
       else {
-        if (debug) debug("\tAbsent: " + f);
+        debug("\tAbsent: " + f);
         f = new Location(id.substring(0,
           id.lastIndexOf(File.separator) + 1) + "._" +
           id.substring(base.lastIndexOf(File.separator) + 1));
         if (f.exists()) {
-          if (debug) debug("\t Found: " + f);
+          debug("\t Found: " + f);
           if (in != null) in.close();
           in = new RandomAccessStream(f.getAbsolutePath());
           stripHeader();
@@ -340,10 +340,10 @@ public class NativeQTReader extends FormatReader {
           core[0].imageCount = offsets.size();
         }
         else {
-          if (debug) debug("\tAbsent: " + f);
+          debug("\tAbsent: " + f);
           f = new Location(id + "/..namedfork/rsrc");
           if (f.exists()) {
-            if (debug) debug("\t Found: " + f);
+            debug("\t Found: " + f);
             if (in != null) in.close();
             in = new RandomAccessStream(f.getAbsolutePath());
             stripHeader();
@@ -351,7 +351,7 @@ public class NativeQTReader extends FormatReader {
             core[0].imageCount = offsets.size();
           }
           else {
-            if (debug) debug("\tAbsent: " + f);
+            debug("\tAbsent: " + f);
             throw new FormatException("QuickTime resource fork not found. " +
               " To avoid this issue, please flatten your QuickTime movies " +
               "before importing with Bio-Formats.");
@@ -397,10 +397,8 @@ public class NativeQTReader extends FormatReader {
         LogTools.println("QTReader: invalid atom size: " + atomSize);
       }
 
-      if (debug) {
-        debug("Seeking to " + offset +
-          "; atomType=" + atomType + "; atomSize=" + atomSize);
-      }
+      debug("Seeking to " + offset +
+        "; atomType=" + atomType + "; atomSize=" + atomSize);
 
       // if this is a container atom, parse the children
       if (isContainer(atomType)) {
@@ -572,7 +570,7 @@ public class NativeQTReader extends FormatReader {
 
       // if a 'udta' atom, skip ahead 4 bytes
       if (atomType.equals("udta")) offset += 4;
-      if (debug) print(depth, atomSize, atomType);
+      print(depth, atomSize, atomType);
     }
   }
 

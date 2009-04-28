@@ -218,7 +218,7 @@ public class LIFReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("LIFReader.initFile(" + id + ")");
+    debug("LIFReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
     offsets = new Vector();

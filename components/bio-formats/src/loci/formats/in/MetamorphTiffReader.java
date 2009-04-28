@@ -83,7 +83,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("MetamorphTiffReader.initFile(" + id + ")");
+    debug("MetamorphTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
     String[] comments = new String[ifds.length];

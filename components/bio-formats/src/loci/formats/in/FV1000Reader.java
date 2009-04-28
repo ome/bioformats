@@ -239,7 +239,7 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("FV1000Reader.initFile(" + id + ")");
+    debug("FV1000Reader.initFile(" + id + ")");
 
     super.initFile(id);
 
@@ -906,7 +906,7 @@ public class FV1000Reader extends FormatReader {
       }
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
     }
 
     // initialize lookup table
@@ -926,7 +926,7 @@ public class FV1000Reader extends FormatReader {
         }
       }
       catch (IOException e) {
-        if (debug) LogTools.trace(e);
+        if (debug) trace(e);
         lut = null;
         break;
       }

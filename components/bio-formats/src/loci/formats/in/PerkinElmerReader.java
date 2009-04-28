@@ -190,7 +190,7 @@ public class PerkinElmerReader extends FormatReader {
 
     status("Finding HTML companion file");
 
-    if (debug) debug("PerkinElmerReader.initFile(" + id + ")");
+    debug("PerkinElmerReader.initFile(" + id + ")");
     // always init on the HTML file - this prevents complications with
     // initializing the image files
 
@@ -818,7 +818,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
     catch (NumberFormatException exc) {
-      if (debug) LogTools.trace(exc);
+      if (debug) trace(exc);
     }
   }
 

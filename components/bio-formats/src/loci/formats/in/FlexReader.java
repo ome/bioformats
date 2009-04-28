@@ -209,8 +209,8 @@ public class FlexReader extends BaseTiffReader {
     // verify factor count
     int nsize = n.size();
     int fsize = f.size();
-    if (debug && (nsize != fsize || nsize != totalPlanes)) {
-      LogTools.println("Warning: mismatch between image count, " +
+    if (nsize != fsize || nsize != totalPlanes) {
+      warn("Mismatch between image count, " +
         "names and factors (count=" + totalPlanes +
         ", names=" + nsize + ", factors=" + fsize + ")");
     }
@@ -227,9 +227,7 @@ public class FlexReader extends BaseTiffReader {
         q = Double.parseDouble(factor);
       }
       catch (NumberFormatException exc) {
-        if (debug) {
-          LogTools.println("Warning: invalid factor #" + i + ": " + factor);
-        }
+        warn("Invalid factor #" + i + ": " + factor);
       }
       factors[i] = q;
       if (q > factors[max]) max = i;

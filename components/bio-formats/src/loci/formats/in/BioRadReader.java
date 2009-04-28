@@ -184,7 +184,7 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("BioRadReader.initFile(" + id + ")");
+    debug("BioRadReader.initFile(" + id + ")");
 
     // always initialize a PIC file, even if we were given something else
     if (!checkSuffix(id, PIC_SUFFIX)) {
@@ -369,9 +369,10 @@ public class BioRadReader extends FormatReader {
     }
     if (brokenNotes) lut = null;
 
-    if (debug && debugLevel >= 2) {
-      debug(numLuts + " color table" + (numLuts == 1 ? "" : "s") + " present.");
-    }
+
+    String message = numLuts + " color table" + (numLuts == 1 ? "" : "s") +
+      " present.";
+    debug(message, 2);
 
     status("Populating metadata");
 

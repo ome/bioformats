@@ -133,7 +133,7 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("DeltavisionReader.initFile(" + id + ")");
+    debug("DeltavisionReader.initFile(" + id + ")");
     super.initFile(id);
 
     MetadataStore store =
@@ -554,6 +554,8 @@ public class DeltavisionReader extends FormatReader {
     String logFile = getCurrentFile() + ".log";
     if (!new Location(logFile).exists()) return false;
 
+    status("Parsing log file");
+
     RandomAccessStream s = new RandomAccessStream(logFile);
 
     String line, key, value = "", prefix = "";
@@ -587,14 +589,31 @@ public class DeltavisionReader extends FormatReader {
 
             store.setObjectiveManufacturer(manufacturer, 0, 0);
 
-            String magnification =
-              tokens[0].substring(0, tokens[0].indexOf("X"));
-            String na = tokens[0].substring(tokens[0].indexOf("/") + 1);
+            String magnification = "", na = "";
 
-            store.setObjectiveNominalMagnification(new Integer(magnification),
-              0, 0);
-            store.setObjectiveLensNA(new Float(na), 0, 0);
-            store.setObjectiveCorrection(tokens[1], 0, 0);
+            if (tokens.length >= 1) {
+              int end = tokens[0].indexOf("X");
+              if (end > 0) magnification = tokens[0].substring(0, end);
+              int start = tokens[0].indexOf("/");
+              if (start >= 0) na = tokens[0].substring(start + 1);
+            }
+
+            try {
+              store.setObjectiveNominalMagnification(
+                new Integer(magnification), 0, 0);
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse magnification '" + magnification + "'");
+            }
+            try {
+              store.setObjectiveLensNA(new Float(na), 0, 0);
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse N.A. '" + na + "'");
+            }
+            if (tokens.length >= 2) {
+              store.setObjectiveCorrection(tokens[1], 0, 0);
+            }
             // TODO:  Token #2 is the microscope model name.
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
           }
@@ -607,9 +626,32 @@ public class DeltavisionReader extends FormatReader {
         // Image properties
         else if (key.equals("Pixel Size")) {
           String[] pixelSizes = value.split(" ");
-          Float x = new Float(pixelSizes[0].trim());
-          Float y = new Float(pixelSizes[1].trim());
-          Float z = new Float(pixelSizes[2].trim());
+          Float x = null, y = null, z = null;
+
+          if (pixelSizes.length >= 1) {
+            try {
+              x = new Float(pixelSizes[0].trim());
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse pixel size '" + pixelSizes[0].trim() + "'");
+            }
+          }
+          if (pixelSizes.length >= 2) {
+            try {
+              y = new Float(pixelSizes[1].trim());
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse pixel size '" + pixelSizes[1].trim() + "'");
+            }
+          }
+          if (pixelSizes.length >= 3) {
+            try {
+              z = new Float(pixelSizes[2].trim());
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse pixel size '" + pixelSizes[2].trim() + "'");
+            }
+          }
 
           store.setDimensionsPhysicalSizeX(x, 0, 0);
           store.setDimensionsPhysicalSizeY(y, 0, 0);
@@ -632,44 +674,105 @@ public class DeltavisionReader extends FormatReader {
         }
         else if (key.equals("Gain")) {
           value = value.replaceAll("X", "");
-          store.setDetectorSettingsGain(new Float(value), 0, 0);
+          try {
+            store.setDetectorSettingsGain(new Float(value), 0, 0);
+          }
+          catch (NumberFormatException e) {
+            warn("Could not parse gain '" + value + "'");
+          }
         }
         else if (key.equals("Speed")) {
           value = value.replaceAll("KHz", "");
-          float mhz = Float.parseFloat(value) / 1000;
-          store.setDetectorSettingsReadOutRate(new Float(mhz), 0, 0);
+          try {
+            float mhz = Float.parseFloat(value) / 1000;
+            store.setDetectorSettingsReadOutRate(new Float(mhz), 0, 0);
+          }
+          catch (NumberFormatException e) {
+            warn("Could not parse read-out rate '" + value + "'");
+          }
         }
         else if (key.equals("Temp Setting")) {
           value = value.replaceAll("C", "").trim();
-          store.setImagingEnvironmentTemperature(new Float(value), 0);
+          try {
+            store.setImagingEnvironmentTemperature(new Float(value), 0);
+          }
+          catch (NumberFormatException e) {
+            warn("Could not parse temperature '" + value + "'");
+          }
         }
         // Plane properties
         //else if (key.equals("Time")) { }
         else if (key.equals("Time Point")) {
-          Float time = new Float(value.substring(0, value.indexOf(" ")));
-          store.setPlaneTimingDeltaT(time, 0, 0, currentImage);
+          int space = value.indexOf(" ");
+          if (space >= 0) value = value.substring(0, space);
+          try {
+            store.setPlaneTimingDeltaT(new Float(value), 0, 0, currentImage);
+          }
+          catch (NumberFormatException e) {
+            warn("Could not parse timestamp '" + value + "'");
+          }
         }
         //else if (key.equals("Intensity")) { }
         //else if (key.equals("EX filter")) { }
         else if (key.equals("EM filter")) {
-          int cIndex = getZCTCoords(currentImage)[1];
+          int cIndex = 0;
+          try {
+            cIndex = getZCTCoords(currentImage)[1];
+          }
+          catch (IllegalArgumentException e) {
+            if (debug) trace(e);
+          }
           store.setLogicalChannelName(value, 0, cIndex);
         }
         else if (key.equals("ND filter")) {
+          value = value.replaceAll("%", "");
           try {
-            float nd = Float.parseFloat(value.replaceAll("%", ""));
-            nd = (float) Math.pow(10, -1 * nd);
             int cIndex = getZCTCoords(currentImage)[1];
-            ndFilters[cIndex] = new Float(nd);
+            float nd = Float.parseFloat(value);
+            ndFilters[cIndex] = new Float(Math.pow(10, -1 * nd));
           }
-          catch (NumberFormatException exc) { }
+          catch (NumberFormatException exc) {
+            warn("Could not parse ND filter '" + value + "'");
+          }
+          catch (IllegalArgumentException e) {
+            if (debug) trace(e);
+          }
         }
         else if (key.equals("Stage coordinates")) {
-          value = value.substring(1, value.length() - 1);
+          if (value.length() > 1) {
+            value = value.substring(1, value.length() - 1);
+          }
           String[] coords = value.split(",");
-          Float x = new Float(coords[0].trim());
-          Float y = new Float(coords[1].trim());
-          Float z = new Float(coords[2].trim());
+          for (int i=0; i<coords.length; i++) {
+            coords[i] = coords[i].trim();
+          }
+
+          Float x = null, y = null, z = null;
+
+          if (coords.length >= 1) {
+            try {
+              x = new Float(coords[0]);
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse stage coordinate '" + coords[0] + "'");
+            }
+          }
+          if (coords.length >= 2) {
+            try {
+              y = new Float(coords[1]);
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse stage coordinate '" + coords[0] + "'");
+            }
+          }
+          if (coords.length >= 3) {
+            try {
+              z = new Float(coords[2]);
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse stage coordinate '" + coords[0] + "'");
+            }
+          }
 
           store.setStagePositionPositionX(x, 0, 0, currentImage);
           store.setStagePositionPositionY(y, 0, 0, currentImage);
@@ -680,11 +783,17 @@ public class DeltavisionReader extends FormatReader {
       }
       else if (line.startsWith("Image")) prefix = line;
       else if (line.startsWith("Created")) {
+        if (line.length() > 8) line = line.substring(8).trim();
         SimpleDateFormat parse =
           new SimpleDateFormat("EEE MMM  d HH:mm:ss yyyy");
-        Date date = parse.parse(line.substring(8).trim(), new ParsePosition(0));
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        store.setImageCreationDate(fmt.format(date), 0);
+        Date date = parse.parse(line, new ParsePosition(0));
+        if (date != null) {
+          SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+          store.setImageCreationDate(fmt.format(date), 0);
+        }
+        else {
+          warn("Could not parse date '" + line + "'");
+        }
       }
     }
 
@@ -696,7 +805,9 @@ public class DeltavisionReader extends FormatReader {
   private void parseDeconvolutionLog(MetadataStore store) throws IOException {
     int dot = getCurrentFile().lastIndexOf(".");
     String base = getCurrentFile().substring(0, dot);
-    if (! new Location(base + "_log.txt").exists()) return;
+    if (!new Location(base + "_log.txt").exists()) return;
+
+    status("Parsing deconvolution log file");
 
     RandomAccessStream s = new RandomAccessStream(base + "_log.txt");
 
@@ -712,31 +823,38 @@ public class DeltavisionReader extends FormatReader {
         String[] keys = line.split("  ");
         Vector realKeys = new Vector();
         for (int i=0; i<keys.length; i++) {
-          if (keys[i].trim().length() > 0) realKeys.add(keys[i].trim());
+          keys[i] = keys[i].trim();
+          if (keys[i].length() > 0) realKeys.add(keys[i]);
         }
         keys = (String[]) realKeys.toArray(new String[0]);
 
         s.readLine();
 
         line = s.readLine().trim();
-        while (line.length() != 0) {
+        while (line != null && line.length() != 0) {
           String[] values = line.split(" ");
           Vector realValues = new Vector();
           for (int i=0; i<values.length; i++) {
-            if (values[i].trim().length() > 0) {
-              realValues.add(values[i].trim());
-            }
+            values[i] = values[i].trim();
+            if (values[i].length() > 0) { realValues.add(values[i]); }
           }
           values = (String[]) realValues.toArray(new String[0]);
 
           try {
-            int zz = Integer.parseInt(values[0].trim()) - 1;
-            int index = getIndex(zz, cc, tt);
-            for (int i=1; i<keys.length; i++) {
-              addMeta("Plane " + index + " " + keys[i], values[i]);
+            if (values.length > 0) {
+              int zz = Integer.parseInt(values[0]) - 1;
+              int index = getIndex(zz, cc, tt);
+              for (int i=1; i<keys.length; i++) {
+                addMeta("Plane " + index + " " + keys[i], values[i]);
+              }
             }
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) {
+            warn("Could not parse Z position '" + values[0] + "'");
+          }
+          catch (IllegalArgumentException iae) {
+            if (debug) trace(iae);
+          }
           line = s.readLine().trim();
         }
       }
@@ -761,15 +879,25 @@ public class DeltavisionReader extends FormatReader {
         }
       }
 
-      if (line.indexOf("correcting time point") != -1) {
+      if (line.indexOf("correcting time point\t") != -1) {
         int index = line.indexOf("time point\t") + 11;
         if (index > 10) {
           String t = line.substring(index, line.indexOf(",", index));
-          tt = Integer.parseInt(t) - 1;
+          try {
+            tt = Integer.parseInt(t) - 1;
+          }
+          catch (NumberFormatException e) {
+            warn("Could not parse timepoint '" + t + "'");
+          }
           index = line.indexOf("wavelength\t") + 11;
           if (index > 10) {
             String c = line.substring(index, line.indexOf(".", index));
-            cc = Integer.parseInt(c) - 1;
+            try {
+              cc = Integer.parseInt(c) - 1;
+            }
+            catch (NumberFormatException e) {
+              warn("Could not parse channel position '" + c + "'");
+            }
           }
         }
       }
@@ -916,7 +1044,7 @@ public class DeltavisionReader extends FormatReader {
         energyConvFactor = in.readFloat();
       }
       catch (IOException e) {
-        if (debug) LogTools.trace(e);
+        if (debug) trace(e);
       }
     }
 

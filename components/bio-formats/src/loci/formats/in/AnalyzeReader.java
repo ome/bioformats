@@ -111,7 +111,7 @@ public class AnalyzeReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("AnalyzeReader.initFile(" + id + ")");
+    debug("AnalyzeReader.initFile(" + id + ")");
 
     // the dataset has two files - we want the one ending in '.hdr'
     if (id.endsWith(".img")) {

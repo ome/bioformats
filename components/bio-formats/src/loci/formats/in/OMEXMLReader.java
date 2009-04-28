@@ -200,7 +200,7 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("OMEXMLReader.initFile(" + id + ")");
+    debug("OMEXMLReader.initFile(" + id + ")");
     if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     super.initFile(id);
 

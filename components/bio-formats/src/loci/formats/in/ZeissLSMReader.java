@@ -232,7 +232,7 @@ public class ZeissLSMReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("ZeissLSMReader.initFile(" + id + ")");
+    debug("ZeissLSMReader.initFile(" + id + ")");
     super.initFile(id);
 
     if (!checkSuffix(id, MDB_SUFFIX)) {

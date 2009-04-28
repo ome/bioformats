@@ -157,7 +157,7 @@ public class LeicaReader extends FormatReader {
       return tiff.get8BitLookupTable();
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
     }
     return null;
   }
@@ -170,7 +170,7 @@ public class LeicaReader extends FormatReader {
       return tiff.get16BitLookupTable();
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
     }
     return null;
   }
@@ -240,7 +240,7 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("LeicaReader.initFile(" + id + ")");
+    debug("LeicaReader.initFile(" + id + ")");
     close();
 
     if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
@@ -997,7 +997,7 @@ public class LeicaReader extends FormatReader {
             }
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
       }

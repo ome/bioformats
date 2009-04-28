@@ -185,7 +185,7 @@ public class NativeND2Reader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("ND2Reader.initFile(" + id + ")");
+    debug("ND2Reader.initFile(" + id + ")");
     super.initFile(id);
 
     channelNames = new Vector();

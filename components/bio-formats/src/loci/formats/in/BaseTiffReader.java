@@ -539,7 +539,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (date == null) {
       date = parseDate(creationDate, "MM/dd/yyyy hh:mm:ss.SSS aa");
     }
-    if (creationDate != null && date == null && debug) {
+    if (creationDate != null && date == null) {
       debug("Warning: unknown creation date format: " + creationDate);
     }
     creationDate = date;
@@ -649,7 +649,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("BaseTiffReader.initFile(" + id + ")");
+    debug("BaseTiffReader.initFile(" + id + ")");
     super.initFile(id);
     initMetadata();
   }

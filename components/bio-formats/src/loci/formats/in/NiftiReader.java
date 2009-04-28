@@ -89,7 +89,7 @@ public class NiftiReader extends FormatReader {
       return isValid;
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
     }
     return false;
   }
@@ -146,7 +146,7 @@ public class NiftiReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("NiftiReader.initFile(" + id + ")");
+    debug("NiftiReader.initFile(" + id + ")");
 
     // the dataset has two files - we want the one ending in '.hdr'
     if (id.endsWith(".img")) {

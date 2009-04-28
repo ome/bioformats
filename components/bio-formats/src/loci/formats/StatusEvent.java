@@ -43,6 +43,9 @@ public class StatusEvent {
   /** Current status message. */
   protected String status;
 
+  /** Whether or not this is a warning event. */
+  protected boolean warning;
+
   // -- Constructor --
 
   /** Constructs a status event. */
@@ -51,10 +54,21 @@ public class StatusEvent {
   }
 
   /** Constructs a status event. */
+  public StatusEvent(String message, boolean warn) {
+    this(-1, -1, message, warn);
+  }
+
+  /** Constructs a status event. */
   public StatusEvent(int progress, int maximum, String message) {
+    this(progress, maximum, message, false);
+  }
+
+  /** Constructs a status event. */
+  public StatusEvent(int progress, int maximum, String message, boolean warn) {
     this.progress = progress;
     this.maximum = maximum;
     status = message;
+    warning = warn;
   }
 
   // -- StatusEvent API methods --
@@ -67,5 +81,8 @@ public class StatusEvent {
 
   /** Gets status message. */
   public String getStatusMessage() { return status; }
+
+  /** Returns whether or not this is a warning event. */
+  public boolean isWarning() { return warning; }
 
 }

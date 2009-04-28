@@ -366,7 +366,7 @@ public abstract class FormatReader extends FormatHandler
       return isThisType;
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
     }
     return false;
   }

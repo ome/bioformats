@@ -316,7 +316,7 @@ public class ImarisHDFReader extends FormatReader {
             gainValue = new Float((String) gain.get(cIndex));
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
         if (cIndex < pinhole.size()) {
@@ -324,7 +324,7 @@ public class ImarisHDFReader extends FormatReader {
             pinholeValue = new Integer((String) pinhole.get(cIndex));
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
         if (cIndex < emWave.size()) {
@@ -332,7 +332,7 @@ public class ImarisHDFReader extends FormatReader {
             emWaveValue = new Integer((String) emWave.get(cIndex));
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
         if (cIndex < exWave.size()) {
@@ -340,7 +340,7 @@ public class ImarisHDFReader extends FormatReader {
             exWaveValue = new Integer((String) exWave.get(cIndex));
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
 
@@ -361,7 +361,7 @@ public class ImarisHDFReader extends FormatReader {
             minValue = new Double((String) channelMin.get(cIndex));
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
         if (cIndex < channelMax.size()) {
@@ -369,7 +369,7 @@ public class ImarisHDFReader extends FormatReader {
             maxValue = new Double((String) channelMax.get(cIndex));
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
 

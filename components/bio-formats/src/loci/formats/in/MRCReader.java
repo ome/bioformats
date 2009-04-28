@@ -94,7 +94,7 @@ public class MRCReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   public void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("MRCReader.initFile(" + id + ")");
+    debug("MRCReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 

@@ -315,7 +315,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
+    debug("ZeissZVIReader.initFile(" + id + ")");
     super.initFile(id);
 
     timestamps = new Hashtable();

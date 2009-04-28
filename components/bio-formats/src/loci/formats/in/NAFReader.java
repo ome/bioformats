@@ -87,7 +87,7 @@ public class NAFReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("NAFReader.initFile(" + id + ")");
+    debug("NAFReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 

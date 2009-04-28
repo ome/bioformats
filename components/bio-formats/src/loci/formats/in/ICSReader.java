@@ -237,7 +237,7 @@ public class ICSReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("ICSReader.initFile(" + id + ")");
+    debug("ICSReader.initFile(" + id + ")");
     super.initFile(id);
 
     status("Finding companion file");

@@ -142,7 +142,7 @@ public class LegacyQTReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("LegacyQTReader.initFile(" + id + ")");
+    debug("LegacyQTReader.initFile(" + id + ")");
 
     status("Checking for QuickTime Java");
 

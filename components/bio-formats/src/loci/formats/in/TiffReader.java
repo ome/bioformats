@@ -85,7 +85,7 @@ public class TiffReader extends BaseTiffReader {
             value = Integer.parseInt(token.substring(eq + 1));
           }
           catch (NumberFormatException e) {
-            if (debug) LogTools.trace(e);
+            if (debug) trace(e);
           }
         }
 

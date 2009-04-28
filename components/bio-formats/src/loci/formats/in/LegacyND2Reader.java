@@ -129,7 +129,7 @@ public class LegacyND2Reader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("LegacyND2Reader.initFile(" + id + ")");
+    debug("LegacyND2Reader.initFile(" + id + ")");
     super.initFile(id);
 
     try {

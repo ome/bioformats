@@ -94,7 +94,7 @@ public class TCSReader extends FormatReader {
       return isThisType;
     }
     catch (IOException e) {
-      if (debug) LogTools.trace(e);
+      if (debug) trace(e);
       return false;
     }
   }
@@ -180,7 +180,7 @@ public class TCSReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("TCSReader.initFile(" + id + ")");
+    debug("TCSReader.initFile(" + id + ")");
 
     if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
       // find the associated XML file, if it exists

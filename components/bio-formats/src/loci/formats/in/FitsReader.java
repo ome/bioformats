@@ -85,6 +85,7 @@ public class FitsReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    debug("FitsReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
     count = 1;

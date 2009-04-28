@@ -103,7 +103,7 @@ public class L2DReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("L2DReader.initFile(" + id + ")");
+    debug("L2DReader.initFile(" + id + ")");
 
     // NB: This format cannot be imported using omebf.
     // See Trac ticket #266 for details.

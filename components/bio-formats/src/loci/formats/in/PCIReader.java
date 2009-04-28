@@ -108,7 +108,7 @@ public class PCIReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("PCIReader.initFile(" + id + ")");
+    debug("PCIReader.initFile(" + id + ")");
 
     super.initFile(id);
 

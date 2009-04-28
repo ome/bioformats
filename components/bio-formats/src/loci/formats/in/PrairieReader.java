@@ -178,7 +178,7 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("PrairieReader.initFile(" + id + ")");
+    debug("PrairieReader.initFile(" + id + ")");
 
     if (metadata == null) metadata = new Hashtable();
     if (core == null) core = new CoreMetadata[] {new CoreMetadata()};

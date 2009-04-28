@@ -144,7 +144,7 @@ public class MinimalTiffReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("MinimalTiffReader.initFile(" + id + ")");
+    debug("MinimalTiffReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
     boolean little = in.readShort() == 0x4949;

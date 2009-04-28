@@ -177,7 +177,7 @@ public class GIFReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("GIFReader.initFile(" + id + ")");
+    debug("GIFReader.initFile(" + id + ")");
     super.initFile(id);
 
     status("Verifying GIF format");
