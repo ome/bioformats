@@ -45,6 +45,8 @@ public class MinimalTiffReader extends FormatReader {
   /** List of IFDs for the current TIFF. */
   protected Hashtable[] ifds;
 
+  private int lastPlane;
+
   // -- Constructors --
 
   /** Constructs a new MinimalTiffReader. */
@@ -71,10 +73,10 @@ public class MinimalTiffReader extends FormatReader {
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (ifds == null) return null;
-    int[] bits = TiffTools.getBitsPerSample(ifds[0]);
+    int[] bits = TiffTools.getBitsPerSample(ifds[lastPlane]);
     if (bits[0] <= 8) {
       int[] colorMap =
-        TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
+        TiffTools.getIFDIntArray(ifds[lastPlane], TiffTools.COLOR_MAP, false);
       if (colorMap == null) return null;
 
       byte[][] table = new byte[3][colorMap.length / 3];
@@ -94,10 +96,10 @@ public class MinimalTiffReader extends FormatReader {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (ifds == null) return null;
-    int[] bits = TiffTools.getBitsPerSample(ifds[0]);
+    int[] bits = TiffTools.getBitsPerSample(ifds[lastPlane]);
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap =
-        TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
+        TiffTools.getIFDIntArray(ifds[lastPlane], TiffTools.COLOR_MAP, false);
       if (colorMap == null || colorMap.length < 65536 * 3) return null;
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;
@@ -128,6 +130,7 @@ public class MinimalTiffReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, width, height);
 
+    lastPlane = no;
     TiffTools.getSamples(ifds[no], in, buf, x, y, width, height);
     return buf;
   }

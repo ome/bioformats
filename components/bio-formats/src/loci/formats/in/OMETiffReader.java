@@ -49,6 +49,8 @@ public class OMETiffReader extends FormatReader {
   /** List of used files. */
   protected String[] used;
 
+  private int lastPlane;
+
   // -- Constructor --
 
   /** Constructs a new OME-TIFF reader. */
@@ -73,24 +75,26 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    if (info[series][0] == null || info[series][0].reader == null ||
-      info[series][0].id == null)
+    if (info[series][lastPlane] == null ||
+      info[series][lastPlane].reader == null ||
+      info[series][lastPlane].id == null)
     {
       return null;
     }
-    info[series][0].reader.setId(info[series][0].id);
-    return info[series][0].reader.get8BitLookupTable();
+    info[series][lastPlane].reader.setId(info[series][lastPlane].id);
+    return info[series][lastPlane].reader.get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
-    if (info[series][0] == null || info[series][0].reader == null ||
-      info[series][0].id == null)
+    if (info[series][lastPlane] == null ||
+      info[series][lastPlane].reader == null ||
+      info[series][lastPlane].id == null)
     {
       return null;
     }
-    info[series][0].reader.setId(info[series][0].id);
-    return info[series][0].reader.get16BitLookupTable();
+    info[series][lastPlane].reader.setId(info[series][lastPlane].id);
+    return info[series][lastPlane].reader.get16BitLookupTable();
   }
 
   /*
@@ -101,6 +105,7 @@ public class OMETiffReader extends FormatReader {
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
+    lastPlane = no;
     IFormatReader r = info[series][no].reader;
     r.setId(info[series][no].id);
     return r.openBytes(info[series][no].ifd, buf, x, y, width, height);
@@ -271,6 +276,10 @@ public class OMETiffReader extends FormatReader {
           int index = FormatTools.getIndex(order,
             sizeZ, effSizeC, sizeT, num, z, c, t);
           int count = numPlanes == null ? 1 : numPlanes.intValue();
+          if (count == 0) {
+            core[s] = null;
+            break;
+          }
 
           // get reader object for this filename
           if (filename == null) {
@@ -316,6 +325,8 @@ public class OMETiffReader extends FormatReader {
           }
           debug("    }");
         }
+
+        if (core[s] == null) continue;
 
         // verify that all planes are available
         debug("    --------------------------------");
@@ -369,8 +380,7 @@ public class OMETiffReader extends FormatReader {
           core[s].indexed = photo == TiffTools.RGB_PALETTE &&
             TiffTools.getIFDValue(firstIFD, TiffTools.COLOR_MAP) != null;
           if (core[s].indexed) {
-            core[0].sizeC = 1;
-            core[0].rgb = false;
+            core[s].rgb = false;
           }
           core[s].falseColor = false;
           core[s].metadataComplete = true;
@@ -381,6 +391,19 @@ public class OMETiffReader extends FormatReader {
       }
       debug("}");
     }
+
+    // remove null CoreMetadata entries
+
+    Vector series = new Vector();
+    Vector planeInfo = new Vector();
+    for (int i=0; i<core.length; i++) {
+      if (core[i] != null) {
+        series.add(core[i]);
+        planeInfo.add(info[i]);
+      }
+    }
+    core = (CoreMetadata[]) series.toArray(new CoreMetadata[0]);
+    info = (OMETiffPlane[][]) planeInfo.toArray(new OMETiffPlane[0][0]);
   }
 
   // -- Helper methods --

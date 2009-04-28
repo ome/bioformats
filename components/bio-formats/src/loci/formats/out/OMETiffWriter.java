@@ -97,6 +97,11 @@ public class OMETiffWriter extends TiffWriter {
           if ((((Integer) seriesMap.get(q))).intValue() == series) imageCount++;
         }
 
+        if (imageCount == 0) {
+          omeMeta.setTiffDataNumPlanes(new Integer(0), series, 0, 0);
+          continue;
+        }
+
         // if RGB planes were written, adjust sizeC
         if (imageCount < sizeZ * sizeC * sizeT) {
           sizeC = imageCount / (sizeZ * sizeT);
