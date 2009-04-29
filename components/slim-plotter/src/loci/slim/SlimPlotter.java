@@ -1027,13 +1027,16 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       for (int c=0, cc=0; c<data.channels; c++) {
         if (!data.cVisible[c]) continue;
         int[] cfData = null;
-        if (doProbe) cfData = curveFitters[c].getData();
+        if (doProbe) {
+          cfData = curveFitters == null ?
+            null : curveFitters[c].getData();
+        }
         for (int t=0; t<data.timeBins; t++) {
           int ndx = data.timeBins * cc + t;
           int sum = 0;
           if (doProbe) {
             // use per-pixel lifetime probe rather than binned region
-            sum = cfData[t];
+            sum = cfData == null ? 0 : cfData[t];
           }
           else if (twoDPane.getROICount() == 1) {
             // single pixel "region"
@@ -1308,33 +1311,35 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // update Numbers fields
       // CTR TEMP - this is crap; refactor to MVC
-      int activeC = twoDPane.getActiveC();
-      double aTotal = fitA1[activeC] + fitA2[activeC];
-      double a1 = 100 * fitA1[activeC] / aTotal;
-      double a2 = 100 * fitA2[activeC] / aTotal;
-      a1Param.setText(a1 + "%");
-      a2Param.setText(a2 + "%");
-      double b1 = fitB1[activeC];
-      double b2 = fitB2[activeC];
-      float t1 = b1 > 0 ? data.binsToPico((float) (1 / b1)) : Float.NaN;
-      float t2 = b2 > 0 ? data.binsToPico((float) (1 / b2)) : Float.NaN;
-      t1Param.setText("" + t1);
-      t2Param.setText("" + t2);
-      cParam.setText("" + fitC[activeC]);
-      chi2.setText("" + fitChi2[activeC]);
+      if (data.allowCurveFit) {
+        int activeC = twoDPane.getActiveC();
+        double aTotal = fitA1[activeC] + fitA2[activeC];
+        double a1 = 100 * fitA1[activeC] / aTotal;
+        double a2 = 100 * fitA2[activeC] / aTotal;
+        a1Param.setText(a1 + "%");
+        a2Param.setText(a2 + "%");
+        double b1 = fitB1[activeC];
+        double b2 = fitB2[activeC];
+        float t1 = b1 > 0 ? data.binsToPico((float) (1 / b1)) : Float.NaN;
+        float t2 = b2 > 0 ? data.binsToPico((float) (1 / b2)) : Float.NaN;
+        t1Param.setText("" + t1);
+        t2Param.setText("" + t2);
+        cParam.setText("" + fitC[activeC]);
+        chi2.setText("" + fitChi2[activeC]);
 
-      // when doing an "expensive" plot, output probe values to log
-      if (doProbe && doRescale) {
-        log(decayText);
-        log("\tchannel = " + activeC);
-        log("\tx = " + twoDPane.getROIX());
-        log("\ty = " + twoDPane.getROIY());
-        log("\ta1 = " + a1 + "%");
-        log("\tt1 = " + t1);
-        log("\ta2 = " + a2 + "%");
-        log("\tt2 = " + t2);
-        log("\tc = " + fitC[activeC]);
-        log("\tchi^2 = " + fitChi2[activeC]);
+        // when doing an "expensive" plot, output probe values to log
+        if (doProbe && doRescale) {
+          log(decayText);
+          log("\tchannel = " + activeC);
+          log("\tx = " + twoDPane.getROIX());
+          log("\ty = " + twoDPane.getROIY());
+          log("\ta1 = " + a1 + "%");
+          log("\tt1 = " + t1);
+          log("\ta2 = " + a2 + "%");
+          log("\tt2 = " + t2);
+          log("\tc = " + fitC[activeC]);
+          log("\tchi^2 = " + fitChi2[activeC]);
+        }
       }
 
       try {

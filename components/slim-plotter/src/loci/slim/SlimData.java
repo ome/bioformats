@@ -218,17 +218,20 @@ public class SlimData implements ActionListener, CurveListener {
     }
 
     // construct subsampled per-pixel curve estimate data
-    curves = new CurveCollection[channels];
-    progressInc = 500 / channels;
-    for (int c=0; c<channels; c++) {
-      if (channels == 1) progress.setNote("Subsampling data");
-      else progress.setNote("Subsampling ch. " + (c + 1) + "/" + channels);
-      curves[c] = new CurveCollection(data[c],
-        curveFitterClass, binRadius, maxPeak, timeBins - 1 - cutBins);
-      curves[c].addCurveListener(this);
-      progressBase = 500 + 500 * c / channels;
-      curves[c].computeCurves();
+    if (allowCurveFit) {
+      curves = new CurveCollection[channels];
+      progressInc = 500 / channels;
+      for (int c=0; c<channels; c++) {
+        if (channels == 1) progress.setNote("Subsampling data");
+        else progress.setNote("Subsampling ch. " + (c + 1) + "/" + channels);
+        curves[c] = new CurveCollection(data[c],
+          curveFitterClass, binRadius, maxPeak, timeBins - 1 - cutBins);
+        curves[c].addCurveListener(this);
+        progressBase = 500 + 500 * c / channels;
+        curves[c].computeCurves();
+      }
     }
+    progressBase = 1000;
   }
 
   // -- SlimData methods --
@@ -323,9 +326,10 @@ public class SlimData implements ActionListener, CurveListener {
     sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
     // row 8
     paramPane.add(new JLabel("Fit algorithm"));
-    gaChoice = new JRadioButton("Genetic", true);
+    boolean fitEnabled = timeBins >= 16;
+    gaChoice = new JRadioButton("Genetic", fitEnabled);
     lmChoice = new JRadioButton("LM");
-    noChoice = new JRadioButton("None");
+    noChoice = new JRadioButton("None", !fitEnabled);
     ButtonGroup group = new ButtonGroup();
     group.add(gaChoice);
     group.add(lmChoice);

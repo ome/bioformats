@@ -328,20 +328,23 @@ public class TwoDPane extends JPanel
     doIntensity(true);
 
     // set up lifetime curve fitting renderers for per-pixel lifetime analysis
-    curveRenderers = new ICurveRenderer[data.channels];
-    for (int c=0; c<data.channels; c++) {
-      curveRenderers[c] = new BurnInRenderer(data.curves[c]);
-      curveRenderers[c].setComponentCount(data.numExp);
-    }
-    curveImages = new float[data.channels][][];
-    switcher = new RendererSwitcher(curveRenderers);
-    progressRefresh = new Timer(PROGRESS_RATE, this);
-    progressRefresh.start();
-    lifetimeRefresh = new Timer(1000 / DEFAULT_FPS, this);
-    lifetimeRefresh.start();
+    if (data.allowCurveFit) {
+      curveRenderers = new ICurveRenderer[data.channels];
+      for (int c=0; c<data.channels; c++) {
+        curveRenderers[c] = new BurnInRenderer(data.curves[c]);
+        curveRenderers[c].setComponentCount(data.numExp);
+      }
+      curveImages = new float[data.channels][][];
 
-    iterField.setText("" + switcher.getMaxIterations());
-    doProgressString();
+      switcher = new RendererSwitcher(curveRenderers);
+      progressRefresh = new Timer(PROGRESS_RATE, this);
+      progressRefresh.start();
+      lifetimeRefresh = new Timer(1000 / DEFAULT_FPS, this);
+      lifetimeRefresh.start();
+
+      iterField.setText("" + switcher.getMaxIterations());
+      doProgressString();
+    }
   }
 
   // -- TwoDPane methods --
@@ -358,6 +361,7 @@ public class TwoDPane extends JPanel
    * at the current ROI coordinates.
    */
   public ICurveFitter[] getCurveFitters() {
+    if (!data.allowCurveFit) return null;
     ICurveRenderer[] renderers = switcher.getCurveRenderers();
     ICurveFitter[] cf = new ICurveFitter[data.channels];
     for (int c=0; c<data.channels; c++) {
@@ -510,8 +514,10 @@ public class TwoDPane extends JPanel
             iPlot.reAutoScale();
 
             // update renderer to improve entire image
-            for (int c=0; c<curveRenderers.length; c++) {
-              curveRenderers[c].setMask(null);
+            if (data.allowCurveFit) {
+              for (int c=0; c<curveRenderers.length; c++) {
+                curveRenderers[c].setMask(null);
+              }
             }
           }
           else {
@@ -535,8 +541,10 @@ public class TwoDPane extends JPanel
             slim.plotRegion(true, true, true);
 
             // update renderer to improve only selected region
-            for (int c=0; c<curveRenderers.length; c++) {
-              curveRenderers[c].setMask(roiMask);
+            if (data.allowCurveFit) {
+              for (int c=0; c<curveRenderers.length; c++) {
+                curveRenderers[c].setMask(roiMask);
+              }
             }
           }
         }
