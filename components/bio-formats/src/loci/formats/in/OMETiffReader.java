@@ -57,6 +57,7 @@ public class OMETiffReader extends FormatReader {
   public OMETiffReader() {
     super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
     suffixNecessary = false;
+    suffixSufficient = false;
     blockCheckLen = 1024 * 1024 * 5;
   }
 
@@ -140,12 +141,17 @@ public class OMETiffReader extends FormatReader {
     String xml = TiffTools.getComment(firstIFD);
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
 
+    debug(xml, 3);
+
     if (meta == null) {
       throw new FormatException("ome-xml.jar is required to read OME-TIFF " +
         "files.  Please download it from " +
         "http://loci.wisc.edu/ome/formats-library.html");
     }
 
+    if (meta.getRoot() == null) {
+      throw new FormatException("Could not parse OME-XML from TIFF comment");
+    }
 
     String currentUUID = meta.getUUID();
     MetadataTools.convertMetadata(meta, metadataStore);
