@@ -805,6 +805,13 @@ public final class TiffTools {
     Object value = getIFDValue(ifd, tag, checkNull, null);
     int[] results = null;
     if (value instanceof int[]) results = (int[]) value;
+    else if (value instanceof long[]) {
+      long[] v = (long[]) value;
+      results = new int[v.length];
+      for (int i=0; i<v.length; i++) {
+        results[i] = (int) v[i];
+      }
+    }
     else if (value instanceof Number) {
       results = new int[] {((Number) value).intValue()};
     }
@@ -831,6 +838,13 @@ public final class TiffTools {
     Object value = getIFDValue(ifd, tag, checkNull, null);
     short[] results = null;
     if (value instanceof short[]) results = (short[]) value;
+    else if (value instanceof int[]) {
+      int[] v = (int[]) value;
+      results = new short[v.length];
+      for (int i=0; i<v.length; i++) {
+        results[i] = (short) v[i];
+      }
+    }
     else if (value instanceof Number) {
       results = new short[] {((Number) value).shortValue()};
     }
