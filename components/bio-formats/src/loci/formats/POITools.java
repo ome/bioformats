@@ -60,6 +60,11 @@ public class POITools {
     initialize(id);
   }
 
+  public POITools(RandomAccessStream s) throws FormatException, IOException {
+    id = String.valueOf(System.currentTimeMillis());
+    initialize(s);
+  }
+
   // -- Document retrieval methods --
 
   public RandomAccessStream getDocumentStream(String name)
@@ -124,6 +129,14 @@ public class POITools {
   // -- Helper methods --
 
   private void initialize(String file) throws FormatException, IOException {
+    RandomAccessStream s = new RandomAccessStream(file);
+    initialize(s);
+    s.close();
+  }
+
+  private void initialize(RandomAccessStream s)
+    throws FormatException, IOException
+  {
     try {
       r = new ReflectedUniverse();
       r.exec("import loci.poi.poifs.filesystem.POIFSFileSystem");
@@ -137,21 +150,18 @@ public class POITools {
       throw new FormatException(NO_POI_MSG, exc);
     }
 
-    RandomAccessStream s = new RandomAccessStream(file);
     s.order(true);
     s.seek(30);
     int size = (int) Math.pow(2, s.readShort());
-    s.close();
+    s.seek(0);
 
     try {
-      String fileVar = makeVarName("file");
       String sizeVar = makeVarName("size");
       String fsVar = makeVarName("fs");
       String fisVar = makeVarName("fis");
-      r.setVar(fileVar, file);
       r.setVar(sizeVar, size);
       r.setVar(makeVarName("littleEndian"), true);
-      r.exec(fisVar + " = new RandomAccessStream(" + fileVar + ")");
+      r.setVar(fisVar, s);
       r.exec(fsVar + " = new POIFSFileSystem(" + fisVar + ", " + sizeVar + ")");
       r.exec(makeVarName("root") + " = " + fsVar + ".getRoot()");
     }

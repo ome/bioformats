@@ -90,7 +90,8 @@ public class ZeissZVIReader extends FormatReader {
   /** Constructs a new ZeissZVI reader. */
   public ZeissZVIReader() {
     super("Zeiss Vision Image (ZVI)", "zvi");
-    blockCheckLen = 4;
+    blockCheckLen = 65536;
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
@@ -98,7 +99,21 @@ public class ZeissZVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
   public boolean isThisType(RandomAccessStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readInt() == 0xd0cf11e0;
+    int magic = stream.readInt();
+    if (magic != 0xd0cf11e0) return false;
+    try {
+      POITools p = new POITools(stream);
+      Vector files = p.getDocumentList();
+      String filename = "SummaryInformation";
+      for (int i=0; i<files.size(); i++) {
+        String f = (String) files.get(i);
+        if (f.trim().endsWith(filename)) return true;
+      }
+    }
+    catch (FormatException e) {
+      if (debug) trace(e);
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
