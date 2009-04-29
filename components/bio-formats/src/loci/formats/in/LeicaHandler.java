@@ -496,7 +496,8 @@ public class LeicaHandler extends DefaultHandler {
       }
       int s = seriesNames.size() - 1;
       int channel = Integer.parseInt(attributes.getValue("Channel")) - 1;
-      int channelCount = ((Integer) channels.get(s)).intValue();
+      int channelCount = s < channels.size() ?
+        ((Integer) channels.get(s)).intValue() : 1;
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         String value = attributes.getValue(i);
