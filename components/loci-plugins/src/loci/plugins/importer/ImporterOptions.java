@@ -325,7 +325,7 @@ public class ImporterOptions
     "shortcut for checking all the boxes in the series selector dialog box. " +
     "It is also useful in a macro when the number of available image series " +
     "is unknown.";
-  public static final String INFO_SWAP = info(LABEL_SWAP) + " - " +
+  public static final String INFO_SWAP = info(LABEL_SWAP) +
     " - Allows reassignment of dimensional axes (e.g., channel, Z and time)." +
     "<br><br>Bio-Formats is supposed to be smart about handling " +
     "multidimensional image data, but in some cases gets things wrong. " +
