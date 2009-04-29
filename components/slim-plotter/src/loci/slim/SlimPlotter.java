@@ -798,55 +798,57 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       out.close();
 
       // write full matrix of per-pixel fitted data
-      int roiCount = twoDPane.getROICount();
-      int roiX = twoDPane.getROIX();
-      int roiY = twoDPane.getROIY();
-      boolean[][] mask = twoDPane.getROIMask();
-      for (int c=0; c<data.channels; c++) {
-        out = new PrintWriter(new FileWriter(ppFiles[c]));
-        out.println("Wavelength\tY\tX\t" +
-          "iterations\ta1\tt1\t" +
-          "a2\tt2\tc\t" +
-          "chi^2 (reduced)\tchi^2 (raw)\t" +
-          "first\tlast\tin mask?\t" +
-          "a1 fixed?\tt1 fixed?\t" +
-          "a2 fixed?\tt2 fixed?\tc fixed?");
-        int wavelength = data.minWave + c * data.waveStep;
-        ICurveFitter[][] curveFitters = data.curves[c].getCurves();
-        for (int y=0; y<data.height; y++) {
-          for (int x=0; x<data.width; x++) {
-            ICurveFitter cf = curveFitters[y][x];
-            int iter = cf.getIterations();
-            double[][] curve = cf.getCurve();
-            double a1 = curve[0][0];
-            double t1 = curve[0][1];
-            String a2 = data.numExp > 1 ? "" + curve[1][0] : "";
-            String t2 = data.numExp > 1 ? "" + curve[1][1] : "";
-            double cValue = data.numExp > 1 ?
-              curve[0][2] + curve[1][2] : curve[0][2];
-            double reducedChi2 = cf.getReducedChiSquaredError();
-            double rawChi2 = cf.getChiSquaredError();
-            int first = cf.getFirst();
-            int last = cf.getFirst();
-            boolean inMask = roiCount == 1 ?
-              (y == roiY && x == roiX) :
-              (mask == null ? false : mask[y][x]);
-            boolean[][] fixed = cf.getFixed();
-            boolean fixA1 = fixed[0][0];
-            boolean fixT1 = fixed[0][1];
-            String fixA2 = data.numExp > 1 ? yesNo(fixed[1][0]) : "";
-            String fixT2 = data.numExp > 1 ? yesNo(fixed[1][1]) : "";
-            boolean fixC = fixed[0][2];
-            out.println(wavelength + "\t" + y + "\t" + x + "\t" +
-              iter + "\t" + a1 + "\t" + t1 + "\t" +
-              a2 + "\t" + t2 + "\t" + cValue + "\t" +
-              reducedChi2 + "\t" + rawChi2 + "\t" +
-              first + "\t" + last + "\t" + yesNo(inMask) + "\t" +
-              yesNo(fixA1) + "\t" + yesNo(fixT1) + "\t" +
-              fixA2 + "\t" + fixT2 + "\t" + yesNo(fixC));
+      if (data.allowCurveFit) {
+        int roiCount = twoDPane.getROICount();
+        int roiX = twoDPane.getROIX();
+        int roiY = twoDPane.getROIY();
+        boolean[][] mask = twoDPane.getROIMask();
+        for (int c=0; c<data.channels; c++) {
+          out = new PrintWriter(new FileWriter(ppFiles[c]));
+          out.println("Wavelength\tY\tX\t" +
+            "iterations\ta1\tt1\t" +
+            "a2\tt2\tc\t" +
+            "chi^2 (reduced)\tchi^2 (raw)\t" +
+            "first\tlast\tin mask?\t" +
+            "a1 fixed?\tt1 fixed?\t" +
+            "a2 fixed?\tt2 fixed?\tc fixed?");
+          int wavelength = data.minWave + c * data.waveStep;
+          ICurveFitter[][] curveFitters = data.curves[c].getCurves();
+          for (int y=0; y<data.height; y++) {
+            for (int x=0; x<data.width; x++) {
+              ICurveFitter cf = curveFitters[y][x];
+              int iter = cf.getIterations();
+              double[][] curve = cf.getCurve();
+              double a1 = curve[0][0];
+              double t1 = curve[0][1];
+              String a2 = data.numExp > 1 ? "" + curve[1][0] : "";
+              String t2 = data.numExp > 1 ? "" + curve[1][1] : "";
+              double cValue = data.numExp > 1 ?
+                curve[0][2] + curve[1][2] : curve[0][2];
+              double reducedChi2 = cf.getReducedChiSquaredError();
+              double rawChi2 = cf.getChiSquaredError();
+              int first = cf.getFirst();
+              int last = cf.getFirst();
+              boolean inMask = roiCount == 1 ?
+                (y == roiY && x == roiX) :
+                (mask == null ? false : mask[y][x]);
+              boolean[][] fixed = cf.getFixed();
+              boolean fixA1 = fixed[0][0];
+              boolean fixT1 = fixed[0][1];
+              String fixA2 = data.numExp > 1 ? yesNo(fixed[1][0]) : "";
+              String fixT2 = data.numExp > 1 ? yesNo(fixed[1][1]) : "";
+              boolean fixC = fixed[0][2];
+              out.println(wavelength + "\t" + y + "\t" + x + "\t" +
+                iter + "\t" + a1 + "\t" + t1 + "\t" +
+                a2 + "\t" + t2 + "\t" + cValue + "\t" +
+                reducedChi2 + "\t" + rawChi2 + "\t" +
+                first + "\t" + last + "\t" + yesNo(inMask) + "\t" +
+                yesNo(fixA1) + "\t" + yesNo(fixT1) + "\t" +
+                fixA2 + "\t" + fixT2 + "\t" + yesNo(fixC));
+            }
           }
+          out.close();
         }
-        out.close();
       }
     }
     catch (IOException exc) {
