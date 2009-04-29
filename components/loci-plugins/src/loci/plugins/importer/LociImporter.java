@@ -23,10 +23,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.importer;
 
 import ij.plugin.PlugIn;
 import java.util.HashSet;
+import loci.plugins.util.LibraryChecker;
 
 /**
  * ImageJ plugin for reading files using the LOCI Bio-Formats package.
@@ -34,8 +35,8 @@ import java.util.HashSet;
  * references to classes in the external Bio-Formats library.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/LociImporter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/LociImporter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/LociImporter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/LociImporter.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
@@ -64,11 +65,11 @@ public class LociImporter implements PlugIn {
   public void run(String arg) {
     canceled = false;
     success = false;
-    if (!Checker.checkJava() || !Checker.checkImageJ()) return;
+    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet missing = new HashSet();
-    Checker.checkLibrary(Checker.BIO_FORMATS, missing);
-    Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
-    if (!Checker.checkMissing(missing)) return;
+    LibraryChecker.checkLibrary(LibraryChecker.BIO_FORMATS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_XML, missing);
+    if (!LibraryChecker.checkMissing(missing)) return;
     new Importer(this).run(arg);
   }
 

@@ -31,10 +31,12 @@ import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.plugin.ColorPicker;
 import ij.plugin.filter.PlugInFilter;
-import ij.process.*;
-import ij.util.*;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
+import ij.util.Tools;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -43,6 +45,8 @@ import java.util.Vector;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
+import loci.plugins.importer.ImporterOptions;//FIXME
+import loci.plugins.util.Util;
 
 /**
  * A plugin for merging, colorizing and reordering image stacks.
@@ -267,7 +271,7 @@ public class Colorizer implements PlugInFilter {
           if (num[i] * (i + 2) < stack.getSize()) num[i]++;
         }
 
-        ImporterOptions options = new ImporterOptions();
+        ImporterOptions options = new ImporterOptions();//FIXME
 
         boolean spectral =
           stack.getSliceLabel(1).indexOf(FormatTools.SPECTRA) != -1;

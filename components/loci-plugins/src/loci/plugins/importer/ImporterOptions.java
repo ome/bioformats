@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.importer;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -38,6 +38,8 @@ import java.util.*;
 import javax.swing.*;
 import loci.common.*;
 import loci.formats.*;
+import loci.plugins.util.LibraryChecker;
+import loci.plugins.util.Util;
 
 /**
  * Helper class for managing Bio-Formats Importer options.
@@ -46,8 +48,8 @@ import loci.formats.*;
  * and user input from dialog boxes.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/ImporterOptions.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/ImporterOptions.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/ImporterOptions.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/ImporterOptions.java">SVN</a></dd></dl>
  */
 public class ImporterOptions
   implements FocusListener, ItemListener, MouseListener
@@ -792,9 +794,11 @@ public class ImporterOptions
       stackTypes.add(VIEW_HYPERSTACK);
       stackTypes.add(VIEW_BROWSER);
     }
-    if (Checker.checkClass(CLASS_VISBIO)) stackTypes.add(VIEW_VISBIO);
-    if (Checker.checkClass(CLASS_IMAGE_5D)) stackTypes.add(VIEW_IMAGE_5D);
-    if (Checker.checkClass(CLASS_VIEW_5D)) stackTypes.add(VIEW_VIEW_5D);
+    if (LibraryChecker.checkClass(CLASS_VISBIO)) stackTypes.add(VIEW_VISBIO);
+    if (LibraryChecker.checkClass(CLASS_IMAGE_5D)) {
+      stackTypes.add(VIEW_IMAGE_5D);
+    }
+    if (LibraryChecker.checkClass(CLASS_VIEW_5D)) stackTypes.add(VIEW_VIEW_5D);
     final String[] stackFormats = new String[stackTypes.size()];
     stackTypes.copyInto(stackFormats);
 

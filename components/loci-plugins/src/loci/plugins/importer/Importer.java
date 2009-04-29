@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.importer;
 
 import ij.*;
 import ij.io.FileInfo;
@@ -38,13 +38,16 @@ import loci.formats.*;
 import loci.formats.gui.XMLWindow;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
+import loci.plugins.Colorizer;
+import loci.plugins.Updater;
+import loci.plugins.util.*;
 
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/Importer.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/Importer.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/Importer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/Importer.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
@@ -85,7 +88,7 @@ public class Importer {
 
     if (options.doUpgradeCheck()) {
       IJ.showStatus("Checking for new version...");
-      if (Util.newVersionAvailable()) {
+      if (Updater.newVersionAvailable()) {
         boolean doUpgrade = IJ.showMessageWithCancel("",
           "A new stable version of Bio-Formats is available.\n" +
           "Click 'OK' to upgrade.");

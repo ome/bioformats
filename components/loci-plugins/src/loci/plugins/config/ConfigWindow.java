@@ -38,7 +38,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import loci.plugins.ImporterOptions;
+import loci.plugins.importer.ImporterOptions;//FIXME
 
 /**
  * A window for managing configuration of the LOCI plugins.
@@ -65,7 +65,7 @@ public class ConfigWindow extends JFrame
   private JTextField extensions;
   private JCheckBox enabledBox, windowlessBox, upgradeBox;
 
-  private ImporterOptions options;
+  private ImporterOptions options;//FIXME
 
   private DefaultListModel libsListModel;
   private JList libsList;
@@ -580,8 +580,8 @@ public class ConfigWindow extends JFrame
     NoSuchFieldException, IllegalAccessException, NoSuchMethodException,
     InvocationTargetException
   {
-    Class importerClass = Class.forName("loci.plugins.Util");
-    Field field = importerClass.getField(fieldName);
+    Class utilClass = Class.forName("loci.plugins.util.Util");
+    Field field = utilClass.getField(fieldName);
     String key = field.get(null) + "." + entry.readerName;
     Class prefsClass = Class.forName("ij.Prefs");
     Method method = prefsClass.getMethod(methodName, PARAMS);

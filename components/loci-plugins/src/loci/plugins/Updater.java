@@ -25,12 +25,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins;
 
-import ij.*;
+import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import java.io.*;
-import loci.common.*;
-import loci.formats.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import loci.common.RandomAccessStream;
+import loci.formats.FormatTools;
 
 /**
  * A plugin for updating the LOCI plugins.
@@ -45,17 +48,24 @@ public class Updater implements PlugIn {
 
   // -- Constants --
 
-  protected static final String TRUNK_BUILD =
+  public static final String TRUNK_BUILD =
     "http://hudson.openmicroscopy.org.uk/job/LOCI/lastSuccessfulBuild/" +
     "artifact/trunk/artifacts/loci_tools.jar";
-  protected static final String TODAYS_BUILD =
+  public static final String TODAYS_BUILD =
     "http://loci.wisc.edu/software/daily/loci_tools.jar";
-  protected static final String YESTERDAYS_BUILD =
+  public static final String YESTERDAYS_BUILD =
     "http://loci.wisc.edu/software/daily.old/loci_tools.jar";
-  protected static final String STABLE_BUILD =
+  public static final String STABLE_BUILD =
     "http://loci.wisc.edu/software/loci_tools.jar";
 
-  protected static final String STABLE_VERSION = "29 December 2008";
+  public static final String STABLE_VERSION = "29 December 2008";
+
+  public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
+
+  public static final String[] REGISTRY_PROPERTIES = new String[] {
+    "version", "os.name", "os.version", "os.arch",
+    "java.runtime.version", "java.vm.vendor"
+  };
 
   // -- Fields --
 
@@ -86,10 +96,68 @@ public class Updater implements PlugIn {
     else install(STABLE_BUILD);
   }
 
-  // -- Helper methods --
+  // -- Utility methods --
+
+  /** Check if a new stable version is available. */
+  public static boolean newVersionAvailable() {
+    // connect to the registry
+
+    StringBuffer query = new StringBuffer(REGISTRY);
+    for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
+      if (i == 0) query.append("?");
+      else query.append(";");
+      query.append(REGISTRY_PROPERTIES[i]);
+      query.append("=");
+      if (i == 0) query.append(FormatTools.VERSION);
+      else {
+        try {
+          query.append(URLEncoder.encode(
+            System.getProperty(REGISTRY_PROPERTIES[i]), "UTF-8"));
+        }
+        catch (UnsupportedEncodingException e) { }
+      }
+    }
+
+    try {
+      URLConnection conn = new URL(query.toString()).openConnection();
+      conn.setUseCaches(false);
+      conn.addRequestProperty("User-Agent", "OMERO.imagej");
+      conn.connect();
+
+      // retrieve latest version number from the registry
+
+      InputStream in = conn.getInputStream();
+      StringBuffer latestVersion = new StringBuffer();
+      while (true) {
+        int data = in.read();
+        if (data == -1) break;
+        latestVersion.append((char) data);
+      }
+      in.close();
+
+      // check to see if version reported by registry is greater than
+      // the current version - version number should be in "x.x.x" format
+
+      String[] version = latestVersion.toString().split("\\.");
+      String[] thisVersion = FormatTools.VERSION.split("\\.");
+      for (int i=0; i<thisVersion.length; i++) {
+        int subVersion = Integer.parseInt(thisVersion[i]);
+        try {
+          int registrySubVersion = Integer.parseInt(version[i]);
+          if (registrySubVersion > subVersion) return true;
+          if (registrySubVersion < subVersion) return false;
+        }
+        catch (NumberFormatException e) {
+          return false;
+        }
+      }
+    }
+    catch (IOException e) { }
+    return false;
+  }
 
   /** Download and install a JAR file from the given URL. */
-  protected static void install(String url) {
+  public static void install(String url) {
     String pluginsDirectory = IJ.getDirectory("plugins");
     String jarPath = pluginsDirectory + File.separator + "loci_tools.jar";
     String downloadPath = jarPath + ".tmp";

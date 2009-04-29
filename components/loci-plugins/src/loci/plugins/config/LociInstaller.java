@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.config;
 
 import ij.plugin.PlugIn;
-import loci.plugins.Util;
+import loci.plugins.util.Util;
 
 /**
  * An ImageJ plugin for installing and upgrading libraries

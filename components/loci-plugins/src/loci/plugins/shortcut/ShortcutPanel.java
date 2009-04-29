@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.shortcut;
 
 import ij.IJ;
 import ij.plugin.PlugIn;
@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import loci.plugins.util.Util;
 
 /**
  * A plugin that displays a small window containing shortcuts to the LOCI

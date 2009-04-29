@@ -31,7 +31,7 @@ import ij.process.ColorProcessor;
 import ij.io.FileInfo;
 import java.awt.TextField;
 import java.util.HashSet;
-import loci.plugins.Checker;
+import loci.plugins.util.LibraryChecker;
 import loci.common.DataTools;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -61,12 +61,12 @@ public class LociUploader implements PlugIn {
 
   public void run(String arg) {
     // check that we can safely execute the plugin
-    if (!Checker.checkJava() || !Checker.checkImageJ()) return;
+    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet missing = new HashSet();
-    Checker.checkLibrary(Checker.BIO_FORMATS, missing);
-    Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
-    Checker.checkLibrary(Checker.OME_JAVA_DS, missing);
-    if (!Checker.checkMissing(missing)) return;
+    LibraryChecker.checkLibrary(LibraryChecker.BIO_FORMATS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_XML, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_DS, missing);
+    if (!LibraryChecker.checkMissing(missing)) return;
 
     promptForLogin();
     if (canceled) {

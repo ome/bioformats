@@ -30,7 +30,7 @@ import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
-import loci.plugins.Util;
+import loci.plugins.util.Util;
 
 /**
  * Custom widgets for configuring Bio-Formats SDT support.

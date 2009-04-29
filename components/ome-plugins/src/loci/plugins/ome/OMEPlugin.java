@@ -36,8 +36,8 @@ import loci.common.*;
 import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.plugins.Checker;
-import loci.plugins.Util;
+import loci.plugins.util.LibraryChecker;
+import loci.plugins.util.Util;
 import loci.ome.io.OMECredentials;
 import loci.ome.io.OMEROReader;
 import loci.ome.io.OMEUtils;
@@ -66,13 +66,13 @@ public class OMEPlugin implements PlugIn {
   /** Executes the plugin. */
   public void run(String arg) {
     if (IJ.debugMode) IJ.log("Downloading from OME or OMERO server");
-    if (!Checker.checkJava() || !Checker.checkImageJ()) return;
+    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet missing = new HashSet();
-    Checker.checkLibrary(Checker.BIO_FORMATS, missing);
-    Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
-    Checker.checkLibrary(Checker.OME_JAVA_DS, missing);
-    Checker.checkLibrary(Checker.FORMS, missing);
-    if (!Checker.checkMissing(missing)) {
+    LibraryChecker.checkLibrary(LibraryChecker.BIO_FORMATS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_XML, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_DS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.FORMS, missing);
+    if (!LibraryChecker.checkMissing(missing)) {
       if (IJ.debugMode) IJ.log("Required libraries are missing, exiting.");
       return;
     }

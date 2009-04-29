@@ -23,12 +23,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.exporter;
 
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import java.util.HashSet;
+import loci.plugins.util.LibraryChecker;
 
 /**
  * ImageJ plugin for writing files using the LOCI Bio-Formats package.
@@ -36,8 +37,8 @@ import java.util.HashSet;
  * references to classes in the external Bio-Formats library.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/LociExporter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/LociExporter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/exporter/LociExporter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/exporter/LociExporter.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
@@ -61,11 +62,11 @@ public class LociExporter implements PlugInFilter {
 
   /** Executes the plugin. */
   public void run(ImageProcessor ip) {
-    if (!Checker.checkJava() || !Checker.checkImageJ()) return;
+    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet missing = new HashSet();
-    Checker.checkLibrary(Checker.BIO_FORMATS, missing);
-    Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
-    if (!Checker.checkMissing(missing)) return;
+    LibraryChecker.checkLibrary(LibraryChecker.BIO_FORMATS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_XML, missing);
+    if (!LibraryChecker.checkMissing(missing)) return;
     if (exporter != null) exporter.run(ip);
   }
 

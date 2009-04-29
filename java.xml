@@ -29,7 +29,7 @@ Type "ant -p" for a list of targets.
   <!-- Main build targets -->
 
   <target name="compile" depends="copy-source" description="compile classes">
-    <javac debug="true" deprecation="true"
+    <javac debug="true" deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       srcdir="${dest.dir}" destdir="${classes.dir}"

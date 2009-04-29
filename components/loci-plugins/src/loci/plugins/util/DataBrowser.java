@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.util;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -40,6 +40,7 @@ import loci.formats.FormatTools;
 import loci.formats.cache.Cache;
 import loci.formats.gui.CacheIndicator;
 import loci.formats.gui.XMLWindow;
+import loci.plugins.util.BFVirtualStack;
 import org.xml.sax.SAXException;
 
 /**
@@ -47,8 +48,8 @@ import org.xml.sax.SAXException;
  * virtual stack caching options, metadata, and general beautification.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/DataBrowser.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/DataBrowser.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/DataBrowser.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/DataBrowser.java">SVN</a></dd></dl>
  */
 public class DataBrowser extends StackWindow implements ActionListener {
 

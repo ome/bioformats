@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.util;
 
 import ij.*;
 import ij.gui.GenericDialog;
@@ -32,12 +32,14 @@ import ij.process.*;
 import ij.text.TextWindow;
 import ij.util.Tools;
 import java.awt.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.*;
-import java.net.*;
-import loci.common.*;
-import loci.formats.*;
+import loci.common.DataTools;
+import loci.common.ReflectedUniverse;
+import loci.common.ReflectException;
 import loci.formats.codec.LuraWaveCodec;
+import loci.formats.*;
 import loci.formats.in.*;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -45,8 +47,8 @@ import loci.formats.meta.MetadataRetrieve;
  * Miscellaneous generally useful utility methods.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/Util.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/Util.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/Util.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/Util.java">SVN</a></dd></dl>
  */
 public final class Util {
 
@@ -63,13 +65,6 @@ public final class Util {
   public static final String PREF_PICT_QTJAVA = "bioformats.pict.qtjava";
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
-
-  public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
-
-  public static final String[] REGISTRY_PROPERTIES = new String[] {
-    "version", "os.name", "os.version", "os.arch",
-    "java.runtime.version", "java.vm.vendor"
-  };
 
   // -- Constructor --
 
@@ -617,64 +612,6 @@ public final class Util {
     }
     if (IJ.getInstance() != null) new TextWindow("Exception", s, 350, 250);
     else IJ.log(s);
-  }
-
-  /** Check if a new stable version is available. */
-  public static boolean newVersionAvailable() {
-    // connect to the registry
-
-    StringBuffer query = new StringBuffer(REGISTRY);
-    for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
-      if (i == 0) query.append("?");
-      else query.append(";");
-      query.append(REGISTRY_PROPERTIES[i]);
-      query.append("=");
-      if (i == 0) query.append(FormatTools.VERSION);
-      else {
-        try {
-          query.append(URLEncoder.encode(
-            System.getProperty(REGISTRY_PROPERTIES[i]), "UTF-8"));
-        }
-        catch (UnsupportedEncodingException e) { }
-      }
-    }
-
-    try {
-      URLConnection conn = new URL(query.toString()).openConnection();
-      conn.setUseCaches(false);
-      conn.addRequestProperty("User-Agent", "OMERO.imagej");
-      conn.connect();
-
-      // retrieve latest version number from the registry
-
-      InputStream in = conn.getInputStream();
-      StringBuffer latestVersion = new StringBuffer();
-      while (true) {
-        int data = in.read();
-        if (data == -1) break;
-        latestVersion.append((char) data);
-      }
-      in.close();
-
-      // check to see if version reported by registry is greater than
-      // the current version - version number should be in "x.x.x" format
-
-      String[] version = latestVersion.toString().split("\\.");
-      String[] thisVersion = FormatTools.VERSION.split("\\.");
-      for (int i=0; i<thisVersion.length; i++) {
-        int subVersion = Integer.parseInt(thisVersion[i]);
-        try {
-          int registrySubVersion = Integer.parseInt(version[i]);
-          if (registrySubVersion > subVersion) return true;
-          if (registrySubVersion < subVersion) return false;
-        }
-        catch (NumberFormatException e) {
-          return false;
-        }
-      }
-    }
-    catch (IOException e) { }
-    return false;
   }
 
   // -- Helper methods --

@@ -33,8 +33,10 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import loci.common.*;
-import loci.formats.*;
+import loci.common.ReflectedUniverse;
+import loci.common.ReflectException;
+import loci.formats.FormatTools;
+import loci.plugins.util.Util;
 
 /**
  * A plugin for splitting an image stack into separate channels, focal planes
