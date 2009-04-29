@@ -80,6 +80,8 @@ public class Importer {
 
     // -- Step 0: parse core options --
 
+    if (IJ.debugMode) IJ.log("Bio-Formats Importer: parse core options");
+
     ImporterOptions options = new ImporterOptions();
     options.loadPreferences();
     options.parseArg(arg);
@@ -87,6 +89,9 @@ public class Importer {
     // -- Step 1: check if new version is available --
 
     if (options.doUpgradeCheck()) {
+      if (IJ.debugMode) {
+        IJ.log("Bio-Formats Importer: check if new version is available");
+      }
       IJ.showStatus("Checking for new version...");
       if (Updater.newVersionAvailable()) {
         boolean doUpgrade = IJ.showMessageWithCancel("",
@@ -97,8 +102,17 @@ public class Importer {
         }
       }
     }
+    else {
+      if (IJ.debugMode) {
+        IJ.log("Bio-Formats Importer: skipping new version check");
+      }
+    }
 
     // -- Step 2: construct reader and check id --
+
+    if (IJ.debugMode) {
+      IJ.log("Bio-Formats Importer: construct reader and check id");
+    }
 
     int status = options.promptLocation();
     if (!statusOk(status)) return;
@@ -166,6 +180,8 @@ public class Importer {
 
     // -- Step 3: get parameter values --
 
+    if (IJ.debugMode) IJ.log("Bio-Formats Importer: get parameter values");
+
     boolean windowless = options.isWindowless() || Util.isWindowless(r);
     if (!windowless) status = options.promptOptions();
     if (!statusOk(status)) return;
@@ -185,6 +201,10 @@ public class Importer {
 
     // -- Step 4: analyze and read from data source --
 
+    if (IJ.debugMode) {
+      IJ.log("Bio-Formats Importer: analyze and read from data source");
+    }
+
     // 'id' contains the user's password if we are opening from OME/OMERO
     String a = id;
     if (options.isOME() || options.isOMERO()) a = "...";
@@ -201,10 +221,18 @@ public class Importer {
       // -- Step 4a: prompt for the file pattern, if necessary --
 
       if (groupFiles) {
+        if (IJ.debugMode) {
+          IJ.log("Bio-Formats Importer: prompt for the file pattern");
+        }
         status = options.promptFilePattern();
         if (!statusOk(status)) return;
         id = options.getId();
         if (id == null) id = currentFile;
+      }
+      else {
+        if (IJ.debugMode) {
+          IJ.log("Bio-Formats Importer: no need to prompt for file pattern");
+        }
       }
 
       if (groupFiles) r = new FileStitcher(r, true);
@@ -294,8 +322,16 @@ public class Importer {
 
       if (seriesCount > 1 && !options.openAllSeries() && !options.isViewNone())
       {
+        if (IJ.debugMode) {
+          IJ.log("Bio-Formats Importer: prompt for which series to import");
+        }
         status = options.promptSeries(r, seriesLabels, series);
         if (!statusOk(status)) return;
+      }
+      else {
+        if (IJ.debugMode) {
+          IJ.log("Bio-Formats Importer: no need to prompt for series");
+        }
       }
 
       if (options.openAllSeries() || options.isViewNone()) {
@@ -305,6 +341,10 @@ public class Importer {
       // -- Step 4c: prompt for dimension swapping parameters, if necessary --
 
       if (swapDimensions) {
+        if (IJ.debugMode) {
+          IJ.log("Bio-Formats Importer: " +
+            "prompt for dimension swapping parameters");
+        }
         options.promptSwap((DimensionSwapper) r, series);
 
         for (int i=0; i<seriesCount; i++) {
@@ -321,6 +361,12 @@ public class Importer {
           cStep[i] = zStep[i] = tStep[i] = 1;
         }
       }
+      else {
+        if (IJ.debugMode) {
+          IJ.log("Bio-Formats Importer: " +
+            "no need to prompt for dimension swapping");
+        }
+      }
 
       // -- Step 4d: prompt for the range of planes to import, if necessary --
 
@@ -330,11 +376,22 @@ public class Importer {
           if (series[i] && num[i] > 1) needRange = true;
         }
         if (needRange) {
+          if (IJ.debugMode) {
+            IJ.log("Bio-Formats Importer: prompt for planar ranges");
+          }
           IJ.showStatus("");
           status = options.promptRange(r, series, seriesLabels,
             cBegin, cEnd, cStep, zBegin, zEnd, zStep, tBegin, tEnd, tStep);
           if (!statusOk(status)) return;
         }
+        else {
+          if (IJ.debugMode) {
+            IJ.log("Bio-Formats Importer: no need to prompt for planar ranges");
+          }
+        }
+      }
+      else {
+        if (IJ.debugMode) IJ.log("Bio-Formats Importer: open all planes");
       }
       int[] cCount = new int[seriesCount];
       int[] zCount = new int[seriesCount];
@@ -357,6 +414,7 @@ public class Importer {
       // -- Step 4e: display metadata, if appropriate --
 
       if (showMetadata) {
+        if (IJ.debugMode) IJ.log("Bio-Formats Importer: display metadata");
         IJ.showStatus("Populating metadata");
 
         // display standard metadata in a table in its own window
@@ -402,8 +460,10 @@ public class Importer {
           "Key\tValue", metaString, 400, 400);
         w.setVisible(true);
       }
+      else if (IJ.debugMode) IJ.log("Bio-Formats Importer: skip metadata");
 
       if (showOMEXML) {
+        if (IJ.debugMode) IJ.log("Bio-Formats Importer: show OME-XML");
         if (options.isViewBrowser()) {
           // NB: Data Browser has its own internal OME-XML metadata window,
           // which we'll trigger once we have created a Data Browser.
@@ -426,10 +486,13 @@ public class Importer {
           }
         }
       }
+      else if (IJ.debugMode) IJ.log("Bio-Formats Importer: skip OME-XML");
 
       // -- Step 4f: read pixel data --
 
       if (options.isViewNone()) return;
+
+      if (IJ.debugMode) IJ.log("Bio-Formats Importer: read pixel data");
 
       IJ.showStatus("Reading " + currentFile);
 
@@ -698,11 +761,16 @@ public class Importer {
       // display ROIs, if necessary
 
       if (options.showROIs()) {
+        if (IJ.debugMode) IJ.log("Bio-Formats Importer: display ROIs");
+
         ROIHandler.openROIs(omexmlMeta,
           (ImagePlus[]) imps.toArray(new ImagePlus[0]));
       }
+      else if (IJ.debugMode) IJ.log("Bio-Formats Importer: skip ROIs");
 
       // -- Step 5: finish up --
+
+      if (IJ.debugMode) IJ.log("Bio-Formats Importer: finish up");
 
       try {
         if (!options.isVirtual()) r.close();
