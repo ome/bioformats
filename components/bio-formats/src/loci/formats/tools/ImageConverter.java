@@ -51,6 +51,7 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     String in = null, out = null;
+    String map = null;
     String compression = null;
     boolean stitch = false, separate = false, merge = false, fill = false;
     boolean bigtiff = false;
@@ -64,6 +65,7 @@ public final class ImageConverter {
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-expand")) fill = true;
           else if (args[i].equals("-bigtiff")) bigtiff = true;
+          else if (args[i].equals("-map")) map = args[++i];
           else if (args[i].equals("-compression")) compression = args[++i];
           else if (args[i].equals("-series")) {
             try {
@@ -87,7 +89,8 @@ public final class ImageConverter {
       String[] s = {
         "To convert a file between formats, run:",
         "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
-        "    [-bigtiff] [-compression codec] [-series series] in_file out_file",
+        "    [-bigtiff] [-compression codec] [-series series] [-map id]",
+        "    in_file out_file",
         "",
         "      -debug: turn on debugging output",
         "     -stitch: stitch input files with similar names",
@@ -97,6 +100,7 @@ public final class ImageConverter {
         "    -bigtiff: force BigTIFF files to be written",
         "-compression: specify the codec to use when saving images",
         "     -series: specify which image series to convert",
+        "        -map: specify file on disk to which name should be mapped",
         "",
         "If any of the following patterns are present in out_file, they will",
         "be replaced with the indicated metadata value from the input file.",
@@ -128,6 +132,8 @@ public final class ImageConverter {
       for (int i=0; i<s.length; i++) LogTools.println(s[i]);
       return false;
     }
+
+    if (map != null) Location.mapId(in, map);
 
     long start = System.currentTimeMillis();
     LogTools.print(in + " ");
