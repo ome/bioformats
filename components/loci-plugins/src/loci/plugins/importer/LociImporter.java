@@ -69,6 +69,7 @@ public class LociImporter implements PlugIn {
     HashSet missing = new HashSet();
     LibraryChecker.checkLibrary(LibraryChecker.BIO_FORMATS, missing);
     LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_XML, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.FORMS, missing);
     if (!LibraryChecker.checkMissing(missing)) return;
     new Importer(this).run(arg);
   }
