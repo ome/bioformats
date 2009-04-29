@@ -596,6 +596,12 @@ public class RecordedImageProcessor extends ImageProcessor {
     return proc.getPixel(x, y, iArray);
   }
 
+  public int getPixelInterpolated(double x, double y) {
+    record("getPixelInterpolated", new Object[] {new Double(x), new Double(y)},
+      new Class[] {double.class, double.class});
+    return proc.getPixelInterpolated(x, y);
+  }
+
   public int getPixelCount() {
     record("getPixelCount", null, (Class) null);
     return proc.getPixelCount();
