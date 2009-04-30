@@ -92,6 +92,7 @@ public class TiffWriter extends FormatWriter {
     boolean lastInSeries, boolean last) throws IOException, FormatException
   {
     MetadataRetrieve retrieve = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(retrieve, series);
     Boolean bigEndian = retrieve.getPixelsBigEndian(series, 0);
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();

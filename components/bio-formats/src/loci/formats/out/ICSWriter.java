@@ -56,9 +56,7 @@ public class ICSWriter extends FormatWriter {
   public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (image == null) {
-      throw new FormatException("Image is null");
-    }
+    if (image == null) throw new FormatException("Image is null");
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
     byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
     int bytesPerPixel =
@@ -73,11 +71,7 @@ public class ICSWriter extends FormatWriter {
       out.writeBytes("layout\tparameters\t6\n");
 
       MetadataRetrieve meta = getMetadataRetrieve();
-      if (meta == null) {
-        throw new FormatException("MetadataRetrieve is null.  " +
-          "Call setMetadataRetrieve(MetadataRetrieve) before calling " +
-          "saveImage(Image, boolean).");
-      }
+      MetadataTools.verifyMinimumPopulated(meta, series);
 
       String order = meta.getPixelsDimensionOrder(series, 0);
       int x = meta.getPixelsSizeX(series, 0).intValue();

@@ -274,6 +274,65 @@ public final class MetadataTools {
   }
 
   /**
+   * Checks whether the given metadata object has the minimum metadata
+   * populated to successfully describe an Image.
+   *
+   * @throws FormatException if there is a missing metadata field,
+   *   or the metadata object is uninitialized
+   */
+  public static void verifyMinimumPopulated(MetadataRetrieve src)
+    throws FormatException
+  {
+    verifyMinimumPopulated(src, 0);
+  }
+
+  /**
+   * Checks whether the given metadata object has the minimum metadata
+   * populated to successfully describe the nth Image.
+   *
+   * @throws FormatException if there is a missing metadata field,
+   *   or the metadata object is uninitialized
+   */
+  public static void verifyMinimumPopulated(MetadataRetrieve src, int n)
+    throws FormatException
+  {
+    if (src == null) {
+      throw new FormatException("Metadata object is null; " +
+          "call IFormatWriter.setMetadataRetrieve() first");
+    }
+    if (src instanceof MetadataStore &&
+      ((MetadataStore) src).getRoot() == null)
+    {
+      throw new FormatException("Metadata object has null root; " +
+        "call IMetadata.createRoot() first");
+    }
+    if (src.getPixelsBigEndian(n, 0) == null) {
+      throw new FormatException("BigEndian #" + n + " is null");
+    }
+    if (src.getPixelsDimensionOrder(n, 0) == null) {
+      throw new FormatException("DimensionOrder #" + n + " is null");
+    }
+    if (src.getPixelsPixelType(n, 0) == null) {
+      throw new FormatException("PixelType #" + n + " is null");
+    }
+    if (src.getPixelsSizeC(n, 0) == null) {
+      throw new FormatException("SizeC #" + n + " is null");
+    }
+    if (src.getPixelsSizeT(n, 0) == null) {
+      throw new FormatException("SizeT #" + n + " is null");
+    }
+    if (src.getPixelsSizeX(n, 0) == null) {
+      throw new FormatException("SizeX #" + n + " is null");
+    }
+    if (src.getPixelsSizeY(n, 0) == null) {
+      throw new FormatException("SizeY #" + n + " is null");
+    }
+    if (src.getPixelsSizeZ(n, 0) == null) {
+      throw new FormatException("SizeZ #" + n + " is null");
+    }
+  }
+
+  /**
    * Sets a default creation date.  If the named file exists, then the creation
    * date is set to the file's last modification date.  Otherwise, it is set
    * to the current date.

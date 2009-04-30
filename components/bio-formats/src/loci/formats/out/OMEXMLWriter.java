@@ -74,6 +74,7 @@ public class OMEXMLWriter extends FormatWriter {
     boolean last) throws FormatException, IOException
   {
     MetadataRetrieve retrieve = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(retrieve, series);
     if (!initialized) {
       out = new RandomAccessOutputStream(currentId);
 

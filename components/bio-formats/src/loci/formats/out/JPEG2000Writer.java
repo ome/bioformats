@@ -63,7 +63,9 @@ public class JPEG2000Writer extends FormatWriter {
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
 
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    boolean littleEndian = !retrieve.getPixelsBigEndian(0, 0).booleanValue();
+    MetadataTools.verifyMinimumPopulated(retrieve, series);
+    boolean littleEndian =
+      !retrieve.getPixelsBigEndian(series, 0).booleanValue();
     byte[][] byteData = AWTImageTools.getPixelBytes(img, littleEndian);
     byte[] stream =
       new byte[byteData.length * byteData[0].length];

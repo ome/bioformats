@@ -90,7 +90,7 @@ public abstract class FormatWriter extends FormatHandler
   {
     FormatTools.assertId(currentId, true, 1);
     MetadataRetrieve r = getMetadataRetrieve();
-    if (r == null) throw new FormatException("MetadataRetrieve cannot be null");
+    MetadataTools.verifyMinimumPopulated(r, series);
     int width = r.getPixelsSizeX(series, 0).intValue();
     int height = r.getPixelsSizeY(series, 0).intValue();
     int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
