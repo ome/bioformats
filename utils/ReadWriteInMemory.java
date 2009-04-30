@@ -61,7 +61,6 @@ public class ReadWriteInMemory {
     System.out.println("\tSizeC = " + sizeC);
     System.out.println("\tSizeT = " + sizeT);
 
-    /*
     // map output id string to output byte array
     String outId = fileName + ".ome.tif";
     RABytes outputFile = new RABytes();
@@ -101,7 +100,6 @@ public class ReadWriteInMemory {
     DataOutputStream out = new DataOutputStream(new FileOutputStream(outFile));
     out.write(outBytes);
     out.close();
-    */
   }
 
 }

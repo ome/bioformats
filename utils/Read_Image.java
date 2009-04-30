@@ -12,7 +12,7 @@ import java.io.IOException;
 import loci.formats.ChannelSeparator;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
-import loci.plugins.Util;
+import loci.plugins.util.Util;
 
 /** A very simple example of using Bio-Formats in an ImageJ plugin. */
 public class Read_Image implements PlugIn {
