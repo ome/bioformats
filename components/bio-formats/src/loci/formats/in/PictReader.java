@@ -364,13 +364,12 @@ public class PictReader extends FormatReader {
       lookup = new byte[3][count];
 
       for (int i=0; i<count; i++) {
-        int index = in.readShort();
-        if ((flags & 0x8000) != 0) index = i;
-        lookup[0][index] = in.readByte();
+        in.skipBytes(2);
+        lookup[0][i] = in.readByte();
         in.skipBytes(1);
-        lookup[1][index] = in.readByte();
+        lookup[1][i] = in.readByte();
         in.skipBytes(1);
-        lookup[2][index] = in.readByte();
+        lookup[2][i] = in.readByte();
         in.skipBytes(1);
       }
     }
