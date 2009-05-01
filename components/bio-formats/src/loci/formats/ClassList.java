@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
@@ -67,14 +68,15 @@ public class ClassList {
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class base) throws IOException {
-    this(file, base, null);
+    this(file, base, ClassList.class);
   }
 
   /**
    * Constructs a list of classes from the given configuration file.
    * @param file Configuration file containing the list of classes.
    * @param base Base class to which all classes are assignable.
-   * @param location Class indicating which package to search for the file.
+   * @param location Class indicating which package to search for the file.  If
+   *  null, 'file' is interpreted as an absolute path name.
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class base, Class location) throws IOException {
@@ -82,11 +84,15 @@ public class ClassList {
     classes = new Vector();
     if (file == null) return;
 
-    if (location == null) location = getClass();
-
     // read classes from file
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-      location.getResourceAsStream(file)));
+    BufferedReader in = null;
+    if (location == null) {
+      in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    }
+    else {
+      in = new BufferedReader(new InputStreamReader(
+        location.getResourceAsStream(file)));
+    }
     while (true) {
       String line = null;
       line = in.readLine();
