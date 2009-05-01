@@ -62,8 +62,8 @@ public class MRWReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return stream.readString(4).endsWith("MRM");
   }
 
@@ -157,7 +157,7 @@ public class MRWReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("AliconaReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     in.skipBytes(4); // magic number
     offset = in.readInt() + 8;
@@ -194,7 +194,7 @@ public class MRWReader extends FormatReader {
       else if (blockName.endsWith("TTW")) {
         byte[] b = new byte[len];
         in.read(b);
-        RandomAccessStream ras = new RandomAccessStream(b);
+        RandomAccessInputStream ras = new RandomAccessInputStream(b);
         Hashtable[] ifds = TiffTools.getIFDs(ras);
 
         for (int i=0; i<ifds.length; i++) {

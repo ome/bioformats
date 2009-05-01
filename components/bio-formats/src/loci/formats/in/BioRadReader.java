@@ -112,8 +112,8 @@ public class BioRadReader extends FormatReader {
     return fname.equals("lse.xml") || fname.equals("data.raw");
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, LITTLE_ENDIAN)) {
       return false;
     }
@@ -156,7 +156,7 @@ public class BioRadReader extends FormatReader {
 
     if (picFiles != null) {
       int file = no % picFiles.length;
-      RandomAccessStream ras = new RandomAccessStream(picFiles[file]);
+      RandomAccessInputStream ras = new RandomAccessInputStream(picFiles[file]);
       long offset = (no / picFiles.length) * getSizeX() * getSizeY() * bytes;
       ras.seek(offset + 76);
 
@@ -202,7 +202,7 @@ public class BioRadReader extends FormatReader {
     }
 
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     in.order(true);
 
     used = new Vector();
@@ -388,7 +388,7 @@ public class BioRadReader extends FormatReader {
       if (list[i].endsWith("lse.xml")) {
         String path =
           new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath();
-        RandomAccessStream raw = new RandomAccessStream(path);
+        RandomAccessInputStream raw = new RandomAccessInputStream(path);
         used.add(path);
         byte[] xml = new byte[(int) raw.length()];
         raw.read(xml);

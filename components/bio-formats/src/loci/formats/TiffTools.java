@@ -229,7 +229,7 @@ public final class TiffTools {
    * Tests the given stream to see if it represents
    * a TIFF file.
    */
-  public static boolean isValidHeader(RandomAccessStream stream) {
+  public static boolean isValidHeader(RandomAccessInputStream stream) {
     try {
       return checkHeader(stream) != null;
     }
@@ -246,7 +246,7 @@ public final class TiffTools {
    */
   public static Boolean checkHeader(byte[] block) {
     try {
-      RandomAccessStream s = new RandomAccessStream(block);
+      RandomAccessInputStream s = new RandomAccessInputStream(block);
       Boolean result = checkHeader(s);
       s.close();
       return result;
@@ -262,7 +262,7 @@ public final class TiffTools {
    *         false if big-endian,
    *         or null if not a TIFF.
    */
-  public static Boolean checkHeader(RandomAccessStream stream)
+  public static Boolean checkHeader(RandomAccessInputStream stream)
     throws IOException
   {
     if (stream.length() < 4) return null;
@@ -303,7 +303,7 @@ public final class TiffTools {
    * Gets all IFDs within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable[] getIFDs(RandomAccessStream in) throws IOException {
+  public static Hashtable[] getIFDs(RandomAccessInputStream in) throws IOException {
     // check TIFF header
     Boolean result = checkHeader(in);
     if (result == null) return null;
@@ -340,7 +340,7 @@ public final class TiffTools {
    * Gets the first IFD within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable getFirstIFD(RandomAccessStream in) throws IOException
+  public static Hashtable getFirstIFD(RandomAccessInputStream in) throws IOException
   {
     // check TIFF header
     Boolean result = checkHeader(in);
@@ -364,7 +364,7 @@ public final class TiffTools {
    * @return an object representing the entry's fields.
    * @throws IOException when there is an error accessing the stream <i>in</i>.
    */
-  public static TiffIFDEntry getFirstIFDEntry(RandomAccessStream in, int tag)
+  public static TiffIFDEntry getFirstIFDEntry(RandomAccessInputStream in, int tag)
     throws IOException
   {
     // First lets re-position the file pointer by checking the TIFF header
@@ -413,7 +413,7 @@ public final class TiffTools {
    * Gets offset to the first IFD, or -1 if stream is not TIFF.
    * Assumes the stream is positioned properly (checkHeader just called).
    */
-  public static long getFirstOffset(RandomAccessStream in)
+  public static long getFirstOffset(RandomAccessInputStream in)
     throws IOException
   {
     return getFirstOffset(in, false);
@@ -425,7 +425,7 @@ public final class TiffTools {
    *
    * @param bigTiff true if this is a BigTIFF file (8 byte pointers).
    */
-  public static long getFirstOffset(RandomAccessStream in, boolean bigTiff)
+  public static long getFirstOffset(RandomAccessInputStream in, boolean bigTiff)
     throws IOException
   {
     if (bigTiff) in.skipBytes(4);
@@ -433,14 +433,14 @@ public final class TiffTools {
   }
 
   /** Gets the IFD stored at the given offset. */
-  public static Hashtable getIFD(RandomAccessStream in, long ifdNum,
+  public static Hashtable getIFD(RandomAccessInputStream in, long ifdNum,
     long offset) throws IOException
   {
     return getIFD(in, ifdNum, offset, false);
   }
 
   /** Gets the IFD stored at the given offset. */
-  public static Hashtable getIFD(RandomAccessStream in,
+  public static Hashtable getIFD(RandomAccessInputStream in,
     long ifdNum, long offset, boolean bigTiff) throws IOException
   {
     Hashtable ifd = new Hashtable();
@@ -891,7 +891,7 @@ public final class TiffTools {
     throws FormatException, IOException
   {
     // read first IFD
-    RandomAccessStream in = new RandomAccessStream(id);
+    RandomAccessInputStream in = new RandomAccessInputStream(id);
     Hashtable ifd = TiffTools.getFirstIFD(in);
     in.close();
     return getComment(ifd);
@@ -929,7 +929,7 @@ public final class TiffTools {
 
   // -- Image reading methods --
 
-  public static byte[] getTile(Hashtable ifd, RandomAccessStream in,
+  public static byte[] getTile(Hashtable ifd, RandomAccessInputStream in,
     int row, int col)
     throws FormatException, IOException
   {
@@ -943,7 +943,7 @@ public final class TiffTools {
     return getTile(ifd, in, buf, row, col);
   }
 
-  public static byte[] getTile(Hashtable ifd, RandomAccessStream in,
+  public static byte[] getTile(Hashtable ifd, RandomAccessInputStream in,
     byte[] buf, int row, int col)
     throws FormatException, IOException
   {
@@ -991,7 +991,7 @@ public final class TiffTools {
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in)
+  public static byte[][] getSamples(Hashtable ifd, RandomAccessInputStream in)
     throws FormatException, IOException
   {
     int samplesPerPixel = getSamplesPerPixel(ifd);
@@ -1010,7 +1010,7 @@ public final class TiffTools {
     return samples;
   }
 
-  public static byte[] getSamples(Hashtable ifd, RandomAccessStream in,
+  public static byte[] getSamples(Hashtable ifd, RandomAccessInputStream in,
     byte[] buf) throws FormatException, IOException
   {
     long width = getImageWidth(ifd);
@@ -1018,7 +1018,7 @@ public final class TiffTools {
     return getSamples(ifd, in, buf, 0, 0, width, length);
   }
 
-  public static byte[] getSamples(Hashtable ifd, RandomAccessStream in,
+  public static byte[] getSamples(Hashtable ifd, RandomAccessInputStream in,
     byte[] buf, int x, int y, long width, long height)
     throws FormatException, IOException
   {
@@ -1693,7 +1693,7 @@ public final class TiffTools {
       value + ")");
     byte[] header = new byte[4];
 
-    RandomAccessStream raf = new RandomAccessStream(file);
+    RandomAccessInputStream raf = new RandomAccessInputStream(file);
     raf.seek(0);
     raf.readFully(header);
     if (!isValidHeader(header)) {

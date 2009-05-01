@@ -58,7 +58,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     debug("ImarisTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 
     ifds = TiffTools.getIFDs(in);

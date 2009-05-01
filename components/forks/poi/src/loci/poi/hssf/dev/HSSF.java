@@ -60,7 +60,7 @@ public class HSSF
     {
         this.filename = filename;
         POIFSFileSystem fs =
-            new POIFSFileSystem(new RandomAccessStream(filename), 512);
+            new POIFSFileSystem(new RandomAccessInputStream(filename), 512);
 
         hssfworkbook = new HSSFWorkbook(fs);
 
@@ -183,7 +183,7 @@ public class HSSF
     {
         this.filename = infile;
         POIFSFileSystem fs =
-            new POIFSFileSystem(new RandomAccessStream(filename), 512);
+            new POIFSFileSystem(new RandomAccessInputStream(filename), 512);
 
         hssfworkbook = new HSSFWorkbook(fs);
 

@@ -66,8 +66,8 @@ public class EPSReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
@@ -163,7 +163,7 @@ public class EPSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("EPSReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     status("Verifying EPS format");
 
@@ -182,7 +182,7 @@ public class EPSReader extends FormatReader {
       in.seek(offset);
       in.read(b);
 
-      in = new RandomAccessStream(b);
+      in = new RandomAccessInputStream(b);
       ifds = TiffTools.getIFDs(in);
 
       core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);

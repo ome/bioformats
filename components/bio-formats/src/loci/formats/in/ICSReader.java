@@ -136,8 +136,8 @@ public class ICSReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
@@ -265,9 +265,9 @@ public class ICSReader extends FormatReader {
     status("Checking file version");
 
     // check if we have a v2 ICS file - means there is no companion IDS file
-    RandomAccessStream f = new RandomAccessStream(icsId);
+    RandomAccessInputStream f = new RandomAccessInputStream(icsId);
     if (f.readString(17).trim().equals("ics_version\t2.0")) {
-      in = new RandomAccessStream(icsId);
+      in = new RandomAccessInputStream(icsId);
       versionTwo = true;
     }
     else {
@@ -275,7 +275,7 @@ public class ICSReader extends FormatReader {
       Location idsFile = new Location(idsId);
       if (!idsFile.exists()) throw new FormatException("IDS file not found.");
       currentIdsId = idsId;
-      in = new RandomAccessStream(idsId);
+      in = new RandomAccessInputStream(idsId);
     }
     f.close();
 
@@ -290,7 +290,7 @@ public class ICSReader extends FormatReader {
 
     // parse key/value pairs from beginning of ICS file
 
-    RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
+    RandomAccessInputStream reader = new RandomAccessInputStream(icsIn.getAbsolutePath());
     reader.seek(0);
     String token;
     String line = reader.readLine();

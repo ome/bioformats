@@ -60,18 +60,18 @@ public class POITools {
     initialize(id);
   }
 
-  public POITools(RandomAccessStream s) throws FormatException, IOException {
+  public POITools(RandomAccessInputStream s) throws FormatException, IOException {
     id = String.valueOf(System.currentTimeMillis());
     initialize(s);
   }
 
   // -- Document retrieval methods --
 
-  public RandomAccessStream getDocumentStream(String name)
+  public RandomAccessInputStream getDocumentStream(String name)
     throws FormatException, IOException
   {
     byte[] buf = getDocumentBytes(name, getFileSize(name));
-    return new RandomAccessStream(buf);
+    return new RandomAccessInputStream(buf);
   }
 
   public byte[] getDocumentBytes(String name) throws FormatException {
@@ -129,12 +129,12 @@ public class POITools {
   // -- Helper methods --
 
   private void initialize(String file) throws FormatException, IOException {
-    RandomAccessStream s = new RandomAccessStream(file);
+    RandomAccessInputStream s = new RandomAccessInputStream(file);
     initialize(s);
     s.close();
   }
 
-  private void initialize(RandomAccessStream s)
+  private void initialize(RandomAccessInputStream s)
     throws FormatException, IOException
   {
     try {
@@ -143,7 +143,7 @@ public class POITools {
       r.exec("import loci.poi.poifs.filesystem.DirectoryEntry");
       r.exec("import loci.poi.poifs.filesystem.DocumentEntry");
       r.exec("import loci.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import loci.common.RandomAccessStream");
+      r.exec("import loci.common.RandomAccessInputStream");
       r.exec("import java.util.Iterator");
     }
     catch (ReflectException exc) {

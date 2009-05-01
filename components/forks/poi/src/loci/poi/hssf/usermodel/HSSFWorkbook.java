@@ -237,7 +237,7 @@ public class HSSFWorkbook extends POIDocument
         }
     }
 
-     public HSSFWorkbook(RandomAccessStream s) throws IOException {
+     public HSSFWorkbook(RandomAccessInputStream s) throws IOException {
          this(s,true);
      }
 
@@ -254,7 +254,7 @@ public class HSSFWorkbook extends POIDocument
      * @exception IOException if the stream cannot be read
      */
 
-    public HSSFWorkbook(RandomAccessStream s, boolean preserveNodes)
+    public HSSFWorkbook(RandomAccessInputStream s, boolean preserveNodes)
             throws IOException
     {
         this(new POIFSFileSystem(s, 512), preserveNodes);
@@ -929,7 +929,7 @@ public class HSSFWorkbook extends POIDocument
         List excepts = new ArrayList(1);
         
         // Write out the Workbook stream
-        fs.createDocument(new RandomAccessStream(bytes), "Workbook");
+        fs.createDocument(new RandomAccessInputStream(bytes), "Workbook");
         
         // Write out our HPFS properties, if we have them
         writeProperties(fs, excepts);

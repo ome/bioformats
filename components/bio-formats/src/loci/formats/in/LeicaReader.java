@@ -142,8 +142,8 @@ public class LeicaReader extends FormatReader {
     return lei.exists();
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     Hashtable ifd = TiffTools.getFirstIFD(stream);
     return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
@@ -247,7 +247,7 @@ public class LeicaReader extends FormatReader {
       // need to find the associated .lei file
       if (ifds == null) super.initFile(id);
 
-      in = new RandomAccessStream(id);
+      in = new RandomAccessInputStream(id);
       in.order(TiffTools.checkHeader(in).booleanValue());
 
       in.seek(0);
@@ -308,7 +308,7 @@ public class LeicaReader extends FormatReader {
 
     leiFilename = new File(id).exists() ?
       new Location(id).getAbsolutePath() : id;
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     seriesNames = new Vector();
 
@@ -384,7 +384,7 @@ public class LeicaReader extends FormatReader {
 
       Vector f = new Vector();
       byte[] tempData = (byte[]) headerIFDs[i].get(IMAGES);
-      RandomAccessStream data = new RandomAccessStream(tempData);
+      RandomAccessInputStream data = new RandomAccessInputStream(tempData);
       data.order(isLittleEndian());
       int tempImages = data.readInt();
 
@@ -566,7 +566,7 @@ public class LeicaReader extends FormatReader {
       for (int q=0; q<keys.length; q++) {
         byte[] tmp = (byte[]) headerIFDs[i].get(keys[q]);
         if (tmp == null) continue;
-        RandomAccessStream stream = new RandomAccessStream(tmp);
+        RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
         stream.order(isLittleEndian());
 
         if (keys[q].equals(SERIES)) {
@@ -893,7 +893,7 @@ public class LeicaReader extends FormatReader {
         if (keys[q].equals(FILTERSET) || keys[q].equals(SCANNERSET)) {
           byte[] tmp = (byte[]) headerIFDs[i].get(keys[q]);
           if (tmp == null) continue;
-          RandomAccessStream stream = new RandomAccessStream(tmp);
+          RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
           stream.order(isLittleEndian());
           parseInstrumentData(stream, store, i);
           stream.close();
@@ -916,7 +916,7 @@ public class LeicaReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void parseInstrumentData(RandomAccessStream stream,
+  private void parseInstrumentData(RandomAccessInputStream stream,
     MetadataStore store, int series) throws IOException
   {
     // read 24 byte SAFEARRAY
@@ -1156,13 +1156,13 @@ public class LeicaReader extends FormatReader {
     return false;
   }
 
-  private String getString(RandomAccessStream stream, int len)
+  private String getString(RandomAccessInputStream stream, int len)
     throws IOException
   {
     return DataTools.stripString(stream.readString(len));
   }
 
-  private String getString(RandomAccessStream stream, boolean doubleLength)
+  private String getString(RandomAccessInputStream stream, boolean doubleLength)
     throws IOException
   {
     int len = stream.readInt();

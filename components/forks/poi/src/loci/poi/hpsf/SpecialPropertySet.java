@@ -247,7 +247,7 @@ public abstract class SpecialPropertySet extends MutablePropertySet
     /**
      * @see loci.poi.hpsf.MutablePropertySet#toInputStream()
      */
-    public RandomAccessStream toInputStream() throws IOException, WritingNotSupportedException
+    public RandomAccessInputStream toInputStream() throws IOException, WritingNotSupportedException
     {
         return delegate.toInputStream();
     }

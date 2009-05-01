@@ -141,7 +141,7 @@ public class POIFSDocument
      * @exception IOException thrown on read errors
      */
 
-    public POIFSDocument(final String name, final RandomAccessStream stream,
+    public POIFSDocument(final String name, final RandomAccessInputStream stream,
       int size) throws IOException
     {
         List blocks = new ArrayList();
@@ -247,7 +247,7 @@ public class POIFSDocument
      * @param offset the offset into our storage to read from
      */
 
-    void read(final byte [] buffer, final int offset, RandomAccessStream stream)
+    void read(final byte [] buffer, final int offset, RandomAccessInputStream stream)
     {
         if (_property.shouldUseSmallBlocks())
         {
@@ -590,8 +590,8 @@ public class POIFSDocument
                 writer.processPOIFSWriterEvent(new POIFSWriterEvent(dstream,
                         path, name, size));
                 try {
-                  RandomAccessStream s =
-                    new RandomAccessStream(stream.toByteArray());
+                  RandomAccessInputStream s =
+                    new RandomAccessInputStream(stream.toByteArray());
                   bigBlocks = DocumentBlock.convert(0, s, (int) s.length(),
                     size, bigBlockSize);
                 }

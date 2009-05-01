@@ -78,7 +78,7 @@ public final class LibraryChecker {
   public static void checkLibrary(int library, HashSet missing) {
     switch (library) {
       case BIO_FORMATS:
-        checkLibrary("loci.common.RandomAccessStream",
+        checkLibrary("loci.common.RandomAccessInputStream",
           "loci-common.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
         checkLibrary("loci.poi.poifs.filesystem.POIFSDocument",

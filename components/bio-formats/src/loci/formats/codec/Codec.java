@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.IOException;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**
@@ -113,7 +113,7 @@ public interface Codec {
   byte[] decompress(byte[][] data) throws FormatException;
 
   /**
-   * Decompresses data from the given RandomAccessStream.
+   * Decompresses data from the given RandomAccessInputStream.
    *
    * @param in The stream from which to read compressed data.
    * @param options Options to be used during decompression.
@@ -121,7 +121,7 @@ public interface Codec {
    * @throws FormatException If data is not valid compressed data for this
    *   decompressor.
    */
-  byte[] decompress(RandomAccessStream in, CodecOptions options)
+  byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException;
 
 }

@@ -5,7 +5,7 @@
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import loci.common.Location;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FilePattern;
 import loci.formats.TiffTools;
 import loci.formats.in.TiffReader;
@@ -51,7 +51,7 @@ public class SewTiffs {
 
       if (t == 0) {
         // read first IFD
-        RandomAccessStream ras = new RandomAccessStream(inId);
+        RandomAccessInputStream ras = new RandomAccessInputStream(inId);
         Hashtable ifd = TiffTools.getFirstIFD(ras);
         ras.close();
 

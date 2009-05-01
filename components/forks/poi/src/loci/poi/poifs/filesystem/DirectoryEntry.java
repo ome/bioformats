@@ -98,7 +98,7 @@ public interface DirectoryEntry
      */
 
     public DocumentEntry createDocument(final String name,
-                                        final RandomAccessStream stream)
+                                        final RandomAccessInputStream stream)
         throws IOException;
 
     /**

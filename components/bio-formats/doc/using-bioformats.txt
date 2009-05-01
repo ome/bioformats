@@ -167,7 +167,7 @@ o Through specialized I/O classes, Bio-Formats is able to control the number of
   open file descriptors (in the current JVM).  Currently, the maximum is 200,
   which is lower than the default on most systems.  Side note on I/O: the
   reasoning behind writing our own I/O stuff (see
-  loci.formats.RandomAccessStream) is 1) InputStreams are fast at reading
+  loci.common.RandomAccessInputStream) is 1) InputStreams are fast at reading
   data sequentially, but cannot do random access; 2) RandomAccessFiles are
   great for random access, but less efficient for sequential reading; 3) we
   needed RandomAccessFile-like functionality for byte arrays; 4) we wanted to

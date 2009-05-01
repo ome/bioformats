@@ -32,7 +32,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.GUITools;
@@ -571,7 +571,7 @@ public class Notes extends JFrame implements ActionListener {
     metadata = new AggregateMetadata(new ArrayList());
 
     if (currentFile.endsWith(".ome")) {
-      RandomAccessStream s = new RandomAccessStream(currentFile);
+      RandomAccessInputStream s = new RandomAccessInputStream(currentFile);
       String xml = s.readString((int) s.length());
       s.close();
       metadata.addDelegate(MetadataTools.createOMEXMLMetadata(xml));
@@ -582,7 +582,7 @@ public class Notes extends JFrame implements ActionListener {
       MetadataStore companionStore = null, readerStore = null;
       if (companion.exists()) {
         progress.setString("Reading companion file (" + companion + ")");
-        RandomAccessStream s = new RandomAccessStream(currentFile);
+        RandomAccessInputStream s = new RandomAccessInputStream(currentFile);
         String xml = s.readString((int) s.length());
         s.close();
         companionStore = MetadataTools.createOMEXMLMetadata(xml);

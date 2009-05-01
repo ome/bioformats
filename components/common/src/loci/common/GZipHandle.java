@@ -1,5 +1,5 @@
 //
-// RAGZip.java
+// GZipHandle.java
 //
 
 /*
@@ -29,17 +29,17 @@ import java.util.zip.*;
 
 /**
  * CompressedRandomAccess implementation for reading from gzip-compressed files
- * or byte arrays.  Instances of RAGZip are read-only.
+ * or byte arrays.  Instances of GZipHandle are read-only.
  *
  * @see CompressedRandomAccess
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RAGZip.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RAGZip.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/GZipHandle.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/GZipHandle.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class RAGZip extends CompressedRandomAccess {
+public class GZipHandle extends CompressedRandomAccess {
 
   // -- Fields --
 
@@ -47,7 +47,7 @@ public class RAGZip extends CompressedRandomAccess {
 
   // -- Constructor --
 
-  public RAGZip(String file) throws IOException {
+  public GZipHandle(String file) throws IOException {
     super();
     this.file = file;
     if (!isGZipFile(file)) {
@@ -69,7 +69,7 @@ public class RAGZip extends CompressedRandomAccess {
     stream = new DataInputStream(new GZIPInputStream(bis));
   }
 
-  // -- RAGZip API methods --
+  // -- GZipHandle API methods --
 
   /** Returns true if the given filename is a gzip file. */
   public static boolean isGZipFile(String file) {

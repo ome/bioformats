@@ -126,8 +126,8 @@ public class LIFReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return stream.read() == 0x70;
   }
 
@@ -220,7 +220,7 @@ public class LIFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("LIFReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     offsets = new Vector();
 
     core[0].littleEndian = true;

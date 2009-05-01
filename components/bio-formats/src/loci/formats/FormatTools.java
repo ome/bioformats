@@ -571,7 +571,7 @@ public final class FormatTools {
     }
   }
 
-  public static boolean validStream(RandomAccessStream stream, int len,
+  public static boolean validStream(RandomAccessInputStream stream, int len,
     boolean littleEndian) throws IOException
   {
     stream.seek(0);

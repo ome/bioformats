@@ -91,8 +91,8 @@ public class DeltavisionReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     stream.seek(96);
     int magic = stream.readShort() & 0xffff;
@@ -143,7 +143,7 @@ public class DeltavisionReader extends FormatReader {
 
     status("Reading header");
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     in.seek(96);
     in.order(true);
@@ -556,7 +556,7 @@ public class DeltavisionReader extends FormatReader {
 
     status("Parsing log file");
 
-    RandomAccessStream s = new RandomAccessStream(logFile);
+    RandomAccessInputStream s = new RandomAccessInputStream(logFile);
 
     String line, key, value = "", prefix = "";
 
@@ -809,7 +809,7 @@ public class DeltavisionReader extends FormatReader {
 
     status("Parsing deconvolution log file");
 
-    RandomAccessStream s = new RandomAccessStream(base + "_log.txt");
+    RandomAccessInputStream s = new RandomAccessInputStream(base + "_log.txt");
 
     boolean doStatistics = false;
     int cc = 0, tt = 0;
@@ -1023,7 +1023,7 @@ public class DeltavisionReader extends FormatReader {
       return sb.toString();
     }
 
-    private DVExtHdrFields(RandomAccessStream in) {
+    private DVExtHdrFields(RandomAccessInputStream in) {
       try {
         // NB: this is consistent with the Deltavision Opener plugin
         // for ImageJ (http://rsb.info.nih.gov/ij/plugins/track/delta.html)

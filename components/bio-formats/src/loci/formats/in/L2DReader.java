@@ -58,8 +58,8 @@ public class L2DReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
@@ -123,7 +123,7 @@ public class L2DReader extends FormatReader {
     }
 
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     used = new Vector();
     used.add(new Location(id).getAbsolutePath());
@@ -174,7 +174,7 @@ public class L2DReader extends FormatReader {
       String scanPath =
         new Location(scanDir, scanName + ".scn").getAbsolutePath();
       addDirectory(scanDir.getAbsolutePath());
-      RandomAccessStream scan = new RandomAccessStream(scanPath);
+      RandomAccessInputStream scan = new RandomAccessInputStream(scanPath);
       line = scan.readLine().trim();
       while (line != null && line.length() > 0) {
         if (!line.startsWith("#")) {

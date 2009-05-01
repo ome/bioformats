@@ -240,8 +240,8 @@ public class FileStitcher implements IFormatReader {
     return reader.isThisType(block);
   }
 
-  /* @see IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return reader.isThisType(stream);
   }
 

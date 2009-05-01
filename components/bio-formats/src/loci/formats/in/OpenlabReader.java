@@ -108,8 +108,8 @@ public class OpenlabReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readLong() == 0xffff696d7072L;
   }
@@ -192,7 +192,7 @@ public class OpenlabReader extends FormatReader {
       byte[] tmpBuf =
         new byte[buf.length * (getRGBChannelCount() == 3 ? 1 : 3)];
       try {
-        Location.mapFile("OPENLAB_PICT", new RABytes(b));
+        Location.mapFile("OPENLAB_PICT", new ByteArrayHandle(b));
         pict.setId("OPENLAB_PICT");
 
         if (getPixelType() != pict.getPixelType()) {
@@ -299,7 +299,7 @@ public class OpenlabReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("OpenlabReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     luts = new Vector();
 

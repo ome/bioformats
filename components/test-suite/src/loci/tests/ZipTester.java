@@ -36,7 +36,7 @@ import loci.formats.FormatException;
 import loci.formats.ImageReader;
 
 /**
- * A class for testing {@link loci.common.RandomAccessStream}'s
+ * A class for testing {@link loci.common.RandomAccessInputStream}'s
  * ability to handle files compressed with gz, zip or bz2.
  *
  * <dl><dt><b>Source code:</b></dt>

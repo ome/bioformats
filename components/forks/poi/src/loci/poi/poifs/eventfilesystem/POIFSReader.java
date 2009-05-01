@@ -54,7 +54,7 @@ public class POIFSReader
     private POIFSReaderRegistry registry;
     private boolean             registryClosed;
     private int bigBlockSize;
-    private RandomAccessStream stream;
+    private RandomAccessInputStream stream;
 
     /**
      * Create a POIFSReader
@@ -74,7 +74,7 @@ public class POIFSReader
      * @exception IOException on errors reading, or on invalid data
      */
 
-    public void read(final RandomAccessStream stream, int size)
+    public void read(final RandomAccessInputStream stream, int size)
         throws IOException
     {
         bigBlockSize = size;
@@ -210,7 +210,7 @@ public class POIFSReader
 
             reader.registerListener(listener);
             System.out.println("reading " + args[ j ]);
-            RandomAccessStream istream = new RandomAccessStream(args[ j ]);
+            RandomAccessInputStream istream = new RandomAccessInputStream(args[ j ]);
 
             reader.read(istream, 512);
             istream.close();

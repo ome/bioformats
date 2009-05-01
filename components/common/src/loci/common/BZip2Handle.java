@@ -1,5 +1,5 @@
 //
-// RABZip2.java
+// BZip2Handle.java
 //
 
 /*
@@ -29,17 +29,17 @@ import java.util.zip.*;
 
 /**
  * CompressedRandomAccess implementation for reading from BZip2-compressed files
- * or byte arrays.  Instances of RABZip2 are read-only.
+ * or byte arrays.  Instances of BZip2Handle are read-only.
  *
  * @see CompressedRandomAccess
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RABZip2.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RABZip2.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/BZip2Handle.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/BZip2Handle.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class RABZip2 extends CompressedRandomAccess {
+public class BZip2Handle extends CompressedRandomAccess {
 
   // -- Fields --
 
@@ -47,7 +47,7 @@ public class RABZip2 extends CompressedRandomAccess {
 
   // -- Constructor --
 
-  public RABZip2(String file) throws IOException {
+  public BZip2Handle(String file) throws IOException {
     super();
     this.file = file;
     if (!isBZip2File(file)) {
@@ -71,7 +71,7 @@ public class RABZip2 extends CompressedRandomAccess {
     stream = new DataInputStream(new CBZip2InputStream(bis));
   }
 
-  // -- RABZip2 API methods --
+  // -- BZip2Handle API methods --
 
   /** Returns true if the given filename is a BZip2 file. */
   public static boolean isBZip2File(String file) {

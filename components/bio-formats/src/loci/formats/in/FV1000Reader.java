@@ -138,8 +138,8 @@ public class FV1000Reader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     String s = DataTools.stripString(stream.readString(blockCheckLen));
     return s.indexOf("FileInformation") != -1 ||
@@ -203,7 +203,7 @@ public class FV1000Reader extends FormatReader {
 
     if (filename == null) return buf;
 
-    RandomAccessStream plane = getFile(filename);
+    RandomAccessInputStream plane = getFile(filename);
     Hashtable[] ifds = TiffTools.getIFDs(plane);
     if (image >= ifds.length) return buf;
 
@@ -263,7 +263,7 @@ public class FV1000Reader extends FormatReader {
 
     isOIB = checkSuffix(id, OIB_SUFFIX);
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     if (isOIB) poi = new POITools(Location.getMappedId(id));
 
     // mappedOIF is used to distinguish between datasets that are being read
@@ -296,7 +296,7 @@ public class FV1000Reader extends FormatReader {
       if (infoFile == null) {
         throw new FormatException("OibInfo.txt not found in " + id);
       }
-      RandomAccessStream ras = poi.getDocumentStream(infoFile);
+      RandomAccessInputStream ras = poi.getDocumentStream(infoFile);
 
       oibMapping = new Hashtable();
 
@@ -375,7 +375,7 @@ public class FV1000Reader extends FormatReader {
         }
         else currentId = oifFile;
         super.initFile(currentId);
-        in = new RandomAccessStream(currentId);
+        in = new RandomAccessInputStream(currentId);
         oifName = currentId;
       }
       else oifName = currentId;
@@ -385,7 +385,7 @@ public class FV1000Reader extends FormatReader {
     String path = (isOIB || !f.endsWith(oifName) || mappedOIF) ? "" :
       f.substring(0, f.lastIndexOf(File.separator) + 1);
 
-    RandomAccessStream oif = null;
+    RandomAccessInputStream oif = null;
     try {
       oif = getFile(oifName);
     }
@@ -755,7 +755,7 @@ public class FV1000Reader extends FormatReader {
         tiffPath = file.substring(0, file.lastIndexOf(File.separator));
       }
       else tiffPath = file;
-      RandomAccessStream ptyReader = getFile(file);
+      RandomAccessInputStream ptyReader = getFile(file);
       s = ptyReader.readString((int) ptyReader.length());
       ptyReader.close();
       st = new StringTokenizer(s, "\n");
@@ -919,11 +919,11 @@ public class FV1000Reader extends FormatReader {
     // set up thumbnail file mapping
 
     try {
-      RandomAccessStream thumb = getFile(thumbId);
+      RandomAccessInputStream thumb = getFile(thumbId);
       byte[] b = new byte[(int) thumb.length()];
       thumb.read(b);
       thumb.close();
-      Location.mapFile("thumbnail.bmp", new RABytes(b));
+      Location.mapFile("thumbnail.bmp", new ByteArrayHandle(b));
       thumbReader.setId("thumbnail.bmp");
       for (int i=0; i<getSeriesCount(); i++) {
         core[i].thumbSizeX = thumbReader.getSizeX();
@@ -941,7 +941,7 @@ public class FV1000Reader extends FormatReader {
     int count = (int) Math.min(getSizeC(), lutNames.size());
     for (int c=0; c<count; c++) {
       try {
-        RandomAccessStream stream = getFile((String) lutNames.get(c));
+        RandomAccessInputStream stream = getFile((String) lutNames.get(c));
         stream.seek(stream.length() - 65536 * 4);
         stream.read(buffer);
         for (int q=0; q<buffer.length; q+=4) {
@@ -1075,7 +1075,7 @@ public class FV1000Reader extends FormatReader {
       String filename = (String) roiFilenames.get(new Integer(i));
       filename = sanitizeFile(filename, (isOIB || mappedOIF) ? "" : path);
 
-      RandomAccessStream stream = getFile(filename);
+      RandomAccessInputStream stream = getFile(filename);
       String data = stream.readString((int) stream.length());
       stream.close();
 
@@ -1275,7 +1275,7 @@ public class FV1000Reader extends FormatReader {
     return path + File.separator + f;
   }
 
-  private RandomAccessStream getFile(String name)
+  private RandomAccessInputStream getFile(String name)
     throws FormatException, IOException
   {
     if (isOIB) {
@@ -1285,7 +1285,7 @@ public class FV1000Reader extends FormatReader {
       name = name.replace('\\', '/');
       return poi.getDocumentStream((String) oibMapping.get(name));
     }
-    else return new RandomAccessStream(name);
+    else return new RandomAccessInputStream(name);
   }
 
   private boolean isPreviewName(String name) {

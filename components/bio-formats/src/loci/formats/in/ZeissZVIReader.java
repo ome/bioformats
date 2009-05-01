@@ -96,8 +96,8 @@ public class ZeissZVIReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     int magic = stream.readInt();
     if (magic != 0xd0cf11e0) return false;
@@ -183,7 +183,7 @@ public class ZeissZVIReader extends FormatReader {
     options.interleaved = isInterleaved();
 
     if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
-      RandomAccessStream s = poi.getDocumentStream(imageFiles[no]);
+      RandomAccessInputStream s = poi.getDocumentStream(imageFiles[no]);
       s.seek(offsets[no]);
 
       int len = w * pixel;
@@ -260,7 +260,7 @@ public class ZeissZVIReader extends FormatReader {
               ii *= count;
               ii += firstTile;
 
-              RandomAccessStream s = poi.getDocumentStream(imageFiles[ii]);
+              RandomAccessInputStream s = poi.getDocumentStream(imageFiles[ii]);
               s.seek(offsets[ii]);
               int nread = s.read(tile);
 
@@ -387,7 +387,7 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       if (name.indexOf("Scaling") == -1 && dirName.equals("Tags")) {
-        RandomAccessStream s = poi.getDocumentStream(name);
+        RandomAccessInputStream s = poi.getDocumentStream(name);
         s.order(true);
         int imageNum = getImageNumber(name, -1);
         tagsToParse.put(new Integer(imageNum), s);
@@ -396,7 +396,7 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       else if (dirName.equals("Shapes") && name.indexOf("Item") != -1) {
-        RandomAccessStream s = poi.getDocumentStream(name);
+        RandomAccessInputStream s = poi.getDocumentStream(name);
         s.order(true);
         int imageNum = getImageNumber(name, -1);
         if (imageNum != -1) {
@@ -410,7 +410,7 @@ public class ZeissZVIReader extends FormatReader {
         if (imageNum == -1) continue;
 
         // found a valid image stream
-        RandomAccessStream s = poi.getDocumentStream(name);
+        RandomAccessInputStream s = poi.getDocumentStream(name);
         s.order(true);
 
         if (s.length() <= 1024) {
@@ -582,7 +582,7 @@ public class ZeissZVIReader extends FormatReader {
 
     Integer[] keys = (Integer[]) tagsToParse.keySet().toArray(new Integer[0]);
     for (int i=0; i<keys.length; i++) {
-      RandomAccessStream s = (RandomAccessStream) tagsToParse.get(keys[i]);
+      RandomAccessInputStream s = (RandomAccessInputStream) tagsToParse.get(keys[i]);
       parseTags(keys[i].intValue(), s, store);
       s.close();
     }
@@ -610,7 +610,7 @@ public class ZeissZVIReader extends FormatReader {
     return defaultNumber;
   }
 
-  private String getNextTag(RandomAccessStream s) throws IOException {
+  private String getNextTag(RandomAccessInputStream s) throws IOException {
     int type = s.readShort();
     switch (type) {
       case 0:
@@ -657,7 +657,7 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /** Parse all of the tags in a stream. */
-  private void parseTags(int image, RandomAccessStream s, MetadataStore store)
+  private void parseTags(int image, RandomAccessInputStream s, MetadataStore store)
     throws IOException
   {
     s.seek(8);
@@ -866,10 +866,10 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /**
-   * Parse ROI data from the given RandomAccessStream and store it in the
+   * Parse ROI data from the given RandomAccessInputStream and store it in the
    * given MetadataStore.
    */
-  private void parseROIs(int imageNum, RandomAccessStream s,
+  private void parseROIs(int imageNum, RandomAccessInputStream s,
     MetadataStore store) throws IOException
   {
     // scan stream for offsets to each ROI

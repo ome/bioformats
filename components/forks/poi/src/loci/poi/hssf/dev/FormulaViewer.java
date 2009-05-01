@@ -66,7 +66,7 @@ public class FormulaViewer
         throws Exception
     {
         POIFSFileSystem fs      =
-            new POIFSFileSystem(new RandomAccessStream(file), 512);
+            new POIFSFileSystem(new RandomAccessInputStream(file), 512);
         List            records =
             RecordFactory
                 .createRecords(fs.createDocumentInputStream("Workbook"));

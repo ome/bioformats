@@ -155,8 +155,8 @@ public class ZeissLSMReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     byte[] check = new byte[blockCheckLen];
     stream.read(check);
@@ -221,7 +221,7 @@ public class ZeissLSMReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in = new RandomAccessStream(lsmFilenames[getSeries()]);
+    in = new RandomAccessInputStream(lsmFilenames[getSeries()]);
     in.order(!isLittleEndian());
     TiffTools.getSamples(ifds[getSeries()][no], in, buf, x, y, w, h);
     in.close();
@@ -262,7 +262,7 @@ public class ZeissLSMReader extends FormatReader {
     ifds = new Hashtable[core.length][];
     for (int i=0; i<core.length; i++) {
       core[i] = new CoreMetadata();
-      RandomAccessStream s = new RandomAccessStream(lsmFilenames[i]);
+      RandomAccessInputStream s = new RandomAccessInputStream(lsmFilenames[i]);
       core[i].littleEndian = s.read() == TiffTools.LITTLE;
       s.order(isLittleEndian());
       s.seek(0);
@@ -325,7 +325,7 @@ public class ZeissLSMReader extends FormatReader {
     setSeries(series);
     Hashtable ifd = ifds[series][0];
 
-    in = new RandomAccessStream(lsmFilenames[series]);
+    in = new RandomAccessInputStream(lsmFilenames[series]);
     in.order(isLittleEndian());
 
     int photo = TiffTools.getPhotometricInterpretation(ifd);
@@ -359,7 +359,7 @@ public class ZeissLSMReader extends FormatReader {
       cz[i] = (byte) s[i];
     }
 
-    RandomAccessStream ras = new RandomAccessStream(cz);
+    RandomAccessInputStream ras = new RandomAccessInputStream(cz);
     ras.order(isLittleEndian());
 
     addMeta(keyPrefix + "MagicNumber ", ras.readInt());

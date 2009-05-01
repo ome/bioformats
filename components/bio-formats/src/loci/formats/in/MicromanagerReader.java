@@ -81,7 +81,7 @@ public class MicromanagerReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA)) {
       try {
-        RandomAccessStream stream = new RandomAccessStream(name);
+        RandomAccessInputStream stream = new RandomAccessInputStream(name);
         long length = stream.length();
         stream.close();
         return length > 0;
@@ -105,8 +105,8 @@ public class MicromanagerReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return tiffReader.isThisType(stream);
   }
 
@@ -167,7 +167,7 @@ public class MicromanagerReader extends FormatReader {
     Location file = new Location(currentId).getAbsoluteFile();
     metadataFile = file.exists() ? new Location(file.getParentFile(),
       METADATA).getAbsolutePath() : METADATA;
-    in = new RandomAccessStream(metadataFile);
+    in = new RandomAccessInputStream(metadataFile);
     String parent = file.exists() ?
       file.getParentFile().getAbsolutePath() + File.separator : "";
 

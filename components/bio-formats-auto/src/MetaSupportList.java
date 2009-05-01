@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import java.io.*;
 import java.util.*;
-import loci.common.*;
+import loci.common.IniParser;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import loci.formats.IFormatHandler;
 
 /**
@@ -57,16 +59,16 @@ public class MetaSupportList {
   protected MetaEntityList entityList;
 
   /** List of groups. Key is group name, value is list of properties. */
-  protected Hashtable<String, Vector<String>> groups =
-    new Hashtable<String, Vector<String>>();
+  protected HashMap<String, Vector<String>> groups =
+    new HashMap<String, Vector<String>>();
 
   /**
    * List of supported properties. Key is handler name (e.g., AVIReader),
    * value is a table mapping from properties to support tags
    * (YES, NO, PARTIAL or MISSING).
    */
-  protected Hashtable<String, Hashtable<String, String>> supported =
-    new Hashtable<String, Hashtable<String, String>>();
+  protected HashMap<String, HashMap<String, String>> supported =
+    new HashMap<String, HashMap<String, String>>();
 
   /** Version of OME-XML (e.g., 2008-02). */
   protected String version;
@@ -93,14 +95,14 @@ public class MetaSupportList {
 
     // parse INI data
     IniParser parser = new IniParser();
-    Vector<Hashtable<String, String>> groupsList = parser.parseINI(groupsPath);
-    Vector<Hashtable<String, String>> supportList =
+    Vector<HashMap<String, String>> groupsList = parser.parseINI(groupsPath);
+    Vector<HashMap<String, String>> supportList =
       parser.parseINI(supportPath);
 
     // convert unprocessed INI-style config data into data structures
 
     // process list of groups
-    Hashtable<String, String> groupHash = groupsList.get(0);
+    HashMap<String, String> groupHash = groupsList.get(0);
     for (String groupName : groupHash.keySet()) {
       String propString = groupHash.get(groupName);
       StringTokenizer st = new StringTokenizer(propString, " ");
@@ -114,7 +116,7 @@ public class MetaSupportList {
     }
 
     // process list of supported metadata properties
-    for (Hashtable<String, String> propHash : supportList) {
+    for (HashMap<String, String> propHash : supportList) {
       String handler = propHash.get(IniParser.HEADER_KEY);
       propHash.remove(IniParser.HEADER_KEY);
       supported.put(handler, propHash);
@@ -259,7 +261,7 @@ public class MetaSupportList {
     Vector<String> props = new Vector<String>();
 
     // for this handler, get table mapping properties to support tags
-    Hashtable<String, String> supportProps = supported.get(handlerName);
+    HashMap<String, String> supportProps = supported.get(handlerName);
 
     // flag whether we are looking for missing entries
     boolean missing = MISSING.equals(supportValue);
@@ -329,7 +331,7 @@ public class MetaSupportList {
     boolean missing = MISSING.equals(supportValue);
     int handlerCount = 0;
     for (String handler : supported.keySet()) {
-      Hashtable<String, String> supportProps = supported.get(handler);
+      HashMap<String, String> supportProps = supported.get(handler);
       String propSupportValue = supportProps.get(fqProp);
       if (propSupportValue != null) {
         int space = propSupportValue.indexOf(" ");

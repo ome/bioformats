@@ -45,7 +45,7 @@ public class RawDataBlockList
      *            block is read
      */
 
-    public RawDataBlockList(final RandomAccessStream stream, int size)
+    public RawDataBlockList(final RandomAccessInputStream stream, int size)
         throws IOException
     {
         List blocks = new ArrayList();

@@ -83,8 +83,8 @@ public class OMEXMLReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     String xml = stream.readString(blockCheckLen);
     return xml.startsWith("<?xml") && xml.indexOf("<OME") >= 0;
   }
@@ -204,7 +204,7 @@ public class OMEXMLReader extends FormatReader {
     if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     super.initFile(id);
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     binDataOffsets = new Vector();
     binDataLengths = new Vector();

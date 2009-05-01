@@ -84,8 +84,8 @@ public class GatanReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readInt() == 3;
   }
@@ -122,7 +122,7 @@ public class GatanReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("GatanReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     pixelOffset = 0;
 
     status("Verifying Gatan format");

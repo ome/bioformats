@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.*;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
@@ -51,8 +51,8 @@ public class JPEG2000Reader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     int b1 = stream.read() & 0xff;
     int b2 = stream.read() & 0xff;
@@ -93,7 +93,7 @@ public class JPEG2000Reader extends FormatReader {
     debug("JPEG2000Reader.initFile(" + id + ")");
     super.initFile(id);
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     long pos = in.getFilePointer();
     int length = 0, box = 0;

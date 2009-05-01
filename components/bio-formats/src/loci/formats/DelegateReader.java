@@ -77,8 +77,8 @@ public class DelegateReader extends FormatReader {
     return nativeReader.isThisType(name, open);
   }
 
-  /* @see IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return nativeReader.isThisType(stream);
   }
 

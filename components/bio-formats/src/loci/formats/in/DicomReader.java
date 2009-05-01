@@ -140,8 +140,8 @@ public class DicomReader extends FormatReader {
     return super.isThisType(name, open);
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readString(blockCheckLen).indexOf("DICM") >= 0;
   }
@@ -355,7 +355,7 @@ public class DicomReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("DicomReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     in.order(true);
 
     core[0].littleEndian = true;
@@ -609,7 +609,7 @@ public class DicomReader extends FormatReader {
         if (!files[i].equals(currentId) && !file.equals(currentId) &&
           isThisType(files[i]))
         {
-          RandomAccessStream stream = new RandomAccessStream(file);
+          RandomAccessInputStream stream = new RandomAccessInputStream(file);
           stream.order(true);
 
           stream.seek(128);
@@ -860,7 +860,7 @@ public class DicomReader extends FormatReader {
     else return value;
   }
 
-  private int getLength(RandomAccessStream stream, int tag) throws IOException {
+  private int getLength(RandomAccessInputStream stream, int tag) throws IOException {
     byte[] b = new byte[4];
     stream.read(b);
 
@@ -922,7 +922,7 @@ public class DicomReader extends FormatReader {
     }
   }
 
-  private int getNextTag(RandomAccessStream stream) throws IOException {
+  private int getNextTag(RandomAccessInputStream stream) throws IOException {
     int groupWord = stream.readShort();
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
       core[0].littleEndian = false;

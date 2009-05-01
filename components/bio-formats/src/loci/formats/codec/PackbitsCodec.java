@@ -25,7 +25,7 @@ package loci.formats.codec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**
@@ -52,9 +52,9 @@ public class PackbitsCodec extends BaseCodec {
    * The CodecOptions parameter should have the following fields set:
    *  {@link CodecOptions#maxBytes maxBytes}
    *
-   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     // Adapted from the TIFF 6.0 specification, page 42.

@@ -206,11 +206,11 @@ public final class ImageInfo {
 
     if (map != null) Location.mapId(id, map);
     else if (preload) {
-      RandomAccessStream f = new RandomAccessStream(id);
+      RandomAccessInputStream f = new RandomAccessInputStream(id);
       byte[] b = new byte[(int) f.length()];
       f.read(b);
       f.close();
-      RABytes file = new RABytes(b);
+      ByteArrayHandle file = new ByteArrayHandle(b);
       Location.mapFile(id, file);
     }
 

@@ -53,9 +53,9 @@ public class RPZACodec extends BaseCodec {
    *  {@link CodecOptions#width width}
    *  {@link CodecOptions#height height}
    *
-   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     if (options == null) options = CodecOptions.getDefaultOptions();

@@ -25,7 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.common.DataTools;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -54,8 +54,8 @@ public class ARFReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     byte endian1 = stream.readByte();
     byte endian2 = stream.readByte();
@@ -88,7 +88,7 @@ public class ARFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("ARFReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     // parse file header
 

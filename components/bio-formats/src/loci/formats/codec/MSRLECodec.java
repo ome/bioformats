@@ -49,9 +49,9 @@ public class MSRLECodec extends BaseCodec {
    *  {@link CodecOptions#height height}
    *  {@link CodecOptions#previousImage previousImage}
    *
-   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     if (options == null) options = CodecOptions.getDefaultOptions();

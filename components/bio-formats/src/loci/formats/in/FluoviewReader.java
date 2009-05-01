@@ -84,7 +84,7 @@ public class FluoviewReader extends BaseTiffReader {
   public boolean isThisType(String name, boolean open) {
     if (!open) return false;
     try {
-      RandomAccessStream stream = new RandomAccessStream(name);
+      RandomAccessInputStream stream = new RandomAccessInputStream(name);
       boolean isThisType = isThisType(stream);
       stream.close();
       return isThisType;
@@ -95,8 +95,8 @@ public class FluoviewReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     Hashtable ifd = TiffTools.getFirstIFD(stream);
     String com = TiffTools.getComment(ifd);
     if (com == null) com = "";
@@ -181,7 +181,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (mmheader[i] < 0) mmheader[i]++;
     }
 
-    RandomAccessStream ras = new RandomAccessStream(mmheader);
+    RandomAccessInputStream ras = new RandomAccessInputStream(mmheader);
     ras.order(isLittleEndian());
 
     put("Header Flag", ras.readShort());
@@ -250,7 +250,7 @@ public class FluoviewReader extends BaseTiffReader {
         stamp[j] = (byte) s[j];
         if (stamp[j] < 0) stamp[j]++;
       }
-      ras = new RandomAccessStream(stamp);
+      ras = new RandomAccessInputStream(stamp);
 
       // each stamp is 8 doubles, representing the position on dimensions 3-10
       for (int j=0; j<8; j++) {

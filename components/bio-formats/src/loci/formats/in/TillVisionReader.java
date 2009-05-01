@@ -47,7 +47,7 @@ public class TillVisionReader extends FormatReader {
 
   // -- Fields --
 
-  private RandomAccessStream[] pixelsStream;
+  private RandomAccessInputStream[] pixelsStream;
   private Hashtable exposureTimes;
   private boolean embeddedImages;
   private int embeddedOffset;
@@ -61,8 +61,8 @@ public class TillVisionReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
@@ -129,7 +129,7 @@ public class TillVisionReader extends FormatReader {
     for (int i=0; i<documents.size(); i++) {
       String name = (String) documents.get(i);
       if (name.equals("Root Entry/Contents")) {
-        RandomAccessStream s = poi.getDocumentStream(name);
+        RandomAccessInputStream s = poi.getDocumentStream(name);
 
         byte[] b = new byte[(int) s.length()];
         s.read(b);
@@ -287,7 +287,7 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsStream = new RandomAccessStream[getSeriesCount()];
+    pixelsStream = new RandomAccessInputStream[getSeriesCount()];
 
     for (int i=0; i<getSeriesCount(); i++) {
       if (!embeddedImages) {
@@ -311,13 +311,13 @@ public class TillVisionReader extends FormatReader {
           }
         }
 
-        pixelsStream[i] = new RandomAccessStream(file);
+        pixelsStream[i] = new RandomAccessInputStream(file);
 
         // read key/value pairs from .inf files
 
         int dot = file.lastIndexOf(".");
         String infFile = file.substring(0, dot) + ".inf";
-        in = new RandomAccessStream(infFile);
+        in = new RandomAccessInputStream(infFile);
 
         String data = in.readString((int) in.length());
         StringTokenizer lines = new StringTokenizer(data);

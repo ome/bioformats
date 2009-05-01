@@ -60,7 +60,7 @@ public class NiftiReader extends FormatReader {
   private int pixelOffset;
 
   /** File containing the pixel data. */
-  private RandomAccessStream pixelFile;
+  private RandomAccessInputStream pixelFile;
 
   private String pixelsFilename;
 
@@ -83,7 +83,7 @@ public class NiftiReader extends FormatReader {
     if (extension.equals("nii")) return true;
     String headerFile = name.substring(0, dot - 1) + ".hdr";
     try {
-      RandomAccessStream header = new RandomAccessStream(headerFile);
+      RandomAccessInputStream header = new RandomAccessInputStream(headerFile);
       boolean isValid = isThisType(header);
       header.close();
       return isValid;
@@ -94,8 +94,8 @@ public class NiftiReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     stream.seek(344);
     String magic = stream.readString(3);
@@ -160,7 +160,7 @@ public class NiftiReader extends FormatReader {
     }
 
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     in.seek(40);
     short check = in.readShort();
@@ -169,7 +169,7 @@ public class NiftiReader extends FormatReader {
 
     if (id.endsWith(".hdr")) {
       pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
-      pixelFile = new RandomAccessStream(pixelsFilename);
+      pixelFile = new RandomAccessInputStream(pixelsFilename);
     }
     else if (id.endsWith(".nii")) {
       pixelsFilename = id;

@@ -68,7 +68,7 @@ public class BiffViewer {
     public void run() {
         try {
             POIFSFileSystem fs =
-                    new POIFSFileSystem(new RandomAccessStream(filename), 512);
+                    new POIFSFileSystem(new RandomAccessInputStream(filename), 512);
             InputStream stream =
                     fs.createDocumentInputStream("Workbook");
             createRecords(stream, dump);
@@ -566,7 +566,7 @@ public class BiffViewer {
                 }
                 if ((args.length > 1) && args[1].equals("bfd")) {
                     POIFSFileSystem fs = new POIFSFileSystem(
-                      new RandomAccessStream(args[0]), 512);
+                      new RandomAccessInputStream(args[0]), 512);
                     InputStream stream =
                             fs.createDocumentInputStream("Workbook");
                     int size = stream.available();

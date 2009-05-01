@@ -26,7 +26,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -68,7 +68,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isThisType(block);
   }
 
-  public boolean isThisType(RandomAccessStream stream) throws IOException{
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException{
     return reader.isThisType(stream);
   }
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.IOException;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**
@@ -62,9 +62,9 @@ public class HuffmanCodec extends BaseCodec {
    *   {@link CodecOptions#bitsPerSample bitsPerSample}
    *   {@link CodecOptions#maxBytes maxBytes}
    *
-   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     if (options == null || !(options instanceof HuffmanCodecOptions)) {

@@ -4,7 +4,7 @@
 
 import java.io.*;
 import java.util.Hashtable;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.TiffTools;
 
 /** Allows raw user TIFF comment editing for the given TIFF files. */
@@ -22,7 +22,7 @@ public class EditTiff {
       System.out.println("Reading " + f + " ");
       String comment = TiffTools.getComment(f);
       // or if you already have the file open for random access, you can use:
-      // RandomAccessStream fin = new RandomAccessStream(f);
+      // RandomAccessInputStream fin = new RandomAccessInputStream(f);
       // Hashtable ifd = TiffTools.getFirstIFD(fin);
       // String comment = (String)
       //   TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);

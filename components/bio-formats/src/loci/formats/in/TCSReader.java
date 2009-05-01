@@ -88,7 +88,7 @@ public class TCSReader extends FormatReader {
     }
     if (lei.exists()) return false;
     try {
-      RandomAccessStream s = new RandomAccessStream(name);
+      RandomAccessInputStream s = new RandomAccessInputStream(name);
       boolean isThisType = isThisType(s);
       s.close();
       return isThisType;
@@ -104,8 +104,8 @@ public class TCSReader extends FormatReader {
     return MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     // check for Leica TCS IFD directory entries
     Hashtable ifd = TiffTools.getFirstIFD(stream);
 
@@ -198,7 +198,7 @@ public class TCSReader extends FormatReader {
     super.initFile(id);
 
     if (checkSuffix(id, XML_SUFFIX)) {
-      in = new RandomAccessStream(id);
+      in = new RandomAccessInputStream(id);
       MetadataStore store = new DummyMetadata();
 
       // parse XML metadata
@@ -241,7 +241,7 @@ public class TCSReader extends FormatReader {
       for (int i=0; i<list.length; i++) {
         if (checkSuffix(list[i], TiffReader.TIFF_SUFFIXES)) {
           String file = new Location(parent, list[i]).getAbsolutePath();
-          Hashtable ifd = TiffTools.getIFDs(new RandomAccessStream(file))[0];
+          Hashtable ifd = TiffTools.getIFDs(new RandomAccessInputStream(file))[0];
           String software =
             (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
           if (software != null && software.trim().equals("TCSNTV")) {
@@ -324,7 +324,7 @@ public class TCSReader extends FormatReader {
       tiffReaders[0] = new TiffReader();
       tiffReaders[0].setMetadataStore(getMetadataStore());
       tiffReaders[0].setId(id);
-      in = new RandomAccessStream(id);
+      in = new RandomAccessInputStream(id);
 
       Hashtable[] ifds = TiffTools.getIFDs(in);
 

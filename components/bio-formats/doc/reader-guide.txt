@@ -69,7 +69,7 @@ Every reader also has an instance of loci.formats.CoreMetadata.  All readers
 should populate the fields in CoreMetadata, which are essential to reading
 image planes.
 
-If you read from a file using something other than RandomAccessStream or
+If you read from a file using something other than RandomAccessInputStream or
 Location, you *must* use the file name returned by Location.getMappedId(String),
 not the file name passed to the reader.
 Thus, a stub for initFile(String) might look like this:
@@ -77,7 +77,7 @@ Thus, a stub for initFile(String) might look like this:
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    RandomAccessStream in = new RandomAccessStream(id);
+    RandomAccessInputStream in = new RandomAccessInputStream(id);
     // alternatively,
     //FileInputStream in = new FileInputStream(Location.getMappedId(id));
 
@@ -90,7 +90,7 @@ and Location.getMappedId(String).
                               Other Useful Things
                              ---------------------
 
-- loci.formats.RandomAccessStream is a hybrid RandomAccessFile/InputStream
+- loci.common.RandomAccessInputStream is a hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
   InputStream, and implements the DataInput interface.  It also keeps track
   of open files, and will automatically close and re-open files as needed
@@ -103,7 +103,7 @@ and Location.getMappedId(String).
 
 - loci.formats.DataTools provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
-  directly from a RandomAccessStream (or other DataInput implementation).
+  directly from a RandomAccessInputStream (or other DataInput implementation).
 
 - loci.formats.ImageTools provides several methods for manipulating
   java.awt.image.BufferedImage objects.  In particular, it can create

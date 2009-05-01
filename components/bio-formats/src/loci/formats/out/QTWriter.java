@@ -235,7 +235,7 @@ public class QTWriter extends FormatWriter {
       else {
         out.seek(byteCountOffset);
 
-        RandomAccessStream in = new RandomAccessStream(currentId);
+        RandomAccessInputStream in = new RandomAccessInputStream(currentId);
         in.seek(byteCountOffset);
         numBytes = (int) DataTools.read4UnsignedBytes(in, false) - 8;
         in.close();

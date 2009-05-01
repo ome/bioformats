@@ -1,5 +1,5 @@
 //
-// RAFile.java
+// FileHandle.java
 //
 
 /*
@@ -29,19 +29,19 @@ import java.io.*;
  * A wrapper for RandomAccessFile that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RAFile.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RAFile.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/FileHandle.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/FileHandle.java">SVN</a></dd></dl>
  *
  * @see IRandomAccess
  * @see java.io.RandomAccessFile
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class RAFile implements IRandomAccess {
+public class FileHandle implements IRandomAccess {
 
   // -- Fields --
 
-  /** The random access file object backing this RAFile. */
+  /** The random access file object backing this FileHandle. */
   protected RandomAccessFile raf;
 
   // -- Constructors --
@@ -50,7 +50,7 @@ public class RAFile implements IRandomAccess {
    * Creates a random access file stream to read from, and
    * optionally to write to, the file specified by the File argument.
    */
-  public RAFile(File file, String mode) throws FileNotFoundException {
+  public FileHandle(File file, String mode) throws FileNotFoundException {
     raf = new RandomAccessFile(file, mode);
   }
 
@@ -58,13 +58,13 @@ public class RAFile implements IRandomAccess {
    * Creates a random access file stream to read from, and
    * optionally to write to, a file with the specified name.
    */
-  public RAFile(String name, String mode) throws FileNotFoundException {
+  public FileHandle(String name, String mode) throws FileNotFoundException {
     raf = new RandomAccessFile(name, mode);
   }
 
-  // -- RAFile API methods --
+  // -- FileHandle API methods --
 
-  /** Gets the random access file object backing this RAFile. */
+  /** Gets the random access file object backing this FileHandle. */
   public RandomAccessFile getRandomAccessFile() { return raf; }
 
   // -- IRandomAccess API methods --

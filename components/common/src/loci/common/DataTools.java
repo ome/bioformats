@@ -649,7 +649,7 @@ public final class DataTools {
    * Load a list of metadata tags and their corresponding descriptions.
    */
   public static Hashtable getMetadataTags(Class c, String file) {
-    Hashtable h = new Hashtable();
+    Hashtable<String, String> h = new Hashtable<String, String>();
     BufferedReader in = new BufferedReader(new InputStreamReader(
       c.getResourceAsStream(file)));
     String line = null, key = null, value = null;
@@ -723,7 +723,7 @@ public final class DataTools {
     parseXML(xml.getBytes(), handler);
   }
 
-  public static void parseXML(RandomAccessStream stream, DefaultHandler handler)
+  public static void parseXML(RandomAccessInputStream stream, DefaultHandler handler)
     throws IOException
   {
     try {

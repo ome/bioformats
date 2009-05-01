@@ -49,7 +49,7 @@ public abstract class FormatReader extends FormatHandler
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessStream in;
+  protected RandomAccessInputStream in;
 
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable metadata;
@@ -147,7 +147,7 @@ public abstract class FormatReader extends FormatHandler
    */
   protected boolean checkBytes(String name, int maxLen) {
     try {
-      RandomAccessStream ras = new RandomAccessStream(name);
+      RandomAccessInputStream ras = new RandomAccessInputStream(name);
       boolean isThisType = isThisType(ras);
       ras.close();
       return isThisType;
@@ -274,7 +274,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /** Reads a raw plane from disk. */
-  protected byte[] readPlane(RandomAccessStream s, int x, int y, int w, int h,
+  protected byte[] readPlane(RandomAccessInputStream s, int x, int y, int w, int h,
     byte[] buf) throws IOException
   {
     int c = getRGBChannelCount();
@@ -360,7 +360,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     try {
-      RandomAccessStream stream = new RandomAccessStream(block);
+      RandomAccessInputStream stream = new RandomAccessInputStream(block);
       boolean isThisType = isThisType(stream);
       stream.close();
       return isThisType;

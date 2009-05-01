@@ -57,8 +57,8 @@ public abstract class ImageIOReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
@@ -80,7 +80,7 @@ public abstract class ImageIOReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
-    RandomAccessStream ras = new RandomAccessStream(currentId);
+    RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
     DataInputStream dis =
       new DataInputStream(new BufferedInputStream(ras, 4096));
     BufferedImage b = ImageIO.read(dis);
@@ -99,7 +99,7 @@ public abstract class ImageIOReader extends FormatReader {
     status("Populating metadata");
     core[0].imageCount = 1;
     BufferedImage img =
-      ImageIO.read(new DataInputStream(new RandomAccessStream(currentId)));
+      ImageIO.read(new DataInputStream(new RandomAccessInputStream(currentId)));
 
     core[0].sizeX = img.getWidth();
     core[0].sizeY = img.getHeight();

@@ -183,8 +183,8 @@ public class PictReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return FormatTools.validStream(stream, blockCheckLen, false);
   }
 
@@ -194,7 +194,7 @@ public class PictReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("PictReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     status("Populating metadata");
 

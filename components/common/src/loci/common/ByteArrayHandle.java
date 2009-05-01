@@ -1,5 +1,5 @@
 //
-// RABytes.java
+// ByteArrayHandle.java
 //
 
 /*
@@ -29,14 +29,14 @@ import java.io.*;
  * A wrapper for a byte array that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RABytes.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RABytes.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/ByteArrayHandle.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/ByteArrayHandle.java">SVN</a></dd></dl>
  *
  * @see IRandomAccess
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class RABytes implements IRandomAccess {
+public class ByteArrayHandle implements IRandomAccess {
 
   // -- Constants --
 
@@ -45,7 +45,7 @@ public class RABytes implements IRandomAccess {
 
   // -- Fields --
 
-  /** The byte array backing this RABytes. */
+  /** The byte array backing this ByteArrayHandle. */
   protected byte[] array;
 
   /** The file pointer. */
@@ -60,22 +60,22 @@ public class RABytes implements IRandomAccess {
    * Creates a random access byte stream to read from, and
    * write to, the bytes specified by the byte[] argument.
    */
-  public RABytes(byte[] bytes) {
+  public ByteArrayHandle(byte[] bytes) {
     array = bytes;
     fp = 0;
     length = bytes.length;
   }
 
   /** Creates a random access byte stream to write to a byte array. */
-  public RABytes() {
+  public ByteArrayHandle() {
     fp = 0;
     length = 0;
     array = new byte[INITIAL_LENGTH];
   }
 
-  // -- RABytes API methods --
+  // -- ByteArrayHandle API methods --
 
-  /** Gets the byte array backing this RAFile. */
+  /** Gets the byte array backing this FileHandle. */
   public byte[] getBytes() {
     byte[] file = new byte[(int) length];
     System.arraycopy(array, 0, file, 0, file.length);

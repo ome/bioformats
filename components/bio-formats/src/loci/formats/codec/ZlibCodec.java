@@ -26,7 +26,7 @@ package loci.formats.codec;
 import java.io.*;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**
@@ -57,8 +57,8 @@ public class ZlibCodec extends BaseCodec {
     return bytes.toByteArray();
   }
 
-  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     InflaterInputStream i = new InflaterInputStream(in);

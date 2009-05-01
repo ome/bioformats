@@ -62,8 +62,8 @@ public class IPLabReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     String s = stream.readString(4);
     boolean big = s.equals("iiii");
@@ -107,7 +107,7 @@ public class IPLabReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("IPLabReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     status("Populating metadata");
 

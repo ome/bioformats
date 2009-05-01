@@ -112,8 +112,8 @@ public class PrairieReader extends FormatReader {
     return hasMetadataFiles && super.isThisType(name, false);
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     String s = stream.readString(blockCheckLen);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
@@ -204,7 +204,7 @@ public class PrairieReader extends FormatReader {
       offsets = new Vector();
       zt = 0;
 
-      RandomAccessStream is = new RandomAccessStream(id);
+      RandomAccessInputStream is = new RandomAccessInputStream(id);
       byte[] b = new byte[(int) is.length()];
       is.read(b);
       is.close();

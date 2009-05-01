@@ -1,5 +1,5 @@
 //
-// RAUrl.java
+// URLHandle.java
 //
 
 /*
@@ -31,15 +31,15 @@ import java.net.*;
  * This is slow, but functional.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RAUrl.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RAUrl.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/URLHandle.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/URLHandle.java">SVN</a></dd></dl>
  *
  * @see IRandomAccess
  * @see java.net.HttpURLConnection
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class RAUrl implements IRandomAccess {
+public class URLHandle implements IRandomAccess {
 
   // -- Fields --
 
@@ -66,7 +66,7 @@ public class RAUrl implements IRandomAccess {
 
   // -- Constructors --
 
-  public RAUrl(String url, String mode) throws IOException {
+  public URLHandle(String url, String mode) throws IOException {
     if (!url.startsWith("http")) url = "http://" + url;
     conn = (HttpURLConnection) (new URL(url)).openConnection();
     if (mode.equals("r")) {

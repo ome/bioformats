@@ -56,8 +56,8 @@ public class VisitechReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
@@ -84,7 +84,7 @@ public class VisitechReader extends FormatReader {
     int planeIndex = no % div;
 
     String file = (String) files.get(fileIndex);
-    RandomAccessStream s = new RandomAccessStream(file);
+    RandomAccessInputStream s = new RandomAccessInputStream(file);
     s.seek(374);
     while (s.read() != (byte) 0xf0);
     s.skipBytes(1);
@@ -131,7 +131,7 @@ public class VisitechReader extends FormatReader {
 
     // parse the HTML file
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     String s = in.readString((int) in.length());
 
     // strip out "style", "a", and "script" tags

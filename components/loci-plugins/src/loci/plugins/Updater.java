@@ -32,7 +32,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatTools;
 
 /**
@@ -169,7 +169,7 @@ public class Updater implements PlugIn {
     // download new version to plugins directory
     IJ.showStatus("Downloading loci_tools.jar...");
     try {
-      RandomAccessStream in = new RandomAccessStream(url);
+      RandomAccessInputStream in = new RandomAccessInputStream(url);
       byte[] buf = new byte[(int) in.length()];
       in.read(buf);
       in.close();

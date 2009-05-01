@@ -78,7 +78,7 @@ public class POIFSViewer
         try
         {
             POIFSViewable fs      =
-                new POIFSFileSystem(new RandomAccessStream(filename), 512);
+                new POIFSFileSystem(new RandomAccessInputStream(filename), 512);
             List          strings = POIFSViewEngine.inspectViewable(fs, true,
                                         0, "  ");
             Iterator      iter    = strings.iterator();

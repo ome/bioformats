@@ -100,9 +100,9 @@ public class LosslessJPEGCodec extends BaseCodec {
    *  {@link CodecOptions#interleaved interleaved}
    *  {@link CodecOptions#littleEndian littleEndian}
    *
-   * @see Codec#decompress(RandomAccessStream, CodecOptions)
+   * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     byte[] buf = new byte[0];

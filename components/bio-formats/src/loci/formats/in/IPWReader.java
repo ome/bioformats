@@ -63,8 +63,8 @@ public class IPWReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readInt() == 0xd0cf11e0;
   }
@@ -72,7 +72,7 @@ public class IPWReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    RandomAccessStream stream =
+    RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     int[] bits = TiffTools.getBitsPerSample(ifds[0]);
@@ -104,7 +104,7 @@ public class IPWReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    RandomAccessStream stream =
+    RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(no)));
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     TiffTools.getSamples(ifds[0], stream, buf, x, y, w, h);
@@ -132,7 +132,7 @@ public class IPWReader extends FormatReader {
     debug("IPWReader.initFile(" + id + ")");
     super.initFile(id);
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     poi = new POITools(Location.getMappedId(currentId));
 
     imageFiles = new Hashtable();
@@ -215,7 +215,7 @@ public class IPWReader extends FormatReader {
 
     status("Populating metadata");
 
-    RandomAccessStream stream =
+    RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     stream.close();

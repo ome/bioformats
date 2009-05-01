@@ -53,7 +53,7 @@ public class DocumentInputStream
     // buffer used to read one byte at a time
     private byte[]           _tiny_buffer;
 
-    private RandomAccessStream stream;
+    private RandomAccessInputStream stream;
 
     // returned by read operations if we're at end of document
     static private final int EOD = -1;
@@ -68,7 +68,7 @@ public class DocumentInputStream
      */
 
     public DocumentInputStream(final DocumentEntry document,
-      RandomAccessStream stream) throws IOException
+      RandomAccessInputStream stream) throws IOException
     {
         _current_offset = 0;
         _marked_offset  = 0;
@@ -96,7 +96,7 @@ public class DocumentInputStream
      */
 
     public DocumentInputStream(final POIFSDocument document,
-      RandomAccessStream stream) throws IOException
+      RandomAccessInputStream stream) throws IOException
     {
         _current_offset = 0;
         _marked_offset  = 0;

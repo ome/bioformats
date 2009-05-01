@@ -147,7 +147,7 @@ public abstract class POIDocument {
 
 			mSet.write(bOut);
 			byte[] data = bOut.toByteArray();
-			outFS.createDocument(new RandomAccessStream(data),name);
+			outFS.createDocument(new RandomAccessInputStream(data),name);
 
 			logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
 		} catch(loci.poi.hpsf.WritingNotSupportedException wnse) {
@@ -212,7 +212,7 @@ public abstract class POIDocument {
       DocumentInputStream dstream = new DocumentInputStream(dentry);
 		  byte[] b = new byte[dstream.available()];
       dstream.read(b);
-      target.createDocument(dentry.getName(), new RandomAccessStream(b));
+      target.createDocument(dentry.getName(), new RandomAccessInputStream(b));
 			dstream.close();
 	    */
     }

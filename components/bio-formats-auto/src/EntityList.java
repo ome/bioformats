@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import java.io.*;
 import java.util.*;
+import loci.common.IniParser;
 
 /**
  * An EntityList is a list of entities parsed from an INI-style resource,
@@ -121,12 +122,12 @@ public class EntityList {
   // -- Fields --
 
   /** List of versions and their details. */
-  protected Hashtable<String, Hashtable<String, String>> versions =
-    new Hashtable<String, Hashtable<String, String>>();
+  protected HashMap<String, HashMap<String, String>> versions =
+    new HashMap<String, HashMap<String, String>>();
 
   /** List of entities. */
-  protected Hashtable<String, Entity> entities =
-    new Hashtable<String, Entity>();
+  protected HashMap<String, Entity> entities =
+    new HashMap<String, Entity>();
 
   /** The active version. */
   protected String ver;
@@ -144,23 +145,23 @@ public class EntityList {
     // parse INI data
     System.out.println("Parsing configuration data");
     IniParser parser = new IniParser();
-    Vector<Hashtable<String, String>> versionList =
+    Vector<HashMap<String, String>> versionList =
       parser.parseINI(versionPath);
-    Vector<Hashtable<String, String>> entityList =
+    Vector<HashMap<String, String>> entityList =
       parser.parseINI(entityPath);
 
     // convert unprocessed INI-style config data into
     // hierarchical entity/property/version structure
 
     // process list of versions
-    for (Hashtable<String, String> attrs : versionList) {
+    for (HashMap<String, String> attrs : versionList) {
       String name = attrs.get(IniParser.HEADER_KEY);
       versions.put(name, attrs);
     }
 
     // process list of entities
-    entities = new Hashtable<String, Entity>();
-    for (Hashtable<String, String> attrs : entityList) {
+    entities = new HashMap<String, Entity>();
+    for (HashMap<String, String> attrs : entityList) {
       String name = attrs.get(IniParser.HEADER_KEY);
       if (DEBUG) debug("-- Parsing entry '" + name + "' --");
 
@@ -186,7 +187,7 @@ public class EntityList {
           }
           attrs.put(IniParser.HEADER_KEY, t2);
           if (DEBUG) debug("Reset header value to '" + t2 + "'");
-          Hashtable<String, String> version = versions.get(t2);
+          HashMap<String, String> version = versions.get(t2);
           if (version == null) {
             // property header
             if (DEBUG) debug("Entry is a property definition");
@@ -326,7 +327,7 @@ public class EntityList {
 
     // version override of the given property of the given entity
     if (value == null && version != null && p != null) {
-      Hashtable<String, String> attrs = p.versions.get(version);
+      HashMap<String, String> attrs = p.versions.get(version);
       if (attrs != null) value = attrs.get(key);
     }
 
@@ -335,7 +336,7 @@ public class EntityList {
 
     // version override of the given entity
     if (value == null && version != null && e != null) {
-      Hashtable<String, String> attrs = e.versions.get(version);
+      HashMap<String, String> attrs = e.versions.get(version);
       if (attrs != null) value = attrs.get(key);
     }
 
@@ -344,7 +345,7 @@ public class EntityList {
 
     // default value in the given version's attribute table
     if (value == null && version != null) {
-      Hashtable<String, String> attrs = versions.get(version);
+      HashMap<String, String> attrs = versions.get(version);
       if (attrs != null) value = attrs.get(key);
     }
 

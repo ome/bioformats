@@ -59,8 +59,8 @@ public class SlidebookReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readLong() == 0x6c000001494900L;
   }
@@ -97,7 +97,7 @@ public class SlidebookReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("SlidebookReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     status("Finding offsets to pixel data");
 

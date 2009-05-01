@@ -156,19 +156,19 @@ public class Location {
 
     IRandomAccess handle = null;
     if (id.startsWith("http://")) {
-      handle = new RAUrl(getMappedId(id), writable ? "rw" : "r");
+      handle = new URLHandle(getMappedId(id), writable ? "rw" : "r");
     }
-    else if (RAZip.isZipFile(id)) {
-      handle = new RAZip(getMappedId(id));
+    else if (ZipHandle.isZipFile(id)) {
+      handle = new ZipHandle(getMappedId(id));
     }
-    else if (RAGZip.isGZipFile(id)) {
-      handle = new RAGZip(getMappedId(id));
+    else if (GZipHandle.isGZipFile(id)) {
+      handle = new GZipHandle(getMappedId(id));
     }
-    else if (RABZip2.isBZip2File(id)) {
-      handle = new RABZip2(getMappedId(id));
+    else if (BZip2Handle.isBZip2File(id)) {
+      handle = new BZip2Handle(getMappedId(id));
     }
     else {
-      handle = new RAFile(f, writable ? "rw" : "r");
+      handle = new FileHandle(f, writable ? "rw" : "r");
     }
     return handle;
   }

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.IOException;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**
@@ -146,8 +146,8 @@ public class Base64Codec extends BaseCodec {
     return encoded;
   }
 
-  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     // TODO: Add checks for invalid data.

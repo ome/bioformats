@@ -59,8 +59,8 @@ public class MNGReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readLong() == 0x8a4d4e470d0a1a0aL;
   }
@@ -128,7 +128,7 @@ public class MNGReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("MNGReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     in.order(false);
 
     status("Verifying MNG format");

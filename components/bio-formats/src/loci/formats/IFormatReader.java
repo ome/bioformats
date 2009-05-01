@@ -26,7 +26,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -60,7 +60,7 @@ public interface IFormatReader extends IFormatHandler {
   boolean isThisType(byte[] block);
 
   /** Checks if the given stream is a valid stream for this file format. */
-  boolean isThisType(RandomAccessStream stream) throws IOException;
+  boolean isThisType(RandomAccessInputStream stream) throws IOException;
 
   /** Determines the number of images in the current file. */
   int getImageCount();

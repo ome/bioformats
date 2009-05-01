@@ -63,8 +63,8 @@ public class OMETiffReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     boolean validHeader = TiffTools.isValidHeader(stream);
     if (!validHeader) return false;
     // look for OME-XML in first IFD's comment
@@ -135,7 +135,7 @@ public class OMETiffReader extends FormatReader {
 
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
-    RandomAccessStream ras = new RandomAccessStream(fileName);
+    RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     Hashtable firstIFD = TiffTools.getFirstIFD(ras);
     ras.close();
     String xml = TiffTools.getComment(firstIFD);

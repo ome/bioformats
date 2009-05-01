@@ -4,7 +4,7 @@
 
 import java.io.*;
 import loci.common.Location;
-import loci.common.RABytes;
+import loci.common.ByteArrayHandle;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
 
@@ -34,7 +34,7 @@ public class ReadWriteInMemory {
 
     // map input id string to input byte array
     String inId = "inBytes" + suffix;
-    Location.mapFile(inId, new RABytes(inBytes));
+    Location.mapFile(inId, new ByteArrayHandle(inBytes));
 
     // read data from byte array using ImageReader
     System.out.println();
@@ -63,7 +63,7 @@ public class ReadWriteInMemory {
 
     // map output id string to output byte array
     String outId = fileName + ".ome.tif";
-    RABytes outputFile = new RABytes();
+    ByteArrayHandle outputFile = new ByteArrayHandle();
     Location.mapFile(outId, outputFile);
 
     // write data to byte array using ImageWriter

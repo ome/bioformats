@@ -141,7 +141,7 @@ public class NikonReader extends BaseTiffReader {
 
     if (!open) return false;
     try {
-      RandomAccessStream stream = new RandomAccessStream(name);
+      RandomAccessInputStream stream = new RandomAccessInputStream(name);
       boolean isThisType = isThisType(stream);
       stream.close();
       return isThisType;
@@ -152,8 +152,8 @@ public class NikonReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     Hashtable ifd = TiffTools.getFirstIFD(stream);
     return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
@@ -352,7 +352,7 @@ public class NikonReader extends BaseTiffReader {
               int extra = new String(b, 0, 10).startsWith("Nikon") ? 10 : 0;
               byte[] buf = new byte[b.length];
               System.arraycopy(b, extra, buf, 0, buf.length - extra);
-              RandomAccessStream makerNote = new RandomAccessStream(buf);
+              RandomAccessInputStream makerNote = new RandomAccessInputStream(buf);
                 Hashtable note = TiffTools.getFirstIFD(makerNote);
                 if (note != null) {
                   Enumeration en = note.keys();
@@ -363,7 +363,7 @@ public class NikonReader extends BaseTiffReader {
                     addMeta(getTagName(nextTag), note.get(nextKey));
                     if (nextTag == 150) {
                       b = (byte[]) note.get(nextKey);
-                      RandomAccessStream s = new RandomAccessStream(b);
+                      RandomAccessInputStream s = new RandomAccessInputStream(b);
                       byte check1 = s.readByte();
                       byte check2 = s.readByte();
 
@@ -434,7 +434,7 @@ public class NikonReader extends BaseTiffReader {
     debug("NikonReader.initFile(" + id + ")");
     super.initFile(id);
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 
     ifds = TiffTools.getIFDs(in);

@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
+Copyright (C) 2005-@year@ Melissa Linkert and Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package loci.common;
+
 import java.io.*;
 import java.util.*;
 
@@ -29,8 +31,8 @@ import java.util.*;
  * and backslash (\) to continue values across multiple lines.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/auto/IniParser.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/auto/IniParser.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/IniParser.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/IniParser.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -44,19 +46,19 @@ public class IniParser {
   // -- IniParser API methods --
 
   /** Parses the INI-style configuration data from the given resource. */
-  public Vector<Hashtable<String, String>> parseINI(String path)
+  public Vector<HashMap<String, String>> parseINI(String path)
     throws IOException
   {
     return parseINI(openTextResource(path));
   }
 
   /** Parses the INI-style configuration data from the given input stream. */
-  public Vector<Hashtable<String, String>> parseINI(BufferedReader in)
+  public Vector<HashMap<String, String>> parseINI(BufferedReader in)
     throws IOException
   {
-    Vector<Hashtable<String, String>> list =
-      new Vector<Hashtable<String, String>>();
-    Hashtable<String, String> attrs = null;
+    Vector<HashMap<String, String>> list =
+      new Vector<HashMap<String, String>>();
+    HashMap<String, String> attrs = null;
     int no = 1;
     StringBuffer sb = new StringBuffer();
     while (true) {
@@ -72,7 +74,7 @@ public class IniParser {
 
       if (line.startsWith("[")) {
         // section header
-        attrs = new Hashtable<String, String>();
+        attrs = new HashMap<String, String>();
         list.add(attrs);
 
         // strip brackets

@@ -122,8 +122,8 @@ public class PerkinElmerReader extends FormatReader {
     return htmlFile.exists() && (binFile || super.isThisType(name, false));
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
@@ -147,7 +147,7 @@ public class PerkinElmerReader extends FormatReader {
 
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    RandomAccessStream ras = new RandomAccessStream(files[no]);
+    RandomAccessInputStream ras = new RandomAccessInputStream(files[no]);
     ras.seek(6);
 
     readPlane(ras, x, y, w, h, buf);
@@ -395,7 +395,7 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     core[0].imageCount = files.length;
-    RandomAccessStream read;
+    RandomAccessInputStream read;
     byte[] data;
     StringTokenizer t;
 
@@ -426,7 +426,7 @@ public class PerkinElmerReader extends FormatReader {
       tempFile = new Location(workingDirPath, ls[timPos]);
       if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
       else allFiles.add(ls[timPos]);
-      read = new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+      read = new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
       t = new StringTokenizer(read.readString((int) read.length()));
       int tNum = 0;
       // can ignore "Zero x" and "Extra int"
@@ -459,7 +459,7 @@ public class PerkinElmerReader extends FormatReader {
       tempFile = new Location(workingDirPath, ls[csvPos]);
       if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
       else allFiles.add(ls[csvPos]);
-      read = new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+      read = new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
       t = new StringTokenizer(read.readString((int) read.length()));
       int tNum = 0;
       String[] hashKeys = {"Calibration Unit", "Pixel Size X", "Pixel Size Y",
@@ -496,7 +496,7 @@ public class PerkinElmerReader extends FormatReader {
       if (csvPos < 0) {
         // parse .zpo only if no .csv is available
         read =
-          new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+          new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
         t = new StringTokenizer(read.readString((int) read.length()));
         int tNum = 0;
         while (t.hasMoreTokens()) {
@@ -519,7 +519,7 @@ public class PerkinElmerReader extends FormatReader {
       tempFile = new Location(workingDirPath, ls[htmPos]);
       if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
       else allFiles.add(ls[htmPos]);
-      read = new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+      read = new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
       data = new byte[(int) read.length()];
       read.read(data);
 
@@ -622,7 +622,7 @@ public class PerkinElmerReader extends FormatReader {
       core[0].pixelType = tiff.getPixelType();
     }
     else {
-      RandomAccessStream tmp = new RandomAccessStream(files[0]);
+      RandomAccessInputStream tmp = new RandomAccessInputStream(files[0]);
       int bpp = (int) (tmp.length() - 6) / (getSizeX() * getSizeY());
       tmp.close();
       switch (bpp) {

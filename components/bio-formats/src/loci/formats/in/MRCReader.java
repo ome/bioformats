@@ -60,8 +60,8 @@ public class MRCReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false; // no way to tell if this is an MRC file or not
   }
 
@@ -96,7 +96,7 @@ public class MRCReader extends FormatReader {
   public void initFile(String id) throws FormatException, IOException {
     debug("MRCReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     status("Reading header");
 

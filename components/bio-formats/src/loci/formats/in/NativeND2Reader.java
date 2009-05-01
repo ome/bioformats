@@ -93,8 +93,8 @@ public class NativeND2Reader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     stream.seek(4);
     return stream.readInt() == 0x6a502020;
@@ -200,7 +200,7 @@ public class NativeND2Reader extends FormatReader {
     power = new Vector();
     rois = new Vector();
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000

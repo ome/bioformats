@@ -46,7 +46,7 @@ public class AnalyzeReader extends FormatReader {
   private int pixelOffset;
 
   /** File containing the pixel data. */
-  private RandomAccessStream pixelFile;
+  private RandomAccessInputStream pixelFile;
 
   private String pixelsFilename;
 
@@ -59,8 +59,8 @@ public class AnalyzeReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return true;
   }
@@ -125,9 +125,9 @@ public class AnalyzeReader extends FormatReader {
     }
 
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
     pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
-    pixelFile = new RandomAccessStream(pixelsFilename);
+    pixelFile = new RandomAccessInputStream(pixelsFilename);
 
     status("Reading header");
 

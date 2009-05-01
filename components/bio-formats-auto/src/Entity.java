@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * An entity is an object that contains a bundle of {@link Property} objects.
@@ -41,20 +41,20 @@ public class Entity {
   // -- Fields --
 
   /** The entity's attributes. */
-  protected Hashtable<String, String> attrs;
+  protected HashMap<String, String> attrs;
 
   /** The entity's properties. */
-  protected Hashtable<String, Property> props =
-    new Hashtable<String, Property>();
+  protected HashMap<String, Property> props =
+    new HashMap<String, Property>();
 
   /** The entity's version overrides. */
-  protected Hashtable<String, Hashtable<String, String>> versions =
-    new Hashtable<String, Hashtable<String, String>>();
+  protected HashMap<String, HashMap<String, String>> versions =
+    new HashMap<String, HashMap<String, String>>();
 
   // -- Constructor --
 
   /** Creates a new entity with the given attributes. */
-  public Entity(Hashtable<String, String> attrs) {
+  public Entity(HashMap<String, String> attrs) {
     this.attrs = attrs;
   }
 

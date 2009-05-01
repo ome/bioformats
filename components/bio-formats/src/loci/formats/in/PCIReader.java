@@ -57,8 +57,8 @@ public class PCIReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readInt() == 0xd0cf11e0;
   }
@@ -73,7 +73,7 @@ public class PCIReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    RandomAccessStream s = poi.getDocumentStream((String) imageFiles.get(no));
+    RandomAccessInputStream s = poi.getDocumentStream((String) imageFiles.get(no));
 
     // can be raw pixel data or an embedded TIFF file
 

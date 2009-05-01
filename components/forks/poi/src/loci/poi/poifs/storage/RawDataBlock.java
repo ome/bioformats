@@ -35,7 +35,7 @@ public class RawDataBlock
 {
     private boolean _eof;
     private int blockSize;
-    private RandomAccessStream stream;
+    private RandomAccessInputStream stream;
     private long offset;
     private int length;
 
@@ -49,7 +49,7 @@ public class RawDataBlock
      *            amount of data is read
      */
 
-    public RawDataBlock(final RandomAccessStream stream, int size)
+    public RawDataBlock(final RandomAccessInputStream stream, int size)
         throws IOException
     {
         this.stream = stream;

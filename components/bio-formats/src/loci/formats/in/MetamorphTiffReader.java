@@ -61,7 +61,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   public boolean isThisType(String name, boolean open) {
     if (!open) return false;
     try {
-      RandomAccessStream stream = new RandomAccessStream(name);
+      RandomAccessInputStream stream = new RandomAccessInputStream(name);
       boolean isThisType = isThisType(stream);
       stream.close();
       return isThisType;
@@ -72,8 +72,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
     return comment != null && comment.trim().startsWith("<MetaData>");

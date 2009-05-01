@@ -120,7 +120,7 @@ public class NativeQTReader extends FormatReader {
 
     if (open) {
       try {
-        RandomAccessStream s = new RandomAccessStream(name);
+        RandomAccessInputStream s = new RandomAccessInputStream(name);
         boolean isThisType = isThisType(s);
         s.close();
         return isThisType;
@@ -135,8 +135,8 @@ public class NativeQTReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     // use a crappy hack for now
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     String s = stream.readString(blockCheckLen);
@@ -274,7 +274,7 @@ public class NativeQTReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("QTReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     spork = true;
     offsets = new Vector();
@@ -320,7 +320,7 @@ public class NativeQTReader extends FormatReader {
       if (f.exists()) {
         debug("\t Found: " + f);
         if (in != null) in.close();
-        in = new RandomAccessStream(f.getAbsolutePath());
+        in = new RandomAccessInputStream(f.getAbsolutePath());
 
         stripHeader();
         parse(0, 0, in.length());
@@ -334,7 +334,7 @@ public class NativeQTReader extends FormatReader {
         if (f.exists()) {
           debug("\t Found: " + f);
           if (in != null) in.close();
-          in = new RandomAccessStream(f.getAbsolutePath());
+          in = new RandomAccessInputStream(f.getAbsolutePath());
           stripHeader();
           parse(0, in.getFilePointer(), in.length());
           core[0].imageCount = offsets.size();
@@ -345,7 +345,7 @@ public class NativeQTReader extends FormatReader {
           if (f.exists()) {
             debug("\t Found: " + f);
             if (in != null) in.close();
-            in = new RandomAccessStream(f.getAbsolutePath());
+            in = new RandomAccessInputStream(f.getAbsolutePath());
             stripHeader();
             parse(0, in.getFilePointer(), in.length());
             core[0].imageCount = offsets.size();
@@ -452,8 +452,8 @@ public class NativeQTReader extends FormatReader {
 
             byte[] output = new ZlibCodec().decompress(b, null);
 
-            RandomAccessStream oldIn = in;
-            in = new RandomAccessStream(output);
+            RandomAccessInputStream oldIn = in;
+            in = new RandomAccessInputStream(output);
             parse(0, 0, output.length);
             in.close();
             in = oldIn;

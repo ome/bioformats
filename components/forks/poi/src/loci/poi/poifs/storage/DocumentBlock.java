@@ -69,7 +69,7 @@ public class DocumentBlock
      * @exception IOException
      */
 
-    public DocumentBlock(final RandomAccessStream stream, int size)
+    public DocumentBlock(final RandomAccessInputStream stream, int size)
         throws IOException
     {
         this(size);
@@ -131,7 +131,7 @@ public class DocumentBlock
      */
 
     public static DocumentBlock[] convert(long offset,
-      RandomAccessStream stream, int numBytes, int size, int blockSize)
+      RandomAccessInputStream stream, int numBytes, int size, int blockSize)
     {
         DocumentBlock[] rval   =
             new DocumentBlock[ (size + blockSize - 1) / blockSize ];
@@ -160,7 +160,7 @@ public class DocumentBlock
 
     public static void read(final DocumentBlock [] blocks,
                             final byte [] buffer, final int offset,
-                            int blockSize, RandomAccessStream stream)
+                            int blockSize, RandomAccessInputStream stream)
     {
         int firstBlockIndex  = offset / blockSize;
         int firstBlockOffset = offset % blockSize;

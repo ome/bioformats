@@ -266,7 +266,7 @@ public class DirectoryNode
      */
 
     public DocumentEntry createDocument(final String name,
-                                        final RandomAccessStream stream)
+                                        final RandomAccessInputStream stream)
         throws IOException
     {
         return createDocument(new POIFSDocument(name, stream, 512));

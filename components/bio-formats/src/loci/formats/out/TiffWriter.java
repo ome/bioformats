@@ -111,7 +111,7 @@ public class TiffWriter extends FormatWriter {
       initialized = true;
       out = new RandomAccessOutputStream(currentId);
 
-      RandomAccessStream tmp = new RandomAccessStream(currentId);
+      RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
       if (tmp.length() == 0) {
         // write TIFF header
         TiffTools.writeHeader(out, littleEndian, isBigTiff);
@@ -146,7 +146,7 @@ public class TiffWriter extends FormatWriter {
     int plane = width * height * c * bytesPerPixel;
 
     if (!isBigTiff) {
-      RandomAccessStream tmp = new RandomAccessStream(currentId);
+      RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
       isBigTiff = (tmp.length() + 2 * plane) >= 4294967296L;
       if (isBigTiff) {
         throw new FormatException("File is too large; call setBigTiff(true)");

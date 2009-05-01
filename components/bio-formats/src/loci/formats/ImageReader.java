@@ -178,8 +178,8 @@ public class ImageReader implements IFormatReader {
     return false;
   }
 
-  /* @see IFormatReader.isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see IFormatReader.isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     for (int i=0; i<readers.length; i++) {
       if (readers[i].isThisType(stream)) return true;
     }

@@ -96,8 +96,8 @@ public class LuraWaveCodec extends BaseCodec {
     throw new FormatException("LuraWave compression not supported");
   }
 
-  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
-  public byte[] decompress(RandomAccessStream in, CodecOptions options)
+  /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
+  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
     byte[] buf = new byte[(int) in.length()];

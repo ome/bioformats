@@ -1,5 +1,5 @@
 //
-// RAZip.java
+// ZipHandle.java
 //
 
 /*
@@ -29,17 +29,17 @@ import java.util.zip.*;
 
 /**
  * CompressedRandomAccess implementation for reading from Zip-compressed files
- * or byte arrays.  Instances of RAZip are read-only.
+ * or byte arrays.  Instances of ZipHandle are read-only.
  *
  * @see CompressedRandomAccess
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RAZip.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RAZip.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/ZipHandle.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/ZipHandle.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class RAZip extends CompressedRandomAccess {
+public class ZipHandle extends CompressedRandomAccess {
 
   // -- Fields --
 
@@ -48,7 +48,7 @@ public class RAZip extends CompressedRandomAccess {
 
   // -- Constructor --
 
-  public RAZip(String file) throws IOException {
+  public ZipHandle(String file) throws IOException {
     super();
     if (!isZipFile(file)) {
       throw new IOException(file + " is not a Zip file.");
@@ -79,10 +79,10 @@ public class RAZip extends CompressedRandomAccess {
 
     length = entry.getSize();
     stream = new DataInputStream(new BufferedInputStream(
-      zip.getInputStream(entry), RandomAccessStream.MAX_OVERHEAD));
+      zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
   }
 
-  // -- RAZip API methods --
+  // -- ZipHandle API methods --
 
   /** Returns true if the given filename is a Zip file. */
   public static boolean isZipFile(String file) {
@@ -119,7 +119,7 @@ public class RAZip extends CompressedRandomAccess {
     else if (fp < oldFP) {
       stream.close();
       stream = new DataInputStream(new BufferedInputStream(
-        zip.getInputStream(entry), RandomAccessStream.MAX_OVERHEAD));
+        zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
       stream.skipBytes((int) fp);
     }
   }

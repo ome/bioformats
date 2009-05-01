@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * A property is an object that belongs to a particular {@link Entity}.
@@ -41,16 +41,16 @@ public class Property {
   // -- Fields --
 
   /** The property's attributes. */
-  protected Hashtable<String, String> attrs;
+  protected HashMap<String, String> attrs;
 
   /** The property's version overrides. */
-  protected Hashtable<String, Hashtable<String, String>> versions =
-    new Hashtable<String, Hashtable<String, String>>();
+  protected HashMap<String, HashMap<String, String>> versions =
+    new HashMap<String, HashMap<String, String>>();
 
   // -- Constructor --
 
   /** Creates a new property with the given attributes. */
-  public Property(Hashtable<String, String> attrs) {
+  public Property(HashMap<String, String> attrs) {
     this.attrs = attrs;
   }
 

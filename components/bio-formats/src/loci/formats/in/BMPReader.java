@@ -78,8 +78,8 @@ public class BMPReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     return stream.readString(blockCheckLen).startsWith("BM");
   }
@@ -170,7 +170,7 @@ public class BMPReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("BMPReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     status("Reading bitmap header");
 

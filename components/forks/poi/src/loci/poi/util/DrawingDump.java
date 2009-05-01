@@ -34,7 +34,7 @@ public class DrawingDump
     public static void main( String[] args ) throws IOException
     {
         POIFSFileSystem fs      =
-                new POIFSFileSystem(new RandomAccessStream(args[0]), 512);
+                new POIFSFileSystem(new RandomAccessInputStream(args[0]), 512);
         HSSFWorkbook wb = new HSSFWorkbook(fs);
         System.out.println( "Drawing group:" );
         wb.dumpDrawingGroupRecords(true);

@@ -50,8 +50,8 @@ public class ZipReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return true;
   }
 
@@ -112,7 +112,7 @@ public class ZipReader extends FormatReader {
     reader.setNormalized(isNormalized());
     reader.setMetadataStore(getMetadataStore());
 
-    RAZip zip = new RAZip(id);
+    ZipHandle zip = new ZipHandle(id);
     String name = zip.getEntryName();
     Location.mapFile(name, zip);
     reader.setId(name);

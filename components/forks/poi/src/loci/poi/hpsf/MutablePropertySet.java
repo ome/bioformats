@@ -267,14 +267,14 @@ public class MutablePropertySet extends PropertySet
      * of a property's variant type.
      * @throws IOException if an I/O exception occurs.
      */
-    public RandomAccessStream toInputStream()
+    public RandomAccessInputStream toInputStream()
         throws IOException, WritingNotSupportedException
     {
         final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
         write(psStream);
         psStream.close();
         final byte[] streamData = psStream.toByteArray();
-        return new RandomAccessStream(streamData);
+        return new RandomAccessInputStream(streamData);
     }
 
     /**

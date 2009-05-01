@@ -1,5 +1,5 @@
 //
-// RandomAccessStream.java
+// RandomAccessInputStream.java
 //
 
 /*
@@ -28,17 +28,17 @@ import java.util.*;
 import java.util.zip.*;
 
 /**
- * RandomAccessStream provides methods for "intelligent" reading of files and
+ * RandomAccessInputStream provides methods for "intelligent" reading of files and
  * byte arrays.  It also automagically deals with closing and reopening files
  * to prevent an IOException caused by too many open files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RandomAccessStream.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RandomAccessStream.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RandomAccessInputStream.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RandomAccessInputStream.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class RandomAccessStream extends InputStream implements DataInput {
+public class RandomAccessInputStream extends InputStream implements DataInput {
 
   // -- Constants --
 
@@ -56,7 +56,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- Static fields --
 
   /** Hashtable of all files that have been opened at some point. */
-  private static Hashtable fileCache = new Hashtable();
+  private static Hashtable<RandomAccessInputStream, Boolean> fileCache =
+    new Hashtable<RandomAccessInputStream, Boolean>();
 
   /** Number of currently open files. */
   private static int openFiles = 0;
@@ -102,7 +103,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * Constructs a hybrid RandomAccessFile/DataInputStream
    * around the given file.
    */
-  public RandomAccessStream(String file) throws IOException {
+  public RandomAccessInputStream(String file) throws IOException {
     String path = Location.getMappedId(file);
     File f = new File(path).getAbsoluteFile();
     raf = Location.getHandle(file);
@@ -134,16 +135,16 @@ public class RandomAccessStream extends InputStream implements DataInput {
   }
 
   /** Constructs a random access stream around the given byte array. */
-  public RandomAccessStream(byte[] array) throws IOException {
+  public RandomAccessInputStream(byte[] array) throws IOException {
     // this doesn't use a file descriptor, so we don't need to add it to the
     // file cache
-    raf = new RABytes(array);
+    raf = new ByteArrayHandle(array);
     fp = 0;
     afp = 0;
     length = raf.length();
   }
 
-  // -- RandomAccessStream API methods --
+  // -- RandomAccessInputStream API methods --
 
   /** Returns the underlying InputStream. */
   public DataInputStream getInputStream() {
@@ -570,8 +571,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
   /** If we have too many open files, close most of them. */
   private void cleanCache() {
     int toClose = MAX_FILES - 10;
-    RandomAccessStream[] files = (RandomAccessStream[])
-      fileCache.keySet().toArray(new RandomAccessStream[0]);
+    RandomAccessInputStream[] files = (RandomAccessInputStream[])
+      fileCache.keySet().toArray(new RandomAccessInputStream[0]);
     int closed = 0;
     int ndx = 0;
 

@@ -34,7 +34,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.TiffTools;
 import ome.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;
@@ -187,7 +187,7 @@ public class MetadataPane extends JPanel
       if (TiffTools.isValidHeader(header)) {
         // TIFF file
         in.close();
-        RandomAccessStream ras = new RandomAccessStream(file.getPath());
+        RandomAccessInputStream ras = new RandomAccessInputStream(file.getPath());
         Hashtable ifd = TiffTools.getFirstIFD(ras);
         ras.close();
         if (ifd == null) return false;

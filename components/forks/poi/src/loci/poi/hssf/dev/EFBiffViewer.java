@@ -47,7 +47,7 @@ public class EFBiffViewer
     public void run()
         throws IOException
     {
-        RandomAccessStream fin   = new RandomAccessStream(file);
+        RandomAccessInputStream fin   = new RandomAccessInputStream(file);
         POIFSFileSystem poifs = new POIFSFileSystem(fin, 512);
         InputStream     din   = poifs.createDocumentInputStream("Workbook");
         HSSFRequest     req   = new HSSFRequest();

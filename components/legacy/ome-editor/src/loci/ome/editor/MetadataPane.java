@@ -546,7 +546,7 @@ public class MetadataPane extends JPanel
       DocumentBuilder db = docFact.newDocumentBuilder();
 
       //get TIFF comment without parsing out TiffData Elements
-      RandomAccessStream in = new RandomAccessStream(currentFile.getPath());
+      RandomAccessInputStream in = new RandomAccessInputStream(currentFile.getPath());
       Hashtable ifd = TiffTools.getFirstIFD(in);
       in.close();  // extract comment
       Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
@@ -688,7 +688,7 @@ public class MetadataPane extends JPanel
   public boolean checkOMETiff(File file) {
     Hashtable ifd;
     try{
-      RandomAccessStream in = new RandomAccessStream(file.getPath());
+      RandomAccessInputStream in = new RandomAccessInputStream(file.getPath());
       ifd = TiffTools.getFirstIFD(in);
       in.close();
     }

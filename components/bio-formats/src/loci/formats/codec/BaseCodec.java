@@ -26,7 +26,7 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.*;
 import loci.common.LogTools;
-import loci.common.RandomAccessStream;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**
@@ -160,7 +160,7 @@ public abstract class BaseCodec implements Codec {
     throws FormatException
   {
     try {
-      RandomAccessStream r = new RandomAccessStream(data);
+      RandomAccessInputStream r = new RandomAccessInputStream(data);
       byte[] t = decompress(r, options);
       r.close();
       return t;
@@ -170,8 +170,8 @@ public abstract class BaseCodec implements Codec {
     }
   }
 
-  /* @see Codec#decompress(RandomAccessStream, CodecOptions) */
-  public abstract byte[] decompress(RandomAccessStream in, CodecOptions options)
+  /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
+  public abstract byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException;
 
   /**

@@ -75,8 +75,8 @@ public class APNGReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessStream) */
-  public boolean isThisType(RandomAccessStream stream) throws IOException {
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return true;
   }
 
@@ -169,7 +169,7 @@ public class APNGReader extends FormatReader {
       }
     }
 
-    RandomAccessStream s = new RandomAccessStream(stream.toByteArray());
+    RandomAccessInputStream s = new RandomAccessInputStream(stream.toByteArray());
     DataInputStream dis = new DataInputStream(new BufferedInputStream(s, 4096));
     BufferedImage b = ImageIO.read(dis);
     dis.close();
@@ -196,7 +196,7 @@ public class APNGReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("APNGReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessInputStream(id);
 
     // check that this is a valid PNG file
     byte[] signature = new byte[8];
@@ -258,7 +258,7 @@ public class APNGReader extends FormatReader {
     core[0].interleaved = false;
 
     BufferedImage img =
-      ImageIO.read(new DataInputStream(new RandomAccessStream(currentId)));
+      ImageIO.read(new DataInputStream(new RandomAccessInputStream(currentId)));
     core[0].sizeX = img.getWidth();
     core[0].sizeY = img.getHeight();
     core[0].rgb = img.getRaster().getNumBands() > 1;

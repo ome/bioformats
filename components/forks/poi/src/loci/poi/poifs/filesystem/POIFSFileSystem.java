@@ -61,7 +61,7 @@ public class POIFSFileSystem
     private List          _documents;
     private DirectoryNode _root;
     private int bigBlockSize;
-    private RandomAccessStream stream;
+    private RandomAccessInputStream stream;
 
     /**
      * Constructor, intended for writing
@@ -82,7 +82,7 @@ public class POIFSFileSystem
      * @exception IOException on errors reading, or on invalid data
      */
 
-    public POIFSFileSystem(final RandomAccessStream stream, int size)
+    public POIFSFileSystem(final RandomAccessInputStream stream, int size)
         throws IOException
     {
         this();
@@ -130,7 +130,7 @@ public class POIFSFileSystem
      * @exception IOException on error creating the new POIFSDocument
      */
 
-    public DocumentEntry createDocument(final RandomAccessStream stream,
+    public DocumentEntry createDocument(final RandomAccessInputStream stream,
                                         final String name)
         throws IOException
     {
@@ -294,7 +294,7 @@ public class POIFSFileSystem
             System.exit(1);
         }
         FileOutputStream ostream = new FileOutputStream(args[ 1 ]);
-        RandomAccessStream in = new RandomAccessStream(args[0]);
+        RandomAccessInputStream in = new RandomAccessInputStream(args[0]);
 
         new POIFSFileSystem(in, 512).writeFilesystem(ostream);
         in.close();
