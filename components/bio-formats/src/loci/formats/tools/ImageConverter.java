@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.tools;
 
-import java.awt.Image;
+import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import loci.common.*;
 import loci.formats.*;
@@ -177,16 +177,23 @@ public final class ImageConverter {
     int last = series == -1 ? num : series + 1;
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
+      writer.setInterleaved(reader.isInterleaved());
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
       for (int i=0; i<numImages; i++) {
         writer.setId(FormatTools.getFilename(q, i, reader, out));
         if (compression != null) writer.setCompression(compression);
 
         long s = System.currentTimeMillis();
-        Image image = reader.openImage(i);
+        byte[] buf = reader.openBytes(i);
+        byte[][] lut = reader.get8BitLookupTable();
+        if (lut != null) {
+          IndexColorModel model = new IndexColorModel(8, lut[0].length,
+            lut[0], lut[1], lut[2]);
+          writer.setColorModel(model);
+        }
         long m = System.currentTimeMillis();
-        writer.saveImage(image, q, i == numImages - 1,
-          q == last - 1 && i == numImages - 1);
+        boolean lastInSeries = i == numImages - 1;
+        writer.saveBytes(buf, q, lastInSeries, q == last - 1 && lastInSeries);
         long e = System.currentTimeMillis();
         LogTools.print(".");
         read += m - s;

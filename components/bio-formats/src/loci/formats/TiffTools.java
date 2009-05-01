@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.io.*;
@@ -1823,7 +1823,7 @@ public final class TiffTools {
    * Writes the given field to the specified output stream using the given
    * byte offset and IFD, in big-endian format.
    *
-   * @param img The field to write
+   * @param buf The pixels to write
    * @param ifd Hashtable representing the TIFF IFD; can be null
    * @param out The output stream to which the TIFF data should be written
    * @param offset The value to use for specifying byte offsets
@@ -1831,22 +1831,25 @@ public final class TiffTools {
    * @param bigTiff Whether this image should be written as BigTIFF
    * @return total number of bytes written
    */
-  public static long writeImage(BufferedImage img, Hashtable ifd,
-    RandomAccessOutputStream out, long offset, boolean last, boolean bigTiff)
+  public static long writeImage(byte[] buf, Hashtable ifd,
+    RandomAccessOutputStream out, long offset, boolean last, boolean bigTiff,
+    ColorModel colorModel, int pixelType, boolean interleaved)
     throws FormatException, IOException
   {
-    if (img == null) throw new FormatException("Image is null");
+    if (buf == null) throw new FormatException("Byte array is null");
     debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
     boolean little = isLittleEndian(ifd);
 
-    byte[][] values = AWTImageTools.getPixelBytes(img, little);
+    int width = (int) getImageWidth(ifd);
+    int height = (int) getImageLength(ifd);
 
-    int width = img.getWidth();
-    int height = img.getHeight();
+    int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
+    int plane = (int) (width * height * bytesPerPixel);
+    int nChannels = buf.length / plane;
 
-    int bytesPerPixel = values[0].length / (width * height);
-    boolean indexed = img.getColorModel() instanceof IndexColorModel;
+    boolean indexed =
+      colorModel != null && (colorModel instanceof IndexColorModel);
 
     // populate required IFD directory entries (except strip information)
     if (ifd == null) ifd = new Hashtable();
@@ -1854,11 +1857,11 @@ public final class TiffTools {
     putIFDValue(ifd, IMAGE_LENGTH, height);
     if (getIFDValue(ifd, BITS_PER_SAMPLE) == null) {
       int bps = 8 * bytesPerPixel;
-      int[] bpsArray = new int[values.length];
+      int[] bpsArray = new int[nChannels];
       Arrays.fill(bpsArray, bps);
       putIFDValue(ifd, BITS_PER_SAMPLE, bpsArray);
     }
-    if (img.getRaster().getTransferType() == DataBuffer.TYPE_FLOAT) {
+    if (FormatTools.isFloatingPoint(pixelType)) {
       putIFDValue(ifd, SAMPLE_FORMAT, 3);
     }
     if (getIFDValue(ifd, COMPRESSION) == null) {
@@ -1866,11 +1869,11 @@ public final class TiffTools {
     }
     if (getIFDValue(ifd, PHOTOMETRIC_INTERPRETATION) == null) {
       int photometricInterpretation = indexed ? RGB_PALETTE :
-        values.length == 1 ? BLACK_IS_ZERO : RGB;
+        nChannels == 1 ? BLACK_IS_ZERO : RGB;
       putIFDValue(ifd, PHOTOMETRIC_INTERPRETATION, photometricInterpretation);
     }
     if (getIFDValue(ifd, SAMPLES_PER_PIXEL) == null) {
-      putIFDValue(ifd, SAMPLES_PER_PIXEL, values.length);
+      putIFDValue(ifd, SAMPLES_PER_PIXEL, nChannels);
     }
     if (getIFDValue(ifd, X_RESOLUTION) == null) {
       putIFDValue(ifd, X_RESOLUTION, new TiffRational(1, 1)); // no unit
@@ -1889,7 +1892,7 @@ public final class TiffTools {
     }
     if (indexed && getIFDValue(ifd, COLOR_MAP) == null) {
       byte[][] lut = new byte[3][256];
-      IndexColorModel model = (IndexColorModel) img.getColorModel();
+      IndexColorModel model = (IndexColorModel) colorModel;
       model.getReds(lut[0]);
       model.getGreens(lut[1]);
       model.getBlues(lut[2]);
@@ -1909,8 +1912,8 @@ public final class TiffTools {
       fullImageCompression = true;
     }
     int pixels = fullImageCompression ? width * height : width;
-    int stripSize = Math.max(8192, pixels * bytesPerPixel * values.length);
-    int rowsPerStrip = stripSize / (width * bytesPerPixel * values.length);
+    int stripSize = Math.max(8192, pixels * bytesPerPixel * nChannels);
+    int rowsPerStrip = stripSize / (width * bytesPerPixel * nChannels);
     int stripsPerImage = (height + rowsPerStrip - 1) / rowsPerStrip;
     int[] bps = (int[]) getIFDValue(ifd, BITS_PER_SAMPLE, true, int[].class);
     ByteArrayOutputStream[] stripBuf =
@@ -1926,9 +1929,11 @@ public final class TiffTools {
       int strip = y / rowsPerStrip;
       for (int x=0; x<width; x++) {
         int ndx = y * width * bytesPerPixel + x * bytesPerPixel;
-        for (int c=0; c<values.length; c++) {
+        for (int c=0; c<nChannels; c++) {
           for (int n=0; n<bps[c]/8; n++) {
-            stripOut[strip].writeByte(values[c][ndx + n]);
+            int off = interleaved ? ndx * nChannels + c * bytesPerPixel + n :
+              c * plane + ndx + n;
+            stripOut[strip].writeByte(buf[off]);
           }
         }
       }
@@ -2017,6 +2022,38 @@ public final class TiffTools {
     }
     out.write(extraArray);
     return numBytes;
+  }
+
+  /**
+   * Write the header for a TIFF file to the given RandomAccessOutputStream.
+   */
+  public static void writeHeader(RandomAccessOutputStream out,
+    boolean littleEndian, boolean bigTiff) throws IOException
+  {
+    // write endianness indicator
+    if (littleEndian) {
+      out.writeByte(LITTLE);
+      out.writeByte(LITTLE);
+    }
+    else {
+      out.writeByte(BIG);
+      out.writeByte(BIG);
+    }
+    // write magic number
+    if (bigTiff) {
+      DataTools.writeShort(out, BIG_TIFF_MAGIC_NUMBER, littleEndian);
+    }
+    else DataTools.writeShort(out, MAGIC_NUMBER, littleEndian);
+
+    // write the offset to the first IFD
+
+    // for vanilla TIFFs, 8 is the offset to the first IFD
+    // for BigTIFFs, 8 is the number of bytes in an offset
+    DataTools.writeInt(out, 8, littleEndian);
+    if (bigTiff) {
+      // write the offset to the first IFD for BigTIFF files
+      DataTools.writeLong(out, 16, littleEndian);
+    }
   }
 
   // -- Tag retrieval methods --

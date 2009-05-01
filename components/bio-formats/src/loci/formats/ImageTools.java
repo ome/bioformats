@@ -145,6 +145,7 @@ public final class ImageTools {
   public static byte[] splitChannels(byte[] array, int index, int c, int bytes,
     boolean reverse, boolean interleaved)
   {
+    if (c == 1) return array;
     byte[] rtn = new byte[array.length / c];
 
     if (reverse) index = c - index - 1;

@@ -23,11 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.*;
 import java.io.*;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * EPSWriter is the file format writer for Encapsulated PostScript (EPS) files.
@@ -51,29 +50,28 @@ public class EPSWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (image == null) {
-      throw new FormatException("Image is null");
+    if (buf == null) {
+      throw new FormatException("Byte array is null");
     }
 
     out = new RandomAccessOutputStream(currentId);
 
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
-    int type = AWTImageTools.getPixelType(img);
+    MetadataRetrieve meta = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(meta, series);
+    int width = meta.getPixelsSizeX(series, 0).intValue();
+    int height = meta.getPixelsSizeY(series, 0).intValue();
+    int type =
+      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
+    int nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+
     if (!DataTools.containsValue(getPixelTypes(), type)) {
       throw new FormatException("Unsupported image type '" +
         FormatTools.getPixelTypeString(type) + "'.");
     }
-
-    // get the width and height of the image
-    int width = img.getWidth();
-    int height = img.getHeight();
-
-    // retrieve pixel data for this plane
-    byte[][] byteData = AWTImageTools.getBytes(img);
 
     // write the header
 
@@ -91,52 +89,34 @@ public class EPSWriter extends FormatWriter {
     out.writeBytes("0 0 translate\n");
     out.writeBytes(((float) width) + " " + ((float) height) + " scale\n");
     out.writeBytes("/picstr 40 string def\n");
-    if (byteData.length == 1) {
+    if (nChannels == 1) {
       out.writeBytes(width + " " + height + " 8 [" + width + " 0 0 " +
         (-1*height) + " 0 " + height + "] {currentfile picstr " +
         "readhexstring pop} image\n");
-
-      // write pixel data
-      // for simplicity, write 80 char lines
-
-      int charCount = 0;
-      for (int i=0; i<byteData[0].length; i++) {
-        for (int j=0; j<1; j++) {
-          String s = Integer.toHexString(byteData[j][i]);
-          // only want last 2 characters of s
-          if (s.length() > 1) s = s.substring(s.length() - 2);
-          else s = "0" + s;
-          out.writeBytes(s);
-          charCount++;
-          if (charCount == 40) {
-            out.writeBytes("\n");
-            charCount = 0;
-          }
-        }
-      }
     }
     else {
       out.writeBytes(width + " " + height + " 8 [" + width + " 0 0 " +
         (-1*height) + " 0 " + height + "] {currentfile picstr " +
         "readhexstring pop} false 3 colorimage\n");
+    }
 
-      // write pixel data
-      // for simplicity, write 80 char lines
+    // write pixel data
+    // for simplicity, write 80 char lines
 
-      int charCount = 0;
-      for (int i=0; i<byteData[0].length; i++) {
-        for (int j=0; j<byteData.length; j++) {
-          String s = Integer.toHexString(byteData[j][i]);
-          // only want last 2 characters of s
-          if (s.length() > 1) s = s.substring(s.length() - 2);
-          else s = "0" + s;
-          out.writeBytes(s);
-          charCount++;
-          if (charCount == 40) {
-            out.writeBytes("\n");
-            charCount = 0;
-          }
-        }
+    int planeSize = width * height;
+    int charCount = 0;
+    for (int i=0; i<buf.length; i++) {
+      int index = interleaved || nChannels == 1 ? i :
+        (i % nChannels) * planeSize + (i / nChannels);
+      String s = Integer.toHexString(buf[index]);
+      // only want last 2 characters of s
+      if (s.length() > 1) s = s.substring(s.length() - 2);
+      else s = "0" + s;
+      out.writeBytes(s);
+      charCount++;
+      if (charCount == 40) {
+        out.writeBytes("\n");
+        charCount = 0;
       }
     }
 

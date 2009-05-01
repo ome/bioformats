@@ -23,13 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.*;
 import java.util.zip.*;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * APNGWriter is the file format writer for PNG and APNG files.
@@ -61,35 +60,22 @@ public class APNGWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (image == null) {
-      throw new FormatException("Image is null");
+    if (buf == null) {
+      throw new FormatException("Byte array is null");
     }
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    MetadataRetrieve meta = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(meta, series);
+    int bytesPerPixel = FormatTools.getBytesPerPixel(
+      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0)));
 
-    byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
-    byte[] stream =
-      new byte[byteData.length * byteData[0].length + img.getHeight()];
-    int next = 0;
-    int rowLen = byteData[0].length / img.getHeight();
-    int bpp = rowLen / img.getWidth();
-    for (int row=0; row<img.getHeight(); row++) {
-      stream[next++] = 0;
-      for (int col=0; col<img.getWidth(); col++) {
-        for (int c=0; c<byteData.length; c++) {
-          System.arraycopy(byteData[c], row*rowLen + col*bpp, stream,
-            next, bpp);
-          next += bpp;
-        }
-      }
-    }
-    int bytesPerPixel =
-      FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
-
-    boolean indexed = img.getColorModel() instanceof IndexColorModel;
+    boolean indexed = getColorModel() instanceof IndexColorModel;
+    int nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    int width = meta.getPixelsSizeX(series, 0).intValue();
+    int height = meta.getPixelsSizeY(series, 0).intValue();
 
     if (!initialized) {
       out = new RandomAccessOutputStream(currentId);
@@ -100,25 +86,27 @@ public class APNGWriter extends FormatWriter {
       // write IHDR chunk
 
       out.writeInt(13);
-      byte[] buf = new byte[17];
-      buf[0] = 'I';
-      buf[1] = 'H';
-      buf[2] = 'D';
-      buf[3] = 'R';
-      DataTools.unpackBytes(img.getWidth(), buf, 4, 4, false);
-      DataTools.unpackBytes(img.getHeight(), buf, 8, 4, false);
-      buf[12] = (byte) (bytesPerPixel * 8);
-      if (indexed) buf[13] = (byte) 3;
-      else if (byteData.length == 1) buf[13] = (byte) 0;
-      else if (byteData.length == 2) buf[13] = (byte) 4;
-      else if (byteData.length == 3) buf[13] = (byte) 2;
-      else if (byteData.length == 4) buf[13] = (byte) 6;
-      buf[14] = (byte) 0;
-      buf[15] = (byte) 0;
-      buf[16] = (byte) 0;
+      byte[] b = new byte[17];
+      b[0] = 'I';
+      b[1] = 'H';
+      b[2] = 'D';
+      b[3] = 'R';
 
-      out.write(buf);
-      out.writeInt(crc(buf));
+      DataTools.unpackBytes(width, b, 4, 4, false);
+      DataTools.unpackBytes(height, b, 8, 4, false);
+
+      b[12] = (byte) (bytesPerPixel * 8);
+      if (indexed) b[13] = (byte) 3;
+      else if (nChannels == 1) b[13] = (byte) 0;
+      else if (nChannels == 2) b[13] = (byte) 4;
+      else if (nChannels == 3) b[13] = (byte) 2;
+      else if (nChannels == 4) b[13] = (byte) 6;
+      b[14] = (byte) 0;
+      b[15] = (byte) 0;
+      b[16] = (byte) 0;
+
+      out.write(b);
+      out.writeInt(crc(b));
 
       // write acTL chunk
 
@@ -130,21 +118,21 @@ public class APNGWriter extends FormatWriter {
       out.writeInt(0); // save a place for the CRC
 
       // write fcTL chunk
-      writeFCTL(img.getWidth(), img.getHeight());
+      writeFCTL(width, height);
 
       // write PLTE chunk, if needed
-      writePLTE(img);
+      writePLTE();
 
       // write IDAT chunk
-      writePixels("IDAT", stream);
+      writePixels("IDAT", buf, width, height, nChannels);
       initialized = true;
     }
     else {
       // write fcTL chunk
-      writeFCTL(img.getWidth(), img.getHeight());
+      writeFCTL(width, height);
 
       // write fdAT chunk
-      writePixels("fdAT", stream);
+      writePixels("fdAT", buf, width, height, nChannels);
     }
 
     numFrames++;
@@ -224,10 +212,10 @@ public class APNGWriter extends FormatWriter {
     out.writeInt(crc(b));
   }
 
-  private void writePLTE(BufferedImage img) throws IOException {
-    if (!(img.getColorModel() instanceof IndexColorModel)) return;
+  private void writePLTE() throws IOException {
+    if (!(getColorModel() instanceof IndexColorModel)) return;
 
-    IndexColorModel model = (IndexColorModel) img.getColorModel();
+    IndexColorModel model = (IndexColorModel) getColorModel();
     byte[][] lut = new byte[3][256];
     model.getReds(lut[0]);
     model.getGreens(lut[1]);
@@ -250,25 +238,45 @@ public class APNGWriter extends FormatWriter {
     out.writeInt(crc(b));
   }
 
-  private void writePixels(String chunk, byte[] stream) throws IOException {
-    Deflater deflater = new Deflater();
-    deflater.setInput(stream);
-    deflater.finish();
-    int extra = chunk.equals("fdAT") ? 4 : 0;
-    byte[] tmp = new byte[stream.length + 4 + extra];
-    byte[] chunkBytes = chunk.getBytes();
-    System.arraycopy(chunkBytes, 0, tmp, 0, 4);
+  private void writePixels(String chunk, byte[] stream, int width, int height,
+    int sizeC) throws IOException
+  {
+    ByteArrayOutputStream s = new ByteArrayOutputStream();
+    s.write(chunk.getBytes());
     if (chunk.equals("fdAT")) {
-      DataTools.unpackBytes(nextSequenceNumber++, tmp, 4, 4, false);
+      s.write(DataTools.intToBytes(nextSequenceNumber++, false));
     }
-    int nBytes = deflater.deflate(tmp, extra + 4, stream.length);
+    DeflaterOutputStream deflater = new DeflaterOutputStream(s);
+    int planeSize = stream.length / sizeC;
+    int rowLen = stream.length / height;
+    int bytesPerPixel = stream.length / (width * height * sizeC);
+    byte[] rowBuf = new byte[rowLen];
+    for (int i=0; i<height; i++) {
+      deflater.write(0);
+      if (interleaved) {
+        System.arraycopy(stream, i * rowLen, rowBuf, 0, rowLen);
+      }
+      else {
+        for (int col=0; col<width; col++) {
+          for (int c=0; c<sizeC; c++) {
+            for (int q=0; q<bytesPerPixel; q++) {
+              rowBuf[(col * sizeC + c) * bytesPerPixel + q] =
+                stream[c * planeSize + (i * width + col) * bytesPerPixel + q];
+            }
+          }
+        }
+      }
+      deflater.write(rowBuf);
+    }
+    deflater.finish();
+    byte[] b = s.toByteArray();
 
     // write chunk length
-    out.writeInt(nBytes + extra);
-    out.write(tmp, 0, nBytes + extra + 4);
+    out.writeInt(b.length - 4);
+    out.write(b);
 
     // write checksum
-    out.writeInt(crc(tmp, 0, nBytes + extra + 4));
+    out.writeInt(crc(b));
   }
 
 }

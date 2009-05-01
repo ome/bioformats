@@ -277,6 +277,9 @@ public class ZeissLSMReader extends FormatReader {
 
     status("Removing thumbnails");
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     for (int series=0; series<ifds.length; series++) {
       Vector newIFDs = new Vector();
       for (int i=0; i<ifds[series].length; i++) {
@@ -311,6 +314,7 @@ public class ZeissLSMReader extends FormatReader {
 
       initMetadata(series);
       core[series].littleEndian = !isLittleEndian();
+      store.setPixelsBigEndian(new Boolean(!isLittleEndian()), series, 0);
     }
     setSeries(0);
   }

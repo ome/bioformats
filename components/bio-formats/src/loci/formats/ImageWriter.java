@@ -195,6 +195,11 @@ public class ImageWriter implements IFormatWriter {
     getWriter().saveImage(image, series, lastInSeries, last);
   }
 
+  /* @see IFormatWriter#setInterleaved(boolean) */
+  public void setInterleaved(boolean interleaved) {
+    for (int i=0; i<writers.length; i++) writers[i].setInterleaved(interleaved);
+  }
+
   /* @see IFormatWriter#canDoStacks() */
   public boolean canDoStacks() {
     return getWriter().canDoStacks();

@@ -439,6 +439,20 @@ public final class DataTools {
     return Double.longBitsToDouble(bytesToLong(bytes, offset, len, little));
   }
 
+  /** Translates the short value into an array of two bytes. */
+  public static byte[] shortToBytes(short value, boolean little) {
+    byte[] v = new byte[2];
+    unpackShort(value, v, 0, little);
+    return v;
+  }
+
+  /** Translates the int value into an array of four bytes. */
+  public static byte[] intToBytes(int value, boolean little) {
+    byte[] v = new byte[4];
+    unpackBytes(value, v, 0, 4, little);
+    return v;
+  }
+
   /**
    * Translates the short value into two bytes, and places them in a byte
    * array at the given index.

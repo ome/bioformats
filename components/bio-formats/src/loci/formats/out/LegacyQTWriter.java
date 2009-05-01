@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * LegacyQTWriter is a file format writer for QuickTime movies. It uses the
@@ -107,6 +108,25 @@ public class LegacyQTWriter extends FormatWriter {
   public void setQuality(int quality) { this.quality = quality; }
 
   // -- IFormatWriter API methods --
+
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    MetadataRetrieve r = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(r, series);
+    int width = r.getPixelsSizeX(series, 0).intValue();
+    int height = r.getPixelsSizeY(series, 0).intValue();
+    int c = r.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
+    int bpp = FormatTools.getBytesPerPixel(type);
+    boolean little = !r.getPixelsBigEndian(series, 0).booleanValue();
+
+    BufferedImage img = AWTImageTools.makeImage(buf, width, height, c,
+      interleaved, bpp, FormatTools.isFloatingPoint(type), little,
+      FormatTools.isSigned(type));
+    saveImage(img, series, lastInSeries, last);
+  }
 
   /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
   public void saveImage(Image image, int series, boolean lastInSeries,

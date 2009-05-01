@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import loci.common.*;
 import loci.formats.*;
@@ -45,23 +43,6 @@ public class JPEGWriter extends ImageIOWriter {
   }
 
   // -- IFormatWriter API methods --
-
-  /* @see loci.formats.IFormatWriter#save(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
-    int type = AWTImageTools.getPixelType(img);
-    int[] types = getPixelTypes();
-    for (int i=0; i<types.length; i++) {
-      if (types[i] == type) {
-        super.saveImage(image, series, lastInSeries, last);
-        return;
-      }
-    }
-    throw new FormatException("Unsupported data type - > 8 bit images " +
-      "cannot be saved.");
-  }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes() {

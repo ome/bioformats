@@ -23,8 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Image;
 import java.io.*;
 import java.util.*;
 import loci.common.*;
@@ -75,10 +74,20 @@ public class TiffWriter extends FormatWriter {
    * depth, compression and units.  If this image is the last one in the file,
    * the last flag must be set.
    */
-  public void saveImage(Image image, Hashtable ifd, boolean last)
+  public void saveImage(Image image, Hashtable ifd, boolean last) {
+    // TODO
+  }
+
+  /**
+   * Saves the given image to the specified (possibly already open) file.
+   * The IFD hashtable allows specification of TIFF parameters such as bit
+   * depth, compression and units.  If this image is the last one in the file,
+   * the last flag must be set.
+   */
+  public void saveBytes(byte[] buf, Hashtable ifd, boolean last)
     throws IOException, FormatException
   {
-    saveImage(image, ifd, 0, last, last);
+    saveBytes(buf, ifd, 0, last, last);
   }
 
   /**
@@ -88,7 +97,7 @@ public class TiffWriter extends FormatWriter {
    * the lastInSeries flag must be set. If this image is the last one in the
    * file, the last flag must be set.
    */
-  public void saveImage(Image image, Hashtable ifd, int series,
+  public void saveBytes(byte[] buf, Hashtable ifd, int series,
     boolean lastInSeries, boolean last) throws IOException, FormatException
   {
     MetadataRetrieve retrieve = getMetadataRetrieve();
@@ -105,27 +114,8 @@ public class TiffWriter extends FormatWriter {
       RandomAccessStream tmp = new RandomAccessStream(currentId);
       if (tmp.length() == 0) {
         // write TIFF header
-        if (littleEndian) {
-          out.writeByte(TiffTools.LITTLE);
-          out.writeByte(TiffTools.LITTLE);
-        }
-        else {
-          out.writeByte(TiffTools.BIG);
-          out.writeByte(TiffTools.BIG);
-        }
-        if (isBigTiff) {
-          DataTools.writeShort(out, TiffTools.BIG_TIFF_MAGIC_NUMBER,
-            littleEndian);
-        }
-        else {
-          DataTools.writeShort(out, TiffTools.MAGIC_NUMBER, littleEndian);
-        }
-        DataTools.writeInt(out, 8, littleEndian); // offset to first IFD
-        lastOffset = 8;
-        if (isBigTiff) {
-          DataTools.writeLong(out, 16, littleEndian);
-          lastOffset = 16;
-        }
+        TiffTools.writeHeader(out, littleEndian, isBigTiff);
+        lastOffset = isBigTiff ? 16 : 8;
       }
       else {
         // compute the offset to the last IFD
@@ -143,11 +133,17 @@ public class TiffWriter extends FormatWriter {
       tmp.close();
     }
 
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    int width = retrieve.getPixelsSizeX(series, 0).intValue();
+    int height = retrieve.getPixelsSizeY(series, 0).intValue();
+    int c = retrieve.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    int type =
+      FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0));
+    int bytesPerPixel = FormatTools.getBytesPerPixel(type);
 
-    int plane = img.getWidth() * img.getHeight() *
-      img.getRaster().getNumBands() *
-      FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
+    ifd.put(new Integer(TiffTools.IMAGE_WIDTH), new Integer(width));
+    ifd.put(new Integer(TiffTools.IMAGE_LENGTH), new Integer(height));
+
+    int plane = width * height * c * bytesPerPixel;
 
     if (!isBigTiff) {
       RandomAccessStream tmp = new RandomAccessStream(currentId);
@@ -161,15 +157,15 @@ public class TiffWriter extends FormatWriter {
     // write the image
     ifd.put(new Integer(TiffTools.LITTLE_ENDIAN), new Boolean(littleEndian));
     out.seek(out.length());
-    lastOffset +=
-      TiffTools.writeImage(img, ifd, out, lastOffset, last, isBigTiff);
+    lastOffset += TiffTools.writeImage(buf, ifd, out, lastOffset, last,
+      isBigTiff, getColorModel(), type, interleaved);
     if (last) close();
   }
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     Hashtable h = new Hashtable();
@@ -184,7 +180,7 @@ public class TiffWriter extends FormatWriter {
       compressType = new Integer(TiffTools.JPEG);
     }
     h.put(new Integer(TiffTools.COMPRESSION), compressType);
-    saveImage(image, h, series, lastInSeries, last);
+    saveBytes(buf, h, series, lastInSeries, last);
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */

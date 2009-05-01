@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.*;
 import java.io.*;
 import java.util.StringTokenizer;
 import loci.common.*;
@@ -52,15 +50,22 @@ public class ICSWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (image == null) throw new FormatException("Image is null");
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
-    byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
-    int bytesPerPixel =
-      FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
+    if (buf == null) {
+      throw new FormatException("Byte array is null");
+    }
+
+    MetadataRetrieve meta = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(meta, series);
+
+    int pixelType =
+      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
+    int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
+    int rgbChannels =
+      meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
 
     if (!initialized) {
       initialized = true;
@@ -70,42 +75,34 @@ public class ICSWriter extends FormatWriter {
       out.writeBytes("filename\t" + currentId + "\n");
       out.writeBytes("layout\tparameters\t6\n");
 
-      MetadataRetrieve meta = getMetadataRetrieve();
-      MetadataTools.verifyMinimumPopulated(meta, series);
-
       String order = meta.getPixelsDimensionOrder(series, 0);
       int x = meta.getPixelsSizeX(series, 0).intValue();
       int y = meta.getPixelsSizeY(series, 0).intValue();
       int z = meta.getPixelsSizeZ(series, 0).intValue();
       int c = meta.getPixelsSizeC(series, 0).intValue();
       int t = meta.getPixelsSizeT(series, 0).intValue();
-      int pixelType =
-        FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
 
       StringBuffer dimOrder = new StringBuffer();
       int[] sizes = new int[6];
       int nextSize = 0;
-      sizes[nextSize++] = 8 * FormatTools.getBytesPerPixel(pixelType);
+      sizes[nextSize++] = 8 * bytesPerPixel;
 
-      if (byteData.length > 1) {
+      if (rgbChannels > 1) {
         dimOrder.append("ch\t");
         sizes[nextSize++] = c;
       }
 
-
       for (int i=0; i<order.length(); i++) {
-        if (order.charAt(i) == 'C' && byteData.length == 1) {
-          dimOrder.append("ch");
+        if (order.charAt(i) == 'X') sizes[nextSize++] = x;
+        else if (order.charAt(i) == 'Y') sizes[nextSize++] = y;
+        else if (order.charAt(i) == 'Z') sizes[nextSize++] = z;
+        else if (order.charAt(i) == 'T') sizes[nextSize++] = t;
+        else if (order.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
           sizes[nextSize++] = c;
+          dimOrder.append("ch");
         }
-        else {
-          if (order.charAt(i) == 'X') sizes[nextSize++] = x;
-          else if (order.charAt(i) == 'Y') sizes[nextSize++] = y;
-          else if (order.charAt(i) == 'Z') sizes[nextSize++] = z;
-          else if (order.charAt(i) == 'T') sizes[nextSize++] = t;
-          if (order.charAt(i) != 'C') {
-            dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
-          }
+        if (order.charAt(i) != 'C') {
+          dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
         }
         dimOrder.append("\t");
       }
@@ -163,11 +160,13 @@ public class ICSWriter extends FormatWriter {
       out.writeBytes("\nend\n");
     }
 
-    if (byteData.length == 1) out.write(byteData[0]);
+    out.seek(out.length());
+    if (interleaved || rgbChannels == 1) out.write(buf);
     else {
-      for (int pixel=0; pixel<byteData[0].length/bytesPerPixel; pixel++) {
-        for (int channel=0; channel<byteData.length; channel++) {
-          out.write(byteData[channel], pixel*bytesPerPixel, bytesPerPixel);
+      int planeSize = buf.length / rgbChannels;
+      for (int i=0; i<planeSize; i+=bytesPerPixel) {
+        for (int ch=0; ch<rgbChannels; ch++) {
+          out.write(buf, ch*planeSize + i, bytesPerPixel);
         }
       }
     }

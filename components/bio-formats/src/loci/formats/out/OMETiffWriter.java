@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
 import java.io.IOException;
 import java.util.Vector;
 import loci.common.*;
@@ -153,13 +152,13 @@ public class OMETiffWriter extends TiffWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     if (seriesMap == null) seriesMap = new Vector();
     seriesMap.add(new Integer(series));
-    super.saveImage(image, series, lastInSeries, last);
+    super.saveBytes(buf, series, lastInSeries, last);
   }
 
 }

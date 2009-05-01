@@ -75,6 +75,11 @@ public interface IFormatWriter extends IFormatHandler {
   void saveBytes(byte[] bytes, int series, boolean lastInSeries, boolean last)
     throws FormatException, IOException;
 
+  /**
+   * Sets whether or not the channels in an image are interleaved.
+   */
+  void setInterleaved(boolean interleaved);
+
   /** Reports whether the writer can save multiple images to a single file. */
   boolean canDoStacks();
 

@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
 import loci.common.*;
@@ -69,8 +67,8 @@ public class OMEXMLWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     MetadataRetrieve retrieve = getMetadataRetrieve();
@@ -90,37 +88,38 @@ public class OMEXMLWriter extends FormatWriter {
     }
     boolean littleEndian =
       !retrieve.getPixelsBigEndian(series, 0).booleanValue();
-    BufferedImage buffImage = AWTImageTools.makeBuffered(image);
-    byte[][] pix = AWTImageTools.getPixelBytes(buffImage, littleEndian);
 
     String type = retrieve.getPixelsPixelType(series, 0);
     int pixelType = FormatTools.pixelTypeFromString(type);
 
     CodecOptions options = new CodecOptions();
-    options.width = buffImage.getWidth();
-    options.height = buffImage.getHeight();
+    options.width = retrieve.getPixelsSizeX(series, 0).intValue();
+    options.height = retrieve.getPixelsSizeY(series, 0).intValue();
     options.channels = 1;
     options.interleaved = false;
     options.littleEndian = littleEndian;
     options.signed = FormatTools.isSigned(pixelType);
 
-    buffImage = null;
+    // TODO: Create a method compress to handle all compression methods
+    int bytes = FormatTools.getBytesPerPixel(pixelType);
+    options.bitsPerSample = bytes * 8;
 
-    for (int i = 0; i < pix.length; i++) {
-      // TODO: Create a method compress to handle all compression methods
-      int bytes = pix[i].length / (options.width * options.height);
-      options.bitsPerSample = bytes * 8;
+    int nChannels =
+      retrieve.getLogicalChannelSamplesPerPixel(series, 0).intValue();
 
+    for (int i=0; i<nChannels; i++) {
+      byte[] b = ImageTools.splitChannels(buf, i, nChannels, bytes, false,
+        interleaved);
       if (compression.equals("J2K")) {
-        pix[i] = new JPEG2000Codec().compress(pix[i], options);
+        b = new JPEG2000Codec().compress(b, options);
       }
       else if (compression.equals("JPEG")) {
-        pix[i] = new JPEGCodec().compress(pix[i], options);
+        b = new JPEGCodec().compress(b, options);
       }
       else if (compression.equals("zlib")) {
-        pix[i] = new ZlibCodec().compress(pix[i], options);
+        b = new ZlibCodec().compress(b, options);
       }
-      byte[] encodedPix = new Base64Codec().compress(pix[i], options);
+      byte[] encodedPix = new Base64Codec().compress(b, options);
 
       StringBuffer plane = new StringBuffer("\n<Bin:BinData Length=\"");
       plane.append(encodedPix.length);

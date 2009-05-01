@@ -23,12 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.*;
 import java.io.*;
 import java.util.Vector;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * QTWriter is the file format writer for uncompressed QuickTime movie files.
@@ -155,66 +154,52 @@ public class QTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (image == null) throw new FormatException("Image is null");
     if (legacy == null) legacy = new LegacyQTWriter();
 
     if (needLegacy) {
       legacy.setId(currentId);
-      legacy.saveImage(image, last);
+      legacy.saveBytes(buf, last);
       return;
     }
 
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    MetadataRetrieve r = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(r, series);
 
     // get the width and height of the image
-    int width = img.getWidth();
-    int height = img.getHeight();
-
-    // retrieve pixel data for this plane
-    byte[][] byteData = AWTImageTools.getPixelBytes(img, false);
+    int width = r.getPixelsSizeX(series, 0).intValue();
+    int height = r.getPixelsSizeY(series, 0).intValue();
 
     // need to check if the width is a multiple of 8
     // if it is, great; if not, we need to pad each scanline with enough
     // bytes to make the width a multiple of 8
 
-    int pad = width % 4;
-    pad = (4 - pad) % 4;
-
-    int bytesPerPixel = byteData[0].length / (width * height);
-
-    pad *= bytesPerPixel;
-
-    byte[][] temp = byteData;
-    byteData = new byte[temp.length][temp[0].length + height*pad];
-
-    int rowLength = width * bytesPerPixel;
-    for (int c=0; c<temp.length; c++) {
-      for (int row=0; row<height; row++) {
-        System.arraycopy(temp[c], row * rowLength, byteData[c],
-          row * (rowLength + pad), rowLength);
-      }
-    }
+    int bytesPerPixel =
+      FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
+    int pad = ((4 - (width % 4)) % 4) * bytesPerPixel;
+    int nChannels = r.getLogicalChannelSamplesPerPixel(series, 0).intValue();
 
     // invert each pixel
     // this will makes the colors look right in other readers (e.g. xine),
     // but needs to be reversed in QTReader
 
-    if (byteData.length == 1 && bytesPerPixel == 1) {
-      for (int i=0; i<byteData.length; i++) {
-        for (int k=0; k<byteData[0].length; k++) {
-          byteData[i][k] = (byte) (255 - byteData[i][k]);
-        }
+    if (nChannels == 1 && bytesPerPixel == 1) {
+      for (int i=0; i<buf.length; i++) {
+        buf[i] = (byte) (255 - buf[i]);
       }
     }
 
-    byte[] buffer = new byte[byteData.length * byteData[0].length];
-    for (int i=0; i<byteData[0].length; i++) {
-      for (int j=0; j<byteData.length; j++) {
-        buffer[i * byteData.length + j] = byteData[j][i];
+    if (!interleaved) {
+      // need to write interleaved data
+      byte[] tmp = new byte[buf.length];
+      System.arraycopy(buf, 0, tmp, 0, buf.length);
+      for (int i=0; i<buf.length; i++) {
+        int c = i / (width * height);
+        int index = i % (width * height);
+        buf[index * nChannels + c] = tmp[i];
       }
     }
 
@@ -225,7 +210,7 @@ public class QTWriter extends FormatWriter {
         needLegacy = true;
         legacy.setCodec(codec);
         legacy.setId(currentId);
-        legacy.saveImage(image, last);
+        legacy.saveBytes(buf, series, lastInSeries, last);
         return;
       }
 
@@ -235,7 +220,7 @@ public class QTWriter extends FormatWriter {
       out = new RandomAccessOutputStream(currentId);
       created = (int) System.currentTimeMillis();
       numWritten = 0;
-      numBytes = buffer.length;
+      numBytes = buf.length;
       byteCountOffset = 8;
 
       if (out.length() == 0) {
@@ -255,14 +240,14 @@ public class QTWriter extends FormatWriter {
         numBytes = (int) DataTools.read4UnsignedBytes(in, false) - 8;
         in.close();
 
-        numWritten = numBytes / buffer.length;
-        numBytes += buffer.length;
+        numWritten = numBytes / buf.length;
+        numBytes += buf.length;
 
         out.seek(byteCountOffset);
         DataTools.writeInt(out, numBytes + 8, false);
 
         for (int i=0; i<numWritten; i++) {
-          offsets.add(new Integer(16 + i * buffer.length));
+          offsets.add(new Integer(16 + i * buf.length));
         }
 
         out.seek(out.length());
@@ -274,19 +259,19 @@ public class QTWriter extends FormatWriter {
 
       numWritten++;
 
-      out.write(buffer);
+      out.write(buf);
     }
     else {
       // update the number of pixel bytes written
       int planeOffset = numBytes;
-      numBytes += buffer.length;
+      numBytes += buf.length;
       out.seek(byteCountOffset);
       DataTools.writeInt(out, numBytes + 8, false);
 
       // write this plane's pixel data
       out.seek(out.length());
 
-      out.write(buffer);
+      out.write(buf);
 
       offsets.add(new Integer(planeOffset + 16));
       numWritten++;
@@ -295,10 +280,10 @@ public class QTWriter extends FormatWriter {
     if (last) {
       int timeScale = 100;
       int duration = numWritten * (timeScale / fps);
-      int bitsPerPixel = (byteData.length > 1) ? bytesPerPixel * 24 :
+      int bitsPerPixel = (nChannels > 1) ? bytesPerPixel * 24 :
         bytesPerPixel * 8 + 32;
       if (bytesPerPixel == 2) {
-        bitsPerPixel = byteData.length > 1 ? 16 : 40;
+        bitsPerPixel = nChannels > 1 ? 16 : 40;
       }
       int channels = (bitsPerPixel >= 40) ? 1 : 3;
 

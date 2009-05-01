@@ -35,8 +35,7 @@ import loci.common.*;
 import loci.formats.*;
 
 /**
- * This class implements JPEG 2000 decompression.  Compression is not yet
- * implemented.
+ * This class implements JPEG 2000 compression and decompression.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/codec/JPEG2000Codec.java">Trac</a>,

@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import loci.common.*;
 import loci.formats.*;
@@ -53,49 +51,32 @@ public class JPEG2000Writer extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (image == null) {
-      throw new FormatException("Image is null");
-    }
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
-
     MetadataRetrieve retrieve = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(retrieve, series);
     boolean littleEndian =
       !retrieve.getPixelsBigEndian(series, 0).booleanValue();
-    byte[][] byteData = AWTImageTools.getPixelBytes(img, littleEndian);
-    byte[] stream =
-      new byte[byteData.length * byteData[0].length];
-    int next = 0;
-    int rowLen = byteData[0].length / img.getHeight();
-    int bpp = rowLen / img.getWidth();
-    for (int row=0; row<img.getHeight(); row++) {
-      for (int col=0; col<img.getWidth(); col++) {
-        for (int c=0; c<byteData.length; c++) {
-          System.arraycopy(byteData[c], row*rowLen + col*bpp, stream,
-            next, bpp);
-          next += bpp;
-        }
-      }
-    }
-
-    int bytesPerPixel = byteData[0].length / (img.getWidth() * img.getHeight());
+    int width = retrieve.getPixelsSizeX(series, 0).intValue();
+    int height = retrieve.getPixelsSizeY(series, 0).intValue();
+    int bytesPerPixel = FormatTools.getBytesPerPixel(
+      FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0)));
+    int nChannels =
+      retrieve.getLogicalChannelSamplesPerPixel(series, 0).intValue();
 
     out = new RandomAccessOutputStream(currentId);
 
     CodecOptions options = new CodecOptions();
-    options.width = img.getWidth();
-    options.height = img.getHeight();
-    options.channels = img.getRaster().getNumBands();
+    options.width = width;
+    options.height = height;
+    options.channels = nChannels;
     options.bitsPerSample = bytesPerPixel * 8;
     options.littleEndian = littleEndian;
-    options.interleaved = true;
+    options.interleaved = interleaved;
 
-    byte[] compressedData = new JPEG2000Codec().compress(stream, options);
-    out.write(compressedData);
+    out.write(new JPEG2000Codec().compress(buf, options));
     out.close();
   }
 

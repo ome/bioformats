@@ -58,6 +58,9 @@ public abstract class FormatWriter extends FormatHandler
   /** Whether the current file has been prepped for writing. */
   protected boolean initialized;
 
+  /** Whether the channels in an RGB image are interleaved. */
+  protected boolean interleaved;
+
   /**
    * Current metadata retrieval object. Should <b>never</b> be accessed
    * directly as the semantics of {@link #getMetadataRetrieve()}
@@ -84,35 +87,51 @@ public abstract class FormatWriter extends FormatHandler
     saveBytes(bytes, 0, last, last);
   }
 
-  /* @see IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    MetadataRetrieve r = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(r, series);
-    int width = r.getPixelsSizeX(series, 0).intValue();
-    int height = r.getPixelsSizeY(series, 0).intValue();
-    int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
-    boolean littleEndian = !r.getPixelsBigEndian(series, 0).booleanValue();
-
-    int bpp = FormatTools.getBytesPerPixel(type);
-    int planeSize = width * height * bpp;
-
-    // calculate the number of channels per plane
-    int channels = bytes.length / planeSize;
-
-    BufferedImage img = AWTImageTools.makeImage(bytes, width, height,
-      channels, true, bpp, FormatTools.isFloatingPoint(type), littleEndian,
-      FormatTools.isSigned(type));
-    saveImage(img, series, lastInSeries, last);
-  }
-
   /* @see IFormatWriter#saveImage(Image, boolean) */
   public void saveImage(Image image, boolean last)
     throws FormatException, IOException
   {
     saveImage(image, 0, last, last);
+  }
+
+  /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
+  public void saveImage(Image image, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    BufferedImage img = AWTImageTools.makeBuffered(image);
+    boolean littleEndian = false;
+    int bpp = FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
+
+    MetadataRetrieve r = getMetadataRetrieve();
+    if (r != null) {
+      Boolean bigEndian = r.getPixelsBigEndian(series, 0);
+      if (bigEndian != null) littleEndian = !bigEndian.booleanValue();
+    }
+
+    byte[][] pixelBytes = AWTImageTools.getPixelBytes(img, littleEndian);
+    byte[] buf = new byte[pixelBytes.length * pixelBytes[0].length];
+    if (interleaved) {
+      for (int i=0; i<pixelBytes[0].length; i+=bpp) {
+        for (int j=0; j<pixelBytes.length; j++) {
+          System.arraycopy(pixelBytes[j], i, buf, i*pixelBytes.length + j*bpp,
+            bpp);
+        }
+      }
+    }
+    else {
+      for (int i=0; i<pixelBytes.length; i++) {
+        System.arraycopy(pixelBytes[i], 0, buf, i * pixelBytes[0].length,
+          pixelBytes[i].length);
+      }
+    }
+    pixelBytes = null;
+
+    saveBytes(buf, series, lastInSeries, last);
+  }
+
+  /* @see IFormatWriter#setInterleaved(boolean) */
+  public void setInterleaved(boolean interleaved) {
+    this.interleaved = interleaved;
   }
 
   /* @see IFormatWriter#canDoStacks() */

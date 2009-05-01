@@ -32,6 +32,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * ImageIOWriter is the superclass for file format writers that use the
@@ -71,16 +72,41 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    MetadataRetrieve meta = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(meta, series);
+    int width = meta.getPixelsSizeX(series, 0).intValue();
+    int height = meta.getPixelsSizeY(series, 0).intValue();
+    int type =
+      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
+    int channels = meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
+
+    BufferedImage image = AWTImageTools.makeImage(buf, width, height, channels,
+      interleaved, FormatTools.getBytesPerPixel(type),
+      FormatTools.isFloatingPoint(type), littleEndian,
+      FormatTools.isSigned(type));
+    saveImage(image, series, lastInSeries, last);
+  }
+
   /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
   public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     BufferedImage img = AWTImageTools.makeBuffered(image, cm);
-    if (AWTImageTools.getPixelType(img) == FormatTools.FLOAT) {
-      throw new FormatException("Floating point data not supported.");
+    int type = AWTImageTools.getPixelType(img);
+    int[] types = getPixelTypes();
+    for (int i=0; i<types.length; i++) {
+      if (types[i] == type) {
+        out = new RandomAccessOutputStream(currentId);
+        ImageIO.write(img, kind, out);
+        return;
+      }
     }
-    out = new RandomAccessOutputStream(currentId);
-    ImageIO.write(img, kind, out);
+    throw new FormatException("Floating point data not supported.");
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes() */

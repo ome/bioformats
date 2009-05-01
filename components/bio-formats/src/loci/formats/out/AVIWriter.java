@@ -23,12 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
-import java.awt.image.*;
+import java.awt.image.IndexColorModel;
 import java.io.*;
 import java.util.Vector;
 import loci.common.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * AVIWriter is the file format writer for AVI files.
@@ -92,32 +92,29 @@ public class AVIWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (image == null) {
-      throw new FormatException("Image is null");
+    if (buf == null) {
+      throw new FormatException("Byte array is null");
     }
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
-    int type = AWTImageTools.getPixelType(img);
+    MetadataRetrieve meta = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(meta, series);
+    int type =
+      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
     if (!DataTools.containsValue(getPixelTypes(), type)) {
       throw new FormatException("Unsupported image type '" +
         FormatTools.getPixelTypeString(type) + "'.");
     }
 
-    byte[][] byteData = AWTImageTools.getBytes(img);
-    if (byteData.length == 2) {
-      byte[][] tmpByteData = byteData;
-      byteData = new byte[3][tmpByteData[0].length];
-      byteData[0] = tmpByteData[0];
-      byteData[1] = tmpByteData[1];
-    }
+    int nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+
     byte[][] lut = null;
 
-    if (img.getColorModel() instanceof IndexColorModel) {
+    if (getColorModel() instanceof IndexColorModel) {
       lut = new byte[4][256];
-      IndexColorModel model = (IndexColorModel) img.getColorModel();
+      IndexColorModel model = (IndexColorModel) getColorModel();
       model.getReds(lut[0]);
       model.getGreens(lut[1]);
       model.getBlues(lut[2]);
@@ -127,7 +124,7 @@ public class AVIWriter extends FormatWriter {
     if (!initialized) {
       initialized = true;
       planesWritten = 0;
-      bytesPerPixel = byteData.length;
+      bytesPerPixel = nChannels == 2 ? 3 : nChannels;
 
       out = new RandomAccessOutputStream(currentId);
       out.seek(out.length());
@@ -152,8 +149,8 @@ public class AVIWriter extends FormatWriter {
 
       tDim = 1;
       zDim = 1;
-      yDim = img.getHeight();
-      xDim = img.getWidth();
+      yDim = meta.getPixelsSizeY(series, 0).intValue();
+      xDim = meta.getPixelsSizeX(series, 0).intValue();
 
       xPad = 0;
       xMod = xDim % 4;
@@ -440,35 +437,36 @@ public class AVIWriter extends FormatWriter {
     // The color bytes are in reverse order from the Windows convention.
 
     int width = xDim - xPad;
-    int height = byteData[0].length / width;
+    int height = buf.length / (width * bytesPerPixel);
 
     out.write(dataSignature);
     savedbLength.add(new Long(out.getFilePointer()));
-    // Write the data length
 
+    // Write the data length
     DataTools.writeInt(out, bytesPerPixel * xDim * yDim, true);
 
-    if (bytesPerPixel == 1) {
-      for (int i=(height-1); i>=0; i--) {
-        out.write(byteData[0], i*width, width);
-        for (int j=0; j<xPad; j++) out.write(0);
-      }
-    }
-    else {
-      byte[] buf = new byte[bytesPerPixel * xDim * yDim];
-      int offset = 0;
-      int next = 0;
-      for (int i=(height-1); i>=0; i--) {
-        for (int j=0; j<width; j++) {
-          offset = i*width + j;
-          for (int k=(byteData.length - 1); k>=0; k--) {
-            buf[next++] = byteData[k][offset];
+    int rowPad = xPad * bytesPerPixel;
+
+    byte[] rowBuffer = new byte[width * bytesPerPixel + rowPad];
+
+    for (int row=height-1; row>=0; row--) {
+      for (int col=0; col<width; col++) {
+        int offset = row * width + col;
+        if (interleaved) offset *= nChannels;
+        byte r = buf[offset];
+        if (nChannels > 1) {
+          byte g = buf[offset + (interleaved ? 1 : width * height)];
+          byte b = 0;
+          if (nChannels > 2) {
+            b = buf[offset + (interleaved ? 2 : 2 * width * height)];
           }
+
+          rowBuffer[col * bytesPerPixel] = b;
+          rowBuffer[col * bytesPerPixel + 1] = g;
         }
-        next += xPad * byteData.length;
+        rowBuffer[col * bytesPerPixel + bytesPerPixel - 1] = r;
       }
-      out.write(buf);
-      buf = null;
+      out.write(rowBuffer);
     }
 
     planesWritten++;
