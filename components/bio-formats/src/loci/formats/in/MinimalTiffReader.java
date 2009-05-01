@@ -45,6 +45,9 @@ public class MinimalTiffReader extends FormatReader {
   /** List of IFDs for the current TIFF. */
   protected Hashtable[] ifds;
 
+  /** List of thumbnail IFDs for the current TIFF. */
+  protected Hashtable[] thumbnailIFDs;
+
   private int lastPlane;
 
   // -- Constructors --
@@ -120,6 +123,43 @@ public class MinimalTiffReader extends FormatReader {
     return null;
   }
 
+  /* @see loci.formats.FormatReader#getThumbSizeX() */
+  public int getThumbSizeX() {
+    if (thumbnailIFDs != null && thumbnailIFDs.length > 0) {
+      try {
+        return (int) TiffTools.getImageWidth(thumbnailIFDs[0]);
+      }
+      catch (FormatException e) {
+        if (debug) trace(e);
+      }
+    }
+    return super.getThumbSizeX();
+  }
+
+  /* @see loci.formats.FormatReader#getThumbSizeY() */
+  public int getThumbSizeY() {
+    if (thumbnailIFDs != null && thumbnailIFDs.length > 0) {
+      try {
+        return (int) TiffTools.getImageLength(thumbnailIFDs[0]);
+      }
+      catch (FormatException e) {
+        if (debug) trace(e);
+      }
+    }
+    return super.getThumbSizeY();
+  }
+
+  /* @see loci.formats.FormatReader#openThumbBytes(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    if (thumbnailIFDs == null || thumbnailIFDs.length <= no) {
+      return super.openThumbBytes(no);
+    }
+    byte[] buf = new byte[getThumbSizeX() * getThumbSizeY() *
+      getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType())];
+    return TiffTools.getSamples(thumbnailIFDs[no], in, buf);
+  }
+
   /**
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -141,6 +181,7 @@ public class MinimalTiffReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     ifds = null;
+    thumbnailIFDs = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -157,6 +198,20 @@ public class MinimalTiffReader extends FormatReader {
 
     ifds = TiffTools.getIFDs(in);
     if (ifds == null) throw new FormatException("No IFDs found");
+
+    // separate thumbnail IFDs from regular IFDs
+
+    Vector v = new Vector();
+    Vector thumbs = new Vector();
+    for (int i=0; i<ifds.length; i++) {
+      boolean thumbnail =
+        TiffTools.getIFDIntValue(ifds[i], TiffTools.NEW_SUBFILE_TYPE) != 0;
+      if (thumbnail) thumbs.add(ifds[i]);
+      else v.add(ifds[i]);
+    }
+
+    ifds = (Hashtable[]) v.toArray(new Hashtable[0]);
+    thumbnailIFDs = (Hashtable[]) thumbs.toArray(new Hashtable[0]);
 
     status("Populating metadata");
 
