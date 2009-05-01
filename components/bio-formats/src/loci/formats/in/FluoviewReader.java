@@ -292,7 +292,9 @@ public class FluoviewReader extends BaseTiffReader {
         }
         voxelC = voxel;
       }
-      else if (name.equals("time") || name.equals("t") || name.equals("animation")) {
+      else if (name.equals("time") || name.equals("t") ||
+        name.equals("animation"))
+      {
         core[0].sizeT *= size;
         if (dimensionOrder.indexOf("T") == -1) {
           dimensionOrder += "T";

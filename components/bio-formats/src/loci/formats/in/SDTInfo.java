@@ -422,7 +422,9 @@ public class SDTInfo {
    * Constructs a new SDT header by reading values from the given input source,
    * populating the given metadata table.
    */
-  public SDTInfo(RandomAccessInputStream in, Hashtable meta) throws IOException {
+  public SDTInfo(RandomAccessInputStream in, Hashtable meta)
+    throws IOException
+  {
     // read bhfileHeader
     revision = in.readShort();
     infoOffs = in.readInt();

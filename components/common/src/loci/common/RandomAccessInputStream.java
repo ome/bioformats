@@ -28,9 +28,9 @@ import java.util.*;
 import java.util.zip.*;
 
 /**
- * RandomAccessInputStream provides methods for "intelligent" reading of files and
- * byte arrays.  It also automagically deals with closing and reopening files
- * to prevent an IOException caused by too many open files.
+ * RandomAccessInputStream provides methods for "intelligent" reading of files
+ * and byte arrays.  It also automagically deals with closing and reopening
+ * files to prevent an IOException caused by too many open files.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/RandomAccessInputStream.java">Trac</a>,

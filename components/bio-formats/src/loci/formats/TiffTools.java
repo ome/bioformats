@@ -303,7 +303,9 @@ public final class TiffTools {
    * Gets all IFDs within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable[] getIFDs(RandomAccessInputStream in) throws IOException {
+  public static Hashtable[] getIFDs(RandomAccessInputStream in)
+    throws IOException
+  {
     // check TIFF header
     Boolean result = checkHeader(in);
     if (result == null) return null;
@@ -340,7 +342,8 @@ public final class TiffTools {
    * Gets the first IFD within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable getFirstIFD(RandomAccessInputStream in) throws IOException
+  public static Hashtable getFirstIFD(RandomAccessInputStream in)
+    throws IOException
   {
     // check TIFF header
     Boolean result = checkHeader(in);
@@ -364,8 +367,8 @@ public final class TiffTools {
    * @return an object representing the entry's fields.
    * @throws IOException when there is an error accessing the stream <i>in</i>.
    */
-  public static TiffIFDEntry getFirstIFDEntry(RandomAccessInputStream in, int tag)
-    throws IOException
+  public static TiffIFDEntry getFirstIFDEntry(RandomAccessInputStream in,
+    int tag) throws IOException
   {
     // First lets re-position the file pointer by checking the TIFF header
     Boolean result = checkHeader(in);

@@ -426,7 +426,8 @@ public class PerkinElmerReader extends FormatReader {
       tempFile = new Location(workingDirPath, ls[timPos]);
       if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
       else allFiles.add(ls[timPos]);
-      read = new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
+      read = new RandomAccessInputStream((String)
+        allFiles.get(allFiles.size() - 1));
       t = new StringTokenizer(read.readString((int) read.length()));
       int tNum = 0;
       // can ignore "Zero x" and "Extra int"
@@ -459,7 +460,8 @@ public class PerkinElmerReader extends FormatReader {
       tempFile = new Location(workingDirPath, ls[csvPos]);
       if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
       else allFiles.add(ls[csvPos]);
-      read = new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
+      read = new RandomAccessInputStream((String)
+        allFiles.get(allFiles.size() - 1));
       t = new StringTokenizer(read.readString((int) read.length()));
       int tNum = 0;
       String[] hashKeys = {"Calibration Unit", "Pixel Size X", "Pixel Size Y",
@@ -495,8 +497,8 @@ public class PerkinElmerReader extends FormatReader {
       else allFiles.add(ls[zpoPos]);
       if (csvPos < 0) {
         // parse .zpo only if no .csv is available
-        read =
-          new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
+        read = new RandomAccessInputStream((String)
+          allFiles.get(allFiles.size() - 1));
         t = new StringTokenizer(read.readString((int) read.length()));
         int tNum = 0;
         while (t.hasMoreTokens()) {
@@ -519,7 +521,8 @@ public class PerkinElmerReader extends FormatReader {
       tempFile = new Location(workingDirPath, ls[htmPos]);
       if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
       else allFiles.add(ls[htmPos]);
-      read = new RandomAccessInputStream((String) allFiles.get(allFiles.size() - 1));
+      read = new RandomAccessInputStream((String)
+        allFiles.get(allFiles.size() - 1));
       data = new byte[(int) read.length()];
       read.read(data);
 

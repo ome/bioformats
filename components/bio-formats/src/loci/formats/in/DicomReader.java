@@ -860,7 +860,9 @@ public class DicomReader extends FormatReader {
     else return value;
   }
 
-  private int getLength(RandomAccessInputStream stream, int tag) throws IOException {
+  private int getLength(RandomAccessInputStream stream, int tag)
+    throws IOException
+  {
     byte[] b = new byte[4];
     stream.read(b);
 

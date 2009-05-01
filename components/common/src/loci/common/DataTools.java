@@ -723,8 +723,8 @@ public final class DataTools {
     parseXML(xml.getBytes(), handler);
   }
 
-  public static void parseXML(RandomAccessInputStream stream, DefaultHandler handler)
-    throws IOException
+  public static void parseXML(RandomAccessInputStream stream,
+    DefaultHandler handler) throws IOException
   {
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();

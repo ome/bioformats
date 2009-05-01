@@ -546,7 +546,8 @@ public class MetadataPane extends JPanel
       DocumentBuilder db = docFact.newDocumentBuilder();
 
       //get TIFF comment without parsing out TiffData Elements
-      RandomAccessInputStream in = new RandomAccessInputStream(currentFile.getPath());
+      RandomAccessInputStream in =
+        new RandomAccessInputStream(currentFile.getPath());
       Hashtable ifd = TiffTools.getFirstIFD(in);
       in.close();  // extract comment
       Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);

@@ -574,7 +574,9 @@ public class ZeissLSMReader extends FormatReader {
           if (in.getFilePointer() >= in.length() - 1) break;
           // we want to read until we find a null char
           String name = in.readCString();
-          if (name.length() <= 128) addMeta(keyPrefix + "ChannelName" + i, name);
+          if (name.length() <= 128) {
+            addMeta(keyPrefix + "ChannelName" + i, name);
+          }
         }
       }
     }

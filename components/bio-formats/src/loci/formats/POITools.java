@@ -60,7 +60,9 @@ public class POITools {
     initialize(id);
   }
 
-  public POITools(RandomAccessInputStream s) throws FormatException, IOException {
+  public POITools(RandomAccessInputStream s)
+    throws FormatException, IOException
+  {
     id = String.valueOf(System.currentTimeMillis());
     initialize(s);
   }

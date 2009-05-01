@@ -582,7 +582,8 @@ public class ZeissZVIReader extends FormatReader {
 
     Integer[] keys = (Integer[]) tagsToParse.keySet().toArray(new Integer[0]);
     for (int i=0; i<keys.length; i++) {
-      RandomAccessInputStream s = (RandomAccessInputStream) tagsToParse.get(keys[i]);
+      RandomAccessInputStream s =
+        (RandomAccessInputStream) tagsToParse.get(keys[i]);
       parseTags(keys[i].intValue(), s, store);
       s.close();
     }
@@ -657,8 +658,8 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /** Parse all of the tags in a stream. */
-  private void parseTags(int image, RandomAccessInputStream s, MetadataStore store)
-    throws IOException
+  private void parseTags(int image, RandomAccessInputStream s,
+    MetadataStore store) throws IOException
   {
     s.seek(8);
 

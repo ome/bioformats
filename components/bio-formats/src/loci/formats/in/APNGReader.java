@@ -169,7 +169,8 @@ public class APNGReader extends FormatReader {
       }
     }
 
-    RandomAccessInputStream s = new RandomAccessInputStream(stream.toByteArray());
+    RandomAccessInputStream s =
+      new RandomAccessInputStream(stream.toByteArray());
     DataInputStream dis = new DataInputStream(new BufferedInputStream(s, 4096));
     BufferedImage b = ImageIO.read(dis);
     dis.close();

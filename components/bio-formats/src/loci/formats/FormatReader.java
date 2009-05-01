@@ -274,8 +274,8 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /** Reads a raw plane from disk. */
-  protected byte[] readPlane(RandomAccessInputStream s, int x, int y, int w, int h,
-    byte[] buf) throws IOException
+  protected byte[] readPlane(RandomAccessInputStream s, int x, int y,
+    int w, int h, byte[] buf) throws IOException
   {
     int c = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());

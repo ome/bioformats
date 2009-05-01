@@ -187,7 +187,8 @@ public class MetadataPane extends JPanel
       if (TiffTools.isValidHeader(header)) {
         // TIFF file
         in.close();
-        RandomAccessInputStream ras = new RandomAccessInputStream(file.getPath());
+        RandomAccessInputStream ras =
+          new RandomAccessInputStream(file.getPath());
         Hashtable ifd = TiffTools.getFirstIFD(ras);
         ras.close();
         if (ifd == null) return false;

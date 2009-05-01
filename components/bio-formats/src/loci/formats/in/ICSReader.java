@@ -290,7 +290,8 @@ public class ICSReader extends FormatReader {
 
     // parse key/value pairs from beginning of ICS file
 
-    RandomAccessInputStream reader = new RandomAccessInputStream(icsIn.getAbsolutePath());
+    RandomAccessInputStream reader =
+      new RandomAccessInputStream(icsIn.getAbsolutePath());
     reader.seek(0);
     String token;
     String line = reader.readLine();

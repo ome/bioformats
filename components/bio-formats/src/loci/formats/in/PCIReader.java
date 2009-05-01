@@ -73,7 +73,8 @@ public class PCIReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    RandomAccessInputStream s = poi.getDocumentStream((String) imageFiles.get(no));
+    RandomAccessInputStream s =
+      poi.getDocumentStream((String) imageFiles.get(no));
 
     // can be raw pixel data or an embedded TIFF file
 

@@ -457,13 +457,13 @@ public class JVMLinkFlowCytometry {
       Detector.displayImage(d.getFloodArray());
     }
     Slice thisSlice = new Slice(nSlices);
-	if (lastFrameParticles.size() > 0) {
+    if (lastFrameParticles.size() > 0) {
       thisSlice.hasParticles = true;
       thisSlice.begin = nParticles;
-	  thisSlice.end = nParticles + lastFrameParticles.size() - 1;
+      thisSlice.end = nParticles + lastFrameParticles.size() - 1;
     }
 
-	for (int i = 0; i < lastFrameParticles.size(); i++) {
+    for (int i = 0; i < lastFrameParticles.size(); i++) {
       Particle thisParticle = lastFrameParticles.get(i);
       thisParticle.setNum(nParticles++);
       thisParticle.setSliceNum(nSlices);
@@ -485,16 +485,15 @@ public class JVMLinkFlowCytometry {
     //for (int i=0; i<particles.size(); i++) particles.get(i).print();
   }
 
-	public static int[] getParticleMicronAreas() {
-		int[] micronAreas = new int[lastFrameParticles.size()];
-		for (int i = 0; i < micronAreas.length; i++) {
-			micronAreas[i] = lastFrameParticles.get(i).getMicronArea();
-		}
-		return micronAreas;
-	}
+  public static int[] getParticleMicronAreas() {
+    int[] micronAreas = new int[lastFrameParticles.size()];
+    for (int i = 0; i < micronAreas.length; i++) {
+      micronAreas[i] = lastFrameParticles.get(i).getMicronArea();
+    }
+    return micronAreas;
+  }
 
-	private static boolean addParticle(Particle particle)
-	{
+  private static boolean addParticle(Particle particle) {
     int particleIndex = particles.size()-1;
     if (particles.size() == 0) {
       particles.add(particle);

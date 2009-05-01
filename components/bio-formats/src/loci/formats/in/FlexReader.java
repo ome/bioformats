@@ -600,14 +600,16 @@ public class FlexReader extends BaseTiffReader {
         parentQName = qName;
       //TODO: definition of the dimension type and unit Where to store?
         for (int i=0; i<attributes.getLength(); i++) {
-          //addMeta("Image " + nextImage + " " + attributes.getQName(i), attributes.getValue(i));
+          //addMeta("Image " + nextImage + " " + attributes.getQName(i),
+          //  attributes.getValue(i));
         }
       }
       else if(qName.equals("ImageResolutionY")) {
         parentQName = qName;
         //TODO: definition of the dimension type and unit Where to store?
         for (int i=0; i<attributes.getLength(); i++) {
-          //addMeta("Image " + nextImage + " " + attributes.getQName(i),attributes.getValue(i));
+          //addMeta("Image " + nextImage + " " + attributes.getQName(i),
+          //  attributes.getValue(i));
         }
       }
       else if (qName.equals("FLIM")) {

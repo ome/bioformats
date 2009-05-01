@@ -213,7 +213,8 @@ public class MetamorphReader extends BaseTiffReader {
 
       ndFilename = ndfile.getAbsolutePath();
 
-      RandomAccessInputStream ndStream = new RandomAccessInputStream(ndFilename);
+      RandomAccessInputStream ndStream =
+        new RandomAccessInputStream(ndFilename);
       String line = ndStream.readLine().trim();
 
       int zc = getSizeZ(), cc = getSizeC(), tc = getSizeT();
@@ -956,7 +957,9 @@ public class MetamorphReader extends BaseTiffReader {
     return intFormat(myint, String.valueOf(maxint).length());
   }
 
-  private TiffRational readRational(RandomAccessInputStream s) throws IOException {
+  private TiffRational readRational(RandomAccessInputStream s)
+    throws IOException
+  {
     return readRational(s, s.getFilePointer());
   }
 

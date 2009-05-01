@@ -352,73 +352,74 @@ public class NikonReader extends BaseTiffReader {
               int extra = new String(b, 0, 10).startsWith("Nikon") ? 10 : 0;
               byte[] buf = new byte[b.length];
               System.arraycopy(b, extra, buf, 0, buf.length - extra);
-              RandomAccessInputStream makerNote = new RandomAccessInputStream(buf);
-                Hashtable note = TiffTools.getFirstIFD(makerNote);
-                if (note != null) {
-                  Enumeration en = note.keys();
-                  Integer nextKey;
-                  while (en.hasMoreElements()) {
-                    nextKey = (Integer) en.nextElement();
-                    int nextTag = nextKey.intValue();
-                    addMeta(getTagName(nextTag), note.get(nextKey));
-                    if (nextTag == 150) {
-                      b = (byte[]) note.get(nextKey);
-                      RandomAccessInputStream s = new RandomAccessInputStream(b);
-                      byte check1 = s.readByte();
-                      byte check2 = s.readByte();
+              RandomAccessInputStream makerNote =
+                new RandomAccessInputStream(buf);
+              Hashtable note = TiffTools.getFirstIFD(makerNote);
+              if (note != null) {
+                Enumeration en = note.keys();
+                Integer nextKey;
+                while (en.hasMoreElements()) {
+                  nextKey = (Integer) en.nextElement();
+                  int nextTag = nextKey.intValue();
+                  addMeta(getTagName(nextTag), note.get(nextKey));
+                  if (nextTag == 150) {
+                    b = (byte[]) note.get(nextKey);
+                    RandomAccessInputStream s = new RandomAccessInputStream(b);
+                    byte check1 = s.readByte();
+                    byte check2 = s.readByte();
 
-                      lossyCompression = check1 != 0x46;
+                    lossyCompression = check1 != 0x46;
 
-                      vPredictor = new int[4];
-                      for (int q=0; q<vPredictor.length; q++) {
-                        vPredictor[q] = s.readShort();
+                    vPredictor = new int[4];
+                    for (int q=0; q<vPredictor.length; q++) {
+                      vPredictor[q] = s.readShort();
+                    }
+
+                    curve = new int[16385];
+
+                    int bps = TiffTools.getBitsPerSample(ifds[0])[0];
+                    int max = 1 << bps & 0x7fff;
+                    int step = 0;
+                    int csize = s.readShort();
+                    if (csize > 1) {
+                      step = max / (csize - 1);
+                    }
+
+                    if (check1 == 0x44 && check2 == 0x20 && step > 0) {
+                      for (int i=0; i<csize; i++) {
+                        curve[i * step] = s.readShort();
                       }
-
-                      curve = new int[16385];
-
-                      int bps = TiffTools.getBitsPerSample(ifds[0])[0];
-                      int max = 1 << bps & 0x7fff;
-                      int step = 0;
-                      int csize = s.readShort();
-                      if (csize > 1) {
-                        step = max / (csize - 1);
+                      for (int i=0; i<max; i++) {
+                        int n = i % step;
+                        curve[i] = (curve[i - n] * (step - n) +
+                          curve[i - n + step] * n) / step;
                       }
-
-                      if (check1 == 0x44 && check2 == 0x20 && step > 0) {
-                        for (int i=0; i<csize; i++) {
-                          curve[i * step] = s.readShort();
+                      s.seek(562);
+                      split = s.readShort();
+                    }
+                    else {
+                      int maxValue = (int) Math.pow(2, bps) - 1;
+                      Arrays.fill(curve, maxValue);
+                      int nElements =
+                        (int) (s.length() - s.getFilePointer()) / 2;
+                      if (nElements < 100) {
+                        for (int i=0; i<curve.length; i++) {
+                          curve[i] = (short) i;
                         }
-                        for (int i=0; i<max; i++) {
-                          int n = i % step;
-                          curve[i] = (curve[i - n] * (step - n) +
-                            curve[i - n + step] * n) / step;
-                        }
-                        s.seek(562);
-                        split = s.readShort();
                       }
                       else {
-                        int maxValue = (int) Math.pow(2, bps) - 1;
-                        Arrays.fill(curve, maxValue);
-                        int nElements =
-                          (int) (s.length() - s.getFilePointer()) / 2;
-                        if (nElements < 100) {
-                          for (int i=0; i<curve.length; i++) {
-                            curve[i] = (short) i;
-                          }
-                        }
-                        else {
-                          for (int q=0; q<nElements; q++) {
-                            curve[q] = s.readShort();
-                          }
+                        for (int q=0; q<nElements; q++) {
+                          curve[q] = s.readShort();
                         }
                       }
-                      s.close();
                     }
-                    else if (nextTag == WHITE_BALANCE_RGB_COEFFS) {
-                      whiteBalance = (TiffRational[]) note.get(nextKey);
-                    }
+                    s.close();
+                  }
+                  else if (nextTag == WHITE_BALANCE_RGB_COEFFS) {
+                    whiteBalance = (TiffRational[]) note.get(nextKey);
                   }
                 }
+              }
               makerNote.close();
             }
           }

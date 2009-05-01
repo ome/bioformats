@@ -241,7 +241,8 @@ public class TCSReader extends FormatReader {
       for (int i=0; i<list.length; i++) {
         if (checkSuffix(list[i], TiffReader.TIFF_SUFFIXES)) {
           String file = new Location(parent, list[i]).getAbsolutePath();
-          Hashtable ifd = TiffTools.getIFDs(new RandomAccessInputStream(file))[0];
+          Hashtable ifd =
+            TiffTools.getIFDs(new RandomAccessInputStream(file))[0];
           String software =
             (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
           if (software != null && software.trim().equals("TCSNTV")) {

@@ -171,8 +171,8 @@ public abstract class BaseCodec implements Codec {
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
-  public abstract byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException;
+  public abstract byte[] decompress(RandomAccessInputStream in,
+    CodecOptions options) throws FormatException, IOException;
 
   /**
    * 2D data block decoding default implementation.
