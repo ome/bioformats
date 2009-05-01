@@ -43,6 +43,8 @@ public class LineLength implements FileFilter {
       }
       // argument is a filename
       String dir;
+      String crap = "." + File.separator;
+      if (args[i].startsWith(crap)) args[i] = args[i].substring(crap.length());
       int slash = args[i].lastIndexOf(File.separator);
       if (slash < 0) dir = ".";
       else dir = args[i].substring(0, slash);
@@ -123,7 +125,8 @@ public class LineLength implements FileFilter {
   public boolean accept(File pathName) {
     pathName = strip(pathName);
     return suffix ?
-      pathName.getName().endsWith(exp) : expFile.equals(pathName);
+      pathName.getName().endsWith(exp) :
+      expFile.getAbsoluteFile().equals(pathName.getAbsoluteFile());
   }
 
 }
