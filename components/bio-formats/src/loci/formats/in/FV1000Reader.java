@@ -189,12 +189,12 @@ public class FV1000Reader extends FormatReader {
     String filename = null;
 
     if (series == 0) {
-      file /= tiffs.size();
+      file = planeNum / (getImageCount() / tiffs.size());
       image = planeNum % (getImageCount() / tiffs.size());
       if (file < tiffs.size()) filename = (String) tiffs.get(file);
     }
     else {
-      file /= previewNames.size();
+      file = planeNum / (getImageCount() / previewNames.size());
       image = planeNum % (getImageCount() / previewNames.size());
       if (file < previewNames.size()) {
         filename = (String) previewNames.get(file);
