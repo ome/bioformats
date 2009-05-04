@@ -21,7 +21,7 @@ public class ConvertToOmeTiff {
     OMETiffWriter writer = new OMETiffWriter();
     for (int i=0; i<args.length; i++) {
       String id = args[i];
-      int dot = id.indexOf(".");
+      int dot = id.lastIndexOf(".");
       String outId = (dot >= 0 ? id.substring(0, dot) : id) + ".ome.tif";
       System.out.print("Converting " + id + " to " + outId + " ");
 
@@ -33,6 +33,7 @@ public class ConvertToOmeTiff {
       // configure OME-TIFF writer
       writer.setMetadataRetrieve((MetadataRetrieve) omexmlMeta);
       writer.setId(outId);
+      //writer.setCompression("J2K");
 
       // write out image planes
       int imageCount = reader.getImageCount();
