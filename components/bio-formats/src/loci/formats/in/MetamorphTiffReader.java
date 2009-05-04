@@ -106,17 +106,21 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // calculate axis sizes
 
     Vector uniqueC = new Vector();
-    for (int i=0; i<zPositions.size(); i++) {
+    for (int i=0; i<wavelengths.size(); i++) {
       Integer c = (Integer) wavelengths.get(i);
       if (!uniqueC.contains(c)) {
         uniqueC.add(c);
-        core[0].sizeC++;
       }
     }
+    core[0].sizeC = uniqueC.size();
 
-    core[0].sizeT = timestamps.size();
-    if (core[0].sizeT == 0) core[0].sizeT = 1;
-    core[0].sizeZ = ifds.length / (getSizeT() * getSizeC());
+    Vector uniqueZ = new Vector();
+    for (int i=0; i<zPositions.size(); i++) {
+      Float z = (Float) zPositions.get(i);
+      if (!uniqueZ.contains(z)) uniqueZ.add(z);
+    }
+    core[0].sizeZ = uniqueZ.size();
+    core[0].sizeT = ifds.length / (getSizeZ() * getSizeC());
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

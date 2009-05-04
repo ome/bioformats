@@ -492,6 +492,10 @@ public class MetamorphReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
+    core[0].sizeZ = 0;
+    core[0].sizeT = 0;
+    int rgbChannels = getSizeC();
+
     try {
       // Now that the base TIFF standard metadata has been parsed, we need to
       // parse out the STK metadata from the UIC4TAG.
@@ -514,10 +518,15 @@ public class MetamorphReader extends BaseTiffReader {
       TiffRational[] uic3 = entry instanceof TiffRational[] ?
         (TiffRational[]) entry : new TiffRational[] {(TiffRational) entry};
       wave = new double[uic3.length];
+      Vector uniqueWavelengths = new Vector();
       for (int i=0; i<uic3.length; i++) {
         wave[i] = uic3[i].doubleValue();
         addMeta("Wavelength [" + intFormatMax(i, mmPlanes) + "]", wave[i]);
+        Double v = new Double(wave[i]);
+        if (!uniqueWavelengths.contains(v)) uniqueWavelengths.add(v);
       }
+
+      core[0].sizeC *= uniqueWavelengths.size();
 
       Hashtable[] tempIFDs = new Hashtable[getImageCount()];
 
@@ -581,16 +590,6 @@ public class MetamorphReader extends BaseTiffReader {
     catch (IOException exc) { trace(exc); }
     catch (FormatException exc) { trace(exc); }
 
-    try {
-      super.initStandardMetadata();
-    }
-    catch (FormatException exc) {
-      if (debug) trace(exc);
-    }
-    catch (IOException exc) {
-      if (debug) trace(exc);
-    }
-
     // parse (mangle) TIFF comment
     String descr = TiffTools.getComment(ifds[0]);
     if (descr != null) {
@@ -646,15 +645,19 @@ public class MetamorphReader extends BaseTiffReader {
       if (descr.equals("")) metadata.remove("Comment");
       else addMeta("Comment", descr);
     }
-    try {
-      if (getSizeZ() == 0) {
-        core[0].sizeZ =
-          TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
-      }
-      if (getSizeT() == 0) core[0].sizeT = getImageCount() / getSizeZ();
-    }
-    catch (FormatException exc) {
-      if (debug) trace(exc);
+
+    core[0].sizeT = getImageCount() / (getSizeZ() * (getSizeC() / rgbChannels));
+
+    // if '_t' is present in the file name, swap Z and T sizes
+    // this file was probably part of a larger dataset, but the .nd file is
+    //  missing
+
+    String filename =
+      currentId.substring(currentId.lastIndexOf(File.separator) + 1);
+    if (filename.indexOf("_t") != -1 && getSizeT() > 1) {
+      int z = getSizeZ();
+      core[0].sizeZ = getSizeT();
+      core[0].sizeT = z;
     }
   }
 
@@ -690,6 +693,8 @@ public class MetamorphReader extends BaseTiffReader {
       zDistances[i] = readRational(in).doubleValue();
       addMeta("zDistance[" + iAsString + "]", zDistances[i]);
 
+      if (zDistances[i] != 0.0) core[0].sizeZ++;
+
       cDate = decodeDate(in.readInt());
       cTime = decodeTime(in.readInt());
 
@@ -701,6 +706,8 @@ public class MetamorphReader extends BaseTiffReader {
       // modification date and time are skipped as they all seem equal to 0...?
       in.skip(8);
     }
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+
     in.seek(saveLoc);
   }
 
