@@ -48,6 +48,7 @@ public class SlidebookReader extends FormatReader {
   private Vector metadataOffsets;
   private Vector pixelOffsets;
   private Vector pixelLengths;
+  private Vector ndFilters;
 
   // -- Constructor --
 
@@ -88,7 +89,8 @@ public class SlidebookReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    metadataOffsets = pixelOffsets = pixelLengths = null;
+    metadataOffsets = pixelOffsets = null;
+    pixelLengths = ndFilters = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -132,6 +134,7 @@ public class SlidebookReader extends FormatReader {
     metadataOffsets = new Vector();
     pixelOffsets = new Vector();
     pixelLengths = new Vector();
+    ndFilters = new Vector();
 
     in.seek(0);
 
@@ -407,9 +410,21 @@ public class SlidebookReader extends FormatReader {
         else if (n == 'd') {
           // objective info and pixel size X/Y
           in.skipBytes(6);
+          long fp = in.getFilePointer();
           objective = in.readCString();
-          in.skipBytes(126);
+          in.seek(fp + 144);
           pixelSize = in.readFloat();
+        }
+        else if (n == 'e') {
+          in.skipBytes(174);
+          ndFilters.add(new Float(in.readFloat()));
+          in.skipBytes(40);
+          addMeta(imageNames[nextName] + " channel " +
+            ndFilters.size() + " intensification", in.readShort());
+        }
+        else if (n == 'k') {
+          in.skipBytes(14);
+          addMeta(imageNames[nextName - 1] + " Mag. changer", in.readCString());
         }
       }
     }
@@ -482,9 +497,15 @@ public class SlidebookReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<core[i].sizeC; c++) {
         if (index < channelNames.size()) {
-          store.setLogicalChannelName((String) channelNames.get(index++), i, c);
-          addMeta(imageNames[i] + " channel " + c, channelNames.get(index - 1));
+          store.setLogicalChannelName((String) channelNames.get(index), i, c);
+          addMeta(imageNames[i] + " channel " + c, channelNames.get(index));
         }
+        if (index < ndFilters.size()) {
+          store.setLogicalChannelNdFilter((Float) ndFilters.get(index), i, c);
+          addMeta(imageNames[i] + " channel " + c + " Neutral density",
+            ndFilters.get(index));
+        }
+        index++;
       }
     }
   }
