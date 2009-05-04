@@ -730,6 +730,7 @@ Pixels = Yes since r1519
 Image.Name = Yes
 LogicalChannel.Name = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.NdFilter = Yes
 Plane = Yes
 Dimensions.PhysicalSizeX = Yes
 Dimensions.PhysicalSizeY = Yes

@@ -95,9 +95,10 @@ public class MetaSupportList {
 
     // parse INI data
     IniParser parser = new IniParser();
-    Vector<HashMap<String, String>> groupsList = parser.parseINI(groupsPath);
+    Vector<HashMap<String, String>> groupsList =
+      parser.parseINI(groupsPath, MetaSupportList.class);
     Vector<HashMap<String, String>> supportList =
-      parser.parseINI(supportPath);
+      parser.parseINI(supportPath, MetaSupportList.class);
 
     // convert unprocessed INI-style config data into data structures
 

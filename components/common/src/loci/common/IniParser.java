@@ -52,6 +52,16 @@ public class IniParser {
     return parseINI(openTextResource(path));
   }
 
+  /**
+   * Parses the INI-style configuration data from the given resource,
+   * using the given class to find the resource.
+   */
+  public Vector<HashMap<String, String>> parseINI(String path, Class c)
+    throws IOException
+  {
+    return parseINI(openTextResource(path, c));
+  }
+
   /** Parses the INI-style configuration data from the given input stream. */
   public Vector<HashMap<String, String>> parseINI(BufferedReader in)
     throws IOException
@@ -104,8 +114,15 @@ public class IniParser {
   public static BufferedReader openTextResource(String path)
     throws IOException
   {
+    return openTextResource(path, IniParser.class);
+  }
+
+  /** Opens a buffered reader for the given resource. */
+  public static BufferedReader openTextResource(String path, Class c)
+    throws IOException
+  {
     return new BufferedReader(new InputStreamReader(
-      IniParser.class.getResourceAsStream(path)));
+      c.getResourceAsStream(path)));
   }
 
   // -- Helper methods --

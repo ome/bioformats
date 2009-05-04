@@ -146,9 +146,9 @@ public class EntityList {
     System.out.println("Parsing configuration data");
     IniParser parser = new IniParser();
     Vector<HashMap<String, String>> versionList =
-      parser.parseINI(versionPath);
+      parser.parseINI(versionPath, EntityList.class);
     Vector<HashMap<String, String>> entityList =
-      parser.parseINI(entityPath);
+      parser.parseINI(entityPath, EntityList.class);
 
     // convert unprocessed INI-style config data into
     // hierarchical entity/property/version structure
