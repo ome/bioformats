@@ -125,7 +125,6 @@ public final class AWTImageTools {
    * @param h Height of image plane.
    * @param signed Whether the int values should be treated as signed
    *   (-2^31 to 2^31-1) instead of unsigned (0 to 2^32-1).
-   *   <b>** Only signed int data is supported for now. **</b>
    */
   public static BufferedImage makeImage(int[] data,
     int w, int h, boolean signed)
@@ -268,22 +267,18 @@ public final class AWTImageTools {
    *   while "RRR...GGG...BBB..." is sequential.
    * @param signed Whether the int values should be treated as signed
    *   (-2^31 to 2^31-1) instead of unsigned (0 to 2^32-1).
-   *   <b>** Only signed int data is supported for now. **</b>
    */
   public static BufferedImage makeImage(int[] data,
     int w, int h, int c, boolean interleaved, boolean signed)
   {
     if (c == 1) return makeImage(data, w, h, signed);
-    int dataType;
+    int dataType = DataBuffer.TYPE_INT;
     DataBuffer buffer;
     if (signed) {
-      dataType = DataBuffer.TYPE_INT;
       buffer = new DataBufferInt(data, c * w * h);
     }
     else {
-      // NB: No built-in data buffer type for unsigned int data.
-      throw new IllegalArgumentException(
-        "Support for uint32 pixel type (unsigned ints) is unimplemented");
+      buffer = new UnsignedIntBuffer(data, c * w * h);
     }
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
@@ -423,21 +418,17 @@ public final class AWTImageTools {
    * @param h Height of image plane.
    * @param signed Whether the int values should be treated as signed
    *   (-2^31 to 2^31-1) instead of unsigned (0 to 2^32-1).
-   *   <b>** Only signed int data is supported for now. **</b>
    */
   public static BufferedImage makeImage(int[][] data,
     int w, int h, boolean signed)
   {
-    int dataType;
+    int dataType = DataBuffer.TYPE_INT;
     DataBuffer buffer;
     if (signed) {
-      dataType = DataBuffer.TYPE_INT;
       buffer = new DataBufferInt(data, data[0].length);
     }
     else {
-      // NB: No built-in data buffer type for unsigned int data.
-      throw new IllegalArgumentException(
-        "Support for uint32 pixel type (unsigned ints) is unimplemented");
+      buffer = new UnsignedIntBuffer(data, data[0].length);
     }
     return constructImage(data.length, dataType, w, h, false, true, buffer);
   }
@@ -686,6 +677,12 @@ public final class AWTImageTools {
   {
     ColorModel colorModel = makeColorModel(c, type);
     if (colorModel == null) return null;
+    if (buffer instanceof UnsignedIntBuffer) {
+      try {
+        colorModel = new UnsignedIntColorModel(32, type, c);
+      }
+      catch (IOException e) { }
+    }
 
     SampleModel model;
     if (c > 2 && type == DataBuffer.TYPE_INT && buffer.getNumBanks() == 1) {
@@ -1048,7 +1045,8 @@ public final class AWTImageTools {
    * </ul>
    */
   public static int getPixelType(BufferedImage image) {
-    int type = image.getRaster().getDataBuffer().getDataType();
+    DataBuffer buffer = image.getRaster().getDataBuffer();
+    int type = buffer.getDataType();
     int imageType = image.getType();
     switch (type) {
       case DataBuffer.TYPE_BYTE:
@@ -1063,6 +1061,9 @@ public final class AWTImageTools {
           imageType == BufferedImage.TYPE_INT_ARGB)
         {
           return FormatTools.UINT8;
+        }
+        if (buffer instanceof UnsignedIntBuffer) {
+          return FormatTools.UINT32;
         }
         return FormatTools.INT32;
       case DataBuffer.TYPE_SHORT:
