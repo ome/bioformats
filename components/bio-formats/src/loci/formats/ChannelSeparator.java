@@ -47,6 +47,18 @@ public class ChannelSeparator extends ReaderWrapper {
   /** Series of last image opened. */
   private int lastImageSeries = -1;
 
+  /** X index of last image opened. */
+  private int lastImageX = -1;
+
+  /** Y index of last image opened. */
+  private int lastImageY = -1;
+
+  /** Width of last image opened. */
+  private int lastImageWidth = -1;
+
+  /** Height of last image opened. */
+  private int lastImageHeight = -1;
+
   // -- Constructors --
 
   /** Constructs a ChannelSeparator around a new image reader. */
@@ -86,6 +98,10 @@ public class ChannelSeparator extends ReaderWrapper {
     lastImage = null;
     lastImageIndex = -1;
     lastImageSeries = -1;
+    lastImageX = -1;
+    lastImageY = -1;
+    lastImageWidth = -1;
+    lastImageHeight = -1;
   }
 
   /* @see IFormatReader#getImageCount() */
@@ -148,10 +164,17 @@ public class ChannelSeparator extends ReaderWrapper {
       int channel = no % c;
       int series = getSeries();
 
-      if (source != lastImageIndex || series != lastImageSeries) {
+      if (source != lastImageIndex || series != lastImageSeries ||
+        x != lastImageX || y != lastImageY || w != lastImageWidth ||
+        h != lastImageHeight)
+      {
         lastImage = reader.openBytes(source, x, y, w, h);
         lastImageIndex = source;
         lastImageSeries = series;
+        lastImageX = x;
+        lastImageY = y;
+        lastImageWidth = w;
+        lastImageHeight = h;
       }
 
       byte[] n = ImageTools.splitChannels(lastImage, channel, c,
@@ -189,6 +212,10 @@ public class ChannelSeparator extends ReaderWrapper {
     lastImage = null;
     lastImageIndex = -1;
     lastImageSeries = -1;
+    lastImageX = -1;
+    lastImageY = -1;
+    lastImageWidth = -1;
+    lastImageHeight = -1;
   }
 
   public int getIndex(int z, int c, int t) {
