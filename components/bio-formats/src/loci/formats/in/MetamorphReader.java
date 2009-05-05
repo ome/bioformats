@@ -203,6 +203,18 @@ public class MetamorphReader extends BaseTiffReader {
     Location ndfile = null;
 
     if (checkSuffix(id, ND_SUFFIX)) ndfile = new Location(id);
+    else {
+      // an STK file was passed to initFile
+      // let's check the parent directory for an .nd file
+      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      String[] list = parent.list();
+      for (int i=0; i<list.length; i++) {
+        if (checkSuffix(list[i], ND_SUFFIX)) {
+          ndfile = new Location(parent, list[i]).getAbsoluteFile();
+          break;
+        }
+      }
+    }
 
     String creationTime = null;
 
