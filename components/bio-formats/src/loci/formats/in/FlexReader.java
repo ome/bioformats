@@ -60,12 +60,12 @@ public class FlexReader extends BaseTiffReader {
   private int wellCount;
   private int fieldCount;
 
-  private Vector channelNames;
+  private Vector<String> channelNames;
 
-  private Vector xPositions;
-  private Vector yPositions;
+  private Vector<Float> xPositions;
+  private Vector<Float> yPositions;
 
-  private Vector lightSourceIDs;
+  private Vector<String> lightSourceIDs;
 
   // -- Constructor --
 
@@ -140,10 +140,10 @@ public class FlexReader extends BaseTiffReader {
     core[0].sizeT = 0;
     core[0].sizeZ = 0;
 
-    channelNames = new Vector();
-    xPositions = new Vector();
-    yPositions = new Vector();
-    lightSourceIDs = new Vector();
+    channelNames = new Vector<String>();
+    xPositions = new Vector<Float>();
+    yPositions = new Vector<Float>();
+    lightSourceIDs = new Vector<String>();
 
     // parse factors from XML
     String xml = (String) TiffTools.getIFDValue(ifds[0],
@@ -155,12 +155,12 @@ public class FlexReader extends BaseTiffReader {
     for (int i=0; i<c.length; i++) {
       if (c[i] > '~' || (c[i] != '\t' && c[i] < ' ')) c[i] = ' ';
     }
-
+    
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    Vector n = new Vector();
-    Vector f = new Vector();
+    Vector<String> n = new Vector<String>();
+    Vector<String> f = new Vector<String>();
     DefaultHandler handler = new FlexHandler(n, f, store);
     DataTools.parseXML(c, handler);
 
@@ -221,7 +221,7 @@ public class FlexReader extends BaseTiffReader {
     factors = new double[totalPlanes];
     int max = 0;
     for (int i=0; i<(int) Math.min(fsize, totalPlanes); i++) {
-      String factor = (String) f.get(i);
+      String factor = f.get(i);
       double q = 1;
       try {
         q = Double.parseDouble(factor);
@@ -256,11 +256,11 @@ public class FlexReader extends BaseTiffReader {
       store.setWellSampleIndex(new Integer(i), pos[0], pos[1], pos[2]);
       store.setWellSampleImageRef("Image:" + i, pos[0], pos[1], pos[2]);
       if (pos[2] < xPositions.size()) {
-        store.setWellSamplePosX((Float) xPositions.get(pos[2]), pos[0],
+        store.setWellSamplePosX(xPositions.get(pos[2]), pos[0],
           pos[1], pos[2]);
       }
       if (pos[2] < yPositions.size()) {
-        store.setWellSamplePosY((Float) yPositions.get(pos[2]), pos[0],
+        store.setWellSamplePosY(yPositions.get(pos[2]), pos[0],
           pos[1], pos[2]);
       }
     }
@@ -271,7 +271,7 @@ public class FlexReader extends BaseTiffReader {
 
   /** SAX handler for parsing XML. */
   public class FlexHandler extends DefaultHandler {
-    private Vector names, factors;
+    private Vector<String> names, factors;
     private MetadataStore store;
 
     private int nextLightSource = 0;
@@ -296,24 +296,24 @@ public class FlexReader extends BaseTiffReader {
     private int nextSliderRef = 0;
     private int nextFilterCombination = 0;
 
-    private Hashtable fieldCounts;
+    private Hashtable<String, Integer> fieldCounts;
     private String currentSublayout;
 
     private String parentQName;
     private String currentQName;
 
-    public FlexHandler(Vector names, Vector factors, MetadataStore store) {
+    public FlexHandler(Vector<String> names, Vector<String> factors, MetadataStore store) {
       this.names = names;
       this.factors = factors;
       this.store = store;
-      fieldCounts = new Hashtable();
+      fieldCounts = new Hashtable<String, Integer>();
     }
 
     public void characters(char[] ch, int start, int length) {
       String value = new String(ch, start, length);
 
       if (currentQName.equals("SublayoutRef")) {
-        fieldCount = ((Integer) fieldCounts.get(value)).intValue();
+        fieldCount = fieldCounts.get(value).intValue();
       }
 
       if (currentQName.equals("PlateName")) {
@@ -369,11 +369,6 @@ public class FlexReader extends BaseTiffReader {
         else if (currentQName.equals("CameraBinningY")) {
           binY = Integer.parseInt(value);
         }
-        else if (currentQName.equals("LightSourceCombinationRef")) {
-          if (!channelNames.contains(value) && lightSourceIDs.contains(value)) {
-            channelNames.add(value);
-          }
-        }
       }
       else if (parentQName.equals("ImageResolutionX")) {
         try {
@@ -401,17 +396,22 @@ public class FlexReader extends BaseTiffReader {
       currentQName = qName;
       if (qName.equals("Array")) {
         int len = attributes.getLength();
-        for (int i=0; i<len; i++, nextArrayImage++) {
+        //TODO: Why increment NextArrayImage as part of the loop? Verify that the incrementation should be done at the end of  if (qName.equals("Array")) {}
+        for (int i=0; i<len; i++) {
           String name = attributes.getQName(i);
-          if (name.equals("Name") && nextArrayImage == 0) {
+          //TODO: Why double check if NextArray==0? The names etc should be collected for each arrays.
+          if (name.equals("Name")) {
             names.add(attributes.getValue(i));
             store.setImageName(attributes.getValue(i), 0);
+            if (!channelNames.contains(attributes.getValue(i)))
+              channelNames.add(attributes.getValue(i));
           }
           else if (name.equals("Factor")) factors.add(attributes.getValue(i));
           else if (name.equals("Description") && nextArrayImage == 0) {
             store.setImageDescription(attributes.getValue(i), 0);
           }
         }
+        nextArrayImage++;
       }
       else if (qName.equals("LightSource")) {
         parentQName = qName;
@@ -487,7 +487,7 @@ public class FlexReader extends BaseTiffReader {
         }
         nextField++;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        int count = ((Integer) fieldCounts.get(currentSublayout)).intValue();
+        int count = fieldCounts.get(currentSublayout).intValue();
         if (fieldNo > count) count++;
         fieldCounts.put(currentSublayout, new Integer(count));
       }
