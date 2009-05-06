@@ -100,7 +100,6 @@ public class FV1000Reader extends FormatReader {
 
   private short[][][] lut;
   private int lastChannel;
-  private int[] channelIndexes;
 
   private Vector pinholeSizes;
   private Vector dyeNames;
@@ -170,36 +169,25 @@ public class FV1000Reader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
-    int[] coords = getZCTCoords(no);
-    if (coords[1] < channelIndexes.length) {
-      coords[1] = channelIndexes[coords[1]];
-      lastChannel = coords[1];
-    }
-
-    int planeNum = coords[1];
-
-    if (getSizeY() > 1 && getImageCount() > getSizeC()) {
-      planeNum = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
-        getEffectiveSizeC(), getSizeT(), getImageCount(), coords[0],
-        coords[1], coords[2]);
-    }
-
-    int file = planeNum;
+    int file = no;
     int image = 0;
     String filename = null;
 
     if (series == 0) {
-      file = planeNum / (getImageCount() / tiffs.size());
-      image = planeNum % (getImageCount() / tiffs.size());
+      file = no / (getImageCount() / tiffs.size());
+      image = no % (getImageCount() / tiffs.size());
       if (file < tiffs.size()) filename = (String) tiffs.get(file);
     }
     else {
-      file = planeNum / (getImageCount() / previewNames.size());
-      image = planeNum % (getImageCount() / previewNames.size());
+      file = no / (getImageCount() / previewNames.size());
+      image = no % (getImageCount() / previewNames.size());
       if (file < previewNames.size()) {
         filename = (String) previewNames.get(file);
       }
     }
+
+    int[] coords = getZCTCoords(image);
+    lastChannel = coords[1];
 
     if (filename == null) return buf;
 
@@ -639,40 +627,6 @@ public class FV1000Reader extends FormatReader {
         }
         filenames.put(new Integer(file), pty.toString());
       }
-    }
-
-    channelIndexes = new int[channels.size()];
-    for (int i=0; i<channelIndexes.length; i++) {
-      channelIndexes[i] = Integer.parseInt((String) channels.get(i));
-    }
-
-    // check that no two indexes are equal
-    for (int i=0; i<channelIndexes.length; i++) {
-      for (int q=0; q<channelIndexes.length; q++) {
-        if (i != q && channelIndexes[i] == channelIndexes[q]) {
-          for (int n=0; n<channelIndexes.length; n++) {
-            if (channelIndexes[n] > channelIndexes[q]) {
-              channelIndexes[q] = channelIndexes[n];
-            }
-          }
-          channelIndexes[q]++;
-        }
-      }
-    }
-
-    // normalize channel indexes to [0, sizeC-1]
-
-    int nextIndex = 0;
-    for (int i=0; i<channelIndexes.length; i++) {
-      int min = Integer.MAX_VALUE;
-      int minIndex = -1;
-      for (int q=0; q<channelIndexes.length; q++) {
-        if (channelIndexes[q] < min && channelIndexes[q] >= nextIndex) {
-          min = channelIndexes[q];
-          minIndex = q;
-        }
-      }
-      channelIndexes[minIndex] = nextIndex++;
     }
 
     int reference = ((String) filenames.get(new Integer(0))).length();
