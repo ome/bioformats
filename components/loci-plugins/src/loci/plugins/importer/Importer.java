@@ -535,7 +535,7 @@ public class Importer {
           // class loader happy for earlier versions of ImageJ.
           try {
             ReflectedUniverse ru = new ReflectedUniverse();
-            ru.exec("import loci.plugins.BFVirtualStack");
+            ru.exec("import loci.plugins.util.BFVirtualStack");
             ru.setVar("id", id);
             ru.setVar("r", r);
             ru.setVar("colorize", colorize);
