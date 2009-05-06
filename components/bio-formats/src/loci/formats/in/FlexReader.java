@@ -54,6 +54,7 @@ public class FlexReader extends BaseTiffReader {
   protected double[] factors;
 
   /** Camera binning values. */
+  //TODO: return the binX and binY
   private int binX, binY;
 
   private int plateCount;
@@ -176,10 +177,15 @@ public class FlexReader extends BaseTiffReader {
     int seriesCount = plateCount * wellCount * fieldCount;
 
     if (getImageCount() * seriesCount < ifds.length) {
+      if(fieldCount==1){
+      	fieldCount=ifds.length / getSizeC();
+      	seriesCount = plateCount * wellCount * fieldCount;
+      }
       core[0].imageCount = ifds.length / seriesCount;
-      core[0].sizeZ = 1;
-      core[0].sizeC = 1;
-      core[0].sizeT = getImageCount() / getSizeC();
+      //Z-stacks are more likely than t-series (especially in Flex version 1.0)
+      core[0].sizeC = getSizeC(); 
+      core[0].sizeZ = getSizeZ()<=1?getImageCount() / getSizeC():getSizeZ();
+      core[0].sizeT = getImageCount() / (getSizeC()*getSizeZ());
     }
     else if (getImageCount() == ifds.length) {
       seriesCount = 1;
@@ -406,6 +412,9 @@ public class FlexReader extends BaseTiffReader {
             // some datasets have image names of the form "1_Exp1Cam1"
             // we're assuming that "Exp1Cam1" is the channel name, and
             // "1" is the T index
+            
+            //Actually tis would be from the old flex format. the 1_, 2_... represnet any series (wether, they are time  point, Z-section or
+            //number of fields=number of series. I would be more enclined to associate that index to a number of series or Z-stacks.
             imageName = imageName.substring(imageName.indexOf("_") + 1);
             if (!channelNames.contains(imageName)) {
               channelNames.add(imageName);
