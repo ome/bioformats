@@ -36,12 +36,17 @@ public class ConvertToOmeTiff {
       //writer.setCompression("J2K");
 
       // write out image planes
-      int totalImages = reader.getImageCount()*reader.getSeriesCount();
-      for (int j=0; j<totalImages; j++) {
-        BufferedImage plane = reader.openImage(j);
-        // write plane to output file
-        writer.saveImage(plane, j == totalImages - 1);
-        System.out.print(".");
+      int seriesCount = reader.getSeriesCount();
+      for (int series=0; series<seriesCount; series++) {
+        reader.setSeries(series);
+        int imageCount = reader.getImageCount();
+        for (int image=0; image<imageCount; image++) {
+          BufferedImage plane = reader.openImage(image);
+          // write plane to output file
+          writer.saveImage(plane, series, image == imageCount - 1,
+            (image == imageCount - 1) && (series == seriesCount - 1));
+          System.out.print(".");
+        }
       }
       writer.close();
       reader.close();
