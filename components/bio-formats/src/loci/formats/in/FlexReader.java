@@ -155,7 +155,7 @@ public class FlexReader extends BaseTiffReader {
     for (int i=0; i<c.length; i++) {
       if (c[i] > '~' || (c[i] != '\t' && c[i] < ' ')) c[i] = ' ';
     }
-    
+
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
@@ -179,7 +179,7 @@ public class FlexReader extends BaseTiffReader {
       core[0].imageCount = ifds.length / seriesCount;
       core[0].sizeZ = 1;
       core[0].sizeC = 1;
-      core[0].sizeT = ifds.length / seriesCount;
+      core[0].sizeT = getImageCount() / getSizeC();
     }
     else if (getImageCount() == ifds.length) {
       seriesCount = 1;
@@ -277,7 +277,6 @@ public class FlexReader extends BaseTiffReader {
     private int nextLightSource = 0;
     private int nextLaser = -1;
 
-    private int nextArrayImage = 0;
     private int nextSlider = 0;
     private int nextFilter = 0;
     private int nextCamera = 0;
@@ -302,7 +301,9 @@ public class FlexReader extends BaseTiffReader {
     private String parentQName;
     private String currentQName;
 
-    public FlexHandler(Vector<String> names, Vector<String> factors, MetadataStore store) {
+    public FlexHandler(Vector<String> names, Vector<String> factors,
+      MetadataStore store)
+    {
       this.names = names;
       this.factors = factors;
       this.store = store;
@@ -396,22 +397,25 @@ public class FlexReader extends BaseTiffReader {
       currentQName = qName;
       if (qName.equals("Array")) {
         int len = attributes.getLength();
-        //TODO: Why increment NextArrayImage as part of the loop? Verify that the incrementation should be done at the end of  if (qName.equals("Array")) {}
         for (int i=0; i<len; i++) {
           String name = attributes.getQName(i);
-          //TODO: Why double check if NextArray==0? The names etc should be collected for each arrays.
           if (name.equals("Name")) {
-            names.add(attributes.getValue(i));
-            store.setImageName(attributes.getValue(i), 0);
-            if (!channelNames.contains(attributes.getValue(i)))
-              channelNames.add(attributes.getValue(i));
+            String imageName = attributes.getValue(i);
+            names.add(imageName);
+            store.setImageName(imageName, 0);
+            // some datasets have image names of the form "1_Exp1Cam1"
+            // we're assuming that "Exp1Cam1" is the channel name, and
+            // "1" is the T index
+            imageName = imageName.substring(imageName.indexOf("_") + 1);
+            if (!channelNames.contains(imageName)) {
+              channelNames.add(imageName);
+            }
           }
           else if (name.equals("Factor")) factors.add(attributes.getValue(i));
-          else if (name.equals("Description") && nextArrayImage == 0) {
+          else if (name.equals("Description")) {
             store.setImageDescription(attributes.getValue(i), 0);
           }
         }
-        nextArrayImage++;
       }
       else if (qName.equals("LightSource")) {
         parentQName = qName;
@@ -446,8 +450,7 @@ public class FlexReader extends BaseTiffReader {
         }
         nextCamera++;
       }
-      else if (qName.startsWith("PixelSize") && parentQName.equals("Camera"))
-      {
+      else if (qName.startsWith("PixelSize") && parentQName.equals("Camera")) {
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta("Camera " + (nextCamera - 1) + " " + qName + " " +
             attributes.getQName(i), attributes.getValue(i));
