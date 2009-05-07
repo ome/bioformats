@@ -26,14 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.util;
 
 import ij.ImagePlus;
-import ij.WindowManager;
 import ij.gui.*;
-import ij.plugin.PlugIn;
 import ij.plugin.frame.RoiManager;
-import java.awt.*;
-import java.util.*;
-import loci.formats.MetadataTools;
-import loci.formats.meta.*;
+import java.awt.Color;
+import java.awt.Rectangle;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * TODO

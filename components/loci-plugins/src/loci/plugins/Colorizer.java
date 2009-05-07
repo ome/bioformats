@@ -46,7 +46,8 @@ import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
 import loci.plugins.importer.ImporterOptions;//FIXME
-import loci.plugins.util.Util;
+import loci.plugins.util.ImagePlusTools;
+import loci.plugins.util.LibraryChecker;
 
 /**
  * A plugin for merging, colorizing and reordering image stacks.
@@ -183,11 +184,11 @@ public class Colorizer implements PlugInFilter {
     boolean closeOriginal = true;
 
     if (color) {
-      if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG) && nChannels > 1) {
+      if (LibraryChecker.checkComposite() && nChannels > 1) {
         // use reflection to construct CompositeImage,
         // in case ImageJ version is too old
         try {
-          r.setVar("imp", Util.reorder(imp, stackOrder, "XYCZT"));
+          r.setVar("imp", ImagePlusTools.reorder(imp, stackOrder, "XYCZT"));
           r.exec("composite = new CompositeImage(imp, CompositeImage.COLOR)");
           r.setVar("1", 1);
           for (int i=0; i<nChannels; i++) {
@@ -236,11 +237,11 @@ public class Colorizer implements PlugInFilter {
         newImp = makeRGB(newImp, stack, nChannels);
       }
       else if (nChannels <= 7 && type != ImagePlus.COLOR_256) {
-        if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG)) {
+        if (LibraryChecker.checkComposite()) {
           // use reflection to construct CompositeImage,
           // in case ImageJ version is too old
           try {
-            r.setVar("imp", Util.reorder(imp, stackOrder, "XYCZT"));
+            r.setVar("imp", ImagePlusTools.reorder(imp, stackOrder, "XYCZT"));
             newImp = (ImagePlus)
               r.exec("new CompositeImage(imp, CompositeImage.COMPOSITE)");
           }
@@ -314,10 +315,11 @@ public class Colorizer implements PlugInFilter {
               if (imp.getType() == ImagePlus.GRAY8 && n < 4) {
                 newImp = makeRGB(newImp, stack, n);
               }
-              else if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG)) {
+              else if (LibraryChecker.checkComposite()) {
                 imp.setDimensions(n, imp.getNSlices()*num[n - 2],
                   imp.getNFrames());
-                r.setVar("imp", Util.reorder(imp, stackOrder, "XYCZT"));
+                r.setVar("imp",
+                  ImagePlusTools.reorder(imp, stackOrder, "XYCZT"));
                 r.exec("mode = CompositeImage.COMPOSITE");
                 r.exec("newImp = new CompositeImage(imp, mode)");
                 newImp = (ImagePlus) r.getVar("newImp");
@@ -350,7 +352,7 @@ public class Colorizer implements PlugInFilter {
       }
       newImp.setCalibration(calibration);
       newImp.setFileInfo(imp.getOriginalFileInfo());
-      if (IJ.getVersion().compareTo("1.39l") >= 0 &&
+      if (LibraryChecker.checkComposite() &&
         !(newImp instanceof CompositeImage))
       {
         newImp.setOpenAsHyperStack(hyperstack);
@@ -393,7 +395,7 @@ public class Colorizer implements PlugInFilter {
 
     for (int i=0; i<indices[0].length; i++) {
       newStack.addSlice(s.getSliceLabel(indices[indices.length - 1][i]),
-        Util.makeRGB(processors[i]).getProcessor());
+        ImagePlusTools.makeRGB(processors[i]).getProcessor());
     }
 
     ip.setStack(ip.getTitle(), newStack);

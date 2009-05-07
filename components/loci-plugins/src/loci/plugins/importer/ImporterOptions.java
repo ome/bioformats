@@ -39,7 +39,7 @@ import javax.swing.*;
 import loci.common.*;
 import loci.formats.*;
 import loci.plugins.util.LibraryChecker;
-import loci.plugins.util.Util;
+import loci.plugins.util.WindowTools;
 
 /**
  * Helper class for managing Bio-Formats Importer options.
@@ -1167,7 +1167,7 @@ public class ImporterOptions
       gdl.setConstraints(p[i], gbc);
       gd.add(p[i]);
     }
-    Util.addScrollBars(gd);
+    WindowTools.addScrollBars(gd);
 
     Panel buttons = new Panel();
 
@@ -1243,7 +1243,7 @@ public class ImporterOptions
       gd.addNumericField("Width_" + i, 0, 0);
       gd.addNumericField("Height_" + i, 0, 0);
     }
-    Util.addScrollBars(gd);
+    WindowTools.addScrollBars(gd);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
@@ -1328,7 +1328,7 @@ public class ImporterOptions
       //  gd.addNumericField("Step" + s, cStep[i], 0);
       //}
     }
-    Util.addScrollBars(gd);
+    WindowTools.addScrollBars(gd);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
@@ -1399,7 +1399,7 @@ public class ImporterOptions
         gd.addChoice(i + "_planes", labels, labels[i]);
       }
     }
-    Util.addScrollBars(gd);
+    WindowTools.addScrollBars(gd);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 

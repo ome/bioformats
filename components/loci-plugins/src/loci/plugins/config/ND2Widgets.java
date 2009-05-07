@@ -30,7 +30,7 @@ import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
-import loci.plugins.util.Util;
+import loci.plugins.util.LociPrefs;
 
 /**
  * Custom widgets for configuring Bio-Formats ND2 support.
@@ -51,7 +51,7 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
   // -- Constructor --
 
   public ND2Widgets() {
-    boolean nikon = Prefs.get(Util.PREF_ND2_NIKON, false);
+    boolean nikon = Prefs.get(LociPrefs.PREF_ND2_NIKON, false);
 
     String legacyLabel = "Nikon";
     JCheckBox legacyBox = new JCheckBox(
@@ -76,7 +76,7 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
 
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
-    Prefs.set(Util.PREF_ND2_NIKON, box.isSelected());
+    Prefs.set(LociPrefs.PREF_ND2_NIKON, box.isSelected());
   }
 
 }

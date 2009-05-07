@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.config;
 
 import ij.plugin.PlugIn;
-import loci.plugins.util.Util;
+import loci.plugins.util.WindowTools;
 
 /**
  * An ImageJ plugin for displaying the LOCI plugins configuration dialog.
@@ -44,7 +44,7 @@ public class LociConfig implements PlugIn {
   /** Executes the plugin. */
   public void run(String arg) {
     ConfigWindow cw = new ConfigWindow();
-    Util.placeWindow(cw);
+    WindowTools.placeWindow(cw);
     cw.setVisible(true);
   }
 

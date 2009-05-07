@@ -35,7 +35,7 @@ import java.net.URL;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import loci.plugins.util.Util;
+import loci.plugins.util.WindowTools;
 
 /**
  * A plugin that displays a small window containing shortcuts to the LOCI
@@ -178,7 +178,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
       IJ.runPlugIn(className, arg);
     }
     catch (Throwable t) {
-      Util.reportException(t);
+      WindowTools.reportException(t);
     }
   }
 
@@ -204,7 +204,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frame.setContentPane(new ShortcutPanel());
     frame.pack();
-    Util.placeWindow(frame);
+    WindowTools.placeWindow(frame);
     frame.setVisible(true);
   }
 

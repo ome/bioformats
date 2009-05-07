@@ -36,7 +36,8 @@ import java.io.PrintStream;
 import loci.common.ReflectedUniverse;
 import loci.common.ReflectException;
 import loci.formats.FormatTools;
-import loci.plugins.util.Util;
+import loci.plugins.util.ImagePlusTools;
+import loci.plugins.util.LibraryChecker;
 
 /**
  * A plugin for splitting an image stack into separate channels, focal planes
@@ -186,18 +187,15 @@ public class Slicer implements PlugInFilter {
         sliceT ? 1 : sizeT);
       p.setCalibration(calibration);
       p.setFileInfo(imp.getOriginalFileInfo());
-      if (IJ.getVersion().compareTo("1.39l") >= 0 &&
-        !(p instanceof CompositeImage))
-      {
+      boolean canDoComposite = LibraryChecker.checkComposite();
+      if (canDoComposite && !(p instanceof CompositeImage)) {
         p.setOpenAsHyperStack(hyperstack);
       }
-      if (imp.getClass().equals(c) && !sliceC &&
-        Util.checkVersion("1.39l", Util.COMPOSITE_MSG))
-      {
+      if (imp.getClass().equals(c) && !sliceC && canDoComposite) {
         try {
           ReflectedUniverse r = new ReflectedUniverse();
           r.exec("import ij.CompositeImage");
-          r.setVar("p", Util.reorder(p, stackOrder, "XYCZT"));
+          r.setVar("p", ImagePlusTools.reorder(p, stackOrder, "XYCZT"));
           r.exec("c = new CompositeImage(p, CompositeImage.COMPOSITE)");
           r.exec("c.show()");
         }

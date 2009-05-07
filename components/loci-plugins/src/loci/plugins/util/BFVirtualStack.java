@@ -46,7 +46,7 @@ public class BFVirtualStack extends VirtualStack {
 
   // -- Fields --
 
-  protected IFormatReader reader;
+  protected ImagePlusReader reader;
   protected String id;
   protected Cache cache;
 
@@ -85,7 +85,7 @@ public class BFVirtualStack extends VirtualStack {
     throws FormatException, IOException, CacheException
   {
     super(getWidth(r, path), getHeight(r, path), null, path);
-    reader = r;
+    reader = new ImagePlusReader(r);
     id = path;
 
     this.colorize = colorize;
@@ -114,7 +114,7 @@ public class BFVirtualStack extends VirtualStack {
 
   public String getPath() { return id; }
 
-  public IFormatReader getReader() { return reader; }
+  public ImagePlusReader getReader() { return reader; }
 
   public Cache getCache() { return cache; }
 
@@ -155,8 +155,7 @@ public class BFVirtualStack extends VirtualStack {
     // cache missed
     try {
       if (ip == null) {
-        ip = Util.openProcessors(reader,
-          reader.getIndex(pos[0], pos[1], pos[2]))[0];
+        ip = reader.openProcessors(reader.getIndex(pos[0], pos[1], pos[2]))[0];
       }
     }
     catch (FormatException exc) {
@@ -200,7 +199,7 @@ public class BFVirtualStack extends VirtualStack {
         if (otherChannels[i] == null) {
           try {
             int index = reader.getIndex(pos[0], channel, pos[2]);
-            otherChannels[i] = Util.openProcessors(reader, index)[0];
+            otherChannels[i] = reader.openProcessors(index)[0];
           }
           catch (FormatException exc) {
             exc.printStackTrace();

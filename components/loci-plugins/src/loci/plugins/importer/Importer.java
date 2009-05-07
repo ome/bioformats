@@ -118,11 +118,11 @@ public class Importer {
     String idName = options.getIdName();
     String idType = options.getIdType();
 
-    IFormatReader r = null;
+    IFormatReader base = null;
     if (options.isLocal() || options.isHTTP()) {
       IJ.showStatus("Identifying " + idName);
-      ImageReader reader = Util.makeImageReader();
-      try { r = reader.getReader(id); }
+      ImageReader reader = ImagePlusReader.makeImageReader();
+      try { base = reader.getReader(id); }
       catch (FormatException exc) {
         reportException(exc, quiet,
           "Sorry, there was an error reading the file.");
@@ -139,7 +139,7 @@ public class Importer {
       try {
         ReflectedUniverse ru = new ReflectedUniverse();
         ru.exec("import loci.ome.io.OMEROReader");
-        r = (IFormatReader) ru.exec("new OMEROReader()");
+        base = (IFormatReader) ru.exec("new OMEROReader()");
       }
       catch (ReflectException exc) {
         reportException(exc, options.isQuiet(),
@@ -152,7 +152,7 @@ public class Importer {
       try {
         ReflectedUniverse ru = new ReflectedUniverse();
         ru.exec("import loci.ome.io.OMEReader");
-        r = (IFormatReader) ru.exec("new OMEReader()");
+        base = (IFormatReader) ru.exec("new OMEReader()");
       }
       catch (ReflectException exc) {
         reportException(exc, options.isQuiet(),
@@ -165,16 +165,16 @@ public class Importer {
         "Sorry, there has been an internal error: unknown data source");
     }
     IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
-    r.setMetadataStore(omexmlMeta);
+    base.setMetadataStore(omexmlMeta);
 
     IJ.showStatus("");
-    r.addStatusListener(new StatusEchoer());
+    base.addStatusListener(new StatusEchoer());
 
     // -- Step 3: get parameter values --
 
     debug("get parameter values");
 
-    boolean windowless = options.isWindowless() || Util.isWindowless(r);
+    boolean windowless = options.isWindowless() || LociPrefs.isWindowless(base);
     if (!windowless) status = options.promptOptions();
     if (!statusOk(status)) return;
 
@@ -201,12 +201,12 @@ public class Importer {
     IJ.showStatus("Analyzing " + a);
 
     try {
-      r.setMetadataFiltered(true);
-      r.setNormalized(true);
-      r.setId(id);
+      base.setMetadataFiltered(true);
+      base.setNormalized(true);
+      base.setId(id);
 
-      int pixelType = r.getPixelType();
-      String currentFile = r.getCurrentFile();
+      int pixelType = base.getPixelType();
+      String currentFile = base.getCurrentFile();
 
       // -- Step 4a: prompt for the file pattern, if necessary --
 
@@ -219,9 +219,12 @@ public class Importer {
       }
       else debug("no need to prompt for file pattern");
 
-      if (groupFiles) r = new FileStitcher(r, true);
+      if (groupFiles) base = new FileStitcher(base, true);
       // NB: VirtualReader extends DimensionSwapper
-      r = new VirtualReader(new ChannelSeparator(r));
+      VirtualReader virtualReader =
+        new VirtualReader(new ChannelSeparator(base));
+      ImagePlusReader r = new ImagePlusReader(virtualReader);
+        
       r.setId(id);
 
       // -- Step 4b: prompt for which series to import, if necessary --
@@ -320,7 +323,7 @@ public class Importer {
 
       if (swapDimensions) {
         debug("prompt for dimension swapping parameters");
-        options.promptSwap((DimensionSwapper) r, series);
+        options.promptSwap(virtualReader, series);
 
         for (int i=0; i<seriesCount; i++) {
           r.setSeries(i);
@@ -435,7 +438,7 @@ public class Importer {
           XMLWindow metaWindow = new XMLWindow("OME Metadata - " + id);
           try {
             metaWindow.setXML(MetadataTools.getOMEXML(omexmlMeta));
-            Util.placeWindow(metaWindow);
+            WindowTools.placeWindow(metaWindow);
             metaWindow.setVisible(true);
           }
           catch (javax.xml.parsers.ParserConfigurationException exc) {
@@ -463,7 +466,7 @@ public class Importer {
         for (int i=0; i<seriesCount; i++) {
           if (series[i]) totalSeries++;
         }
-        ((VirtualReader) r).setRefCount(totalSeries);
+        virtualReader.setRefCount(totalSeries);
       }
 
       for (int i=0; i<seriesCount; i++) {
@@ -516,7 +519,7 @@ public class Importer {
         if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
           stackOrder = r.getDimensionOrder();
         }
-        ((DimensionSwapper) r).setOutputOrder(stackOrder);
+        virtualReader.setOutputOrder(stackOrder);
 
         omexmlMeta.setPixelsDimensionOrder(stackOrder, i, 0);
 
@@ -593,7 +596,7 @@ public class Importer {
               omexmlMeta, i, zCount, cCount, tCount);
 
             // get image processor for jth plane
-            ImageProcessor ip = Util.openProcessors(r, ndx, cropOptions[i])[0];
+            ImageProcessor ip = r.openProcessors(ndx, cropOptions[i])[0];
             if (ip == null) {
               plugin.canceled = true;
               return;
@@ -778,7 +781,7 @@ public class Importer {
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
-    Util.applyCalibration(retrieve, imp, r.getSeries());
+    ImagePlusTools.applyCalibration(retrieve, imp, r.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
     displayStack(imp, r, options, windowless);
@@ -796,7 +799,7 @@ public class Importer {
     int nSlices = imp.getNSlices();
     int nFrames = imp.getNFrames();
     if (options.isAutoscale() && !options.isVirtual()) {
-      Util.adjustColorRange(imp);
+      ImagePlusTools.adjustColorRange(imp);
     }
 
     boolean splitC = options.isSplitChannels();

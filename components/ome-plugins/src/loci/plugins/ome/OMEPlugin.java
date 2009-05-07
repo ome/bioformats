@@ -37,7 +37,7 @@ import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.plugins.util.LibraryChecker;
-import loci.plugins.util.Util;
+import loci.plugins.util.WindowTools;
 import loci.ome.io.OMECredentials;
 import loci.ome.io.OMEROReader;
 import loci.ome.io.OMEUtils;
@@ -68,10 +68,10 @@ public class OMEPlugin implements PlugIn {
     if (IJ.debugMode) IJ.log("Downloading from OME or OMERO server");
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet missing = new HashSet();
-    LibraryChecker.checkLibrary(LibraryChecker.BIO_FORMATS, missing);
-    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_XML, missing);
-    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_DS, missing);
-    LibraryChecker.checkLibrary(LibraryChecker.FORMS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.BIO_FORMATS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.OME_JAVA_XML, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.OME_JAVA_DS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.FORMS, missing);
     if (!LibraryChecker.checkMissing(missing)) {
       if (IJ.debugMode) IJ.log("Required libraries are missing, exiting.");
       return;
@@ -366,7 +366,7 @@ public class OMEPlugin implements PlugIn {
       gdl.setConstraints(p[i], gbc);
       gd.add(p[i]);
     }
-    Util.addScrollBars(gd);
+    WindowTools.addScrollBars(gd);
     if (cred.isOMERO) {
       OMEROLoader l = new OMEROLoader(ids, cred, p, gd, tips);
       gd.showDialog();

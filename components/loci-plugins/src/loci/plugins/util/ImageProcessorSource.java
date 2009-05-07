@@ -44,12 +44,12 @@ public class ImageProcessorSource implements ICacheSource {
   // -- Fields --
 
   /** Image reader from which to draw ImageProcessors. */
-  protected IFormatReader reader;
+  protected ImagePlusReader reader;
 
   // -- Constructors --
 
   public ImageProcessorSource(IFormatReader reader) throws CacheException {
-    this.reader = reader;
+    this.reader = new ImagePlusReader(reader);
   }
 
   // -- ICacheSource API methods --
@@ -62,7 +62,7 @@ public class ImageProcessorSource implements ICacheSource {
     // assumes that channels are separated
     ImageProcessor ip = null;
     try {
-      ip = Util.openProcessors(reader, index)[0];
+      ip = reader.openProcessors(index)[0];
     }
     catch (FormatException exc) {
       throw new CacheException(exc);

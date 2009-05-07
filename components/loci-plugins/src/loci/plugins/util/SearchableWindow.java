@@ -27,10 +27,13 @@ package loci.plugins.util;
 
 import com.jgoodies.forms.layout.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.event.*;
-import ij.text.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import ij.text.TextPanel;
+import ij.text.TextWindow;
 
 /**
  * Text panel with search capabilities.

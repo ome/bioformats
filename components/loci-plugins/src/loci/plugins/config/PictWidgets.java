@@ -30,7 +30,7 @@ import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
-import loci.plugins.util.Util;
+import loci.plugins.util.LociPrefs;
 
 /**
  * Custom widgets for configuring Bio-Formats PICT support.
@@ -51,7 +51,7 @@ public class PictWidgets implements IFormatWidgets, ItemListener {
   // -- Constructor --
 
   public PictWidgets() {
-    boolean qtJava = Prefs.get(Util.PREF_PICT_QTJAVA, false);
+    boolean qtJava = Prefs.get(LociPrefs.PREF_PICT_QTJAVA, false);
 
     String legacyLabel = "Legacy";
     JCheckBox legacyBox = new JCheckBox(
@@ -76,7 +76,7 @@ public class PictWidgets implements IFormatWidgets, ItemListener {
 
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
-    Prefs.set(Util.PREF_PICT_QTJAVA, box.isSelected());
+    Prefs.set(LociPrefs.PREF_PICT_QTJAVA, box.isSelected());
   }
 
 }

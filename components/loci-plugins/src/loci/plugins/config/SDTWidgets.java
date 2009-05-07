@@ -30,7 +30,7 @@ import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
-import loci.plugins.util.Util;
+import loci.plugins.util.LociPrefs;
 
 /**
  * Custom widgets for configuring Bio-Formats SDT support.
@@ -51,7 +51,7 @@ public class SDTWidgets implements IFormatWidgets, ItemListener {
   // -- Constructor --
 
   public SDTWidgets() {
-    boolean intensity = Prefs.get(Util.PREF_SDT_INTENSITY, false);
+    boolean intensity = Prefs.get(LociPrefs.PREF_SDT_INTENSITY, false);
 
     String mergeLabel = "Merge";
     JCheckBox mergeBox = new JCheckBox(
@@ -76,7 +76,7 @@ public class SDTWidgets implements IFormatWidgets, ItemListener {
 
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
-    Prefs.set(Util.PREF_SDT_INTENSITY, box.isSelected());
+    Prefs.set(LociPrefs.PREF_SDT_INTENSITY, box.isSelected());
   }
 
 }

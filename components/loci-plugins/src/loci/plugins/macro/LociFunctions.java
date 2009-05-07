@@ -31,7 +31,8 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
-import loci.plugins.util.Util;
+import loci.plugins.util.ImagePlusReader;
+import loci.plugins.util.ImagePlusTools;
 
 /**
  * This class provides macro extensions for ImageJ for Bio-Formats and other
@@ -49,12 +50,13 @@ public class LociFunctions extends MacroFunctions {
 
   // -- Fields --
 
-  private IFormatReader r;
+  private ImagePlusReader r;
 
   // -- Constructor --
 
   public LociFunctions() {
-    r = new ChannelSeparator(new FileStitcher(true));
+    r = new ImagePlusReader(new ChannelSeparator(
+      new FileStitcher(ImagePlusReader.makeImageReader(), true)));
     r.setMetadataStore(MetadataTools.createOMEXMLMetadata());
   }
 
@@ -129,8 +131,8 @@ public class LociFunctions extends MacroFunctions {
   public void openImage(String title, Double no)
     throws FormatException, IOException
   {
-    ImageProcessor[] ip = Util.openProcessors(r, no.intValue());
-    Util.makeRGB(title, ip).show();
+    ImageProcessor[] ip = r.openProcessors(no.intValue());
+    ImagePlusTools.makeRGB(title, ip).show();
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
@@ -138,8 +140,8 @@ public class LociFunctions extends MacroFunctions {
   {
     Rectangle crop = new Rectangle(x.intValue(), y.intValue(),
       width.intValue(), height.intValue());
-    ImageProcessor[] ip = Util.openProcessors(r, no.intValue(), crop);
-    Util.makeRGB(title, ip).show();
+    ImageProcessor[] ip = r.openProcessors(no.intValue(), crop);
+    ImagePlusTools.makeRGB(title, ip).show();
   }
 
   public void close() throws IOException { r.close(); }

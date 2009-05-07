@@ -41,17 +41,27 @@ public final class LibraryChecker {
 
   // -- Constants --
 
-  /** Identifier for checking the Bio-Formats library is present. */
-  public static final int BIO_FORMATS = 1;
+  /** List of possible libraries for which to check. */
+  public enum Library {
+    BIO_FORMATS,  // Bio-Formats
+    OME_JAVA_XML, // OME-XML Java
+    OME_JAVA_DS,  // OME-Java
+    FORMS         // JGoodies Forms
+  }
 
-  /** Identifier for checking the OME Java OME-XML library is present. */
-  public static final int OME_JAVA_XML = 2;
+  /** Minimum version of ImageJ necessary for CompositeImage. */
+  public static final String IMAGEJ_VERSION = "1.34";
 
-  /** Identifier for checking the OME Java OMEDS library is present. */
-  public static final int OME_JAVA_DS = 3;
+  /** Message to be displayed if ImageJ is too old for LOCI plugins. */
+  public static final String IMAGEJ_MSG =
+    "Sorry, the LOCI plugins require ImageJ v" + IMAGEJ_VERSION + " or later.";
 
-  /** Identifier for checking the JGoodies Forms library is present. */
-  public static final int FORMS = 4;
+  /** Minimum version of ImageJ necessary for LOCI plugins. */
+  public static final String COMPOSITE_VERSION = "1.39l";
+
+  /** Message to be displayed if ImageJ is too old for CompositeImage. */
+  public static final String COMPOSITE_MSG = "ImageJ " + COMPOSITE_VERSION +
+    " or later is required to merge >8 bit or >3 channel data";
 
   // -- Constructor --
 
@@ -66,16 +76,8 @@ public final class LibraryChecker {
     return true;
   }
 
-  /**
-   * Checks for a required library.
-   * @param library One of:<ul>
-   *   <li>BIO_FORMATS</li>
-   *   <li>OME_JAVA_XML</li>
-   *   <li>OME_JAVA_DS</li>
-   *   <li>FORMS</li>
-   *   </ul>
-   */
-  public static void checkLibrary(int library, HashSet missing) {
+  /** Checks for a required library. */
+  public static void checkLibrary(Library library, HashSet missing) {
     switch (library) {
       case BIO_FORMATS:
         checkLibrary("loci.common.RandomAccessInputStream",
@@ -129,20 +131,40 @@ public final class LibraryChecker {
     return true;
   }
 
-  /** Checks whether the version of ImageJ is new enough. */
+  /** Checks whether ImageJ is new enough for the LOCI plugins. */
   public static boolean checkImageJ() {
+    return checkImageJ(IMAGEJ_VERSION, IMAGEJ_MSG);
+  }
+
+  /** Checks whether ImageJ is new enough for CompositeImages. */
+  public static boolean checkComposite() {
+    return checkImageJ(COMPOSITE_VERSION, COMPOSITE_MSG);
+  }
+
+  /**
+   * Returns true the current ImageJ version is greater than or equal to the
+   * specified version. Displays the given warning message if the current
+   * version is too old.
+   */
+  public static boolean checkImageJ(String target, String msg) {
+    return checkImageJ(target, msg, "LOCI Plugins");
+  }
+
+  /**
+   * Returns true the current ImageJ version is greater than or equal to the
+   * specified version. Displays the given warning message with the specified
+   * title if the current version is too old.
+   */
+  public static boolean checkImageJ(String target, String msg, String title) {
     boolean success;
     try {
-      String version = IJ.getVersion();
-      success = version != null && version.compareTo("1.34") >= 0;
+      String current = IJ.getVersion();
+      success = current != null && current.compareTo(target) >= 0;
     }
     catch (NoSuchMethodError err) {
       success = false;
     }
-    if (!success) {
-      IJ.error("LOCI Plugins",
-        "Sorry, the LOCI plugins require ImageJ v1.34 or later.");
-    }
+    if (!success) IJ.error(title, msg);
     return success;
   }
 

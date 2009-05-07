@@ -63,9 +63,9 @@ public class LociUploader implements PlugIn {
     // check that we can safely execute the plugin
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet missing = new HashSet();
-    LibraryChecker.checkLibrary(LibraryChecker.BIO_FORMATS, missing);
-    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_XML, missing);
-    LibraryChecker.checkLibrary(LibraryChecker.OME_JAVA_DS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.BIO_FORMATS, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.OME_JAVA_XML, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.OME_JAVA_DS, missing);
     if (!LibraryChecker.checkMissing(missing)) return;
 
     promptForLogin();
