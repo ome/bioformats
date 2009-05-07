@@ -50,6 +50,7 @@ import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.plugins.util.RecordedImageProcessor;
 
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
@@ -291,6 +292,10 @@ public class Exporter {
         }
         else IJ.showStatus("Saving image");
         proc = is.getProcessor(i + 1);
+
+        if (proc instanceof RecordedImageProcessor) {
+          proc = ((RecordedImageProcessor) proc).getChild();
+        }
 
         int x = proc.getWidth();
         int y = proc.getHeight();
