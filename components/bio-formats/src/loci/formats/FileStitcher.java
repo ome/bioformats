@@ -961,61 +961,15 @@ public class FileStitcher implements IFormatReader {
     }
 
     // determine reader type for these files; assume all are the same type
-    Vector classes = new Vector();
-    IFormatReader r = reader;
-    while (r instanceof ReaderWrapper) {
-      classes.add(r.getClass());
-      r = ((ReaderWrapper) r).getReader();
-    }
-    if (r instanceof ImageReader) r = ((ImageReader) r).getReader(files[0][0]);
-    classes.add(r.getClass());
+    Class readerClass = reader.unwrap(files[0][0]).getClass();
 
     // construct list of readers for all files
     readers = new DimensionSwapper[files.length][];
     for (int i=0; i<readers.length; i++) {
       readers[i] = new DimensionSwapper[files[i].length];
-    }
-
-    for (int i=0; i<readers.length; i++) {
       for (int j=0; j<readers[i].length; j++) {
-        if (i == 0 && j == 0) {
-          readers[i][j] = reader;
-          continue;
-        }
-        // use crazy reflection to instantiate a reader of the proper type
-        try {
-          r = null;
-          for (int k=classes.size()-1; k>=0; k--) {
-            Class c = (Class) classes.elementAt(k);
-            if (r == null) r = (IFormatReader) c.newInstance();
-            else {
-              r = (IFormatReader) c.getConstructor(new Class[]
-                {IFormatReader.class}).newInstance(new Object[] {r});
-            }
-          }
-          readers[i][j] = (DimensionSwapper) r;
-        }
-        catch (InstantiationException exc) { LogTools.trace(exc); }
-        catch (IllegalAccessException exc) { LogTools.trace(exc); }
-        catch (NoSuchMethodException exc) { LogTools.trace(exc); }
-        catch (InvocationTargetException exc) { LogTools.trace(exc); }
-      }
-    }
-
-    // sync reader configurations with original reader
-    boolean normalized = reader.isNormalized();
-    boolean metadataFiltered = reader.isMetadataFiltered();
-    boolean metadataCollected = reader.isMetadataCollected();
-    StatusListener[] statusListeners = reader.getStatusListeners();
-    for (int i=0; i<readers.length; i++) {
-      for (int j=0; j<readers[i].length; j++) {
-        if (i == 0 && j == 0) continue;
-        readers[i][j].setNormalized(normalized);
-        readers[i][j].setMetadataFiltered(metadataFiltered);
-        readers[i][j].setMetadataCollected(metadataCollected);
-        for (int k=0; k<statusListeners.length; k++) {
-          readers[i][j].addStatusListener(statusListeners[k]);
-        }
+        readers[i][j] = i == 0 && j == 0 ? reader :
+          (DimensionSwapper) reader.duplicate(readerClass);
       }
     }
 

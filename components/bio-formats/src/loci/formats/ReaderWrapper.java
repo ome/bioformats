@@ -25,7 +25,9 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
+import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
 
@@ -61,6 +63,115 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   /** Gets the wrapped reader. */
   public IFormatReader getReader() { return reader; }
+
+  /**
+   * Unwraps nested wrapped readers until the core reader (i.e., not
+   * a {@link ReaderWrapper} or {@link ImageReader}) is found.
+   */
+  public IFormatReader unwrap() throws FormatException, IOException {
+    return unwrap(null, null);
+  }
+
+  /**
+   * Unwraps nested wrapped readers until the core reader (i.e., not
+   * a {@link ReaderWrapper} or {@link ImageReader}) is found.
+   *
+   * @param id Id to use as a basis when unwrapping any nested
+   *   {@link ImageReader}s. If null, the current id is used.
+   */
+  public IFormatReader unwrap(String id)
+    throws FormatException, IOException
+  {
+    return unwrap(null, id);
+  }
+
+  /**
+   * Unwraps nested wrapped readers until the given reader class is found.
+   *
+   * @param readerClass Class of the desired nested reader. If null, the
+   *   core reader (i.e., deepest wrapped reader) will be returned.
+   * @param id Id to use as a basis when unwrapping any nested
+   *   {@link ImageReader}s. If null, the current id is used.
+   */
+  public IFormatReader unwrap(Class readerClass, String id)
+    throws FormatException, IOException
+  {
+    IFormatReader r = this;
+    while (r instanceof ReaderWrapper || r instanceof ImageReader) {
+      if (readerClass != null && readerClass.isInstance(r)) break;
+      if (r instanceof ImageReader) {
+        ImageReader ir = (ImageReader) r;
+        r = id == null ? ir.getReader() : ir.getReader(id);
+      }
+      else r = ((ReaderWrapper) r).getReader();
+    }
+    if (readerClass != null && !readerClass.isInstance(r)) return null;
+    return r;
+  }
+
+  /**
+   * Performs a deep copy of the reader, including nested wrapped readers. 
+   * Most of the reader state is preserved as well, including:<ul>
+   *   <li>{@link #isNormalized()}</li>
+   *   <li>{@link #isMetadataFiltered()}</li>
+   *   <li>{@link #isMetadataCollected()}</li>
+   *   <li>Attached {@link StatusListener}s</li>
+   * </ul>
+   *
+   * @param imageReaderClass If non-null, any {@link ImageReader}s in the
+   *   reader stack will be replaced with instances of the given class.
+   * @throws FormatException If something goes wrong during the duplication.
+   */
+  public ReaderWrapper duplicate(Class imageReaderClass)
+    throws FormatException
+  {
+    IFormatReader childCopy = null;
+    if (reader instanceof ReaderWrapper) {
+      // found a nested reader layer; duplicate via recursion
+      childCopy = ((ReaderWrapper) reader).duplicate(imageReaderClass);
+    }
+    else {
+      Class c = null;
+      if (reader instanceof ImageReader) {
+        // found an image reader; if given, substitute the reader class
+        c = imageReaderClass == null ? ImageReader.class : imageReaderClass;
+      }
+      else {
+        // bottom of the reader stack; duplicate the core reader
+        c = reader.getClass();
+      }
+      try {
+        childCopy = (IFormatReader) c.newInstance();
+      }
+      catch (IllegalAccessException exc) { throw new FormatException(exc); }
+      catch (InstantiationException exc) { throw new FormatException(exc); }
+    }
+
+    // use crazy reflection to instantiate a reader of the proper type
+    Class wrapperClass = getClass();
+    ReaderWrapper wrapperCopy = null;
+    try {
+      wrapperCopy = (ReaderWrapper) wrapperClass.getConstructor(new Class[]
+        {IFormatReader.class}).newInstance(new Object[] {childCopy});
+    }
+    catch (InstantiationException exc) { throw new FormatException(exc); }
+    catch (IllegalAccessException exc) { throw new FormatException(exc); }
+    catch (NoSuchMethodException exc) { throw new FormatException(exc); }
+    catch (InvocationTargetException exc) { throw new FormatException(exc); }
+
+    // sync configuration with original reader
+    boolean normalized = isNormalized();
+    boolean metadataFiltered = isMetadataFiltered();
+    boolean metadataCollected = isMetadataCollected();
+    StatusListener[] statusListeners = getStatusListeners();
+    wrapperCopy.setNormalized(normalized);
+    wrapperCopy.setMetadataFiltered(metadataFiltered);
+    wrapperCopy.setMetadataCollected(metadataCollected);
+    for (int k=0; k<statusListeners.length; k++) {
+      wrapperCopy.addStatusListener(statusListeners[k]);
+    }
+    return wrapperCopy;
+  }
 
   // -- IFormatReader API methods --
 
