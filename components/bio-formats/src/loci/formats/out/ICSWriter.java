@@ -115,6 +115,7 @@ public class ICSWriter extends FormatWriter {
 
       boolean signed = pixelType == FormatTools.INT8 ||
         pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
+      boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
 
       out.writeBytes("representation\tformat\t" +
         (pixelType == FormatTools.FLOAT ? "real\n" : "integer\n"));
@@ -123,7 +124,12 @@ public class ICSWriter extends FormatWriter {
       out.writeBytes("representation\tcompression\tuncompressed\n");
       out.writeBytes("representation\tbyte_order\t");
       for (int i=0; i<sizes[0]/8; i++) {
-        out.writeBytes(((sizes[0] / 8) - i) + "\t");
+        if (littleEndian) {
+          out.writeBytes((i + 1) + "\t");
+        }
+        else {
+          out.writeBytes(((sizes[0] / 8) - i) + "\t");
+        }
       }
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
