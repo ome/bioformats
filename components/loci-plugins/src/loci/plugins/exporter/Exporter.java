@@ -44,6 +44,7 @@ import java.io.PrintStream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import loci.common.DataTools;
 import loci.formats.*;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
@@ -209,6 +210,7 @@ public class Exporter {
           store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
           store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
           store.setPixelsDimensionOrder("XYCZT", 0, 0);
+          store.setLogicalChannelSamplesPerPixel(new Integer(channels), 0, 0);
         }
 
         if (imp.getImageStackSize() !=
@@ -277,6 +279,11 @@ public class Exporter {
       int start = doStack ? 0 : imp.getCurrentSlice() - 1;
       int end = doStack ? size : start + 1;
 
+      boolean littleEndian =
+        !w.getMetadataRetrieve().getPixelsBigEndian(0, 0).booleanValue();
+      byte[] plane = null;
+      w.setInterleaved(false);
+
       for (int i=start; i<end; i+=n) {
         if (doStack) {
           IJ.showStatus("Saving plane " + (i + 1) + "/" + size);
@@ -285,59 +292,62 @@ public class Exporter {
         else IJ.showStatus("Saving image");
         proc = is.getProcessor(i + 1);
 
-        BufferedImage img = null;
         int x = proc.getWidth();
         int y = proc.getHeight();
 
         if (proc instanceof ByteProcessor) {
           if (fakeRGB) {
-            byte[][] b = new byte[n][];
+            plane = new byte[n * x * y];
             for (int j=0; j<n; j++) {
-              b[j] = (byte[]) is.getProcessor(i + j + 1).getPixels();
+              byte[] b = (byte[]) is.getProcessor(i + j + 1).getPixels();
+              System.arraycopy(b, 0, plane, j * x * y, b.length);
             }
-            img = AWTImageTools.makeImage(b, x, y, false);
           }
           else {
-            byte[] b = (byte[]) proc.getPixels();
-            img = AWTImageTools.makeImage(b, x, y, false);
+            plane = (byte[]) proc.getPixels();
           }
         }
         else if (proc instanceof ShortProcessor) {
           if (fakeRGB) {
-            short[][] s = new short[n][];
+            plane = new byte[n * x * y * 2];
             for (int j=0; j<n; j++) {
-              s[j] = (short[]) is.getProcessor(i + j + 1).getPixels();
+              byte[] b = DataTools.shortsToBytes(
+                (short[]) is.getProcessor(i + j + 1).getPixels(), littleEndian);
+              System.arraycopy(b, 0, plane, j * x * y * 2, b.length);
             }
-            img = AWTImageTools.makeImage(s, x, y, false);
           }
           else {
-            short[] s = (short[]) proc.getPixels();
-            img = AWTImageTools.makeImage(s, x, y, false);
+            plane = DataTools.shortsToBytes(
+              (short[]) proc.getPixels(), littleEndian);
           }
         }
         else if (proc instanceof FloatProcessor) {
           if (fakeRGB) {
-            float[][] f = new float[n][];
+            plane = new byte[n * x * y * 4];
             for (int j=0; j<n; j++) {
-              f[j] = (float[]) is.getProcessor(i + j + 1).getPixels();
+              byte[] b = DataTools.floatsToBytes(
+                (float[]) is.getProcessor(i + j + 1).getPixels(), littleEndian);
+              System.arraycopy(b, 0, plane, j * x * y * 4, b.length);
             }
-            img = AWTImageTools.makeImage(f, x, y);
           }
           else {
-            float[] b = (float[]) proc.getPixels();
-            img = AWTImageTools.makeImage(b, x, y);
+            plane = DataTools.floatsToBytes(
+              (float[]) proc.getPixels(), littleEndian);
           }
         }
         else if (proc instanceof ColorProcessor) {
           byte[][] pix = new byte[3][x*y];
           ((ColorProcessor) proc).getRGB(pix[0], pix[1], pix[2]);
-          img = AWTImageTools.makeImage(pix, x, y, false);
+          plane = new byte[3 * x * y];
+          System.arraycopy(pix[0], 0, plane, 0, x * y);
+          System.arraycopy(pix[1], 0, plane, x * y, x * y);
+          System.arraycopy(pix[2], 0, plane, 2 * x * y, x * y);
         }
 
         if (notSupportedType) {
           IJ.error("Pixel type not supported by this format.");
         }
-        else w.saveImage(img, i == end - n);
+        else w.saveBytes(plane, i == end - n);
       }
       w.close();
     }

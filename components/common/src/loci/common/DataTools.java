@@ -453,6 +453,33 @@ public final class DataTools {
     return v;
   }
 
+  /** Translates an array of short values into an array of byte values. */
+  public static byte[] shortsToBytes(short[] values, boolean little) {
+    byte[] v = new byte[values.length * 2];
+    for (int i=0; i<values.length; i++) {
+      unpackShort(values[i], v, i * 2, little);
+    }
+    return v;
+  }
+
+  /** Translates an array of int values into an array of byte values. */
+  public static byte[] intsToBytes(int[] values, boolean little) {
+    byte[] v = new byte[values.length * 4];
+    for (int i=0; i<values.length; i++) {
+      unpackBytes(values[i], v, i * 4, 4, little);
+    }
+    return v;
+  }
+
+  /** Translates an array of float values into an array of byte values. */
+  public static byte[] floatsToBytes(float[] values, boolean little) {
+    byte[] v = new byte[values.length * 4];
+    for (int i=0; i<values.length; i++) {
+      unpackBytes(Float.floatToIntBits(values[i]), v, i * 4, 4, little);
+    }
+    return v;
+  }
+
   /**
    * Translates the short value into two bytes, and places them in a byte
    * array at the given index.
