@@ -583,7 +583,10 @@ public class DeltavisionReader extends FormatReader {
   private boolean parseLogFile(MetadataStore store) throws IOException {
     // see if log file exists
     logFile = getCurrentFile() + ".log";
-    if (!new Location(logFile).exists()) return false;
+    if (!new Location(logFile).exists()) {
+      logFile = null;
+      return false;
+    }
 
     status("Parsing log file");
 
