@@ -25,8 +25,11 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferShort;
 import java.awt.image.Raster;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
@@ -75,12 +78,23 @@ public class SignedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#isCompatibleRaster(Raster) */
   public boolean isCompatibleRaster(Raster raster) {
-    return raster.getNumBands() == getNumComponents() &&
-      raster.getTransferType() == getTransferType();
+    if (pixelBits == 16) {
+      return raster.getTransferType() == DataBuffer.TYPE_SHORT;
+    }
+    return helper.isCompatibleRaster(raster);
   }
 
   /* @see java.awt.image.ColorModel#createCompatibleWritableRaster(int, int) */
   public WritableRaster createCompatibleWritableRaster(int w, int h) {
+    if (pixelBits == 16) {
+      int[] bandOffsets = new int[nChannels];
+      for (int i=0; i<nChannels; i++) bandOffsets[i] = i;
+
+      SampleModel m = new ComponentSampleModel(DataBuffer.TYPE_SHORT, w, h,
+        nChannels, w * nChannels, bandOffsets);
+      DataBuffer db = new DataBufferShort(w * h, nChannels);
+      return Raster.createWritableRaster(m, db, null);
+    }
     return helper.createCompatibleWritableRaster(w, h);
   }
 

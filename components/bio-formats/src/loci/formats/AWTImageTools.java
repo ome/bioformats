@@ -1530,27 +1530,33 @@ public final class AWTImageTools {
     }
 
     BufferedImage result = null;
-    if ((source.getColorModel() instanceof Index16ColorModel) ||
-      (source.getColorModel() instanceof IndexColorModel))
+    ColorModel sourceModel = source.getColorModel();
+    if ((sourceModel instanceof Index16ColorModel) ||
+      (sourceModel instanceof IndexColorModel) ||
+      (sourceModel instanceof SignedColorModel))
     {
-      ColorModel model = source.getColorModel();
+      DataBuffer buffer = source.getData().getDataBuffer();
       WritableRaster raster = Raster.createWritableRaster(
-        source.getSampleModel(), source.getData().getDataBuffer(), null);
-      source = new BufferedImage(makeColorModel(1,
-        source.getData().getDataBuffer().getDataType()), raster, false, null);
+        source.getSampleModel(), buffer, null);
+
+      ColorModel model = makeColorModel(1, buffer.getDataType());
+      if (sourceModel instanceof SignedColorModel) {
+        model = sourceModel;
+      }
+      source = new BufferedImage(model, raster, false, null);
 
       Image scaled =
         scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
-      result = makeBuffered(scaled, source.getColorModel());
+      result = makeBuffered(scaled, sourceModel);
 
       raster = Raster.createWritableRaster(result.getSampleModel(),
         result.getData().getDataBuffer(), null);
-      result = new BufferedImage(model, raster, false, null);
+      result = new BufferedImage(sourceModel, raster, false, null);
     }
     else {
       Image scaled =
         scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
-      result = makeBuffered(scaled, source.getColorModel());
+      result = makeBuffered(scaled, sourceModel);
     }
     return padImage(result, finalWidth, finalHeight);
   }
