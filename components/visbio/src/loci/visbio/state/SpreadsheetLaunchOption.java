@@ -23,19 +23,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.*;
 import java.awt.Component;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
 import loci.visbio.overlays.SpreadsheetLaunchException;
 import loci.visbio.overlays.SpreadsheetLauncher;
 import loci.visbio.util.LAFUtil;
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /** Option to toggle whether spreadsheet automatically launches when overlays
  *  are exported.  Also allows user to specify path to spreadsheet application.

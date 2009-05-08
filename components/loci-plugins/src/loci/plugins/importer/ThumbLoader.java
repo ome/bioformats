@@ -26,13 +26,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.importer;
 
 import ij.IJ;
+
 import java.awt.Dialog;
 import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-import javax.swing.JLabel;
+
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;

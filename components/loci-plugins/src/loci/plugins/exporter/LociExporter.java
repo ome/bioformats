@@ -28,7 +28,9 @@ package loci.plugins.exporter;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+
 import java.util.HashSet;
+
 import loci.plugins.util.LibraryChecker;
 
 /**

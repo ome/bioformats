@@ -23,20 +23,31 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import com.jgoodies.plaf.LookUtils;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Properties;
-import javax.swing.*;
-import loci.formats.*;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import loci.formats.LegacyQTTools;
 import loci.visbio.ext.MatlabUtil;
-import loci.visbio.util.*;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.LAFUtil;
+import loci.visbio.util.SwingUtil;
 import visad.util.Util;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.plaf.LookUtils;
 
 /**
  * SystemControls is the control panel for reporting system information.

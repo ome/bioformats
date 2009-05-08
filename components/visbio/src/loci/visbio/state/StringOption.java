@@ -24,13 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
-import java.lang.Math;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.*;
+
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * StringOption is a user-supplied string option in the VisBio Options dialog.

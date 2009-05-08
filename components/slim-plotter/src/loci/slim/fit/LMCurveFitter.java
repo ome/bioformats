@@ -27,6 +27,7 @@ package loci.slim.fit;
 import jaolho.data.lma.LMA;
 import jaolho.data.lma.LMAFunction;
 import jaolho.data.lma.implementations.JAMAMatrix;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Hashtable;

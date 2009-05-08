@@ -25,8 +25,14 @@ package loci.ome.editor;
 
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A simple xml parser to help set up the MetadataEditor's gui

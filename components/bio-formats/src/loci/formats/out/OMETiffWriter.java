@@ -25,9 +25,13 @@ package loci.formats.out;
 
 import java.io.IOException;
 import java.util.Vector;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.meta.*;
+
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.TiffTools;
+import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * OMETiffWriter is the file format writer for OME-TIFF files.

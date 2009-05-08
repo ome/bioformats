@@ -32,8 +32,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package loci.apps.flow;
 
-import ij.*;
-import ij.process.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 
 import java.awt.image.IndexColorModel;
 import java.util.Vector;

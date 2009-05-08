@@ -25,7 +25,9 @@ package loci.formats.codec;
 
 import java.io.IOException;
 import java.util.Vector;
-import loci.common.*;
+
+import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**

@@ -26,7 +26,16 @@ package loci.visbio.overlays;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.rmi.RemoteException;
-import visad.*;
+
+import visad.DataImpl;
+import visad.FieldImpl;
+import visad.FunctionType;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.Set;
+import visad.SingletonSet;
+import visad.TupleType;
+import visad.VisADException;
 
 /**
  * OverlayText is a text string overlay.

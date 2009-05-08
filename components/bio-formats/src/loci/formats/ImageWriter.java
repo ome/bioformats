@@ -26,8 +26,11 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
-import java.util.*;
-import loci.common.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Vector;
+
+import loci.common.LogTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**

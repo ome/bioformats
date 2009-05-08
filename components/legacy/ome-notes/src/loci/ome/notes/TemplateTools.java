@@ -23,9 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notes;
 
-import java.lang.reflect.*;
-import java.util.*;
-import javax.swing.*;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JViewport;
+
 import loci.formats.meta.AggregateMetadata;
 
 /**

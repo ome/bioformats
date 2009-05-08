@@ -23,21 +23,48 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import com.jgoodies.plaf.LookUtils;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
-import javax.swing.*;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
-import loci.common.ReflectedUniverse;
+
 import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import loci.visbio.VisBioFrame;
 import loci.visbio.WindowManager;
 import loci.visbio.data.DataTransform;
-import loci.visbio.state.*;
-import loci.visbio.util.*;
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.Dynamic;
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.Saveable;
+import loci.visbio.util.BreakawayPanel;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.FormsUtil;
+import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.SwingUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.DisplayEvent;
+import visad.DisplayImpl;
+import visad.DisplayListener;
+import visad.GraphicsModeControl;
+import visad.VisADException;
+
+import com.jgoodies.plaf.LookUtils;
 
 /**
  * DisplayWindow is a window containing a 2D or 3D

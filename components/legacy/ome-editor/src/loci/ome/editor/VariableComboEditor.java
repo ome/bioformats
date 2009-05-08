@@ -30,13 +30,15 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Hashtable;
+import java.util.Vector;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
-import java.util.Hashtable;
-import java.util.Vector;
+
 import ome.xml.OMEXMLNode;
 
 /**

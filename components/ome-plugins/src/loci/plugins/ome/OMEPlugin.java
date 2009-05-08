@@ -24,23 +24,36 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.ome;
 
-import ij.*;
+import ij.IJ;
+import ij.Macro;
+import ij.Prefs;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import java.awt.*;
+
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Panel;
+import java.awt.TextField;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import loci.common.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Vector;
+
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+import loci.common.ReflectException;
 import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.plugins.util.LibraryChecker;
-import loci.plugins.util.WindowTools;
 import loci.ome.io.OMECredentials;
 import loci.ome.io.OMEROReader;
 import loci.ome.io.OMEUtils;
+import loci.plugins.util.LibraryChecker;
+import loci.plugins.util.WindowTools;
 
 /**
  * OMEPlugin is the ImageJ Plugin that allows image import and exports from

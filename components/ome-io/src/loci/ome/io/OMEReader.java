@@ -24,10 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ome.io;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
 import java.util.List;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.common.LogTools;
+import loci.common.RandomAccessInputStream;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
+import loci.formats.AWTImageTools;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 /**

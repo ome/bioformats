@@ -23,12 +23,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.DirectColorModel;
 import java.awt.image.MemoryImageSource;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.StringTokenizer;
-import loci.common.*;
+
+import loci.common.Location;
+import loci.common.LogTools;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 
 /**
  * Utility class for working with QuickTime for Java.

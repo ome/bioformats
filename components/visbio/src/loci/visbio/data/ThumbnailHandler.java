@@ -24,11 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
+
 import loci.formats.FormatTools;
 import loci.visbio.BioTask;
 import loci.visbio.TaskManager;
-import loci.visbio.util.*;
-import visad.*;
+import loci.visbio.util.DataUtil;
+import visad.Data;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.RealTupleType;
+import visad.VisADException;
 
 /**
  * Provides logic for handling data transform thumbnails.

@@ -24,9 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+
+import loci.common.RandomAccessInputStream;
+import loci.formats.FormatException;
+import loci.formats.MetadataTools;
+import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 

@@ -25,7 +25,10 @@ package loci.visbio.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 // Modified by Curtis Rueden to use Firefox in a new tab instead of Netscape.
 

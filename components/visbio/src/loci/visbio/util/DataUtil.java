@@ -26,7 +26,32 @@ package loci.visbio.util;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.util.Vector;
-import visad.*;
+
+import visad.CoordinateSystem;
+import visad.Data;
+import visad.DisplayImpl;
+import visad.FieldException;
+import visad.FieldImpl;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.GriddedSet;
+import visad.ImageFlatField;
+import visad.Integer1DSet;
+import visad.Integer2DSet;
+import visad.IntegerNDSet;
+import visad.Linear1DSet;
+import visad.Linear3DSet;
+import visad.LinearNDSet;
+import visad.LinearSet;
+import visad.MathType;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.ScalarMap;
+import visad.ScalarType;
+import visad.Set;
+import visad.Unit;
+import visad.VisADException;
 
 /**
  * DataUtil contains useful VisAD data functions.

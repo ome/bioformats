@@ -21,8 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import loci.common.IniParser;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;

@@ -23,9 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
+
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 

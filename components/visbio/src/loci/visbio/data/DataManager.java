@@ -25,17 +25,33 @@ package loci.visbio.data;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import javax.swing.tree.DefaultMutableTreeNode;
-import loci.formats.*;
-import loci.visbio.*;
+
+import loci.formats.FilePattern;
+import loci.formats.StatusEvent;
+import loci.formats.StatusListener;
+import loci.visbio.BioTask;
+import loci.visbio.LogicManager;
+import loci.visbio.PanelManager;
+import loci.visbio.TaskManager;
+import loci.visbio.VisBioEvent;
+import loci.visbio.VisBioFrame;
 import loci.visbio.help.HelpManager;
-import loci.visbio.state.*;
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.ResolutionOption;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.StateManager;
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
 
 /**

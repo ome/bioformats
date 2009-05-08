@@ -30,13 +30,15 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.AbstractCellEditor;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.JTextComponent;
+
 import ome.xml.DOMUtil;
 
 /**

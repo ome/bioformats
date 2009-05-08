@@ -25,14 +25,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
+
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
+
 import loci.common.DataTools;
-import loci.formats.*;
-import loci.formats.in.*;
+import loci.formats.ClassList;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.ImageTools;
+import loci.formats.ReaderWrapper;
+import loci.formats.in.ND2Reader;
+import loci.formats.in.PictReader;
+import loci.formats.in.QTReader;
+import loci.formats.in.SDTReader;
 
 /**
  * Utility methods for working with ImagePlus objects.

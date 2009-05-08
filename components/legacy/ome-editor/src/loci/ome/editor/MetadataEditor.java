@@ -26,16 +26,34 @@ package loci.ome.editor;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Toolkit;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
-import javax.swing.*;
-import javax.swing.border.*;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
-import loci.formats.*;
+
+import loci.formats.ImageReader;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
+
 import org.openmicroscopy.xml.OMENode;
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
 
 /**
  * An user-friendly application for displaying and editing OME-XML metadata.

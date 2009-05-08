@@ -24,7 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.util.Vector;
-import loci.common.*;
+
+import loci.common.LogTools;
 
 /**
  * Abstract superclass of all biological file format readers and writers.

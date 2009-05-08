@@ -25,16 +25,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins;
 
-import ij.*;
+import ij.CompositeImage;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.Macro;
 import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import loci.common.ReflectedUniverse;
+
 import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LibraryChecker;

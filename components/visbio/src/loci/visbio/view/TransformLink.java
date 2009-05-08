@@ -26,12 +26,41 @@ package loci.visbio.view;
 import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.Vector;
+
 import loci.visbio.VisBioFrame;
-import loci.visbio.data.*;
-import loci.visbio.state.*;
-import loci.visbio.util.*;
+import loci.visbio.data.DataManager;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.ThumbnailHandler;
+import loci.visbio.data.TransformEvent;
+import loci.visbio.data.TransformListener;
+import loci.visbio.state.Dynamic;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.Saveable;
+import loci.visbio.util.DataUtil;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.Data;
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.DataRenderer;
+import visad.Display;
+import visad.DisplayEvent;
+import visad.DisplayImpl;
+import visad.DisplayListener;
+import visad.DisplayRenderer;
+import visad.FlatField;
+import visad.FunctionImpl;
+import visad.FunctionType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.TextControl;
+import visad.Unit;
+import visad.VisADException;
 import visad.util.CursorUtil;
 import visad.util.Util;
 

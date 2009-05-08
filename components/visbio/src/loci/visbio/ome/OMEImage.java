@@ -29,21 +29,34 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Vector;
+
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
 import loci.common.ReflectException;
-import loci.formats.*;
+import loci.formats.AWTImageTools;
+import loci.formats.FormatException;
 import loci.ome.io.OMECredentials;
 import loci.ome.io.OMEReader;
 import loci.ome.io.OMEUtils;
-import loci.visbio.*;
-import loci.visbio.data.*;
+import loci.visbio.BioTask;
+import loci.visbio.TaskManager;
+import loci.visbio.data.DataCache;
+import loci.visbio.data.DataManager;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.ThumbnailHandler;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.DialogPane;
 import loci.visbio.util.ObjectUtil;
-import visad.*;
+import visad.Data;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Linear2DSet;
+import visad.RealTupleType;
+import visad.VisADException;
 
 /**
  * A OMEImage object encompasses a multidimensional biological image series

@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
+
 import loci.formats.meta.MetadataRetrieve;
 
 /**

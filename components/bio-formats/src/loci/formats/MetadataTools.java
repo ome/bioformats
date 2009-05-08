@@ -23,8 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import loci.common.*;
-import loci.formats.meta.*;
+import loci.common.DataTools;
+import loci.common.Location;
+import loci.common.LogTools;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
+import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * A utility class for working with metadata objects,

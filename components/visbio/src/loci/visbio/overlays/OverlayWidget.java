@@ -23,28 +23,65 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.Timer;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.Document;
+
+import loci.formats.gui.ExtensionFileFilter;
+import loci.poi.hssf.usermodel.HSSFWorkbook;
+import loci.visbio.VisBioFrame;
+import loci.visbio.data.TransformEvent;
+import loci.visbio.data.TransformListener;
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.SpreadsheetLaunchOption;
+import loci.visbio.state.SpreadsheetOptionStrategy;
+import loci.visbio.util.BioComboBox;
+import loci.visbio.util.DialogPane;
+import loci.visbio.util.FontChooserPane;
+import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
+import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.SwingUtil;
+import visad.util.Util;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.Vector;
-import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.*;
-import javax.swing.text.Document;
-import loci.formats.gui.ExtensionFileFilter;
-import loci.visbio.VisBioFrame;
-import loci.visbio.data.*;
-import loci.visbio.state.OptionManager;
-import loci.visbio.state.SpreadsheetLaunchOption;
-import loci.visbio.state.SpreadsheetOptionStrategy;
-import loci.visbio.util.*;
-import loci.poi.hssf.usermodel.HSSFWorkbook;
-import visad.util.Util;
 
 /**
  * OverlayWidget is a set of GUI controls for an overlay transform.

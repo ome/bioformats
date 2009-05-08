@@ -23,8 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
-import java.io.*;
-import loci.common.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
 
 /**

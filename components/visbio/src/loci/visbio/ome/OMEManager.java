@@ -24,11 +24,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import java.awt.Component;
+
 import javax.swing.JOptionPane;
+
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
-import loci.visbio.*;
-import loci.visbio.data.*;
+import loci.visbio.BioTask;
+import loci.visbio.LogicManager;
+import loci.visbio.TaskManager;
+import loci.visbio.VisBioEvent;
+import loci.visbio.VisBioFrame;
+import loci.visbio.data.DataManager;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.Dataset;
 import loci.visbio.help.HelpManager;
 
 /**

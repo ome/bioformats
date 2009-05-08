@@ -23,12 +23,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.codec.*;
+
+import loci.common.Location;
+import loci.common.LogTools;
+import loci.common.RandomAccessInputStream;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.MJPBCodec;
+import loci.formats.codec.MJPBCodecOptions;
+import loci.formats.codec.QTRLECodec;
+import loci.formats.codec.RPZACodec;
+import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 

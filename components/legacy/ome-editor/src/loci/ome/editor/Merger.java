@@ -23,14 +23,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.editor;
 
-import ome.xml.OMEXMLNode;
-import org.openmicroscopy.xml.*;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
 import java.io.File;
+import java.util.Vector;
+
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import java.util.Vector;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import ome.xml.OMEXMLNode;
+
+import org.openmicroscopy.xml.OMENode;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * <dl><dt><b>Source code:</b></dt>

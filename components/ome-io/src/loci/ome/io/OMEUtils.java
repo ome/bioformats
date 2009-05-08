@@ -25,7 +25,9 @@ package loci.ome.io;
 
 import java.awt.image.BufferedImage;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.List;
+import java.util.Vector;
+
 import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;

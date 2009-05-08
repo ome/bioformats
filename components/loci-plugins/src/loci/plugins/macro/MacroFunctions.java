@@ -26,14 +26,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.macro;
 
 import ij.IJ;
+import ij.macro.ExtensionDescriptor;
 import ij.macro.Functions;
 import ij.macro.MacroExtension;
-import ij.macro.ExtensionDescriptor;
 import ij.plugin.PlugIn;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Convenience class that simplifies implemention of ImageJ macro extensions.

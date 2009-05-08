@@ -23,9 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.io.*;
-import java.util.*;
-import loci.common.*;
+import java.io.PrintStream;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import loci.common.Location;
+import loci.common.LogTools;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 
 /**
  * Utility class for working with NetCDF/HDF files.  Uses reflection to

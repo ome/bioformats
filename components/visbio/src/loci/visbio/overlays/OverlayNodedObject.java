@@ -26,8 +26,18 @@ package loci.visbio.overlays;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+
 import loci.visbio.util.MathUtil;
-import visad.*;
+import visad.DataImpl;
+import visad.DelaunayCustom;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded2DSet;
+import visad.Irregular2DSet;
+import visad.RealTupleType;
+import visad.SampledSet;
+import visad.TupleType;
+import visad.VisADException;
 
 /**
  * OverlayNodedObject is an overlay object built of nodes likely

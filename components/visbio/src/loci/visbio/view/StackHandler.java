@@ -25,12 +25,18 @@ package loci.visbio.view;
 
 import java.rmi.RemoteException;
 import java.util.Vector;
+
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
-import loci.visbio.state.*;
+import loci.visbio.state.SaveException;
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.Display;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.VisADException;
 
 /**
  * Provides logic for linking data transforms

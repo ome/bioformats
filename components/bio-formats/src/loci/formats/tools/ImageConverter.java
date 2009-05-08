@@ -25,8 +25,21 @@ package loci.formats.tools;
 
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.common.Location;
+import loci.common.LogTools;
+import loci.formats.ChannelFiller;
+import loci.formats.ChannelMerger;
+import loci.formats.ChannelSeparator;
+import loci.formats.FileStitcher;
+import loci.formats.FormatException;
+import loci.formats.FormatHandler;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.IFormatWriter;
+import loci.formats.ImageReader;
+import loci.formats.ImageWriter;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;

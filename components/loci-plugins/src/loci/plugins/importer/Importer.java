@@ -25,22 +25,59 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
-import ij.*;
+import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.WindowManager;
 import ij.io.FileInfo;
 import ij.plugin.filter.PlugInFilterRunner;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
+
 import java.awt.Rectangle;
 import java.awt.image.IndexColorModel;
-import java.io.*;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import loci.common.Location;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
+import loci.formats.ChannelMerger;
+import loci.formats.ChannelSeparator;
+import loci.formats.DimensionSwapper;
+import loci.formats.FilePattern;
+import loci.formats.FileStitcher;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
+import loci.formats.StatusEvent;
+import loci.formats.StatusListener;
 import loci.formats.gui.XMLWindow;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.plugins.Colorizer;
 import loci.plugins.Updater;
-import loci.plugins.util.*;
+import loci.plugins.util.DataBrowser;
+import loci.plugins.util.ImagePlusReader;
+import loci.plugins.util.ImagePlusTools;
+import loci.plugins.util.LociPrefs;
+import loci.plugins.util.ROIHandler;
+import loci.plugins.util.SearchableWindow;
+import loci.plugins.util.VirtualImagePlus;
+import loci.plugins.util.WindowTools;
 
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.

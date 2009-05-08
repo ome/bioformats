@@ -23,13 +23,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import loci.common.Location;
+import loci.formats.ChannelFiller;
+import loci.formats.ChannelSeparator;
+import loci.formats.FileStitcher;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import ome.xml.DOMUtil;
 import ome.xml.r2003fc.ome.OMENode;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

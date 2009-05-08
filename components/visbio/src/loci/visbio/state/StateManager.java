@@ -24,12 +24,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 //import java.awt.event.KeyEvent;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Stack;
+import java.util.Vector;
+
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import loci.formats.gui.ExtensionFileFilter;
-import loci.visbio.*;
+import loci.visbio.ExitManager;
+import loci.visbio.LogicManager;
+import loci.visbio.VisBioEvent;
+import loci.visbio.VisBioFrame;
+import loci.visbio.WindowManager;
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

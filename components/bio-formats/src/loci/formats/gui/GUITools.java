@@ -25,11 +25,18 @@ package loci.formats.gui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
+
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.formats.FileStitcher;
+import loci.formats.IFormatHandler;
+import loci.formats.IFormatReader;
+import loci.formats.IFormatWriter;
+import loci.formats.ImageReader;
+import loci.formats.ImageWriter;
+import loci.formats.ReaderWrapper;
 
 /**
  * A utility class for working with graphical user interfaces.

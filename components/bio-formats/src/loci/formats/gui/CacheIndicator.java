@@ -23,9 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import loci.formats.cache.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+
+import loci.formats.cache.Cache;
+import loci.formats.cache.CacheEvent;
+import loci.formats.cache.CacheException;
+import loci.formats.cache.CacheListener;
 
 /**
  * Indicator GUI component showing which planes are currently in the cache

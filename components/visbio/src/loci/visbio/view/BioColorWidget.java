@@ -25,7 +25,12 @@ package loci.visbio.view;
 
 import java.awt.event.ItemListener;
 import java.util.Vector;
-import javax.swing.*;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import loci.visbio.util.BioComboBox;
 import loci.visbio.util.ColorUtil;
 import visad.RealType;

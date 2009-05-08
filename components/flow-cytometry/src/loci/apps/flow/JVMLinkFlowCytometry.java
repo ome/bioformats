@@ -32,16 +32,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package loci.apps.flow;
 
-import ij.*;
+import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.ImageStack;
 import ij.gui.ImageWindow;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.Analyzer;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.BorderLayout;
+import java.awt.Scrollbar;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -49,11 +58,26 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import javax.swing.*;
-import visad.*;
-import visad.java2d.DisplayImplJ2D;
-import loci.formats.*;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import loci.formats.FormatException;
+import loci.formats.ImageWriter;
+import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import visad.DataReferenceImpl;
+import visad.Display;
+import visad.DisplayImpl;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.List1DDoubleSet;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.VisADException;
+import visad.java2d.DisplayImplJ2D;
 
 class Slice {
   int num;

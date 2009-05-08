@@ -25,13 +25,26 @@ package loci.visbio.help;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Enumeration;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.html.HTMLFrameHyperlinkEvent;
+
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.html.HTMLDocument;
-import javax.swing.tree.*;
+import javax.swing.text.html.HTMLFrameHyperlinkEvent;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
 import loci.visbio.util.BrowserLauncher;
 import loci.visbio.util.SwingUtil;
 

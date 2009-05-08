@@ -24,14 +24,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
+
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.XMLUtil;
 import loci.visbio.view.TransformLink;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.Data;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.MathType;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.VisADException;
 
 /**
  * CollapseTransform converts a dimensional axis

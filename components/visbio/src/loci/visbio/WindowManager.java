@@ -23,14 +23,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import loci.visbio.state.*;
-import loci.visbio.util.*;
+
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.SaveException;
+import loci.visbio.util.Docker;
+import loci.visbio.util.SwingUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
 
 /**

@@ -29,12 +29,18 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.process.*;
-import loci.formats.FormatTools;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import loci.common.ReflectedUniverse;
+
 import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
+import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**

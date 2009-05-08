@@ -23,10 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Vector;
+
+import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -44,7 +50,7 @@ public class APLReader extends FormatReader {
   private String[] tiffFiles;
   private String[] xmlFiles;
   private MinimalTiffReader[] tiffReaders;
-  private Vector used;
+  private Vector<String> used;
 
   // -- Constructor --
 
@@ -63,7 +69,7 @@ public class APLReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     if (used == null) return new String[0];
-    return (String[]) used.toArray(new String[0]);
+    return used.toArray(new String[0]);
   }
 
   /**
@@ -114,19 +120,19 @@ public class APLReader extends FormatReader {
 
     String mtb = new Location(currentId).getAbsolutePath();
 
-    Vector rows = MDBParser.parseDatabase(mtb)[0];
-    String[] columnNames = (String[]) rows.get(0);
+    Vector<String[]> rows = MDBParser.parseDatabase(mtb)[0];
+    String[] columnNames = rows.get(0);
 
     // add full table to metadata hashtable
 
     for (int i=1; i<rows.size(); i++) {
-      String[] row = (String[]) rows.get(i);
+      String[] row = rows.get(i);
       for (int q=0; q<row.length; q++) {
         addMeta(columnNames[q + 1] + " " + i, row[q]);
       }
     }
 
-    used = new Vector();
+    used = new Vector<String>();
     used.add(id);
     if (!id.equals(mtb)) used.add(mtb);
 
@@ -156,8 +162,8 @@ public class APLReader extends FormatReader {
     String parentDirectory = mtb.substring(0, mtb.lastIndexOf(File.separator));
 
     for (int i=0; i<seriesCount; i++) {
-      String[] row2 = (String[]) rows.get(i * 3 + 2);
-      String[] row3 = (String[]) rows.get(i * 3 + 3);
+      String[] row2 = rows.get(i * 3 + 2);
+      String[] row3 = rows.get(i * 3 + 3);
 
       core[i].sizeZ = Integer.parseInt(row3[frames]);
       core[i].sizeT = 1;
@@ -212,7 +218,7 @@ public class APLReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<seriesCount; i++) {
-      String[] row3 = (String[]) rows.get(i * 3 + 3);
+      String[] row3 = rows.get(i * 3 + 3);
 
       // populate Image data
       MetadataTools.setDefaultCreationDate(store, mtb, i);

@@ -25,7 +25,8 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import loci.common.*;
+
+import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
 
 /**

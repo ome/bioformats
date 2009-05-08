@@ -25,6 +25,7 @@ package loci.visbio.overlays;
 
 import java.awt.event.InputEvent;
 import java.util.Vector;
+
 import loci.visbio.data.TransformEvent;
 import loci.visbio.util.MathUtil;
 import visad.DisplayEvent;

@@ -23,25 +23,39 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Vector;
+
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import loci.visbio.VisBioFrame;
-import loci.visbio.data.*;
-import loci.visbio.state.*;
+import loci.visbio.data.DataCache;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.Saveable;
+import loci.visbio.state.StateManager;
 import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.Display;
+import visad.DisplayImpl;
+import visad.DisplayRealType;
+import visad.ScalarMap;
+import visad.TextControl;
+import visad.VisADException;
 import visad.java2d.DisplayImplJ2D;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Provides logic for linking data transforms to a display.

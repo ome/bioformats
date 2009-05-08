@@ -31,9 +31,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package loci.tests.testng;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import loci.common.LogTools;
 import loci.formats.FormatTools;
 

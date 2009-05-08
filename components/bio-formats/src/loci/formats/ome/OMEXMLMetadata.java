@@ -24,12 +24,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.ome;
 
 import java.io.ByteArrayOutputStream;
+
 import javax.xml.transform.TransformerException;
+
 import loci.common.LogTools;
 import loci.formats.meta.IMetadata;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-import org.w3c.dom.*;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.

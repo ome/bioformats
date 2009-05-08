@@ -23,29 +23,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import com.jgoodies.plaf.LookUtils;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Vector;
-import javax.swing.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import loci.common.ReflectedUniverse;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 import loci.visbio.ext.ExtManager;
 import loci.visbio.help.HelpManager;
-import loci.visbio.overlays.OverlayManager;
 import loci.visbio.ome.OMEImage;
 import loci.visbio.ome.OMEManager;
+import loci.visbio.overlays.OverlayManager;
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
-import loci.visbio.util.*;
+import loci.visbio.util.InstanceServer;
+import loci.visbio.util.LAFUtil;
+import loci.visbio.util.SpawnEvent;
+import loci.visbio.util.SpawnListener;
+import loci.visbio.util.SplashScreen;
+import loci.visbio.util.SwingUtil;
 import loci.visbio.view.DisplayManager;
 import visad.util.GUIFrame;
 import visad.util.Util;
+
+import com.jgoodies.plaf.LookUtils;
 
 /**
  * VisBioFrame is the main GUI frame for VisBio.

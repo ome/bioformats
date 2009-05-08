@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import ij.gui.GenericDialog;
 import ij.Prefs;
+import ij.gui.GenericDialog;
 import loci.formats.FormatException;
 import loci.formats.codec.LuraWaveCodec;
 

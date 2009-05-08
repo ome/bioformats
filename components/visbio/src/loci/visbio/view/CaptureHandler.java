@@ -27,17 +27,27 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Vector;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-import loci.formats.*;
+
+import loci.formats.FormatException;
+import loci.formats.ImageWriter;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
-import loci.visbio.state.*;
-import loci.visbio.util.*;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.Saveable;
+import loci.visbio.state.StateManager;
+import loci.visbio.util.ImageJUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.DisplayImpl;
+import visad.ProjectionControl;
+import visad.VisADException;
 import visad.util.Util;
 
 /**

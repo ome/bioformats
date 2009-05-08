@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.common;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
 
 /**
  * A wrapper for a byte array that implements the IRandomAccess interface.

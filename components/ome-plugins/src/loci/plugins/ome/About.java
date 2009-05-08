@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.ome;
 
+import ij.plugin.PlugIn;
+
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import ij.plugin.PlugIn;
+
 import loci.ome.io.OMEReader;
 
 /**

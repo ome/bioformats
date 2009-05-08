@@ -26,8 +26,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.util;
 
 import java.awt.Dimension;
+
 import javax.swing.JFrame;
 import javax.swing.border.EmptyBorder;
+
 import loci.formats.cache.Cache;
 import loci.formats.gui.CacheComponent;
 

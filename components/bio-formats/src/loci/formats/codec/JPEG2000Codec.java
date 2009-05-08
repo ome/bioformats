@@ -23,16 +23,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferUShort;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
+
 import javax.imageio.ImageIO;
-import javax.imageio.spi.*;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.common.DataTools;
+import loci.common.LogTools;
+import loci.common.RandomAccessInputStream;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
+import loci.formats.AWTImageTools;
+import loci.formats.FormatException;
 
 /**
  * This class implements JPEG 2000 compression and decompression.

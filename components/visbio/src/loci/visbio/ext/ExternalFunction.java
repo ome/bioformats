@@ -24,13 +24,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ext;
 
 import javax.swing.JComponent;
-import loci.visbio.data.*;
+
+import loci.visbio.data.DataCache;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.ThumbnailCache;
+import loci.visbio.data.ThumbnailHandler;
+import loci.visbio.data.TransformEvent;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.XMLUtil;
 import loci.visbio.view.TransformLink;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.Data;
+import visad.FlatField;
 
 /**
  * ExternalFunction is an abstract transform that calls some form of external

@@ -24,20 +24,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.awt.Color;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Date;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+
 import loci.formats.FormatTools;
-import loci.visbio.state.BooleanOption;
-import loci.visbio.state.OptionManager;
-import loci.visbio.util.*;
+import loci.poi.hssf.usermodel.HSSFCell;
+import loci.poi.hssf.usermodel.HSSFCellStyle;
+import loci.poi.hssf.usermodel.HSSFDataFormat;
+import loci.poi.hssf.usermodel.HSSFRichTextString;
+import loci.poi.hssf.usermodel.HSSFRow;
+import loci.poi.hssf.usermodel.HSSFSheet;
+import loci.poi.hssf.usermodel.HSSFWorkbook;
+import loci.poi.hssf.util.Region;
 import loci.visbio.VisBio;
 import loci.visbio.VisBioFrame;
-import loci.poi.hssf.usermodel.*;
-import loci.poi.hssf.util.Region;
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.OptionManager;
+import loci.visbio.util.ColorUtil;
+import loci.visbio.util.ObjectUtil;
 
 /**
  * Utility methods for saving and loading overlays to and from disk.

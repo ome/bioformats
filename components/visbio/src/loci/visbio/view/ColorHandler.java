@@ -25,12 +25,28 @@ package loci.visbio.view;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+
 import loci.visbio.VisBioFrame;
-import loci.visbio.data.*;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.ThumbnailHandler;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.*;
+import loci.visbio.util.ColorUtil;
+import loci.visbio.util.DataUtil;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.BaseColorControl;
+import visad.Display;
+import visad.DisplayImpl;
+import visad.DisplayRealType;
+import visad.FlatField;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.VisADException;
 
 /**
  * Provides logic for controlling a TransformLink's color settings.

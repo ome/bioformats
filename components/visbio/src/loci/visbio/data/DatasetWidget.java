@@ -24,13 +24,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.awt.BorderLayout;
-import java.util.*;
-import javax.swing.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.table.DefaultTableModel;
+
 import loci.formats.gui.XMLCellRenderer;
 import loci.visbio.util.SwingUtil;
 import ome.xml.OMEXMLNode;
-import org.w3c.dom.*;
+
+import org.w3c.dom.Document;
 
 /**
  * DatasetWidget is a set of GUI controls for a Dataset transform.

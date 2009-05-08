@@ -23,14 +23,40 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import java.util.Vector;
 import java.rmi.RemoteException;
-import loci.visbio.data.*;
+import java.util.Vector;
+
+import loci.visbio.data.DataCache;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.ThumbnailHandler;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.*;
+import loci.visbio.util.ColorUtil;
+import loci.visbio.util.DataUtil;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.ConstantMap;
+import visad.Data;
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.DataRenderer;
+import visad.Display;
+import visad.DisplayImpl;
+import visad.DisplayRenderer;
+import visad.FlatField;
+import visad.FunctionImpl;
+import visad.FunctionType;
+import visad.Gridded3DSet;
+import visad.GriddedSet;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.Unit;
+import visad.VisADException;
 import visad.util.CursorUtil;
 
 /**

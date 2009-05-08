@@ -32,15 +32,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package loci.tests.testng;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.in.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import loci.common.Location;
+import loci.common.LogTools;
+import loci.formats.AWTImageTools;
+import loci.formats.FileStitcher;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
+import loci.formats.ReaderWrapper;
+import loci.formats.in.BioRadReader;
+import loci.formats.in.NRRDReader;
+import loci.formats.in.TiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+
 import org.testng.SkipException;
 
 /**

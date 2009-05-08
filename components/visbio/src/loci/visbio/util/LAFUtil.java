@@ -23,11 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
-import com.jgoodies.plaf.*;
 import java.awt.Dimension;
 import java.util.Vector;
+
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+
+import com.jgoodies.plaf.FontSizeHints;
+import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.plaf.Options;
 
 /**
  * LAFUtil contains useful functions relating to Look and Feel.

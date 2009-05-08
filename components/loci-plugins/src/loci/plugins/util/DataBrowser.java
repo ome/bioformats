@@ -25,23 +25,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import ij.*;
+import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.ImageStack;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import ij.io.FileInfo;
-import java.awt.*;
-import java.awt.event.*;
+
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.Rectangle;
+import java.awt.Scrollbar;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
 import java.io.IOException;
-import javax.swing.*;
-import javax.xml.parsers.*;
+
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.xml.parsers.ParserConfigurationException;
+
 import loci.formats.FormatTools;
 import loci.formats.cache.Cache;
 import loci.formats.gui.CacheIndicator;
 import loci.formats.gui.XMLWindow;
-import loci.plugins.util.BFVirtualStack;
+
 import org.xml.sax.SAXException;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Extension of StackWindow with additional UI trimmings for animation,

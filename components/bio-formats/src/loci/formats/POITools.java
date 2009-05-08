@@ -23,9 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.io.*;
-import java.util.*;
-import loci.common.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import loci.common.RandomAccessInputStream;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 
 /**
  * Utility methods for working with Microsoft OLE document format files.

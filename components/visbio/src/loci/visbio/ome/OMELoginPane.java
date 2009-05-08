@@ -23,11 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.ome;
 
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import loci.visbio.util.DialogPane;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import javax.swing.*;
-import loci.visbio.util.DialogPane;
 
 /**
  * OMELoginPane provides a dialog for obtaining

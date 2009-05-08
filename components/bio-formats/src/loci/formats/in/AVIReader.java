@@ -23,11 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Vector;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.codec.*;
+
+import loci.common.RandomAccessInputStream;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.codec.BitBuffer;
+import loci.formats.codec.CodecOptions;
+import loci.formats.codec.MSRLECodec;
+import loci.formats.codec.MSVideoCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -53,10 +60,10 @@ public class AVIReader extends FormatReader {
   // -- Fields --
 
   /** Offset to each plane. */
-  private Vector offsets;
+  private Vector<Long> offsets;
 
   /** Number of bytes in each plane. */
-  private Vector lengths;
+  private Vector<Long> lengths;
 
   private String type = "error";
   private String fcc = "error";
@@ -114,7 +121,7 @@ public class AVIReader extends FormatReader {
       effectiveWidth = getSizeX();
     }
 
-    long fileOff = ((Long) offsets.get(no)).longValue();
+    long fileOff = offsets.get(no).longValue();
     in.seek(fileOff);
 
     if (bmpCompression != 0) {
@@ -226,8 +233,8 @@ public class AVIReader extends FormatReader {
 
     status("Verifying AVI format");
 
-    offsets = new Vector();
-    lengths = new Vector();
+    offsets = new Vector<Long>();
+    lengths = new Vector<Long>();
     lastImageNo = -1;
 
     String listString;
@@ -556,7 +563,7 @@ public class AVIReader extends FormatReader {
     options.bitsPerSample = bmpBitsPerPixel;
 
     if (bmpCompression == MSRLE) {
-      byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()];
+      byte[] b = new byte[(int) lengths.get(no).longValue()];
       in.read(b);
       MSRLECodec codec = new MSRLECodec();
       buf = codec.decompress(b, options);

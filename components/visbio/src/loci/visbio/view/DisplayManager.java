@@ -23,15 +23,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import com.jgoodies.plaf.LookUtils;
 import java.awt.Component;
 import java.util.Vector;
+
 import javax.swing.JOptionPane;
-import loci.visbio.*;
+
+import loci.visbio.LogicManager;
+import loci.visbio.PanelManager;
+import loci.visbio.VisBioEvent;
+import loci.visbio.VisBioFrame;
+import loci.visbio.WindowManager;
 import loci.visbio.help.HelpManager;
-import loci.visbio.state.*;
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.ResolutionToggleOption;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.StateManager;
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
+
+import com.jgoodies.plaf.LookUtils;
 
 /**
  * DisplayManager is the manager encapsulating VisBio's 2D and 3D displays.

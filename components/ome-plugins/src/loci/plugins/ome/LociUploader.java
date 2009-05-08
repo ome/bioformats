@@ -24,20 +24,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.ome;
 
-import ij.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.Prefs;
+import ij.WindowManager;
 import ij.gui.GenericDialog;
+import ij.io.FileInfo;
 import ij.plugin.PlugIn;
 import ij.process.ColorProcessor;
-import ij.io.FileInfo;
+
 import java.awt.TextField;
 import java.util.HashSet;
-import loci.plugins.util.LibraryChecker;
+
 import loci.common.DataTools;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.ome.io.OMEWriter;
+import loci.plugins.util.LibraryChecker;
 
 /**
  * ImageJ plugin for uploading images to an OME server.

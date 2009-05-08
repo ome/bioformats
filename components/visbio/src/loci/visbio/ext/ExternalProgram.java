@@ -23,11 +23,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.ext;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Vector;
+
 import javax.swing.JOptionPane;
-import loci.visbio.data.*;
-import visad.*;
+
+import loci.visbio.data.DataManager;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import visad.FlatField;
+import visad.Linear2DSet;
+import visad.SampledSet;
+import visad.Set;
+import visad.VisADException;
 
 /**
  * ExternalProgram is a transform that uses system calls to an external program

@@ -25,6 +25,7 @@ package loci.formats.codec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 

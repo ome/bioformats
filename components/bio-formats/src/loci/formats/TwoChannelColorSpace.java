@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.color.*;
+import java.awt.color.ColorSpace;
 
 /**
  * ColorSpace for 2-channel images.

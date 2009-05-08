@@ -23,16 +23,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
-import ij.*;
-import ij.process.*;
+import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
+
 import java.awt.Component;
 import java.awt.Image;
 import java.io.File;
+
 import javax.swing.JOptionPane;
+
 import loci.visbio.VisBioFrame;
-import loci.visbio.view.DisplayManager;
 import loci.visbio.state.OptionManager;
-import visad.*;
+import loci.visbio.view.DisplayManager;
+import visad.FlatField;
+import visad.GriddedSet;
+import visad.VisADException;
 
 /**
  * ImageJUtil contains useful ImageJ functions.

@@ -25,13 +25,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import ij.*;
+import ij.VirtualStack;
 import ij.process.ImageProcessor;
+
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import java.util.Vector;
-import loci.formats.*;
-import loci.formats.cache.*;
+
+import loci.formats.ChannelMerger;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.cache.Cache;
+import loci.formats.cache.CacheException;
+import loci.formats.cache.CacheStrategy;
+import loci.formats.cache.CrosshairStrategy;
 
 /**
  * Subclass of VirtualStack that uses Bio-Formats to read planes on demand.

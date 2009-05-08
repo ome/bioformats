@@ -23,7 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.cache;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Vector;
+
 import loci.formats.FormatTools;
 
 /**

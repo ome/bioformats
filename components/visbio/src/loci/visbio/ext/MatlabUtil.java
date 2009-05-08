@@ -24,9 +24,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ext;
 
 import java.rmi.RemoteException;
+
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import visad.*;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.GriddedSet;
+import visad.Linear2DSet;
+import visad.MathType;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.Set;
+import visad.TupleType;
+import visad.VisADException;
 
 /**
  * MatlabUtil contains useful MATLAB functions.

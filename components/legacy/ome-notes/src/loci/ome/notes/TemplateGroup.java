@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ome.notes;
 
 import java.awt.Point;
-import java.util.*;
+import java.util.Hashtable;
 
 /**
  * Stores information about a template group.

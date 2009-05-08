@@ -23,8 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.util.*;
-import loci.common.*;
+import java.util.List;
+import java.util.Vector;
+
+import loci.common.LogTools;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
 import loci.formats.FormatHandler;
 
@@ -80,7 +84,9 @@ public final class MDBParser {
   // -- Utility methods --
 
   /** Parses table structure for a specified MDB file. */
-  public static Vector[] parseDatabase(String filename) throws FormatException {
+  public static Vector<String[]>[] parseDatabase(String filename)
+    throws FormatException
+  {
     if (noMDB) throw new FormatException(NO_MDB_MSG);
 
     try {
@@ -111,7 +117,7 @@ public final class MDBParser {
           realCount--;
         }
       }
-      Vector[] rtn = new Vector[realCount];
+      Vector<String[]>[] rtn = new Vector[realCount];
 
       int previousColumnCount = 0;
 
@@ -130,7 +136,7 @@ public final class MDBParser {
         String objName = (String) r.getVar("objName");
 
         if (isTable && !objName.startsWith("MSys")) {
-          rtn[index++] = new Vector();
+          rtn[index++] = new Vector<String[]>();
           r.exec("table = Table.mdb_read_table(entry)");
           try {
             r.exec("Table.mdb_read_columns(table)");

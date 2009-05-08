@@ -25,9 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import ij.*;
+import ij.ImagePlus;
+import ij.ImageStack;
+
 import java.io.IOException;
 import java.util.Vector;
+
 import loci.formats.IFormatReader;
 
 /**

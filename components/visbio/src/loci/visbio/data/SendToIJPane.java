@@ -23,16 +23,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.JOptionPane;
+
+import loci.visbio.BioTask;
+import loci.visbio.TaskManager;
+import loci.visbio.VisBioFrame;
+import loci.visbio.util.BioComboBox;
+import loci.visbio.util.DialogPane;
+import loci.visbio.util.ImageJUtil;
+import loci.visbio.view.BioSlideWidget;
+import visad.FlatField;
+import visad.VisADException;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import loci.visbio.*;
-import loci.visbio.view.BioSlideWidget;
-import loci.visbio.util.*;
-import java.awt.event.ActionEvent;
-import javax.swing.JOptionPane;
-import visad.FlatField;
-import visad.VisADException;
 
 /**
  * SendToIJPane provides options for exporting part of a

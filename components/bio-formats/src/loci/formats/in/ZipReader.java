@@ -23,11 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
+import java.io.IOException;
+
+import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.common.ZipHandle;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.ImageReader;
 
 /**
  * Reader for Zip files.

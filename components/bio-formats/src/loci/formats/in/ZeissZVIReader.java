@@ -23,14 +23,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.codec.*;
-import loci.formats.meta.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import loci.common.DataTools;
+import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.POITools;
+import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.ZlibCodec;
+import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.

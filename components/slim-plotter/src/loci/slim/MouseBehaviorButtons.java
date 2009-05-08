@@ -27,8 +27,13 @@ package loci.slim;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
+
 import visad.DisplayImpl;
 import visad.MouseHelper;
 import visad.VisADException;

@@ -25,8 +25,13 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.*;
-import loci.common.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import loci.common.LogTools;
+import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
 
 /**

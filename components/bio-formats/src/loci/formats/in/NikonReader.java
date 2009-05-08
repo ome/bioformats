@@ -23,11 +23,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.codec.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import loci.common.RandomAccessInputStream;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.ImageTools;
+import loci.formats.TiffRational;
+import loci.formats.TiffTools;
+import loci.formats.codec.BitBuffer;
+import loci.formats.codec.NikonCodec;
+import loci.formats.codec.NikonCodecOptions;
 
 /**
  * NikonReader is the file format reader for Nikon NEF (TIFF) files.

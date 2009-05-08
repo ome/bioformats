@@ -23,9 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.io.IOException;
-import loci.common.*;
-import loci.formats.*;
+import loci.formats.FormatTools;
 
 /**
  * JPEGWriter is the file format writer for JPEG files.

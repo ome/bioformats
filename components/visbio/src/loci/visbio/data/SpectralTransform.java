@@ -24,15 +24,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
+
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import org.w3c.dom.Element;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.XMLUtil;
 import loci.visbio.view.TransformLink;
-import visad.*;
+
+import org.w3c.dom.Element;
+
+import visad.Data;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.VisADException;
 
 /**
  * SpectralTransform is a mapping of spectral bands onto an RGB or grayscale

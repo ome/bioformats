@@ -23,22 +23,51 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Vector;
+
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+
 import loci.formats.FormatTools;
-import loci.visbio.data.*;
+import loci.poi.hssf.usermodel.HSSFWorkbook;
+import loci.visbio.data.DataCache;
+import loci.visbio.data.DataManager;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.TransformEvent;
+import loci.visbio.data.TransformListener;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.TransformLink;
-import loci.poi.hssf.usermodel.HSSFWorkbook;
-import visad.*;
+import visad.Data;
+import visad.DataImpl;
+import visad.Display;
+import visad.DisplayEvent;
+import visad.DisplayImpl;
+import visad.FieldImpl;
+import visad.FunctionType;
+import visad.GriddedSet;
+import visad.Integer1DSet;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.ScalarType;
+import visad.Text;
+import visad.TextType;
+import visad.Tuple;
+import visad.TupleType;
+import visad.VisADException;
 import visad.util.CursorUtil;
 
 /**

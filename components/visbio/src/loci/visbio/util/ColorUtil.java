@@ -24,10 +24,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.util;
 
 import java.awt.Color;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import visad.*;
+
+import visad.BaseColorControl;
+import visad.ColorControl;
+import visad.Display;
+import visad.DisplayImpl;
+import visad.GraphicsModeControl;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.VisADException;
 
 /**
  * ColorUtil contains useful color table functions.

@@ -26,14 +26,24 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
-import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.Vector;
+import java.util.zip.CRC32;
+
 import javax.imageio.ImageIO;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
+import loci.formats.AWTImageTools;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.codec.ByteVector;
-import loci.formats.meta.*;
+import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.MetadataStore;
 
 /**
  * APNGReader is the file format reader for
@@ -49,10 +59,10 @@ public class APNGReader extends FormatReader {
 
   // -- Constants --
 
-  /** Valid values for dispose operation field. */
-  private static final int DISPOSE_OP_NONE = 0;
-  private static final int DISPOSE_OP_BACKGROUND = 1;
-  private static final int DISPOSE_OP_PREVIOUS = 2;
+  // Valid values for dispose operation field:
+  //private static final int DISPOSE_OP_NONE = 0;
+  //private static final int DISPOSE_OP_BACKGROUND = 1;
+  //private static final int DISPOSE_OP_PREVIOUS = 2;
 
   private static final byte[] PNG_SIGNATURE = new byte[] {
     (byte) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a
@@ -60,8 +70,8 @@ public class APNGReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector blocks;
-  private Vector frameCoordinates;
+  private Vector<PNGBlock> blocks;
+  private Vector<int[]> frameCoordinates;
 
   private byte[][] lut;
 
@@ -125,10 +135,10 @@ public class APNGReader extends FormatReader {
     boolean fdatValid = false;
     int fctlCount = 0;
 
-    int[] coords = (int[]) frameCoordinates.get(no);
+    int[] coords = frameCoordinates.get(no);
 
     for (int i=0; i<blocks.size(); i++) {
-      PNGBlock block = (PNGBlock) blocks.get(i);
+      PNGBlock block = blocks.get(i);
       if (!block.type.equals("IDAT") && !block.type.equals("fdAT") &&
         !block.type.equals("acTL") && !block.type.equals("fcTL"))
       {
@@ -216,10 +226,8 @@ public class APNGReader extends FormatReader {
     // 3) 'length' bytes of data
     // 4) 32 bit CRC
 
-    blocks = new Vector();
-    frameCoordinates = new Vector();
-
-    int currentImage = 0;
+    blocks = new Vector<PNGBlock>();
+    frameCoordinates = new Vector<int[]>();
 
     while (in.getFilePointer() < in.length()) {
       int length = in.readInt();

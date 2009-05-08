@@ -26,7 +26,15 @@ package loci.visbio.overlays;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import visad.*;
+
+import visad.DataImpl;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded2DSet;
+import visad.GriddedSet;
+import visad.RealTupleType;
+import visad.TupleType;
+import visad.VisADException;
 
 /**
  * OverlayMarker is a marker crosshairs overlay.

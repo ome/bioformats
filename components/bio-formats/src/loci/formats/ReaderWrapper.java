@@ -24,10 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
-import loci.common.LogTools;
+
 import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
 

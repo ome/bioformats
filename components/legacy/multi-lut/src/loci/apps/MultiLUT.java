@@ -9,17 +9,55 @@ Permission is granted to use this code for anything.
 
 package loci.apps;
 
-import visad.*;
-import visad.data.*;
-import visad.util.*;
-import visad.bom.*;
-import visad.java3d.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.rmi.RemoteException;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import visad.CellImpl;
+import visad.ConstantMap;
+import visad.Control;
+import visad.Data;
+import visad.DataReferenceImpl;
+import visad.Display;
+import visad.FieldImpl;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded2DSet;
+import visad.Integer1DSet;
+import visad.Linear1DSet;
+import visad.Linear2DSet;
+import visad.MathType;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.Scalar;
+import visad.ScalarMap;
+import visad.Set;
+import visad.Text;
+import visad.TextControl;
+import visad.TextType;
+import visad.Tuple;
+import visad.TupleType;
+import visad.Unit;
+import visad.VisADException;
+import visad.bom.RubberBandLineRendererJ3D;
+import visad.data.DefaultFamily;
+import visad.java3d.DefaultRendererJ3D;
+import visad.java3d.DisplayImplJ3D;
+import visad.java3d.TwoDDisplayRendererJ3D;
+import visad.util.VisADSlider;
 
 /**
  * An application for weighted spectral mapping.

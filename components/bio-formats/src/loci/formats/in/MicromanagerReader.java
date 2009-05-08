@@ -23,11 +23,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import loci.common.DataTools;
+import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 

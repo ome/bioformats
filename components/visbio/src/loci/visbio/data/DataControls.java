@@ -23,27 +23,49 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
-import com.jgoodies.forms.builder.ButtonStackBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import loci.visbio.*;
+import loci.visbio.BioDropHandler;
+import loci.visbio.ControlPanel;
+import loci.visbio.LogicManager;
+import loci.visbio.VisBioFrame;
+import loci.visbio.WindowManager;
 import loci.visbio.ome.OMEManager;
 import loci.visbio.overlays.OverlayTransform;
-import loci.visbio.util.*;
-import loci.visbio.view.DisplayWindow;
+import loci.visbio.util.DialogPane;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.LAFUtil;
+import loci.visbio.util.SwingUtil;
 import loci.visbio.view.DisplayManager;
+import loci.visbio.view.DisplayWindow;
+
+import com.jgoodies.forms.builder.ButtonStackBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * DataControls is the control panel for managing data.

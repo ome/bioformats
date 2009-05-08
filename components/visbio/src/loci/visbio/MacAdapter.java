@@ -23,9 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import com.apple.eawt.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.OptionManager;
+
+import com.apple.eawt.Application;
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
 
 /**
  * An adapter for handling the Mac OS X application menu items.

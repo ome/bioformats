@@ -21,12 +21,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
-import java.util.*;
-import org.apache.velocity.app.VelocityEngine;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 
 /**
  * Useful methods for working with Apache Velocity.

@@ -23,14 +23,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.gui;
 
-import com.jgoodies.forms.layout.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import loci.common.*;
-import loci.formats.cache.*;
-import java.lang.reflect.InvocationTargetException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import loci.common.LogTools;
+import loci.formats.cache.BufferedImageSource;
+import loci.formats.cache.ByteArraySource;
+import loci.formats.cache.Cache;
+import loci.formats.cache.CacheEvent;
+import loci.formats.cache.CacheException;
+import loci.formats.cache.CacheListener;
+import loci.formats.cache.CrosshairStrategy;
+import loci.formats.cache.ICacheSource;
+import loci.formats.cache.ICacheStrategy;
+import loci.formats.cache.RectangleStrategy;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * GUI component for managing a cache.

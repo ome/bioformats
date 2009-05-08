@@ -23,11 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
-import com.jgoodies.forms.factories.ButtonBarFactory;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.factories.ButtonBarFactory;
 
 /**
  * WizardPane provides an extensible interface for creating

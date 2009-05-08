@@ -24,13 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.Iterator;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+
 import javax.imageio.ImageIO;
-import javax.imageio.spi.*;
-import javax.imageio.stream.ImageInputStream;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.common.RandomAccessInputStream;
+import loci.formats.AWTImageTools;
+import loci.formats.FormatException;
 
 /**
  * This class implements JPEG compression and decompression.

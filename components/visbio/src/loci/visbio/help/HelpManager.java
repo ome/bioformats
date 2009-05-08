@@ -23,17 +23,34 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.help;
 
+import java.awt.event.KeyEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.KeyStroke;
+
+import loci.visbio.LogicManager;
+import loci.visbio.VisBio;
+import loci.visbio.VisBioEvent;
+import loci.visbio.VisBioFrame;
+import loci.visbio.WindowManager;
+import loci.visbio.data.DataControls;
+import loci.visbio.data.DataManager;
+import loci.visbio.data.DataTransform;
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.StateManager;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.LAFUtil;
+import visad.util.GUIFrame;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.LookUtils;
-import java.awt.event.KeyEvent;
-import javax.swing.*;
-import loci.visbio.*;
-import loci.visbio.data.*;
-import loci.visbio.state.*;
-import loci.visbio.util.*;
-import visad.util.GUIFrame;
 
 /**
  * HelpManager is the manager encapsulating VisBio's help window logic.

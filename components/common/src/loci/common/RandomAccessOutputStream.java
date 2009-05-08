@@ -23,8 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.common;
 
-import java.io.*;
-import java.util.*;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * RandomAccessOutputStream provides methods for writing to files and

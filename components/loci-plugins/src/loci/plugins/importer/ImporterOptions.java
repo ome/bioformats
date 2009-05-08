@@ -25,21 +25,54 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
+import ij.IJ;
+import ij.Macro;
+import ij.Prefs;
+import ij.gui.GenericDialog;
+import ij.io.OpenDialog;
+
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Choice;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.KeyboardFocusManager;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+
+import loci.common.Location;
+import loci.formats.AWTImageTools;
+import loci.formats.DimensionSwapper;
+import loci.formats.FilePattern;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.plugins.util.LibraryChecker;
+import loci.plugins.util.WindowTools;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import ij.*;
-import ij.gui.GenericDialog;
-import ij.io.OpenDialog;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.util.*;
-import javax.swing.*;
-import loci.common.*;
-import loci.formats.*;
-import loci.plugins.util.LibraryChecker;
-import loci.plugins.util.WindowTools;
 
 /**
  * Helper class for managing Bio-Formats Importer options.

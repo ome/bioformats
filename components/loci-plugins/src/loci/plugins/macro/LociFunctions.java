@@ -27,9 +27,16 @@ package loci.plugins.macro;
 
 import ij.IJ;
 import ij.process.ImageProcessor;
+
 import java.awt.Rectangle;
 import java.io.IOException;
-import loci.formats.*;
+
+import loci.formats.ChannelSeparator;
+import loci.formats.FileStitcher;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.plugins.util.ImagePlusReader;
 import loci.plugins.util.ImagePlusTools;

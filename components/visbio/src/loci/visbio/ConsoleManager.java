@@ -25,10 +25,16 @@ package loci.visbio;
 
 import java.awt.event.KeyEvent;
 import java.io.PrintStream;
-import javax.swing.*;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
 import loci.visbio.state.BooleanOption;
 import loci.visbio.state.OptionManager;
-import loci.visbio.util.*;
+import loci.visbio.util.OutputConsole;
+import loci.visbio.util.OutputEvent;
+import loci.visbio.util.OutputListener;
 
 /**
  * ConsoleManager is the manager encapsulating VisBio's console output logic.

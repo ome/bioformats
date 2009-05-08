@@ -31,13 +31,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package loci.tests;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import javax.swing.*;
-import loci.formats.AWTImageTools;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import loci.common.LogTools;
+import loci.formats.AWTImageTools;
 
 /**
  * A class for testing the {@link loci.formats.AWTImageTools#makeImage} methods.

@@ -25,8 +25,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.formats.FormatException;
+import loci.formats.TiffTools;
 
 /**
  * SEQReader is the file format reader for Image-Pro Sequence files.

@@ -23,15 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.Vector;
-import javax.swing.*;
+
+import javax.swing.JPanel;
+
 import loci.visbio.help.HelpManager;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * PanelManager is the manager encapsulating VisBio's control panel logic.

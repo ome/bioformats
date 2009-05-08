@@ -27,13 +27,38 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.*;
-import java.io.*;
-import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.*;
-import loci.common.*;
-import loci.formats.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import loci.common.LogTools;
+import loci.formats.DimensionSwapper;
+import loci.formats.FilePattern;
+import loci.formats.FileStitcher;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.ImageWriter;
+import loci.formats.LegacyQTTools;
 
 /**
  * A utility for reorganizing and converting QuickTime movies,

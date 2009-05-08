@@ -24,7 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.slim;
 
-import visad.*;
+import visad.FunctionType;
+import visad.Integer2DSet;
+import visad.Linear1DSet;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SI;
+import visad.ScaledUnit;
+import visad.Unit;
+import visad.VisADException;
 
 /**
  * Data structure encapsulating shared VisAD math types and domain sets.

@@ -33,7 +33,8 @@ package loci.tests.testng;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import loci.common.*;
+
+import loci.common.DataTools;
 
 /**
  * Utility methods for use with TestNG tests.

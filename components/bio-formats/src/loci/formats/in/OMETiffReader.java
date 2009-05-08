@@ -25,9 +25,21 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import loci.common.*;
-import loci.formats.*;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+
+import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.MetadataTools;
+import loci.formats.TiffTools;
 import loci.formats.meta.IMetadata;
 
 /**

@@ -26,11 +26,26 @@ package loci.visbio.data;
 import java.awt.image.BufferedImage;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
+
 import loci.visbio.state.SaveException;
-import loci.visbio.util.*;
+import loci.visbio.util.DataUtil;
+import loci.visbio.util.MathUtil;
+import loci.visbio.util.ObjectUtil;
 import loci.visbio.view.TransformLink;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.Data;
+import visad.Display;
+import visad.FunctionType;
+import visad.ImageFlatField;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SI;
+import visad.ScalarMap;
+import visad.ScaledUnit;
+import visad.Unit;
+import visad.VisADException;
 
 /**
  * ImageTransform is a DataTransform superclass that provides image data.

@@ -32,9 +32,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package loci.jvmlink;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.lang.reflect.Array;
-import java.net.*;
+import java.net.Socket;
+import java.net.SocketException;
+
 import loci.common.DataTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;

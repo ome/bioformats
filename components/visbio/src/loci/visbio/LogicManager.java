@@ -25,6 +25,7 @@ package loci.visbio;
 
 import loci.visbio.state.SaveException;
 import loci.visbio.state.Saveable;
+
 import org.w3c.dom.Element;
 
 /**

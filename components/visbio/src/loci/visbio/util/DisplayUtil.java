@@ -29,10 +29,21 @@ import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Vector;
+
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import visad.*;
-import visad.java2d.*;
+import visad.DisplayEvent;
+import visad.DisplayImpl;
+import visad.DisplayRealType;
+import visad.DisplayRenderer;
+import visad.KeyboardBehavior;
+import visad.MouseHelper;
+import visad.ScalarMap;
+import visad.ScalarType;
+import visad.VisADException;
+import visad.java2d.DisplayImplJ2D;
+import visad.java2d.DisplayRendererJ2D;
+import visad.java2d.KeyboardBehaviorJ2D;
 import visad.util.Util;
 
 /**

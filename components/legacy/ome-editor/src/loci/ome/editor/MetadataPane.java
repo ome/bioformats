@@ -23,29 +23,78 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.editor;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import loci.common.RandomAccessInputStream;
+import loci.common.ReflectedUniverse;
+import loci.formats.AWTImageTools;
+import loci.formats.FormatException;
+import loci.formats.ImageReader;
+import loci.formats.TiffTools;
+import loci.formats.in.OMEXMLReader;
+import loci.formats.in.TiffReader;
+import loci.formats.ome.OMEXML2003FCMetadata;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.out.TiffWriter;
+import ome.xml.DOMUtil;
+import ome.xml.OMEXMLNode;
+
+import org.openmicroscopy.xml.AttributeNode;
+import org.openmicroscopy.xml.CustomAttributesNode;
+import org.openmicroscopy.xml.OMENode;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.Hashtable;
-import java.util.Vector;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.*;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.in.*;
-import loci.formats.ome.OMEXML2003FCMetadata;
-import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.out.*;
-import ome.xml.DOMUtil;
-import ome.xml.OMEXMLNode;
-import org.openmicroscopy.xml.*;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
 
 /**
  * A panel that displays OME-XML metadata.

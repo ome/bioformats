@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.cache;
 
 import java.io.IOException;
-import loci.common.*;
-import loci.formats.*;
+
+import loci.formats.FileStitcher;
+import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 
 /**
  * Superclass of cache sources that retrieve image planes

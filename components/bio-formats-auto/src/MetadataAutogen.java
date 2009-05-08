@@ -21,12 +21,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-import java.io.*;
-import java.text.DateFormat;
-import java.util.*;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.Template;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Vector;
+
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 
 /**
  * Automatically generates code for the MetadataStore and MetadataRetrieve

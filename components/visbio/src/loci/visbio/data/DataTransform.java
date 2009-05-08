@@ -26,13 +26,21 @@ package loci.visbio.data;
 import java.awt.Font;
 import java.math.BigInteger;
 import java.util.Vector;
+
 import javax.swing.JComponent;
-import loci.visbio.state.*;
+
+import loci.visbio.state.Dynamic;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.Saveable;
 import loci.visbio.util.FontChooserPane;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.view.TransformLink;
+
 import org.w3c.dom.Element;
-import visad.*;
+
+import visad.Data;
+import visad.DisplayEvent;
+import visad.ScalarMap;
 
 /**
  * DataTransform is the superclass of all data transform types.

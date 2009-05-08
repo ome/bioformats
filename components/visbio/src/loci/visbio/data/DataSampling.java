@@ -25,12 +25,17 @@ package loci.visbio.data;
 
 import java.awt.image.BufferedImage;
 import java.math.BigInteger;
+
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+
 import loci.formats.AWTImageTools;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.*;
+import loci.visbio.util.MathUtil;
+import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
 
 /**

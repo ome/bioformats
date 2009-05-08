@@ -9,7 +9,8 @@ Permission is granted to use this code for anything.
 
 package loci.checks;
 
-import com.puppycrawl.tools.checkstyle.api.*;
+import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.DetailAST;
 
 /**
  * A Checkstyle check for identifying multiple consecutive blank lines.

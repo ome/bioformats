@@ -23,26 +23,47 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
-import java.awt.*;
+import java.awt.Component;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
+
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
 import loci.common.Location;
-import loci.formats.*;
+import loci.formats.ChannelSeparator;
+import loci.formats.FilePattern;
+import loci.formats.FileStitcher;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.MetadataTools;
+import loci.formats.StatusEvent;
+import loci.formats.StatusListener;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataStore;
 import loci.visbio.VisBioFrame;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.*;
-import org.w3c.dom.Element;
+import loci.visbio.util.MathUtil;
+import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.XMLUtil;
 import ome.xml.OMEXMLNode;
-import visad.*;
+
+import org.w3c.dom.Element;
+
+import visad.FunctionType;
+import visad.ImageFlatField;
+import visad.MathType;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.TupleType;
+import visad.VisADException;
 
 /**
  * A Dataset object encompasses a multidimensional biological image series.

@@ -26,8 +26,16 @@ package loci.visbio.state;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
-import loci.visbio.util.*;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
+import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
 
 /**

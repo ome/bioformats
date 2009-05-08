@@ -27,7 +27,9 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Vector;
-import loci.common.*;
+
+import loci.common.Location;
+import loci.common.LogTools;
 
 /**
  * FilePattern is a collection of methods for handling file patterns, a way of

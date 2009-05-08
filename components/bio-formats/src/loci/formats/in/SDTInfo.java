@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
 import loci.common.RandomAccessInputStream;
 
 /**

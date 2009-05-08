@@ -24,19 +24,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.slim;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.IOException;
 import java.util.Arrays;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.ProgressMonitor;
+import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
+
+import loci.common.DataTools;
 import loci.formats.ChannelSeparator;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
-import loci.common.DataTools;
-import loci.slim.fit.*;
+import loci.slim.fit.CurveCollection;
+import loci.slim.fit.CurveEvent;
+import loci.slim.fit.CurveListener;
+import loci.slim.fit.GACurveFitter;
+import loci.slim.fit.LMCurveFitter;
 
 /**
  * Data structure for housing raw experimental data, as well as various

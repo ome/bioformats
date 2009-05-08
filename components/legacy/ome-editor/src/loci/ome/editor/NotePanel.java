@@ -23,17 +23,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.editor;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import ome.xml.DOMUtil;
+
+import org.openmicroscopy.xml.CustomAttributesNode;
+import org.w3c.dom.Element;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import java.awt.*;
-import java.util.Vector;
-import java.util.Hashtable;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import ome.xml.DOMUtil;
-import org.openmicroscopy.xml.*;
-import org.w3c.dom.*;
 
 /**
  * A panel that has a JList to display note names, and a JTextArea to display

@@ -24,10 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import loci.visbio.state.Dynamic;
-import loci.visbio.state.Saveable;
 import loci.visbio.state.SaveException;
+import loci.visbio.state.Saveable;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.XMLUtil;
+
 import org.w3c.dom.Element;
 
 /**

@@ -27,9 +27,20 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Vector;
+
 import loci.visbio.util.MathUtil;
 import loci.visbio.view.TransformLink;
-import visad.*;
+import visad.DataImpl;
+import visad.DisplayImpl;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded2DSet;
+import visad.GriddedSet;
+import visad.RealTupleType;
+import visad.SampledSet;
+import visad.TupleType;
+import visad.UnionSet;
+import visad.VisADException;
 import visad.util.CursorUtil;
 
 /**
