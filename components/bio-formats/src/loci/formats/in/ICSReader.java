@@ -222,6 +222,13 @@ public class ICSReader extends FormatReader {
     return new String[] {currentIdsId, currentIcsId};
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels && !versionTwo) return new String[] {currentIcsId};
+    return null;
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */

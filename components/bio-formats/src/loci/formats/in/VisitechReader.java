@@ -108,8 +108,15 @@ public class VisitechReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
     if (files == null) return new String[0];
     return (String[]) files.toArray(new String[0]);
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return noPixels ? new String[] {currentId} : getUsedFiles();
   }
 
   // -- IFormatHandler API methods --

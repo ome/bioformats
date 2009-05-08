@@ -32,6 +32,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -68,8 +69,25 @@ public class APLReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
     if (used == null) return new String[0];
     return used.toArray(new String[0]);
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      Vector<String> files = new Vector();
+      for (String f : used) {
+        String name = f.toLowerCase();
+        if (!name.endsWith(".tif") && !name.endsWith(".tiff")) {
+          files.add(f);
+        }
+      }
+      return files.toArray(new String[0]);
+    }
+    return getUsedFiles();
   }
 
   /**
@@ -87,14 +105,19 @@ public class APLReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     if (tiffReaders != null) {
-      for (int i=0; i<tiffReaders.length; i++) {
-        tiffReaders[i].close();
+      for (MinimalTiffReader reader : tiffReaders) {
+        reader.close();
       }
     }
     tiffReaders = null;
     tiffFiles = null;
     xmlFiles = null;
     used = null;
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
   }
 
   // -- Internal FormatReader API methods --

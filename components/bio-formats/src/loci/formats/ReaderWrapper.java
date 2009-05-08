@@ -385,6 +385,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getUsedFiles();
   }
 
+  public String[] getUsedFiles(boolean noPixels) {
+    return reader.getUsedFiles(noPixels);
+  }
+
   public String getCurrentFile() { return reader.getCurrentFile(); }
 
   public int getIndex(int z, int c, int t) {

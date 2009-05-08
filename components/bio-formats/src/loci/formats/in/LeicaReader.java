@@ -231,6 +231,12 @@ public class LeicaReader extends FormatReader {
     return (String[]) v.toArray(new String[0]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return noPixels ? new String[] {currentId} : getUsedFiles();
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     if (in != null) in.close();

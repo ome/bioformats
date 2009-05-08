@@ -173,6 +173,35 @@ public class PerkinElmerReader extends FormatReader {
     return (String[]) allFiles.toArray(new String[0]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      Vector files = new Vector();
+      if (isTiff) {
+        for (int i=0; i<allFiles.size(); i++) {
+          String f = ((String) allFiles.get(i)).toLowerCase();
+          if (!f.endsWith(".tif") && !f.endsWith(".tiff")) {
+            files.add(allFiles.get(i));
+          }
+        }
+      }
+      else {
+        for (int i=0; i<allFiles.size(); i++) {
+          String f = (String) allFiles.get(i);
+          String ext = f.substring(f.lastIndexOf(".") + 1);
+          try {
+            Integer.parseInt(ext, 16);
+            files.add(f);
+          }
+          catch (NumberFormatException e) { }
+        }
+      }
+      return (String[]) files.toArray(new String[0]);
+    }
+    return getUsedFiles();
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {

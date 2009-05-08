@@ -181,6 +181,17 @@ public class TCSReader extends FormatReader {
     return (String[]) v.toArray(new String[0]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      String name = currentId.toLowerCase();
+      if (name.endsWith(".tif") || name.endsWith(".tiff")) return null;
+      return new String[] {currentId};
+    }
+    return getUsedFiles();
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */

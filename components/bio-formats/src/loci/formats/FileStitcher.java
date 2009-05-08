@@ -737,6 +737,12 @@ public class FileStitcher implements IFormatReader {
     return (String[]) v.toArray(new String[0]);
   }
 
+  /* @see IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles(boolean noPixels) {
+    return noPixels && noStitch ?
+      reader.getUsedFiles(noPixels) : getUsedFiles();
+  }
+
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() { return currentId; }
 

@@ -228,6 +228,25 @@ public class FV1000Reader extends FormatReader {
     return (String[]) usedFiles.toArray(new String[0]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      if (isOIB) return null;
+      Vector files = new Vector();
+      for (int i=0; i<usedFiles.size(); i++) {
+        String file = ((String) usedFiles.get(i)).toLowerCase();
+        if (!file.endsWith(".tif") && !file.endsWith(".tiff") &&
+          !file.endsWith(".bmp"))
+        {
+          files.add(usedFiles.get(i));
+        }
+      }
+      return (String[]) files.toArray(new String[0]);
+    }
+    return getUsedFiles();
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     if (in != null) in.close();

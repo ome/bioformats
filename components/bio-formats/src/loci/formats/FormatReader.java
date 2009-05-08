@@ -682,6 +682,11 @@ public abstract class FormatReader extends FormatHandler
     return new String[] {currentId};
   }
 
+  /* @see IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles(boolean noPixels) {
+    return noPixels ? null : getUsedFiles();
+  }
+
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() {
     return currentId;

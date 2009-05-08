@@ -188,6 +188,16 @@ public class ZeissLSMReader extends FormatReader {
     return files;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      if (checkSuffix(currentId, MDB_SUFFIX)) return new String[] {currentId};
+      return null;
+    }
+    return getUsedFiles();
+  }
+
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);

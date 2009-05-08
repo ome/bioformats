@@ -86,6 +86,9 @@ public class DeltavisionReader extends FormatReader {
 
   private Float[] ndFilters;
 
+  private String logFile;
+  private String deconvolutionLogFile;
+
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
@@ -103,6 +106,28 @@ public class DeltavisionReader extends FormatReader {
     stream.seek(96);
     int magic = stream.readShort() & 0xffff;
     return magic == 0xa0c0 || magic == 0xc0a0;
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    Vector files = new Vector();
+    files.add(currentId);
+    if (logFile != null) files.add(logFile);
+    if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
+    return (String[]) files.toArray(new String[0]);
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      Vector files = new Vector();
+      if (logFile != null) files.add(logFile);
+      if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
+      return (String[]) files.toArray(new String[0]);
+    }
+    return getUsedFiles();
   }
 
   /**
@@ -557,7 +582,7 @@ public class DeltavisionReader extends FormatReader {
   /** Extract metadata from associated log file, if it exists. */
   private boolean parseLogFile(MetadataStore store) throws IOException {
     // see if log file exists
-    String logFile = getCurrentFile() + ".log";
+    logFile = getCurrentFile() + ".log";
     if (!new Location(logFile).exists()) return false;
 
     status("Parsing log file");
@@ -815,7 +840,10 @@ public class DeltavisionReader extends FormatReader {
 
     status("Parsing deconvolution log file");
 
-    RandomAccessInputStream s = new RandomAccessInputStream(base + "_log.txt");
+    deconvolutionLogFile = base + "_log.txt";
+
+    RandomAccessInputStream s =
+      new RandomAccessInputStream(deconvolutionLogFile);
 
     boolean doStatistics = false;
     int cc = 0, tt = 0;

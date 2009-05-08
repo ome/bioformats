@@ -96,6 +96,22 @@ public class L2DReader extends FormatReader {
     return (String[]) used.toArray(new String[0]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      Vector files = new Vector();
+      for (int i=0; i<used.size(); i++) {
+        String f = ((String) used.get(i)).toLowerCase();
+        if (!f.endsWith(".tif") && !f.endsWith(".tiff")) {
+          files.add(used.get(i));
+        }
+      }
+      return (String[]) used.toArray(new String[0]);
+    }
+    return getUsedFiles();
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */

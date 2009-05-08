@@ -129,6 +129,12 @@ public class MicromanagerReader extends FormatReader {
     return s;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return noPixels ? new String[] {metadataFile} : getUsedFiles();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

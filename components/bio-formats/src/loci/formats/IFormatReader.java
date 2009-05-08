@@ -314,6 +314,13 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns an array of filenames needed to open this dataset. */
   String[] getUsedFiles();
 
+  /**
+   * Returns an array of filenames needed to open this dataset.
+   * If the 'noPixels' flag is set, then only files that do not contain
+   * pixel data will be returned.
+   */
+  String[] getUsedFiles(boolean noPixels);
+
   /** Returns the current file. */
   String getCurrentFile();
 

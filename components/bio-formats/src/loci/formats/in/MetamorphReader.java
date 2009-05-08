@@ -144,6 +144,16 @@ public class MetamorphReader extends BaseTiffReader {
     return (String[]) v.toArray(new String[0]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      if (ndFilename == null) return null;
+      return new String[] {ndFilename};
+    }
+    return getUsedFiles();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

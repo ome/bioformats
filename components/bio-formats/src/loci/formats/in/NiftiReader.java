@@ -132,6 +132,13 @@ public class NiftiReader extends FormatReader {
     return new String[] {currentId, pixelsFilename};
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (pixelsFilename.equals(currentId)) return null;
+    return new String[] {currentId};
+  }
+
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;

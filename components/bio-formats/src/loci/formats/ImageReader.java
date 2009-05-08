@@ -416,6 +416,12 @@ public class ImageReader implements IFormatReader {
     return getReader().getUsedFiles();
   }
 
+  /* @see IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().getUsedFiles(noPixels);
+  }
+
   /* @see IFormatReader#getIndex(int, int, int) */
   public int getIndex(int z, int c, int t) {
     FormatTools.assertId(currentId, true, 2);

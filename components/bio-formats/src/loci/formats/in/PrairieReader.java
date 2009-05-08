@@ -154,6 +154,15 @@ public class PrairieReader extends FormatReader {
     return s;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      return new String[] {xmlFile, cfgFile};
+    }
+    return getUsedFiles();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

@@ -134,7 +134,7 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return id.toLowerCase().endsWith(".pic") ? FormatTools.CAN_GROUP :
+    return checkSuffix(id, PIC_SUFFIX) ? FormatTools.CAN_GROUP :
       FormatTools.MUST_GROUP;
   }
 
@@ -148,6 +148,20 @@ public class BioRadReader extends FormatReader {
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
     return (String[]) used.toArray(new String[0]);
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      Vector files = new Vector();
+      for (int i=0; i<used.size(); i++) {
+        String f = (String) used.get(i);
+        if (checkSuffix(f, PIC_SUFFIX)) files.add(f);
+      }
+      return (String[]) files.toArray(new String[0]);
+    }
+    return getUsedFiles();
   }
 
   /**
