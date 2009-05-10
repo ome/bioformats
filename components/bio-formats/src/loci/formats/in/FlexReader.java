@@ -77,6 +77,9 @@ public class FlexReader extends BaseTiffReader {
 
   private Vector<String> lightSourceIDs;
 
+  private Vector<Float> xResolutions;
+  private Vector<Float> yResolutions;
+
   // -- Constructor --
 
   /** Constructs a new Flex reader. */
@@ -154,6 +157,8 @@ public class FlexReader extends BaseTiffReader {
     xPositions = new Vector<Float>();
     yPositions = new Vector<Float>();
     lightSourceIDs = new Vector<String>();
+    xResolutions = new Vector<Float>();
+    yResolutions = new Vector<Float>();
 
     // parse factors from XML
     String xml = (String) TiffTools.getIFDValue(ifds[0],
@@ -186,15 +191,14 @@ public class FlexReader extends BaseTiffReader {
     int seriesCount = plateCount * wellCount * fieldCount;
 
     if (getImageCount() * seriesCount < ifds.length) {
-      if(fieldCount==1){
-      	fieldCount=ifds.length / getSizeC();
+      if (fieldCount == 1) {
+      	fieldCount = ifds.length / getSizeC();
       	seriesCount = plateCount * wellCount * fieldCount;
       }
       core[0].imageCount = ifds.length / seriesCount;
       //Z-stacks are more likely than t-series (especially in Flex version 1.0)
-      core[0].sizeC = getSizeC(); 
-      core[0].sizeZ = getSizeZ()<=1?getImageCount() / getSizeC():getSizeZ();
-      core[0].sizeT = getImageCount() / (getSizeC()*getSizeZ());
+      if (getSizeZ() <= 1) core[0].sizeZ = getImageCount() / getSizeC();
+      core[0].sizeT = getImageCount() / (getSizeC() * getSizeZ());
     }
     else if (getImageCount() == ifds.length) {
       seriesCount = 1;
@@ -265,6 +269,13 @@ public class FlexReader extends BaseTiffReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
+
+      if (i < xResolutions.size()) {
+        store.setDimensionsPhysicalSizeX(xResolutions.get(i), i, 0);
+      }
+      if (i < yResolutions.size()) {
+        store.setDimensionsPhysicalSizeY(yResolutions.get(i), i, 0);
+      }
 
       store.setImageID("Image:" + i, i);
       store.setImageInstrumentRef("Instrument:0", i);
@@ -388,13 +399,13 @@ public class FlexReader extends BaseTiffReader {
       }
       else if (parentQName.equals("ImageResolutionX")) {
         try {
-          store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
+          xResolutions.add(new Float(value));
         }
         catch (NumberFormatException e) { }
       }
       else if (parentQName.equals("ImageResolutionY")) {
         try {
-          store.setDimensionsPhysicalSizeY(new Float(value), nextImage - 1, 0);
+          yResolutions.add(new Float(value));
         }
         catch (NumberFormatException e) { }
       }
