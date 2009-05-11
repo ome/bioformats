@@ -140,7 +140,9 @@ public class ZeissZVIReader extends FormatReader {
       return null;
     }
     byte[][] lut = new byte[3][256];
-    int color = channelColors[getZCTCoords(lastPlane)[1]];
+    int channel = getZCTCoords(lastPlane)[1];
+    if (channel >= channelColors.length) return null;
+    int color = channelColors[channel];
 
     float red = (color & 0xff) / 255f;
     float green = ((color & 0xff00) >> 8) / 255f;
@@ -164,7 +166,9 @@ public class ZeissZVIReader extends FormatReader {
       return null;
     }
     short[][] lut = new short[3][65536];
-    int color = channelColors[getZCTCoords(lastPlane)[1]];
+    int channel = getZCTCoords(lastPlane)[1];
+    if (channel >= channelColors.length) return null;
+    int color = channelColors[channel];
 
     float red = (color & 0xff) / 255f;
     float green = ((color & 0xff00) >> 8) / 255f;
@@ -502,13 +506,16 @@ public class ZeissZVIReader extends FormatReader {
     // calculate tile dimensions and number of tiles
     int totalTiles = offsets.length / getImageCount();
 
-    tileRows = (realHeight / getSizeY()) + 1;
-    tileColumns = (realWidth / getSizeX()) + 1;
+    tileRows = realHeight / getSizeY();
+    tileColumns = realWidth / getSizeX();
+
+    if (getSizeY() * tileRows != realHeight) tileRows++;
+    if (getSizeX() * tileColumns != realWidth) tileColumns++;
 
     while (totalTiles < tileRows * tileColumns && tileRows > 1) {
       tileRows--;
     }
-    tileColumns = totalTiles / tileRows;
+    if (tileRows > 0) tileColumns = totalTiles / tileRows;
 
     if (totalTiles <= 1) {
       tileRows = 1;
