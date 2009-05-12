@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import loci.common.RandomAccessInputStream;
 import loci.formats.TiffTools;
 
-/** Extracts the XML metadata from a Flex file. */
+/** Convenience method to extract the metadata from all the Flex files present in a directory. */
 public class ExtractFlexMetadata {
 
   public static void main(String[] args) throws Exception {
