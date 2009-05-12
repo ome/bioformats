@@ -1,5 +1,5 @@
 //
-// ConvertToOmeTiff.java
+// ExtractFlexMetdata.java
 //
 
 import java.io.File;
@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import loci.common.RandomAccessInputStream;
 import loci.formats.TiffTools;
 
-/** Converts the given files to OME-TIFF format. */
+/** Convenience method to extract the metadat from all the Flex files present in a directory. */
 public class ExtractFlexMetdata {
 
   public static void main(String[] args) throws Exception {
