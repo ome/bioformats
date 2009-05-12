@@ -69,6 +69,7 @@ import loci.formats.gui.XMLWindow;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.plugins.Colorizer;
+import loci.plugins.LociImporter;
 import loci.plugins.Updater;
 import loci.plugins.util.DataBrowser;
 import loci.plugins.util.ImagePlusReader;

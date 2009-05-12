@@ -61,6 +61,7 @@ import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 
 /**

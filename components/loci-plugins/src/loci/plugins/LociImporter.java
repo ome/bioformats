@@ -1,5 +1,5 @@
 //
-// LociExporter.java
+// LociImporter.java
 //
 
 /*
@@ -23,53 +23,58 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.exporter;
+package loci.plugins;
 
-import ij.ImagePlus;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ImageProcessor;
+import ij.plugin.PlugIn;
 
 import java.util.HashSet;
 
+import loci.plugins.importer.Importer;
 import loci.plugins.util.LibraryChecker;
 
 /**
- * ImageJ plugin for writing files using the LOCI Bio-Formats package.
- * Wraps core logic in {@link loci.plugins.Exporter}, to avoid direct
+ * ImageJ plugin for reading files using the LOCI Bio-Formats package.
+ * Wraps core logic in {@link loci.plugins.Importer}, to avoid direct
  * references to classes in the external Bio-Formats library.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/exporter/LociExporter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/exporter/LociExporter.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/LociImporter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/LociImporter.java">SVN</a></dd></dl>
  *
+ * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class LociExporter implements PlugInFilter {
+public class LociImporter implements PlugIn {
 
   // -- Fields --
 
-  /** Argument passed to setup method. */
-  public String arg;
+  /**
+   * Flag indicating whether last operation was successful.
+   * NB: This field must be updated properly, or the plugin
+   * will stop working correctly with HandleExtraFileTypes.
+   */
+  public boolean success;
 
-  private Exporter exporter;
+  /**
+   * Flag indicating whether last operation was canceled.
+   * NB: This field must be updated properly, or the plugin
+   * will stop working correctly with HandleExtraFileTypes.
+   */
+  public boolean canceled;
 
-  // -- PlugInFilter API methods --
-
-  /** Sets up the writer. */
-  public int setup(String arg, ImagePlus imp) {
-    this.arg = arg;
-    exporter = new Exporter(this, imp);
-    return DOES_ALL + NO_CHANGES;
-  }
+  // -- PlugIn API methods --
 
   /** Executes the plugin. */
-  public void run(ImageProcessor ip) {
+  public void run(String arg) {
+    canceled = false;
+    success = false;
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet missing = new HashSet();
     LibraryChecker.checkLibrary(LibraryChecker.Library.BIO_FORMATS, missing);
     LibraryChecker.checkLibrary(LibraryChecker.Library.OME_JAVA_XML, missing);
+    LibraryChecker.checkLibrary(LibraryChecker.Library.FORMS, missing);
     if (!LibraryChecker.checkMissing(missing)) return;
-    if (exporter != null) exporter.run(ip);
+    new Importer(this).run(arg);
   }
 
 }

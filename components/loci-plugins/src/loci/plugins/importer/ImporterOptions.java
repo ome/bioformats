@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import ij.IJ;
 import ij.Macro;
 import ij.Prefs;
@@ -69,10 +73,6 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.plugins.util.LibraryChecker;
 import loci.plugins.util.WindowTools;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Helper class for managing Bio-Formats Importer options.
