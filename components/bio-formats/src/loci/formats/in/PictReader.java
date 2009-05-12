@@ -109,12 +109,11 @@ public class PictReader extends FormatReader {
     this.legacy = legacy;
   }
 
+  // -- IFormatReader API methods --
 
-  /**
-   * @see loci.formats.IFormatReader#get8BitLookupTable()
-   */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 0);
+    FormatTools.assertId(currentId, true, 1);
     return lookup;
   }
 
@@ -131,9 +130,11 @@ public class PictReader extends FormatReader {
       byte[][] b = AWTImageTools.getPixelBytes(
         AWTImageTools.makeBuffered(qtTools.pictToImage(pix)),
         isLittleEndian());
+      pix = null;
       for (int i=0; i<b.length; i++) {
         System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
       }
+      b = null;
       return buf;
     }
 
@@ -163,10 +164,14 @@ public class PictReader extends FormatReader {
 
       int nc = strips.size() / getSizeY();
 
+      byte[] c0 = null;
+      byte[] c1 = null;
+      byte[] c2 = null;
+
       for (int i=0; i<getSizeY(); i++) {
-        byte[] c0 = (byte[]) strips.get(i * nc + nc - 3);
-        byte[] c1 = (byte[]) strips.get(i * nc + nc - 2);
-        byte[] c2 = (byte[]) strips.get(i * nc + nc - 1);
+        c0 = (byte[]) strips.get(i * nc + nc - 3);
+        c1 = (byte[]) strips.get(i * nc + nc - 2);
+        c2 = (byte[]) strips.get(i * nc + nc - 1);
         int baseOffset = i * getSizeX();
         System.arraycopy(c0, 0, buf, baseOffset, getSizeX());
         System.arraycopy(c1, 0, buf, plane + baseOffset, getSizeX());
@@ -175,8 +180,9 @@ public class PictReader extends FormatReader {
     }
     else {
       // RGB value is packed into a single short: xRRR RRGG GGGB BBBB
+      int[] row = null;
       for (int i=0; i<getSizeY(); i++) {
-        int[] row = (int[]) strips.get(i);
+        row = (int[]) strips.get(i);
 
         for (int j=0; j<row.length; j++) {
           int base = i * row.length + j;
@@ -189,11 +195,21 @@ public class PictReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatReader API methods --
-
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return FormatTools.validStream(stream, blockCheckLen, false);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    rowBytes = 0;
+    strips = null;
+    versionOne = false;
+    lookup = null;
+    legacy = false;
   }
 
   // -- Internal FormatReader API methods --
@@ -440,6 +456,7 @@ public class PictReader extends FormatReader {
               uBufI[i] = DataTools.bytesToShort(buf, i*2, 2, false);
             }
             strips.add(uBufI);
+            buf = null;
             core[0].sizeC = 3;
             break;
           case 8:
@@ -448,6 +465,7 @@ public class PictReader extends FormatReader {
           default: // pixel size < 8
             expandPixels(pixelSize, buf, outBuf, outBuf.length);
             strips.add(outBuf);
+            buf = null;
         }
       }
     }

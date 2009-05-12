@@ -29,10 +29,12 @@ import java.util.Vector;
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
@@ -148,7 +150,6 @@ public class OpenlabReader extends FormatReader {
     long last = no == getImageCount() - 1 ? in.length() :
       planes[planeOffsets[series][no + 1]].planeOffset;
     in.seek(first);
-    byte[] b = new byte[(int) (last - first)];
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
@@ -159,6 +160,7 @@ public class OpenlabReader extends FormatReader {
       else {
         in.skipBytes(16);
         int bytes = bpp * getRGBChannelCount();
+        byte[] b = new byte[(int) (last - first)];
         in.read(b);
 
         CodecOptions options = new CodecOptions();
@@ -184,6 +186,7 @@ public class OpenlabReader extends FormatReader {
             System.arraycopy(b, (row + y)*src + x*bytes, buf, row*dest, dest);
           }
         }
+        b = null;
       }
       if (planes[index].volumeType == MAC_256_GREYS ||
         planes[index].volumeType == MAC_256_COLORS)
@@ -195,14 +198,14 @@ public class OpenlabReader extends FormatReader {
     }
     else {
       // PICT plane
-      b = new byte[b.length + 512];
+      byte[] b = new byte[(int) (last - first) + 512];
       in.read(b, 512, b.length - 512);
       Exception exc = null;
-      byte[] tmpBuf =
-        new byte[buf.length * (getRGBChannelCount() == 3 ? 1 : 3)];
+      IFormatReader r =
+        getRGBChannelCount() == 1 ? new ChannelSeparator(pict) : pict;
       try {
         Location.mapFile("OPENLAB_PICT", new ByteArrayHandle(b));
-        pict.setId("OPENLAB_PICT");
+        r.setId("OPENLAB_PICT");
 
         if (getPixelType() != pict.getPixelType()) {
           throw new FormatException("Pixel type of inner PICT does not match " +
@@ -214,19 +217,14 @@ public class OpenlabReader extends FormatReader {
             planeOffsets[series][lastPlane]);
         }
 
-        pict.openBytes(0, tmpBuf, x, y, w, h);
-
-        if (getRGBChannelCount() == 1) {
-          byte[] splitBuf = ImageTools.splitChannels(tmpBuf, 0, 3,
-            FormatTools.getBytesPerPixel(getPixelType()), false,
-            pict.isInterleaved());
-          System.arraycopy(splitBuf, 0, buf, 0, splitBuf.length);
-        }
-        else System.arraycopy(tmpBuf, 0, buf, 0, tmpBuf.length);
+        r.openBytes(0, buf, x, y, w, h);
+        r.close();
+        // remove file from map
+        Location.mapFile("OPENLAB_PICT", null);
       }
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
-      pict.close();
+      b = null;
 
       if (exc != null) {
         if (debug) trace(exc);
@@ -276,6 +274,7 @@ public class OpenlabReader extends FormatReader {
           System.arraycopy(plane, (row + y) * srcRow +
             x * bpp * getRGBChannelCount(), buf, row*rowLen, rowLen);
         }
+        plane = null;
       }
     }
 
@@ -300,6 +299,15 @@ public class OpenlabReader extends FormatReader {
     planes = null;
     luts = null;
     lastPlane = 0;
+    version = 0;
+    numSeries = 0;
+    xcal = ycal = 0f;
+    nextTag = 0;
+    tag = subTag = 0;
+    fmt = "";
+    planeOffsets = null;
+    gain = detectorOffset = null;
+    xPos = yPos = zPos = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -369,9 +377,7 @@ public class OpenlabReader extends FormatReader {
         in.skipBytes(16);
         long pointer = in.getFilePointer();
         planes[imagesFound].planeName = in.readCString().trim();
-        in.skipBytes((int) (128 - in.getFilePointer() + pointer));
-
-        in.skipBytes(128);
+        in.skipBytes((int) (256 - in.getFilePointer() + pointer));
 
         planes[imagesFound].planeOffset = in.getFilePointer();
 
@@ -496,20 +502,19 @@ public class OpenlabReader extends FormatReader {
 
     int nSeries = representativePlanes.size();
     planeOffsets = new int[nSeries][];
-    Vector tmpOffsets = new Vector();
+    Vector<Integer> tmpOffsets = new Vector<Integer>();
     Vector names = new Vector();
     for (int i=0; i<nSeries; i++) {
       for (int q=0; q<planes.length; q++) {
         if (planes[q] != null && planes[q].series == i) {
-          tmpOffsets.add(new Integer(q));
+          tmpOffsets.add(q);
           names.add(planes[q].planeName);
         }
       }
       planeOffsets[i] = new int[tmpOffsets.size()];
       for (int q=0; q<planeOffsets[i].length; q++) {
-        planeOffsets[i][q] = ((Integer) tmpOffsets.get(q)).intValue();
-        addMeta("Series " + i + " Plane " + q + " Name",
-         names.get(q));
+        planeOffsets[i][q] = tmpOffsets.get(q);
+        addMeta("Series " + i + " Plane " + q + " Name", names.get(q));
       }
       tmpOffsets.clear();
       names.clear();

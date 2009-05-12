@@ -917,6 +917,7 @@ public class FV1000Reader extends FormatReader {
         core[i].thumbSizeX = thumbReader.getSizeX();
         core[i].thumbSizeY = thumbReader.getSizeY();
       }
+      Location.mapFile("thumbnail.bmp", null);
     }
     catch (IOException e) {
       if (debug) trace(e);
