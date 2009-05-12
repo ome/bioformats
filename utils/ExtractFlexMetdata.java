@@ -18,7 +18,7 @@ public class ExtractFlexMetdata {
       return;
     }
     for(File file:dir.listFiles()) {
-      if(file.getName().endsWith(".flex"));{
+      if(file.getName().endsWith(".flex")){
       String id=file.getPath();
       int dot = id.lastIndexOf(".");
       String outId = (dot >= 0 ? id.substring(0, dot) : id) + ".xml";
