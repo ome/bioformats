@@ -32,7 +32,6 @@ import java.net.URL;
 
 /**
  * Provides random access to data over HTTP using the IRandomAccess interface.
- * This is slow, but functional.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/URLHandle.java">Trac</a>,
@@ -68,23 +67,15 @@ public class URLHandle implements IRandomAccess {
   /** Reset marker */
   private long mark;
 
+  private String mode;
+
   // -- Constructors --
 
   public URLHandle(String url, String mode) throws IOException {
+    this.mode = mode.toLowerCase();
     if (!url.startsWith("http")) url = "http://" + url;
-    conn = (HttpURLConnection) (new URL(url)).openConnection();
-    if (mode.equals("r")) {
-      is = new DataInputStream(new BufferedInputStream(
-        conn.getInputStream(), 65536));
-    }
-    else if (mode.equals("w")) {
-      conn.setDoOutput(true);
-      os = new DataOutputStream(conn.getOutputStream());
-    }
-    fp = 0;
-    length = conn.getContentLength();
-    if (is != null) is.mark((int) length);
     this.url = url;
+    resetStream();
   }
 
   // -- IRandomAccess API methods --
@@ -135,31 +126,22 @@ public class URLHandle implements IRandomAccess {
   /* @see IRandomAccess#seek(long) */
   public void seek(long pos) throws IOException {
     if (pos >= fp) {
-      skipBytes((int) (pos - fp));
+      skip(pos - fp);
       return;
     }
     else if (pos >= mark) {
       try {
         is.reset();
         fp = mark;
-        skipBytes((int) (pos - fp));
+        skip(pos - fp);
         return;
       }
       catch (IOException e) { }
     }
 
     close();
-    conn = (HttpURLConnection) (new URL(url)).openConnection();
-    conn.setDoOutput(true);
-    if (is != null) {
-      is = new DataInputStream(new BufferedInputStream(
-        conn.getInputStream(), 65536));
-      is.mark((int) length());
-      mark = 0;
-    }
-    if (os != null) os = new DataOutputStream(conn.getOutputStream());
-    fp = 0;
-    skipBytes((int) pos);
+    resetStream();
+    skip(pos);
   }
 
   /* @see IRandomAccess#setLength(long) */
@@ -337,9 +319,33 @@ public class URLHandle implements IRandomAccess {
   // -- Helper methods --
 
   private void markManager() throws IOException {
-    if (fp >= mark + 65535) {
+    if (fp >= mark + RandomAccessInputStream.MAX_OVERHEAD - 1) {
       mark = fp;
-      is.mark((int) length());
+      is.mark(RandomAccessInputStream.MAX_OVERHEAD);
     }
   }
+
+  private void resetStream() throws IOException {
+    conn = (HttpURLConnection) (new URL(url)).openConnection();
+    if (mode.equals("w")) {
+      conn.setDoOutput(true);
+      os = new DataOutputStream(conn.getOutputStream());
+    }
+    else {
+      is = new DataInputStream(new BufferedInputStream(
+        conn.getInputStream(), RandomAccessInputStream.MAX_OVERHEAD));
+    }
+    fp = 0;
+    mark = 0;
+    length = conn.getContentLength();
+    if (is != null) is.mark(RandomAccessInputStream.MAX_OVERHEAD);
+  }
+
+  private void skip(long bytes) throws IOException {
+    while (bytes >= Integer.MAX_VALUE) {
+      bytes -= skipBytes(Integer.MAX_VALUE);
+    }
+    skipBytes((int) bytes);
+  }
+
 }

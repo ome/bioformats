@@ -160,7 +160,7 @@ public class Location {
 
     IRandomAccess handle = null;
     if (id.startsWith("http://")) {
-      handle = new URLHandle(getMappedId(id), writable ? "rw" : "r");
+      handle = new URLHandle(getMappedId(id), writable ? "w" : "r");
     }
     else if (ZipHandle.isZipFile(id)) {
       handle = new ZipHandle(getMappedId(id));
@@ -328,6 +328,7 @@ public class Location {
         Vector files = new Vector();
         while (!foundEnd) {
           byte[] b = new byte[is.available()];
+          is.read(b);
           String s = new String(b);
           if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
 

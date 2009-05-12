@@ -109,34 +109,10 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
    * around the given file.
    */
   public RandomAccessInputStream(String file) throws IOException {
-    String path = Location.getMappedId(file);
-    File f = new File(path).getAbsoluteFile();
-    raf = Location.getHandle(file);
-    length = raf.length();
-
-    if (raf == null) {
-      throw new IOException("File not found: " + file);
-    }
-
-    if (f.exists()) {
-      compressed = raf instanceof CompressedRandomAccess;
-      if (compressed) {
-        BufferedInputStream bis = new BufferedInputStream(
-          new FileInputStream(path), MAX_OVERHEAD);
-        dis = new DataInputStream(bis);
-
-        buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
-        raf.readFully(buf);
-        raf.seek(0);
-        nextMark = MAX_OVERHEAD;
-      }
-    }
     this.file = file;
+    reopen();
     fp = 0;
     afp = 0;
-    fileCache.put(this, Boolean.TRUE);
-    openFiles++;
-    if (openFiles > MAX_FILES) cleanCache();
   }
 
   /** Constructs a random access stream around the given byte array. */
@@ -196,7 +172,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     dis = null;
     buf = null;
     if (Boolean.TRUE.equals(fileCache.get(this))) {
-      fileCache.put(this, Boolean.FALSE);
+      fileCache.put(this, false);
       openFiles--;
     }
   }
@@ -488,12 +464,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
         fp += skip;
       }
 
-      if (fp >= nextMark) {
-        dis.mark(MAX_OVERHEAD);
-      }
-      nextMark = fp + MAX_OVERHEAD;
-      mark = fp;
-
+      resetMark();
       return DIS;
     }
     else {
@@ -520,25 +491,22 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
             fp += skip;
           }
 
-          if (fp >= nextMark) {
-            dis.mark(MAX_OVERHEAD);
-          }
-          nextMark = fp + MAX_OVERHEAD;
-          mark = fp;
-
+          resetMark();
           return DIS;
         }
-        else {
-          raf.seek(afp);
-          return RAF;
-        }
-      }
-      else {
-        // we don't want this to happen very often
-        raf.seek(afp);
-        return RAF;
       }
     }
+    // we don't want this to happen very often
+    raf.seek(afp);
+    return RAF;
+  }
+
+  private void resetMark() {
+    if (fp >= nextMark) {
+      dis.mark(MAX_OVERHEAD);
+    }
+    nextMark = fp + MAX_OVERHEAD;
+    mark = fp;
   }
 
   // -- Helper methods - cache management --
@@ -551,24 +519,25 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     raf = Location.getHandle(file);
     length = raf.length();
 
+    if (raf == null) {
+      throw new IOException("File not found: " + file);
+    }
+
     if (f.exists()) {
-      BufferedInputStream bis = new BufferedInputStream(
-        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
-
-      path = path.toLowerCase();
-
-      if (dis != null) dis.close();
-
       compressed = raf instanceof CompressedRandomAccess;
+      if (compressed) {
+        BufferedInputStream bis = new BufferedInputStream(
+          new FileInputStream(path), MAX_OVERHEAD);
 
-      if (!compressed) {
+        if (dis != null) dis.close();
         dis = new DataInputStream(bis);
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);
+        nextMark = MAX_OVERHEAD;
       }
     }
-    fileCache.put(this, Boolean.TRUE);
+    fileCache.put(this, true);
     openFiles++;
     if (openFiles > MAX_FILES) cleanCache();
   }
@@ -576,15 +545,14 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   /** If we have too many open files, close most of them. */
   private void cleanCache() {
     int toClose = MAX_FILES - 10;
-    RandomAccessInputStream[] files = (RandomAccessInputStream[])
+    RandomAccessInputStream[] files =
       fileCache.keySet().toArray(new RandomAccessInputStream[0]);
     int closed = 0;
     int ndx = 0;
 
     while (closed < toClose) {
-      if (!this.equals(files[ndx]) &&
-        !fileCache.get(files[ndx]).equals(Boolean.FALSE) &&
-        files[ndx].file != null)
+      if (!this.equals(files[ndx]) && files[ndx].file != null &&
+        Boolean.TRUE.equals(fileCache.get(files[ndx])))
       {
         try { files[ndx].close(); }
         catch (IOException exc) { LogTools.trace(exc); }

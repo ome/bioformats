@@ -54,6 +54,7 @@ public class ZipHandle extends CompressedRandomAccess {
 
   public ZipHandle(String file) throws IOException {
     super();
+    this.file = file;
     if (!isZipFile(file)) {
       throw new IOException(file + " is not a Zip file.");
     }

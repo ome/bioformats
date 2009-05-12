@@ -552,7 +552,7 @@ public final class DataTools {
     else if (bpp == 4 && fp) {
       float[] f = new float[b.length / 4];
       for (int i=0; i<f.length; i++) {
-        f[i] = Float.intBitsToFloat(bytesToInt(b, i*4, 4, little));
+        f[i] = bytesToFloat(b, i * 4, 4, little);
       }
       return f;
     }
@@ -566,7 +566,7 @@ public final class DataTools {
     else if (bpp == 8 && fp) {
       double[] d = new double[b.length / 8];
       for (int i=0; i<d.length; i++) {
-        d[i] = Double.longBitsToDouble(bytesToLong(b, i*8, 8, little));
+        d[i] = bytesToDouble(b, i * 8, 8, little);
       }
       return d;
     }
@@ -621,17 +621,13 @@ public final class DataTools {
 
   /** Remove null bytes from a string. */
   public static String stripString(String toStrip) {
-    char[] toRtn = new char[toStrip.length()];
-    int counter = 0;
-    for (int i=0; i<toRtn.length; i++) {
+    StringBuffer s = new StringBuffer();
+    for (int i=0; i<toStrip.length(); i++) {
       if (toStrip.charAt(i) != 0) {
-        toRtn[counter] = toStrip.charAt(i);
-        counter++;
+        s.append(toStrip.charAt(i));
       }
     }
-    toStrip = new String(toRtn);
-    toStrip = toStrip.trim();
-    return toStrip;
+    return s.toString().trim();
   }
 
   /** Check if two filenames have the same prefix. */
@@ -644,8 +640,8 @@ public final class DataTools {
     int slash1 = s1.lastIndexOf(File.pathSeparator);
     int slash2 = s2.lastIndexOf(File.pathSeparator);
 
-    String sub1 = s1.substring((slash1 == -1) ? 0 : slash1 + 1, n1);
-    String sub2 = s2.substring((slash2 == -1) ? 0 : slash2 + 1, n2);
+    String sub1 = s1.substring(slash1 + 1, n1);
+    String sub2 = s2.substring(slash2 + 1, n2);
     return sub1.equals(sub2) || sub1.startsWith(sub2) || sub2.startsWith(sub1);
   }
 
@@ -674,40 +670,6 @@ public final class DataTools {
   }
 
   /**
-   * Load a list of metadata tags and their corresponding descriptions.
-   */
-  public static Hashtable getMetadataTags(String baseClass, String file) {
-    try {
-      return getMetadataTags(Class.forName(baseClass), file);
-    }
-    catch (ClassNotFoundException e) { }
-    return null;
-  }
-
-  /**
-   * Load a list of metadata tags and their corresponding descriptions.
-   */
-  public static Hashtable getMetadataTags(Class c, String file) {
-    Hashtable<String, String> h = new Hashtable<String, String>();
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-      c.getResourceAsStream(file)));
-    String line = null, key = null, value = null;
-    while (true) {
-      try {
-        line = in.readLine();
-      }
-      catch (IOException e) {
-        line = null;
-      }
-      if (line == null) break;
-      key = line.substring(0, line.indexOf("=>")).trim();
-      value = line.substring(line.indexOf("=>") + 2).trim();
-      h.put(key, value);
-    }
-    return h;
-  }
-
-  /**
    * Normalize the given float array so that the minimum value maps to 0.0
    * and the maximum value maps to 1.0.
    */
@@ -718,18 +680,17 @@ public final class DataTools {
 
     float min = Float.MAX_VALUE;
     float max = Float.MIN_VALUE;
+    float range = max - min;
 
     for (int i=0; i<data.length; i++) {
       if (data[i] < min) min = data[i];
-      if (data[i] > max) {
-        max = data[i];
-      }
+      if (data[i] > max) max = data[i];
     }
 
     // now normalize; min => 0.0, max => 1.0
 
     for (int i=0; i<rtn.length; i++) {
-      rtn[i] = (data[i] - min) / (max - min);
+      rtn[i] = (data[i] - min) / range;
     }
 
     return rtn;
@@ -744,6 +705,7 @@ public final class DataTools {
 
     double min = Double.MAX_VALUE;
     double max = Double.MIN_VALUE;
+    double range = max - min;
 
     for (int i=0; i<data.length; i++) {
       if (data[i] < min) min = data[i];
@@ -751,7 +713,7 @@ public final class DataTools {
     }
 
     for (int i=0; i<rtn.length; i++) {
-      rtn[i] = (data[i] - min) / (max - min);
+      rtn[i] = (data[i] - min) / range;
     }
     return rtn;
   }
@@ -784,20 +746,7 @@ public final class DataTools {
   public static void parseXML(byte[] xml, DefaultHandler handler)
     throws IOException
   {
-    try {
-      SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(new ByteArrayInputStream(xml), handler);
-    }
-    catch (ParserConfigurationException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-    }
-    catch (SAXException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-    }
+    parseXML(new RandomAccessInputStream(xml), handler);
   }
 
   // -- Date handling --

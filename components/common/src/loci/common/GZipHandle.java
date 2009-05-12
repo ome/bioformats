@@ -43,10 +43,6 @@ import java.util.zip.GZIPInputStream;
  */
 public class GZipHandle extends CompressedRandomAccess {
 
-  // -- Fields --
-
-  private String file;
-
   // -- Constructor --
 
   public GZipHandle(String file) throws IOException {
@@ -56,9 +52,7 @@ public class GZipHandle extends CompressedRandomAccess {
       throw new IOException(file + " is not a gzip file.");
     }
 
-    BufferedInputStream bis = new BufferedInputStream(
-      new FileInputStream(file), MAX_OVERHEAD);
-    stream = new DataInputStream(new GZIPInputStream(bis));
+    resetStream();
 
     length = 0;
     while (true) {
@@ -67,8 +61,7 @@ public class GZipHandle extends CompressedRandomAccess {
       length += skip;
     }
 
-    bis = new BufferedInputStream(new FileInputStream(file), MAX_OVERHEAD);
-    stream = new DataInputStream(new GZIPInputStream(bis));
+    resetStream();
   }
 
   // -- GZipHandle API methods --
@@ -82,19 +75,24 @@ public class GZipHandle extends CompressedRandomAccess {
 
   /* @see IRandomAccess#seek(long) */
   public void seek(long pos) throws IOException {
-    long oldFP = fp;
+    long diff = fp - pos;
     fp = pos;
-    if (fp > oldFP) {
-      long diff = fp - oldFP;
+    if (diff >= 0) {
       stream.skipBytes((int) diff);
     }
-    else if (fp < oldFP) {
-      stream.close();
-      BufferedInputStream bis = new BufferedInputStream(
-        new FileInputStream(file), MAX_OVERHEAD);
-      stream = new DataInputStream(new GZIPInputStream(bis));
+    else {
+      resetStream();
       stream.skipBytes((int) fp);
     }
+  }
+
+  // -- Helper methods --
+
+  private void resetStream() throws IOException {
+    if (stream != null) stream.close();
+    BufferedInputStream bis = new BufferedInputStream(
+      new FileInputStream(file), RandomAccessInputStream.MAX_OVERHEAD);
+    stream = new DataInputStream(new GZIPInputStream(bis));
   }
 
 }

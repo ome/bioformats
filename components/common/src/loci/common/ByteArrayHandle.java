@@ -161,18 +161,12 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see java.io.DataInput.readDouble() */
   public double readDouble() throws IOException {
-    if (fp + 8 > length()) throw new EOFException();
-    double d = Double.longBitsToDouble(DataTools.bytesToLong(array, fp, false));
-    fp += 8;
-    return d;
+    return Double.longBitsToDouble(readLong());
   }
 
   /* @see java.io.DataInput.readFloat() */
   public float readFloat() throws IOException {
-    if (fp + 4 > length()) throw new EOFException();
-    float f = Float.intBitsToFloat(DataTools.bytesToInt(array, fp, false));
-    fp += 4;
-    return f;
+    return Float.intBitsToFloat(readInt());
   }
 
   /* @see java.io.DataInput.readFully(byte[]) */
@@ -237,7 +231,7 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see java.io.DataInput.skipBytes(int) */
   public int skipBytes(int n) {
-    if (n < 0) n = 0;
+    if (n < 0) return 0;
     if (fp + n > length()) n = (int) (length() - fp);
     fp += n;
     return n;
@@ -284,8 +278,8 @@ public class ByteArrayHandle implements IRandomAccess {
   /* @see java.io.DataOutput.writeChar(int) */
   public void writeChar(int v) throws IOException {
     if (fp + 2 > length()) setLength(fp + 2);
-    array[fp++] = (byte) (0xff & (v >> 8));
-    array[fp++] = (byte) (0xff & v);
+    DataTools.unpackShort((short) v, array, fp, false);
+    fp += 2;
   }
 
   /* @see java.io.DataOutput.writeChars(String) */
@@ -294,9 +288,8 @@ public class ByteArrayHandle implements IRandomAccess {
     if (fp + len > length()) setLength(fp + len);
     char[] c = s.toCharArray();
     for (int i=0; i<c.length; i++) {
-      char v = c[i];
-      array[fp++] = (byte) (0xff & (v >> 8));
-      array[fp++] = (byte) (0xff & v);
+      DataTools.unpackShort((short) c[i], array, fp, false);
+      fp += 2;
     }
   }
 
@@ -313,24 +306,22 @@ public class ByteArrayHandle implements IRandomAccess {
   /* @see java.io.DataOutput.writeInt(int) */
   public void writeInt(int v) throws IOException {
     if (fp + 4 > length()) setLength(fp + 4);
-    for (int i=0; i<4; i++) {
-      array[fp++] = (byte) (0xff & (v >> ((3 - i) * 8)));
-    }
+    DataTools.unpackBytes(v, array, fp, 4, false);
+    fp += 4;
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
   public void writeLong(long v) throws IOException {
     if (fp + 8 > length()) setLength(fp + 8);
-    for (int i=0; i<8; i++) {
-      array[fp++] = (byte) (0xff & (v >> ((7 - i) * 8)));
-    }
+    DataTools.unpackBytes(v, array, fp, 8, false);
+    fp += 8;
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
   public void writeShort(int v) throws IOException {
     if (fp + 2 > length()) setLength(fp + 2);
-    array[fp++] = (byte) (0xff & (v >> 8));
-    array[fp++] = (byte) (0xff & v);
+    DataTools.unpackShort((short) v, array, fp, false);
+    fp += 2;
   }
 
   /* @see java.io.DataOutput.writeUTF(String)  */

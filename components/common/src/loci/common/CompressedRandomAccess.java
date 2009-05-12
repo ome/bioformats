@@ -40,12 +40,9 @@ import java.io.IOException;
  */
 public abstract class CompressedRandomAccess implements IRandomAccess {
 
-  // -- Constants --
-
-  protected static final int MAX_OVERHEAD = 1048576;
-
   // -- Fields --
 
+  protected String file;
   protected DataInputStream stream;
   protected long length;
   protected long fp;

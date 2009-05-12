@@ -42,10 +42,6 @@ import java.io.IOException;
  */
 public class BZip2Handle extends CompressedRandomAccess {
 
-  // -- Fields --
-
-  private String file;
-
   // -- Constructor --
 
   public BZip2Handle(String file) throws IOException {
@@ -55,10 +51,7 @@ public class BZip2Handle extends CompressedRandomAccess {
       throw new IOException(file + " is not a BZip2 file.");
     }
 
-    BufferedInputStream bis =
-      new BufferedInputStream(new FileInputStream(file), MAX_OVERHEAD);
-    bis.skip(2);
-    stream = new DataInputStream(new CBZip2InputStream(bis));
+    resetStream();
 
     length = 0;
     while (true) {
@@ -67,9 +60,7 @@ public class BZip2Handle extends CompressedRandomAccess {
       length += skip;
     }
 
-    bis = new BufferedInputStream(new FileInputStream(file), MAX_OVERHEAD);
-    bis.skip(2);
-    stream = new DataInputStream(new CBZip2InputStream(bis));
+    resetStream();
   }
 
   // -- BZip2Handle API methods --
@@ -91,14 +82,18 @@ public class BZip2Handle extends CompressedRandomAccess {
     }
     else if (fp < oldFP) {
       stream.close();
-
-      BufferedInputStream bis =
-        new BufferedInputStream(new FileInputStream(file), MAX_OVERHEAD);
-      bis.skip(2);
-      stream = new DataInputStream(new CBZip2InputStream(bis));
-
+      resetStream();
       stream.skipBytes((int) fp);
     }
+  }
+
+  // -- Helper methods --
+
+  private void resetStream() throws IOException {
+    BufferedInputStream bis = new BufferedInputStream(
+      new FileInputStream(file), RandomAccessInputStream.MAX_OVERHEAD);
+    bis.skip(2);
+    stream = new DataInputStream(new CBZip2InputStream(bis));
   }
 
 }
