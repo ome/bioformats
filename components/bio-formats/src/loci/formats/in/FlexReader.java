@@ -55,7 +55,7 @@ public class FlexReader extends BaseTiffReader {
   // -- Constants --
 
   /** Custom IFD entry for Flex XML. */
-  protected static final int FLEX = 65200;
+  public static final int FLEX = 65200;
 
   // -- Fields --
 
