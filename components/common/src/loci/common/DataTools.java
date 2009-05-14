@@ -727,9 +727,18 @@ public final class DataTools {
   public static void parseXML(RandomAccessInputStream stream,
     DefaultHandler handler) throws IOException
   {
+    byte[] b = new byte[(int) (stream.getFilePointer() - stream.length())];
+    stream.read(b);
+    parseXML(b, handler);
+    b = null;
+  }
+
+  public static void parseXML(byte[] xml, DefaultHandler handler)
+    throws IOException
+  {
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(stream, handler);
+      parser.parse(new ByteArrayInputStream(xml), handler);
     }
     catch (ParserConfigurationException exc) {
       IOException e = new IOException();
@@ -740,13 +749,8 @@ public final class DataTools {
       IOException e = new IOException();
       e.initCause(exc);
       throw e;
-    }
-  }
 
-  public static void parseXML(byte[] xml, DefaultHandler handler)
-    throws IOException
-  {
-    parseXML(new RandomAccessInputStream(xml), handler);
+    }
   }
 
   // -- Date handling --
