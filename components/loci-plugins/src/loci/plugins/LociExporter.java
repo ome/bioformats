@@ -36,8 +36,8 @@ import loci.plugins.util.LibraryChecker;
 
 /**
  * ImageJ plugin for writing files using the LOCI Bio-Formats package.
- * Wraps core logic in {@link loci.plugins.Exporter}, to avoid direct
- * references to classes in the external Bio-Formats library.
+ * Wraps core logic in {@link loci.plugins.exporter.Exporter}, to avoid
+ * direct references to classes in the external Bio-Formats library.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/LociExporter.java">Trac</a>,

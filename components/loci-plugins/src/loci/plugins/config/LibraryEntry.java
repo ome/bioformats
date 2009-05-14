@@ -28,7 +28,7 @@ package loci.plugins.config;
 import java.io.File;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * A list entry for the configuration window's Libraries tab.
@@ -68,7 +68,7 @@ public class LibraryEntry implements Comparable {
 
   // -- Constructor --
 
-  public LibraryEntry(PrintWriter log, Hashtable props) {
+  public LibraryEntry(PrintWriter log, HashMap<String, String> props) {
     this(log,
       (String) props.get("name"),
       (String) props.get("type"),

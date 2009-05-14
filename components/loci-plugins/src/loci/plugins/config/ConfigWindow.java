@@ -40,7 +40,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import javax.imageio.spi.IIORegistry;
 import javax.swing.DefaultListModel;
@@ -293,8 +293,8 @@ public class ConfigWindow extends JFrame
     try {
       Class irClass = Class.forName("loci.formats.ImageReader");
       Object ir = irClass.newInstance();
-      Method getClasses = irClass.getMethod("getReaders", null);
-      Object[] readers = (Object[]) getClasses.invoke(ir, null);
+      Method getClasses = irClass.getMethod("getReaders");
+      Object[] readers = (Object[]) getClasses.invoke(ir);
       for (int i=0; i<readers.length; i++) {
         FormatEntry entry = new FormatEntry(log, readers[i]);
         addEntry(entry, formatsListModel);
@@ -325,8 +325,8 @@ public class ConfigWindow extends JFrame
     try {
       Class qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
       Object qtTools = qtToolsClass.newInstance();
-      Method getQTVersion = qtToolsClass.getMethod("getQTVersion", null);
-      qtVersion = (String) getQTVersion.invoke(qtTools, null);
+      Method getQTVersion = qtToolsClass.getMethod("getQTVersion");
+      qtVersion = (String) getQTVersion.invoke(qtTools);
     }
     catch (Throwable t) {
       log.println("Could not determine QuickTime version:");
@@ -371,7 +371,7 @@ public class ConfigWindow extends JFrame
       }
     }
 
-    Hashtable versions = new Hashtable();
+    HashMap<String, String> versions = new HashMap<String, String>();
     if (javaVersion != null) versions.put("javaVersion", javaVersion);
     if (bfVersion != null) versions.put("bfVersion", bfVersion);
     if (qtVersion != null) versions.put("qtVersion", qtVersion);
@@ -379,7 +379,7 @@ public class ConfigWindow extends JFrame
     if (matlabVersion != null) versions.put("matlabVersion", matlabVersion);
 
     // parse libraries
-    Hashtable props = null;
+    HashMap<String, String> props = null;
     String propKey = null;
     StringBuffer propValue = new StringBuffer();
     String resource = "libraries.txt";
@@ -408,7 +408,7 @@ public class ConfigWindow extends JFrame
       int equals = line.indexOf("=");
       if (line.startsWith("[")) {
         // new entry
-        if (props == null) props = new Hashtable();
+        if (props == null) props = new HashMap<String, String>();
         else {
           addProp(props, propKey, propValue.toString(), versions);
           LibraryEntry entry = new LibraryEntry(log, props);
@@ -474,8 +474,8 @@ public class ConfigWindow extends JFrame
 
   // -- Helper methods --
 
-  private void addProp(Hashtable props,
-    String key, String value, Hashtable versions)
+  private void addProp(HashMap<String, String> props,
+    String key, String value, HashMap versions)
   {
     if (key == null) return;
 

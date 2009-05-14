@@ -57,10 +57,10 @@ public class FormatEntry implements Comparable {
     String n = readerClass.getName();
     readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
     try {
-      Method getFormat = readerClass.getMethod("getFormat", null);
-      formatName = (String) getFormat.invoke(reader, null);
-      Method getSuffixes = readerClass.getMethod("getSuffixes", null);
-      suffixes = (String[]) getSuffixes.invoke(reader, null);
+      Method getFormat = readerClass.getMethod("getFormat");
+      formatName = (String) getFormat.invoke(reader);
+      Method getSuffixes = readerClass.getMethod("getSuffixes");
+      suffixes = (String[]) getSuffixes.invoke(reader);
       log.println("Successfully queried " + readerName + " reader.");
     }
     catch (Throwable t) {
