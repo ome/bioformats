@@ -102,6 +102,7 @@ public class MetamorphReader extends BaseTiffReader {
   private String[][] stks;
 
   private String ndFilename;
+  private boolean canLookForND = true;
 
   // -- Constructor --
 
@@ -172,10 +173,14 @@ public class MetamorphReader extends BaseTiffReader {
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
-    if (stkReader == null) stkReader = new MetamorphReader();
+    if (stkReader == null) {
+      stkReader = new MetamorphReader();
+      stkReader.setCanLookForND(false);
+    }
     stkReader.setId(file);
     int plane = stks[series].length == 1 ? no : coords[0];
-    return stkReader.openBytes(plane, buf, x, y, w, h);
+    stkReader.openBytes(plane, buf, x, y, w, h);
+    return buf;
   }
 
   // -- IFormatHandler API methods --
@@ -229,7 +234,7 @@ public class MetamorphReader extends BaseTiffReader {
     Location ndfile = null;
 
     if (checkSuffix(id, ND_SUFFIX)) ndfile = new Location(id);
-    else {
+    else if (canLookForND) {
       // an STK file was passed to initFile
       // let's check the parent directory for an .nd file
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
@@ -256,9 +261,11 @@ public class MetamorphReader extends BaseTiffReader {
       String line = ndStream.readLine().trim();
 
       int zc = getSizeZ(), cc = getSizeC(), tc = getSizeT();
+      int nstages = 0;
       String z = null, c = null, t = null;
       Vector hasZ = new Vector();
       waveNames = new Vector();
+      boolean useWaveNames = true;
 
       while (!line.equals("\"EndFile\"")) {
         String key = line.substring(1, line.indexOf(",") - 1).trim();
@@ -280,6 +287,12 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("ZStepSize")) {
           stepSize = Float.parseFloat(value);
         }
+        else if (key.equals("NStagePositions")) {
+          nstages = Integer.parseInt(value);
+        }
+        else if (key.equals("WaveInFileName")) {
+          useWaveNames = Boolean.parseBoolean(value);
+        }
 
         line = ndStream.readLine().trim();
       }
@@ -291,18 +304,23 @@ public class MetamorphReader extends BaseTiffReader {
       if (t != null) tc = Integer.parseInt(t);
 
       int numFiles = cc * tc;
+      if (nstages > 0) numFiles *= nstages;
 
       // determine series count
 
-      int seriesCount = 1;
+      int seriesCount = nstages == 0 ? 1 : nstages;
+      boolean differentZs = false;
       for (int i=0; i<cc; i++) {
         boolean hasZ1 = ((Boolean) hasZ.get(i)).booleanValue();
         boolean hasZ2 = i != 0 && ((Boolean) hasZ.get(i - 1)).booleanValue();
-        if (i > 0 && hasZ1 != hasZ2) seriesCount = 2;
+        if (i > 0 && hasZ1 != hasZ2) {
+          if (!differentZs) seriesCount *= 2;
+          differentZs = true;
+        }
       }
 
       int channelsInFirstSeries = cc;
-      if (seriesCount == 2) {
+      if (differentZs) {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
           if (((Boolean) hasZ.get(i)).booleanValue()) channelsInFirstSeries++;
@@ -311,9 +329,14 @@ public class MetamorphReader extends BaseTiffReader {
 
       stks = new String[seriesCount][];
       if (seriesCount == 1) stks[0] = new String[numFiles];
-      else {
+      else if (differentZs) {
         stks[0] = new String[channelsInFirstSeries * tc];
         stks[1] = new String[(cc - channelsInFirstSeries) * tc];
+      }
+      else {
+        for (int i=0; i<stks.length; i++) {
+          stks[i] = new String[numFiles / stks.length];
+        }
       }
 
       String prefix = ndfile.getPath();
@@ -331,15 +354,24 @@ public class MetamorphReader extends BaseTiffReader {
 
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
-        for (int j=0; j<cc; j++) {
-          boolean validZ = ((Boolean) hasZ.get(j)).booleanValue();
-          int seriesNdx = (seriesCount == 1 || validZ) ? 0 : 1;
-          stks[seriesNdx][pt[seriesNdx]] = prefix;
-          if (waveNames.get(j) != null) {
-            stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1) + waveNames.get(j);
+        int ns = nstages == 0 ? 1 : nstages;
+        for (int s=0; s<ns; s++) {
+          for (int j=0; j<cc; j++) {
+            boolean validZ = ((Boolean) hasZ.get(j)).booleanValue();
+            int seriesNdx = (seriesCount == 1 || validZ) ? 0 : 1;
+            stks[seriesNdx][pt[seriesNdx]] = prefix;
+            if (waveNames.get(j) != null) {
+              stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
+              if (useWaveNames) {
+                stks[seriesNdx][pt[seriesNdx]] += waveNames.get(j);
+              }
+            }
+            if (nstages > 0) {
+              stks[seriesNdx][pt[seriesNdx]] += "_s" + (s + 1);
+            }
+            stks[seriesNdx][pt[seriesNdx]] += "_t" + (i + 1) + ".STK";
+            pt[seriesNdx]++;
           }
-          stks[seriesNdx][pt[seriesNdx]] += "_t" + (i + 1) + ".STK";
-          pt[seriesNdx]++;
         }
       }
 
@@ -361,9 +393,14 @@ public class MetamorphReader extends BaseTiffReader {
                   stks[s][f].lastIndexOf(".")) + ".TIF";
                 l = new Location(ndfile.getParent(), stks[s][f]);
                 if (!l.exists()) {
-                  String filename = stks[s][f];
-                  stks = null;
-                  throw new FormatException("Missing STK file: " + filename);
+                  stks[s][f] = stks[s][f].substring(0,
+                    stks[s][f].lastIndexOf(".")) + ".tif";
+                  l = new Location(ndfile.getParent(), stks[s][f]);
+                  if (!l.exists()) {
+                    String filename = stks[s][f];
+                    stks = null;
+                    throw new FormatException("Missing STK file: " + filename);
+                  }
                 }
               }
             }
@@ -374,9 +411,14 @@ public class MetamorphReader extends BaseTiffReader {
                 stks[s][f].lastIndexOf(".")) + ".TIF";
               l = new Location(ndfile.getParent(), stks[s][f]);
               if (!l.exists()) {
-                String filename = stks[s][f];
-                stks = null;
-                throw new FormatException("Missing STK file: " + filename);
+                stks[s][f] = stks[s][f].substring(0,
+                  stks[s][f].lastIndexOf(".")) + ".tif";
+                l = new Location(ndfile.getParent(), stks[s][f]);
+                if (!l.exists()) {
+                  String filename = stks[s][f];
+                  stks = null;
+                  throw new FormatException("Missing STK file: " + filename);
+                }
               }
             }
           }
@@ -530,7 +572,7 @@ public class MetamorphReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    core[0].sizeZ = 0;
+    core[0].sizeZ = 1;
     core[0].sizeT = 0;
     int rgbChannels = getSizeC();
 
@@ -623,10 +665,10 @@ public class MetamorphReader extends BaseTiffReader {
       }
       ifds = tempIFDs;
     }
-    catch (UnknownTagException exc) { trace(exc); }
-    catch (NullPointerException exc) { trace(exc); }
-    catch (IOException exc) { trace(exc); }
-    catch (FormatException exc) { trace(exc); }
+    catch (UnknownTagException exc) { if (debug) trace(exc); }
+    catch (NullPointerException exc) { if (debug) trace(exc); }
+    catch (IOException exc) { if (debug) trace(exc); }
+    catch (FormatException exc) { if (debug) trace(exc); }
 
     // parse (mangle) TIFF comment
     String descr = TiffTools.getComment(ifds[0]);
@@ -1015,6 +1057,11 @@ public class MetamorphReader extends BaseTiffReader {
     int num = s.readInt();
     int denom = s.readInt();
     return new TiffRational(num, denom);
+  }
+
+  private void setCanLookForND(boolean v) {
+    FormatTools.assertId(currentId, false, 1);
+    canLookForND = v;
   }
 
   private String getKey(int id) {
