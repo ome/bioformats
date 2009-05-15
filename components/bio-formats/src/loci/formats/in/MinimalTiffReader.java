@@ -160,6 +160,16 @@ public class MinimalTiffReader extends FormatReader {
     if (thumbnailIFDs == null || thumbnailIFDs.length <= no) {
       return super.openThumbBytes(no);
     }
+    int[] bps = TiffTools.getBitsPerSample(thumbnailIFDs[no]);
+    int b = bps[0];
+    while ((b % 8) != 0) b++;
+    b /= 8;
+    if (b != FormatTools.getBytesPerPixel(getPixelType()) ||
+      bps.length != getRGBChannelCount())
+    {
+      return super.openThumbBytes(no);
+    }
+
     byte[] buf = new byte[getThumbSizeX() * getThumbSizeY() *
       getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType())];
     return TiffTools.getSamples(thumbnailIFDs[no], in, buf);
@@ -212,7 +222,9 @@ public class MinimalTiffReader extends FormatReader {
       boolean thumbnail =
         TiffTools.getIFDIntValue(ifds[i], TiffTools.NEW_SUBFILE_TYPE) == 1;
       if (thumbnail) thumbs.add(ifds[i]);
-      else v.add(ifds[i]);
+      else if (ifds[i].get(new Integer(TiffTools.IMAGE_WIDTH)) != null) {
+        v.add(ifds[i]);
+      }
     }
 
     ifds = (Hashtable[]) v.toArray(new Hashtable[0]);

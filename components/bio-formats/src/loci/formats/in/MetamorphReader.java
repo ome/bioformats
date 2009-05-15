@@ -727,6 +727,12 @@ public class MetamorphReader extends BaseTiffReader {
     }
 
     core[0].sizeT = getImageCount() / (getSizeZ() * (getSizeC() / rgbChannels));
+    if (getSizeT() * getSizeZ() * (getSizeC() / rgbChannels) !=
+      getImageCount())
+    {
+      core[0].sizeT = 1;
+      core[0].sizeZ = getImageCount() / (getSizeC() / rgbChannels);
+    }
 
     // if '_t' is present in the file name, swap Z and T sizes
     // this file was probably part of a larger dataset, but the .nd file is
@@ -739,6 +745,8 @@ public class MetamorphReader extends BaseTiffReader {
       core[0].sizeZ = getSizeT();
       core[0].sizeT = z;
     }
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
   }
 
   // -- Helper methods --

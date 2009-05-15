@@ -269,6 +269,9 @@ public class OMETiffReader extends FormatReader {
 
         int effSizeC = meta.getPixelsSizeC(i, p).intValue() / samples;
         if (effSizeC == 0) effSizeC = 1;
+        if (effSizeC * samples != meta.getPixelsSizeC(i, p).intValue()) {
+          effSizeC = meta.getPixelsSizeC(i, p).intValue();
+        }
         int sizeT = meta.getPixelsSizeT(i, p).intValue();
         int sizeZ = meta.getPixelsSizeZ(i, p).intValue();
         int num = effSizeC * sizeT * sizeZ;
@@ -382,12 +385,16 @@ public class OMETiffReader extends FormatReader {
           if (core[s].pixelType != tiffPixelType) {
             warn("PixelType mismatch: OME=" + core[s].pixelType +
               ", TIFF=" + tiffPixelType);
+            core[s].pixelType = tiffPixelType;
           }
           core[s].imageCount = num;
           core[s].dimensionOrder = meta.getPixelsDimensionOrder(i, p);
           core[s].orderCertain = true;
           int photo = TiffTools.getPhotometricInterpretation(firstIFD);
           core[s].rgb = samples > 1 || photo == TiffTools.RGB;
+          if (samples != core[s].sizeC && (samples % core[s].sizeC) != 0) {
+            core[s].sizeC *= samples;
+          }
           core[s].littleEndian = !meta.getPixelsBigEndian(i, p).booleanValue();
           boolean tiffLittleEndian = TiffTools.isLittleEndian(firstIFD);
           if (core[s].littleEndian != tiffLittleEndian) {

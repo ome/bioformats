@@ -147,7 +147,12 @@ public class TiffReader extends BaseTiffReader {
           ifds[i].put(new Integer(TiffTools.STRIP_OFFSETS), offsets);
         }
 
-        core[0].sizeZ = ifds.length;
+        if (z * c * t == ifds.length) {
+          core[0].sizeZ = z;
+          core[0].sizeT = t;
+          core[0].sizeC = c;
+        }
+        else core[0].sizeZ = ifds.length;
         core[0].imageCount = ifds.length;
       }
       else {

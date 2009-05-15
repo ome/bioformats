@@ -74,11 +74,6 @@ public class ZipReader extends FormatReader {
     reader.setGroupFiles(groupFiles);
   }
 
-  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
-  public int fileGroupOption(String id) throws FormatException, IOException {
-    return reader.fileGroupOption(id);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     return reader.getUsedFiles();
