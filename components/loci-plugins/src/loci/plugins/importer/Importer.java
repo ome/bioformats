@@ -225,6 +225,7 @@ public class Importer {
     boolean specifyRanges = options.isSpecifyRanges();
     boolean cropOnImport = options.doCrop();
     boolean swapDimensions = options.isSwapDimensions();
+    quiet = options.isQuiet();
 
     // save options as new defaults
     options.savePreferences();

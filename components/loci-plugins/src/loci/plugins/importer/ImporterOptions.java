@@ -195,6 +195,8 @@ public class ImporterOptions
   public static final String LABEL_LOCATION = "Location: ";
   public static final String LABEL_ID = "Open";
 
+  public static final String LABEL_QUIET = "Quiet mode";
+
   // informative description of each option
   public static final String INFO_STACK = info(LABEL_STACK) +
     " - The type of image viewer to use when displaying the dataset." +
@@ -652,6 +654,8 @@ public class ImporterOptions
 
       location = Macro.getValue(arg, LABEL_LOCATION, location);
       id = Macro.getValue(arg, LABEL_ID, id);
+
+      quiet = getMacroValue(arg, LABEL_QUIET, quiet);
     }
   }
 
@@ -862,6 +866,8 @@ public class ImporterOptions
     gd.addCheckbox(LABEL_ALL_SERIES, openAllSeries);
     gd.addCheckbox(LABEL_SWAP, swapDimensions);
     gd.addCheckbox(LABEL_ROI, showROIs);
+
+    gd.addCheckbox(LABEL_QUIET, quiet); // NB: invisible
 
     // extract GUI components from dialog and add listeners
 
@@ -1074,6 +1080,8 @@ public class ImporterOptions
     openAllSeries = gd.getNextBoolean();
     swapDimensions = gd.getNextBoolean();
     showROIs = gd.getNextBoolean();
+
+    quiet = gd.getNextBoolean(); // NB: invisible
 
     return STATUS_OK;
   }
