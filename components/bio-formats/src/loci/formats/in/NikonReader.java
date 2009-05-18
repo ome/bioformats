@@ -291,6 +291,11 @@ public class NikonReader extends BaseTiffReader {
     makerNoteOffset = 0;
     original = null;
     split = -1;
+    whiteBalance = null;
+    cfaPattern = null;
+    curve = null;
+    vPredictor = null;
+    lossyCompression = false;
   }
 
   // -- Internal BaseTiffReader API methods --

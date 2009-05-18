@@ -161,6 +161,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
         long ms = parse.parse(stamp, new ParsePosition(0)).getTime();
         store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
           0, 0, i);
+      }
+      if (i < exposures.size()) {
         store.setPlaneTimingExposureTime((Float) exposures.get(i), 0, 0, i);
       }
     }

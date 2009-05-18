@@ -130,12 +130,15 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     if (tc == null) tc = "1";
     if (tt == null) tt = "1";
 
-    core[0].sizeZ = Integer.parseInt(tz);
-    if (!isRGB()) core[0].sizeC = Integer.parseInt(tc);
-    core[0].sizeT = Integer.parseInt(tt);
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
+
+    core[0].sizeZ *= Integer.parseInt(tz);
+    if (!isRGB()) core[0].sizeC *= Integer.parseInt(tc);
+    core[0].sizeT *= Integer.parseInt(tt);
 
     if (getSizeZ() * getSizeC() * getSizeT() < getImageCount()) {
-      core[0].sizeC = getImageCount();
+      core[0].sizeC *= getImageCount();
     }
 
     // parse each of the comments to determine axis ordering

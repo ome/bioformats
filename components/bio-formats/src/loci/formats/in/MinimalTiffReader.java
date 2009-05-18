@@ -219,7 +219,7 @@ public class MinimalTiffReader extends FormatReader {
     Vector v = new Vector();
     Vector thumbs = new Vector();
     for (int i=0; i<ifds.length; i++) {
-      boolean thumbnail =
+      boolean thumbnail = ifds.length > 1 &&
         TiffTools.getIFDIntValue(ifds[i], TiffTools.NEW_SUBFILE_TYPE) == 1;
       if (thumbnail) thumbs.add(ifds[i]);
       else if (ifds[i].get(new Integer(TiffTools.IMAGE_WIDTH)) != null) {
