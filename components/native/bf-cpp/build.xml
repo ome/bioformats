@@ -65,29 +65,56 @@ from the Subversion repository using the command:
       <else>
         <mkdir dir="${proxies.dir}/include"/>
         <mkdir dir="${proxies.dir}/source"/>
-        <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
-        <java classname="jace.autoproxy.AutoProxy" fork="true">
-          <arg path="include"/>
-          <arg path="source"/>
-          <arg path="${proxies.dir}/include"/>
-          <arg path="${proxies.dir}/source"/>
-          <arg path="${jre.runtime}:${artifact.dir}/bio-formats.jar"/>
-          <classpath>
-            <fileset dir="${jace.home}/release/lib">
-              <include name="*.jar"/>
-            </fileset>
-          </classpath>
-          <arg value="-mindep"/>
-          <arg value="-exportsymbols"/>
-        </java>
-        <!-- HACK - Insert missing export symbol for Windows builds. -->
-        <move file="${hack.object-header}" tofile="${hack.object-header}.old"/>
-        <copy file="${hack.object-header}.old" tofile="${hack.object-header}">
-          <filterset begintoken="f" endtoken="d" recurse="false">
-            <filter token="rien" value="JACE_PROXY_API friend"/>
-          </filterset>
-        </copy>
-        <delete file="${hack.object-header}.old"/>
+        <if>
+          <isset property="isWindows"/>
+          <then>
+            <!-- Generate proxies for Visual C++ builds. -->
+
+            <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
+            <java classname="jace.autoproxy.AutoProxy" fork="true">
+              <arg path="include"/>
+              <arg path="source"/>
+              <arg path="${proxies.dir}/include"/>
+              <arg path="${proxies.dir}/source"/>
+              <arg path="${jre.runtime}:${artifact.dir}/bio-formats.jar"/>
+              <classpath>
+                <fileset dir="${jace.home}/release/lib">
+                  <include name="*.jar"/>
+                </fileset>
+              </classpath>
+              <arg value="-mindep"/>
+              <arg value="-exportsymbols"/> <!-- required for Visual C++ -->
+            </java>
+            <!-- HACK - Insert missing export symbol for Windows builds. -->
+            <move file="${hack.object-header}"
+              tofile="${hack.object-header}.old"/>
+            <copy file="${hack.object-header}.old"
+              tofile="${hack.object-header}">
+              <filterset begintoken="f" endtoken="d" recurse="false">
+                <filter token="rien" value="JACE_PROXY_API friend"/>
+              </filterset>
+            </copy>
+            <delete file="${hack.object-header}.old"/>
+          </then>
+          <else>
+            <!-- Generate proxies for GCC builds. -->
+
+            <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
+            <java classname="jace.autoproxy.AutoProxy" fork="true">
+              <arg path="include"/>
+              <arg path="source"/>
+              <arg path="${proxies.dir}/include"/>
+              <arg path="${proxies.dir}/source"/>
+              <arg path="${jre.runtime}:${artifact.dir}/bio-formats.jar"/>
+              <classpath>
+                <fileset dir="${jace.home}/release/lib">
+                  <include name="*.jar"/>
+                </fileset>
+              </classpath>
+              <arg value="-mindep"/>
+            </java>
+          </else>
+        </if>
       </else>
     </if>
   </target>
