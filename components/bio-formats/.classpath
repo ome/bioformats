@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
-	<classpathentry kind="var" path="LOCI_JARS/forms-1.0.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jai"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

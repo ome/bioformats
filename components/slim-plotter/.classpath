@@ -2,10 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="LOCI_JARS/visad-lite.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-formats"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/visbio"/>
-	<classpathentry kind="var" path="LOCI_JARS/lma.jar"/>
 	<classpathentry kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
