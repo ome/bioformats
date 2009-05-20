@@ -78,4 +78,16 @@ public class OptionsList {
     }
   }
 
+  // -- OptionsList methods --
+
+  /** Loads option values from the ImageJ preferences file. */
+  public void loadOptions() {
+    for (Option o : options) o.loadOption();
+  }
+
+  /** Saves option values to the ImageJ preferences file. */
+  public void saveOptions() {
+    for (Option o : options) o.saveOption();
+  }
+
 }

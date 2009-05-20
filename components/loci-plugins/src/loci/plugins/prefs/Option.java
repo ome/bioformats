@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.prefs;
 
+import loci.common.IniParser;
+
 /**
  * Base class for an option for one of the LOCI plugins.
  *
@@ -40,7 +42,7 @@ public abstract class Option {
   public static final String KEY_PREFIX = "bioformats.";
 
   /** INI key indicating option's key. */
-  public static final String INI_KEY = "key";
+  public static final String INI_KEY = IniParser.HEADER_KEY;
 
   /** INI key indicating option's label. */
   public static final String INI_LABEL = "label";

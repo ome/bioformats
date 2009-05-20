@@ -1,0 +1,295 @@
+#
+# importer-options.txt
+#
+
+# LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+# Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+# Data Browser, Stack Colorizer and Stack Slicer. Copyright (C) 2005-@year@
+# Melissa Linkert, Curtis Rueden and Christopher Peterson.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# Configuration options for Bio-Formats Importer plugin.
+
+[autoscale]
+type = boolean
+label = Autoscale
+info = \
+  Stretches the histogram of the image planes to fit the data range.    \
+  Does not alter underlying values in the image. If selected, histogram \
+  is stretched for each stack based upon the global minimum and maximum \
+  value throughout the stack.                                           \
+  <br><br>Note that you can use the Brightness &amp; Contrast or        \
+  Window/Level controls to adjust the contrast range regardless of      \
+  whether this option is used.
+
+[colorize]
+type = boolean
+label = RGB_colorize channels
+info = \
+  Each channel is assigned an appropriate pseudocolor table rather than the \
+  normal grayscale.                                                         \
+  <br><br>The first channel is colorized red, the second channel is green,  \
+  and the third channel is blue. This option is not available when <b>Merge \
+  channels to RGB</b> or <b>Custom colorize channels</b> are set.
+
+[concatenate]
+type = boolean
+label = Concatenate_series when compatible
+info = \
+  Allows multiple image series to be joined end to end.             \
+  <br><br><b>Example:</b> You want to join two sequential timelapse \
+  series.
+
+[crop]
+type = boolean
+label = Crop on import
+info = \
+  Image planes may be cropped during import to conserve memory.          \
+  <br><br>A window is opened with display of the pixel width and height  \
+  of the image plane. Enter the X and Y coordinates for the upper left   \
+  corner of the crop region and the width and height of the selection to \
+  be displayed, in pixels.
+
+[customColorize]
+type = boolean
+label = Custom_colorize channels
+info = \
+  Each channel is assigned a pseudocolor table rather than the normal      \
+  grayscale.<br><br>The color for each channel is chosen by the user. This \
+  option is not available when <b>Merge channels to RGB</b> or <b>RGB      \
+  colorize channels</b> are set.
+
+[firstTime]
+type = boolean
+
+[forceThumbnails]
+type = boolean
+
+[groupFiles]
+type = boolean
+label = Group_files with similar names
+info = \
+  Parses filenames in the selected folder to open files with similar     \
+  names as planes in the same dataset.                                   \
+  <br><br>The base filename and path is presented before opening for     \
+  editing.                                                               \
+  <br><br><b>Example:</b> Suppose you have a collection of 12 TIFF files \
+  numbered data1.tif, data2.tif, ..., data12.tif, with each file         \
+  representing one timepoint, and containing the 9 focal planes at that  \
+  timepoint. If you leave this option unchecked and attempt to import    \
+  data1.tif, Bio-Formats will create an image stack with 9 planes.       \
+  But if you enable this option, Bio-Formats will automatically detect   \
+  the other similarly named files and present a confirmation dialog with \
+  the detected file pattern, which in this example would be              \
+  <code>data&lt;1-12&gt;.tif</code>. You can then edit the pattern in    \
+  case it is incorrect. Bio-Formats will then import all 12 x 9 = 108    \
+  planes of the dataset.
+
+[mergeChannels]
+type = boolean
+label = Merge_channels to RGB
+info = \
+  A dataset with multiple channels will be opened and merged with       \
+  channels pseudocolored in the order of the RGB color scheme; i.e.,    \
+  channel 1 is red, channel 2 is green, and channel 3 is blue.          \
+  <br><br>The bit depth will be preserved. If the dataset has more than \
+  3 channels, Bio-Formats will ask how to combine them.                 \
+  <br><br>For example, a 12-channel image could be combined into:<ul>   \
+  <li>6 planes with 2 channels each (1st channel is red, 2nd is green)  \
+  </li>                                                                 \
+  <li>4 planes with 3 channels each (3rd channel is blue)</li>          \
+  <li>3 planes with 4 channels each (4th channel is gray)</li>          \
+  <li>3 planes with 5 channels each (5th channel is cyan)</li>          \
+  <li>2 planes with 6 channels each (6th channel is magenta)</li>       \
+  <li>2 planes with 7 channels each (7th channel is yellow)</li>        \
+  </ul>
+
+[mergeOption]
+type = string
+label = Merging Options
+
+[openAllSeries]
+type = boolean
+label = Open_all_series
+info = \
+  Opens every available image series without prompting.                  \
+  <br><br>Some datasets contain multiple distinct image series. Normally \
+  when Bio-Formats detects such data it presents a dialog box with       \
+  thumbnails allowing individual selection of each available series.     \
+  Checking this box instructs Bio-Formats to bypass this dialog box and  \
+  instead open every available image series. Essentially, it is a        \
+  shortcut for checking all the boxes in the series selector dialog box. \
+  It is also useful in a macro when the number of available image series \
+  is unknown.
+
+[record]
+type = boolean
+label = Record_modifications_to_virtual_stack
+info = \
+  <i>BETA FEATURE</i> - Record and reapply changes to virtual stack      \
+  planes.                                                                \
+  <br><br>When viewing as a virtual stack with this option enabled,      \
+  Bio-Formats will attempt to record the operations you perform. When    \
+  you switch to a new image plane, Bio-Formats will \"play back\" those  \
+  same operations, so that the image plane undergoes the same processing \
+  you performed previously. In this way, the image stack should behave   \
+  more like a normal, fully memory-resident image stack.
+
+[series]
+type = string
+label = series
+
+[showMetadata]
+type = boolean
+label = Display_metadata in results window
+info = \
+  Reads metadata that may be contained within the file format and      \
+  displays it. You can save it as a text file or copy it from the File \
+  and Edit menus specific to the ImageJ Results window. Readability    \
+  depends upon the manner in which metadata is formatted in the data   \
+  source.
+
+[showOMEXML]
+type = boolean
+label = Display_OME-XML metadata
+info = \
+  Displays a tree of metadata standardized into the OME data model.     \
+  This structure is the same regardless of file format, though some     \
+  formats will populate more information than others.                   \
+  <br><br><b>Examples:</b><ul>                                          \
+  <li>The title of the dataset is listed under                          \
+  OME &gt; Image &gt; Name.</li>                                        \
+  <li>The time and date when the dataset was acquired is listed under   \
+  OME &gt; Image &gt; CreationDate.</li>                                \
+  <li>The physical pixel sizes of each plane in microns is listed under \
+  OME &gt; Image &gt; Pixels &gt;                                       \
+  PhysicalSizeX, PhysicalSizeY, PhysicalSizeZ.</li>                     \
+  </ul>
+
+[showROIs]
+type = boolean
+label = Display_ROIs
+info = Adds any ROIs in the file to ImageJ's ROI manager.
+
+[specifyRanges]
+type = boolean
+label = Specify_range for each series
+info = \
+  Opens only the specified range of image planes from a dataset.       \
+  <br><br>After analyzing the dataset dimensional parameters,          \
+  Bio-Formats will present an additional dialog box prompting for the  \
+  desired range.                                                       \
+  <br><br><b>Example:</b> You only want to open the range of focal     \
+  planes in a z-series that actually contain structures of interest to \
+  conserve memory.
+
+[splitFocalPlanes]
+type = boolean
+label = Split_focal planes
+info = Each focal plane is opened as a separate stack.
+
+[splitTimepoints]
+type = boolean
+label = Split_timepoints
+info = Timelapse data will be opened as a separate stack for each timepoint.
+
+[splitWindows]
+type = boolean
+label = Split_channels
+info = \
+  Each channel is opened as a separate stack.                       \
+  <br><br>This option is especially useful if you want to merge the \
+  channels into a specific order, rather than automatically assign  \
+  channels to the order of RGB. The bit depth is preserved.
+
+[stackFormat]
+type = string
+label = View stack with:
+info = \
+  The type of image viewer to use when displaying the dataset.           \
+  <br><br>Possible choices are:<ul>                                      \
+  <li><b>" + VIEW_NONE + "</b> - Display no pixels, only metadata.</li>  \
+  <li><b>" + VIEW_STANDARD + "</b> - Display the pixels in a standard    \
+  ImageJ window without multidimensional support.</li>                   \
+  <li><b>" + VIEW_HYPERSTACK + "</b> - Display the pixels in ImageJ's    \
+  built-in 5D viewer. If you do not have this option, upgrade to a more  \
+  recent version of ImageJ.</li>                                         \
+  <li><b>" + VIEW_BROWSER + "</b> - Display the pixels in LOCI's         \
+  multidimensional Data Browser viewer. The Data Browser has some        \
+  additional features on top of the normal ImageJ hyperstack. If you do  \
+  not have this option, upgrade to a more recent version of ImageJ.</li> \
+  /"<li><b>" + VIEW_VISBIO + "</b> - Not yet implemented.</li>           \
+  <li><b>" + VIEW_IMAGE_5D + "</b> - Display the pixels in               \
+  Joachim Walter's Image5D viewer. Requires the Image5D plugin.</li>     \
+  <li><b>" + VIEW_VIEW_5D + "</b> - Display the pixels in                \
+  Rainer Heintzmann's View5D viewer. Requires the View5D plugin.</li>    \
+  </ul>
+
+[stackOrder]
+type = string
+label = Stack_order:
+info = \
+  Controls the rasterization order of the dataset's dimensional axes.   \
+  <br><br>Unless you care about the order in which the image planes     \
+  appear, you probably don't need to worry too much about this option.  \
+  <br><br>By default, Bio-Formats reads the image planes in whatever    \
+  order they are stored, which is format-dependent. However, several    \
+  stack view modes require a specific rasterization order:<ul>          \
+  <li>Hyperstacks must be in " + ORDER_XYCZT + " order.</li>            \
+  <li>Image5D must be in " + ORDER_XYCZT + " order.</li>                \
+  <li>View5D must be in " + ORDER_XYCZT + " order.</li>                 \
+  </ul><b>Example:</b> For a dataset in " + ORDER_XYCZT + " order with  \
+  2 channels, 3 focal planes and 5 time points, the order would be:<ol> \
+  <li>C1-Z1-T1</li>                                                     \
+  <li>C2-Z1-T1</li>                                                     \
+  <li>C1-Z2-T1</li>                                                     \
+  <li>C2-Z2-T1</li>                                                     \
+  <li>C1-Z3-T1</li>                                                     \
+  <li>C2-Z3-T1</li>                                                     \
+  <li>C1-Z1-T2</li>                                                     \
+  <li>C2-Z1-T2</li>                                                     \
+  <li>etc.</li>                                                         \
+  </ol>
+
+[swapDimensions]
+type = boolean
+label = Swap_dimensions
+info = \
+  Allows reassignment of dimensional axes (e.g., channel, Z and time).        \
+  <br><br>Bio-Formats is supposed to be smart about handling multidimensional \
+  image data, but in some cases gets things wrong. For example, when          \
+  stitching together a dataset from multiple files using the <b>Group files   \
+  with similar names</b> option, Bio-Formats  may not know which dimensional  \
+  axis the file numbering is supposed to represent. It will take a guess, but \
+  in case it guesses wrong, you can use <b>Swap dimensions</b> to reassign    \
+  which dimensions are which.
+
+[upgradeCheck]
+type = boolean
+default = true
+
+[virtual]
+type = boolean
+label = Use_virtual_stack
+info = \
+  Only reads one image plane into memory at a time, loading from the  \
+  data source on the fly as the active image plane changes.           \
+  <br><br>This option is essential for datasets too large to fit into \
+  memory.
+
+[windowless]
+type = boolean
+label = windowless
