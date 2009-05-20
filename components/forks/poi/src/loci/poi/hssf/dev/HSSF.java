@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import loci.common.*;
+import loci.common.RandomAccessInputStream;
 
 import loci.poi.poifs.filesystem.POIFSFileSystem;
 import loci.poi.hssf.usermodel.*;

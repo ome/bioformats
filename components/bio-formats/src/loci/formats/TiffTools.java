@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
@@ -42,6 +41,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.common.Region;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -1077,7 +1077,7 @@ public final class TiffTools {
     long nrows = numTileRows;
     if (planarConfig == 2) numTileRows *= samplesPerPixel;
 
-    Rectangle imageBounds = new Rectangle(x, y, (int) width,
+    Region imageBounds = new Region(x, y, (int) width,
       (int) (height * (samplesPerPixel / effectiveChannels)));
 
     int endX = (int) width + x;
@@ -1085,9 +1085,8 @@ public final class TiffTools {
 
     for (int row=0; row<numTileRows; row++) {
       for (int col=0; col<numTileCols; col++) {
-        Rectangle tileBounds = new Rectangle(col * (int) tileWidth,
-          (int) (row * tileLength), (int) tileWidth,
-          (int) tileLength);
+        Region tileBounds = new Region(col * (int) tileWidth,
+          (int) (row * tileLength), (int) tileWidth, (int) tileLength);
 
         if (!imageBounds.intersects(tileBounds)) continue;
 
