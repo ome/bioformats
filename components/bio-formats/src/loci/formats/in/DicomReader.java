@@ -791,7 +791,19 @@ public class DicomReader extends FormatReader {
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
-        addMeta(key, info);
+        if (metadata.containsKey(key)) {
+          // make sure that values are not overwritten
+          Object v = getMetadataValue(key);
+          metadata.remove(key);
+          addMeta(key + " #1", v);
+          addMeta(key + " #2", info);
+        }
+        else if (metadata.containsKey(key + " #1")) {
+          int index = 2;
+          while (metadata.containsKey(key + " #" + index)) index++;
+          addMeta(key + " #" + index, info);
+        }
+        else addMeta(key, info);
       }
     }
   }
