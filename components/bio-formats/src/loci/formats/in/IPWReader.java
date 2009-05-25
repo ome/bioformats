@@ -255,7 +255,7 @@ public class IPWReader extends FormatReader {
     Hashtable h = ifds[0];
     core[0].sizeX = (int) TiffTools.getImageWidth(h);
     core[0].sizeY = (int) TiffTools.getImageLength(h);
-    core[0].dimensionOrder = isRGB() ? "XYCTZ" : "XYTCZ";
+    core[0].dimensionOrder = isRGB() ? "XYCZT" : "XYZCT";
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
     if (getSizeC() == 0) core[0].sizeC = 1;
