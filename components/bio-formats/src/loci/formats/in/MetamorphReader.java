@@ -138,7 +138,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (ndFilename == null) return null;
       return new String[] {ndFilename};
     }
-    if (stks == null) return super.getUsedFiles();
+    if (stks == null) return new String[] {currentId};
     Vector<String> v = new Vector<String>();
     if (ndFilename != null) v.add(ndFilename);
     for (int i=0; i<stks.length; i++) {
