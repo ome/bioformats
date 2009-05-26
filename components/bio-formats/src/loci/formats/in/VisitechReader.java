@@ -53,7 +53,7 @@ public class VisitechReader extends FormatReader {
   // -- Fields --
 
   /** Files in this dataset. */
-  private Vector files;
+  private Vector<String> files;
 
   // -- Constructor --
 
@@ -90,7 +90,7 @@ public class VisitechReader extends FormatReader {
     int fileIndex = (series * getSizeC()) + no / div;
     int planeIndex = no % div;
 
-    String file = (String) files.get(fileIndex);
+    String file = files.get(fileIndex);
     RandomAccessInputStream s = new RandomAccessInputStream(file);
     s.seek(374);
     while (s.read() != (byte) 0xf0);
@@ -106,17 +106,11 @@ public class VisitechReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    if (files == null) return new String[0];
-    return (String[]) files.toArray(new String[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return noPixels ? new String[] {currentId} : getUsedFiles();
+    if (noPixels) return new String[] {currentId};
+    return files == null ? new String[0] : files.toArray(new String[0]);
   }
 
   // -- IFormatHandler API methods --
@@ -258,7 +252,7 @@ public class VisitechReader extends FormatReader {
 
     // find pixels files - we think there is one channel per file
 
-    files = new Vector();
+    files = new Vector<String>();
 
     int ndx = currentId.lastIndexOf(File.separator) + 1;
     String base = currentId.substring(ndx, currentId.lastIndexOf(" "));

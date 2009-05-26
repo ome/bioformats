@@ -121,7 +121,7 @@ public class DicomReader extends FormatReader {
   private String date, time, imageType;
   private String pixelSizeX, pixelSizeY;
 
-  private Vector fileList;
+  private Vector<String> fileList;
   private int imagesPerFile;
 
   private String originalDate, originalTime, originalInstance;
@@ -181,9 +181,11 @@ public class DicomReader extends FormatReader {
     return shortLut;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    return fileList == null ? null : (String[]) fileList.toArray(new String[0]);
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return noPixels || fileList == null ? null :
+      fileList.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -204,7 +206,7 @@ public class DicomReader extends FormatReader {
     if (fileList.size() > 1) {
       int fileNumber = no / imagesPerFile;
       no = no % imagesPerFile;
-      initFile((String) fileList.get(fileNumber));
+      initFile(fileList.get(fileNumber));
     }
 
     int ec = isIndexed() ? 1 : getSizeC();
@@ -605,7 +607,7 @@ public class DicomReader extends FormatReader {
     if (fileList == null && originalInstance != null && originalDate != null &&
       originalTime != null)
     {
-      fileList = new Vector();
+      fileList = new Vector<String>();
 
       int instanceNumber = Integer.parseInt(originalInstance) - 1;
       if (instanceNumber == 0) fileList.add(currentId);
@@ -665,14 +667,14 @@ public class DicomReader extends FormatReader {
         }
       }
 
-      files = (String[]) fileList.toArray(new String[0]);
+      files = fileList.toArray(new String[0]);
       fileList.clear();
       for (int i=0; i<files.length; i++) {
         if (files[i] != null) fileList.add(files[i]);
       }
     }
     else if (fileList == null) {
-      fileList = new Vector();
+      fileList = new Vector<String>();
       fileList.add(currentId);
     }
 

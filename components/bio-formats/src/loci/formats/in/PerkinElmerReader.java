@@ -25,17 +25,12 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -66,6 +61,10 @@ public class PerkinElmerReader extends FormatReader {
   public static final String[] ZPO_SUFFIX = {"zpo"};
   public static final String[] HTM_SUFFIX = {"htm"};
 
+  public static final String HTML_REGEX =
+    "<p>|</p>|<br>|<hr>|<b>|</b>|<HTML>|<HEAD>|</HTML>|" +
+    "</HEAD>|<h1>|</h1>|<HR>|</body>";
+
   // -- Fields --
 
   /** Helper reader. */
@@ -78,7 +77,7 @@ public class PerkinElmerReader extends FormatReader {
   private boolean isTiff = true;
 
   /** List of all files to open */
-  private Vector allFiles;
+  private Vector<String> allFiles;
 
   private String details, sliceSpace;
 
@@ -167,20 +166,14 @@ public class PerkinElmerReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    return (String[]) allFiles.toArray(new String[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
-      Vector files = new Vector();
+      Vector<String> files = new Vector<String>();
       if (isTiff) {
         for (int i=0; i<allFiles.size(); i++) {
-          String f = ((String) allFiles.get(i)).toLowerCase();
+          String f = allFiles.get(i).toLowerCase();
           if (!f.endsWith(".tif") && !f.endsWith(".tiff")) {
             files.add(allFiles.get(i));
           }
@@ -188,18 +181,17 @@ public class PerkinElmerReader extends FormatReader {
       }
       else {
         for (int i=0; i<allFiles.size(); i++) {
-          String f = (String) allFiles.get(i);
+          String f = allFiles.get(i);
           String ext = f.substring(f.lastIndexOf(".") + 1);
           try {
             Integer.parseInt(ext, 16);
-            files.add(f);
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) { files.add(f); }
         }
       }
-      return (String[]) files.toArray(new String[0]);
+      return files.toArray(new String[0]);
     }
-    return getUsedFiles();
+    return allFiles.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -238,9 +230,9 @@ public class PerkinElmerReader extends FormatReader {
     if (!checkSuffix(id, HTM_SUFFIX)) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       String[] ls = parent.list();
-      for (int i=0; i<ls.length; i++) {
-        if (checkSuffix(ls[i], HTM_SUFFIX) && !ls[i].startsWith(".")) {
-          id = new Location(parent.getAbsolutePath(), ls[i]).getAbsolutePath();
+      for (String file : ls) {
+        if (checkSuffix(file, HTM_SUFFIX) && !file.startsWith(".")) {
+          id = new Location(parent.getAbsolutePath(), file).getAbsolutePath();
           break;
         }
       }
@@ -248,23 +240,23 @@ public class PerkinElmerReader extends FormatReader {
 
     super.initFile(id);
 
-    allFiles = new Vector();
+    allFiles = new Vector<String>();
 
     // get the working directory
-    File tmpFile = new File(id).getAbsoluteFile();
-    File workingDir = tmpFile.getParentFile();
-    if (workingDir == null) workingDir = new File(".");
+    Location tmpFile = new Location(id).getAbsoluteFile();
+    Location workingDir = tmpFile.getParentFile();
+    if (workingDir == null) workingDir = new Location(".");
     String workingDirPath = workingDir.getPath();
     if (!workingDirPath.equals("")) workingDirPath += File.separator;
     String[] ls = workingDir.list();
-    if (!new File(id).exists()) {
+    if (!new Location(id).exists()) {
       ls = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
       workingDirPath = "";
     }
 
     // remove files that start with '.'
 
-    Vector v = new Vector();
+    Vector<String> v = new Vector<String>();
     for (int i=0; i<ls.length; i++) {
       String file = ls[i];
       if (file.indexOf(File.separator) != -1) {
@@ -274,19 +266,16 @@ public class PerkinElmerReader extends FormatReader {
         v.add(ls[i]);
       }
     }
-    ls = (String[]) v.toArray(new String[0]);
+    ls = v.toArray(new String[0]);
 
     status("Searching for all metadata companion files");
 
     // check if we have any of the required header file types
 
-    int cfgPos = -1;
-    int anoPos = -1;
-    int recPos = -1;
-    int timPos = -1;
-    int csvPos = -1;
-    int zpoPos = -1;
-    int htmPos = -1;
+    String cfgFile = null, anoFile = null, recFile = null;
+    String timFile = null, csvFile = null, zpoFile = null;
+    String htmFile = null;
+
     int filesPt = 0;
     files = new String[ls.length];
 
@@ -297,8 +286,6 @@ public class PerkinElmerReader extends FormatReader {
     // locate appropriate .tim, .csv, .zpo, .htm and .tif files
 
     String prefix = null;
-
-    Location tempFile = null;
 
     for (int i=0; i<ls.length; i++) {
       // make sure that the file has a name similar to the name of the
@@ -314,46 +301,24 @@ public class PerkinElmerReader extends FormatReader {
       if (s.startsWith(check) || check.startsWith(s) ||
         ((prefix != null) && (s.startsWith(prefix))))
       {
-        if (cfgPos == -1 && checkSuffix(ls[i], CFG_SUFFIX)) {
-          cfgPos = i;
-          prefix = ls[i].substring(0, d);
-        }
-        if (anoPos == -1 && checkSuffix(ls[i], ANO_SUFFIX)) {
-          anoPos = i;
-          prefix = ls[i].substring(0, d);
-        }
-        if (recPos == -1 && checkSuffix(ls[i], REC_SUFFIX)) {
-          recPos = i;
-          prefix = ls[i].substring(0, d);
-        }
-        if (timPos == -1 && checkSuffix(ls[i], TIM_SUFFIX)) {
-          timPos = i;
-          prefix = ls[i].substring(0, d);
-        }
-        if (csvPos == -1 && checkSuffix(ls[i], CSV_SUFFIX)) {
-          csvPos = i;
-          prefix = ls[i].substring(0, d);
-        }
-        if (zpoPos == -1 && checkSuffix(ls[i], ZPO_SUFFIX)) {
-          zpoPos = i;
-          prefix = ls[i].substring(0, d);
-        }
-        if (htmPos == -1 && checkSuffix(ls[i], HTM_SUFFIX)) {
-          htmPos = i;
-          prefix = ls[i].substring(0, d);
-        }
+        prefix = ls[i].substring(0, d);
+        if (cfgFile == null && checkSuffix(ls[i], CFG_SUFFIX)) cfgFile = ls[i];
+        if (anoFile == null && checkSuffix(ls[i], ANO_SUFFIX)) anoFile = ls[i];
+        if (recFile == null && checkSuffix(ls[i], REC_SUFFIX)) recFile = ls[i];
+        if (timFile == null && checkSuffix(ls[i], TIM_SUFFIX)) timFile = ls[i];
+        if (csvFile == null && checkSuffix(ls[i], CSV_SUFFIX)) csvFile = ls[i];
+        if (zpoFile == null && checkSuffix(ls[i], ZPO_SUFFIX)) zpoFile = ls[i];
+        if (htmFile == null && checkSuffix(ls[i], HTM_SUFFIX)) htmFile = ls[i];
 
         if (checkSuffix(ls[i], TiffReader.TIFF_SUFFIXES)) {
-          files[filesPt] = workingDirPath + ls[i];
-          filesPt++;
+          files[filesPt++] = workingDirPath + ls[i];
         }
 
         try {
           String ext = ls[i].substring(ls[i].lastIndexOf(".") + 1);
           Integer.parseInt(ext, 16);
           isTiff = false;
-          files[filesPt] = workingDirPath + ls[i];
-          filesPt++;
+          files[filesPt++] = workingDirPath + ls[i];
         }
         catch (NumberFormatException exc) {
           if (debug) trace(exc);
@@ -371,7 +336,7 @@ public class PerkinElmerReader extends FormatReader {
     status("Finding image files");
 
     int extCount = 0;
-    Vector foundExts = new Vector();
+    Vector<String> foundExts = new Vector<String>();
     for (int i=0; i<filesPt; i++) {
       String ext = tempFiles[i].substring(tempFiles[i].lastIndexOf(".") + 1);
       if (!foundExts.contains(ext)) {
@@ -379,15 +344,16 @@ public class PerkinElmerReader extends FormatReader {
         foundExts.add(ext);
       }
     }
+    foundExts = null;
 
     for (int i=0; i<filesPt; i+=extCount) {
-      Vector extSet = new Vector();
+      Vector<String> extSet = new Vector<String>();
       for (int j=0; j<extCount; j++) {
-        if (extSet.size() == 0) extSet.add(tempFiles[i + j]);
+        String file = tempFiles[i + j];
+        if (extSet.size() == 0) extSet.add(file);
         else {
-          if (tempFiles[i + j] == null) continue;
-          String ext =
-            tempFiles[i+j].substring(tempFiles[i+j].lastIndexOf(".") + 1);
+          if (file == null) continue;
+          String ext = file.substring(file.lastIndexOf(".") + 1);
           int extNum = Integer.parseInt(ext, 16);
 
           int insert = -1;
@@ -438,7 +404,6 @@ public class PerkinElmerReader extends FormatReader {
     core[0].imageCount = files.length;
     RandomAccessInputStream read;
     byte[] data;
-    StringTokenizer t;
 
     tiff = new MinimalTiffReader();
 
@@ -447,29 +412,21 @@ public class PerkinElmerReader extends FormatReader {
 
     status("Parsing metadata values");
 
-    if (cfgPos != -1) {
-      tempFile = new Location(workingDirPath, ls[cfgPos]);
-      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
-      else allFiles.add(ls[cfgPos]);
-    }
-    if (anoPos != -1) {
-      tempFile = new Location(workingDirPath, ls[anoPos]);
-      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
-      else allFiles.add(ls[anoPos]);
-    }
-    if (recPos != -1) {
-      tempFile = new Location(workingDirPath, ls[recPos]);
-      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
-      else allFiles.add(ls[recPos]);
-    }
+    addUsedFile(workingDirPath, cfgFile);
+    addUsedFile(workingDirPath, anoFile);
+    addUsedFile(workingDirPath, recFile);
+    addUsedFile(workingDirPath, timFile);
+    if (timFile != null) timFile = allFiles.get(allFiles.size() - 1);
+    addUsedFile(workingDirPath, csvFile);
+    if (csvFile != null) csvFile = allFiles.get(allFiles.size() - 1);
+    addUsedFile(workingDirPath, zpoFile);
+    if (zpoFile != null) zpoFile = allFiles.get(allFiles.size() - 1);
+    addUsedFile(workingDirPath, htmFile);
+    if (htmFile != null) htmFile = allFiles.get(allFiles.size() - 1);
 
-    if (timPos != -1) {
-      tempFile = new Location(workingDirPath, ls[timPos]);
-      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
-      else allFiles.add(ls[timPos]);
-      read = new RandomAccessInputStream((String)
-        allFiles.get(allFiles.size() - 1));
-      t = new StringTokenizer(read.readString((int) read.length()));
+    if (timFile != null) {
+      read = new RandomAccessInputStream(timFile);
+      String[] tokens = read.readString((int) read.length()).split("\\s");
       int tNum = 0;
       // can ignore "Zero x" and "Extra int"
       String[] hashKeys = {"Number of Wavelengths/Timepoints", "Zero 1",
@@ -481,107 +438,85 @@ public class PerkinElmerReader extends FormatReader {
 
       // there are 9 additional tokens, but I don't know what they're for
 
-      while (t.hasMoreTokens() && tNum<hashKeys.length) {
-        String token = t.nextToken();
+      for (String token : tokens) {
+        if (token.trim().length() == 0) continue;
+        if (tNum >= hashKeys.length) break;
         if (token.equals("um")) tNum = 5;
         while ((tNum == 1 || tNum == 2) && !token.trim().equals("0")) {
           tNum++;
         }
-
         if (tNum == 4) {
-          try { Integer.parseInt(token); }
-          catch (NumberFormatException e) { tNum++; }
+          try {
+            Integer.parseInt(token);
+          }
+          catch (NumberFormatException e) {
+            tNum++;
+          }
         }
         parseKeyValue(hashKeys[tNum++], token);
       }
+
       read.close();
     }
 
-    if (csvPos != -1) {
-      tempFile = new Location(workingDirPath, ls[csvPos]);
-      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
-      else allFiles.add(ls[csvPos]);
-      read = new RandomAccessInputStream((String)
-        allFiles.get(allFiles.size() - 1));
-      t = new StringTokenizer(read.readString((int) read.length()));
+    if (csvFile != null) {
+      read = new RandomAccessInputStream(csvFile);
+      String[] tokens = read.readString((int) read.length()).split("\\s");
+      Vector<String> tmp = new Vector<String>();
+      for (String token : tokens) {
+        if (token.trim().length() > 0) tmp.add(token.trim());
+      }
+      tokens = tmp.toArray(new String[0]);
+      read.close();
+
       int tNum = 0;
       String[] hashKeys = {"Calibration Unit", "Pixel Size X", "Pixel Size Y",
         "Z slice space"};
       int pt = 0;
-      while (t.hasMoreTokens()) {
+      for (int j=0; j<tokens.length;) {
         String key = null, value = null;
-        if (tNum < 7) { t.nextToken(); }
+        if (tNum < 7) { j++; }
         else if ((tNum > 7 && tNum < 12) ||
           (tNum > 12 && tNum < 18) || (tNum > 18 && tNum < 22))
         {
-          t.nextToken();
+          j++;
         }
         else if (pt < hashKeys.length) {
-          key = hashKeys[pt];
-          value = t.nextToken();
-          pt++;
+          key = hashKeys[pt++];
+          value = tokens[j++];
         }
         else {
-          key = t.nextToken() + t.nextToken();
-          value = t.nextToken();
+          key = tokens[j++] + tokens[j++];
+          value = tokens[j++];
         }
 
         parseKeyValue(key, value);
-
         tNum++;
       }
-      read.close();
     }
-    if (zpoPos != -1) {
-      tempFile = new Location(workingDirPath, ls[zpoPos]);
-      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
-      else allFiles.add(ls[zpoPos]);
-      if (csvPos < 0) {
-        // parse .zpo only if no .csv is available
-        read = new RandomAccessInputStream((String)
-          allFiles.get(allFiles.size() - 1));
-        t = new StringTokenizer(read.readString((int) read.length()));
-        int tNum = 0;
-        while (t.hasMoreTokens()) {
-          addMeta("Z slice #" + tNum + " position", t.nextToken());
-          tNum++;
-        }
-        read.close();
+
+    if (zpoFile != null && csvFile == null) {
+      // parse .zpo only if no .csv is available
+      read = new RandomAccessInputStream(zpoFile);
+      String[] tokens = read.readString((int) read.length()).split("\\s");
+      for (int t=0; t<tokens.length; t++) {
+        addMeta("Z slice #" + t + " position", tokens[t]);
       }
+      read.close();
     }
 
     // be aggressive about parsing the HTML file, since it's the only one that
     // explicitly defines the number of wavelengths and timepoints
 
-    Vector exposureTimes = new Vector();
-    Vector zPositions = new Vector();
-    Vector emWaves = new Vector();
-    Vector exWaves = new Vector();
+    Vector<Float> exposureTimes = new Vector<Float>();
+    Vector<Float> zPositions = new Vector<Float>();
+    Vector<Integer> emWaves = new Vector<Integer>();
+    Vector<Integer> exWaves = new Vector<Integer>();
 
-    if (htmPos != -1) {
-      tempFile = new Location(workingDirPath, ls[htmPos]);
-      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
-      else allFiles.add(ls[htmPos]);
-      read = new RandomAccessInputStream((String)
-        allFiles.get(allFiles.size() - 1));
-      data = new byte[(int) read.length()];
-      read.read(data);
-
-      String regex = "<p>|</p>|<br>|<hr>|<b>|</b>|<HTML>|<HEAD>|</HTML>|" +
-        "</HEAD>|<h1>|</h1>|<HR>|</body>";
-
-      // use reflection to avoid dependency on Java 1.4-specific split method
-      Class c = String.class;
-      String[] tokens = new String[0];
-      Throwable th = null;
-      try {
-        Method split = c.getMethod("split", new Class[] {c});
-        tokens = (String[]) split.invoke(new String(data),
-          new Object[] {regex});
-      }
-      catch (NoSuchMethodException exc) { if (debug) trace(exc); }
-      catch (IllegalAccessException exc) { if (debug) trace(exc); }
-      catch (InvocationTargetException exc) { if (debug) trace(exc); }
+    if (htmFile != null) {
+      read = new RandomAccessInputStream(htmFile);
+      String[] tokens = read.readString((int) read.length()).split(HTML_REGEX);
+      read.close();
 
       for (int j=0; j<tokens.length; j++) {
         if (tokens[j].indexOf("<") != -1) tokens[j] = "";
@@ -631,7 +566,6 @@ public class PerkinElmerReader extends FormatReader {
           parseKeyValue(tokens[j], tokens[j + 1]);
         }
       }
-      read.close();
     }
     else {
       throw new FormatException("Valid header files not found.");
@@ -640,22 +574,16 @@ public class PerkinElmerReader extends FormatReader {
     // parse details to get number of wavelengths and timepoints
 
     if (details != null) {
-      t = new StringTokenizer(details);
-      int tokenNum = 0;
-      String prevToken = "";
-      while (t.hasMoreTokens()) {
-        String token = t.nextToken();
-        if (token.equals("Wavelengths")) {
-          core[0].sizeC = Integer.parseInt(prevToken);
+      String[] tokens = details.split("\\s");
+      int n = 0;
+      for (String token : tokens) {
+        if (token.equals("Wavelengths")) core[0].sizeC = n;
+        else if (token.equals("Frames")) core[0].sizeT = n;
+        else if (token.equals("Slices")) core[0].sizeZ = n;
+        try {
+          n = Integer.parseInt(token);
         }
-        else if (token.equals("Frames")) {
-          core[0].sizeT = Integer.parseInt(prevToken);
-        }
-        else if (token.equals("Slices")) {
-          core[0].sizeZ = Integer.parseInt(prevToken);
-        }
-        tokenNum++;
-        prevToken = token;
+        catch (NumberFormatException e) { n = 0; }
       }
     }
 
@@ -706,14 +634,14 @@ public class PerkinElmerReader extends FormatReader {
       int imageCount = (int) Math.min(getImageCount(), calcCount);
       files = new String[imageCount];
 
-      Hashtable zSections = new Hashtable();
+      Hashtable<String, Integer> zSections = new Hashtable<String, Integer>();
       for (int i=0; i<tmpFiles.length; i++) {
         int underscore = tmpFiles[i].lastIndexOf("_");
         int dotIndex = tmpFiles[i].lastIndexOf(".");
         String z = tmpFiles[i].substring(underscore + 1, dotIndex);
         if (zSections.get(z) == null) zSections.put(z, new Integer(1));
         else {
-          int count = ((Integer) zSections.get(z)).intValue() + 1;
+          int count = zSections.get(z).intValue() + 1;
           zSections.put(z, new Integer(count));
         }
       }
@@ -721,10 +649,10 @@ public class PerkinElmerReader extends FormatReader {
       int nextFile = 0;
       int oldFile = 0;
       Arrays.sort(tmpFiles, new PEComparator());
-      String[] keys = (String[]) zSections.keySet().toArray(new String[0]);
+      String[] keys = zSections.keySet().toArray(new String[0]);
       Arrays.sort(keys);
       for (int i=0; i<keys.length; i++) {
-        int oldCount = ((Integer) zSections.get(keys[i])).intValue();
+        int oldCount = zSections.get(keys[i]).intValue();
         int nPlanes =
           (isTiff ? tiff.getEffectiveSizeC() : getSizeC()) * getSizeT();
         int count = (int) Math.min(oldCount, nPlanes);
@@ -737,7 +665,6 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     core[0].dimensionOrder = "XYCTZ";
-
     core[0].rgb = isTiff ? tiff.isRGB() : false;
     core[0].interleaved = false;
     core[0].littleEndian = isTiff ? tiff.isLittleEndian() : true;
@@ -759,10 +686,7 @@ public class PerkinElmerReader extends FormatReader {
     // populate Image element
     store.setImageName("", 0);
     if (finishTime != null) {
-      SimpleDateFormat parse = new SimpleDateFormat("HH:mm:ss (MM/dd/yyyy)");
-      Date date = parse.parse(finishTime, new ParsePosition(0));
-      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      finishTime = fmt.format(date);
+      finishTime = DataTools.formatDate(finishTime, "HH:mm:ss (MM/dd/yyyy)");
       store.setImageCreationDate(finishTime, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
@@ -772,56 +696,38 @@ public class PerkinElmerReader extends FormatReader {
     store.setImageInstrumentRef("Instrument:0", 0);
 
     // populate LogicalChannel element
-    for (int i=0; i<getSizeC(); i++) {
+    for (int i=0; i<getEffectiveSizeC(); i++) {
       if (i < emWaves.size()) {
-        store.setLogicalChannelEmWave((Integer) emWaves.get(i), 0, i);
+        store.setLogicalChannelEmWave(emWaves.get(i), 0, i);
       }
       if (i < exWaves.size()) {
-        store.setLogicalChannelExWave((Integer) exWaves.get(i), 0, i);
+        store.setLogicalChannelExWave(exWaves.get(i), 0, i);
       }
     }
 
-    // populate PlaneTiming
+    // populate PlaneTiming and StagePosition
 
     long start = 0, end = 0;
     if (startTime != null) {
-      SimpleDateFormat parse = new SimpleDateFormat("HH:mm:ss (MM/dd/yyyy)");
-      Date date = parse.parse(startTime, new ParsePosition(0));
-      start = date.getTime();
+      start = DataTools.getTime(startTime, "HH:mm:ss (MM/dd/yyyy)");
     }
     if (finishTime != null) {
-      SimpleDateFormat parse = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      Date date = parse.parse(finishTime, new ParsePosition(0));
-      end = date.getTime();
+      end = DataTools.getTime(finishTime, "yyyy-MM-dd'T'HH:mm:ss");
     }
 
-    long range = end - start;
-    float msPerPlane = (float) range / getImageCount();
-
-    int plane = 0;
-    for (int zi=0; zi<getSizeZ(); zi++) {
-      for (int ti=0; ti<getSizeT(); ti++) {
-        for (int ci=0; ci<getSizeC(); ci++) {
-          store.setPlaneTimingDeltaT(new Float((plane * msPerPlane) / 1000),
-            0, 0, plane);
-          if (ci < exposureTimes.size()) {
-            store.setPlaneTimingExposureTime(
-              (Float) exposureTimes.get(ci), 0, 0, plane);
-          }
-          plane++;
-        }
-      }
-    }
-
-    // populate StagePosition
+    float secondsPerPlane = ((float) (end - start) / getImageCount()) / 1000f;
 
     for (int i=0; i<getImageCount(); i++) {
       int[] zct = getZCTCoords(i);
+      store.setPlaneTimingDeltaT(new Float(i * secondsPerPlane), 0, 0, i);
+      if (zct[1] < exposureTimes.size()) {
+        store.setPlaneTimingExposureTime(exposureTimes.get(zct[1]), 0, 0, i);
+      }
+
       if (zct[0] < zPositions.size()) {
-        store.setStagePositionPositionX(new Float(0.0), 0, 0, plane);
-        store.setStagePositionPositionY(new Float(0.0), 0, 0, plane);
-        store.setStagePositionPositionZ((Float) zPositions.get(zct[0]),
-          0, 0, plane);
+        store.setStagePositionPositionX(new Float(0.0), 0, 0, i);
+        store.setStagePositionPositionY(new Float(0.0), 0, 0, i);
+        store.setStagePositionPositionZ(zPositions.get(zct[0]), 0, 0, i);
       }
     }
   }
@@ -866,6 +772,14 @@ public class PerkinElmerReader extends FormatReader {
     }
   }
 
+  /** Add the given file to the used files list. */
+  private void addUsedFile(String workingDirPath, String file) {
+    if (file == null) return;
+    Location f = new Location(workingDirPath, file);
+    if (!workingDirPath.equals("")) allFiles.add(f.getAbsolutePath());
+    else allFiles.add(file);
+  }
+
   // -- Helper class --
 
   class PEComparator implements Comparator {
@@ -875,28 +789,31 @@ public class PerkinElmerReader extends FormatReader {
 
       if (s1.equals(s2)) return 0;
 
-      int underscore1 = s1.lastIndexOf("_");
-      int underscore2 = s2.lastIndexOf("_");
-      int dot1 = s1.lastIndexOf(".");
-      int dot2 = s2.lastIndexOf(".");
+      int underscore1 = (int) Math.max(s1.lastIndexOf("_"), 0);
+      int underscore2 = (int) Math.max(s2.lastIndexOf("_"), 0);
+      int dot1 = (int) Math.max(s1.lastIndexOf("."), 0);
+      int dot2 = (int) Math.max(s2.lastIndexOf("."), 0);
 
       String prefix1 = s1.substring(0, underscore1);
       String prefix2 = s2.substring(0, underscore2);
 
       if (!prefix1.equals(prefix2)) return prefix1.compareTo(prefix2);
 
-      int z1 = Integer.parseInt(s1.substring(underscore1 + 1, dot1));
-      int z2 = Integer.parseInt(s2.substring(underscore2 + 1, dot2));
+      try {
+        int z1 = Integer.parseInt(s1.substring(underscore1 + 1, dot1));
+        int z2 = Integer.parseInt(s2.substring(underscore2 + 1, dot2));
 
-      if (z1 < z2) return -1;
-      if (z2 < z1) return 1;
+        if (z1 < z2) return -1;
+        if (z2 < z1) return 1;
+      }
+      catch (NumberFormatException e) { }
 
       try {
         int ext1 = Integer.parseInt(s1.substring(dot1 + 1), 16);
         int ext2 = Integer.parseInt(s2.substring(dot2 + 1), 16);
 
         if (ext1 < ext2) return -1;
-        return 1;
+        if (ext1 > ext2) return 1;
       }
       catch (NumberFormatException e) { }
       return 0;

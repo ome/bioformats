@@ -63,7 +63,7 @@ public class TCSReader extends FormatReader {
   // -- Fields --
 
   /** List of TIFF files. */
-  private Vector tiffs;
+  private Vector<String> tiffs;
 
   /** Helper readers. */
   private TiffReader[] tiffReaders;
@@ -170,17 +170,6 @@ public class TCSReader extends FormatReader {
     return tiffReaders[n].openBytes(0, buf, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    Vector v = new Vector();
-    for (int i=0; i<tiffs.size(); i++) {
-      v.add(tiffs.get(i));
-    }
-    if (!v.contains(currentId)) v.add(currentId);
-    return (String[]) v.toArray(new String[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
@@ -189,7 +178,12 @@ public class TCSReader extends FormatReader {
       if (name.endsWith(".tif") || name.endsWith(".tiff")) return null;
       return new String[] {currentId};
     }
-    return getUsedFiles();
+    Vector<String> v = new Vector<String>();
+    for (String f : tiffs) {
+      v.add(f);
+    }
+    if (!v.contains(currentId)) v.add(currentId);
+    return v.toArray(new String[0]);
   }
 
   // -- IFormatHandler API methods --
@@ -258,7 +252,7 @@ public class TCSReader extends FormatReader {
 
       // look for associated TIFF files
 
-      tiffs = new Vector();
+      tiffs = new Vector<String>();
 
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       String[] list = parent.list();
@@ -280,7 +274,7 @@ public class TCSReader extends FormatReader {
 
       for (int i=0; i<tiffReaders.length; i++) {
         tiffReaders[i] = new TiffReader();
-        tiffReaders[i].setId((String) tiffs.get(i));
+        tiffReaders[i].setId(tiffs.get(i));
       }
 
       core = new CoreMetadata[x.size()];
@@ -344,7 +338,7 @@ public class TCSReader extends FormatReader {
       DataTools.parseXML(xml, new LeicaHandler(store));
     }
     else {
-      tiffs = new Vector();
+      tiffs = new Vector<String>();
       tiffs.add(id);
       tiffReaders = new TiffReader[1];
       tiffReaders[0] = new TiffReader();

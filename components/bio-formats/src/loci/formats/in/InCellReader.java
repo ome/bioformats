@@ -128,10 +128,11 @@ public class InCellReader extends FormatReader {
     return tiffReader.openBytes(0, buf, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector files = new Vector();
+    if (noPixels) return new String[] {currentId};
+    Vector<String> files = new Vector<String>();
     if (imageFiles != null) {
       for (int well=0; well<wellRows*wellCols; well++) {
         for (int field=0; field<fieldCount; field++) {
@@ -147,13 +148,7 @@ public class InCellReader extends FormatReader {
       }
     }
     files.add(currentId);
-    return (String[]) files.toArray(new String[0]);
-  }
-
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
-    FormatTools.assertId(currentId, true, 1);
-    return noPixels ? new String[] {currentId} : getUsedFiles();
+    return files.toArray(new String[0]);
   }
 
   // -- IFormatHandler API methods --

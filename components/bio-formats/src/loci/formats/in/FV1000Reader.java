@@ -84,7 +84,7 @@ public class FV1000Reader extends FormatReader {
   // -- Fields --
 
   /** Names of every TIFF file to open. */
-  private Vector tiffs;
+  private Vector<String> tiffs;
 
   /** Name of thumbnail file. */
   private String thumbId;
@@ -93,13 +93,13 @@ public class FV1000Reader extends FormatReader {
   private BMPReader thumbReader;
 
   /** Used file list. */
-  private Vector usedFiles;
+  private Vector<String> usedFiles;
 
   /** Flag indicating this is an OIB dataset. */
   private boolean isOIB;
 
   /** File mappings for OIB file. */
-  private Hashtable oibMapping;
+  private Hashtable<String, String> oibMapping;
 
   private String[] code, size, pixelSize;
   private int imageDepth;
@@ -191,7 +191,7 @@ public class FV1000Reader extends FormatReader {
     if (series == 0) {
       file = no / (getImageCount() / tiffs.size());
       image = no % (getImageCount() / tiffs.size());
-      if (file < tiffs.size()) filename = (String) tiffs.get(file);
+      if (file < tiffs.size()) filename = tiffs.get(file);
     }
     else {
       file = no / (getImageCount() / previewNames.size());
@@ -221,30 +221,23 @@ public class FV1000Reader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    if (usedFiles == null) return new String[] {currentId};
-    return (String[]) usedFiles.toArray(new String[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
       if (isOIB) return null;
-      Vector files = new Vector();
+      Vector<String> files = new Vector<String>();
       for (int i=0; i<usedFiles.size(); i++) {
-        String file = ((String) usedFiles.get(i)).toLowerCase();
-        if (!file.endsWith(".tif") && !file.endsWith(".tiff") &&
-          !file.endsWith(".bmp"))
+        String f = usedFiles.get(i).toLowerCase();
+        if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp"))
         {
           files.add(usedFiles.get(i));
         }
       }
-      return (String[]) files.toArray(new String[0]);
+      return files.toArray(new String[0]);
     }
-    return getUsedFiles();
+    if (usedFiles == null) return new String[] {currentId};
+    return usedFiles.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -320,7 +313,7 @@ public class FV1000Reader extends FormatReader {
       }
       RandomAccessInputStream ras = poi.getDocumentStream(infoFile);
 
-      oibMapping = new Hashtable();
+      oibMapping = new Hashtable<String, String>();
 
       // set up file name mappings
 
@@ -719,7 +712,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     core[0].imageCount = filenames.size();
-    tiffs = new Vector(getImageCount());
+    tiffs = new Vector<String>(getImageCount());
 
     thumbReader = new BMPReader();
     thumbId = thumbId.replaceAll("pty", "bmp");
@@ -808,7 +801,7 @@ public class FV1000Reader extends FormatReader {
       core[0].imageCount = tiffs.size();
     }
 
-    usedFiles = new Vector();
+    usedFiles = new Vector<String>();
 
     if (tiffPath != null) {
       usedFiles.add(id);
@@ -1272,7 +1265,7 @@ public class FV1000Reader extends FormatReader {
         name = name.substring(1);
       }
       name = name.replace('\\', '/');
-      return poi.getDocumentStream((String) oibMapping.get(name));
+      return poi.getDocumentStream(oibMapping.get(name));
     }
     else return new RandomAccessInputStream(name);
   }

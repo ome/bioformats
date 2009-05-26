@@ -74,9 +74,9 @@ public class ZipReader extends FormatReader {
     reader.setGroupFiles(groupFiles);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    return reader.getUsedFiles();
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    return reader.getUsedFiles(noPixels);
   }
 
   /**

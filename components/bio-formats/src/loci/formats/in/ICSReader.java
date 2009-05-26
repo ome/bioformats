@@ -196,21 +196,14 @@ public class ICSReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    if (versionTwo) {
-      return new String[] {currentId};
-    }
-    return new String[] {currentIdsId, currentIcsId};
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels && !versionTwo) return new String[] {currentIcsId};
-    else if (noPixels) return null;
-    return getUsedFiles();
+    if (versionTwo) {
+      return noPixels ? null : new String[] {currentIcsId};
+    }
+    return noPixels ? new String[] {currentIcsId} :
+      new String[] {currentIcsId, currentIdsId};
   }
 
   // -- IFormatHandler API methods --

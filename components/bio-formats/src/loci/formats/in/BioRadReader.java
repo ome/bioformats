@@ -96,7 +96,7 @@ public class BioRadReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector used;
+  private Vector<String> used;
 
   private String[] picFiles;
 
@@ -144,24 +144,17 @@ public class BioRadReader extends FormatReader {
     return lut == null ? null : lut[lastChannel];
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    return (String[]) used.toArray(new String[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
-      Vector files = new Vector();
-      for (int i=0; i<used.size(); i++) {
-        String f = (String) used.get(i);
-        if (checkSuffix(f, PIC_SUFFIX)) files.add(f);
+      Vector<String> files = new Vector<String>();
+      for (String f : used) {
+        if (!checkSuffix(f, PIC_SUFFIX)) files.add(f);
       }
-      return (String[]) files.toArray(new String[0]);
+      return files.toArray(new String[0]);
     }
-    return getUsedFiles();
+    return used.toArray(new String[0]);
   }
 
   /**
@@ -229,7 +222,7 @@ public class BioRadReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    used = new Vector();
+    used = new Vector<String>();
     used.add(currentId);
 
     status("Reading image dimensions");

@@ -144,23 +144,17 @@ public class PrairieReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    String[] s = new String[files.length + 2];
-    System.arraycopy(files, 0, s, 0, files.length);
-    s[files.length] = xmlFile;
-    s[files.length + 1] = cfgFile;
-    return s;
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
       return new String[] {xmlFile, cfgFile};
     }
-    return getUsedFiles();
+    String[] s = new String[files.length + 2];
+    System.arraycopy(files, 0, s, 0, files.length);
+    s[files.length] = xmlFile;
+    s[files.length + 1] = cfgFile;
+    return s;
   }
 
   /**

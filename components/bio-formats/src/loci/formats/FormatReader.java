@@ -678,13 +678,12 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    return new String[] {currentId};
+    return getUsedFiles(false);
   }
 
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles(boolean noPixels) {
-    return noPixels ? null : getUsedFiles();
+    return noPixels ? null : new String[] {currentId};
   }
 
   /* @see IFormatReader#getCurrentFile() */

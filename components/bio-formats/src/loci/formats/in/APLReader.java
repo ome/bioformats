@@ -67,13 +67,6 @@ public class APLReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    if (used == null) return new String[0];
-    return used.toArray(new String[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
@@ -87,7 +80,7 @@ public class APLReader extends FormatReader {
       }
       return files.toArray(new String[0]);
     }
-    return getUsedFiles();
+    return used == null ? new String[0] : used.toArray(new String[0]);
   }
 
   /**

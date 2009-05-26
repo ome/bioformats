@@ -125,17 +125,13 @@ public class NiftiReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    if (pixelsFilename.equals(currentId)) return new String[] {currentId};
-    return new String[] {currentId, pixelsFilename};
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (pixelsFilename.equals(currentId)) return null;
+    if (pixelsFilename.equals(currentId) && noPixels) return null;
+    if (!noPixels && !pixelsFilename.equals(currentId)) {
+      return new String[] {currentId, pixelsFilename};
+    }
     return new String[] {currentId};
   }
 

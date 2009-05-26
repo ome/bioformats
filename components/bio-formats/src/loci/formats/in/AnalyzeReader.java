@@ -88,19 +88,11 @@ public class AnalyzeReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    String[] s = new String[2];
-    s[0] = currentId;
-    s[1] = pixelsFilename;
-    return s;
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return new String[] {currentId};
+    return noPixels ? new String[] {currentId} :
+      new String[] {currentId, pixelsFilename};
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

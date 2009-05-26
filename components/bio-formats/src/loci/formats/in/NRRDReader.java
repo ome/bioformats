@@ -82,13 +82,6 @@ public class NRRDReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    if (dataFile == null) return new String[] {currentId};
-    return new String[] {currentId, dataFile};
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
@@ -96,7 +89,8 @@ public class NRRDReader extends FormatReader {
       if (dataFile == null) return null;
       return new String[] {currentId};
     }
-    return getUsedFiles();
+    if (dataFile == null) return new String[] {currentId};
+    return new String[] {currentId, dataFile};
   }
 
   /**

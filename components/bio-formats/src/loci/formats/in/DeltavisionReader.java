@@ -108,26 +108,14 @@ public class DeltavisionReader extends FormatReader {
     return magic == 0xa0c0 || magic == 0xc0a0;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    Vector files = new Vector();
-    files.add(currentId);
-    if (logFile != null) files.add(logFile);
-    if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
-    return (String[]) files.toArray(new String[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) {
-      Vector files = new Vector();
-      if (logFile != null) files.add(logFile);
-      if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
-      return (String[]) files.toArray(new String[0]);
-    }
-    return getUsedFiles();
+    Vector<String> files = new Vector<String>();
+    if (logFile != null) files.add(logFile);
+    if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
+    if (!noPixels) files.add(currentId);
+    return files.toArray(new String[0]);
   }
 
   /**
