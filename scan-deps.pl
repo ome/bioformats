@@ -936,6 +936,7 @@ foreach my $c (@components) {
   foreach my $dep (@projDeps) {
     push(@deps, "/$$dep{NAME}");
   }
+  # CTR TODO - fix Eclipse dependency checking
   foreach my $dep (@libDeps) {
     push(@deps, "LOCI_JARS/$$dep{JAR}");
   }
