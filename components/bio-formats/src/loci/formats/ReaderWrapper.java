@@ -110,7 +110,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   /**
-   * Performs a deep copy of the reader, including nested wrapped readers. 
+   * Performs a deep copy of the reader, including nested wrapped readers.
    * Most of the reader state is preserved as well, including:<ul>
    *   <li>{@link #isNormalized()}</li>
    *   <li>{@link #isMetadataFiltered()}</li>
