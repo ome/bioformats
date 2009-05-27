@@ -1487,8 +1487,8 @@ public final class TiffTools {
 
     // write directory entry to output buffers
     DataTools.writeShort(ifdOut, tag, littleEndian); // tag
-    if (value instanceof byte[]) {
-      byte[] q = (byte[]) value;
+    if (value instanceof short[]) {
+      short[] q = (short[]) value;
       DataTools.writeShort(ifdOut, BYTE, littleEndian);
       if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
       else DataTools.writeInt(ifdOut, q.length, littleEndian);
@@ -1505,33 +1505,6 @@ public final class TiffTools {
             littleEndian);
         }
         for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]);
-      }
-    }
-    else if (value instanceof short[]) { // SHORT
-      short[] q = (short[]) value;
-      DataTools.writeShort(ifdOut, SHORT, littleEndian); // type
-      if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
-      else DataTools.writeInt(ifdOut, q.length, littleEndian);
-      if (q.length <= dataLength / 2) {
-        for (int i=0; i<q.length; i++) {
-          DataTools.writeShort(ifdOut, q[i], littleEndian);
-        }
-        for (int i=q.length; i<dataLength / 2; i++) {
-          DataTools.writeShort(ifdOut, 0, littleEndian);
-        }
-      }
-      else {
-        if (bigTiff) {
-          DataTools.writeLong(ifdOut, offset + extraBuf.size(), littleEndian);
-        }
-        else {
-          // offset
-          DataTools.writeInt(ifdOut, (int) (offset + extraBuf.size()),
-            littleEndian);
-        }
-        for (int i=0; i<q.length; i++) {
-          DataTools.writeShort(extraOut, q[i], littleEndian);
-        }
       }
     }
     else if (value instanceof String) { // ASCII
@@ -1556,17 +1529,17 @@ public final class TiffTools {
         extraOut.writeByte(0); // concluding NULL byte
       }
     }
-    else if (value instanceof int[]) { // LONG
+    else if (value instanceof int[]) { // SHORT
       int[] q = (int[]) value;
-      DataTools.writeShort(ifdOut, LONG, littleEndian); // type
+      DataTools.writeShort(ifdOut, SHORT, littleEndian); // type
       if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
       else DataTools.writeInt(ifdOut, q.length, littleEndian);
-      if (q.length <= dataLength / 4) {
+      if (q.length <= dataLength / 2) {
         for (int i=0; i<q.length; i++) {
-          DataTools.writeInt(ifdOut, q[i], littleEndian); // value(s)
+          DataTools.writeShort(ifdOut, q[i], littleEndian); // value(s)
         }
-        for (int i=q.length; i<dataLength / 4; i++) {
-          DataTools.writeInt(ifdOut, 0, littleEndian); // padding
+        for (int i=q.length; i<dataLength / 2; i++) {
+          DataTools.writeShort(ifdOut, 0, littleEndian); // padding
         }
       }
       else {
@@ -1579,7 +1552,7 @@ public final class TiffTools {
             littleEndian);
         }
         for (int i=0; i<q.length; i++) {
-          DataTools.writeInt(extraOut, q[i], littleEndian); // values
+          DataTools.writeShort(extraOut, q[i], littleEndian); // values
         }
       }
     }
