@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -63,9 +62,6 @@ public class FluoviewReader extends BaseTiffReader {
 
   /** Pixel dimensions for this file. */
   private float voxelX = 1f, voxelY = 1f, voxelZ = 1f, voxelC = 1f, voxelT = 1f;
-
-  /** First image. */
-  private BufferedImage zeroImage = null;
 
   private String dimensionOrder;
 
@@ -164,7 +160,6 @@ public class FluoviewReader extends BaseTiffReader {
   public void close() throws IOException {
     super.close();
     voxelX = voxelY = voxelZ = voxelC = voxelT = 1f;
-    zeroImage = null;
     dimensionOrder = null;
   }
 

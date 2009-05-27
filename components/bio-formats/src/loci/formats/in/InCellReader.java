@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -517,8 +516,8 @@ public class InCellReader extends FormatReader {
 
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("Image")) {
-        Point p = new Point(currentRow, currentCol);
-        wellCoordinates.put(new Integer(currentField), p);
+        wellCoordinates.put(new Integer(currentField),
+          new int[] {currentRow, currentCol});
         openImage = false;
 
         int well = currentRow * wellCols + currentCol;

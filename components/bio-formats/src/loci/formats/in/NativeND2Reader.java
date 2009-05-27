@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -245,15 +244,15 @@ public class NativeND2Reader extends FormatReader {
 
         if (blockType.startsWith("ImageDataSeq")) {
           imageOffsets.add(new Long(fp));
-          imageLengths.add(new Point(lenOne, lenTwo));
+          imageLengths.add(new int[] {lenOne, lenTwo});
         }
         else if (blockType.startsWith("Image")) {
           xmlOffsets.add(new Long(fp));
-          xmlLengths.add(new Point(lenOne, lenTwo));
+          xmlLengths.add(new int[] {lenOne, lenTwo});
         }
         else if (blockType.startsWith("CustomData|A")) {
           customDataOffsets.add(new Long(fp));
-          customDataLengths.add(new Point(lenOne, lenTwo));
+          customDataLengths.add(new int[] {lenOne, lenTwo});
         }
       }
 
@@ -264,8 +263,8 @@ public class NativeND2Reader extends FormatReader {
 
       for (int i=0; i<xmlOffsets.size(); i++) {
         long offset = ((Long) xmlOffsets.get(i)).longValue();
-        Point p = (Point) xmlLengths.get(i);
-        int length = (int) (p.x + p.y);
+        int[] p = (int[]) xmlLengths.get(i);
+        int length = p[0] + p[1];
 
         byte[] b = new byte[length];
         in.seek(offset);
@@ -348,8 +347,8 @@ public class NativeND2Reader extends FormatReader {
 
       for (int i=0; i<imageOffsets.size(); i++) {
         long offset = ((Long) imageOffsets.get(i)).longValue();
-        Point p = (Point) imageLengths.get(i);
-        int length = (int) (p.x + p.y);
+        int[] p = (int[]) imageLengths.get(i);
+        int length = p[0] + p[1];
 
         in.seek(offset);
         byte[] b = new byte[length];
@@ -375,7 +374,7 @@ public class NativeND2Reader extends FormatReader {
 
         if (seriesIndex < offsets.length && plane < offsets[seriesIndex].length)
         {
-          offsets[seriesIndex][plane] = offset + p.x + 8;
+          offsets[seriesIndex][plane] = offset + p[0] + 8;
         }
         b = null;
       }
@@ -443,8 +442,8 @@ public class NativeND2Reader extends FormatReader {
 
       if (customDataOffsets.size() > 0) {
         in.seek(((Long) customDataOffsets.get(0)).longValue());
-        Point p = (Point) customDataLengths.get(0);
-        int len = (int) (p.x + p.y);
+        int[] p = (int[]) customDataLengths.get(0);
+        int len = p[0] + p[1];
 
         int timestampBytes = imageOffsets.size() * 8;
         in.skipBytes(len - timestampBytes);
