@@ -614,7 +614,7 @@ public class NativeQTReader extends FormatReader {
       (bitsPerPixel - 32) / 8;
     options.previousImage = canUsePrevious ? prevPixels : null;
     options.littleEndian = isLittleEndian();
-    options.interleaved = false;
+    options.interleaved = isRGB();
 
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) {
