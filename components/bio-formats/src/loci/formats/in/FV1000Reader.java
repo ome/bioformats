@@ -717,7 +717,6 @@ public class FV1000Reader extends FormatReader {
     thumbReader = new BMPReader();
     thumbId = thumbId.replaceAll("pty", "bmp");
     thumbId = sanitizeFile(thumbId, (isOIB || mappedOIF) ? "" : path);
-    //if (isOIB) thumbId = thumbId.substring(1);
 
     status("Reading additional metadata");
 
@@ -736,6 +735,16 @@ public class FV1000Reader extends FormatReader {
         tiffPath = file.substring(0, file.lastIndexOf(File.separator));
       }
       else tiffPath = file;
+
+      Location ptyFile = new Location(file);
+      if (!ptyFile.exists()) {
+        warn("Could not find .pty file (" + file + "); guessing at the " +
+          "corresponding TIFF file.");
+        String tiff = file.replaceAll(".pty", ".tif");
+        tiffs.add(ii, tiff);
+        continue;
+      }
+
       RandomAccessInputStream ptyReader = getFile(file);
       s = ptyReader.readString((int) ptyReader.length());
       ptyReader.close();
