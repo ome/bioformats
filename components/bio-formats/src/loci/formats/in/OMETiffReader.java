@@ -314,6 +314,17 @@ public class OMETiffReader extends FormatReader {
             readers.put(filename, r);
           }
 
+          Location file = new Location(filename);
+          if (!file.exists()) {
+            // if this is an absolute file name, try using a relative name
+            // old versions of OMETiffWriter wrote an absolute path to
+            // UUID.FileName, which causes problems if the file is moved to
+            // a different directory
+            filename =
+              filename.substring(filename.lastIndexOf(File.separator) + 1);
+            filename = dir + File.separator + filename;
+          }
+
           // populate plane index -> IFD mapping
           for (int q=0; q<count; q++) {
             int no = index + q;

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -123,7 +124,12 @@ public class OMETiffWriter extends TiffWriter {
           }
           int[] zct = FormatTools.getZCTCoords(dimensionOrder,
             sizeZ, sizeC, sizeT, imageCount, plane);
-          omeMeta.setTiffDataFileName(currentId, series, 0, plane);
+
+          // use the relative file path
+          String filename =
+            currentId.substring(currentId.lastIndexOf(File.separator) + 1);
+
+          omeMeta.setTiffDataFileName(filename, series, 0, plane);
           omeMeta.setTiffDataFirstZ(new Integer(zct[0]), series, 0, plane);
           omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, 0, plane);
           omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, 0, plane);
