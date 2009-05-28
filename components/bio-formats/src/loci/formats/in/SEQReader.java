@@ -104,12 +104,19 @@ public class SEQReader extends BaseTiffReader {
       StringTokenizer tokenizer = new StringTokenizer(descr, "\n");
       while (tokenizer.hasMoreTokens()) {
         String token = tokenizer.nextToken();
-        String label = token.substring(0, token.indexOf("="));
-        String data = token.substring(token.indexOf("=") + 1);
-        addMeta(label, data);
-        if (label.equals("channels")) core[0].sizeC = Integer.parseInt(data);
-        else if (label.equals("frames")) core[0].sizeT = Integer.parseInt(data);
-        else if (label.equals("slices")) core[0].sizeZ = Integer.parseInt(data);
+        int eq = token.indexOf("=");
+        if (eq != -1) {
+          String label = token.substring(0, eq);
+          String data = token.substring(eq + 1);
+          addMeta(label, data);
+          if (label.equals("channels")) core[0].sizeC = Integer.parseInt(data);
+          else if (label.equals("frames")) {
+            core[0].sizeT = Integer.parseInt(data);
+          }
+          else if (label.equals("slices")) {
+            core[0].sizeZ = Integer.parseInt(data);
+          }
+        }
       }
     }
 
