@@ -1,4 +1,4 @@
-
+//
 // DicomReader.java
 //
 
@@ -944,7 +944,9 @@ public class DicomReader extends FormatReader {
         int n2 = DataTools.bytesToShort(b, 2, 2, !isLittleEndian());
         if (n1 < 0) return n2;
         if (n2 < 0) return n1;
-        return (int) Math.min(n1, n2);
+        int min = (int) Math.min(n1, n2);
+        if (min == n2 && (min % 2) != 0) return n1;
+        return min;
       default:
         vr = IMPLICIT_VR;
         return DataTools.bytesToInt(b, isLittleEndian());
