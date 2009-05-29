@@ -137,7 +137,7 @@ public class InstallWizard extends JFrame
     File file = new File(localPath);
     long installed = file.lastModified();
     if (installed < latest) {
-      // TODO
+      // TODO: prompt user to upgrade
     }
   }
 

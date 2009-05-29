@@ -234,15 +234,12 @@ public class Colorizer implements PlugInFilter {
 
         ImporterOptions options = null;
         try {
-          // CTR TODO - should not depend anything in importer package
+          // TODO: remove dependency on importer package
           options = new ImporterOptions();
         }
         catch (IOException exc) {
           WindowTools.reportException(exc);
         }
-
-        boolean spectral =
-          stack.getSliceLabel(1).indexOf(FormatTools.SPECTRA) != -1;
 
         if (mergeOption == null) {
           MergeDialog mergeDialog = new MergeDialog(options, num);

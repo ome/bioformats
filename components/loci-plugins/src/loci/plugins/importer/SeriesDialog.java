@@ -195,7 +195,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
 
     if (options.isConcatenate()) {
       // toggle on compatible series
-      // CTR TODO -- why are we doing this?
+      // TODO: why are we doing this?
       for (int i=0; i<seriesCount; i++) {
         if (series[i]) continue;
 

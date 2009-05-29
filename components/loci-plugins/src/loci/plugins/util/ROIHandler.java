@@ -234,7 +234,7 @@ public class ROIHandler {
   private static void storeOval(OvalRoi roi, MetadataStore store, int image,
     int roiNum, int shape)
   {
-    // TODO - storeOval
+    // TODO: storeOval
   }
 
   /**

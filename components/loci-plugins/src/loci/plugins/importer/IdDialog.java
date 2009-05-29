@@ -74,9 +74,9 @@ public class IdDialog extends OptionsDialog {
           "One-time warning: There is a bug in Java on Mac OS X with the " +
           "native file chooser\nthat crashes ImageJ if you click on a file " +
           "in CXD, IPW, OIB or ZVI format while in\ncolumn view mode. You " +
-          "can work around the problem in one of two ways:\n" +
-          "  1. Switch to list view (press Command+2)\n" +
-          "  2. Check \"Use JFileChooser to Open/Save\" under " +
+          "can work around the problem in one of two ways:\n \n" +
+          "    1. Switch to list view (press Command+2)\n" +
+          "    2. Check \"Use JFileChooser to Open/Save\" under " +
           "Edit>Options>Input/Output...");
       }
     }
@@ -145,7 +145,7 @@ public class IdDialog extends OptionsDialog {
   public int showDialogOME() {
     String id = options.getId();
     if (id == null) {
-      // CTR TODO -- eliminate this kludge
+      // TODO: eliminate OMEPlugin kludge
       IJ.runPlugIn("loci.plugins.ome.OMEPlugin", "");
       return STATUS_FINISHED;
     }

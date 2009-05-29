@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.Location;
@@ -67,7 +68,6 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.plugins.Colorizer;
 import loci.plugins.LociImporter;
-import loci.plugins.Updater;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.DataBrowser;
@@ -131,23 +131,11 @@ public class Importer {
 
     // -- Step 1: check if new version is available --
 
+    debug("check if new version is available");
+
     UpgradeDialog upgradeDialog = new UpgradeDialog(options);
     int status = upgradeDialog.showDialog();
     if (!statusOk(status)) return;
-
-    if (options.doUpgradeCheck()) {
-      debug("check if new version is available");
-      IJ.showStatus("Checking for new version...");
-      if (Updater.newVersionAvailable()) {
-        boolean doUpgrade = IJ.showMessageWithCancel("",
-          "A new stable version of Bio-Formats is available.\n" +
-          "Click 'OK' to upgrade.");
-        if (doUpgrade) {
-          Updater.install(Updater.STABLE_BUILD);
-        }
-      }
-    }
-    else debug("skipping new version check");
 
     // -- Step 2: construct reader and check id --
 
@@ -164,12 +152,28 @@ public class Importer {
     String id = options.getId();
     boolean quiet = options.isQuiet();
 
-    String location = options.getLocation();
     Location idLoc = null;
     String idName = id;
-    if (ImporterOptions.LOCATION_LOCAL.equals(location)) {
+    if (options.isLocal()) {
       idLoc = new Location(id);
       idName = idLoc.getName();
+    }
+    else if (options.isOME() || options.isOMERO()) {
+      // NB: strip out username and password when opening from OME/OMERO
+      StringTokenizer st = new StringTokenizer(id, "?&");
+      StringBuffer idBuf = new StringBuffer();
+      int tokenCount = 0;
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken();
+        if (token.startsWith("username=") || token.startsWith("password=")) {
+          continue;
+        }
+        if (tokenCount == 1) idBuf.append("?");
+        else if (tokenCount > 1) idBuf.append("&");
+        idBuf.append(token);
+        tokenCount++;
+      }
+      idName = idBuf.toString();
     }
 
     IFormatReader base = null;
@@ -247,16 +251,14 @@ public class Importer {
     quiet = options.isQuiet();
 
     // save options as new defaults
+    if (!quiet) options.setFirstTime(false);
     options.saveOptions();
 
     // -- Step 4: analyze and read from data source --
 
     debug("analyze and read from data source");
 
-    // 'id' contains the user's password if we are opening from OME/OMERO
-    String a = id;
-    if (options.isOME() || options.isOMERO()) a = "...";
-    IJ.showStatus("Analyzing " + a);
+    IJ.showStatus("Analyzing " + idName);
 
     try {
       base.setMetadataFiltered(true);
@@ -452,7 +454,7 @@ public class Importer {
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata();
         //if (seriesCount == 1) meta = r.getMetadata();
-        meta.put(location, currentFile);
+        meta.put(options.getLocation(), currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
@@ -886,7 +888,7 @@ public class Importer {
         //ru.setVar("name", name);
         //ru.setVar("pattern", pattern);
         ru.exec("dataset = new Dataset(name, pattern)");
-        // CTR TODO finish VisBio logic
+        // TODO: finish VisBio logic
       }
       catch (ReflectException exc) {
         WindowTools.reportException(exc, options.isQuiet(),

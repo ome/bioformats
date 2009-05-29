@@ -72,7 +72,7 @@ public class StringOption extends Option {
   /** Constructs a string option with the parameters from the given map. */
   public StringOption(HashMap<String, String> entry) {
     this(entry.get(INI_KEY),
-      "true".equals(entry.get(INI_SAVE)),
+      !"false".equals(entry.get(INI_SAVE)), // default behavior is saved
       entry.get(INI_LABEL),
       entry.get(INI_INFO),
       entry.get(INI_DEFAULT),

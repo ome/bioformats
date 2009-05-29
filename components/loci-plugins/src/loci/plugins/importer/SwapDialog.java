@@ -97,7 +97,7 @@ public class SwapDialog extends OptionsDialog {
 
       if (z.equals(t) || z.equals(c) || c.equals(t)) {
         IJ.error("Invalid swapping options - each axis can be used only once.");
-        return showDialog(); // CTR: TODO: fix bad recursion
+        return showDialog(); // TODO: fix bad recursion
       }
 
       String originalOrder = r.getDimensionOrder();

@@ -160,7 +160,7 @@ public class ConfigWindow extends JFrame
     version = makeTextField();
     libInfo.add(version);
 
-    // TODO - install/upgrade button, if applicable
+    // TODO: install/upgrade button, if applicable
     // - can upgrade any JAR from LOCI repository
     //   + upgrade button for "ImageJ" just launches ImageJ upgrade plugin
     // - can install native libs by downloading installer from its web site
@@ -187,7 +187,7 @@ public class ConfigWindow extends JFrame
     notes.setLineWrap(true);
     libInfo.add(new JScrollPane(notes));
 
-    // TODO - "How to install" for each library?
+    // TODO: "How to install" for each library?
 
     JPanel upgradePanel = new JPanel();
     tabs.addTab("Upgrade", upgradePanel);
@@ -195,11 +195,11 @@ public class ConfigWindow extends JFrame
     upgradePanel.setLayout(new SpringLayout());
 
     JLabel upgradeLabel =
-      new JLabel("Automatically check for a new versions of the LOCI plugins");
+      new JLabel("Automatically check for new versions of the LOCI plugins");
     upgradePanel.add(upgradeLabel);
 
     try {
-      // CTR TODO - should not depend anything in importer package
+      // TODO: remove dependency on importer package
       options = new ImporterOptions();
     }
     catch (IOException exc) {
@@ -243,14 +243,12 @@ public class ConfigWindow extends JFrame
 
   public void itemStateChanged(ItemEvent e) {
     Object src = e.getSource();
-    // CTR TODO NOW
-    /*
+
     if (src == upgradeBox) {
       options.setUpgradeCheck(upgradeBox.isSelected());
-      Prefs.set(ImporterOptions.PREF_UPGRADE, upgradeBox.isSelected());
+      options.saveOptions();
       return;
     }
-    */
 
     Object value = formatsList.getSelectedValue();
     if (!(value instanceof FormatEntry)) return;

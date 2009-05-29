@@ -25,7 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
+import ij.IJ;
 import ij.gui.GenericDialog;
+import loci.plugins.Updater;
 import loci.plugins.prefs.OptionsDialog;
 
 /**
@@ -53,14 +55,17 @@ public class UpgradeDialog extends OptionsDialog {
   // -- OptionsDialog methods --
 
   /**
-   * Asks user whether Bio-Formats should automatically check for upgrades.
+   * Asks user whether Bio-Formats should automatically check for upgrades,
+   * and if so, checks for an upgrade and prompts user to install it.
    *
    * @return status of operation
    */
   public int showDialog() {
-    if (options.isFirstTime() && !options.isQuiet()) {
+    if (options.isQuiet()) return STATUS_OK;
+
+    if (options.isFirstTime()) {
       // present user with one-time dialog box
-      GenericDialog gd = new GenericDialog("Check for Upgrades");
+      GenericDialog gd = new GenericDialog("Bio-Formats Upgrade Checker");
       gd.addMessage("One-time notice: The LOCI plugins for ImageJ can " +
         "automatically check for upgrades\neach time they are run. If you " +
         "wish to disable this feature, uncheck the box below.\nYou can " +
@@ -70,6 +75,17 @@ public class UpgradeDialog extends OptionsDialog {
       gd.showDialog();
       if (gd.wasCanceled()) return STATUS_CANCELED;
     }
+
+    if (options.doUpgradeCheck()) {
+      IJ.showStatus("Checking for new version...");
+      if (Updater.newVersionAvailable()) {
+        boolean doUpgrade = IJ.showMessageWithCancel("",
+          "A new stable version of Bio-Formats is available.\n" +
+          "Click 'OK' to upgrade now, or 'Cancel' to skip for now.");
+        if (doUpgrade) Updater.install(Updater.STABLE_BUILD);
+      }
+    }
+
     return STATUS_OK;
   }
 

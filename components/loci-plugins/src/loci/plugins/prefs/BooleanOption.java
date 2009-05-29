@@ -52,10 +52,10 @@ public class BooleanOption extends Option {
   /** Constructs a boolean option with the parameters from the given map. */
   public BooleanOption(HashMap<String, String> entry) {
     this(entry.get(INI_KEY),
-      "true".equals(entry.get(INI_SAVE)),
+      !"false".equals(entry.get(INI_SAVE)), // default behavior is saved
       entry.get(INI_LABEL),
       entry.get(INI_INFO),
-      "true".equals(entry.get(INI_DEFAULT)));
+      "true".equals(entry.get(INI_DEFAULT))); // default value is false
   }
 
   /** Constructs a boolean option with the given parameters. */
