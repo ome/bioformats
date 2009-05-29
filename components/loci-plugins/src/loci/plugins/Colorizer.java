@@ -56,6 +56,7 @@ import loci.plugins.importer.ImporterOptions;
 import loci.plugins.importer.MergeDialog;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.ImagePlusTools;
+import loci.plugins.util.LibraryChecker;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -98,6 +99,8 @@ public class Colorizer implements PlugInFilter {
   }
 
   public void run(ImageProcessor ip) {
+    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
+
     stackOrder = "XYCZT";
 
     boolean doPrompt = false;

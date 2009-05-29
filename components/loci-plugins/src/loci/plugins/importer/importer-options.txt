@@ -110,6 +110,7 @@ default = false
 
 [id]
 type = string
+label = Open
 save = false
 
 [location]

@@ -37,6 +37,7 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import loci.formats.FormatTools;
 import loci.plugins.util.ImagePlusTools;
+import loci.plugins.util.LibraryChecker;
 
 /**
  * A plugin for splitting an image stack into separate channels, focal planes
@@ -70,6 +71,8 @@ public class Slicer implements PlugInFilter {
   }
 
   public void run(ImageProcessor ip) {
+    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
+
     boolean sliceZ = false;
     boolean sliceC = false;
     boolean sliceT = false;
