@@ -30,7 +30,7 @@ import ij.gui.GenericDialog;
 import java.awt.Rectangle;
 
 import loci.formats.IFormatReader;
-import loci.plugins.util.OptionsDialog;
+import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
 /**

@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.importer;
 
 import ij.gui.GenericDialog;
-import loci.plugins.util.OptionsDialog;
+import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Bio-Formats Importer location chooser dialog box.

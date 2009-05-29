@@ -40,7 +40,9 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 
 /**
- * TODO
+ * Utility class for managing regions of interest within ImageJ.
+ * Capable of constructing ROIs within ImageJ's ROI manager matching
+ * those specified in an OME metadata store, and vice versa.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ROIHandler.java">Trac</a>,
@@ -232,7 +234,7 @@ public class ROIHandler {
   private static void storeOval(OvalRoi roi, MetadataStore store, int image,
     int roiNum, int shape)
   {
-    // TODO
+    // TODO - storeOval
   }
 
   /**

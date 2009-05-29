@@ -25,10 +25,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
-import loci.plugins.util.OptionsDialog;
+import ij.gui.GenericDialog;
+import loci.plugins.prefs.OptionsDialog;
 
 /**
- * Bio-Formats Importer update checker dialog box.
+ * Bio-Formats Importer upgrade checker dialog box.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/UpgradeDialog.java">Trac</a>,
@@ -43,7 +44,7 @@ public class UpgradeDialog extends OptionsDialog {
 
   // -- Constructor --
 
-  /** Creates an update checker dialog for the Bio-Formats Importer. */
+  /** Creates an upgrade checker dialog for the Bio-Formats Importer. */
   public UpgradeDialog(ImporterOptions options) {
     super(options);
     this.options = options;
@@ -52,24 +53,23 @@ public class UpgradeDialog extends OptionsDialog {
   // -- OptionsDialog methods --
 
   /**
-   * Asks user whether Bio-Formats should automatically check for updates.
+   * Asks user whether Bio-Formats should automatically check for upgrades.
    *
    * @return status of operation
    */
   public int showDialog() {
-    // CTR TODO
-    /*
-    // load:
-    if (Prefs.get(KEY_UPGRADE, null) == null) {
-      IJ.showMessage("The Bio-Formats plugin for ImageJ can automatically " +
-        "check for\nupdates. By default, this feature is enabled, but you " +
-        "can disable\nit in the 'Upgrade' tab of the LOCI plugins " +
-        "configuration window.");
+    if (options.isFirstTime() && !options.isQuiet()) {
+      // present user with one-time dialog box
+      GenericDialog gd = new GenericDialog("Check for Upgrades");
+      gd.addMessage("One-time notice: The LOCI plugins for ImageJ can " +
+        "automatically check for upgrades\neach time they are run. If you " +
+        "wish to disable this feature, uncheck the box below.\nYou can " +
+        "toggle this behavior later in the LOCI Plugins Configuration's " +
+        "\"Upgrade\" tab.");
+      addCheckbox(gd, ImporterOptions.KEY_UPGRADE_CHECK);
+      gd.showDialog();
+      if (gd.wasCanceled()) return STATUS_CANCELED;
     }
-
-    // save:
-    if (Prefs.get(KEY_UPGRADE, null) == null) upgradeCheck = true;
-    */
     return STATUS_OK;
   }
 

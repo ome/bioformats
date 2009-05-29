@@ -47,7 +47,7 @@ import javax.swing.JLabel;
 import loci.formats.AWTImageTools;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
-import loci.plugins.util.OptionsDialog;
+import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -195,7 +195,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
 
     if (options.isConcatenate()) {
       // toggle on compatible series
-      // CTR FIXME -- why are we doing this?
+      // CTR TODO -- why are we doing this?
       for (int i=0; i<seriesCount; i++) {
         if (series[i]) continue;
 

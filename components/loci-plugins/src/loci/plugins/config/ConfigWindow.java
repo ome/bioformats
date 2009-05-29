@@ -89,7 +89,7 @@ public class ConfigWindow extends JFrame
   private JTextField extensions;
   private JCheckBox enabledBox, windowlessBox, upgradeBox;
 
-  private ImporterOptions options;//FIXME
+  private ImporterOptions options;
 
   private DefaultListModel libsListModel;
   private JList libsList;
@@ -195,10 +195,11 @@ public class ConfigWindow extends JFrame
     upgradePanel.setLayout(new SpringLayout());
 
     JLabel upgradeLabel =
-      new JLabel("Automatically check for a new version of Bio-Formats");
+      new JLabel("Automatically check for a new versions of the LOCI plugins");
     upgradePanel.add(upgradeLabel);
 
     try {
+      // CTR TODO - should not depend anything in importer package
       options = new ImporterOptions();
     }
     catch (IOException exc) {
@@ -242,7 +243,7 @@ public class ConfigWindow extends JFrame
 
   public void itemStateChanged(ItemEvent e) {
     Object src = e.getSource();
-    // CTR TODO
+    // CTR TODO NOW
     /*
     if (src == upgradeBox) {
       options.setUpgradeCheck(upgradeBox.isSelected());
@@ -612,7 +613,7 @@ public class ConfigWindow extends JFrame
     NoSuchFieldException, IllegalAccessException, NoSuchMethodException,
     InvocationTargetException
   {
-    Class utilClass = Class.forName("loci.plugins.util.Util");
+    Class utilClass = Class.forName("loci.plugins.util.LociPrefs");
     Field field = utilClass.getField(fieldName);
     String key = field.get(null) + "." + entry.readerName;
     Class prefsClass = Class.forName("ij.Prefs");

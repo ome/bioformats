@@ -68,12 +68,12 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.plugins.Colorizer;
 import loci.plugins.LociImporter;
 import loci.plugins.Updater;
+import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.DataBrowser;
 import loci.plugins.util.ImagePlusReader;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LociPrefs;
-import loci.plugins.util.OptionsDialog;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.SearchableWindow;
 import loci.plugins.util.VirtualImagePlus;
@@ -131,6 +131,10 @@ public class Importer {
 
     // -- Step 1: check if new version is available --
 
+    UpgradeDialog upgradeDialog = new UpgradeDialog(options);
+    int status = upgradeDialog.showDialog();
+    if (!statusOk(status)) return;
+
     if (options.doUpgradeCheck()) {
       debug("check if new version is available");
       IJ.showStatus("Checking for new version...");
@@ -150,7 +154,7 @@ public class Importer {
     debug("construct reader and check id");
 
     LocationDialog locationDialog = new LocationDialog(options);
-    int status = locationDialog.showDialog();
+    status = locationDialog.showDialog();
     if (!statusOk(status)) return;
 
     IdDialog idDialog = new IdDialog(options);

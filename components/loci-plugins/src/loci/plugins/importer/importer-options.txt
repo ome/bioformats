@@ -51,9 +51,9 @@ default = true
 type = boolean
 label = Concatenate_series when compatible
 info = <b>Concatenate series when compatible</b> - \
-  Allows multiple image series to be joined end to end.             \
-  <br><br><b>Example:</b> You want to join two sequential timelapse \
-  series.
+  Allows multiple image series to be joined end to end.   \
+  <br><br><b>Example:</b> You want to join two sequential \
+  timelapse series.
 default = false
 
 [crop]
@@ -71,10 +71,10 @@ default = false
 type = boolean
 label = Custom_colorize channels
 info = <b>Custom colorize channels</b> - \
-  Each channel is assigned a pseudocolor table rather than the normal      \
-  grayscale.<br><br>The color for each channel is chosen by the user. This \
-  option is not available when <b>Merge channels to RGB</b> or <b>RGB      \
-  colorize channels</b> are set.
+  Each channel is assigned a pseudocolor table rather than the normal \
+  grayscale.<br><br>The color for each channel is chosen by the user. \
+  This option is not available when <b>Merge channels to RGB</b> or   \
+  <b>RGB colorize channels</b> are set.
 default = false
 
 [firstTime]
@@ -343,6 +343,7 @@ default = false
 
 [upgradeCheck]
 type = boolean
+label = Check_for_upgrades to the LOCI plugins
 default = true
 
 [virtual]

@@ -28,7 +28,7 @@ package loci.plugins.importer;
 import ij.IJ;
 import ij.gui.GenericDialog;
 import loci.formats.DimensionSwapper;
-import loci.plugins.util.OptionsDialog;
+import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -97,7 +97,7 @@ public class SwapDialog extends OptionsDialog {
 
       if (z.equals(t) || z.equals(c) || c.equals(t)) {
         IJ.error("Invalid swapping options - each axis can be used only once.");
-        return showDialog(); // CTR: FIXME: bad recursion
+        return showDialog(); // CTR: TODO: fix bad recursion
       }
 
       String originalOrder = r.getDimensionOrder();

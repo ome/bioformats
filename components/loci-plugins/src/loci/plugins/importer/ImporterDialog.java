@@ -44,7 +44,7 @@ import java.util.Vector;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
-import loci.plugins.util.OptionsDialog;
+import loci.plugins.prefs.OptionsDialog;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;

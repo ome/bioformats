@@ -49,11 +49,15 @@ import java.lang.reflect.Method;
 import java.util.Vector;
 
 /**
- * TODO
+ * Image processor extension that records commands executed upon it.
+ * Allows "recordable virtual stacks" that repeat operations performed on
+ * one image plane on other image planes when they are loaded from disk.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/RecordedImageProcessor.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/RecordedImageProcessor.java">SVN</a></dd></dl>
+ *
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class RecordedImageProcessor extends ImageProcessor {
 

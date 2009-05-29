@@ -29,7 +29,7 @@ import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import loci.common.Location;
-import loci.plugins.util.OptionsDialog;
+import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Bio-Formats Importer id chooser dialog box.
@@ -71,12 +71,13 @@ public class IdDialog extends OptionsDialog {
       {
         // present user with one-time dialog box
         IJ.showMessage("Bio-Formats",
-          "One-time warning: There is a bug in Java on Mac OS X with the\n" +
-          "native file chooser that crashes ImageJ if you click on a file\n" +
-          "in cxd, ipw, oib or zvi format while in column view mode.\n" +
-          "You can work around the problem by switching to list view\n" +
-          "(press Command+2) or by checking the \"Use JFileChooser to\n" +
-          "Open/Save\" option in the Edit>Options>Input/Output... dialog.");
+          "One-time warning: There is a bug in Java on Mac OS X with the " +
+          "native file chooser\nthat crashes ImageJ if you click on a file " +
+          "in CXD, IPW, OIB or ZVI format while in\ncolumn view mode. You " +
+          "can work around the problem in one of two ways:\n" +
+          "  1. Switch to list view (press Command+2)\n" +
+          "  2. Check \"Use JFileChooser to Open/Save\" under " +
+          "Edit>Options>Input/Output...");
       }
     }
     String id = options.getId();
@@ -144,7 +145,7 @@ public class IdDialog extends OptionsDialog {
   public int showDialogOME() {
     String id = options.getId();
     if (id == null) {
-      // CTR FIXME -- eliminate this kludge
+      // CTR TODO -- eliminate this kludge
       IJ.runPlugIn("loci.plugins.ome.OMEPlugin", "");
       return STATUS_FINISHED;
     }

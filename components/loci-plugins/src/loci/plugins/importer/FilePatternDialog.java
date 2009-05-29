@@ -29,7 +29,7 @@ import ij.IJ;
 import ij.gui.GenericDialog;
 import loci.common.Location;
 import loci.formats.FilePattern;
-import loci.plugins.util.OptionsDialog;
+import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Bio-Formats Importer file pattern dialog box.

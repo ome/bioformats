@@ -54,8 +54,8 @@ import java.util.Vector;
 import loci.formats.FormatTools;
 import loci.plugins.importer.ImporterOptions;
 import loci.plugins.importer.MergeDialog;
+import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.ImagePlusTools;
-import loci.plugins.util.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -234,7 +234,8 @@ public class Colorizer implements PlugInFilter {
 
         ImporterOptions options = null;
         try {
-          options = new ImporterOptions();//FIXME
+          // CTR TODO - should not depend anything in importer package
+          options = new ImporterOptions();
         }
         catch (IOException exc) {
           WindowTools.reportException(exc);
