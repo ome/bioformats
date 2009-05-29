@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Vector;
 import loci.formats.FilePattern;
 import loci.formats.ImageReader;
-import loci.plugins.importer.LociImporter;
+import loci.plugins.LociImporter;
 
 /**
  * Processes all image files in the chosen directory,
