@@ -165,9 +165,9 @@ public final class WindowTools {
 
   /** Reports the given exception with stack trace in an ImageJ error dialog. */
   public static void reportException(Throwable t) {
-	reportException(t, false, null);
+    reportException(t, false, null);
   }
-  
+
   /** Reports the given exception with stack trace in an ImageJ error dialog. */
   public static void reportException(Throwable t, boolean quiet, String msg) {
     IJ.showStatus("");

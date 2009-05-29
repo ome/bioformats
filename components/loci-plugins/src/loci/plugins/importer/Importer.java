@@ -121,7 +121,6 @@ public class Importer {
 
     ImporterOptions options = null;
     try {
-    				
       options = new ImporterOptions();
     }
     catch (IOException exc) {
@@ -280,7 +279,6 @@ public class Importer {
       VirtualReader virtualReader =
         new VirtualReader(new ChannelSeparator(base));
       ImagePlusReader r = new ImagePlusReader(virtualReader);
-        
       r.setId(id);
 
       // -- Step 4b: prompt for which series to import, if necessary --
@@ -435,10 +433,10 @@ public class Importer {
         if (series[i] && cropOnImport) cropOptions[i] = new Rectangle();
       }
       if (cropOnImport) {
-    	CropDialog cropDialog = new CropDialog(options,
+        CropDialog cropDialog = new CropDialog(options,
           r, seriesLabels, series, cropOptions);
         status = cropDialog.showDialog();
-    	if (!statusOk(status)) return;
+        if (!statusOk(status)) return;
       }
 
       // -- Step 4e: display metadata, if appropriate --
