@@ -27,8 +27,6 @@ package loci.plugins.util;
 
 import ij.IJ;
 import ij.ImageJ;
-import ij.text.TextWindow;
-import ij.util.Tools;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -43,8 +41,9 @@ import java.awt.Rectangle;
 import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.StringTokenizer;
 
 /**
  * Utility methods for managing ImageJ dialogs and windows.
@@ -164,21 +163,24 @@ public final class WindowTools {
     w.setLocation(p);
   }
 
-  /** Reports an exception in an ImageJ text window. */
+  /** Reports the given exception with stack trace in an ImageJ error dialog. */
   public static void reportException(Throwable t) {
-    // stolen from IJ.Executor.run()
+	reportException(t, false, null);
+  }
+  
+  /** Reports the given exception with stack trace in an ImageJ error dialog. */
+  public static void reportException(Throwable t, boolean quiet, String msg) {
     IJ.showStatus("");
-    IJ.showProgress(1.0);
-    CharArrayWriter caw = new CharArrayWriter();
-    PrintWriter pw = new PrintWriter(caw);
-    t.printStackTrace(pw);
-    String s = caw.toString();
-    if (IJ.isMacintosh()) {
-      if (s.indexOf("ThreadDeath") > 0) return;
-      s = Tools.fixNewLines(s);
+    if (!quiet) {
+      if (t != null) {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        t.printStackTrace(new PrintStream(buf));
+        String s = new String(buf.toByteArray());
+        StringTokenizer st = new StringTokenizer(s, "\n\r");
+        while (st.hasMoreTokens()) IJ.write(st.nextToken());
+      }
+      if (msg != null) IJ.error("Bio-Formats Importer", msg);
     }
-    if (IJ.getInstance() != null) new TextWindow("Exception", s, 350, 250);
-    else IJ.log(s);
   }
 
 }

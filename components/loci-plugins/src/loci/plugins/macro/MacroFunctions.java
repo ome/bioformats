@@ -36,6 +36,8 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import loci.plugins.util.LibraryChecker;
+
 /**
  * Convenience class that simplifies implemention of ImageJ macro extensions.
  * It uses reflection to create an extension method for each public method in
@@ -56,7 +58,7 @@ public class MacroFunctions implements PlugIn, MacroExtension {
   // -- PlugIn API methods --
 
   public void run(String arg) {
-    if (IJ.versionLessThan("1.39c")) return;
+    if (!LibraryChecker.checkImageJ()) return;
     if (!IJ.macroRunning()) {
       IJ.error("Cannot install extensions from outside a macro.");
       return;

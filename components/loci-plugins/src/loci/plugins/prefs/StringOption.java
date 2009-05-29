@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.prefs;
 
+import ij.Macro;
 import ij.Prefs;
 
 import java.util.Arrays;
@@ -47,11 +48,11 @@ public class StringOption extends Option {
 
   // -- Fields --
 
-  /** List of possible values. */
-  protected List<String> possibleValues;
-
   /** The option's default value. */
   protected String defaultValue;
+
+  /** List of possible values. */
+  protected List<String> possibleValues;
 
   /** The option's current value. */
   protected String value;
@@ -70,20 +71,25 @@ public class StringOption extends Option {
 
   /** Constructs a string option with the parameters from the given map. */
   public StringOption(HashMap<String, String> entry) {
-    this(entry.get(INI_KEY), entry.get(INI_LABEL), entry.get(INI_INFO),
-      entry.get(INI_DEFAULT), parseList(entry.get(INI_POSSIBLE)));
+    this(entry.get(INI_KEY),
+      "true".equals(entry.get(INI_SAVE)),
+      entry.get(INI_LABEL),
+      entry.get(INI_INFO),
+      entry.get(INI_DEFAULT),
+      parseList(entry.get(INI_POSSIBLE)));
   }
 
   /**
    * Constructs a string option with the given parameters.
    * If possible values list is null, any string value is allowed.
    */
-  public StringOption(String key, String label, String info,
-    String defaultValue, List<String> possibleValues)
+  public StringOption(String key, boolean save, String label,
+    String info, String defaultValue, List<String> possibleValues)
   {
-    super(key, label, info);
+    super(key, save, label, info);
     this.defaultValue = defaultValue;
     this.possibleValues = possibleValues;
+    this.value = defaultValue;
   }
 
   // -- StringOption methods --
@@ -113,7 +119,27 @@ public class StringOption extends Option {
     return value;
   }
 
+  /** Sets the current value of the option. */
+  public void setValue(String value) {
+    if (possibleValues == null) this.value = value;
+    else {
+      for (String p : possibleValues) {
+        if (p.equals(value)) {
+          this.value = value;
+          return;
+        }
+      }
+      throw new IllegalArgumentException("'" +
+        value + "' is not a possible value");
+    }
+  }
+
   // -- Option methods --
+
+  /* @see Option#parseOption(String arg) */
+  public void parseOption(String arg) {
+    value = Macro.getValue(arg, key, value);
+  }
 
   /* @see Option#loadOption() */
   public void loadOption() {
@@ -122,7 +148,7 @@ public class StringOption extends Option {
 
   /* @see Option#saveOption() */
   public void saveOption() {
-    Prefs.set(KEY_PREFIX + key, value);
+    if (save) Prefs.set(KEY_PREFIX + key, value);
   }
 
 }

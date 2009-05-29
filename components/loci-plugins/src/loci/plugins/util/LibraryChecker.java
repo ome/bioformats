@@ -50,19 +50,12 @@ public final class LibraryChecker {
     FORMS         // JGoodies Forms
   }
 
-  /** Minimum version of ImageJ necessary for CompositeImage. */
-  public static final String IMAGEJ_VERSION = "1.34";
+  /** Minimum version of ImageJ necessary for LOCI plugins. */
+  public static final String IMAGEJ_VERSION = "1.40";
 
   /** Message to be displayed if ImageJ is too old for LOCI plugins. */
   public static final String IMAGEJ_MSG =
     "Sorry, the LOCI plugins require ImageJ v" + IMAGEJ_VERSION + " or later.";
-
-  /** Minimum version of ImageJ necessary for LOCI plugins. */
-  public static final String COMPOSITE_VERSION = "1.39l";
-
-  /** Message to be displayed if ImageJ is too old for CompositeImage. */
-  public static final String COMPOSITE_MSG = "ImageJ " + COMPOSITE_VERSION +
-    " or later is required to merge >8 bit or >3 channel data";
 
   // -- Constructor --
 
@@ -135,11 +128,6 @@ public final class LibraryChecker {
   /** Checks whether ImageJ is new enough for the LOCI plugins. */
   public static boolean checkImageJ() {
     return checkImageJ(IMAGEJ_VERSION, IMAGEJ_MSG);
-  }
-
-  /** Checks whether ImageJ is new enough for CompositeImages. */
-  public static boolean checkComposite() {
-    return checkImageJ(COMPOSITE_VERSION, COMPOSITE_MSG);
   }
 
   /**

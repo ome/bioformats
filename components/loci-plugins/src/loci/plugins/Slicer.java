@@ -35,15 +35,8 @@ import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
 import loci.plugins.util.ImagePlusTools;
-import loci.plugins.util.LibraryChecker;
 
 /**
  * A plugin for splitting an image stack into separate channels, focal planes
@@ -133,12 +126,6 @@ public class Slicer implements PlugInFilter {
 
     Calibration calibration = imp.getCalibration();
 
-    Class c = null;
-    try {
-      c = Class.forName("ij.CompositeImage");
-    }
-    catch (ClassNotFoundException e) { }
-
     int sizeZ = imp.getNSlices();
     int sizeC = imp.getNChannels();
     int sizeT = imp.getNFrames();
@@ -169,15 +156,9 @@ public class Slicer implements PlugInFilter {
       int[] zct = FormatTools.getZCTCoords(stackOrder, sliceZ ? sizeZ : 1,
         sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
 
-      if (imp.getClass().equals(c)) {
-        try {
-          ReflectedUniverse r = new ReflectedUniverse();
-          r.setVar("imp", imp);
-          r.setVar("channel", zct[1] + 1);
-          LUT lut = (LUT) r.exec("imp.getChannelLut(channel)");
-          newStacks[i].setColorModel(lut);
-        }
-        catch (ReflectException e) { }
+      if (imp.isComposite()) {
+        LUT lut = ((CompositeImage) imp).getChannelLut(zct[1] + 1);
+        newStacks[i].setColorModel(lut);
       }
 
       String title = imp.getTitle();
@@ -193,23 +174,12 @@ public class Slicer implements PlugInFilter {
         sliceT ? 1 : sizeT);
       p.setCalibration(calibration);
       p.setFileInfo(imp.getOriginalFileInfo());
-      boolean canDoComposite = LibraryChecker.checkComposite();
-      if (canDoComposite && !(p instanceof CompositeImage)) {
+      if (!p.isComposite()) {
         p.setOpenAsHyperStack(hyperstack);
       }
-      if (imp.getClass().equals(c) && !sliceC && canDoComposite) {
-        try {
-          ReflectedUniverse r = new ReflectedUniverse();
-          r.exec("import ij.CompositeImage");
-          r.setVar("p", ImagePlusTools.reorder(p, stackOrder, "XYCZT"));
-          r.exec("c = new CompositeImage(p, CompositeImage.COMPOSITE)");
-          r.exec("c.show()");
-        }
-        catch (ReflectException e) {
-          ByteArrayOutputStream s = new ByteArrayOutputStream();
-          e.printStackTrace(new PrintStream(s));
-          IJ.error(s.toString());
-        }
+      if (imp.isComposite() && !sliceC) {
+        p = ImagePlusTools.reorder(p, stackOrder, "XYCZT");
+       	new CompositeImage(p, CompositeImage.COMPOSITE).show();
       }
       else p.show();
     }

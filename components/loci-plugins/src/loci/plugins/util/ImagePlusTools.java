@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import ij.IJ;
+import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
@@ -34,12 +34,6 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -110,24 +104,12 @@ public final class ImagePlusTools {
         new byte[width * height]);
       imp = new ImagePlus(title, cp);
     }
-    else if (p.length <= 7 && LibraryChecker.checkComposite()) {
+    else if (p.length <= 7) {
       ImageStack tmpStack = new ImageStack(width, height);
-      for (int i=0; i<p.length; i++) {
-        tmpStack.addSlice("", p[i]);
-      }
-      try {
-        ReflectedUniverse r = new ReflectedUniverse();
-        r.exec("import ij.CompositeImage");
-        ImagePlus ii = new ImagePlus(title, tmpStack);
-        r.setVar("ii", ii);
-        r.exec("imp = new CompositeImage(ii, CompositeImage.COMPOSITE)");
-        imp = (ImagePlus) r.getVar("imp");
-      }
-      catch (ReflectException e) {
-        ByteArrayOutputStream s = new ByteArrayOutputStream();
-        e.printStackTrace(new PrintStream(s));
-        IJ.error(s.toString());
-      }
+      for (int i=0; i<p.length; i++) tmpStack.addSlice("", p[i]);
+
+      ImagePlus ii = new ImagePlus(title, tmpStack);
+      imp = new CompositeImage(ii, CompositeImage.COMPOSITE);
     }
 
     return imp;

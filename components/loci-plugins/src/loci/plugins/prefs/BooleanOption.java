@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.prefs;
 
+import ij.Macro;
 import ij.Prefs;
 
 import java.util.HashMap;
@@ -50,16 +51,20 @@ public class BooleanOption extends Option {
 
   /** Constructs a boolean option with the parameters from the given map. */
   public BooleanOption(HashMap<String, String> entry) {
-    this(entry.get(INI_KEY), entry.get(INI_LABEL),
-      entry.get(INI_INFO), "true".equals(entry.get(INI_DEFAULT)));
+    this(entry.get(INI_KEY),
+      "true".equals(entry.get(INI_SAVE)),
+      entry.get(INI_LABEL),
+      entry.get(INI_INFO),
+      "true".equals(entry.get(INI_DEFAULT)));
   }
 
   /** Constructs a boolean option with the given parameters. */
-  public BooleanOption(String key, String label, String info,
-    boolean defaultValue)
+  public BooleanOption(String key, boolean save, String label,
+    String info, boolean defaultValue)
   {
-    super(key, label, info);
+    super(key, save, label, info);
     this.defaultValue = defaultValue;
+    this.value = defaultValue;
   }
 
   // -- BooleanOption methods --
@@ -74,7 +79,18 @@ public class BooleanOption extends Option {
     return value;
   }
 
+  /** Sets the current value of the option. */
+  public void setValue(boolean value) {
+    this.value = value;
+  }
+
   // -- Option methods --
+
+  /* @see Option#parseOption(String arg) */
+  public void parseOption(String arg) {
+    String s = Macro.getValue(arg, key, null);
+    if (s != null) value = s.equalsIgnoreCase("true");
+  }
 
   /* @see Option#loadOption() */
   public void loadOption() {
@@ -83,7 +99,7 @@ public class BooleanOption extends Option {
 
   /* @see Option#saveOption() */
   public void saveOption() {
-    Prefs.set(KEY_PREFIX + key, value);
+    if (save) Prefs.set(KEY_PREFIX + key, value);
   }
 
 }

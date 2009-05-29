@@ -47,17 +47,16 @@ import java.awt.TextField;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.awt.image.IndexColorModel;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
 
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 import loci.formats.FormatTools;
 import loci.plugins.importer.ImporterOptions;
+import loci.plugins.importer.MergeDialog;
 import loci.plugins.util.ImagePlusTools;
-import loci.plugins.util.LibraryChecker;
+import loci.plugins.util.OptionsDialog;
+import loci.plugins.util.WindowTools;
 
 /**
  * A plugin for merging, colorizing and reordering image stacks.
@@ -69,19 +68,6 @@ import loci.plugins.util.LibraryChecker;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class Colorizer implements PlugInFilter {
-
-  // -- Static fields --
-
-  private static ReflectedUniverse r = createReflectedUniverse();
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import ij.CompositeImage");
-    }
-    catch (ReflectException exc) { }
-    return r;
-  }
 
   // -- Fields --
 
@@ -178,15 +164,7 @@ public class Colorizer implements PlugInFilter {
     int nTimes = imp.getNFrames();
     int nSlices = imp.getNSlices();
 
-    Class c = null;
-    try {
-      c = Class.forName("ij.CompositeImage");
-    }
-    catch (ClassNotFoundException e) { }
-
-    if (imp.getClass().equals(c) || stack.isRGB() ||
-      (nChannels == 1 && !color))
-    {
+    if (imp.isComposite() || stack.isRGB() || (nChannels == 1 && !color)) {
       return;
     }
 
@@ -194,33 +172,21 @@ public class Colorizer implements PlugInFilter {
     boolean closeOriginal = true;
 
     if (color) {
-      if (LibraryChecker.checkComposite() && nChannels > 1) {
-        // use reflection to construct CompositeImage,
-        // in case ImageJ version is too old
-        try {
-          r.setVar("imp", ImagePlusTools.reorder(imp, stackOrder, "XYCZT"));
-          r.exec("composite = new CompositeImage(imp, CompositeImage.COLOR)");
-          r.setVar("1", 1);
-          for (int i=0; i<nChannels; i++) {
-            r.setVar("channel", i + 1);
-            r.exec("composite.setPosition(channel, 1, 1)");
-            if (doPrompt) {
-              promptForColor(i);
-            }
-            if (lut != null) {
-              LUT channelLut = new LUT(lut[i][0], lut[i][1], lut[i][2]);
-              r.setVar("lut", channelLut);
-              r.exec("composite.setChannelLut(lut)");
-            }
+      if (nChannels > 1) {
+        imp = ImagePlusTools.reorder(imp, stackOrder, "XYCZT");
+        // NB: ImageJ v1.39+ is required for CompositeImage
+        CompositeImage composite =
+          new CompositeImage(imp, CompositeImage.COLOR);
+        for (int i=0; i<nChannels; i++) {
+          composite.setPosition(i + 1, 1, 1);
+          if (doPrompt) promptForColor(i);
+          if (lut != null) {
+            LUT channelLut = new LUT(lut[i][0], lut[i][1], lut[i][2]);
+            composite.setChannelLut(channelLut);
           }
-          newImp = (ImagePlus) r.getVar("composite");
-          newImp.setPosition(1, 1, 1);
         }
-        catch (ReflectException exc) {
-          ByteArrayOutputStream s = new ByteArrayOutputStream();
-          exc.printStackTrace(new PrintStream(s));
-          IJ.error(s.toString());
-        }
+        newImp = composite;
+        newImp.setPosition(1, 1, 1);
       }
       else {
         ImageStack newStack =
@@ -247,24 +213,8 @@ public class Colorizer implements PlugInFilter {
         newImp = makeRGB(newImp, stack, nChannels);
       }
       else if (nChannels <= 7 && type != ImagePlus.COLOR_256) {
-        if (LibraryChecker.checkComposite()) {
-          // use reflection to construct CompositeImage,
-          // in case ImageJ version is too old
-          try {
-            r.setVar("imp", ImagePlusTools.reorder(imp, stackOrder, "XYCZT"));
-            newImp = (ImagePlus)
-              r.exec("new CompositeImage(imp, CompositeImage.COMPOSITE)");
-          }
-          catch (ReflectException exc) {
-            ByteArrayOutputStream s = new ByteArrayOutputStream();
-            exc.printStackTrace(new PrintStream(s));
-            IJ.error(s.toString());
-          }
-        }
-        else {
-          closeOriginal = false;
-          newImp = null;
-        }
+        imp = ImagePlusTools.reorder(imp, stackOrder, "XYCZT");
+        newImp = new CompositeImage(imp, CompositeImage.COMPOSITE);
       }
       else if (nChannels > 7) {
         // ask the user what they would like to do...
@@ -282,73 +232,53 @@ public class Colorizer implements PlugInFilter {
           if (num[i] * (i + 2) < stack.getSize()) num[i]++;
         }
 
-        ImporterOptions options = new ImporterOptions();//FIXME
+        ImporterOptions options = null;
+        try {
+          options = new ImporterOptions();//FIXME
+        }
+        catch (IOException exc) {
+          WindowTools.reportException(exc);
+        }
 
         boolean spectral =
           stack.getSliceLabel(1).indexOf(FormatTools.SPECTRA) != -1;
 
         if (mergeOption == null) {
-          int status = options.promptMergeOption(num, spectral);
-          if (status == ImporterOptions.STATUS_OK) {
+          MergeDialog mergeDialog = new MergeDialog(options, num);
+          int status = mergeDialog.showDialog();
+          if (status == OptionsDialog.STATUS_OK) {
             mergeOption = options.getMergeOption();
           }
-          // TEMP - remove this once spectral projection is implemented
-          while (mergeOption.equals(ImporterOptions.MERGE_PROJECTION)) {
-            IJ.error("Spectral projection has not been implemented.");
-            status = options.promptMergeOption(num, spectral);
-            if (status == ImporterOptions.STATUS_OK) {
-              mergeOption = options.getMergeOption();
-            }
-          }
         }
 
-        try {
-          if (mergeOption != null) {
-            int ndx = mergeOption.indexOf("channels");
-            if (ndx != -1) {
-              int n = Integer.parseInt(mergeOption.substring(ndx - 2, ndx - 1));
+        if (mergeOption != null) {
+          int ndx = mergeOption.indexOf("channels");
+          if (ndx != -1) {
+            int n = Integer.parseInt(mergeOption.substring(ndx - 2, ndx - 1));
 
-              // add extra blank slices if the number of slices is not a
-              // multiple of the number of channels
-              if ((stack.getSize() % n) != 0) {
-                int toAdd = n - (stack.getSize() % n);
-                ImageProcessor blank =
-                  stack.getProcessor(stack.getSize()).duplicate();
-                blank.setValue(0);
-                blank.fill();
-                for (int i=0; i<toAdd; i++) {
-                  stack.addSlice("", blank);
-                }
-                imp.setStack(imp.getTitle(), stack);
+            // add extra blank slices if the number of slices is not a
+            // multiple of the number of channels
+            if ((stack.getSize() % n) != 0) {
+              int toAdd = n - (stack.getSize() % n);
+              ImageProcessor blank =
+                stack.getProcessor(stack.getSize()).duplicate();
+              blank.setValue(0);
+              blank.fill();
+              for (int i=0; i<toAdd; i++) {
+                stack.addSlice("", blank);
               }
+              imp.setStack(imp.getTitle(), stack);
+            }
 
-              if (imp.getType() == ImagePlus.GRAY8 && n < 4) {
-                newImp = makeRGB(newImp, stack, n);
-              }
-              else if (LibraryChecker.checkComposite()) {
-                imp.setDimensions(n, imp.getNSlices()*num[n - 2],
-                  imp.getNFrames());
-                r.setVar("imp",
-                  ImagePlusTools.reorder(imp, stackOrder, "XYCZT"));
-                r.exec("mode = CompositeImage.COMPOSITE");
-                r.exec("newImp = new CompositeImage(imp, mode)");
-                newImp = (ImagePlus) r.getVar("newImp");
-              }
-              else {
-                closeOriginal = false;
-                newImp = null;
-              }
+            if (imp.getType() == ImagePlus.GRAY8 && n < 4) {
+              newImp = makeRGB(newImp, stack, n);
             }
-            else if (mergeOption.equals(ImporterOptions.MERGE_PROJECTION)) {
-              // TODO - Add spectral projection logic here (see ticket #86).
-            }
-            else closeOriginal = false;
+            imp.setDimensions(n, imp.getNSlices()*num[n - 2],
+              imp.getNFrames());
+            imp = ImagePlusTools.reorder(imp, stackOrder, "XYCZT");
+            newImp = new CompositeImage(imp, CompositeImage.COMPOSITE);
           }
-        }
-        catch (ReflectException e) {
-          ByteArrayOutputStream s = new ByteArrayOutputStream();
-          e.printStackTrace(new PrintStream(s));
-          IJ.error(s.toString());
+          else closeOriginal = false;
         }
       }
     }
@@ -356,17 +286,13 @@ public class Colorizer implements PlugInFilter {
     if (newImp != null) {
       newImp.setTitle(imp.getTitle());
       newImp.setProperty("Info", imp.getProperty("Info"));
-      if (!newImp.getClass().equals(c)) {
+      if (!newImp.isComposite()) {
         newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
           nSlices, nTimes);
       }
       newImp.setCalibration(calibration);
       newImp.setFileInfo(imp.getOriginalFileInfo());
-      if (LibraryChecker.checkComposite() &&
-        !(newImp instanceof CompositeImage))
-      {
-        newImp.setOpenAsHyperStack(hyperstack);
-      }
+      if (!newImp.isComposite()) newImp.setOpenAsHyperStack(hyperstack);
       newImp.show();
     }
     if (closeOriginal) imp.close();

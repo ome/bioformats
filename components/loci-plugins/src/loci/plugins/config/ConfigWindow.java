@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
-import ij.Prefs;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,6 +62,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import loci.plugins.importer.ImporterOptions;
+import loci.plugins.util.WindowTools;
 
 /**
  * A window for managing configuration of the LOCI plugins.
@@ -199,8 +198,13 @@ public class ConfigWindow extends JFrame
       new JLabel("Automatically check for a new version of Bio-Formats");
     upgradePanel.add(upgradeLabel);
 
-    options = new ImporterOptions();
-    options.loadPreferences();
+    try {
+      options = new ImporterOptions();
+    }
+    catch (IOException exc) {
+      WindowTools.reportException(exc);
+    }
+    options.loadOptions();
     upgradeBox = new JCheckBox("", options.doUpgradeCheck());
     upgradeBox.addItemListener(this);
     upgradePanel.add(upgradeBox);
@@ -238,11 +242,14 @@ public class ConfigWindow extends JFrame
 
   public void itemStateChanged(ItemEvent e) {
     Object src = e.getSource();
+    // CTR TODO
+    /*
     if (src == upgradeBox) {
       options.setUpgradeCheck(upgradeBox.isSelected());
       Prefs.set(ImporterOptions.PREF_UPGRADE, upgradeBox.isSelected());
       return;
     }
+    */
 
     Object value = formatsList.getSelectedValue();
     if (!(value instanceof FormatEntry)) return;

@@ -44,6 +44,9 @@ public abstract class Option {
   /** INI key indicating option's key. */
   public static final String INI_KEY = IniParser.HEADER_KEY;
 
+  /** INI key indicating whether option should be saved to prefs file. */
+  public static final String INI_SAVE = "save";
+
   /** INI key indicating option's label. */
   public static final String INI_LABEL = "label";
 
@@ -58,6 +61,9 @@ public abstract class Option {
   /** Key name for ImageJ preferences file. */
   protected String key;
 
+  /** Whether option state should be saved to ImageJ preferences file. */
+  protected boolean save;
+
   /**
    * Label describing the option, for use with ImageJ dialogs.
    * May contain underscores to produce a better macro variable name.
@@ -70,9 +76,10 @@ public abstract class Option {
   // -- Constructor --
 
   /** Constructs an option with the given parameters. */
-  public Option(String key, String label, String info) {
+  public Option(String key, boolean save, String label, String info) {
     this.key = key;
     if (key == null) throw new IllegalArgumentException("Null key");
+    this.save = save;
     this.label = label;
     this.info = info;
   }
@@ -82,6 +89,11 @@ public abstract class Option {
   /** Gets the option's key name. */
   public String getKey() {
     return key;
+  }
+
+  /** Gets whether option should be saved to ImageJ preferences file. */
+  public boolean isSaved() {
+    return save;
   }
 
   /** Gets label describing the option. */
@@ -95,6 +107,9 @@ public abstract class Option {
   }
 
   // -- Abstract Option methods --
+
+  /** Parses the option's value from the given argument string. */
+  public abstract void parseOption(String arg);
 
   /** Loads the option's value from the ImageJ preferences file. */
   public abstract void loadOption();

@@ -40,14 +40,11 @@ import ij.process.ShortProcessor;
 
 import java.awt.Rectangle;
 import java.awt.image.IndexColorModel;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.Location;
@@ -71,10 +68,12 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.plugins.Colorizer;
 import loci.plugins.LociImporter;
 import loci.plugins.Updater;
+import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.DataBrowser;
 import loci.plugins.util.ImagePlusReader;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LociPrefs;
+import loci.plugins.util.OptionsDialog;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.SearchableWindow;
 import loci.plugins.util.VirtualImagePlus;
@@ -120,8 +119,15 @@ public class Importer {
 
     debug("parse core options");
 
-    ImporterOptions options = new ImporterOptions();
-    options.loadPreferences();
+    ImporterOptions options = null;
+    try {
+    				
+      options = new ImporterOptions();
+    }
+    catch (IOException exc) {
+      WindowTools.reportException(exc);
+    }
+    options.loadOptions();
     options.parseArg(arg);
 
     // -- Step 1: check if new version is available --
@@ -144,17 +150,24 @@ public class Importer {
 
     debug("construct reader and check id");
 
-    int status = options.promptLocation();
+    LocationDialog locationDialog = new LocationDialog(options);
+    int status = locationDialog.showDialog();
     if (!statusOk(status)) return;
-    status = options.promptId();
+
+    IdDialog idDialog = new IdDialog(options);
+    status = idDialog.showDialog();
     if (!statusOk(status)) return;
 
     String id = options.getId();
     boolean quiet = options.isQuiet();
 
-    Location idLoc = options.getIdLocation();
-    String idName = options.getIdName();
-    String idType = options.getIdType();
+    String location = options.getLocation();
+    Location idLoc = null;
+    String idName = id;
+    if (ImporterOptions.LOCATION_LOCAL.equals(location)) {
+      idLoc = new Location(id);
+      idName = idLoc.getName();
+    }
 
     IFormatReader base = null;
     if (options.isLocal() || options.isHTTP()) {
@@ -162,12 +175,12 @@ public class Importer {
       ImageReader reader = ImagePlusReader.makeImageReader();
       try { base = reader.getReader(id); }
       catch (FormatException exc) {
-        reportException(exc, quiet,
+        WindowTools.reportException(exc, quiet,
           "Sorry, there was an error reading the file.");
         return;
       }
       catch (IOException exc) {
-        reportException(exc, quiet,
+        WindowTools.reportException(exc, quiet,
           "Sorry, there was a I/O problem reading the file.");
         return;
       }
@@ -180,7 +193,7 @@ public class Importer {
         base = (IFormatReader) ru.exec("new OMEROReader()");
       }
       catch (ReflectException exc) {
-        reportException(exc, options.isQuiet(),
+        WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a problem constructing the OMERO I/O engine");
         return;
       }
@@ -193,13 +206,13 @@ public class Importer {
         base = (IFormatReader) ru.exec("new OMEReader()");
       }
       catch (ReflectException exc) {
-        reportException(exc, options.isQuiet(),
+        WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a problem constructing the OME I/O engine");
         return;
       }
     }
     else {
-      reportException(null, options.isQuiet(),
+      WindowTools.reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");
     }
     IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
@@ -213,7 +226,10 @@ public class Importer {
     debug("get parameter values");
 
     boolean windowless = options.isWindowless() || LociPrefs.isWindowless(base);
-    if (!windowless) status = options.promptOptions();
+    if (!windowless) {
+      ImporterDialog importerDialog = new ImporterDialog(options);
+      status = importerDialog.showDialog();
+    }
     if (!statusOk(status)) return;
 
     boolean mergeChannels = options.isMergeChannels();
@@ -228,7 +244,7 @@ public class Importer {
     quiet = options.isQuiet();
 
     // save options as new defaults
-    options.savePreferences();
+    options.saveOptions();
 
     // -- Step 4: analyze and read from data source --
 
@@ -251,7 +267,8 @@ public class Importer {
 
       if (groupFiles) {
         debug("prompt for the file pattern");
-        status = options.promptFilePattern();
+        FilePatternDialog filePatternDialog = new FilePatternDialog(options);
+        status = filePatternDialog.showDialog();
         if (!statusOk(status)) return;
         id = options.getId();
         if (id == null) id = currentFile;
@@ -349,7 +366,9 @@ public class Importer {
       if (seriesCount > 1 && !options.openAllSeries() && !options.isViewNone())
       {
         debug("prompt for which series to import");
-        status = options.promptSeries(r, seriesLabels, series);
+        SeriesDialog seriesDialog = new SeriesDialog(options,
+          r, seriesLabels, series);
+        status = seriesDialog.showDialog();
         if (!statusOk(status)) return;
       }
       else debug("no need to prompt for series");
@@ -362,7 +381,10 @@ public class Importer {
 
       if (swapDimensions) {
         debug("prompt for dimension swapping parameters");
-        options.promptSwap(virtualReader, series);
+
+        SwapDialog swapDialog = new SwapDialog(options, virtualReader, series);
+        status = swapDialog.showDialog();
+        if (!statusOk(status)) return;
 
         for (int i=0; i<seriesCount; i++) {
           r.setSeries(i);
@@ -390,8 +412,10 @@ public class Importer {
         if (needRange) {
           debug("prompt for planar ranges");
           IJ.showStatus("");
-          status = options.promptRange(r, series, seriesLabels,
-            cBegin, cEnd, cStep, zBegin, zEnd, zStep, tBegin, tEnd, tStep);
+          RangeDialog rangeDialog = new RangeDialog(options,
+            r, series, seriesLabels, cBegin, cEnd, cStep,
+            zBegin, zEnd, zStep, tBegin, tEnd, tStep);
+          status = rangeDialog.showDialog();
           if (!statusOk(status)) return;
         }
         else debug("no need to prompt for planar ranges");
@@ -411,8 +435,10 @@ public class Importer {
         if (series[i] && cropOnImport) cropOptions[i] = new Rectangle();
       }
       if (cropOnImport) {
-        status = options.promptCropSize(r, seriesLabels, series, cropOptions);
-        if (!statusOk(status)) return;
+    	CropDialog cropDialog = new CropDialog(options,
+          r, seriesLabels, series, cropOptions);
+        status = cropDialog.showDialog();
+    	if (!statusOk(status)) return;
       }
 
       // -- Step 4e: display metadata, if appropriate --
@@ -424,7 +450,7 @@ public class Importer {
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata();
         //if (seriesCount == 1) meta = r.getMetadata();
-        meta.put(idType, currentFile);
+        meta.put(location, currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
@@ -481,11 +507,11 @@ public class Importer {
             metaWindow.setVisible(true);
           }
           catch (javax.xml.parsers.ParserConfigurationException exc) {
-            reportException(exc, options.isQuiet(),
+            WindowTools.reportException(exc, options.isQuiet(),
               "Sorry, there was a problem displaying the OME metadata");
           }
           catch (org.xml.sax.SAXException exc) {
-            reportException(exc, options.isQuiet(),
+            WindowTools.reportException(exc, options.isQuiet(),
               "Sorry, there was a problem displaying the OME metadata");
           }
         }
@@ -572,45 +598,28 @@ public class Importer {
           boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
           boolean needComposite = doMerge && (cSize > 3 || eight);
           int merge = (needComposite || !doMerge) ? 1 : cSize;
-          // NB: BFVirtualStack extends VirtualStack, which only exists in
-          // ImageJ v1.39+. We avoid referencing it directly to keep the
-          // class loader happy for earlier versions of ImageJ.
-          try {
-            ReflectedUniverse ru = new ReflectedUniverse();
-            ru.exec("import loci.plugins.util.BFVirtualStack");
-            ru.setVar("id", id);
-            ru.setVar("r", r);
-            ru.setVar("colorize", colorize);
-            ru.setVar("merge", doMerge);
-            ru.setVar("record", options.isRecord());
-            stackB = (ImageStack) ru.exec("stackB = new BFVirtualStack(id, " +
-              "r, colorize, merge, record)");
 
-            if (doMerge) {
-              cCount[i] = 1;
-              for (int j=0; j<num[i]; j++) {
-                int[] pos = r.getZCTCoords(j);
-                if (pos[1] > 0) continue;
-                String label = constructSliceLabel(
-                  new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]), r,
-                  omexmlMeta, i, zCount, cCount, tCount);
-                ru.setVar("label", label);
-                ru.exec("stackB.addSlice(label)");
-              }
-            }
-            else {
-              for (int j=0; j<num[i]; j++) {
-                String label = constructSliceLabel(j, r,
-                  omexmlMeta, i, zCount, cCount, tCount);
-                ru.setVar("label", label);
-                ru.exec("stackB.addSlice(label)");
-              }
+          // NB: ImageJ 1.39+ is required for VirtualStack
+          BFVirtualStack virtualStackB = new BFVirtualStack(id,
+            r, colorize, doMerge, options.isRecord());
+          stackB = virtualStackB;
+          if (doMerge) {
+            cCount[i] = 1;
+            for (int j=0; j<num[i]; j++) {
+              int[] pos = r.getZCTCoords(j);
+              if (pos[1] > 0) continue;
+              String label = constructSliceLabel(
+                new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]), r,
+                omexmlMeta, i, zCount, cCount, tCount);
+              virtualStackB.addSlice(label);
             }
           }
-          catch (ReflectException exc) {
-            reportException(exc, options.isQuiet(),
-              "Sorry, there was a problem constructing the virtual stack");
-            return;
+          else {
+            for (int j=0; j<num[i]; j++) {
+              String label = constructSliceLabel(j, r,
+                omexmlMeta, i, zCount, cCount, tCount);
+              virtualStackB.addSlice(label);
+            }
           }
         }
         else {
@@ -780,18 +789,18 @@ public class Importer {
         if (!options.isVirtual()) r.close();
       }
       catch (IOException exc) {
-        reportException(exc, options.isQuiet(),
+        WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a problem closing the file");
       }
 
       plugin.success = true;
     }
     catch (FormatException exc) {
-      reportException(exc, quiet,
+      WindowTools.reportException(exc, quiet,
         "Sorry, there was a problem reading the data.");
     }
     catch (IOException exc) {
-      reportException(exc, quiet,
+      WindowTools.reportException(exc, quiet,
         "Sorry, there was an I/O problem reading the data.");
     }
   }
@@ -878,7 +887,7 @@ public class Importer {
         // CTR TODO finish VisBio logic
       }
       catch (ReflectException exc) {
-        reportException(exc, options.isQuiet(),
+        WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a problem interfacing with VisBio");
         return;
       }
@@ -901,7 +910,7 @@ public class Importer {
         ru.exec("i5d.show()");
       }
       catch (ReflectException exc) {
-        reportException(exc, options.isQuiet(),
+        WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a problem interfacing with Image5D");
         return;
       }
@@ -911,10 +920,9 @@ public class Importer {
       IJ.run("View5D ", "");
     }
     else if (!options.isViewNone()) {
-      if (IJ.getVersion().compareTo("1.39l") >= 0) {
-        boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-        imp.setOpenAsHyperStack(hyper);
-      }
+      // NB: ImageJ 1.39+ is required for hyperstacks
+      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
+      imp.setOpenAsHyperStack(hyper);
 
       if (!concatenate) {
         if (options.isViewBrowser()) {
@@ -1051,23 +1059,8 @@ public class Importer {
 
   /** Verifies that the given status result is OK. */
   private boolean statusOk(int status) {
-    if (status == ImporterOptions.STATUS_CANCELED) plugin.canceled = true;
-    return status == ImporterOptions.STATUS_OK;
-  }
-
-  /** Reports the given exception with stack trace in an ImageJ error dialog. */
-  private void reportException(Throwable t, boolean quiet, String msg) {
-    IJ.showStatus("");
-    if (!quiet) {
-      if (t != null) {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        t.printStackTrace(new PrintStream(buf));
-        String s = new String(buf.toByteArray());
-        StringTokenizer st = new StringTokenizer(s, "\n\r");
-        while (st.hasMoreTokens()) IJ.write(st.nextToken());
-      }
-      IJ.error("Bio-Formats Importer", msg);
-    }
+    if (status == OptionsDialog.STATUS_CANCELED) plugin.canceled = true;
+    return status == OptionsDialog.STATUS_OK;
   }
 
   /** Returns a string with each key/value pair on its own line. */

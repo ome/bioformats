@@ -25,10 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.prefs;
 
-import ij.Prefs;
-
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import loci.common.IniParser;
@@ -55,39 +54,138 @@ public class OptionsList {
 
   // -- Fields --
 
-  /** List of options defining this set of preferences. */
-  protected Vector<Option> options;
+  /** Table of options defining this set of preferences. */
+  protected HashMap<String, Option> options;
 
   // -- Constructor --
 
-  public OptionsList(String path) throws IOException {
-    this(new IniParser().parseINI(path));
+  public OptionsList(String path, Class c) throws IOException {
+    this(new IniParser().parseINI(path, c));
   }
 
   public OptionsList(Vector<HashMap<String, String>> ini) {
-    options = new Vector<Option>();
+    options = new HashMap<String, Option>();
     for (HashMap<String, String> entry : ini) {
       String type = entry.get(INI_TYPE);
-      if (type.equals(TYPE_BOOLEAN)) {
-        options.add(new BooleanOption(entry));
-      }
-      else if (type.equals(TYPE_STRING)) {
-        options.add(new StringOption(entry));
-      }
+      Option o;
+      if (type.equals(TYPE_BOOLEAN)) o = new BooleanOption(entry);
+      else if (type.equals(TYPE_STRING)) o = new StringOption(entry);
       else throw new IllegalArgumentException("Unknown type: " + type);
+      options.put(o.getKey(), o);
     }
   }
 
   // -- OptionsList methods --
 
+  /** Parses option values from the given argument string. */
+  public void parseOptions(String arg) {
+    for (Option o : options.values()) o.parseOption(arg);
+  }
+
   /** Loads option values from the ImageJ preferences file. */
   public void loadOptions() {
-    for (Option o : options) o.loadOption();
+    for (Option o : options.values()) o.loadOption();
   }
 
   /** Saves option values to the ImageJ preferences file. */
   public void saveOptions() {
-    for (Option o : options) o.saveOption();
+    for (Option o : options.values()) o.saveOption();
+  }
+
+  /**
+   * Gets whether the option with the given key
+   * is saved to the ImageJ preferences file.
+   */
+  public boolean isSaved(String key) { return options.get(key).isSaved(); }
+
+  /** Gets the label for the option with the given key. */
+  public String getLabel(String key) { return options.get(key).getLabel(); }
+
+  /** Gets the documentation for the option with the given key. */
+  public String getInfo(String key) { return options.get(key).getInfo(); }
+
+  /** Gets the possible values for the string option with the given key. */
+  public String[] getPossible(String key) {
+    Option o = options.get(key);
+    if (o instanceof StringOption) {
+      List<String> possible = ((StringOption) o).getPossible();
+      return possible.toArray(new String[0]);
+    }
+    throw new IllegalArgumentException("Not a string key: " + key);
+  }
+
+  /**
+   * Gets whether the specified value is a possible one
+   * for the string option with the given key.
+   */
+  public boolean isPossible(String key, String value) {
+    Option o = options.get(key);
+    if (o instanceof StringOption) {
+      List<String> possible = ((StringOption) o).getPossible();
+      return possible.contains(value);
+    }
+    throw new IllegalArgumentException("Not a string key: " + key);
+  }
+
+  /** Gets the default value of the boolean option with the given key. */
+  public boolean isSetByDefault(String key) {
+    Option o = options.get(key);
+    if (o instanceof BooleanOption) return ((BooleanOption) o).getDefault();
+    throw new IllegalArgumentException("Not a boolean key: " + key);
+  }
+
+  /** Gets the default value of the string option with the given key. */
+  public String getDefaultValue(String key) {
+    Option o = options.get(key);
+    if (o instanceof StringOption) return ((StringOption) o).getDefault();
+    throw new IllegalArgumentException("Not a string key: " + key);
+  }
+
+  /** Gets the value of the boolean option with the given key. */
+  public boolean isSet(String key) {
+    Option o = options.get(key);
+    if (o instanceof BooleanOption) return ((BooleanOption) o).getValue();
+    throw new IllegalArgumentException("Not a boolean key: " + key);
+  }
+
+  /** Gets the value of the string option with the given key. */
+  public String getValue(String key) {
+    Option o = options.get(key);
+    if (o instanceof StringOption) return ((StringOption) o).getValue();
+    throw new IllegalArgumentException("Not a string key: " + key);
+  }
+
+  /** Sets the value of the boolean option with the given key. */
+  public void setValue(String key, boolean value) {
+    Option o = options.get(key);
+    if (o instanceof BooleanOption) ((BooleanOption) o).setValue(value);
+    else throw new IllegalArgumentException("Not a boolean key: " + key);
+  }
+
+  /** Sets the value of the string option with the given key. */
+  public void setValue(String key, String value) {
+    Option o = options.get(key);
+    if (o instanceof StringOption) ((StringOption) o).setValue(value);
+    else throw new IllegalArgumentException("Not a string key: " + key);
+  }
+
+  /** Gets the option with the given key. */
+  public Option getOption(String key) {
+    return options.get(key);
+  }
+
+  /** Gets the boolean option with the given key. */
+  public BooleanOption getBooleanOption(String key) {
+    Option o = options.get(key);
+    if (o instanceof BooleanOption) return (BooleanOption) o;
+    throw new IllegalArgumentException("Not a boolean key: " + key);
+  }
+
+  /** Gets the string option with the given key. */
+  public StringOption getStringOption(String key) {
+    Option o = options.get(key);
+    if (o instanceof StringOption) return (StringOption) o;
+    throw new IllegalArgumentException("Not a string key: " + key);
   }
 
 }

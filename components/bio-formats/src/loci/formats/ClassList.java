@@ -76,8 +76,8 @@ public class ClassList {
    * Constructs a list of classes from the given configuration file.
    * @param file Configuration file containing the list of classes.
    * @param base Base class to which all classes are assignable.
-   * @param location Class indicating which package to search for the file.  If
-   *  null, 'file' is interpreted as an absolute path name.
+   * @param location Class indicating which package to search for the file.
+   *  If null, 'file' is interpreted as an absolute path name.
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class base, Class location) throws IOException {
