@@ -27,7 +27,6 @@ package loci.plugins.prefs;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Vector;
 
 import loci.common.IniParser;
@@ -108,7 +107,7 @@ public class OptionsList {
   public String[] getPossible(String key) {
     Option o = options.get(key);
     if (o instanceof StringOption) {
-      List<String> possible = ((StringOption) o).getPossible();
+      Vector<String> possible = ((StringOption) o).getPossible();
       return possible.toArray(new String[0]);
     }
     throw new IllegalArgumentException("Not a string key: " + key);
@@ -121,7 +120,7 @@ public class OptionsList {
   public boolean isPossible(String key, String value) {
     Option o = options.get(key);
     if (o instanceof StringOption) {
-      List<String> possible = ((StringOption) o).getPossible();
+      Vector<String> possible = ((StringOption) o).getPossible();
       return possible.contains(value);
     }
     throw new IllegalArgumentException("Not a string key: " + key);

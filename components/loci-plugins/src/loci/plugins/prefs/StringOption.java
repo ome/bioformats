@@ -30,7 +30,7 @@ import ij.Prefs;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Vector;
 
 /**
  * A string option for one of the LOCI plugins.
@@ -52,7 +52,7 @@ public class StringOption extends Option {
   protected String defaultValue;
 
   /** List of possible values. */
-  protected List<String> possibleValues;
+  protected Vector<String> possibleValues;
 
   /** The option's current value. */
   protected String value;
@@ -60,11 +60,11 @@ public class StringOption extends Option {
   // -- Static utility methods --
 
   /** Parses a string of comma-separated values into a list of tokens. */
-  public static List<String> parseList(String s) {
+  public static Vector<String> parseList(String s) {
     if (s == null) return null;
     String[] array = s.split(",");
     for (int i=0; i<array.length; i++) array[i] = array[i].trim();
-    return Arrays.asList(array);
+    return new Vector<String>(Arrays.asList(array));
   }
 
   // -- Constructors --
@@ -84,7 +84,7 @@ public class StringOption extends Option {
    * If possible values list is null, any string value is allowed.
    */
   public StringOption(String key, boolean save, String label,
-    String info, String defaultValue, List<String> possibleValues)
+    String info, String defaultValue, Vector<String> possibleValues)
   {
     super(key, save, label, info);
     this.defaultValue = defaultValue;
@@ -95,7 +95,7 @@ public class StringOption extends Option {
   // -- StringOption methods --
 
   /** Gets the list of possible values. */
-  public List<String> getPossible() {
+  public Vector<String> getPossible() {
     return possibleValues;
   }
 
