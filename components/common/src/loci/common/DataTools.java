@@ -790,6 +790,7 @@ public final class DataTools {
   public static String formatDate(String date, String format) {
     SimpleDateFormat f = new SimpleDateFormat(format);
     Date d = f.parse(date, new ParsePosition(0));
+    if (d == null) return null;
     f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     return f.format(d);
   }
@@ -797,6 +798,7 @@ public final class DataTools {
   public static long getTime(String date, String format) {
     SimpleDateFormat f = new SimpleDateFormat(format);
     Date d = f.parse(date, new ParsePosition(0));
+    if (d == null) return -1;
     return d.getTime();
   }
 

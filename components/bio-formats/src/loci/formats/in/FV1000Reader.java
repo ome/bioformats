@@ -726,6 +726,8 @@ public class FV1000Reader extends FormatReader {
 
     pinholeSizes = new Vector();
 
+    core[0].dimensionOrder = "XY";
+
     for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
       String file = (String) filenames.get(new Integer(i));
       while (file == null) file = (String) filenames.get(new Integer(++i));
@@ -737,7 +739,7 @@ public class FV1000Reader extends FormatReader {
       else tiffPath = file;
 
       Location ptyFile = new Location(file);
-      if (!ptyFile.exists()) {
+      if (!isOIB && !ptyFile.exists()) {
         warn("Could not find .pty file (" + file + "); guessing at the " +
           "corresponding TIFF file.");
         String tiff = file.replaceAll(".pty", ".tif");
@@ -750,15 +752,21 @@ public class FV1000Reader extends FormatReader {
       ptyReader.close();
       st = new StringTokenizer(s, "\n");
 
+      boolean zAxis = false, cAxis = false, tAxis = false;
+
       while (st.hasMoreTokens()) {
         line = st.nextToken().trim();
+        line = DataTools.stripString(line);
+
+        if (line.equals("[Axis 2 Parameters]")) cAxis = true;
+        else if (line.equals("[Axis 3 Parameters]")) zAxis = true;
+        else if (line.equals("[Axis 4 Parameters]")) tAxis = true;
+
         if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
-          key = line.substring(0, line.indexOf("=") - 1).trim();
+          key = line.substring(0, line.indexOf("=")).trim();
           value = line.substring(line.indexOf("=") + 1).trim();
-          key = DataTools.stripString(key);
-          value = DataTools.stripString(value);
+          value = value.replaceAll("\"", "");
           if (key.equals("DataName")) {
-            value = value.substring(1, value.length() - 1);
             if (!isPreviewName(value)) {
               value = value.replaceAll("/", File.separator);
               value = value.replace('\\', File.separatorChar);
@@ -773,7 +781,28 @@ public class FV1000Reader extends FormatReader {
               else tiffs.add(ii, tiffPath + File.separator + value);
             }
           }
-          value = value.replaceAll("\"", "");
+          else if (key.equals("Number")) {
+            boolean addAxis = Integer.parseInt(value) > 1;
+            if (zAxis) {
+              if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
+                core[0].dimensionOrder += "Z";
+              }
+              zAxis = false;
+            }
+            if (cAxis) {
+              if (addAxis && getDimensionOrder().indexOf("C") == -1) {
+                core[0].dimensionOrder += "C";
+              }
+              cAxis = false;
+            }
+            if (tAxis) {
+              if (addAxis && getDimensionOrder().indexOf("T") == -1) {
+                core[0].dimensionOrder += "T";
+              }
+              tAxis = false;
+            }
+          }
+
           addMeta("Image " + ii + " : " + key, value);
 
           if (key.equals("AnalogPMTGain") || key.equals("CountingPMTGain")) {
@@ -878,16 +907,19 @@ public class FV1000Reader extends FormatReader {
       core[0].sizeT = 1;
     }
 
-    if (getSizeZ() * getSizeT() * getSizeC() > getImageCount()) {
+    if (getSizeZ() * getSizeT() * getSizeC() != getImageCount()) {
       int diff = (getSizeZ() * getSizeC() * getSizeT()) - getImageCount();
-      if (diff == previewNames.size()) {
+      if (diff == previewNames.size() || diff < 0) {
+        diff /= getSizeC();
         if (getSizeT() > 1 && getSizeZ() == 1) core[0].sizeT -= diff;
         else if (getSizeZ() > 1 && getSizeT() == 1) core[0].sizeZ -= diff;
       }
       else core[0].imageCount += diff;
     }
 
-    core[0].dimensionOrder = "XYCZT";
+    if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
+    if (getDimensionOrder().indexOf("Z") == -1) core[0].dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("T") == -1) core[0].dimensionOrder += "T";
 
     switch (imageDepth) {
       case 1:
@@ -966,10 +998,7 @@ public class FV1000Reader extends FormatReader {
 
     if (creationDate != null) {
       creationDate = creationDate.replaceAll("'", "");
-      SimpleDateFormat parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      Date date = parse.parse(creationDate, new ParsePosition(0));
-      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      creationDate = fmt.format(date);
+      creationDate = DataTools.formatDate(creationDate, "yyyy-MM-dd HH:mm:ss");
     }
 
     store.setInstrumentID("Instrument:0", 0);
