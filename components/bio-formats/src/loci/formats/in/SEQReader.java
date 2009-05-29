@@ -103,8 +103,9 @@ public class SEQReader extends BaseTiffReader {
     if (descr != null) {
       StringTokenizer tokenizer = new StringTokenizer(descr, "\n");
       while (tokenizer.hasMoreTokens()) {
-        String token = tokenizer.nextToken();
+        String token = tokenizer.nextToken().trim();
         int eq = token.indexOf("=");
+        if (eq == -1) eq = token.indexOf(":");
         if (eq != -1) {
           String label = token.substring(0, eq);
           String data = token.substring(eq + 1);

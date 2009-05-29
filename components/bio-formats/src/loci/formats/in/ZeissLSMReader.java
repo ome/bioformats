@@ -358,14 +358,14 @@ public class ZeissLSMReader extends FormatReader {
 
     String keyPrefix = "Series " + series + " ";
 
-    status("Reading LSM metadata");
+    status("Reading LSM metadata for series #" + series);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", series);
-    store.setImageInstrumentRef("Instrument:0", series);
+    store.setInstrumentID("Instrument:" + series, series);
+    store.setImageInstrumentRef("Instrument:" + series, series);
 
     // get TIF_CZ_LSMINFO structure
     short[] s = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
@@ -795,8 +795,8 @@ public class ZeissLSMReader extends FormatReader {
             store.setObjectiveCorrection("Unknown", series, 0);
 
             // link Objective to Image
-            store.setObjectiveID("Objective:0", series, 0);
-            store.setObjectiveSettingsObjective("Objective:0", series);
+            store.setObjectiveID("Objective:" + series, series, 0);
+            store.setObjectiveSettingsObjective("Objective:" + series, series);
 
             break;
           case TRACK_ENTRY_TIME_BETWEEN_STACKS:
@@ -934,19 +934,30 @@ public class ZeissLSMReader extends FormatReader {
     store.setDimensionsPhysicalSizeY(pixY, series, 0);
     store.setDimensionsPhysicalSizeZ(pixZ, series, 0);
 
-    float firstStamp =
-      timestamps.size() == 0 ? 0f : ((Double) timestamps.get(0)).floatValue();
+    int offset = 0;
+    for (int i=0; i<series; i++) {
+      setSeries(i);
+      offset += getImageCount();
+    }
+    setSeries(series);
+
+    float firstStamp = timestamps.size() <= offset ? 0f :
+      ((Double) timestamps.get(offset)).floatValue();
 
     for (int i=0; i<getImageCount(); i++) {
       int[] zct = FormatTools.getZCTCoords(this, i);
 
-      if (zct[2] < timestamps.size()) {
-        float thisStamp = ((Double) timestamps.get(zct[2])).floatValue();
-        store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp), 0, 0, i);
+      if (offset + zct[2] < timestamps.size()) {
+        float thisStamp =
+          ((Double) timestamps.get(offset + zct[2])).floatValue();
+        store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp),
+          series, 0, i);
         float nextStamp = zct[2] < getSizeT() - 1 ?
-          ((Double) timestamps.get(zct[2] + 1)).floatValue() : thisStamp;
+          ((Double) timestamps.get(offset + zct[2] + 1)).floatValue() :
+          thisStamp;
         if (i == getSizeT() - 1 && zct[2] > 0) {
-          thisStamp = ((Double) timestamps.get(zct[2] - 1)).floatValue();
+          thisStamp =
+            ((Double) timestamps.get(offset + zct[2] - 1)).floatValue();
         }
         store.setPlaneTimingExposureTime(new Float(nextStamp - thisStamp),
           series, 0, i);
