@@ -193,31 +193,6 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     }
     seriesString += "]";
 
-    if (options.isConcatenate()) {
-      // toggle on compatible series
-      // TODO: why are we doing this?
-      for (int i=0; i<seriesCount; i++) {
-        if (series[i]) continue;
-
-        r.setSeries(i);
-        int sizeX = r.getSizeX();
-        int sizeY = r.getSizeY();
-        int pixelType = r.getPixelType();
-        int sizeC = r.getSizeC();
-
-        for (int j=0; j<seriesCount; j++) {
-          if (j == i || !series[j]) continue;
-          r.setSeries(j);
-          if (sizeX == r.getSizeX() && sizeY == r.getSizeY() &&
-            pixelType == r.getPixelType() && sizeC == r.getSizeC())
-          {
-            series[i] = true;
-            break;
-          }
-        }
-      }
-    }
-
     options.setSeries(seriesString);
     return STATUS_OK;
   }

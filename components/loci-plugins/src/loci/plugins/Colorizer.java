@@ -279,7 +279,6 @@ public class Colorizer implements PlugInFilter {
             imp = ImagePlusTools.reorder(imp, stackOrder, "XYCZT");
             newImp = new CompositeImage(imp, CompositeImage.COMPOSITE);
           }
-          else closeOriginal = false;
         }
       }
     }

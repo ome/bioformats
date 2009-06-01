@@ -77,11 +77,12 @@ public class CropDialog extends OptionsDialog {
     GenericDialog gd = new GenericDialog("Bio-Formats Crop Options");
     for (int i=0; i<series.length; i++) {
       if (!series[i]) continue;
+      r.setSeries(i);
       gd.addMessage(labels[i].replaceAll("_", " "));
-      gd.addNumericField("X_Coordinate_" + i, 0, 0);
-      gd.addNumericField("Y_Coordinate_" + i, 0, 0);
-      gd.addNumericField("Width_" + i, 0, 0);
-      gd.addNumericField("Height_" + i, 0, 0);
+      gd.addNumericField("X_Coordinate_" + (i + 1), 0, 0);
+      gd.addNumericField("Y_Coordinate_" + (i + 1), 0, 0);
+      gd.addNumericField("Width_" + (i + 1), r.getSizeX(), 0);
+      gd.addNumericField("Height_" + (i + 1), r.getSizeY(), 0);
     }
     WindowTools.addScrollBars(gd);
     gd.showDialog();

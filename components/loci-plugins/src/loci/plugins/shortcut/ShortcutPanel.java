@@ -177,7 +177,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
    * with the Bio-Formats Importer plugin.
    */
   public void open(String id) {
-    String arg = args[openerIndex] + "open=[" + id + "] ";
+    String arg = args[openerIndex] + "id=[" + id + "] ";
     runPlugIn(plugins[openerIndex], arg);
   }
 

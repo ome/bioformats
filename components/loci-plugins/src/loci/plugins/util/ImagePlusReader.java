@@ -227,10 +227,10 @@ public class ImagePlusReader extends ReaderWrapper {
       Object pixels = DataTools.makeDataArray(channel, bpp, isFloat, isLittle);
       if (pixels instanceof byte[]) {
         byte[] q = (byte[]) pixels;
-        if (q.length > w * h) {
+        if (q.length != w * h) {
           byte[] tmp = q;
           q = new byte[w * h];
-          System.arraycopy(tmp, 0, q, 0, q.length);
+          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
         }
         if (isSigned) q = DataTools.makeSigned(q);
 
@@ -239,10 +239,10 @@ public class ImagePlusReader extends ReaderWrapper {
       }
       else if (pixels instanceof short[]) {
         short[] q = (short[]) pixels;
-        if (q.length > w * h) {
+        if (q.length != w * h) {
           short[] tmp = q;
           q = new short[w * h];
-          System.arraycopy(tmp, 0, q, 0, q.length);
+          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
         }
         if (isSigned) q = DataTools.makeSigned(q);
 
@@ -250,29 +250,29 @@ public class ImagePlusReader extends ReaderWrapper {
       }
       else if (pixels instanceof int[]) {
         int[] q = (int[]) pixels;
-        if (q.length > w * h) {
+        if (q.length != w * h) {
           int[] tmp = q;
           q = new int[w * h];
-          System.arraycopy(tmp, 0, q, 0, q.length);
+          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
         }
 
         ip[i] = new FloatProcessor(w, h, q);
       }
       else if (pixels instanceof float[]) {
         float[] q = (float[]) pixels;
-        if (q.length > w * h) {
+        if (q.length != w * h) {
           float[] tmp = q;
           q = new float[w * h];
-          System.arraycopy(tmp, 0, q, 0, q.length);
+          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
         }
         ip[i] = new FloatProcessor(w, h, q, null);
       }
       else if (pixels instanceof double[]) {
         double[] q = (double[]) pixels;
-        if (q.length > w * h) {
+        if (q.length != w * h) {
           double[] tmp = q;
           q = new double[w * h];
-          System.arraycopy(tmp, 0, q, 0, q.length);
+          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
         }
         ip[i] = new FloatProcessor(w, h, q);
       }

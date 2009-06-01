@@ -182,7 +182,8 @@ public class Slicer implements PlugInFilter {
       }
       if (imp.isComposite() && !sliceC) {
         p = ImagePlusTools.reorder(p, stackOrder, "XYCZT");
-        new CompositeImage(p, CompositeImage.COMPOSITE).show();
+        int mode = ((CompositeImage) imp).getMode();
+        new CompositeImage(p, mode).show();
       }
       else p.show();
     }

@@ -1,3 +1,19 @@
+4.0.1 (2009 June 1):
+
+* Lots of bug fixes in most format readers and writers
+* Added support for Analyze 7.1 files
+* Added support for Nifti files
+* Added support for Cellomics .c01 files
+* Refactored ImageJ plugins
+* Bio-Formats, the common package, and the ImageJ plugins now require Java 1.5
+* Eliminated native library dependency for reading lossless JPEGs
+* Changed license from GPL v3 or later to GPL v2 or later
+* Updated Olympus FV1000, Zeiss LSM, Zeiss ZVI and Nikon ND2 readers to parse
+  ROI data
+* Added option to ImageJ plugin for displaying ROIs parsed from the chosen
+  dataset
+* Fixed BufferedImage construction for signed data and unsigned int data
+
 4.0.0 (2009 March 3):
 
 * Improved OME data model population for Olympus FV1000, Nikon ND2, Metamorph

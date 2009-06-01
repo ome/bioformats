@@ -74,14 +74,15 @@ public class SwapDialog extends OptionsDialog {
 
     int oldSeries = r.getSeries();
     String[] labels = {"Z", "C", "T"};
+    int[] sizes = new int[] {r.getSizeZ(), r.getSizeC(), r.getSizeT()};
     for (int n=0; n<r.getSeriesCount(); n++) {
       if (!series[n]) continue;
       r.setSeries(n);
 
-      gd.addMessage("Series " + n + ":\n");
+      gd.addMessage("Series " + (n + 1) + ":\n");
 
       for (int i=0; i<labels.length; i++) {
-        gd.addChoice(i + "_planes", labels, labels[i]);
+        gd.addChoice(sizes[i] + "_planes", labels, labels[i]);
       }
     }
     WindowTools.addScrollBars(gd);

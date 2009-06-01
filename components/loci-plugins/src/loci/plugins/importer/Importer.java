@@ -429,6 +429,7 @@ public class Importer {
       int[] zCount = new int[seriesCount];
       int[] tCount = new int[seriesCount];
       for (int i=0; i<seriesCount; i++) {
+        if (!series[i]) continue;
         cCount[i] = (cEnd[i] - cBegin[i] + cStep[i]) / cStep[i];
         zCount[i] = (zEnd[i] - zBegin[i] + zStep[i]) / zStep[i];
         tCount[i] = (tEnd[i] - tBegin[i] + tStep[i]) / tStep[i];
@@ -613,8 +614,8 @@ public class Importer {
               int[] pos = r.getZCTCoords(j);
               if (pos[1] > 0) continue;
               String label = constructSliceLabel(
-                new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]), r,
-                omexmlMeta, i, zCount, cCount, tCount);
+                new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]),
+                new ChannelMerger(r), omexmlMeta, i, zCount, cCount, tCount);
               virtualStackB.addSlice(label);
             }
           }
@@ -771,6 +772,20 @@ public class Importer {
               " slice_c=" + splitC + " slice_t=" + splitT +
               " stack_order=" + stackOrder + " keep_original=false " +
               "hyper_stack=" + options.isViewHyperstack() + " ");
+            imp.close();
+          }
+          if (mergeChannels && windowless) {
+            IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+              " merge=true merge_option=[" + options.getMergeOption() + "] " +
+              "series=" + r.getSeries() + " hyper_stack=" +
+              options.isViewHyperstack() + " ");
+            imp.close();
+          }
+          else if (mergeChannels) {
+            IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+              " merge=true series=" + r.getSeries() + " hyper_stack=" +
+              options.isViewHyperstack() + " ");
+            imp.close();
           }
         }
       }
@@ -864,7 +879,7 @@ public class Importer {
 
     if (!concatenate && mergeChannels) imp.show();
 
-    if (!options.isVirtual()) {
+    if (!options.isVirtual() && !concatenate) {
       if (mergeChannels && windowless) {
         IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
           " merge=true merge_option=[" + options.getMergeOption() + "] " +
@@ -965,6 +980,7 @@ public class Importer {
             " slice_c=" + splitC + " slice_t=" + splitT +
             " stack_order=" + stackOrder + " keep_original=false " +
             "hyper_stack=" + options.isViewHyperstack() + " ");
+          imp.close();
         }
       }
       imps.add(imp);

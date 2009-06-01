@@ -104,6 +104,7 @@ public class BFVirtualStack extends VirtualStack {
 
     // set up cache
     int[] subC = r.getChannelDimLengths();
+    if (merge) subC = new int[] {new ChannelMerger(r).getEffectiveSizeC()};
     len = new int[subC.length + 2];
     System.arraycopy(subC, 0, len, 0, subC.length);
     len[len.length - 2] = r.getSizeZ();
