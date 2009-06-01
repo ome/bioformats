@@ -716,7 +716,8 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("Temp Setting")) {
           value = value.replaceAll("C", "").trim();
           try {
-            store.setImagingEnvironmentTemperature(new Float(value), 0);
+            // this is the camera temperature, not the environment temperature
+            //store.setImagingEnvironmentTemperature(new Float(value), 0);
           }
           catch (NumberFormatException e) {
             warn("Could not parse temperature '" + value + "'");
