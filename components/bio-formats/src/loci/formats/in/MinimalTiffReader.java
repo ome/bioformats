@@ -80,7 +80,7 @@ public class MinimalTiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null) return null;
+    if (ifds == null || lastPlane < 0 || lastPlane > ifds.length) return null;
     int[] bits = TiffTools.getBitsPerSample(ifds[lastPlane]);
     if (bits[0] <= 8) {
       int[] colorMap =
@@ -103,7 +103,7 @@ public class MinimalTiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null) return null;
+    if (ifds == null || lastPlane < 0 || lastPlane > ifds.length) return null;
     int[] bits = TiffTools.getBitsPerSample(ifds[lastPlane]);
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap =
@@ -197,6 +197,7 @@ public class MinimalTiffReader extends FormatReader {
     super.close();
     ifds = null;
     thumbnailIFDs = null;
+    lastPlane = 0;
   }
 
   // -- Internal FormatReader API methods --
