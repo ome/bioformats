@@ -206,10 +206,12 @@ public class TCSReader extends FormatReader {
       Location l = new Location(id).getAbsoluteFile();
       Location parent = l.getParentFile();
       String[] list = parent.list();
-      for (int i=0; i<list.length; i++) {
-        if (checkSuffix(list[i], XML_SUFFIX)) {
-          initFile(new Location(parent, list[i]).getAbsolutePath());
-          return;
+      if (list != null) {
+        for (int i=0; i<list.length; i++) {
+          if (checkSuffix(list[i], XML_SUFFIX)) {
+            initFile(new Location(parent, list[i]).getAbsolutePath());
+            return;
+          }
         }
       }
     }

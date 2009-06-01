@@ -64,6 +64,7 @@ public class NumberFilter implements FileFilter {
     int end = name.length() - post.length();
     try { return new BigInteger(name.substring(ndx, end)); }
     catch (NumberFormatException exc) { return null; }
+    catch (IndexOutOfBoundsException exc) { return null; }
   }
 
   /** Tests if a specified file should be included in a file list. */

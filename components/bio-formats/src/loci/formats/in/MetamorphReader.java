@@ -235,8 +235,11 @@ public class MetamorphReader extends BaseTiffReader {
       String[] list = parent.list();
       for (int i=0; i<list.length; i++) {
         if (checkSuffix(list[i], ND_SUFFIX)) {
-          ndfile = new Location(parent, list[i]).getAbsoluteFile();
-          break;
+          String prefix = list[i].substring(0, list[i].lastIndexOf("."));
+          if (currentId.startsWith(prefix)) {
+            ndfile = new Location(parent, list[i]).getAbsoluteFile();
+            break;
+          }
         }
       }
     }

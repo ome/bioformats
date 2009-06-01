@@ -378,7 +378,7 @@ public class TillVisionReader extends FormatReader {
         store.setImageName((String) imageNames.get(i), i);
       }
       String date = i < dates.size() ? (String) dates.get(i) : "";
-      if (!date.equals("")) {
+      if (date != null && !date.equals("")) {
         store.setImageCreationDate(date, i);
       }
       else MetadataTools.setDefaultCreationDate(store, id, i);

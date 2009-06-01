@@ -571,7 +571,6 @@ public class NativeND2Reader extends FormatReader {
       }
 
       sb.append("</NIKON>");
-      String xml = sb.toString();
 
       status("Finished assembling XML string");
 
@@ -579,18 +578,17 @@ public class NativeND2Reader extends FormatReader {
 
       // strip out invalid characters
       int offset = 0;
-      byte[] b = xml.getBytes();
-      int len = b.length;
+      int len = sb.length();
       for (int i=0; i<len; i++) {
-        char ch = (char) b[i];
+        char ch = sb.charAt(i);
         if (offset == 0 && ch == '!') offset = i + 1;
 
         if (Character.isISOControl(ch) || !Character.isDefined(ch)) {
-          b[i] = (byte) ' ';
+          sb.setCharAt(i, ' ');
         }
       }
 
-      xml = new String(b, offset, len - offset);
+      String xml = sb.toString().substring(offset, len - offset);
       DataTools.parseXML(xml, handler);
       xml = null;
     }
@@ -936,7 +934,7 @@ public class NativeND2Reader extends FormatReader {
         if (i < magIndex - 1) model.append(" ");
       }
       objectiveModel = model.toString();
-      immersion = tokens[magIndex + 1];
+      if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
     }
     else if (key.endsWith("dTimeMSec")) {
       long v = (long) Double.parseDouble(value);

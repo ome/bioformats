@@ -74,6 +74,7 @@ public class OMEXMLWriter extends FormatWriter {
     if (out != null) out.close();
     out = null;
     xmlFragments = null;
+    initialized = false;
   }
 
   // -- IFormatWriter API methods --
@@ -92,6 +93,7 @@ public class OMEXMLWriter extends FormatWriter {
       xmlFragments = new Vector();
       currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
       DataTools.parseXML(xml, new OMEHandler());
+
       xmlFragments.add(currentFragment);
 
       out.writeBytes((String) xmlFragments.get(0));
@@ -148,8 +150,8 @@ public class OMEXMLWriter extends FormatWriter {
 
     if (lastInSeries) {
       out.writeBytes((String) xmlFragments.get(series + 1));
-      close();
     }
+    if (last) close();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */

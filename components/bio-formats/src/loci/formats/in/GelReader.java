@@ -111,6 +111,7 @@ public class GelReader extends BaseTiffReader {
 
   /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() throws FormatException, IOException {
+    ifds = TiffTools.getIFDs(in);
     if (ifds.length > 1) {
       Hashtable[] tmpIFDs = ifds;
       ifds = new Hashtable[tmpIFDs.length / 2];

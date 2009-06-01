@@ -103,7 +103,7 @@ public class DimensionSwapper extends ReaderWrapper {
     int oldC = oldOrder.indexOf("C");
     int oldT = oldOrder.indexOf("T");
 
-    if (oldC != newC && getRGBChannelCount() > 1) {
+    if (oldC != newC && reader.getRGBChannelCount() > 1) {
       throw new IllegalArgumentException(
         "Cannot swap C dimension when RGB channel count > 1");
     }
@@ -130,8 +130,8 @@ public class DimensionSwapper extends ReaderWrapper {
 
     if (oldC != newC) {
       // C was overridden; clear the sub-C dimensional metadata
-      core[series].cLengths = null;
-      core[series].cTypes = null;
+      core[series].cLengths = new int[] {getSizeC()};
+      core[series].cTypes = new String[] {FormatTools.CHANNEL};
     }
 
     MetadataStore store = getMetadataStore();
@@ -199,6 +199,20 @@ public class DimensionSwapper extends ReaderWrapper {
     return getCoreMetadata()[getSeries()].sizeT;
   }
 
+  /* @see loci.formats.IFormatReader#getChannelDimLengths() */
+  public int[] getChannelDimLengths() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    int[] cLengths = getCoreMetadata()[getSeries()].cLengths;
+    return cLengths == null ? super.getChannelDimLengths() : cLengths;
+  }
+
+  /* @see loci.formats.IFormatReader#getChannelDimTypes() */
+  public String[] getChannelDimTypes() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    String[] cTypes = getCoreMetadata()[getSeries()].cTypes;
+    return cTypes == null ? super.getChannelDimTypes() : cTypes;
+  }
+
   /* @see loci.formats.IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -231,7 +245,7 @@ public class DimensionSwapper extends ReaderWrapper {
   public byte[] openBytes(int no, byte[] buf, int x, int y,
     int width, int height) throws FormatException, IOException
   {
-    return super.openBytes(reorder(no));
+    return super.openBytes(reorder(no), buf, x, y, width, height);
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */

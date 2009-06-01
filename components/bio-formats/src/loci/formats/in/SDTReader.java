@@ -143,10 +143,16 @@ public class SDTReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
 
+    // HACK
+    // adjust the number of time bins if DimensionSwapper was used
+    if (buf.length == sizeY * sizeX * bpp && timeBins > 1) {
+      timeBins = 1;
+    }
+
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
 
-    boolean direct = !intensity && x == 0 && y == 0 && w == sizeX && h == sizeY;
+    boolean direct = !intensity;
     byte[] b = direct ? buf : new byte[sizeY * sizeX * timeBins * bpp];
     in.seek(off + no * planeSize + y * paddedWidth * bpp * timeBins);
 

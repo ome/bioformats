@@ -727,7 +727,7 @@ public final class DataTools {
   public static void parseXML(RandomAccessInputStream stream,
     DefaultHandler handler) throws IOException
   {
-    byte[] b = new byte[(int) (stream.getFilePointer() - stream.length())];
+    byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
     stream.read(b);
     parseXML(b, handler);
     b = null;

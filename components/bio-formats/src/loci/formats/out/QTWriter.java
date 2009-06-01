@@ -167,6 +167,7 @@ public class QTWriter extends FormatWriter {
     if (legacy == null) legacy = new LegacyQTWriter();
 
     if (needLegacy) {
+      legacy.setMetadataRetrieve(getMetadataRetrieve());
       legacy.setId(currentId);
       legacy.saveBytes(buf, last);
       return;
@@ -215,6 +216,7 @@ public class QTWriter extends FormatWriter {
       if (codec != 0) {
         needLegacy = true;
         legacy.setCodec(codec);
+        legacy.setMetadataRetrieve(getMetadataRetrieve());
         legacy.setId(currentId);
         legacy.saveBytes(buf, series, lastInSeries, last);
         return;

@@ -200,13 +200,12 @@ public class FormatWriterTest {
           int expectedX = config.getX();
           int expectedY = config.getY();
           boolean expectRGB = config.isRGB();
+          if (TestTools.shortClassName(writer).equals("OMEXMLWriter")) {
+            expectRGB = false;
+          }
           int expectedPixelType = config.getPixelType();
           int expectedCount =
             config.getZ() * config.getT() * (expectRGB ? 1 : config.getC());
-          if (TestTools.shortClassName(writer).equals("OMEXMLWriter")) {
-            expectedCount *= config.getC();
-            expectRGB = false;
-          }
 
           String expectedMD5 = config.getMD5();
 
