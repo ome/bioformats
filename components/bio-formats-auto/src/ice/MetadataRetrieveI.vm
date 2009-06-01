@@ -1,0 +1,115 @@
+//
+// MetadataRetrieveI.java
+//
+
+/*
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by $user via MetadataAutogen on $timestamp
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package loci.ice.formats;
+
+import Ice.Current;
+//import loci.ice.formats._MetadataRetrieveDisp;
+//import loci.formats.*;
+//import loci.formats.meta.*;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
+
+/**
+ * Server-side Ice wrapper for client/server
+ * {@link loci.formats.meta.MetadataRetrieve} objects.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats-ice/src/loci/ice/formats/MetadataRetrieveI.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats-ice/src/loci/ice/formats/MetadataRetrieveI.java">SVN</a></dd></dl>
+ *
+ * @author Hidayath Ansari mansari at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public class MetadataRetrieveI extends _MetadataRetrieveDisp {
+
+  // -- Fields --
+
+  private IMetadata metadataObject;
+
+  // -- Constructor --
+
+  public MetadataRetrieveI() {
+    metadataObject = MetadataTools.createOMEXMLMetadata();
+  }
+
+  // -- MetadataRetrieveI methods --
+
+  public loci.formats.meta.MetadataRetrieve getWrappedObject() {
+    return metadataObject;
+  }
+
+  // -- MetadataRetrieve methods --
+
+  public MetadataRetrieveI getServant(Current current) {
+    return this;
+  }
+
+  public String getOMEXML(Current current) {
+    return MetadataTools.getOMEXML(metadataObject);
+  }
+
+  // - Entity counting -
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+#if ($q.countable())
+#set ($args = $q.argsList($q.chop()))
+#if ($args == "")
+#set ($args = "Current current")
+#else
+#set ($args = $args + ", Current current")
+#end##if $args == ""
+
+  public int get${entity}Count($args) {
+    return metadataObject.get${entity}Count($q.varsList($q.chop()));
+  }
+#end###if countable
+#end##foreach $entity
+
+  // - Entity retrieval -
+
+  public String getUUID(Current current) {
+    return metadataObject.getUUID();
+  }
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+
+  // - $entity property retrieval -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
+
+  public $q.primitive($q.type()) get$entity$prop($q.argsList(), Current current) {
+    return metadataObject.get$entity$prop($q.varsList());
+  }
+#end##foreach $prop
+#end##foreach $entity
+
+}

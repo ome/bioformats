@@ -1,0 +1,966 @@
+<!--
+build.xml
+
+Master ant build file for all Java software projects at LOCI.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+
+===============================================================================
+This build file handles the following components.
+For more information on a component, see the
+build.properties file in that component's subtree.
+Run ./scan-deps.pl to programmatically generate this list.
+
+LOCI Common
+    A library containing common I/O and reflection classes
+    -=-
+    JAR file:      loci-common.jar
+    Path:          components/common
+    Project deps:  (none)
+    Library deps:  (none)
+    Optional:      (none)
+    License:       GPL
+
+OME-XML Java library
+    A library for working with OME-XML metadata structures
+    -=-
+    JAR file:      ome-xml.jar
+    Path:          components/ome-xml
+    Project deps:  (none)
+    Library deps:  (none)
+    Optional:      (none)
+    License:       GPL
+
+Bio-Formats
+    A library for reading and writing popular microscopy file formats
+    -=-
+    JAR file:      bio-formats.jar
+    Path:          components/bio-formats
+    Project deps:  LOCI Common, OME-XML Java library
+    Library deps:  JGoodies Forms
+    Optional:      OME I/O, OME Notes, Apache Jakarta POI,
+                   MDB Tools (Java port), JAI Image I/O Tools, NetCDF
+    License:       GPL
+
+Bio-Formats code generator
+    Code that generates the Bio-Formats metadata API, related documentation and
+    Ice bindings
+    -=-
+    JAR file:      bio-formats-auto.jar
+    Path:          components/bio-formats-auto
+    Project deps:  LOCI Common, Bio-Formats
+    Library deps:  Apache Velocity
+    Optional:      (none)
+    License:       GPL
+
+Bio-Formats Ice framework
+    Bindings for Bio-Formats client/server communication enabling
+    cross-language interoperability
+    -=-
+    JAR file:      bio-formats-ice.jar
+    Path:          components/bio-formats-ice
+    Project deps:  Bio-Formats
+    Library deps:  Ice
+    Optional:      (none)
+    License:       GPL
+
+LOCI Plugins for ImageJ
+    A collection of plugins for ImageJ, including the Bio-Formats Importer,
+    Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
+    Colorizer and Stack Slicer
+    -=-
+    JAR file:      loci_plugins.jar
+    Path:          components/loci-plugins
+    Project deps:  LOCI Common, Bio-Formats
+    Library deps:  JGoodies Forms, ImageJ
+    Optional:      OME I/O, VisBio
+    License:       GPL
+
+OME I/O
+    A library for OME database import, upload and download
+    -=-
+    JAR file:      ome-io.jar
+    Path:          components/ome-io
+    Project deps:  LOCI Common, Bio-Formats
+    Library deps:  OMERO Client, OMERO Common, OMERO Importer,
+                   OMERO Model PostgreSQL
+    Optional:      OME-Java
+    License:       GPL
+
+OME Plugins for ImageJ
+    A collection of plugins for ImageJ, including the Download from OME and
+    Upload to OME plugins
+    -=-
+    JAR file:      ome_plugins.jar
+    Path:          components/ome-plugins
+    Project deps:  LOCI Common, Bio-Formats, LOCI Plugins for ImageJ, OME I/O
+    Library deps:  ImageJ
+    Optional:      (none)
+    License:       GPL
+
+VisBio
+    A multi-purpose biological analysis tool
+    -=-
+    JAR file:      visbio.jar
+    Path:          components/visbio
+    Project deps:  LOCI Common, OME-XML Java library, Bio-Formats, OME I/O,
+                   Apache Jakarta POI
+    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, JGoodies Looks,
+                   VisAD
+    Optional:      (none)
+    License:       GPL
+
+SLIM Plotter
+    An application and curve fitting library for visualization and analysis of
+    combined spectral lifetime data
+    -=-
+    JAR file:      SlimPlotter.jar
+    Path:          components/slim-plotter
+    Project deps:  LOCI Common, Bio-Formats, VisBio
+    Library deps:  L-M Fit, VisAD
+    Optional:      (none)
+    License:       GPL
+
+WiscScan Flow Cytometry
+    Server application for flow cytometry with WiscScan using JVMLink
+    -=-
+    JAR file:      flow-cytometry.jar
+    Path:          components/flow-cytometry
+    Project deps:  Bio-Formats
+    Library deps:  ImageJ, VisAD
+    Optional:      (none)
+    License:       BSD
+
+LOCI Checkstyle checks
+    LOCI's Checkstyle extensions, for checking source code style
+    -=-
+    JAR file:      loci-checks.jar
+    Path:          components/checkstyle
+    Project deps:  (none)
+    Library deps:  Checkstyle
+    Optional:      (none)
+    License:       Public domain
+
+LOCI testing framework
+    Framework for automated and manual testing of the LOCI software packages
+    -=-
+    JAR file:      loci-testing-framework.jar
+    Path:          components/test-suite
+    Project deps:  LOCI Common, Bio-Formats
+    Library deps:  TestNG
+    Optional:      (none)
+    License:       BSD
+
+===============================================================================
+The following components are considered "legacy" but still available:
+
+JVMLink
+    A library for communicating between a Java Virtual Machine and other
+    programs (e.g., C++ applications) via IP over localhost (or remotely)
+    -=-
+    JAR file:      jvmlink.jar
+    Path:          components/legacy/jvmlink
+    Project deps:  LOCI Common
+    Optional:      (none)
+    License:       BSD
+
+Multi-LUT
+    A demo application for visually exploring multi-spectral image data
+    -=-
+    JAR file:      MultiLUT.jar
+    Path:          components/legacy/multi-lut
+    Project deps:  (none)
+    Optional:      (none)
+    License:       Public domain
+
+OME Notes
+    A library for flexible organization and presentation of OME-XML metadata
+    within a graphical browser and editor interface
+    -=-
+    JAR file:      ome-notes.jar
+    Path:          components/legacy/ome-notes
+    Project deps:  LOCI Common, Bio-Formats
+    Optional:      (none)
+    License:       LGPL
+
+OME Metadata Editor
+    An application for exploration and editing of OME-XML and OME-TIFF metadata
+    -=-
+    JAR file:      ome-editor.jar
+    Path:          components/legacy/ome-editor
+    Project deps:  LOCI Common, OME-XML Java library, Bio-Formats
+    Optional:      (none)
+    License:       LGPL
+
+===============================================================================
+The following components are forks of third party projects:
+
+Apache Jakarta POI
+    Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
+    -=-
+    JAR file:      poi-loci.jar
+    Path:          components/forks/poi
+    Project deps:  LOCI Common
+    Optional:      (none)
+    License:       Apache
+    Project URL:   http://jakarta.apache.org/poi/
+    Notes:         Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE
+                   v2 and memory efficiency improvements. Used by Bio-Formats
+                   for OLE support (cxd, ipw, oib, zvi). Used by VisBio
+                   overlays logic for XLS export feature.
+
+MDB Tools (Java port)
+    Java API to handle Microsoft MDB format (Access)
+    -=-
+    JAR file:      mdbtools-java.jar
+    Path:          components/forks/mdbtools
+    Project deps:  (none)
+    Optional:      (none)
+    License:       LGPL
+    Project URL:   http://sourceforge.net/forum/message.php?msg_id=2550619
+    Notes:         Used by Bio-Formats for Zeiss LSM metadata in MDB files.
+
+JAI Image I/O Tools
+    Java API to handle JPEG and JPEG2000 files
+    -=-
+    JAR file:      jai_imageio.jar
+    Path:          components/forks/jai
+    Project deps:  (none)
+    Optional:      (none)
+    License:       BSD
+    Project URL:   http://jai-imageio.dev.java.net/
+    Notes:         Used by Bio-Formats to read images compressed with JPEG2000
+                   and lossless JPEG. Modified from the 2008-10-14 source to
+                   include support for the YCbCr color space. Several files in
+                   the com.sun.media.jai packages were removed, as they are not
+                   needed by Bio-Formats, and created an additional dependency.
+                   This component will be removed once our changes have been
+                   added to the official JAI CVS repository.
+
+===============================================================================
+The following external dependencies (in the jar folder) may be required:
+Apple eAWT stubs
+    JAR file:  AppleJavaExtensions.jar
+    URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
+    Notes:     required to compile VisBio on non-Mac OS X machines
+    License:   BSD
+
+Ant-Contrib
+    JAR file:  ant-contrib-1.0b1.jar
+    URL:       http://ant-contrib.sourceforge.net/
+    Notes:     used by tools target to iterate over JAR files ("for" task)
+    License:   Apache
+
+Checkstyle
+    JAR file:  checkstyle-all-4.2.jar
+    URL:       http://checkstyle.sourceforge.net/
+    Notes:     used by style Ant target to check source code style conventions
+    License:   LGPL
+
+Apache Jakarta Commons HttpClient
+    JAR file:  commons-httpclient-2.0-rc2.jar
+    URL:       http://jakarta.apache.org/commons/httpclient/
+    Notes:     required for OME-Java to communicate with OME servers
+    License:   Apache
+
+Apache Jakarta Commons Logging
+    JAR file:  commons-logging.jar
+    URL:       http://jakarta.apache.org/commons/logging/
+    Notes:     used by OME-Java
+    License:   Apache
+
+FindBugs Ant task
+    JAR file:  findbugs-ant.jar
+    URL:       http://findbugs.sourceforge.net/
+    Notes:     used by findbugs Ant target to check for program bugs
+    License:   LGPL
+
+JGoodies Forms
+    JAR file:  forms-1.0.4.jar
+    URL:       http://www.jgoodies.com/freeware/forms/index.html
+    Notes:     used for layout by VisBio, Data Browser and OME Notes
+    License:   BSD
+
+Ice
+    JAR file:  Ice-3.2.1.jar
+    URL:       http://www.zeroc.com/ice.html
+    Notes:     used by Bio-Formats Ice framework
+    License:   GPL
+
+ImageJ
+    JAR file:  ij.jar
+    URL:       http://rsb.info.nih.gov/ij/
+    Notes:     used by LOCI plugins for ImageJ and OME plugins for ImageJ;
+               bundled with VisBio to achieve ImageJ interconnectivity
+    License:   Public domain
+
+JAI ImageIO wrapper
+    JAR file:  clibwrapper_jiio.jar
+    URL:       https://jai-imageio.dev.java.net/
+    Notes:     used by Bio-Formats via reflection for JPEG2000 support (ND2,
+               JP2) and lossless JPEG decompression (DICOM)
+    License:   BSD
+
+JUnit
+    JAR file:  junit.jar
+    URL:       http://www.junit.org/
+    Notes:     unit testing framework used for a few VisBio unit tests
+    License:   Common Public License
+
+L-M Fit
+    JAR file:  lma.jar
+    URL:       http://users.utu.fi/jaolho/
+    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
+               used by SLIM Plotter
+    License:   LGPL
+
+JGoodies Looks
+    JAR file:  looks-1.2.2.jar
+    URL:       http://www.jgoodies.com/freeware/looks/index.html
+    Notes:     used for a nicer Look & Feel by VisBio and OME Metadata Editor
+    License:   BSD
+
+NetCDF
+    JAR file:  netcdf-4.0.jar
+    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
+    Notes:     used by Bio-Formats via reflection for HDF support (Imaris 5.5)
+    License:   LGPL
+
+BUFR Java Decoder
+    JAR file:  bufr-1.1.00.jar
+    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
+    Notes:     used by NetCDF library
+    License:   LGPL
+
+GRIB Java Decoder
+    JAR file:  grib-5.1.03.jar
+    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
+    Notes:     used by NetCDF library
+    License:   LGPL
+
+Simple Logging Facade for Java
+    JAR file:  slf4j-jdk14.jar
+    URL:       http://www.slf4j.org/
+    Notes:     used by NetCDF library
+    License:   BSD
+
+OME-Java
+    JAR file:  ome-java.jar
+    URL:       http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
+    Notes:     used by OME I/O to connect to OME servers
+    License:   LGPL
+
+OME-Java deprecated classes
+    JAR file:  ome-java-deprecated.jar
+    URL:       http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
+    Notes:     used by OME Notes and OME Metadata Editor to work with OME-XML
+    License:   LGPL
+
+OMERO Client
+    JAR file:  omero-client-3.0-Beta3.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by OME I/O to connect to OMERO servers
+    License:   GPL
+
+OMERO Common
+    JAR file:  omero-common-3.0-Beta3.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by OME I/O to connect to OMERO servers
+    License:   GPL
+
+OMERO Importer
+    JAR file:  omero-importer-3.0-Beta3.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by OME I/O to connect to OMERO servers
+    License:   GPL
+
+OMERO Model PostgreSQL
+    JAR file:  omero-model-psql-3.0-Beta3.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by OME I/O to connect to OMERO servers
+    License:   GPL
+
+Spring
+    JAR file:  spring-2.5.jar
+    URL:       http://springframework.org
+    Notes:     used by the OMERO libraries
+    License:   Apache
+
+JBoss
+    JAR file:  jbossall-client-4.2.1.GA.jar
+    URL:       http://www.jboss.org/
+    Notes:     used by the OMERO libraries
+    License:   LGPL
+
+Skin Look and Feel
+    JAR file:  skinlf.jar
+    URL:       http://skinlf.l2fprod.com/
+    Notes:     not used (may be used in the future for flexible skinning)
+    License:   Custom (BSD-like)
+
+TestNG
+    JAR file:  testng-5.7-jdk14.jar
+    URL:       http://testng.org/
+    Notes:     testing framework used for LOCI software automated test suite
+    License:   Apache
+
+Apache Velocity
+    JAR file:  velocity-dep-1.5.jar
+    URL:       http://velocity.apache.org/
+    Notes:     used to autogenerate the loci.formats.meta and loci.formats.ome
+               Bio-Formats packages
+    License:   Apache
+
+VisAD
+    JAR file:  visad-lite.jar
+    URL:       http://www.ssec.wisc.edu/~billh/visad.html
+    Notes:     stripped down VisAD library used by VisBio and SLIM Plotter for
+               interactive visualization
+    License:   LGPL
+
+Apache XML-RPC
+    JAR file:  xmlrpc-1.2-b1.jar
+    URL:       http://ws.apache.org/xmlrpc/
+    Notes:     used by OME-Java library to communicate with OME servers
+    License:   Apache
+-->
+
+<project name="LOCI Software" default="jars" basedir=".">
+  <description>
+    Master build file for all Java software projects at LOCI
+  </description>
+
+  <property file="${user.home}/.ant-global.properties"/>
+  <property file="global.properties"/>
+  <property file="build.properties"/>
+
+  <!-- Non-core ant tasks -->
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+    classpath="${shared-lib.dir}/ant-contrib-1.0b1.jar"/>
+  <!-- HACK - some environments do not install the antcontrib tasks properly
+  from antcontrib.properties above; also load them from antlib.xml -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml"
+    classpath="${shared-lib.dir}/ant-contrib-1.0b1.jar"/>
+
+  <!-- Global build targets -->
+
+  <target name="jars"
+    depends="copy-jars, jar-common, jar-ome-xml,
+      jar-jai, jar-poi-loci, jar-mdbtools,
+      jar-formats, jar-formats-auto, jar-formats-ice,
+      jar-loci-plugins, jar-ome-io, jar-ome-plugins,
+      jar-visbio, jar-slim, jar-flow,
+      jar-checks, jar-tests,
+      jar-jvmlink, jar-multi-lut,
+      jar-ome-notes, jar-ome-editor"
+    description="generate JAR files for LOCI software packages"/>
+
+  <target name="clean"
+    depends="clean-common, clean-ome-xml,
+      clean-jai, clean-poi-loci, clean-mdbtools,
+      clean-formats, clean-formats-auto, clean-formats-ice,
+      clean-loci-plugins, clean-ome-io, clean-ome-plugins,
+      clean-visbio, clean-slim, clean-flow,
+      clean-checks, clean-tests,
+      clean-jvmlink, clean-multi-lut,
+      clean-ome-notes, clean-ome-editor"
+    description="remove all build files">
+    <delete dir="${shared-artifact.dir}"/>
+    <delete dir="build"/>
+  </target>
+
+  <target name="docs" depends="jars"
+    description="generate javadocs for LOCI software packages">
+    <tstamp>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+    <javadoc sourcepath="${merged-docs.source}"
+      classpath="${merged-docs.classpath}"
+      destdir="${merged-docs.dir}/api"
+      maxmemory="${merged-docs.memory}"
+      failonerror="true" author="true" version="true" use="true"
+      nodeprecated="true" windowtitle="LOCI Software API">
+      <doctitle><![CDATA[<h1>LOCI Software</h1>]]></doctitle>
+      <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      <link href="http://hudson.openmicroscopy.org.uk/job/OMEJAVA/javadoc/"/>
+      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
+      <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/"/>
+      <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
+      <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
+    </javadoc>
+  </target>
+
+  <target name="copy-jars">
+    <!-- copy third party JARs into artifacts folder -->
+    <!-- necessary for runtime classpath dependencies to function properly -->
+    <copy todir="${shared-artifact.dir}" preservelastmodified="true">
+      <fileset dir="${shared-lib.dir}"/>
+    </copy>
+  </target>
+
+  <!-- LOCI common library -->
+
+  <target name="compile-common"
+    description="compile classes for LOCI common library">
+    <ant dir="components/common" target="common.compile"/>
+  </target>
+
+  <target name="jar-common"
+    description="generate JAR file for LOCI common library">
+    <ant dir="components/common" target="common.jar"/>
+  </target>
+
+  <target name="clean-common"
+    description="remove build files for LOCI common library">
+    <ant dir="components/common" target="common.clean"/>
+  </target>
+
+  <!-- JAI Image I/O Tools library -->
+
+  <target name="compile-jai"
+    description="compile classes for JAI Image I/O Tools library">
+    <ant dir="components/forks/jai" target="jai.compile"/>
+  </target>
+
+  <target name="jar-jai"
+    description="generate JAR file for JAI Image I/O Tools library">
+    <ant dir="components/forks/jai" target="jai.jar"/>
+  </target>
+
+  <target name="clean-jai"
+    description="remove build files for JAI Image I/O Tools library">
+    <ant dir="components/forks/jai" target="jai.clean"/>
+  </target>
+
+  <!-- Apache POI Java library -->
+
+  <target name="compile-poi-loci"
+    depends="compile-common"
+    description="compile classes for Apache POI library">
+    <ant dir="components/forks/poi" target="poi-loci.compile"/>
+  </target>
+
+  <target name="jar-poi-loci"
+    depends="jar-common"
+    description="generate JAR file for Apache POI library">
+    <ant dir="components/forks/poi" target="poi-loci.jar"/>
+  </target>
+
+  <target name="clean-poi-loci"
+    depends="clean-common"
+    description="remove build files for Apache POI library">
+    <ant dir="components/forks/poi" target="poi-loci.clean"/>
+  </target>
+
+  <!-- MDB Tools Java library -->
+
+  <target name="compile-mdbtools"
+    description="compile classes for MDB Tools Java library">
+    <ant dir="components/forks/mdbtools" target="mdbtools.compile"/>
+  </target>
+
+  <target name="jar-mdbtools"
+    description="generate JAR file for MDB Tools Java library">
+    <ant dir="components/forks/mdbtools" target="mdbtools.jar"/>
+  </target>
+
+  <target name="clean-mdbtools"
+    description="remove build files for MDB Tools Java library">
+    <ant dir="components/forks/mdbtools" target="mdbtools.clean"/>
+  </target>
+
+  <!-- OME-XML Java library -->
+
+  <target name="compile-ome-xml"
+    description="compile classes for OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.compile"/>
+  </target>
+
+  <target name="jar-ome-xml"
+    description="generate JAR file for OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.jar"/>
+  </target>
+
+  <target name="clean-ome-xml"
+    description="remove build files for OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.clean"/>
+  </target>
+
+  <!-- Bio-Formats -->
+
+  <target name="compile-formats"
+    depends="compile-common, compile-ome-xml"
+    description="compile classes for Bio-Formats">
+    <ant dir="components/bio-formats" target="formats.compile"/>
+  </target>
+
+  <target name="jar-formats"
+    depends="jar-common, jar-ome-xml"
+    description="generate JAR file for Bio-Formats">
+    <ant dir="components/bio-formats" target="formats.jar"/>
+  </target>
+
+  <target name="clean-formats"
+    depends="clean-common, clean-ome-xml"
+    description="remove build files for Bio-Formats">
+    <ant dir="components/bio-formats" target="formats.clean"/>
+  </target>
+
+  <!-- Bio-Formats code generator -->
+
+  <target name="compile-formats-auto"
+    depends="compile-common, compile-formats"
+    description="compile classes for Bio-Formats code gen">
+    <ant dir="components/bio-formats-auto" target="formats-auto.compile"/>
+  </target>
+
+  <target name="jar-formats-auto"
+    depends="jar-common, jar-formats"
+    description="generate JAR file for Bio-Formats code gen">
+    <ant dir="components/bio-formats-auto" target="formats-auto.jar"/>
+  </target>
+
+  <target name="clean-formats-auto"
+    depends="clean-common, clean-formats"
+    description="remove build files for Bio-Formats code gen">
+    <ant dir="components/bio-formats-auto" target="formats-auto.clean"/>
+  </target>
+
+  <!-- Bio-Formats Ice framework -->
+
+  <target name="compile-formats-ice"
+    depends="compile-formats"
+    description="compile classes for Bio-Formats Ice framework">
+    <ant dir="components/bio-formats-ice" target="formats-ice.compile"/>
+  </target>
+
+  <target name="jar-formats-ice"
+    depends="jar-formats"
+    description="generate JAR file for Bio-Formats Ice framework">
+    <ant dir="components/bio-formats-ice" target="formats-ice.jar"/>
+  </target>
+
+  <target name="clean-formats-ice"
+    depends="clean-formats"
+    description="remove build files for Bio-Formats Ice framework">
+    <ant dir="components/bio-formats-ice" target="formats-ice.clean"/>
+  </target>
+
+  <!-- LOCI Plugins for ImageJ -->
+
+  <target name="compile-loci-plugins"
+    depends="compile-common, compile-formats"
+    description="compile classes for LOCI Plugins for ImageJ">
+    <ant dir="components/loci-plugins" target="loci-plugins.compile"/>
+  </target>
+
+  <target name="jar-loci-plugins"
+    depends="jar-common, jar-formats"
+    description="generate JAR file for LOCI Plugins for ImageJ">
+    <ant dir="components/loci-plugins" target="loci-plugins.jar"/>
+  </target>
+
+  <target name="clean-loci-plugins"
+    depends="clean-common, clean-formats"
+    description="remove build files for LOCI Plugins for ImageJ">
+    <ant dir="components/loci-plugins" target="loci-plugins.clean"/>
+  </target>
+
+  <!-- OME I/O -->
+
+  <target name="compile-ome-io"
+    depends="compile-common, compile-formats"
+    description="compile classes for OME I/O">
+    <ant dir="components/ome-io" target="ome-io.compile"/>
+  </target>
+
+  <target name="jar-ome-io"
+    depends="jar-common, jar-formats"
+    description="generate JAR file for OME I/O">
+    <ant dir="components/ome-io" target="ome-io.jar"/>
+  </target>
+
+  <target name="clean-ome-io"
+    depends="clean-common, clean-formats"
+    description="remove build files for OME I/O">
+    <ant dir="components/ome-io" target="ome-io.clean"/>
+  </target>
+
+  <!-- OME Plugins for ImageJ -->
+
+  <target name="compile-ome-plugins"
+    depends="compile-common, compile-formats,
+      compile-loci-plugins, compile-ome-io"
+    description="compile classes for OME Plugins for ImageJ">
+    <ant dir="components/ome-plugins" target="ome-plugins.compile"/>
+  </target>
+
+  <target name="jar-ome-plugins"
+    depends="jar-common, jar-formats, jar-loci-plugins, jar-ome-io"
+    description="generate JAR file for OME Plugins for ImageJ">
+    <ant dir="components/ome-plugins" target="ome-plugins.jar"/>
+  </target>
+
+  <target name="clean-ome-plugins"
+    depends="clean-common, clean-formats, clean-loci-plugins, clean-ome-io"
+    description="remove build files for OME Plugins for ImageJ">
+    <ant dir="components/ome-plugins" target="ome-plugins.clean"/>
+  </target>
+
+  <!-- VisBio -->
+
+
+  <target name="compile-visbio"
+    depends="compile-common, compile-ome-xml, compile-formats,
+      compile-ome-io, compile-poi-loci"
+    description="compile classes for VisBio">
+    <ant dir="components/visbio" target="visbio.compile"/>
+  </target>
+
+  <target name="jar-visbio"
+    depends="jar-common, jar-ome-xml, jar-formats, jar-ome-io, jar-poi-loci"
+    description="generate JAR file for VisBio">
+    <ant dir="components/visbio" target="visbio.jar"/>
+  </target>
+
+  <target name="clean-visbio"
+    depends="clean-common, clean-ome-xml, clean-formats,
+      clean-ome-io, clean-poi-loci"
+    description="remove build files for VisBio">
+    <ant dir="components/visbio" target="visbio.clean"/>
+  </target>
+
+  <target name="dist-visbio"
+    description="create distribution bundles for VisBio">
+    <ant dir="components/visbio" target="visbio.dist"/>
+  </target>
+
+  <target name="dist-visbio-win32"
+    description="create distribution bundle for VisBio: Windows w/ JRE">
+    <ant dir="components/visbio" target="visbio.dist-win32"/>
+  </target>
+
+  <target name="dist-visbio-win32-nojre"
+    description="create distribution bundle for VisBio: Windows no JRE">
+    <ant dir="components/visbio" target="visbio.dist-win32-nojre"/>
+  </target>
+
+  <target name="dist-visbio-macosx"
+    description="create distribution bundle for VisBio: Mac OS X">
+    <ant dir="components/visbio" target="visbio.dist-macosx"/>
+  </target>
+
+  <target name="dist-visbio-linux"
+    description="create distribution bundle for VisBio: Linux w/ JRE">
+    <ant dir="components/visbio" target="visbio.dist-linux"/>
+  </target>
+
+  <target name="dist-visbio-nojre"
+    description="create distribution bundle for VisBio: cross-platform">
+    <ant dir="components/visbio" target="visbio.dist-nojre"/>
+  </target>
+
+  <!-- SLIM Plotter -->
+
+  <target name="compile-slim"
+    depends="compile-common, compile-formats, compile-visbio"
+    description="compile classes for SLIM Plotter">
+    <ant dir="components/slim-plotter" target="slim.compile"/>
+  </target>
+
+  <target name="jar-slim"
+    depends="jar-common, jar-formats, jar-visbio"
+    description="generate JAR file for SLIM Plotter">
+    <ant dir="components/slim-plotter" target="slim.jar"/>
+  </target>
+
+  <target name="clean-slim"
+    depends="clean-common, clean-formats, clean-visbio"
+    description="remove build files for SLIM Plotter">
+    <ant dir="components/slim-plotter" target="slim.clean"/>
+  </target>
+
+  <target name="dist-slim"
+    description="create distribution bundle for SLIM Plotter">
+    <ant dir="components/slim-plotter" target="dist"/>
+  </target>
+
+  <!-- WiscScan Flow Cytometry -->
+
+  <target name="compile-flow"
+    depends="compile-formats"
+    description="compile classes for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.compile"/>
+  </target>
+
+  <target name="jar-flow"
+    depends="jar-formats"
+    description="generate JAR file for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.jar"/>
+  </target>
+
+  <target name="clean-flow"
+    depends="clean-formats"
+    description="remove build files for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.clean"/>
+  </target>
+
+  <!-- LOCI Checkstyle checks -->
+
+  <target name="compile-checks"
+    description="compile classes for LOCI Checkstyle checks">
+    <ant dir="components/checkstyle" target="checks.compile"/>
+  </target>
+
+  <target name="jar-checks"
+    description="generate JAR file for LOCI Checkstyle checks">
+    <ant dir="components/checkstyle" target="checks.jar"/>
+  </target>
+
+  <target name="clean-checks"
+    description="remove build files for LOCI Checkstyle checks">
+    <ant dir="components/checkstyle" target="checks.clean"/>
+  </target>
+
+  <!-- LOCI testing framework -->
+
+  <target name="compile-tests"
+    depends="compile-common, compile-formats"
+    description="compile classes for LOCI testing framework">
+    <ant dir="components/test-suite" target="tests.compile"/>
+  </target>
+
+  <target name="jar-tests"
+    depends="jar-common, jar-formats"
+    description="generate JAR file for LOCI testing framework">
+    <ant dir="components/test-suite" target="tests.jar"/>
+  </target>
+
+  <target name="clean-tests"
+    depends="clean-common, clean-formats"
+    description="remove build files for LOCI testing framework">
+    <ant dir="components/test-suite" target="tests.clean"/>
+  </target>
+
+  <!-- JVMLink -->
+
+  <target name="compile-jvmlink"
+    depends="compile-common"
+    description="compile classes for JVMLink">
+    <ant dir="components/legacy/jvmlink" target="jvmlink.compile"/>
+  </target>
+
+  <target name="jar-jvmlink"
+    depends="jar-common"
+    description="generate JAR file for JVMLink">
+    <ant dir="components/legacy/jvmlink" target="jvmlink.jar"/>
+  </target>
+
+  <target name="clean-jvmlink"
+    depends="clean-common"
+    description="remove build files for JVMLink">
+    <ant dir="components/legacy/jvmlink" target="jvmlink.clean"/>
+  </target>
+
+  <!-- Multi LUT app -->
+
+  <target name="compile-multi-lut"
+    description="compile classes for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.compile"/>
+  </target>
+
+  <target name="jar-multi-lut"
+    description="generate JAR file for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.jar"/>
+  </target>
+
+  <target name="clean-multi-lut"
+    description="remove build files for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.clean"/>
+  </target>
+
+  <!-- OME Notes -->
+
+  <target name="compile-ome-notes"
+    depends="compile-common, compile-formats"
+    description="compile classes for OME Notes">
+    <ant dir="components/legacy/ome-notes" target="ome-notes.compile"/>
+  </target>
+
+  <target name="jar-ome-notes"
+    depends="jar-common, jar-formats"
+    description="generate JAR file for OME Notes">
+    <ant dir="components/legacy/ome-notes" target="ome-notes.jar"/>
+  </target>
+
+  <target name="clean-ome-notes"
+    depends="clean-common, clean-formats"
+    description="remove build files for OME Notes">
+    <ant dir="components/legacy/ome-notes" target="ome-notes.clean"/>
+  </target>
+
+  <!-- OME Metadata Editor -->
+
+  <target name="compile-ome-editor"
+    depends="compile-common, compile-ome-xml, compile-formats"
+    description="compile classes for OME Metadata Editor">
+    <ant dir="components/legacy/ome-editor" target="ome-editor.compile"/>
+  </target>
+
+  <target name="jar-ome-editor"
+    depends="jar-common, jar-ome-xml, jar-formats"
+    description="generate JAR file for OME Metadata Editor">
+    <ant dir="components/legacy/ome-editor" target="ome-editor.jar"/>
+  </target>
+
+  <target name="clean-ome-editor"
+    depends="clean-common, clean-ome-xml, clean-formats"
+    description="remove build files for OME Metadata Editor">
+    <ant dir="components/legacy/ome-editor" target="ome-editor.clean"/>
+  </target>
+
+  <!-- Tool bundles -->
+
+  <target name="tools" depends="copy-jars, jar-common,
+    jar-jai, jar-poi-loci, jar-mdbtools,
+    jar-ome-xml, jar-formats, jar-loci-plugins"
+    description="create JAR file encompassing several LOCI tools">
+    <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${shared-artifact.dir}/@{jar}" dest="${loci-tools.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${loci-tools.jar}" basedir="${loci-tools.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${loci-tools.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${loci-tools.dir}"/>
+  </target>
+
+  <target name="tools-ome" depends="jar-ome-io, jar-ome-plugins"
+    description="create JAR file encompassing several OME tools">
+    <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${shared-artifact.dir}/@{jar}" dest="${ome-tools.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${ome-tools.jar}" basedir="${ome-tools.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${ome-tools.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${ome-tools.dir}"/>
+  </target>
+
+</project>
