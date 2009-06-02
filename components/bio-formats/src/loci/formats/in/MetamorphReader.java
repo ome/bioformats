@@ -327,8 +327,11 @@ public class MetamorphReader extends BaseTiffReader {
       stks = new String[seriesCount][];
       if (seriesCount == 1) stks[0] = new String[numFiles];
       else if (differentZs) {
-        stks[0] = new String[channelsInFirstSeries * tc];
-        stks[1] = new String[(cc - channelsInFirstSeries) * tc];
+        int stages = nstages == 0 ? 1 : nstages;
+        for (int i=0; i<stages; i++) {
+          stks[i * 2] = new String[channelsInFirstSeries * tc];
+          stks[i * 2 + 1] = new String[(cc - channelsInFirstSeries) * tc];
+        }
       }
       else {
         for (int i=0; i<stks.length; i++) {
@@ -355,7 +358,8 @@ public class MetamorphReader extends BaseTiffReader {
         for (int s=0; s<ns; s++) {
           for (int j=0; j<cc; j++) {
             boolean validZ = ((Boolean) hasZ.get(j)).booleanValue();
-            int seriesNdx = (seriesCount == 1 || validZ) ? 0 : 1;
+            int seriesNdx = s * (seriesCount / ns);
+            seriesNdx += (seriesCount == 1 || validZ) ? 0 : 1;
             stks[seriesNdx][pt[seriesNdx]] = prefix;
             if (waveNames.get(j) != null) {
               stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
@@ -425,6 +429,12 @@ public class MetamorphReader extends BaseTiffReader {
         if (stks == null) break;
       }
 
+      RandomAccessInputStream s = new RandomAccessInputStream(stks[0][0]);
+      Hashtable ifd = TiffTools.getFirstIFD(s);
+      s.close();
+      core[0].sizeX = (int) TiffTools.getImageWidth(ifd);
+      core[0].sizeY = (int) TiffTools.getImageLength(ifd);
+
       core[0].sizeZ = zc;
       core[0].sizeC = cc;
       core[0].sizeT = tc;
@@ -448,12 +458,19 @@ public class MetamorphReader extends BaseTiffReader {
           newCore[i].interleaved = isInterleaved();
           newCore[i].orderCertain = true;
         }
-        newCore[0].sizeC = stks[0].length / getSizeT();
-        newCore[1].sizeC = stks[1].length / newCore[1].sizeT;
-        newCore[1].sizeZ = 1;
-        newCore[0].imageCount =
-          newCore[0].sizeC * newCore[0].sizeT * newCore[0].sizeZ;
-        newCore[1].imageCount = newCore[1].sizeC * newCore[1].sizeT;
+        if (stks.length > nstages) {
+          int ns = nstages == 0 ? 1 : nstages;
+          for (int j=0; j<ns; j++) {
+            newCore[j * 2].sizeC = stks[j * 2].length / getSizeT();
+            newCore[j * 2 + 1].sizeC =
+              stks[j * 2 + 1].length / newCore[j * 2 + 1].sizeT;
+            newCore[j * 2 + 1].sizeZ = 1;
+            newCore[j * 2].imageCount = newCore[j * 2].sizeC *
+              newCore[j * 2].sizeT * newCore[j * 2].sizeZ;
+            newCore[j * 2 + 1].imageCount =
+              newCore[j * 2 + 1].sizeC * newCore[j * 2 + 1].sizeT;
+          }
+        }
         core = newCore;
       }
     }
@@ -506,7 +523,10 @@ public class MetamorphReader extends BaseTiffReader {
         long ms = DataTools.getTime(stamp, DATE_FORMAT);
         store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
           0, 0, i);
-        store.setPlaneTimingExposureTime((Float) exposureTimes.get(i), 0, 0, i);
+        if (coords[2] < exposureTimes.size()) {
+          store.setPlaneTimingExposureTime(
+            (Float) exposureTimes.get(coords[2]), 0, 0, i);
+        }
       }
       else if (internalStamps != null && i < internalStamps.length) {
         long delta = internalStamps[i] - internalStamps[0];
