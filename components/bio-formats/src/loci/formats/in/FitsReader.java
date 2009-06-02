@@ -115,7 +115,11 @@ public class FitsReader extends FormatReader {
       }
       else key = line.trim();
 
-      if (key.equals("END")) break;
+      // if the file has an extended header, "END" will appear twice
+      // the first time marks the end of the extended header
+      // the second time marks the end of the standard header
+      // image dimensions are only populated by the standard header
+      if (key.equals("END") && getSizeX() > 0) break;
 
       if (key.equals("BITPIX")) {
         int bits = Integer.parseInt(value);
