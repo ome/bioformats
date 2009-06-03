@@ -1259,9 +1259,12 @@ public class FileStitcher implements IFormatReader {
   protected void initReader(int sno, int fno)
     throws FormatException, IOException
   {
+    if (files[sno][fno].equals(readers[sno][fno].getCurrentFile())) {
+      return;
+    }
     readers[sno][fno].setId(files[sno][fno]);
     readers[sno][fno].setSeries(seriesInFile ? getSeries() : 0);
-    readers[sno][fno].swapDimensions(reader.getDimensionOrder());
+    readers[sno][fno].swapDimensions(reader.getInputOrder());
   }
 
   private FilePattern getPattern(String[] f, String dir, String block) {
