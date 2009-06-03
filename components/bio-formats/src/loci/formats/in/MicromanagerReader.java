@@ -441,6 +441,8 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
+    if (detectorID == null) detectorID = "Detector:0";
+
     for (int i=0; i<channels.length; i++) {
       store.setDetectorSettingsBinning(binning, 0, i);
       store.setDetectorSettingsGain(new Float(gain), 0, i);
