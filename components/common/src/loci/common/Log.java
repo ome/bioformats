@@ -49,7 +49,7 @@ public class Log {
   /** Overrides the stream to which logging occurs (default is System.out). */
   public void setStream(PrintStream out) { this.out = out; }
 
-  /** Gets the stream to which logging currenly occurs. */
+  /** Gets the stream to which logging currently occurs. */
   public PrintStream getStream() { return out; }
 
   /** Main output method. Override to control how logging occurs. */
