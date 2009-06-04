@@ -227,6 +227,7 @@ public class OpenlabReader extends FormatReader {
       b = null;
 
       if (exc != null) {
+        r.close();
         if (debug) trace(exc);
         in.seek(planes[index].planeOffset - 298);
 
