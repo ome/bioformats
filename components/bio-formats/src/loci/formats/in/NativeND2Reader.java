@@ -79,7 +79,7 @@ public class NativeND2Reader extends FormatReader {
   private int numSeries;
 
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
-  private String voltage, mag, na, objectiveModel, immersion;
+  private String voltage, mag, na, objectiveModel, immersion, correction;
 
   private Vector channelNames;
   private Vector binning;
@@ -178,7 +178,7 @@ public class NativeND2Reader extends FormatReader {
     tsT.clear();
 
     pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
-    voltage = mag = na = objectiveModel = immersion = null;
+    voltage = mag = na = objectiveModel = immersion = correction = null;
     channelNames = null;
     binning = null;
     speed = null;
@@ -839,7 +839,8 @@ public class NativeND2Reader extends FormatReader {
     }
     if (immersion == null) immersion = "Unknown";
     store.setObjectiveImmersion(immersion, 0, 0);
-    store.setObjectiveCorrection("Unknown", 0, 0);
+    if (correction == null || correction.length() == 0) correction = "Unknown";
+    store.setObjectiveCorrection(correction, 0, 0);
 
     // link Objective to Image
     store.setObjectiveID("Objective:0", 0, 0);
@@ -917,23 +918,25 @@ public class NativeND2Reader extends FormatReader {
     else if (key.endsWith("dZStep")) pixelSizeZ = Float.parseFloat(value);
     else if (key.endsWith("Gain")) gain.add(new Float(value));
     else if (key.endsWith("dLampVoltage")) voltage = value;
-    else if (key.endsWith("dObjectiveMag")) mag = value;
+    else if (key.endsWith("dObjectiveMag") && mag == null) mag = value;
     else if (key.endsWith("dObjectiveNA")) na = value;
     else if (key.equals("sObjective") || key.equals("wsObjectiveName")) {
       String[] tokens = value.split(" ");
       int magIndex = -1;
       for (int i=0; i<tokens.length; i++) {
-        if (tokens[i].endsWith("x")) {
+        if (tokens[i].indexOf("x") != -1) {
           magIndex = i;
           break;
         }
       }
-      StringBuffer model = new StringBuffer();
+      StringBuffer s = new StringBuffer();
       for (int i=0; i<magIndex; i++) {
-        model.append(tokens[i]);
-        if (i < magIndex - 1) model.append(" ");
+        s.append(tokens[i]);
       }
-      objectiveModel = model.toString();
+      correction = s.toString();
+      if (magIndex >= 0) {
+        mag = tokens[magIndex].substring(0, tokens[magIndex].indexOf("x"));
+      }
       if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
     }
     else if (key.endsWith("dTimeMSec")) {
