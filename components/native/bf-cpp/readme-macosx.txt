@@ -26,3 +26,7 @@ This will install Boost into a subdirectory of /usr/local; e.g.:
 7) Depending on your version of Boost, you may need to edit bf-cpp's
    CMakeLists.txt to tweak the Boost_ADDITIONAL_VERSIONS variable to include
    your version.
+
+Alternately, you can use MacPorts (http://www.macports.org/):
+
+  sudo port install boost
