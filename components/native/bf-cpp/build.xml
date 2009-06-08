@@ -29,6 +29,7 @@ This component requires Jace, available from:
 Please set the jace.home property to point to
 your Jace installation directory. E.g.:
   ant -Djace.home=${user.home}/jace
+Please use an absolute path, not a relative one.
 
 You can check out the latest known-to-work Jace code
 from the Subversion repository using the command:

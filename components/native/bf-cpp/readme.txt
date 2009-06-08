@@ -80,7 +80,7 @@ Finally, you can compile the Bio-Formats C++ bindings:
   ant -Djace.home=/path/to/jace
 
 Where /path/to/jace is the location of your Jace source code checkout.
-Be sure to use forward slashes, even on Windows.
+Do not use a relative path, and use forward slashes, even on Windows.
 
 If all goes well, the build system will:
 
