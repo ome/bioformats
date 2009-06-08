@@ -2465,6 +2465,12 @@ countable = true
 path = Instrument+/Filter+
 description = TODO
 
+[Filter ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the filter
+
 [Filter Type]
 type = String
 description = TODO

@@ -24,64 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 8, 2009 8:47:09 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
-import java.util.List;
-
-import loci.common.LogTools;
 import ome.xml.OMEXMLNode;
-import ome.xml.r2003fc.ome.ArcNode;
-import ome.xml.r2003fc.ome.ChannelComponentNode;
-import ome.xml.r2003fc.ome.ChannelInfoNode;
-import ome.xml.r2003fc.ome.ContactNode;
-import ome.xml.r2003fc.ome.DatasetNode;
-import ome.xml.r2003fc.ome.DetectorNode;
-import ome.xml.r2003fc.ome.DetectorRefNode;
-import ome.xml.r2003fc.ome.DichroicNode;
-import ome.xml.r2003fc.ome.DisplayOptionsNode;
-import ome.xml.r2003fc.ome.EmFilterNode;
-import ome.xml.r2003fc.ome.ExFilterNode;
-import ome.xml.r2003fc.ome.ExperimentNode;
-import ome.xml.r2003fc.ome.ExperimentRefNode;
-import ome.xml.r2003fc.ome.ExperimenterNode;
-import ome.xml.r2003fc.ome.ExperimenterRefNode;
-import ome.xml.r2003fc.ome.FilamentNode;
-import ome.xml.r2003fc.ome.FilterNode;
-import ome.xml.r2003fc.ome.FilterSetNode;
-import ome.xml.r2003fc.ome.GroupNode;
-import ome.xml.r2003fc.ome.GroupRefNode;
-import ome.xml.r2003fc.ome.ImageNode;
-import ome.xml.r2003fc.ome.ImagingEnvironmentNode;
-import ome.xml.r2003fc.ome.InstrumentNode;
-import ome.xml.r2003fc.ome.InstrumentRefNode;
-import ome.xml.r2003fc.ome.LaserNode;
-import ome.xml.r2003fc.ome.LightSourceNode;
-import ome.xml.r2003fc.ome.LightSourceRefNode;
-import ome.xml.r2003fc.ome.MicroscopeNode;
-import ome.xml.r2003fc.ome.OMENode;
-import ome.xml.r2003fc.ome.OTFNode;
-import ome.xml.r2003fc.ome.OTFRefNode;
-import ome.xml.r2003fc.ome.ObjectiveNode;
-import ome.xml.r2003fc.ome.ObjectiveRefNode;
-import ome.xml.r2003fc.ome.PixelsNode;
-import ome.xml.r2003fc.ome.PlateNode;
-import ome.xml.r2003fc.ome.PlateRefNode;
-import ome.xml.r2003fc.ome.ProjectNode;
-import ome.xml.r2003fc.ome.ProjectRefNode;
-import ome.xml.r2003fc.ome.ProjectionNode;
-import ome.xml.r2003fc.ome.PumpNode;
-import ome.xml.r2003fc.ome.ROINode;
-import ome.xml.r2003fc.ome.ScreenNode;
-import ome.xml.r2003fc.ome.ScreenRefNode;
-import ome.xml.r2003fc.ome.StageLabelNode;
-import ome.xml.r2003fc.ome.ThumbnailNode;
-import ome.xml.r2003fc.ome.TiffDataNode;
-import ome.xml.r2003fc.ome.TimeNode;
+import ome.xml.r2003fc.ome.*;
+import java.util.List;
+import loci.common.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -891,6 +844,12 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public String getFilterFilterWheel(int instrumentIndex, int filterIndex) {
     // NB: FilterWheel unsupported for schema version 2003-FC
     return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterID(int, int) */
+  public String getFilterID(int instrumentIndex, int filterIndex) {
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
+    return filter == null ? null : filter.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getFilterLotNumber(int, int) */
@@ -3233,6 +3192,13 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setFilterFilterWheel(String, int, int) */
   public void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex) {
     // NB: FilterWheel unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterID(String, int, int) */
+  public void setFilterID(String id, int instrumentIndex, int filterIndex) {
+    if (id == null) return;
+    FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
+    filterNode.setNodeID(id);
   }
 
   /* @see loci.formats.meta.MetadataStore#setFilterLotNumber(String, int, int) */

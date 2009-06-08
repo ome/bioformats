@@ -62,9 +62,7 @@ public class FlexReader extends BaseTiffReader {
   /** Scale factor for each image. */
   protected double[] factors;
 
-  /** Camera binning values. */
-  //TODO: return the binX and binY
-  private int binX, binY;
+  private Vector<ImageInfo> images;
 
   private int plateCount;
   private int wellCount;
@@ -72,13 +70,12 @@ public class FlexReader extends BaseTiffReader {
 
   private Vector<String> channelNames;
 
-  private Vector<Float> xPositions;
-  private Vector<Float> yPositions;
+  private Hashtable<String, Vector<Float>> xPositions;
+  private Hashtable<String, Vector<Float>> yPositions;
 
   private Vector<String> lightSourceIDs;
-
-  private Vector<Float> xResolutions;
-  private Vector<Float> yResolutions;
+  private Vector<String> subLayoutIDs;
+  private Hashtable<String[], Float> power;
 
   // -- Constructor --
 
@@ -137,7 +134,6 @@ public class FlexReader extends BaseTiffReader {
   public void close() throws IOException {
     super.close();
     factors = null;
-    binX = binY = 0;
     plateCount = wellCount = fieldCount = 0;
     channelNames = null;
   }
@@ -153,12 +149,13 @@ public class FlexReader extends BaseTiffReader {
     core[0].sizeT = 0;
     core[0].sizeZ = 0;
 
+    images = new Vector<ImageInfo>();
     channelNames = new Vector<String>();
-    xPositions = new Vector<Float>();
-    yPositions = new Vector<Float>();
+    xPositions = new Hashtable<String, Vector<Float>>();
+    yPositions = new Hashtable<String, Vector<Float>>();
     lightSourceIDs = new Vector<String>();
-    xResolutions = new Vector<Float>();
-    yResolutions = new Vector<Float>();
+    subLayoutIDs = new Vector<String>();
+    power = new Hashtable<String[], Float>();
 
     // parse factors from XML
     String xml = (String) TiffTools.getIFDValue(ifds[0],
@@ -196,7 +193,7 @@ public class FlexReader extends BaseTiffReader {
       	seriesCount = plateCount * wellCount * fieldCount;
       }
       core[0].imageCount = ifds.length / seriesCount;
-      //Z-stacks are more likely than t-series (especially in Flex version 1.0)
+      // Z-stacks are more likely than t-series (especially in Flex version 1.0)
       if (getSizeZ() <= 1) core[0].sizeZ = getImageCount() / getSizeC();
       core[0].sizeT = getImageCount() / (getSizeC() * getSizeZ());
     }
@@ -262,7 +259,7 @@ public class FlexReader extends BaseTiffReader {
       core[i].pixelType = getPixelType();
     }
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
     store.setInstrumentID("Instrument:0", 0);
 
     int[] lengths = new int[] {plateCount, wellCount, fieldCount};
@@ -270,27 +267,53 @@ public class FlexReader extends BaseTiffReader {
     for (int i=0; i<getSeriesCount(); i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
 
-      if (i < xResolutions.size()) {
-        store.setDimensionsPhysicalSizeX(xResolutions.get(i), i, 0);
+      for (int q=0; q<getImageCount(); q++) {
+        if (i * getImageCount() + q >= images.size()) break;
+        ImageInfo image = images.get(i * getImageCount() + q);
+        store.setStagePositionPositionX(new Float(image.positionX), i, 0, q);
+        store.setStagePositionPositionY(new Float(image.positionY), i, 0, q);
+        store.setStagePositionPositionZ(new Float(image.positionZ), i, 0, q);
+        store.setPlaneTimingDeltaT(
+          new Float(image.measurementTimeOffset), i, 0, q);
+        store.setPlaneTimingExposureTime(
+          new Float(image.exposureTime), i, 0, q);
       }
-      if (i < yResolutions.size()) {
-        store.setDimensionsPhysicalSizeY(yResolutions.get(i), i, 0);
+
+      if (i * getImageCount() < images.size()) {
+        ImageInfo image = images.get(i * getImageCount());
+
+        store.setImageCreationDate(image.date, i);
+
+        store.setDimensionsPhysicalSizeX(new Float(image.resolutionX), i, 0);
+        store.setDimensionsPhysicalSizeY(new Float(image.resolutionY), i, 0);
+        store.setObjectiveSettingsObjective("Objective:" + image.objective, i);
+      }
+
+      for (int ch=0; ch<getEffectiveSizeC(); ch++) {
+        if (i * getImageCount() + ch >= images.size()) break;
+        ImageInfo image = images.get(i * getImageCount() + ch);
+        store.setDetectorSettingsDetector("Detector:" + image.camera, i, ch);
+        store.setDetectorSettingsBinning(image.binX + "x" + image.binY, i, ch);
       }
 
       store.setImageID("Image:" + i, i);
       store.setImageInstrumentRef("Instrument:0", i);
       store.setWellSampleIndex(new Integer(i), pos[0], pos[1], pos[2]);
       store.setWellSampleImageRef("Image:" + i, pos[0], pos[1], pos[2]);
-      if (pos[2] < xPositions.size()) {
-        store.setWellSamplePosX(xPositions.get(pos[2]), pos[0],
-          pos[1], pos[2]);
-      }
-      if (pos[2] < yPositions.size()) {
-        store.setWellSamplePosY(yPositions.get(pos[2]), pos[0],
-          pos[1], pos[2]);
+
+      if (pos[1] < subLayoutIDs.size()) {
+        String sublayout = subLayoutIDs.get(pos[1]);
+        Float xpos = xPositions.get(sublayout).get(pos[2]);
+        Float ypos = yPositions.get(sublayout).get(pos[2]);
+        store.setWellSamplePosX(xpos, pos[0], pos[1], pos[2]);
+        store.setWellSamplePosY(ypos, pos[0], pos[1], pos[2]);
       }
     }
+  }
 
+  /* @see loci.formats.in.BaseTiffReader#initMetadata() */
+  protected void initMetadata() throws FormatException, IOException {
+    initStandardMetadata();
   }
 
   // -- Helper classes --
@@ -321,11 +344,15 @@ public class FlexReader extends BaseTiffReader {
     private int nextSliderRef = 0;
     private int nextFilterCombination = 0;
 
+    private ImageInfo currentImage;
+
     private Hashtable<String, Integer> fieldCounts;
     private String currentSublayout;
 
-    private String parentQName;
-    private String currentQName;
+    private String parentQName, currentQName;
+    private String sliderName;
+
+    private String lightSourceComboID, lightSourceID;
 
     public FlexHandler(Vector<String> names, Vector<String> factors,
       MetadataStore store)
@@ -341,6 +368,7 @@ public class FlexReader extends BaseTiffReader {
 
       if (currentQName.equals("SublayoutRef")) {
         fieldCount = fieldCounts.get(value).intValue();
+        subLayoutIDs.add(value);
       }
 
       if (currentQName.equals("PlateName")) {
@@ -354,13 +382,12 @@ public class FlexReader extends BaseTiffReader {
         addMeta("Plate " + (nextPlate - 1) + " WellShape " + currentQName,
           value);
       }
-      else if (currentQName.equals("Wavelength")) {
-        store.setLaserWavelength(new Integer(value), 0, nextLaser);
-        addMeta("Laser " + nextLaser + " Wavelength", value);
-      }
       else if (currentQName.equals("Magnification")) {
-        store.setObjectiveCalibratedMagnification(new Float(value), 0,
-          nextObjective);
+        try {
+          store.setObjectiveNominalMagnification(
+            new Integer((int) Float.parseFloat(value)), 0, nextObjective);
+        }
+        catch (NumberFormatException e) { }
       }
       else if (currentQName.equals("NumAperture")) {
         store.setObjectiveLensNA(new Float(value), 0, nextObjective);
@@ -372,9 +399,19 @@ public class FlexReader extends BaseTiffReader {
       {
         addMeta("Sublayout " + (nextSublayout - 1) + " Field " +
           (nextField - 1) + " " + currentQName, value);
-        Float offset = new Float(value);
-        if (currentQName.equals("OffsetX")) xPositions.add(offset);
-        else yPositions.add(offset);
+        Float offset = new Float(Float.parseFloat(value) * 10000);
+        if (currentQName.equals("OffsetX")) {
+          Vector<Float> v = xPositions.get(currentSublayout);
+          if (v == null) v = new Vector<Float>();
+          v.add(offset);
+          xPositions.put(currentSublayout, v);
+        }
+        else {
+          Vector<Float> v = yPositions.get(currentSublayout);
+          if (v == null) v = new Vector<Float>();
+          v.add(offset);
+          yPositions.put(currentSublayout, v);
+        }
       }
       else if (currentQName.equals("OffsetZ")) {
         addMeta("Stack " + (nextStack - 1) + " Plane " + (nextPlane - 1) +
@@ -383,6 +420,74 @@ public class FlexReader extends BaseTiffReader {
       else if (currentQName.equals("Power")) {
         addMeta("LightSourceCombination " + (nextLightSourceCombination - 1) +
           " LightSourceRef " + (nextLightSourceRef - 1) + " Power", value);
+        power.put(new String[] {lightSourceComboID, lightSourceID},
+          new Float(value));
+      }
+      else if (currentQName.equals("CameraBinningX")) {
+        try {
+          currentImage.binX = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("CameraBinningY")) {
+        try {
+          currentImage.binY = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("ImageResolutionX")) {
+        try {
+          currentImage.resolutionX = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("ImageResolutionY")) {
+        try {
+          currentImage.resolutionY = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("ObjectiveRef")) {
+        currentImage.objective = value;
+      }
+      else if (currentQName.equals("CameraExposureTime")) {
+        try {
+          currentImage.exposureTime = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("PositionX")) {
+        try {
+          currentImage.positionX = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("PositionY")) {
+        try {
+          currentImage.positionY = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("PositionZ")) {
+        try {
+          currentImage.positionZ = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("MeasurementTimeOffset")) {
+        try {
+          currentImage.measurementTimeOffset = Float.parseFloat(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (currentQName.equals("DateTime")) {
+        currentImage.date = value;
+      }
+      else if (currentQName.equals("CameraRef")) {
+        currentImage.camera = value;
+      }
+      else if (currentQName.equals("LightSourceCombinationRef")) {
+        currentImage.lightSource = value;
       }
       else if (parentQName.equals("Image")) {
         addMeta("Image " + (nextImage - 1) + " " + currentQName, value);
@@ -390,30 +495,20 @@ public class FlexReader extends BaseTiffReader {
         if (currentQName.equals("DateTime") && nextImage == 1) {
           store.setImageCreationDate(value, 0);
         }
-        else if (currentQName.equals("CameraBinningX")) {
-          binX = Integer.parseInt(value);
-        }
-        else if (currentQName.equals("CameraBinningY")) {
-          binY = Integer.parseInt(value);
-        }
-      }
-      else if (parentQName.equals("ImageResolutionX")) {
-        try {
-          xResolutions.add(new Float(value));
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (parentQName.equals("ImageResolutionY")) {
-        try {
-          yResolutions.add(new Float(value));
-        }
-        catch (NumberFormatException e) { }
       }
       else if (parentQName.equals("Well")) {
         addMeta("Well " + (nextWell - 1) + " " + currentQName, value);
       }
       else if (parentQName.equals("FLIM")) {
         addMeta("FLIM " + nextImage + " " + currentQName, value);
+      }
+      else if (currentQName.equals("Wavelength") &&
+        parentQName.equals("LightSource"))
+      {
+        store.setLaserWavelength(new Integer(value), 0, nextLaser);
+        store.setLaserType("Unknown", 0, nextLaser);
+        store.setLaserLaserMedium("Unknown", 0, nextLaser);
+        addMeta("Laser " + nextLaser + " Wavelength", value);
       }
     }
 
@@ -428,13 +523,15 @@ public class FlexReader extends BaseTiffReader {
           if (name.equals("Name")) {
             String imageName = attributes.getValue(i);
             names.add(imageName);
-            store.setImageName(imageName, 0);
             // some datasets have image names of the form "1_Exp1Cam1"
             // we're assuming that "Exp1Cam1" is the channel name, and
             // "1" is the T index
-            
-            //Actually tis would be from the old flex format. the 1_, 2_... represnet any series (wether, they are time  point, Z-section or
-            //number of fields=number of series. I would be more enclined to associate that index to a number of series or Z-stacks.
+
+            // Actually this would be from the old flex format.
+            // The 1_, 2_... represent any series,  whether they are time
+            // points, Z-sections or number of fields == number of series.
+            // I would be more innclined to associate that index with the
+            // number of series or Z-stacks.
             imageName = imageName.substring(imageName.indexOf("_") + 1);
             if (!channelNames.contains(imageName)) {
               channelNames.add(imageName);
@@ -453,54 +550,47 @@ public class FlexReader extends BaseTiffReader {
         addMeta("LightSource " + nextLightSource + " ID", id);
         addMeta("LightSource " + nextLightSource + " Type", type);
 
-        if (type.equals("Laser")) nextLaser++;
+        store.setLightSourceID("LightSource:" + id, 0, nextLightSource);
+
+        nextLaser++;
         nextLightSource++;
       }
       else if (qName.equals("Slider")) {
         parentQName = qName;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Slider " + nextSlider + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Slider " + nextSlider, attributes);
+        sliderName = attributes.getValue("Name");
         nextSlider++;
       }
       else if (qName.equals("Filter")) {
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Filter " + nextFilter + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Filter " + nextFilter, attributes);
+        store.setFilterID("Filter:" + attributes.getValue("ID"), 0, nextFilter);
+        store.setFilterFilterWheel(sliderName, 0, nextFilter);
         nextFilter++;
       }
       else if (qName.equals("Camera")) {
         parentQName = qName;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Camera " + nextCamera + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Camera " + nextCamera, attributes);
+        store.setDetectorID("Detector:" + attributes.getValue("ID"),
+          0, nextCamera);
+        store.setDetectorType(attributes.getValue("CameraType"), 0, nextCamera);
         nextCamera++;
       }
       else if (qName.startsWith("PixelSize") && parentQName.equals("Camera")) {
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Camera " + (nextCamera - 1) + " " + qName + " " +
-            attributes.getQName(i), attributes.getValue(i));
-        }
+        addAllAttributes("Camera " + (nextCamera - 1) + " " + qName,
+          attributes);
       }
       else if (qName.equals("Objective")) {
         parentQName = qName;
         nextObjective++;
 
-        // link Objective to Image using ObjectiveSettings
-        store.setObjectiveID("Objective:" + nextObjective, 0, 0);
-        store.setObjectiveSettingsObjective("Objective:" + nextObjective, 0);
-        store.setObjectiveCorrection("Unknown", 0, 0);
+        store.setObjectiveID("Objective:" + attributes.getValue("ID"),
+          0, nextObjective);
+        store.setObjectiveCorrection("Unknown", 0, nextObjective);
       }
       else if (qName.equals("Sublayout")) {
         parentQName = qName;
         nextField = 0;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Sublayout " + nextSublayout + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Sublayout " + nextSublayout, attributes);
         nextSublayout++;
 
         String id = attributes.getValue("ID");
@@ -513,97 +603,84 @@ public class FlexReader extends BaseTiffReader {
       }
       else if (qName.equals("Field")) {
         parentQName = qName;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Sublayout " + (nextSublayout - 1) + " Field " + nextField +
-            " " + attributes.getQName(i), attributes.getValue(i));
-        }
+        addAllAttributes("Sublayout " + (nextSublayout - 1) + " Field " +
+          nextField, attributes);
         nextField++;
-        int fieldNo = Integer.parseInt(attributes.getValue("No"));
+        int fieldNo = 0;
+        try { fieldNo = Integer.parseInt(attributes.getValue("No")); }
+        catch (NumberFormatException e) { }
         int count = fieldCounts.get(currentSublayout).intValue();
         if (fieldNo > count) count++;
         fieldCounts.put(currentSublayout, new Integer(count));
       }
       else if (qName.equals("Stack")) {
         nextPlane = 0;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Stack " + nextStack + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Stack " + nextStack, attributes);
         nextStack++;
       }
       else if (qName.equals("Plane")) {
         parentQName = qName;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Stack " + (nextStack - 1) + " Plane " + nextPlane +
-            " " + attributes.getQName(i), attributes.getValue(i));
-        }
+        addAllAttributes("Stack " + (nextStack - 1) + " Plane " + nextPlane,
+          attributes);
         nextPlane++;
-        int planeNo = Integer.parseInt(attributes.getValue("No"));
+        int planeNo = 0;
+        try { planeNo = Integer.parseInt(attributes.getValue("No")); }
+        catch (NumberFormatException e) { }
         if (planeNo > getSizeZ()) core[0].sizeZ++;
       }
       else if (qName.equals("Kinetic")) {
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Kinetic " + nextKinetic + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Kinetic " + nextKinetic, attributes);
         nextKinetic++;
       }
       else if (qName.equals("Dispensing")) {
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Dispensing " + nextDispensing + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Dispensin " + nextDispensing, attributes);
         nextDispensing++;
       }
       else if (qName.equals("LightSourceCombination")) {
         nextLightSourceRef = 0;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("LightSourceCombination " + nextLightSourceCombination +
-            " " + attributes.getQName(i), attributes.getValue(i));
-        }
+        addAllAttributes("LightSourceCombination " + nextLightSourceCombination,
+          attributes);
         nextLightSourceCombination++;
-        lightSourceIDs.add(attributes.getValue("ID"));
+        lightSourceComboID = attributes.getValue("ID");
+        lightSourceIDs.add(lightSourceComboID);
       }
       else if (qName.equals("LightSourceRef")) {
         parentQName = qName;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("LightSourceCombination " + (nextLightSourceCombination - 1) +
-            " LightSourceRef " + nextLightSourceRef + " " +
-            attributes.getQName(i), attributes.getValue(i));
-        }
-        nextLightSourceRef++;
+        lightSourceID = attributes.getValue("ID");
       }
       else if (qName.equals("FilterCombination")) {
         parentQName = qName;
         nextSliderRef = 0;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("FilterCombination " + nextFilterCombination + " " +
-            attributes.getQName(i), attributes.getValue(i));
-        }
+        addAllAttributes("FilterCombination " + nextFilterCombination,
+          attributes);
         nextFilterCombination++;
       }
       else if (qName.equals("SliderRef")) {
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("FilterCombination " + (nextFilterCombination - 1) +
-            " SliderRef " + nextSliderRef + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
-        nextSliderRef++;
+        parentQName = qName;
       }
       else if (qName.equals("Image")) {
         parentQName = qName;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("Image " + nextImage + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("Image " + nextImage, attributes);
 
         nextImage++;
+
+        currentImage = new ImageInfo();
 
         //Implemented for FLEX v1.7 and below
         String x = attributes.getValue("CameraBinningX");
         String y = attributes.getValue("CameraBinningY");
-        if (x != null) binX = Integer.parseInt(x);
-        if (y != null) binY = Integer.parseInt(y);
+        if (x != null) {
+          try {
+            currentImage.binX = Integer.parseInt(x);
+          }
+          catch (NumberFormatException e) { }
+        }
+        if (y != null) {
+          try {
+            currentImage.binY = Integer.parseInt(y);
+          }
+          catch (NumberFormatException e) { }
+        }
       }
       else if (qName.equals("Plate") || qName.equals("WellShape") ||
         qName.equals("Well"))
@@ -620,41 +697,98 @@ public class FlexReader extends BaseTiffReader {
       }
       else if (qName.equals("WellCoordinate")) {
         int ndx = nextWell - 1;
-        addMeta("Well" + ndx + " Row", attributes.getValue("Row"));
-        addMeta("Well" + ndx + " Col", attributes.getValue("Col"));
-        store.setWellRow(new Integer(attributes.getValue("Row")), 0, ndx);
-        store.setWellColumn(new Integer(attributes.getValue("Col")), 0, ndx);
+        int row = 0, col = 0;
+        try {
+          row = Integer.parseInt(attributes.getValue("Row")) - 1;
+        }
+        catch (NumberFormatException e) { }
+        try {
+          col = Integer.parseInt(attributes.getValue("Col")) - 1;
+        }
+        catch (NumberFormatException e) { }
+        addMeta("Well " + ndx + " Row", row);
+        addMeta("Well " + ndx + " Col", col);
+        store.setWellRow(new Integer(row), 0, ndx);
+        store.setWellColumn(new Integer(col), 0, ndx);
       }
       else if (qName.equals("Status")) {
         addMeta("Status", attributes.getValue("StatusString"));
       }
-      else if(qName.equals("ImageResolutionX")) {
+      else if (qName.equals("ImageResolutionX")) {
         parentQName = qName;
-      //TODO: definition of the dimension type and unit Where to store?
-        for (int i=0; i<attributes.getLength(); i++) {
-          //addMeta("Image " + nextImage + " " + attributes.getQName(i),
-          //  attributes.getValue(i));
-        }
+        currentImage.resolutionXUnit = attributes.getValue("Unit");
       }
-      else if(qName.equals("ImageResolutionY")) {
+      else if (qName.equals("ImageResolutionY")) {
         parentQName = qName;
-        //TODO: definition of the dimension type and unit Where to store?
-        for (int i=0; i<attributes.getLength(); i++) {
-          //addMeta("Image " + nextImage + " " + attributes.getQName(i),
-          //  attributes.getValue(i));
-        }
+        currentImage.resolutionYUnit = attributes.getValue("Unit");
+      }
+      else if (qName.equals("PositionX")) {
+        parentQName = qName;
+        currentImage.positionXUnit = attributes.getValue("Unit");
+      }
+      else if (qName.equals("PositionY")) {
+        parentQName = qName;
+        currentImage.positionYUnit = attributes.getValue("Unit");
+      }
+      else if (qName.equals("PositionZ")) {
+        parentQName = qName;
+        currentImage.positionZUnit = attributes.getValue("Unit");
       }
       else if (qName.equals("FLIM")) {
         parentQName = qName;
-        for (int i=0; i<attributes.getLength(); i++) {
-          addMeta("FLIM " + nextImage + " " + attributes.getQName(i),
-            attributes.getValue(i));
-        }
+        addAllAttributes("FLIM " + nextImage, attributes);
       }
     }
 
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals(parentQName)) parentQName = "";
+      if (qName.equals("Image")) {
+        currentImage.adjustForUnits();
+        images.add(currentImage);
+      }
+    }
+
+    // -- Helper methods --
+
+    private void addAllAttributes(String keyPrefix, Attributes attributes) {
+      for (int i=0; i<attributes.getLength(); i++) {
+        String name = attributes.getQName(i);
+        addMeta(keyPrefix + " " + name, attributes.getValue(name));
+      }
+    }
+  }
+
+  /** Stores metadata for a single image. */
+  class ImageInfo {
+    public String objective;
+    public String camera;
+    public float exposureTime;
+    public int binX, binY;
+    public float positionX, positionY, positionZ;
+    public String positionXUnit, positionYUnit, positionZUnit;
+    public float measurementTimeOffset;
+    public String date;
+    public float resolutionX, resolutionY;
+    public String resolutionXUnit, resolutionYUnit;
+    public String lightSource;
+
+    public void adjustForUnits() {
+      positionX = changeToMicrons(positionX, positionXUnit);
+      positionY = changeToMicrons(positionY, positionYUnit);
+      positionZ = changeToMicrons(positionZ, positionZUnit);
+      resolutionX = changeToMicrons(resolutionX, resolutionXUnit);
+      resolutionY = changeToMicrons(resolutionY, resolutionYUnit);
+    }
+
+    private float changeToMicrons(float value, String oldUnit) {
+      if (oldUnit == null || oldUnit.equals("um")) return value;
+      float mul = 1f;
+
+      if (oldUnit.equals("m")) mul = 10000f;
+      else if (oldUnit.equals("mm")) mul = 100f;
+      else if (oldUnit.equals("cm")) mul = 1000f;
+
+      return value * mul;
     }
 
   }

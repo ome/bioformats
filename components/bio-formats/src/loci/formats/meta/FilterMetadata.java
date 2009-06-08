@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 8, 2009 8:47:09 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -555,6 +555,12 @@ public class FilterMetadata implements MetadataStore {
   public void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex) {
     String value = filter ? DataTools.sanitize(filterWheel) : filterWheel;
     store.setFilterFilterWheel(value, instrumentIndex, filterIndex);
+  }
+
+  /* @see MetadataStore#setFilterID(String, int, int) */
+  public void setFilterID(String id, int instrumentIndex, int filterIndex) {
+    String value = filter ? DataTools.sanitize(id) : id;
+    store.setFilterID(value, instrumentIndex, filterIndex);
   }
 
   /* @see MetadataStore#setFilterLotNumber(String, int, int) */

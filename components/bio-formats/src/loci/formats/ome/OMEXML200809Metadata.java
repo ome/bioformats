@@ -24,92 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Apr 14, 2009 3:39:48 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 8, 2009 8:47:09 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
-import java.util.List;
-
-import loci.common.LogTools;
 import ome.xml.OMEXMLNode;
-import ome.xml.r200809.ome.ArcNode;
-import ome.xml.r200809.ome.ChannelComponentNode;
-import ome.xml.r200809.ome.CircleNode;
-import ome.xml.r200809.ome.ContactNode;
-import ome.xml.r200809.ome.DatasetNode;
-import ome.xml.r200809.ome.DatasetRefNode;
-import ome.xml.r200809.ome.DetectorNode;
-import ome.xml.r200809.ome.DetectorRefNode;
-import ome.xml.r200809.ome.DichroicNode;
-import ome.xml.r200809.ome.DisplayOptionsNode;
-import ome.xml.r200809.ome.EllipseNode;
-import ome.xml.r200809.ome.ExperimentNode;
-import ome.xml.r200809.ome.ExperimentRefNode;
-import ome.xml.r200809.ome.ExperimenterNode;
-import ome.xml.r200809.ome.ExperimenterRefNode;
-import ome.xml.r200809.ome.FilamentNode;
-import ome.xml.r200809.ome.FilterNode;
-import ome.xml.r200809.ome.FilterSetNode;
-import ome.xml.r200809.ome.FilterSetRefNode;
-import ome.xml.r200809.ome.GreyChannelNode;
-import ome.xml.r200809.ome.GroupNode;
-import ome.xml.r200809.ome.GroupRefNode;
-import ome.xml.r200809.ome.ImageNode;
-import ome.xml.r200809.ome.ImagingEnvironmentNode;
-import ome.xml.r200809.ome.InstrumentNode;
-import ome.xml.r200809.ome.InstrumentRefNode;
-import ome.xml.r200809.ome.LaserNode;
-import ome.xml.r200809.ome.LightSourceNode;
-import ome.xml.r200809.ome.LightSourceRefNode;
-import ome.xml.r200809.ome.LineNode;
-import ome.xml.r200809.ome.LogicalChannelNode;
-import ome.xml.r200809.ome.MaskNode;
-import ome.xml.r200809.ome.MaskPixelsNode;
-import ome.xml.r200809.ome.MicrobeamManipulationNode;
-import ome.xml.r200809.ome.MicrobeamManipulationRefNode;
-import ome.xml.r200809.ome.MicroscopeNode;
-import ome.xml.r200809.ome.OMENode;
-import ome.xml.r200809.ome.OTFNode;
-import ome.xml.r200809.ome.OTFRefNode;
-import ome.xml.r200809.ome.ObjectiveNode;
-import ome.xml.r200809.ome.ObjectiveRefNode;
-import ome.xml.r200809.ome.PixelsNode;
-import ome.xml.r200809.ome.PlaneNode;
-import ome.xml.r200809.ome.PlaneTimingNode;
-import ome.xml.r200809.ome.PointNode;
-import ome.xml.r200809.ome.PolygonNode;
-import ome.xml.r200809.ome.PolylineNode;
-import ome.xml.r200809.ome.ProjectNode;
-import ome.xml.r200809.ome.ProjectRefNode;
-import ome.xml.r200809.ome.ProjectionNode;
-import ome.xml.r200809.ome.PumpNode;
-import ome.xml.r200809.ome.ROINode;
-import ome.xml.r200809.ome.ROIRefNode;
-import ome.xml.r200809.ome.RectNode;
-import ome.xml.r200809.ome.RegionNode;
-import ome.xml.r200809.ome.ShapeNode;
-import ome.xml.r200809.ome.StageLabelNode;
-import ome.xml.r200809.ome.StagePositionNode;
-import ome.xml.r200809.ome.ThumbnailNode;
-import ome.xml.r200809.ome.TiffDataNode;
-import ome.xml.r200809.ome.TimeNode;
-import ome.xml.r200809.ome.TransmittanceRangeNode;
-import ome.xml.r200809.ome.UUIDNode;
-import ome.xml.r200809.ome.UnionNode;
-import ome.xml.r200809.spw.ImageRefNode;
-import ome.xml.r200809.spw.PlateNode;
-import ome.xml.r200809.spw.PlateRefNode;
-import ome.xml.r200809.spw.ReagentNode;
-import ome.xml.r200809.spw.ReagentRefNode;
-import ome.xml.r200809.spw.ScreenAcquisitionNode;
-import ome.xml.r200809.spw.ScreenNode;
-import ome.xml.r200809.spw.ScreenRefNode;
-import ome.xml.r200809.spw.WellNode;
-import ome.xml.r200809.spw.WellSampleNode;
-import ome.xml.r200809.spw.WellSampleRefNode;
+import ome.xml.r200809.ome.*;
+import ome.xml.r200809.spw.*;
+import java.util.List;
+import loci.common.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -945,6 +871,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getFilterFilterWheel(int instrumentIndex, int filterIndex) {
     FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
     return filter == null ? null : filter.getFilterWheel();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterID(int, int) */
+  public String getFilterID(int instrumentIndex, int filterIndex) {
+    FilterNode filter = getFilterNode(instrumentIndex, filterIndex, false);
+    return filter == null ? null : filter.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getFilterLotNumber(int, int) */
@@ -3321,6 +3253,13 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (filterWheel == null) return;
     FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
     filterNode.setFilterWheel(filterWheel);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterID(String, int, int) */
+  public void setFilterID(String id, int instrumentIndex, int filterIndex) {
+    if (id == null) return;
+    FilterNode filterNode = getFilterNode(instrumentIndex, filterIndex, true);
+    filterNode.setNodeID(id);
   }
 
   /* @see loci.formats.meta.MetadataStore#setFilterLotNumber(String, int, int) */
