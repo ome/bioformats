@@ -1,0 +1,13 @@
+The following is a list of changes which came out of the
+work on the 4.1 DataIn/DataOut push:
+
+  * Add WellSample->SampleAcquisition index
+  * Convert Roi/Shape fields to double rather than string
+  * Add "text" Roi.Shape type
+  * Remove Image->Thumbnail or change arity
+  * Change Transmittange to a float
+  * Remove Dataset.Locked
+  * Remove DisplayOptions
+  * Remove old ROI elements
+  * Possibly merge Circle and Ellipse
+  * Remove Point.R
