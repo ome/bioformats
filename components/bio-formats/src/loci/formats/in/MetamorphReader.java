@@ -90,7 +90,8 @@ public class MetamorphReader extends BaseTiffReader {
   private String binning;
   private float zoom, stepSize;
   private Float exposureTime;
-  private Vector waveNames;
+  private Vector<String> waveNames;
+  private Vector<String> stageNames;
   private long[] internalStamps;
   private double[] zDistances, stageX, stageY;
 
@@ -103,6 +104,8 @@ public class MetamorphReader extends BaseTiffReader {
 
   private String ndFilename;
   private boolean canLookForND = true;
+
+  private boolean[] firstSeriesChannels;
 
   // -- Constructor --
 
@@ -261,7 +264,8 @@ public class MetamorphReader extends BaseTiffReader {
       int nstages = 0;
       String z = null, c = null, t = null;
       Vector hasZ = new Vector();
-      waveNames = new Vector();
+      waveNames = new Vector<String>();
+      stageNames = new Vector<String>();
       boolean useWaveNames = true;
 
       while (!line.equals("\"EndFile\"")) {
@@ -277,6 +281,9 @@ public class MetamorphReader extends BaseTiffReader {
         }
         else if (key.startsWith("WaveName")) {
           waveNames.add(value);
+        }
+        else if (key.startsWith("Stage")) {
+          stageNames.add(value);
         }
         else if (key.startsWith("StartTime")) {
           creationTime = value;
@@ -306,6 +313,8 @@ public class MetamorphReader extends BaseTiffReader {
       // determine series count
 
       int seriesCount = nstages == 0 ? 1 : nstages;
+      firstSeriesChannels = new boolean[cc];
+      Arrays.fill(firstSeriesChannels, true);
       boolean differentZs = false;
       for (int i=0; i<cc; i++) {
         boolean hasZ1 = ((Boolean) hasZ.get(i)).booleanValue();
@@ -321,6 +330,7 @@ public class MetamorphReader extends BaseTiffReader {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
           if (((Boolean) hasZ.get(i)).booleanValue()) channelsInFirstSeries++;
+          else firstSeriesChannels[i] = false;
         }
       }
 
@@ -345,7 +355,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       for (int i=0; i<cc; i++) {
         if (waveNames.get(i) != null) {
-          String name = (String) waveNames.get(i);
+          String name = waveNames.get(i);
           waveNames.setElementAt(name.substring(1, name.length() - 1), i);
         }
       }
@@ -475,106 +485,182 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
-    String comment = TiffTools.getComment(ifds[0]);
+    Vector timestamps = null;
     MetamorphHandler handler = new MetamorphHandler(getMetadata());
-    if (comment != null && comment.startsWith("<MetaData>")) {
-      DataTools.parseXML(comment, handler);
-    }
-
-    Vector timestamps = handler.getTimestamps();
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
     for (int i=0; i<getSeriesCount(); i++) {
+      setSeries(i);
+
+      String comment = null;
+
+      if (stks != null) {
+        RandomAccessInputStream stream =
+          new RandomAccessInputStream(stks[i][0]);
+        Hashtable ifd = TiffTools.getFirstIFD(stream);
+        stream.close();
+        comment = TiffTools.getComment(ifd);
+      }
+      else {
+        comment = TiffTools.getComment(ifds[0]);
+      }
+      if (comment != null && comment.startsWith("<MetaData>")) {
+        DataTools.parseXML(comment, handler);
+      }
+
       if (creationTime != null) {
         store.setImageCreationDate(DataTools.formatDate(creationTime,
           "yyyyMMdd HH:mm:ss"), 0);
       }
       else if (i > 0) MetadataTools.setDefaultCreationDate(store, id, i);
-      if (i == 0) store.setImageName(handler.getImageName(), 0);
-      else store.setImageName("", i);
+
+      String name = "";
+      if (stageNames != null && stageNames.size() > 0) {
+        int stagePosition = i / (getSeriesCount() / stageNames.size());
+        name += "Stage " + stageNames.get(stagePosition) + "; ";
+      }
+
+      if (firstSeriesChannels != null) {
+        for (int c=0; c<firstSeriesChannels.length; c++) {
+          if (firstSeriesChannels[c] == ((i % 2) == 0)) {
+            name += waveNames.get(c) + "/";
+          }
+        }
+        name = name.substring(0, name.length() - 1);
+      }
+
+      store.setImageName(name, i);
       store.setImageDescription("", i);
+
+      store.setImagingEnvironmentTemperature(
+        new Float(handler.getTemperature()), i);
+      store.setDimensionsPhysicalSizeX(
+        new Float(handler.getPixelSizeX()), i, 0);
+      store.setDimensionsPhysicalSizeY(
+        new Float(handler.getPixelSizeY()), i, 0);
+      if (zDistances != null) {
+        stepSize = (float) zDistances[0];
+      }
+      store.setDimensionsPhysicalSizeZ(new Float(stepSize), i, 0);
+
+      int waveIndex = 0;
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (firstSeriesChannels == null ||
+          (stageNames != null && stageNames.size() == getSeriesCount()))
+        {
+          waveIndex = c;
+        }
+        else if (firstSeriesChannels != null) {
+          int s = i % 2;
+          while (firstSeriesChannels[waveIndex] == (s == 1) &&
+            waveIndex < firstSeriesChannels.length)
+          {
+            waveIndex++;
+          }
+        }
+
+        if (waveNames != null && waveIndex < waveNames.size()) {
+          store.setLogicalChannelName(waveNames.get(waveIndex), i, c);
+        }
+        store.setDetectorSettingsBinning(binning, i, c);
+        if (handler.getBinning() != null) {
+          store.setDetectorSettingsBinning(handler.getBinning(), i, c);
+        }
+        if (handler.getReadOutRate() != 0) {
+          store.setDetectorSettingsReadOutRate(
+            new Float(handler.getReadOutRate()), i, c);
+        }
+        store.setDetectorSettingsDetector("Detector:0", i, c);
+
+        if (wave != null && waveIndex < wave.length &&
+          (int) wave[waveIndex] >= 1)
+        {
+          store.setLightSourceSettingsWavelength(
+            new Integer((int) wave[waveIndex]), i, c);
+
+          // link LightSource to Image
+          store.setLightSourceID("LightSource:" + c, i, c);
+          store.setLightSourceSettingsLightSource("LightSource:" + c, i, c);
+          store.setLaserType("Unknown", i, c);
+        }
+        waveIndex++;
+      }
+
+      timestamps = handler.getTimestamps();
+
+      long startDate = 0;
+      if (timestamps.size() > 0) {
+        startDate = DataTools.getTime((String) timestamps.get(0), DATE_FORMAT);
+      }
+
+      Float positionX = new Float(handler.getStagePositionX());
+      Float positionY = new Float(handler.getStagePositionY());
+      Vector exposureTimes = handler.getExposures();
+      if (exposureTimes.size() == 0) {
+        for (int p=0; p<getImageCount(); p++) {
+          exposureTimes.add(exposureTime);
+        }
+      }
+
+      for (int p=0; p<getImageCount(); p++) {
+        int[] coords = getZCTCoords(p);
+        Float deltaT = 0f;
+        Float exposureTime = 0f;
+
+        if (coords[2] > 0 && stks != null) {
+          RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][
+            getIndex(0, 0, coords[2]) / getSizeZ()]);
+          Hashtable ifd = TiffTools.getFirstIFD(stream);
+          stream.close();
+          comment = TiffTools.getComment(ifd);
+          handler = new MetamorphHandler(getMetadata());
+          if (comment != null && comment.startsWith("<MetaData>")) {
+            DataTools.parseXML(comment, handler);
+          }
+          timestamps = handler.getTimestamps();
+          exposureTimes = handler.getExposures();
+        }
+
+        int index = 0;
+
+        if (timestamps.size() > 0) {
+          if (coords[2] < timestamps.size()) index = coords[2];
+          String stamp = (String) timestamps.get(index);
+          long ms = DataTools.getTime(stamp, DATE_FORMAT);
+          deltaT = new Float((ms - startDate) / 1000f);
+        }
+        else if (internalStamps != null && p < internalStamps.length) {
+          long delta = internalStamps[p] - internalStamps[0];
+          deltaT = new Float(delta / 1000f);
+          if (coords[2] < exposureTimes.size()) index = coords[2];
+        }
+
+        if (index < exposureTimes.size()) {
+          exposureTime = (Float) exposureTimes.get(index);
+        }
+
+        store.setPlaneTimingDeltaT(deltaT, i, 0, p);
+        store.setPlaneTimingExposureTime(exposureTime, i, 0, p);
+
+        if (stageX != null && p < stageX.length) {
+          store.setStagePositionPositionX(
+            new Float((float) stageX[p]), i, 0, p);
+        }
+        if (stageY != null && p < stageY.length) {
+          store.setStagePositionPositionY(
+            new Float((float) stageY[p]), i, 0, p);
+        }
+      }
     }
+    setSeries(0);
 
     for (int i=0; i<timestamps.size(); i++) {
       addMeta("timestamp " + i, DataTools.formatDate(
         (String) timestamps.get(i), DATE_FORMAT));
     }
 
-    long startDate = 0;
-    if (timestamps.size() > 0) {
-      startDate = DataTools.getTime((String) timestamps.get(0), DATE_FORMAT);
-    }
-
-    Float positionX = new Float(handler.getStagePositionX());
-    Float positionY = new Float(handler.getStagePositionY());
-    Vector exposureTimes = handler.getExposures();
-    if (exposureTimes.size() == 0) {
-      for (int i=0; i<getImageCount(); i++) {
-        exposureTimes.add(exposureTime);
-      }
-    }
-
-    for (int i=0; i<getImageCount(); i++) {
-      int[] coords = getZCTCoords(i);
-      if (coords[2] < timestamps.size()) {
-        String stamp = (String) timestamps.get(coords[2]);
-        long ms = DataTools.getTime(stamp, DATE_FORMAT);
-        store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
-          0, 0, i);
-        if (coords[2] < exposureTimes.size()) {
-          store.setPlaneTimingExposureTime(
-            (Float) exposureTimes.get(coords[2]), 0, 0, i);
-        }
-      }
-      else if (internalStamps != null && i < internalStamps.length) {
-        long delta = internalStamps[i] - internalStamps[0];
-        store.setPlaneTimingDeltaT(new Float(delta / 1000f), 0, 0, i);
-        store.setPlaneTimingExposureTime((Float) exposureTimes.get(i), 0, 0, i);
-      }
-      if (stageX != null && i < stageX.length) {
-        store.setStagePositionPositionX(new Float((float) stageX[i]), 0, 0, i);
-      }
-      if (stageY != null && i < stageY.length) {
-        store.setStagePositionPositionY(new Float((float) stageY[i]), 0, 0, i);
-      }
-    }
-
-    store.setImagingEnvironmentTemperature(
-      new Float(handler.getTemperature()), 0);
-    store.setDimensionsPhysicalSizeX(new Float(handler.getPixelSizeX()), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(handler.getPixelSizeY()), 0, 0);
-    if (zDistances != null) {
-      stepSize = (float) zDistances[0];
-    }
-    store.setDimensionsPhysicalSizeZ(new Float(stepSize), 0, 0);
-
-    for (int i=0; i<getEffectiveSizeC(); i++) {
-      if (waveNames != null && i < waveNames.size()) {
-        store.setLogicalChannelName((String) waveNames.get(i), 0, i);
-      }
-      store.setDetectorSettingsBinning(binning, 0, i);
-      if (handler.getBinning() != null) {
-        store.setDetectorSettingsBinning(handler.getBinning(), 0, i);
-      }
-      if (handler.getReadOutRate() != 0) {
-        store.setDetectorSettingsReadOutRate(
-          new Float(handler.getReadOutRate()), 0, i);
-      }
-      store.setDetectorSettingsDetector("Detector:0", 0, i);
-
-      int index = getIndex(0, i, 0);
-      if (wave != null && index < wave.length && (int) wave[index] >= 1) {
-        store.setLightSourceSettingsWavelength(
-          new Integer((int) wave[index]), 0, i);
-
-        // link LightSource to Image
-        store.setLightSourceID("LightSource:" + i, 0, i);
-        store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
-        store.setLaserType("Unknown", 0, i);
-      }
-    }
     store.setDetectorID("Detector:0", 0, 0);
     store.setDetectorZoom(new Float(zoom), 0, 0);
     if (handler.getZoom() != 0f) {
