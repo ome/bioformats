@@ -271,7 +271,8 @@ public class DicomReader extends FormatReader {
     }
     else if (isJPEG || isJP2K) {
       // plane is compressed using JPEG or JPEG-2000
-      byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
+      long end = no < offsets.length - 1 ? offsets[no + 1] : in.length();
+      byte[] b = new byte[(int) (end - in.getFilePointer())];
       in.read(b);
       if (b[2] != (byte) 0xff) {
         byte[] tmp = new byte[b.length + 1];
@@ -580,8 +581,10 @@ public class DicomReader extends FormatReader {
         in.read(buf);
         boolean found = false;
         while (!found) {
-          for (int q=0; q<buf.length-3; q++) {
-            if (buf[q] == (byte) 0xff && buf[q + 1] == secondCheck) {
+          for (int q=0; q<buf.length-2; q++) {
+            if (buf[q] == (byte) 0xff && buf[q + 1] == secondCheck &&
+              buf[q + 2] == (byte) 0xff)
+            {
               if (isJPEG ||
                 (isJP2K && buf[q + 2] == (byte) 0xff && buf[q + 3] == 0x51))
               {
@@ -966,7 +969,7 @@ public class DicomReader extends FormatReader {
 
     elementLength = getLength(stream, tag);
 
-    if (elementLength == 0 && groupWord == 0x7fe0) {
+    if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
       elementLength = getLength(stream, tag);
     }
 
