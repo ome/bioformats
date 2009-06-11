@@ -11,3 +11,5 @@ work on the 4.1 DataIn/DataOut push:
   * Remove old ROI elements
   * Possibly merge Circle and Ellipse
   * Remove Point.R
+  * Re-model "Description"
+  * Specify coordinate systems of ROIs (et al? - http://lists.openmicroscopy.org.uk/pipermail/ome-users/2009-June/001835.html)
