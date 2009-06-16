@@ -28,8 +28,24 @@ This component requires Jace, available from:
 
 Please set the jace.home property to point to
 your Jace installation directory. E.g.:
+</echo>
+        <!-- HACK - Document need for forward slashes even on Windows. -->
+        <if>
+          <isset property="isWindows"/>
+          <then>
+<echo>
+  ant -Djace.home=C:/jace
+</echo>
+          </then>
+          <else>
+<echo>
   ant -Djace.home=${user.home}/jace
-Please use an absolute path, not a relative one.
+</echo>
+          </else>
+        </if>
+<echo>
+Please use an absolute path, not a relative one,
+and use forward slashes (/), not backslashes (\).
 
 You can check out the latest known-to-work Jace code
 from the Subversion repository using the command:
@@ -161,7 +177,7 @@ from the Subversion repository using the command:
         </exec>
 <echo>
 Please use Visual Studio to complete the build.
-Select "Build solution" from the "Build" menu.
+In Visual Studio, press F7, or select "Build solution" from the "Build" menu.
 </echo>
       </then>
       <else>
