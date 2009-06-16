@@ -21,7 +21,7 @@
 
 # CMake build file for the Bio-Formats C++ bindings.
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6.4)
 
 project(bfjace)
 
