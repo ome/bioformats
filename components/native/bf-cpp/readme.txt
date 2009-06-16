@@ -36,7 +36,7 @@ Subversion is not strictly necessary, but is useful for checking out the
 Jace source code (see "Installing Compile-Time Dependencies" below).
 
 ==> Java Development Kit -- http://java.sun.com/
-At runtime, only the JRE is necessarry to execute the Bio-Formats code.
+At runtime, only the JRE is necessary to execute the Bio-Formats code.
 However, at compile time, the full J2SE development kit is required for two
 reasons. First, the Jace proxy class generator is written in Java, so Ant needs
 a working Java compiler to compile Jace itself. Second, on Windows, only the
