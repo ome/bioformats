@@ -220,22 +220,22 @@ namespace itk
     }
     int bytesPerSubPlane = xCount * yCount * bpp;
 
-    PRINT("\tRegion dimension = " << regionDim);
-    PRINT("\tX index = " << xIndex);
-    PRINT("\tX count = " << xCount);
-    PRINT("\tY index = " << yIndex);
-    PRINT("\tY count = " << yCount);
-    PRINT("\tPlane index = " << pIndex);
-    PRINT("\tPlane count = " << pCount);
-    PRINT("\tBytes per plane = " << bytesPerSubPlane);
+    //PRINT("\tRegion dimension = " << regionDim);
+    //PRINT("\tX index = " << xIndex);
+    //PRINT("\tX count = " << xCount);
+    //PRINT("\tY index = " << yIndex);
+    //PRINT("\tY count = " << yCount);
+    //PRINT("\tPlane index = " << pIndex);
+    //PRINT("\tPlane count = " << pCount);
+    //PRINT("\tBytes per plane = " << bytesPerSubPlane);
 
     int p = 0;
     ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
     for (int no=pIndex; no<pIndex+pCount; no++)
     {
-      PRINT("Reading image plane " << no <<
-        " (" << (no - pIndex + 1) << "/" << pCount <<
-        " of " << reader->getImageCount() << " available planes)");
+      //PRINT("Reading image plane " << no <<
+      //  " (" << (no - pIndex + 1) << "/" << pCount <<
+      //  " of " << reader->getImageCount() << " available planes)");
       reader->openBytes(no, buf, xIndex, yIndex, xCount, yCount);
       for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
     }

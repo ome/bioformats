@@ -45,20 +45,20 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
 # Include dirs
 
 find_package(JNI REQUIRED)
-message("-- Java Native Interface:")
-message("jawt lib         : ${JAVA_AWT_LIBRARY}")
-message("jvm lib          : ${JAVA_JVM_LIBRARY}")
-message("jni.h            : ${JAVA_INCLUDE_PATH}")
-message("jni_md.h         : ${JAVA_INCLUDE_PATH2}")
-message("jawt.h           : ${JAVA_AWT_INCLUDE_PATH}")
-message("")
+message(STATUS "-- Java Native Interface:")
+message(STATUS "jawt lib         : ${JAVA_AWT_LIBRARY}")
+message(STATUS "jvm lib          : ${JAVA_JVM_LIBRARY}")
+message(STATUS "jni.h            : ${JAVA_INCLUDE_PATH}")
+message(STATUS "jni_md.h         : ${JAVA_INCLUDE_PATH2}")
+message(STATUS "jawt.h           : ${JAVA_AWT_INCLUDE_PATH}")
+message(STATUS "")
 
 # HACK - CMake on Windows refuses to find the thread library unless BOOST_ROOT
 #        is set, even though it can locate the Boost directory tree.
 #        So we first look for base Boost, then set BOOST_ROOT and look again
 #        for Boost Thread specifically.
 
-message("-- Boost:")
+message(STATUS "-- Boost:")
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREAD ON)
 set(Boost_ADDITIONAL_VERSIONS "1.37" "1.37.0" "1.37.1" "1.38" "1.38.0" "1.38.1"
@@ -67,7 +67,7 @@ set(Boost_ADDITIONAL_VERSIONS "1.37" "1.37.0" "1.37.1" "1.38" "1.38.0" "1.38.1"
 set(Boost_FIND_QUIETLY ON)
 find_package(Boost)
 if(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
-  message("boost headers : ${Boost_INCLUDE_DIR}")
+  message(STATUS "boost headers : ${Boost_INCLUDE_DIR}")
 else(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
   if(UNIX)
     message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
@@ -89,12 +89,12 @@ string(REGEX REPLACE "/[^/]*$" ""
   Boost_STRIPPED_LIB_DIR "${Boost_THREAD_LIB_CHECK}")
 
 if(EXISTS "${Boost_THREAD_LIB_CHECK}")
-  message("boost lib dir : ${Boost_STRIPPED_LIB_DIR}")
-  message("thread lib    : ${Boost_THREAD_LIBRARY}")
+  message(STATUS "boost lib dir : ${Boost_STRIPPED_LIB_DIR}")
+  message(STATUS "thread lib    : ${Boost_THREAD_LIBRARY}")
 else(EXISTS "${Boost_THREAD_LIB_CHECK}")
   message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
 endif(EXISTS "${Boost_THREAD_LIB_CHECK}")
-message("")
+message(STATUS "")
 
 set(JACE_DIR NOTFOUND CACHE PATH "The path to toplevel directory of your Jace checkout")
 if(NOT JACE_DIR)

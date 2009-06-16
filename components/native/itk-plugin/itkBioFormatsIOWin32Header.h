@@ -45,7 +45,7 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #if defined(BIO_FORMATS_IO_EXPORTS)
 #define BioFormatsImageIO_EXPORT __declspec( dllexport )
 #else
-#define BioFormatsImageIO_EXPORT __declspec( dllimport )
+#define BioFormatsImageIO_EXPORT __declspec( dllexport )
 #endif
 #else
 #define BioFormatsImageIO_EXPORT
