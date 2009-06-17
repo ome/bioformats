@@ -237,6 +237,7 @@ public class $q.className() extends OMEXMLMetadata {
 #end##foreach $path
 
   private void clearCachedNodes() {
+    OMEXMLNode.clearCaches();
 #foreach ($path in $q.unique())
 #set ($pathVar = $q.var($path))
 #set ($indices = $q.indices($path))

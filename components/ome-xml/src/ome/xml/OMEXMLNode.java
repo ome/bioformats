@@ -143,6 +143,14 @@ public abstract class OMEXMLNode {
     idPrefix = prefix;
   }
 
+  /** Clears the cached nodes and resets node indices. */
+  public static void clearCaches() {
+    nextIds.clear();
+    classHash.clear();
+    nodeHash.clear();
+    constructorHash.clear();
+  }
+
   // -- OMEXMLNode API methods --
 
   /** Gets the DOM element backing this OME-XML node. */
