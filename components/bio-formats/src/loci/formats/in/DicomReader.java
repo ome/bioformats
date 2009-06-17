@@ -135,12 +135,8 @@ public class DicomReader extends FormatReader {
   public DicomReader() {
     super("DICOM",
       new String[] {"dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw"});
-    blockCheckLen = 132;
-    // FIXME: Would like to enable extensionless DICOM support with
-    // suffixNecessary = false here, but in order to do that, the
-    // isThisType(byte[]) method must robustly identify DICOM files
-    // from their headers.
-    //suffixNecessary = false;
+    blockCheckLen = 20480;
+    suffixNecessary = false;
     suffixSufficient = false;
   }
 
@@ -155,8 +151,28 @@ public class DicomReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(blockCheckLen).indexOf("DICM") >= 0;
+    if (!FormatTools.validStream(stream, blockCheckLen, true)) return false;
+
+    stream.seek(128);
+    if (stream.readString(4).equals("DICM")) return true;
+    stream.seek(0);
+
+    boolean foundImageWidth = false, foundImageHeight = false;
+
+    while (stream.getFilePointer() < stream.length()) {
+      int tag = getNextTag(stream);
+      stream.skipBytes(elementLength);
+      switch (tag) {
+        case ROWS:
+          foundImageHeight = true;
+          break;
+        case COLUMNS:
+          foundImageWidth = true;
+          break;
+      }
+      if (foundImageWidth && foundImageHeight) return true;
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -915,7 +931,7 @@ public class DicomReader extends FormatReader {
           return stream.readInt();
         }
         vr = IMPLICIT_VR;
-        return DataTools.bytesToInt(b, isLittleEndian());
+        return DataTools.bytesToInt(b, stream.isLittleEndian());
       case AE:
       case AS:
       case AT:
@@ -941,10 +957,10 @@ public class DicomReader extends FormatReader {
       case QQ:
         // Explicit VR with 16-bit length
         if (tag == 0x00283006) {
-          return DataTools.bytesToInt(b, 2, 2, isLittleEndian());
+          return DataTools.bytesToInt(b, 2, 2, stream.isLittleEndian());
         }
-        int n1 = DataTools.bytesToShort(b, 2, 2, isLittleEndian());
-        int n2 = DataTools.bytesToShort(b, 2, 2, !isLittleEndian());
+        int n1 = DataTools.bytesToShort(b, 2, 2, stream.isLittleEndian());
+        int n2 = DataTools.bytesToShort(b, 2, 2, !stream.isLittleEndian());
         if (n1 < 0) return n2;
         if (n2 < 0) return n1;
         int min = (int) Math.min(n1, n2);
@@ -952,7 +968,7 @@ public class DicomReader extends FormatReader {
         return min;
       default:
         vr = IMPLICIT_VR;
-        return DataTools.bytesToInt(b, isLittleEndian());
+        return DataTools.bytesToInt(b, stream.isLittleEndian());
     }
   }
 
