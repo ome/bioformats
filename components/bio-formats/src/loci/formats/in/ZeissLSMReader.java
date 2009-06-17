@@ -774,9 +774,9 @@ public class ZeissLSMReader extends FormatReader {
           ((Double) timestamps.get(offset + zct[2])).floatValue();
         store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp),
           series, 0, i);
-        float nextStamp = zct[2] < getSizeT() - 1 ?
-          ((Double) timestamps.get(offset + zct[2] + 1)).floatValue() :
-          thisStamp;
+        int index = offset + zct[2] + 1;
+        float nextStamp = index < timestamps.size() ?
+          ((Double) timestamps.get(index)).floatValue() : thisStamp;
         if (i == getSizeT() - 1 && zct[2] > 0) {
           thisStamp =
             ((Double) timestamps.get(offset + zct[2] - 1)).floatValue();
@@ -800,8 +800,8 @@ public class ZeissLSMReader extends FormatReader {
         series, 0);
       store.setObjectiveLensNA(recording.lensNA, series, 0);
       store.setObjectiveIris(recording.iris, series, 0);
-      store.setObjectiveID("Objective:0", series, 0);
-      store.setObjectiveSettingsObjective("Objective:0", series);
+      store.setObjectiveID("Objective:" + series, series, 0);
+      store.setObjectiveSettingsObjective("Objective:" + series, series);
     }
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
