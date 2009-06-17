@@ -27,12 +27,12 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/2008-09/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-09/V1/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" schemaLocation="AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09" schemaLocation="STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="SA.xsd"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	
 	<xsd:annotation>
@@ -108,7 +108,7 @@
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="MicrobeamManipulation" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ImageID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
@@ -326,7 +326,7 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="PlaneTiming">
+	<xsd:complexType name="PlaneTiming"> <!-- TODO: add ability to set on a per channel basis -->
 		<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
 			<xsd:annotation>
 				<xsd:documentation>
@@ -375,7 +375,7 @@
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="MicrobeamManipulation" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="Type" use="required">
 				<xsd:simpleType>
@@ -427,7 +427,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="ROIRef" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element ref="ROI" minOccurs="1" maxOccurs="unbounded"/>
 				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LightSourceRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -941,16 +941,26 @@
 	</xsd:element>
 	<xsd:element name="Correction"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation>The coating applied to the lens</xsd:documentation>
+			<xsd:documentation>The correction applied to the lens</xsd:documentation>
 		</xsd:annotation>
 		<xsd:simpleType>
 			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="Unknown"/>
+				<xsd:enumeration value="Other"/>
 				<xsd:enumeration value="UV"/>
 				<xsd:enumeration value="PlanApo"/>
 				<xsd:enumeration value="PlanFluor"/>
 				<xsd:enumeration value="SuperFluor"/>
 				<xsd:enumeration value="VioletCorrected"/>
-				<xsd:enumeration value="Unknown"/>
+				<xsd:enumeration value="Achro"/>
+				<xsd:enumeration value="Achromat"/>
+				<xsd:enumeration value="Fluor"/>
+				<xsd:enumeration value="Fl"/>
+				<xsd:enumeration value="Fluar"/>
+				<xsd:enumeration value="Neofluar"/>
+				<xsd:enumeration value="Fluotar"/>
+				<xsd:enumeration value="Apo"/>
+				<!-- TODO: Add PlanNeofluar -->
 			</xsd:restriction>
 		</xsd:simpleType>
 	</xsd:element>
@@ -976,10 +986,19 @@
 			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number. Units are um.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="LensNA" type="xsd:float"> <!-- top level definition -->
+	<xsd:element name="LensNA"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation>The numerical aperture of the lens expressed as a floating point (real) number.</xsd:documentation>
+			<xsd:documentation>
+				The numerical aperture of the lens expressed as a floating point (real) number.
+				Expected range 0.02 - 1.5
+			</xsd:documentation>
 		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:float">
+				<xsd:minInclusive value="0.02"/>
+				<xsd:maxInclusive value="1.5"/>
+			</xsd:restriction>
+		</xsd:simpleType>
 	</xsd:element>
 	<xsd:element name="FilterSet"> <!-- top level definition -->
 		<xsd:annotation>
