@@ -1016,17 +1016,25 @@ public final class TiffTools {
   public static byte[][] getSamples(Hashtable ifd, RandomAccessInputStream in)
     throws FormatException, IOException
   {
+    return getSamples(ifd, in, 0, 0, (int) getImageWidth(ifd),
+      (int) getImageLength(ifd));
+  }
+
+  /** Reads the image defined in the given IFD from the specified file. */
+  public static byte[][] getSamples(Hashtable ifd, RandomAccessInputStream in,
+    int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     int samplesPerPixel = getSamplesPerPixel(ifd);
     int bpp = getBytesPerSample(ifd)[0];
     long width = getImageWidth(ifd);
     long length = getImageLength(ifd);
-    byte[] b = new byte[(int) (width * length * samplesPerPixel * bpp)];
+    byte[] b = new byte[(int) (w * h * samplesPerPixel * bpp)];
 
-    getSamples(ifd, in, b);
-    byte[][] samples = new byte[samplesPerPixel][(int) (width * length * bpp)];
+    getSamples(ifd, in, b, x, y, w, h);
+    byte[][] samples = new byte[samplesPerPixel][(int) (w * h * bpp)];
     for (int i=0; i<samplesPerPixel; i++) {
-      System.arraycopy(b, (int) (i*width*length*bpp), samples[i], 0,
-        samples[i].length);
+      System.arraycopy(b, (int) (i*w*h*bpp), samples[i], 0, samples[i].length);
     }
     b = null;
     return samples;

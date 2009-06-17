@@ -98,17 +98,24 @@ public class ZeissLSMReader extends FormatReader {
   private static final int RECORDING_ENTRY_DESCRIPTION = 0x10000002;
   private static final int RECORDING_ENTRY_OBJECTIVE = 0x10000004;
 
+  private static final int TRACK_ENTRY_ACQUIRE = 0x40000006;
   private static final int TRACK_ENTRY_TIME_BETWEEN_STACKS = 0x4000000b;
 
   private static final int LASER_ENTRY_NAME = 0x50000001;
+  private static final int LASER_ENTRY_ACQUIRE = 0x50000002;
+  private static final int LASER_ENTRY_POWER = 0x50000003;
 
   private static final int CHANNEL_ENTRY_DETECTOR_GAIN = 0x70000003;
   private static final int CHANNEL_ENTRY_PINHOLE_DIAMETER = 0x70000009;
   private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_START = 0x70000022;
   private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_END = 0x70000023;
+  private static final int CHANNEL_ENTRY_ACQUIRE = 0x7000000b;
+  private static final int ILLUM_CHANNEL_POWER = 0x90000002;
   private static final int ILLUM_CHANNEL_WAVELENGTH = 0x90000003;
+  private static final int ILLUM_CHANNEL_ACQUIRE = 0x90000004;
   private static final int START_TIME = 0x10000036;
   private static final int DATA_CHANNEL_NAME = 0xd0000001;
+  private static final int DATA_CHANNEL_ACQUIRE = 0xd0000017;
 
   /** Drawing element types. */
   private static final int TEXT = 13;
@@ -143,6 +150,10 @@ public class ZeissLSMReader extends FormatReader {
   private String[] lsmFilenames;
   private Hashtable[][] ifds;
 
+  private int nextLaser = 0;
+  private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
+  private boolean splitPlanes = false;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -162,6 +173,8 @@ public class ZeissLSMReader extends FormatReader {
     validChannels = 0;
     lsmFilenames = null;
     ifds = null;
+    nextLaser = nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
+    splitPlanes = false;
   }
 
   // -- IFormatReader API methods --
@@ -238,7 +251,14 @@ public class ZeissLSMReader extends FormatReader {
 
     in = new RandomAccessInputStream(lsmFilenames[getSeries()]);
     in.order(!isLittleEndian());
-    TiffTools.getSamples(ifds[getSeries()][no], in, buf, x, y, w, h);
+    if (splitPlanes && getSizeC() > 1) {
+      int plane = no / getSizeC();
+      int c = no % getSizeC();
+      byte[][] samples =
+        TiffTools.getSamples(ifds[getSeries()][plane], in, x, y, w, h);
+      System.arraycopy(samples[c], 0, buf, 0, buf.length);
+    }
+    else TiffTools.getSamples(ifds[getSeries()][no], in, buf, x, y, w, h);
     in.close();
     return buf;
   }
@@ -512,14 +532,13 @@ public class ZeissLSMReader extends FormatReader {
     if (getSizeZ() == 0) core[series].sizeZ = getImageCount();
     if (getSizeT() == 0) core[series].sizeT = getImageCount() / getSizeZ();
 
-    MetadataTools.populatePixels(store, this, true);
     MetadataTools.setDefaultCreationDate(store, getCurrentFile(), series);
 
     int spectralScan = ras.readShort();
     if (spectralScan != 1) {
-       addMeta(keyPrefix + "SpectralScan", "no spectral scan");
+      addMeta(keyPrefix + "SpectralScan", "no spectral scan");
     }
-    else  addMeta(keyPrefix + "SpectralScan", "acquired with spectral scan");
+    else addMeta(keyPrefix + "SpectralScan", "acquired with spectral scan");
 
     int type = ras.readInt();
     switch (type) {
@@ -569,6 +588,9 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     addMeta(keyPrefix + "ToolbarFlags", ras.readInt());
+
+    int wavelengthOffset = ras.readInt();
+
     ras.close();
 
     // read referenced structures
@@ -580,7 +602,7 @@ public class ZeissLSMReader extends FormatReader {
       in.seek(channelColorsOffset + 16);
       int namesOffset = in.readInt();
 
-      // read in the intensity value for each color
+      // read the name of each channel
 
       if (namesOffset > 0) {
         in.skipBytes(namesOffset - 16);
@@ -635,296 +657,96 @@ public class ZeissLSMReader extends FormatReader {
       }
     }
 
-    Hashtable acquireChannels = new Hashtable();
-    Hashtable channelData = new Hashtable();
-
-    Hashtable acquireLasers = new Hashtable();
-    Hashtable laserData = new Hashtable();
-
     if (scanInformationOffset != 0) {
       in.seek(scanInformationOffset);
 
-      Stack prefix = new Stack();
-      int count = 1;
+      nextLaser = nextDataChannel = nextDetectChannel = nextIllumChannel = 0;
 
-      Object value = null;
+      Vector<SubBlock> blocks = new Vector<SubBlock>();
 
-      boolean done = false;
-      int nextLaserMedium = 0, nextLaserType = 0, nextGain = 0;
-      int nextPinhole = 0, nextEmWave = 0, nextExWave = 0;
-      int nextChannelName = 0;
-
-      while (!done) {
+      while (in.getFilePointer() < in.length() - 12) {
+        if (in.getFilePointer() < 0) break;
         int entry = in.readInt();
         int blockType = in.readInt();
         int dataSize = in.readInt();
 
-        switch (blockType) {
-          case TYPE_SUBBLOCK:
-            switch (entry) {
-              case SUBBLOCK_RECORDING:
-                prefix.push("Recording");
-                break;
-              case SUBBLOCK_LASERS:
-                prefix.push("Lasers");
-                break;
-              case SUBBLOCK_LASER:
-                prefix.push("Laser " + count);
-                count++;
-                break;
-              case SUBBLOCK_TRACKS:
-                prefix.push("Tracks");
-                break;
-              case SUBBLOCK_TRACK:
-                prefix.push("Track " + count);
-                count++;
-                break;
-              case SUBBLOCK_DETECTION_CHANNELS:
-                prefix.push("Detection Channels");
-                break;
-              case SUBBLOCK_DETECTION_CHANNEL:
-                prefix.push("Detection Channel " + count);
-                count++;
-                validChannels = count;
-                break;
-              case SUBBLOCK_ILLUMINATION_CHANNELS:
-                prefix.push("Illumination Channels");
-                break;
-              case SUBBLOCK_ILLUMINATION_CHANNEL:
-                prefix.push("Illumination Channel " + count);
-                count++;
-                break;
-              case SUBBLOCK_BEAM_SPLITTERS:
-                prefix.push("Beam Splitters");
-                break;
-              case SUBBLOCK_BEAM_SPLITTER:
-                prefix.push("Beam Splitter " + count);
-                count++;
-                break;
-              case SUBBLOCK_DATA_CHANNELS:
-                prefix.push("Data Channels");
-                break;
-              case SUBBLOCK_DATA_CHANNEL:
-                prefix.push("Data Channel " + count);
-                count++;
-                break;
-              case SUBBLOCK_TIMERS:
-                prefix.push("Timers");
-                break;
-              case SUBBLOCK_TIMER:
-                prefix.push("Timer " + count);
-                count++;
-                break;
-              case SUBBLOCK_MARKERS:
-                prefix.push("Markers");
-                break;
-              case SUBBLOCK_MARKER:
-                prefix.push("Marker " + count);
-                count++;
-                break;
-              case SUBBLOCK_END:
-                if (prefix.size() > 0) {
-                  String p = (String) prefix.pop();
-                  if (p.endsWith("s")) count = 1;
-                }
-                if (prefix.size() == 0) done = true;
-                break;
-            }
-            break;
-          case TYPE_LONG:
-            value = new Long(in.readInt());
-            break;
-          case TYPE_RATIONAL:
-            value = new Double(in.readDouble());
-            break;
-          case TYPE_ASCII:
-            value = in.readString(dataSize);
-            break;
-        }
-        String key = getKey(prefix, entry).trim();
-        if (key != null) addMeta(keyPrefix + key, value);
-        String v = value != null ? value.toString().trim() : "";
-
-        if (key.endsWith("Acquire")) {
-          Integer index = new Integer(count - 2);
-          Integer acquire = new Integer(v);
-          if (key.indexOf("Detection Channel") != -1) {
-            acquireChannels.put(index, acquire);
+        if (blockType == TYPE_SUBBLOCK) {
+          SubBlock block = null;
+          switch (entry) {
+            case SUBBLOCK_RECORDING:
+              block = new Recording();
+              break;
+            case SUBBLOCK_LASER:
+              block = new Laser();
+              break;
+            case SUBBLOCK_TRACK:
+              block = new Track();
+              break;
+            case SUBBLOCK_DETECTION_CHANNEL:
+              block = new DetectionChannel();
+              break;
+            case SUBBLOCK_ILLUMINATION_CHANNEL:
+              block = new IlluminationChannel();
+              break;
+            case SUBBLOCK_BEAM_SPLITTER:
+              block = new BeamSplitter();
+              break;
+            case SUBBLOCK_DATA_CHANNEL:
+              block = new DataChannel();
+              break;
+            case SUBBLOCK_TIMER:
+              block = new Timer();
+              break;
+            case SUBBLOCK_MARKER:
+              block = new Marker();
+              break;
           }
-          else if (key.indexOf("Laser") != -1) {
-            acquireLasers.put(index, acquire);
+          if (block != null) {
+            blocks.add(block);
           }
         }
+        else in.skipBytes(dataSize);
+      }
 
-        switch (entry) {
-          case RECORDING_ENTRY_DESCRIPTION:
-            store.setImageDescription(v, series);
-            break;
-          case RECORDING_ENTRY_OBJECTIVE:
-            String[] tokens = v.split(" ");
-            StringBuffer model = new StringBuffer();
-            int next = 0;
-            for (; next<tokens.length; next++) {
-              if (tokens[next].indexOf("/") != -1) break;
-              model.append(tokens[next]);
-            }
-            store.setObjectiveModel(model.toString(), series, 0);
-            if (next < tokens.length) {
-              String p = tokens[next++];
-              String mag = p.substring(0, p.indexOf("/") - 1);
-              String na = p.substring(p.indexOf("/") + 1);
-              try {
-                store.setObjectiveNominalMagnification(new Integer(mag),
-                  series, 0);
-              }
-              catch (NumberFormatException e) { }
-              try {
-                store.setObjectiveLensNA(new Float(na), series, 0);
-              }
-              catch (NumberFormatException e) { }
-            }
-            if (next < tokens.length) {
-              store.setObjectiveImmersion(tokens[next++], series, 0);
-            }
-            else store.setObjectiveImmersion("Unknown", series, 0);
-            boolean iris = false;
-            if (next < tokens.length) {
-              iris = tokens[next++].trim().equalsIgnoreCase("iris");
-            }
-            store.setObjectiveIris(new Boolean(iris), series, 0);
-            store.setObjectiveCorrection("Unknown", series, 0);
+      SubBlock[] metadataBlocks = blocks.toArray(new SubBlock[0]);
+      for (SubBlock block : metadataBlocks) {
+        block.addToHashtable("Series " + series);
+        if (!block.acquire) blocks.remove(block);
+      }
 
-            // link Objective to Image
-            store.setObjectiveID("Objective:" + series, series, 0);
-            store.setObjectiveSettingsObjective("Objective:" + series, series);
-
-            break;
-          case TRACK_ENTRY_TIME_BETWEEN_STACKS:
-            try {
-              store.setDimensionsTimeIncrement(new Float(v), series, 0);
-            }
-            catch (NumberFormatException e) { }
-            break;
-          case LASER_ENTRY_NAME:
-            String medium = v;
-            String laserType = "";
-
-            if (medium.startsWith("HeNe")) {
-              medium = "HeNe";
-              laserType = "Gas";
-            }
-            else if (medium.startsWith("Argon")) {
-              medium = "Ar";
-              laserType = "Gas";
-            }
-            else if (medium.equals("Titanium:Sapphire") ||
-              medium.equals("Mai Tai"))
-            {
-              medium = "TiSapphire";
-              laserType = "SolidState";
-            }
-            else if (medium.equals("YAG")) {
-              medium = "";
-              laserType = "SolidState";
-            }
-            else if (medium.equals("Ar/Kr")) {
-              medium = "";
-              laserType = "Gas";
-            }
-            else if (medium.equals("Enterprise")) medium = "";
-
-            laserData.put("medium " + nextLaserMedium, medium);
-            laserData.put("type " + nextLaserType, laserType);
-
-            nextLaserMedium++;
-            nextLaserType++;
-
-            break;
-          //case LASER_POWER:
-            // TODO: this is a setting, not a fixed value
-            //store.setLaserPower(new Float(v), 0, count - 1);
-            //break;
-          case CHANNEL_ENTRY_DETECTOR_GAIN:
-            //store.setDetectorSettingsGain(new Float(v), 0, nextGain++);
-            break;
-          case CHANNEL_ENTRY_PINHOLE_DIAMETER:
-            try {
-              channelData.put("pinhole " + count, new Float(v));
-            }
-            catch (NumberFormatException e) { }
-            break;
-          case ILLUM_CHANNEL_WAVELENGTH:
-            try {
-              Integer wave = new Integer((int) Float.parseFloat(v));
-              channelData.put("em " + count, wave);
-              channelData.put("ex " + count, wave);
-            }
-            catch (NumberFormatException e) { }
-            break;
-          case START_TIME:
-            // date/time on which the first pixel was acquired, in days
-            // since 30 December 1899
-            double time = Double.parseDouble(v);
-            store.setImageCreationDate(DataTools.convertDate(
-              (long) (time * 86400000), DataTools.MICROSOFT), series);
-
-            break;
-          case DATA_CHANNEL_NAME:
-            channelData.put("name " + count, v);
-            break;
+      for (int i=0; i<blocks.size(); i++) {
+        SubBlock block = blocks.get(i);
+        // every valid IlluminationChannel must be immediately followed by
+        // a valid DataChannel or IlluminationChannel
+        if ((block instanceof IlluminationChannel) && i < blocks.size() - 1) {
+          SubBlock nextBlock = blocks.get(i + 1);
+          if (!(nextBlock instanceof DataChannel) &&
+            !(nextBlock instanceof IlluminationChannel))
+          {
+            ((IlluminationChannel) block).wavelength = null;
+          }
         }
-
-        if (!done) done = in.getFilePointer() >= in.length() - 12;
+        // every valid DetectionChannel must be immediately preceded by
+        // a valid Track or DetectionChannel
+        else if ((block instanceof DetectionChannel) && i > 0) {
+          SubBlock prevBlock = blocks.get(i - 1);
+          if (!(prevBlock instanceof Track) &&
+            !(prevBlock instanceof DetectionChannel))
+          {
+            block.acquire = false;
+          }
+        }
+        if (block.acquire) populateMetadataStore(block, store, series);
       }
     }
-
-    // set laser data
-
-    int nextLaser = 0;
-
-    for (int i=0; i<acquireLasers.size(); i++) {
-      boolean acquire =
-        ((Integer) acquireLasers.get(new Integer(i))).intValue() != 0;
-      if (!acquire) continue;
-
-      String medium = (String) laserData.get("medium " + i);
-      String laserType = (String) laserData.get("type " + i);
-
-      if (!medium.equals("") && !laserType.equals("")) {
-        store.setLaserLaserMedium(medium, 0, nextLaser);
-        store.setLaserType(laserType, 0, nextLaser);
-
-        if (nextLaser < getEffectiveSizeC()) {
-          // link Laser (LightSource) to Image
-          store.setLightSourceID("LightSource:" + nextLaser, 0, nextLaser);
-          store.setLightSourceSettingsLightSource("LightSource:" + nextLaser,
-            series, nextLaser);
-        }
-
-        nextLaser++;
-      }
+    int nLogicalChannels = nextDataChannel == 0 ? 1 : nextDataChannel;
+    if (nLogicalChannels == getSizeC()) {
+      splitPlanes = isRGB();
+      core[series].rgb = false;
+      if (splitPlanes) core[series].imageCount *= getSizeC();
     }
 
-    // set channel data
-
-    int nextChannel = 0;
-
-    for (int i=0; i<acquireChannels.size(); i++) {
-      boolean acquire =
-        ((Integer) acquireChannels.get(new Integer(i + 1))).intValue() != 0;
-      if (!acquire) continue;
-
-      String name = (String) channelData.get("name " + (i + 3));
-      Integer ex = (Integer) channelData.get("ex " + (i + 3));
-      Integer em = (Integer) channelData.get("em " + (i + 3));
-      Float pinhole = (Float) channelData.get("pinhole " + (i + 3));
-
-      store.setLogicalChannelName(name, series, nextChannel);
-      store.setLogicalChannelEmWave(em, series, nextChannel);
-      store.setLogicalChannelExWave(ex, series, nextChannel);
-      store.setLogicalChannelPinholeSize(pinhole, series, nextChannel);
-      nextChannel++;
-    }
+    MetadataTools.populatePixels(store, this, true);
 
     Float pixX = new Float((float) pixelSizeX);
     Float pixY = new Float((float) pixelSizeY);
@@ -964,6 +786,70 @@ public class ZeissLSMReader extends FormatReader {
       }
     }
     in.close();
+  }
+
+  protected void populateMetadataStore(SubBlock block, MetadataStore store,
+    int series)
+  {
+    if (block instanceof Recording) {
+      Recording recording = (Recording) block;
+      store.setImageDescription(recording.description, series);
+      store.setObjectiveCorrection(recording.correction, series, 0);
+      store.setObjectiveImmersion(recording.immersion, series, 0);
+      store.setObjectiveNominalMagnification(recording.magnification,
+        series, 0);
+      store.setObjectiveLensNA(recording.lensNA, series, 0);
+      store.setObjectiveIris(recording.iris, series, 0);
+      store.setObjectiveID("Objective:0", series, 0);
+      store.setObjectiveSettingsObjective("Objective:0", series);
+    }
+    else if (block instanceof Laser) {
+      Laser laser = (Laser) block;
+      if (laser.medium != null) {
+        store.setLaserLaserMedium(laser.medium, series, nextLaser);
+      }
+      if (laser.type != null) {
+        store.setLaserType(laser.type, series, nextLaser);
+      }
+      store.setLightSourceID("LightSource:" + nextLaser, series, nextLaser);
+      nextLaser++;
+    }
+    else if (block instanceof Track) {
+      Track track = (Track) block;
+      store.setDimensionsTimeIncrement(track.timeIncrement, series, 0);
+    }
+    else if (block instanceof DataChannel) {
+      DataChannel channel = (DataChannel) block;
+      if (channel.name != null && nextDataChannel < getSizeC()) {
+        int lightSource = nextDataChannel < nextLaser ? nextDataChannel :
+          nextLaser - 1;
+        if (lightSource >= 0) {
+          store.setLightSourceSettingsLightSource(
+            "LightSource:" + lightSource, series, nextDataChannel);
+        }
+        store.setLogicalChannelName(channel.name, series, nextDataChannel++);
+      }
+    }
+    else if (block instanceof DetectionChannel) {
+      DetectionChannel channel = (DetectionChannel) block;
+      if (channel.pinhole != null && channel.pinhole.floatValue() != 0f &&
+        nextDetectChannel < getSizeC())
+      {
+        store.setLogicalChannelPinholeSize(channel.pinhole, series,
+          nextDetectChannel++);
+      }
+      else nextDetectChannel++;
+    }
+    else if (block instanceof IlluminationChannel) {
+      IlluminationChannel channel = (IlluminationChannel) block;
+      if (channel.wavelength != null && nextIllumChannel < getSizeC()) {
+        store.setLogicalChannelExWave(channel.wavelength, series,
+          nextIllumChannel++);
+      }
+      else if (nextIllumChannel < getSizeC() - 1) {
+        nextIllumChannel++;
+      }
+    }
   }
 
   /** Parses overlay-related fields. */
@@ -1233,19 +1119,6 @@ public class ZeissLSMReader extends FormatReader {
     }
   }
 
-  /** Construct a metadata key from the given stack. */
-  private String getKey(Stack stack, int entry) {
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<stack.size(); i++) {
-      sb.append((String) stack.get(i));
-      sb.append("/");
-    }
-    sb.append(" - ");
-
-    sb.append(metadataKeys.get(new Integer(entry)));
-    return sb.toString();
-  }
-
   /** Parse a .mdb file and return a list of referenced .lsm files. */
   private String[] parseMDB(String mdbFile) throws FormatException {
     Location mdb = new Location(mdbFile).getAbsoluteFile();
@@ -1301,7 +1174,7 @@ public class ZeissLSMReader extends FormatReader {
     h.put(new Integer(0x4000000c), "Name");
     h.put(new Integer(0x50000001), "Name");
     h.put(new Integer(0x90000001), "Name");
-    h.put(new Integer(0x90000005), "Name");
+    h.put(new Integer(0x90000005), "Detection Channel Name");
     h.put(new Integer(0xb0000003), "Name");
     h.put(new Integer(0xd0000001), "Name");
     h.put(new Integer(0x12000001), "Name");
@@ -1460,5 +1333,209 @@ public class ZeissLSMReader extends FormatReader {
     h.put(new Integer(0x12000003), "Interval");
     return h;
   }
+
+  private Integer readEntry() throws IOException {
+    return new Integer(in.readInt());
+  }
+
+  private Object readValue() throws IOException {
+    int blockType = in.readInt();
+    int dataSize = in.readInt();
+
+    switch (blockType) {
+      case TYPE_LONG:
+        return new Long(in.readInt());
+      case TYPE_RATIONAL:
+        return new Double(in.readDouble());
+      case TYPE_ASCII:
+        return in.readString(dataSize);
+      case TYPE_SUBBLOCK:
+        return null;
+    }
+    in.skipBytes(dataSize);
+    return "";
+  }
+
+  // -- Helper classes --
+
+  class SubBlock {
+    public Hashtable<Integer, Object> blockData;
+    public boolean acquire = true;
+
+    public SubBlock() {
+      try {
+        read();
+      }
+      catch (IOException e) {
+        if (debug) trace(e);
+      }
+    }
+
+    protected void read() throws IOException {
+      blockData = new Hashtable<Integer, Object>();
+      Integer entry = readEntry();
+      Object value = readValue();
+      while (value != null) {
+        if (!blockData.containsKey(entry)) blockData.put(entry, value);
+        entry = readEntry();
+        value = readValue();
+      }
+    }
+
+    public void addToHashtable(String prefix) {
+      prefix += " " + this.getClass().getSimpleName() + " #";
+      int index = 1;
+      while (getMeta(prefix + index + " Acquire") != null) index++;
+      prefix += index;
+      Integer[] keys = blockData.keySet().toArray(new Integer[0]);
+      for (Integer key : keys) {
+        if (metadataKeys.get(key) != null) {
+          addMeta(prefix + " " + metadataKeys.get(key), blockData.get(key));
+        }
+      }
+      addMeta(prefix + " Acquire", new Boolean(acquire));
+    }
+  }
+
+  class Recording extends SubBlock {
+    public String description;
+    // Objective data
+    public String correction, immersion;
+    public Integer magnification;
+    public Float lensNA;
+    public Boolean iris;
+
+    protected void read() throws IOException {
+      super.read();
+      description = (String) blockData.get(RECORDING_ENTRY_DESCRIPTION);
+      String objective = (String) blockData.get(RECORDING_ENTRY_OBJECTIVE);
+
+      correction = "";
+
+      if (objective == null) objective = "";
+      String[] tokens = objective.split(" ");
+      int next = 0;
+      for (; next<tokens.length; next++) {
+        if (tokens[next].indexOf("/") != -1) break;
+        correction += tokens[next];
+      }
+      if (next < tokens.length) {
+        String p = tokens[next++];
+        try {
+          magnification = new Integer(p.substring(0, p.indexOf("/") - 1));
+        }
+        catch (NumberFormatException e) { }
+        try {
+          lensNA = new Float(p.substring(p.indexOf("/") + 1));
+        }
+        catch (NumberFormatException e) { }
+      }
+
+      immersion = next < tokens.length ? tokens[next++] : "Unknown";
+      iris = Boolean.FALSE;
+      if (next < tokens.length) {
+        iris = new Boolean(tokens[next++].trim().equalsIgnoreCase("iris"));
+      }
+    }
+  }
+
+  class Laser extends SubBlock {
+    public String medium, type;
+    public Double power;
+
+    protected void read() throws IOException {
+      super.read();
+      type = (String) blockData.get(new Integer(LASER_ENTRY_NAME));
+      if (type == null) type = "";
+      medium = "";
+
+      if (type.startsWith("HeNe")) {
+        medium = "HeNe";
+        type = "Gas";
+      }
+      else if (type.startsWith("Argon")) {
+        medium = "Ar";
+        type = "Gas";
+      }
+      else if (type.equals("Titanium:Sapphire") || type.equals("Mai Tai")) {
+        medium = "TiSapphire";
+        type = "SolidState";
+      }
+      else if (type.equals("YAG")) {
+        medium = "";
+        type = "SolidState";
+      }
+      else if (type.equals("Ar/Kr")) {
+        medium = "";
+        type = "Gas";
+      }
+
+      acquire = ((Long) blockData.get(
+        new Integer(LASER_ENTRY_ACQUIRE))).intValue() != 0;
+      power = (Double) blockData.get(new Integer(LASER_ENTRY_POWER));
+    }
+  }
+
+  class Track extends SubBlock {
+    public Float timeIncrement;
+
+    protected void read() throws IOException {
+      super.read();
+      timeIncrement = new Float(((Double) blockData.get(
+        new Integer(TRACK_ENTRY_TIME_BETWEEN_STACKS))).floatValue());
+      acquire = ((Long) blockData.get(
+        new Integer(TRACK_ENTRY_ACQUIRE))).intValue() != 0;
+    }
+  }
+
+  class DetectionChannel extends SubBlock {
+    public Float pinhole;
+
+    protected void read() throws IOException {
+      super.read();
+      pinhole = new Float(((Double) blockData.get(
+        new Integer(CHANNEL_ENTRY_PINHOLE_DIAMETER))).floatValue());
+      acquire = ((Long) blockData.get(
+        new Integer(CHANNEL_ENTRY_ACQUIRE))).intValue() != 0;
+    }
+  }
+
+  class IlluminationChannel extends SubBlock {
+    public Integer wavelength;
+
+    protected void read() throws IOException {
+      super.read();
+      wavelength = new Integer(((Double) blockData.get(
+        new Integer(ILLUM_CHANNEL_WAVELENGTH))).intValue());
+      Long v = (Long) blockData.get(new Integer(ILLUM_CHANNEL_ACQUIRE));
+      if (v != null) {
+        acquire = v.intValue() != 0;
+      }
+    }
+  }
+
+  class DataChannel extends SubBlock {
+    public String name;
+
+    protected void read() throws IOException {
+      super.read();
+      name = (String) blockData.get(new Integer(DATA_CHANNEL_NAME));
+      for (int i=0; i<name.length(); i++) {
+        if (name.charAt(i) < 10) {
+          name = name.substring(0, i);
+          break;
+        }
+      }
+
+      Long v = (Long) blockData.get(new Integer(DATA_CHANNEL_ACQUIRE));
+      if (v != null) {
+        acquire = v.intValue() != 0;
+      }
+    }
+  }
+
+  class Timer extends SubBlock { }
+  class Marker extends SubBlock { }
+  class BeamSplitter extends SubBlock { }
 
 }
