@@ -62,7 +62,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref = "AML:Entry" minOccurs="1" maxOccurs = "unbounded"/>
-				<xsd:element ref = "OME:Description" minOccurs = "0" maxOccurs="1"/>
+				<xsd:element ref = "AML:Description" minOccurs = "0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name = "Name" use = "required">
 				<xsd:annotation>
@@ -84,7 +84,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref = "AML:LookupTable" minOccurs = "0" maxOccurs="1"/>
-				<xsd:element ref = "OME:Description" minOccurs = "0" maxOccurs="1"/>
+				<xsd:element ref = "AML:Description" minOccurs = "0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name = "UserDefined" default = "false" use="optional" type = "xsd:boolean">
 				<xsd:annotation>
@@ -130,7 +130,7 @@ Tied to DB. Table FORMAL_INPUTS Column USER_DEFINED
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref = "OME:Description" minOccurs = "0" maxOccurs="1"/>
+				<xsd:element ref = "AML:Description" minOccurs = "0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name = "IBelongTo" use="optional">
 				<xsd:annotation>
@@ -199,7 +199,7 @@ These are given by &lt;RawImageFilePath>, &lt;sizeX>, &lt;sizeY>, &lt;sizeZ>, &l
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref = "OME:Description" minOccurs = "0" maxOccurs="1"/>
+				<xsd:element ref = "AML:Description" minOccurs = "0" maxOccurs="1"/>
 				<xsd:element ref = "AML:Declaration" minOccurs="1" maxOccurs="1"/>
 				<xsd:choice minOccurs = "0" maxOccurs="1">
 					<xsd:element ref = "CLI:ExecutionInstructions" minOccurs="1" maxOccurs="1"/>
@@ -421,7 +421,7 @@ A temporary hack to be sure, but that's the way it works for now.
 	<xsd:element name = "Category"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref = "OME:Description" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref = "AML:Description" minOccurs="1" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name = "Path" use = "required">
 				<xsd:annotation>
@@ -436,6 +436,26 @@ If you defined a sub category, we Strongly encourage you to also define all ance
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "Description"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				Just some free-form text.
+				The content model is now String.
+				This is no longer the correct place for an XML sub-document
+				Either 
+				- use CustomAttributes instead
+				Or
+				- define your own xml tree outside the OME node and link to the OME objects using references to the IDs
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute ref = "xml:lang" default = "en" use="optional"/>
+				</xsd:extension>
+			</xsd:simpleContent>
 		</xsd:complexType>
 	</xsd:element>
 </xsd:schema>

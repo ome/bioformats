@@ -23,9 +23,9 @@
         <file name="CLI.xsd"/>
         <file name="DataHistory.xsd"/>
         <file name="MLI.xsd"/>
-        <file name="ome-roi-sa.xsd"/>
         <file name="ome.xsd"/>
         <file name="OMERO.xsd"/>
+        <file name="ProposedChanges.txt"/>
         <file name="SA.xsd"/>
         <file name="SPW.xsd"/>
         <file name="STD.xsd"/>

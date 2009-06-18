@@ -76,7 +76,7 @@
 								Instrument can contain only 1 Microscope.
 							-->
 							<xsd:element ref="OME:InstrumentRef" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="OME:ObjectiveRef" minOccurs="0" maxOccurs="1"/>
+							<xsd:element ref="OME:ObjectiveSettings" minOccurs="0" maxOccurs="1"/>
 						</xsd:sequence>
 						<xsd:attribute name="origin" use="optional" type="ProfileSource"/>
 					</xsd:complexType>
@@ -86,9 +86,9 @@
 						<xsd:sequence>
 							<xsd:element name="Name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
 							<xsd:element name="Description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="OME:LightSourceRef" minOccurs="0" maxOccurs="1"/>
+							<xsd:element ref="OME:LightSourceSettings" minOccurs="0" maxOccurs="1"/>
 							<xsd:element ref="OME:OTFRef" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="OME:DetectorRef" minOccurs="0" maxOccurs="1"/>
+							<xsd:element ref="OME:DetectorSettings" minOccurs="0" maxOccurs="1"/>
 							<xsd:element ref="OME:FilterSetRef" minOccurs="0" maxOccurs="1"/>
 						</xsd:sequence>
 						<xsd:attribute name="origin" use="optional" type="ProfileSource"/>

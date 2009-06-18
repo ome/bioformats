@@ -56,7 +56,13 @@
 					</xsd:documentation>
 				</xsd:annotation>		
 			</xsd:attribute>
-			<xsd:attribute name="Description" use="optional" type="xsd:string"/>
+			<xsd:attribute name="Description" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						A description for the plate.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="Status" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -73,8 +79,77 @@
 					</xsd:documentation>
 				</xsd:annotation>		
 			</xsd:attribute>
+			<xsd:attribute name="ColumnNamingConvention" use="optional" type="NamingConvention">
+				<xsd:annotation>
+					<xsd:documentation>
+						The ColumnNamingConvention
+					</xsd:documentation>
+				</xsd:annotation>		
+			</xsd:attribute>
+			<xsd:attribute name="RowNamingConvention" use="optional" type="NamingConvention">
+				<xsd:annotation>
+					<xsd:documentation>
+						The RowNamingConvention
+					</xsd:documentation>
+				</xsd:annotation>		
+			</xsd:attribute>
+			<xsd:attribute name="WellOriginX" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The WellOriginX 
+					</xsd:documentation>
+				</xsd:annotation>		
+			</xsd:attribute>
+			<xsd:attribute name="WellOriginY" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The WellOriginY 
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="DefaultSample" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						The DefaultSample
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
+
+	<xsd:simpleType name="NamingConvention">
+		<xsd:annotation>
+			<xsd:documentation>
+				Predefined list of values for the number of pixels that can be combined to form larger pixels.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="A-ZZZ">
+				<xsd:annotation>
+					<xsd:documentation>
+						A, B, C, ... X, Y, Z, AA, BB, CC, ... YY, ZZ, AAA, BBB, ...
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="a-zzz"/>
+			<xsd:enumeration value="Z-A"/>
+			<xsd:enumeration value="z-a"/>
+			<xsd:enumeration value="0-*">
+				<xsd:annotation>
+					<xsd:documentation>
+						0, 1, 2, 3, ...
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="1-*">
+				<xsd:annotation>
+					<xsd:documentation>
+						1, 2, 3, ...
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
 
 	<xsd:element name="PlateRef"> <!-- top level definition -->
 		<xsd:annotation>
@@ -161,13 +236,19 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="OME:Description" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Reagent" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="PlateRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="ScreenAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ScreenID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
+			<xsd:attribute name="Description" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						A description for the screen.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="ProtocolIdentifier" use="optional" type="xsd:string">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -286,13 +367,23 @@
 				<xsd:element ref="ReagentRef" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="WellID"/>
-			<xsd:attribute name="Column" use="optional" type="xsd:integer">
+			<xsd:attribute name="Column" use="required" type="xsd:nonNegativeInteger">
 				<xsd:annotation>
 					<xsd:documentation>
 						This is the column index of the well, the origin is the top left corner of the plate
 						with the first column of cells being column zero. i.e top left is (0,0)
+						The combination of Row, Column has to be unique for each well in a plate.
 					</xsd:documentation>
 				</xsd:annotation>	  
+			</xsd:attribute>
+			<xsd:attribute name="Row" use="required" type="xsd:nonNegativeInteger">
+				<xsd:annotation>
+					<xsd:documentation>
+						This is the row index of the well, the origin is the top left corner of the plate
+						with the first row of wells being row zero. i.e top left is (0,0)
+						The combination of Row, Column has to be unique for each well in a plate.
+					</xsd:documentation>
+				</xsd:annotation>		  
 			</xsd:attribute>
 			<xsd:attribute name="ExternalDescription" use="optional" type="xsd:string">
 				<xsd:annotation>
@@ -308,20 +399,40 @@
 					</xsd:documentation>
 				</xsd:annotation>			
 			</xsd:attribute>
-			<xsd:attribute name="Row" use="optional" type="xsd:integer">
-				<xsd:annotation>
-					<xsd:documentation>
-						This is the row index of the well, the origin is the top left corner of the plate
-						with the first row of wells being row zero. i.e top left is (0,0)
-					</xsd:documentation>
-				</xsd:annotation>		  
-			</xsd:attribute>
 			<xsd:attribute name="Type" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						A human readable identifier for the screening status. 
 						e.g. empty, positive control, negative control, control, experimental, etc.
 						This string is likely to become an enumeration in future releases.
+					</xsd:documentation>
+				</xsd:annotation>	  
+			</xsd:attribute>
+			<xsd:attribute name="TypeColourAlpha" use="optional" type="xsd:integer" default="255">
+				<xsd:annotation>
+					<xsd:documentation>
+						A marker colour used to highlight the wells type - the alpha value
+					</xsd:documentation>
+				</xsd:annotation>	  
+			</xsd:attribute>
+			<xsd:attribute name="TypeColourRed" use="optional" type="xsd:integer" default="255">
+				<xsd:annotation>
+					<xsd:documentation>
+						A marker colour used to highlight the wells type - the red value
+					</xsd:documentation>
+				</xsd:annotation>	  
+			</xsd:attribute>
+			<xsd:attribute name="TypeColourGreen" use="optional" type="xsd:integer" default="255">
+				<xsd:annotation>
+					<xsd:documentation>
+						A marker colour used to highlight the wells type - the green value
+					</xsd:documentation>
+				</xsd:annotation>	  
+			</xsd:attribute>
+			<xsd:attribute name="TypeColourBlue" use="optional" type="xsd:integer" default="255">
+				<xsd:annotation>
+					<xsd:documentation>
+						A marker colour used to highlight the wells type - the blue value
 					</xsd:documentation>
 				</xsd:annotation>	  
 			</xsd:attribute>
@@ -351,21 +462,14 @@
 				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="WellSampleID"/>
-			<xsd:attribute name="Index" use="optional" type="xsd:integer">
-				<xsd:annotation>
-					<xsd:documentation>
-						This is redundant and will be removed
-					</xsd:documentation>
-				</xsd:annotation>	  
-			</xsd:attribute>
-			<xsd:attribute name="PosX" use="optional" type="xsd:float">
+			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
 						The X position of the image within the well
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PosY" use="optional" type="xsd:float">
+			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
 						The Y position of the image within the well
