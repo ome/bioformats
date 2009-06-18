@@ -26,10 +26,17 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version = "1"
 	elementFormDefault = "qualified">
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/CLI/2008-09" schemaLocation = "CLI.xsd"/>
+	<!-- Using the svn location for import -->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation = "http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/CLI/2008-09" schemaLocation = "http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/CLI.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/MLI/2008-09" schemaLocation = "http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/MLI.xsd"/>
+	<!-- Using the local directory location for import 
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="ome.xsd"/>
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation = "BinaryFile.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/CLI/2008-09" schemaLocation = "CLI.xsd"/>
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/MLI/2008-09" schemaLocation = "MLI.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation = "ome.xsd"/>
+	-->
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<xsd:element name = "Entry"> <!-- top level definition -->
 		<xsd:complexType>
