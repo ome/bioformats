@@ -31,7 +31,7 @@
 	<!-- Using the svn location for import -->
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/AnalysisModule.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/2008-09/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
@@ -78,7 +78,13 @@
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
-			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional"/>
+			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Image"> <!-- top level definition -->
@@ -174,6 +180,11 @@
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PixelsID"/>
 			<xsd:attribute name="DimensionOrder" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="XYZCT"/>
@@ -185,7 +196,13 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="PixelType" use="required" type="PixelTypes"/>
+			<xsd:attribute name="PixelType" use="required" type="PixelTypes">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="BigEndian" use="required" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>This is true if the pixel data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All pixel data must be written in the same endian order.</xsd:documentation>
@@ -231,9 +248,27 @@
 					<xsd:documentation>Physical size of a pixel</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TimeIncrement" use="optional" type="xsd:float"/>
-			<xsd:attribute name="WaveStart" use="optional" type="xsd:positiveInteger"/>
-			<xsd:attribute name="WaveIncrement" use="optional" type="xsd:positiveInteger"/>
+			<xsd:attribute name="TimeIncrement" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="WaveStart" use="optional" type="xsd:positiveInteger">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="WaveIncrement" use="optional" type="xsd:positiveInteger">
+				<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="TiffData"> <!-- top level definition -->
@@ -335,9 +370,27 @@
 					<xsd:element name="HashSHA1" type="Hex40" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 			</xsd:sequence>
-			<xsd:attribute name="TheZ" use="required" type="xsd:integer"/>
-			<xsd:attribute name="TheT" use="required" type="xsd:integer"/>
-			<xsd:attribute name="TheC" use="required" type="xsd:integer"/>
+			<xsd:attribute name="TheZ" use="required" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TheT" use="required" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TheC" use="required" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -364,9 +417,27 @@
 				All units are in the microscope reference frame
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:attribute name="PositionX" use="optional" type="xsd:float"/>
-		<xsd:attribute name="PositionY" use="optional" type="xsd:float"/>
-		<xsd:attribute name="PositionZ" use="optional" type="xsd:float"/>
+		<xsd:attribute name="PositionX" use="optional" type="xsd:float">
+			<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="PositionY" use="optional" type="xsd:float">
+			<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
+			<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	<xsd:element name="Experiment"> <!-- top level definition -->
@@ -399,6 +470,11 @@
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Type" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:list>
 						<xsd:simpleType>
@@ -443,7 +519,6 @@
 				Defines a microbeam operation type and the region of the image it was applied to.
 				The LightSourceRef element is a reference to a LightSource specified in the Instrument element which was used for a technique other than illumination for
 				the purpose of imaging.  For example, a laser used for photobleaching.
-				
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -454,6 +529,11 @@
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="MicrobeamManipulationID"/>
 			<xsd:attribute name="Type" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:list>
 						<xsd:simpleType>
@@ -515,14 +595,45 @@
 				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ChannelComponent" minOccurs="1" maxOccurs="unbounded"/>
 			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
-			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
-			<xsd:attribute name="SamplesPerPixel" use="optional" type="xsd:integer"/>
-			<xsd:attribute name="SecondaryEmissionFilter" use="optional" type="FilterID"/>
-			<xsd:attribute name="SecondaryExcitationFilter" use="optional" type="FilterID"/>
+			<xsd:attribute name="ID" use="required" type="LogicalChannelID">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Name" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SamplesPerPixel" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SecondaryEmissionFilter" use="optional" type="FilterID">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SecondaryExcitationFilter" use="optional" type="FilterID">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="IlluminationType" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
+						MISSING
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -535,7 +646,13 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="PinholeSize" use="optional" type="xsd:float"/>
+			<xsd:attribute name="PinholeSize" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="PhotometricInterpretation" default="Monochrome" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -555,6 +672,11 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="Mode" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="WideField"/>
@@ -576,6 +698,11 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="ContrastMethod" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Brightfield"/>
@@ -590,11 +717,41 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="ExcitationWavelength" use="optional" type="xsd:positiveInteger"/>
-			<xsd:attribute name="EmissionWavelength" use="optional" type="xsd:positiveInteger"/>
-			<xsd:attribute name="Fluor" use="optional" type="xsd:string"/>
-			<xsd:attribute name="NDFilter" use="optional" type="xsd:float"/>	
-			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer"/>
+			<xsd:attribute name="ExcitationWavelength" use="optional" type="xsd:positiveInteger">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="EmissionWavelength" use="optional" type="xsd:positiveInteger">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Fluor" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="NDFilter" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>	
+			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="LogicalChannelRef"> <!-- top level definition -->
@@ -647,9 +804,27 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
-			<xsd:attribute name="X" use="optional" type="xsd:float"/>
-			<xsd:attribute name="Y" use="optional" type="xsd:float"/>
-			<xsd:attribute name="Z" use="optional" type="xsd:float"/>
+			<xsd:attribute name="X" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Y" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Z" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Experimenter"> <!-- top level definition -->
@@ -665,37 +840,37 @@
 				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ExperimenterID"/>
-			<xsd:attribute name="DisplayName" use="required" type="xsd:string" >
+			<xsd:attribute name="DisplayName" use="required" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>This is the only required name field.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FirstName" use="optional" type="xsd:string" >
+			<xsd:attribute name="FirstName" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>First name, sometime called christian name or given name or forename</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="MiddleName" use="optional" type="xsd:string" >
+			<xsd:attribute name="MiddleName" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>Any other names.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="LastName" use="optional" type="xsd:string" >
+			<xsd:attribute name="LastName" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>A person's last name sometimes called surname or family name.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Email" use="optional" type="xsd:string" >
+			<xsd:attribute name="Email" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>A person's email address.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Institution" use="optional" type="xsd:string" >
+			<xsd:attribute name="Institution" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>A person's Institution</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="UserName" use="optional" type="xsd:string" >
+			<xsd:attribute name="UserName" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense).</xsd:documentation>
 				</xsd:annotation>
@@ -810,11 +985,41 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="CutIn" use="optional" type="xsd:integer" />
-			<xsd:attribute name="CutOut" use="optional" type="xsd:integer" />
-			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" />
-			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" />
-			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" />
+			<xsd:attribute name="CutIn" use="optional" type="xsd:integer" >
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutOut" use="optional" type="xsd:integer" >
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" >
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" >
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" >
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -894,10 +1099,34 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
-					<xsd:attribute name="ExcitationFilterRef" use="optional" type="FilterID" />
-					<xsd:attribute name="DichroicRef" use="optional" type="DichroicID"/>
-					<xsd:attribute name="EmissionFilterRef" use="optional" type="FilterID"/>
-					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
+					<xsd:attribute name="ExcitationFilterRef" use="optional" type="FilterID" >
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="DichroicRef" use="optional" type="DichroicID">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="EmissionFilterRef" use="optional" type="FilterID">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="ID" use="required" type="FilterSetID">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -915,13 +1144,54 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
-					<xsd:attribute name="Gain" use="optional" type="xsd:float"/>
-					<xsd:attribute name="Voltage" use="optional" type="xsd:float"/>
-					<xsd:attribute name="Offset" use="optional" type="xsd:float"/>
-					<xsd:attribute name="Zoom" use="optional" type="xsd:float"/>
-					<xsd:attribute name="AmplificationGain" use="optional" type="xsd:float"/>
-					<xsd:attribute name="ID" use="required" type="DetectorID"/>
+					<xsd:attribute name="Gain" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Offset" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="AmplificationGain" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="ID" use="required" type="DetectorID">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 					<xsd:attribute name="Type" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
 								<xsd:enumeration value="CCD"/>
@@ -967,10 +1237,39 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:complexType name="ManufacturerSpec">
-		<xsd:attribute name="Manufacturer" use="optional" type="xsd:string"/>
-		<xsd:attribute name="Model" use="optional" type="xsd:string"/>
-		<xsd:attribute name="SerialNumber" use="optional" type="xsd:string"/>
-		<xsd:attribute name="LotNumber" use="optional" type="xsd:string"/>
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="Manufacturer" use="optional" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="Model" use="optional" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="SerialNumber" use="optional" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="LotNumber" use="optional" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:element name="Thumbnail"> <!-- top level definition -->
 		<xsd:annotation>
@@ -984,8 +1283,20 @@
 			<xsd:sequence>
 				<xsd:any namespace="http://www.w3.org/2000/svg" processContents="strict" minOccurs="0"/>
 			</xsd:sequence>
-			<xsd:attribute name="href" use="optional" type="xsd:anyURI"/>
-			<xsd:attribute name="MIMEtype" use="required" type="MIMEtype"/>
+			<xsd:attribute name="href" use="optional" type="xsd:anyURI">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="MIMEtype" use="required" type="MIMEtype">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Project"> <!-- top level definition -->

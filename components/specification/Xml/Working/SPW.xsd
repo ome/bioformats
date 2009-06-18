@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2003-2008 Open Microscopy Environment
+	# Copyright (C) 2003-2009 Open Microscopy Environment
 	#		Massachusetts Institute of Technology,
 	#		National Institutes of Health,
 	#		University of Dundee,
