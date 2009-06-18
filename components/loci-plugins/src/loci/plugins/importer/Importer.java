@@ -862,11 +862,16 @@ public class Importer {
     boolean colorize = options.isColorize();
     boolean customColorize = options.isCustomColorize();
     boolean concatenate = options.isConcatenate();
-    int nChannels = imp.getNChannels();
     int nSlices = imp.getNSlices();
     int nFrames = imp.getNFrames();
     if (options.isAutoscale() && !options.isVirtual()) {
       ImagePlusTools.adjustColorRange(imp);
+    }
+    else {
+      // ImageJ may autoscale the images anyway, so we need to manually
+      // set the display range to the min/max values allowed for
+      // this pixel type
+      imp.setDisplayRange(0, Math.pow(2, imp.getBitDepth()) - 1);
     }
 
     boolean splitC = options.isSplitChannels();
