@@ -184,6 +184,26 @@ public class TiffReader extends BaseTiffReader {
         addMeta(key, value);
       }
     }
+
+    // check for other INI-style comment
+    if (!ij && !metamorph) {
+      String[] lines = comment.split("\n");
+      if (lines.length > 1) {
+        comment = "";
+        for (String line : lines) {
+          int eq = line.indexOf("=");
+          if (eq != -1) {
+            String key = line.substring(0, eq).trim();
+            String value = line.substring(eq + 1).trim();
+            addMeta(key, value);
+          }
+          else if (!line.startsWith("[")) {
+            comment += line + "\n";
+          }
+        }
+        addMeta("Comment", comment);
+      }
+    }
   }
 
 }
