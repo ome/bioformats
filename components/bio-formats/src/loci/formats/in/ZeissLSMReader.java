@@ -383,6 +383,16 @@ public class ZeissLSMReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    String imageName = lsmFilenames[series];
+    if (imageName.indexOf(".") != -1) {
+      imageName = imageName.substring(0, imageName.lastIndexOf("."));
+    }
+    if (imageName.indexOf(File.separator) != -1) {
+      imageName =
+        imageName.substring(imageName.lastIndexOf(File.separator) + 1);
+    }
+    store.setImageName(imageName, series);
+
     // link Instrument and Image
     store.setInstrumentID("Instrument:" + series, series);
     store.setImageInstrumentRef("Instrument:" + series, series);
@@ -821,12 +831,6 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof DataChannel) {
       DataChannel channel = (DataChannel) block;
       if (channel.name != null && nextDataChannel < getSizeC()) {
-        int lightSource = nextDataChannel < nextLaser ? nextDataChannel :
-          nextLaser - 1;
-        if (lightSource >= 0) {
-          store.setLightSourceSettingsLightSource(
-            "LightSource:" + lightSource, series, nextDataChannel);
-        }
         store.setLogicalChannelName(channel.name, series, nextDataChannel++);
       }
     }
@@ -1124,7 +1128,7 @@ public class ZeissLSMReader extends FormatReader {
     Location mdb = new Location(mdbFile).getAbsoluteFile();
     Location parent = mdb.getParentFile();
     Vector[] tables = MDBParser.parseDatabase(mdbFile);
-    Vector referencedLSMs = new Vector();
+    Vector<String> referencedLSMs = new Vector<String>();
 
     for (int table=0; table<tables.length; table++) {
       String[] columnNames = (String[]) tables[table].get(0);
@@ -1156,16 +1160,18 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     if (referencedLSMs.size() > 0) {
-      return (String[]) referencedLSMs.toArray(new String[0]);
+      return referencedLSMs.toArray(new String[0]);
     }
 
     String[] fileList = parent.list();
     for (int i=0; i<fileList.length; i++) {
-      if (checkSuffix(fileList[i], new String[] {"lsm"})) {
+      if (checkSuffix(fileList[i], new String[] {"lsm"}) &&
+        !fileList[i].startsWith("."))
+      {
         referencedLSMs.add(new Location(parent, fileList[i]).getAbsolutePath());
       }
     }
-    return (String[]) referencedLSMs.toArray(new String[0]);
+    return referencedLSMs.toArray(new String[0]);
   }
 
   private static Hashtable createKeys() {
