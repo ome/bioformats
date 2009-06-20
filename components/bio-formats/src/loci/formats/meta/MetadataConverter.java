@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 17, 2009 12:24:44 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -653,6 +653,8 @@ public final class MetadataConverter {
         if (filterSetEmFilterValue != null) dest.setFilterSetEmFilter(filterSetEmFilterValue, instrumentIndex, filterSetIndex);
         String filterSetExFilterValue = src.getFilterSetExFilter(instrumentIndex, filterSetIndex);
         if (filterSetExFilterValue != null) dest.setFilterSetExFilter(filterSetExFilterValue, instrumentIndex, filterSetIndex);
+        String filterSetIDValue = src.getFilterSetID(instrumentIndex, filterSetIndex);
+        if (filterSetIDValue != null) dest.setFilterSetID(filterSetIDValue, instrumentIndex, filterSetIndex);
         String filterSetLotNumberValue = src.getFilterSetLotNumber(instrumentIndex, filterSetIndex);
         if (filterSetLotNumberValue != null) dest.setFilterSetLotNumber(filterSetLotNumberValue, instrumentIndex, filterSetIndex);
         String filterSetManufacturerValue = src.getFilterSetManufacturer(instrumentIndex, filterSetIndex);

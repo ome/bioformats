@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 17, 2009 12:24:44 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -650,6 +650,10 @@ public class DummyMetadata implements IMetadata {
   }
   /* @see MetadataRetrieve#getFilterSetExFilter(int, int) */
   public String getFilterSetExFilter(int instrumentIndex, int filterSetIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getFilterSetID(int, int) */
+  public String getFilterSetID(int instrumentIndex, int filterSetIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getFilterSetLotNumber(int, int) */
@@ -2264,6 +2268,10 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataStore#setFilterSetExFilter(String, int, int) */
   public void setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex) {
+  }
+
+  /* @see MetadataStore#setFilterSetID(String, int, int) */
+  public void setFilterSetID(String id, int instrumentIndex, int filterSetIndex) {
   }
 
   /* @see MetadataStore#setFilterSetLotNumber(String, int, int) */

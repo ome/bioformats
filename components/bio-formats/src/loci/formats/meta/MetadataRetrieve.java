@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 17, 2009 12:24:44 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -767,6 +767,13 @@ public interface MetadataRetrieve {
    * @param filterSetIndex index of the FilterSet
    */
   String getFilterSetExFilter(int instrumentIndex, int filterSetIndex);
+
+  /**
+   * For a particular FilterSet, gets unique label identifying the filter set.
+   * @param instrumentIndex index of the Instrument
+   * @param filterSetIndex index of the FilterSet
+   */
+  String getFilterSetID(int instrumentIndex, int filterSetIndex);
 
   /**
    * For a particular FilterSet, gets TODO.

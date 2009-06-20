@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 17, 2009 12:24:44 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -919,6 +919,12 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   public String getFilterSetExFilter(int instrumentIndex, int filterSetIndex) {
     FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
     return filterSet == null ? null : filterSet.getExFilterRef();
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getFilterSetID(int, int) */
+  public String getFilterSetID(int instrumentIndex, int filterSetIndex) {
+    FilterSetNode filterSet = getFilterSetNode(instrumentIndex, filterSetIndex, false);
+    return filterSet == null ? null : filterSet.getNodeID();
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#getFilterSetLotNumber(int, int) */
@@ -3287,6 +3293,13 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (exFilter == null) return;
     FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
     filterSetNode.setExFilterRef(exFilter);
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setFilterSetID(String, int, int) */
+  public void setFilterSetID(String id, int instrumentIndex, int filterSetIndex) {
+    if (id == null) return;
+    FilterSetNode filterSetNode = getFilterSetNode(instrumentIndex, filterSetIndex, true);
+    filterSetNode.setNodeID(id);
   }
 
   /* @see loci.formats.meta.MetadataStore#setFilterSetLotNumber(String, int, int) */

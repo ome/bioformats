@@ -2600,6 +2600,12 @@ description = a filter set for a particular instrument
 [FilterSet 2003FC]
 path = Instrument+/Filter+/FilterSet
 
+[FilterSet ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the filter set
+
 [FilterSet Manufacturer]
 type = String
 description = TODO

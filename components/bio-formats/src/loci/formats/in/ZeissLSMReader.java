@@ -69,53 +69,49 @@ public class ZeissLSMReader extends FormatReader {
 
   /** Subblock types. */
   private static final int SUBBLOCK_RECORDING = 0x10000000;
-  private static final int SUBBLOCK_LASERS = 0x30000000;
   private static final int SUBBLOCK_LASER = 0x50000000;
-  private static final int SUBBLOCK_TRACKS = 0x20000000;
   private static final int SUBBLOCK_TRACK = 0x40000000;
-  private static final int SUBBLOCK_DETECTION_CHANNELS = 0x60000000;
   private static final int SUBBLOCK_DETECTION_CHANNEL = 0x70000000;
-  private static final int SUBBLOCK_ILLUMINATION_CHANNELS = 0x80000000;
   private static final int SUBBLOCK_ILLUMINATION_CHANNEL = 0x90000000;
-  private static final int SUBBLOCK_BEAM_SPLITTERS = 0xa0000000;
   private static final int SUBBLOCK_BEAM_SPLITTER = 0xb0000000;
-  private static final int SUBBLOCK_DATA_CHANNELS = 0xc0000000;
   private static final int SUBBLOCK_DATA_CHANNEL = 0xd0000000;
-  private static final int SUBBLOCK_TIMERS = 0x11000000;
   private static final int SUBBLOCK_TIMER = 0x12000000;
-  private static final int SUBBLOCK_MARKERS = 0x13000000;
   private static final int SUBBLOCK_MARKER = 0x14000000;
   private static final int SUBBLOCK_END = (int) 0xffffffff;
 
-  private static final int SUBBLOCK_GAMMA = 1;
-  private static final int SUBBLOCK_BRIGHTNESS = 2;
-  private static final int SUBBLOCK_CONTRAST = 3;
-  private static final int SUBBLOCK_RAMP = 4;
-  private static final int SUBBLOCK_KNOTS = 5;
-  private static final int SUBBLOCK_PALETTE = 6;
-
   /** Data types. */
-  private static final int RECORDING_ENTRY_DESCRIPTION = 0x10000002;
-  private static final int RECORDING_ENTRY_OBJECTIVE = 0x10000004;
+  private static final int RECORDING_NAME = 0x10000001;
+  private static final int RECORDING_DESCRIPTION = 0x10000002;
+  private static final int RECORDING_OBJECTIVE = 0x10000004;
+  private static final int RECORDING_ZOOM = 0x10000016;
+  private static final int RECORDING_SAMPLE_0TIME = 0x10000036;
+  private static final int RECORDING_CAMERA_BINNING = 0x10000052;
 
-  private static final int TRACK_ENTRY_ACQUIRE = 0x40000006;
-  private static final int TRACK_ENTRY_TIME_BETWEEN_STACKS = 0x4000000b;
+  private static final int TRACK_ACQUIRE = 0x40000006;
+  private static final int TRACK_TIME_BETWEEN_STACKS = 0x4000000b;
 
-  private static final int LASER_ENTRY_NAME = 0x50000001;
-  private static final int LASER_ENTRY_ACQUIRE = 0x50000002;
-  private static final int LASER_ENTRY_POWER = 0x50000003;
+  private static final int LASER_NAME = 0x50000001;
+  private static final int LASER_ACQUIRE = 0x50000002;
+  private static final int LASER_POWER = 0x50000003;
 
-  private static final int CHANNEL_ENTRY_DETECTOR_GAIN = 0x70000003;
-  private static final int CHANNEL_ENTRY_PINHOLE_DIAMETER = 0x70000009;
-  private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_START = 0x70000022;
-  private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_END = 0x70000023;
-  private static final int CHANNEL_ENTRY_ACQUIRE = 0x7000000b;
-  private static final int ILLUM_CHANNEL_POWER = 0x90000002;
+  private static final int CHANNEL_DETECTOR_GAIN = 0x70000003;
+  private static final int CHANNEL_PINHOLE_DIAMETER = 0x70000009;
+  private static final int CHANNEL_AMPLIFIER_GAIN = 0x70000005;
+  private static final int CHANNEL_FILTER_SET = 0x7000000f;
+  private static final int CHANNEL_FILTER = 0x70000010;
+  private static final int CHANNEL_ACQUIRE = 0x7000000b;
+  private static final int CHANNEL_NAME = 0x70000014;
+
+  private static final int ILLUM_CHANNEL_ATTENUATION = 0x90000002;
   private static final int ILLUM_CHANNEL_WAVELENGTH = 0x90000003;
   private static final int ILLUM_CHANNEL_ACQUIRE = 0x90000004;
+
   private static final int START_TIME = 0x10000036;
   private static final int DATA_CHANNEL_NAME = 0xd0000001;
   private static final int DATA_CHANNEL_ACQUIRE = 0xd0000017;
+
+  private static final int BEAM_SPLITTER_FILTER = 0xb0000002;
+  private static final int BEAM_SPLITTER_FILTER_SET = 0xb0000003;
 
   /** Drawing element types. */
   private static final int TEXT = 13;
@@ -150,7 +146,8 @@ public class ZeissLSMReader extends FormatReader {
   private String[] lsmFilenames;
   private Hashtable[][] ifds;
 
-  private int nextLaser = 0;
+  private int nextLaser = 0, nextDetector = 0;
+  private int nextFilter = 0, nextFilterSet = 0;
   private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
 
@@ -173,7 +170,9 @@ public class ZeissLSMReader extends FormatReader {
     validChannels = 0;
     lsmFilenames = null;
     ifds = null;
-    nextLaser = nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
+    nextLaser = nextDetector = 0;
+    nextFilter = nextFilterSet = 0;
+    nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
     splitPlanes = false;
   }
 
@@ -670,7 +669,9 @@ public class ZeissLSMReader extends FormatReader {
     if (scanInformationOffset != 0) {
       in.seek(scanInformationOffset);
 
-      nextLaser = nextDataChannel = nextDetectChannel = nextIllumChannel = 0;
+      nextLaser = nextDetector = 0;
+      nextFilter = nextFilterSet = 0;
+      nextDataChannel = nextDetectChannel = nextIllumChannel = 0;
 
       Vector<SubBlock> blocks = new Vector<SubBlock>();
 
@@ -718,10 +719,15 @@ public class ZeissLSMReader extends FormatReader {
         else in.skipBytes(dataSize);
       }
 
+      Vector<SubBlock> nonAcquiredBlocks = new Vector<SubBlock>();
+
       SubBlock[] metadataBlocks = blocks.toArray(new SubBlock[0]);
       for (SubBlock block : metadataBlocks) {
         block.addToHashtable("Series " + series);
-        if (!block.acquire) blocks.remove(block);
+        if (!block.acquire) {
+          nonAcquiredBlocks.add(block);
+          blocks.remove(block);
+        }
       }
 
       for (int i=0; i<blocks.size(); i++) {
@@ -744,9 +750,14 @@ public class ZeissLSMReader extends FormatReader {
             !(prevBlock instanceof DetectionChannel))
           {
             block.acquire = false;
+            nonAcquiredBlocks.add(block);
           }
         }
         if (block.acquire) populateMetadataStore(block, store, series);
+      }
+
+      for (SubBlock block : nonAcquiredBlocks) {
+        populateMetadataStore(block, store, series);
       }
     }
     int nLogicalChannels = nextDataChannel == 0 ? 1 : nextDataChannel;
@@ -801,9 +812,19 @@ public class ZeissLSMReader extends FormatReader {
   protected void populateMetadataStore(SubBlock block, MetadataStore store,
     int series)
   {
+    // NB: block.acquire can be false.  If that is the case, Instrument data
+    // is the only thing that should be populated.
     if (block instanceof Recording) {
       Recording recording = (Recording) block;
-      store.setImageDescription(recording.description, series);
+      if (recording.acquire) {
+        store.setImageName(recording.name, series);
+        store.setImageDescription(recording.description, series);
+        store.setImageCreationDate(recording.startTime, series);
+        for (int c=0; c<getSizeC(); c++) {
+          store.setDetectorSettingsBinning(recording.binning, series, c);
+        }
+        store.setObjectiveSettingsObjective("Objective:" + series, series);
+      }
       store.setObjectiveCorrection(recording.correction, series, 0);
       store.setObjectiveImmersion(recording.immersion, series, 0);
       store.setObjectiveNominalMagnification(recording.magnification,
@@ -811,7 +832,6 @@ public class ZeissLSMReader extends FormatReader {
       store.setObjectiveLensNA(recording.lensNA, series, 0);
       store.setObjectiveIris(recording.iris, series, 0);
       store.setObjectiveID("Objective:" + series, series, 0);
-      store.setObjectiveSettingsObjective("Objective:" + series, series);
     }
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
@@ -826,32 +846,83 @@ public class ZeissLSMReader extends FormatReader {
     }
     else if (block instanceof Track) {
       Track track = (Track) block;
-      store.setDimensionsTimeIncrement(track.timeIncrement, series, 0);
+      if (track.acquire) {
+        store.setDimensionsTimeIncrement(track.timeIncrement, series, 0);
+      }
     }
     else if (block instanceof DataChannel) {
       DataChannel channel = (DataChannel) block;
-      if (channel.name != null && nextDataChannel < getSizeC()) {
+      if (channel.name != null && nextDataChannel < getSizeC() &&
+        channel.acquire)
+      {
         store.setLogicalChannelName(channel.name, series, nextDataChannel++);
       }
     }
     else if (block instanceof DetectionChannel) {
       DetectionChannel channel = (DetectionChannel) block;
       if (channel.pinhole != null && channel.pinhole.floatValue() != 0f &&
-        nextDetectChannel < getSizeC())
+        nextDetectChannel < getSizeC() && channel.acquire)
       {
         store.setLogicalChannelPinholeSize(channel.pinhole, series,
-          nextDetectChannel++);
+          nextDetectChannel);
       }
-      else nextDetectChannel++;
+      if (channel.filter != null) {
+        String id = "Filter:" + channel.filter;
+        if (channel.acquire) {
+          store.setLogicalChannelSecondaryExcitationFilter(
+            id, series, nextDetectChannel);
+        }
+        store.setFilterID(id, series, nextFilter++);
+      }
+      if (channel.channelName != null) {
+        store.setDetectorID("Detector:" + channel.channelName + "-" +
+          (nextDetector + 1), series, nextDetector);
+        if (channel.acquire) {
+          store.setDetectorSettingsDetector("Detector:" + channel.channelName +
+            "-" + (nextDetector + 1), series, nextDetector);
+        }
+      }
+      if (channel.amplificationGain != null) {
+        store.setDetectorAmplificationGain(channel.amplificationGain, series,
+          nextDetector);
+      }
+      if (channel.gain != null) {
+        store.setDetectorGain(channel.gain, series, nextDetector);
+      }
+      nextDetectChannel++;
+      nextDetector++;
     }
     else if (block instanceof IlluminationChannel) {
       IlluminationChannel channel = (IlluminationChannel) block;
-      if (channel.wavelength != null && nextIllumChannel < getSizeC()) {
-        store.setLogicalChannelExWave(channel.wavelength, series,
-          nextIllumChannel++);
+      boolean mustIncrement = false;
+      if (nextIllumChannel < getSizeC()) {
+        if (channel.wavelength != null && channel.acquire) {
+          store.setLogicalChannelExWave(channel.wavelength, series,
+            nextIllumChannel);
+          mustIncrement = true;
+        }
+        if (channel.attenuation != null && channel.acquire) {
+          store.setLightSourceSettingsAttenuation(channel.attenuation, series,
+            nextIllumChannel);
+          mustIncrement = true;
+        }
+        if (mustIncrement || nextIllumChannel < getSizeC() - 1) {
+          nextIllumChannel++;
+        }
       }
-      else if (nextIllumChannel < getSizeC() - 1) {
-        nextIllumChannel++;
+    }
+    else if (block instanceof BeamSplitter) {
+      BeamSplitter beamSplitter = (BeamSplitter) block;
+      if (beamSplitter.filterSet != null) {
+        store.setFilterSetID("FilterSet:" + beamSplitter.filterSet, series,
+          nextFilterSet);
+        if (beamSplitter.filter != null) {
+          String filterID = "Filter:" + beamSplitter.filter;
+          store.setFilterID(filterID, series, nextFilter);
+          store.setFilterSetDichroic(filterID, series, nextFilterSet);
+          nextFilter++;
+        }
+        nextFilterSet++;
       }
     }
   }
@@ -1377,6 +1448,29 @@ public class ZeissLSMReader extends FormatReader {
       }
     }
 
+    protected int getIntValue(int key) {
+      Object o = blockData.get(new Integer(key));
+      return o == null || !(o instanceof Number) ? null :
+        ((Number) o).intValue();
+    }
+
+    protected float getFloatValue(int key) {
+      Object o = blockData.get(new Integer(key));
+      return o == null || !(o instanceof Number) ? null :
+        ((Number) o).floatValue();
+    }
+
+    protected double getDoubleValue(int key) {
+      Object o = blockData.get(new Integer(key));
+      return o == null || !(o instanceof Number) ? null :
+        ((Number) o).doubleValue();
+    }
+
+    protected String getStringValue(int key) {
+      Object o = blockData.get(new Integer(key));
+      return o == null ? null : o.toString();
+    }
+
     protected void read() throws IOException {
       blockData = new Hashtable<Integer, Object>();
       Integer entry = readEntry();
@@ -1405,6 +1499,10 @@ public class ZeissLSMReader extends FormatReader {
 
   class Recording extends SubBlock {
     public String description;
+    public String name;
+    public String binning;
+    public String startTime;
+    public Double zoom;
     // Objective data
     public String correction, immersion;
     public Integer magnification;
@@ -1413,8 +1511,18 @@ public class ZeissLSMReader extends FormatReader {
 
     protected void read() throws IOException {
       super.read();
-      description = (String) blockData.get(RECORDING_ENTRY_DESCRIPTION);
-      String objective = (String) blockData.get(RECORDING_ENTRY_OBJECTIVE);
+      description = getStringValue(RECORDING_DESCRIPTION);
+      name = getStringValue(RECORDING_NAME);
+      binning = getStringValue(RECORDING_CAMERA_BINNING);
+      if (binning.indexOf("x") == -1) binning += "x" + binning;
+
+      // start time in days since Dec 30 1899
+      long stamp = (long) (getDoubleValue(RECORDING_SAMPLE_0TIME) * 86400000);
+      startTime = DataTools.convertDate(stamp, DataTools.MICROSOFT);
+
+      zoom = getDoubleValue(RECORDING_ZOOM);
+
+      String objective = getStringValue(RECORDING_OBJECTIVE);
 
       correction = "";
 
@@ -1451,7 +1559,7 @@ public class ZeissLSMReader extends FormatReader {
 
     protected void read() throws IOException {
       super.read();
-      type = (String) blockData.get(new Integer(LASER_ENTRY_NAME));
+      type = getStringValue(LASER_NAME);
       if (type == null) type = "";
       medium = "";
 
@@ -1476,9 +1584,8 @@ public class ZeissLSMReader extends FormatReader {
         type = "Gas";
       }
 
-      acquire = ((Long) blockData.get(
-        new Integer(LASER_ENTRY_ACQUIRE))).intValue() != 0;
-      power = (Double) blockData.get(new Integer(LASER_ENTRY_POWER));
+      acquire = getIntValue(LASER_ACQUIRE) != 0;
+      power = getDoubleValue(LASER_POWER);
     }
   }
 
@@ -1487,36 +1594,45 @@ public class ZeissLSMReader extends FormatReader {
 
     protected void read() throws IOException {
       super.read();
-      timeIncrement = new Float(((Double) blockData.get(
-        new Integer(TRACK_ENTRY_TIME_BETWEEN_STACKS))).floatValue());
-      acquire = ((Long) blockData.get(
-        new Integer(TRACK_ENTRY_ACQUIRE))).intValue() != 0;
+      timeIncrement = getFloatValue(TRACK_TIME_BETWEEN_STACKS);
+      acquire = getIntValue(TRACK_ACQUIRE) != 0;
     }
   }
 
   class DetectionChannel extends SubBlock {
     public Float pinhole;
+    public Float gain, amplificationGain;
+    public String filter, filterSet;
+    public String channelName;
 
     protected void read() throws IOException {
       super.read();
-      pinhole = new Float(((Double) blockData.get(
-        new Integer(CHANNEL_ENTRY_PINHOLE_DIAMETER))).floatValue());
-      acquire = ((Long) blockData.get(
-        new Integer(CHANNEL_ENTRY_ACQUIRE))).intValue() != 0;
+      pinhole = new Float(getFloatValue(CHANNEL_PINHOLE_DIAMETER));
+      gain = new Float(getFloatValue(CHANNEL_DETECTOR_GAIN));
+      amplificationGain = new Float(getFloatValue(CHANNEL_AMPLIFIER_GAIN));
+      filter = getStringValue(CHANNEL_FILTER);
+      if (filter != null) {
+        filter = filter.trim();
+        if (filter.length() == 0 || filter.equals("None")) {
+          filter = null;
+        }
+      }
+
+      filterSet = getStringValue(CHANNEL_FILTER_SET);
+      channelName = getStringValue(CHANNEL_NAME);
+      acquire = getIntValue(CHANNEL_ACQUIRE) != 0;
     }
   }
 
   class IlluminationChannel extends SubBlock {
     public Integer wavelength;
+    public Float attenuation;
 
     protected void read() throws IOException {
       super.read();
-      wavelength = new Integer(((Double) blockData.get(
-        new Integer(ILLUM_CHANNEL_WAVELENGTH))).intValue());
-      Long v = (Long) blockData.get(new Integer(ILLUM_CHANNEL_ACQUIRE));
-      if (v != null) {
-        acquire = v.intValue() != 0;
-      }
+      wavelength = new Integer(getIntValue(ILLUM_CHANNEL_WAVELENGTH));
+      attenuation = new Float(getFloatValue(ILLUM_CHANNEL_ATTENUATION));
+      acquire = getIntValue(ILLUM_CHANNEL_ACQUIRE) != 0;
     }
   }
 
@@ -1525,7 +1641,7 @@ public class ZeissLSMReader extends FormatReader {
 
     protected void read() throws IOException {
       super.read();
-      name = (String) blockData.get(new Integer(DATA_CHANNEL_NAME));
+      name = getStringValue(DATA_CHANNEL_NAME);
       for (int i=0; i<name.length(); i++) {
         if (name.charAt(i) < 10) {
           name = name.substring(0, i);
@@ -1533,15 +1649,28 @@ public class ZeissLSMReader extends FormatReader {
         }
       }
 
-      Long v = (Long) blockData.get(new Integer(DATA_CHANNEL_ACQUIRE));
-      if (v != null) {
-        acquire = v.intValue() != 0;
+      acquire = getIntValue(DATA_CHANNEL_ACQUIRE) != 0;
+    }
+  }
+
+  class BeamSplitter extends SubBlock {
+    public String filter, filterSet;
+
+    protected void read() throws IOException {
+      super.read();
+
+      filter = getStringValue(BEAM_SPLITTER_FILTER);
+      if (filter != null) {
+        filter = filter.trim();
+        if (filter.length() == 0 || filter.equals("None")) {
+          filter = null;
+        }
       }
+      filterSet = getStringValue(BEAM_SPLITTER_FILTER_SET);
     }
   }
 
   class Timer extends SubBlock { }
   class Marker extends SubBlock { }
-  class BeamSplitter extends SubBlock { }
 
 }
