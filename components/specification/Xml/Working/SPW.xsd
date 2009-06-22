@@ -49,6 +49,18 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the plate.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="ScreenRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Well" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -60,13 +72,6 @@
 						ID, and so must be unique within the document.
 					</xsd:documentation>
 				</xsd:annotation>		
-			</xsd:attribute>
-			<xsd:attribute name="Description" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						A description for the plate.
-					</xsd:documentation>
-				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Status" use="optional" type="xsd:string">
 				<xsd:annotation>
@@ -186,14 +191,21 @@
 			</xsd:documentation>
 		</xsd:annotation>	   
 		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A long description for the reagent.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ReagentID"/>
-			<xsd:attribute name="Description" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						A long description for the reagent
-					</xsd:documentation>
-				</xsd:annotation>					
-			</xsd:attribute>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -241,19 +253,24 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the screen.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="Reagent" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="PlateRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="ScreenAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ScreenID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
-			<xsd:attribute name="Description" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						A description for the screen.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
 			<xsd:attribute name="ProtocolIdentifier" use="optional" type="xsd:string">
 					<xsd:annotation>
 						<xsd:documentation>

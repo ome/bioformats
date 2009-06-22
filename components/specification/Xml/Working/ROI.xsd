@@ -1,0 +1,449 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#
+	# Copyright (C) 2003-2009 Open Microscopy Environment
+	#       Massachusetts Institute of Technology,
+	#       National Institutes of Health,
+	#       University of Dundee,
+	#       University of Wisconsin at Madison
+	#
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Written by:  Andrew J Patterson 
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/ROI/2008-09"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/ROI/2008-09"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" 
+	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
+	version = "1"
+	elementFormDefault = "qualified">
+	<!-- Using the svn location for import -->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
+	<!-- Using the local directory location for import 
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="BinaryFile.xsd"/>
+	-->
+	<xsd:element name="ROI"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				A four dimensional 'Region of Interest'.
+				If they are not used, and the Image has more than one plane,
+				the entire set of planes is assumed to be included in the ROI.
+				Multiple ROIs may be specified.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice minOccurs="1" maxOccurs="1">
+				<xsd:element name="Union" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+			<xsd:attribute name="ID" use="required" type="ROIID"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Shape"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Channels" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="OME:LogicalChannelRef" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="Rect" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Mask" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Ellipse" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Circle" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Point" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Polygon" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Polyline" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Line" minOccurs="1" maxOccurs="1"/>
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="ShapeID"/>
+			<xsd:attribute name="TheZ" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TheT" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="BasicSvgShape">
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="transform" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>
+					MISSING
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	
+	<xsd:element name="Rect"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:attribute name="x" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="y" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="width" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="height" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Mask"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:sequence>
+						<xsd:element ref="MaskPixels" minOccurs="1" maxOccurs="1"/>
+					</xsd:sequence>
+					<xsd:attribute name="x" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="y" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="width" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="height" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="MaskPixels"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="OME:TiffData" minOccurs="1" maxOccurs="unbounded"/>
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="PixelType" use="required" type="OME:PixelTypes">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="BigEndian" use="required" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>This is true if the pixel data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All pixel data must be written in the same endian order.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
+				<xsd:annotation>
+					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
+				<xsd:annotation>
+					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Circle"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:attribute name="cx" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="cy" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="r" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Point"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:attribute name="cx" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="cy" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="r" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Ellipse"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>		
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:attribute name="cx" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="cy" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="rx" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="ry" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Line"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:attribute name="x1" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="y1" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="x2" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="y2" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Polyline"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:attribute name="points" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Polygon"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicSvgShape">
+					<xsd:attribute name="points" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="ROIRef"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:Reference">
+					<xsd:attribute name="ID" use="required" type="ROIID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:simpleType name="ROIID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ShapeID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(Shape:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

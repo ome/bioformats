@@ -21,10 +21,11 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" 
 	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09" 
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" 
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" 
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-09" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09" 
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09" 
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2008-09" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
@@ -35,14 +36,19 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
-	<!-- Using the local directory location for import 
+	<!-- 
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ROI.xsd"/>
+	-->
+    <!-- Using the local directory location for import 
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" schemaLocation="AnalysisModule.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09" schemaLocation="STD.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="BinaryFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="SPW.xsd"/>http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="SA.xsd"/>
-    -->
+	-->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2008-09" schemaLocation="ROI.xsd"/>
+
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	
 	<xsd:annotation>
@@ -107,7 +113,19 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="CreationDate" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the image.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="AcquiredDate" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ExperimentRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
@@ -115,47 +133,22 @@
 				<xsd:element ref="InstrumentRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ObjectiveSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="Thumbnail" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ImageID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
-			<xsd:attribute name="Description" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						A description for the image.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="DefaultPixels" use="required" type="PixelsID">
-				<xsd:annotation>
-					<xsd:documentation>
-						More than one Pixels element may be associated with an Image. 
-						An Image will however have one "primary" set of Pixels specified with this attribute.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="AcquiredPixels" use="optional" type="PixelsID">
-				<xsd:annotation>
-					<xsd:documentation>
-						Optional. 
-						More than one Pixels element may be associated with an Image. 
-						This attribute indicates the original acquired pixels.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="CreationDate" type="xsd:dateTime"> <!-- top level definition -->
+	<xsd:element name="AcquiredDate" type="xsd:dateTime"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The creation date of the Image - when the Image was acquired.
+				The acquisition date of the Image/
 				The element contains a string in the ISO 8601 dateTime format (i.e. 1988-04-07T18:39:09)
 			</xsd:documentation>
 		</xsd:annotation>
@@ -173,8 +166,9 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:choice minOccurs="1" maxOccurs="1">
-					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
 					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="MetadataOnly" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -201,11 +195,6 @@
 					<xsd:documentation>
 						MISSING
 					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="BigEndian" use="required" type="xsd:boolean">
-				<xsd:annotation>
-					<xsd:documentation>This is true if the pixel data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All pixel data must be written in the same endian order.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
@@ -270,6 +259,13 @@
 			</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="MetadataOnly"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				This place holder means there is on pixel data in this file.
+			</xsd:documentation>
+		</xsd:annotation>
 	</xsd:element>
 	<xsd:element name="TiffData"> <!-- top level definition -->
 		<xsd:annotation>
@@ -453,6 +449,18 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the experiment.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -462,13 +470,6 @@
 				</xsd:element>
 				<xsd:element ref="MicrobeamManipulation" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
-			<xsd:attribute name="Description" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						A description for the experiment.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
 			<xsd:attribute name="Type" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -523,7 +524,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="ROI" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element ref="ROI:ROI" minOccurs="1" maxOccurs="unbounded"/>
 				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LightSourceSettings" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -902,37 +903,93 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
-					<xsd:sequence>
-						<xsd:sequence>
-							<xsd:element ref="Correction" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="Immersion" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="LensNA" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="NominalMagnification" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="CalibratedMagnification" minOccurs="0" maxOccurs="1"/>
-							<xsd:element ref="WorkingDistance" minOccurs="0" maxOccurs="1"/>
-							<xsd:element name="Iris" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
-						</xsd:sequence>
-					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="ObjectiveID"/>
+					<xsd:attribute name="Correction" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>The correction applied to the lens</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="UV"/>
+								<xsd:enumeration value="PlanApo"/>
+								<xsd:enumeration value="PlanFluor"/>
+								<xsd:enumeration value="SuperFluor"/>
+								<xsd:enumeration value="VioletCorrected"/>
+								<xsd:enumeration value="Achro"/>
+								<xsd:enumeration value="Achromat"/>
+								<xsd:enumeration value="Fluor"/>
+								<xsd:enumeration value="Fl"/>
+								<xsd:enumeration value="Fluar"/>
+								<xsd:enumeration value="Neofluar"/>
+								<xsd:enumeration value="Fluotar"/>
+								<xsd:enumeration value="Apo"/>
+								<xsd:enumeration value="PlanNeofluar"/>
+								<xsd:enumeration value="Other"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="Immersion" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>The immersion medium the lens is designed for</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="Oil"/>
+								<xsd:enumeration value="Water"/>
+								<xsd:enumeration value="WaterDipping"/>
+								<xsd:enumeration value="Air"/>
+								<xsd:enumeration value="Multi"/>
+								<xsd:enumeration value="Glycerol"/>
+								<xsd:enumeration value="Other"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="LensNA" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>
+								The numerical aperture of the lens expressed as a floating point (real) number.
+								Expected range 0.02 - 1.5
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:float">
+								<xsd:minInclusive value="0.02"/>
+								<xsd:maxInclusive value="1.5"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="NominalMagnification" use="optional" type="xsd:integer">
+						<xsd:annotation>
+							<xsd:documentation>
+								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="CalibratedMagnification" use="optional"  type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="WorkingDistance" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								The working distance of the lens expressed as a floating point (real) number. Units are um.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Iris" use="optional" type="xsd:boolean">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:simpleType name="Medium"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				A description of a Medium used for the lens.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="Air"/>
-			<xsd:enumeration value="Oil"/>
-			<xsd:enumeration value="Water"/>
-			<xsd:enumeration value="Glycerol"/>
-			<xsd:enumeration value="Other"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	
 	<xsd:element name="Filter"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1023,75 +1080,6 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="NominalMagnification" type="xsd:integer"> <!-- top level definition -->
-			<xsd:annotation>
-			<xsd:documentation>The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens.</xsd:documentation>
-		</xsd:annotation>
-	</xsd:element>
-	<xsd:element name="CalibratedMagnification" type="xsd:float"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens.</xsd:documentation>
-		</xsd:annotation>
-	</xsd:element>
-	<xsd:element name="Correction"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>The correction applied to the lens</xsd:documentation>
-		</xsd:annotation>
-		<xsd:simpleType>
-			<xsd:restriction base="xsd:string">
-				<xsd:enumeration value="UV"/>
-				<xsd:enumeration value="PlanApo"/>
-				<xsd:enumeration value="PlanFluor"/>
-				<xsd:enumeration value="SuperFluor"/>
-				<xsd:enumeration value="VioletCorrected"/>
-				<xsd:enumeration value="Achro"/>
-				<xsd:enumeration value="Achromat"/>
-				<xsd:enumeration value="Fluor"/>
-				<xsd:enumeration value="Fl"/>
-				<xsd:enumeration value="Fluar"/>
-				<xsd:enumeration value="Neofluar"/>
-				<xsd:enumeration value="Fluotar"/>
-				<xsd:enumeration value="Apo"/>
-				<xsd:enumeration value="PlanNeofluar"/>
-				<xsd:enumeration value="Other"/>
-			</xsd:restriction>
-		</xsd:simpleType>
-	</xsd:element>
-	<xsd:element name="Immersion"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>The immersion medium the lens is designed for</xsd:documentation>
-		</xsd:annotation>
-		<xsd:simpleType>
-			<xsd:restriction base="xsd:string">
-				<xsd:enumeration value="Oil"/>
-				<xsd:enumeration value="Water"/>
-				<xsd:enumeration value="WaterDipping"/>
-				<xsd:enumeration value="Air"/>
-				<xsd:enumeration value="Multi"/>
-				<xsd:enumeration value="Glycerol"/>
-				<xsd:enumeration value="Other"/>
-			</xsd:restriction>
-		</xsd:simpleType>	
-	</xsd:element>
-	<xsd:element name="WorkingDistance" type="xsd:float"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number. Units are um.</xsd:documentation>
-		</xsd:annotation>
-	</xsd:element>
-	<xsd:element name="LensNA"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				The numerical aperture of the lens expressed as a floating point (real) number.
-				Expected range 0.02 - 1.5
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:simpleType>
-			<xsd:restriction base="xsd:float">
-				<xsd:minInclusive value="0.02"/>
-				<xsd:maxInclusive value="1.5"/>
-			</xsd:restriction>
-		</xsd:simpleType>
-	</xsd:element>
 	<xsd:element name="FilterSet"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>Filter set manufacturer specification</xsd:documentation>
@@ -1271,34 +1259,7 @@
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
-	<xsd:element name="Thumbnail"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				The thumbnail may be an external URI reference specified by the href attribute, or it may contain an SVG sub-document
-				(denoted by the #wildCard 'element').
-				The MIMEtype is a required attribute, and must be set to 'SVG' if the tag's contents are an SVG document.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:any namespace="http://www.w3.org/2000/svg" processContents="strict" minOccurs="0"/>
-			</xsd:sequence>
-			<xsd:attribute name="href" use="optional" type="xsd:anyURI">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="MIMEtype" use="required" type="MIMEtype">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+
 	<xsd:element name="Project"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1310,18 +1271,23 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the project.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="ID" use="required" type="ProjectID"/>
-			<xsd:attribute name="Description" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						A description for the project.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name="MIMEtype">
@@ -1343,55 +1309,6 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<xsd:simpleType name="LaserMedia">
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="xsd:string">
-			<!-- MetalVaporLaserMedia -->
-			<xsd:enumeration value="Cu"/>
-			<xsd:enumeration value="Ag"/>
-			<!-- ExcimerLaserMedia -->
-			<xsd:enumeration value="ArFl"/>
-			<xsd:enumeration value="ArCl"/>
-			<xsd:enumeration value="KrFl"/>
-			<xsd:enumeration value="KrCl"/>
-			<xsd:enumeration value="XeFl"/>
-			<xsd:enumeration value="XeCl"/>
-			<xsd:enumeration value="XeBr"/>
-			<!-- GasLaserMedia -->
-			<xsd:enumeration value="N"/>
-			<xsd:enumeration value="Ar"/>
-			<xsd:enumeration value="Kr"/>
-			<xsd:enumeration value="Xe"/>
-			<xsd:enumeration value="HeNe"/>
-			<xsd:enumeration value="HeCd"/>
-			<xsd:enumeration value="CO"/>
-			<xsd:enumeration value="CO2"/>
-			<xsd:enumeration value="H2O"/>
-			<xsd:enumeration value="HFl"/>
-			<!-- SolidStateLaserMedia -->
-			<xsd:enumeration value="NdGlass"/>
-			<xsd:enumeration value="NdYAG"/>
-			<xsd:enumeration value="ErGlass"/>
-			<xsd:enumeration value="ErYAG"/>
-			<xsd:enumeration value="HoYLF"/>
-			<xsd:enumeration value="HoYAG"/>
-			<xsd:enumeration value="Ruby"/>
-			<xsd:enumeration value="TiSapphire"/>
-			<xsd:enumeration value="Alexandrite"/>
-			<!-- DyeLaserMedia -->
-			<xsd:enumeration value="Rhodamine6G"/>
-			<xsd:enumeration value="CoumarinC30"/>
-			<!-- SemiconductorLaserMedia -->
-			<xsd:enumeration value="GaAs"/>
-			<xsd:enumeration value="GaAlAs"/>
-			<!-- FreeElectronLaserMedia -->
-			<xsd:enumeration value="EMinus"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 
 	<xsd:simpleType name="PercentFraction">
 		<xsd:annotation>
@@ -1472,16 +1389,6 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:MicrobeamManipulation:\S+)|(MicrobeamManipulation:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="ROIID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="ShapeID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(Shape:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="InstrumentID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Instrument:\S+)|(Instrument:\S+)"/>
@@ -1525,11 +1432,6 @@
 	<xsd:simpleType name="PixelsID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Pixels:\S+)|(Pixels:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="DisplayOptionsID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:DisplayOptions:\S+)|(DisplayOptions:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="LogicalChannelID">
@@ -1685,409 +1587,6 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ROI"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				A four dimensional 'Region of Interest'.  The Z and T coordinates are optional.
-				If they are not used, and the Image has more than one plane,
-				the entire set of planes is assumed to be included in the ROI.
-				Multiple ROIs may be specified.
-				Added ID - ajp
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:choice minOccurs="1" maxOccurs="1">
-				<xsd:element name="Union" minOccurs="1" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
-						</xsd:sequence>
-					</xsd:complexType>
-				</xsd:element>
-			</xsd:choice>
-			<xsd:attribute name="ID" use="required" type="ROIID"/>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="Shape"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Channels" minOccurs="0" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:element ref="LogicalChannelRef" minOccurs="1" maxOccurs="unbounded"></xsd:element>
-						</xsd:sequence>
-					</xsd:complexType>
-				</xsd:element>
-				<xsd:choice minOccurs="1" maxOccurs="1">
-					<xsd:element ref="Rect" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Mask" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Ellipse" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Circle" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Point" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Polygon" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Polyline" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Line" minOccurs="1" maxOccurs="1"/>
-				</xsd:choice>
-			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="ShapeID"/>
-			<xsd:attribute name="theZ" use="optional" type="xsd:integer">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="theT" use="optional" type="xsd:integer">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:complexType name="BasicSvgShape">
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:attribute name="transform" use="optional">
-			<xsd:annotation>
-				<xsd:documentation>
-					MISSING
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-	</xsd:complexType>
-	<xsd:element name="Rect"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="x" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="y" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="width" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="height" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="Mask"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:sequence>
-						<xsd:element ref="MaskPixels" minOccurs="1" maxOccurs="1"/>
-					</xsd:sequence>
-					<xsd:attribute name="x" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="y" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="width" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="height" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="MaskPixels"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:choice minOccurs="1" maxOccurs="1">
-					<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="unbounded"/>
-					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
-				</xsd:choice>
-			</xsd:sequence>
-			<xsd:attribute name="PixelType" use="required" type="PixelTypes">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="BigEndian" use="required" type="xsd:boolean">
-				<xsd:annotation>
-					<xsd:documentation>This is true if the pixel data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All pixel data must be written in the same endian order.</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
-				<xsd:annotation>
-					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
-				<xsd:annotation>
-					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="Circle"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="cx" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="cy" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="r" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="Point"> <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="cx" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="cy" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="r" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="Ellipse"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>		
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="cx" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="cy" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="rx" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="ry" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="Line"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="x1" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="y1" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="x2" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="y2" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="Polyline"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="points" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="Polygon"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="points" use="optional" type="xsd:string">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="ROIRef"> <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="ROIID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
 	
 	<xsd:element name="LightSource"> <!-- top level definition -->
 		<xsd:annotation>
@@ -2144,7 +1643,7 @@
 			<xsd:sequence>
 				<xsd:element ref="ObjectiveSettings" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="Bin:BinaryFile" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="BIN:BinaryFile" minOccurs="1" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
 			<xsd:attribute name="PixelType" use="required" type="PixelTypes">
@@ -2191,6 +1690,18 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the dataset.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ProjectRef" minOccurs="0" maxOccurs="unbounded"/>
@@ -2207,13 +1718,6 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="Description" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						A description for the dataset.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -2384,12 +1888,58 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="LaserMedium" use="required" type="LaserMedia">
+			<xsd:attribute name="LaserMedium" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						MISSING
 					</xsd:documentation>
 				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<!-- MetalVaporLaserMedia -->
+						<xsd:enumeration value="Cu"/>
+						<xsd:enumeration value="Ag"/>
+						<!-- ExcimerLaserMedia -->
+						<xsd:enumeration value="ArFl"/>
+						<xsd:enumeration value="ArCl"/>
+						<xsd:enumeration value="KrFl"/>
+						<xsd:enumeration value="KrCl"/>
+						<xsd:enumeration value="XeFl"/>
+						<xsd:enumeration value="XeCl"/>
+						<xsd:enumeration value="XeBr"/>
+						<!-- GasLaserMedia -->
+						<xsd:enumeration value="N"/>
+						<xsd:enumeration value="Ar"/>
+						<xsd:enumeration value="Kr"/>
+						<xsd:enumeration value="Xe"/>
+						<xsd:enumeration value="HeNe"/>
+						<xsd:enumeration value="HeCd"/>
+						<xsd:enumeration value="CO"/>
+						<xsd:enumeration value="CO2"/>
+						<xsd:enumeration value="H2O"/>
+						<xsd:enumeration value="HFl"/>
+						<!-- SolidStateLaserMedia -->
+						<xsd:enumeration value="NdGlass"/>
+						<xsd:enumeration value="NdYAG"/>
+						<xsd:enumeration value="ErGlass"/>
+						<xsd:enumeration value="ErYAG"/>
+						<xsd:enumeration value="HoYLF"/>
+						<xsd:enumeration value="HoYAG"/>
+						<xsd:enumeration value="Ruby"/>
+						<xsd:enumeration value="TiSapphire"/>
+						<xsd:enumeration value="Alexandrite"/>
+						<!-- DyeLaserMedia -->
+						<xsd:enumeration value="Rhodamine6G"/>
+						<xsd:enumeration value="CoumarinC30"/>
+						<!-- SemiconductorLaserMedia -->
+						<xsd:enumeration value="GaAs"/>
+						<xsd:enumeration value="GaAlAs"/>
+						<!-- FreeElectronLaserMedia -->
+						<xsd:enumeration value="EMinus"/>
+						<!-- OtherLaserMedia -->
+						<xsd:enumeration value="Other"/>
+					</xsd:restriction>
+				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
@@ -2417,7 +1967,8 @@
 					<xsd:documentation>
 						MISSING
 					</xsd:documentation>
-				</xsd:annotation>				<xsd:simpleType>
+				</xsd:annotation>
+				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="CW"/>
 						<xsd:enumeration value="Single"/>
@@ -2537,26 +2088,31 @@
 					<xsd:attribute name="ReadOutRate" use="optional" type="xsd:float">
 						<xsd:annotation><xsd:documentation>The speed at which the detector can count pixels. Units of ReadOutRate is MHz. This is the bytes per second that can be read from the detector (like a baud rate). </xsd:documentation></xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="Binning" use="optional" type="Binning">
-						<xsd:annotation><xsd:documentation>Represents the number of pixels that are combined to form larger pixels.</xsd:documentation></xsd:annotation>
+					<xsd:attribute name="Binning" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>
+								Represents the number of pixels that are combined to form larger pixels.
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:annotation>
+								<xsd:documentation>
+									Predefined list of values for the number of pixels that can be combined to form larger pixels.
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="1x1"/>
+								<xsd:enumeration value="2x2"/>
+								<xsd:enumeration value="4x4"/>
+								<xsd:enumeration value="8x8"/>
+								<xsd:enumeration value="Other"/>
+							</xsd:restriction>
+						</xsd:simpleType>	
 					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:simpleType name="Binning">
-		<xsd:annotation>
-			<xsd:documentation>
-				Predefined list of values for the number of pixels that can be combined to form larger pixels.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="1x1"/>
-			<xsd:enumeration value="2x2"/>
-			<xsd:enumeration value="4x4"/>
-			<xsd:enumeration value="8x8"/>
-		</xsd:restriction>
-	</xsd:simpleType>	
 	<xsd:element name="Pump"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -2590,7 +2146,22 @@
 				<xsd:extension base="Settings">
 					<xsd:attribute name="ID" use="required" type="ObjectiveID"/>
 					<xsd:attribute name="CorrectionCollar" use="optional" type="xsd:float"/>
-					<xsd:attribute name="Medium" use="optional" type="Medium"/>
+					<xsd:attribute name="Medium" use="optional">
+						<xsd:simpleType>
+							<xsd:annotation>
+								<xsd:documentation>
+									A description of a Medium used for the lens.
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="Air"/>
+								<xsd:enumeration value="Oil"/>
+								<xsd:enumeration value="Water"/>
+								<xsd:enumeration value="Glycerol"/>
+								<xsd:enumeration value="Other"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
 					<xsd:attribute name="RefractiveIndex" use="optional" type="xsd:float">
 						<xsd:annotation><xsd:documentation>This is unit-less, it is a ratio.</xsd:documentation></xsd:annotation>
 					</xsd:attribute>
