@@ -26,6 +26,7 @@
         <file name="ome.xsd"/>
         <file name="OMERO.xsd"/>
         <file name="ProposedChanges.txt"/>
+        <file name="ROI.xsd"/>
         <file name="SA.xsd"/>
         <file name="SPW.xsd"/>
         <file name="STD.xsd"/>

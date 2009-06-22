@@ -79,6 +79,13 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
+					<xsd:attribute name="BigEndian" use="required" type="xsd:boolean">
+						<xsd:annotation>
+							<xsd:documentation>
+								This is true if the binary data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All Binary data must be written in the same endian order.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 					<xsd:attribute name="Length" use="required">
 						<xsd:annotation>
 							<xsd:documentation>Character count attribute for the BinData field. This is the length of the base-64 encoded block. It allows easy skipping of the block when parsing the file.
