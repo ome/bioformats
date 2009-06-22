@@ -30,6 +30,7 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="ome.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="BinaryFile.xsd"/>
 	-->
+	
 	<xsd:element name="ROI"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -97,7 +98,7 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="BasicSvgShape">
+	<xsd:complexType name="BasicSvgShape"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				MISSING
@@ -198,6 +199,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+
 	<xsd:element name="MaskPixels"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -436,14 +438,16 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:simpleType name="ROIID">
+	<xsd:simpleType name="ROIID"> <!-- top level definition -->
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="ShapeID">
+	
+	<xsd:simpleType name="ShapeID"> <!-- top level definition -->
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(Shape:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	
 </xsd:schema>
