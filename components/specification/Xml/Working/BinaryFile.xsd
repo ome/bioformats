@@ -88,8 +88,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 					</xsd:attribute>
 					<xsd:attribute name="Length" use="required">
 						<xsd:annotation>
-							<xsd:documentation>Character count attribute for the BinData field. This is the length of the base-64 encoded block. It allows easy skipping of the block when parsing the file.
-							Added in response to Evolution document - ajp</xsd:documentation>
+							<xsd:documentation>
+								Character count attribute for the BinData field. This is the length of the base-64 encoded block. It allows easy skipping of the block when parsing the file.
+							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:nonNegativeInteger">

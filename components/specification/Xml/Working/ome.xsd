@@ -148,7 +148,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="InstrumentRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ObjectiveSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Channel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
@@ -312,10 +312,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="LogicalChannel"> <!-- top level definition -->
+	<xsd:element name="Channel"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				There must be one per channel in the Image, even for a single-plane image.  In OME, Channels (e.g. 'FITC', 'Texas Red', etc) are specified as Logical Channels,
+				There must be one per channel in the Image, even for a single-plane image.  
 				And information about how each of them was acquired is stored in the various optional *Ref elements.  Each Logical Channel is composed of one or more
 				ChannelComponents.  For example, an entire spectrum in an FTIR experiment may be stored in a single Logical Channel with each discrete wavenumber of the spectrum
 				constituting a ChannelComponent of the FTIR Logical Channel.  An RGB image where the Red, Green and Blue components do not reflect discrete probes but are
@@ -344,9 +344,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="OTFRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="DetectorSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="ChannelComponent" minOccurs="1" maxOccurs="unbounded"/>
 			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="LogicalChannelID">
+			<xsd:attribute name="ID" use="required" type="ChannelID">
 				<xsd:annotation>
 					<xsd:documentation>
 						MISSING
@@ -404,25 +403,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhotometricInterpretation" default="Monochrome" use="optional">
-				<xsd:annotation>
-					<xsd:documentation>
-						To Do - Add more documentation - ajp
-						Added ColorMap - ajp
-					</xsd:documentation>
-				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Monochrome"/>
-						<xsd:enumeration value="RGB"/>
-						<xsd:enumeration value="ARGB"/>
-						<xsd:enumeration value="CMYK"/>
-						<xsd:enumeration value="HSV"/>
-						<xsd:enumeration value="ColorMap"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
-			<xsd:attribute name="Mode" use="optional">
+			<xsd:attribute name="AcquisitionMode" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						MISSING
@@ -503,15 +484,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="ChannelComponent"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				Logical Channels are composed of ChannelComponents.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
 			<xsd:attribute name="Pixels" use="required" type="PixelsID"/>
 			<xsd:attribute name="Alpha" use="optional" type="xsd:integer" default="255">
 				<xsd:annotation>
@@ -1031,7 +1003,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				FRAP Photoablation Optical-Trapping Photoactivation Fluorescence-Lifetime Spectral-Imaging Other
 				FP refers to fluorescent proteins, PGI/Docuemntation is not a 'data' image.
 				The optional Description element may contain free text to further describe the experiment.
-				Added Type Photobleaching - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1051,7 +1022,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							This is a link to the Experimenter who conducted the experiment - ajp
+							This is a link to the Experimenter who conducted the experiment
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
@@ -1362,8 +1333,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				The type of detector used to capture the image.
 				The Detector ID can be used as a reference within the LogicalChannel element in the Image element.
 				The Type attribute can be set to 'CCD','Intensified-CCD','Analog-Video','PMT','Photodiode','Spectroscopy','Life-time-Imaging','Correlation-Spectroscopy','FTIR'.
-				Added new types EMCCD, APD, and CMOS - ajp
-				Added new optional attributes AmplificationGain and Zoom - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1393,7 +1362,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								MISSING - same as Confocal Zoom?
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1860,11 +1829,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="LogicalChannelRef"> <!-- top level definition -->
+	<xsd:element name="ChannelRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
+					<xsd:attribute name="ID" use="required" type="ChannelID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -2118,8 +2087,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:simpleType name="LSID">
 		<xsd:annotation>
 			<xsd:documentation>
-				Either LSID or internal consistent IDs for the file - ajp
-				To Do - Put in some samples of valid lsid and internal ID - ajp
+				Either LSID or internal consistent IDs for the file
+				MISSING - TODO - Put in some samples of valid lsid and internal ID
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
@@ -2211,9 +2180,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Pixels:\S+)|(Pixels:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="LogicalChannelID">
+	<xsd:simpleType name="ChannelID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:LogicalChannel:\S+)|(LogicalChannel:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Channel:\S+)|(Channel:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ModuleID">

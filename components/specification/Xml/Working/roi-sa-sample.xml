@@ -68,7 +68,7 @@
 			<sa:Link>Shape:3</sa:Link>
 			<sa:Link>Shape:2</sa:Link>
 			<sa:Value>
-				<omero:RoiDisplay
+				<omero:ROIDisplay
 					fill-opacity="0.25098039215686274" fill-rule="evenodd"
 					stroke="#c4c4c4" stroke-dashoffset="0" stroke-linecap="butt"
 					stroke-linejoin="miter" stroke-miterlimit="3"
@@ -79,7 +79,7 @@
 		<sa:XmlAnnotation ID="Annotation:4" Namespace="ome:omero:insight:roi:svg">
 			<sa:Link>Shape:1</sa:Link>
 			<sa:Value>
-				<omero:RoiDisplay
+				<omero:ROIDisplay
 					fill="#c4c4c4" fill-opacity="0.7686274509803922"
 					font-family="Verdana" font-size="12" font-style="normal" 
 					font-variant="normal" font-weight="normal"
