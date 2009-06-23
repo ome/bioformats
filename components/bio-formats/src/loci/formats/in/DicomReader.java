@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -33,6 +34,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -320,7 +322,6 @@ public class DicomReader extends FormatReader {
     }
     else {
       // plane is not compressed
-
       int c = isIndexed() ? 1 : getSizeC();
       in.skipBytes(y * c * bpp * getSizeX());
 
@@ -345,20 +346,7 @@ public class DicomReader extends FormatReader {
       }
     }
 
-    // apply rescale function, if the data is signed
-    // we don't apply the rescale function to unsigned data because it can
-    // result in negative values (which cannot be properly handled if the
-    // data is unsigned)
-
-    if (getPixelType() == FormatTools.INT8 ||
-      getPixelType() == FormatTools.INT16)
-    {
-      for (int i=0; i<w * h; i++) {
-        int pixel = DataTools.bytesToInt(buf, i * bpp, bpp, isLittleEndian());
-        pixel = (int) (pixel * rescaleSlope + rescaleIntercept);
-        DataTools.unpackBytes(pixel, buf, i * bpp, bpp, isLittleEndian());
-      }
-    }
+    // NB: do *not* apply the rescale function
 
     return buf;
   }
@@ -634,14 +622,24 @@ public class DicomReader extends FormatReader {
         while (instanceNumber > fileList.size()) fileList.add(null);
         fileList.add(currentId);
       }
+      int timestamp = 0;
+      try {
+        timestamp = Integer.parseInt(originalTime);
+      }
+      catch (NumberFormatException e) { }
 
-      Location directory =
-        new Location(currentId).getAbsoluteFile().getParentFile();
+      Location currentFile = new Location(currentId).getAbsoluteFile();
+      Location directory = currentFile.getParentFile();
+      FilePattern pattern =
+        new FilePattern(currentFile.getName(), directory.getAbsolutePath());
+      String[] patternFiles = pattern.getFiles();
+      Arrays.sort(patternFiles);
       String[] files = directory.list();
+      Arrays.sort(files);
       for (int i=0; i<files.length; i++) {
         String file = new Location(directory, files[i]).getAbsolutePath();
         if (!files[i].equals(currentId) && !file.equals(currentId) &&
-          isThisType(files[i]))
+          isThisType(files[i]) && Arrays.binarySearch(patternFiles, file) >= 0)
         {
           RandomAccessInputStream stream = new RandomAccessInputStream(file);
           stream.order(true);
@@ -671,10 +669,24 @@ public class DicomReader extends FormatReader {
 
           if (date == null || time == null || instance == null) continue;
 
-          if (date.equals(originalDate) && time.equals(originalTime)) {
+          int stamp = 0;
+          try {
+            stamp = Integer.parseInt(time);
+          }
+          catch (NumberFormatException e) { }
+
+          if (date.equals(originalDate) && (stamp - timestamp < 100)) {
             int position = Integer.parseInt(instance) - 1;
             if (position < fileList.size()) {
-              fileList.setElementAt(file, position);
+              while (position < fileList.size() &&
+                fileList.get(position) != null)
+              {
+                position++;
+              }
+              if (position < fileList.size()) {
+                fileList.setElementAt(file, position);
+              }
+              else fileList.add(file);
             }
             else {
               while (position > fileList.size()) {
