@@ -852,6 +852,17 @@ public class LeicaReader extends FormatReader {
         core[i].sizeZ = 1;
         core[i].sizeT = 1;
       }
+      if (getSizeY() == 1) {
+        // XZ or XT scan
+        if (getSizeZ() > 1 && getImageCount() == getSizeC() * getSizeT()) {
+          core[i].sizeY = getSizeZ();
+          core[i].sizeZ = 1;
+        }
+        else if (getSizeT() > 1 && getImageCount() == getSizeC() * getSizeZ()) {
+          core[i].sizeY = getSizeT();
+          core[i].sizeT = 1;
+        }
+      }
       if (isRGB()) core[i].indexed = false;
 
       if (getDimensionOrder().indexOf("C") == -1) {
