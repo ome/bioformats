@@ -294,6 +294,12 @@ public class OMETiffReader extends FormatReader {
           int c = firstC == null ? 0 : firstC.intValue();
           int t = firstT == null ? 0 : firstT.intValue();
           int z = firstZ == null ? 0 : firstZ.intValue();
+
+          // NB: some writers index FirstC, FirstZ and FirstT from 1
+          if (c >= effSizeC) c--;
+          if (z >= sizeZ) z--;
+          if (t >= sizeT) t--;
+
           int index = FormatTools.getIndex(order,
             sizeZ, effSizeC, sizeT, num, z, c, t);
           int count = numPlanes == null ? 1 : numPlanes.intValue();
@@ -366,8 +372,18 @@ public class OMETiffReader extends FormatReader {
           debug("    Plane[" + no + "]: file=" +
             planes[no].id + ", IFD=" + planes[no].ifd);
           if (planes[no].reader == null) {
-            throw new FormatException("Pixels ID '" +
-              meta.getPixelsID(i, p) + "': missing plane #" + no);
+            warn("Pixels ID '" + meta.getPixelsID(i, p) + "': missing plane #" +
+              no + ".  Using TiffReader to determine the number of planes.");
+            TiffReader r = new TiffReader();
+            r.setId(currentId);
+            planes = new OMETiffPlane[r.getImageCount()];
+            for (int plane=0; plane<planes.length; plane++) {
+              planes[plane] = new OMETiffPlane();
+              planes[plane].id = currentId;
+              planes[plane].reader = r;
+              planes[plane].ifd = plane;
+            }
+            num = planes.length;
           }
         }
         debug("  }");
@@ -403,9 +419,29 @@ public class OMETiffReader extends FormatReader {
           core[s].orderCertain = true;
           int photo = TiffTools.getPhotometricInterpretation(firstIFD);
           core[s].rgb = samples > 1 || photo == TiffTools.RGB;
-          if (samples != core[s].sizeC && (samples % core[s].sizeC) != 0) {
+          if (samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
+            (core[s].sizeC % samples) != 0)
+          {
             core[s].sizeC *= samples;
           }
+
+          if (core[s].sizeZ * core[s].sizeT * core[s].sizeC >
+            core[s].imageCount && !core[s].rgb)
+          {
+            if (core[s].sizeZ == core[s].imageCount) {
+              core[s].sizeT = 1;
+              core[s].sizeC = 1;
+            }
+            else if (core[s].sizeT == core[s].imageCount) {
+              core[s].sizeZ = 1;
+              core[s].sizeC = 1;
+            }
+            else if (core[s].sizeC == core[s].imageCount) {
+              core[s].sizeT = 1;
+              core[s].sizeZ = 1;
+            }
+          }
+
           core[s].littleEndian = !meta.getPixelsBigEndian(i, p).booleanValue();
           boolean tiffLittleEndian = TiffTools.isLittleEndian(firstIFD);
           if (core[s].littleEndian != tiffLittleEndian) {
