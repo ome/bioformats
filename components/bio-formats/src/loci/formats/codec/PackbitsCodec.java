@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -58,24 +59,30 @@ public class PackbitsCodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    long fp = in.getFilePointer();
     // Adapted from the TIFF 6.0 specification, page 42.
     ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
-    while (output.size() < options.maxBytes &&
-      in.getFilePointer() < in.length())
-    {
-      byte n = in.readByte();
+    int nread = 0;
+    BufferedInputStream s = new BufferedInputStream(in, 262144);
+    while (output.size() < options.maxBytes) {
+      byte n = (byte) (s.read() & 0xff);
+      nread++;
       if (n >= 0) { // 0 <= n <= 127
         byte[] b = new byte[n + 1];
-        in.read(b);
+        s.read(b);
+        nread += n + 1;
         output.write(b);
         b = null;
       }
       else if (n != -128) { // -127 <= n <= -1
         int len = -n + 1;
-        byte inp = in.readByte();
+        byte inp = (byte) (s.read() & 0xff);
+        nread++;
         for (int i=0; i<len; i++) output.write(inp);
       }
     }
+    s.close();
+    in.seek(fp + nread);
     return output.toByteArray();
   }
 }
