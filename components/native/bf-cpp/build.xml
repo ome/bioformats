@@ -177,7 +177,8 @@ from the Subversion repository using the command:
         </exec>
 <echo>
 Please use Visual Studio to complete the build.
-In Visual Studio, press F7, or select "Build solution" from the "Build" menu.
+In Visual Studio, press F7, or select
+"Build solution" from the "Build" menu.
 </echo>
       </then>
       <else>

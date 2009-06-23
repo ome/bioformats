@@ -58,7 +58,6 @@ set(Boost_ADDITIONAL_VERSIONS "1.37" "1.37.0" "1.37.1" "1.38" "1.38.0" "1.38.1"
   "1.42" "1.42.0" "1.42.1" "1.43" "1.43.0" "1.43.1" "1.44" "1.44.0" "1.44.1")
 #set(Boost_FIND_QUIETLY ON)
 find_package(Boost)
-  message(STATUS "boost headers : ${Boost_INCLUDE_DIR}")
 if(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
   message(STATUS "boost headers : ${Boost_INCLUDE_DIR}")
 else(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
@@ -74,14 +73,13 @@ if(WIN32)
 endif(WIN32)
 find_package(Boost COMPONENTS thread REQUIRED)
 
-# NB: Necessary on Windows to test for Boost Thread when
-#     multiple semicolon-separated files are identified.
+# HACK: Make linking to Boost work on Windows systems.
 string(REGEX REPLACE "/[^/]*$" ""
   Boost_STRIPPED_LIB_DIR "${Boost_THREAD_LIBRARY_DEBUG}")
 
 if(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
   message(STATUS "boost lib dir : ${Boost_STRIPPED_LIB_DIR}")
-  message(STATUS "thread lib    : ${Boost_THREAD_LIBRARY}")
+  message(STATUS "thread lib    : ${Boost_THREAD_LIBRARY_DEBUG}")
 else(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
   message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
 endif(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
@@ -116,7 +114,7 @@ add_library(jace SHARED ${JACE_SRC})
 if(WIN32)
   target_link_libraries(jace "${JAVA_JVM_LIBRARY}")
 else(WIN32)
-  target_link_libraries(jace "${JAVA_JVM_LIBRARY}" ${Boost_THREAD_LIBRARY})
+  target_link_libraries(jace "${JAVA_JVM_LIBRARY}" ${Boost_THREAD_LIBRARY_DEBUG})
 endif(WIN32)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
