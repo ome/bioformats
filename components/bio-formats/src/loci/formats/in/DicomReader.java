@@ -612,7 +612,7 @@ public class DicomReader extends FormatReader {
     status("Building file list");
 
     if (fileList == null && originalInstance != null && originalDate != null &&
-      originalTime != null)
+      originalTime != null && isGroupFiles())
     {
       fileList = new Vector<String>();
 
