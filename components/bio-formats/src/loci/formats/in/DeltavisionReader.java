@@ -24,11 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -130,9 +128,8 @@ public class DeltavisionReader extends FormatReader {
 
     // read the image plane's pixel data
     int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
-    long offset = HEADER_LENGTH + extSize;
     long planeOffset = (long) getSizeX() * getSizeY() * bytesPerPixel * no;
-    in.seek(offset + planeOffset);
+    in.seek(HEADER_LENGTH + extSize + planeOffset);
     readPlane(in, x, y, w, h, buf);
 
     return buf;
@@ -146,6 +143,8 @@ public class DeltavisionReader extends FormatReader {
     extSize = wSize = zSize = tSize = 0;
     numIntsPerSection = numFloatsPerSection = 0;
     extHdrFields = null;
+    ndFilters = null;
+    logFile = deconvolutionLogFile = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -193,13 +192,36 @@ public class DeltavisionReader extends FormatReader {
     int yAxisSeq = in.readInt();
     int zAxisSeq = in.readInt();
 
-    in.seek(160);
+    float[] minWave = new float[5];
+    float[] maxWave = new float[5];
+
+    minWave[0] = in.readFloat();
+    maxWave[0] = in.readFloat();
+
+    float meanIntensity = in.readFloat();
+    int spaceGroupNumber = in.readInt();
+
+    extSize = in.readInt();
+
+    in.seek(128);
+    numIntsPerSection = in.readShort();
+    numFloatsPerSection = in.readShort();
+
+    short numSubResSets = in.readShort();
+    short zAxisReductionQuotient = in.readShort();
+
+    for (int i=1; i<=3; i++) {
+      minWave[i] = in.readFloat();
+      maxWave[i] = in.readFloat();
+    }
 
     int type = in.readShort();
-
     int lensID = in.readShort();
 
-    in.seek(180);
+    in.seek(172);
+
+    minWave[4] = in.readFloat();
+    maxWave[4] = in.readFloat();
 
     int rawSizeT = in.readShort();
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
@@ -229,38 +251,6 @@ public class DeltavisionReader extends FormatReader {
       // Make sure that "null" characters are stripped out
       title[i] = in.readString(80).replaceAll("\0", "");
     }
-
-    long fp = in.getFilePointer();
-
-    in.seek(76);
-
-    float[] minWave = new float[5];
-    float[] maxWave = new float[5];
-
-    minWave[0] = in.readFloat();
-    maxWave[0] = in.readFloat();
-
-    float meanIntensity = in.readFloat();
-    int spaceGroupNumber = in.readInt();
-
-    extSize = in.readInt();
-
-    in.seek(128);
-    numIntsPerSection = in.readShort();
-    numFloatsPerSection = in.readShort();
-
-    short numSubResSets = in.readShort();
-    short zAxisReductionQuotient = in.readShort();
-
-    for (int i=1; i<=3; i++) {
-      minWave[i] = in.readFloat();
-      maxWave[i] = in.readFloat();
-    }
-
-    in.seek(172);
-
-    minWave[4] = in.readFloat();
-    maxWave[4] = in.readFloat();
 
     // --- compute some secondary values ---
 
@@ -445,8 +435,6 @@ public class DeltavisionReader extends FormatReader {
 
     status("Reading extended header");
 
-    in.seek(fp);
-
     setOffsetInfo(sequence, sizeZ, sizeC, sizeT);
     extHdrFields = new DVExtHdrFields[sizeZ][sizeC][sizeT];
 
@@ -479,19 +467,6 @@ public class DeltavisionReader extends FormatReader {
       // programmatically access any given extended header field.
       String prefix = "Extended header Z" + z + " W" + w + " T" + t;
       addMeta(prefix, hdr);
-      //addMeta(prefix + " - Photosensor reading", hdr.photosensorReading);
-      //addMeta(prefix + " - Time stamp (in s)", hdr.timeStampSeconds);
-      //addMeta(prefix + " - X stage coordinates", hdr.stageXCoord);
-      //addMeta(prefix + " - Y stage coordinates", hdr.stageYCoord);
-      //addMeta(prefix + " - Z stage coordinates", hdr.stageZCoord);
-      //addMeta(prefix + " - Minimum intensity", hdr.minInten);
-      //addMeta(prefix + " - Maximum intensity", hdr.maxInten);
-      //addMeta(prefix + " - Exposure time (in ms)", hdr.expTime);
-      //addMeta(prefix + " - Neutral density value", hdr.ndFilter);
-      //addMeta(prefix + " - Excitation filter wavelength", hdr.exWavelen);
-      //addMeta(prefix + " - Emission filter wavelength", hdr.emWavelen);
-      //addMeta(prefix + " - Intensity scaling factor", hdr.intenScaling);
-      //addMeta(prefix + " - Energy conversion factor", hdr.energyConvFactor);
 
       // -- record OME metadata --
 
@@ -499,7 +474,7 @@ public class DeltavisionReader extends FormatReader {
       if (!logFound) {
         store.setPlaneTimingDeltaT(new Float(hdr.timeStampSeconds), 0, 0, i);
       }
-      store.setPlaneTimingExposureTime(new Float(hdr.expTime / 1000f), 0, 0, i);
+      store.setPlaneTimingExposureTime(new Float(hdr.expTime), 0, 0, i);
 
       // stage position
       if (!logFound) {
@@ -532,6 +507,7 @@ public class DeltavisionReader extends FormatReader {
     int numWaves, int numTimes)
   {
     int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
+
     switch (imgSequence) {
       // ZTW sequence
       case 0:
@@ -590,12 +566,11 @@ public class DeltavisionReader extends FormatReader {
       if (colon != -1) {
         if (line.startsWith("Created")) {
           key = "Created";
-          value = line.substring(7).trim();
+          colon = 6;
         }
-        else {
-          key = line.substring(0, colon).trim();
-          value = line.substring(colon + 1).trim();
-        }
+        else key = line.substring(0, colon).trim();
+
+        value = line.substring(colon + 1).trim();
         if (value.equals("") && !key.equals("")) prefix = key;
         addMeta(prefix + " " + key, value);
 
@@ -644,40 +619,22 @@ public class DeltavisionReader extends FormatReader {
           store.setObjectiveID("Objective:" + value, 0, 0);
           store.setObjectiveSettingsObjective("Objective:" + value, 0);
         }
-        //else if (key.equals("Aux Magn")) { }
         // Image properties
         else if (key.equals("Pixel Size")) {
           String[] pixelSizes = value.split(" ");
-          Float x = null, y = null, z = null;
 
-          if (pixelSizes.length >= 1) {
+          for (int q=0; q<pixelSizes.length; q++) {
+            Float size = null;
             try {
-              x = new Float(pixelSizes[0].trim());
+              size = new Float(pixelSizes[q].trim());
             }
             catch (NumberFormatException e) {
-              warn("Could not parse pixel size '" + pixelSizes[0].trim() + "'");
+              warn("Could not parse pixel size '" + pixelSizes[q].trim() + "'");
             }
+            if (q == 0) store.setDimensionsPhysicalSizeX(size, 0, 0);
+            if (q == 1) store.setDimensionsPhysicalSizeY(size, 0, 0);
+            if (q == 2) store.setDimensionsPhysicalSizeZ(size, 0, 0);
           }
-          if (pixelSizes.length >= 2) {
-            try {
-              y = new Float(pixelSizes[1].trim());
-            }
-            catch (NumberFormatException e) {
-              warn("Could not parse pixel size '" + pixelSizes[1].trim() + "'");
-            }
-          }
-          if (pixelSizes.length >= 3) {
-            try {
-              z = new Float(pixelSizes[2].trim());
-            }
-            catch (NumberFormatException e) {
-              warn("Could not parse pixel size '" + pixelSizes[2].trim() + "'");
-            }
-          }
-
-          store.setDimensionsPhysicalSizeX(x, 0, 0);
-          store.setDimensionsPhysicalSizeY(y, 0, 0);
-          store.setDimensionsPhysicalSizeZ(z, 0, 0);
         }
         else if (key.equals("Binning")) {
           for (int c=0; c<getSizeC(); c++) {
@@ -724,7 +681,6 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         // Plane properties
-        //else if (key.equals("Time")) { }
         else if (key.equals("Time Point")) {
           int space = value.indexOf(" ");
           if (space >= 0) value = value.substring(0, space);
@@ -735,8 +691,6 @@ public class DeltavisionReader extends FormatReader {
             warn("Could not parse timestamp '" + value + "'");
           }
         }
-        //else if (key.equals("Intensity")) { }
-        //else if (key.equals("EX filter")) { }
         else if (key.equals("EM filter")) {
           int cIndex = 0;
           try {
@@ -767,39 +721,18 @@ public class DeltavisionReader extends FormatReader {
           }
           String[] coords = value.split(",");
           for (int i=0; i<coords.length; i++) {
-            coords[i] = coords[i].trim();
-          }
-
-          Float x = null, y = null, z = null;
-
-          if (coords.length >= 1) {
+            Float p = null;
             try {
-              x = new Float(coords[0]);
+              p = new Float(coords[i].trim());
             }
             catch (NumberFormatException e) {
-              warn("Could not parse stage coordinate '" + coords[0] + "'");
+              warn("Could not parse stage coordinate '" + coords[i] + "'");
             }
-          }
-          if (coords.length >= 2) {
-            try {
-              y = new Float(coords[1]);
-            }
-            catch (NumberFormatException e) {
-              warn("Could not parse stage coordinate '" + coords[0] + "'");
-            }
-          }
-          if (coords.length >= 3) {
-            try {
-              z = new Float(coords[2]);
-            }
-            catch (NumberFormatException e) {
-              warn("Could not parse stage coordinate '" + coords[0] + "'");
-            }
-          }
 
-          store.setStagePositionPositionX(x, 0, 0, currentImage);
-          store.setStagePositionPositionY(y, 0, 0, currentImage);
-          store.setStagePositionPositionZ(z, 0, 0, currentImage);
+            if (i == 0) store.setStagePositionPositionX(p, 0, 0, currentImage);
+            if (i == 1) store.setStagePositionPositionY(p, 0, 0, currentImage);
+            if (i == 2) store.setStagePositionPositionZ(p, 0, 0, currentImage);
+          }
 
           currentImage++;
         }
@@ -807,12 +740,9 @@ public class DeltavisionReader extends FormatReader {
       else if (line.startsWith("Image")) prefix = line;
       else if (line.startsWith("Created")) {
         if (line.length() > 8) line = line.substring(8).trim();
-        SimpleDateFormat parse =
-          new SimpleDateFormat("EEE MMM  d HH:mm:ss yyyy");
-        Date date = parse.parse(line, new ParsePosition(0));
+        String date = DataTools.formatDate(line, "EEE MMM  d HH:mm:ss yyyy");
         if (date != null) {
-          SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-          store.setImageCreationDate(fmt.format(date), 0);
+          store.setImageCreationDate(date, 0);
         }
         else {
           warn("Could not parse date '" + line + "'");
@@ -847,24 +777,24 @@ public class DeltavisionReader extends FormatReader {
 
       if (doStatistics) {
         String[] keys = line.split("  ");
-        Vector realKeys = new Vector();
+        Vector<String> realKeys = new Vector<String>();
         for (int i=0; i<keys.length; i++) {
           keys[i] = keys[i].trim();
           if (keys[i].length() > 0) realKeys.add(keys[i]);
         }
-        keys = (String[]) realKeys.toArray(new String[0]);
+        keys = realKeys.toArray(new String[0]);
 
         s.readLine();
 
         line = s.readLine().trim();
         while (line != null && line.length() != 0) {
           String[] values = line.split(" ");
-          Vector realValues = new Vector();
+          Vector<String> realValues = new Vector<String>();
           for (int i=0; i<values.length; i++) {
             values[i] = values[i].trim();
             if (values[i].length() > 0) { realValues.add(values[i]); }
           }
-          values = (String[]) realValues.toArray(new String[0]);
+          values = realValues.toArray(new String[0]);
 
           try {
             if (values.length > 0) {
@@ -981,20 +911,11 @@ public class DeltavisionReader extends FormatReader {
     /** Maxiumum intensity. */
     public float maxInten;
 
-    ///** Mean intesity. */
-    //public float meanInten;
-
     /** Exposure time in milliseconds. */
     public float expTime;
 
     /** Neutral density value. */
     public float ndFilter;
-
-    ///** Excitation filter number. */
-    //public float exFilter;
-
-    ///** Emission filter number. */
-    //public float emFilter;
 
     /** Excitation filter wavelength. */
     public float exWavelen;
@@ -1028,16 +949,10 @@ public class DeltavisionReader extends FormatReader {
       sb.append(minInten);
       sb.append("\nmaxInten: ");
       sb.append(maxInten);
-      //sb.append("\nmeanInten: ");
-      //sb.append(meanInten);
       sb.append("\nexpTime: ");
       sb.append(expTime);
       sb.append("\nndFilter: ");
       sb.append(ndFilter);
-      //sb.append("\nexFilter: ");
-      //sb.append(exFilter);
-      //sb.append("\nemFilter: ");
-      //sb.append(emFilter);
       sb.append("\nexWavelen: ");
       sb.append(exWavelen);
       sb.append("\nemWavelen: ");
