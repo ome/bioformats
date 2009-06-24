@@ -107,16 +107,14 @@
 				If any of the required Image attributes or elements are missing, its 
 				guaranteed to be an invalid document. The required attributes and 
 				elements are ID and Pixels.
+				
 
 ExperimenterRef is required for all Images with well formed LSIDs.
 				ImageType is a vendor-specific designation of the type of image this is.
 				Examples of ImageType include 'STK', 'SoftWorx', etc.
 				The Name attributes are in all cases the name of the element instance. In this case, the name of the image,
 				not necessarily the filename.
-				PixelSize* is in microns.
-				TimeIncrement is used for time series that have a global timing specification instead of per-timepoint timing info.
-				For example in a video stream.  The unit is seconds.
-				Similarly, WaveStart and WaveIncrement are used in spectral images like FTIR.  These are both positive integers.
+				PixelSize* is in microns[um].
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -231,17 +229,17 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeX" use="optional" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns.</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeY" use="optional" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns.</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeZ" use="optional" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns.</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TimeIncrement" use="optional" type="xsd:float">
@@ -256,15 +254,17 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="WaveStart" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						WaveStart is used in spectral images like FTIR. Units are nanometres[nm].
+						TODO - can this be a float?
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="WaveIncrement" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
-				<xsd:documentation>
-					MISSING
-				</xsd:documentation>
+					<xsd:documentation>
+						WaveIncrement is used in spectral images like FTIR. Units are nanometres[nm].
+						TODO - can this be a float?
+					</xsd:documentation>
 			</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -323,7 +323,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				The total number of ChannelComponents for a set of pixels must equal SizeC.
 				The SamplesPerPixel attribute is the number of channel components in the logical channel.
 				The IlluminationType attribute is a string enumeration which may be set to 'Transmitted', 'Epifluorescence', 'Oblique', or 'NonLinear'.
-				The optional PinholeSize attribute allows specifying adjustable pin hole diameters for confocal microscopes (units um).
 				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
 				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
 				The Mode attribute describes the type of microscopy performed for each channel.  This may be set to:
@@ -399,7 +398,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PinholeSize" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The optional PinholeSize attribute allows specifying adjustable 
+						pin hole diameters for confocal microscopes (units microns[um]).
+						TODO - units Airy disks?
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -452,14 +453,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="ExcitationWavelength" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						Excitation wavelength of excitation for a particular channel, in nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="EmissionWavelength" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						Emission wavelength of excitation for a particular channel, in nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -734,7 +735,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				The OTF element contains an optical transfer function.
 				The same OTF can be used for all wavelengths, or there may be one per wavelength.
 				There may be multiple light sources, detectors, objectives and filters on a microscope.
-				Each of these has their own ID attribute, which can be referred to from LogicalChannel.
+				Each of these has their own ID attribute, which can be referred to from Channel.
 				It is understood that the light path configuration can be different for each channel,
 				but cannot be different for each timepoint or each plane of an XYZ stack.
 			</xsd:documentation>
@@ -1234,7 +1235,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				LensNA: The numerical aperture of the lens (as a float)
 				NominalMagnification: The specified magnification e.g. x10
 				CalibratedMagnification: The measured magnification e.g. x10.3
-				WorkingDistance: WorkingDistance of the lens. The Units are um.
+				WorkingDistance: WorkingDistance of the lens. The Units are microns[um].
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1312,7 +1313,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="WorkingDistance" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The working distance of the lens expressed as a floating point (real) number. Units are um.
+								The working distance of the lens expressed as a floating point (real) number. Units are microns[um].
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1331,8 +1332,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				The type of detector used to capture the image.
-				The Detector ID can be used as a reference within the LogicalChannel element in the Image element.
-				The Type attribute can be set to 'CCD','Intensified-CCD','Analog-Video','PMT','Photodiode','Spectroscopy','Life-time-Imaging','Correlation-Spectroscopy','FTIR'.
+				The Detector ID can be used as a reference within the Channel element in the Image element.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1448,7 +1448,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:documentation>
 				A filter is either an excitation or emission filters.
 				There should be one filter element specified per wavelength in the image.  
-				The channel number associated with a filter set is specified in LogicalChannel's required ChannelComponent element and its Index attribute.
+				The channel number associated with a filter set is specified in Channel.
 				It is based on the FilterSpec type, so has the required attributes Manufacturer, Model, and LotNumber.
 				It may also contain a Type attribute which may be set to
 				'LongPass', 'ShortPass', 'BandPass', or 'MultiPass'.
@@ -1487,10 +1487,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="TransmittanceRange"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				CutIn Units: nm,
-				CutOut Units: nm,
-				CutInTolerance Units: nm,
-				CutOutTolerance Units: nm,
+				CutIn Units: nanometres[nm],
+				CutOut Units: nanometres[nm],
+				CutInTolerance Units: nanometres[nm],
+				CutOutTolerance Units: nanometres[nm],
 				Transmittance Units: PercentFraction
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1498,14 +1498,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="CutIn" use="optional" type="xsd:integer" >
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units: nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutOut" use="optional" type="xsd:integer" >
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units: nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1554,7 +1554,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				Each of the light source types has its own Type attribute to further differentiate the light source
 				(eg, Nd-YAG for Laser or Hg for Arc).
 				A LightSource ID must be specified for each light source, and the individual 
-				light sources can be referred to by their LightSource IDs (eg from LogicalChannel).
+				light sources can be referred to by their LightSource IDs (eg from Channel).
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1677,7 +1677,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Wavelength of the laser (in nm)
+						The Wavelength of the laser in nanometres[nm]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
