@@ -70,13 +70,13 @@
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:choice minOccurs="1" maxOccurs="1">
-					<xsd:element ref="Rect" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Rectangle" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Mask" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Ellipse" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Point" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Polygon" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Polyline" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Line" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Path" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Text" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ShapeID"/>
@@ -97,7 +97,7 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="BasicSvgShape"> <!-- top level definition -->
+	<xsd:complexType name="BasicShape"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				MISSING
@@ -112,7 +112,7 @@
 		</xsd:attribute>
 	</xsd:complexType>
 	
-	<xsd:element name="Rect"> <!-- top level definition -->
+	<xsd:element name="Rectangle"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				MISSING
@@ -120,7 +120,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
+				<xsd:extension base="BasicShape">
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -162,7 +162,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
+				<xsd:extension base="BasicShape">
 					<xsd:sequence>
 						<xsd:element ref="OME:Pixels" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
@@ -188,7 +188,7 @@
 	<xsd:element name="Point"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
+				<xsd:extension base="BasicShape">
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -216,15 +216,15 @@
 		</xsd:annotation>		
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="CenterX" use="required" type="xsd:float">
+				<xsd:extension base="BasicShape">
+					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
 								MISSING
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="CenterY" use="required" type="xsd:float">
+					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
 								MISSING
@@ -258,7 +258,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
+				<xsd:extension base="BasicShape">
 					<xsd:attribute name="X1" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -296,11 +296,40 @@
 		<xsd:annotation>
 			<xsd:documentation>
 				MISSING
+				Note: Polyline uses counterclockwise winding (this is the default OpenGL behavior)
 			</xsd:documentation>
 		</xsd:annotation>		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="Points" use="optional" type="xsd:string">
+				<xsd:extension base="BasicShape">
+					<xsd:attribute name="Points" use="required" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Closed" use="optional" type="xsd:boolean" default="false">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:element name="Path"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="BasicShape">
+					<xsd:attribute name="Definition" use="required" type="xsd:string">
 						<xsd:annotation>
 							<xsd:documentation>
 								MISSING
@@ -312,7 +341,7 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Polygon"> <!-- top level definition -->
+	<xsd:element name="Text"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				MISSING
@@ -320,8 +349,29 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="BasicSvgShape">
-					<xsd:attribute name="Points" use="optional" type="xsd:string">
+				<xsd:extension base="BasicShape">
+					<xsd:sequence>
+						<xsd:element name="Value">
+							<xsd:annotation>
+								<xsd:documentation>
+									A description for the project.
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:whiteSpace value="preserve"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+					<xsd:attribute name="X" use="required" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								MISSING
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
 								MISSING
