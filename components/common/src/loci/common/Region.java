@@ -72,6 +72,23 @@ public class Region {
     return rtn;
   }
 
+  /**
+   * Returns a Region representing the intersection of this Region with the
+   * given Region.  If the two Regions do not intersect, the result is an
+   * empty Region.
+   */
+  public Region intersection(Region r) {
+    int x = (int) Math.max(this.x, r.x);
+    int y = (int) Math.max(this.y, r.y);
+    int w = (int) Math.min(this.x + this.width, r.x + r.width) - x;
+    int h = (int) Math.min(this.y + this.height, r.y + r.height) - y;
+
+    if (w < 0) w = 0;
+    if (h < 0) h = 0;
+
+    return new Region(x, y, w, h);
+  }
+
   public String toString() {
     return "x=" + x + ", y=" + y + ", w=" + width + ", h=" + height;
   }
