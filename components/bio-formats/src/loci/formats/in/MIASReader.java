@@ -161,7 +161,7 @@ public class MIASReader extends FormatReader {
     int well = getWellNumber(getSeries());
     int plate = getPlateNumber(getSeries());
 
-    if (tileRows == tileCols == 1) {
+    if (tileRows == 1 && tileCols == 1) {
       reader.setId(tiffs[plate][well][no]);
       reader.openBytes(0, buf, x, y, w, h);
       return buf;
