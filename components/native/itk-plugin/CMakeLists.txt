@@ -60,11 +60,11 @@ message(STATUS "")
 
 message(STATUS "-- Boost:")
 set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREAD ON)
+set(Boost_USE_MULTITHREADED ON)
 set(Boost_ADDITIONAL_VERSIONS "1.37" "1.37.0" "1.37.1" "1.38" "1.38.0" "1.38.1"
   "1.39" "1.39.0" "1.39.1" "1.40" "1.40.0" "1.40.1" "1.41" "1.41.0" "1.41.1"
   "1.42" "1.42.0" "1.42.1" "1.43" "1.43.0" "1.43.1" "1.44" "1.44.0" "1.44.1")
-set(Boost_FIND_QUIETLY ON)
+#set(Boost_FIND_QUIETLY ON)
 find_package(Boost)
 if(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
   message(STATUS "boost headers : ${Boost_INCLUDE_DIR}")
@@ -75,7 +75,7 @@ else(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
     message(FATAL_ERROR "Cannot build without Boost Thread library. Please install Boost from www.boost.org.")
   endif(UNIX)
 endif(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
-set(Boost_FIND_QUIETLY OFF)
+#set(Boost_FIND_QUIETLY OFF)
 if(WIN32)
   set(BOOST_ROOT ${Boost_INCLUDE_DIR})
 endif(WIN32)
@@ -83,23 +83,24 @@ find_package(Boost COMPONENTS thread REQUIRED)
 
 # NB: Necessary on Windows to test for Boost Thread when
 #     multiple semicolon-separated files are identified.
-string(REGEX REPLACE ".*;" ""
-  Boost_THREAD_LIB_CHECK "${Boost_THREAD_LIBRARY}")
 string(REGEX REPLACE "/[^/]*$" ""
-  Boost_STRIPPED_LIB_DIR "${Boost_THREAD_LIB_CHECK}")
+  Boost_STRIPPED_LIB_DIR "${Boost_THREAD_LIBRARY_DEBUG}")
 
-if(EXISTS "${Boost_THREAD_LIB_CHECK}")
+if(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
   message(STATUS "boost lib dir : ${Boost_STRIPPED_LIB_DIR}")
   message(STATUS "thread lib    : ${Boost_THREAD_LIBRARY}")
-else(EXISTS "${Boost_THREAD_LIB_CHECK}")
+else(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
   message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
-endif(EXISTS "${Boost_THREAD_LIB_CHECK}")
+endif(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
 message(STATUS "")
 
+message(STATUS "-- Jace:")
 set(JACE_DIR NOTFOUND CACHE PATH "The path to toplevel directory of your Jace checkout")
-if(NOT JACE_DIR)
-  message(FATAL_ERROR "Please set JACE_DIR to the toplevel directory of your Jace checkout")
-endif()
+if(IS_DIRECTORY "${JACE_DIR}")
+  message(STATUS "jace root     : ${JACE_DIR}")
+else(IS_DIRECTORY "${JACE_DIR}")
+  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
+endif(IS_DIRECTORY "${JACE_DIR}")
 
 set(BF_JACE_DIR ${PROJECT_SOURCE_DIR}/../bf-cpp)
 
