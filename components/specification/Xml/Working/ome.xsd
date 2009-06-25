@@ -19,6 +19,7 @@
 <xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09" 
 	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-09"
 	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" 
 	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09" 
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" 
@@ -93,6 +94,113 @@
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
+		<!-- Unique IDs and Valid References -->
+		<xsd:key name="ProjectIDKey">
+			<xsd:selector xpath="OME:Project"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>		
+		<xsd:keyref name="DatasetProjectIDKeyRef" refer="ProjectIDKey" >
+			<xsd:selector xpath="OME:Dataset/OME:ProjectRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:key name="DatasetIDKey">
+			<xsd:selector xpath="OME:Dataset"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:key name="ExperimentIDKey">
+			<xsd:selector xpath="OME:Experiment"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:keyref name="ProjectExperimenterIDKeyRef" refer="ExperimentIDKey" >
+			<xsd:selector xpath="OME:Project/OME:ExperimenterRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:key name="ScreenIDKey">
+			<xsd:selector xpath="SPW:Screen"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:keyref name="PlateScreenIDKeyRef" refer="ScreenIDKey" >
+			<xsd:selector xpath="SPW:Plate/SPW:ScreenRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:key name="PlateIDKey">
+			<xsd:selector xpath="SPW:Plate"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+	  	<xsd:keyref name="ScreenPlateIDKeyRef" refer="PlateIDKey" >
+			<xsd:selector xpath="SPW:Screen/SPW:PlateRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:key name="ExperimenterIDKey">
+			<xsd:selector xpath="OME:Experimenter"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:key name="GroupIDKey">
+			<xsd:selector xpath="OME:Group"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:keyref name="ProjectGroupIDKeyRef" refer="GroupIDKey" >
+			<xsd:selector xpath="OME:Project/OME:GroupRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:keyref name="DatasetGroupIDKeyRef" refer="GroupIDKey" >
+			<xsd:selector xpath="OME:Dataset/OME:GroupRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:key name="InstrumentIDKey">
+			<xsd:selector xpath="OME:Instrument"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:key name="ImageIDKey">
+			<xsd:selector xpath="OME:Image"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:key name="PixelsIDKey">
+			<xsd:selector xpath="OME:Image/OME:Pixels"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:key name="ChannelIDKey">
+			<xsd:selector xpath="OME:Image/OME:Channel"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:keyref name="ChannelPixelsIDKeyRef" refer="PixelsIDKey" >
+			<xsd:selector xpath="OME:Image/OME:Channel"/>
+			<xsd:field xpath="@Pixels"/>
+		</xsd:keyref>
+		<xsd:key name="WellIDKey">
+			<xsd:selector xpath="SPW:Plate/SPW:Well"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:key name="ReagentIDKey">
+			<xsd:selector xpath="SPW:Screen/SPW:Reagent"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:keyref name="PlateWellReagentIDKeyRef" refer="ReagentIDKey" >
+			<xsd:selector xpath="SPW:Plate/SPW:Well/SPW:ReagentRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:key name="ScreenAcquisitionIDKey">
+			<xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:key name="WellSampleIDKey">
+			<xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:key>
+		<xsd:keyref name="PlateWellWellSampleImageIDKeyRef" refer="ImageIDKey" >
+			<xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample/SPW:ImageRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<xsd:keyref name="ScreenAcquisitionIDKeyRef" refer="WellSampleIDKey" >
+			<xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition/SPW:WellSampleRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
+		<!--
+		<xsd:element ref="STD:SemanticTypeDefinitions" minOccurs="0" maxOccurs="1"/>
+		<xsd:element ref="AML:AnalysisModuleLibrary" minOccurs="0" maxOccurs="1"/>
+		<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
+		<xsd:element ref="SA:StructuredAnnotation" minOccurs="0" maxOccurs="1"/>
+-->
 	</xsd:element>
 
 	<!-- Key pixel storage elements -->

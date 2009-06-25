@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
+	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-09"
+	xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 ome.xsd http://www.openmicroscopy.org/Schemas/SPW/2008-09 SPW.xsd">
+	<ome:Project ID="Project:1">
+		<ome:ExperimenterRef ID="Experimenter:x"/>
+		<ome:GroupRef ID="Group:x"/>
+	</ome:Project>
+	<ome:Project ID="Project:1"></ome:Project>
+	<ome:Dataset ID="Dataset:1">
+		<ome:GroupRef ID="Group:y"/>
+		<ome:ProjectRef ID="Project:y"/>
+	</ome:Dataset>
+	<ome:Dataset ID="Dataset:1"></ome:Dataset>
+	<spw:Plate ID="Plate:2">
+		<spw:ScreenRef ID="Screen:x"/>
+		<spw:Well ID="Well:1" Column="1" Row="1" Type="Dummy">
+			<spw:ReagentRef ID="Reagent:x"/>
+		</spw:Well>
+		<spw:Well ID="Well:1" Column="1" Row="1" Type="Dummy">
+			<spw:WellSample ID="WellSample:1">
+				<spw:ImageRef ID="Image:x"/>
+			</spw:WellSample>
+			<spw:WellSample ID="WellSample:1"/>
+			<spw:ReagentRef ID="Reagent:1"/>
+		</spw:Well>
+	</spw:Plate>
+	<spw:Plate ID="Plate:2">
+		<spw:ScreenRef ID="Screen:2"/>
+	</spw:Plate>
+	<spw:Screen ID="Screen:1">
+		<spw:Reagent ID="Reagent:1"/>
+		<spw:Reagent ID="Reagent:1"/>
+		<spw:PlateRef ID="Plate:x"/>
+		<spw:ScreenAcquisition ID="ScreenAcquisition:1">
+			<spw:WellSampleRef ID="WellSample:x"/>
+		</spw:ScreenAcquisition>
+		<spw:ScreenAcquisition ID="ScreenAcquisition:1"/>
+	</spw:Screen>
+	<spw:Screen ID="Screen:1">
+		<spw:PlateRef ID="Plate:2"/>
+	</spw:Screen>
+	<ome:Experimenter ID="Experimenter:1" DisplayName="Dummy1"/>
+	<ome:Experimenter ID="Experimenter:1" DisplayName="Dummy2"/>
+	<ome:Group ID="Group:1"/>
+	<ome:Group ID="Group:1"/>
+	<ome:Instrument ID="Instrument:1"/>
+	<ome:Instrument ID="Instrument:1"/>
+	<ome:Image ID="Image:1" Name="Name92">
+		<ome:AcquiredDate>2008-03-04T14:17:43.0Z</ome:AcquiredDate>
+		<ome:Pixels ID="Pixels:1" DimensionOrder="XYZCT" Type="int8" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
+			<bf:BinData BigEndian="true" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+		</ome:Pixels>
+	</ome:Image>
+	<ome:Image ID="Image:1" Name="Name92">
+		<ome:AcquiredDate>2008-03-04T14:17:43.0Z</ome:AcquiredDate>
+		<ome:Channel ID="Channel:1" Pixels="Pixels:1"></ome:Channel>
+		<ome:Channel ID="Channel:1" Pixels="Pixels:1"></ome:Channel>
+		<ome:Channel ID="Channel:3" Pixels="Pixels:x"></ome:Channel>
+		<ome:Pixels ID="Pixels:1" DimensionOrder="XYZCT" Type="int8" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
+			<bf:BinData BigEndian="true" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+		</ome:Pixels>
+	</ome:Image>
+</ome:OME>
