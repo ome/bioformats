@@ -68,141 +68,159 @@ public class TiffReader extends BaseTiffReader {
     if (ifds.length > 1) core[0].orderCertain = false;
 
     // check for ImageJ-style TIFF comment
-    boolean ij = comment != null && comment.startsWith("ImageJ=");
-    if (ij) {
-      int nl = comment.indexOf("\n");
-      put("ImageJ", nl < 0 ? comment.substring(7) : comment.substring(7, nl));
-      metadata.remove("Comment");
+    boolean ij = checkCommentImageJ(comment);
+    if (ij) parseCommentImageJ(comment);
 
-      int z = 1, t = 1;
-      int c = getSizeC();
+    // check for MetaMorph-style TIFF comment
+    boolean metamorph = checkCommentMetamorph(comment);
+    if (metamorph) parseCommentMetamorph(comment);
+    put("MetaMorph", metamorph ? "yes" : "no");
 
-      // parse ZCT sizes
-      StringTokenizer st = new StringTokenizer(comment, "\n");
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        int value = 0;
-        int eq = token.indexOf("=");
-        if (eq != -1 && eq + 1 < token.length()) {
-          try {
-            value = Integer.parseInt(token.substring(eq + 1));
-          }
-          catch (NumberFormatException e) {
-            if (debug) trace(e);
-          }
+    // check for other INI-style comment
+    if (!ij && !metamorph) parseCommentGeneric(comment);
+  }
+
+  // -- Helper methods --
+
+  private boolean checkCommentImageJ(String comment) {
+    return comment != null && comment.startsWith("ImageJ=");
+  }
+
+  private boolean checkCommentMetamorph(String comment) {
+    Object software = TiffTools.getIFDValue(ifds[0], TiffTools.SOFTWARE);
+    String check = software instanceof String ? (String) software :
+      software instanceof String[] ? ((String[]) software)[0] : null;
+    return comment != null && software != null &&
+      check.indexOf("MetaMorph") != -1;
+  }
+
+  private void parseCommentImageJ(String comment)
+    throws FormatException, IOException
+  {
+    int nl = comment.indexOf("\n");
+    put("ImageJ", nl < 0 ? comment.substring(7) : comment.substring(7, nl));
+    metadata.remove("Comment");
+
+    int z = 1, t = 1;
+    int c = getSizeC();
+
+    // parse ZCT sizes
+    StringTokenizer st = new StringTokenizer(comment, "\n");
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      int value = 0;
+      int eq = token.indexOf("=");
+      if (eq != -1 && eq + 1 < token.length()) {
+        try {
+          value = Integer.parseInt(token.substring(eq + 1));
         }
-
-        if (token.startsWith("channels=")) c = value;
-        else if (token.startsWith("slices=")) z = value;
-        else if (token.startsWith("frames=")) t = value;
+        catch (NumberFormatException e) {
+          if (debug) trace(e);
+        }
       }
-      if (z * c * t == c) {
-        t = getImageCount();
-      }
-      core[0].dimensionOrder = "XYCZT";
 
-      if (z * t * (isRGB() ? 1 : c) == ifds.length) {
+      if (token.startsWith("channels=")) c = value;
+      else if (token.startsWith("slices=")) z = value;
+      else if (token.startsWith("frames=")) t = value;
+    }
+    if (z * c * t == c) {
+      t = getImageCount();
+    }
+    core[0].dimensionOrder = "XYCZT";
+
+    if (z * t * (isRGB() ? 1 : c) == ifds.length) {
+      core[0].sizeZ = z;
+      core[0].sizeT = t;
+      core[0].sizeC = c;
+    }
+    else if (ifds.length == 1 && z * t > ifds.length &&
+      TiffTools.getCompression(ifds[0]) == TiffTools.UNCOMPRESSED)
+    {
+      // file is likely corrupt (missing end IFDs)
+      //
+      // ImageJ writes TIFF files like this:
+      // IFD #0
+      // comment
+      // all pixel data
+      // IFD #1
+      // IFD #2
+      // ...
+      //
+      // since we know where the pixel data is, we can create fake
+      // IFDs in an attempt to read the rest of the pixels
+
+      int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+        FormatTools.getBytesPerPixel(getPixelType());
+      long[] stripOffsets = TiffTools.getStripOffsets(ifds[0]);
+      long[] stripByteCounts = TiffTools.getStripByteCounts(ifds[0]);
+
+      long endOfFirstPlane = stripOffsets[stripOffsets.length - 1] +
+        stripByteCounts[stripByteCounts.length - 1];
+      long totalBytes = in.length() - endOfFirstPlane;
+      int totalPlanes = (int) (totalBytes / planeSize) + 1;
+
+      Hashtable ifd = ifds[0];
+      ifds = new Hashtable[totalPlanes];
+      ifds[0] = ifd;
+      for (int i=1; i<totalPlanes; i++) {
+        ifds[i] = new Hashtable(ifds[0]);
+        long[] prevOffsets = TiffTools.getStripOffsets(ifds[i - 1]);
+        long[] offsets = new long[stripOffsets.length];
+        offsets[0] = prevOffsets[prevOffsets.length - 1] +
+          stripByteCounts[stripByteCounts.length - 1];
+        for (int j=1; j<offsets.length; j++) {
+          offsets[j] = offsets[j - 1] + stripByteCounts[j - 1];
+        }
+        ifds[i].put(new Integer(TiffTools.STRIP_OFFSETS), offsets);
+      }
+
+      if (z * c * t == ifds.length) {
         core[0].sizeZ = z;
         core[0].sizeT = t;
         core[0].sizeC = c;
       }
-      else if (ifds.length == 1 && z * t > ifds.length &&
-        TiffTools.getCompression(ifds[0]) == TiffTools.UNCOMPRESSED)
-      {
-        // file is likely corrupt (missing end IFDs)
-        //
-        // ImageJ writes TIFF files like this:
-        // IFD #0
-        // comment
-        // all pixel data
-        // IFD #1
-        // IFD #2
-        // ...
-        //
-        // since we know where the pixel data is, we can create fake
-        // IFDs in an attempt to read the rest of the pixels
-
-        int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
-          FormatTools.getBytesPerPixel(getPixelType());
-        long[] stripOffsets = TiffTools.getStripOffsets(ifds[0]);
-        long[] stripByteCounts = TiffTools.getStripByteCounts(ifds[0]);
-
-        long endOfFirstPlane = stripOffsets[stripOffsets.length - 1] +
-          stripByteCounts[stripByteCounts.length - 1];
-        long totalBytes = in.length() - endOfFirstPlane;
-        int totalPlanes = (int) (totalBytes / planeSize) + 1;
-
-        Hashtable ifd = ifds[0];
-        ifds = new Hashtable[totalPlanes];
-        ifds[0] = ifd;
-        for (int i=1; i<totalPlanes; i++) {
-          ifds[i] = new Hashtable(ifds[0]);
-          long[] prevOffsets = TiffTools.getStripOffsets(ifds[i - 1]);
-          long[] offsets = new long[stripOffsets.length];
-          offsets[0] = prevOffsets[prevOffsets.length - 1] +
-            stripByteCounts[stripByteCounts.length - 1];
-          for (int j=1; j<offsets.length; j++) {
-            offsets[j] = offsets[j - 1] + stripByteCounts[j - 1];
-          }
-          ifds[i].put(new Integer(TiffTools.STRIP_OFFSETS), offsets);
-        }
-
-        if (z * c * t == ifds.length) {
-          core[0].sizeZ = z;
-          core[0].sizeT = t;
-          core[0].sizeC = c;
-        }
-        else core[0].sizeZ = ifds.length;
-        core[0].imageCount = ifds.length;
-      }
-      else {
-        core[0].sizeT = ifds.length;
-        core[0].imageCount = ifds.length;
-      }
+      else core[0].sizeZ = ifds.length;
+      core[0].imageCount = ifds.length;
     }
-
-    // check for MetaMorph-style TIFF comment
-    Object software = TiffTools.getIFDValue(ifds[0], TiffTools.SOFTWARE);
-    String check = software instanceof String ? (String) software :
-      software instanceof String[] ? ((String[]) software)[0] : null;
-    boolean metamorph = comment != null && software != null &&
-      check.indexOf("MetaMorph") != -1;
-    put("MetaMorph", metamorph ? "yes" : "no");
-
-    if (metamorph) {
-      // parse key/value pairs
-      StringTokenizer st = new StringTokenizer(comment, "\n");
-      while (st.hasMoreTokens()) {
-        String line = st.nextToken();
-        int colon = line.indexOf(":");
-        if (colon < 0) {
-          addMeta("Comment", line);
-          continue;
-        }
-        String key = line.substring(0, colon);
-        String value = line.substring(colon + 1);
-        addMeta(key, value);
-      }
+    else {
+      core[0].sizeT = ifds.length;
+      core[0].imageCount = ifds.length;
     }
+  }
 
-    // check for other INI-style comment
-    if (!ij && !metamorph) {
-      String[] lines = comment.split("\n");
-      if (lines.length > 1) {
-        comment = "";
-        for (String line : lines) {
-          int eq = line.indexOf("=");
-          if (eq != -1) {
-            String key = line.substring(0, eq).trim();
-            String value = line.substring(eq + 1).trim();
-            addMeta(key, value);
-          }
-          else if (!line.startsWith("[")) {
-            comment += line + "\n";
-          }
-        }
-        addMeta("Comment", comment);
+  private void parseCommentMetamorph(String comment) {
+    // parse key/value pairs
+    StringTokenizer st = new StringTokenizer(comment, "\n");
+    while (st.hasMoreTokens()) {
+      String line = st.nextToken();
+      int colon = line.indexOf(":");
+      if (colon < 0) {
+        addMeta("Comment", line);
+        continue;
       }
+      String key = line.substring(0, colon);
+      String value = line.substring(colon + 1);
+      addMeta(key, value);
+    }
+  }
+
+  private void parseCommentGeneric(String comment) {
+    if (comment == null) return;
+    String[] lines = comment.split("\n");
+    if (lines.length > 1) {
+      comment = "";
+      for (String line : lines) {
+        int eq = line.indexOf("=");
+        if (eq != -1) {
+          String key = line.substring(0, eq).trim();
+          String value = line.substring(eq + 1).trim();
+          addMeta(key, value);
+        }
+        else if (!line.startsWith("[")) {
+          comment += line + "\n";
+        }
+      }
+      addMeta("Comment", comment);
     }
   }
 
