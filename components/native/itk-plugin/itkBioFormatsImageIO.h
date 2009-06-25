@@ -46,15 +46,6 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 
 #include "bioformats.h"
 
-// for debugging
-#define BF_ITK_DEBUG
-#ifdef BF_ITK_DEBUG
-#define PRINT(x) \
-  std::cout << x << std::endl;
-#else
-#define PRINT(x)
-#endif
-
 namespace itk
 {
 
@@ -89,7 +80,7 @@ namespace itk
     ~BioFormatsImageIO();
 
   private:
-    ChannelSeparator* reader;
+    ChannelFiller* reader;
     ImageWriter* writer;
   };
 
