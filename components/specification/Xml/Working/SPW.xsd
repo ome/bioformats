@@ -387,6 +387,7 @@
 			<xsd:sequence>
 				<xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="ReagentRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="WellMarker" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="WellID"/>
 			<xsd:attribute name="Column" use="required" type="xsd:nonNegativeInteger">
@@ -421,42 +422,22 @@
 					</xsd:documentation>
 				</xsd:annotation>			
 			</xsd:attribute>
-			<xsd:attribute name="Type" use="optional" type="xsd:string">
+			<xsd:attribute name="Type" use="required" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						A human readable identifier for the screening status. 
 						e.g. empty, positive control, negative control, control, experimental, etc.
 						This string is likely to become an enumeration in future releases.
 					</xsd:documentation>
-				</xsd:annotation>	  
+				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TypeColourAlpha" use="optional" type="xsd:integer" default="255">
+			<xsd:attribute name="Color" use="optional" type="xsd:integer" default="4294967295">
 				<xsd:annotation>
 					<xsd:documentation>
-						A marker colour used to highlight the wells type - the alpha value
+						A marker color used to highlight the well - encoded as RGBA
+						The default value "4294967295" is #FFFFFFFF so solid white
 					</xsd:documentation>
-				</xsd:annotation>	  
-			</xsd:attribute>
-			<xsd:attribute name="TypeColourRed" use="optional" type="xsd:integer" default="255">
-				<xsd:annotation>
-					<xsd:documentation>
-						A marker colour used to highlight the wells type - the red value
-					</xsd:documentation>
-				</xsd:annotation>	  
-			</xsd:attribute>
-			<xsd:attribute name="TypeColourGreen" use="optional" type="xsd:integer" default="255">
-				<xsd:annotation>
-					<xsd:documentation>
-						A marker colour used to highlight the wells type - the green value
-					</xsd:documentation>
-				</xsd:annotation>	  
-			</xsd:attribute>
-			<xsd:attribute name="TypeColourBlue" use="optional" type="xsd:integer" default="255">
-				<xsd:annotation>
-					<xsd:documentation>
-						A marker colour used to highlight the wells type - the blue value
-					</xsd:documentation>
-				</xsd:annotation>	  
+				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>

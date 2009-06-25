@@ -82,7 +82,7 @@
 				<xsd:element ref="STD:SemanticTypeDefinitions" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="AML:AnalysisModuleLibrary" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="SA:StructuredAnnotation" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional">
 				<xsd:annotation>
@@ -195,7 +195,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="PixelType" use="required" type="PixelTypes">
+			<xsd:attribute name="Type" use="required" type="PixelType">
 				<xsd:annotation>
 					<xsd:documentation>
 						MISSING
@@ -276,8 +276,55 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="PlaneTiming" type="PlaneTimings" minOccurs="0" maxOccurs="1"/>
-				<xsd:element name="StagePosition" type="StagePositions" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="PlaneTiming" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
+							<xsd:annotation>
+								<xsd:documentation>
+									Units are seconds since the beginning of the experiment
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="ExposureTime" use="optional" type="xsd:float">
+							<xsd:annotation>
+								<xsd:documentation>
+									Units are seconds
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+					</xsd:complexType>
+					
+				</xsd:element>
+				<xsd:element name="StagePosition" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:annotation>
+							<xsd:documentation>
+								All units are in the microscope reference frame
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:attribute name="PositionX" use="optional" type="xsd:float">
+							<xsd:annotation>
+								<xsd:documentation>
+									MISSING
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="PositionY" use="optional" type="xsd:float">
+							<xsd:annotation>
+								<xsd:documentation>
+									MISSING
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
+							<xsd:annotation>
+								<xsd:documentation>
+									MISSING
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
 				<xsd:choice minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -486,31 +533,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Pixels" use="required" type="PixelsID"/>
-			<xsd:attribute name="Alpha" use="optional" type="xsd:integer" default="255">
+			<xsd:attribute name="Color" use="optional" type="xsd:integer" default="4294967295">
 				<xsd:annotation>
 					<xsd:documentation>
-						A colour used render this channel - the alpha value
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="Red" use="optional" type="xsd:integer" default="255">
-				<xsd:annotation>
-					<xsd:documentation>
-						A colour used render this channel - the red value
-					</xsd:documentation>
-				</xsd:annotation>	  
-			</xsd:attribute>
-			<xsd:attribute name="Green" use="optional" type="xsd:integer" default="255">
-				<xsd:annotation>
-					<xsd:documentation>
-						A colour used render this channel - the green value
-					</xsd:documentation>
-				</xsd:annotation>	  
-			</xsd:attribute>
-			<xsd:attribute name="Blue" use="optional" type="xsd:integer" default="255">
-				<xsd:annotation>
-					<xsd:documentation>
-						A colour used render this channel - the blue value
+						A color used render this channel - encoded as RGBA
+						The default value "4294967295" is #FFFFFFFF so solid white
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -635,52 +662,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:complexType>
 	</xsd:element>
 
-	<!-- Types storing plane information  -->
-	<xsd:complexType name="PlaneTimings"> <!-- TODO: add ability to set on a per channel basis -->
-		<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
-			<xsd:annotation>
-				<xsd:documentation>
-					Units are seconds since the beginning of the experiment
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="ExposureTime" use="optional" type="xsd:float">
-			<xsd:annotation>
-				<xsd:documentation>
-					Units are seconds
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-	</xsd:complexType>
-	<xsd:complexType name="StagePositions">
-		<xsd:annotation>
-			<xsd:documentation>
-				All units are in the microscope reference frame
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:attribute name="PositionX" use="optional" type="xsd:float">
-			<xsd:annotation>
-				<xsd:documentation>
-					MISSING
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="PositionY" use="optional" type="xsd:float">
-			<xsd:annotation>
-				<xsd:documentation>
-					MISSING
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
-			<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		</xsd:attribute>
-	</xsd:complexType>
-
 	<!-- Misc -->
 	<xsd:element name="MicrobeamManipulation"> <!-- top level definition -->
 		<xsd:annotation>
@@ -794,7 +775,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="BIN:BinaryFile" minOccurs="1" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
-			<xsd:attribute name="PixelType" use="required" type="PixelTypes">
+			<xsd:attribute name="Type" use="required" type="PixelType">
 				<xsd:annotation>
 					<xsd:documentation>
 						MISSING
@@ -1150,14 +1131,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
-	<xsd:simpleType name="MIMEtype">
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="xsd:string"/>
-	</xsd:simpleType>
 	<xsd:simpleType name="Hex40">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1195,7 +1168,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:pattern value="(urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="PixelTypes">
+	<xsd:simpleType name="PixelType">
 		<xsd:annotation>
 			<xsd:documentation>
 				MISSING

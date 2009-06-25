@@ -70,6 +70,7 @@
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="Line" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Rectangle" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Mask" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Ellipse" minOccurs="1" maxOccurs="1"/>
@@ -354,7 +355,7 @@
 						<xsd:element name="Value">
 							<xsd:annotation>
 								<xsd:documentation>
-									A description for the project.
+									MISSING
 								</xsd:documentation>
 							</xsd:annotation>
 							<xsd:simpleType>

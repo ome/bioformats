@@ -110,18 +110,15 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 				<xsd:element ref = "Bin:External" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref = "Bin:BinData" minOccurs="1" maxOccurs="1"/>
 			</xsd:choice>
-			<xsd:attribute name = "FileName" use = "required">
-				<xsd:simpleType>
-					<xsd:restriction base = "xsd:string">
-						<xsd:maxLength value = "64"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
+			<xsd:attribute name = "FileName" use = "required" type="xsd:string"/>
 			<xsd:attribute name = "Size" use = "required" type = "xsd:integer">
 				<xsd:annotation>
-					<xsd:documentation>Size (in bytes) of the uncompressed file.</xsd:documentation>
+					<xsd:documentation>
+						Size (in bytes) of the uncompressed file.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="MIMEType" use="optional" type="xsd:string"/>	
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name = "Hex40">

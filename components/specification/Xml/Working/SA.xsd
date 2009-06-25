@@ -30,10 +30,15 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="ome.xsd"/>
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation = "BinaryFile.xsd"/>
 	-->
-	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
+	<xsd:element name="StructuredAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:element ref="XmlAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="XMLAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="FileAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="ListAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LongAnnotation" minOccurs="1" maxOccurs="1"/>
@@ -45,6 +50,11 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:complexType name="CommonAnnotation" abstract="true">
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element ref="Link" minOccurs="1" maxOccurs="unbounded"/>
 		</xsd:sequence>
@@ -52,6 +62,11 @@
 		<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
 	</xsd:complexType>
 	<xsd:element name="Link"> <!-- top level definition --> 
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:simpleType>
 			<xsd:restriction base="OME:LSID"/>
 		</xsd:simpleType>
@@ -62,22 +77,27 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:element name="FileAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="FileName" minOccurs="1" maxOccurs="1"/>
-						<xsd:element name="MimeType" minOccurs="0" maxOccurs="1" type="OME:MIMEtype"/>	
-						<xsd:choice minOccurs="1" maxOccurs="1">
-							<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
-							<xsd:element name="ExternalFile" minOccurs="1" maxOccurs="1" type="xsd:string"/>
-						</xsd:choice>
+						<xsd:element ref="Bin:BinaryFile" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent> 
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="XmlAnnotation"> <!-- top level definition -->
+	<xsd:element name="XMLAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
@@ -95,6 +115,11 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="ListAnnotation">  <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
@@ -112,6 +137,11 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="StringAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
@@ -123,6 +153,11 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="LongAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
@@ -134,6 +169,11 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="DoubleAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
@@ -145,6 +185,11 @@
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="BooleanAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
@@ -156,6 +201,11 @@
 		</xsd:complexType>
 	</xsd:element>	
 	<xsd:element name="TimestampAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				MISSING
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
