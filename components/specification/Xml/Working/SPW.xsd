@@ -387,7 +387,6 @@
 			<xsd:sequence>
 				<xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="ReagentRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="WellMarker" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="WellID"/>
 			<xsd:attribute name="Column" use="required" type="xsd:nonNegativeInteger">
