@@ -867,12 +867,39 @@ public class ZeissLSMReader extends FormatReader {
           nextDetectChannel);
       }
       if (channel.filter != null) {
-        String id = "Filter:" + channel.filter;
+        String id = "Filter:" + nextFilter;
         if (channel.acquire) {
           store.setLogicalChannelSecondaryExcitationFilter(
             id, series, nextDetectChannel);
         }
-        store.setFilterID(id, series, nextFilter++);
+        store.setFilterID(id, series, nextFilter);
+        store.setFilterModel(channel.filter, series, nextFilter);
+
+        int space = channel.filter.indexOf(" ");
+        if (space != -1) {
+          String type = channel.filter.substring(0, space).trim();
+          if (type.equals("BP")) type = "BandPass";
+          else if (type.equals("LP")) type = "LongPass";
+
+          store.setFilterType(type, series, nextFilter);
+
+          String transmittance = channel.filter.substring(space + 1).trim();
+          String[] v = transmittance.split("-");
+          try {
+            store.setTransmittanceRangeCutIn(new Integer(v[0].trim()), series,
+              nextFilter);
+          }
+          catch (NumberFormatException e) { }
+          if (v.length > 1) {
+            try {
+              store.setTransmittanceRangeCutOut(new Integer(v[1].trim()),
+                series, nextFilter);
+            }
+            catch (NumberFormatException e) { }
+          }
+        }
+
+        nextFilter++;
       }
       if (channel.channelName != null) {
         store.setDetectorID("Detector:" + channel.channelName + "-" +
@@ -917,9 +944,10 @@ public class ZeissLSMReader extends FormatReader {
         store.setFilterSetID("FilterSet:" + beamSplitter.filterSet, series,
           nextFilterSet);
         if (beamSplitter.filter != null) {
-          String filterID = "Filter:" + beamSplitter.filter;
-          store.setFilterID(filterID, series, nextFilter);
-          store.setFilterSetDichroic(filterID, series, nextFilterSet);
+          String id = "Dichroic:" + nextFilter;
+          store.setDichroicID(id, series, nextFilter);
+          store.setDichroicModel(beamSplitter.filter, series, nextFilter);
+          store.setFilterSetDichroic(id, series, nextFilterSet);
           nextFilter++;
         }
         nextFilterSet++;
@@ -1450,20 +1478,20 @@ public class ZeissLSMReader extends FormatReader {
 
     protected int getIntValue(int key) {
       Object o = blockData.get(new Integer(key));
-      return o == null || !(o instanceof Number) ? null :
-        ((Number) o).intValue();
+      if (o == null) return -1;
+      return !(o instanceof Number) ? -1 : ((Number) o).intValue();
     }
 
     protected float getFloatValue(int key) {
       Object o = blockData.get(new Integer(key));
-      return o == null || !(o instanceof Number) ? null :
-        ((Number) o).floatValue();
+      if (o == null) return -1f;
+      return !(o instanceof Number) ? -1f : ((Number) o).floatValue();
     }
 
     protected double getDoubleValue(int key) {
       Object o = blockData.get(new Integer(key));
-      return o == null || !(o instanceof Number) ? null :
-        ((Number) o).doubleValue();
+      if (o == null) return -1d;
+      return !(o instanceof Number) ? -1d : ((Number) o).doubleValue();
     }
 
     protected String getStringValue(int key) {
@@ -1514,7 +1542,9 @@ public class ZeissLSMReader extends FormatReader {
       description = getStringValue(RECORDING_DESCRIPTION);
       name = getStringValue(RECORDING_NAME);
       binning = getStringValue(RECORDING_CAMERA_BINNING);
-      if (binning.indexOf("x") == -1) binning += "x" + binning;
+      if (binning != null && binning.indexOf("x") == -1) {
+        binning += "x" + binning;
+      }
 
       // start time in days since Dec 30 1899
       long stamp = (long) (getDoubleValue(RECORDING_SAMPLE_0TIME) * 86400000);

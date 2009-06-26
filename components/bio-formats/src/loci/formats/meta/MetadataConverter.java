@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -597,6 +597,8 @@ public final class MetadataConverter {
       }
       int dichroicCount = src.getDichroicCount(instrumentIndex);
       for (int dichroicIndex=0; dichroicIndex<dichroicCount; dichroicIndex++) {
+        String dichroicIDValue = src.getDichroicID(instrumentIndex, dichroicIndex);
+        if (dichroicIDValue != null) dest.setDichroicID(dichroicIDValue, instrumentIndex, dichroicIndex);
         String dichroicLotNumberValue = src.getDichroicLotNumber(instrumentIndex, dichroicIndex);
         if (dichroicLotNumberValue != null) dest.setDichroicLotNumber(dichroicLotNumberValue, instrumentIndex, dichroicIndex);
         String dichroicManufacturerValue = src.getDichroicManufacturer(instrumentIndex, dichroicIndex);

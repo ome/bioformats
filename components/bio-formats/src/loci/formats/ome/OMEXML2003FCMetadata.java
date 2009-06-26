@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -561,6 +561,12 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   // - Dichroic property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getDichroicID(int, int) */
+  public String getDichroicID(int instrumentIndex, int dichroicIndex) {
+    DichroicNode dichroic = getDichroicNode(instrumentIndex, dichroicIndex, false);
+    return dichroic == null ? null : dichroic.getNodeID();
+  }
 
   /* @see loci.formats.meta.MetadataRetrieve#getDichroicLotNumber(int, int) */
   public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex) {
@@ -2886,6 +2892,13 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   // - Dichroic property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setDichroicID(String, int, int) */
+  public void setDichroicID(String id, int instrumentIndex, int dichroicIndex) {
+    if (id == null) return;
+    DichroicNode dichroicNode = getDichroicNode(instrumentIndex, dichroicIndex, true);
+    dichroicNode.setNodeID(id);
+  }
 
   /* @see loci.formats.meta.MetadataStore#setDichroicLotNumber(String, int, int) */
   public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex) {

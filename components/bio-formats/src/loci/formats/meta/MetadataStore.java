@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -366,6 +366,14 @@ public interface MetadataStore {
   void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex);
 
   // - Dichroic property storage -
+
+  /**
+   * For a particular Dichroic, sets unique label identifying the dichroic.
+   * @param id unique label identifying the dichroic
+   * @param instrumentIndex index of the Instrument
+   * @param dichroicIndex index of the Dichroic
+   */
+  void setDichroicID(String id, int instrumentIndex, int dichroicIndex);
 
   /**
    * For a particular Dichroic, sets TODO.

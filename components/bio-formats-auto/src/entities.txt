@@ -2547,6 +2547,12 @@ description = a dichroic for a particular instrument
 [Dichroic 2003FC]
 path = Instrument+/Filter+/Dichroic
 
+[Dichroic ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the dichroic
+
 [Dichroic Manufacturer]
 type = String
 description = TODO

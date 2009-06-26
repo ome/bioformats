@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 19, 2009 1:03:12 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1061,6 +1061,19 @@ public class AggregateMetadata implements IMetadata {
   }
 
   // - Dichroic property retrieval -
+
+  /* @see MetadataRetrieve#getDichroicID(int, int) */
+  public String getDichroicID(int instrumentIndex, int dichroicIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getDichroicID(instrumentIndex, dichroicIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   /* @see MetadataRetrieve#getDichroicLotNumber(int, int) */
   public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex) {
@@ -5742,6 +5755,17 @@ public class AggregateMetadata implements IMetadata {
   }
 
   // - Dichroic property storage -
+
+  /* @see MetadataStore#setDichroicID(String, int, int) */
+  public void setDichroicID(String id, int instrumentIndex, int dichroicIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDichroicID(id, instrumentIndex, dichroicIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setDichroicLotNumber(String, int, int) */
   public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex) {
