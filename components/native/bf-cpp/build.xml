@@ -9,12 +9,12 @@ Note that this build file extends common.xml rather than java.xml,
 because this component does not consist of Java source files.
 -->
 
-<project name="bfcpp" default="compile" basedir=".">
+<project name="bfcpp" default="compile-proxies" basedir=".">
   <description>
     Build file for Bio-Formats C++ bindings
   </description>
   <property file="base.properties"/>
-  <import file="${root.dir}/common.xml"/>
+  <import file="${root.dir}/java.xml"/>
   <property file="build.properties"/>
 
   <target name="check-jace">
@@ -71,7 +71,7 @@ from the Subversion repository using the command:
     </if>
   </target>
 
-  <target name="gen-proxies" depends="compile-jace"
+  <target name="gen-proxies" depends="compile-jace, compile"
     description="generate C++ proxies for Bio-Formats Java library">
     <available file="${proxies.dir}" property="proxiesExist"/>
     <if>
@@ -102,19 +102,40 @@ from the Subversion repository using the command:
               <arg value="-mindep"/>
               <arg value="-exportsymbols"/> <!-- required for Visual C++ -->
             </java>
-            <!-- HACK - Insert missing export symbol for Windows builds. -->
-            <move file="${hack.object-header}"
-              tofile="${hack.object-header}.old"/>
-            <copy file="${hack.object-header}.old"
-              tofile="${hack.object-header}">
-              <filterset begintoken="f" endtoken="d" recurse="false">
-                <filter token="rien" value="JACE_PROXY_API friend"/>
-              </filterset>
-            </copy>
-            <delete file="${hack.object-header}.old"/>
+            <!-- HACK - Replace patterns to dodge Jace problems on Windows. -->
+            <java fork="true" classname="${hack.program}"
+              classpath="${classes.dir}:${component.runtime-cp}">
+              <arg value="${hack.input1}"/>
+              <arg value="${hack.output1}"/>
+              <arg path="${hack.path1}"/>
+            </java>
+            <java fork="true" classname="${hack.program}"
+              classpath="${classes.dir}:${component.runtime-cp}">
+              <arg value="${hack.input2}"/>
+              <arg value="${hack.output2}"/>
+              <arg path="${hack.path2}"/>
+            </java>
+            <java fork="true" classname="${hack.program}"
+              classpath="${classes.dir}:${component.runtime-cp}">
+              <arg value="${hack.input3}"/>
+              <arg value="${hack.output3}"/>
+              <arg path="${hack.path3}"/>
+            </java>
+            <java fork="true" classname="${hack.program}"
+              classpath="${classes.dir}:${component.runtime-cp}">
+              <arg value="${hack.input4}"/>
+              <arg value="${hack.output4}"/>
+              <arg path="${hack.path4}"/>
+            </java>
+            <java fork="true" classname="${hack.program}"
+              classpath="${classes.dir}:${component.runtime-cp}">
+              <arg value="${hack.input5}"/>
+              <arg value="${hack.output5}"/>
+              <arg path="${hack.path5}"/>
+            </java>
           </then>
           <else>
-            <!-- Generate proxies for GCC builds. -->
+            <!-- Generate proxies for GCC and other builds. -->
 
             <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
             <java classname="jace.autoproxy.AutoProxy" fork="true">
@@ -165,7 +186,7 @@ from the Subversion repository using the command:
     </if>
   </target>
 
-  <target name="compile" depends="gen-makefile, copy-libs"
+  <target name="compile-proxies" depends="gen-makefile, copy-libs"
     description="build Bio-Formats C++ library">
     <if>
       <isset property="isWindows"/>

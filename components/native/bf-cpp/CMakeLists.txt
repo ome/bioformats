@@ -86,6 +86,7 @@ endif(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
 message(STATUS "")
 
 message(STATUS "-- Jace:")
+set(JACE_DIR NOTFOUND CACHE PATH "The path to toplevel directory of your Jace checkout")
 if(IS_DIRECTORY "${JACE_DIR}")
   message(STATUS "jace root     : ${JACE_DIR}")
 else(IS_DIRECTORY "${JACE_DIR}")
