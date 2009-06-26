@@ -52,13 +52,19 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class InCellReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final String[] PIXELS_SUFFIXES =
+    new String[] {"tif", "tiff", "im"};
+
   // -- Fields --
 
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
   private int seriesCount;
-  private Vector emWaves, exWaves;
+  private Vector<Integer> emWaves, exWaves;
   private int totalImages;
+  private int imageWidth, imageHeight;
   private String creationDate;
   private String rowName, colName;
   private int startRow, startCol;
@@ -66,7 +72,7 @@ public class InCellReader extends FormatReader {
 
   private int wellRows, wellCols;
   private Hashtable wellCoordinates;
-  private Vector posX, posY;
+  private Vector<Float> posX, posY;
 
   private int firstRow, firstCol;
   private int lastCol;
@@ -77,16 +83,24 @@ public class InCellReader extends FormatReader {
   private boolean oneTimepointPerSeries;
   private int totalChannels;
 
+  private Vector<String> metadataFiles;
+
   // -- Constructor --
 
   /** Constructs a new InCell 1000 reader. */
-  public InCellReader() { super("InCell 1000", "xdce"); }
+  public InCellReader() {
+    super("InCell 1000", new String[] {"xdce", "xml"});
+    suffixSufficient = false;
+    blockCheckLen = 2048;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return false;
+    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    String check = stream.readString(blockCheckLen);
+    return check.indexOf("IN Cell Analyzer 1000") != -1;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -97,13 +111,13 @@ public class InCellReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReader.get8BitLookupTable();
+    return tiffReader == null ? null : tiffReader.get8BitLookupTable();
   }
 
-  /* @see loci.formats.IForamtReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReader.get16BitLookupTable();
+    return tiffReader == null ? null : tiffReader.get16BitLookupTable();
   }
 
   /**
@@ -123,30 +137,46 @@ public class InCellReader extends FormatReader {
     int timepoint = oneTimepointPerSeries ?
       getSeries() % channelsPerTimepoint.size() : coordinates[2];
     int image = getIndex(coordinates[0], coordinates[1], 0);
-    tiffReader.setId(imageFiles[well][field][timepoint][image].filename);
-    return tiffReader.openBytes(0, buf, x, y, w, h);
+
+    String filename = imageFiles[well][field][timepoint][image].filename;
+    if (filename == null || !(new Location(filename).exists())) return buf;
+
+    if (imageFiles[well][field][timepoint][image].isTiff) {
+      tiffReader.setId(filename);
+      return tiffReader.openBytes(0, buf, x, y, w, h);
+    }
+
+    // pixels are stored in .im files
+    RandomAccessInputStream s = new RandomAccessInputStream(filename);
+    s.skipBytes(128);
+    s.read(buf);
+    s.close();
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) return new String[] {currentId};
+    if (noPixels) {
+      return metadataFiles.toArray(new String[0]);
+    }
     Vector<String> files = new Vector<String>();
     if (imageFiles != null) {
-      for (int well=0; well<wellRows*wellCols; well++) {
-        for (int field=0; field<fieldCount; field++) {
-          for (int time=0; time<imageFiles[well][field].length; time++) {
-            for (int p=0; p<imageFiles[well][field][time].length; p++)
-            {
-              if (imageFiles[well][field][time][p] != null) {
-                files.add(imageFiles[well][field][time][p].filename);
+      for (Image[][][] wells : imageFiles) {
+        for (Image[][] fields : wells) {
+          for (Image[] timepoints : fields) {
+            for (Image plane : timepoints) {
+              if (plane != null && plane.filename != null) {
+                files.add(plane.filename);
               }
             }
           }
         }
       }
     }
-    files.add(currentId);
+    for (String file : metadataFiles) {
+      files.add(file);
+    }
     return files.toArray(new String[0]);
   }
 
@@ -170,6 +200,7 @@ public class InCellReader extends FormatReader {
     startRow = startCol = 0;
     fieldCount = 0;
     exclude = null;
+    metadataFiles = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -184,13 +215,26 @@ public class InCellReader extends FormatReader {
     firstCol = Integer.MAX_VALUE;
     lastCol = Integer.MIN_VALUE;
 
-    emWaves = new Vector();
-    exWaves = new Vector();
+    emWaves = new Vector<Integer>();
+    exWaves = new Vector<Integer>();
     channelsPerTimepoint = new Vector();
+    metadataFiles = new Vector<String>();
+
+    // build list of companion files
+
+    Location directory = new Location(id).getAbsoluteFile().getParentFile();
+    String[] files = directory.list();
+    for (String file : files) {
+      if (!checkSuffix(file, PIXELS_SUFFIXES)) {
+        metadataFiles.add(new Location(directory, file).getAbsolutePath());
+      }
+    }
+
+    // parse metadata from the .xdce or .xml file
 
     wellCoordinates = new Hashtable();
-    posX = new Vector();
-    posY = new Vector();
+    posX = new Vector<Float>();
+    posY = new Vector<Float>();
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -259,19 +303,36 @@ public class InCellReader extends FormatReader {
       core[i].dimensionOrder = "XYZCT";
     }
 
-    tiffReader = new MinimalTiffReader();
-    tiffReader.setId(
-      imageFiles[getWellFromSeries(0)][getFieldFromSeries(0)][0][0].filename);
+    int wellIndex = getWellFromSeries(0);
+    int fieldIndex = getFieldFromSeries(0);
 
-    int nextTiming = 0;
-    for (int i=0; i<seriesCount; i++) {
-      core[i].sizeX = tiffReader.getSizeX();
-      core[i].sizeY = tiffReader.getSizeY();
-      core[i].interleaved = tiffReader.isInterleaved();
-      core[i].indexed = tiffReader.isIndexed();
-      core[i].rgb = tiffReader.isRGB();
-      core[i].pixelType = tiffReader.getPixelType();
-      core[i].littleEndian = tiffReader.isLittleEndian();
+    String filename = imageFiles[wellIndex][fieldIndex][0][0].filename;
+    boolean isTiff = imageFiles[wellIndex][fieldIndex][0][0].isTiff;
+
+    if (isTiff && filename != null) {
+      tiffReader = new MinimalTiffReader();
+      tiffReader.setId(filename);
+      int nextTiming = 0;
+      for (int i=0; i<seriesCount; i++) {
+        core[i].sizeX = tiffReader.getSizeX();
+        core[i].sizeY = tiffReader.getSizeY();
+        core[i].interleaved = tiffReader.isInterleaved();
+        core[i].indexed = tiffReader.isIndexed();
+        core[i].rgb = tiffReader.isRGB();
+        core[i].pixelType = tiffReader.getPixelType();
+        core[i].littleEndian = tiffReader.isLittleEndian();
+      }
+    }
+    else {
+      for (int i=0; i<seriesCount; i++) {
+        core[i].sizeX = imageWidth;
+        core[i].sizeY = imageHeight;
+        core[i].interleaved = false;
+        core[i].indexed = false;
+        core[i].rgb = false;
+        core[i].pixelType = FormatTools.UINT16;
+        core[i].littleEndian = true;
+      }
     }
 
     MetadataTools.populatePixels(store, this, true);
@@ -291,6 +352,7 @@ public class InCellReader extends FormatReader {
 
       store.setImageID("Image:" + i, i);
       store.setImageInstrumentRef("Instrument:0", i);
+      store.setImageExperimentRef("Experiment:0", i);
 
       int wellRow = well / wellCols;
       int wellCol = well % wellCols;
@@ -335,6 +397,10 @@ public class InCellReader extends FormatReader {
           int plane = time * getSizeZ() * c + q;
           store.setPlaneTimingDeltaT(img.deltaT, i, 0, plane);
           store.setPlaneTimingExposureTime(img.exposure, i, 0, plane);
+
+          store.setStagePositionPositionX(posX.get(field), i, 0, plane);
+          store.setStagePositionPositionY(posY.get(field), i, 0, plane);
+          store.setStagePositionPositionZ(img.zPosition, i, 0, plane);
         }
       }
     }
@@ -342,9 +408,13 @@ public class InCellReader extends FormatReader {
     // populate LogicalChannel data
 
     for (int i=0; i<seriesCount; i++) {
-      for (int q=0; q<emWaves.size(); q++) {
-        store.setLogicalChannelEmWave((Integer) emWaves.get(q), i, q);
-        store.setLogicalChannelExWave((Integer) exWaves.get(q), i, q);
+      for (int q=0; q<getEffectiveSizeC(); q++) {
+        if (q < emWaves.size()) {
+          store.setLogicalChannelEmWave(emWaves.get(q), i, q);
+        }
+        if (q < exWaves.size()) {
+          store.setLogicalChannelExWave(exWaves.get(q), i, q);
+        }
       }
     }
 
@@ -365,8 +435,8 @@ public class InCellReader extends FormatReader {
 
       store.setWellSampleIndex(new Integer(i), 0, well, field);
       store.setWellSampleImageRef("Image:" + i, 0, well, field);
-      store.setWellSamplePosX((Float) posX.get(field), 0, well, field);
-      store.setWellSamplePosY((Float) posY.get(field), 0, well, field);
+      store.setWellSamplePosX(posX.get(field), 0, well, field);
+      store.setWellSamplePosY(posY.get(field), 0, well, field);
     }
   }
 
@@ -456,7 +526,14 @@ public class InCellReader extends FormatReader {
           channels, 1, getSizeZ() * channels, z, c, 0);
 
         Image img = new Image();
-        img.filename = currentImageFile;
+        Location file = new Location(currentImageFile);
+        img.filename = file.exists() ? currentImageFile : null;
+        if (img.filename == null) {
+          warn(currentImageFile + " does not exist.");
+        }
+        currentImageFile = currentImageFile.toLowerCase();
+        img.isTiff = currentImageFile.endsWith(".tif") ||
+          currentImageFile.endsWith(".tiff");
         imageFiles[wellRow * wellCols + wellCol][field][t][index] = img;
       }
       else if (qName.equals("offset_point")) {
@@ -466,7 +543,8 @@ public class InCellReader extends FormatReader {
         core[0].sizeT++;
       }
       else if (qName.equals("Wavelength")) {
-        core[0].sizeC++;
+        String fusion = attributes.getValue("fusion_wave");
+        if (fusion.equals("false")) core[0].sizeC++;
       }
       else if (qName.equals("AcqWave")) {
         nChannels++;
@@ -487,6 +565,10 @@ public class InCellReader extends FormatReader {
         firstCol = (int) Math.min(firstCol, wellCol);
         lastCol = (int) Math.max(lastCol, wellCol);
       }
+      else if (qName.equals("Size")) {
+        imageWidth = Integer.parseInt(attributes.getValue("width"));
+        imageHeight = Integer.parseInt(attributes.getValue("height"));
+      }
     }
   }
 
@@ -500,8 +582,8 @@ public class InCellReader extends FormatReader {
     private int nextPlate = 0;
     private int currentRow = -1, currentCol = -1;
     private int currentField = 0;
-    private int currentImage;
-    private Float timestamp, exposure;
+    private int currentImage, currentPlane;
+    private Float timestamp, exposure, zPosition;
 
     public InCellHandler(MetadataStore store) {
       this.store = store;
@@ -521,9 +603,10 @@ public class InCellReader extends FormatReader {
         openImage = false;
 
         int well = currentRow * wellCols + currentCol;
-        if (imageFiles[well][currentField][currentImage][0] != null) {
-          imageFiles[well][currentField][currentImage][0].deltaT = timestamp;
-          imageFiles[well][currentField][currentImage][0].exposure = exposure;
+        Image img = imageFiles[well][currentField][currentImage][currentPlane];
+        if (img != null) {
+          img.deltaT = timestamp;
+          img.exposure = exposure;
         }
       }
     }
@@ -536,7 +619,11 @@ public class InCellReader extends FormatReader {
         addMeta(qName + " - " + attributes.getQName(i), attributes.getValue(i));
       }
 
-      if (qName.equals("Image")) {
+      if (qName.equals("Microscopy")) {
+        store.setExperimentID("Experiment:0", 0);
+        store.setExperimentType(attributes.getValue("type"), 0);
+      }
+      else if (qName.equals("Image")) {
         openImage = true;
         float time =
           Float.parseFloat(attributes.getValue("acquisition_time_ms"));
@@ -548,6 +635,13 @@ public class InCellReader extends FormatReader {
         int c = Integer.parseInt(attributes.getValue("wave_index"));
         int t = Integer.parseInt(attributes.getValue("time_index"));
         currentImage = t;
+        currentPlane = z * getSizeC() + c;
+        int well = currentRow * wellCols + currentCol;
+        Image img = imageFiles[well][currentField][currentImage][currentPlane];
+        img.zPosition = zPosition;
+      }
+      else if (qName.equals("FocusPosition")) {
+        zPosition = new Float(attributes.getValue("z"));
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd
@@ -557,11 +651,16 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("ObjectiveCalibration")) {
         store.setObjectiveNominalMagnification(new Integer(
           (int) Float.parseFloat(attributes.getValue("magnification"))), 0, 0);
-        store.setObjectiveModel(attributes.getValue("objective_name"), 0, 0);
         store.setObjectiveLensNA(new Float(
           attributes.getValue("numerical_aperture")), 0, 0);
-        store.setObjectiveCorrection("Unknown", 0, 0);
         store.setObjectiveImmersion("Unknown", 0, 0);
+
+        String objective = attributes.getValue("objective_name");
+        String[] tokens = objective.split("_");
+
+        store.setObjectiveManufacturer(tokens[0], 0, 0);
+        if (tokens.length > 2) store.setObjectiveCorrection(tokens[2], 0, 0);
+        else store.setObjectiveCorrection("Unknown", 0, 0);
 
         Float pixelSizeX = new Float(attributes.getValue("pixel_width"));
         Float pixelSizeY = new Float(attributes.getValue("pixel_height"));
@@ -617,7 +716,7 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("Plate")) {
-        store.setPlateName(new Location(getCurrentFile()).getName(), nextPlate);
+        store.setPlateName(attributes.getValue("name"), nextPlate);
 
         for (int r=0; r<wellRows; r++) {
           for (int c=0; c<wellCols; c++) {
@@ -664,7 +763,9 @@ public class InCellReader extends FormatReader {
 
   class Image {
     public String filename;
+    public boolean isTiff;
     public Float deltaT, exposure;
+    public Float zPosition;
   }
 
 }
