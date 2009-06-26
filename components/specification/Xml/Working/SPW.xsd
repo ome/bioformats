@@ -421,7 +421,7 @@
 					</xsd:documentation>
 				</xsd:annotation>			
 			</xsd:attribute>
-			<xsd:attribute name="Type" use="required" type="xsd:string">
+			<xsd:attribute name="Type" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						A human readable identifier for the screening status. 
