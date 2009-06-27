@@ -542,6 +542,7 @@ public class MIASReader extends FormatReader {
       String plateDir = plateDirectories[plate];
       plateDir = plateDir.substring(plateDir.lastIndexOf(File.separator) + 1);
       plateDir = plateDir.substring(plateDir.indexOf("-") + 1);
+      store.setPlateName(plateDir, plate);
       store.setPlateExternalIdentifier(plateDir, plate);
 
       for (int well=0; well<tiffs[plate].length; well++) {
@@ -566,6 +567,7 @@ public class MIASReader extends FormatReader {
       char wellRow = (char) ('A' + (well / wellCols));
       int wellCol = (well % wellCols) + 1;
 
+      store.setImageID("Image:" + s, s);
       store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
     }
