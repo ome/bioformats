@@ -201,6 +201,25 @@ public class Cache implements CacheReporter {
     }
   }
 
+  /** Updates all planes on the load list. */
+  public void recache() throws CacheException {
+    // what happens if cache source and cache strategy lengths do not match?
+    // throw exception in that case
+    // what if developer wants to change both source and strategy to something
+    // completely different -- make sure it works
+    // in general, what if developer wants to tweak a few parameters before
+    // starting to reload things? probably should have a recache method that
+    // you must explicitly call to trigger the separate thread refresh
+    // need to be careful -- don't want cache parameter changes affecting the
+    // recaching thread on the fly -- should refresh those parameter values
+    // each time through the loop only (i.e., only when a recache call occurs)
+    //
+    // /lo
+    for (int i=0; i<strategy.getLoadList(currentPos).length; i++) {
+      recache(i);
+    }
+  }
+
   // -- CacheReporter API methods --
 
   /* @see CacheReporter#addCacheListener(CacheListener) */
@@ -230,24 +249,6 @@ public class Cache implements CacheReporter {
   }
 
   // -- Helper methods --
-
-  protected void recache() throws CacheException {
-    // what happens if cache source and cache strategy lengths do not match?
-    // throw exception in that case
-    // what if developer wants to change both source and strategy to something
-    // completely different -- make sure it works
-    // in general, what if developer wants to tweak a few parameters before
-    // starting to reload things? probably should have a recache method that
-    // you must explicitly call to trigger the separate thread refresh
-    // need to be careful -- don't want cache parameter changes affecting the
-    // recaching thread on the fly -- should refresh those parameter values
-    // each time through the loop only (i.e., only when a recache call occurs)
-    //
-    // /lo
-    for (int i=0; i<strategy.getLoadList(currentPos).length; i++) {
-      recache(i);
-    }
-  }
 
   /** Informs listeners of a cache update. */
   protected void notifyListeners(CacheEvent e) {

@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
@@ -130,16 +129,6 @@ public class DelegateReader extends FormatReader {
     super.setMetadataStore(store);
     nativeReader.setMetadataStore(store);
     legacyReader.setMetadataStore(store);
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
-      return legacyReader.openImage(no, x, y, w, h);
-    }
-    return nativeReader.openImage(no, x, y, w, h);
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */

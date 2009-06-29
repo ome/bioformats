@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import loci.formats.meta.MetadataStore;
@@ -38,6 +37,14 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/DimensionSwapper.java">SVN</a></dd></dl>
  */
 public class DimensionSwapper extends ReaderWrapper {
+
+  // -- Utility methods --
+
+  /** Converts the given reader into a DimensionSwapper, wrapping if needed. */
+  public static DimensionSwapper makeDimensionSwapper(IFormatReader r) {
+    if (r instanceof DimensionSwapper) return (DimensionSwapper) r;
+    return new DimensionSwapper(r);
+  }
 
   // -- Constructors --
 
@@ -248,28 +255,9 @@ public class DimensionSwapper extends ReaderWrapper {
     return super.openBytes(reorder(no), buf, x, y, width, height);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return super.openImage(reorder(no));
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int width, int height)
-    throws FormatException, IOException
-  {
-    return super.openImage(reorder(no), x, y, width, height);
-  }
-
   /* @see loci.formats.IFormatReader#openThumbImage(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     return super.openThumbBytes(reorder(no));
-  }
-
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    return super.openThumbImage(reorder(no));
   }
 
   /* @see loci.formats.IFormatReader#getZCTCoords(int) */

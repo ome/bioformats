@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.formats.gui;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -37,13 +37,15 @@ import loci.common.Location;
 import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.formats.FormatException;
+import loci.formats.FormatHandler;
 
 /**
  * Utility class for working with QuickTime for Java.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/LegacyQTTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/LegacyQTTools.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/gui/LegacyQTTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/gui/LegacyQTTools.java">SVN</a></dd></dl>
  */
 public class LegacyQTTools {
 

@@ -41,13 +41,14 @@ import java.util.List;
 
 import loci.common.Location;
 import loci.common.LogTools;
-import loci.formats.AWTImageTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.BioRadReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.TiffReader;
@@ -86,7 +87,7 @@ public class FormatReaderTest {
   public static List skipFiles = new LinkedList();
 
   /** Global shared reader for use in all tests. */
-  private static IFormatReader reader;
+  private static BufferedImageReader reader;
 
   // -- Fields --
 
@@ -820,7 +821,7 @@ public class FormatReaderTest {
   private boolean initFile() {
     if (skip) throw new SkipException(SKIP_MESSAGE);
     if (reader == null) {
-      reader = new FileStitcher();
+      reader = new BufferedImageReader(new FileStitcher());
       reader.setNormalized(true);
       reader.setOriginalMetadataPopulated(true);
       reader.setMetadataFiltered(true);

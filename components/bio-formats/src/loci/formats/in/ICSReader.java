@@ -29,7 +29,6 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 
-import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;

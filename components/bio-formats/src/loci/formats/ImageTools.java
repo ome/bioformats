@@ -30,7 +30,7 @@ import loci.common.DataTools;
  * in primitive array form.
  *
  * To work with images in {@link java.awt.image.BufferedImage} form,
- * use the {@link AWTImageTools} class.
+ * use the {@link loci.formats.gui.AWTImageTools} class.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ImageTools.java">Trac</a>,

@@ -51,12 +51,12 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import loci.common.DataTools;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
+import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataRetrieve;

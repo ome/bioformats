@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.io;
 
-import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +33,6 @@ import loci.common.DataTools;
 import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import loci.formats.AWTImageTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -133,25 +131,6 @@ public class OMEWriter extends FormatWriter {
   }
 
   // -- IFormatWriter API methods --
-
-  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
-  public void saveImage(Image image, boolean last)
-    throws FormatException, IOException
-  {
-    saveImage(image, 0, last, last);
-  }
-
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    byte[][] b = AWTImageTools.getPixelBytes(AWTImageTools.makeBuffered(image),
-      !metadataRetrieve.getPixelsBigEndian(series, 0).booleanValue());
-    for (int i=0; i<b.length; i++) {
-      saveBytes(b[i], series, lastInSeries && (i == b.length - 1),
-        last && (i == b.length - 1));
-    }
-  }
 
   /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
   public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
@@ -591,7 +570,7 @@ public class OMEWriter extends FormatWriter {
       reader.setSeries(s);
       for (int i=0; i<reader.getImageCount(); i++) {
         boolean last = i == reader.getImageCount() - 1;
-        uploader.saveImage(reader.openImage(i), s, last,
+        uploader.saveBytes(reader.openBytes(i), s, last,
           last && s == end - 1);
       }
     }

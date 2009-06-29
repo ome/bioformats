@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.formats.gui;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -57,21 +57,25 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import loci.common.DataTools;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.ImageTools;
 
 /**
  * A utility class with convenience methods for manipulating images
  * in {@link java.awt.image.BufferedImage} form.
  *
  * To work with images in primitive array form,
- * use the {@link ImageTools} class.
+ * use the {@link loci.formats.ImageTools} class.
  *
  * Much code was stolen and adapted from
  * <a href="http://forum.java.sun.com/thread.jspa?threadID=522483">DrLaszloJamf's posts</a>
  * on the Java forums.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/AWTImageTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/AWTImageTools.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/gui/AWTImageTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/gui/AWTImageTools.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

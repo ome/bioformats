@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
+import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 

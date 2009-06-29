@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.io;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
@@ -31,7 +30,6 @@ import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -278,32 +276,6 @@ public class OMEReader extends FormatReader {
       throw new FormatException(e);
     }
     return buf;
-  }
-
-  /* @see loci.formats.IFormatReader#openThumbBytes(int) */
-  public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    FormatTools.checkPlaneNumber(this, no);
-    byte[][] b = AWTImageTools.getPixelBytes(openThumbImage(no), true);
-    byte[] rtn = new byte[b.length * b[0].length];
-    for (int i=0; i<b.length; i++) {
-      System.arraycopy(b[i], 0, rtn, i*b[0].length, b[i].length);
-    }
-    return rtn;
-  }
-
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    try {
-      return (BufferedImage) r.getVar("thumb");
-    }
-    catch (ReflectException e) {
-      if (debug) LogTools.trace(e);
-    }
-    return super.openThumbImage(no);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

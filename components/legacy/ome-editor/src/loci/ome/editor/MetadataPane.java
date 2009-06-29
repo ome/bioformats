@@ -72,10 +72,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectedUniverse;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.TiffTools;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.OMEXMLReader;
 import loci.formats.in.TiffReader;
 import loci.formats.ome.OMEXML2003FCMetadata;
@@ -196,8 +197,8 @@ public class MetadataPane extends JPanel
 
   public BufferedImage[] images, thumbs;
 
-  /** Holds the ImageReader used to open image or null if none used.*/
-  protected ImageReader reader;
+  /** Holds the image reader used to open image or null if none used. */
+  protected BufferedImageReader reader;
 
   private int minPixNum;
 
@@ -438,7 +439,7 @@ public class MetadataPane extends JPanel
       String outId = id + ".tif";
       File outFile = new File(outId);
       if (outFile.exists()) outFile.delete();
-      if (reader == null) reader = new ImageReader();
+      if (reader == null) reader = new BufferedImageReader();
       TiffWriter writer = new TiffWriter();
 
       int imageCount = 0;
@@ -495,7 +496,7 @@ public class MetadataPane extends JPanel
     String id = currentFile.getPath();
     File outFile = new File(outId);
     if (outFile.exists()) outFile.delete();
-    if (reader == null) reader = new ImageReader();
+    if (reader == null) reader = new BufferedImageReader();
     TiffWriter writer = new TiffWriter();
 
     int imageCount = 0;
@@ -812,7 +813,7 @@ public class MetadataPane extends JPanel
       boolean doMerge = false;
 
       try {
-        reader = new ImageReader();
+        reader = new BufferedImageReader();
         ms = new OMEXML2003FCMetadata();
 
         // tell reader to write metadata as it's being

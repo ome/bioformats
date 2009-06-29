@@ -31,7 +31,6 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
 
@@ -58,6 +57,12 @@ import loci.formats.in.SDTReader;
 public class ImagePlusReader extends ReaderWrapper {
 
   // -- Utility methods --
+
+  /** Converts the given reader into a ImagePlusReader, wrapping if needed. */
+  public static ImagePlusReader makeImagePlusReader(IFormatReader r) {
+    if (r instanceof ImagePlusReader) return (ImagePlusReader) r;
+    return new ImagePlusReader(r);
+  }
 
   /**
    * Creates an image reader according to the current configuration settings,
@@ -181,13 +186,8 @@ public class ImagePlusReader extends ReaderWrapper {
     boolean interleave = isInterleaved();
 
     if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
-      // HACK - byte array dimensions are incorrect - image is probably
-      // a different size, but we have no way of knowing what size;
-      // so open this plane as a BufferedImage to find out
-      BufferedImage bi =
-        openImage(no, crop.x, crop.y, crop.width, crop.height);
-      b = ImageTools.padImage(b, isInterleaved(), c,
-        bi.getWidth() * bpp, w, h);
+      throw new FormatException("Invalid byte array length: " + b.length +
+        " (expected w=" + w + ", h=" + h + ", c=" + c + ", bpp=" + bpp + ")");
     }
 
     // convert byte array to appropriate primitive array type

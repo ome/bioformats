@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -39,6 +37,14 @@ import loci.formats.meta.IMinMaxStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/MinMaxCalculator.java">SVN</a></dd></dl>
  */
 public class MinMaxCalculator extends ReaderWrapper {
+
+  // -- Utility methods --
+
+  /** Converts the given reader into a MinMaxCalculator, wrapping if needed. */
+  public static MinMaxCalculator makeMinMaxCalculator(IFormatReader r) {
+    if (r instanceof MinMaxCalculator) return (MinMaxCalculator) r;
+    return new MinMaxCalculator(r);
+  }
 
   // -- Fields --
 
@@ -211,21 +217,6 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return openImage(no, 0, 0, getSizeX(), getSizeY());
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    BufferedImage b = super.openImage(no, x, y, w, h);
-    updateMinMax(b, no);
-    return b;
-  }
-
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
@@ -268,61 +259,6 @@ public class MinMaxCalculator extends ReaderWrapper {
   }
 
   // -- Helper methods --
-
-  /** Updates min/max values based on the given BufferedImage. */
-  protected void updateMinMax(BufferedImage b, int ndx)
-    throws FormatException, IOException
-  {
-    if (b == null) return;
-    initMinMax();
-
-    int numRGB = getRGBChannelCount();
-    int series = getSeries();
-
-    // check whether min/max values have already been computed for this plane
-    if (planeMin[series][ndx * numRGB] == planeMin[series][ndx * numRGB]) {
-      return;
-    }
-
-    int[] coords = getZCTCoords(ndx);
-    int cBase = coords[1] * numRGB;
-    int pBase = ndx * numRGB;
-    for (int c=0; c<numRGB; c++) {
-      planeMin[series][pBase + c] = Double.POSITIVE_INFINITY;
-      planeMax[series][pBase + c] = Double.NEGATIVE_INFINITY;
-    }
-
-    WritableRaster pixels = b.getRaster();
-    for (int x=0; x<b.getWidth(); x++) {
-      for (int y=0; y<b.getHeight(); y++) {
-        for (int c=0; c<numRGB; c++) {
-          double v = pixels.getSampleDouble(x, y, c);
-
-          if (v > chanMax[series][cBase + c]) {
-            chanMax[series][cBase + c] = v;
-          }
-          if (v < chanMin[series][cBase + c]) {
-            chanMin[series][cBase + c] = v;
-          }
-          if (v > planeMax[series][pBase + c]) {
-            planeMax[series][pBase + c] = v;
-          }
-          if (v < planeMin[series][pBase + c]) {
-            planeMin[series][pBase + c] = v;
-          }
-        }
-      }
-    }
-
-    minMaxDone[series]++;
-
-    if (minMaxDone[series] == getImageCount() && minMaxStore != null) {
-      for (int c=0; c<getSizeC(); c++) {
-        minMaxStore.setChannelGlobalMinMax(c, chanMin[series][c],
-          chanMax[series][c], getSeries());
-      }
-    }
-  }
 
   /** Updates min/max values based on the given byte array. */
   protected void updateMinMax(byte[] b, int ndx)

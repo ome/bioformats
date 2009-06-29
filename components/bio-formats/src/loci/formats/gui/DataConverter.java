@@ -58,7 +58,6 @@ import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageWriter;
-import loci.formats.LegacyQTTools;
 
 /**
  * A utility for reorganizing and converting QuickTime movies,
@@ -81,6 +80,7 @@ public class DataConverter extends JFrame implements
 
   private FileStitcher reader = new FileStitcher(true);
   private DimensionSwapper swap = new DimensionSwapper(reader);
+  private BufferedImageReader biReader = new BufferedImageReader(swap);
   private ImageWriter writer = new ImageWriter();
   private JFileChooser rc, wc;
   private boolean shutdown, force = true;
@@ -599,7 +599,7 @@ public class DataConverter extends JFrame implements
                   plane++;
                   int ndx = swap.getIndex(zPos, cPos, tPos);
 
-                  BufferedImage img = swap.openImage(ndx);
+                  BufferedImage img = biReader.openImage(ndx);
                   writer.setId(out);
                   if (force && !writer.isSupportedType(swap.getPixelType())) {
                     int pixelType = 0;

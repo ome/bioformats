@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -283,16 +282,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isInterleaved(subC);
   }
 
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return reader.openImage(no);
-  }
-
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return reader.openImage(no, x, y, w, h);
-  }
-
   public byte[] openBytes(int no) throws FormatException, IOException {
     return reader.openBytes(no);
   }
@@ -313,12 +302,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     throws FormatException, IOException
   {
     return reader.openBytes(no, buf, x, y, w, h);
-  }
-
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    return reader.openThumbImage(no);
   }
 
   public byte[] openThumbBytes(int no) throws FormatException, IOException {

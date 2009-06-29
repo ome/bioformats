@@ -48,7 +48,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import loci.formats.ImageReader;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 
@@ -342,7 +342,7 @@ public class MetadataEditor extends JFrame
       new ExtensionFileFilter[] {tiffFilter, omeFilter};
     saver = GUITools.buildFileChooser(filters);
     saver.setCurrentDirectory(new File(System.getProperty("user.dir")));
-    if (metadata.reader == null) metadata.reader = new ImageReader();
+    if (metadata.reader == null) metadata.reader = new BufferedImageReader();
     opener = GUITools.buildFileChooser(metadata.reader);
     opener.setCurrentDirectory(new File(System.getProperty("user.dir")));
 

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.ReflectException;
+import loci.common.ReflectedUniverse;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -579,26 +581,6 @@ public final class FormatTools {
     return stream.length() >= len;
   }
 
-  // -- Utility methods -- other
-
-  /**
-   * Recursively look for the first underlying reader that is an
-   * instance of the given class.
-   */
-  public static IFormatReader getReader(IFormatReader r, Class c) {
-    IFormatReader[] underlying = r.getUnderlyingReaders();
-    if (underlying != null) {
-      for (int i=0; i<underlying.length; i++) {
-        if (underlying[i].getClass().isInstance(c)) return underlying[i];
-      }
-      for (int i=0; i<underlying.length; i++) {
-        IFormatReader t = getReader(underlying[i], c);
-        if (t != null) return t;
-      }
-    }
-    return null;
-  }
-
   // -- Utility methods -- export
 
   public static String getFilename(int series, int image, IFormatReader r,
@@ -658,6 +640,69 @@ public final class FormatTools {
       totalPlanes += r.getImageCount();
     }
     return totalPlanes / filenames.length;
+  }
+
+  // -- Utility methods -- other
+
+  /**
+   * Recursively look for the first underlying reader that is an
+   * instance of the given class.
+   */
+  public static IFormatReader getReader(IFormatReader r, Class c) {
+    IFormatReader[] underlying = r.getUnderlyingReaders();
+    if (underlying != null) {
+      for (int i=0; i<underlying.length; i++) {
+        if (underlying[i].getClass().isInstance(c)) return underlying[i];
+      }
+      for (int i=0; i<underlying.length; i++) {
+        IFormatReader t = getReader(underlying[i], c);
+        if (t != null) return t;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Default implementation for {@link IFormatReader#openThumbBytes}.
+   *
+   * At the moment, it uses {@link java.awt.image.BufferedImage} objects
+   * to resize thumbnails, so it is not safe for use in headless contexts.
+   * In the future, we may reimplement the image scaling logic purely with
+   * byte arrays, but handling every case would be substantial effort, so
+   * doing so is currently a low priority item.
+   */
+  public static byte[] openThumbBytes(IFormatReader reader, int no)
+    throws FormatException, IOException
+  {
+    // NB: Dependency on AWT here is unfortunate, but very difficult to
+    // eliminate in general. We use reflection to limit class loading
+    // problems with AWT on Mac OS X.
+    ReflectedUniverse r = new ReflectedUniverse();
+    byte[][] bytes = null;
+    try {
+      r.exec("import loci.formats.gui.AWTImageTools");
+      r.setVar("plane", reader.openBytes(no));
+      r.setVar("reader", reader);
+      r.setVar("sizeX", reader.getSizeX());
+      r.setVar("sizeY", reader.getSizeY());
+      r.setVar("thumbSizeX", reader.getThumbSizeX());
+      r.setVar("thumbSizeY", reader.getThumbSizeY());
+      r.setVar("little", reader.isLittleEndian());
+      r.exec("img = AWTImageTools.openImage(plane, reader, sizeX, sizeY)");
+      r.exec("thumb = AWTImageTools.scale(img, thumbSizeX, thumbSizeY, false)");
+      bytes = (byte[][]) r.exec("AWTImageTools.getPixelBytes(thumb, little)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
+
+    if (bytes.length == 1) return bytes[0];
+    int rgbChannelCount = reader.getRGBChannelCount();
+    byte[] rtn = new byte[rgbChannelCount * bytes[0].length];
+    for (int i=0; i<rgbChannelCount; i++) {
+      System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
+    }
+    return rtn;
   }
 
 }

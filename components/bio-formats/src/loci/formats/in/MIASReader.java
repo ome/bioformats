@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -31,7 +30,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -42,12 +40,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
-import loci.formats.in.MinimalTiffReader;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -132,8 +126,8 @@ public class MIASReader extends FormatReader {
     return reader == null ? null : reader.get16BitLookupTable();
   }
 
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
+  /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  public byte[] openThumbBytes(int no)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
@@ -145,7 +139,7 @@ public class MIASReader extends FormatReader {
     int plate = getPlateNumber(getSeries());
 
     reader.setId(tiffs[well][plate][no * tileRows * tileCols]);
-    return reader.openThumbImage(0);
+    return reader.openThumbBytes(0);
   }
 
   /**

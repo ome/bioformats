@@ -36,8 +36,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import loci.common.ReflectException;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.ome.io.OMECredentials;
 import loci.ome.io.OMEReader;
 import loci.ome.io.OMEUtils;
@@ -100,7 +101,7 @@ public class OMEImage extends ImageTransform {
   // -- Computed fields --
 
   /** Associated download helper object. */
-  protected OMEReader downloader;
+  protected BufferedImageReader downloader;
 
   /** ID passed to the OMEReader object. */
   protected String id;
@@ -394,7 +395,7 @@ public class OMEImage extends ImageTransform {
       catch (Exception e) { e.printStackTrace(); }
     }
 
-    downloader = new OMEReader();
+    downloader = new BufferedImageReader(new OMEReader());
     if (task != null) {
       task.setStatus("Downloading image");
     }

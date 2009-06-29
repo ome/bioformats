@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -84,14 +83,8 @@ public class FileStitcher implements IFormatReader {
   /** Reader used for each file. */
   private DimensionSwapper[][] readers;
 
-  /** Blank buffered image, for use when image counts vary between files. */
-  private BufferedImage[] blankImage;
-
   /** Blank image bytes, for use when image counts vary between files. */
   private byte[][] blankBytes;
-
-  /** Blank buffered thumbnail, for use when image counts vary between files. */
-  private BufferedImage[] blankThumb;
 
   /** Blank thumbnail bytes, for use when image counts vary between files. */
   private byte[][] blankThumbBytes;
@@ -149,8 +142,7 @@ public class FileStitcher implements IFormatReader {
    *   patterns rather than single file paths.
    */
   public FileStitcher(IFormatReader r, boolean patternIds) {
-    if (r instanceof DimensionSwapper) reader = (DimensionSwapper) r;
-    else reader = new DimensionSwapper(r);
+    reader = DimensionSwapper.makeDimensionSwapper(r);
     this.patternIds = patternIds;
   }
 
@@ -411,37 +403,6 @@ public class FileStitcher implements IFormatReader {
       readers[seriesInFile ? 0 : getSeries()][0].isInterleaved(subC);
   }
 
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return openImage(no, 0, 0, getSizeX(), getSizeY());
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 2);
-    if (noStitch) return reader.openImage(no, x, y, w, h);
-    int[] q = computeIndices(no);
-    int sno = seriesInFile ? 0 : getSeries();
-    int fno = q[0], ino = q[1];
-    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
-    if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openImage(ino, x, y, w, h);
-    }
-
-    sno = getSeries();
-
-    // return a blank image to cover for the fact that
-    // this file does not contain enough image planes
-    if (blankImage[sno] == null) {
-      blankImage[sno] = AWTImageTools.blankImage(w, h,
-        sizeC[sno], getPixelType());
-    }
-
-    return blankImage[sno];
-  }
-
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
@@ -499,31 +460,6 @@ public class FileStitcher implements IFormatReader {
     return buf;
   }
 
-  /* @see IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 2);
-    if (noStitch) return reader.openThumbImage(no);
-    int[] q = computeIndices(no);
-    int sno = seriesInFile ? 0 : getSeries();
-    int fno = q[0], ino = q[1];
-    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
-    if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openThumbImage(ino);
-    }
-
-    sno = getSeries();
-
-    // return a blank image to cover for the fact that
-    // this file does not contain enough image planes
-    if (blankThumb[sno] == null) {
-      blankThumb[sno] = AWTImageTools.blankImage(getThumbSizeX(),
-        getThumbSizeY(), sizeC[sno], getPixelType());
-    }
-    return blankThumb[sno];
-  }
-
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
@@ -561,14 +497,12 @@ public class FileStitcher implements IFormatReader {
     if (!fileOnly) {
       noStitch = false;
       readers = null;
-      blankImage = null;
       blankBytes = null;
       currentId = null;
       fp = null;
       ag = null;
       files = null;
       usedFiles = null;
-      blankThumb = null;
       blankThumbBytes = null;
       imagesPerFile = null;
       sizeZ = sizeC = sizeT = null;
@@ -986,9 +920,7 @@ public class FileStitcher implements IFormatReader {
     }
 
     ag = new AxisGuesser[seriesCount];
-    blankImage = new BufferedImage[seriesCount];
     blankBytes = new byte[seriesCount][];
-    blankThumb = new BufferedImage[seriesCount];
     blankThumbBytes = new byte[seriesCount][];
     imagesPerFile = new int[seriesCount];
     sizeZ = new int[seriesCount];

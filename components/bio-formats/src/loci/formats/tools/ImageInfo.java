@@ -36,7 +36,6 @@ import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import loci.formats.AWTImageTools;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
@@ -54,6 +53,8 @@ import loci.formats.MinMaxCalculator;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
 import loci.formats.XMLTools;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 
@@ -65,169 +66,181 @@ import loci.formats.meta.MetadataStore;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/tools/ImageInfo.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/ImageInfo.java">SVN</a></dd></dl>
  */
-public final class ImageInfo {
+public class ImageInfo {
 
-  // -- Constructor --
+  // -- Fields --
 
-  private ImageInfo() { }
+  private String id = null;
+  private boolean printVersion = false;
+  private boolean pixels = true;
+  private boolean doMeta = true;
+  private boolean filter = true;
+  private boolean thumbs = false;
+  private boolean minmax = false;
+  private boolean merge = false;
+  private boolean stitch = false;
+  private boolean separate = false;
+  private boolean expand = false;
+  private boolean omexml = false;
+  private boolean normalize = false;
+  private boolean fastBlit = false;
+  private boolean preload = false;
+  private String omexmlVersion = null;
+  private int start = 0;
+  private int end = Integer.MAX_VALUE;
+  private int series = 0;
+  private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
+  private String swapOrder = null, shuffleOrder = null;
+  private String map = null;
 
-  // -- Utility methods --
+  private IFormatReader reader;
+  private MinMaxCalculator minMaxCalc;
+  private DimensionSwapper dimSwapper;
+  private BufferedImageReader biReader;
 
-  /**
-   * A utility method for reading a file from the command line,
-   * and displaying the results in a simple display.
-   */
-  public static boolean testRead(String[] args)
-    throws FormatException, IOException
-  {
-    return testRead(new ImageReader(), args);
-  }
+  private StatusEchoer status;
 
-  /**
-   * A utility method for reading a file from the command line, and
-   * displaying the results in a simple display, using the given reader.
-   */
-  public static boolean testRead(IFormatReader reader, String[] args)
-    throws FormatException, IOException
-  {
-    String id = null;
-    boolean printVersion = false;
-    boolean pixels = true;
-    boolean doMeta = true;
-    boolean filter = true;
-    boolean thumbs = false;
-    boolean minmax = false;
-    boolean merge = false;
-    boolean stitch = false;
-    boolean separate = false;
-    boolean expand = false;
-    boolean omexml = false;
-    boolean normalize = false;
-    boolean fastBlit = false;
-    boolean preload = false;
-    String omexmlVersion = null;
-    int start = 0;
-    int end = Integer.MAX_VALUE;
-    int series = 0;
-    int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
-    String swapOrder = null, shuffleOrder = null;
-    String map = null;
-    if (args != null) {
-      for (int i=0; i<args.length; i++) {
-        if (args[i].startsWith("-")) {
-          if (args[i].equals("-nopix")) pixels = false;
-          else if (args[i].equals("-version")) printVersion = true;
-          else if (args[i].equals("-nometa")) doMeta = false;
-          else if (args[i].equals("-nofilter")) filter = false;
-          else if (args[i].equals("-thumbs")) thumbs = true;
-          else if (args[i].equals("-minmax")) minmax = true;
-          else if (args[i].equals("-merge")) merge = true;
-          else if (args[i].equals("-stitch")) stitch = true;
-          else if (args[i].equals("-separate")) separate = true;
-          else if (args[i].equals("-expand")) expand = true;
-          else if (args[i].equals("-omexml")) omexml = true;
-          else if (args[i].equals("-normalize")) normalize = true;
-          else if (args[i].equals("-fast")) fastBlit = true;
-          else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
-          else if (args[i].equals("-preload")) preload = true;
-          else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
-          else if (args[i].equals("-crop")) {
-            StringTokenizer st = new StringTokenizer(args[++i], ",");
-            xCoordinate = Integer.parseInt(st.nextToken());
-            yCoordinate = Integer.parseInt(st.nextToken());
-            width = Integer.parseInt(st.nextToken());
-            height = Integer.parseInt(st.nextToken());
-          }
-          else if (args[i].equals("-level")) {
-            try {
-              FormatHandler.setDebugLevel(Integer.parseInt(args[++i]));
-            }
-            catch (NumberFormatException exc) { }
-          }
-          else if (args[i].equals("-range")) {
-            try {
-              start = Integer.parseInt(args[++i]);
-              end = Integer.parseInt(args[++i]);
-            }
-            catch (NumberFormatException exc) { }
-          }
-          else if (args[i].equals("-series")) {
-            try {
-              series = Integer.parseInt(args[++i]);
-            }
-            catch (NumberFormatException exc) { }
-          }
-          else if (args[i].equals("-swap")) {
-            swapOrder = args[++i].toUpperCase();
-          }
-          else if (args[i].equals("-shuffle")) {
-            shuffleOrder = args[++i].toUpperCase();
-          }
-          else if (args[i].equals("-map")) map = args[++i];
-          else LogTools.println("Ignoring unknown command flag: " + args[i]);
+  private String seriesLabel = null;
+
+  private Double[] preGlobalMin = null, preGlobalMax = null;
+  private Double[] preKnownMin = null, preKnownMax = null;
+  private Double[] prePlaneMin = null, prePlaneMax = null;
+  private boolean preIsMinMaxPop = false;
+
+  // -- ImageInfo methods --
+
+  public void parseArgs(String[] args) {
+    id = null;
+    printVersion = false;
+    pixels = true;
+    doMeta = true;
+    filter = true;
+    thumbs = false;
+    minmax = false;
+    merge = false;
+    stitch = false;
+    separate = false;
+    expand = false;
+    omexml = false;
+    normalize = false;
+    fastBlit = false;
+    preload = false;
+    omexmlVersion = null;
+    start = 0;
+    end = Integer.MAX_VALUE;
+    series = 0;
+    xCoordinate = 0;
+    yCoordinate = 0;
+    width = 0;
+    height = 0;
+    swapOrder = null;
+    shuffleOrder = null;
+    map = null;
+    if (args == null) return;
+    for (int i=0; i<args.length; i++) {
+      if (args[i].startsWith("-")) {
+        if (args[i].equals("-nopix")) pixels = false;
+        else if (args[i].equals("-version")) printVersion = true;
+        else if (args[i].equals("-nometa")) doMeta = false;
+        else if (args[i].equals("-nofilter")) filter = false;
+        else if (args[i].equals("-thumbs")) thumbs = true;
+        else if (args[i].equals("-minmax")) minmax = true;
+        else if (args[i].equals("-merge")) merge = true;
+        else if (args[i].equals("-stitch")) stitch = true;
+        else if (args[i].equals("-separate")) separate = true;
+        else if (args[i].equals("-expand")) expand = true;
+        else if (args[i].equals("-omexml")) omexml = true;
+        else if (args[i].equals("-normalize")) normalize = true;
+        else if (args[i].equals("-fast")) fastBlit = true;
+        else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
+        else if (args[i].equals("-preload")) preload = true;
+        else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
+        else if (args[i].equals("-crop")) {
+          StringTokenizer st = new StringTokenizer(args[++i], ",");
+          xCoordinate = Integer.parseInt(st.nextToken());
+          yCoordinate = Integer.parseInt(st.nextToken());
+          width = Integer.parseInt(st.nextToken());
+          height = Integer.parseInt(st.nextToken());
         }
-        else {
-          if (id == null) id = args[i];
-          else LogTools.println("Ignoring unknown argument: " + args[i]);
+        else if (args[i].equals("-level")) {
+          try {
+            FormatHandler.setDebugLevel(Integer.parseInt(args[++i]));
+          }
+          catch (NumberFormatException exc) { }
         }
+        else if (args[i].equals("-range")) {
+          try {
+            start = Integer.parseInt(args[++i]);
+            end = Integer.parseInt(args[++i]);
+          }
+          catch (NumberFormatException exc) { }
+        }
+        else if (args[i].equals("-series")) {
+          try {
+            series = Integer.parseInt(args[++i]);
+          }
+          catch (NumberFormatException exc) { }
+        }
+        else if (args[i].equals("-swap")) {
+          swapOrder = args[++i].toUpperCase();
+        }
+        else if (args[i].equals("-shuffle")) {
+          shuffleOrder = args[++i].toUpperCase();
+        }
+        else if (args[i].equals("-map")) map = args[++i];
+        else LogTools.println("Ignoring unknown command flag: " + args[i]);
+      }
+      else {
+        if (id == null) id = args[i];
+        else LogTools.println("Ignoring unknown argument: " + args[i]);
       }
     }
+  }
 
-    if (printVersion) {
-      LogTools.println("Version: " + FormatTools.VERSION);
-      LogTools.println("SVN revision: " + FormatTools.SVN_REVISION);
-      LogTools.println("Build date: " + FormatTools.DATE);
-      return true;
-    }
+  public void printUsage() {
+    String className = reader.getClass().getName();
+    String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
+    String[] s = {
+      "To test read a file in " + fmt + " format, run:",
+      "  showinf file [-nopix] [-nometa] [-thumbs] [-minmax] ",
+      "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
+      "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
+      "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
+      "    [-xmlversion v] [-crop x,y,w,h]",
+      "",
+      "  -version: print the library version and exit",
+      "      file: the image file to read",
+      "    -nopix: read metadata only, not pixels",
+      "   -nometa: output only core metadata",
+      " -nofilter: do not filter metadata fields",
+      "   -thumbs: read thumbnails instead of normal pixels",
+      "   -minmax: compute min/max statistics",
+      "    -merge: combine separate channels into RGB image",
+      "   -stitch: stitch files with similar names",
+      " -separate: split RGB image into separate channels",
+      "   -expand: expand indexed color to RGB",
+      "   -omexml: populate OME-XML metadata",
+      "-normalize: normalize floating point images*",
+      "     -fast: paint RGB images as quickly as possible*",
+      "    -debug: turn on debugging output",
+      "    -range: specify range of planes to read (inclusive)",
+      "   -series: specify which image series to read",
+      "     -swap: override the default input dimension order",
+      "  -shuffle: override the default output dimension order",
+      "      -map: specify file on disk to which name should be mapped",
+      "  -preload: pre-read entire file into a buffer; significantly",
+      "            reduces the time required to read the images, but",
+      "            requires more memory",
+      "  -xmlversion: specify which OME-XML version should be generated",
+      "     -crop: crop images before displaying; argument is 'x,y,w,h'",
+      "",
+      "* = may result in loss of precision",
+      ""
+    };
+    for (int i=0; i<s.length; i++) LogTools.println(s[i]);
+  }
 
-    if (FormatHandler.debug) {
-      LogTools.println("Debugging at level " + FormatHandler.debugLevel);
-    }
-
-    if (id == null) {
-      String className = reader.getClass().getName();
-      String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
-      String[] s = {
-        "To test read a file in " + fmt + " format, run:",
-        "  showinf file [-nopix] [-nometa] [-thumbs] [-minmax] ",
-        "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
-        "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
-        "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
-        "    [-xmlversion v] [-crop x,y,w,h]",
-        "",
-        "  -version: print the library version and exit",
-        "      file: the image file to read",
-        "    -nopix: read metadata only, not pixels",
-        "   -nometa: output only core metadata",
-        " -nofilter: do not filter metadata fields",
-        "   -thumbs: read thumbnails instead of normal pixels",
-        "   -minmax: compute min/max statistics",
-        "    -merge: combine separate channels into RGB image",
-        "   -stitch: stitch files with similar names",
-        " -separate: split RGB image into separate channels",
-        "   -expand: expand indexed color to RGB",
-        "   -omexml: populate OME-XML metadata",
-        "-normalize: normalize floating point images*",
-        "     -fast: paint RGB images as quickly as possible*",
-        "    -debug: turn on debugging output",
-        "    -range: specify range of planes to read (inclusive)",
-        "   -series: specify which image series to read",
-        "     -swap: override the default input dimension order",
-        "  -shuffle: override the default output dimension order",
-        "      -map: specify file on disk to which name should be mapped",
-        "  -preload: pre-read entire file into a buffer; significantly",
-        "            reduces the time required to read the images, but",
-        "            requires more memory",
-        "  -xmlversion: specify which OME-XML version should be generated",
-        "     -crop: crop images before displaying; argument is 'x,y,w,h'",
-        "",
-        "* = may result in loss of precision",
-        ""
-      };
-      for (int i=0; i<s.length; i++) LogTools.println(s[i]);
-      return false;
-    }
-
+  public void mapLocation() throws IOException {
     if (map != null) Location.mapId(id, map);
     else if (preload) {
       RandomAccessInputStream f = new RandomAccessInputStream(id);
@@ -237,7 +250,9 @@ public final class ImageInfo {
       ByteArrayHandle file = new ByteArrayHandle(b);
       Location.mapFile(id, file);
     }
+  }
 
+  public void configureReaderPreInit() throws FormatException, IOException {
     if (omexml) {
       reader.setOriginalMetadataPopulated(true);
       MetadataStore store =
@@ -267,28 +282,29 @@ public final class ImageInfo {
     if (expand) reader = new ChannelFiller(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
-    MinMaxCalculator minMaxCalc = null;
+    minMaxCalc = null;
     if (minmax) reader = minMaxCalc = new MinMaxCalculator(reader);
-    DimensionSwapper dimSwapper = null;
+    dimSwapper = null;
     if (swapOrder != null || shuffleOrder != null) {
       reader = dimSwapper = new DimensionSwapper(reader);
     }
+    reader = biReader = new BufferedImageReader(reader);
 
-    StatusEchoer status = new StatusEchoer();
+    status = new StatusEchoer();
     reader.addStatusListener(status);
 
     reader.close();
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(filter);
     reader.setMetadataCollected(doMeta);
-    long s1 = System.currentTimeMillis();
-    reader.setId(id);
-    long e1 = System.currentTimeMillis();
-    float sec1 = (e1 - s1) / 1000f;
-    LogTools.println("Initialization took " + sec1 + "s");
+  }
+
+  public void configureReaderPostInit() {
     if (swapOrder != null) dimSwapper.swapDimensions(swapOrder);
     if (shuffleOrder != null) dimSwapper.setOutputOrder(shuffleOrder);
+  }
 
+  public void checkWarnings() {
     if (!normalize && (reader.getPixelType() == FormatTools.FLOAT ||
       reader.getPixelType() == FormatTools.DOUBLE))
     {
@@ -304,7 +320,9 @@ public final class ImageInfo {
       LogTools.println("Please use the '-separate' option " +
         "to avoid receiving a cryptic exception.");
     }
+  }
 
+  public void readCoreMetadata() throws FormatException, IOException {
     // read basic metadata
     LogTools.println();
     LogTools.println("Reading core metadata");
@@ -474,17 +492,16 @@ public final class ImageInfo {
         }
       }
     }
-    reader.setSeries(series);
-    String s = seriesCount > 1 ? (" series #" + series) : "";
-    int pixelType = reader.getPixelType();
-    int sizeC = reader.getSizeC();
+  }
 
+  public void initPreMinMaxValues() throws FormatException, IOException {
     // get a priori min/max values
-    Double[] preGlobalMin = null, preGlobalMax = null;
-    Double[] preKnownMin = null, preKnownMax = null;
-    Double[] prePlaneMin = null, prePlaneMax = null;
-    boolean preIsMinMaxPop = false;
+    preGlobalMin = preGlobalMax = null;
+    preKnownMin = preKnownMax = null;
+    prePlaneMin = prePlaneMax = null;
+    preIsMinMaxPop = false;
     if (minmax) {
+      int sizeC = reader.getSizeC();
       preGlobalMin = new Double[sizeC];
       preGlobalMax = new Double[sizeC];
       preKnownMin = new Double[sizeC];
@@ -499,192 +516,269 @@ public final class ImageInfo {
       prePlaneMax = minMaxCalc.getPlaneMaximum(0);
       preIsMinMaxPop = minMaxCalc.isMinMaxPopulated();
     }
+  }
+
+  public void printMinMaxValues() throws FormatException, IOException {
+    // get computed min/max values
+    int sizeC = reader.getSizeC();
+    Double[] globalMin = new Double[sizeC];
+    Double[] globalMax = new Double[sizeC];
+    Double[] knownMin = new Double[sizeC];
+    Double[] knownMax = new Double[sizeC];
+    for (int c=0; c<sizeC; c++) {
+      globalMin[c] = minMaxCalc.getChannelGlobalMinimum(c);
+      globalMax[c] = minMaxCalc.getChannelGlobalMaximum(c);
+      knownMin[c] = minMaxCalc.getChannelKnownMinimum(c);
+      knownMax[c] = minMaxCalc.getChannelKnownMaximum(c);
+    }
+    Double[] planeMin = minMaxCalc.getPlaneMinimum(0);
+    Double[] planeMax = minMaxCalc.getPlaneMaximum(0);
+    boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated();
+
+    // output min/max results
+    LogTools.println();
+    LogTools.println("Min/max values:");
+    for (int c=0; c<sizeC; c++) {
+      LogTools.println("\tChannel " + c + ":");
+      LogTools.println("\t\tGlobal minimum = " +
+        globalMin[c] + " (initially " + preGlobalMin[c] + ")");
+      LogTools.println("\t\tGlobal maximum = " +
+        globalMax[c] + " (initially " + preGlobalMax[c] + ")");
+      LogTools.println("\t\tKnown minimum = " +
+        knownMin[c] + " (initially " + preKnownMin[c] + ")");
+      LogTools.println("\t\tKnown maximum = " +
+        knownMax[c] + " (initially " + preKnownMax[c] + ")");
+    }
+    LogTools.print("\tFirst plane minimum(s) =");
+    if (planeMin == null) LogTools.print(" none");
+    else {
+      for (int subC=0; subC<planeMin.length; subC++) {
+        LogTools.print(" " + planeMin[subC]);
+      }
+    }
+    LogTools.print(" (initially");
+    if (prePlaneMin == null) LogTools.print(" none");
+    else {
+      for (int subC=0; subC<prePlaneMin.length; subC++) {
+        LogTools.print(" " + prePlaneMin[subC]);
+      }
+    }
+    LogTools.println(")");
+    LogTools.print("\tFirst plane maximum(s) =");
+    if (planeMax == null) LogTools.print(" none");
+    else {
+      for (int subC=0; subC<planeMax.length; subC++) {
+        LogTools.print(" " + planeMax[subC]);
+      }
+    }
+    LogTools.print(" (initially");
+    if (prePlaneMax == null) LogTools.print(" none");
+    else {
+      for (int subC=0; subC<prePlaneMax.length; subC++) {
+        LogTools.print(" " + prePlaneMax[subC]);
+      }
+    }
+    LogTools.println(")");
+    LogTools.println("\tMin/max populated = " +
+      isMinMaxPop + " (initially " + preIsMinMaxPop + ")");
+  }
+
+  public void readPixels() throws FormatException, IOException {
+    String seriesLabel = reader.getSeriesCount() > 1 ?
+      (" series #" + series) : "";
+    LogTools.println();
+    LogTools.print("Reading" + seriesLabel + " pixel data ");
+    status.setVerbose(false);
+    int num = reader.getImageCount();
+    if (start < 0) start = 0;
+    if (start >= num) start = num - 1;
+    if (end < 0) end = 0;
+    if (end >= num) end = num - 1;
+    if (end < start) end = start;
+
+    int sizeX = reader.getSizeX();
+    int sizeY = reader.getSizeY();
+    int sizeC = reader.getSizeC();
+
+    if (width == 0) width = sizeX;
+    if (height == 0) height = sizeY;
+
+    int pixelType = reader.getPixelType();
+
+    LogTools.print("(" + start + "-" + end + ") ");
+    BufferedImage[] images = new BufferedImage[end - start + 1];
+    long s2 = System.currentTimeMillis();
+    boolean mismatch = false;
+    for (int i=start; i<=end; i++) {
+      status.setEchoNext(true);
+      if (!fastBlit) {
+        images[i - start] = thumbs ? biReader.openThumbImage(i) :
+          biReader.openImage(i, xCoordinate, yCoordinate, width, height);
+      }
+      else {
+        byte[] b = thumbs ? reader.openThumbBytes(i) :
+          reader.openBytes(i, xCoordinate, yCoordinate, width, height);
+        Object pix = DataTools.makeDataArray(b,
+          FormatTools.getBytesPerPixel(pixelType),
+          FormatTools.isFloatingPoint(pixelType),
+          reader.isLittleEndian());
+        images[i - start] = AWTImageTools.makeImage(
+          ImageTools.make24Bits(pix, sizeX, sizeY, false, false),
+          sizeX, sizeY, FormatTools.isSigned(pixelType));
+      }
+
+      // check for pixel type mismatch
+      int pixType = AWTImageTools.getPixelType(images[i - start]);
+      if (pixType != pixelType && pixType != pixelType + 1 && !fastBlit) {
+        if (!mismatch) {
+          LogTools.println();
+          mismatch = true;
+        }
+        LogTools.println("\tPlane #" + i + ": pixel type mismatch: " +
+          FormatTools.getPixelTypeString(pixType) + "/" +
+          FormatTools.getPixelTypeString(pixelType));
+      }
+      else {
+        mismatch = false;
+        LogTools.print(".");
+      }
+    }
+    long e2 = System.currentTimeMillis();
+    if (!mismatch) LogTools.print(" ");
+    LogTools.println("[done]");
+
+    // output timing results
+    float sec2 = (e2 - s2) / 1000f;
+    float avg = (float) (e2 - s2) / images.length;
+    LogTools.println(sec2 + "s elapsed (" + avg + "ms per image)");
+
+    if (minmax) printMinMaxValues();
+
+    // display pixels in image viewer
+    // NB: avoid dependencies on optional loci.formats.gui package
+    LogTools.println();
+    LogTools.println("Launching image viewer");
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import loci.formats.gui.ImageViewer");
+      r.exec("viewer = new ImageViewer()");
+      r.setVar("reader", reader);
+      r.setVar("images", images);
+      r.setVar("true", true);
+      r.exec("viewer.setImages(reader, images)");
+      r.exec("viewer.setVisible(true)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
+  }
+
+  public void printOriginalMetadata() {
+    String seriesLabel = reader.getSeriesCount() > 1 ?
+      (" series #" + series) : "";
+    LogTools.println();
+    LogTools.println("Reading" + seriesLabel + " metadata");
+    Hashtable meta = reader.getMetadata();
+    String[] keys = (String[]) meta.keySet().toArray(new String[0]);
+    Arrays.sort(keys);
+    for (int i=0; i<keys.length; i++) {
+      LogTools.print(keys[i] + ": ");
+      LogTools.println(reader.getMetadataValue(keys[i]));
+    }
+  }
+
+  public void printOMEXML() {
+    LogTools.println();
+    MetadataStore ms = reader.getMetadataStore();
+    String version = MetadataTools.getOMEXMLVersion(ms);
+    if (version == null) LogTools.println("Generating OME-XML");
+    else {
+      LogTools.println("Generating OME-XML (schema version " + version + ")");
+    }
+    if (ms instanceof MetadataRetrieve) {
+      String xml = MetadataTools.getOMEXML((MetadataRetrieve) ms);
+      LogTools.println(XMLTools.indentXML(xml));
+      MetadataTools.validateOMEXML(xml);
+    }
+    else {
+      LogTools.println("The metadata could not be converted to OME-XML.");
+      if (omexmlVersion == null) {
+        LogTools.println(
+          "The OME-XML Java library is probably not available.");
+      }
+      else {
+        LogTools.println(omexmlVersion +
+          " is probably not a legal schema version.");
+      }
+    }
+  }
+
+  /**
+   * A utility method for reading a file from the command line,
+   * and displaying the results in a simple display.
+   */
+  public boolean testRead(String[] args)
+    throws FormatException, IOException
+  {
+    return testRead(new ImageReader(), args);
+  }
+
+  /**
+   * A utility method for reading a file from the command line, and
+   * displaying the results in a simple display, using the given reader.
+   */
+  public boolean testRead(IFormatReader reader, String[] args)
+    throws FormatException, IOException
+  {
+    this.reader = reader;
+
+    parseArgs(args);
+    if (printVersion) {
+      LogTools.println("Version: " + FormatTools.VERSION);
+      LogTools.println("SVN revision: " + FormatTools.SVN_REVISION);
+      LogTools.println("Build date: " + FormatTools.DATE);
+      return true;
+    }
+
+    if (FormatHandler.debug) {
+      LogTools.println("Debugging at level " + FormatHandler.debugLevel);
+    }
+
+    if (id == null) {
+      printUsage();
+      return false;
+    }
+
+    mapLocation();
+    configureReaderPreInit();
+
+    // initialize reader
+    long s1 = System.currentTimeMillis();
+    reader.setId(id);
+    long e1 = System.currentTimeMillis();
+    float sec1 = (e1 - s1) / 1000f;
+    LogTools.println("Initialization took " + sec1 + "s");
+
+    configureReaderPostInit();
+
+    checkWarnings();
+
+    readCoreMetadata();
+
+    reader.setSeries(series);
+    int pixelType = reader.getPixelType();
+    int sizeC = reader.getSizeC();
+
+    initPreMinMaxValues();
 
     // read pixels
-    if (pixels) {
-      LogTools.println();
-      LogTools.print("Reading" + s + " pixel data ");
-      status.setVerbose(false);
-      int num = reader.getImageCount();
-      if (start < 0) start = 0;
-      if (start >= num) start = num - 1;
-      if (end < 0) end = 0;
-      if (end >= num) end = num - 1;
-      if (end < start) end = start;
-
-      if (width == 0) width = reader.getSizeX();
-      if (height == 0) height = reader.getSizeY();
-
-      LogTools.print("(" + start + "-" + end + ") ");
-      BufferedImage[] images = new BufferedImage[end - start + 1];
-      long s2 = System.currentTimeMillis();
-      boolean mismatch = false;
-      for (int i=start; i<=end; i++) {
-        status.setEchoNext(true);
-        if (!fastBlit) {
-          images[i - start] = thumbs ? reader.openThumbImage(i) :
-            reader.openImage(i, xCoordinate, yCoordinate, width, height);
-        }
-        else {
-          int x = reader.getSizeX();
-          int y = reader.getSizeY();
-          byte[] b = thumbs ? reader.openThumbBytes(i) :
-            reader.openBytes(i, xCoordinate, yCoordinate, width, height);
-          Object pix = DataTools.makeDataArray(b,
-            FormatTools.getBytesPerPixel(pixelType),
-            FormatTools.isFloatingPoint(pixelType),
-            reader.isLittleEndian());
-          images[i - start] = AWTImageTools.makeImage(
-            ImageTools.make24Bits(pix, x, y, false, false), x, y,
-            FormatTools.isSigned(pixelType));
-        }
-
-        // check for pixel type mismatch
-        int pixType = AWTImageTools.getPixelType(images[i - start]);
-        if (pixType != pixelType && pixType != pixelType + 1 && !fastBlit) {
-          if (!mismatch) {
-            LogTools.println();
-            mismatch = true;
-          }
-          LogTools.println("\tPlane #" + i + ": pixel type mismatch: " +
-            FormatTools.getPixelTypeString(pixType) + "/" +
-            FormatTools.getPixelTypeString(pixelType));
-        }
-        else {
-          mismatch = false;
-          LogTools.print(".");
-        }
-      }
-      long e2 = System.currentTimeMillis();
-      if (!mismatch) LogTools.print(" ");
-      LogTools.println("[done]");
-
-      // output timing results
-      float sec2 = (e2 - s2) / 1000f;
-      float avg = (float) (e2 - s2) / images.length;
-      LogTools.println(sec2 + "s elapsed (" + avg + "ms per image)");
-
-      if (minmax) {
-        // get computed min/max values
-        Double[] globalMin = new Double[sizeC];
-        Double[] globalMax = new Double[sizeC];
-        Double[] knownMin = new Double[sizeC];
-        Double[] knownMax = new Double[sizeC];
-        for (int c=0; c<sizeC; c++) {
-          globalMin[c] = minMaxCalc.getChannelGlobalMinimum(c);
-          globalMax[c] = minMaxCalc.getChannelGlobalMaximum(c);
-          knownMin[c] = minMaxCalc.getChannelKnownMinimum(c);
-          knownMax[c] = minMaxCalc.getChannelKnownMaximum(c);
-        }
-        Double[] planeMin = minMaxCalc.getPlaneMinimum(0);
-        Double[] planeMax = minMaxCalc.getPlaneMaximum(0);
-        boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated();
-
-        // output min/max results
-        LogTools.println();
-        LogTools.println("Min/max values:");
-        for (int c=0; c<sizeC; c++) {
-          LogTools.println("\tChannel " + c + ":");
-          LogTools.println("\t\tGlobal minimum = " +
-            globalMin[c] + " (initially " + preGlobalMin[c] + ")");
-          LogTools.println("\t\tGlobal maximum = " +
-            globalMax[c] + " (initially " + preGlobalMax[c] + ")");
-          LogTools.println("\t\tKnown minimum = " +
-            knownMin[c] + " (initially " + preKnownMin[c] + ")");
-          LogTools.println("\t\tKnown maximum = " +
-            knownMax[c] + " (initially " + preKnownMax[c] + ")");
-        }
-        LogTools.print("\tFirst plane minimum(s) =");
-        if (planeMin == null) LogTools.print(" none");
-        else {
-          for (int subC=0; subC<planeMin.length; subC++) {
-            LogTools.print(" " + planeMin[subC]);
-          }
-        }
-        LogTools.print(" (initially");
-        if (prePlaneMin == null) LogTools.print(" none");
-        else {
-          for (int subC=0; subC<prePlaneMin.length; subC++) {
-            LogTools.print(" " + prePlaneMin[subC]);
-          }
-        }
-        LogTools.println(")");
-        LogTools.print("\tFirst plane maximum(s) =");
-        if (planeMax == null) LogTools.print(" none");
-        else {
-          for (int subC=0; subC<planeMax.length; subC++) {
-            LogTools.print(" " + planeMax[subC]);
-          }
-        }
-        LogTools.print(" (initially");
-        if (prePlaneMax == null) LogTools.print(" none");
-        else {
-          for (int subC=0; subC<prePlaneMax.length; subC++) {
-            LogTools.print(" " + prePlaneMax[subC]);
-          }
-        }
-        LogTools.println(")");
-        LogTools.println("\tMin/max populated = " +
-          isMinMaxPop + " (initially " + preIsMinMaxPop + ")");
-      }
-
-      // display pixels in image viewer
-      // NB: avoid dependencies on optional loci.formats.gui package
-      LogTools.println();
-      LogTools.println("Launching image viewer");
-      ReflectedUniverse r = new ReflectedUniverse();
-      try {
-        r.exec("import loci.formats.gui.ImageViewer");
-        r.exec("viewer = new ImageViewer()");
-        r.setVar("reader", reader);
-        r.setVar("images", images);
-        r.setVar("true", true);
-        r.exec("viewer.setImages(reader, images)");
-        r.exec("viewer.setVisible(true)");
-      }
-      catch (ReflectException exc) {
-        throw new FormatException(exc);
-      }
-    }
+    if (pixels) readPixels();
 
     // read format-specific metadata table
-    if (doMeta) {
-      LogTools.println();
-      LogTools.println("Reading" + s + " metadata");
-      Hashtable meta = reader.getMetadata();
-      String[] keys = (String[]) meta.keySet().toArray(new String[0]);
-      Arrays.sort(keys);
-      for (int i=0; i<keys.length; i++) {
-        LogTools.print(keys[i] + ": ");
-        LogTools.println(reader.getMetadataValue(keys[i]));
-      }
-    }
+    if (doMeta) printOriginalMetadata();
 
     // output and validate OME-XML
-    if (omexml) {
-      LogTools.println();
-      String version = MetadataTools.getOMEXMLVersion(ms);
-      if (version == null) LogTools.println("Generating OME-XML");
-      else {
-        LogTools.println("Generating OME-XML (schema version " + version + ")");
-      }
-      if (MetadataTools.isOMEXMLMetadata(ms)) {
-        String xml = MetadataTools.getOMEXML((MetadataRetrieve) ms);
-        LogTools.println(XMLTools.indentXML(xml));
-        MetadataTools.validateOMEXML(xml);
-      }
-      else {
-        LogTools.println("The metadata could not be converted to OME-XML.");
-        if (omexmlVersion == null) {
-          LogTools.println(
-            "The OME-XML Java library is probably not available.");
-        }
-        else {
-          LogTools.println(omexmlVersion +
-            " is probably not a legal schema version.");
-        }
-      }
-    }
+    if (omexml) printOMEXML();
 
     return true;
   }
@@ -692,7 +786,7 @@ public final class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    if (!testRead(args)) System.exit(1);
+    if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 
   // -- Helper classes --

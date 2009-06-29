@@ -23,14 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.io;
 
-import java.awt.Image;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
-import loci.common.LogTools;
-import loci.formats.AWTImageTools;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatWriter;
 import loci.formats.StatusEvent;
@@ -124,28 +118,6 @@ public class OMEROWriter extends FormatWriter {
   protected void status(StatusEvent e) {
     StatusListener[] l = getStatusListeners();
     for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
-  }
-
-  public void saveImage(Image image, boolean last)
-    throws FormatException, IOException
-  {
-    saveImage(image, 0, last, last);
-  }
-
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
-    boolean last)
-    throws FormatException, IOException
-  {
-
-    byte[][] b = AWTImageTools.getPixelBytes(
-      AWTImageTools.makeBuffered(image), true);
-
-    //!metadata.getBigEndian(series).booleanValue());
-    for (int i=0; i<b.length; i++) {
-      saveBytes(b[i], series, lastInSeries && (i == b.length - 1),
-        last && (i == b.length - 1));
-    }
   }
 
   public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
@@ -285,125 +257,6 @@ public class OMEROWriter extends FormatWriter {
       return false;
     }
     return true;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws Exception {
-    // org.apache.log4j.BasicConfigurator.configure();
-    username="allison";
-    password="omero";
-    serverName="localhost";
-    port="1099";
-
-    String id=null;
-
-    // parse command-line arguments
-    boolean doUsage = false;
-    if (args.length == 0) doUsage = true;
-    for (int i=0; i<args.length; i++) {
-      if (args[i].startsWith("-")) {
-        // argument is a command line flag
-        String param = args[i];
-        try {
-          if (param.equalsIgnoreCase("-s")) serverName = args[++i];
-          else if (param.equalsIgnoreCase("-a")) port = args[++i];
-          else if (param.equalsIgnoreCase("-u")) username = args[++i];
-          else if (param.equalsIgnoreCase("-p")) password = args[++i];
-          else if (param.equalsIgnoreCase("-h") ||
-            param.equalsIgnoreCase("-?"))
-          {
-            doUsage = true;
-          }
-          else {
-            LogTools.println("Error: unknown flag: "+ param);
-            LogTools.println();
-            doUsage = true;
-            break;
-          }
-        }
-        catch (ArrayIndexOutOfBoundsException exc) {
-          if (i == args.length - 1) {
-            LogTools.println("Error: flag " + param +
-              " must be followed by a parameter value.");
-            LogTools.println();
-            doUsage = true;
-            break;
-          }
-          else throw exc;
-        }
-      }
-      else {
-        if (id == null) id = args[i];
-        else {
-          LogTools.println("Error: unknown argument: " + args[i]);
-          LogTools.println();
-        }
-      }
-    }
-
-    if (id == null) doUsage = true;
-    if (doUsage) {
-      LogTools.println("Usage: omero [-s server.address] " +
-        "[-a port] [-u username] [-p password] filename");
-      LogTools.println();
-      System.exit(1);
-    }
-
-    // ask for information if necessary
-    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
-    if (serverName == null) {
-      LogTools.print("Server name? ");
-      try { serverName = cin.readLine(); }
-      catch (IOException exc) { }
-    }
-    if (port == null) {
-        LogTools.print("Port? ");
-        try { port = cin.readLine(); }
-        catch (IOException exc) { }
-      }
-    if (username == null) {
-      LogTools.print("Username? ");
-      try { username = cin.readLine(); }
-      catch (IOException exc) { }
-    }
-    if (password == null) {
-      LogTools.print("Password? ");
-      try { password = cin.readLine(); }
-      catch (IOException exc) { }
-    }
-    if (serverName == null || username == null ||
-      password == null || port == null)
-    {
-      LogTools.println("Error: could not obtain server login information");
-      System.exit(2);
-    }
-    LogTools.println("Using server " + serverName + " as user " + username);
-
-    //create image uploader
-
-    OMEROWriter uploader = new OMEROWriter();
-    uploader.addStatusListener(new StatusListener() {
-      public void statusUpdated(StatusEvent e) {
-        LogTools.println(e.getStatusMessage());
-      }
-    });
-
-    uploader.setId(serverName +
-      "?user=" + username + "&password=" + password);
-
-    FileStitcher reader = new FileStitcher();
-    //reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
-    //reader.setMetadataStore(new OMEXMLMetadata());
-
-    reader.setId(id);
-    //reader.setMetadataStore(store);
-    uploader.setMetadata((MetadataRetrieve) reader.getMetadataStore());
-    for (int i=0; i<reader.getImageCount(); i++) {
-      uploader.saveImage(reader.openImage(i), i == reader.getImageCount()-1);
-    }
-    reader.close();
-    uploader.close();
   }
 
 }

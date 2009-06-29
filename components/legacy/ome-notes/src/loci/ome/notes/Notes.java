@@ -65,6 +65,7 @@ import javax.swing.filechooser.FileFilter;
 import loci.common.RandomAccessInputStream;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.AggregateMetadata;
 import loci.formats.meta.MetadataRetrieve;
@@ -597,7 +598,7 @@ public class Notes extends JFrame implements ActionListener {
 
   private void openFile(String file) throws Exception {
     currentFile = file;
-    ImageReader reader = new ImageReader();
+    BufferedImageReader reader = new BufferedImageReader();
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(true);
     progress.setString("Reading " + currentFile);
@@ -673,7 +674,7 @@ public class Notes extends JFrame implements ActionListener {
       }
       else if (field.getValueMap() != null) {
         try {
-          ImageReader tempReader = new ImageReader();
+          BufferedImageReader tempReader = new BufferedImageReader();
           tempReader.setId(field.getValueMap());
           if (tempReader.getImageCount() > 0) {
             thumbnail = tempReader.openThumbImage(0);

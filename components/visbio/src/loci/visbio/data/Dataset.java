@@ -45,6 +45,7 @@ import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataStore;
 import loci.visbio.VisBioFrame;
@@ -100,7 +101,7 @@ public class Dataset extends ImageTransform {
   // -- Computed fields --
 
   /** Data reader. */
-  protected IFormatReader reader;
+  protected BufferedImageReader reader;
 
   /** Controls for this dataset. */
   protected DatasetWidget controls;
@@ -375,7 +376,8 @@ public class Dataset extends ImageTransform {
     int numTasks = 4;
 
     // initialize data reader
-    reader = new ChannelSeparator(new FileStitcher(true));
+    reader = new BufferedImageReader(
+      new ChannelSeparator(new FileStitcher(true)));
     reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
 
     // determine number of images per source file

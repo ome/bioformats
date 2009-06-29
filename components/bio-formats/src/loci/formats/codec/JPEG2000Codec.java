@@ -43,8 +43,8 @@ import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
+import loci.formats.gui.AWTImageTools;
 
 /**
  * This class implements JPEG 2000 compression and decompression.

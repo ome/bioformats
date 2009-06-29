@@ -5,6 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-formats"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
-	<classpathentry kind="var" path="LOCI_JARS"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

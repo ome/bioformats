@@ -36,10 +36,11 @@ import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageReader;
 
 /**
  * Loads thumbnails for Bio-Formats Importer
@@ -53,7 +54,7 @@ public class ThumbLoader implements Runnable {
 
   // -- Fields --
 
-  private IFormatReader ir;
+  private BufferedImageReader ir;
   private Panel[] p;
   private Dialog dialog;
   private boolean scale;
@@ -70,7 +71,7 @@ public class ThumbLoader implements Runnable {
    */
   public ThumbLoader(IFormatReader ir, Panel[] p, Dialog dialog, boolean scale)
   {
-    this.ir = ir;
+    this.ir = BufferedImageReader.makeBufferedImageReader(ir);
     this.p = p;
     this.dialog = dialog;
     this.scale = scale;

@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
 
@@ -235,26 +234,11 @@ public interface IFormatReader extends IFormatHandler {
   byte[] openBytes(int no, byte[] buf, int x, int y, int width, int height)
     throws FormatException, IOException;
 
-  /** Obtains the specified image from the current file. */
-  BufferedImage openImage(int no)
-    throws FormatException, IOException;
-
-  /**
-   * Obtains a sub-image of the specified image, whose upper-left corner is
-   * given by (x, y).
-   */
-  BufferedImage openImage(int no, int x, int y, int width, int height)
-    throws FormatException, IOException;
-
   /**
    * Obtains a thumbnail for the specified image from the current file,
    * as a byte array.
    */
   byte[] openThumbBytes(int no) throws FormatException, IOException;
-
-  /** Obtains a thumbnail for the specified image from the current file. */
-  BufferedImage openThumbImage(int no)
-    throws FormatException, IOException;
 
   /**
    * Closes the currently open file. If the flag is set, this is all that

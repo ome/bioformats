@@ -39,7 +39,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import loci.common.LogTools;
-import loci.formats.cache.BufferedImageSource;
 import loci.formats.cache.ByteArraySource;
 import loci.formats.cache.Cache;
 import loci.formats.cache.CacheEvent;

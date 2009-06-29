@@ -29,7 +29,7 @@ import java.math.BigInteger;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
-import loci.formats.AWTImageTools;
+import loci.formats.gui.AWTImageTools;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.MathUtil;

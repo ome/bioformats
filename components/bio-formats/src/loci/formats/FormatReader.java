@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
 
@@ -537,18 +536,6 @@ public abstract class FormatReader extends FormatHandler
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return openImage(no, 0, 0, getSizeX(), getSizeY());
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
-  }
-
   /* @see IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
@@ -570,26 +557,10 @@ public abstract class FormatReader extends FormatHandler
   public abstract byte[] openBytes(int no, byte[] buf, int x, int y,
     int w, int h) throws FormatException, IOException;
 
-  /* @see IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    return AWTImageTools.scale(openImage(no), getThumbSizeX(),
-      getThumbSizeY(), false);
-  }
-
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    BufferedImage img = openThumbImage(no);
-    byte[][] bytes = AWTImageTools.getPixelBytes(img, isLittleEndian());
-    if (bytes.length == 1) return bytes[0];
-    byte[] rtn = new byte[getRGBChannelCount() * bytes[0].length];
-    for (int i=0; i<getRGBChannelCount(); i++) {
-      System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
-    }
-    return rtn;
+    return FormatTools.openThumbBytes(this, no);
   }
 
   /* @see IFormatReader#close(boolean) */

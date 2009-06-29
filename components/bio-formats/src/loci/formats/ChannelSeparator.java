@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
@@ -34,6 +33,14 @@ import java.io.IOException;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ChannelSeparator.java">SVN</a></dd></dl>
  */
 public class ChannelSeparator extends ReaderWrapper {
+
+  // -- Utility methods --
+
+  /** Converts the given reader into a ChannelSeparator, wrapping if needed. */
+  public static ChannelSeparator makeChannelSeparator(IFormatReader r) {
+    if (r instanceof ChannelSeparator) return (ChannelSeparator) r;
+    return new ChannelSeparator(r);
+  }
 
   // -- Fields --
 
@@ -182,27 +189,6 @@ public class ChannelSeparator extends ReaderWrapper {
       return buf;
     }
     else return reader.openBytes(no, buf, x, y, w, h);
-  }
-
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return openImage(no, 0, 0, getSizeX(), getSizeY());
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
-  }
-
-  /* @see IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return AWTImageTools.scale(openImage(no), getThumbSizeX(),
-      getThumbSizeY(), true);
   }
 
   /* @see IFormatReader#close() */

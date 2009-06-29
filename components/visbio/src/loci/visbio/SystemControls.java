@@ -37,7 +37,7 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import loci.formats.LegacyQTTools;
+import loci.formats.gui.LegacyQTTools;
 import loci.visbio.ext.MatlabUtil;
 import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.LAFUtil;

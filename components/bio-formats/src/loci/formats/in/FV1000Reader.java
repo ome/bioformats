@@ -25,9 +25,6 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;

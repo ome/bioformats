@@ -43,7 +43,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import loci.common.LogTools;
-import loci.formats.AWTImageTools;
+import loci.formats.gui.AWTImageTools;
 
 /**
  * A class for testing the {@link loci.formats.AWTImageTools#makeImage} methods.

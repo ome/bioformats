@@ -37,7 +37,7 @@ import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
-import loci.formats.AWTImageTools;
+import loci.formats.gui.AWTImageTools;
 
 /**
  * Stores information about a template field.

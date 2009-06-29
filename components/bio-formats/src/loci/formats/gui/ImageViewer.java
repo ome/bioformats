@@ -60,7 +60,6 @@ import javax.swing.event.ChangeListener;
 import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import loci.formats.AWTImageTools;
 import loci.formats.ChannelMerger;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -101,7 +100,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   protected JMenuItem fileSave;
 
   /** Current format reader. */
-  protected IFormatReader myReader;
+  protected BufferedImageReader myReader;
 
   /** Current format writer. */
   protected IFormatWriter myWriter;
@@ -140,7 +139,8 @@ public class ImageViewer extends JFrame implements ActionListener,
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     // image I/O engine
-    myReader = fileReader = new ChannelMerger(new FileStitcher());
+    fileReader = new ChannelMerger(new FileStitcher());
+    myReader = new BufferedImageReader(fileReader);
     myWriter = fileWriter = new ImageWriter();
 
     // NB: avoid dependencies on optional loci.ome.io package
@@ -753,7 +753,7 @@ public class ImageViewer extends JFrame implements ActionListener,
           myReader.close();
         }
         catch (IOException exc) { LogTools.trace(exc); }
-        myReader = r;
+        myReader = new BufferedImageReader(r);
         open(id);
       }
     }.start();

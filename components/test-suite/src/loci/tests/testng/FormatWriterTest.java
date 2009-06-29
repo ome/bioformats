@@ -44,11 +44,10 @@ import java.util.Vector;
 
 import loci.common.LogTools;
 import loci.formats.FormatException;
-import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
-import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -83,7 +82,7 @@ public class FormatWriterTest {
   public static List skipFiles = new LinkedList();
 
   /** Global shared reader for use in all tests. */
-  private static IFormatReader reader;
+  private static BufferedImageReader reader;
 
   // -- Fields --
 
@@ -253,7 +252,7 @@ public class FormatWriterTest {
       if (id == null) return false;
     }
     try {
-      if (reader == null) reader = new ImageReader();
+      if (reader == null) reader = new BufferedImageReader();
       reader.close();
       MetadataStore store = MetadataTools.createOMEXMLMetadata();
       reader.setMetadataStore(store);

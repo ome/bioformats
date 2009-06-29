@@ -26,7 +26,6 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.Stack;
 import java.util.Vector;
 
 import loci.common.DataTools;

@@ -1,5 +1,5 @@
 //
-// ImageProcessorSource.java
+// BufferedImageSource.java
 //
 
 /*
@@ -23,10 +23,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.util;
+package loci.formats.gui;
 
-import ij.process.ImageProcessor;
-
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import loci.formats.FormatException;
@@ -34,28 +33,29 @@ import loci.formats.IFormatReader;
 import loci.formats.cache.CacheException;
 import loci.formats.cache.ICacheSource;
 
+
 /**
- * Retrieves ImageJ image processors from an image reader.
+ * Retrieves BufferedImages from a data source using Bio-Formats.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorSource.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorSource.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/gui/BufferedImageSource.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/gui/BufferedImageSource.java">SVN</a></dd></dl>
  */
-public class ImageProcessorSource implements ICacheSource {
+public class BufferedImageSource implements ICacheSource {
 
   // -- Fields --
 
-  /** Image reader from which to draw ImageProcessors. */
-  protected ImagePlusReader reader;
+  /** Image reader from which to draw BufferedImages. */
+  protected BufferedImageReader reader;
 
   // -- Constructors --
 
-  public ImageProcessorSource(IFormatReader reader) throws CacheException {
-    if (reader instanceof ImagePlusReader) {
-      this.reader = (ImagePlusReader) reader;
+  public BufferedImageSource(IFormatReader reader) throws CacheException {
+    if (reader instanceof BufferedImageReader) {
+      this.reader = (BufferedImageReader) reader;
     }
     else {
-      this.reader = new ImagePlusReader(reader);
+      this.reader = new BufferedImageReader(reader);
     }
   }
 
@@ -66,10 +66,9 @@ public class ImageProcessorSource implements ICacheSource {
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
   public Object getObject(int index) throws CacheException {
-    // assumes that channels are separated
-    ImageProcessor ip = null;
+    BufferedImage bi = null;
     try {
-      ip = reader.openProcessors(index)[0];
+      bi = reader.openImage(index);
     }
     catch (FormatException exc) {
       throw new CacheException(exc);
@@ -77,7 +76,7 @@ public class ImageProcessorSource implements ICacheSource {
     catch (IOException exc) {
       throw new CacheException(exc);
     }
-    return ip;
+    return bi;
   }
 
 }

@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -335,20 +334,6 @@ public class ImageReader implements IFormatReader {
     return getReader().isInterleaved(subC);
   }
 
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 2);
-    return getReader().openImage(no);
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 2);
-    return getReader().openImage(no, x, y, w, h);
-  }
-
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
@@ -377,14 +362,6 @@ public class ImageReader implements IFormatReader {
   {
     FormatTools.assertId(currentId, true, 2);
     return getReader().openBytes(no, buf, x, y, w, h);
-  }
-
-  /* @see IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 2);
-    return getReader().openThumbImage(no);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */

@@ -35,7 +35,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
-import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;

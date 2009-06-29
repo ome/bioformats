@@ -46,8 +46,6 @@ import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
-import loci.formats.IFormatReader;
-import loci.formats.ImageReader;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
 
@@ -66,7 +64,7 @@ public class PreviewPane extends JPanel
   // -- Fields --
 
   /** Reader for use when loading thumbnails. */
-  protected IFormatReader reader;
+  protected BufferedImageReader reader;
 
   /** Current ID to load. */
   protected String loadId;
@@ -100,7 +98,7 @@ public class PreviewPane extends JPanel
   public PreviewPane(JFileChooser jc) {
     super();
 
-    reader = new ImageReader();
+    reader = new BufferedImageReader();
     reader.setNormalized(true);
     reader.addStatusListener(this);
 

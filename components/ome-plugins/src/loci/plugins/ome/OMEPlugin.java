@@ -46,9 +46,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import loci.common.ReflectException;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.ome.io.OMECredentials;
 import loci.ome.io.OMEROReader;
 import loci.ome.io.OMEUtils;
@@ -442,11 +443,12 @@ public class OMEPlugin implements PlugIn {
     public void run() {
       try {
         OMEROReader r = new OMEROReader();
+        BufferedImageReader bir = new BufferedImageReader(r);
         for (int i=0; i<ids.length; i++) {
-          r.setId("server=" + cred.server + "\nusername=" + cred.username +
+          bir.setId("server=" + cred.server + "\nusername=" + cred.username +
             "\npassword=" + cred.password + "\nport=" + cred.port + "\nid=" +
             ids[i]);
-          BufferedImage thumb = r.openThumbImage(0);
+          BufferedImage thumb = bir.openThumbImage(0);
           ImageIcon icon = new ImageIcon(thumb);
           p[i].removeAll();
           JLabel label = new JLabel(icon);

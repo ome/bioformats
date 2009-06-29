@@ -31,11 +31,74 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import ome.xml.OMEXMLNode;
-import ome.xml.r200706.ome.*;
-import ome.xml.r200706.spw.*;
 import java.util.List;
+
 import loci.common.LogTools;
+import ome.xml.OMEXMLNode;
+import ome.xml.r200706.ome.ArcNode;
+import ome.xml.r200706.ome.ChannelComponentNode;
+import ome.xml.r200706.ome.ContactNode;
+import ome.xml.r200706.ome.DatasetNode;
+import ome.xml.r200706.ome.DatasetRefNode;
+import ome.xml.r200706.ome.DetectorNode;
+import ome.xml.r200706.ome.DetectorRefNode;
+import ome.xml.r200706.ome.DichroicNode;
+import ome.xml.r200706.ome.DisplayOptionsNode;
+import ome.xml.r200706.ome.ExperimentNode;
+import ome.xml.r200706.ome.ExperimentRefNode;
+import ome.xml.r200706.ome.ExperimenterNode;
+import ome.xml.r200706.ome.ExperimenterRefNode;
+import ome.xml.r200706.ome.FilamentNode;
+import ome.xml.r200706.ome.FilterNode;
+import ome.xml.r200706.ome.FilterSetNode;
+import ome.xml.r200706.ome.FilterSetRefNode;
+import ome.xml.r200706.ome.GreyChannelNode;
+import ome.xml.r200706.ome.GroupNode;
+import ome.xml.r200706.ome.GroupRefNode;
+import ome.xml.r200706.ome.ImageNode;
+import ome.xml.r200706.ome.ImagingEnvironmentNode;
+import ome.xml.r200706.ome.InstrumentNode;
+import ome.xml.r200706.ome.InstrumentRefNode;
+import ome.xml.r200706.ome.LaserNode;
+import ome.xml.r200706.ome.LightSourceNode;
+import ome.xml.r200706.ome.LightSourceRefNode;
+import ome.xml.r200706.ome.LogicalChannelNode;
+import ome.xml.r200706.ome.MicrobeamManipulationNode;
+import ome.xml.r200706.ome.MicrobeamManipulationRefNode;
+import ome.xml.r200706.ome.MicroscopeNode;
+import ome.xml.r200706.ome.OMENode;
+import ome.xml.r200706.ome.OTFNode;
+import ome.xml.r200706.ome.OTFRefNode;
+import ome.xml.r200706.ome.ObjectiveNode;
+import ome.xml.r200706.ome.ObjectiveRefNode;
+import ome.xml.r200706.ome.ObjectiveSettingsNode;
+import ome.xml.r200706.ome.PixelsNode;
+import ome.xml.r200706.ome.PlaneNode;
+import ome.xml.r200706.ome.PlaneTimingNode;
+import ome.xml.r200706.ome.ProjectNode;
+import ome.xml.r200706.ome.ProjectRefNode;
+import ome.xml.r200706.ome.ProjectionNode;
+import ome.xml.r200706.ome.PumpNode;
+import ome.xml.r200706.ome.ROINode;
+import ome.xml.r200706.ome.ROIRefNode;
+import ome.xml.r200706.ome.RegionNode;
+import ome.xml.r200706.ome.StageLabelNode;
+import ome.xml.r200706.ome.StagePositionNode;
+import ome.xml.r200706.ome.ThumbnailNode;
+import ome.xml.r200706.ome.TiffDataNode;
+import ome.xml.r200706.ome.TimeNode;
+import ome.xml.r200706.ome.TransmittanceRangeNode;
+import ome.xml.r200706.spw.ImageRefNode;
+import ome.xml.r200706.spw.PlateNode;
+import ome.xml.r200706.spw.PlateRefNode;
+import ome.xml.r200706.spw.ReagentNode;
+import ome.xml.r200706.spw.ReagentRefNode;
+import ome.xml.r200706.spw.ScreenAcquisitionNode;
+import ome.xml.r200706.spw.ScreenNode;
+import ome.xml.r200706.spw.ScreenRefNode;
+import ome.xml.r200706.spw.WellNode;
+import ome.xml.r200706.spw.WellSampleNode;
+import ome.xml.r200706.spw.WellSampleRefNode;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML

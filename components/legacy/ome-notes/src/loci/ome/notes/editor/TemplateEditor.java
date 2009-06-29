@@ -60,7 +60,7 @@ import javax.swing.JToolBar;
 import javax.swing.filechooser.FileFilter;
 
 import loci.formats.FormatException;
-import loci.formats.ImageReader;
+import loci.formats.gui.BufferedImageReader;
 import loci.ome.notes.Template;
 import loci.ome.notes.TemplateField;
 import loci.ome.notes.TemplateTab;
@@ -591,7 +591,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
       if (text != null) {
         try {
-          ImageReader reader = new ImageReader();
+          BufferedImageReader reader = new BufferedImageReader();
           reader.setId(text);
           BufferedImage thumb = reader.openThumbImage(0);
           JLabel label = (JLabel) icon.image.getComponents()[0];

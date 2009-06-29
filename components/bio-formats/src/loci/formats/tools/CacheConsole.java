@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.cache;
+package loci.formats.tools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,14 +34,23 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.cache.ByteArraySource;
+import loci.formats.cache.Cache;
+import loci.formats.cache.CacheEvent;
+import loci.formats.cache.CacheListener;
+import loci.formats.cache.CrosshairStrategy;
+import loci.formats.cache.ICacheSource;
+import loci.formats.cache.ICacheStrategy;
+import loci.formats.cache.RectangleStrategy;
+import loci.formats.gui.BufferedImageSource;
 
 /**
  * CacheConsole provides an interactive interpreter for
  * testing the Bio-Formats caching implementation.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/cache/CacheConsole.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/cache/CacheConsole.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/tools/CacheConsole.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/CacheConsole.java">SVN</a></dd></dl>
  */
 public final class CacheConsole {
 

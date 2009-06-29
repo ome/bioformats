@@ -30,11 +30,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import loci.common.RandomAccessOutputStream;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
+import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**

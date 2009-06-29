@@ -35,6 +35,7 @@ import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
+import loci.formats.gui.AWTTiffTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -164,7 +165,7 @@ public class TiffWriter extends FormatWriter {
     // write the image
     ifd.put(new Integer(TiffTools.LITTLE_ENDIAN), new Boolean(littleEndian));
     out.seek(out.length());
-    lastOffset += TiffTools.writeImage(buf, ifd, out, lastOffset, last,
+    lastOffset += AWTTiffTools.writeImage(buf, ifd, out, lastOffset, last,
       isBigTiff, getColorModel(), type, interleaved);
     if (last) close();
   }

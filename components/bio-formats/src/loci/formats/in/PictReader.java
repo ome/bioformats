@@ -28,14 +28,14 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
-import loci.formats.LegacyQTTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.PackbitsCodec;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 

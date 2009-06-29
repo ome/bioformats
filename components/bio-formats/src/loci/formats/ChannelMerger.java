@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
@@ -34,6 +33,14 @@ import java.io.IOException;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ChannelMerger.java">SVN</a></dd></dl>
  */
 public class ChannelMerger extends ReaderWrapper {
+
+  // -- Utility methods --
+
+  /** Converts the given reader into a ChannelMerger, wrapping if needed. */
+  public static ChannelMerger makeChannelMerger(IFormatReader r) {
+    if (r instanceof ChannelMerger) return (ChannelMerger) r;
+    return new ChannelMerger(r);
+  }
 
   // -- Constructor --
 
@@ -144,28 +151,6 @@ public class ChannelMerger extends ReaderWrapper {
       System.arraycopy(b, 0, buf, c * b.length, b.length);
     }
     return buf;
-  }
-
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return openImage(no, 0, 0, getSizeX(), getSizeY());
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
-  }
-
-  /* @see IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    if (!canMerge()) return super.openThumbImage(no);
-    return AWTImageTools.scale(openImage(no), getThumbSizeX(),
-      getThumbSizeY(), true);
   }
 
   public int getIndex(int z, int c, int t) {

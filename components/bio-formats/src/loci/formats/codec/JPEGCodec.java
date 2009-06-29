@@ -33,8 +33,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import loci.common.RandomAccessInputStream;
-import loci.formats.AWTImageTools;
 import loci.formats.FormatException;
+import loci.formats.gui.AWTImageTools;
 
 /**
  * This class implements JPEG compression and decompression.

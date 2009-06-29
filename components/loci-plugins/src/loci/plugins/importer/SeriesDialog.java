@@ -44,9 +44,10 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import loci.formats.AWTImageTools;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
@@ -64,7 +65,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
   /** LOCI plugins configuration. */
   protected ImporterOptions options;
 
-  protected IFormatReader r;
+  protected BufferedImageReader r;
   protected String[] seriesLabels;
   protected boolean[] series;
 
@@ -85,7 +86,8 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
   {
     super(options);
     this.options = options;
-    this.r = r;
+    this.r = r instanceof BufferedImageReader ?
+      (BufferedImageReader) r : new BufferedImageReader(r);
     this.seriesLabels = seriesLabels;
     this.series = series;
   }
