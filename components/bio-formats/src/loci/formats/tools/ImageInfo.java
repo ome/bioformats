@@ -34,8 +34,6 @@ import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
@@ -55,6 +53,7 @@ import loci.formats.StatusListener;
 import loci.formats.XMLTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
+import loci.formats.gui.ImageViewer;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 
@@ -655,22 +654,11 @@ public class ImageInfo {
     if (minmax) printMinMaxValues();
 
     // display pixels in image viewer
-    // NB: avoid dependencies on optional loci.formats.gui package
     LogTools.println();
     LogTools.println("Launching image viewer");
-    ReflectedUniverse r = new ReflectedUniverse();
-    try {
-      r.exec("import loci.formats.gui.ImageViewer");
-      r.exec("viewer = new ImageViewer()");
-      r.setVar("reader", reader);
-      r.setVar("images", images);
-      r.setVar("true", true);
-      r.exec("viewer.setImages(reader, images)");
-      r.exec("viewer.setVisible(true)");
-    }
-    catch (ReflectException exc) {
-      throw new FormatException(exc);
-    }
+    ImageViewer viewer = new ImageViewer();
+    viewer.setImages(reader, images);
+    viewer.setVisible(true);
   }
 
   public void printOriginalMetadata() {
@@ -727,10 +715,10 @@ public class ImageInfo {
    * A utility method for reading a file from the command line, and
    * displaying the results in a simple display, using the given reader.
    */
-  public boolean testRead(IFormatReader reader, String[] args)
+  public boolean testRead(IFormatReader r, String[] args)
     throws FormatException, IOException
   {
-    this.reader = reader;
+    reader = r;
 
     parseArgs(args);
     if (printVersion) {
@@ -754,21 +742,15 @@ public class ImageInfo {
 
     // initialize reader
     long s1 = System.currentTimeMillis();
-    this.reader.setId(id);
+    reader.setId(id);
     long e1 = System.currentTimeMillis();
     float sec1 = (e1 - s1) / 1000f;
     LogTools.println("Initialization took " + sec1 + "s");
 
     configureReaderPostInit();
-
     checkWarnings();
-
     readCoreMetadata();
-
-    this.reader.setSeries(series);
-    int pixelType = this.reader.getPixelType();
-    int sizeC = this.reader.getSizeC();
-
+    reader.setSeries(series);
     initPreMinMaxValues();
 
     // read pixels
