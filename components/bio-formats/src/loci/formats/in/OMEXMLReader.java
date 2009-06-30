@@ -141,7 +141,9 @@ public class OMEXMLReader extends FormatReader {
         in.seek(in.getFilePointer() - n + idx);
         while (true) {
           r = in.read();
-          if (r <= 0) throw new IOException("Cannot read from input stream");
+          if (r <= 0) {
+            throw new IOException("EOF looking for terminating > character");
+          }
           if (r == '>') break;
         }
       }
