@@ -137,9 +137,8 @@ public class MIASReader extends FormatReader {
 
     int well = getWellNumber(getSeries());
     int plate = getPlateNumber(getSeries());
-    int tile = getTileNumber(getSeries());
 
-    reader.setId(tiffs[well][plate][no * tileRows * tileCols + tile]);
+    reader.setId(tiffs[well][plate][no * tileRows * tileCols]);
     return reader.openThumbBytes(0);
   }
 
@@ -155,10 +154,55 @@ public class MIASReader extends FormatReader {
 
     int well = getWellNumber(getSeries());
     int plate = getPlateNumber(getSeries());
-    int tile = getTileNumber(getSeries());
 
-    reader.setId(tiffs[plate][well][no * tileRows * tileCols + tile]);
-    reader.openBytes(0, buf, x, y, w, h);
+    if (tileRows == 1 && tileCols == 1) {
+      reader.setId(tiffs[plate][well][no]);
+      reader.openBytes(0, buf, x, y, w, h);
+      return buf;
+    }
+
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int outputRowLen = w * bpp;
+
+    int tileWidth = getSizeX() / tileCols;
+    int tileHeight = getSizeY() / tileRows;
+
+    Region image = new Region(x, y, w, h);
+    int outputRow = 0, outputCol = 0;
+    Region intersection = null;
+
+    byte[] tileBuf = null;
+
+    for (int row=0; row<tileRows; row++) {
+      for (int col=0; col<tileCols; col++) {
+        Region tile =
+          new Region(col * tileWidth, row * tileHeight, tileWidth, tileHeight);
+        if (!tile.intersects(image)) continue;
+
+        intersection = tile.intersection(image);
+        intersection.x %= tileWidth;
+        intersection.y %= tileHeight;
+
+        reader.setId(tiffs[plate][well][(no*tileRows + row) * tileCols + col]);
+        tileBuf = reader.openBytes(0, intersection.x, intersection.y,
+          intersection.width, intersection.height);
+
+        int rowLen = tileBuf.length / intersection.height;
+
+        // copy tile into output image
+        int outputOffset = outputRow * outputRowLen + outputCol;
+        for (int trow=0; trow<intersection.height; trow++) {
+          System.arraycopy(tileBuf, trow * rowLen, buf, outputOffset, rowLen);
+          outputOffset += outputRowLen;
+        }
+
+        outputCol += rowLen;
+      }
+      if (intersection != null) {
+        outputRow += intersection.height;
+        outputCol = 0;
+      }
+    }
 
     return buf;
   }
@@ -381,7 +425,6 @@ public class MIASReader extends FormatReader {
     for (int i=0; i<tiffs.length; i++) {
       nSeries += tiffs[i].length;
     }
-    nSeries *= tileRows * tileCols;
 
     core = new CoreMetadata[nSeries];
     for (int i=0; i<core.length; i++) {
@@ -389,7 +432,6 @@ public class MIASReader extends FormatReader {
 
       int plate = getPlateNumber(i);
       int well = getWellNumber(i);
-      int tile = getTileNumber(i);
 
       core[i].sizeZ = zCount[plate][well];
       core[i].sizeC = cCount[plate][well];
@@ -400,8 +442,8 @@ public class MIASReader extends FormatReader {
       if (core[i].sizeT == 0) core[i].sizeT = 1;
 
       reader.setId(tiffs[plate][well][0]);
-      core[i].sizeX = reader.getSizeX();
-      core[i].sizeY = reader.getSizeY();
+      core[i].sizeX = reader.getSizeX() * tileCols;
+      core[i].sizeY = reader.getSizeY() * tileRows;
       core[i].pixelType = reader.getPixelType();
       core[i].sizeC *= reader.getSizeC();
       core[i].rgb = reader.isRGB();
@@ -502,15 +544,10 @@ public class MIASReader extends FormatReader {
         store.setWellColumn(wellIndex % wellCols, plate, wellIndex);
         store.setWellRow(wellIndex / wellCols, plate, wellIndex);
 
-        for (int tile=0; tile<tileRows*tileCols; tile++) {
-          int imageNumber = getSeriesNumber(plate, well, tile);
-          store.setWellSampleImageRef("Image:" + imageNumber, plate,
-            wellIndex, tile);
-          store.setWellSampleIndex(new Integer(imageNumber), plate,
-            wellIndex, tile);
-          store.setWellSamplePosX(new Float(0), plate, wellIndex, tile);
-          store.setWellSamplePosY(new Float(0), plate, wellIndex, tile);
-        }
+        int imageNumber = getSeriesNumber(plate, well);
+        store.setWellSampleImageRef("Image:" + imageNumber, plate,
+          wellIndex, 0);
+        store.setWellSampleIndex(new Integer(imageNumber), plate, wellIndex, 0);
       }
     }
 
@@ -518,7 +555,6 @@ public class MIASReader extends FormatReader {
     for (int s=0; s<getSeriesCount(); s++) {
       int plate = getPlateNumber(s);
       int well = getWellNumber(s);
-      int tile = getTileNumber(s);
       well = wellNumber[plate][well];
       store.setImageExperimentRef("Experiment:" + experimentName, s);
 
@@ -526,9 +562,7 @@ public class MIASReader extends FormatReader {
       int wellCol = (well % wellCols) + 1;
 
       store.setImageID("Image:" + s, s);
-      String name = "Plate #" + plate + "; Well " + wellRow + wellCol +
-        "; Tile " + (tile / tileCols) + "," + (tile % tileCols);
-      store.setImageName(name, s);
+      store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
     }
 
@@ -553,6 +587,8 @@ public class MIASReader extends FormatReader {
         int time = Integer.parseInt(t);
         int z = Integer.parseInt(zValue);
 
+        int series = getSeriesNumber(plate, well);
+
         RandomAccessInputStream s = new RandomAccessInputStream(file);
         String data = s.readString((int) s.length());
         String[] lines = data.split("\n");
@@ -563,46 +599,29 @@ public class MIASReader extends FormatReader {
         Vector<String> columnNames = new Vector<String>();
         for (String v : columns) columnNames.add(v);
 
-        int[] nextROI = new int[tileRows * tileCols];
-        Arrays.fill(nextROI, 0);
-
         for (int i=start+1; i<lines.length; i++) {
           int roi = i - start - 1;
 
           String[] v = lines[i].split("\t");
 
-          // NB: We determine which tile this ROI belongs in based on where
-          // the center point is.  The ROI may extend beyond the borders of
-          // the tile.
-
           float cx = Float.parseFloat(v[columnNames.indexOf("Col")]);
           float cy = Float.parseFloat(v[columnNames.indexOf("Row")]);
 
-          int tileRow = (int) (cy / getSizeY());
-          int tileCol = (int) (cx / getSizeX());
-          int tile = tileRow * tileCols + tileCol;
-          int series = getSeriesNumber(plate, well, tile);
+          store.setROIT0(new Integer(time), series, roi);
+          store.setROIT1(new Integer(time), series, roi);
+          store.setROIZ0(new Integer(z), series, roi);
+          store.setROIZ1(new Integer(z), series, roi);
 
-          store.setROIT0(new Integer(time), series, nextROI[tile]);
-          store.setROIT1(new Integer(time), series, nextROI[tile]);
-          store.setROIZ0(new Integer(z), series, nextROI[tile]);
-          store.setROIZ1(new Integer(z), series, nextROI[tile]);
-
-          store.setShapeText(v[columnNames.indexOf("Label")], series,
-            nextROI[tile], 0);
-          store.setShapeTheT(new Integer(time), series, nextROI[tile], 0);
-          store.setShapeTheZ(new Integer(z), series, nextROI[tile], 0);
-          store.setCircleCx(v[columnNames.indexOf("Col")], series,
-            nextROI[tile], 0);
-          store.setCircleCy(v[columnNames.indexOf("Row")], series,
-            nextROI[tile], 0);
+          store.setShapeText(v[columnNames.indexOf("Label")], series, roi, 0);
+          store.setShapeTheT(new Integer(time), series, roi, 0);
+          store.setShapeTheZ(new Integer(z), series, roi, 0);
+          store.setCircleCx(v[columnNames.indexOf("Col")], series, roi, 0);
+          store.setCircleCy(v[columnNames.indexOf("Row")], series, roi, 0);
 
           float diam = Float.parseFloat(v[columnNames.indexOf("Cell Diam.")]);
           String radius = String.valueOf(diam / 2);
 
-          store.setCircleR(radius, series, nextROI[tile], 0);
-
-          nextROI[tile]++;
+          store.setCircleR(radius, series, roi, 0);
 
           // NB: other attributes are "Nucleus Area", "Cell Type", and
           // "Mean Nucleus Intens."
@@ -615,47 +634,36 @@ public class MIASReader extends FormatReader {
 
   // -- Helper methods --
 
-  /** Retrieve the series corresponding to the given plate, well and tile. */
-  private int getSeriesNumber(int plate, int well, int tile) {
-    int totalTiles = tileRows * tileCols;
+  /** Retrieve the series corresponding to the given plate and well. */
+  private int getSeriesNumber(int plate, int well) {
     int series = 0;
     for (int i=0; i<plate; i++) {
       series += tiffs[i].length;
     }
-    return (series + well) * totalTiles + tile;
+    return series + well;
   }
 
   /** Retrieve the well to which this series belongs. */
   private int getWellNumber(int series) {
-    return getIndices(series)[1];
+    return getPlateAndWell(series)[1];
   }
 
   /** Retrieve the plate to which this series belongs. */
   private int getPlateNumber(int series) {
-    return getIndices(series)[0];
+    return getPlateAndWell(series)[0];
   }
 
-  /** Retrieve the tile to which this series belongs. */
-  private int getTileNumber(int series) {
-    return getIndices(series)[2];
-  }
-
-  /**
-   * Retrieve a three element array containing the plate, well, and
-   * tile indices.
-   */
-  private int[] getIndices(int series) {
+  /** Retrieve a two element array containing the plate and well indices. */
+  private int[] getPlateAndWell(int series) {
     // NB: Don't use FormatTools.rasterToPosition(...), because each plate
     // could have a different number of wells.
-    int totalTiles = tileRows * tileCols;
-    int tileNumber = series % totalTiles;
-    int wellNumber = series / totalTiles;
+    int wellNumber = series;
     int plateNumber = 0;
     while (wellNumber >= tiffs[plateNumber].length) {
       wellNumber -= tiffs[plateNumber].length;
       plateNumber++;
     }
-    return new int[] {plateNumber, wellNumber, tileNumber};
+    return new int[] {plateNumber, wellNumber};
   }
 
 }
