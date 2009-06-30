@@ -131,13 +131,19 @@ public class OMEXMLReader extends FormatReader {
     int n = in.read(check, 0, overlap);
 
     while (!foundBinData) {
-      n += in.read(check, overlap, check.length - overlap);
+      int r = in.read(check, overlap, check.length - overlap);
+      if (r <= 0) throw new IOException("Cannot read from input stream");
+      n += r;
       String checkString = new String(check);
       if (checkString.indexOf("<Bin") != -1) {
         int idx = checkString.indexOf("<Bin") + 4;
         foundBinData = true;
         in.seek(in.getFilePointer() - n + idx);
-        while (in.read() != '>');
+        while (true) {
+          r = in.read();
+          if (r <= 0) throw new IOException("Cannot read from input stream");
+          if (r == '>') break;
+        }
       }
       else {
         System.arraycopy(check, check.length - overlap, check, 0, overlap);
