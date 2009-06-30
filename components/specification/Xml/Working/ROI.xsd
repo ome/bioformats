@@ -95,24 +95,16 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="Transform" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="BasicShape"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:attribute name="Transform" use="optional" type="xsd:string">
-			<xsd:annotation>
-				<xsd:documentation>
-					MISSING
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-	</xsd:complexType>
-	
 	<xsd:element name="Rectangle"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -120,8 +112,6 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -150,8 +140,6 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -162,8 +150,6 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
 					<xsd:sequence>
 						<xsd:element ref="OME:Pixels" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
@@ -181,15 +167,11 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 
 	<xsd:element name="Point"> <!-- top level definition -->
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -204,8 +186,6 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -216,8 +196,6 @@
 			</xsd:documentation>
 		</xsd:annotation>		
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -246,8 +224,6 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -258,8 +234,6 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
 					<xsd:attribute name="X1" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -288,8 +262,6 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -299,9 +271,8 @@
 				MISSING
 				Note: Polyline uses counterclockwise winding (this is the default OpenGL behavior)
 			</xsd:documentation>
-		</xsd:annotation>		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
+		</xsd:annotation>		
+		<xsd:complexType>
 					<xsd:attribute name="Points" use="required" type="xsd:string">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -316,8 +287,6 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 		
@@ -328,8 +297,6 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
 					<xsd:attribute name="Definition" use="required" type="xsd:string">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -337,8 +304,6 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -349,8 +314,6 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="BasicShape">
 					<xsd:sequence>
 						<xsd:element name="Value">
 							<xsd:annotation>
@@ -379,8 +342,6 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 

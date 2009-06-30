@@ -255,10 +255,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="InstrumentRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ObjectiveSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="Channel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
@@ -279,6 +277,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element ref="Channel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
 					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
@@ -641,7 +640,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Pixels" use="required" type="PixelsID"/>
 			<xsd:attribute name="Color" use="optional" type="xsd:integer" default="4294967295">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -988,11 +986,23 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:documentation>
 				The Group ID is required.
 				Contact information should be specified for the leader of the group and a contact person.
-				The Leader and/or Contact are themselves experimenters defined in OME, but they need not have OMENames.
+				The Leader and/or Contact are themselves experimenters.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the group.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="Leader" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Contact" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
@@ -2272,24 +2282,5 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-
-	<!-- To Remove? -->
-	<xsd:element name="Region"> <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
-			</xsd:sequence>
-			<xsd:attribute name="Tag" use="required" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
-			<xsd:attribute name="ID" use="required" type="RegionID"/>
-		</xsd:complexType>
-	</xsd:element>
 
 </xsd:schema>

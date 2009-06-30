@@ -30,6 +30,29 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="ome.xsd"/>
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation = "BinaryFile.xsd"/>
 	-->
+	
+	<!-- Annotatable objects from the mapping files
+		Image
+		Pixels
+		OriginalFile
+		PlaneInfo
+		Channel
+		Annotation
+		Project
+		Dataset
+		ExperimenterGroup
+		Experimenter
+		Session
+		Node
+		Roi
+		Screen
+		ScreenAcquisition
+		Plate
+		Well
+		WellSample
+		Reagent
+	-->
+	
 	<xsd:element name="StructuredAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
