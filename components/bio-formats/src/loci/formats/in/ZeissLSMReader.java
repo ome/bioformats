@@ -139,7 +139,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private byte[][] lut = null;
-  private Vector timestamps;
+  private Vector<Double> timestamps;
   private int validChannels;
 
   private String[] lsmFilenames;
@@ -273,6 +273,7 @@ public class ZeissLSMReader extends FormatReader {
       Location parentFile = new Location(id).getAbsoluteFile().getParentFile();
       String[] fileList = parentFile.list();
       for (int i=0; i<fileList.length; i++) {
+        if (fileList[i].startsWith(".")) continue;
         if (checkSuffix(fileList[i], MDB_SUFFIX)) {
           Location file =
             new Location(parentFile, fileList[i]).getAbsoluteFile();
@@ -289,7 +290,7 @@ public class ZeissLSMReader extends FormatReader {
       throw new FormatException("LSM files were not found.");
     }
 
-    timestamps = new Vector();
+    timestamps = new Vector<Double>();
 
     core = new CoreMetadata[lsmFilenames.length];
     ifds = new Hashtable[core.length][];
@@ -776,30 +777,23 @@ public class ZeissLSMReader extends FormatReader {
     store.setDimensionsPhysicalSizeY(pixY, series, 0);
     store.setDimensionsPhysicalSizeZ(pixZ, series, 0);
 
-    int offset = 0;
-    for (int i=0; i<series; i++) {
-      setSeries(i);
-      offset += getImageCount();
+    float firstStamp = 0f;
+    if (timestamps.size() > 0) {
+      firstStamp = timestamps.get(0).floatValue();
     }
-    setSeries(series);
-
-    float firstStamp = timestamps.size() <= offset ? 0f :
-      ((Double) timestamps.get(offset)).floatValue();
 
     for (int i=0; i<getImageCount(); i++) {
       int[] zct = FormatTools.getZCTCoords(this, i);
 
-      if (offset + zct[2] < timestamps.size()) {
-        float thisStamp =
-          ((Double) timestamps.get(offset + zct[2])).floatValue();
+      if (zct[2] < timestamps.size()) {
+        float thisStamp = timestamps.get(zct[2]).floatValue();
         store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp),
           series, 0, i);
-        int index = offset + zct[2] + 1;
+        int index = zct[2] + 1;
         float nextStamp = index < timestamps.size() ?
-          ((Double) timestamps.get(index)).floatValue() : thisStamp;
+          timestamps.get(index).floatValue() : thisStamp;
         if (i == getSizeT() - 1 && zct[2] > 0) {
-          thisStamp =
-            ((Double) timestamps.get(offset + zct[2] - 1)).floatValue();
+          thisStamp = timestamps.get(zct[2] - 1).floatValue();
         }
         store.setPlaneTimingExposureTime(new Float(nextStamp - thisStamp),
           series, 0, i);
@@ -867,7 +861,7 @@ public class ZeissLSMReader extends FormatReader {
       }
       if (channel.filter != null) {
         String id = "Filter:" + nextFilter;
-        if (channel.acquire) {
+        if (channel.acquire && nextDetectChannel < getSizeC()) {
           store.setLogicalChannelSecondaryExcitationFilter(
             id, series, nextDetectChannel);
         }
@@ -901,11 +895,11 @@ public class ZeissLSMReader extends FormatReader {
         nextFilter++;
       }
       if (channel.channelName != null) {
-        store.setDetectorID("Detector:" + channel.channelName + "-" +
-          (nextDetector + 1), series, nextDetector);
-        if (channel.acquire) {
-          store.setDetectorSettingsDetector("Detector:" + channel.channelName +
-            "-" + (nextDetector + 1), series, nextDetector);
+        String detectorID =
+          "Detector:" + channel.channelName + "-" + (nextDetector + 1);
+        store.setDetectorID(detectorID, series, nextDetector);
+        if (channel.acquire && nextDetector < getSizeC()) {
+          store.setDetectorSettingsDetector(detectorID, series, nextDetector);
         }
       }
       if (channel.amplificationGain != null) {
@@ -915,6 +909,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.gain != null) {
         store.setDetectorGain(channel.gain, series, nextDetector);
       }
+      store.setDetectorType("Unknown", series, nextDetector);
       nextDetectChannel++;
       nextDetector++;
     }
@@ -927,11 +922,13 @@ public class ZeissLSMReader extends FormatReader {
             nextIllumChannel);
           mustIncrement = true;
         }
+        /*
         if (channel.attenuation != null && channel.acquire) {
           store.setLightSourceSettingsAttenuation(channel.attenuation, series,
             nextIllumChannel);
           mustIncrement = true;
         }
+        */
         if (mustIncrement || nextIllumChannel < getSizeC() - 1) {
           nextIllumChannel++;
         }
@@ -1452,7 +1449,14 @@ public class ZeissLSMReader extends FormatReader {
       case TYPE_RATIONAL:
         return new Double(in.readDouble());
       case TYPE_ASCII:
-        return in.readString(dataSize);
+        String s = in.readString(dataSize).trim();
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<s.length(); i++) {
+          if (s.charAt(i) >= 10) sb.append(s.charAt(i));
+          else break;
+        }
+
+        return sb.toString();
       case TYPE_SUBBLOCK:
         return null;
     }
@@ -1542,6 +1546,7 @@ public class ZeissLSMReader extends FormatReader {
       name = getStringValue(RECORDING_NAME);
       binning = getStringValue(RECORDING_CAMERA_BINNING);
       if (binning != null && binning.indexOf("x") == -1) {
+        if (binning.equals("0")) binning = "1";
         binning += "x" + binning;
       }
 
