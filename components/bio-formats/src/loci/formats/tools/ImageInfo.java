@@ -754,7 +754,7 @@ public class ImageInfo {
 
     // initialize reader
     long s1 = System.currentTimeMillis();
-    reader.setId(id);
+    this.reader.setId(id);
     long e1 = System.currentTimeMillis();
     float sec1 = (e1 - s1) / 1000f;
     LogTools.println("Initialization took " + sec1 + "s");
@@ -765,9 +765,9 @@ public class ImageInfo {
 
     readCoreMetadata();
 
-    reader.setSeries(series);
-    int pixelType = reader.getPixelType();
-    int sizeC = reader.getSizeC();
+    this.reader.setSeries(series);
+    int pixelType = this.reader.getPixelType();
+    int sizeC = this.reader.getSizeC();
 
     initPreMinMaxValues();
 
