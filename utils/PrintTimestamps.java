@@ -130,6 +130,7 @@ public class PrintTimestamps {
     printDimensions(reader);
     printGlobalTiming(meta, series);
     printTimingPerTimepoint(meta, series);
+    printTimingPerPlane(meta, series);
   }
 
 }
