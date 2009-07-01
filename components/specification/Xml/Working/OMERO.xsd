@@ -30,43 +30,74 @@
 	
 	<xsd:element name="ShapeDisplayOptions"> <!-- top level definition -->
 		<xsd:complexType>
-			<xsd:attribute name="fill" use="optional" type="xsd:string"/>
-			<xsd:attribute name="fill-opacity" use="optional" type="xsd:string"/>
-			<xsd:attribute name="fill-rule" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke-opacity" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke-width" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke-dashoffset" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke-dasharray" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke-linecap" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke-linejoin" use="optional" type="xsd:string"/>
-			<xsd:attribute name="stroke-miterlimit" use="optional" type="xsd:string"/>
-			<xsd:attribute name="color-interpolation" use="optional" type="xsd:string"/>
-			<xsd:attribute name="color-rendering" use="optional" type="xsd:string"/>
-			<xsd:attribute name="opacity" use="optional" type="xsd:string"/>
-			<xsd:attribute name="marker-end" use="optional" type="xsd:string"/>
-			<xsd:attribute name="font-family" use="optional" type="xsd:string"/>
-			<xsd:attribute name="font-size" use="optional" type="xsd:string"/>
-			<xsd:attribute name="font-adjust" use="optional" type="xsd:string"/>
-			<xsd:attribute name="font-strech" use="optional" type="xsd:string"/>
-			<xsd:attribute name="font-style" use="optional" type="xsd:string"/>
-			<xsd:attribute name="font-variant" use="optional" type="xsd:string"/>
-			<xsd:attribute name="font-weight" use="optional" type="xsd:string"/>
-			<xsd:attribute name="alignment-baseline" use="optional" type="xsd:string"/>
-			<xsd:attribute name="baseline-shift" use="optional" type="xsd:string"/>
-			<xsd:attribute name="direction" use="optional" type="xsd:string"/>
-			<xsd:attribute name="dominant-baseline" use="optional" type="xsd:string"/>
-			<xsd:attribute name="glyph-orientation-horizontal" use="optional" type="xsd:string"/>
-			<xsd:attribute name="glyph-orientation-vertical" use="optional" type="xsd:string"/>
-			<xsd:attribute name="kerning" use="optional" type="xsd:string"/>
-			<xsd:attribute name="letter-spacing" use="optional" type="xsd:string"/>
-			<xsd:attribute name="text-anchor" use="optional" type="xsd:string"/>
-			<xsd:attribute name="text-decoration" use="optional" type="xsd:string"/>
-			<xsd:attribute name="unicode-bidi" use="optional" type="xsd:string"/>
-			<xsd:attribute name="word-spacing" use="optional" type="xsd:string"/>
-			<xsd:attribute name="rotate" use="optional" type="xsd:string"/>
+			<xsd:attribute name="Fill" use="optional" type="xsd:integer"/>
+			<xsd:attribute name="FillRule" use="optional" type="xsd:string"/>
+			<xsd:attribute name="Stroke" use="optional" type="xsd:integer"/>
+			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float"/>
+			<xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string"/>
+			<xsd:attribute name="LineCap" use="optional">
+				<xsd:simpleType>
+					<xsd:annotation>
+						<xsd:documentation>
+							MISSING
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Butt"/>
+						<xsd:enumeration value="Line"/>
+						<xsd:enumeration value="Square"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
+			<xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
+			<xsd:attribute name="Text" use="optional" type="xsd:string"/>
+			<xsd:attribute name="FontFamily" use="optional">
+				<xsd:simpleType>
+					<xsd:annotation>
+						<xsd:documentation>
+							MISSING
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Arial"/>
+						<xsd:enumeration value="Courier"/>
+						<xsd:enumeration value="Helvetica"/>
+						<xsd:enumeration value="TimesNewRoman"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="FontSize" use="optional" type="xsd:integer"/>
+			<xsd:attribute name="FontStyle" use="optional">
+				<xsd:simpleType>
+					<xsd:annotation>
+						<xsd:documentation>
+							MISSING
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Bold"/>
+						<xsd:enumeration value="BoldItalic"/>
+						<xsd:enumeration value="Italic"/>
+						<xsd:enumeration value="Regular"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:simpleType name="Marker"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				Shape of marker on the end of a line.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Arrow"/>
+			<xsd:enumeration value="Circle"/>
+			<xsd:enumeration value="Square"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	
 	<xsd:element name="ProfileSet"> <!-- top level definition -->
 		<xsd:complexType>
