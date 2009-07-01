@@ -68,6 +68,9 @@ public final class DataTools {
   public static final long MICROSOFT_EPOCH = 2272060800000L;
   public static final long ZVI_EPOCH = 2921084975759000L;
 
+  /** ISO 8601 date format string. */
+  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+
   /** Factory for generating SAX parsers. */
   public static final SAXParserFactory SAX_FACTORY =
     SAXParserFactory.newInstance();
@@ -774,7 +777,7 @@ public final class DataTools {
         break;
     }
 
-    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    SimpleDateFormat fmt = new SimpleDateFormat(ISO8601_FORMAT);
     StringBuffer sb = new StringBuffer();
 
     Date d = new Date(ms);
@@ -788,10 +791,14 @@ public final class DataTools {
     SimpleDateFormat f = new SimpleDateFormat(format);
     Date d = f.parse(date, new ParsePosition(0));
     if (d == null) return null;
-    f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    f = new SimpleDateFormat(ISO8601_FORMAT);
     return f.format(d);
   }
 
+  /**
+   * Converts a string date in the given format to a long timestamp
+   * (in Unix format: milliseconds since January 1, 1970).
+   */
   public static long getTime(String date, String format) {
     SimpleDateFormat f = new SimpleDateFormat(format);
     Date d = f.parse(date, new ParsePosition(0));
