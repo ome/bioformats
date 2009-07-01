@@ -16,6 +16,7 @@
 	<ome:Dataset ID="Dataset:1"></ome:Dataset>
 	<spw:Plate ID="Plate:2">
 		<spw:ScreenRef ID="Screen:x"/>
+		<spw:ScreenRef ID="ScreenX:1"/>
 		<spw:Well ID="Well:1" Column="1" Row="1" Type="Dummy">
 			<spw:ReagentRef ID="Reagent:x"/>
 		</spw:Well>
@@ -40,6 +41,9 @@
 		<spw:ScreenAcquisition ID="ScreenAcquisition:1"/>
 	</spw:Screen>
 	<spw:Screen ID="Screen:1">
+		<spw:PlateRef ID="Plate:2"/>
+	</spw:Screen>
+	<spw:Screen ID="ScreenX:3">
 		<spw:PlateRef ID="Plate:2"/>
 	</spw:Screen>
 	<ome:Experimenter ID="Experimenter:1" DisplayName="Dummy1"/>

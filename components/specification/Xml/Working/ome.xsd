@@ -120,7 +120,7 @@
 			<xsd:field xpath="@ID"/>
 		</xsd:key>
 		<xsd:keyref name="PlateScreenIDKeyRef" refer="OME:ScreenIDKey" >
-			<xsd:selector xpath="SPW:Plate/SPW:ScreenRef"/>
+			<xsd:selector xpath="SPW:Plate/SPW:ScreenRef"/> <!-- ok -->
 			<xsd:field xpath="@ID"/>
 		</xsd:keyref>
 		<xsd:key name="PlateIDKey">

@@ -61,7 +61,7 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:element ref="ScreenRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="ScreenRef" minOccurs="0" maxOccurs="unbounded" type="OME:LSID"/>
 				<xsd:element ref="Well" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PlateID"/>
@@ -269,7 +269,13 @@
 				<xsd:element ref="PlateRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="ScreenAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="ScreenID"/>
+			<xsd:attribute name="ID" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="OME:LSID">
+						<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Screen:\S+)|(Screen:\S+)"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="ProtocolIdentifier" use="optional" type="xsd:string">
 					<xsd:annotation>
@@ -313,13 +319,7 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:simpleType name="ScreenID">
-		<xsd:restriction base="OME:LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Screen:\S+)|(Screen:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:element name="ScreenRef">	<!-- top level definition -->
+	<xsd:element name="ScreenRefX">	<!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation> <!-- top level definition -->
 				The ScreenRef element is a reference to a Screen element.
@@ -330,7 +330,6 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="OME:Reference">
-					<xsd:attribute name="ID" use="required" type="ScreenID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
