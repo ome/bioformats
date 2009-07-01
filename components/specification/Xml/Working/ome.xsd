@@ -1903,6 +1903,19 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:complexType>
+	
+	<xsd:complexType name="ReferenceWithID">
+		<xsd:annotation>
+			<xsd:documentation>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="Reference">
+				<xsd:attribute name="ID" use="required" type="LSID"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
 	<xsd:element name="MicrobeamManipulationRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>

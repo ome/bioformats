@@ -16,7 +16,7 @@
 	<ome:Dataset ID="Dataset:1"></ome:Dataset>
 	<spw:Plate ID="Plate:2">
 		<spw:ScreenRef ID="Screen:x"/>
-		<spw:ScreenRef ID="ScreenX:1"/>
+		<spw:ScreenRef ID="Screen:1"/>
 		<spw:Well ID="Well:1" Column="1" Row="1" Type="Dummy">
 			<spw:ReagentRef ID="Reagent:x"/>
 		</spw:Well>
