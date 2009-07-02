@@ -318,8 +318,8 @@ public class MinMaxCalculator extends ReaderWrapper {
         if (v < chanMin[series][cBase + c]) {
           chanMin[series][cBase + c] = v;
         }
-        if (v > planeMax[series][ndx]) {
-          planeMax[series][ndx] = v;
+        if (v > planeMax[series][pBase + c]) {
+          planeMax[series][pBase + c] = v;
         }
         if (v < planeMin[series][pBase + c]) {
           planeMin[series][pBase + c] = v;
