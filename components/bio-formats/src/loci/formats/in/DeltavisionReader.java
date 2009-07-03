@@ -637,14 +637,12 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equals("Binning")) {
+          store.setDetectorType("Unknown", 0, 0);
+          store.setDetectorID("Detector:0", 0, 0);
           for (int c=0; c<getSizeC(); c++) {
             store.setDetectorSettingsBinning(value, 0, c);
-
-            store.setDetectorType("Unknown", 0, c);
-
             // link DetectorSettings to an actual Detector
-            store.setDetectorID("Detector:" + c, 0, c);
-            store.setDetectorSettingsDetector("Detector:" + c, 0, c);
+            store.setDetectorSettingsDetector("Detector:0", 0, c);
           }
         }
         // Camera properties
@@ -654,7 +652,9 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("Gain")) {
           value = value.replaceAll("X", "");
           try {
-            store.setDetectorSettingsGain(new Float(value), 0, 0);
+            for (int c=0; c<getSizeC(); c++) {
+              store.setDetectorSettingsGain(new Float(value), 0, c);
+            }
           }
           catch (NumberFormatException e) {
             warn("Could not parse gain '" + value + "'");
@@ -664,7 +664,9 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("KHz", "");
           try {
             float mhz = Float.parseFloat(value) / 1000;
-            store.setDetectorSettingsReadOutRate(new Float(mhz), 0, 0);
+            for (int c=0; c<getSizeC(); c++) {
+              store.setDetectorSettingsReadOutRate(new Float(mhz), 0, c);
+            }
           }
           catch (NumberFormatException e) {
             warn("Could not parse read-out rate '" + value + "'");
