@@ -958,17 +958,19 @@ public class JVMLinkFlowCytometry {
   public static void saveValues() throws IOException {
     BufferedWriter bw = new BufferedWriter(
       new FileWriter("values"+s_Date.substring(0,9)));
-    bw.write("Area (micron^2)\t\t(pixel^2)\t\tIntensity\t\tFrame");
+    bw.write("Area (micron^2)\t\t(pixel^2)\t\tIntensity\t\tFrame\t\tLast");
     bw.newLine();
     bw.newLine();
     System.out.println("Particles size is "+particles.size());
-    for (int i=0; i<particles.size(); i++) {
-      if (particles.get(i).getStatus()) {
-        bw.write(particles.get(i).getMicronArea()+"\t\t"+
-          particles.get(i).getPixelArea()+"\t\t"+
-          particles.get(i).getMeanIntensity()+"\t\t"+
-          particles.get(i).getSliceNum());
-      }
+    for (Particle p : particles) {
+      bw.write(p.getMicronArea()+"\t\t"+
+        p.getPixelArea()+"\t\t"+
+        p.getMeanIntensity()+"\t\t"+
+        p.getSliceNum()+"\t\t"+
+        // NB: The same particle across multiple timepoints will be labeled
+        // with Last=no until the final position of that particle, which will
+        // be labeled Last=yes.
+        (p.getStatus() ? "no" : "yes"));
       bw.newLine();
     }
     bw.flush();
