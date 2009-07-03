@@ -59,8 +59,7 @@ import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.IMetadata;
 import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 
@@ -190,60 +189,58 @@ public class Exporter {
       FileInfo fi = imp.getOriginalFileInfo();
       String xml = fi == null ? null : fi.description == null ? null :
         fi.description.indexOf("xml") == -1 ? null : fi.description;
-      MetadataStore store = MetadataTools.createOMEXMLMetadata(xml);
+      IMetadata store = MetadataTools.createOMEXMLMetadata(xml);
       if (store == null) IJ.error("OME-XML Java library not found.");
-      else if (store instanceof MetadataRetrieve) {
-        if (xml == null) {
-          store.createRoot();
+      if (xml == null) {
+        store.createRoot();
 
-          int ptype = 0;
-          int channels = 1;
-          switch (imp.getType()) {
-            case ImagePlus.GRAY8:
-            case ImagePlus.COLOR_256:
-              ptype = FormatTools.UINT8;
-              break;
-            case ImagePlus.COLOR_RGB:
-              channels = 3;
-              ptype = FormatTools.UINT8;
-              break;
-            case ImagePlus.GRAY16:
-              ptype = FormatTools.UINT16;
-              break;
-            case ImagePlus.GRAY32:
-              ptype = FormatTools.FLOAT;
-              break;
-          }
-
-          store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
-          store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
-          store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
-          store.setPixelsSizeC(new Integer(channels*imp.getNChannels()), 0, 0);
-          store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
-          store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
-          store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
-          store.setPixelsDimensionOrder("XYCZT", 0, 0);
-          store.setLogicalChannelSamplesPerPixel(new Integer(channels), 0, 0);
+        int ptype = 0;
+        int channels = 1;
+        switch (imp.getType()) {
+          case ImagePlus.GRAY8:
+          case ImagePlus.COLOR_256:
+            ptype = FormatTools.UINT8;
+            break;
+          case ImagePlus.COLOR_RGB:
+            channels = 3;
+            ptype = FormatTools.UINT8;
+            break;
+          case ImagePlus.GRAY16:
+            ptype = FormatTools.UINT16;
+            break;
+          case ImagePlus.GRAY32:
+            ptype = FormatTools.FLOAT;
+            break;
         }
 
-        if (imp.getImageStackSize() !=
-          imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
-        {
-          IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
-            "The number of planes in the stack (" + imp.getImageStackSize() +
-            ") does not match the number of expected planes (" +
-            (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
-            "\nIf you select 'OK', only " + imp.getImageStackSize() +
-            " planes will be exported. If you wish to export all of the " +
-            "planes,\nselect 'Cancel' and convert the Image5D window " +
-            "to a stack.");
-          store.setPixelsSizeZ(new Integer(imp.getImageStackSize()), 0, 0);
-          store.setPixelsSizeC(new Integer(1), 0, 0);
-          store.setPixelsSizeT(new Integer(1), 0, 0);
-        }
-
-        w.setMetadataRetrieve((MetadataRetrieve) store);
+        store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
+        store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
+        store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
+        store.setPixelsSizeC(new Integer(channels*imp.getNChannels()), 0, 0);
+        store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
+        store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
+        store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
+        store.setPixelsDimensionOrder("XYCZT", 0, 0);
+        store.setLogicalChannelSamplesPerPixel(new Integer(channels), 0, 0);
       }
+
+      if (imp.getImageStackSize() !=
+        imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
+      {
+        IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
+          "The number of planes in the stack (" + imp.getImageStackSize() +
+          ") does not match the number of expected planes (" +
+          (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
+          "\nIf you select 'OK', only " + imp.getImageStackSize() +
+          " planes will be exported. If you wish to export all of the " +
+          "planes,\nselect 'Cancel' and convert the Image5D window " +
+          "to a stack.");
+        store.setPixelsSizeZ(new Integer(imp.getImageStackSize()), 0, 0);
+        store.setPixelsSizeC(new Integer(1), 0, 0);
+        store.setPixelsSizeT(new Integer(1), 0, 0);
+      }
+
+      w.setMetadataRetrieve(store);
 
       w.setId(outfile);
 
