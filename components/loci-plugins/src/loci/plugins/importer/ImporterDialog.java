@@ -189,7 +189,7 @@ public class ImporterDialog extends OptionsDialog
       stackFormatLabel  = labels.get(0);
       stackOrderChoice  = choices.get(1);
       stackOrderLabel   = labels.get(1);
-      swapDimsBox           = boxes.get(17);
+      swapDimsBox       = boxes.get(17);
       virtualBox        = boxes.get(18);
     }
     verifyOptions(null);
@@ -512,11 +512,11 @@ public class ImporterDialog extends OptionsDialog
     if (!recordEnabled) isRecord = false;
 
     // specifyRangesBox
-    specifyRangesEnabled = !isStackNone;
+    specifyRangesEnabled = !isStackNone && !isVirtual;
     if (!specifyRangesEnabled) isSpecifyRanges = false;
 
     // cropBox
-    cropEnabled = !isStackNone;
+    cropEnabled = !isStackNone && !isVirtual;
     if (!cropEnabled) isCrop = false;
 
     // == Color options ==
