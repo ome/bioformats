@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -490,6 +490,19 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getRegionCount(imageIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getRoiLinkCount(int, int) */
+  public int getRoiLinkCount(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getRoiLinkCount(imageIndex, roiIndex);
         if (result >= 0) return result;
       }
     }
@@ -4239,6 +4252,47 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getRegionTag(imageIndex, regionIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - RoiLink property retrieval -
+
+  /* @see MetadataRetrieve#getRoiLinkDirection(int, int, int) */
+  public String getRoiLinkDirection(int imageIndex, int roiIndex, int roiLinkIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getRoiLinkDirection(imageIndex, roiIndex, roiLinkIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getRoiLinkName(int, int, int) */
+  public String getRoiLinkName(int imageIndex, int roiIndex, int roiLinkIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getRoiLinkName(imageIndex, roiIndex, roiLinkIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getRoiLinkRef(int, int, int) */
+  public String getRoiLinkRef(int imageIndex, int roiIndex, int roiLinkIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getRoiLinkRef(imageIndex, roiIndex, roiLinkIndex);
         if (result != null) return result;
       }
     }
@@ -8461,6 +8515,41 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setRegionTag(tag, imageIndex, regionIndex);
+      }
+    }
+  }
+
+  // - RoiLink property storage -
+
+  /* @see MetadataStore#setRoiLinkDirection(String, int, int, int) */
+  public void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setRoiLinkDirection(direction, imageIndex, roiIndex, roiLinkIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setRoiLinkName(String, int, int, int) */
+  public void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setRoiLinkName(name, imageIndex, roiIndex, roiLinkIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setRoiLinkRef(String, int, int, int) */
+  public void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setRoiLinkRef(ref, imageIndex, roiIndex, roiLinkIndex);
       }
     }
   }

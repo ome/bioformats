@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -2355,6 +2355,35 @@ public interface MetadataStore {
    * @param regionIndex index of the Region
    */
   void setRegionTag(String tag, int imageIndex, int regionIndex);
+
+  // - RoiLink property storage -
+
+  /**
+   * For a particular RoiLink, sets TODO.
+   * @param direction TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param roiLinkIndex index of the RoiLink
+   */
+  void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex);
+
+  /**
+   * For a particular RoiLink, sets TODO.
+   * @param name TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param roiLinkIndex index of the RoiLink
+   */
+  void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex);
+
+  /**
+   * For a particular RoiLink, sets TODO.
+   * @param ref TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param roiLinkIndex index of the RoiLink
+   */
+  void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex);
 
   // - Screen property storage -
 

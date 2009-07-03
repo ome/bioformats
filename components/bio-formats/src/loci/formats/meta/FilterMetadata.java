@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1737,6 +1737,26 @@ public class FilterMetadata implements MetadataStore {
   public void setRegionTag(String tag, int imageIndex, int regionIndex) {
     String value = filter ? DataTools.sanitize(tag) : tag;
     store.setRegionTag(value, imageIndex, regionIndex);
+  }
+
+  // -- RoiLink property storage -
+
+  /* @see MetadataStore#setRoiLinkDirection(String, int, int, int) */
+  public void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex) {
+    String value = filter ? DataTools.sanitize(direction) : direction;
+    store.setRoiLinkDirection(value, imageIndex, roiIndex, roiLinkIndex);
+  }
+
+  /* @see MetadataStore#setRoiLinkName(String, int, int, int) */
+  public void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex) {
+    String value = filter ? DataTools.sanitize(name) : name;
+    store.setRoiLinkName(value, imageIndex, roiIndex, roiLinkIndex);
+  }
+
+  /* @see MetadataStore#setRoiLinkRef(String, int, int, int) */
+  public void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex) {
+    String value = filter ? DataTools.sanitize(ref) : ref;
+    store.setRoiLinkRef(value, imageIndex, roiIndex, roiLinkIndex);
   }
 
   // -- Screen property storage -

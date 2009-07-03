@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -124,6 +124,8 @@ public interface MetadataRetrieve {
   int getReagentCount(int screenIndex);
 
   int getRegionCount(int imageIndex);
+
+  int getRoiLinkCount(int imageIndex, int roiIndex);
 
   int getScreenCount();
 
@@ -2147,6 +2149,32 @@ public interface MetadataRetrieve {
    * @param regionIndex index of the Region
    */
   String getRegionTag(int imageIndex, int regionIndex);
+
+  // - RoiLink property retrieval -
+
+  /**
+   * For a particular RoiLink, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param roiLinkIndex index of the RoiLink
+   */
+  String getRoiLinkDirection(int imageIndex, int roiIndex, int roiLinkIndex);
+
+  /**
+   * For a particular RoiLink, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param roiLinkIndex index of the RoiLink
+   */
+  String getRoiLinkName(int imageIndex, int roiIndex, int roiLinkIndex);
+
+  /**
+   * For a particular RoiLink, gets TODO.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   * @param roiLinkIndex index of the RoiLink
+   */
+  String getRoiLinkRef(int imageIndex, int roiIndex, int roiLinkIndex);
 
   // - Screen property retrieval -
 

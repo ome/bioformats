@@ -24,64 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
-import java.util.List;
-
-import loci.common.LogTools;
 import ome.xml.OMEXMLNode;
-import ome.xml.r2003fc.ome.ArcNode;
-import ome.xml.r2003fc.ome.ChannelComponentNode;
-import ome.xml.r2003fc.ome.ChannelInfoNode;
-import ome.xml.r2003fc.ome.ContactNode;
-import ome.xml.r2003fc.ome.DatasetNode;
-import ome.xml.r2003fc.ome.DetectorNode;
-import ome.xml.r2003fc.ome.DetectorRefNode;
-import ome.xml.r2003fc.ome.DichroicNode;
-import ome.xml.r2003fc.ome.DisplayOptionsNode;
-import ome.xml.r2003fc.ome.EmFilterNode;
-import ome.xml.r2003fc.ome.ExFilterNode;
-import ome.xml.r2003fc.ome.ExperimentNode;
-import ome.xml.r2003fc.ome.ExperimentRefNode;
-import ome.xml.r2003fc.ome.ExperimenterNode;
-import ome.xml.r2003fc.ome.ExperimenterRefNode;
-import ome.xml.r2003fc.ome.FilamentNode;
-import ome.xml.r2003fc.ome.FilterNode;
-import ome.xml.r2003fc.ome.FilterSetNode;
-import ome.xml.r2003fc.ome.GroupNode;
-import ome.xml.r2003fc.ome.GroupRefNode;
-import ome.xml.r2003fc.ome.ImageNode;
-import ome.xml.r2003fc.ome.ImagingEnvironmentNode;
-import ome.xml.r2003fc.ome.InstrumentNode;
-import ome.xml.r2003fc.ome.InstrumentRefNode;
-import ome.xml.r2003fc.ome.LaserNode;
-import ome.xml.r2003fc.ome.LightSourceNode;
-import ome.xml.r2003fc.ome.LightSourceRefNode;
-import ome.xml.r2003fc.ome.MicroscopeNode;
-import ome.xml.r2003fc.ome.OMENode;
-import ome.xml.r2003fc.ome.OTFNode;
-import ome.xml.r2003fc.ome.OTFRefNode;
-import ome.xml.r2003fc.ome.ObjectiveNode;
-import ome.xml.r2003fc.ome.ObjectiveRefNode;
-import ome.xml.r2003fc.ome.PixelsNode;
-import ome.xml.r2003fc.ome.PlateNode;
-import ome.xml.r2003fc.ome.PlateRefNode;
-import ome.xml.r2003fc.ome.ProjectNode;
-import ome.xml.r2003fc.ome.ProjectRefNode;
-import ome.xml.r2003fc.ome.ProjectionNode;
-import ome.xml.r2003fc.ome.PumpNode;
-import ome.xml.r2003fc.ome.ROINode;
-import ome.xml.r2003fc.ome.ScreenNode;
-import ome.xml.r2003fc.ome.ScreenRefNode;
-import ome.xml.r2003fc.ome.StageLabelNode;
-import ome.xml.r2003fc.ome.ThumbnailNode;
-import ome.xml.r2003fc.ome.TiffDataNode;
-import ome.xml.r2003fc.ome.TimeNode;
+import ome.xml.r2003fc.ome.*;
+import java.util.List;
+import loci.common.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -330,6 +283,12 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getRegionCount(int) */
   public int getRegionCount(int imageIndex) {
     // NB: Region unsupported for schema version 2003-FC
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkCount(int, int) */
+  public int getRoiLinkCount(int imageIndex, int roiIndex) {
+    // NB: RoiLink unsupported for schema version 2003-FC
     return -1;
   }
 
@@ -2144,6 +2103,26 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataRetrieve#getRegionTag(int, int) */
   public String getRegionTag(int imageIndex, int regionIndex) {
     // NB: Tag unsupported for schema version 2003-FC
+    return null;
+  }
+
+  // - RoiLink property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkDirection(int, int, int) */
+  public String getRoiLinkDirection(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Direction unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkName(int, int, int) */
+  public String getRoiLinkName(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkRef(int, int, int) */
+  public String getRoiLinkRef(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Ref unsupported for schema version 2003-FC
     return null;
   }
 
@@ -4571,6 +4550,23 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   /* @see loci.formats.meta.MetadataStore#setRegionTag(String, int, int) */
   public void setRegionTag(String tag, int imageIndex, int regionIndex) {
     // NB: Tag unsupported for schema version 2003-FC
+  }
+
+  // - RoiLink property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkDirection(String, int, int, int) */
+  public void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Direction unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkName(String, int, int, int) */
+  public void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Name unsupported for schema version 2003-FC
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkRef(String, int, int, int) */
+  public void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Ref unsupported for schema version 2003-FC
   }
 
   // - Screen property storage -

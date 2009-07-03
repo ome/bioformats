@@ -24,92 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
-import java.util.List;
-
-import loci.common.LogTools;
 import ome.xml.OMEXMLNode;
-import ome.xml.r200809.ome.ArcNode;
-import ome.xml.r200809.ome.ChannelComponentNode;
-import ome.xml.r200809.ome.CircleNode;
-import ome.xml.r200809.ome.ContactNode;
-import ome.xml.r200809.ome.DatasetNode;
-import ome.xml.r200809.ome.DatasetRefNode;
-import ome.xml.r200809.ome.DetectorNode;
-import ome.xml.r200809.ome.DetectorRefNode;
-import ome.xml.r200809.ome.DichroicNode;
-import ome.xml.r200809.ome.DisplayOptionsNode;
-import ome.xml.r200809.ome.EllipseNode;
-import ome.xml.r200809.ome.ExperimentNode;
-import ome.xml.r200809.ome.ExperimentRefNode;
-import ome.xml.r200809.ome.ExperimenterNode;
-import ome.xml.r200809.ome.ExperimenterRefNode;
-import ome.xml.r200809.ome.FilamentNode;
-import ome.xml.r200809.ome.FilterNode;
-import ome.xml.r200809.ome.FilterSetNode;
-import ome.xml.r200809.ome.FilterSetRefNode;
-import ome.xml.r200809.ome.GreyChannelNode;
-import ome.xml.r200809.ome.GroupNode;
-import ome.xml.r200809.ome.GroupRefNode;
-import ome.xml.r200809.ome.ImageNode;
-import ome.xml.r200809.ome.ImagingEnvironmentNode;
-import ome.xml.r200809.ome.InstrumentNode;
-import ome.xml.r200809.ome.InstrumentRefNode;
-import ome.xml.r200809.ome.LaserNode;
-import ome.xml.r200809.ome.LightSourceNode;
-import ome.xml.r200809.ome.LightSourceRefNode;
-import ome.xml.r200809.ome.LineNode;
-import ome.xml.r200809.ome.LogicalChannelNode;
-import ome.xml.r200809.ome.MaskNode;
-import ome.xml.r200809.ome.MaskPixelsNode;
-import ome.xml.r200809.ome.MicrobeamManipulationNode;
-import ome.xml.r200809.ome.MicrobeamManipulationRefNode;
-import ome.xml.r200809.ome.MicroscopeNode;
-import ome.xml.r200809.ome.OMENode;
-import ome.xml.r200809.ome.OTFNode;
-import ome.xml.r200809.ome.OTFRefNode;
-import ome.xml.r200809.ome.ObjectiveNode;
-import ome.xml.r200809.ome.ObjectiveRefNode;
-import ome.xml.r200809.ome.PixelsNode;
-import ome.xml.r200809.ome.PlaneNode;
-import ome.xml.r200809.ome.PlaneTimingNode;
-import ome.xml.r200809.ome.PointNode;
-import ome.xml.r200809.ome.PolygonNode;
-import ome.xml.r200809.ome.PolylineNode;
-import ome.xml.r200809.ome.ProjectNode;
-import ome.xml.r200809.ome.ProjectRefNode;
-import ome.xml.r200809.ome.ProjectionNode;
-import ome.xml.r200809.ome.PumpNode;
-import ome.xml.r200809.ome.ROINode;
-import ome.xml.r200809.ome.ROIRefNode;
-import ome.xml.r200809.ome.RectNode;
-import ome.xml.r200809.ome.RegionNode;
-import ome.xml.r200809.ome.ShapeNode;
-import ome.xml.r200809.ome.StageLabelNode;
-import ome.xml.r200809.ome.StagePositionNode;
-import ome.xml.r200809.ome.ThumbnailNode;
-import ome.xml.r200809.ome.TiffDataNode;
-import ome.xml.r200809.ome.TimeNode;
-import ome.xml.r200809.ome.TransmittanceRangeNode;
-import ome.xml.r200809.ome.UUIDNode;
-import ome.xml.r200809.ome.UnionNode;
-import ome.xml.r200809.spw.ImageRefNode;
-import ome.xml.r200809.spw.PlateNode;
-import ome.xml.r200809.spw.PlateRefNode;
-import ome.xml.r200809.spw.ReagentNode;
-import ome.xml.r200809.spw.ReagentRefNode;
-import ome.xml.r200809.spw.ScreenAcquisitionNode;
-import ome.xml.r200809.spw.ScreenNode;
-import ome.xml.r200809.spw.ScreenRefNode;
-import ome.xml.r200809.spw.WellNode;
-import ome.xml.r200809.spw.WellSampleNode;
-import ome.xml.r200809.spw.WellSampleRefNode;
+import ome.xml.r200809.ome.*;
+import ome.xml.r200809.spw.*;
+import java.util.List;
+import loci.common.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -374,6 +300,12 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getRegionNode(imageIndex, i, false) == null) return i;
     }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkCount(int, int) */
+  public int getRoiLinkCount(int imageIndex, int roiIndex) {
+    // NB: RoiLink unsupported for schema version 2008-09
     return -1;
   }
 
@@ -2201,6 +2133,26 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getRegionTag(int imageIndex, int regionIndex) {
     RegionNode region = getRegionNode(imageIndex, regionIndex, false);
     return region == null ? null : region.getTag();
+  }
+
+  // - RoiLink property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkDirection(int, int, int) */
+  public String getRoiLinkDirection(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Direction unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkName(int, int, int) */
+  public String getRoiLinkName(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Name unsupported for schema version 2008-09
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkRef(int, int, int) */
+  public String getRoiLinkRef(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Ref unsupported for schema version 2008-09
+    return null;
   }
 
   // - Screen property retrieval -
@@ -4825,6 +4777,23 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (tag == null) return;
     RegionNode regionNode = getRegionNode(imageIndex, regionIndex, true);
     regionNode.setTag(tag);
+  }
+
+  // - RoiLink property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkDirection(String, int, int, int) */
+  public void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Direction unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkName(String, int, int, int) */
+  public void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Name unsupported for schema version 2008-09
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkRef(String, int, int, int) */
+  public void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Ref unsupported for schema version 2008-09
   }
 
   // - Screen property storage -

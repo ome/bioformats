@@ -24,81 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
-import java.util.List;
-
-import loci.common.LogTools;
 import ome.xml.OMEXMLNode;
-import ome.xml.r200706.ome.ArcNode;
-import ome.xml.r200706.ome.ChannelComponentNode;
-import ome.xml.r200706.ome.ContactNode;
-import ome.xml.r200706.ome.DatasetNode;
-import ome.xml.r200706.ome.DatasetRefNode;
-import ome.xml.r200706.ome.DetectorNode;
-import ome.xml.r200706.ome.DetectorRefNode;
-import ome.xml.r200706.ome.DichroicNode;
-import ome.xml.r200706.ome.DisplayOptionsNode;
-import ome.xml.r200706.ome.ExperimentNode;
-import ome.xml.r200706.ome.ExperimentRefNode;
-import ome.xml.r200706.ome.ExperimenterNode;
-import ome.xml.r200706.ome.ExperimenterRefNode;
-import ome.xml.r200706.ome.FilamentNode;
-import ome.xml.r200706.ome.FilterNode;
-import ome.xml.r200706.ome.FilterSetNode;
-import ome.xml.r200706.ome.FilterSetRefNode;
-import ome.xml.r200706.ome.GreyChannelNode;
-import ome.xml.r200706.ome.GroupNode;
-import ome.xml.r200706.ome.GroupRefNode;
-import ome.xml.r200706.ome.ImageNode;
-import ome.xml.r200706.ome.ImagingEnvironmentNode;
-import ome.xml.r200706.ome.InstrumentNode;
-import ome.xml.r200706.ome.InstrumentRefNode;
-import ome.xml.r200706.ome.LaserNode;
-import ome.xml.r200706.ome.LightSourceNode;
-import ome.xml.r200706.ome.LightSourceRefNode;
-import ome.xml.r200706.ome.LogicalChannelNode;
-import ome.xml.r200706.ome.MicrobeamManipulationNode;
-import ome.xml.r200706.ome.MicrobeamManipulationRefNode;
-import ome.xml.r200706.ome.MicroscopeNode;
-import ome.xml.r200706.ome.OMENode;
-import ome.xml.r200706.ome.OTFNode;
-import ome.xml.r200706.ome.OTFRefNode;
-import ome.xml.r200706.ome.ObjectiveNode;
-import ome.xml.r200706.ome.ObjectiveRefNode;
-import ome.xml.r200706.ome.ObjectiveSettingsNode;
-import ome.xml.r200706.ome.PixelsNode;
-import ome.xml.r200706.ome.PlaneNode;
-import ome.xml.r200706.ome.PlaneTimingNode;
-import ome.xml.r200706.ome.ProjectNode;
-import ome.xml.r200706.ome.ProjectRefNode;
-import ome.xml.r200706.ome.ProjectionNode;
-import ome.xml.r200706.ome.PumpNode;
-import ome.xml.r200706.ome.ROINode;
-import ome.xml.r200706.ome.ROIRefNode;
-import ome.xml.r200706.ome.RegionNode;
-import ome.xml.r200706.ome.StageLabelNode;
-import ome.xml.r200706.ome.StagePositionNode;
-import ome.xml.r200706.ome.ThumbnailNode;
-import ome.xml.r200706.ome.TiffDataNode;
-import ome.xml.r200706.ome.TimeNode;
-import ome.xml.r200706.ome.TransmittanceRangeNode;
-import ome.xml.r200706.spw.ImageRefNode;
-import ome.xml.r200706.spw.PlateNode;
-import ome.xml.r200706.spw.PlateRefNode;
-import ome.xml.r200706.spw.ReagentNode;
-import ome.xml.r200706.spw.ReagentRefNode;
-import ome.xml.r200706.spw.ScreenAcquisitionNode;
-import ome.xml.r200706.spw.ScreenNode;
-import ome.xml.r200706.spw.ScreenRefNode;
-import ome.xml.r200706.spw.WellNode;
-import ome.xml.r200706.spw.WellSampleNode;
-import ome.xml.r200706.spw.WellSampleRefNode;
+import ome.xml.r200706.ome.*;
+import ome.xml.r200706.spw.*;
+import java.util.List;
+import loci.common.LogTools;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -363,6 +300,12 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     for (int i=0; i<Integer.MAX_VALUE; i++) {
       if (getRegionNode(imageIndex, i, false) == null) return i;
     }
+    return -1;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkCount(int, int) */
+  public int getRoiLinkCount(int imageIndex, int roiIndex) {
+    // NB: RoiLink unsupported for schema version 2007-06
     return -1;
   }
 
@@ -2188,6 +2131,26 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   public String getRegionTag(int imageIndex, int regionIndex) {
     RegionNode region = getRegionNode(imageIndex, regionIndex, false);
     return region == null ? null : region.getTag();
+  }
+
+  // - RoiLink property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkDirection(int, int, int) */
+  public String getRoiLinkDirection(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Direction unsupported for schema version 2007-06
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkName(int, int, int) */
+  public String getRoiLinkName(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Name unsupported for schema version 2007-06
+    return null;
+  }
+
+  /* @see loci.formats.meta.MetadataRetrieve#getRoiLinkRef(int, int, int) */
+  public String getRoiLinkRef(int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Ref unsupported for schema version 2007-06
+    return null;
   }
 
   // - Screen property retrieval -
@@ -4728,6 +4691,23 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
     if (tag == null) return;
     RegionNode regionNode = getRegionNode(imageIndex, regionIndex, true);
     regionNode.setTag(tag);
+  }
+
+  // - RoiLink property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkDirection(String, int, int, int) */
+  public void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Direction unsupported for schema version 2007-06
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkName(String, int, int, int) */
+  public void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Name unsupported for schema version 2007-06
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRoiLinkRef(String, int, int, int) */
+  public void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex) {
+    // NB: Ref unsupported for schema version 2007-06
   }
 
   // - Screen property storage -

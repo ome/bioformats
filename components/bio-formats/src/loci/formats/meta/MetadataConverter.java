@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -194,6 +194,15 @@ public final class MetadataConverter {
         if (roiZ0Value != null) dest.setROIZ0(roiZ0Value, imageIndex, roiIndex);
         Integer roiZ1Value = src.getROIZ1(imageIndex, roiIndex);
         if (roiZ1Value != null) dest.setROIZ1(roiZ1Value, imageIndex, roiIndex);
+        int roiLinkCount = src.getRoiLinkCount(imageIndex, roiIndex);
+        for (int roiLinkIndex=0; roiLinkIndex<roiLinkCount; roiLinkIndex++) {
+          String roiLinkDirectionValue = src.getRoiLinkDirection(imageIndex, roiIndex, roiLinkIndex);
+          if (roiLinkDirectionValue != null) dest.setRoiLinkDirection(roiLinkDirectionValue, imageIndex, roiIndex, roiLinkIndex);
+          String roiLinkNameValue = src.getRoiLinkName(imageIndex, roiIndex, roiLinkIndex);
+          if (roiLinkNameValue != null) dest.setRoiLinkName(roiLinkNameValue, imageIndex, roiIndex, roiLinkIndex);
+          String roiLinkRefValue = src.getRoiLinkRef(imageIndex, roiIndex, roiLinkIndex);
+          if (roiLinkRefValue != null) dest.setRoiLinkRef(roiLinkRefValue, imageIndex, roiIndex, roiLinkIndex);
+        }
         int shapeCount = src.getShapeCount(imageIndex, roiIndex);
         for (int shapeIndex=0; shapeIndex<shapeCount; shapeIndex++) {
           String shapeBaselineShiftValue = src.getShapeBaselineShift(imageIndex, roiIndex, shapeIndex);

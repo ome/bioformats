@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 26, 2009 10:37:58 AM CDT
+ * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -201,6 +201,11 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataRetrieve#getRegionCount(int) */
   public int getRegionCount(int imageIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getRoiLinkCount(int, int) */
+  public int getRoiLinkCount(int imageIndex, int roiIndex) {
     return -1;
   }
 
@@ -1508,6 +1513,21 @@ public class DummyMetadata implements IMetadata {
   }
   /* @see MetadataRetrieve#getRegionTag(int, int) */
   public String getRegionTag(int imageIndex, int regionIndex) {
+    return null;
+  }
+
+  // - RoiLink property retrieval -
+
+  /* @see MetadataRetrieve#getRoiLinkDirection(int, int, int) */
+  public String getRoiLinkDirection(int imageIndex, int roiIndex, int roiLinkIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getRoiLinkName(int, int, int) */
+  public String getRoiLinkName(int imageIndex, int roiIndex, int roiLinkIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getRoiLinkRef(int, int, int) */
+  public String getRoiLinkRef(int imageIndex, int roiIndex, int roiLinkIndex) {
     return null;
   }
 
@@ -3092,6 +3112,20 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataStore#setRegionTag(String, int, int) */
   public void setRegionTag(String tag, int imageIndex, int regionIndex) {
+  }
+
+  // - RoiLink property storage -
+
+  /* @see MetadataStore#setRoiLinkDirection(String, int, int, int) */
+  public void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex) {
+  }
+
+  /* @see MetadataStore#setRoiLinkName(String, int, int, int) */
+  public void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex) {
+  }
+
+  /* @see MetadataStore#setRoiLinkRef(String, int, int, int) */
+  public void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex) {
   }
 
   // - Screen property storage -

@@ -1024,6 +1024,40 @@ description = the ending timepoint
 [ROI T1 200809]
 path = -
 
+## RoiLink ##
+
+# This entity is not present in any existing OME-XML schema version.
+# It will be added in a future version of the schema.
+
+[RoiLink]
+countable = true
+path = Image+/DisplayOptions/ROI+/RoiLink+
+description = TODO
+
+[RoiLink 2003FC]
+path = -
+
+[RoiLink 200706]
+path = -
+
+[RoiLink 200802]
+path = -
+
+[RoiLink 200809]
+path = -
+
+[RoiLink Name]
+type = String
+description = TODO
+
+[RoiLink Ref]
+type = String
+description = TODO
+
+[RoiLink Direction]
+type = String
+description = TODO
+
 ## ROIRef ##
 
 [ROIRef]
