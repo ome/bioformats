@@ -16,7 +16,7 @@
 	<ome:Dataset ID="Dataset:1"></ome:Dataset>
 	<spw:Plate ID="Plate:2">
 		<spw:ScreenRef ID="Screen:x"/>
-		<spw:ScreenRef ID="Screen:1"/>
+		<spw:ScreenRef ID="Well:1"/>
 		<spw:Well ID="Well:1" Column="1" Row="1" Type="Dummy">
 			<spw:ReagentRef ID="Reagent:x"/>
 		</spw:Well>
@@ -60,10 +60,10 @@
 	</ome:Image>
 	<ome:Image ID="Image:1" Name="Name92">
 		<ome:AcquiredDate>2008-03-04T14:17:43.0Z</ome:AcquiredDate>
-		<ome:Channel ID="Channel:1" Pixels="Pixels:1"></ome:Channel>
-		<ome:Channel ID="Channel:1" Pixels="Pixels:1"></ome:Channel>
-		<ome:Channel ID="Channel:3" Pixels="Pixels:x"></ome:Channel>
 		<ome:Pixels ID="Pixels:1" DimensionOrder="XYZCT" Type="int8" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
+			<ome:Channel ID="Channel:1"></ome:Channel>
+			<ome:Channel ID="Channel:1"></ome:Channel>
+			<ome:Channel ID="Channel:3"></ome:Channel>
 			<bf:BinData BigEndian="true" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
 		</ome:Pixels>
 	</ome:Image>
