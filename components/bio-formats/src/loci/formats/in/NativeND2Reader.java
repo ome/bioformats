@@ -564,7 +564,9 @@ public class NativeND2Reader extends FormatReader {
         s = s.replaceAll("<!--.+?>", ""); // remove comments
         int openBracket = s.indexOf("<");
         if (openBracket == -1) continue;
-        s = s.substring(openBracket, s.lastIndexOf(">") + 1).trim();
+        int closedBracket = s.lastIndexOf(">") + 1;
+        if (closedBracket < openBracket) continue;
+        s = s.substring(openBracket, closedBracket).trim();
         if (s.indexOf("VCAL") == -1 && s.indexOf("jp2cLUNK") == -1) {
           sb.append(s);
         }
