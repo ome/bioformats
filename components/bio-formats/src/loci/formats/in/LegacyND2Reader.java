@@ -101,7 +101,7 @@ public class LegacyND2Reader extends FormatReader {
 
     int[] zct = FormatTools.getZCTCoords(this, no);
     int bpc = FormatTools.getBytesPerPixel(getPixelType());
-    byte[] b = new byte[FormatTools.getPlaneSize(this)]
+    byte[] b = new byte[FormatTools.getPlaneSize(this)];
 
     getImage(b, getSeries(), zct[0], zct[1], zct[2]);
 
