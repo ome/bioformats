@@ -144,10 +144,7 @@ public class FluoviewReader extends BaseTiffReader {
       TiffTools.getSamples(ifds[image], in, buf, x, y, w, h);
     }
     else {
-      FormatTools.assertId(currentId, true, 1);
-      FormatTools.checkPlaneNumber(this, no);
-      FormatTools.checkBufferSize(this, buf.length, w, h);
-
+      FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
       TiffTools.getSamples(ifds[0], in, buf, x, image, w, 1);
     }
 

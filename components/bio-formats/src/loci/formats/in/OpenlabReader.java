@@ -137,9 +137,7 @@ public class OpenlabReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastPlane = no;
 
@@ -235,8 +233,7 @@ public class OpenlabReader extends FormatReader {
 
         int size = 0, expectedBlock = 0, totalBlocks = -1, pixPos = 0;
 
-        byte[] plane =
-          new byte[getSizeX() * getSizeY() * bpp * getRGBChannelCount()];
+        byte[] plane = new byte[FormatTools.getPlaneSize(this)];
 
         while (expectedBlock != totalBlocks &&
           in.getFilePointer() + 32 < in.length())

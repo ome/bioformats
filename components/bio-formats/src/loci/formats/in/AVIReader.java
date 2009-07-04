@@ -110,9 +110,7 @@ public class AVIReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     double p = ((double) bmpScanLineSize) / bmpBitsPerPixel;
@@ -126,17 +124,17 @@ public class AVIReader extends FormatReader {
 
     if (bmpCompression != 0) {
       byte[] b = uncompress(no, buf);
-      int rowLen = w * bytes * getSizeC();
+      int rowLen = FormatTools.getPlaneSize(this, w, 1);
+      int inputRowLen = FormatTools.getPlaneSize(this, getSizeX(), 1);
       for (int row=0; row<h; row++) {
-        System.arraycopy(b, (row + y) * getSizeX() * bytes * getSizeC(),
-          buf, row * rowLen, rowLen);
+        System.arraycopy(b, (row + y) * inputRowLen, buf, row * rowLen, rowLen);
       }
       b = null;
       return buf;
     }
 
     if (bmpBitsPerPixel < 8) {
-      int rawSize = bytes * getSizeY() * effectiveWidth * getSizeC();
+      int rawSize = FormatTools.getPlaneSize(this, effectiveWidth, getSizeY());
       rawSize /= (8 / bmpBitsPerPixel);
 
       byte[] b = new byte[rawSize];
@@ -178,6 +176,7 @@ public class AVIReader extends FormatReader {
       }
     }
     else {
+      int skip = FormatTools.getPlaneSize(this, getSizeX() - w - x + pad, 1);
       for (int i=h - 1; i>=0; i--) {
         in.skipBytes(x * (bmpBitsPerPixel / 8));
         in.read(buf, (i - y)*scanline, scanline);
@@ -188,8 +187,7 @@ public class AVIReader extends FormatReader {
             buf[i*scanline + j*3] = r;
           }
         }
-        in.skipBytes(bytes * (getSizeX() - w - x + pad) *
-          (isInterleaved() ? getRGBChannelCount() : 1));
+        in.skipBytes(skip);
       }
     }
 

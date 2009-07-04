@@ -83,8 +83,7 @@ public abstract class ImageIOReader extends FormatReader {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
     RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
     DataInputStream dis =

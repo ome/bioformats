@@ -51,10 +51,10 @@ public class SlidebookReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector metadataOffsets;
-  private Vector pixelOffsets;
-  private Vector pixelLengths;
-  private Vector ndFilters;
+  private Vector<Long> metadataOffsets;
+  private Vector<Long> pixelOffsets;
+  private Vector<Long> pixelLengths;
+  private Vector<Float> ndFilters;
 
   // -- Constructor --
 
@@ -78,12 +78,10 @@ public class SlidebookReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int plane = getSizeX() * getSizeY() * 2;
-    long offset = ((Long) pixelOffsets.get(series)).longValue() + plane * no;
+    int plane = FormatTools.getPlaneSize(this);
+    long offset = pixelOffsets.get(series).longValue() + plane * no;
     in.seek(offset);
 
     readPlane(in, x, y, w, h, buf);
@@ -95,8 +93,8 @@ public class SlidebookReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    metadataOffsets = pixelOffsets = null;
-    pixelLengths = ndFilters = null;
+    metadataOffsets = pixelOffsets = pixelLengths = null;
+    ndFilters = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -137,10 +135,10 @@ public class SlidebookReader extends FormatReader {
     core[0].littleEndian = in.read() == 0x49;
     in.order(isLittleEndian());
 
-    metadataOffsets = new Vector();
-    pixelOffsets = new Vector();
-    pixelLengths = new Vector();
-    ndFilters = new Vector();
+    metadataOffsets = new Vector<Long>();
+    pixelOffsets = new Vector<Long>();
+    pixelLengths = new Vector<Long>();
+    ndFilters = new Vector<Float>();
 
     in.seek(0);
 
@@ -257,8 +255,8 @@ public class SlidebookReader extends FormatReader {
     }
 
     for (int i=0; i<pixelOffsets.size(); i++) {
-      long length = ((Long) pixelLengths.get(i)).longValue();
-      long offset = ((Long) pixelOffsets.get(i)).longValue();
+      long length = pixelLengths.get(i).longValue();
+      long offset = pixelOffsets.get(i).longValue();
       in.seek(offset);
       byte checkByte = in.readByte();
       if (length + offset >= in.length()) {
@@ -267,16 +265,16 @@ public class SlidebookReader extends FormatReader {
         i--;
       }
       else if (checkByte == 'l') {
-        long lengthSum = ((Long) pixelLengths.get(0)).longValue();
+        long lengthSum = pixelLengths.get(0).longValue();
         while (pixelLengths.size() > 1) {
           int size = pixelLengths.size() - 1;
-          lengthSum += ((Long) pixelLengths.get(size)).longValue();
+          lengthSum += pixelLengths.get(size).longValue();
           pixelLengths.remove(size);
           pixelOffsets.remove(size);
         }
 
         for (int q=0; q<metadataOffsets.size(); q++) {
-          long mOffset = ((Long) metadataOffsets.get(q)).longValue();
+          long mOffset = metadataOffsets.get(q).longValue();
           if (mOffset > lengthSum) {
             lengthSum = mOffset - offset;
             break;
@@ -291,8 +289,8 @@ public class SlidebookReader extends FormatReader {
     if (pixelOffsets.size() > 1) {
       if (pixelOffsets.size() > 2) {
         int size = pixelOffsets.size();
-        long last = ((Long) pixelOffsets.get(size - 1)).longValue();
-        long nextToLast = ((Long) pixelOffsets.get(size - 2)).longValue();
+        long last = pixelOffsets.get(size - 1).longValue();
+        long nextToLast = pixelOffsets.get(size - 2).longValue();
         long diff = in.length() - last;
         if (last - nextToLast > 2*diff && diff < (256 * 256 * 2)) {
           pixelOffsets.removeElementAt(size - 1);
@@ -316,7 +314,7 @@ public class SlidebookReader extends FormatReader {
 
     long pixelBytes = 0;
     for (int i=0; i<pixelLengths.size(); i++) {
-      pixelBytes += ((Long) pixelLengths.get(i)).longValue();
+      pixelBytes += pixelLengths.get(i).longValue();
     }
 
     String[] imageNames = new String[getSeriesCount()];
@@ -331,10 +329,10 @@ public class SlidebookReader extends FormatReader {
     int prevSeriesU = -1;
     int nextChannel = 0;
     for (int i=0; i<metadataOffsets.size(); i++) {
-      long off = ((Long) metadataOffsets.get(i)).longValue();
+      long off = metadataOffsets.get(i).longValue();
       in.seek(off);
       long next = i == metadataOffsets.size() - 1 ? in.length() :
-        ((Long) metadataOffsets.get(i + 1)).longValue();
+        metadataOffsets.get(i + 1).longValue();
       int totalBlocks = (int) ((next - off) / 128);
       for (int q=0; q<totalBlocks; q++) {
         if (withinPixels(off + q * 128)) break;
@@ -348,7 +346,7 @@ public class SlidebookReader extends FormatReader {
 
           for (int j=0; j<pixelOffsets.size(); j++) {
             long end = j == pixelOffsets.size() - 1 ? in.length() :
-              ((Long) pixelOffsets.get(j + 1)).longValue();
+              pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
               if (core[j].sizeX == 0) {
                 core[j].sizeX = in.readShort();
@@ -373,7 +371,7 @@ public class SlidebookReader extends FormatReader {
           uCount++;
           for (int j=0; j<pixelOffsets.size(); j++) {
             long end = j == pixelOffsets.size() - 1 ? in.length() :
-              ((Long) pixelOffsets.get(j + 1)).longValue();
+              pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
               if (prevSeriesU != j) {
                 uCount = 1;
@@ -408,7 +406,7 @@ public class SlidebookReader extends FormatReader {
         }
         else if (n == 'm') {
           // this block should contain a channel name
-          if (in.getFilePointer() > ((Long) pixelOffsets.get(0)).longValue()) {
+          if (in.getFilePointer() > pixelOffsets.get(0).longValue()) {
             in.skipBytes(14);
             channelNames.add(in.readCString().trim());
           }
@@ -437,7 +435,7 @@ public class SlidebookReader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
-      long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
+      long pixels = pixelLengths.get(i).longValue() / 2;
       boolean x = true;
       while (getSizeX() * getSizeY() * getSizeC() * getSizeZ() > pixels) {
         if (x) core[i].sizeX /= 2;
@@ -507,7 +505,7 @@ public class SlidebookReader extends FormatReader {
           addMeta(imageNames[i] + " channel " + c, channelNames.get(index));
         }
         if (index < ndFilters.size()) {
-          store.setLogicalChannelNdFilter((Float) ndFilters.get(index), i, c);
+          store.setLogicalChannelNdFilter(ndFilters.get(index), i, c);
           addMeta(imageNames[i] + " channel " + c + " Neutral density",
             ndFilters.get(index));
         }
@@ -520,8 +518,8 @@ public class SlidebookReader extends FormatReader {
 
   private boolean withinPixels(long offset) {
     for (int i=0; i<pixelOffsets.size(); i++) {
-      long pixelOffset = ((Long) pixelOffsets.get(i)).longValue();
-      long pixelLength = ((Long) pixelLengths.get(i)).longValue();
+      long pixelOffset = pixelOffsets.get(i).longValue();
+      long pixelLength = pixelLengths.get(i).longValue();
       if (offset >= pixelOffset && offset < (pixelOffset + pixelLength)) {
         return true;
       }

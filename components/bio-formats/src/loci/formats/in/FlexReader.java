@@ -90,7 +90,7 @@ public class FlexReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int ifdIndex = getSeries() * getImageCount() + no;
 
@@ -99,32 +99,16 @@ public class FlexReader extends BaseTiffReader {
     // expand pixel values with multiplication by factor[no]
     byte[] bytes = TiffTools.getSamples(ifds[ifdIndex], in, buf, x, y, w, h);
 
-    if (getPixelType() == FormatTools.UINT8) {
-      int num = bytes.length;
-      for (int i=num-1; i>=0; i--) {
-        int q = (int) ((bytes[i] & 0xff) * factors[ifdIndex]);
-        bytes[i] = (byte) (q & 0xff);
-      }
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int num = bytes.length / bpp;
+
+    for (int i=num-1; i>=0; i--) {
+      int q = nBytes == 1 ? bytes[i] & 0xff :
+        DataTools.bytesToInt(bytes, i * bpp, bpp, isLittleEndian());
+      q = (int) (q * factors[ifdIndex]);
+      DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
     }
-    else if (getPixelType() == FormatTools.UINT16) {
-      int num = bytes.length / 2;
-      for (int i=num-1; i>=0; i--) {
-        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[ifdIndex]) :
-          (int) (DataTools.bytesToInt(bytes, i*2, 2, isLittleEndian()) *
-          factors[ifdIndex]);
-        DataTools.unpackBytes(q, bytes, i * 2, 2, isLittleEndian());
-      }
-    }
-    else if (getPixelType() == FormatTools.UINT32) {
-      int num = bytes.length / 4;
-      for (int i=num-1; i>=0; i--) {
-        int q = nBytes == 1 ? (int) ((bytes[i] & 0xff) * factors[ifdIndex]) :
-          (int) (DataTools.bytesToInt(bytes, i*4, nBytes,
-          isLittleEndian()) * factors[ifdIndex]);
-        DataTools.unpackBytes(q, bytes, i * 4, 4, isLittleEndian());
-      }
-    }
-    System.arraycopy(bytes, 0, buf, 0, bytes.length);
+
     return buf;
   }
 

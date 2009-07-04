@@ -62,11 +62,7 @@ public class SVSReader extends BaseTiffReader {
     if (getSeriesCount() == 1) {
       return super.openBytes(no, buf, x, y, w, h);
     }
-
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
-
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     TiffTools.getSamples(ifds[series], in, buf, x, y, w, h);
     return buf;
   }

@@ -99,16 +99,12 @@ public class NRRDReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     // TODO : add support for additional encoding types
     if (dataFile == null) {
       if (encoding.equals("raw")) {
-        int bpp = FormatTools.getBytesPerPixel(getPixelType());
-        int rowLen = getSizeX() * bpp * getSizeC();
-        in.seek(offset + no * getSizeY() * rowLen);
+        in.seek(offset + no * FormatTools.getPlaneSize(this));
 
         readPlane(in, x, y, w, h, buf);
         return buf;

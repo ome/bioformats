@@ -113,15 +113,14 @@ public class OMETiffReader extends FormatReader {
   /*
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
-  public byte[] openBytes(int no, byte[] buf, int x, int y,
-    int width, int height) throws FormatException, IOException
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     lastPlane = no;
     IFormatReader r = info[series][no].reader;
     r.setId(info[series][no].id);
-    return r.openBytes(info[series][no].ifd, buf, x, y, width, height);
+    return r.openBytes(info[series][no].ifd, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */

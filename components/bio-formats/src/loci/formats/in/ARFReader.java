@@ -72,14 +72,9 @@ public class ARFReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
-    int sizeX = getSizeX();
-    int sizeY = getSizeY();
-    in.seek(14 + 510 + no * bytesPerPixel * sizeX * sizeY);
+    in.seek(524 + no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
 
     return buf;

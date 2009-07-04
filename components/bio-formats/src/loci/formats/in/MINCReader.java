@@ -71,9 +71,7 @@ public class MINCReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (no < pixelData.length) {
       for (int row=y; row<y+h; row++) {

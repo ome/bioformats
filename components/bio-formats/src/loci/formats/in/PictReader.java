@@ -123,6 +123,7 @@ public class PictReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     if (legacy || strips.size() == 0) {
       in.seek(512);
       byte[] pix = new byte[(int) (in.length() - in.getFilePointer())];

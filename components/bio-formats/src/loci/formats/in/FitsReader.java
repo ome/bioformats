@@ -68,9 +68,7 @@ public class FitsReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     in.seek(2880 * ((((count * 80) - 1) / 2880) + 1));
     readPlane(in, x, y, w, h, buf);

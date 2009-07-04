@@ -163,25 +163,21 @@ public class BioRadReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastChannel = getZCTCoords(no)[1];
-
-    int bytes = FormatTools.getBytesPerPixel(getPixelType());
 
     if (picFiles != null) {
       int file = no % picFiles.length;
       RandomAccessInputStream ras = new RandomAccessInputStream(picFiles[file]);
-      long offset = (no / picFiles.length) * getSizeX() * getSizeY() * bytes;
+      long offset = (no / picFiles.length) * FormatTools.getPlaneSize(this);
       ras.seek(offset + 76);
 
       readPlane(ras, x, y, w, h, buf);
       ras.close();
     }
     else {
-      in.seek(no * getSizeX() * getSizeY() * bytes + 76);
+      in.seek(no * FormatTools.getPlaneSize(this) + 76);
       readPlane(in, x, y, w, h, buf);
     }
     return buf;

@@ -140,14 +140,12 @@ public class ICSReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int len = getSizeX() * getSizeY() * bpp * getRGBChannelCount();
+    int len = FormatTools.getPlaneSize(this);
     int pixel = bpp * getRGBChannelCount();
-    int rowLen = w * pixel;
+    int rowLen = FormatTools.getPlaneSize(this, w, 1);
 
     in.seek(offset + no * len);
 

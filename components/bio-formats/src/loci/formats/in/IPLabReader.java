@@ -86,12 +86,10 @@ public class IPLabReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int numPixels = getSizeX() * getSizeY() * getSizeC() * bps;
-    in.seek(numPixels * (no / getSizeC()) + 44);
+    int numPixels = FormatTools.getPlaneSize(this);
+    in.seek(numPixels * no + 44);
 
     readPlane(in, x, y, w, h, buf);
     return buf;

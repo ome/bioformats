@@ -72,17 +72,13 @@ public class NAFReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (in.getFilePointer() + buf.length > in.length()) {
       throw new FormatException("Sorry, compressed data is not supported.");
     }
 
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int plane = getSizeX() * getSizeY() * bpp;
-    in.seek(offsets[series] + no * plane);
+    in.seek(offsets[series] + no * FormatTools.getPlaneSize(this));
 
     readPlane(in, x, y, w, h, buf);
     return buf;

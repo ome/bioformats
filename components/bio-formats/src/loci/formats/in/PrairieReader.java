@@ -163,8 +163,7 @@ public class PrairieReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     tiff.setId(files[no]);
     return tiff.openBytes(0, buf, x, y, w, h);
   }

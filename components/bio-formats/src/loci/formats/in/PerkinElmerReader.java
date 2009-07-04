@@ -149,14 +149,11 @@ public class PerkinElmerReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     if (isTiff) {
       tiff.setId(files[no / getSizeC()]);
       return tiff.openBytes(0, buf, x, y, w, h);
     }
-
-    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     RandomAccessInputStream ras = new RandomAccessInputStream(files[no]);
     ras.seek(6);

@@ -84,17 +84,15 @@ public class TillVisionReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int plane = FormatTools.getPlaneSize(this);
     if (embeddedImages) {
-      in.seek(embeddedOffset + no * getSizeX() * getSizeY() * bpp);
+      in.seek(embeddedOffset + no * plane);
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      pixelsStream[series].seek(no * getSizeX() * getSizeY() * bpp);
+      pixelsStream[series].seek(no * plane);
       readPlane(pixelsStream[series], x, y, w, h, buf);
     }
 

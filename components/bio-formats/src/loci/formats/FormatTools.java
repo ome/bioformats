@@ -545,6 +545,21 @@ public final class FormatTools {
     throw new IllegalStateException(header + msg);
   }
 
+  /**
+   * Convenience method for checking that the plane number, tile size and
+   * buffer sizes are all valid for the given reader.
+   * If 'bufLength' is less than 0, then the buffer length check is not
+   * performed.
+   */
+  public static void checkPlaneParameters(IFormatReader r, int no,
+    int bufLength, int x, int y, int w, int h) throws FormatException
+  {
+    assertId(r.getCurrentFile(), true, 2);
+    checkPlaneNumber(r, no);
+    checkTileSize(r, x, y, w, h);
+    if (bufLength >= 0) checkBufferSize(r, bufLength, w, h);
+  }
+
   /** Checks that the given plane number is valid for the given reader. */
   public static void checkPlaneNumber(IFormatReader r, int no)
     throws FormatException
@@ -556,29 +571,61 @@ public final class FormatTools {
     }
   }
 
+  /** Checks that the given tile size is valid for the given reader. */
+  public static void checkTileSize(IFormatReader r, int x, int y, int w, int h)
+    throws FormatException
+  {
+    int width = r.getSizeX();
+    int height = r.getSizeY();
+    if (x < 0 || y < 0 || w < 0 || h < 0 || (x + w) >  width ||
+      (y + h) > height)
+    {
+      throw new FormatException("Invalid tile size: x=" + x + ", y=" + y +
+        ", w=" + w + ", h=" + h);
+    }
+  }
+
   public static void checkBufferSize(IFormatReader r, int len)
     throws FormatException
   {
     checkBufferSize(r, len, r.getSizeX(), r.getSizeY());
   }
 
+  /**
+   * Checks that the given buffer size is large enough to hold a w * h
+   * image as returned by the given reader.
+   * @throw FormatException if the buffer is too small
+   */
   public static void checkBufferSize(IFormatReader r, int len, int w, int h)
     throws FormatException
   {
-    int size = w * h * (r.isIndexed() ? 1 : r.getRGBChannelCount()) *
-      getBytesPerPixel(r.getPixelType());
+    int size = getPlaneSize(r, w, h);
     if (size > len) {
       throw new FormatException("Buffer too small (got " + len +
         ", expected " + size + ").");
     }
   }
 
+  /**
+   * Returns true if the given RandomAccessInputStream conatins at least
+   * 'len' bytes.
+   */
   public static boolean validStream(RandomAccessInputStream stream, int len,
     boolean littleEndian) throws IOException
   {
     stream.seek(0);
     stream.order(littleEndian);
     return stream.length() >= len;
+  }
+
+  /** Returns the size in bytes of a single plane. */
+  public static int getPlaneSize(IFormatReader r) {
+    return getPlaneSize(r, r.getSizeX(), r.getSizeY());
+  }
+
+  /** Returns the size in bytes of a w * h tile. */
+  public static int getPlaneSize(IFormatReader r, int w, int h) {
+    return w * h * r.getRGBChannelCount() * getBytesPerPixel(r.getPixelType());
   }
 
   // -- Utility methods -- export

@@ -80,9 +80,7 @@ public class PCIReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     RandomAccessInputStream s =
       poi.getDocumentStream((String) imageFiles.get(no));
@@ -95,8 +93,7 @@ public class PCIReader extends FormatReader {
     }
     else {
       s.seek(0);
-      int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
-        FormatTools.getBytesPerPixel(getPixelType());
+      int planeSize = FormatTools.getPlaneSize(this);
       s.skipBytes((int) (s.length() - planeSize));
       readPlane(s, x, y, w, h, buf);
     }

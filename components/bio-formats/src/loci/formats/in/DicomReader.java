@@ -217,9 +217,7 @@ public class DicomReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (fileList.size() > 1) {
       int fileNumber = no / imagesPerFile;
@@ -229,7 +227,7 @@ public class DicomReader extends FormatReader {
 
     int ec = isIndexed() ? 1 : getSizeC();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bytes = getSizeX() * getSizeY() * bpp * ec;
+    int bytes = FormatTools.getPlaneSize(this);
     in.seek(offsets[no]);
 
     if (isRLE) {
@@ -275,7 +273,6 @@ public class DicomReader extends FormatReader {
 
         int rowLen = w * bpp;
         int srcRowLen = getSizeX() * bpp;
-
         int srcPlane = getSizeY() * srcRowLen;
 
         for (int row=0; row<h; row++) {

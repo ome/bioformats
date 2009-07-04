@@ -97,21 +97,19 @@ public class LegacyND2Reader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
     int bpc = FormatTools.getBytesPerPixel(getPixelType());
-    byte[] b = new byte[getSizeX() * getSizeY() * bpc * getRGBChannelCount()];
+    byte[] b = new byte[FormatTools.getPlaneSize(this)]
 
     getImage(b, getSeries(), zct[0], zct[1], zct[2]);
 
     int pixel = bpc * getRGBChannelCount();
     int rowLen = w * pixel;
     for (int row=0; row<h; row++) {
-      System.arraycopy(b, (row + y) * getSizeX() * pixel + x * pixel,
-        buf, row * rowLen, rowLen);
+      System.arraycopy(b, pixel * ((row + y) * getSizeX() + x), buf,
+        row * rowLen, rowLen);
     }
 
     if (isRGB()) {
