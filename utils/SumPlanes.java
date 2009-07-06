@@ -4,6 +4,7 @@
 
 import java.awt.image.*;
 import loci.formats.*;
+import loci.formats.gui.BufferedImageReader;
 
 /**
  * Sums together the image planes from the given file,
@@ -13,7 +14,7 @@ public class SumPlanes {
 
   public static void main(String[] args) throws Exception {
     String id = args[0];
-    ImageReader r = new ImageReader();
+    BufferedImageReader r = new BufferedImageReader();
     System.out.print("Reading " + id);
     r.setId(id);
     int imageCount = r.getImageCount();

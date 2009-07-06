@@ -4,9 +4,9 @@
 
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
-import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
@@ -15,7 +15,7 @@ import loci.formats.out.TiffWriter;
 public class MakeLZW {
 
   public static void main(String[] args) throws Exception {
-    ImageReader reader = new ImageReader();
+    BufferedImageReader reader = new BufferedImageReader();
     MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
     reader.setMetadataStore(omexmlMeta);
     TiffWriter writer = new TiffWriter();

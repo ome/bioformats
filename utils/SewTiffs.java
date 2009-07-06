@@ -8,6 +8,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FilePattern;
 import loci.formats.TiffTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.TiffReader;
 import loci.formats.out.TiffWriter;
 
@@ -33,7 +34,7 @@ public class SewTiffs {
     }
     else num = Integer.parseInt(args[2]);
     System.out.println("Fixing " + base + "_C" + c + "_TP<1-" + num + ">.tiff");
-    TiffReader in = new TiffReader();
+    BufferedImageReader in = new BufferedImageReader(new TiffReader());
     TiffWriter out = new TiffWriter();
     String outId = base + "_C" + c + ".tiff";
     System.out.println("Writing " + outId);

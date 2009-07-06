@@ -3,8 +3,8 @@
 //
 
 import java.awt.image.BufferedImage;
-import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
+import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.OMETiffWriter;
@@ -17,7 +17,7 @@ public class ConvertToOmeTiff {
       System.out.println("Usage: java ConvertToOmeTiff file1 file2 ...");
       return;
     }
-    ImageReader reader = new ImageReader();
+    BufferedImageReader reader = new BufferedImageReader();
     OMETiffWriter writer = new OMETiffWriter();
     for (int i=0; i<args.length; i++) {
       String id = args[i];
