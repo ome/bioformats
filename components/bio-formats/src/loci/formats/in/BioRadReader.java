@@ -671,7 +671,7 @@ public class BioRadReader extends FormatReader {
                 break;
               case 12:
                 for (int i=0; i<2; i++) {
-                  prefix = "Part number for ";
+                  String prefix = "Part number for ";
                   addGlobalMeta(prefix + "laser " + (i + 1), values[i * 4]);
                   addGlobalMeta(prefix + "excitation filter for laser " +
                     (i + 1), values[i * 4 + 1]);
