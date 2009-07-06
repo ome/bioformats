@@ -373,8 +373,6 @@ public class ZeissLSMReader extends FormatReader {
     core[series].sizeZ = getImageCount();
     core[series].sizeT = 1;
 
-    String keyPrefix = "Series " + series + " ";
-
     status("Reading LSM metadata for series #" + series);
 
     MetadataStore store =
@@ -404,10 +402,10 @@ public class ZeissLSMReader extends FormatReader {
     RandomAccessInputStream ras = new RandomAccessInputStream(cz);
     ras.order(isLittleEndian());
 
-    addMeta(keyPrefix + "MagicNumber ", ras.readInt());
-    addMeta(keyPrefix + "StructureSize", ras.readInt());
-    addMeta(keyPrefix + "DimensionX", ras.readInt());
-    addMeta(keyPrefix + "DimensionY", ras.readInt());
+    addSeriesMeta("MagicNumber ", ras.readInt());
+    addSeriesMeta("StructureSize", ras.readInt());
+    addSeriesMeta("DimensionX", ras.readInt());
+    addSeriesMeta("DimensionY", ras.readInt());
 
     core[series].sizeZ = ras.readInt();
     ras.skipBytes(4);
@@ -416,82 +414,82 @@ public class ZeissLSMReader extends FormatReader {
     int dataType = ras.readInt();
     switch (dataType) {
       case 2:
-        addMeta(keyPrefix + "DataType", "12 bit unsigned integer");
+        addSeriesMeta("DataType", "12 bit unsigned integer");
         break;
       case 5:
-        addMeta(keyPrefix + "DataType", "32 bit float");
+        addSeriesMeta("DataType", "32 bit float");
         break;
       case 0:
-        addMeta(keyPrefix + "DataType", "varying data types");
+        addSeriesMeta("DataType", "varying data types");
         break;
       default:
-        addMeta(keyPrefix + "DataType", "8 bit unsigned integer");
+        addSeriesMeta("DataType", "8 bit unsigned integer");
     }
 
-    addMeta(keyPrefix + "ThumbnailX", ras.readInt());
-    addMeta(keyPrefix + "ThumbnailY", ras.readInt());
+    addSeriesMeta("ThumbnailX", ras.readInt());
+    addSeriesMeta("ThumbnailY", ras.readInt());
 
     // pixel sizes are stored in meters, we need them in microns
     pixelSizeX = ras.readDouble() * 1000000;
     pixelSizeY = ras.readDouble() * 1000000;
     pixelSizeZ = ras.readDouble() * 1000000;
 
-    addMeta(keyPrefix + "VoxelSizeX", new Double(pixelSizeX));
-    addMeta(keyPrefix + "VoxelSizeY", new Double(pixelSizeY));
-    addMeta(keyPrefix + "VoxelSizeZ", new Double(pixelSizeZ));
+    addSeriesMeta("VoxelSizeX", new Double(pixelSizeX));
+    addSeriesMeta("VoxelSizeY", new Double(pixelSizeY));
+    addSeriesMeta("VoxelSizeZ", new Double(pixelSizeZ));
 
-    addMeta(keyPrefix + "OriginX", ras.readDouble());
-    addMeta(keyPrefix + "OriginY", ras.readDouble());
-    addMeta(keyPrefix + "OriginZ", ras.readDouble());
+    addSeriesMeta("OriginX", ras.readDouble());
+    addSeriesMeta("OriginY", ras.readDouble());
+    addSeriesMeta("OriginZ", ras.readDouble());
 
     int scanType = ras.readShort();
     switch (scanType) {
       case 0:
-        addMeta(keyPrefix + "ScanType", "x-y-z scan");
+        addSeriesMeta("ScanType", "x-y-z scan");
         core[series].dimensionOrder = "XYZCT";
         break;
       case 1:
-        addMeta(keyPrefix + "ScanType", "z scan (x-z plane)");
+        addSeriesMeta("ScanType", "z scan (x-z plane)");
         core[series].dimensionOrder = "XYZCT";
         break;
       case 2:
-        addMeta(keyPrefix + "ScanType", "line scan");
+        addSeriesMeta("ScanType", "line scan");
         core[series].dimensionOrder = "XYZCT";
         break;
       case 3:
-        addMeta(keyPrefix + "ScanType", "time series x-y");
+        addSeriesMeta("ScanType", "time series x-y");
         core[series].dimensionOrder = "XYTCZ";
         break;
       case 4:
-        addMeta(keyPrefix + "ScanType", "time series x-z");
+        addSeriesMeta("ScanType", "time series x-z");
         core[series].dimensionOrder = "XYZTC";
         break;
       case 5:
-        addMeta(keyPrefix + "ScanType", "time series 'Mean of ROIs'");
+        addSeriesMeta("ScanType", "time series 'Mean of ROIs'");
         core[series].dimensionOrder = "XYTCZ";
         break;
       case 6:
-        addMeta(keyPrefix + "ScanType", "time series x-y-z");
+        addSeriesMeta("ScanType", "time series x-y-z");
         core[series].dimensionOrder = "XYZTC";
         break;
       case 7:
-        addMeta(keyPrefix + "ScanType", "spline scan");
+        addSeriesMeta("ScanType", "spline scan");
         core[series].dimensionOrder = "XYCTZ";
         break;
       case 8:
-        addMeta(keyPrefix + "ScanType", "spline scan x-z");
+        addSeriesMeta("ScanType", "spline scan x-z");
         core[series].dimensionOrder = "XYCZT";
         break;
       case 9:
-        addMeta(keyPrefix + "ScanType", "time series spline plane x-z");
+        addSeriesMeta("ScanType", "time series spline plane x-z");
         core[series].dimensionOrder = "XYTCZ";
         break;
       case 10:
-        addMeta(keyPrefix + "ScanType", "point mode");
+        addSeriesMeta("ScanType", "point mode");
         core[series].dimensionOrder = "XYZCT";
         break;
       default:
-        addMeta(keyPrefix + "ScanType", "x-y-z scan");
+        addSeriesMeta("ScanType", "x-y-z scan");
         core[series].dimensionOrder = "XYZCT";
     }
 
@@ -543,20 +541,20 @@ public class ZeissLSMReader extends FormatReader {
 
     int spectralScan = ras.readShort();
     if (spectralScan != 1) {
-      addMeta(keyPrefix + "SpectralScan", "no spectral scan");
+      addSeriesMeta("SpectralScan", "no spectral scan");
     }
-    else addMeta(keyPrefix + "SpectralScan", "acquired with spectral scan");
+    else addSeriesMeta("SpectralScan", "acquired with spectral scan");
 
     int type = ras.readInt();
     switch (type) {
       case 1:
-        addMeta(keyPrefix + "DataType2", "calculated data");
+        addSeriesMeta("DataType2", "calculated data");
         break;
       case 2:
-        addMeta(keyPrefix + "DataType2", "animation");
+        addSeriesMeta("DataType2", "animation");
         break;
       default:
-        addMeta(keyPrefix + "DataType2", "original scan data");
+        addSeriesMeta("DataType2", "original scan data");
     }
 
     long[] overlayOffsets = new long[9];
@@ -570,7 +568,7 @@ public class ZeissLSMReader extends FormatReader {
 
     long channelColorsOffset = ras.readInt();
 
-    addMeta(keyPrefix + "TimeInterval", ras.readDouble());
+    addSeriesMeta("TimeInterval", ras.readDouble());
     ras.skipBytes(4);
     long scanInformationOffset = ras.readInt();
     ras.skipBytes(4);
@@ -580,10 +578,10 @@ public class ZeissLSMReader extends FormatReader {
     overlayOffsets[4] = ras.readInt();
     ras.skipBytes(4);
 
-    addMeta(keyPrefix + "DisplayAspectX", ras.readDouble());
-    addMeta(keyPrefix + "DisplayAspectY", ras.readDouble());
-    addMeta(keyPrefix + "DisplayAspectZ", ras.readDouble());
-    addMeta(keyPrefix + "DisplayAspectTime", ras.readDouble());
+    addSeriesMeta("DisplayAspectX", ras.readDouble());
+    addSeriesMeta("DisplayAspectY", ras.readDouble());
+    addSeriesMeta("DisplayAspectZ", ras.readDouble());
+    addSeriesMeta("DisplayAspectTime", ras.readDouble());
 
     overlayOffsets[5] = ras.readInt();
     overlayOffsets[6] = ras.readInt();
@@ -594,7 +592,7 @@ public class ZeissLSMReader extends FormatReader {
       parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
     }
 
-    addMeta(keyPrefix + "ToolbarFlags", ras.readInt());
+    addSeriesMeta("ToolbarFlags", ras.readInt());
 
     int wavelengthOffset = ras.readInt();
 
@@ -602,8 +600,8 @@ public class ZeissLSMReader extends FormatReader {
 
     // read referenced structures
 
-    addMeta(keyPrefix + "DimensionZ", getSizeZ());
-    addMeta(keyPrefix + "DimensionChannels", getSizeC());
+    addSeriesMeta("DimensionZ", getSizeZ());
+    addSeriesMeta("DimensionChannels", getSizeC());
 
     if (channelColorsOffset != 0) {
       in.seek(channelColorsOffset + 16);
@@ -619,7 +617,7 @@ public class ZeissLSMReader extends FormatReader {
           // we want to read until we find a null char
           String name = in.readCString();
           if (name.length() <= 128) {
-            addMeta(keyPrefix + "ChannelName" + i, name);
+            addSeriesMeta("ChannelName" + i, name);
           }
         }
       }
@@ -629,7 +627,7 @@ public class ZeissLSMReader extends FormatReader {
       in.seek(timeStampOffset + 8);
       for (int i=0; i<getSizeT(); i++) {
         double stamp = in.readDouble();
-        addMeta(keyPrefix + "TimeStamp" + i, stamp);
+        addSeriesMeta("TimeStamp" + i, stamp);
         timestamps.add(new Double(stamp));
       }
     }
@@ -651,13 +649,13 @@ public class ZeissLSMReader extends FormatReader {
           int size = in.readInt();
           double eventTime = in.readDouble();
           int eventType = in.readInt();
-          addMeta(keyPrefix + "Event" + i + " Time", eventTime);
-          addMeta(keyPrefix + "Event" + i + " Type", eventType);
+          addSeriesMeta("Event" + i + " Time", eventTime);
+          addSeriesMeta("Event" + i + " Type", eventType);
           long fp = in.getFilePointer();
           int len = size - 16;
           if (len > 65536) len = 65536;
           if (len < 0) len = 0;
-          addMeta(keyPrefix + "Event" + i + " Description", in.readString(len));
+          addSeriesMeta("Event" + i + " Description", in.readString(len));
           in.seek(fp + size - 16);
           if (in.getFilePointer() < 0) break;
         }
@@ -721,7 +719,7 @@ public class ZeissLSMReader extends FormatReader {
 
       SubBlock[] metadataBlocks = blocks.toArray(new SubBlock[0]);
       for (SubBlock block : metadataBlocks) {
-        block.addToHashtable("Series " + series);
+        block.addToHashtable();
         if (!block.acquire) {
           nonAcquiredBlocks.add(block);
           blocks.remove(block);
@@ -1231,7 +1229,7 @@ public class ZeissLSMReader extends FormatReader {
         String[] tableRow = (String[]) tables[table].get(row);
         for (int col=0; col<tableRow.length; col++) {
           String key = tableName + " " + columnNames[col + 1] + " " + row;
-          addMeta(key, tableRow[col]);
+          addGlobalMeta(key, tableRow[col]);
 
           if (tableName.equals("Recordings") && columnNames[col + 1] != null &&
             columnNames[col + 1].equals("SampleData"))
@@ -1511,18 +1509,19 @@ public class ZeissLSMReader extends FormatReader {
       }
     }
 
-    public void addToHashtable(String prefix) {
-      prefix += " " + this.getClass().getSimpleName() + " #";
+    public void addToHashtable() {
+      String prefix = this.getClass().getSimpleName() + " #";
       int index = 1;
-      while (getMeta(prefix + index + " Acquire") != null) index++;
+      while (getSeriesMeta(prefix + index + " Acquire") != null) index++;
       prefix += index;
       Integer[] keys = blockData.keySet().toArray(new Integer[0]);
       for (Integer key : keys) {
         if (metadataKeys.get(key) != null) {
-          addMeta(prefix + " " + metadataKeys.get(key), blockData.get(key));
+          addSeriesMeta(prefix + " " + metadataKeys.get(key),
+            blockData.get(key));
         }
       }
-      addMeta(prefix + " Acquire", new Boolean(acquire));
+      addGlobalMeta(prefix + " Acquire", new Boolean(acquire));
     }
   }
 

@@ -260,8 +260,8 @@ public class EPSReader extends FormatReader {
           core[0].sizeX = Integer.parseInt(t.nextToken().trim()) - originX;
           core[0].sizeY = Integer.parseInt(t.nextToken().trim()) - originY;
 
-          addMeta("X-coordinate of origin", originX);
-          addMeta("Y-coordinate of origin", originY);
+          addGlobalMeta("X-coordinate of origin", originX);
+          addGlobalMeta("Y-coordinate of origin", originY);
         }
         else if (line.startsWith("%%BeginBinary")) {
           binary = true;
@@ -273,7 +273,7 @@ public class EPSReader extends FormatReader {
           if (ndx != -1) {
             String key = line.substring(0, ndx);
             String value = line.substring(ndx + 1);
-            addMeta(key, value);
+            addGlobalMeta(key, value);
           }
         }
       }

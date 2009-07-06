@@ -154,7 +154,7 @@ public class NRRDReader extends FormatReader {
         // parse key/value pair
         key = line.substring(0, line.indexOf(":")).trim();
         v = line.substring(line.indexOf(":") + 1).trim();
-        addMeta(key, v);
+        addGlobalMeta(key, v);
 
         if (key.equals("type")) {
           if (v.indexOf("char") != -1 || v.indexOf("8") != -1) {

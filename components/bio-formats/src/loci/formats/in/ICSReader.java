@@ -321,7 +321,7 @@ public class ICSReader extends FormatReader {
         }
         String k = key.toString().trim().replaceAll("\t", " ");
         String v = value.toString().trim();
-        addMeta(k, v);
+        addGlobalMeta(k, v);
 
         Float floatValue = null;
         try {
@@ -522,7 +522,7 @@ public class ICSReader extends FormatReader {
     }
     reader.close();
 
-    addMeta("history text", textBlock.toString());
+    addGlobalMeta("history text", textBlock.toString());
 
     status("Populating core metadata");
 

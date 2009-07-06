@@ -114,15 +114,15 @@ public class CellomicsReader extends FormatReader {
 
     status("Populating metadata hashtable");
 
-    addMeta("Image width", x);
-    addMeta("Image height", y);
-    addMeta("Number of planes", nPlanes);
-    addMeta("Bits per pixel", nBits);
-    addMeta("Compression", compression);
-    addMeta("Pixels per meter (X)", pixelWidth);
-    addMeta("Pixels per meter (Y)", pixelHeight);
-    addMeta("Color used", colorUsed);
-    addMeta("Color important", colorImportant);
+    addGlobalMeta("Image width", x);
+    addGlobalMeta("Image height", y);
+    addGlobalMeta("Number of planes", nPlanes);
+    addGlobalMeta("Bits per pixel", nBits);
+    addGlobalMeta("Compression", compression);
+    addGlobalMeta("Pixels per meter (X)", pixelWidth);
+    addGlobalMeta("Pixels per meter (Y)", pixelHeight);
+    addGlobalMeta("Color used", colorUsed);
+    addGlobalMeta("Color important", colorImportant);
 
     status("Populating core metadata");
 

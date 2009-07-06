@@ -195,12 +195,12 @@ public class TiffReader extends BaseTiffReader {
       String line = st.nextToken();
       int colon = line.indexOf(":");
       if (colon < 0) {
-        addMeta("Comment", line);
+        addGlobalMeta("Comment", line);
         continue;
       }
       String key = line.substring(0, colon);
       String value = line.substring(colon + 1);
-      addMeta(key, value);
+      addGlobalMeta(key, value);
     }
   }
 
@@ -214,13 +214,13 @@ public class TiffReader extends BaseTiffReader {
         if (eq != -1) {
           String key = line.substring(0, eq).trim();
           String value = line.substring(eq + 1).trim();
-          addMeta(key, value);
+          addGlobalMeta(key, value);
         }
         else if (!line.startsWith("[")) {
           comment += line + "\n";
         }
       }
-      addMeta("Comment", comment);
+      addGlobalMeta("Comment", comment);
     }
   }
 

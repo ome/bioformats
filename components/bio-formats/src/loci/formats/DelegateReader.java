@@ -181,12 +181,12 @@ public class DelegateReader extends FormatReader {
     }
     if (nativeReaderInitialized) {
       core = nativeReader.getCoreMetadata();
-      metadata = nativeReader.getMetadata();
+      metadata = nativeReader.getGlobalMetadata();
       metadataStore = nativeReader.getMetadataStore();
     }
     if (legacyReaderInitialized) {
       core = legacyReader.getCoreMetadata();
-      metadata = legacyReader.getMetadata();
+      metadata = legacyReader.getGlobalMetadata();
       metadataStore = legacyReader.getMetadataStore();
     }
   }

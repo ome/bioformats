@@ -192,7 +192,7 @@ public class VisitechReader extends FormatReader {
           else if (key.startsWith("Microscope XY")) {
             numSeries++;
           }
-          addMeta(key, value);
+          addGlobalMeta(key, value);
         }
 
         if (token.indexOf("pixels") != -1) {

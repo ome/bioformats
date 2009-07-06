@@ -135,12 +135,12 @@ public class ARFReader extends FormatReader {
 
     // populate original metadata
 
-    addMeta("Endianness", little ? "little" : "big");
-    addMeta("Version", version);
-    addMeta("Width", width);
-    addMeta("Height", height);
-    addMeta("Bits per pixel", bitsPerPixel);
-    addMeta("Image count", numImages);
+    addGlobalMeta("Endianness", little ? "little" : "big");
+    addGlobalMeta("Version", version);
+    addGlobalMeta("Width", width);
+    addGlobalMeta("Height", height);
+    addGlobalMeta("Bits per pixel", bitsPerPixel);
+    addGlobalMeta("Image count", numImages);
 
     // populate OME metadata
 

@@ -370,7 +370,7 @@ public class PrairieReader extends FormatReader {
       else if (qName.equals("Key")) {
         String key = attributes.getValue("key");
         String value = attributes.getValue("value");
-        addMeta(key, value);
+        addGlobalMeta(key, value);
 
         if (key.equals("pixelsPerLine")) {
           core[0].sizeX = Integer.parseInt(value);

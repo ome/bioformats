@@ -719,7 +719,7 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         if (cIndex != -1) key += " " + cIndex;
-        addMeta(key, value);
+        addGlobalMeta(key, value);
 
         if (key.equals("ImageTile Index") || key.equals("ImageTile Index 0")) {
           firstImageTile = value;
@@ -878,7 +878,7 @@ public class ZeissZVIReader extends FormatReader {
         else if (key.startsWith("Acquisition Date")) {
           if (image >= 0) {
             timestamps.put(new Integer(image), value);
-            addMeta("Timestamp " + image, value);
+            addGlobalMeta("Timestamp " + image, value);
           }
         }
       }

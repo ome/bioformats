@@ -123,10 +123,10 @@ public class ImarisReader extends FormatReader {
 
     status("Reading header");
 
-    addMeta("Version", in.readInt());
+    addGlobalMeta("Version", in.readInt());
     in.skipBytes(4);
 
-    addMeta("Image name", in.readString(128));
+    addGlobalMeta("Image name", in.readString(128));
 
     core[0].sizeX = in.readShort();
     core[0].sizeY = in.readShort();
@@ -137,16 +137,16 @@ public class ImarisReader extends FormatReader {
     core[0].sizeC = in.readInt();
     in.skipBytes(2);
 
-    addMeta("Original date", in.readString(32));
+    addGlobalMeta("Original date", in.readString(32));
 
     float dx = in.readFloat();
     float dy = in.readFloat();
     float dz = in.readFloat();
     int mag = in.readShort();
 
-    addMeta("Image comment", in.readString(128));
+    addGlobalMeta("Image comment", in.readString(128));
     int isSurvey = in.readInt();
-    addMeta("Survey performed", isSurvey == 0);
+    addGlobalMeta("Survey performed", isSurvey == 0);
 
     status("Calculating image offsets");
 
@@ -158,7 +158,7 @@ public class ImarisReader extends FormatReader {
     float[] pinholes = new float[getSizeC()];
 
     for (int i=0; i<getSizeC(); i++) {
-      addMeta("Channel #" + i + " Comment", in.readString(128));
+      addGlobalMeta("Channel #" + i + " Comment", in.readString(128));
       gains[i] = in.readFloat();
       detectorOffsets[i] = in.readFloat();
       pinholes[i] = in.readFloat();

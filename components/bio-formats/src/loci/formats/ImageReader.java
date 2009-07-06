@@ -417,6 +417,18 @@ public class ImageReader implements IFormatReader {
     return getReader().getMetadataValue(field);
   }
 
+  /* @see IFormatReader#getGlobalMetadata() */
+  public Hashtable getGlobalMetadata() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().getGlobalMetadata();
+  }
+
+  /* @see IFormatReader#getSeriesMetadata() */
+  public Hashtable getSeriesMetadata() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().getSeriesMetadata();
+  }
+
   /* @see IFormatReader#getMetadata() */
   public Hashtable getMetadata() {
     FormatTools.assertId(currentId, true, 2);

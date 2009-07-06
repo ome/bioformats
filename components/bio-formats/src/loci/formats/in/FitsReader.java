@@ -141,7 +141,7 @@ public class FitsReader extends FormatReader {
       else if (key.equals("NAXIS2")) core[0].sizeY = Integer.parseInt(value);
       else if (key.equals("NAXIS3")) core[0].sizeZ = Integer.parseInt(value);
 
-      addMeta(key, value);
+      addGlobalMeta(key, value);
     }
 
     core[0].sizeC = 1;

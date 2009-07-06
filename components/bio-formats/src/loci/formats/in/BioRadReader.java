@@ -255,23 +255,23 @@ public class BioRadReader extends FormatReader {
     }
 
     // populate metadata fields
-    addMeta("nx", getSizeX());
-    addMeta("ny", getSizeY());
-    addMeta("npic", getImageCount());
-    addMeta("ramp1_min", ramp1min);
-    addMeta("ramp1_max", ramp1max);
-    addMeta("notes", notes);
-    addMeta("image_number", imageNumber);
-    addMeta("name", name);
-    addMeta("merged", MERGE_NAMES[merged]);
-    addMeta("color1", color1);
-    addMeta("file_id", fileId);
-    addMeta("ramp2_min", ramp2min);
-    addMeta("ramp2_max", ramp2max);
-    addMeta("color2", color2);
-    addMeta("edited", edited);
-    addMeta("lens", lens);
-    addMeta("mag_factor", magFactor);
+    addGlobalMeta("nx", getSizeX());
+    addGlobalMeta("ny", getSizeY());
+    addGlobalMeta("npic", getImageCount());
+    addGlobalMeta("ramp1_min", ramp1min);
+    addGlobalMeta("ramp1_max", ramp1max);
+    addGlobalMeta("notes", notes);
+    addGlobalMeta("image_number", imageNumber);
+    addGlobalMeta("name", name);
+    addGlobalMeta("merged", MERGE_NAMES[merged]);
+    addGlobalMeta("color1", color1);
+    addGlobalMeta("file_id", fileId);
+    addGlobalMeta("ramp2_min", ramp2min);
+    addGlobalMeta("ramp2_max", ramp2max);
+    addGlobalMeta("color2", color2);
+    addGlobalMeta("edited", edited);
+    addGlobalMeta("lens", lens);
+    addGlobalMeta("mag_factor", magFactor);
 
     // skip image data
     int imageLen = getSizeX() * getSizeY();
@@ -445,7 +445,7 @@ public class BioRadReader extends FormatReader {
       switch (n.type) {
         case NOTE_TYPE_USER:
           // TODO : this should be an overlay
-          addMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteCount, n.toString());
           break;
         case NOTE_TYPE_SCALEBAR:
           // TODO : this should be an overlay
@@ -453,7 +453,7 @@ public class BioRadReader extends FormatReader {
           // SCALEBAR = <length> <angle>
           // where <length> is the length of the scalebar in microns,
           // and <angle> is the angle in degrees
-          addMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteCount, n.toString());
           break;
         case NOTE_TYPE_ARROW:
           // TODO : this should be an overlay
@@ -462,13 +462,13 @@ public class BioRadReader extends FormatReader {
           // where <lx> and <ly> define the arrow's bounding box,
           // <angle> is the angle in degrees and <fill> is either "Fill" or
           // "Outline"
-          addMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteCount, n.toString());
           break;
         case NOTE_TYPE_VARIABLE:
           if (n.p.indexOf("=") >= 0) {
             String key = n.p.substring(0, n.p.indexOf("=")).trim();
             String value = n.p.substring(n.p.indexOf("=") + 1).trim();
-            addMeta(key, value);
+            addGlobalMeta(key, value);
 
             if (key.equals("INFO_OBJECTIVE_NAME")) {
               store.setObjectiveModel(value, 0, 0);
@@ -532,7 +532,7 @@ public class BioRadReader extends FormatReader {
             }
           }
           else {
-            addMeta("Note #" + noteCount, n.toString());
+            addGlobalMeta("Note #" + noteCount, n.toString());
           }
           break;
         case NOTE_TYPE_STRUCTURE:
@@ -542,21 +542,21 @@ public class BioRadReader extends FormatReader {
           if (structureType == 1) {
             switch (n.y) {
               case 1:
-                addMeta("Scan Channel", values[0]);
-                addMeta("Both mode", values[1]);
-                addMeta("Speed", values[2]);
-                addMeta("Filter", values[3]);
-                addMeta("Factor", values[4]);
-                addMeta("Number of scans", values[5]);
-                addMeta("Photon counting mode (channel 1)", values[6]);
-                addMeta("Photon counting detector (channel 1)", values[7]);
-                addMeta("Photon counting mode (channel 2)", values[8]);
-                addMeta("Photon counting detector (channel 2)", values[9]);
-                addMeta("Photon mode", values[10]);
-                addMeta("Objective magnification", values[11]);
-                addMeta("Zoom factor", values[12]);
-                addMeta("Motor on", values[13]);
-                addMeta("Z Step Size", values[14]);
+                addGlobalMeta("Scan Channel", values[0]);
+                addGlobalMeta("Both mode", values[1]);
+                addGlobalMeta("Speed", values[2]);
+                addGlobalMeta("Filter", values[3]);
+                addGlobalMeta("Factor", values[4]);
+                addGlobalMeta("Number of scans", values[5]);
+                addGlobalMeta("Photon counting mode (channel 1)", values[6]);
+                addGlobalMeta("Photon counting detector (channel 1)", values[7]);
+                addGlobalMeta("Photon counting mode (channel 2)", values[8]);
+                addGlobalMeta("Photon counting detector (channel 2)", values[9]);
+                addGlobalMeta("Photon mode", values[10]);
+                addGlobalMeta("Objective magnification", values[11]);
+                addGlobalMeta("Zoom factor", values[12]);
+                addGlobalMeta("Motor on", values[13]);
+                addGlobalMeta("Z Step Size", values[14]);
 
                 store.setObjectiveNominalMagnification(
                   new Integer((int) Double.parseDouble(values[11])), 0, 0);
@@ -564,12 +564,12 @@ public class BioRadReader extends FormatReader {
                 store.setDimensionsPhysicalSizeZ(new Float(values[14]), 0, 0);
                 break;
               case 2:
-                addMeta("Z Start", values[0]);
-                addMeta("Z Stop", values[1]);
-                addMeta("Scan area X coordinate", values[2]);
-                addMeta("Scan area Y coordinate", values[3]);
-                addMeta("Scan area width", values[4]);
-                addMeta("Scan area height", values[5]);
+                addGlobalMeta("Z Start", values[0]);
+                addGlobalMeta("Z Stop", values[1]);
+                addGlobalMeta("Scan area X coordinate", values[2]);
+                addGlobalMeta("Scan area Y coordinate", values[3]);
+                addGlobalMeta("Scan area width", values[4]);
+                addGlobalMeta("Scan area height", values[5]);
 
                 float width =
                   Float.parseFloat(values[4]) - Float.parseFloat(values[2]);
@@ -584,73 +584,73 @@ public class BioRadReader extends FormatReader {
                 break;
               case 3:
                 for (int i=0; i<3; i++) {
-                  addMeta("Iris for PMT " + (i + 1), values[i * 4]);
-                  addMeta("Gain for PMT " + (i + 1), values[i * 4 + 1]);
-                  addMeta("Black level for PMT " + (i + 1), values[i * 4 + 2]);
-                  addMeta("Emission filter for PMT " + (i+1), values[i*4] + 3);
-                  addMeta("Multiplier for channel " + (i+1), values[12 + i]);
+                  addGlobalMeta("Iris for PMT " + (i + 1), values[i * 4]);
+                  addGlobalMeta("Gain for PMT " + (i + 1), values[i * 4 + 1]);
+                  addGlobalMeta("Black level for PMT " + (i + 1), values[i * 4 + 2]);
+                  addGlobalMeta("Emission filter for PMT " + (i+1), values[i*4] + 3);
+                  addGlobalMeta("Multiplier for channel " + (i+1), values[12 + i]);
                 }
                 break;
               case 4:
                 nLasers = Integer.parseInt(values[0]);
-                addMeta("Number of lasers", values[0]);
-                addMeta("Number of transmission detectors", values[1]);
-                addMeta("Number of PMTs", values[2]);
+                addGlobalMeta("Number of lasers", values[0]);
+                addGlobalMeta("Number of transmission detectors", values[1]);
+                addGlobalMeta("Number of PMTs", values[2]);
                 for (int i=1; i<=3; i++) {
                   int idx = (i + 1) * 3;
-                  addMeta("Shutter present for laser " + i, values[i + 2]);
-                  addMeta("Neutral density filter for laser " + i, values[idx]);
-                  addMeta("Excitation filter for laser " + i, values[idx + 1]);
-                  addMeta("Use laser " + i, values[idx + 2]);
+                  addGlobalMeta("Shutter present for laser " + i, values[i + 2]);
+                  addGlobalMeta("Neutral density filter for laser " + i, values[idx]);
+                  addGlobalMeta("Excitation filter for laser " + i, values[idx + 1]);
+                  addGlobalMeta("Use laser " + i, values[idx + 2]);
                 }
                 for (int i=0; i<nLasers; i++) {
-                  addMeta("Neutral density filter name - laser " + (i + 1),
+                  addGlobalMeta("Neutral density filter name - laser " + (i + 1),
                     values[15 + i]);
                 }
                 break;
               case 5:
                 for (int i=0; i<nLasers; i++) {
-                  addMeta("Excitation filter name - laser " + (i+1), values[i]);
+                  addGlobalMeta("Excitation filter name - laser " + (i+1), values[i]);
                 }
                 break;
               case 6:
                 for (int i=0; i<nLasers; i++) {
-                  addMeta("Emission filter name - laser " + (i+1), values[i]);
+                  addGlobalMeta("Emission filter name - laser " + (i+1), values[i]);
                 }
                 break;
               case 7:
                 for (int i=0; i<2; i++) {
                   String prefix = "Mixer " + i;
-                  addMeta(prefix + " - enhanced", values[i*7]);
-                  addMeta(prefix + " - PMT 1 percentage", values[i*7 + 1]);
-                  addMeta(prefix + " - PMT 2 percentage", values[i*7 + 2]);
-                  addMeta(prefix + " - PMT 3 percentage", values[i*7 + 3]);
-                  addMeta(prefix + " - Transmission 1 percentage",
+                  addGlobalMeta(prefix + " - enhanced", values[i*7]);
+                  addGlobalMeta(prefix + " - PMT 1 percentage", values[i*7 + 1]);
+                  addGlobalMeta(prefix + " - PMT 2 percentage", values[i*7 + 2]);
+                  addGlobalMeta(prefix + " - PMT 3 percentage", values[i*7 + 3]);
+                  addGlobalMeta(prefix + " - Transmission 1 percentage",
                     values[i * 7 + 4]);
-                  addMeta(prefix + " - Transmission 2 percentage",
+                  addGlobalMeta(prefix + " - Transmission 2 percentage",
                     values[i * 7 + 5]);
-                  addMeta(prefix + " - Transmission 3 percentage",
+                  addGlobalMeta(prefix + " - Transmission 3 percentage",
                     values[i * 7 + 6]);
                 }
-                addMeta("Mixer 0 - low signal on", values[14]);
-                addMeta("Mixer 1 - low signal on", values[15]);
+                addGlobalMeta("Mixer 0 - low signal on", values[14]);
+                addGlobalMeta("Mixer 1 - low signal on", values[15]);
                 break;
               case 8:
-                addMeta("Laser name - laser 1", values[0]);
+                addGlobalMeta("Laser name - laser 1", values[0]);
                 break;
               case 9:
-                addMeta("Laser name - laser 2", values[0]);
+                addGlobalMeta("Laser name - laser 2", values[0]);
                 break;
               case 10:
-                addMeta("Laser name - laser 3", values[0]);
+                addGlobalMeta("Laser name - laser 3", values[0]);
                 break;
               case 11:
                 for (int i=0; i<3; i++) {
-                  addMeta("Transmission detector " + (i + 1) + " - offset",
+                  addGlobalMeta("Transmission detector " + (i + 1) + " - offset",
                     values[i * 3]);
-                  addMeta("Transmission detector " + (i + 1) + " - gain",
+                  addGlobalMeta("Transmission detector " + (i + 1) + " - gain",
                     values[i * 3 + 1]);
-                  addMeta("Transmission detector " + (i + 1) + " - black level",
+                  addGlobalMeta("Transmission detector " + (i + 1) + " - black level",
                     values[i * 3 + 2]);
 
                   store.setDetectorOffset(new Float(values[i * 3]), 0, i);
@@ -660,34 +660,34 @@ public class BioRadReader extends FormatReader {
                 break;
               case 12:
                 for (int i=0; i<2; i++) {
-                  addMeta("Part number for laser " + (i + 1), values[i * 4]);
-                  addMeta("Part number for excitation filter for laser " +
+                  addGlobalMeta("Part number for laser " + (i + 1), values[i * 4]);
+                  addGlobalMeta("Part number for excitation filter for laser " +
                     (i + 1), values[i * 4 + 1]);
-                  addMeta("Part number for ND filter for laser " + (i + 1),
+                  addGlobalMeta("Part number for ND filter for laser " + (i + 1),
                     values[i * 4 + 2]);
-                  addMeta("Part number for emission filter for laser " +
+                  addGlobalMeta("Part number for emission filter for laser " +
                     (i + 1), values[i * 4 + 3]);
                 }
                 break;
               case 13:
-                  addMeta("Part number for laser 3", values[0]);
-                  addMeta("Part number for excitation filter for laser 3",
+                  addGlobalMeta("Part number for laser 3", values[0]);
+                  addGlobalMeta("Part number for excitation filter for laser 3",
                     values[1]);
-                  addMeta("Part number for ND filter for laser 3", values[2]);
-                  addMeta("Part number for emission filter for laser 3",
+                  addGlobalMeta("Part number for ND filter for laser 3", values[2]);
+                  addGlobalMeta("Part number for emission filter for laser 3",
                     values[3]);
-                  addMeta("Part number for filter block 1", values[4]);
-                  addMeta("Part number for filter block 2", values[5]);
+                  addGlobalMeta("Part number for filter block 1", values[4]);
+                  addGlobalMeta("Part number for filter block 2", values[5]);
                 break;
               case 14:
-                addMeta("Filter Block Name - filter block 1", values[0]);
-                addMeta("Filter Block Name - filter block 2", values[1]);
+                addGlobalMeta("Filter Block Name - filter block 1", values[0]);
+                addGlobalMeta("Filter Block Name - filter block 2", values[1]);
                 break;
               case 15:
                 for (int i=0; i<5; i++) {
-                  addMeta("Image bands status - band " + (i + 1), values[i*3]);
-                  addMeta("Image bands min - band " + (i + 1), values[i*3 + 1]);
-                  addMeta("Image bands max - band " + (i + 1), values[i*3 + 2]);
+                  addGlobalMeta("Image bands status - band " + (i + 1), values[i*3]);
+                  addGlobalMeta("Image bands min - band " + (i + 1), values[i*3 + 1]);
+                  addGlobalMeta("Image bands max - band " + (i + 1), values[i*3 + 2]);
                   if (store instanceof IMinMaxStore) {
                     ((IMinMaxStore) store).setChannelGlobalMinMax(i,
                       Double.parseDouble(values[i*3 + 1]),
@@ -704,45 +704,45 @@ public class BioRadReader extends FormatReader {
                 // date is in yyyy-MM-dd'T'HH:mm:ss
                 String date = year + "-" + values[4] + "-" + values[3] + "T" +
                   values[2] + ":" + values[1] + ":" + values[0];
-                addMeta("Acquisition date", date);
+                addGlobalMeta("Acquisition date", date);
                 store.setImageCreationDate(date, 0);
                 break;
               case 18:
-                addMeta("Mixer 3 - enhanced", values[0]);
+                addGlobalMeta("Mixer 3 - enhanced", values[0]);
                 for (int i=1; i<=3; i++) {
-                  addMeta("Mixer 3 - PMT " + i + " percentage", values[i]);
-                  addMeta("Mixer 3 - Transmission " + i + " percentage",
+                  addGlobalMeta("Mixer 3 - PMT " + i + " percentage", values[i]);
+                  addGlobalMeta("Mixer 3 - Transmission " + i + " percentage",
                     values[i + 3]);
-                  addMeta("Mixer 3 - photon counting " + i, values[i + 7]);
+                  addGlobalMeta("Mixer 3 - photon counting " + i, values[i + 7]);
                 }
-                addMeta("Mixer 3 - low signal on", values[7]);
-                addMeta("Mixer 3 - mode", values[11]);
+                addGlobalMeta("Mixer 3 - low signal on", values[7]);
+                addGlobalMeta("Mixer 3 - mode", values[11]);
                 break;
               case 19:
                 for (int i=1; i<=2; i++) {
                   String prefix = "Mixer " + i;
-                  addMeta(prefix + " - photon counting 1", values[i * 4 - 4]);
-                  addMeta(prefix + " - photon counting 2", values[i * 4 - 3]);
-                  addMeta(prefix + " - photon counting 3", values[i * 4 - 2]);
-                  addMeta(prefix + " - mode", values[i * 4 - 1]);
+                  addGlobalMeta(prefix + " - photon counting 1", values[i * 4 - 4]);
+                  addGlobalMeta(prefix + " - photon counting 2", values[i * 4 - 3]);
+                  addGlobalMeta(prefix + " - photon counting 3", values[i * 4 - 2]);
+                  addGlobalMeta(prefix + " - mode", values[i * 4 - 1]);
                 }
                 break;
               case 20:
-                addMeta("Display mode", values[0]);
-                addMeta("Course", values[1]);
-                addMeta("Time Course - experiment type", values[2]);
-                addMeta("Time Course - kd factor", values[3]);
+                addGlobalMeta("Display mode", values[0]);
+                addGlobalMeta("Course", values[1]);
+                addGlobalMeta("Time Course - experiment type", values[2]);
+                addGlobalMeta("Time Course - kd factor", values[3]);
                 store.setExperimentType(values[2], 0);
                 break;
               case 21:
-                addMeta("Time Course - ion name", values[0]);
+                addGlobalMeta("Time Course - ion name", values[0]);
                 break;
               case 22:
-                addMeta("PIC file generated on Isoscan (lite)", values[0]);
+                addGlobalMeta("PIC file generated on Isoscan (lite)", values[0]);
                 for (int i=1; i<=3; i++) {
-                  addMeta("Photon counting used (PMT " + i + ")", values[i]);
-                  addMeta("Hot spot filter used (PMT " + i + ")", values[i+3]);
-                  addMeta("Tx Selector used (TX " + i + ")", values[i + 6]);
+                  addGlobalMeta("Photon counting used (PMT " + i + ")", values[i]);
+                  addGlobalMeta("Hot spot filter used (PMT " + i + ")", values[i+3]);
+                  addGlobalMeta("Tx Selector used (TX " + i + ")", values[i + 6]);
                 }
                 break;
             }
@@ -750,7 +750,7 @@ public class BioRadReader extends FormatReader {
           break;
         default:
           // notes for display only
-          addMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteCount, n.toString());
       }
 
       // if the text of the note contains "AXIS", parse the text
@@ -775,34 +775,34 @@ public class BioRadReader extends FormatReader {
             case 1:
               String dx = values[2];
               String dy = values[3];
-              addMeta(key + " distance (X) in microns", dx);
-              addMeta(key + " distance (Y) in microns", dy);
+              addGlobalMeta(key + " distance (X) in microns", dx);
+              addGlobalMeta(key + " distance (Y) in microns", dy);
               break;
             case 3:
-              addMeta(key + " angle (X) in degrees", values[2]);
-              addMeta(key + " angle (Y) in degrees", values[3]);
+              addGlobalMeta(key + " angle (X) in degrees", values[2]);
+              addGlobalMeta(key + " angle (Y) in degrees", values[3]);
               break;
             case 4:
-              addMeta(key + " intensity (X)", values[2]);
-              addMeta(key + " intensity (Y)", values[3]);
+              addGlobalMeta(key + " intensity (X)", values[2]);
+              addGlobalMeta(key + " intensity (Y)", values[3]);
               break;
             case 6:
-              addMeta(key + " ratio (X)", values[2]);
-              addMeta(key + " ratio (Y)", values[3]);
+              addGlobalMeta(key + " ratio (X)", values[2]);
+              addGlobalMeta(key + " ratio (Y)", values[3]);
               break;
             case 7:
-              addMeta(key + " log ratio (X)", values[2]);
-              addMeta(key + " log ratio (Y)", values[3]);
+              addGlobalMeta(key + " log ratio (X)", values[2]);
+              addGlobalMeta(key + " log ratio (Y)", values[3]);
               break;
             case 9:
-              addMeta(key + " noncalibrated intensity min", values[2]);
-              addMeta(key + " noncalibrated intensity max", values[3]);
-              addMeta(key + " calibrated intensity min", values[4]);
-              addMeta(key + " calibrated intensity max", values[5]);
+              addGlobalMeta(key + " noncalibrated intensity min", values[2]);
+              addGlobalMeta(key + " noncalibrated intensity max", values[3]);
+              addGlobalMeta(key + " calibrated intensity min", values[4]);
+              addGlobalMeta(key + " calibrated intensity max", values[5]);
               break;
             case 11:
-              addMeta(key + " RGB type (X)", values[2]);
-              addMeta(key + " RGB type (Y)", values[3]);
+              addGlobalMeta(key + " RGB type (X)", values[2]);
+              addGlobalMeta(key + " RGB type (Y)", values[3]);
 
               // NB: This logic has not been tested, so it may be broken.
               if (key.equals("AXIS_4")) {
@@ -813,27 +813,27 @@ public class BioRadReader extends FormatReader {
               }
               break;
             case 14:
-              addMeta(key + " time course type (X)", values[2]);
-              addMeta(key + " time course type (Y)", values[3]);
+              addGlobalMeta(key + " time course type (X)", values[2]);
+              addGlobalMeta(key + " time course type (Y)", values[3]);
               break;
             case 15:
-              addMeta(key + " inverse sigmoid calibrated intensity (min)",
+              addGlobalMeta(key + " inverse sigmoid calibrated intensity (min)",
                 values[2]);
-              addMeta(key + " inverse sigmoid calibrated intensity (max)",
+              addGlobalMeta(key + " inverse sigmoid calibrated intensity (max)",
                 values[3]);
-              addMeta(key + " inverse sigmoid calibrated intensity (beta)",
+              addGlobalMeta(key + " inverse sigmoid calibrated intensity (beta)",
                 values[4]);
-              addMeta(key + " inverse sigmoid calibrated intensity (Kd)",
+              addGlobalMeta(key + " inverse sigmoid calibrated intensity (Kd)",
                 values[5]);
               break;
             case 16:
-              addMeta(key + " log inverse sigmoid calibrated intensity (min)",
+              addGlobalMeta(key + " log inverse sigmoid calibrated intensity (min)",
                 values[2]);
-              addMeta(key + " log inverse sigmoid calibrated intensity (max)",
+              addGlobalMeta(key + " log inverse sigmoid calibrated intensity (max)",
                 values[3]);
-              addMeta(key + " log inverse sigmoid calibrated intensity (beta)",
+              addGlobalMeta(key + " log inverse sigmoid calibrated intensity (beta)",
                 values[4]);
-              addMeta(key + " log inverse sigmoid calibrated intensity (Kd)",
+              addGlobalMeta(key + " log inverse sigmoid calibrated intensity (Kd)",
                 values[5]);
               break;
           }
@@ -884,7 +884,7 @@ public class BioRadReader extends FormatReader {
         String stamp = attributes.getValue("TimeCompleted");
         int count = 0;
         while (metadata.containsKey("Timestamp " + count)) count++;
-        addMeta("Timestamp " + count, stamp);
+        addGlobalMeta("Timestamp " + count, stamp);
       }
     }
   }

@@ -148,7 +148,7 @@ public class AliconaReader extends FormatReader {
       String key = in.readString(20).trim();
       String value = in.readString(30).trim();
 
-      addMeta(key, value);
+      addGlobalMeta(key, value);
       in.skipBytes(2);
 
       if (key.equals("TagCount")) count += Integer.parseInt(value);

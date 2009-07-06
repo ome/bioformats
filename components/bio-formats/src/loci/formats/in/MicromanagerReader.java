@@ -256,7 +256,7 @@ public class MicromanagerReader extends FormatReader {
         value = value.substring(0, value.length() - 1);
         value = value.replaceAll("\"", "");
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
-        addMeta(key, value);
+        addGlobalMeta(key, value);
         if (key.equals("Channels")) core[0].sizeC = Integer.parseInt(value);
         else if (key.equals("ChNames")) {
           StringTokenizer t = new StringTokenizer(value, ",");
@@ -303,7 +303,7 @@ public class MicromanagerReader extends FormatReader {
           key = key.replaceAll("\"", "");
           value = value.replaceAll("\"", "");
 
-          addMeta(key, value);
+          addGlobalMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
             float t = Float.parseFloat(value);

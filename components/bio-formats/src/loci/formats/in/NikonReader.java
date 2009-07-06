@@ -356,11 +356,11 @@ public class NikonReader extends BaseTiffReader {
             byte[] cfa = (byte[]) exifIFD.get(key);
             int[] colorMap = new int[cfa.length];
             for (int i=0; i<cfa.length; i++) colorMap[i] = (int) cfa[i];
-            addMeta(getTagName(tag), colorMap);
+            addGlobalMeta(getTagName(tag), colorMap);
             cfaPattern = colorMap;
           }
           else {
-            addMeta(getTagName(tag), exifIFD.get(key));
+            addGlobalMeta(getTagName(tag), exifIFD.get(key));
             if (getTagName(tag).equals("Offset to maker note")) {
               byte[] b = (byte[]) exifIFD.get(key);
               int extra = new String(b, 0, 10).startsWith("Nikon") ? 10 : 0;
@@ -375,7 +375,7 @@ public class NikonReader extends BaseTiffReader {
                 while (en.hasMoreElements()) {
                   nextKey = (Integer) en.nextElement();
                   int nextTag = nextKey.intValue();
-                  addMeta(getTagName(nextTag), note.get(nextKey));
+                  addGlobalMeta(getTagName(nextTag), note.get(nextKey));
                   if (nextTag == 150) {
                     b = (byte[]) note.get(nextKey);
                     RandomAccessInputStream s = new RandomAccessInputStream(b);

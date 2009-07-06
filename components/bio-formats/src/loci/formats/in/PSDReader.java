@@ -142,7 +142,7 @@ public class PSDReader extends FormatReader {
       throw new FormatException("Not a valid Photoshop file.");
     }
 
-    addMeta("Version", in.readShort());
+    addGlobalMeta("Version", in.readShort());
 
     in.skipBytes(6); // reserved, set to 0
     core[0].sizeC = in.readShort();
@@ -150,7 +150,7 @@ public class PSDReader extends FormatReader {
     core[0].sizeX = in.readInt();
 
     int bits = in.readShort();
-    addMeta("Bits per pixel", bits);
+    addGlobalMeta("Bits per pixel", bits);
     if (bits == 16) core[0].pixelType = FormatTools.UINT16;
     else core[0].pixelType = FormatTools.UINT8;
 
@@ -185,7 +185,7 @@ public class PSDReader extends FormatReader {
         modeString = "LAB color";
         break;
     }
-    addMeta("Color mode", modeString);
+    addGlobalMeta("Color mode", modeString);
 
     // read color mode block, if present
 

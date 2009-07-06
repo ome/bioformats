@@ -131,7 +131,7 @@ public class ImarisTiffReader extends BaseTiffReader {
         if (equals < 0) continue;
         String key = line.substring(0, equals).trim();
         String value = line.substring(equals + 1).trim();
-        addMeta(key, value);
+        addGlobalMeta(key, value);
 
         if (key.equals("Description")) {
           description = value;

@@ -158,21 +158,21 @@ public class MRCReader extends FormatReader {
     float ylen = in.readFloat();
     float zlen = in.readFloat();
 
-    addMeta("Pixel size (X)", xlen / mx);
-    addMeta("Pixel size (Y)", ylen / my);
-    addMeta("Pixel size (Z)", zlen / mz);
+    addGlobalMeta("Pixel size (X)", xlen / mx);
+    addGlobalMeta("Pixel size (Y)", ylen / my);
+    addGlobalMeta("Pixel size (Z)", zlen / mz);
 
-    addMeta("Alpha angle", in.readFloat());
-    addMeta("Beta angle", in.readFloat());
-    addMeta("Gamma angle", in.readFloat());
+    addGlobalMeta("Alpha angle", in.readFloat());
+    addGlobalMeta("Beta angle", in.readFloat());
+    addGlobalMeta("Gamma angle", in.readFloat());
 
     in.skipBytes(12);
 
     // min, max and mean pixel values
 
-    addMeta("Minimum pixel value", in.readFloat());
-    addMeta("Maximum pixel value", in.readFloat());
-    addMeta("Mean pixel value", in.readFloat());
+    addGlobalMeta("Minimum pixel value", in.readFloat());
+    addGlobalMeta("Maximum pixel value", in.readFloat());
+    addGlobalMeta("Mean pixel value", in.readFloat());
 
     in.skipBytes(4);
     extHeaderSize = in.readInt();
@@ -185,23 +185,23 @@ public class MRCReader extends FormatReader {
     String type = (idtype >= 0 && idtype < types.length) ? types[idtype] :
       "unknown";
 
-    addMeta("Series type", type);
-    addMeta("Lens", in.readShort());
-    addMeta("ND1", in.readShort());
-    addMeta("ND2", in.readShort());
-    addMeta("VD1", in.readShort());
-    addMeta("VD2", in.readShort());
+    addGlobalMeta("Series type", type);
+    addGlobalMeta("Lens", in.readShort());
+    addGlobalMeta("ND1", in.readShort());
+    addGlobalMeta("ND2", in.readShort());
+    addGlobalMeta("VD1", in.readShort());
+    addGlobalMeta("VD2", in.readShort());
 
     for (int i=0; i<6; i++) {
-      addMeta("Angle " + (i + 1), in.readFloat());
+      addGlobalMeta("Angle " + (i + 1), in.readFloat());
     }
 
     in.skipBytes(24);
 
-    addMeta("Number of useful labels", in.readInt());
+    addGlobalMeta("Number of useful labels", in.readInt());
 
     for (int i=0; i<10; i++) {
-      addMeta("Label " + (i + 1), in.readString(80));
+      addGlobalMeta("Label " + (i + 1), in.readString(80));
     }
 
     in.skipBytes(extHeaderSize);

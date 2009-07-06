@@ -397,7 +397,7 @@ public class DicomReader extends FormatReader {
     if (in.readString(4).equals("DICM")) {
       // header exists, so we'll read it
       in.seek(0);
-      addMeta("Header information", in.readString(128));
+      addGlobalMeta("Header information", in.readString(128));
       in.skipBytes(4);
       location = 128;
     }
@@ -825,15 +825,15 @@ public class DicomReader extends FormatReader {
           // make sure that values are not overwritten
           Object v = getMetadataValue(key);
           metadata.remove(key);
-          addMeta(key + " #1", v);
-          addMeta(key + " #2", info);
+          addGlobalMeta(key + " #1", v);
+          addGlobalMeta(key + " #2", info);
         }
         else if (metadata.containsKey(key + " #1")) {
           int index = 2;
           while (metadata.containsKey(key + " #" + index)) index++;
-          addMeta(key + " #" + index, info);
+          addGlobalMeta(key + " #" + index, info);
         }
-        else addMeta(key, info);
+        else addGlobalMeta(key, info);
       }
     }
   }

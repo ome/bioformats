@@ -71,7 +71,7 @@ public class SEQReader extends BaseTiffReader {
       if (tag1 != null) {
         String seqId = "";
         for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
-        addMeta("Image-Pro SEQ ID", seqId);
+        addGlobalMeta("Image-Pro SEQ ID", seqId);
       }
 
       int tag2 = TiffTools.getIFDIntValue(ifds[0], IMAGE_PRO_TAG_2);
@@ -79,10 +79,10 @@ public class SEQReader extends BaseTiffReader {
       if (tag2 != -1) {
         // should be one of these for every image plane
         core[0].sizeZ++;
-        addMeta("Frame Rate", tag2);
+        addGlobalMeta("Frame Rate", tag2);
       }
 
-      addMeta("Number of images", getSizeZ());
+      addGlobalMeta("Number of images", getSizeZ());
     }
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
@@ -93,9 +93,9 @@ public class SEQReader extends BaseTiffReader {
     }
 
     // default values
-    addMeta("frames", getSizeZ());
-    addMeta("channels", super.getSizeC());
-    addMeta("slices", getSizeT());
+    addGlobalMeta("frames", getSizeZ());
+    addGlobalMeta("channels", super.getSizeC());
+    addGlobalMeta("slices", getSizeT());
 
     // parse the description to get channels, slices and times where applicable
     String descr = TiffTools.getComment(ifds[0]);
@@ -109,7 +109,7 @@ public class SEQReader extends BaseTiffReader {
         if (eq != -1) {
           String label = token.substring(0, eq);
           String data = token.substring(eq + 1);
-          addMeta(label, data);
+          addGlobalMeta(label, data);
           if (label.equals("channels")) core[0].sizeC = Integer.parseInt(data);
           else if (label.equals("frames")) {
             core[0].sizeT = Integer.parseInt(data);

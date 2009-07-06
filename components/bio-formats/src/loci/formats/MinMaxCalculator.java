@@ -270,9 +270,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     int numRGB = getRGBChannelCount();
     int series = getSeries();
     // check whether min/max values have already been computed for this plane
-    if (planeMin[series][ndx * numRGB] ==
-      planeMin[series][ndx * numRGB])
-    {
+    if (planeMin[series][ndx * numRGB] == planeMin[series][ndx * numRGB]) {
       return;
     }
 
@@ -318,15 +316,17 @@ public class MinMaxCalculator extends ReaderWrapper {
         if (v < chanMin[series][cBase + c]) {
           chanMin[series][cBase + c] = v;
         }
-        if (v > planeMax[series][pBase + c]) {
-          planeMax[series][pBase + c] = v;
-        }
-        if (v < planeMin[series][pBase + c]) {
-          planeMin[series][pBase + c] = v;
-        }
       }
     }
 
+    for (int c=0; c<numRGB; c++) {
+      if (chanMin[series][cBase + c] < planeMin[series][pBase + c]) {
+        planeMin[series][pBase + c] = chanMin[series][cBase + c];
+      }
+      if (chanMax[series][cBase + c] > planeMax[series][pBase + c]) {
+        planeMax[series][pBase + c] = chanMax[series][cBase + c];
+      }
+    }
     minMaxDone[series]++;
 
     if (minMaxDone[getSeries()] == getImageCount() && minMaxStore != null) {

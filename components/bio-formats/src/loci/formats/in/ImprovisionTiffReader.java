@@ -109,7 +109,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
         if (equals < 0) continue;
         String key = line.substring(0, equals);
         String value = line.substring(equals + 1);
-        addMeta(key, value);
+        addGlobalMeta(key, value);
         if (key.equals("TotalZPlanes")) tz = value;
         else if (key.equals("TotalChannels")) tc = value;
         else if (key.equals("TotalTimepoints")) tt = value;

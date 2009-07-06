@@ -156,21 +156,21 @@ public class IPWReader extends FormatReader {
         name.substring(name.lastIndexOf(File.separator) + 1);
 
       if (relativePath.equals("CONTENTS")) {
-        addMeta("Version", new String(poi.getDocumentBytes(name)).trim());
+        addGlobalMeta("Version", new String(poi.getDocumentBytes(name)).trim());
       }
       else if (relativePath.equals("FrameRate")) {
         byte[] b = poi.getDocumentBytes(name, 4);
-        addMeta("Frame Rate", DataTools.bytesToInt(b, true));
+        addGlobalMeta("Frame Rate", DataTools.bytesToInt(b, true));
       }
       else if (relativePath.equals("FrameInfo")) {
         byte[] b = poi.getDocumentBytes(name);
         for (int q=0; q<b.length/2; q++) {
-          addMeta("FrameInfo " + q, DataTools.bytesToShort(b, q*2, 2, true));
+          addGlobalMeta("FrameInfo " + q, DataTools.bytesToShort(b, q*2, 2, true));
         }
       }
       else if (relativePath.equals("ImageInfo")) {
         description = new String(poi.getDocumentBytes(name)).trim();
-        addMeta("Image Description", description);
+        addGlobalMeta("Image Description", description);
 
         String timestamp = null;
 
@@ -187,7 +187,7 @@ public class IPWReader extends FormatReader {
               data = token.substring(token.indexOf("=") + 1).trim();
             }
             else data = token.trim();
-            addMeta(label, data);
+            addGlobalMeta(label, data);
             if (label.equals("frames")) core[0].sizeT = Integer.parseInt(data);
             else if (label.equals("slices")) {
               core[0].sizeZ = Integer.parseInt(data);
@@ -246,9 +246,9 @@ public class IPWReader extends FormatReader {
 
     // retrieve axis sizes
 
-    addMeta("slices", "1");
-    addMeta("channels", "1");
-    addMeta("frames", getImageCount());
+    addGlobalMeta("slices", "1");
+    addGlobalMeta("channels", "1");
+    addGlobalMeta("frames", getImageCount());
 
     Hashtable h = ifds[0];
     core[0].sizeX = (int) TiffTools.getImageWidth(h);

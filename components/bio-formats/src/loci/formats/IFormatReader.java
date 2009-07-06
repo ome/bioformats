@@ -330,9 +330,25 @@ public interface IFormatReader extends IFormatHandler {
   /**
    * Obtains the hashtable containing the metadata field/value pairs from
    * the current file.
-   * @return the hashtable containing all metadata from the file
+   * @return the hashtable containing all non-series-specific metadata
+   * from the file
+   */
+  Hashtable getGlobalMetadata();
+
+  /**
+   * Returns a hashtable containing the union of all of the field/value pairs
+   * in getGlobalMetadata() and getSeriesMetadata().  The series name is
+   * prepended to fields in the getSeriesMetadata() hashtable.
+   *
+   * @deprecated Use getGlobalMetadata() or getSeriesMetadata() instead.
    */
   Hashtable getMetadata();
+
+  /**
+   * Obtains the hashtable containing metadata field/value pairs from the
+   * current series in the current file.
+   */
+  Hashtable getSeriesMetadata();
 
   /** Obtains the core metadata values for the current file. */
   CoreMetadata[] getCoreMetadata();

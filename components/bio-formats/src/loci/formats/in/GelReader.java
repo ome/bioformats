@@ -126,28 +126,28 @@ public class GelReader extends BaseTiffReader {
 
     long fmt = TiffTools.getIFDLongValue(ifds[0], MD_FILETAG, true, LINEAR);
     if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
-    addMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
+    addGlobalMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
 
     TiffRational scale =
       (TiffRational) TiffTools.getIFDValue(ifds[0], MD_SCALE_PIXEL);
-    addMeta("Scale factor", scale == null ? new TiffRational(1, 1) : scale);
+    addGlobalMeta("Scale factor", scale == null ? new TiffRational(1, 1) : scale);
 
     // ignore MD_COLOR_TABLE
 
     String lab = (String) TiffTools.getIFDValue(ifds[0], MD_LAB_NAME);
-    addMeta("Lab name", lab);
+    addGlobalMeta("Lab name", lab);
 
     String info = (String) TiffTools.getIFDValue(ifds[0], MD_SAMPLE_INFO);
-    addMeta("Sample info", info);
+    addGlobalMeta("Sample info", info);
 
     String prepDate = (String) TiffTools.getIFDValue(ifds[0], MD_PREP_DATE);
-    addMeta("Date prepared", prepDate);
+    addGlobalMeta("Date prepared", prepDate);
 
     String prepTime = (String) TiffTools.getIFDValue(ifds[0], MD_PREP_TIME);
-    addMeta("Time prepared", prepTime);
+    addGlobalMeta("Time prepared", prepTime);
 
     String units = (String) TiffTools.getIFDValue(ifds[0], MD_FILE_UNITS);
-    addMeta("File units", units);
+    addGlobalMeta("File units", units);
 
     core[0].imageCount = ifds.length;
     core[0].sizeT = getImageCount();

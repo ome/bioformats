@@ -73,31 +73,34 @@ public class SVSReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
+    core = new CoreMetadata[ifds.length];
+
     pixelSize = new float[ifds.length];
     for (int i=0; i<ifds.length; i++) {
+      setSeries(i);
+      core[i] = new CoreMetadata();
+
       String comment = TiffTools.getComment(ifds[i]);
       StringTokenizer st = new StringTokenizer(comment, "\n");
       while (st.hasMoreTokens()) {
         StringTokenizer tokens = new StringTokenizer(st.nextToken(), "|");
         while (tokens.hasMoreTokens()) {
           String t = tokens.nextToken();
-          if (t.indexOf("=") == -1) addMeta("Comment", t);
+          if (t.indexOf("=") == -1) addGlobalMeta("Comment", t);
           else {
             String key = t.substring(0, t.indexOf("=")).trim();
             String value = t.substring(t.indexOf("=") + 1).trim();
-            addMeta("Series " + i + " " + key, value);
+            addSeriesMeta(key, value);
             if (key.equals("MPP")) pixelSize[i] = Float.parseFloat(value);
           }
         }
       }
     }
+    setSeries(0);
 
     // repopulate core metadata
 
-    core = new CoreMetadata[ifds.length];
-
     for (int s=0; s<ifds.length; s++) {
-      core[s] = new CoreMetadata();
       int p = TiffTools.getPhotometricInterpretation(ifds[s]);
       int samples = TiffTools.getSamplesPerPixel(ifds[s]);
       core[s].rgb = samples > 1 || p == TiffTools.RGB;

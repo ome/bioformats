@@ -242,7 +242,7 @@ public class ImarisHDFReader extends FormatReader {
         else if (name.equals("MicroscopyMode")) microscopyMode.add(value);
       }
 
-      if (value != null) addMeta(name, value);
+      if (value != null) addGlobalMeta(name, value);
     }
 
     if (seriesCount > 1) {

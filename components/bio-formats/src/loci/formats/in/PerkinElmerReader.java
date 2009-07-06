@@ -497,7 +497,7 @@ public class PerkinElmerReader extends FormatReader {
       read = new RandomAccessInputStream(zpoFile);
       String[] tokens = read.readString((int) read.length()).split("\\s");
       for (int t=0; t<tokens.length; t++) {
-        addMeta("Z slice #" + t + " position", tokens[t]);
+        addGlobalMeta("Z slice #" + t + " position", tokens[t]);
       }
       read.close();
     }
@@ -521,7 +521,7 @@ public class PerkinElmerReader extends FormatReader {
 
       for (int j=0; j<tokens.length-1; j+=2) {
         if (tokens[j].indexOf("Exposure") != -1) {
-          addMeta("Camera Data " + tokens[j].charAt(13), tokens[j]);
+          addGlobalMeta("Camera Data " + tokens[j].charAt(13), tokens[j]);
 
           int ndx = tokens[j].indexOf("Exposure") + 9;
           String exposure =
@@ -733,7 +733,7 @@ public class PerkinElmerReader extends FormatReader {
 
   private void parseKeyValue(String key, String value) {
     if (key == null || value == null) return;
-    addMeta(key, value);
+    addGlobalMeta(key, value);
     try {
       if (key.equals("Image Width")) {
         core[0].sizeX = Integer.parseInt(value);

@@ -212,8 +212,8 @@ public class SDTReader extends FormatReader {
     off = info.dataBlockOffs + 22;
     timeBins = info.timeBins;
     channels = info.channels;
-    addMeta("time bins", timeBins);
-    addMeta("channels", channels);
+    addGlobalMeta("time bins", timeBins);
+    addGlobalMeta("channels", channels);
 
     status("Populating metadata");
 

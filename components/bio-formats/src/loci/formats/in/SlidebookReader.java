@@ -423,12 +423,14 @@ public class SlidebookReader extends FormatReader {
           in.skipBytes(174);
           ndFilters.add(new Float(in.readFloat()));
           in.skipBytes(40);
-          addMeta(imageNames[nextName] + " channel " +
-            ndFilters.size() + " intensification", in.readShort());
+          setSeries(nextName);
+          addSeriesMeta("channel " + ndFilters.size() + " intensification",
+            in.readShort());
         }
         else if (n == 'k') {
           in.skipBytes(14);
-          addMeta(imageNames[nextName - 1] + " Mag. changer", in.readCString());
+          setSeries(nextName - 1);
+          addSeriesMeta("Mag. changer", in.readCString());
         }
       }
     }
@@ -499,19 +501,21 @@ public class SlidebookReader extends FormatReader {
     // populate LogicalChannel data
 
     for (int i=0; i<getSeriesCount(); i++) {
-      for (int c=0; c<core[i].sizeC; c++) {
+      setSeries(i);
+      for (int c=0; c<getSizeC(); c++) {
         if (index < channelNames.size()) {
           store.setLogicalChannelName((String) channelNames.get(index), i, c);
-          addMeta(imageNames[i] + " channel " + c, channelNames.get(index));
+          addSeriesMeta("channel " + c, channelNames.get(index));
         }
         if (index < ndFilters.size()) {
           store.setLogicalChannelNdFilter(ndFilters.get(index), i, c);
-          addMeta(imageNames[i] + " channel " + c + " Neutral density",
+          addSeriesMeta("channel " + c + " Neutral density",
             ndFilters.get(index));
         }
         index++;
       }
     }
+    setSeries(0);
   }
 
   // -- Helper methods --

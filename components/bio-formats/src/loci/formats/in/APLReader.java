@@ -144,7 +144,7 @@ public class APLReader extends FormatReader {
     for (int i=1; i<rows.size(); i++) {
       String[] row = rows.get(i);
       for (int q=0; q<row.length; q++) {
-        addMeta(columnNames[q + 1] + " " + i, row[q]);
+        addGlobalMeta(columnNames[q + 1] + " " + i, row[q]);
       }
     }
 

@@ -354,7 +354,7 @@ public class FluoviewReader extends BaseTiffReader {
           if (eq != -1) {
             String key = token.substring(0, eq);
             String value = token.substring(eq + 1);
-            addMeta(key, value);
+            addGlobalMeta(key, value);
             if (key.startsWith("Gain Ch")) {
               for (int i=0; i<gains.length; i++) {
                 if (gains[i] == null) {
@@ -414,7 +414,11 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else comment = "";
     }
-    addMeta("Comment", comment);
+    addGlobalMeta("Comment", comment);
+    /* debug */
+    System.out.println("number of global metadata keys: " + getGlobalMetadata().size());
+    System.out.println("number of series metadata keys (0): " + getSeriesMetadata().size());
+    /* end debug */
   }
 
   /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */

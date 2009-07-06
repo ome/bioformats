@@ -139,11 +139,11 @@ public class AnalyzeReader extends FormatReader {
     in.skipBytes(10);
 
     String imageName = in.readString(18);
-    addMeta("Database name", imageName);
+    addGlobalMeta("Database name", imageName);
     in.skipBytes(8);
 
     int ndims = in.readShort();
-    addMeta("Number of dimensions", ndims);
+    addGlobalMeta("Number of dimensions", ndims);
 
     int x = in.readShort();
     int y = in.readShort();
@@ -156,8 +156,8 @@ public class AnalyzeReader extends FormatReader {
 
     int nBitsPerPixel = in.readShort();
 
-    addMeta("Data type", dataType);
-    addMeta("Number of bits per pixel", nBitsPerPixel);
+    addGlobalMeta("Data type", dataType);
+    addGlobalMeta("Number of bits per pixel", nBitsPerPixel);
 
     in.skipBytes(6);
 
@@ -166,16 +166,16 @@ public class AnalyzeReader extends FormatReader {
     float sliceThickness = in.readFloat();
     float deltaT = in.readFloat();
 
-    addMeta("Voxel width", voxelWidth);
-    addMeta("Voxel height", voxelHeight);
-    addMeta("Slice thickness", sliceThickness);
-    addMeta("Exposure time", deltaT);
+    addGlobalMeta("Voxel width", voxelWidth);
+    addGlobalMeta("Voxel height", voxelHeight);
+    addGlobalMeta("Slice thickness", sliceThickness);
+    addGlobalMeta("Exposure time", deltaT);
 
     in.skipBytes(12);
 
     pixelOffset = (int) in.readFloat();
 
-    addMeta("Pixel offset", pixelOffset);
+    addGlobalMeta("Pixel offset", pixelOffset);
 
     in.skipBytes(12);
 
@@ -186,12 +186,12 @@ public class AnalyzeReader extends FormatReader {
     float pixelMax = in.readFloat();
     float pixelMin = in.readFloat();
 
-    addMeta("Calibrated maximum", calibratedMax);
-    addMeta("Calibrated minimum", calibratedMin);
-    addMeta("Compressed", compressed);
-    addMeta("Verified", verified);
-    addMeta("Pixel maximum", pixelMax);
-    addMeta("Pixel minimum", pixelMin);
+    addGlobalMeta("Calibrated maximum", calibratedMax);
+    addGlobalMeta("Calibrated minimum", calibratedMin);
+    addGlobalMeta("Compressed", compressed);
+    addGlobalMeta("Verified", verified);
+    addGlobalMeta("Pixel maximum", pixelMax);
+    addGlobalMeta("Pixel minimum", pixelMin);
 
     String description = in.readString(80);
     String auxFile = in.readString(24);
@@ -214,15 +214,15 @@ public class AnalyzeReader extends FormatReader {
     int smax = in.readInt();
     int smin = in.readInt();
 
-    addMeta("Description", description);
-    addMeta("Auxiliary file", auxFile);
-    addMeta("Orientation", orient);
-    addMeta("Originator", originator);
-    addMeta("Generated", generated);
-    addMeta("Scan Number", scannum);
-    addMeta("Patient ID", patientID);
-    addMeta("Acquisition Date", expDate);
-    addMeta("Acquisition Time", expTime);
+    addGlobalMeta("Description", description);
+    addGlobalMeta("Auxiliary file", auxFile);
+    addGlobalMeta("Orientation", orient);
+    addGlobalMeta("Originator", originator);
+    addGlobalMeta("Generated", generated);
+    addGlobalMeta("Scan Number", scannum);
+    addGlobalMeta("Patient ID", patientID);
+    addGlobalMeta("Acquisition Date", expDate);
+    addGlobalMeta("Acquisition Time", expTime);
 
     status("Populating core metadata");
 

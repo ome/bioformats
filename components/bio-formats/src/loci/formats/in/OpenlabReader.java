@@ -482,7 +482,7 @@ public class OpenlabReader extends FormatReader {
                   baseClassVersion);
               }
 
-              addMeta(name, value);
+              addGlobalMeta(name, value);
 
               if (name.equals("Gain")) gain = value;
               else if (name.equals("Offset")) detectorOffset = value;
@@ -501,7 +501,13 @@ public class OpenlabReader extends FormatReader {
     planeOffsets = new int[nSeries][];
     Vector<Integer> tmpOffsets = new Vector<Integer>();
     Vector names = new Vector();
+
+    core = new CoreMetadata[nSeries];
+
     for (int i=0; i<nSeries; i++) {
+      setSeries(i);
+      core[i] = new CoreMetadata();
+
       for (int q=0; q<planes.length; q++) {
         if (planes[q] != null && planes[q].series == i) {
           tmpOffsets.add(q);
@@ -511,18 +517,16 @@ public class OpenlabReader extends FormatReader {
       planeOffsets[i] = new int[tmpOffsets.size()];
       for (int q=0; q<planeOffsets[i].length; q++) {
         planeOffsets[i][q] = tmpOffsets.get(q);
-        addMeta("Series " + i + " Plane " + q + " Name", names.get(q));
+        addSeriesMeta("Plane " + q + " Name", names.get(q));
       }
       tmpOffsets.clear();
       names.clear();
     }
+    setSeries(0);
 
     // populate core metadata
 
-    core = new CoreMetadata[nSeries];
-
     for (int i=0; i<nSeries; i++) {
-      core[i] = new CoreMetadata();
       core[i].indexed = false;
       core[i].sizeX = planes[planeOffsets[i][0]].width;
       core[i].sizeY = planes[planeOffsets[i][0]].height;
@@ -578,7 +582,7 @@ public class OpenlabReader extends FormatReader {
       core[i].littleEndian = false;
       core[i].falseColor = false;
       core[i].metadataComplete = true;
-      core[i].seriesMetadata = getMetadata();
+      //core[i].seriesMetadata = getMetadata();
     }
 
     MetadataStore store =

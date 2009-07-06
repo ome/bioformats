@@ -522,14 +522,14 @@ public class NativeQTReader extends FormatReader {
                 if (codec.equals("rpza")) bitsPerPixel = 8;
                 in.skipBytes(10);
                 interlaced = in.read() == 2;
-                addMeta("Codec", codec);
-                addMeta("Bits per pixel", bitsPerPixel);
+                addGlobalMeta("Codec", codec);
+                addGlobalMeta("Bits per pixel", bitsPerPixel);
                 in.skipBytes(9);
               }
             }
             else {
               altCodec = in.readString(4);
-              addMeta("Second codec", altCodec);
+              addGlobalMeta("Second codec", altCodec);
             }
           }
         }
@@ -567,7 +567,7 @@ public class NativeQTReader extends FormatReader {
         else if (atomType.equals("stts")) {
           in.skipBytes(10);
           int fps = in.readInt();
-          addMeta("Frames per second", fps);
+          addGlobalMeta("Frames per second", fps);
         }
         if (oldpos + atomSize < in.length()) {
           in.seek(oldpos + atomSize);

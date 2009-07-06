@@ -248,7 +248,7 @@ public class TCSReader extends FormatReader {
       c = handler.getChannels();
       t = handler.getTs();
       bits = handler.getBits();
-      metadata = handler.getMetadata();
+      metadata = handler.getGlobalMetadata();
 
       // look for associated TIFF files
 
@@ -424,7 +424,7 @@ public class TCSReader extends FormatReader {
             int eq = token.indexOf("=");
             String key = token.substring(0, eq).trim();
             String value = token.substring(eq + 1).trim();
-            addMeta(key, value);
+            addGlobalMeta(key, value);
           }
         }
         metadata.remove("Comment");

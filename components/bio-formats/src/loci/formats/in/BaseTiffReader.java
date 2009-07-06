@@ -136,7 +136,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       Enumeration keys = exif.keys();
       while (keys.hasMoreElements()) {
         int key = ((Integer) keys.nextElement()).intValue();
-        addMeta(getExifTagName(key), exif.get(new Integer(key)));
+        addGlobalMeta(getExifTagName(key), exif.get(new Integer(key)));
       }
     }
 
@@ -622,15 +622,19 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   // -- Internal FormatReader API methods - metadata convenience --
 
+  // TODO : the 'put' methods that accept primitive types could probably be
+  // removed, as there are now 'addGlobalMeta' methods that accept
+  // primitive types
+
   protected void put(String key, Object value) {
     if (value == null) return;
     if (value instanceof String) value = ((String) value).trim();
-    addMeta(key, value);
+    addGlobalMeta(key, value);
   }
 
   protected void put(String key, int value) {
     if (value == -1) return; // indicates missing value
-    addMeta(key, value);
+    addGlobalMeta(key, value);
   }
 
   protected void put(String key, boolean value) {

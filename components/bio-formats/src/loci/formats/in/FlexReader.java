@@ -214,8 +214,8 @@ public class FlexReader extends BaseTiffReader {
         "names and factors (count=" + totalPlanes +
         ", names=" + nsize + ", factors=" + fsize + ")");
     }
-    for (int i=0; i<nsize; i++) addMeta("Name " + i, n.get(i));
-    for (int i=0; i<fsize; i++) addMeta("Factor " + i, f.get(i));
+    for (int i=0; i<nsize; i++) addGlobalMeta("Name " + i, n.get(i));
+    for (int i=0; i<fsize; i++) addGlobalMeta("Factor " + i, f.get(i));
 
     // parse factor values
     factors = new double[totalPlanes];
@@ -357,13 +357,13 @@ public class FlexReader extends BaseTiffReader {
 
       if (currentQName.equals("PlateName")) {
         store.setPlateName(value, nextPlate - 1);
-        addMeta("Plate " + (nextPlate - 1) + " Name", value);
+        addGlobalMeta("Plate " + (nextPlate - 1) + " Name", value);
       }
       else if (parentQName.equals("Plate")) {
-        addMeta("Plate " + (nextPlate - 1) + " " + currentQName, value);
+        addGlobalMeta("Plate " + (nextPlate - 1) + " " + currentQName, value);
       }
       else if (parentQName.equals("WellShape")) {
-        addMeta("Plate " + (nextPlate - 1) + " WellShape " + currentQName,
+        addGlobalMeta("Plate " + (nextPlate - 1) + " WellShape " + currentQName,
           value);
       }
       else if (currentQName.equals("Magnification")) {
@@ -381,7 +381,7 @@ public class FlexReader extends BaseTiffReader {
       }
       else if (currentQName.equals("OffsetX") || currentQName.equals("OffsetY"))
       {
-        addMeta("Sublayout " + (nextSublayout - 1) + " Field " +
+        addGlobalMeta("Sublayout " + (nextSublayout - 1) + " Field " +
           (nextField - 1) + " " + currentQName, value);
         Float offset = new Float(Float.parseFloat(value) * 10000);
         if (currentQName.equals("OffsetX")) {
@@ -398,11 +398,11 @@ public class FlexReader extends BaseTiffReader {
         }
       }
       else if (currentQName.equals("OffsetZ")) {
-        addMeta("Stack " + (nextStack - 1) + " Plane " + (nextPlane - 1) +
+        addGlobalMeta("Stack " + (nextStack - 1) + " Plane " + (nextPlane - 1) +
           " OffsetZ", value);
       }
       else if (currentQName.equals("Power")) {
-        addMeta("LightSourceCombination " + (nextLightSourceCombination - 1) +
+        addGlobalMeta("LightSourceCombination " + (nextLightSourceCombination - 1) +
           " LightSourceRef " + (nextLightSourceRef - 1) + " Power", value);
         power.put(new String[] {lightSourceComboID, lightSourceID},
           new Float(value));
@@ -474,17 +474,17 @@ public class FlexReader extends BaseTiffReader {
         currentImage.lightSource = value;
       }
       else if (parentQName.equals("Image")) {
-        addMeta("Image " + (nextImage - 1) + " " + currentQName, value);
+        addGlobalMeta("Image " + (nextImage - 1) + " " + currentQName, value);
 
         if (currentQName.equals("DateTime") && nextImage == 1) {
           store.setImageCreationDate(value, 0);
         }
       }
       else if (parentQName.equals("Well")) {
-        addMeta("Well " + (nextWell - 1) + " " + currentQName, value);
+        addGlobalMeta("Well " + (nextWell - 1) + " " + currentQName, value);
       }
       else if (parentQName.equals("FLIM")) {
-        addMeta("FLIM " + nextImage + " " + currentQName, value);
+        addGlobalMeta("FLIM " + nextImage + " " + currentQName, value);
       }
       else if (currentQName.equals("Wavelength") &&
         parentQName.equals("LightSource"))
@@ -492,7 +492,7 @@ public class FlexReader extends BaseTiffReader {
         store.setLaserWavelength(new Integer(value), 0, nextLaser);
         store.setLaserType("Unknown", 0, nextLaser);
         store.setLaserLaserMedium("Unknown", 0, nextLaser);
-        addMeta("Laser " + nextLaser + " Wavelength", value);
+        addGlobalMeta("Laser " + nextLaser + " Wavelength", value);
       }
     }
 
@@ -531,8 +531,8 @@ public class FlexReader extends BaseTiffReader {
         parentQName = qName;
         String id = attributes.getValue("ID");
         String type = attributes.getValue("LightSourceType");
-        addMeta("LightSource " + nextLightSource + " ID", id);
-        addMeta("LightSource " + nextLightSource + " Type", type);
+        addGlobalMeta("LightSource " + nextLightSource + " ID", id);
+        addGlobalMeta("LightSource " + nextLightSource + " Type", type);
 
         store.setLightSourceID("LightSource:" + id, 0, nextLightSource);
 
@@ -690,13 +690,13 @@ public class FlexReader extends BaseTiffReader {
           col = Integer.parseInt(attributes.getValue("Col")) - 1;
         }
         catch (NumberFormatException e) { }
-        addMeta("Well " + ndx + " Row", row);
-        addMeta("Well " + ndx + " Col", col);
+        addGlobalMeta("Well " + ndx + " Row", row);
+        addGlobalMeta("Well " + ndx + " Col", col);
         store.setWellRow(new Integer(row), 0, ndx);
         store.setWellColumn(new Integer(col), 0, ndx);
       }
       else if (qName.equals("Status")) {
-        addMeta("Status", attributes.getValue("StatusString"));
+        addGlobalMeta("Status", attributes.getValue("StatusString"));
       }
       else if (qName.equals("ImageResolutionX")) {
         parentQName = qName;
@@ -737,7 +737,7 @@ public class FlexReader extends BaseTiffReader {
     private void addAllAttributes(String keyPrefix, Attributes attributes) {
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
-        addMeta(keyPrefix + " " + name, attributes.getValue(name));
+        addGlobalMeta(keyPrefix + " " + name, attributes.getValue(name));
       }
     }
   }

@@ -276,7 +276,7 @@ public class IvisionReader extends FormatReader {
     // -- DefaultHandler API methods --
 
     public void endElement(String uri, String localName, String qName) {
-      addMeta(key, value);
+      addGlobalMeta(key, value);
       if ("iplab:Bin_X".equals(key)) binX = value;
       else if ("iplab:Bin_Y".equals(key)) binY = value;
       else if ("iplab:Capture_Date".equals(key)) creationDate = value;

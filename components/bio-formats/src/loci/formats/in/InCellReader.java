@@ -614,7 +614,7 @@ public class InCellReader extends FormatReader {
     {
       currentQName = qName;
       for (int i=0; i<attributes.getLength(); i++) {
-        addMeta(qName + " - " + attributes.getQName(i), attributes.getValue(i));
+        addGlobalMeta(qName + " - " + attributes.getQName(i), attributes.getValue(i));
       }
 
       if (qName.equals("Microscopy")) {

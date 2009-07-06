@@ -30,6 +30,7 @@ import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -173,8 +174,8 @@ public abstract class FormatReader extends FormatHandler
     return false;
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, Object value) {
+  /** Adds an entry to the specified Hashtable. */
+  protected void addMeta(String key, Object value, Hashtable meta) {
     if (key == null || value == null || !collectMetadata) return;
 
     key = key.trim();
@@ -220,59 +221,114 @@ public abstract class FormatReader extends FormatHandler
       if (string) value = val;
     }
 
-    if (saveOriginalMetadata && simple) {
+    if (saveOriginalMetadata && simple && meta.equals(metadata)) {
       MetadataStore store = getMetadataStore();
       if (MetadataTools.isOMEXMLMetadata(store)) {
         MetadataTools.populateOriginalMetadata(store, key, value.toString());
       }
     }
 
-    metadata.put(key, val == null ? value : val);
+    meta.put(key, val == null ? value : val);
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, boolean value) {
-    addMeta(key, new Boolean(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, Object value) {
+    addMeta(key, value, getGlobalMetadata());
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, byte value) {
-    addMeta(key, new Byte(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, boolean value) {
+    addGlobalMeta(key, new Boolean(value));
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, short value) {
-    addMeta(key, new Short(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, byte value) {
+    addGlobalMeta(key, new Byte(value));
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, int value) {
-    addMeta(key, new Integer(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, short value) {
+    addGlobalMeta(key, new Short(value));
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, long value) {
-    addMeta(key, new Long(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, int value) {
+    addGlobalMeta(key, new Integer(value));
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, float value) {
-    addMeta(key, new Float(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, long value) {
+    addGlobalMeta(key, new Long(value));
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, double value) {
-    addMeta(key, new Double(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, float value) {
+    addGlobalMeta(key, new Float(value));
   }
 
-  /** Adds an entry to the metadata table. */
-  protected void addMeta(String key, char value) {
-    addMeta(key, new Character(value));
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, double value) {
+    addGlobalMeta(key, new Double(value));
   }
 
-  /** Gets a value from the metadata table. */
-  protected Object getMeta(String key) {
+  /** Adds an entry to the global metadata table. */
+  protected void addGlobalMeta(String key, char value) {
+    addGlobalMeta(key, new Character(value));
+  }
+
+  /** Gets a value from the global metadata table. */
+  protected Object getGlobalMeta(String key) {
     return metadata.get(key);
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, Object value) {
+    addMeta(key, value, core[series].seriesMetadata);
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, boolean value) {
+    addSeriesMeta(key, new Boolean(value));
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, byte value) {
+    addSeriesMeta(key, new Byte(value));
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, short value) {
+    addSeriesMeta(key, new Short(value));
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, int value) {
+    addSeriesMeta(key, new Integer(value));
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, long value) {
+    addSeriesMeta(key, new Long(value));
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, float value) {
+    addSeriesMeta(key, new Float(value));
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, double value) {
+    addSeriesMeta(key, new Double(value));
+  }
+
+  /** Adds an entry to the metadata table for the current series. */
+  protected void addSeriesMeta(String key, char value) {
+    addSeriesMeta(key, new Character(value));
+  }
+
+  /** Gets an entry from the metadata table for the current series. */
+  protected Object getSeriesMeta(String key) {
+    return core[series].seriesMetadata.get(key);
   }
 
   /** Reads a raw plane from disk. */
@@ -677,13 +733,47 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
-    return getMeta(field);
+    return getGlobalMeta(field);
+  }
+
+  /* @see IFormatReader#getGlobalMetadata() */
+  public Hashtable getGlobalMetadata() {
+    FormatTools.assertId(currentId, true, 1);
+    return metadata;
+  }
+
+  /* @see IFormatReader#getSeriesMetadata() */
+  public Hashtable getSeriesMetadata() {
+    FormatTools.assertId(currentId, true, 1);
+    return core[series].seriesMetadata;
   }
 
   /* @see IFormatReader#getMetadata() */
   public Hashtable getMetadata() {
     FormatTools.assertId(currentId, true, 1);
-    return metadata;
+    Hashtable h = new Hashtable(getGlobalMetadata());
+    int oldSeries = getSeries();
+
+    IMetadata meta = getMetadataStore() instanceof IMetadata ?
+      (IMetadata) getMetadataStore() : null;
+
+    for (int series=0; series<getSeriesCount(); series++) {
+      String name = "Series " + series;
+      if (meta != null) {
+        String realName = meta.getImageName(series);
+        if (realName != null && realName.trim().length() != 0) {
+          name = realName;
+        }
+      }
+      setSeries(series);
+      Hashtable seriesMetadata = getSeriesMetadata();
+      Object[] keys = seriesMetadata.keySet().toArray();
+      for (Object key : keys) {
+        h.put(name + " " + key, seriesMetadata.get(key));
+      }
+    }
+    setSeries(oldSeries);
+    return h;
   }
 
   /* @see IFormatReader#getCoreMetadata() */

@@ -322,7 +322,7 @@ public class LIFReader extends FormatReader {
     Vector channels = handler.getChannels();
     Vector bps = handler.getBPS();
     Vector extraDims = handler.getExtraDims();
-    metadata = handler.getMetadata();
+    metadata = handler.getGlobalMetadata();
     Vector containerNames = handler.getContainerNames();
     Vector containerCounts = handler.getContainerCounts();
     Vector seriesNames = handler.getSeriesNames();
@@ -335,6 +335,7 @@ public class LIFReader extends FormatReader {
     Vector stageY = handler.getYPosition();
     Vector stageZ = handler.getZPosition();
     Hashtable timestamps = handler.getTimestamps();
+    Vector<Hashtable> seriesMetadata = handler.getMetadata();
 
     numDatasets = widths.size();
 
@@ -434,6 +435,8 @@ public class LIFReader extends FormatReader {
           core[i].pixelType = FormatTools.FLOAT;
           break;
       }
+
+      core[i].seriesMetadata = seriesMetadata.get(i);
     }
     MetadataTools.populatePixels(store, this, true);
 

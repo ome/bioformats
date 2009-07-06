@@ -112,7 +112,7 @@ public class KhorosReader extends FormatReader {
     in.order(true);
     int dependency = in.readInt();
 
-    addMeta("Comment", in.readString(512));
+    addGlobalMeta("Comment", in.readString(512));
 
     in.order(dependency == 4 || dependency == 8);
 

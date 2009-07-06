@@ -386,6 +386,14 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMetadataValue(field);
   }
 
+  public Hashtable getGlobalMetadata() {
+    return reader.getGlobalMetadata();
+  }
+
+  public Hashtable getSeriesMetadata() {
+    return reader.getSeriesMetadata();
+  }
+
   public Hashtable getMetadata() {
     return reader.getMetadata();
   }

@@ -490,7 +490,7 @@ public class MIASReader extends FormatReader {
         if (doKeyValue) {
           String[] n = line.split("\t");
           if (n[0].endsWith(":")) n[0] = n[0].substring(0, n[0].length() - 1);
-          if (n.length >= 2) addMeta(n[0], n[1]);
+          if (n.length >= 2) addGlobalMeta(n[0], n[1]);
         }
         else {
           if (colNames == null) colNames = line;
@@ -504,8 +504,10 @@ public class MIASReader extends FormatReader {
       for (String row : rows) {
         String[] d = row.split("\t");
         for (int col=3; col<cols.length; col++) {
-          addMeta("Plate " + d[0] + ", Well " + d[2] + " " + cols[col], d[col]);
+          String key = "Plate " + d[0] + ", Well " + d[2] + " " + cols[col];
+          addGlobalMeta(key, d[col]);
 
+          addGlobalMeta("Plate " + d[0] + ", Well " + d[2] + " " + cols[col], d[col]);
           if (cols[col].equals("AreaCode")) {
             String wellID = d[col];
             wellID = wellID.replaceAll("\\D", "");

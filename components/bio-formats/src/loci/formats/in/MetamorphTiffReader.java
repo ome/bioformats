@@ -95,7 +95,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     // parse XML comment
 
-    MetamorphHandler handler = new MetamorphHandler(getMetadata());
+    MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
     for (int i=0; i<comments.length; i++) {
       comments[i] = TiffTools.getComment(ifds[i]);
       DataTools.parseXML(comments[i], handler);
@@ -141,10 +141,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
     Date td;
     for (int i=0; i<timestamps.size(); i++) {
       td = parse.parse((String) timestamps.get(i), new ParsePosition(0));
-      addMeta("timestamp " + i, tsfmt.format(td));
+      addGlobalMeta("timestamp " + i, tsfmt.format(td));
     }
     for (int i=0; i<exposures.size(); i++) {
-      addMeta("exposure time " + i + " (ms)",
+      addGlobalMeta("exposure time " + i + " (ms)",
         ((Float) exposures.get(i)).floatValue() * 1000);
     }
 

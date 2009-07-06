@@ -661,17 +661,28 @@ public class ImageInfo {
     viewer.setVisible(true);
   }
 
+  public void printGlobalMetadata() {
+    LogTools.println();
+    LogTools.println("Reading global metadata");
+    Hashtable meta = reader.getGlobalMetadata();
+    String[] keys = (String[]) meta.keySet().toArray(new String[0]);
+    Arrays.sort(keys);
+    for (String key : keys) {
+      LogTools.println(key + ": " + meta.get(key));
+    }
+  }
+
   public void printOriginalMetadata() {
     String seriesLabel = reader.getSeriesCount() > 1 ?
       (" series #" + series) : "";
     LogTools.println();
     LogTools.println("Reading" + seriesLabel + " metadata");
-    Hashtable meta = reader.getMetadata();
+    Hashtable meta = reader.getSeriesMetadata();
     String[] keys = (String[]) meta.keySet().toArray(new String[0]);
     Arrays.sort(keys);
     for (int i=0; i<keys.length; i++) {
       LogTools.print(keys[i] + ": ");
-      LogTools.println(reader.getMetadataValue(keys[i]));
+      LogTools.println(meta.get(keys[i]));
     }
   }
 
@@ -757,7 +768,10 @@ public class ImageInfo {
     if (pixels) readPixels();
 
     // read format-specific metadata table
-    if (doMeta) printOriginalMetadata();
+    if (doMeta) {
+      printGlobalMetadata();
+      printOriginalMetadata();
+    }
 
     // output and validate OME-XML
     if (omexml) printOMEXML();

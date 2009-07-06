@@ -136,6 +136,8 @@ public class TillVisionReader extends FormatReader {
     Vector dates = new Vector();
     int nImages = 0;
 
+    Hashtable tmpSeriesMetadata = new Hashtable();
+
     for (int i=0; i<documents.size(); i++) {
       String name = (String) documents.get(i);
       if (name.equals("Root Entry/Contents")) {
@@ -210,7 +212,8 @@ public class TillVisionReader extends FormatReader {
               String key = lines[q].substring(0, lines[q].indexOf(":")).trim();
               String value =
                 lines[q].substring(lines[q].indexOf(":") + 1).trim();
-              addMeta("Series " + nImages + " " + key, value);
+              String metaKey = "Series " + nImages + " " + key;
+              addMeta(metaKey, value, tmpSeriesMetadata);
 
               if (key.equals("Start time of experiment")) {
                 // HH:mm:ss aa OR HH:mm:ss.sss aa
@@ -299,6 +302,8 @@ public class TillVisionReader extends FormatReader {
 
     pixelsStream = new RandomAccessInputStream[getSeriesCount()];
 
+    Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
+
     for (int i=0; i<getSeriesCount(); i++) {
       if (!embeddedImages) {
         core[i] = new CoreMetadata();
@@ -342,7 +347,7 @@ public class TillVisionReader extends FormatReader {
           String key = line.substring(0, equal).trim();
           String value = line.substring(equal + 1).trim();
 
-          addMeta(key, value);
+          addGlobalMeta(key, value);
 
           if (key.equals("Width")) core[i].sizeX = Integer.parseInt(value);
           else if (key.equals("Height")) {
@@ -366,7 +371,17 @@ public class TillVisionReader extends FormatReader {
       core[i].rgb = false;
       core[i].littleEndian = true;
       core[i].dimensionOrder = "XYCZT";
+
+      core[i].seriesMetadata = new Hashtable();
+      for (Object key : metadataKeys) {
+        String keyName = key.toString();
+        if (keyName.startsWith("Series " + i + " ")) {
+          keyName = keyName.replaceAll("Series " + i + " ", "");
+          core[i].seriesMetadata.put(keyName, tmpSeriesMetadata.get(key));
+        }
+      }
     }
+    tmpSeriesMetadata = null;
 
     MetadataTools.populatePixels(store, this, true);
 

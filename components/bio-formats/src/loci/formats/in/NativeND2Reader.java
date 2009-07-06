@@ -449,13 +449,15 @@ public class NativeND2Reader extends FormatReader {
         // the acqtimecache is a undeliniated stream of doubles
 
         for (int series=0; series<getSeriesCount(); series++) {
+          setSeries(series);
           for (int plane=0; plane<getImageCount(); plane++) {
             // timestamps are stored in ms; we want them in seconds
             double time = in.readDouble() / 1000;
             tsT.add(new Double(time));
-            addMeta("series " + series + " timestamp " + plane, time);
+            addSeriesMeta("timestamp " + plane, time);
           }
         }
+        setSeries(0);
       }
 
       populateMetadataStore();
@@ -910,7 +912,7 @@ public class NativeND2Reader extends FormatReader {
 
   private void parseKeyAndValue(String key, String value) {
     if (key == null || value == null) return;
-    addMeta(key, value);
+    addGlobalMeta(key, value);
     if (key.endsWith("dCalibration")) {
       pixelSizeX = Float.parseFloat(value);
       pixelSizeY = pixelSizeX;
@@ -943,7 +945,7 @@ public class NativeND2Reader extends FormatReader {
       long v = (long) Double.parseDouble(value);
       if (!ts.contains(new Long(v))) {
         ts.add(new Long(v));
-        addMeta("number of timepoints", ts.size());
+        addGlobalMeta("number of timepoints", ts.size());
       }
     }
     else if (key.endsWith("dZPos")) {

@@ -131,11 +131,11 @@ public class IPLabReader extends FormatReader {
 
     core[0].imageCount = getSizeZ() * getSizeT();
 
-    addMeta("Width", getSizeX());
-    addMeta("Height", getSizeY());
-    addMeta("Channels", getSizeC());
-    addMeta("ZDepth", getSizeZ());
-    addMeta("TDepth", getSizeT());
+    addGlobalMeta("Width", getSizeX());
+    addGlobalMeta("Height", getSizeY());
+    addGlobalMeta("Channels", getSizeC());
+    addGlobalMeta("ZDepth", getSizeZ());
+    addGlobalMeta("TDepth", getSizeT());
 
     String ptype;
     switch (filePixelType) {
@@ -177,7 +177,7 @@ public class IPLabReader extends FormatReader {
 
     bps = FormatTools.getBytesPerPixel(getPixelType());
 
-    addMeta("PixelType", ptype);
+    addGlobalMeta("PixelType", ptype);
     in.skipBytes(dataSize);
 
     core[0].dimensionOrder = "XY";
@@ -216,7 +216,7 @@ public class IPLabReader extends FormatReader {
           };
           String clutType = (type >= 0 && type < types.length) ? types[type] :
             "unknown";
-          addMeta("LUT type", clutType);
+          addGlobalMeta("LUT type", clutType);
         }
         else {
           // explicitly defined lookup table
@@ -241,7 +241,7 @@ public class IPLabReader extends FormatReader {
 
           String sourceType = (source >= 0 && source < types.length) ?
             types[source] : "user";
-          addMeta("NormalizationSource" + i, sourceType);
+          addGlobalMeta("NormalizationSource" + i, sourceType);
 
           double min = in.readDouble();
           double max = in.readDouble();
@@ -249,11 +249,11 @@ public class IPLabReader extends FormatReader {
           double black = in.readDouble();
           double white = in.readDouble();
 
-          addMeta("NormalizationMin" + i, min);
-          addMeta("NormalizationMax" + i, max);
-          addMeta("NormalizationGamma" + i, gamma);
-          addMeta("NormalizationBlack" + i, black);
-          addMeta("NormalizationWhite" + i, white);
+          addGlobalMeta("NormalizationMin" + i, min);
+          addGlobalMeta("NormalizationMax" + i, max);
+          addGlobalMeta("NormalizationGamma" + i, gamma);
+          addGlobalMeta("NormalizationBlack" + i, black);
+          addGlobalMeta("NormalizationWhite" + i, white);
 
           // CTR CHECK
           //store.setDisplayChannel(new Integer(core[0].sizeC),
@@ -265,7 +265,7 @@ public class IPLabReader extends FormatReader {
 
         for (int i=0; i<size / 22; i++) {
           int num = in.readShort();
-          addMeta("Header" + num, in.readString(20));
+          addGlobalMeta("Header" + num, in.readString(20));
         }
       }
       else if (tag.equals("mmrc")) {
@@ -305,8 +305,8 @@ public class IPLabReader extends FormatReader {
           float unitsPerPixel = in.readFloat();
           int xUnitName = in.readInt();
 
-          addMeta("ResolutionStyle" + i, xResStyle);
-          addMeta("UnitsPerPixel" + i, unitsPerPixel);
+          addGlobalMeta("ResolutionStyle" + i, xResStyle);
+          addGlobalMeta("UnitsPerPixel" + i, unitsPerPixel);
 
           switch (xUnitName) {
             case 2: // mm
@@ -328,7 +328,7 @@ public class IPLabReader extends FormatReader {
 
           if (i == 0) pixelSize = new Float(unitsPerPixel);
 
-          addMeta("UnitName" + i, xUnitName);
+          addGlobalMeta("UnitName" + i, xUnitName);
         }
       }
       else if (tag.equals("view")) {
@@ -344,8 +344,8 @@ public class IPLabReader extends FormatReader {
         // read in notes (image info)
         String descriptor = in.readString(64);
         String notes = in.readString(512);
-        addMeta("Descriptor", descriptor);
-        addMeta("Notes", notes);
+        addGlobalMeta("Descriptor", descriptor);
+        addGlobalMeta("Notes", notes);
 
         store.setImageDescription(notes, 0);
         store.setImageName("", 0);
@@ -374,7 +374,7 @@ public class IPLabReader extends FormatReader {
               break;
           }
 
-          addMeta("Timestamp " + i, timepoint);
+          addGlobalMeta("Timestamp " + i, timepoint);
 
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {

@@ -384,7 +384,7 @@ public class GatanReader extends FormatReader {
       else debug(indent + i + ": unknown type: " + type);
 
       if (value != null) {
-        addMeta(labelString, value);
+        addGlobalMeta(labelString, value);
 
         if (labelString.equals("Scale")) {
           if (value.indexOf(",") == -1) pixelSizes.add(value);

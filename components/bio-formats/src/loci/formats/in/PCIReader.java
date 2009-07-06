@@ -154,7 +154,7 @@ public class PCIReader extends FormatReader {
             int idx = token.indexOf("=");
             String key = token.substring(0, idx).trim();
             String value = token.substring(idx + 1).trim();
-            addMeta(key, value);
+            addGlobalMeta(key, value);
 
             if (key.equals("factor")) {
               if (value.indexOf(";") != -1) {

@@ -117,7 +117,7 @@ public class MINCReader extends FormatReader {
           for (int q=0; q<o.length; q++) {
             sb.append(o[q].toString());
           }
-          addMeta(variable + " " + keys[j], sb.toString());
+          addGlobalMeta(variable + " " + keys[j], sb.toString());
         }
       }
     }
@@ -136,7 +136,7 @@ public class MINCReader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].pixelType = FormatTools.UINT8;
 
-    addMeta("Comment", netcdf.getAttributeValue("/history"));
+    addGlobalMeta("Comment", netcdf.getAttributeValue("/history"));
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

@@ -521,7 +521,7 @@ public class FV1000Reader extends FormatReader {
           }
           previewNames.add(path + value.trim());
         }
-        addMeta(prefix + key, value);
+        addGlobalMeta(prefix + key, value);
 
         if (prefix.startsWith("[Axis ") &&
           prefix.endsWith("Parameters Common] - "))
@@ -799,7 +799,7 @@ public class FV1000Reader extends FormatReader {
             }
           }
 
-          addMeta("Image " + ii + " : " + key, value);
+          addGlobalMeta("Image " + ii + " : " + key, value);
 
           if (key.equals("AnalogPMTGain") || key.equals("CountingPMTGain")) {
             gain = value;

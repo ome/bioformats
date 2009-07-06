@@ -56,7 +56,8 @@ public class LeicaHandler extends DefaultHandler {
   private Vector lutNames;
 
   private int numDatasets;
-  private Hashtable metadata;
+  private Hashtable globalMetadata;
+  private Vector<Hashtable> metadata;
 
   private MetadataStore store;
 
@@ -82,7 +83,8 @@ public class LeicaHandler extends DefaultHandler {
     seriesNames = new Vector();
     containerNames = new Vector();
     containerCounts = new Vector();
-    metadata = new Hashtable();
+    metadata = new Vector<Hashtable>();
+    globalMetadata = new Hashtable();
     xcal = new Vector();
     ycal = new Vector();
     zcal = new Vector();
@@ -120,7 +122,9 @@ public class LeicaHandler extends DefaultHandler {
 
   public Vector getContainerCounts() { return containerCounts; }
 
-  public Hashtable getMetadata() { return metadata; }
+  public Vector<Hashtable> getMetadata() { return metadata; }
+
+  public Hashtable getGlobalMetadata() { return globalMetadata; }
 
   public int getNumDatasets() { return numDatasets; }
 
@@ -182,6 +186,7 @@ public class LeicaHandler extends DefaultHandler {
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
+    Hashtable h = getSeriesHashtable(seriesNames.size() - 1);
     if (qName.equals("Element")) {
       if (!attributes.getValue("Name").equals("DCROISet") && !firstElement) {
         series = attributes.getValue("Name");
@@ -208,7 +213,7 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("Experiment")) {
       for (int i=0; i<attributes.getLength(); i++) {
-        metadata.put(attributes.getQName(i), attributes.getValue(i));
+        globalMetadata.put(attributes.getQName(i), attributes.getValue(i));
       }
     }
     else if (qName.equals("Image")) {
@@ -227,12 +232,11 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("ChannelDescription")) {
       String prefix = "Channel " + count + " - ";
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
+
       for (int i=0; i<attributes.getLength(); i++) {
-        metadata.put(prefix + attributes.getQName(i), attributes.getValue(i));
+        h.put(prefix + attributes.getQName(i), attributes.getValue(i));
       }
+
       count++;
       numChannels++;
       if (channels.size() > seriesNames.size() - 1) {
@@ -246,12 +250,11 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("DimensionDescription")) {
       String prefix = "Dimension " + count + " - ";
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
+
       for (int i=0; i<attributes.getLength(); i++) {
-        metadata.put(prefix + attributes.getQName(i), attributes.getValue(i));
+        h.put(prefix + attributes.getQName(i), attributes.getValue(i));
       }
+
       int len = Integer.parseInt(attributes.getValue("NumberOfElements"));
       int id = Integer.parseInt(attributes.getValue("DimID"));
 
@@ -296,10 +299,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("ScannerSettingRecord")) {
       String identifier = attributes.getValue("Identifier");
       String key = identifier + " - " + attributes.getValue("Description");
-      if (fullSeries != null && !fullSeries.equals("")) {
-        key = fullSeries + " - " + key;
-      }
-      metadata.put(key, attributes.getValue("Variant"));
+      h.put(key, attributes.getValue("Variant"));
       if (identifier.startsWith("dblVoxel")) {
         String size = attributes.getValue("Variant");
         float cal = Float.parseFloat(size) * 1000000;
@@ -312,13 +312,10 @@ public class LeicaHandler extends DefaultHandler {
       String object = attributes.getValue("ObjectName");
       String key = object + " - " + attributes.getValue("Description") + " - " +
         attributes.getValue("Attribute");
-      if (fullSeries != null && !fullSeries.equals("")) {
-        key = fullSeries + " - " + key;
-      }
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         String value = attributes.getValue(i);
-        metadata.put(key + " - " + name, value);
+        h.put(key + " - " + name, value);
 
         if (name.equals("Variant")) {
           if (key.endsWith("NumericalAperture")) {
@@ -458,7 +455,7 @@ public class LeicaHandler extends DefaultHandler {
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         String value = attributes.getValue(i);
-        metadata.put(fullSeries + " - " + name, value);
+        h.put(name, value);
 
         int s = seriesNames.size() - 1;
 
@@ -475,28 +472,19 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("Wheel")) {
       String prefix = qName + " " + count + " - ";
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
       for (int i=0; i<attributes.getLength(); i++) {
-        metadata.put(prefix + attributes.getQName(i), attributes.getValue(i));
+        h.put(prefix + attributes.getQName(i), attributes.getValue(i));
       }
       count++;
     }
     else if (qName.equals("WheelName")) {
       String prefix = "Wheel " + (count - 1) + " - WheelName ";
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
       int ndx = 0;
-      while (metadata.get(prefix + ndx) != null) ndx++;
-      metadata.put(prefix + ndx, attributes.getValue("FilterName"));
+      while (h.get(prefix + ndx) != null) ndx++;
+      h.put(prefix + ndx, attributes.getValue("FilterName"));
     }
     else if (qName.equals("MultiBand")) {
       String prefix = qName + " Channel " + attributes.getValue("Channel");
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
       int s = seriesNames.size() - 1;
       int channel = Integer.parseInt(attributes.getValue("Channel")) - 1;
       int channelCount = s < channels.size() ?
@@ -504,7 +492,7 @@ public class LeicaHandler extends DefaultHandler {
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         String value = attributes.getValue(i);
-        metadata.put(prefix + " - " + name, value);
+        h.put(prefix + " - " + name, value);
         if (name.equals("LeftWorld") && channel < channelCount) {
           store.setLogicalChannelEmWave(
             new Integer((int) Float.parseFloat(value)), s, channel);
@@ -520,13 +508,10 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("LaserLineSetting")) {
       String prefix = "LaserLine " + attributes.getValue("LaserLine");
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         if (!name.equals("LaserLine")) {
-          metadata.put(prefix + " - " + name, attributes.getValue(i));
+          h.put(prefix + " - " + name, attributes.getValue(i));
           store.setLaserWavelength(
             new Integer(attributes.getValue("LaserLine")), 0,
             Integer.parseInt(attributes.getValue("LineIndex")));
@@ -535,25 +520,19 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("Detector")) {
       String prefix = qName + " Channel " + attributes.getValue("Channel");
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         if (!name.equals("Channel")) {
-          metadata.put(prefix + " - " + name, attributes.getValue(i));
+          h.put(prefix + " - " + name, attributes.getValue(i));
         }
       }
     }
     else if (qName.equals("Laser")) {
       String prefix = qName + " " + attributes.getValue("LaserName");
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
         if (!name.equals("LaserName")) {
-          metadata.put(prefix + " - " + name, attributes.getValue(i));
+          h.put(prefix + " - " + name, attributes.getValue(i));
         }
       }
     }
@@ -570,24 +549,20 @@ public class LeicaHandler extends DefaultHandler {
 
       String n = String.valueOf(count);
       while (n.length() < 4) n = "0" + n;
-      metadata.put(fullSeries + " - " + qName + n,
-        DataTools.convertDate(ms, DataTools.COBOL));
+      h.put(qName + n, DataTools.convertDate(ms, DataTools.COBOL));
       count++;
     }
     else if (qName.equals("ChannelScalingInfo")) {
       String prefix = qName + count;
-      if (fullSeries != null && !fullSeries.equals("")) {
-        prefix = fullSeries + " - " + prefix;
-      }
       for (int i=0; i<attributes.getLength(); i++) {
         String name = attributes.getQName(i);
-        metadata.put(prefix + " - " + name, attributes.getValue(i));
+        h.put(prefix + " - " + name, attributes.getValue(i));
       }
     }
     else if (qName.equals("RelTimeStamp")) {
       String frame = attributes.getValue("Frame");
       String time = attributes.getValue("Time");
-      metadata.put(fullSeries + " - " + qName + " - " + frame, time);
+      h.put(qName + " - " + frame, time);
 
       int originalPlane = Integer.parseInt(frame);
       int planeNum =
@@ -600,6 +575,20 @@ public class LeicaHandler extends DefaultHandler {
       nextPlane.setElementAt(new Integer(planeNum), seriesNames.size() - 1);
     }
     else count = 0;
+    storeSeriesHashtable(seriesNames.size() - 1, h);
+  }
+
+  // -- Helper methods --
+
+  private Hashtable getSeriesHashtable(int series) {
+    if (series < 0 || series >= metadata.size()) return new Hashtable();
+    return metadata.get(series);
+  }
+
+  private void storeSeriesHashtable(int series, Hashtable h) {
+    if (series < 0) return;
+    if (series < metadata.size()) metadata.setElementAt(h, series);
+    else metadata.add(h);
   }
 
 }

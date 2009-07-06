@@ -121,7 +121,7 @@ public class OpenlabRawReader extends FormatReader {
 
     status("Populating metadata");
 
-    addMeta("Version", in.readInt());
+    addGlobalMeta("Version", in.readInt());
 
     core[0].imageCount = in.readInt();
     offsets = new int[getImageCount()];
@@ -146,7 +146,7 @@ public class OpenlabRawReader extends FormatReader {
       timestamp = new Date(stampMs);
       sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       stamp = sdf.format(timestamp);
-      addMeta("Timestamp", stamp);
+      addGlobalMeta("Timestamp", stamp);
     }
     if (stamp == null) {
       stamp = DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
@@ -154,13 +154,13 @@ public class OpenlabRawReader extends FormatReader {
 
     in.skipBytes(4);
     int len = in.read() & 0xff;
-    addMeta("Image name", in.readString(len - 1).trim());
+    addGlobalMeta("Image name", in.readString(len - 1).trim());
 
     if (getSizeC() <= 1) core[0].sizeC = 1;
     else core[0].sizeC = 3;
-    addMeta("Width", getSizeX());
-    addMeta("Height", getSizeY());
-    addMeta("Bytes per pixel", bytesPerPixel);
+    addGlobalMeta("Width", getSizeX());
+    addGlobalMeta("Height", getSizeY());
+    addGlobalMeta("Bytes per pixel", bytesPerPixel);
 
     int plane = getSizeX() * getSizeY() * bytesPerPixel;
     for (int i=1; i<getImageCount(); i++) {

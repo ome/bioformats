@@ -155,7 +155,7 @@ public class L2DReader extends FormatReader {
       if (!line.startsWith("#")) {
         String key = line.substring(0, line.indexOf("="));
         String value = line.substring(line.indexOf("=") + 1);
-        addMeta(key, value);
+        addGlobalMeta(key, value);
 
         if (key.equals("ScanNames")) {
           StringTokenizer names = new StringTokenizer(value, ",");
@@ -180,6 +180,7 @@ public class L2DReader extends FormatReader {
     String model = null;
 
     for (int i=0; i<scans.size(); i++) {
+      setSeries(i);
       core[i] = new CoreMetadata();
       tiffs[i] = new Vector();
       String scanName = (String) scans.get(i);
@@ -196,7 +197,7 @@ public class L2DReader extends FormatReader {
         if (!line.startsWith("#")) {
           String key = line.substring(0, line.indexOf("="));
           String value = line.substring(line.indexOf("=") + 1);
-          addMeta(scanName + " " + key, value);
+          addSeriesMeta(key, value);
 
           if (key.equals("ExperimentNames")) {
             // TODO : parse experiment metadata - this is typically a list of
@@ -229,6 +230,7 @@ public class L2DReader extends FormatReader {
       if (dates.size() == i) dates.add(null);
       if (wavelengths.size() == i) wavelengths.add(null);
     }
+    setSeries(0);
 
     reader = new MinimalTiffReader();
 

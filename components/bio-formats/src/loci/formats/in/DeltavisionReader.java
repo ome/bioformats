@@ -334,62 +334,62 @@ public class DeltavisionReader extends FormatReader {
 
     status("Populating original metadata");
 
-    addMeta("ImageWidth", sizeX);
-    addMeta("ImageHeight", sizeY);
-    addMeta("NumberOfImages", imageCount);
+    addGlobalMeta("ImageWidth", sizeX);
+    addGlobalMeta("ImageHeight", sizeY);
+    addGlobalMeta("NumberOfImages", imageCount);
 
-    addMeta("PixelType", pixel);
-    addMeta("Sub-image starting point (X)", subImageStartX);
-    addMeta("Sub-image starting point (Y)", subImageStartY);
-    addMeta("Sub-image starting point (Z)", subImageStartZ);
-    addMeta("Pixel sampling size (X)", pixelSamplingX);
-    addMeta("Pixel sampling size (Y)", pixelSamplingY);
-    addMeta("Pixel sampling size (Z)", pixelSamplingZ);
+    addGlobalMeta("PixelType", pixel);
+    addGlobalMeta("Sub-image starting point (X)", subImageStartX);
+    addGlobalMeta("Sub-image starting point (Y)", subImageStartY);
+    addGlobalMeta("Sub-image starting point (Z)", subImageStartZ);
+    addGlobalMeta("Pixel sampling size (X)", pixelSamplingX);
+    addGlobalMeta("Pixel sampling size (Y)", pixelSamplingY);
+    addGlobalMeta("Pixel sampling size (Z)", pixelSamplingZ);
 
-    addMeta("X element length (in um)", pixX);
-    addMeta("Y element length (in um)", pixY);
-    addMeta("Z element length (in um)", pixZ);
-    addMeta("X axis angle", xAxisAngle);
-    addMeta("Y axis angle", yAxisAngle);
-    addMeta("Z axis angle", zAxisAngle);
-    addMeta("Column axis sequence", xAxisSeq);
-    addMeta("Row axis sequence", yAxisSeq);
-    addMeta("Section axis sequence", zAxisSeq);
+    addGlobalMeta("X element length (in um)", pixX);
+    addGlobalMeta("Y element length (in um)", pixY);
+    addGlobalMeta("Z element length (in um)", pixZ);
+    addGlobalMeta("X axis angle", xAxisAngle);
+    addGlobalMeta("Y axis angle", yAxisAngle);
+    addGlobalMeta("Z axis angle", zAxisAngle);
+    addGlobalMeta("Column axis sequence", xAxisSeq);
+    addGlobalMeta("Row axis sequence", yAxisSeq);
+    addGlobalMeta("Section axis sequence", zAxisSeq);
 
-    addMeta("Image Type", imageType);
-    addMeta("Lens ID Number", lensID);
+    addGlobalMeta("Image Type", imageType);
+    addGlobalMeta("Lens ID Number", lensID);
 
-    addMeta("Number of timepoints", rawSizeT);
+    addGlobalMeta("Number of timepoints", rawSizeT);
 
-    addMeta("Image sequence", imageSequence);
+    addGlobalMeta("Image sequence", imageSequence);
 
-    addMeta("X axis tilt angle", xTiltAngle);
-    addMeta("Y axis tilt angle", yTiltAngle);
-    addMeta("Z axis tilt angle", zTiltAngle);
+    addGlobalMeta("X axis tilt angle", xTiltAngle);
+    addGlobalMeta("Y axis tilt angle", yTiltAngle);
+    addGlobalMeta("Z axis tilt angle", zTiltAngle);
 
-    addMeta("Number of wavelengths", rawSizeC);
-    addMeta("Number of focal planes", sizeZ);
+    addGlobalMeta("Number of wavelengths", rawSizeC);
+    addGlobalMeta("Number of focal planes", sizeZ);
 
     for (int i=0; i<waves.length; i++) {
-      addMeta("Wavelength " + (i + 1) + " (in nm)", waves[i]);
+      addGlobalMeta("Wavelength " + (i + 1) + " (in nm)", waves[i]);
     }
 
-    addMeta("X origin (in um)", xOrigin);
-    addMeta("Y origin (in um)", yOrigin);
-    addMeta("Z origin (in um)", zOrigin);
+    addGlobalMeta("X origin (in um)", xOrigin);
+    addGlobalMeta("Y origin (in um)", yOrigin);
+    addGlobalMeta("Z origin (in um)", zOrigin);
 
-    for (int i=0; i<title.length; i++) addMeta("Title " + (i + 1), title[i]);
+    for (int i=0; i<title.length; i++) addGlobalMeta("Title " + (i + 1), title[i]);
 
     for (int i=0; i<minWave.length; i++) {
-      addMeta("Wavelength " + (i + 1) + " min. intensity", minWave[i]);
-      addMeta("Wavelength " + (i + 1) + " max. intensity", maxWave[i]);
+      addGlobalMeta("Wavelength " + (i + 1) + " min. intensity", minWave[i]);
+      addGlobalMeta("Wavelength " + (i + 1) + " max. intensity", maxWave[i]);
     }
 
-    addMeta("Wavelength 1 mean intensity", meanIntensity);
-    addMeta("Space group number", spaceGroupNumber);
+    addGlobalMeta("Wavelength 1 mean intensity", meanIntensity);
+    addGlobalMeta("Space group number", spaceGroupNumber);
 
-    addMeta("Number of Sub-resolution sets", numSubResSets);
-    addMeta("Z axis reduction quotient", zAxisReductionQuotient);
+    addGlobalMeta("Number of Sub-resolution sets", numSubResSets);
+    addGlobalMeta("Z axis reduction quotient", zAxisReductionQuotient);
 
     // --- populate OME metadata ---
 
@@ -463,7 +463,7 @@ public class DeltavisionReader extends FormatReader {
       // field individually. With this approach it is still easy to
       // programmatically access any given extended header field.
       String prefix = "Extended header Z" + z + " W" + w + " T" + t;
-      addMeta(prefix, hdr);
+      addGlobalMeta(prefix, hdr);
 
       // -- record OME metadata --
 
@@ -569,7 +569,7 @@ public class DeltavisionReader extends FormatReader {
 
         value = line.substring(colon + 1).trim();
         if (value.equals("") && !key.equals("")) prefix = key;
-        addMeta(prefix + " " + key, value);
+        addGlobalMeta(prefix + " " + key, value);
 
         // Objective properties
         if (key.equals("Objective")) {
@@ -800,7 +800,7 @@ public class DeltavisionReader extends FormatReader {
               int zz = Integer.parseInt(values[0]) - 1;
               int index = getIndex(zz, cc, tt);
               for (int i=1; i<keys.length; i++) {
-                addMeta("Plane " + index + " " + keys[i], values[i]);
+                addGlobalMeta("Plane " + index + " " + keys[i], values[i]);
               }
             }
           }
@@ -828,9 +828,9 @@ public class DeltavisionReader extends FormatReader {
             (previousLine.endsWith("Deconvolution Results:") ||
             previousLine.endsWith("open OTF")))
           {
-            addMeta(previousLine + " " +  key, value);
+            addGlobalMeta(previousLine + " " +  key, value);
           }
-          else addMeta(key, value);
+          else addGlobalMeta(key, value);
         }
       }
 
@@ -870,8 +870,8 @@ public class DeltavisionReader extends FormatReader {
   {
     float min = in.readFloat();
     float max = in.readFloat();
-    addMeta("Wavelength " + (channel + 1) + " min. intensity", min);
-    addMeta("Wavelength " + (channel + 1) + " max. intensity", max);
+    addGlobalMeta("Wavelength " + (channel + 1) + " min. intensity", min);
+    addGlobalMeta("Wavelength " + (channel + 1) + " max. intensity", max);
     if (store instanceof IMinMaxStore) {
       ((IMinMaxStore) store).setChannelGlobalMinMax(0, min, max, channel);
     }

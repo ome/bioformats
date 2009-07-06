@@ -231,7 +231,7 @@ public class OMEReader extends FormatReader {
       for (int i=0; i<l.size(); i++) {
         r.setVar("index", i);
         r.exec("v = original.get(index)");
-        addMeta((String) r.exec("v.getStringElement(NAME)"),
+        addGlobalMeta((String) r.exec("v.getStringElement(NAME)"),
           (String) r.exec("v.getStringElement(VALUE)"));
       }
     }

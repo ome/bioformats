@@ -700,9 +700,21 @@ public class FileStitcher implements IFormatReader {
     return reader.getMetadataValue(field);
   }
 
+  /* @see IFormatReader#getGlobalMetadata() */
+  public Hashtable getGlobalMetadata() {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.getGlobalMetadata();
+  }
+
+  /* @see IFormatReader#getSeriesMetadata() */
+  public Hashtable getSeriesMetadata() {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.getSeriesMetadata();
+  }
+
   /* @see IFormatReader#getMetadata() */
   public Hashtable getMetadata() {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(currentId, true ,2);
     return reader.getMetadata();
   }
 
@@ -965,7 +977,7 @@ public class FileStitcher implements IFormatReader {
       core[i].rgb = rr.isRGB();
       core[i].littleEndian = rr.isLittleEndian();
       core[i].interleaved = rr.isInterleaved();
-      core[i].seriesMetadata = rr.getMetadata();
+      core[i].seriesMetadata = rr.getSeriesMetadata();
       core[i].indexed = rr.isIndexed();
       core[i].falseColor = rr.isFalseColor();
       sizeZ[i] = rr.getSizeZ();

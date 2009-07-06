@@ -204,7 +204,7 @@ public class MRWReader extends FormatReader {
         for (int i=0; i<ifds.length; i++) {
           Integer[] keys = (Integer[]) ifds[i].keySet().toArray(new Integer[0]);
           for (int q=0; q<keys.length; q++) {
-            addMeta(TiffTools.getIFDTagName(keys[q].intValue()),
+            addGlobalMeta(TiffTools.getIFDTagName(keys[q].intValue()),
               ifds[i].get(keys[q]));
           }
 
@@ -215,7 +215,7 @@ public class MRWReader extends FormatReader {
 
             Integer[] k = (Integer[]) exif.keySet().toArray(new Integer[0]);
             for (int q=0; q<k.length; q++) {
-              addMeta(BaseTiffReader.getExifTagName(k[q].intValue()),
+              addGlobalMeta(BaseTiffReader.getExifTagName(k[q].intValue()),
                 exif.get(k[q]));
             }
           }

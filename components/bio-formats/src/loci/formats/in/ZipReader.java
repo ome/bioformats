@@ -117,7 +117,7 @@ public class ZipReader extends FormatReader {
 
     metadataStore = reader.getMetadataStore();
     core = reader.getCoreMetadata();
-    metadata = reader.getMetadata();
+    metadata = reader.getGlobalMetadata();
   }
 
 }
