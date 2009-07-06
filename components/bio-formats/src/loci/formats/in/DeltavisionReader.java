@@ -378,7 +378,9 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("Y origin (in um)", yOrigin);
     addGlobalMeta("Z origin (in um)", zOrigin);
 
-    for (int i=0; i<title.length; i++) addGlobalMeta("Title " + (i + 1), title[i]);
+    for (int i=0; i<title.length; i++) {
+      addGlobalMeta("Title " + (i + 1), title[i]);
+    }
 
     for (int i=0; i<minWave.length; i++) {
       addGlobalMeta("Wavelength " + (i + 1) + " min. intensity", minWave[i]);

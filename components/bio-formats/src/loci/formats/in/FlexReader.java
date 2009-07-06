@@ -173,8 +173,8 @@ public class FlexReader extends BaseTiffReader {
 
     if (getImageCount() * seriesCount < ifds.length) {
       if (fieldCount == 1) {
-      	fieldCount = ifds.length / getSizeC();
-      	seriesCount = plateCount * wellCount * fieldCount;
+        fieldCount = ifds.length / getSizeC();
+        seriesCount = plateCount * wellCount * fieldCount;
       }
       core[0].imageCount = ifds.length / seriesCount;
       // Z-stacks are more likely than t-series (especially in Flex version 1.0)
@@ -402,8 +402,9 @@ public class FlexReader extends BaseTiffReader {
           " OffsetZ", value);
       }
       else if (currentQName.equals("Power")) {
-        addGlobalMeta("LightSourceCombination " + (nextLightSourceCombination - 1) +
-          " LightSourceRef " + (nextLightSourceRef - 1) + " Power", value);
+        addGlobalMeta("LightSourceCombination " +
+          (nextLightSourceCombination - 1) + " LightSourceRef " +
+          (nextLightSourceRef - 1) + " Power", value);
         power.put(new String[] {lightSourceComboID, lightSourceID},
           new Float(value));
       }

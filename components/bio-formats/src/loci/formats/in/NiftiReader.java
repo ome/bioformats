@@ -317,7 +317,8 @@ public class NiftiReader extends FormatReader {
     for (int i=0; i<transform.length; i++) {
       String axis = i == 0 ? "X" : i == 1 ? "Y" : "Z";
       for (int j=0; j<transform[i].length; j++) {
-        addGlobalMeta("Affine transform " + axis + "[" + j + "]", transform[i][j]);
+        addGlobalMeta("Affine transform " + axis + "[" + j + "]",
+          transform[i][j]);
       }
     }
     addGlobalMeta("Intent name", intentName);

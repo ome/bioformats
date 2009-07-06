@@ -165,7 +165,8 @@ public class IPWReader extends FormatReader {
       else if (relativePath.equals("FrameInfo")) {
         byte[] b = poi.getDocumentBytes(name);
         for (int q=0; q<b.length/2; q++) {
-          addGlobalMeta("FrameInfo " + q, DataTools.bytesToShort(b, q*2, 2, true));
+          addGlobalMeta("FrameInfo " + q,
+            DataTools.bytesToShort(b, q*2, 2, true));
         }
       }
       else if (relativePath.equals("ImageInfo")) {

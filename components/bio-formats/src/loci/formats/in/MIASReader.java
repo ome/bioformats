@@ -507,7 +507,6 @@ public class MIASReader extends FormatReader {
           String key = "Plate " + d[0] + ", Well " + d[2] + " " + cols[col];
           addGlobalMeta(key, d[col]);
 
-          addGlobalMeta("Plate " + d[0] + ", Well " + d[2] + " " + cols[col], d[col]);
           if (cols[col].equals("AreaCode")) {
             String wellID = d[col];
             wellID = wellID.replaceAll("\\D", "");

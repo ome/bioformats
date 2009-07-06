@@ -415,10 +415,6 @@ public class FluoviewReader extends BaseTiffReader {
       else comment = "";
     }
     addGlobalMeta("Comment", comment);
-    /* debug */
-    System.out.println("number of global metadata keys: " + getGlobalMetadata().size());
-    System.out.println("number of series metadata keys (0): " + getSeriesMetadata().size());
-    /* end debug */
   }
 
   /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */

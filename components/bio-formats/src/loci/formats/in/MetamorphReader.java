@@ -967,7 +967,8 @@ public class MetamorphReader extends BaseTiffReader {
     for (int i=0; i<mmPlanes; i++) {
       pos = intFormatMax(i, mmPlanes);
       for (int q=0; q<labels.length; q++) {
-        addSeriesMeta(labels[q] + "[" + pos + "]", readRational(in).doubleValue());
+        addSeriesMeta(labels[q] + "[" + pos + "]",
+          readRational(in).doubleValue());
       }
     }
   }
