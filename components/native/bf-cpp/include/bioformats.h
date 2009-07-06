@@ -51,7 +51,6 @@ using namespace jace::proxy::java::lang;
 #include "jace/proxy/java/io/IOException.h"
 using namespace jace::proxy::java::io;
 
-#include "jace/proxy/loci/formats/AWTImageTools.h"
 #include "jace/proxy/loci/formats/AxisGuesser.h"
 #include "jace/proxy/loci/formats/ChannelFiller.h"
 #include "jace/proxy/loci/formats/ChannelMerger.h"
@@ -72,29 +71,23 @@ using namespace jace::proxy::java::io;
 #include "jace/proxy/loci/formats/ImageReader.h"
 #include "jace/proxy/loci/formats/ImageTools.h"
 #include "jace/proxy/loci/formats/ImageWriter.h"
-#include "jace/proxy/loci/formats/Index16ColorModel.h"
-#include "jace/proxy/loci/formats/LegacyQTTools.h"
 #include "jace/proxy/loci/formats/MetadataTools.h"
 #include "jace/proxy/loci/formats/MinMaxCalculator.h"
 #include "jace/proxy/loci/formats/NetcdfTools.h"
 #include "jace/proxy/loci/formats/NumberFilter.h"
 #include "jace/proxy/loci/formats/POITools.h"
 #include "jace/proxy/loci/formats/ReaderWrapper.h"
-#include "jace/proxy/loci/formats/SignedColorModel.h"
 #include "jace/proxy/loci/formats/StatusEvent.h"
 #include "jace/proxy/loci/formats/StatusListener.h"
 #include "jace/proxy/loci/formats/StatusReporter.h"
 #include "jace/proxy/loci/formats/TiffIFDEntry.h"
 #include "jace/proxy/loci/formats/TiffRational.h"
 #include "jace/proxy/loci/formats/TiffTools.h"
-#include "jace/proxy/loci/formats/TwoChannelColorSpace.h"
 #include "jace/proxy/loci/formats/UnknownTagException.h"
 #include "jace/proxy/loci/formats/XMLTools.h"
 using namespace jace::proxy::loci::formats;
 
-#include "jace/proxy/loci/formats/cache/BufferedImageSource.h"
 #include "jace/proxy/loci/formats/cache/ByteArraySource.h"
-#include "jace/proxy/loci/formats/cache/CacheConsole.h"
 #include "jace/proxy/loci/formats/cache/CacheEvent.h"
 #include "jace/proxy/loci/formats/cache/CacheException.h"
 #include "jace/proxy/loci/formats/cache/Cache.h"
@@ -133,6 +126,8 @@ using namespace jace::proxy::loci::formats::cache;
 #include "jace/proxy/loci/formats/codec/ZlibCodec.h"
 using namespace jace::proxy::loci::formats::codec;
 
+#include "jace/proxy/loci/formats/gui/AWTImageTools.h"
+#include "jace/proxy/loci/formats/gui/BufferedImageSource.h"
 #include "jace/proxy/loci/formats/gui/CacheComponent.h"
 #include "jace/proxy/loci/formats/gui/CacheIndicator.h"
 #include "jace/proxy/loci/formats/gui/ComboFileFilter.h"
@@ -141,8 +136,12 @@ using namespace jace::proxy::loci::formats::codec;
 #include "jace/proxy/loci/formats/gui/FormatFileFilter.h"
 #include "jace/proxy/loci/formats/gui/GUITools.h"
 #include "jace/proxy/loci/formats/gui/ImageViewer.h"
+#include "jace/proxy/loci/formats/gui/Index16ColorModel.h"
+#include "jace/proxy/loci/formats/gui/LegacyQTTools.h"
 #include "jace/proxy/loci/formats/gui/NoExtensionFileFilter.h"
 #include "jace/proxy/loci/formats/gui/PreviewPane.h"
+#include "jace/proxy/loci/formats/gui/SignedColorModel.h"
+#include "jace/proxy/loci/formats/gui/TwoChannelColorSpace.h"
 #include "jace/proxy/loci/formats/gui/XMLCellRenderer.h"
 #include "jace/proxy/loci/formats/gui/XMLWindow.h"
 using namespace jace::proxy::loci::formats::gui;
@@ -255,6 +254,7 @@ using namespace jace::proxy::loci::formats::ome;
 #include "jace/proxy/loci/formats/out/TiffWriter.h"
 using namespace jace::proxy::loci::formats::out;
 
+#include "jace/proxy/loci/formats/tools/CacheConsole.h"
 #include "jace/proxy/loci/formats/tools/EditTiffG.h"
 #include "jace/proxy/loci/formats/tools/ImageConverter.h"
 #include "jace/proxy/loci/formats/tools/ImageInfo.h"
