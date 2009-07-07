@@ -65,6 +65,8 @@ public class FlexReader extends FormatReader {
   private Vector<String> channelNames;
   private Vector<Float> xPositions, yPositions;
 
+  private Vector<String> measurementFiles;
+
   /**
    * List of .flex files belonging to this dataset.
    * Indices into the array are the well row and well column.
@@ -96,6 +98,9 @@ public class FlexReader extends FormatReader {
       for (int j=0; j<flexFiles[i].length; j++) {
         if (flexFiles[i][j] != null) files.add(flexFiles[i][j]);
       }
+    }
+    for (String file : measurementFiles) {
+      files.add(file);
     }
     return files.toArray(new String[0]);
   }
@@ -148,6 +153,7 @@ public class FlexReader extends FormatReader {
     binX = binY = 0;
     plateCount = wellCount = fieldCount = 0;
     channelNames = null;
+    measurementFiles = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -156,6 +162,8 @@ public class FlexReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("FlexReader.initFile(" + id + ")");
     super.initFile(id);
+
+    measurementFiles = new Vector<String>();
 
     boolean doGrouping = true;
 
@@ -178,6 +186,7 @@ public class FlexReader extends FormatReader {
     }
 
     if (!isGroupFiles()) doGrouping = false;
+    if (isGroupFiles()) findMeasurementFiles(currentFile);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -240,6 +249,7 @@ public class FlexReader extends FormatReader {
       flexFiles = new String[1][1];
       ifds = new Hashtable[1][1][];
       factors = new double[1][1][];
+      wellNumber = new int[][] {{0, 0}};
 
       flexFiles[0][0] = currentFile.getAbsolutePath();
       RandomAccessInputStream s = new RandomAccessInputStream(flexFiles[0][0]);
@@ -249,10 +259,19 @@ public class FlexReader extends FormatReader {
       parseFlexFile(0, 0, true, store);
     }
 
+    wellCount = v.size() == 0 ? 1 : v.size();
+
     MetadataTools.populatePixels(store, this);
     store.setInstrumentID("Instrument:0", 0);
 
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+
+    /* debug */
+    System.out.println("fieldCount = " + fieldCount);
+    System.out.println("wellCount = " + wellCount);
+    System.out.println("wellNumber.size = " + wellNumber.length + "x" +
+      wellNumber[0].length);
+    /* end debug */
 
     for (int i=0; i<getSeriesCount(); i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
@@ -414,6 +433,66 @@ public class FlexReader extends FormatReader {
       CoreMetadata oldCore = core[0];
       core = new CoreMetadata[seriesCount];
       Arrays.fill(core, oldCore);
+    }
+  }
+
+  /**
+   * Search for measurement files (.mea, .res) that correspond to the
+   * given Flex file.
+   */
+  private void findMeasurementFiles(Location flexFile) throws IOException {
+    // we're assuming that the directory structure looks something like this:
+    //
+    //                        top level directory
+    //                         /              \
+    //           top level flex dir       top level measurement dir
+    //              /     |    \                 /       |     \
+    //        plate #0   ...   plate #n     plate #0    ...    plate #n
+    //       /   |  \                        /   \
+    //    .flex ... .flex                 .mea   .res
+    //
+    // or that the .mea and .res are in the same directory as the .flex files
+
+    Location plateDir = flexFile.getParentFile();
+    String[] files = plateDir.list();
+
+    for (String file : files) {
+      String lfile = file.toLowerCase();
+      if (lfile.endsWith(".mea") || lfile.endsWith(".res")) {
+        measurementFiles.add(new Location(plateDir, file).getAbsolutePath());
+      }
+    }
+    if (measurementFiles.size() > 0) return;
+
+    Location flexDir = plateDir.getParentFile();
+    Location topDir = flexDir.getParentFile();
+    Location measurementDir = null;
+
+    String[] topDirList = topDir.list();
+    for (String file : topDirList) {
+      if (!flexDir.getAbsolutePath().endsWith(file)) {
+        measurementDir = new Location(topDir, file);
+        break;
+      }
+    }
+
+    if (measurementDir == null) return;
+
+    String[] measurementPlates = measurementDir.list();
+    String plateName = plateDir.getName();
+    plateDir = null;
+    for (String file : measurementPlates) {
+      if (file.indexOf(plateName) != -1 || plateName.indexOf(file) != -1) {
+        plateDir = new Location(measurementDir, file);
+        break;
+      }
+    }
+
+    if (plateDir == null) return;
+
+    files = plateDir.list();
+    for (String file : files) {
+      measurementFiles.add(new Location(plateDir, file).getAbsolutePath());
     }
   }
 
