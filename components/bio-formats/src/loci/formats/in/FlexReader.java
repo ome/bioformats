@@ -8,7 +8,7 @@ Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -27,16 +27,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import loci.common.DataTools;
-import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
-
+import loci.common.*;
+import loci.formats.*;
+import loci.formats.meta.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -50,32 +43,38 @@ import org.xml.sax.helpers.DefaultHandler;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/FlexReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/FlexReader.java">SVN</a></dd></dl>
  */
-public class FlexReader extends BaseTiffReader {
+public class FlexReader extends FormatReader {
 
   // -- Constants --
 
   /** Custom IFD entry for Flex XML. */
-  public static final int FLEX = 65200;
+  protected static final int FLEX = 65200;
 
   // -- Fields --
 
   /** Scale factor for each image. */
-  protected double[] factors;
+  protected double[][][] factors;
 
-  private Vector<ImageInfo> images;
+  /** Camera binning values. */
+  private int binX, binY;
 
   private int plateCount;
   private int wellCount;
   private int fieldCount;
 
   private Vector<String> channelNames;
+  private Vector<Float> xPositions, yPositions;
 
-  private Hashtable<String, Vector<Float>> xPositions;
-  private Hashtable<String, Vector<Float>> yPositions;
+  /**
+   * List of .flex files belonging to this dataset.
+   * Indices into the array are the well row and well column.
+   */
+  private String[][] flexFiles;
 
-  private Vector<String> lightSourceIDs;
-  private Vector<String> subLayoutIDs;
-  private Hashtable<String[], Float> power;
+  private Hashtable[][][] ifds;
+
+  /** Specifies the row and column index into 'flexFiles' for a given well. */
+  private int[][] wellNumber;
 
   // -- Constructor --
 
@@ -83,6 +82,23 @@ public class FlexReader extends BaseTiffReader {
   public FlexReader() { super("Evotec Flex", "flex"); }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream in) throws IOException {
+    return false;
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    Vector<String> files = new Vector<String>();
+    for (int i=0; i<flexFiles.length; i++) {
+      for (int j=0; j<flexFiles[i].length; j++) {
+        if (flexFiles[i][j] != null) files.add(flexFiles[i][j]);
+      }
+    }
+    return files.toArray(new String[0]);
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -92,12 +108,23 @@ public class FlexReader extends BaseTiffReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int ifdIndex = getSeries() * getImageCount() + no;
+    int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+    int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
 
-    int nBytes = TiffTools.getBitsPerSample(ifds[ifdIndex])[0] / 8;
+    int imageNumber = getImageCount() * pos[0] + no;
+
+    int wellRow = wellNumber[pos[1]][0];
+    int wellCol = wellNumber[pos[1]][1];
+
+    Hashtable ifd = ifds[wellRow][wellCol][imageNumber];
+    RandomAccessInputStream s =
+      new RandomAccessInputStream(flexFiles[wellRow][wellCol]);
+
+    int nBytes = TiffTools.getBitsPerSample(ifd)[0] / 8;
 
     // expand pixel values with multiplication by factor[no]
-    byte[] bytes = TiffTools.getSamples(ifds[ifdIndex], in, buf, x, y, w, h);
+    byte[] bytes = TiffTools.getSamples(ifd, s, buf, x, y, w, h);
+    s.close();
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int num = bytes.length / bpp;
@@ -105,7 +132,7 @@ public class FlexReader extends BaseTiffReader {
     for (int i=num-1; i>=0; i--) {
       int q = nBytes == 1 ? bytes[i] & 0xff :
         DataTools.bytesToInt(bytes, i * bpp, bpp, isLittleEndian());
-      q = (int) (q * factors[ifdIndex]);
+      q = (int) (q * factors[wellRow][wellCol][imageNumber]);
       DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
     }
 
@@ -118,32 +145,157 @@ public class FlexReader extends BaseTiffReader {
   public void close() throws IOException {
     super.close();
     factors = null;
+    binX = binY = 0;
     plateCount = wellCount = fieldCount = 0;
     channelNames = null;
   }
 
-  // -- Internal BaseTiffReader API methods --
+  // -- Internal FormatReader API methods --
 
-  /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
-  protected void initStandardMetadata() throws FormatException, IOException {
-    super.initStandardMetadata();
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    debug("FlexReader.initFile(" + id + ")");
+    super.initFile(id);
 
-    core[0].dimensionOrder = "XYCZT";
-    core[0].sizeC = 0;
-    core[0].sizeT = 0;
-    core[0].sizeZ = 0;
+    boolean doGrouping = true;
 
-    images = new Vector<ImageInfo>();
-    channelNames = new Vector<String>();
-    xPositions = new Hashtable<String, Vector<Float>>();
-    yPositions = new Hashtable<String, Vector<Float>>();
-    lightSourceIDs = new Vector<String>();
-    subLayoutIDs = new Vector<String>();
-    power = new Hashtable<String[], Float>();
+    Location currentFile = new Location(id).getAbsoluteFile();
+
+    int nRows = 0, nCols = 0;
+    Hashtable<String, String> v = new Hashtable<String, String>();
+
+    try {
+      String name = currentFile.getName();
+      int wellRow = Integer.parseInt(name.substring(0, 3));
+      int wellCol = Integer.parseInt(name.substring(3, 6));
+      if (wellRow > nRows) nRows = wellRow;
+      if (wellCol > nCols) nCols = wellCol;
+      v.put(wellRow + "," + wellCol, currentFile.getAbsolutePath());
+    }
+    catch (NumberFormatException e) {
+      if (debug) trace(e);
+      doGrouping = false;
+    }
+
+    if (!isGroupFiles()) doGrouping = false;
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
+    if (doGrouping) {
+      // group together .flex files that are in the same directory
+
+      Location dir = currentFile.getParentFile();
+      String[] files = dir.list();
+
+      for (String file : files) {
+        // file names should be nnnnnnnnn.flex, where 'n' is 0-9
+        if (file.endsWith(".flex") && file.length() == 14 && !id.endsWith(file))
+        {
+          int wellRow = Integer.parseInt(file.substring(0, 3));
+          int wellCol = Integer.parseInt(file.substring(3, 6));
+          if (wellRow > nRows) nRows = wellRow;
+          if (wellCol > nCols) nCols = wellCol;
+          String path = new Location(dir, file).getAbsolutePath();
+          v.put(wellRow + "," + wellCol, path);
+        }
+        else if (!file.startsWith(".") && !id.endsWith(file)) {
+          doGrouping = false;
+          break;
+        }
+      }
+
+      if (doGrouping) {
+        flexFiles = new String[nRows][nCols];
+        ifds = new Hashtable[nRows][nCols][];
+        factors = new double[nRows][nCols][];
+        wellCount = v.size();
+
+        wellNumber = new int[wellCount][2];
+
+        RandomAccessInputStream s = null;
+
+        boolean firstFile = true;
+
+        int nextWell = 0;
+        for (int row=0; row<flexFiles.length; row++) {
+          for (int col=0; col<flexFiles[row].length; col++) {
+            flexFiles[row][col] = v.get((row + 1) + "," + (col + 1));
+            if (flexFiles[row][col] == null) continue;
+            wellNumber[nextWell][0] = row;
+            wellNumber[nextWell++][1] = col;
+            s = new RandomAccessInputStream(flexFiles[row][col]);
+            ifds[row][col] = TiffTools.getIFDs(s);
+            s.close();
+
+            parseFlexFile(row, col, firstFile, store);
+            if (firstFile) firstFile = false;
+          }
+        }
+      }
+    }
+
+    if (!doGrouping) {
+      wellCount = 1;
+      flexFiles = new String[1][1];
+      ifds = new Hashtable[1][1][];
+      factors = new double[1][1][];
+
+      flexFiles[0][0] = currentFile.getAbsolutePath();
+      RandomAccessInputStream s = new RandomAccessInputStream(flexFiles[0][0]);
+      ifds[0][0] = TiffTools.getIFDs(s);
+      s.close();
+
+      parseFlexFile(0, 0, true, store);
+    }
+
+    MetadataTools.populatePixels(store, this);
+    store.setInstrumentID("Instrument:0", 0);
+
+    int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      int[] pos = FormatTools.rasterToPosition(lengths, i);
+
+      store.setImageID("Image:" + i, i);
+      store.setImageInstrumentRef("Instrument:0", i);
+      store.setImageName("Well Row #" + wellNumber[pos[1]][0] + ", Column #" +
+        wellNumber[pos[1]][1] + "; Field #" + pos[0], i);
+
+      store.setWellSampleIndex(new Integer(i), pos[2], pos[1], pos[0]);
+      store.setWellSampleImageRef("Image:" + i, pos[2], pos[1], pos[0]);
+      if (pos[0] < xPositions.size()) {
+        store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], pos[1], pos[0]);
+      }
+      if (pos[0] < yPositions.size()) {
+        store.setWellSamplePosY(yPositions.get(pos[0]), pos[2], pos[1], pos[0]);
+      }
+
+      store.setWellRow(new Integer(wellNumber[pos[1]][0]), pos[2], pos[1]);
+      store.setWellColumn(new Integer(wellNumber[pos[1]][1]), pos[2], pos[1]);
+    }
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Parses XML metadata from the Flex file corresponding to the given well.
+   * If the 'firstFile' flag is set, then the core metadata is also
+   * populated.
+   */
+  private void parseFlexFile(int wellRow, int wellCol, boolean firstFile,
+    MetadataStore store)
+    throws FormatException, IOException
+  {
+    if (flexFiles[wellRow][wellCol] == null) return;
+
+    if (channelNames == null) channelNames = new Vector<String>();
+    if (xPositions == null) xPositions = new Vector<Float>();
+    if (yPositions == null) yPositions = new Vector<Float>();
 
     // parse factors from XML
-    String xml = (String) TiffTools.getIFDValue(ifds[0],
-      FLEX, true, String.class);
+    String xml =
+      (String) TiffTools.getIFDValue(ifds[wellRow][wellCol][0], FLEX);
 
     // HACK - workaround for Windows and Mac OS X bug where
     // SAX parser fails due to improperly handled mu (181) characters.
@@ -152,15 +304,85 @@ public class FlexReader extends BaseTiffReader {
       if (c[i] > '~' || (c[i] != '\t' && c[i] < ' ')) c[i] = ' ';
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
-    Vector<String> n = new Vector<String>();
-    Vector<String> f = new Vector<String>();
-    DefaultHandler handler = new FlexHandler(n, f, store);
+    Vector n = new Vector();
+    Vector f = new Vector();
+    DefaultHandler handler = new FlexHandler(n, f, store, firstFile);
     DataTools.parseXML(c, handler);
 
-    core[0].sizeC = (int) Math.max(channelNames.size(), 1);
+    if (firstFile) populateCoreMetadata(wellRow, wellCol, n);
+
+    int totalPlanes = getSeriesCount() * getImageCount();
+
+    // verify factor count
+    int nsize = n.size();
+    int fsize = f.size();
+    if (debug && (nsize != fsize || nsize != totalPlanes)) {
+      LogTools.println("Warning: mismatch between image count, " +
+        "names and factors (count=" + totalPlanes +
+        ", names=" + nsize + ", factors=" + fsize + ")");
+    }
+    for (int i=0; i<nsize; i++) addGlobalMeta("Name " + i, n.get(i));
+    for (int i=0; i<fsize; i++) addGlobalMeta("Factor " + i, f.get(i));
+
+    // parse factor values
+    factors[wellRow][wellCol] = new double[totalPlanes];
+    int max = 0;
+    for (int i=0; i<fsize; i++) {
+      String factor = (String) f.get(i);
+      double q = 1;
+      try {
+        q = Double.parseDouble(factor);
+      }
+      catch (NumberFormatException exc) {
+        if (debug) {
+          LogTools.println("Warning: invalid factor #" + i + ": " + factor);
+        }
+      }
+      factors[wellRow][wellCol][i] = q;
+      if (q > factors[wellRow][wellCol][max]) max = i;
+    }
+    Arrays.fill(factors[wellRow][wellCol], fsize,
+      factors[wellRow][wellCol].length, 1);
+
+    // determine pixel type
+    if (factors[wellRow][wellCol][max] > 256) {
+      core[0].pixelType = FormatTools.UINT32;
+    }
+    else if (factors[wellRow][wellCol][max] > 1) {
+      core[0].pixelType = FormatTools.UINT16;
+    }
+    for (int i=1; i<core.length; i++) {
+      core[i].pixelType = getPixelType();
+    }
+  }
+
+  /** Populate core metadata using the given list of image names. */
+  private void populateCoreMetadata(int wellRow, int wellCol,
+    Vector<String> imageNames)
+    throws FormatException
+  {
+    if (getSizeZ() == 0 && getSizeC() == 0 && getSizeT() == 0) {
+      Vector<String> uniqueChannels = new Vector<String>();
+      for (int i=0; i<imageNames.size(); i++) {
+        String name = imageNames.get(i);
+        String[] tokens = name.split("_");
+        if (tokens.length > 1) {
+          // fields are indexed from 1
+          int fieldIndex = Integer.parseInt(tokens[0]);
+          if (fieldIndex > fieldCount) fieldCount = fieldIndex;
+        }
+        String channel = tokens[tokens.length - 1];
+        if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
+      }
+      if (fieldCount == 0) fieldCount = 1;
+      core[0].sizeC = (int) Math.max(uniqueChannels.size(), 1);
+      core[0].sizeZ = 1;
+      core[0].sizeT = imageNames.size() / (fieldCount * getSizeC());
+    }
+
+    if (getSizeC() == 0) {
+      core[0].sizeC = (int) Math.max(channelNames.size(), 1);
+    }
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
     if (getSizeT() == 0) core[0].sizeT = 1;
@@ -171,145 +393,41 @@ public class FlexReader extends BaseTiffReader {
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     int seriesCount = plateCount * wellCount * fieldCount;
 
-    if (getImageCount() * seriesCount < ifds.length) {
-      if (fieldCount == 1) {
-        fieldCount = ifds.length / getSizeC();
-        seriesCount = plateCount * wellCount * fieldCount;
-      }
-      core[0].imageCount = ifds.length / seriesCount;
-      // Z-stacks are more likely than t-series (especially in Flex version 1.0)
-      if (getSizeZ() <= 1) core[0].sizeZ = getImageCount() / getSizeC();
-      core[0].sizeT = getImageCount() / (getSizeC() * getSizeZ());
-    }
-    else if (getImageCount() == ifds.length) {
-      seriesCount = 1;
+    if (getImageCount() * seriesCount < ifds[wellRow][wellCol].length) {
+      core[0].imageCount = ifds[wellRow][wellCol].length / seriesCount;
+      core[0].sizeZ = 1;
+      core[0].sizeC = 1;
+      core[0].sizeT = ifds[wellRow][wellCol].length / seriesCount;
     }
 
-    CoreMetadata oldCore = core[0];
-    core = new CoreMetadata[seriesCount];
-    core[0] = oldCore;
+    Hashtable ifd = ifds[wellRow][wellCol][0];
 
-    for (int i=1; i<seriesCount; i++) {
-      core[i] = new CoreMetadata();
-      core[i].sizeX = getSizeX();
-      core[i].sizeY = getSizeY();
-      core[i].sizeZ = getSizeZ();
-      core[i].sizeC = getSizeC();
-      core[i].sizeT = getSizeT();
-      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[i].dimensionOrder = getDimensionOrder();
-      core[i].rgb = isRGB();
-      core[i].interleaved = isInterleaved();
-      core[i].indexed = isIndexed();
-      core[i].littleEndian = isLittleEndian();
+    core[0].sizeX = (int) TiffTools.getImageWidth(ifd);
+    core[0].sizeY = (int) TiffTools.getImageLength(ifd);
+    core[0].dimensionOrder = "XYCZT";
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].indexed = false;
+    core[0].littleEndian = TiffTools.isLittleEndian(ifd);
+
+    if (seriesCount > 1) {
+      CoreMetadata oldCore = core[0];
+      core = new CoreMetadata[seriesCount];
+      Arrays.fill(core, oldCore);
     }
-
-    int totalPlanes = getSeriesCount() * getImageCount();
-
-    // verify factor count
-    int nsize = n.size();
-    int fsize = f.size();
-    if (nsize != fsize || nsize != totalPlanes) {
-      warn("Mismatch between image count, " +
-        "names and factors (count=" + totalPlanes +
-        ", names=" + nsize + ", factors=" + fsize + ")");
-    }
-    for (int i=0; i<nsize; i++) addGlobalMeta("Name " + i, n.get(i));
-    for (int i=0; i<fsize; i++) addGlobalMeta("Factor " + i, f.get(i));
-
-    // parse factor values
-    factors = new double[totalPlanes];
-    int max = 0;
-    for (int i=0; i<(int) Math.min(fsize, totalPlanes); i++) {
-      String factor = f.get(i);
-      double q = 1;
-      try {
-        q = Double.parseDouble(factor);
-      }
-      catch (NumberFormatException exc) {
-        warn("Invalid factor #" + i + ": " + factor);
-      }
-      factors[i] = q;
-      if (q > factors[max]) max = i;
-    }
-    if (fsize < factors.length) {
-      Arrays.fill(factors, fsize, factors.length, 1);
-    }
-
-    // determine pixel type
-    if (factors[max] > 256) core[0].pixelType = FormatTools.UINT32;
-    else if (factors[max] > 1) core[0].pixelType = FormatTools.UINT16;
-    for (int i=1; i<core.length; i++) {
-      core[i].pixelType = getPixelType();
-    }
-
-    MetadataTools.populatePixels(store, this, true);
-    store.setInstrumentID("Instrument:0", 0);
-
-    int[] lengths = new int[] {plateCount, wellCount, fieldCount};
-
-    for (int i=0; i<getSeriesCount(); i++) {
-      int[] pos = FormatTools.rasterToPosition(lengths, i);
-
-      for (int q=0; q<getImageCount(); q++) {
-        if (i * getImageCount() + q >= images.size()) break;
-        ImageInfo image = images.get(i * getImageCount() + q);
-        store.setStagePositionPositionX(new Float(image.positionX), i, 0, q);
-        store.setStagePositionPositionY(new Float(image.positionY), i, 0, q);
-        store.setStagePositionPositionZ(new Float(image.positionZ), i, 0, q);
-        store.setPlaneTimingDeltaT(
-          new Float(image.measurementTimeOffset), i, 0, q);
-        store.setPlaneTimingExposureTime(
-          new Float(image.exposureTime), i, 0, q);
-      }
-
-      if (i * getImageCount() < images.size()) {
-        ImageInfo image = images.get(i * getImageCount());
-
-        store.setImageCreationDate(image.date, i);
-
-        store.setDimensionsPhysicalSizeX(new Float(image.resolutionX), i, 0);
-        store.setDimensionsPhysicalSizeY(new Float(image.resolutionY), i, 0);
-        store.setObjectiveSettingsObjective("Objective:" + image.objective, i);
-      }
-
-      for (int ch=0; ch<getEffectiveSizeC(); ch++) {
-        if (i * getImageCount() + ch >= images.size()) break;
-        ImageInfo image = images.get(i * getImageCount() + ch);
-        store.setDetectorSettingsDetector("Detector:" + image.camera, i, ch);
-        store.setDetectorSettingsBinning(image.binX + "x" + image.binY, i, ch);
-      }
-
-      store.setImageID("Image:" + i, i);
-      store.setImageInstrumentRef("Instrument:0", i);
-      store.setWellSampleIndex(new Integer(i), pos[0], pos[1], pos[2]);
-      store.setWellSampleImageRef("Image:" + i, pos[0], pos[1], pos[2]);
-
-      if (pos[1] < subLayoutIDs.size()) {
-        String sublayout = subLayoutIDs.get(pos[1]);
-        Float xpos = xPositions.get(sublayout).get(pos[2]);
-        Float ypos = yPositions.get(sublayout).get(pos[2]);
-        store.setWellSamplePosX(xpos, pos[0], pos[1], pos[2]);
-        store.setWellSamplePosY(ypos, pos[0], pos[1], pos[2]);
-      }
-    }
-  }
-
-  /* @see loci.formats.in.BaseTiffReader#initMetadata() */
-  protected void initMetadata() throws FormatException, IOException {
-    initStandardMetadata();
   }
 
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
   public class FlexHandler extends DefaultHandler {
-    private Vector<String> names, factors;
+    private Vector names, factors;
     private MetadataStore store;
 
     private int nextLightSource = 0;
     private int nextLaser = -1;
 
+    private int nextArrayImage = 0;
     private int nextSlider = 0;
     private int nextFilter = 0;
     private int nextCamera = 0;
@@ -328,33 +446,22 @@ public class FlexReader extends BaseTiffReader {
     private int nextSliderRef = 0;
     private int nextFilterCombination = 0;
 
-    private ImageInfo currentImage;
+    private String parentQName;
+    private String currentQName;
 
-    private Hashtable<String, Integer> fieldCounts;
-    private String currentSublayout;
+    private boolean populateCore = true;
 
-    private String parentQName, currentQName;
-    private String sliderName;
-
-    private String lightSourceComboID, lightSourceID;
-
-    public FlexHandler(Vector<String> names, Vector<String> factors,
-      MetadataStore store)
+    public FlexHandler(Vector names, Vector factors, MetadataStore store,
+      boolean populateCore)
     {
       this.names = names;
       this.factors = factors;
       this.store = store;
-      fieldCounts = new Hashtable<String, Integer>();
+      this.populateCore = populateCore;
     }
 
     public void characters(char[] ch, int start, int length) {
       String value = new String(ch, start, length);
-
-      if (currentQName.equals("SublayoutRef")) {
-        fieldCount = fieldCounts.get(value).intValue();
-        subLayoutIDs.add(value);
-      }
-
       if (currentQName.equals("PlateName")) {
         store.setPlateName(value, nextPlate - 1);
         addGlobalMeta("Plate " + (nextPlate - 1) + " Name", value);
@@ -366,12 +473,13 @@ public class FlexReader extends BaseTiffReader {
         addGlobalMeta("Plate " + (nextPlate - 1) + " WellShape " + currentQName,
           value);
       }
+      else if (currentQName.equals("Wavelength")) {
+        store.setLaserWavelength(new Integer(value), 0, nextLaser);
+        addGlobalMeta("Laser " + nextLaser + " Wavelength", value);
+      }
       else if (currentQName.equals("Magnification")) {
-        try {
-          store.setObjectiveNominalMagnification(
-            new Integer((int) Float.parseFloat(value)), 0, nextObjective);
-        }
-        catch (NumberFormatException e) { }
+        store.setObjectiveCalibratedMagnification(new Float(value), 0,
+          nextObjective);
       }
       else if (currentQName.equals("NumAperture")) {
         store.setObjectiveLensNA(new Float(value), 0, nextObjective);
@@ -383,96 +491,17 @@ public class FlexReader extends BaseTiffReader {
       {
         addGlobalMeta("Sublayout " + (nextSublayout - 1) + " Field " +
           (nextField - 1) + " " + currentQName, value);
-        Float offset = new Float(Float.parseFloat(value) * 10000);
-        if (currentQName.equals("OffsetX")) {
-          Vector<Float> v = xPositions.get(currentSublayout);
-          if (v == null) v = new Vector<Float>();
-          v.add(offset);
-          xPositions.put(currentSublayout, v);
-        }
-        else {
-          Vector<Float> v = yPositions.get(currentSublayout);
-          if (v == null) v = new Vector<Float>();
-          v.add(offset);
-          yPositions.put(currentSublayout, v);
-        }
+        Float offset = new Float(value);
+        if (currentQName.equals("OffsetX")) xPositions.add(offset);
+        else yPositions.add(offset);
       }
       else if (currentQName.equals("OffsetZ")) {
         addGlobalMeta("Stack " + (nextStack - 1) + " Plane " + (nextPlane - 1) +
           " OffsetZ", value);
       }
       else if (currentQName.equals("Power")) {
-        addGlobalMeta("LightSourceCombination " +
-          (nextLightSourceCombination - 1) + " LightSourceRef " +
-          (nextLightSourceRef - 1) + " Power", value);
-        power.put(new String[] {lightSourceComboID, lightSourceID},
-          new Float(value));
-      }
-      else if (currentQName.equals("CameraBinningX")) {
-        try {
-          currentImage.binX = Integer.parseInt(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("CameraBinningY")) {
-        try {
-          currentImage.binY = Integer.parseInt(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("ImageResolutionX")) {
-        try {
-          currentImage.resolutionX = Float.parseFloat(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("ImageResolutionY")) {
-        try {
-          currentImage.resolutionY = Float.parseFloat(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("ObjectiveRef")) {
-        currentImage.objective = value;
-      }
-      else if (currentQName.equals("CameraExposureTime")) {
-        try {
-          currentImage.exposureTime = Float.parseFloat(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("PositionX")) {
-        try {
-          currentImage.positionX = Float.parseFloat(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("PositionY")) {
-        try {
-          currentImage.positionY = Float.parseFloat(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("PositionZ")) {
-        try {
-          currentImage.positionZ = Float.parseFloat(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("MeasurementTimeOffset")) {
-        try {
-          currentImage.measurementTimeOffset = Float.parseFloat(value);
-        }
-        catch (NumberFormatException e) { }
-      }
-      else if (currentQName.equals("DateTime")) {
-        currentImage.date = value;
-      }
-      else if (currentQName.equals("CameraRef")) {
-        currentImage.camera = value;
-      }
-      else if (currentQName.equals("LightSourceCombinationRef")) {
-        currentImage.lightSource = value;
+        addGlobalMeta("LightSourceCombination " + (nextLightSourceCombination - 1) +
+          " LightSourceRef " + (nextLightSourceRef - 1) + " Power", value);
       }
       else if (parentQName.equals("Image")) {
         addGlobalMeta("Image " + (nextImage - 1) + " " + currentQName, value);
@@ -480,20 +509,24 @@ public class FlexReader extends BaseTiffReader {
         if (currentQName.equals("DateTime") && nextImage == 1) {
           store.setImageCreationDate(value, 0);
         }
+        else if (currentQName.equals("CameraBinningX")) {
+          binX = Integer.parseInt(value);
+        }
+        else if (currentQName.equals("CameraBinningY")) {
+          binY = Integer.parseInt(value);
+        }
+        else if (currentQName.equals("LightSourceCombinationRef")) {
+          if (!channelNames.contains(value)) channelNames.add(value);
+        }
+      }
+      else if (parentQName.equals("ImageResolutionX")) {
+        store.setDimensionsPhysicalSizeX(new Float(value), nextImage - 1, 0);
+      }
+      else if (parentQName.equals("ImageResolutionY")) {
+        store.setDimensionsPhysicalSizeY(new Float(value), nextImage - 1, 0);
       }
       else if (parentQName.equals("Well")) {
         addGlobalMeta("Well " + (nextWell - 1) + " " + currentQName, value);
-      }
-      else if (parentQName.equals("FLIM")) {
-        addGlobalMeta("FLIM " + nextImage + " " + currentQName, value);
-      }
-      else if (currentQName.equals("Wavelength") &&
-        parentQName.equals("LightSource"))
-      {
-        store.setLaserWavelength(new Integer(value), 0, nextLaser);
-        store.setLaserType("Unknown", 0, nextLaser);
-        store.setLaserLaserMedium("Unknown", 0, nextLaser);
-        addGlobalMeta("Laser " + nextLaser + " Wavelength", value);
       }
     }
 
@@ -503,29 +536,18 @@ public class FlexReader extends BaseTiffReader {
       currentQName = qName;
       if (qName.equals("Array")) {
         int len = attributes.getLength();
-        for (int i=0; i<len; i++) {
+        for (int i=0; i<len; i++, nextArrayImage++) {
           String name = attributes.getQName(i);
           if (name.equals("Name")) {
-            String imageName = attributes.getValue(i);
-            names.add(imageName);
-            // some datasets have image names of the form "1_Exp1Cam1"
-            // we're assuming that "Exp1Cam1" is the channel name, and
-            // "1" is the T index
-
-            // Actually this would be from the old flex format.
-            // The 1_, 2_... represent any series,  whether they are time
-            // points, Z-sections or number of fields == number of series.
-            // I would be more innclined to associate that index with the
-            // number of series or Z-stacks.
-            imageName = imageName.substring(imageName.indexOf("_") + 1);
-            if (!channelNames.contains(imageName)) {
-              channelNames.add(imageName);
-            }
+            names.add(attributes.getValue(i));
+            //if (nextArrayImage == 0) {
+            //  store.setImageName(attributes.getValue(i), 0);
+            //}
           }
           else if (name.equals("Factor")) factors.add(attributes.getValue(i));
-          else if (name.equals("Description")) {
-            store.setImageDescription(attributes.getValue(i), 0);
-          }
+          //else if (name.equals("Description") && nextArrayImage == 0) {
+          //  store.setImageDescription(attributes.getValue(i), 0);
+          //}
         }
       }
       else if (qName.equals("LightSource")) {
@@ -535,137 +557,147 @@ public class FlexReader extends BaseTiffReader {
         addGlobalMeta("LightSource " + nextLightSource + " ID", id);
         addGlobalMeta("LightSource " + nextLightSource + " Type", type);
 
-        store.setLightSourceID("LightSource:" + id, 0, nextLightSource);
-
-        nextLaser++;
+        if (type.equals("Laser")) nextLaser++;
         nextLightSource++;
       }
       else if (qName.equals("Slider")) {
         parentQName = qName;
-        addAllAttributes("Slider " + nextSlider, attributes);
-        sliderName = attributes.getValue("Name");
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Slider " + nextSlider + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
         nextSlider++;
       }
       else if (qName.equals("Filter")) {
-        addAllAttributes("Filter " + nextFilter, attributes);
-        store.setFilterID("Filter:" + attributes.getValue("ID"), 0, nextFilter);
-        store.setFilterFilterWheel(sliderName, 0, nextFilter);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Filter " + nextFilter + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
         nextFilter++;
       }
       else if (qName.equals("Camera")) {
         parentQName = qName;
-        addAllAttributes("Camera " + nextCamera, attributes);
-        store.setDetectorID("Detector:" + attributes.getValue("ID"),
-          0, nextCamera);
-        store.setDetectorType(attributes.getValue("CameraType"), 0, nextCamera);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Camera " + nextCamera + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
         nextCamera++;
       }
-      else if (qName.startsWith("PixelSize") && parentQName.equals("Camera")) {
-        addAllAttributes("Camera " + (nextCamera - 1) + " " + qName,
-          attributes);
+      else if (qName.startsWith("PixelSize") && parentQName.equals("Camera"))
+      {
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Camera " + (nextCamera - 1) + " " + qName + " " +
+            attributes.getQName(i), attributes.getValue(i));
+        }
       }
       else if (qName.equals("Objective")) {
         parentQName = qName;
         nextObjective++;
 
-        store.setObjectiveID("Objective:" + attributes.getValue("ID"),
-          0, nextObjective);
-        store.setObjectiveCorrection("Unknown", 0, nextObjective);
+        // link Objective to Image using ObjectiveSettings
+        store.setObjectiveID("Objective:" + nextObjective, 0, 0);
+        store.setObjectiveSettingsObjective("Objective:" + nextObjective, 0);
+        store.setObjectiveCorrection("Unknown", 0, 0);
       }
       else if (qName.equals("Sublayout")) {
         parentQName = qName;
         nextField = 0;
-        addAllAttributes("Sublayout " + nextSublayout, attributes);
-        nextSublayout++;
-
-        String id = attributes.getValue("ID");
-        if (id != null) {
-          currentSublayout = id;
-          if (!fieldCounts.containsKey(currentSublayout)) {
-            fieldCounts.put(currentSublayout, new Integer(0));
-          }
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Sublayout " + nextSublayout + " " + attributes.getQName(i),
+            attributes.getValue(i));
         }
+        nextSublayout++;
       }
       else if (qName.equals("Field")) {
         parentQName = qName;
-        addAllAttributes("Sublayout " + (nextSublayout - 1) + " Field " +
-          nextField, attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Sublayout " + (nextSublayout - 1) + " Field " + nextField +
+            " " + attributes.getQName(i), attributes.getValue(i));
+        }
         nextField++;
-        int fieldNo = 0;
-        try { fieldNo = Integer.parseInt(attributes.getValue("No")); }
-        catch (NumberFormatException e) { }
-        int count = fieldCounts.get(currentSublayout).intValue();
-        if (fieldNo > count) count++;
-        fieldCounts.put(currentSublayout, new Integer(count));
+        int fieldNo = Integer.parseInt(attributes.getValue("No"));
+        if (fieldNo > fieldCount) fieldCount++;
       }
       else if (qName.equals("Stack")) {
         nextPlane = 0;
-        addAllAttributes("Stack " + nextStack, attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Stack " + nextStack + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
         nextStack++;
       }
       else if (qName.equals("Plane")) {
         parentQName = qName;
-        addAllAttributes("Stack " + (nextStack - 1) + " Plane " + nextPlane,
-          attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Stack " + (nextStack - 1) + " Plane " + nextPlane +
+            " " + attributes.getQName(i), attributes.getValue(i));
+        }
         nextPlane++;
-        int planeNo = 0;
-        try { planeNo = Integer.parseInt(attributes.getValue("No")); }
-        catch (NumberFormatException e) { }
-        if (planeNo > getSizeZ()) core[0].sizeZ++;
+        int planeNo = Integer.parseInt(attributes.getValue("No"));
+        if (planeNo > getSizeZ() && populateCore) core[0].sizeZ++;
       }
       else if (qName.equals("Kinetic")) {
-        addAllAttributes("Kinetic " + nextKinetic, attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Kinetic " + nextKinetic + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
         nextKinetic++;
       }
       else if (qName.equals("Dispensing")) {
-        addAllAttributes("Dispensin " + nextDispensing, attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Dispensing " + nextDispensing + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
         nextDispensing++;
       }
       else if (qName.equals("LightSourceCombination")) {
         nextLightSourceRef = 0;
-        addAllAttributes("LightSourceCombination " + nextLightSourceCombination,
-          attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("LightSourceCombination " + nextLightSourceCombination +
+            " " + attributes.getQName(i), attributes.getValue(i));
+        }
         nextLightSourceCombination++;
-        lightSourceComboID = attributes.getValue("ID");
-        lightSourceIDs.add(lightSourceComboID);
       }
       else if (qName.equals("LightSourceRef")) {
         parentQName = qName;
-        lightSourceID = attributes.getValue("ID");
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("LightSourceCombination " + (nextLightSourceCombination - 1) +
+            " LightSourceRef " + nextLightSourceRef + " " +
+            attributes.getQName(i), attributes.getValue(i));
+        }
+        nextLightSourceRef++;
       }
       else if (qName.equals("FilterCombination")) {
         parentQName = qName;
         nextSliderRef = 0;
-        addAllAttributes("FilterCombination " + nextFilterCombination,
-          attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("FilterCombination " + nextFilterCombination + " " +
+            attributes.getQName(i), attributes.getValue(i));
+        }
         nextFilterCombination++;
       }
       else if (qName.equals("SliderRef")) {
-        parentQName = qName;
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("FilterCombination " + (nextFilterCombination - 1) +
+            " SliderRef " + nextSliderRef + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
+        nextSliderRef++;
       }
       else if (qName.equals("Image")) {
         parentQName = qName;
-        addAllAttributes("Image " + nextImage, attributes);
+        for (int i=0; i<attributes.getLength(); i++) {
+          addGlobalMeta("Image " + nextImage + " " + attributes.getQName(i),
+            attributes.getValue(i));
+        }
 
         nextImage++;
-
-        currentImage = new ImageInfo();
 
         //Implemented for FLEX v1.7 and below
         String x = attributes.getValue("CameraBinningX");
         String y = attributes.getValue("CameraBinningY");
-        if (x != null) {
-          try {
-            currentImage.binX = Integer.parseInt(x);
-          }
-          catch (NumberFormatException e) { }
-        }
-        if (y != null) {
-          try {
-            currentImage.binY = Integer.parseInt(y);
-          }
-          catch (NumberFormatException e) { }
-        }
+        if (x != null) binX = Integer.parseInt(x);
+        if (y != null) binY = Integer.parseInt(y);
       }
       else if (qName.equals("Plate") || qName.equals("WellShape") ||
         qName.equals("Well"))
@@ -682,100 +714,29 @@ public class FlexReader extends BaseTiffReader {
       }
       else if (qName.equals("WellCoordinate")) {
         int ndx = nextWell - 1;
-        int row = 0, col = 0;
-        try {
-          row = Integer.parseInt(attributes.getValue("Row")) - 1;
-        }
-        catch (NumberFormatException e) { }
-        try {
-          col = Integer.parseInt(attributes.getValue("Col")) - 1;
-        }
-        catch (NumberFormatException e) { }
-        addGlobalMeta("Well " + ndx + " Row", row);
-        addGlobalMeta("Well " + ndx + " Col", col);
-        store.setWellRow(new Integer(row), 0, ndx);
-        store.setWellColumn(new Integer(col), 0, ndx);
+        addGlobalMeta("Well" + ndx + " Row", attributes.getValue("Row"));
+        addGlobalMeta("Well" + ndx + " Col", attributes.getValue("Col"));
+        //store.setWellRow(new Integer(attributes.getValue("Row")), 0, ndx);
+        //store.setWellColumn(new Integer(attributes.getValue("Col")), 0, ndx);
       }
       else if (qName.equals("Status")) {
         addGlobalMeta("Status", attributes.getValue("StatusString"));
       }
-      else if (qName.equals("ImageResolutionX")) {
+      else if(qName.equals("ImageResolutionX")) {
         parentQName = qName;
-        currentImage.resolutionXUnit = attributes.getValue("Unit");
+      //TODO: definition of the dimension type and unit Where to store?
+        for (int i=0; i<attributes.getLength(); i++) {
+          //addGlobalMeta("Image " + nextImage + " " + attributes.getQName(i), attributes.getValue(i));
+        }
       }
-      else if (qName.equals("ImageResolutionY")) {
+      else if(qName.equals("ImageResolutionY")) {
         parentQName = qName;
-        currentImage.resolutionYUnit = attributes.getValue("Unit");
-      }
-      else if (qName.equals("PositionX")) {
-        parentQName = qName;
-        currentImage.positionXUnit = attributes.getValue("Unit");
-      }
-      else if (qName.equals("PositionY")) {
-        parentQName = qName;
-        currentImage.positionYUnit = attributes.getValue("Unit");
-      }
-      else if (qName.equals("PositionZ")) {
-        parentQName = qName;
-        currentImage.positionZUnit = attributes.getValue("Unit");
-      }
-      else if (qName.equals("FLIM")) {
-        parentQName = qName;
-        addAllAttributes("FLIM " + nextImage, attributes);
+        //TODO: definition of the dimension type and unit Where to store?
+        for (int i=0; i<attributes.getLength(); i++) {
+          //addGlobalMeta("Image " + nextImage + " " + attributes.getQName(i),attributes.getValue(i));
+        }
       }
     }
-
-    public void endElement(String uri, String localName, String qName) {
-      if (qName.equals(parentQName)) parentQName = "";
-      if (qName.equals("Image")) {
-        currentImage.adjustForUnits();
-        images.add(currentImage);
-      }
-    }
-
-    // -- Helper methods --
-
-    private void addAllAttributes(String keyPrefix, Attributes attributes) {
-      for (int i=0; i<attributes.getLength(); i++) {
-        String name = attributes.getQName(i);
-        addGlobalMeta(keyPrefix + " " + name, attributes.getValue(name));
-      }
-    }
-  }
-
-  /** Stores metadata for a single image. */
-  class ImageInfo {
-    public String objective;
-    public String camera;
-    public float exposureTime;
-    public int binX, binY;
-    public float positionX, positionY, positionZ;
-    public String positionXUnit, positionYUnit, positionZUnit;
-    public float measurementTimeOffset;
-    public String date;
-    public float resolutionX, resolutionY;
-    public String resolutionXUnit, resolutionYUnit;
-    public String lightSource;
-
-    public void adjustForUnits() {
-      positionX = changeToMicrons(positionX, positionXUnit);
-      positionY = changeToMicrons(positionY, positionYUnit);
-      positionZ = changeToMicrons(positionZ, positionZUnit);
-      resolutionX = changeToMicrons(resolutionX, resolutionXUnit);
-      resolutionY = changeToMicrons(resolutionY, resolutionYUnit);
-    }
-
-    private float changeToMicrons(float value, String oldUnit) {
-      if (oldUnit == null || oldUnit.equals("um")) return value;
-      float mul = 1f;
-
-      if (oldUnit.equals("m")) mul = 10000f;
-      else if (oldUnit.equals("mm")) mul = 100f;
-      else if (oldUnit.equals("cm")) mul = 1000f;
-
-      return value * mul;
-    }
-
   }
 
 }
