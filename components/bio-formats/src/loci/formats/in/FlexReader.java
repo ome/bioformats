@@ -266,13 +266,6 @@ public class FlexReader extends FormatReader {
 
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
 
-    /* debug */
-    System.out.println("fieldCount = " + fieldCount);
-    System.out.println("wellCount = " + wellCount);
-    System.out.println("wellNumber.size = " + wellNumber.length + "x" +
-      wellNumber[0].length);
-    /* end debug */
-
     for (int i=0; i<getSeriesCount(); i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
 
