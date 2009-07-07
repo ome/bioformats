@@ -36,7 +36,6 @@ loci.formats.in.FitsReader            # fits
 loci.formats.in.PCXReader             # pcx
 loci.formats.in.GIFReader             # gif
 loci.formats.in.BMPReader             # bmp
-loci.formats.in.DicomReader           # dcm, dicom
 loci.formats.in.IPLabReader           # ipl
 loci.formats.in.IvisionReader         # ipm
 loci.formats.in.DeltavisionReader     # dv, r3d
@@ -114,3 +113,4 @@ loci.formats.in.TiffReader            # tif, tiff
 
 # non-TIFF readers with slow isThisType
 loci.formats.in.OpenlabReader         # liff
+loci.formats.in.DicomReader           # dcm, dicom
