@@ -421,6 +421,7 @@ public class FlexReader extends FormatReader {
     core[0].interleaved = false;
     core[0].indexed = false;
     core[0].littleEndian = TiffTools.isLittleEndian(ifd);
+    core[0].pixelType = TiffTools.getPixelType(ifd);
 
     if (seriesCount > 1) {
       CoreMetadata oldCore = core[0];
