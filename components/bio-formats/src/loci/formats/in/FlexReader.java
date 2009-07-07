@@ -474,10 +474,12 @@ public class FlexReader extends FormatReader {
     String[] measurementPlates = measurementDir.list();
     String plateName = plateDir.getName();
     plateDir = null;
-    for (String file : measurementPlates) {
-      if (file.indexOf(plateName) != -1 || plateName.indexOf(file) != -1) {
-        plateDir = new Location(measurementDir, file);
-        break;
+    if (measurementPlates != null) {
+      for (String file : measurementPlates) {
+        if (file.indexOf(plateName) != -1 || plateName.indexOf(file) != -1) {
+          plateDir = new Location(measurementDir, file);
+          break;
+        }
       }
     }
 
