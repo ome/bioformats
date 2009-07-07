@@ -71,6 +71,7 @@ public class MIASReader extends FormatReader {
   private int[][] wellNumber;
 
   private int tileRows, tileCols;
+  private int tileWidth, tileHeight;
 
   // -- Constructor --
 
@@ -162,9 +163,6 @@ public class MIASReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int outputRowLen = w * bpp;
 
-    int tileWidth = getSizeX() / tileCols;
-    int tileHeight = getSizeY() / tileRows;
-
     Region image = new Region(x, y, w, h);
     int outputRow = 0, outputCol = 0;
     Region intersection = null;
@@ -240,6 +238,7 @@ public class MIASReader extends FormatReader {
       resultFile = null;
       analysisFiles = null;
       wellNumber = null;
+      tileWidth = tileHeight = 0;
     }
   }
 
@@ -293,10 +292,10 @@ public class MIASReader extends FormatReader {
     Arrays.sort(directories);
     for (String dir : directories) {
       if (dir.equals("Batchresults")) {
-        Location f = new Location(experiment.getAbsolutePath(), dir);
+        Location f = new Location(experiment, dir);
         String[] results = f.list();
         for (String result : results) {
-          Location file = new Location(f.getAbsolutePath(), result);
+          Location file = new Location(f, result);
           analysisFiles.add(file.getAbsolutePath());
           if (result.startsWith("NEO_Results")) {
             resultFile = file.getAbsolutePath();
@@ -306,24 +305,24 @@ public class MIASReader extends FormatReader {
       else plateDirs.add(dir);
     }
 
-    String[] plateDirectories = plateDirs.toArray(new String[0]);
+    int nPlates = plateDirs.size();
 
-    tiffs = new String[plateDirectories.length][][];
+    tiffs = new String[nPlates][][];
 
-    int[][] zCount = new int[plateDirectories.length][];
-    int[][] cCount = new int[plateDirectories.length][];
-    int[][] tCount = new int[plateDirectories.length][];
-    String[][] order = new String[plateDirectories.length][];
-    wellNumber = new int[plateDirectories.length][];
+    int[][] zCount = new int[nPlates][];
+    int[][] cCount = new int[nPlates][];
+    int[][] tCount = new int[nPlates][];
+    String[][] order = new String[nPlates][];
+    wellNumber = new int[nPlates][];
 
-    for (int i=0; i<plateDirectories.length; i++) {
-      String plate = plateDirectories[i];
-      Location plateDir = new Location(experiment.getAbsolutePath(), plate);
+    for (int i=0; i<nPlates; i++) {
+      String plate = plateDirs.get(i);
+      Location plateDir = new Location(experiment, plate);
       String[] list = plateDir.list();
       Arrays.sort(list);
       Vector<String> wellDirectories = new Vector<String>();
       for (String dir : list) {
-        Location f = new Location(plateDir.getAbsolutePath(), dir);
+        Location f = new Location(plateDir, dir);
         if (f.getName().startsWith("Well")) {
           wellDirectories.add(f.getAbsolutePath());
         }
@@ -332,7 +331,7 @@ public class MIASReader extends FormatReader {
           for (String result : resultsList) {
             // exclude proprietary program state files
             if (!result.endsWith(".sav") && !result.endsWith(".dsv")) {
-              Location r = new Location(f.getAbsolutePath(), result);
+              Location r = new Location(f, result);
               analysisFiles.add(r.getAbsolutePath());
             }
           }
@@ -353,58 +352,50 @@ public class MIASReader extends FormatReader {
 
         String wellPath = well.getAbsolutePath();
         String[] tiffFiles = well.list();
+        Vector<String> tmpFiles = new Vector<String>();
+        for (String tiff : tiffFiles) {
+          String name = tiff.toLowerCase();
+          if (name.endsWith(".tif") || name.endsWith(".tiff")) {
+            tmpFiles.add(tiff);
+          }
+        }
+        tiffFiles = tmpFiles.toArray(new String[0]);
+
         FilePattern fp = new FilePattern(tiffFiles[0], wellPath);
         String[] blocks = fp.getPrefixes();
         BigInteger[] firstNumber = fp.getFirst();
         BigInteger[] lastNumber = fp.getLast();
         BigInteger[] step = fp.getStep();
 
-        order[i][j] = "";
+        order[i][j] = "XY";
 
-        for (int block=0; block<blocks.length; block++) {
+        for (int block=blocks.length - 1; block>=0; block--) {
           blocks[block] = blocks[block].toLowerCase();
           blocks[block] =
             blocks[block].substring(blocks[block].lastIndexOf("_") + 1);
+
+          BigInteger tmp = lastNumber[block].subtract(firstNumber[block]);
+          tmp = tmp.add(BigInteger.ONE).divide(step[block]);
+          int count = tmp.intValue();
+
           if (blocks[block].equals("z")) {
-            BigInteger tmp = lastNumber[block].subtract(firstNumber[block]);
-            tmp = tmp.add(BigInteger.ONE);
-            tmp = tmp.divide(step[block]);
-            zCount[i][j] = tmp.intValue();
+            zCount[i][j] = count;
             order[i][j] += "Z";
           }
           else if (blocks[block].equals("t")) {
-            BigInteger tmp = lastNumber[block].subtract(firstNumber[block]);
-            tmp = tmp.add(BigInteger.ONE);
-            tmp = tmp.divide(step[block]);
-            tCount[i][j] = tmp.intValue();
+            tCount[i][j] = count;
             order[i][j] += "T";
           }
           else if (blocks[block].equals("mode")) {
-            BigInteger tmp = lastNumber[block].subtract(firstNumber[block]);
-            tmp = tmp.add(BigInteger.ONE);
-            tmp = tmp.divide(step[block]);
-            cCount[i][j] = tmp.intValue();
+            cCount[i][j] = count;
             order[i][j] += "C";
           }
-          else if (blocks[block].equals("im")) {
-            BigInteger tmp = lastNumber[block].subtract(firstNumber[block]);
-            tmp = tmp.add(BigInteger.ONE);
-            tmp = tmp.divide(step[block]);
-            tileRows = tmp.intValue();
-          }
-          else if (blocks[block].equals("")) {
-            BigInteger tmp = lastNumber[block].subtract(firstNumber[block]);
-            tmp = tmp.add(BigInteger.ONE);
-            tmp = tmp.divide(step[block]);
-            tileCols = tmp.intValue();
-          }
+          else if (blocks[block].equals("im")) tileRows = count;
+          else if (blocks[block].equals("")) tileCols = count;
           else {
             throw new FormatException("Unsupported block '" + blocks[block]);
           }
         }
-
-        order[i][j] += "YX";
-        order[i][j] = new StringBuffer(order[i][j]).reverse().toString();
 
         Arrays.sort(tiffFiles);
         tiffs[i][j] = new String[tiffFiles.length];
@@ -440,8 +431,10 @@ public class MIASReader extends FormatReader {
       if (core[i].sizeT == 0) core[i].sizeT = 1;
 
       reader.setId(tiffs[plate][well][0]);
-      core[i].sizeX = reader.getSizeX() * tileCols;
-      core[i].sizeY = reader.getSizeY() * tileRows;
+      tileWidth = reader.getSizeX();
+      tileHeight = reader.getSizeY();
+      core[i].sizeX = tileWidth * tileCols;
+      core[i].sizeY = tileHeight * tileRows;
       core[i].pixelType = reader.getPixelType();
       core[i].sizeC *= reader.getSizeC();
       core[i].rgb = reader.isRGB();
@@ -473,13 +466,14 @@ public class MIASReader extends FormatReader {
     if (resultFile != null) {
       RandomAccessInputStream s = new RandomAccessInputStream(resultFile);
 
-      String colNames = null;
+      String[] cols = null;
       Vector<String> rows = new Vector<String>();
 
       boolean doKeyValue = true;
       int nStarLines = 0;
 
       String analysisResults = s.readString((int) s.length());
+      s.close();
       String[] lines = analysisResults.split("\n");
 
       for (String line : lines) {
@@ -493,23 +487,20 @@ public class MIASReader extends FormatReader {
           if (n.length >= 2) addGlobalMeta(n[0], n[1]);
         }
         else {
-          if (colNames == null) colNames = line;
+          if (cols == null) cols = line.split("\t");
           else rows.add(line);
         }
         if (nStarLines == 2) doKeyValue = false;
       }
 
-      String[] cols = colNames.split("\t");
-
       for (String row : rows) {
         String[] d = row.split("\t");
         for (int col=3; col<cols.length; col++) {
-          String key = "Plate " + d[0] + ", Well " + d[2] + " " + cols[col];
-          addGlobalMeta(key, d[col]);
+          addGlobalMeta("Plate " + d[0] + ", Well " + d[2] + " " + cols[col],
+            d[col]);
 
           if (cols[col].equals("AreaCode")) {
-            String wellID = d[col];
-            wellID = wellID.replaceAll("\\D", "");
+            String wellID = d[col].replaceAll("\\D", "");
             wellCols = Integer.parseInt(wellID);
           }
         }
@@ -532,8 +523,7 @@ public class MIASReader extends FormatReader {
       store.setPlateColumnNamingConvention("1", plate);
       store.setPlateRowNamingConvention("A", plate);
 
-      String plateDir = plateDirectories[plate];
-      plateDir = plateDir.substring(plateDir.lastIndexOf(File.separator) + 1);
+      String plateDir = plateDirs.get(plate);
       plateDir = plateDir.substring(plateDir.indexOf("-") + 1);
       store.setPlateName(plateDir, plate);
       store.setPlateExternalIdentifier(plateDir, plate);
@@ -543,87 +533,46 @@ public class MIASReader extends FormatReader {
         store.setWellColumn(wellIndex % wellCols, plate, wellIndex);
         store.setWellRow(wellIndex / wellCols, plate, wellIndex);
 
-        int imageNumber = getSeriesNumber(plate, well);
-        store.setWellSampleImageRef("Image:" + imageNumber, plate,
-          wellIndex, 0);
-        store.setWellSampleIndex(new Integer(imageNumber), plate, wellIndex, 0);
+        int series = getSeriesNumber(plate, well);
+        store.setWellSampleImageRef("Image:" + series, plate, wellIndex, 0);
+        store.setWellSampleIndex(new Integer(series), plate, wellIndex, 0);
+
+        // populate Image/Pixels metadata
+        store.setImageExperimentRef("Experiment:" + experimentName, series);
+        char wellRow = (char) ('A' + (wellIndex / wellCols));
+        int wellCol = (well % wellCols) + 1;
+
+        store.setImageID("Image:" + series, series);
+        store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol,
+          series);
+        MetadataTools.setDefaultCreationDate(store, id, series);
       }
-    }
-
-    // populate Image/Pixels metadata
-    for (int s=0; s<getSeriesCount(); s++) {
-      int plate = getPlateNumber(s);
-      int well = getWellNumber(s);
-      well = wellNumber[plate][well];
-      store.setImageExperimentRef("Experiment:" + experimentName, s);
-
-      char wellRow = (char) ('A' + (well / wellCols));
-      int wellCol = (well % wellCols) + 1;
-
-      store.setImageID("Image:" + s, s);
-      store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol, s);
-      MetadataTools.setDefaultCreationDate(store, id, s);
     }
 
     // populate image-level ROIs
     for (String file : analysisFiles) {
       String name = new Location(file).getName();
       if (name.startsWith("Well") && name.endsWith(".txt")) {
-        String plateName =
-          new Location(file).getParentFile().getParentFile().getName();
-        String plateIndex = plateName.substring(0, plateName.indexOf("-"));
-        int plate = Integer.parseInt(plateIndex) - 1;
+        int[] position = getPositionFromFile(file);
 
-        String wellIndex = name.substring(4, name.indexOf("_"));
-        int well = Integer.parseInt(wellIndex) - 1;
-
-        int tIndex = name.indexOf("_t") + 2;
-        String t = name.substring(tIndex, name.indexOf("_", tIndex));
-
-        int zIndex = name.indexOf("_z") + 2;
-        String zValue = name.substring(zIndex, name.indexOf("_", zIndex));
-
-        int time = Integer.parseInt(t);
-        int z = Integer.parseInt(zValue);
-
-        int series = getSeriesNumber(plate, well);
+        int series = getSeriesNumber(position[0], position[1]);
 
         RandomAccessInputStream s = new RandomAccessInputStream(file);
         String data = s.readString((int) s.length());
         String[] lines = data.split("\n");
         int start = 0;
-        while (!lines[start].startsWith("Label")) start++;
+        while (start < lines.length && !lines[start].startsWith("Label")) {
+          start++;
+        }
+        if (start >= lines.length) continue;
 
         String[] columns = lines[start].split("\t");
         Vector<String> columnNames = new Vector<String>();
         for (String v : columns) columnNames.add(v);
 
         for (int i=start+1; i<lines.length; i++) {
-          int roi = i - start - 1;
-
-          String[] v = lines[i].split("\t");
-
-          float cx = Float.parseFloat(v[columnNames.indexOf("Col")]);
-          float cy = Float.parseFloat(v[columnNames.indexOf("Row")]);
-
-          store.setROIT0(new Integer(time), series, roi);
-          store.setROIT1(new Integer(time), series, roi);
-          store.setROIZ0(new Integer(z), series, roi);
-          store.setROIZ1(new Integer(z), series, roi);
-
-          store.setShapeText(v[columnNames.indexOf("Label")], series, roi, 0);
-          store.setShapeTheT(new Integer(time), series, roi, 0);
-          store.setShapeTheZ(new Integer(z), series, roi, 0);
-          store.setCircleCx(v[columnNames.indexOf("Col")], series, roi, 0);
-          store.setCircleCy(v[columnNames.indexOf("Row")], series, roi, 0);
-
-          float diam = Float.parseFloat(v[columnNames.indexOf("Cell Diam.")]);
-          String radius = String.valueOf(diam / 2);
-
-          store.setCircleR(radius, series, roi, 0);
-
-          // NB: other attributes are "Nucleus Area", "Cell Type", and
-          // "Mean Nucleus Intens."
+          populateROI(columnNames, lines[i].split("\t"), series, i - start - 1,
+            position[2], position[3], store);
         }
 
         s.close();
@@ -632,6 +581,59 @@ public class MIASReader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  /**
+   * Returns an array of length 4 that contains the plate, well, time point and
+   * Z indices corresponding to the given analysis file.
+   */
+  private int[] getPositionFromFile(String file) {
+    int[] position = new int[4];
+
+    String plateName =
+      new Location(file).getParentFile().getParentFile().getName();
+    String plateIndex = plateName.substring(0, plateName.indexOf("-"));
+    position[0] = Integer.parseInt(plateIndex) - 1;
+
+    file = file.substring(file.lastIndexOf(File.separator) + 1);
+    String wellIndex = file.substring(4, file.indexOf("_"));
+    position[1] = Integer.parseInt(wellIndex) - 1;
+
+    int tIndex = file.indexOf("_t") + 2;
+    String t = file.substring(tIndex, file.indexOf("_", tIndex));
+    position[2] = Integer.parseInt(t);
+
+    int zIndex = file.indexOf("_z") + 2;
+    String zValue = file.substring(zIndex, file.indexOf("_", zIndex));
+    position[3] = Integer.parseInt(zValue);
+
+    return position;
+  }
+
+  private void populateROI(Vector<String> columns, String[] data, int series,
+    int roi, int time, int z, MetadataStore store)
+  {
+    float cx = Float.parseFloat(data[columns.indexOf("Col")]);
+    float cy = Float.parseFloat(data[columns.indexOf("Row")]);
+
+    store.setROIT0(new Integer(time), series, roi);
+    store.setROIT1(new Integer(time), series, roi);
+    store.setROIZ0(new Integer(z), series, roi);
+    store.setROIZ1(new Integer(z), series, roi);
+
+    store.setShapeText(data[columns.indexOf("Label")], series, roi, 0);
+    store.setShapeTheT(new Integer(time), series, roi, 0);
+    store.setShapeTheZ(new Integer(z), series, roi, 0);
+    store.setCircleCx(data[columns.indexOf("Col")], series, roi, 0);
+    store.setCircleCy(data[columns.indexOf("Row")], series, roi, 0);
+
+    float diam = Float.parseFloat(data[columns.indexOf("Cell Diam.")]);
+    String radius = String.valueOf(diam / 2);
+
+    store.setCircleR(radius, series, roi, 0);
+
+    // NB: other attributes are "Nucleus Area", "Cell Type", and
+    // "Mean Nucleus Intens."
+  }
 
   /** Retrieve the series corresponding to the given plate and well. */
   private int getSeriesNumber(int plate, int well) {
