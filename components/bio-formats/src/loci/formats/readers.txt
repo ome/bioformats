@@ -65,7 +65,6 @@ loci.formats.in.QTReader              # mov
 loci.formats.in.MRWReader             # mrw
 loci.formats.in.TillVisionReader      # vws
 loci.formats.in.ARFReader             # arf
-loci.formats.in.JPEG2000Reader        # jp2, j2k
 loci.formats.in.CellomicsReader       # c01
 
 # multi-extension messes
@@ -80,20 +79,21 @@ loci.formats.in.PerkinElmerReader     # rec, ano, csv, htm, tim, zpo, 2, 3, ...
 loci.formats.in.BioRadReader          # pic
 
 # readers requiring third-party libraries
-loci.formats.in.FV1000Reader          # oib, oif, various
-loci.formats.in.ZeissZVIReader        # zvi [POIFS]
-loci.formats.in.IPWReader             # ipw [POIFS]
+loci.formats.in.FV1000Reader          # oib, oif, various [POI]
+loci.formats.in.ZeissZVIReader        # zvi [POI]
+loci.formats.in.IPWReader             # ipw [POI]
 loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
-loci.formats.in.PCIReader             # cxd [POIFS]
-loci.formats.in.ImarisHDFReader       # ims
+loci.formats.in.JPEG2000Reader        # jp2, j2k [JAI-ImageIO]
+loci.formats.in.PCIReader             # cxd [POI]
+loci.formats.in.ImarisHDFReader       # ims [NetCDF]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.MetamorphReader       # stk
-loci.formats.in.ZeissLSMReader        # lsm
+loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
 loci.formats.in.SEQReader             # seq
 loci.formats.in.GelReader             # gel
 loci.formats.in.ImarisTiffReader      # ims
-loci.formats.in.FlexReader            # flex
+loci.formats.in.FlexReader            # flex [LuraWave]
 loci.formats.in.SVSReader             # svs
 
 # TIFF-based readers with slow isThisType
