@@ -275,8 +275,8 @@ public class ICSReader extends FormatReader {
 
     RandomAccessInputStream reader = new RandomAccessInputStream(icsId);
     reader.seek(0);
-    reader.readLine();
-    String line = reader.readLine();
+    reader.readString("\r\n");
+    String line = reader.readString("\r\n");
     boolean signed = false;
 
     StringBuffer textBlock = new StringBuffer();
@@ -517,7 +517,7 @@ public class ICSReader extends FormatReader {
           }
         }
       }
-      line = reader.readLine();
+      line = reader.readString("\r\n");
       if (line.trim().equals("")) line = null;
     }
     reader.close();
@@ -549,7 +549,7 @@ public class ICSReader extends FormatReader {
         core[0].sizeZ = axisLengths[i];
         core[0].dimensionOrder += "Z";
       }
-      else if (axes[i].equals("ch")) {
+      else if (axes[i].startsWith("c")) {
         core[0].sizeC = axisLengths[i];
         core[0].rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
         core[0].dimensionOrder += "C";
@@ -591,8 +591,8 @@ public class ICSReader extends FormatReader {
     gzip = (compression == null) ? false : compression.equals("gzip");
 
     if (versionTwo) {
-      String s = in.readLine();
-      while (!s.trim().equals("end")) s = in.readLine();
+      String s = in.readString("\r\n");
+      while (!s.trim().equals("end")) s = in.readString("\r\n");
     }
 
     offset = in.getFilePointer();

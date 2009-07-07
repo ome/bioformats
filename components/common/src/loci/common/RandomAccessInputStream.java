@@ -183,6 +183,21 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   /** Gets the endianness of the stream. */
   public boolean isLittleEndian() { return littleEndian; }
 
+  /**
+   * Reads a string ending with one of the characters in the given string.
+   * @see readCString()
+   * @see readLine()
+   */
+  public String readString(String lastChars) throws IOException {
+    StringBuffer sb = new StringBuffer();
+    char c = readChar();
+    while (lastChars.indexOf(c) == -1 && getFilePointer() < length()) {
+      sb = sb.append(c);
+      c = readChar();
+    }
+    return sb.toString();
+  }
+
   // -- DataInput API methods --
 
   /** Read an input byte and return true if the byte is nonzero. */
@@ -233,24 +248,12 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read the next line of text from the input stream. */
   public String readLine() throws IOException {
-    StringBuffer sb = new StringBuffer();
-    char c = readChar();
-    while (c != '\n') {
-      sb = sb.append(c);
-      c = readChar();
-    }
-    return sb.toString();
+    return readString("\n");
   }
 
   /** Read a string of arbitrary length, terminated by a null char. */
   public String readCString() throws IOException {
-    StringBuffer sb = new StringBuffer();
-    char achar = readChar();
-    while (achar != 0) {
-      sb = sb.append(achar);
-      achar = readChar();
-    }
-    return sb.toString();
+    return readString("\\0");
   }
 
   /** Read a string of length n. */
