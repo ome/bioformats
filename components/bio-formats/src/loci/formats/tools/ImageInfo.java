@@ -72,6 +72,7 @@ public class ImageInfo {
   private String id = null;
   private boolean printVersion = false;
   private boolean pixels = true;
+  private boolean doCore = true;
   private boolean doMeta = true;
   private boolean filter = true;
   private boolean thumbs = false;
@@ -112,6 +113,7 @@ public class ImageInfo {
     id = null;
     printVersion = false;
     pixels = true;
+    doCore = true;
     doMeta = true;
     filter = true;
     thumbs = false;
@@ -140,6 +142,7 @@ public class ImageInfo {
       if (args[i].startsWith("-")) {
         if (args[i].equals("-nopix")) pixels = false;
         else if (args[i].equals("-version")) printVersion = true;
+        else if (args[i].equals("-nocore")) doCore = false;
         else if (args[i].equals("-nometa")) doMeta = false;
         else if (args[i].equals("-nofilter")) filter = false;
         else if (args[i].equals("-thumbs")) thumbs = true;
@@ -201,7 +204,7 @@ public class ImageInfo {
     String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
     String[] s = {
       "To test read a file in " + fmt + " format, run:",
-      "  showinf file [-nopix] [-nometa] [-thumbs] [-minmax] ",
+      "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] [-minmax] ",
       "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
       "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
@@ -210,7 +213,8 @@ public class ImageInfo {
       "  -version: print the library version and exit",
       "      file: the image file to read",
       "    -nopix: read metadata only, not pixels",
-      "   -nometa: output only core metadata",
+      "   -nocore: do not output core metadata",
+      "   -nometa: do not parse format-specific metadata table",
       " -nofilter: do not filter metadata fields",
       "   -thumbs: read thumbnails instead of normal pixels",
       "   -minmax: compute min/max statistics",
@@ -322,6 +326,8 @@ public class ImageInfo {
   }
 
   public void readCoreMetadata() throws FormatException, IOException {
+    if (!doCore) return; // skip core metadata printout
+
     // read basic metadata
     LogTools.println();
     LogTools.println("Reading core metadata");
