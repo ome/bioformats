@@ -48,6 +48,7 @@
 	</spw:Screen>
 	<ome:Experimenter ID="Experimenter:1" DisplayName="Dummy1"/>
 	<ome:Experimenter ID="Experimenter:1" DisplayName="Dummy2"/>
+	<ome:Experimenter ID="ExperimenterX:1" DisplayName="Dummy3"/>
 	<ome:Group ID="Group:1"/>
 	<ome:Group ID="Group:1"/>
 	<ome:Instrument ID="Instrument:1"/>

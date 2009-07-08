@@ -111,10 +111,6 @@
 			<xsd:selector xpath="OME:Experiment"/>
 			<xsd:field xpath="@ID"/>
 		</xsd:key>
-		<xsd:keyref name="ProjectExperimenterIDKeyRef" refer="OME:ExperimentIDKey" >
-			<xsd:selector xpath="OME:Project/OME:ExperimenterRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
 		<xsd:key name="ScreenIDKey">
 			<xsd:selector xpath="SPW:Screen"/>
 			<xsd:field xpath="@ID"/>
@@ -135,6 +131,10 @@
 			<xsd:selector xpath="OME:Experimenter"/>
 			<xsd:field xpath="@ID"/>
 		</xsd:key>
+		<xsd:keyref name="ProjectExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" >
+			<xsd:selector xpath="OME:Project/OME:ExperimenterRef"/>
+			<xsd:field xpath="@ID"/>
+		</xsd:keyref>
 		<xsd:key name="GroupIDKey">
 			<xsd:selector xpath="OME:Group"/>
 			<xsd:field xpath="@ID"/>

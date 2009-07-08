@@ -20,6 +20,7 @@
         <file name="AnalysisModule.xsd"/>
         <file name="BinaryFile.xsd"/>
         <file name="BrokenConstraints.xml"/>
+        <file name="BrokenConstraintsSmall.xml"/>
         <file name="CA.xsd"/>
         <file name="CLI.xsd"/>
         <file name="DataHistory.xsd"/>
