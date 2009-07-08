@@ -954,10 +954,12 @@ public class JVMLinkFlowCytometry {
     return ff;
   }
 
-
   public static void saveValues() throws IOException {
-    BufferedWriter bw = new BufferedWriter(
-      new FileWriter("values"+s_Date.substring(0,9)));
+    saveValues("values"+s_Date.substring(0,9));
+  }
+
+  public static void saveValues(String filename) throws IOException {
+    BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
     bw.write("Area (micron^2)\t\t(pixel^2)\t\tIntensity\t\tFrame\t\tLast");
     bw.newLine();
     bw.newLine();
@@ -1006,22 +1008,7 @@ public class JVMLinkFlowCytometry {
       updateGraph();
     }
 
-    BufferedWriter bw = new BufferedWriter(new FileWriter(filename+".values"));
-    bw.write("Area (micron^2)\t\t(pixel^2)\t\tIntensity\t\tFrame");
-    bw.newLine();
-    bw.newLine();
-    System.out.println("Particles size is "+particles.size());
-    for (int i=0; i<particles.size(); i++) {
-      if (particles.get(i).getStatus()) {
-        bw.write(particles.get(i).getMicronArea()+"\t\t"+
-          particles.get(i).getPixelArea()+"\t\t"+
-          particles.get(i).getMeanIntensity()+"\t\t"+
-          particles.get(i).getSliceNum());
-      }
-      bw.newLine();
-    }
-    bw.flush();
-    bw.close();
+    saveValues(filename+".values");
   }
 
   public static void printVector(Vector<Double> v) {
