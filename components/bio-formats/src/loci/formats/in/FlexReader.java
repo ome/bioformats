@@ -361,6 +361,26 @@ public class FlexReader extends FormatReader {
     }
     return new int[] {0, 0};
   }
+  
+  /**
+   * Returns the IFDs of the first well that has data. May not be 
+   * <code>[0][0]</code> as the acquisition may have been column or row offset.
+   * @return Hashtable of the first well's IFDs.
+   */
+  private Hashtable[] firstWellIfds()
+  {
+    for (int i = 0; i < ifds.length; i++)
+    {
+      for (int j = 0; j < ifds[i].length; j++)
+      {
+        if (ifds[i][j] != null)
+        {
+          return ifds[i][j];
+        }
+      }
+    }
+    return null;
+  }
 
   /**
    * Parses XML metadata from the Flex file corresponding to the given well.
@@ -665,9 +685,11 @@ public class FlexReader extends FormatReader {
         else yPositions.add(offset);
       }
       else if ("Image".equals(parentQName)) {
-        int currentSeries = (nextImage - 1) / (ifds[0][0].length / fieldCount);
+        int currentSeries =
+          (nextImage - 1) / (firstWellIfds().length / fieldCount);
         currentSeries += well * fieldCount;
-        int currentImage = (nextImage - 1) % (ifds[0][0].length / fieldCount);
+        int currentImage = 
+          (nextImage - 1) % (firstWellIfds().length / fieldCount);
         if (qName.equals("DateTime")) {
           store.setImageCreationDate(value, currentSeries);
         }
@@ -767,7 +789,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Field")) {
         parentQName = qName;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        if (fieldNo > fieldCount && fieldCount < ifds[0][0].length) {
+        if (fieldNo > fieldCount && fieldCount < firstWellIfds().length) {
           fieldCount++;
         }
       }
