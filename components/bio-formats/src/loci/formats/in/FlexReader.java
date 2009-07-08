@@ -654,6 +654,9 @@ public class FlexReader extends FormatReader {
         store.setObjectiveLensNA(new Float(value), 0, nextObjective);
       }
       else if (qName.equals("Immersion")) {
+        if (value.equals("1.33")) value = "Water";
+        else if (value.equals("1.00")) value = "Air";
+        else warn("Unknown immersion medium: " + value);
         store.setObjectiveImmersion(value, 0, nextObjective);
       }
       else if (qName.equals("OffsetX") || qName.equals("OffsetY")) {
