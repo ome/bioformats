@@ -318,6 +318,9 @@ public class FlexReader extends FormatReader {
           if (lightSources != null && c < lightSources.size()) {
             store.setLightSourceSettingsLightSource(lightSources.get(c), i, c);
           }
+          else if (c > 0 && lightSources != null && lightSources.size() == 1) {
+            store.setLightSourceSettingsLightSource(lightSources.get(0), i, c);
+          }
         }
       }
 
@@ -686,11 +689,12 @@ public class FlexReader extends FormatReader {
         else yPositions.add(offset);
       }
       else if ("Image".equals(parentQName)) {
-        int currentSeries =
-          (nextImage - 1) / (firstWellIfds().length / fieldCount);
+        if (fieldCount == 0) fieldCount = 1;
+        int nImages = firstWellIfds().length / fieldCount;
+        if (nImages == 0) nImages = 1; // probably a manually altered dataset
+        int currentSeries = (nextImage - 1) / nImages;
         currentSeries += well * fieldCount;
-        int currentImage = 
-          (nextImage - 1) % (firstWellIfds().length / fieldCount);
+        int currentImage = (nextImage - 1) % nImages;
         if (qName.equals("DateTime")) {
           store.setImageCreationDate(value, currentSeries);
         }
