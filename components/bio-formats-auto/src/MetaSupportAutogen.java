@@ -46,10 +46,8 @@ public class MetaSupportAutogen {
 
   public static void main(String[] args) throws Exception {
     if (args.length == 0) {
-      System.out.println(
-        "Usage: java MetaSupportAutogen ome-xml-version");
-      System.out.println(
-        "    E.g.: java MetaSupportAutogen 2008-02");
+      System.out.println("Usage: java MetaSupportAutogen ome-xml-version");
+      System.out.println("    E.g.: java MetaSupportAutogen 2008-02");
       System.exit(1);
     }
     String version = args[0];

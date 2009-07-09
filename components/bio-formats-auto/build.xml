@@ -18,17 +18,26 @@ Type "ant -p" for a list of targets.
     description="generate code for Bio-Formats metadata classes">
     <java classname="${component.main-class}"
       classpath="${classes.dir}:${component.runtime-cp}"
-      fork="true" dir="${root.dir}/components/bio-formats/src/loci/formats"/>
+      fork="true" dir="${component.meta-dir}"/>
+  </target>
+
+  <target name="gen-ice" depends="compile"
+    description="generate code for Bio-Formats Ice framework">
+    <java classname="${component.main-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${component.ice-dir}">
+      <arg value="-ice"/>
+    </java>
   </target>
 
   <target name="gen-meta-support" depends="compile"
-    description="generate documentation for Bio-Formats' metadata support">
+    description="generate docs for Bio-Formats metadata support">
     <if>
       <isset property="omexml.version"/>
       <then>
         <java classname="${component.meta-support-class}"
           classpath="${classes.dir}:${component.runtime-cp}"
-          fork="true" dir="${root.dir}/components/bio-formats/">
+          fork="true" dir="${component.meta-support-dir}">
             <arg value="${omexml.version}"/>
         </java>
       </then>
@@ -42,12 +51,13 @@ the latest release of the OME-XML schema. E.g.:
     </if>
   </target>
 
-  <target name="gen-ice" depends="compile"
-    description="generate code for Bio-Formats Ice framework">
-    <java classname="${component.main-class}"
+  <target name="gen-bf-cpp" depends="compile"
+    description="generate header for Bio-Formats C++ bindings">
+    <java classname="${component.jace-header-class}"
       classpath="${classes.dir}:${component.runtime-cp}"
-      fork="true" dir="${root.dir}/components/bio-formats-ice/src">
-      <arg value="-ice"/>
+      fork="true" dir="${component.jace-header-dir}">
+      <arg value="bio-formats"/>
+      <arg value="../../../bio-formats/src"/>
     </java>
   </target>
 
