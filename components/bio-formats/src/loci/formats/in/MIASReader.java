@@ -59,8 +59,8 @@ public class MIASReader extends FormatReader {
   /** TIFF files - indexed by plate, well, and file. */
   private String[][][] tiffs;
 
-  /** Delegate reader. */
-  private MinimalTiffReader reader;
+  /** Delegate readers. */
+  private MinimalTiffReader[][][] readers;
 
   /** Path to file containing analysis results for all plates. */
   private String resultFile = null;
@@ -72,6 +72,8 @@ public class MIASReader extends FormatReader {
 
   private int tileRows, tileCols;
   private int tileWidth, tileHeight;
+
+  private Vector<String> plateDirs;
 
   // -- Constructor --
 
@@ -118,13 +120,13 @@ public class MIASReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return reader == null ? null : reader.get8BitLookupTable();
+    return readers == null ? null : readers[0][0][0].get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return reader == null ? null : reader.get16BitLookupTable();
+    return readers == null ? null : readers[0][0][0].get16BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
@@ -138,9 +140,10 @@ public class MIASReader extends FormatReader {
 
     int well = getWellNumber(getSeries());
     int plate = getPlateNumber(getSeries());
+    int image = no * tileRows * tileCols;
 
-    reader.setId(tiffs[well][plate][no * tileRows * tileCols]);
-    return reader.openThumbBytes(0);
+    readers[plate][well][image].setId(tiffs[plate][well][image]);
+    return readers[plate][well][image].openThumbBytes(0);
   }
 
   /**
@@ -155,8 +158,8 @@ public class MIASReader extends FormatReader {
     int plate = getPlateNumber(getSeries());
 
     if (tileRows == 1 && tileCols == 1) {
-      reader.setId(tiffs[plate][well][no]);
-      reader.openBytes(0, buf, x, y, w, h);
+      readers[plate][well][no].setId(tiffs[plate][well][no]);
+      readers[plate][well][no].openBytes(0, buf, x, y, w, h);
       return buf;
     }
 
@@ -179,9 +182,11 @@ public class MIASReader extends FormatReader {
         intersection.x %= tileWidth;
         intersection.y %= tileHeight;
 
-        reader.setId(tiffs[plate][well][(no*tileRows + row) * tileCols + col]);
-        tileBuf = reader.openBytes(0, intersection.x, intersection.y,
-          intersection.width, intersection.height);
+        int tileIndex = (no * tileRows + row) * tileCols + col;
+
+        readers[plate][well][tileIndex].setId(tiffs[plate][well][tileIndex]);
+        tileBuf = readers[plate][well][tileIndex].openBytes(0, intersection.x,
+          intersection.y, intersection.width, intersection.height);
 
         int rowLen = tileBuf.length / intersection.height;
 
@@ -230,15 +235,24 @@ public class MIASReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (reader != null) reader.close(fileOnly);
+    if (readers != null) {
+      for (MinimalTiffReader[][] wells : readers) {
+        for (MinimalTiffReader[] images : wells) {
+          for (MinimalTiffReader r : images) {
+            if (r != null) r.close(fileOnly);
+          }
+        }
+      }
+    }
     if (!fileOnly) {
-      reader = null;
+      readers = null;
       tiffs = null;
       tileRows = tileCols = 0;
       resultFile = null;
       analysisFiles = null;
       wellNumber = null;
       tileWidth = tileHeight = 0;
+      plateDirs = null;
     }
   }
 
@@ -252,8 +266,8 @@ public class MIASReader extends FormatReader {
     // TODO : initFile currently accepts a constituent TIFF file.
     // Consider allowing the top level experiment directory to be passed in
 
-    reader = new MinimalTiffReader();
     analysisFiles = new Vector<String>();
+    plateDirs = new Vector<String>();
 
     // MIAS is a high content screening format which supports multiple plates,
     // wells and fields.
@@ -286,8 +300,6 @@ public class MIASReader extends FormatReader {
 
     String experimentName = experiment.getName();
 
-    Vector<String> plateDirs = new Vector<String>();
-
     String[] directories = experiment.list();
     Arrays.sort(directories);
     for (String dir : directories) {
@@ -308,6 +320,7 @@ public class MIASReader extends FormatReader {
     int nPlates = plateDirs.size();
 
     tiffs = new String[nPlates][][];
+    readers = new MinimalTiffReader[nPlates][][];
 
     int[][] zCount = new int[nPlates][];
     int[][] cCount = new int[nPlates][];
@@ -337,6 +350,7 @@ public class MIASReader extends FormatReader {
           }
         }
       }
+      readers[i] = new MinimalTiffReader[wellDirectories.size()][];
       tiffs[i] = new String[wellDirectories.size()][];
       zCount[i] = new int[wellDirectories.size()];
       cCount[i] = new int[wellDirectories.size()];
@@ -355,7 +369,9 @@ public class MIASReader extends FormatReader {
         Vector<String> tmpFiles = new Vector<String>();
         for (String tiff : tiffFiles) {
           String name = tiff.toLowerCase();
-          if (name.endsWith(".tif") || name.endsWith(".tiff")) {
+          if (!name.startsWith(".") &&
+            (name.endsWith(".tif") || name.endsWith(".tiff")))
+          {
             tmpFiles.add(tiff);
           }
         }
@@ -399,9 +415,11 @@ public class MIASReader extends FormatReader {
 
         Arrays.sort(tiffFiles);
         tiffs[i][j] = new String[tiffFiles.length];
+        readers[i][j] = new MinimalTiffReader[tiffFiles.length];
         for (int k=0; k<tiffFiles.length; k++) {
           tiffs[i][j][k] =
             new Location(wellPath, tiffFiles[k]).getAbsolutePath();
+          readers[i][j][k] = new MinimalTiffReader();
         }
       }
     }
@@ -430,18 +448,18 @@ public class MIASReader extends FormatReader {
       if (core[i].sizeC == 0) core[i].sizeC = 1;
       if (core[i].sizeT == 0) core[i].sizeT = 1;
 
-      reader.setId(tiffs[plate][well][0]);
-      tileWidth = reader.getSizeX();
-      tileHeight = reader.getSizeY();
+      readers[plate][well][0].setId(tiffs[plate][well][0]);
+      tileWidth = readers[plate][well][0].getSizeX();
+      tileHeight = readers[plate][well][0].getSizeY();
       core[i].sizeX = tileWidth * tileCols;
       core[i].sizeY = tileHeight * tileRows;
-      core[i].pixelType = reader.getPixelType();
-      core[i].sizeC *= reader.getSizeC();
-      core[i].rgb = reader.isRGB();
-      core[i].littleEndian = reader.isLittleEndian();
-      core[i].interleaved = reader.isInterleaved();
-      core[i].indexed = reader.isIndexed();
-      core[i].falseColor = reader.isFalseColor();
+      core[i].pixelType = readers[plate][well][0].getPixelType();
+      core[i].sizeC *= readers[plate][well][0].getSizeC();
+      core[i].rgb = readers[plate][well][0].isRGB();
+      core[i].littleEndian = readers[plate][well][0].isLittleEndian();
+      core[i].interleaved = readers[plate][well][0].isInterleaved();
+      core[i].indexed = readers[plate][well][0].isIndexed();
+      core[i].falseColor = readers[plate][well][0].isFalseColor();
       core[i].dimensionOrder = order[plate][well];
 
       if (core[i].dimensionOrder.indexOf("Z") == -1) {
@@ -591,8 +609,7 @@ public class MIASReader extends FormatReader {
 
     String plateName =
       new Location(file).getParentFile().getParentFile().getName();
-    String plateIndex = plateName.substring(0, plateName.indexOf("-"));
-    position[0] = Integer.parseInt(plateIndex) - 1;
+    position[0] = plateDirs.indexOf(plateName);
 
     file = file.substring(file.lastIndexOf(File.separator) + 1);
     String wellIndex = file.substring(4, file.indexOf("_"));
@@ -615,14 +632,17 @@ public class MIASReader extends FormatReader {
     float cx = Float.parseFloat(data[columns.indexOf("Col")]);
     float cy = Float.parseFloat(data[columns.indexOf("Row")]);
 
-    store.setROIT0(new Integer(time), series, roi);
-    store.setROIT1(new Integer(time), series, roi);
-    store.setROIZ0(new Integer(z), series, roi);
-    store.setROIZ1(new Integer(z), series, roi);
+    Integer tv = new Integer(time);
+    Integer zv = new Integer(z);
+
+    store.setROIT0(tv, series, roi);
+    store.setROIT1(tv, series, roi);
+    store.setROIZ0(zv, series, roi);
+    store.setROIZ1(zv, series, roi);
 
     store.setShapeText(data[columns.indexOf("Label")], series, roi, 0);
-    store.setShapeTheT(new Integer(time), series, roi, 0);
-    store.setShapeTheZ(new Integer(z), series, roi, 0);
+    store.setShapeTheT(tv, series, roi, 0);
+    store.setShapeTheZ(zv, series, roi, 0);
     store.setCircleCx(data[columns.indexOf("Col")], series, roi, 0);
     store.setCircleCy(data[columns.indexOf("Row")], series, roi, 0);
 
