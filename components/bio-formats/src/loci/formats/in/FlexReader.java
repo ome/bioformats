@@ -666,6 +666,8 @@ public class FlexReader extends FormatReader {
         store.setPlateExternalIdentifier(value, nextPlate - 1);
       }
       else if (qName.equals("Wavelength")) {
+        String LSID = "LightSource:" + nextLaser;
+        store.setLightSourceID(LSID, 0, nextLaser);
         store.setLaserWavelength(new Integer(value), 0, nextLaser);
         store.setLaserType("Unknown", 0, nextLaser);
         store.setLaserLaserMedium("Unknown", 0, nextLaser);
