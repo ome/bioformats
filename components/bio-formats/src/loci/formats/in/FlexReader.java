@@ -250,19 +250,20 @@ public class FlexReader extends FormatReader {
 
         boolean firstFile = true;
 
-        int nextWell = 0;
+        int currentWell = 0;
         for (int row=0; row<flexFiles.length; row++) {
           for (int col=0; col<flexFiles[row].length; col++) {
             flexFiles[row][col] = v.get(row + "," + col);
             if (flexFiles[row][col] == null) continue;
-            wellNumber[nextWell][0] = row;
-            wellNumber[nextWell++][1] = col;
+            wellNumber[currentWell][0] = row;
+            wellNumber[currentWell][1] = col;
             s = new RandomAccessInputStream(flexFiles[row][col]);
             ifds[row][col] = TiffTools.getIFDs(s);
             s.close();
 
-            parseFlexFile(row, col, firstFile, store);
+            parseFlexFile(currentWell, row, col, firstFile, store);
             if (firstFile) firstFile = false;
+            currentWell++;
           }
         }
       }
@@ -280,7 +281,7 @@ public class FlexReader extends FormatReader {
       ifds[0][0] = TiffTools.getIFDs(s);
       s.close();
 
-      parseFlexFile(0, 0, true, store);
+      parseFlexFile(0, 0, 0, true, store);
     }
 
     MetadataTools.populatePixels(store, this, true);
@@ -387,8 +388,8 @@ public class FlexReader extends FormatReader {
    * If the 'firstFile' flag is set, then the core metadata is also
    * populated.
    */
-  private void parseFlexFile(int wellRow, int wellCol, boolean firstFile,
-    MetadataStore store)
+  private void parseFlexFile(int currentWell, int wellRow, int wellCol,
+    boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
     if (flexFiles[wellRow][wellCol] == null) return;
@@ -424,8 +425,8 @@ public class FlexReader extends FormatReader {
 
     Vector n = new Vector();
     Vector f = new Vector();
-    int well = wellRow * ifds[0].length + wellCol;
-    DefaultHandler handler = new FlexHandler(n, f, store, firstFile, well);
+    DefaultHandler handler = new FlexHandler(n, f, store, firstFile,
+                                             currentWell);
     DataTools.parseXML(c, handler);
 
     if (firstFile) populateCoreMetadata(wellRow, wellCol, n);
