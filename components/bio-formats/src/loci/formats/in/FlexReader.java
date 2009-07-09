@@ -564,11 +564,18 @@ public class FlexReader extends FormatReader {
     //       /   |  \                        /   \
     //    .flex ... .flex                 .mea   .res
     //
+    // or like this:
+    //
+    //                       top level directory
+    //                       /  |  \      /  |  \
+    //          Flex plate #0  ... #n    #0 ... Measurement plate #n
+    //
     // or that the .mea and .res are in the same directory as the .flex files
 
     Location plateDir = flexFile.getParentFile();
     String[] files = plateDir.list();
 
+    // check if the measurement files are in the same directory
     for (String file : files) {
       String lfile = file.toLowerCase();
       if (lfile.endsWith(".mea") || lfile.endsWith(".res")) {
@@ -584,27 +591,50 @@ public class FlexReader extends FormatReader {
     catch (NullPointerException e) { }
     if (flexDir == null) return;
 
-    Location topDir = flexDir.getParentFile();
-    Location measurementDir = null;
+    // check if the measurement directory and the Flex directory
+    // have the same parent
 
-    String[] topDirList = topDir.list();
-    for (String file : topDirList) {
-      if (!flexDir.getAbsolutePath().endsWith(file)) {
-        measurementDir = new Location(topDir, file);
-        break;
+    Location measurementDir = null;
+    String[] flexDirList = flexDir.list();
+    if (flexDirList.length > 1) {
+      for (String file : flexDirList) {
+        if (!file.equals(plateDir.getName()) &&
+          plateDir.getName().startsWith(file))
+        {
+          measurementDir = new Location(flexDir, file);
+          break;
+        }
       }
     }
 
-    if (measurementDir == null) return;
+    // check if Flex directories and measurement directories have
+    // a different parent
 
-    String[] measurementPlates = measurementDir.list();
-    String plateName = plateDir.getName();
-    plateDir = null;
-    if (measurementPlates != null) {
-      for (String file : measurementPlates) {
-        if (file.indexOf(plateName) != -1 || plateName.indexOf(file) != -1) {
-          plateDir = new Location(measurementDir, file);
+    if (measurementDir == null) {
+      Location topDir = flexDir.getParentFile();
+
+      String[] topDirList = topDir.list();
+      for (String file : topDirList) {
+        if (!flexDir.getAbsolutePath().endsWith(file)) {
+          measurementDir = new Location(topDir, file);
           break;
+        }
+      }
+
+      if (measurementDir == null) return;
+    }
+    else plateDir = measurementDir;
+
+    if (!plateDir.equals(measurementDir)) {
+      String[] measurementPlates = measurementDir.list();
+      String plateName = plateDir.getName();
+      plateDir = null;
+      if (measurementPlates != null) {
+        for (String file : measurementPlates) {
+          if (file.indexOf(plateName) != -1 || plateName.indexOf(file) != -1) {
+            plateDir = new Location(measurementDir, file);
+            break;
+          }
         }
       }
     }
