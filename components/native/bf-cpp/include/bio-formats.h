@@ -1,10 +1,10 @@
 //
-// bioformats.h
+// bio-formats.h
 //
 
 /*
 OME Bio-Formats C++ bindings for native access to Bio-Formats Java library.
-Copyright (C) 2008-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2008-2009 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,10 +21,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by curtis via JaceHeaderAutogen on Jul 9, 2009 5:16:12 PM CDT
+ *
+ *-----------------------------------------------------------------------------
+ */
+
 #ifndef BIO_FORMATS_H
 #define BIO_FORMATS_H
-
-// TODO - eventually want to automatically generate this list
 
 #include "jace/JNIHelper.h"
 
@@ -56,7 +62,8 @@ using namespace jace::proxy::java::io;
 #include "jace/proxy/loci/formats/ChannelMerger.h"
 #include "jace/proxy/loci/formats/ChannelSeparator.h"
 #include "jace/proxy/loci/formats/ClassList.h"
-//#include "jace/proxy/loci/formats/CoreMetadata.h"
+#include "jace/proxy/loci/formats/CoreMetadata.h"
+#include "jace/proxy/loci/formats/DelegateReader.h"
 #include "jace/proxy/loci/formats/DimensionSwapper.h"
 #include "jace/proxy/loci/formats/FilePattern.h"
 #include "jace/proxy/loci/formats/FileStitcher.h"
@@ -88,9 +95,9 @@ using namespace jace::proxy::java::io;
 using namespace jace::proxy::loci::formats;
 
 #include "jace/proxy/loci/formats/cache/ByteArraySource.h"
+#include "jace/proxy/loci/formats/cache/Cache.h"
 #include "jace/proxy/loci/formats/cache/CacheEvent.h"
 #include "jace/proxy/loci/formats/cache/CacheException.h"
-#include "jace/proxy/loci/formats/cache/Cache.h"
 #include "jace/proxy/loci/formats/cache/CacheListener.h"
 #include "jace/proxy/loci/formats/cache/CacheReporter.h"
 #include "jace/proxy/loci/formats/cache/CacheSource.h"
@@ -109,11 +116,14 @@ using namespace jace::proxy::loci::formats::cache;
 #include "jace/proxy/loci/formats/codec/ByteVector.h"
 #include "jace/proxy/loci/formats/codec/Codec.h"
 #include "jace/proxy/loci/formats/codec/CodecOptions.h"
+#include "jace/proxy/loci/formats/codec/HuffmanCodec.h"
+#include "jace/proxy/loci/formats/codec/HuffmanCodecOptions.h"
 #include "jace/proxy/loci/formats/codec/JPEG2000Codec.h"
 #include "jace/proxy/loci/formats/codec/JPEGCodec.h"
-#include "jace/proxy/loci/formats/codec/LuraWaveCodec.h"
 #include "jace/proxy/loci/formats/codec/LZOCodec.h"
 #include "jace/proxy/loci/formats/codec/LZWCodec.h"
+#include "jace/proxy/loci/formats/codec/LosslessJPEGCodec.h"
+#include "jace/proxy/loci/formats/codec/LuraWaveCodec.h"
 #include "jace/proxy/loci/formats/codec/MJPBCodec.h"
 #include "jace/proxy/loci/formats/codec/MJPBCodecOptions.h"
 #include "jace/proxy/loci/formats/codec/MSRLECodec.h"
@@ -127,6 +137,8 @@ using namespace jace::proxy::loci::formats::cache;
 using namespace jace::proxy::loci::formats::codec;
 
 #include "jace/proxy/loci/formats/gui/AWTImageTools.h"
+#include "jace/proxy/loci/formats/gui/AWTTiffTools.h"
+#include "jace/proxy/loci/formats/gui/BufferedImageReader.h"
 #include "jace/proxy/loci/formats/gui/BufferedImageSource.h"
 #include "jace/proxy/loci/formats/gui/CacheComponent.h"
 #include "jace/proxy/loci/formats/gui/CacheIndicator.h"
@@ -140,85 +152,98 @@ using namespace jace::proxy::loci::formats::codec;
 #include "jace/proxy/loci/formats/gui/LegacyQTTools.h"
 #include "jace/proxy/loci/formats/gui/NoExtensionFileFilter.h"
 #include "jace/proxy/loci/formats/gui/PreviewPane.h"
+#include "jace/proxy/loci/formats/gui/SignedByteBuffer.h"
 #include "jace/proxy/loci/formats/gui/SignedColorModel.h"
 #include "jace/proxy/loci/formats/gui/TwoChannelColorSpace.h"
+#include "jace/proxy/loci/formats/gui/UnsignedIntBuffer.h"
+#include "jace/proxy/loci/formats/gui/UnsignedIntColorModel.h"
 #include "jace/proxy/loci/formats/gui/XMLCellRenderer.h"
 #include "jace/proxy/loci/formats/gui/XMLWindow.h"
 using namespace jace::proxy::loci::formats::gui;
 
-#include "jace/proxy/loci/formats/in/AliconaReader.h"
 #include "jace/proxy/loci/formats/in/APLReader.h"
 #include "jace/proxy/loci/formats/in/APNGReader.h"
+#include "jace/proxy/loci/formats/in/ARFReader.h"
 #include "jace/proxy/loci/formats/in/AVIReader.h"
+#include "jace/proxy/loci/formats/in/AliconaReader.h"
+#include "jace/proxy/loci/formats/in/AnalyzeReader.h"
+#include "jace/proxy/loci/formats/in/BMPReader.h"
 #include "jace/proxy/loci/formats/in/BaseTiffReader.h"
 #include "jace/proxy/loci/formats/in/BioRadReader.h"
-#include "jace/proxy/loci/formats/in/BMPReader.h"
+#include "jace/proxy/loci/formats/in/CellomicsReader.h"
 #include "jace/proxy/loci/formats/in/DeltavisionReader.h"
 #include "jace/proxy/loci/formats/in/DicomReader.h"
 #include "jace/proxy/loci/formats/in/EPSReader.h"
 #include "jace/proxy/loci/formats/in/FEIReader.h"
+#include "jace/proxy/loci/formats/in/FV1000Reader.h"
 #include "jace/proxy/loci/formats/in/FitsReader.h"
 #include "jace/proxy/loci/formats/in/FlexReader.h"
 #include "jace/proxy/loci/formats/in/FluoviewReader.h"
-#include "jace/proxy/loci/formats/in/FV1000Reader.h"
+#include "jace/proxy/loci/formats/in/GIFReader.h"
 #include "jace/proxy/loci/formats/in/GatanReader.h"
 #include "jace/proxy/loci/formats/in/GelReader.h"
-#include "jace/proxy/loci/formats/in/GIFReader.h"
 #include "jace/proxy/loci/formats/in/ICSReader.h"
+#include "jace/proxy/loci/formats/in/IPLabReader.h"
+#include "jace/proxy/loci/formats/in/IPWReader.h"
 #include "jace/proxy/loci/formats/in/ImageIOReader.h"
 #include "jace/proxy/loci/formats/in/ImarisHDFReader.h"
 #include "jace/proxy/loci/formats/in/ImarisReader.h"
 #include "jace/proxy/loci/formats/in/ImarisTiffReader.h"
 #include "jace/proxy/loci/formats/in/ImprovisionTiffReader.h"
 #include "jace/proxy/loci/formats/in/InCellReader.h"
-#include "jace/proxy/loci/formats/in/IPLabReader.h"
-#include "jace/proxy/loci/formats/in/IPWReader.h"
+#include "jace/proxy/loci/formats/in/IvisionReader.h"
+#include "jace/proxy/loci/formats/in/JPEG2000Reader.h"
 #include "jace/proxy/loci/formats/in/JPEGReader.h"
 #include "jace/proxy/loci/formats/in/KhorosReader.h"
 #include "jace/proxy/loci/formats/in/L2DReader.h"
+#include "jace/proxy/loci/formats/in/LIFReader.h"
+#include "jace/proxy/loci/formats/in/LIMReader.h"
 #include "jace/proxy/loci/formats/in/LegacyND2Reader.h"
 #include "jace/proxy/loci/formats/in/LegacyQTReader.h"
 #include "jace/proxy/loci/formats/in/LeicaHandler.h"
 #include "jace/proxy/loci/formats/in/LeicaReader.h"
-#include "jace/proxy/loci/formats/in/LIFReader.h"
-#include "jace/proxy/loci/formats/in/LIMReader.h"
 #include "jace/proxy/loci/formats/in/MDBParser.h"
+#include "jace/proxy/loci/formats/in/MIASReader.h"
+#include "jace/proxy/loci/formats/in/MINCReader.h"
+#include "jace/proxy/loci/formats/in/MNGReader.h"
+#include "jace/proxy/loci/formats/in/MRCReader.h"
+#include "jace/proxy/loci/formats/in/MRWReader.h"
 #include "jace/proxy/loci/formats/in/MetamorphHandler.h"
 #include "jace/proxy/loci/formats/in/MetamorphReader.h"
 #include "jace/proxy/loci/formats/in/MetamorphTiffReader.h"
 #include "jace/proxy/loci/formats/in/MicromanagerReader.h"
-#include "jace/proxy/loci/formats/in/MINCReader.h"
 #include "jace/proxy/loci/formats/in/MinimalTiffReader.h"
-#include "jace/proxy/loci/formats/in/MNGReader.h"
-#include "jace/proxy/loci/formats/in/MRCReader.h"
-#include "jace/proxy/loci/formats/in/MRWReader.h"
 #include "jace/proxy/loci/formats/in/NAFReader.h"
 #include "jace/proxy/loci/formats/in/ND2Reader.h"
-#include "jace/proxy/loci/formats/in/NikonReader.h"
 #include "jace/proxy/loci/formats/in/NRRDReader.h"
+#include "jace/proxy/loci/formats/in/NativeND2Reader.h"
+#include "jace/proxy/loci/formats/in/NativeQTReader.h"
+#include "jace/proxy/loci/formats/in/NiftiReader.h"
+#include "jace/proxy/loci/formats/in/NikonReader.h"
 #include "jace/proxy/loci/formats/in/OMETiffReader.h"
 #include "jace/proxy/loci/formats/in/OMEXMLReader.h"
 #include "jace/proxy/loci/formats/in/OpenlabRawReader.h"
 #include "jace/proxy/loci/formats/in/OpenlabReader.h"
 #include "jace/proxy/loci/formats/in/PCIReader.h"
 #include "jace/proxy/loci/formats/in/PCXReader.h"
-#include "jace/proxy/loci/formats/in/PerkinElmerReader.h"
 #include "jace/proxy/loci/formats/in/PGMReader.h"
+#include "jace/proxy/loci/formats/in/PSDReader.h"
+#include "jace/proxy/loci/formats/in/PerkinElmerReader.h"
 #include "jace/proxy/loci/formats/in/PictReader.h"
 #include "jace/proxy/loci/formats/in/PrairieReader.h"
-#include "jace/proxy/loci/formats/in/PSDReader.h"
 #include "jace/proxy/loci/formats/in/QTReader.h"
 #include "jace/proxy/loci/formats/in/SDTInfo.h"
 #include "jace/proxy/loci/formats/in/SDTReader.h"
 #include "jace/proxy/loci/formats/in/SEQReader.h"
-#include "jace/proxy/loci/formats/in/SlidebookReader.h"
 #include "jace/proxy/loci/formats/in/SVSReader.h"
+#include "jace/proxy/loci/formats/in/SlidebookReader.h"
 #include "jace/proxy/loci/formats/in/TCSReader.h"
 #include "jace/proxy/loci/formats/in/TiffReader.h"
 #include "jace/proxy/loci/formats/in/TillVisionReader.h"
 #include "jace/proxy/loci/formats/in/VisitechReader.h"
 #include "jace/proxy/loci/formats/in/ZeissLSMReader.h"
 #include "jace/proxy/loci/formats/in/ZeissZVIReader.h"
+#include "jace/proxy/loci/formats/in/ZipReader.h"
 using namespace jace::proxy::loci::formats::in;
 
 #include "jace/proxy/loci/formats/meta/AggregateMetadata.h"
@@ -231,13 +256,13 @@ using namespace jace::proxy::loci::formats::in;
 #include "jace/proxy/loci/formats/meta/MetadataStore.h"
 using namespace jace::proxy::loci::formats::meta;
 
-#include "jace/proxy/loci/formats/ome/OmeisException.h"
-#include "jace/proxy/loci/formats/ome/OmeisImporter.h"
 #include "jace/proxy/loci/formats/ome/OMEXML2003FCMetadata.h"
 #include "jace/proxy/loci/formats/ome/OMEXML200706Metadata.h"
 #include "jace/proxy/loci/formats/ome/OMEXML200802Metadata.h"
 #include "jace/proxy/loci/formats/ome/OMEXML200809Metadata.h"
 #include "jace/proxy/loci/formats/ome/OMEXMLMetadata.h"
+#include "jace/proxy/loci/formats/ome/OmeisException.h"
+#include "jace/proxy/loci/formats/ome/OmeisImporter.h"
 using namespace jace::proxy::loci::formats::ome;
 
 #include "jace/proxy/loci/formats/out/APNGWriter.h"
