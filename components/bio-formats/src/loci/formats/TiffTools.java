@@ -95,25 +95,25 @@ public final class TiffTools {
   public static final int IFD8 = 18;
 
   public static final int[] BYTES_PER_ELEMENT = {
-    -1, // invalid type
-    1, // BYTE
-    1, // ASCII
-    2, // SHORT
-    4, // LONG
-    8, // RATIONAL
-    1, // SBYTE
-    1, // UNDEFINED
-    2, // SSHORT
-    4, // SLONG
-    8, // SRATIONAL
-    4, // FLOAT
-    8, // DOUBLE
-    -1, // invalid type
-    -1, // invalid type
-    -1, // invalid type
-    8, // LONG8
-    8, // SLONG8
-    8 // IFD8
+    -1, //  0: invalid type
+    1,  //  1: BYTE
+    1,  //  2: ASCII
+    2,  //  3: SHORT
+    4,  //  4: LONG
+    8,  //  5: RATIONAL
+    1,  //  6: SBYTE
+    1,  //  7: UNDEFINED
+    2,  //  8: SSHORT
+    4,  //  9: SLONG
+    8,  // 10: SRATIONAL
+    4,  // 11: FLOAT
+    8,  // 12: DOUBLE
+    -1, // 13: invalid type
+    -1, // 14: invalid type
+    -1, // 15: invalid type
+    8,  // 16: LONG8
+    8,  // 17: SLONG8
+    8   // 18: IFD8
   };
 
   // IFD tags
@@ -497,16 +497,20 @@ public final class TiffTools {
         return null;
       }
 
-      if (count > threshhold / BYTES_PER_ELEMENT[type]) {
+      int bpe = BYTES_PER_ELEMENT[type];
+
+      if (count > threshhold / bpe) {
         long pointer = bigTiff ? in.readLong() :
           (long) (in.readInt() & 0xffffffffL);
+        debug("getIFDs: seeking to offset: " + pointer);
         in.seek(pointer);
       }
-      if (count * BYTES_PER_ELEMENT[type] + in.getFilePointer() > in.length()) {
+      long inputLen = in.length();
+      long inputPointer = in.getFilePointer();
+      if (count * bpe + inputPointer > inputLen) {
         int oldCount = count;
-        count =
-          (int) ((in.length() - in.getFilePointer()) / BYTES_PER_ELEMENT[type]);
-        debug("Truncated " + (oldCount - count) +
+        count = (int) ((inputLen - inputPointer) / bpe);
+        debug("getIFDs: truncated " + (oldCount - count) +
           " array elements for tag " + tag);
       }
 
@@ -581,10 +585,8 @@ public final class TiffTools {
         }
       }
       else if (type == RATIONAL || type == SRATIONAL) {
-        // Two LONGs: the first represents the numerator of a fraction;
-        // the second, the denominator
-        // Two SLONG's: the first represents the numerator of a fraction,
-        // the second the denominator
+        // Two LONGs or SLONGs: the first represents the numerator
+        // of a fraction; the second, the denominator
         if (count == 1) value = new TiffRational(in.readInt(), in.readInt());
         else {
           TiffRational[] rationals = new TiffRational[count];
