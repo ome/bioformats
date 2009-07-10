@@ -142,7 +142,7 @@ notes = Optional plugin. If you have Image5D installed, the Bio-Formats
 
 [View5D]
 type = ImageJ plugin
-class = View5D_
+class = view5d.View5D_
 url = http://www.nanoimaging.de/View5D/
 license = GPL
 notes = Optional plugin. If you have View5D installed, the Bio-Formats

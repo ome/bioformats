@@ -95,7 +95,7 @@ public class ImporterOptions extends OptionsList {
   // class to check for each stackFormat value
   private static final String CLASS_VISBIO   = "loci.visbio.VisBio";
   private static final String CLASS_IMAGE_5D = "i5d.Image5D";
-  private static final String CLASS_VIEW_5D  = "View5D_";
+  private static final String CLASS_VIEW_5D  = "view5d.View5D_";
 
   // possible values for stackOrder
   public static final String ORDER_DEFAULT = "Default";

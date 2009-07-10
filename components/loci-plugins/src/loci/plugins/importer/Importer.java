@@ -525,7 +525,7 @@ public class Importer {
 
       // -- Step 4f: read pixel data --
 
-      if (options.isViewNone()) return;
+      if (options.isViewNone()) return; // nothing to display
 
       debug("read pixel data");
 
@@ -544,14 +544,12 @@ public class Importer {
         r.setSeries(i);
 
         boolean[] load = new boolean[num[i]];
-        if (!options.isViewNone()) {
-          for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
-            for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
-              for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
-                //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
-                int index = r.getIndex(z, c, t);
-                load[index] = true;
-              }
+        for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
+          for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
+            for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
+              //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
+              int index = r.getIndex(z, c, t);
+              load[index] = true;
             }
           }
         }
@@ -859,8 +857,6 @@ public class Importer {
     ImporterOptions options, boolean windowless)
   {
     boolean mergeChannels = options.isMergeChannels();
-    boolean colorize = options.isColorize();
-    boolean customColorize = options.isCustomColorize();
     boolean concatenate = options.isConcatenate();
     int nSlices = imp.getNSlices();
     int nFrames = imp.getNFrames();
@@ -916,7 +912,7 @@ public class Importer {
         return;
       }
     }
-    if (options.isViewImage5D()) {
+    else if (options.isViewImage5D()) {
       ReflectedUniverse ru = new ReflectedUniverse();
       try {
         ru.exec("import i5d.Image5D");
@@ -943,7 +939,7 @@ public class Importer {
       WindowManager.setTempCurrentImage(imp);
       IJ.run("View5D ", "");
     }
-    else if (!options.isViewNone()) {
+    else {
       // NB: ImageJ 1.39+ is required for hyperstacks
       boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
       imp.setOpenAsHyperStack(hyper);
@@ -956,19 +952,23 @@ public class Importer {
         }
         else imp.show();
 
-        boolean virtual = options.isViewBrowser() || options.isVirtual();
+        boolean colorize = options.isColorize();
+        boolean customColorize = options.isCustomColorize();
+        boolean browser = options.isViewBrowser();
+        boolean virtual = options.isVirtual();
 
-        if ((colorize || customColorize) && !virtual) {
+        if (colorize || customColorize) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
             " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
             " series=" + r.getSeries() + " hyper_stack=" +
             options.isViewHyperstack() + " ");
+          imp.close();
         }
-        else if (colorModels != null && !virtual) {
+        else if (colorModels != null && !browser && !virtual) {
           Colorizer colorizer = new Colorizer();
           String arg = "stack_order=" + stackOrder + " merge=false " +
             "colorize=true series=" + r.getSeries() + " hyper_stack=" +
-            options.isViewHyperstack() + " ";
+            hyper + " ";
           colorizer.setup(arg, imp);
           for (int channel=0; channel<colorModels.length; channel++) {
             byte[][] lut = new byte[3][256];
@@ -978,13 +978,14 @@ public class Importer {
             colorizer.setLookupTable(lut, channel);
           }
           new PlugInFilterRunner(colorizer, "", arg);
+          imp.close();
         }
 
-        if ((splitC || splitZ || splitT) && !virtual) {
+        if (splitC || splitZ || splitT) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
             " slice_c=" + splitC + " slice_t=" + splitT +
             " stack_order=" + stackOrder + " keep_original=false " +
-            "hyper_stack=" + options.isViewHyperstack() + " ");
+            "hyper_stack=" + hyper + " ");
           imp.close();
         }
       }
