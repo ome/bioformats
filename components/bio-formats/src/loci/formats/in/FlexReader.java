@@ -98,19 +98,21 @@ public class FlexReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */ 
+  public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
-    for (int i=0; i<flexFiles.length; i++) {
-      for (int j=0; j<flexFiles[i].length; j++) {
-        if (flexFiles[i][j] != null) files.add(flexFiles[i][j]);
+    if (!noPixels) {
+      for (int i=0; i<flexFiles.length; i++) {
+        for (int j=0; j<flexFiles[i].length; j++) {
+          if (flexFiles[i][j] != null) files.add(flexFiles[i][j]);
+        }
       }
     }
     for (String file : measurementFiles) {
-      files.add(file);
+        files.add(file);
     }
-    return files.toArray(new String[0]);
+    return files.toArray(new String[files.size()]);
   }
 
   /**
