@@ -73,6 +73,8 @@ public class FlexReader extends FormatReader {
 
   private Vector<String> measurementFiles;
 
+  private String plateName, plateBarcode;
+
   /**
    * List of .flex files belonging to this dataset.
    * Indices into the array are the well row and well column.
@@ -207,11 +209,23 @@ public class FlexReader extends FormatReader {
     }
 
     if (!isGroupFiles()) doGrouping = false;
-    if (isGroupFiles()) findMeasurementFiles(currentFile);
+    if (isGroupFiles()) {
+      try {
+        findMeasurementFiles(currentFile);
+      }
+      catch (NullPointerException e) {
+        if (debug) trace(e);
+      }
+      catch (IOException e) {
+        if (debug) trace(e);
+      }
+      if (measurementFiles.size() == 0) {
+        warn("Measurement files not found.");
+      }
+    }
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setPlateName(currentFile.getParentFile().getName(), 0);
 
     if (doGrouping) {
       // group together .flex files that are in the same directory
@@ -286,6 +300,10 @@ public class FlexReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
     store.setInstrumentID("Instrument:0", 0);
+
+    if (plateName == null) plateName = currentFile.getParentFile().getName();
+    if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
+    store.setPlateName(plateName, 0);
 
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
 
@@ -625,13 +643,13 @@ public class FlexReader extends FormatReader {
     }
     else plateDir = measurementDir;
 
-    if (!plateDir.equals(measurementDir)) {
+    if (!plateDir.getAbsolutePath().equals(measurementDir.getAbsolutePath())) {
       String[] measurementPlates = measurementDir.list();
-      String plateName = plateDir.getName();
+      String plate = plateDir.getName();
       plateDir = null;
       if (measurementPlates != null) {
         for (String file : measurementPlates) {
-          if (file.indexOf(plateName) != -1 || plateName.indexOf(file) != -1) {
+          if (file.indexOf(plate) != -1 || plate.indexOf(file) != -1) {
             plateDir = new Location(measurementDir, file);
             break;
           }
@@ -690,9 +708,10 @@ public class FlexReader extends FormatReader {
         binnings.add(binX + "x" + binY);
       }
       else if (qName.equals("PlateName")) {
-        store.setPlateName(value, nextPlate - 1);
+        if (plateName == null) plateName = value;
       }
       else if (qName.equals("Barcode")) {
+        if (plateBarcode == null) plateBarcode = value;
         store.setPlateExternalIdentifier(value, nextPlate - 1);
       }
       else if (qName.equals("Wavelength")) {
