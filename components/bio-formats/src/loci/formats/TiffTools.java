@@ -502,6 +502,13 @@ public final class TiffTools {
           (long) (in.readInt() & 0xffffffffL);
         in.seek(pointer);
       }
+      if (count * BYTES_PER_ELEMENT[type] + in.getFilePointer() > in.length()) {
+        int oldCount = count;
+        count =
+          (int) ((in.length() - in.getFilePointer()) / BYTES_PER_ELEMENT[type]);
+        debug("Truncated " + (oldCount - count) +
+          " array elements for tag " + tag);
+      }
 
       if (type == BYTE) {
         // 8-bit unsigned integer
