@@ -568,6 +568,7 @@ public class MIASReader extends FormatReader {
     }
 
     // populate image-level ROIs
+    String[] colors = new String[getSizeC()];
     for (String file : analysisFiles) {
       String name = new Location(file).getName();
       if (name.startsWith("Well") && name.endsWith(".txt")) {
@@ -595,20 +596,83 @@ public class MIASReader extends FormatReader {
 
         s.close();
       }
+      else if (name.startsWith("Well") && name.endsWith("AllModesOverlay.tif"))
+      {
+        // original color for each channel is stored in
+        // <plate>/results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
+        int[] position = getPositionFromFile(file);
+        if (colors[position[4]] != null) continue;
+        try {
+          colors[position[4]] = getChannelColorFromFile(file);
+        }
+        catch (IOException e) { }
+        if (colors[position[4]] == null) continue;
+
+        int seriesIndex = getSeriesNumber(position[0], position[1]);
+        for (int s=0; s<getSeriesCount(); s++) {
+          store.setChannelComponentColorDomain(
+            colors[position[4]], s, position[4], 0);
+        }
+      }
     }
   }
 
   // -- Helper methods --
 
   /**
-   * Returns an array of length 4 that contains the plate, well, time point and
-   * Z indices corresponding to the given analysis file.
+   * Get the color associated with the given file's channel.
+   * The file must be one of the
+   * Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
+   * files in <experiment>/<plate>/results/
+   */
+  private String getChannelColorFromFile(String file)
+    throws FormatException, IOException
+  {
+    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    Hashtable ifd = TiffTools.getFirstIFD(s);
+    s.close();
+    int[] colorMap =
+      TiffTools.getIFDIntArray(ifd, TiffTools.COLOR_MAP, false);
+    if (colorMap == null) return null;
+
+    int[] position = getPositionFromFile(file);
+
+    int nEntries = colorMap.length / 3;
+    int max = Integer.MIN_VALUE;
+    int maxIndex = -1;
+    for (int c=0; c<3; c++) {
+      int v = (colorMap[c * nEntries] >> 8) & 0xff;
+      if (v > max) {
+        max = v;
+        maxIndex = c;
+      }
+      else if (v == max) {
+        return "gray";
+      }
+    }
+
+    switch (maxIndex) {
+      case 0:
+        return "R";
+      case 1:
+        return "G";
+      case 2:
+        return "B";
+    }
+    return null;
+  }
+
+  /**
+   * Returns an array of length 5 that contains the plate, well, time point,
+   * Z and channel indices corresponding to the given analysis file.
    */
   private int[] getPositionFromFile(String file) {
-    int[] position = new int[4];
+    int[] position = new int[5];
 
-    String plateName =
-      new Location(file).getParentFile().getParentFile().getName();
+    Location plate = new Location(file).getParentFile().getParentFile();
+    if (file.endsWith(".tif")) plate = plate.getParentFile();
+    String plateName = plate.getName();
+
     position[0] = plateDirs.indexOf(plateName);
 
     file = file.substring(file.lastIndexOf(File.separator) + 1);
@@ -622,6 +686,10 @@ public class MIASReader extends FormatReader {
     int zIndex = file.indexOf("_z") + 2;
     String zValue = file.substring(zIndex, file.indexOf("_", zIndex));
     position[3] = Integer.parseInt(zValue);
+
+    int cIndex = file.indexOf("mode") + 4;
+    String cValue = file.substring(cIndex, file.indexOf("_", cIndex));
+    position[4] = Integer.parseInt(cValue) - 1;
 
     return position;
   }
