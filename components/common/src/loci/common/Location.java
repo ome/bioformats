@@ -177,6 +177,50 @@ public class Location {
     return handle;
   }
 
+  /**
+   * Return a list of all of the files in this directory.  If 'noDotFiles' is
+   * set to true, then file names beginning with '.' are omitted.
+   *
+   * @see java.io.File#list()
+   */
+  public String[] list(boolean noDotFiles) {
+    Vector<String> files = new Vector<String>();
+    if (isURL) {
+      if (!isDirectory()) return null;
+      try {
+        URLConnection c = url.openConnection();
+        InputStream is = c.getInputStream();
+        boolean foundEnd = false;
+
+        while (!foundEnd) {
+          byte[] b = new byte[is.available()];
+          is.read(b);
+          String s = new String(b);
+          if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
+
+          while (s.indexOf("a href") != -1) {
+            int ndx = s.indexOf("a href") + 8;
+            String f = s.substring(ndx, s.indexOf("\"", ndx));
+            s = s.substring(s.indexOf("\"", ndx) + 1);
+            Location check = new Location(getAbsolutePath(), f);
+            if (check.exists() && (!noDotFiles || !f.startsWith("."))) {
+              files.add(check.getName());
+            }
+          }
+        }
+      }
+      catch (IOException e) {
+        return null;
+      }
+    }
+    String[] f = file.list();
+    if (f == null) return null;
+    for (String file : f) {
+      if (!noDotFiles || !file.startsWith(".")) files.add(file);
+    }
+    return files.toArray(new String[files.size()]);
+  }
+
   // -- File API methods --
 
   /* @see java.io.File#canRead() */
@@ -318,37 +362,7 @@ public class Location {
 
   /* @see java.io.File#list() */
   public String[] list() {
-    if (isURL) {
-      if (!isDirectory()) return null;
-      try {
-        URLConnection c = url.openConnection();
-        InputStream is = c.getInputStream();
-        boolean foundEnd = false;
-
-        Vector files = new Vector();
-        while (!foundEnd) {
-          byte[] b = new byte[is.available()];
-          is.read(b);
-          String s = new String(b);
-          if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
-
-          while (s.indexOf("a href") != -1) {
-            int ndx = s.indexOf("a href") + 8;
-            String f = s.substring(ndx, s.indexOf("\"", ndx));
-            s = s.substring(s.indexOf("\"", ndx) + 1);
-            Location check = new Location(getAbsolutePath(), f);
-            if (check.exists()) {
-              files.add(check.getName());
-            }
-          }
-        }
-        return (String[]) files.toArray(new String[0]);
-      }
-      catch (IOException e) {
-        return null;
-      }
-    }
-    return file.list();
+    return list(false);
   }
 
   /* @see java.io.File#listFiles() */

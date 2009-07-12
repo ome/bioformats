@@ -98,7 +98,7 @@ public class FlexReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */ 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -110,7 +110,7 @@ public class FlexReader extends FormatReader {
       }
     }
     for (String file : measurementFiles) {
-        files.add(file);
+      files.add(file);
     }
     return files.toArray(new String[files.size()]);
   }
@@ -233,7 +233,7 @@ public class FlexReader extends FormatReader {
       // group together .flex files that are in the same directory
 
       Location dir = currentFile.getParentFile();
-      String[] files = dir.list();
+      String[] files = dir.list(true);
 
       for (String file : files) {
         // file names should be nnnnnnnnn.flex, where 'n' is 0-9
@@ -245,7 +245,7 @@ public class FlexReader extends FormatReader {
           String path = new Location(dir, file).getAbsolutePath();
           v.put(well[0] + "," + well[1], path);
         }
-        else if (!file.startsWith(".") && !id.endsWith(file)) {
+        else if (!id.endsWith(file)) {
           doGrouping = false;
           break;
         }
@@ -385,20 +385,16 @@ public class FlexReader extends FormatReader {
     }
     return new int[] {0, 0};
   }
-  
+
   /**
-   * Returns the IFDs of the first well that has data. May not be 
+   * Returns the IFDs of the first well that has data. May not be
    * <code>[0][0]</code> as the acquisition may have been column or row offset.
    * @return Hashtable of the first well's IFDs.
    */
-  private Hashtable[] firstWellIfds()
-  {
-    for (int i = 0; i < ifds.length; i++)
-    {
-      for (int j = 0; j < ifds[i].length; j++)
-      {
-        if (ifds[i][j] != null)
-        {
+  private Hashtable[] firstWellIfds() {
+    for (int i = 0; i < ifds.length; i++) {
+      for (int j = 0; j < ifds[i].length; j++) {
+        if (ifds[i][j] != null) {
           return ifds[i][j];
         }
       }
@@ -593,7 +589,7 @@ public class FlexReader extends FormatReader {
     // or that the .mea and .res are in the same directory as the .flex files
 
     Location plateDir = flexFile.getParentFile();
-    String[] files = plateDir.list();
+    String[] files = plateDir.list(true);
 
     // check if the measurement files are in the same directory
     for (String file : files) {
@@ -615,7 +611,7 @@ public class FlexReader extends FormatReader {
     // have the same parent
 
     Location measurementDir = null;
-    String[] flexDirList = flexDir.list();
+    String[] flexDirList = flexDir.list(true);
     if (flexDirList.length > 1) {
       for (String file : flexDirList) {
         if (!file.equals(plateDir.getName()) &&
@@ -633,7 +629,7 @@ public class FlexReader extends FormatReader {
     if (measurementDir == null) {
       Location topDir = flexDir.getParentFile();
 
-      String[] topDirList = topDir.list();
+      String[] topDirList = topDir.list(true);
       for (String file : topDirList) {
         if (!flexDir.getAbsolutePath().endsWith(file)) {
           measurementDir = new Location(topDir, file);
@@ -646,7 +642,7 @@ public class FlexReader extends FormatReader {
     else plateDir = measurementDir;
 
     if (!plateDir.getAbsolutePath().equals(measurementDir.getAbsolutePath())) {
-      String[] measurementPlates = measurementDir.list();
+      String[] measurementPlates = measurementDir.list(true);
       String plate = plateDir.getName();
       plateDir = null;
       if (measurementPlates != null) {
@@ -661,7 +657,7 @@ public class FlexReader extends FormatReader {
 
     if (plateDir == null) return;
 
-    files = plateDir.list();
+    files = plateDir.list(true);
     for (String file : files) {
       measurementFiles.add(new Location(plateDir, file).getAbsolutePath());
     }

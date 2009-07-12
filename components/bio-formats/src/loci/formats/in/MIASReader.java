@@ -300,12 +300,12 @@ public class MIASReader extends FormatReader {
 
     String experimentName = experiment.getName();
 
-    String[] directories = experiment.list();
+    String[] directories = experiment.list(true);
     Arrays.sort(directories);
     for (String dir : directories) {
       if (dir.equals("Batchresults")) {
         Location f = new Location(experiment, dir);
-        String[] results = f.list();
+        String[] results = f.list(true);
         for (String result : results) {
           Location file = new Location(f, result);
           analysisFiles.add(file.getAbsolutePath());
@@ -331,7 +331,7 @@ public class MIASReader extends FormatReader {
     for (int i=0; i<nPlates; i++) {
       String plate = plateDirs.get(i);
       Location plateDir = new Location(experiment, plate);
-      String[] list = plateDir.list();
+      String[] list = plateDir.list(true);
       Arrays.sort(list);
       Vector<String> wellDirectories = new Vector<String>();
       for (String dir : list) {
@@ -340,7 +340,7 @@ public class MIASReader extends FormatReader {
           wellDirectories.add(f.getAbsolutePath());
         }
         else if (f.getName().equals("results")) {
-          String[] resultsList = f.list();
+          String[] resultsList = f.list(true);
           for (String result : resultsList) {
             // exclude proprietary program state files
             if (!result.endsWith(".sav") && !result.endsWith(".dsv")) {
@@ -365,13 +365,11 @@ public class MIASReader extends FormatReader {
         wellNumber[i][j] = Integer.parseInt(wellName) - 1;
 
         String wellPath = well.getAbsolutePath();
-        String[] tiffFiles = well.list();
+        String[] tiffFiles = well.list(true);
         Vector<String> tmpFiles = new Vector<String>();
         for (String tiff : tiffFiles) {
           String name = tiff.toLowerCase();
-          if (!name.startsWith(".") &&
-            (name.endsWith(".tif") || name.endsWith(".tiff")))
-          {
+          if (name.endsWith(".tif") || name.endsWith(".tiff")) {
             tmpFiles.add(tiff);
           }
         }
