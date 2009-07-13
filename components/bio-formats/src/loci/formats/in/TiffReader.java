@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.TiffTools;
@@ -49,11 +50,26 @@ public class TiffReader extends BaseTiffReader {
   public static final String[] TIFF_SUFFIXES =
     {"tif", "tiff", "tf2", "tf8", "btf"};
 
+  // -- Fields --
+
+  private String companionFile;
+
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */
   public TiffReader() {
     super("Tagged Image File Format", TIFF_SUFFIXES);
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    if (noPixels) {
+      return companionFile == null ? null : new String[] {companionFile};
+    }
+    if (companionFile != null) return new String[] {companionFile, currentId};
+    return new String[] {currentId};
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -78,6 +94,24 @@ public class TiffReader extends BaseTiffReader {
 
     // check for other INI-style comment
     if (!ij && !metamorph) parseCommentGeneric(comment);
+
+    // check for another file with the same name
+
+    Location currentFile = new Location(currentId).getAbsoluteFile();
+    String currentName = currentFile.getName();
+    Location directory = currentFile.getParentFile();
+    String[] files = directory.list(true);
+    for (String file : files) {
+      String name = file;
+      if (name.indexOf(".") != -1) name = name.substring(0, name.indexOf("."));
+
+      if (currentName.startsWith(name) && !file.equals(currentName)) {
+        companionFile = new Location(directory, file).getAbsolutePath();
+        break;
+      }
+    }
+
+    // TODO : parse companion file once loci.parsers package is in place
   }
 
   // -- Helper methods --

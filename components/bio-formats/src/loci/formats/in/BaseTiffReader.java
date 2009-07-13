@@ -575,13 +575,13 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     switch (resolutionUnit) {
       case 2:
         // resolution is expressed in pixels per inch
-        pixX /= 0.0254;
-        pixY /= 0.0254;
+        pixX *= 25400;
+        pixY *= 25400;
         break;
       case 3:
         // resolution is expressed in pixels per centimeter
-        pixX *= 100;
-        pixY *= 100;
+        pixX *= 10000;
+        pixY *= 10000;
         break;
     }
 
