@@ -74,7 +74,7 @@ public class NativeND2Reader extends FormatReader {
 
   private Vector zs = new Vector();
   private Vector ts = new Vector();
-  private Vector tsT = new Vector();
+  private Vector<Double> tsT = new Vector<Double>();
 
   private int numSeries;
 
@@ -228,8 +228,15 @@ public class NativeND2Reader extends FormatReader {
       Vector customDataLengths = new Vector();
 
       while (in.getFilePointer() < in.length() && in.getFilePointer() >= 0) {
-        while (in.read() != -38);
-        in.skipBytes(3);
+        int b1 = in.read();
+        int b2 = in.read();
+        while (b1 != -38 || b2 != -50) {
+          if (in.getFilePointer() >= in.length() - 1) break;
+          b1 = b2;
+          b2 = in.read();
+        }
+        if (in.getFilePointer() >= in.length() - 1) break;
+        in.skipBytes(2);
 
         int lenOne = in.readInt();
         int lenTwo = in.readInt();
@@ -238,7 +245,9 @@ public class NativeND2Reader extends FormatReader {
 
         String blockType = in.readString(12);
         long fp = in.getFilePointer() - 12;
-        in.skipBytes(len - 12);
+        int skip = len - 12 - lenOne * 2;
+        if (skip <= 0) skip += lenOne * 2;
+        in.skipBytes(skip);
 
         if (blockType.startsWith("ImageDataSeq")) {
           imageOffsets.add(new Long(fp));
@@ -775,7 +784,7 @@ public class NativeND2Reader extends FormatReader {
           int[] coords = getZCTCoords(n);
           int stampIndex = coords[2];
           if (tsT.size() == getImageCount()) stampIndex = n;
-          float stamp = ((Double) tsT.get(stampIndex)).floatValue();
+          float stamp = tsT.get(stampIndex).floatValue();
           store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
 
           int index = i * getSizeC() + coords[1];
