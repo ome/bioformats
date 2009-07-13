@@ -63,6 +63,8 @@ public class FlexReader extends FormatReader {
   private int wellCount;
   private int fieldCount;
 
+  private int wellRows, wellColumns;
+
   private Vector<String> channelNames;
   private Vector<Float> xPositions, yPositions;
   private Vector<Float> xSizes, ySizes;
@@ -180,6 +182,7 @@ public class FlexReader extends FormatReader {
     lightSourceCombinationIDs = null;
     lightSourceCombinationRefs = null;
     cameraRefs = objectiveRefs = binnings = null;
+    wellRows = wellColumns = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -309,6 +312,13 @@ public class FlexReader extends FormatReader {
 
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
 
+    for (int row=0; row<wellRows; row++) {
+      for (int col=0; col<wellColumns; col++) {
+        store.setWellRow(new Integer(row), 0, row * wellColumns + col);
+        store.setWellColumn(new Integer(col), 0, row * wellColumns + col);
+      }
+    }
+
     for (int i=0; i<getSeriesCount(); i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
 
@@ -352,17 +362,21 @@ public class FlexReader extends FormatReader {
         store.setDimensionsPhysicalSizeY(ySizes.get(sizeIndex), i, 0);
       }
 
-      store.setWellSampleIndex(new Integer(i), pos[2], pos[1], pos[0]);
-      store.setWellSampleImageRef("Image:" + i, pos[2], pos[1], pos[0]);
-      if (pos[0] < xPositions.size()) {
-        store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], pos[1], pos[0]);
-      }
-      if (pos[0] < yPositions.size()) {
-        store.setWellSamplePosY(yPositions.get(pos[0]), pos[2], pos[1], pos[0]);
+      int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
+      if (wellRows == 0 && wellColumns == 0) {
+        well = pos[1];
+        store.setWellRow(new Integer(wellNumber[pos[1]][0]), pos[2], pos[1]);
+        store.setWellColumn(new Integer(wellNumber[pos[1]][1]), pos[2], pos[1]);
       }
 
-      store.setWellRow(new Integer(wellNumber[pos[1]][0]), pos[2], pos[1]);
-      store.setWellColumn(new Integer(wellNumber[pos[1]][1]), pos[2], pos[1]);
+      store.setWellSampleIndex(new Integer(i), pos[2], well, pos[0]);
+      store.setWellSampleImageRef("Image:" + i, pos[2], well, pos[0]);
+      if (pos[0] < xPositions.size()) {
+        store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], well, pos[0]);
+      }
+      if (pos[0] < yPositions.size()) {
+        store.setWellSamplePosY(yPositions.get(pos[0]), pos[2], well, pos[0]);
+      }
     }
   }
 
@@ -444,8 +458,8 @@ public class FlexReader extends FormatReader {
 
     Vector n = new Vector();
     Vector f = new Vector();
-    DefaultHandler handler = new FlexHandler(n, f, store, firstFile,
-                                             currentWell);
+    DefaultHandler handler =
+      new FlexHandler(n, f, store, firstFile, currentWell);
     DataTools.parseXML(c, handler);
 
     if (firstFile) populateCoreMetadata(wellRow, wellCol, n);
@@ -737,6 +751,12 @@ public class FlexReader extends FormatReader {
         if (qName.equals("OffsetX")) xPositions.add(offset);
         else yPositions.add(offset);
       }
+      else if (qName.equals("XSize") && "Plate".equals(parentQName)) {
+        wellRows = Integer.parseInt(value);
+      }
+      else if (qName.equals("YSize") && "Plate".equals(parentQName)) {
+        wellColumns = Integer.parseInt(value);
+      }
       else if ("Image".equals(parentQName)) {
         if (fieldCount == 0) fieldCount = 1;
         int nImages = firstWellIfds().length / fieldCount;
@@ -852,6 +872,9 @@ public class FlexReader extends FormatReader {
         int planeNo = Integer.parseInt(attributes.getValue("No"));
         if (planeNo > getSizeZ() && populateCore) core[0].sizeZ++;
       }
+      else if (qName.equals("WellShape")) {
+        parentQName = qName;
+      }
       else if (qName.equals("Image")) {
         parentQName = qName;
         nextImage++;
@@ -867,6 +890,12 @@ public class FlexReader extends FormatReader {
         if (qName.equals("Plate")) {
           nextPlate++;
           plateCount++;
+        }
+      }
+      else if (qName.equals("WellCoordinate")) {
+        if (wellNumber.length == 1) {
+          wellNumber[0][0] = Integer.parseInt(attributes.getValue("Row")) - 1;
+          wellNumber[0][1] = Integer.parseInt(attributes.getValue("Col")) - 1;
         }
       }
     }

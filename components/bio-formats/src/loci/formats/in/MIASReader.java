@@ -73,6 +73,8 @@ public class MIASReader extends FormatReader {
   private int tileRows, tileCols;
   private int tileWidth, tileHeight;
 
+  private int wellRows, wellColumns;
+
   private Vector<String> plateDirs;
 
   // -- Constructor --
@@ -253,6 +255,7 @@ public class MIASReader extends FormatReader {
       wellNumber = null;
       tileWidth = tileHeight = 0;
       plateDirs = null;
+      wellRows = wellColumns = 0;
     }
   }
 
@@ -477,7 +480,7 @@ public class MIASReader extends FormatReader {
 
     status("Populating metadata hashtable");
 
-    int wellCols = 1;
+    wellColumns = 1;
 
     if (resultFile != null) {
       RandomAccessInputStream s = new RandomAccessInputStream(resultFile);
@@ -517,7 +520,8 @@ public class MIASReader extends FormatReader {
 
           if (cols[col].equals("AreaCode")) {
             String wellID = d[col].replaceAll("\\D", "");
-            wellCols = Integer.parseInt(wellID);
+            wellColumns = Integer.parseInt(wellID);
+            wellRows = (int) (d[col].charAt(0) - 'A') + 1;
           }
         }
       }
@@ -544,10 +548,15 @@ public class MIASReader extends FormatReader {
       store.setPlateName(plateDir, plate);
       store.setPlateExternalIdentifier(plateDir, plate);
 
+      for (int row=0; row<wellRows; row++) {
+        for (int col=0; col<wellColumns; col++) {
+          store.setWellRow(new Integer(row), plate, row * wellColumns + col);
+          store.setWellColumn(new Integer(col), plate, row * wellColumns + col);
+        }
+      }
+
       for (int well=0; well<tiffs[plate].length; well++) {
         int wellIndex = wellNumber[plate][well];
-        store.setWellColumn(wellIndex % wellCols, plate, wellIndex);
-        store.setWellRow(wellIndex / wellCols, plate, wellIndex);
 
         int series = getSeriesNumber(plate, well);
         store.setWellSampleImageRef("Image:" + series, plate, wellIndex, 0);
@@ -555,8 +564,8 @@ public class MIASReader extends FormatReader {
 
         // populate Image/Pixels metadata
         store.setImageExperimentRef("Experiment:" + experimentName, series);
-        char wellRow = (char) ('A' + (wellIndex / wellCols));
-        int wellCol = (well % wellCols) + 1;
+        char wellRow = (char) ('A' + (wellIndex / wellColumns));
+        int wellCol = (well % wellColumns) + 1;
 
         store.setImageID("Image:" + series, series);
         store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol,
