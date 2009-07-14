@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Contributed 2009 by the Center for BioImage Informatics, UCSB
 */
 
+package loci.formats.tools;
+
 import java.io.IOException;
 
 import loci.common.LogTools;
@@ -156,12 +158,26 @@ public class PrintFormatTable {
   public static void printSupportedFormats(String[] args) {
     PrintStyles printStyle = PrintStyles.TXT;
 
+    boolean usage = false;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
-        if (args[i].equals("-xml")) printStyle = PrintStyles.XML;
+        if (args[i].equals("-help")) usage = true;
+        else if (args[i].equals("-xml")) printStyle = PrintStyles.XML;
         else if (args[i].equals("-html")) printStyle = PrintStyles.HTML;
         else if (args[i].equals("-txt")) printStyle = PrintStyles.TXT;
+        else {
+          LogTools.println("Warning: unknown flag: " + args[i] +
+            "; try -help for options");
+        }
       }
+    }
+
+    if (usage) {
+      LogTools.println("Usage: formatlist [-html] [-txt] [-xml]");
+      LogTools.println("  -html: show formats in an HTML table");
+      LogTools.println("   -txt: show formats in plaintext (default)");
+      LogTools.println("   -xml: show formats as XML data");
+      return;
     }
 
     LogTools.println(getHeader(printStyle));

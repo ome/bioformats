@@ -1,3 +1,7 @@
+//
+// MultiFileExample.java
+//
+
 import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
