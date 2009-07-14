@@ -64,7 +64,7 @@ public class DicomReader extends FormatReader {
     "dic", "dcm", "dicom", "j2ki", "j2kr"
   };
 
-  private static final Hashtable TYPES = buildTypes();
+  private static final Hashtable<Integer, String> TYPES = buildTypes();
 
   private static final int PIXEL_REPRESENTATION = 0x00280103;
   private static final int TRANSFER_SYNTAX_UID = 0x00020010;
@@ -137,7 +137,7 @@ public class DicomReader extends FormatReader {
   public DicomReader() {
     super("DICOM",
       new String[] {"dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw"});
-    blockCheckLen = 20480;
+    blockCheckLen = 2048;
     suffixNecessary = false;
     suffixSufficient = false;
   }
@@ -159,22 +159,8 @@ public class DicomReader extends FormatReader {
     if (stream.readString(4).equals("DICM")) return true;
     stream.seek(0);
 
-    boolean foundImageWidth = false, foundImageHeight = false;
-
-    while (stream.getFilePointer() < stream.length()) {
-      int tag = getNextTag(stream);
-      stream.skipBytes(elementLength);
-      switch (tag) {
-        case ROWS:
-          foundImageHeight = true;
-          break;
-        case COLUMNS:
-          foundImageWidth = true;
-          break;
-      }
-      if (foundImageWidth && foundImageHeight) return true;
-    }
-    return false;
+    int tag = getNextTag(stream);
+    return TYPES.get(new Integer(tag)) != null;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -227,7 +213,7 @@ public class DicomReader extends FormatReader {
 
     int ec = isIndexed() ? 1 : getSizeC();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bytes = FormatTools.getPlaneSize(this);
+    int bytes = getSizeX() * getSizeY() * bpp * ec;
     in.seek(offsets[no]);
 
     if (isRLE) {
@@ -273,6 +259,7 @@ public class DicomReader extends FormatReader {
 
         int rowLen = w * bpp;
         int srcRowLen = getSizeX() * bpp;
+
         int srcPlane = getSizeY() * srcRowLen;
 
         for (int row=0; row<h; row++) {
@@ -296,6 +283,9 @@ public class DicomReader extends FormatReader {
         tmp[2] = (byte) 0xff;
         System.arraycopy(b, 2, tmp, 3, b.length - 2);
         b = tmp;
+      }
+      if (b[3] >= (byte) 0xf0) {
+        b[3] -= (byte) 0x30;
       }
       Codec codec = null;
       CodecOptions options = new CodecOptions();
@@ -579,10 +569,10 @@ public class DicomReader extends FormatReader {
 
         in.seek(offsets[i]);
         byte[] buf = new byte[8192];
-        in.read(buf);
+        int n = in.read(buf);
         boolean found = false;
         while (!found) {
-          for (int q=0; q<buf.length-2; q++) {
+          for (int q=0; q<n-2; q++) {
             if (buf[q] == (byte) 0xff && buf[q + 1] == secondCheck &&
               buf[q + 2] == (byte) 0xff)
             {
@@ -590,7 +580,7 @@ public class DicomReader extends FormatReader {
                 (isJP2K && buf[q + 2] == (byte) 0xff && buf[q + 3] == 0x51))
               {
                 found = true;
-                offsets[i] = in.getFilePointer() + q - buf.length;
+                offsets[i] = in.getFilePointer() + q - n;
                 break;
               }
             }
@@ -599,7 +589,7 @@ public class DicomReader extends FormatReader {
             for (int q=0; q<4; q++) {
               buf[q] = buf[buf.length + q - 4];
             }
-            in.read(buf, 4, buf.length - 4);
+            n = in.read(buf, 4, buf.length - 4);
           }
         }
       }
@@ -649,7 +639,7 @@ public class DicomReader extends FormatReader {
             long fp = stream.getFilePointer();
             if (fp + 4 >= stream.length() || fp < 0) break;
             int tag = getNextTag(stream);
-            String key = (String) TYPES.get(new Integer(tag));
+            String key = TYPES.get(new Integer(tag));
             if ("Instance Number".equals(key)) {
               instance = stream.readString(elementLength).trim();
               if (instance.length() == 0) instance = null;
@@ -672,7 +662,8 @@ public class DicomReader extends FormatReader {
           }
           catch (NumberFormatException e) { }
 
-          if (date.equals(originalDate) && (stamp - timestamp < 100)) {
+          if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 100))
+          {
             int position = Integer.parseInt(instance) - 1;
             if (position < fileList.size()) {
               while (position < fileList.size() &&
@@ -765,7 +756,7 @@ public class DicomReader extends FormatReader {
       info = info.trim();
       if (info.equals("")) info = oldValue == null ? "" : oldValue.trim();
 
-      String key = (String) TYPES.get(new Integer(tag));
+      String key = TYPES.get(new Integer(tag));
       if (key == null) {
         key = Integer.toHexString((tag >> 16) & 0xffff) + "," +
           Integer.toHexString(tag & 0xffff);
@@ -847,8 +838,7 @@ public class DicomReader extends FormatReader {
       inSequence = false;
     }
 
-    Integer key = new Integer(tag);
-    String id = (String) TYPES.get(key);
+    String id = TYPES.get(new Integer(tag));
 
     if (id != null) {
       if (vr == IMPLICIT_VR && id != null) {
@@ -1018,8 +1008,8 @@ public class DicomReader extends FormatReader {
    * This is incomplete at best, since there are literally thousands of
    * fields defined by the DICOM specifications.
    */
-  private static Hashtable buildTypes() {
-    Hashtable dict = new Hashtable();
+  private static Hashtable<Integer, String> buildTypes() {
+    Hashtable<Integer, String> dict = new Hashtable<Integer, String>();
 
     dict.put(new Integer(0x00020002), "Media Storage SOP Class UID");
     dict.put(new Integer(0x00020003), "Media Storage SOP Instance UID");
