@@ -315,7 +315,8 @@ public class MicromanagerReader extends FormatReader {
           }
           else if (key.equals("Core-Camera")) cameraRef = value;
           else if (key.equals(cameraRef + "-Binning")) {
-            binning = value;
+            if (value.indexOf("x") != -1) binning = value;
+            else binning = value + "x" + value;
           }
           else if (key.equals(cameraRef + "-CameraID")) detectorID = value;
           else if (key.equals(cameraRef + "-CameraName")) detectorModel = value;
