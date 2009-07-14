@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.util.Hashtable;
+
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.LogTools;
@@ -198,6 +200,26 @@ public final class MetadataTools {
     IMetadata omexmlMeta = createOMEXMLMetadata();
     convertMetadata(src, omexmlMeta);
     return omexmlMeta;
+  }
+
+  /**
+   * If the given IMetadata is an instance of
+   * {@link loci.formats.ome.OMEXMLMetadata}, the OriginalMetadata hashtable
+   * is returned.  Otherwise, returns null;
+   */
+  public static Hashtable<String, String> getOriginalMetadata(IMetadata src) {
+    if (isOMEXMLMetadata(src)) {
+      ReflectedUniverse r = new ReflectedUniverse();
+      r.setVar("omexml", src);
+      try {
+        return
+          (Hashtable<String, String>) r.exec("omexml.getOriginalMetadata()");
+      }
+      catch (ReflectException exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
+      }
+    }
+    return null;
   }
 
   /**

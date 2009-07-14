@@ -122,6 +122,7 @@ public class $q.className() extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
+    super.setRoot(root);
     if (!(root instanceof OMENode)) {
       throw new IllegalArgumentException(
         "Invalid root type: " + root.getClass().getName() + ". " +

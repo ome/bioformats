@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.CBZip2InputStream;
@@ -41,7 +42,7 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
 import org.xml.sax.Attributes;
@@ -239,14 +240,16 @@ public class OMEXMLReader extends FormatReader {
 
     status("Populating metadata");
 
-    MetadataRetrieve omexmlMeta = (MetadataRetrieve)
-      MetadataTools.createOMEXMLMetadata(omexml);
+    IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata(omexml);
 
     if (omexmlMeta == null) {
       throw new FormatException("ome-xml.jar is required to read " +
         "OME-XML files. Please download it from " +
         "http://loci.wisc.edu/ome/formats-library.html");
     }
+
+    Hashtable originalMetadata = MetadataTools.getOriginalMetadata(omexmlMeta);
+    if (originalMetadata != null) metadata = originalMetadata;
 
     int numDatasets = omexmlMeta.getImageCount();
 

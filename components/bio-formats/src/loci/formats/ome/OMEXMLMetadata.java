@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.ome;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Hashtable;
 
 import javax.xml.transform.TransformerException;
 
@@ -67,6 +68,9 @@ public abstract class OMEXMLMetadata implements IMetadata {
 
   /** Whether OriginalMetadata semantic type definition has been created. */
   private boolean omCreated;
+
+  /** Hashtable containing all OriginalMetadata objects. */
+  private Hashtable<String, String> originalMetadata;
 
   // -- Constructors --
 
@@ -133,8 +137,11 @@ public abstract class OMEXMLMetadata implements IMetadata {
     DOMUtil.setAttribute("Value", value, om);
   }
 
-  /** Gets the OriginalMetadata value corresponding to the given key. */
-  public String getOriginalMetadataValue(String key) {
+  /** Gets the Hashtable containing all OriginalMetadata key/value pairs. */
+  public Hashtable<String, String> getOriginalMetadata() {
+    if (originalMetadata != null) return originalMetadata;
+    originalMetadata = new Hashtable<String, String>();
+
     if (imageCA == null) {
       Element ome = root.getDOMElement();
       Element image = DOMUtil.getChildElement("Image", ome);
@@ -142,6 +149,7 @@ public abstract class OMEXMLMetadata implements IMetadata {
       imageCA = DOMUtil.getChildElement("CustomAttributes", image);
       if (imageCA == null) return null;
     }
+
     NodeList list = imageCA.getChildNodes();
     int size = list.getLength();
     for (int i=0; i<size; i++) {
@@ -154,26 +162,23 @@ public abstract class OMEXMLMetadata implements IMetadata {
       }
       NamedNodeMap attrs = node.getAttributes();
       int len = attrs.getLength();
-      String value = null;
+      String key = null, value = null;
       for (int j=0; j<len; j++) {
-        Attr attr = (Attr) attrs.item(i);
+        Attr attr = (Attr) attrs.item(j);
         if (attr == null) continue;
-        String attrName = attr.getName();
-        if ("Name".equals(attrName)) {
-          String name = attr.getValue();
-          if (!key.equals(name)) {
-            // wrong OriginalMetadata element
-            value = null;
-            break;
-          }
-        }
-        else if ("Value".equals(attrName)) {
-          value = attr.getValue();
-        }
+        String name = attr.getName();
+        if ("Name".equals(name)) key = attr.getValue();
+        else if ("Value".equals(name)) value = attr.getValue();
       }
-      if (value != null) return value;
+      if (key != null) originalMetadata.put(key, value);
     }
-    return null;
+
+    return originalMetadata;
+  }
+
+  /** Gets the OriginalMetadata value corresponding to the given key. */
+  public String getOriginalMetadataValue(String key) {
+    return originalMetadata == null ? null : originalMetadata.get(key);
   }
 
   // -- MetadataRetrieve API methods --
@@ -185,6 +190,11 @@ public abstract class OMEXMLMetadata implements IMetadata {
   }
 
   // -- MetadataStore API methods --
+
+  /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
+  public void setRoot(Object root) {
+    originalMetadata = null;
+  }
 
   /* @see loci.formats.meta.MetadataStore#getRoot() */
   public Object getRoot() {

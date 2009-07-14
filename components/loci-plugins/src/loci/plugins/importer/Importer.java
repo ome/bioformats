@@ -263,6 +263,7 @@ public class Importer {
     try {
       base.setMetadataFiltered(true);
       base.setNormalized(true);
+      base.setOriginalMetadataPopulated(true);
       base.setId(id);
 
       int pixelType = base.getPixelType();

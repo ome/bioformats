@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
+ * Created by melissa via MetadataAutogen on Jul 14, 2009 12:57:11 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -2687,6 +2687,7 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
+    super.setRoot(root);
     if (!(root instanceof OMENode)) {
       throw new IllegalArgumentException(
         "Invalid root type: " + root.getClass().getName() + ". " +

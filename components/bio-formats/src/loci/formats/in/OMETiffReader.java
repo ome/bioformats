@@ -152,6 +152,9 @@ public class OMETiffReader extends FormatReader {
     String xml = TiffTools.getComment(firstIFD);
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
 
+    Hashtable originalMetadata = MetadataTools.getOriginalMetadata(meta);
+    if (originalMetadata != null) metadata = originalMetadata;
+
     debug(xml, 3);
 
     if (meta == null) {
