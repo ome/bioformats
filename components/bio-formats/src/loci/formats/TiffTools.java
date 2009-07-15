@@ -37,8 +37,6 @@ import loci.common.DataTools;
 import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 import loci.common.Region;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.Codec;
@@ -2294,17 +2292,11 @@ public final class TiffTools {
       }
       else {
         // this is an array of primitive types, Strings, or TiffRationals
-        ReflectedUniverse r = new ReflectedUniverse();
-        r.setVar("value", value);
-        try {
-          int nElements = ((Integer) r.exec("value.length")).intValue();
-          for (int i=0; i<nElements; i++) {
-            r.setVar("index", i);
-            sb.append(r.exec("value[index]"));
-            if (i < nElements - 1) sb.append(",");
-          }
+        int nElements = Array.getLength(value);
+        for (int i=0; i<nElements; i++) {
+          sb.append(Array.get(value, i));
+          if (i < nElements - 1) sb.append(",");
         }
-        catch (ReflectException re) { }
       }
     }
     debug(sb.toString());
