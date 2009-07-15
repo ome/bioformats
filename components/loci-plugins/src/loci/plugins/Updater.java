@@ -184,7 +184,16 @@ public class Updater implements PlugIn {
       out.write(buf);
       out.close();
 
-      plugin.renameTo(new File(jarPath));
+      boolean success = plugin.renameTo(new File(jarPath));
+      if (!success) {
+        IJ.showStatus("");
+        IJ.showMessage("The LOCI plugins have been downloaded to:\n" +
+          downloadPath + "\n" +
+          "The JAR file could not be renamed to loci_tools.jar.\n" +
+          "Please rename " + downloadPath + " to\n" + jarPath + "\n" +
+          "and restart ImageJ to complete the upgrade process.");
+        return;
+      }
     }
     catch (IOException e) {
       IJ.showMessage("An error occurred while downloading the LOCI plugins");
