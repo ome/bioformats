@@ -72,6 +72,7 @@ public class FlexReader extends FormatReader {
   private Hashtable<String, Vector<String>> lightSourceCombinationIDs;
   private Vector<String> cameraRefs, binnings, objectiveRefs;
   private Vector<String> lightSourceCombinationRefs;
+  private Vector<String> filterSets;
 
   private Vector<String> measurementFiles;
 
@@ -309,6 +310,8 @@ public class FlexReader extends FormatReader {
     if (plateName == null) plateName = currentFile.getParentFile().getName();
     if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
     store.setPlateName(plateName, 0);
+    store.setPlateRowNamingConvention("A", 0);
+    store.setPlateColumnNamingConvention("1", 0);
 
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
 
@@ -324,8 +327,9 @@ public class FlexReader extends FormatReader {
 
       store.setImageID("Image:" + i, i);
       store.setImageInstrumentRef("Instrument:0", i);
-      store.setImageName("Well Row #" + wellNumber[pos[1]][0] + ", Column #" +
-        wellNumber[pos[1]][1] + "; Field #" + pos[0], i);
+      char wellRow = (char) ('A' + wellNumber[pos[1]][0]);
+      store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
+        "; Field #" + (pos[0] + 1), i);
 
       int seriesIndex = i * getImageCount();
       if (seriesIndex < objectiveRefs.size()) {
@@ -350,6 +354,9 @@ public class FlexReader extends FormatReader {
           }
           else if (c > 0 && lightSources != null && lightSources.size() == 1) {
             store.setLightSourceSettingsLightSource(lightSources.get(0), i, c);
+          }
+          if (index < filterSets.size()) {
+            store.setLogicalChannelFilterSet(filterSets.get(index), i, c);
           }
         }
       }
@@ -444,6 +451,7 @@ public class FlexReader extends FormatReader {
     if (cameraRefs == null) cameraRefs = new Vector<String>();
     if (objectiveRefs == null) objectiveRefs = new Vector<String>();
     if (binnings == null) binnings = new Vector<String>();
+    if (filterSets == null) filterSets = new Vector<String>();
 
     // parse factors from XML
     String xml =
@@ -693,6 +701,11 @@ public class FlexReader extends FormatReader {
     private String parentQName;
     private String lightSourceID;
 
+    private String sliderName;
+    private int nextFilter;
+    private int nextFilterSet;
+    private int nextSliderRef;
+
     private boolean populateCore = true;
     private int well = 0;
 
@@ -810,6 +823,13 @@ public class FlexReader extends FormatReader {
         else if (qName.equals("LightSourceCombinationRef")) {
           lightSourceCombinationRefs.add(value);
         }
+        else if (qName.equals("FilterCombinationRef")) {
+          filterSets.add("FilterSet:" + value);
+        }
+      }
+      else if (qName.equals("FilterCombination")) {
+        nextFilterSet++;
+        nextSliderRef = 0;
       }
     }
 
@@ -896,6 +916,37 @@ public class FlexReader extends FormatReader {
         if (wellNumber.length == 1) {
           wellNumber[0][0] = Integer.parseInt(attributes.getValue("Row")) - 1;
           wellNumber[0][1] = Integer.parseInt(attributes.getValue("Col")) - 1;
+        }
+      }
+      else if (qName.equals("Slider")) {
+        sliderName = attributes.getValue("Name");
+      }
+      else if (qName.equals("Filter")) {
+        store.setFilterID("Filter:" + attributes.getValue("ID"), 0, nextFilter);
+        store.setFilterFilterWheel(sliderName, 0, nextFilter);
+
+        nextFilter++;
+      }
+      else if (qName.equals("FilterCombination")) {
+        store.setFilterSetID("FilterSet:" + attributes.getValue("ID"), 0,
+          nextFilterSet);
+      }
+      else if (qName.equals("SliderRef")) {
+        String filterName = attributes.getValue("Filter");
+        String filterID = "Filter:" + filterName;
+        String slider = attributes.getValue("ID");
+        if (nextSliderRef == 0 && slider.startsWith("Camera")) {
+          store.setFilterSetEmFilter(filterID, 0, nextFilterSet);
+        }
+        else if (nextSliderRef == 1 && slider.startsWith("Camera")) {
+          store.setFilterSetExFilter(filterID, 0, nextFilterSet);
+        }
+        else if (slider.equals("Primary_Dichro")) {
+          store.setFilterSetDichroic(filterID, 0, nextFilterSet);
+        }
+        String lname = filterName.toLowerCase();
+        if (!lname.startsWith("empty") && !lname.startsWith("blocked")) {
+          nextSliderRef++;
         }
       }
     }
