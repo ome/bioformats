@@ -33,6 +33,7 @@ import java.awt.Checkbox;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -127,7 +128,6 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     GridBagLayout gdl = (GridBagLayout) gd.getLayout();
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 2;
-    gbc.gridwidth = GridBagConstraints.REMAINDER;
 
     Panel[] p = new Panel[seriesCount];
     for (int i=0; i<seriesCount; i++) {
@@ -175,8 +175,10 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     buttons.add(select);
     buttons.add(deselect);
 
-    gbc.gridx = 0;
+    gbc.gridx = 2;
     gbc.gridy = seriesCount;
+    gbc.anchor = GridBagConstraints.EAST;
+    gbc.insets = new Insets(15, 0, 0, 0);
     gdl.setConstraints(buttons, gbc);
     gd.add(buttons);
 
@@ -205,9 +207,21 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     String cmd = e.getActionCommand();
     if ("select".equals(cmd)) {
       for (int i=0; i<boxes.length; i++) boxes[i].setState(true);
+      updateIfGlitched();
     }
     else if ("deselect".equals(cmd)) {
       for (int i=0; i<boxes.length; i++) boxes[i].setState(false);
+      updateIfGlitched();
+    }
+  }
+
+  // -- Helper methods --
+
+  private void updateIfGlitched() {
+    if (IS_GLITCHED) {
+      // HACK - work around for Mac OS X AWT bug
+      sleep(200);
+      for (int i=0; i<boxes.length; i++) boxes[i].repaint();
     }
   }
 

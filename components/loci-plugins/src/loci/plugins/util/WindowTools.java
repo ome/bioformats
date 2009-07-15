@@ -117,6 +117,7 @@ public final class WindowTools {
 
     // add scroll pane to original container
     GridBagConstraints constraints = new GridBagConstraints();
+    constraints.gridwidth = GridBagConstraints.REMAINDER;
     constraints.fill = GridBagConstraints.BOTH;
     constraints.weightx = 1.0;
     constraints.weighty = 1.0;

@@ -68,10 +68,6 @@ public class ImporterDialog extends OptionsDialog
     "<i>Select an option for a detailed explanation. " +
     "Documentation written by Glen MacDonald and Curtis Rueden.</i>";
 
-  /** Flag indicating whether to invoke workaround for AWT refresh bug. */
-  protected static final boolean IS_GLITCHED =
-    System.getProperty("os.name").indexOf("Mac OS X") >= 0;
-
   // -- Fields --
 
   /** LOCI plugins configuration. */
@@ -649,14 +645,6 @@ public class ImporterDialog extends OptionsDialog
       // reenable focus events
       for (int i=0; i<c.length; i++) c[i].addFocusListener(this);
     }
-  }
-
-  /** Blocks the current thread for the specified number of milliseconds. */
-  private void sleep(long ms) {
-    try {
-      Thread.sleep(ms);
-    }
-    catch (InterruptedException exc) { }
   }
 
 }

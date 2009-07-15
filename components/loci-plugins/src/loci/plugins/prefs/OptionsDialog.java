@@ -43,6 +43,10 @@ public abstract class OptionsDialog {
   public static final int STATUS_CANCELED = 1;
   public static final int STATUS_FINISHED = 2;
 
+  /** Flag indicating whether to invoke workaround for AWT refresh bug. */
+  protected static final boolean IS_GLITCHED =
+    System.getProperty("os.name").indexOf("Mac OS X") >= 0;
+
   // -- Fields --
 
   /** Options list associated with the dialog. */
@@ -77,6 +81,14 @@ public abstract class OptionsDialog {
    */
   protected void addCheckbox(GenericDialog gd, String key) {
     gd.addCheckbox(optionsList.getLabel(key), optionsList.isSet(key));
+  }
+
+  /** Blocks the current thread for the specified number of milliseconds. */
+  protected void sleep(long ms) {
+    try {
+      Thread.sleep(ms);
+    }
+    catch (InterruptedException exc) { }
   }
 
 }
