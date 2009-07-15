@@ -26,18 +26,24 @@ package loci.formats;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import loci.common.LogTools;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -73,24 +79,6 @@ public final class XMLTools {
   public static void validateXML(String xml, String label) {
     if (label == null) label = "XML";
 
-    // check Java version (XML validation only works in Java 1.5+)
-    String version = System.getProperty("java.version");
-    int dot = version.indexOf(".");
-    if (dot >= 0) dot = version.indexOf(".", dot + 1);
-    float ver = Float.NaN;
-    if (dot >= 0) {
-      try {
-        ver = Float.parseFloat(version.substring(0, dot));
-      }
-      catch (NumberFormatException exc) { }
-    }
-    if (ver != ver) {
-      LogTools.println("Warning: cannot determine if Java version\"" +
-        version + "\" supports Java v1.5. XML validation may fail.");
-    }
-
-    if (ver < 1.5f) return; // do not attempt validation if not Java 1.5+
-
     // get path to schema from root element using SAX
     LogTools.println("Parsing schema path");
     ValidationSAXHandler saxHandler = new ValidationSAXHandler();
@@ -118,49 +106,52 @@ public final class XMLTools {
 
     LogTools.println("Validating " + label);
 
-    // use reflection to avoid compile-time dependency on optional
-    // org.openmicroscopy.xml or javax.xml.validation packages
-    ReflectedUniverse r = new ReflectedUniverse();
+    // look up a factory for the W3C XML Schema language
+    String xmlSchemaPath = "http://www.w3.org/2001/XMLSchema";
+    SchemaFactory factory = SchemaFactory.newInstance(xmlSchemaPath);
 
+    // compile the schema
+    URL schemaLocation = null;
     try {
-      // look up a factory for the W3C XML Schema language
-      r.setVar("xmlSchemaPath", "http://www.w3.org/2001/XMLSchema");
-      r.exec("import javax.xml.validation.SchemaFactory");
-      r.exec("factory = SchemaFactory.newInstance(xmlSchemaPath)");
-
-      // compile the schema
-      r.exec("import java.net.URL");
-      r.setVar("schemaPath", schemaPath);
-      r.exec("schemaLocation = new URL(schemaPath)");
-      r.exec("schema = factory.newSchema(schemaLocation)");
-
-      // HACK - workaround for weird Linux bug preventing use of
-      // schema.newValidator() method even though it is "public final"
-      r.setAccessibilityIgnored(true);
-
-      // get a validator from the schema
-      r.exec("validator = schema.newValidator()");
-
-      // prepare the XML source
-      r.exec("import java.io.StringReader");
-      r.setVar("xml", xml);
-      r.exec("reader = new StringReader(xml)");
-      r.exec("import org.xml.sax.InputSource");
-      r.exec("is = new InputSource(reader)");
-      r.exec("import javax.xml.transform.sax.SAXSource");
-      r.exec("source = new SAXSource(is)");
-
-      // validate the XML
-      ValidationErrorHandler errorHandler = new ValidationErrorHandler();
-      r.setVar("errorHandler", errorHandler);
-      r.exec("validator.setErrorHandler(errorHandler)");
-      r.exec("validator.validate(source)");
-      if (errorHandler.ok()) LogTools.println("No validation errors found.");
+      schemaLocation = new URL(schemaPath);
     }
-    catch (ReflectException exc) {
-      LogTools.println("Error validating " + label + ":");
+    catch (MalformedURLException exc) {
+      LogTools.println("Error accessing schema at " + schemaPath + ":");
       LogTools.trace(exc);
+      return;
     }
+    Schema schema = null;
+    try {
+      schema = factory.newSchema(schemaLocation);
+    }
+    catch (SAXException exc) {
+      LogTools.println("Error parsing schema at " + schemaPath + ":");
+      LogTools.trace(exc);
+      return;
+    }
+
+    // get a validator from the schema
+    Validator validator = schema.newValidator();
+
+    // prepare the XML source
+    StringReader reader = new StringReader(xml);
+    InputSource is = new InputSource(reader);
+    SAXSource source = new SAXSource(is);
+
+    // validate the XML
+    ValidationErrorHandler errorHandler = new ValidationErrorHandler();
+    validator.setErrorHandler(errorHandler);
+    try {
+      validator.validate(source);
+    }
+    catch (IOException exc) { exception = exc; }
+    catch (SAXException exc) { exception = exc; }
+    if (exception != null) {
+      LogTools.println("Error validating document:");
+      LogTools.trace(exception);
+      return;
+    }
+    if (errorHandler.ok()) LogTools.println("No validation errors found.");
   }
 
   /** Indents XML to be more readable. */
