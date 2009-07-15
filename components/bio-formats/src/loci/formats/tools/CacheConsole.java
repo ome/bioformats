@@ -27,9 +27,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import javax.swing.JFrame;
+import javax.swing.border.EmptyBorder;
+
 import loci.common.LogTools;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -43,6 +44,7 @@ import loci.formats.cache.ICacheSource;
 import loci.formats.cache.ICacheStrategy;
 import loci.formats.cache.RectangleStrategy;
 import loci.formats.gui.BufferedImageSource;
+import loci.formats.gui.CacheComponent;
 
 /**
  * CacheConsole provides an interactive interpreter for
@@ -125,22 +127,14 @@ public final class CacheConsole {
       }
       else if (cmd.startsWith("e") || cmd.startsWith("q")) break; // exit/quit
       else if (cmd.startsWith("g")) { // gui
-        ReflectedUniverse ru = new ReflectedUniverse();
-        try {
-          ru.exec("import loci.formats.gui.CacheComponent");
-          ru.setVar("cache", cache);
-          ru.setVar("doSource", true);
-          ru.setVar("axes", new String[] {"Z", "C", "T"});
-          ru.setVar("id", id);
-          ru.exec("widget = new CacheComponent(cache, axes, id)");
-          ru.exec("import javax.swing.JFrame");
-          ru.exec("frame = new JFrame(\"Cache controls\")");
-          ru.exec("frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)");
-          ru.exec("frame.setContentPane(widget)");
-          ru.exec("frame.pack()");
-          ru.exec("frame.setVisible(true)");
-        }
-        catch (ReflectException exc) { LogTools.trace(exc); }
+        String[] axes = {"Z", "C", "T"};
+        CacheComponent widget = new CacheComponent(cache, axes, id);
+        widget.setBorder(new EmptyBorder(15, 15, 15, 15));
+        JFrame frame = new JFrame("Cache controls");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setContentPane(widget);
+        frame.pack();
+        frame.setVisible(true);
       }
       else if (cmd.startsWith("h")) { // help
         LogTools.println("Available commands:");
