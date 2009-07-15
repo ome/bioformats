@@ -61,7 +61,6 @@ public class InCellReader extends FormatReader {
 
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
-  private int seriesCount;
   private Vector<Integer> emWaves, exWaves;
   private int totalImages;
   private int imageWidth, imageHeight;
@@ -136,6 +135,7 @@ public class InCellReader extends FormatReader {
       getSeries() % channelsPerTimepoint.size() : coordinates[2];
     int image = getIndex(coordinates[0], coordinates[1], 0);
 
+    if (imageFiles[well][field][timepoint][image] == null) return buf;
     String filename = imageFiles[well][field][timepoint][image].filename;
     if (filename == null || !(new Location(filename).exists())) return buf;
 
@@ -186,7 +186,6 @@ public class InCellReader extends FormatReader {
     imageFiles = null;
     if (tiffReader != null) tiffReader.close();
     tiffReader = null;
-    seriesCount = 0;
     totalImages = 0;
 
     emWaves = exWaves = null;
@@ -249,7 +248,7 @@ public class InCellReader extends FormatReader {
     if (getSizeT() == 0) core[0].sizeT = 1;
 
     Vector wells = new Vector();
-    seriesCount = 0;
+    int seriesCount = 0;
 
     if (exclude != null) {
       for (int row=0; row<wellRows; row++) {
@@ -425,8 +424,6 @@ public class InCellReader extends FormatReader {
 
     // populate Well data
 
-    int[][] plate = new int[wellRows][wellCols];
-
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i);
@@ -436,6 +433,9 @@ public class InCellReader extends FormatReader {
       store.setWellSamplePosX(posX.get(field), 0, well, field);
       store.setWellSamplePosY(posY.get(field), 0, well, field);
     }
+
+    // populate ROI data
+    parseTextROIs(store);
   }
 
   // -- Helper methods --
@@ -451,6 +451,80 @@ public class InCellReader extends FormatReader {
     int wellRow = well / (lastCol - firstCol + 1);
     int wellCol = well % (lastCol - firstCol + 1);
     return (wellRow + firstRow) * wellCols + wellCol + firstCol;
+  }
+
+  /**
+   * If a .txt file is present, parse ROI data and place it in the
+   * given MetadataStore.
+   */
+  private void parseTextROIs(MetadataStore store) throws IOException {
+    if (metadataFiles == null) return;
+    for (String file : metadataFiles) {
+      if (file.toLowerCase().endsWith(".txt")) {
+        RandomAccessInputStream s = new RandomAccessInputStream(file);
+        String data = s.readString((int) s.length());
+        s.close();
+        String[] lines = data.split("\n");
+        String[] skipRow = null, columns = null, values = null;
+        String well = null, prevWell = null;
+        int xIndex = -1, yIndex = -1;
+        int cellIndex = -1, wellIndex = -1;
+        int areaIndex = -1;
+        int image = 0;
+        for (String line : lines) {
+          values = line.split("\t");
+          if (values.length > 2) {
+            if (skipRow == null) skipRow = values;
+            else if (columns == null) {
+              columns = values;
+              xIndex = DataTools.indexOf(columns, "Cell cg X");
+              yIndex = DataTools.indexOf(columns, "Cell cg Y");
+              wellIndex = DataTools.indexOf(columns, "Well");
+              cellIndex = DataTools.indexOf(columns, "Cell");
+              areaIndex = DataTools.indexOf(columns, "Nuc Area");
+            }
+            else {
+              // assume that rows are sorted by well
+              well = values[wellIndex].trim();
+              if (!well.equals(prevWell) && prevWell != null) image++;
+
+              int roiIndex = 0;
+              double area = 0d;
+
+              String cell = values[cellIndex].trim();
+
+              try {
+                roiIndex = Integer.parseInt(cell) - 1;
+                area = Double.parseDouble(values[areaIndex].trim());
+              }
+              catch (NumberFormatException e) {
+                break;
+              }
+
+              // calculate the radius of the ROI, since it's not given
+              double radius = Math.sqrt(area / Math.PI);
+
+              // "Cell cg X", "Cell cg Y"
+              store.setCircleCx(values[xIndex].trim(), image, roiIndex, 0);
+              store.setCircleCy(values[yIndex].trim(), image, roiIndex, 0);
+              store.setCircleR(String.valueOf(radius), image, roiIndex, 0);
+
+              if (isMetadataCollected()) {
+                setSeries(image);
+                for (int col=2; col<values.length; col++) {
+                  addSeriesMeta("Cell #" + cell + " " + columns[col],
+                    values[col].trim());
+                }
+              }
+              prevWell = well;
+            }
+          }
+        }
+
+        break;
+      }
+    }
+    setSeries(0);
   }
 
   // -- Helper classes --

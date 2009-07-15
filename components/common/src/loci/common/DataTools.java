@@ -824,6 +824,17 @@ public final class DataTools {
     return -1;
   }
 
+  /**
+   * Returns the index of the first occurence of the given value in the given
+   * Object array.  If the value is not in the array, returns -1.
+   */
+  public static int indexOf(Object[] array, Object value) {
+    for (int i=0; i<array.length; i++) {
+      if (value.equals(array[i])) return i;
+    }
+    return -1;
+  }
+
   // -- Signed data conversion --
 
   public static byte[] makeSigned(byte[] b) {

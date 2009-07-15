@@ -93,9 +93,7 @@ public class NiftiReader extends FormatReader {
       header.close();
       return isValid;
     }
-    catch (IOException e) {
-      if (debug) trace(e);
-    }
+    catch (IOException e) { }
     return false;
   }
 
