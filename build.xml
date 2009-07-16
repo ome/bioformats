@@ -734,32 +734,32 @@ Apache XML-RPC
 
   <target name="dist-visbio"
     description="create distribution bundles for VisBio">
-    <ant dir="components/visbio" target="visbio.dist"/>
+    <ant dir="components/visbio" target="dist"/>
   </target>
 
   <target name="dist-visbio-win32"
     description="create distribution bundle for VisBio: Windows w/ JRE">
-    <ant dir="components/visbio" target="visbio.dist-win32"/>
+    <ant dir="components/visbio" target="dist-win32"/>
   </target>
 
   <target name="dist-visbio-win32-nojre"
     description="create distribution bundle for VisBio: Windows no JRE">
-    <ant dir="components/visbio" target="visbio.dist-win32-nojre"/>
+    <ant dir="components/visbio" target="dist-win32-nojre"/>
   </target>
 
   <target name="dist-visbio-macosx"
     description="create distribution bundle for VisBio: Mac OS X">
-    <ant dir="components/visbio" target="visbio.dist-macosx"/>
+    <ant dir="components/visbio" target="dist-macosx"/>
   </target>
 
   <target name="dist-visbio-linux"
     description="create distribution bundle for VisBio: Linux w/ JRE">
-    <ant dir="components/visbio" target="visbio.dist-linux"/>
+    <ant dir="components/visbio" target="dist-linux"/>
   </target>
 
   <target name="dist-visbio-nojre"
     description="create distribution bundle for VisBio: cross-platform">
-    <ant dir="components/visbio" target="visbio.dist-nojre"/>
+    <ant dir="components/visbio" target="dist-nojre"/>
   </target>
 
   <!-- SLIM Plotter -->
