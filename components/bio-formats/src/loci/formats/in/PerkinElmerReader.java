@@ -30,7 +30,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -64,6 +64,8 @@ public class PerkinElmerReader extends FormatReader {
   public static final String HTML_REGEX =
     "<p>|</p>|<br>|<hr>|<b>|</b>|<HTML>|<HEAD>|</HTML>|" +
     "</HEAD>|<h1>|</h1>|<HR>|</body>";
+
+  public static final String DATE_FORMAT = "HH:mm:ss (MM/dd/yyyy)";
 
   // -- Fields --
 
@@ -683,7 +685,7 @@ public class PerkinElmerReader extends FormatReader {
     // populate Image element
     store.setImageName("", 0);
     if (finishTime != null) {
-      finishTime = DataTools.formatDate(finishTime, "HH:mm:ss (MM/dd/yyyy)");
+      finishTime = DateTools.formatDate(finishTime, DATE_FORMAT);
       store.setImageCreationDate(finishTime, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
@@ -706,10 +708,10 @@ public class PerkinElmerReader extends FormatReader {
 
     long start = 0, end = 0;
     if (startTime != null) {
-      start = DataTools.getTime(startTime, "HH:mm:ss (MM/dd/yyyy)");
+      start = DateTools.getTime(startTime, DATE_FORMAT);
     }
     if (finishTime != null) {
-      end = DataTools.getTime(finishTime, "yyyy-MM-dd'T'HH:mm:ss");
+      end = DateTools.getTime(finishTime, DateTools.ISO8601_FORMAT);
     }
 
     float secondsPerPlane = ((float) (end - start) / getImageCount()) / 1000f;

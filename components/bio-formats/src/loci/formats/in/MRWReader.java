@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -36,6 +37,7 @@ import loci.formats.TiffTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * MRWReader is the file format reader for Minolta MRW files.
@@ -199,17 +201,18 @@ public class MRWReader extends FormatReader {
         byte[] b = new byte[len];
         in.read(b);
         RandomAccessInputStream ras = new RandomAccessInputStream(b);
-        Hashtable[] ifds = TiffTools.getIFDs(ras);
+        Vector<IFD> ifds = TiffTools.getIFDs(ras);
 
-        for (int i=0; i<ifds.length; i++) {
-          Integer[] keys = (Integer[]) ifds[i].keySet().toArray(new Integer[0]);
+        for (int i=0; i<ifds.size(); i++) {
+          IFD ifd = ifds.get(i);
+          Integer[] keys = (Integer[]) ifd.keySet().toArray(new Integer[0]);
           for (int q=0; q<keys.length; q++) {
             addGlobalMeta(TiffTools.getIFDTagName(keys[q].intValue()),
-              ifds[i].get(keys[q]));
+              ifd.get(keys[q]));
           }
 
           long exifOffset =
-            TiffTools.getIFDLongValue(ifds[i], TiffTools.EXIF, false, 0);
+            TiffTools.getIFDLongValue(ifd, TiffTools.EXIF, false, 0);
           if (exifOffset != 0 && exifOffset < ras.length()) {
             Hashtable exif = TiffTools.getIFD(ras, 1, exifOffset);
 

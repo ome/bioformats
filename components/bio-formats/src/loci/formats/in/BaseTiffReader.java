@@ -24,18 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
+import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
-import loci.formats.TiffRational;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffRational;
 
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
@@ -51,6 +49,12 @@ import loci.formats.meta.MetadataStore;
 public abstract class BaseTiffReader extends MinimalTiffReader {
 
   // -- Constants --
+
+  public static final String[] DATE_FORMATS = {
+    "yyyy:MM:dd HH:mm:ss",
+    "dd/MM/yyyy HH:mm:ss.SS",
+    "MM/dd/yyyy hh:mm:ss.SSS aa"
+  };
 
   /** EXIF tags. */
   private static final int EXIF_VERSION = 36864;
@@ -122,16 +126,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * overwritten if you do so.
    */
   protected void initStandardMetadata() throws FormatException, IOException {
-    Hashtable ifd = ifds[0];
-    put("ImageWidth", ifd, TiffTools.IMAGE_WIDTH);
-    put("ImageLength", ifd, TiffTools.IMAGE_LENGTH);
-    put("BitsPerSample", ifd, TiffTools.BITS_PER_SAMPLE);
+    IFD firstIFD = ifds.get(0);
+    put("ImageWidth", firstIFD, TiffTools.IMAGE_WIDTH);
+    put("ImageLength", firstIFD, TiffTools.IMAGE_LENGTH);
+    put("BitsPerSample", firstIFD, TiffTools.BITS_PER_SAMPLE);
 
     // retrieve EXIF values, if available
 
-    long exifOffset = TiffTools.getIFDLongValue(ifd, TiffTools.EXIF, false, 0);
+    long exifOffset = TiffTools.getIFDLongValue(firstIFD, TiffTools.EXIF, false, 0);
     if (exifOffset != 0) {
-      Hashtable exif = TiffTools.getIFD(in, 1, exifOffset);
+      IFD exif = TiffTools.getIFD(in, 1, exifOffset);
 
       Enumeration keys = exif.keys();
       while (keys.hasMoreElements()) {
@@ -140,7 +144,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       }
     }
 
-    int comp = TiffTools.getCompression(ifd);
+    int comp = TiffTools.getCompression(firstIFD);
     String compression = null;
     switch (comp) {
       case TiffTools.UNCOMPRESSED:
@@ -167,7 +171,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("Compression", compression);
 
-    int photo = TiffTools.getPhotometricInterpretation(ifd);
+    int photo = TiffTools.getPhotometricInterpretation(firstIFD);
     String photoInterp = null;
     String metaDataPhotoInterp = null;
 
@@ -212,15 +216,15 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     put("PhotometricInterpretation", photoInterp);
     put("MetaDataPhotometricInterpretation", metaDataPhotoInterp);
 
-    putInt("CellWidth", ifd, TiffTools.CELL_WIDTH);
-    putInt("CellLength", ifd, TiffTools.CELL_LENGTH);
+    putInt("CellWidth", firstIFD, TiffTools.CELL_WIDTH);
+    putInt("CellLength", firstIFD, TiffTools.CELL_LENGTH);
 
-    int or = TiffTools.getIFDIntValue(ifd, TiffTools.ORIENTATION);
+    int or = TiffTools.getIFDIntValue(firstIFD, TiffTools.ORIENTATION);
 
     // adjust the width and height if necessary
     if (or == 8) {
-      put("ImageWidth", ifd, TiffTools.IMAGE_LENGTH);
-      put("ImageLength", ifd, TiffTools.IMAGE_WIDTH);
+      put("ImageWidth", firstIFD, TiffTools.IMAGE_LENGTH);
+      put("ImageLength", firstIFD, TiffTools.IMAGE_WIDTH);
     }
 
     String orientation = null;
@@ -252,21 +256,21 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         break;
     }
     put("Orientation", orientation);
-    putInt("SamplesPerPixel", ifd, TiffTools.SAMPLES_PER_PIXEL);
+    putInt("SamplesPerPixel", firstIFD, TiffTools.SAMPLES_PER_PIXEL);
 
-    put("Software", ifd, TiffTools.SOFTWARE);
-    put("Instrument Make", ifd, TiffTools.MAKE);
-    put("Instrument Model", ifd, TiffTools.MODEL);
-    put("Document Name", ifd, TiffTools.DOCUMENT_NAME);
-    put("DateTime", ifd, TiffTools.DATE_TIME);
-    put("Artist", ifd, TiffTools.ARTIST);
+    put("Software", firstIFD, TiffTools.SOFTWARE);
+    put("Instrument Make", firstIFD, TiffTools.MAKE);
+    put("Instrument Model", firstIFD, TiffTools.MODEL);
+    put("Document Name", firstIFD, TiffTools.DOCUMENT_NAME);
+    put("DateTime", firstIFD, TiffTools.DATE_TIME);
+    put("Artist", firstIFD, TiffTools.ARTIST);
 
-    put("HostComputer", ifd, TiffTools.HOST_COMPUTER);
-    put("Copyright", ifd, TiffTools.COPYRIGHT);
+    put("HostComputer", firstIFD, TiffTools.HOST_COMPUTER);
+    put("Copyright", firstIFD, TiffTools.COPYRIGHT);
 
-    put("NewSubfileType", ifd, TiffTools.NEW_SUBFILE_TYPE);
+    put("NewSubfileType", firstIFD, TiffTools.NEW_SUBFILE_TYPE);
 
-    int thresh = TiffTools.getIFDIntValue(ifd, TiffTools.THRESHHOLDING);
+    int thresh = TiffTools.getIFDIntValue(firstIFD, TiffTools.THRESHHOLDING);
     String threshholding = null;
     switch (thresh) {
       case 1:
@@ -281,7 +285,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("Threshholding", threshholding);
 
-    int fill = TiffTools.getIFDIntValue(ifd, TiffTools.FILL_ORDER);
+    int fill = TiffTools.getIFDIntValue(firstIFD, TiffTools.FILL_ORDER);
     String fillOrder = null;
     switch (fill) {
       case 1:
@@ -295,14 +299,14 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("FillOrder", fillOrder);
 
-    putInt("Make", ifd, TiffTools.MAKE);
-    putInt("Model", ifd, TiffTools.MODEL);
-    putInt("MinSampleValue", ifd, TiffTools.MIN_SAMPLE_VALUE);
-    putInt("MaxSampleValue", ifd, TiffTools.MAX_SAMPLE_VALUE);
-    putInt("XResolution", ifd, TiffTools.X_RESOLUTION);
-    putInt("YResolution", ifd, TiffTools.Y_RESOLUTION);
+    putInt("Make", firstIFD, TiffTools.MAKE);
+    putInt("Model", firstIFD, TiffTools.MODEL);
+    putInt("MinSampleValue", firstIFD, TiffTools.MIN_SAMPLE_VALUE);
+    putInt("MaxSampleValue", firstIFD, TiffTools.MAX_SAMPLE_VALUE);
+    putInt("XResolution", firstIFD, TiffTools.X_RESOLUTION);
+    putInt("YResolution", firstIFD, TiffTools.Y_RESOLUTION);
 
-    int planar = TiffTools.getIFDIntValue(ifd,
+    int planar = TiffTools.getIFDIntValue(firstIFD,
       TiffTools.PLANAR_CONFIGURATION);
     String planarConfig = null;
     switch (planar) {
@@ -315,16 +319,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("PlanarConfiguration", planarConfig);
 
-    putInt("XPosition", ifd, TiffTools.X_POSITION);
-    putInt("YPosition", ifd, TiffTools.Y_POSITION);
-    putInt("FreeOffsets", ifd, TiffTools.FREE_OFFSETS);
-    putInt("FreeByteCounts", ifd, TiffTools.FREE_BYTE_COUNTS);
-    putInt("GrayResponseUnit", ifd, TiffTools.GRAY_RESPONSE_UNIT);
-    putInt("GrayResponseCurve", ifd, TiffTools.GRAY_RESPONSE_CURVE);
-    putInt("T4Options", ifd, TiffTools.T4_OPTIONS);
-    putInt("T6Options", ifd, TiffTools.T6_OPTIONS);
+    putInt("XPosition", firstIFD, TiffTools.X_POSITION);
+    putInt("YPosition", firstIFD, TiffTools.Y_POSITION);
+    putInt("FreeOffsets", firstIFD, TiffTools.FREE_OFFSETS);
+    putInt("FreeByteCounts", firstIFD, TiffTools.FREE_BYTE_COUNTS);
+    putInt("GrayResponseUnit", firstIFD, TiffTools.GRAY_RESPONSE_UNIT);
+    putInt("GrayResponseCurve", firstIFD, TiffTools.GRAY_RESPONSE_CURVE);
+    putInt("T4Options", firstIFD, TiffTools.T4_OPTIONS);
+    putInt("T6Options", firstIFD, TiffTools.T6_OPTIONS);
 
-    int res = TiffTools.getIFDIntValue(ifd, TiffTools.RESOLUTION_UNIT);
+    int res = TiffTools.getIFDIntValue(firstIFD, TiffTools.RESOLUTION_UNIT);
     String resUnit = null;
     switch (res) {
       case 1:
@@ -339,10 +343,10 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("ResolutionUnit", resUnit);
 
-    putInt("PageNumber", ifd, TiffTools.PAGE_NUMBER);
-    putInt("TransferFunction", ifd, TiffTools.TRANSFER_FUNCTION);
+    putInt("PageNumber", firstIFD, TiffTools.PAGE_NUMBER);
+    putInt("TransferFunction", firstIFD, TiffTools.TRANSFER_FUNCTION);
 
-    int predict = TiffTools.getIFDIntValue(ifd, TiffTools.PREDICTOR);
+    int predict = TiffTools.getIFDIntValue(firstIFD, TiffTools.PREDICTOR);
     String predictor = null;
     switch (predict) {
       case 1:
@@ -354,16 +358,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("Predictor", predictor);
 
-    putInt("WhitePoint", ifd, TiffTools.WHITE_POINT);
-    putInt("PrimaryChromacities", ifd, TiffTools.PRIMARY_CHROMATICITIES);
+    putInt("WhitePoint", firstIFD, TiffTools.WHITE_POINT);
+    putInt("PrimaryChromacities", firstIFD, TiffTools.PRIMARY_CHROMATICITIES);
 
-    putInt("HalftoneHints", ifd, TiffTools.HALFTONE_HINTS);
-    putInt("TileWidth", ifd, TiffTools.TILE_WIDTH);
-    putInt("TileLength", ifd, TiffTools.TILE_LENGTH);
-    putInt("TileOffsets", ifd, TiffTools.TILE_OFFSETS);
-    putInt("TileByteCounts", ifd, TiffTools.TILE_BYTE_COUNTS);
+    putInt("HalftoneHints", firstIFD, TiffTools.HALFTONE_HINTS);
+    putInt("TileWidth", firstIFD, TiffTools.TILE_WIDTH);
+    putInt("TileLength", firstIFD, TiffTools.TILE_LENGTH);
+    putInt("TileOffsets", firstIFD, TiffTools.TILE_OFFSETS);
+    putInt("TileByteCounts", firstIFD, TiffTools.TILE_BYTE_COUNTS);
 
-    int ink = TiffTools.getIFDIntValue(ifd, TiffTools.INK_SET);
+    int ink = TiffTools.getIFDIntValue(firstIFD, TiffTools.INK_SET);
     String inkSet = null;
     switch (ink) {
       case 1:
@@ -375,13 +379,13 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("InkSet", inkSet);
 
-    putInt("InkNames", ifd, TiffTools.INK_NAMES);
-    putInt("NumberOfInks", ifd, TiffTools.NUMBER_OF_INKS);
-    putInt("DotRange", ifd, TiffTools.DOT_RANGE);
-    put("TargetPrinter", ifd, TiffTools.TARGET_PRINTER);
-    putInt("ExtraSamples", ifd, TiffTools.EXTRA_SAMPLES);
+    putInt("InkNames", firstIFD, TiffTools.INK_NAMES);
+    putInt("NumberOfInks", firstIFD, TiffTools.NUMBER_OF_INKS);
+    putInt("DotRange", firstIFD, TiffTools.DOT_RANGE);
+    put("TargetPrinter", firstIFD, TiffTools.TARGET_PRINTER);
+    putInt("ExtraSamples", firstIFD, TiffTools.EXTRA_SAMPLES);
 
-    int fmt = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
+    int fmt = TiffTools.getIFDIntValue(firstIFD, TiffTools.SAMPLE_FORMAT);
     String sampleFormat = null;
     switch (fmt) {
       case 1:
@@ -399,11 +403,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("SampleFormat", sampleFormat);
 
-    putInt("SMinSampleValue", ifd, TiffTools.S_MIN_SAMPLE_VALUE);
-    putInt("SMaxSampleValue", ifd, TiffTools.S_MAX_SAMPLE_VALUE);
-    putInt("TransferRange", ifd, TiffTools.TRANSFER_RANGE);
+    putInt("SMinSampleValue", firstIFD, TiffTools.S_MIN_SAMPLE_VALUE);
+    putInt("SMaxSampleValue", firstIFD, TiffTools.S_MAX_SAMPLE_VALUE);
+    putInt("TransferRange", firstIFD, TiffTools.TRANSFER_RANGE);
 
-    int jpeg = TiffTools.getIFDIntValue(ifd, TiffTools.JPEG_PROC);
+    int jpeg = TiffTools.getIFDIntValue(firstIFD, TiffTools.JPEG_PROC);
     String jpegProc = null;
     switch (jpeg) {
       case 1:
@@ -415,18 +419,18 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("JPEGProc", jpegProc);
 
-    putInt("JPEGInterchangeFormat", ifd, TiffTools.JPEG_INTERCHANGE_FORMAT);
-    putInt("JPEGRestartInterval", ifd, TiffTools.JPEG_RESTART_INTERVAL);
+    putInt("JPEGInterchangeFormat", firstIFD, TiffTools.JPEG_INTERCHANGE_FORMAT);
+    putInt("JPEGRestartInterval", firstIFD, TiffTools.JPEG_RESTART_INTERVAL);
 
     putInt("JPEGLosslessPredictors",
-      ifd, TiffTools.JPEG_LOSSLESS_PREDICTORS);
-    putInt("JPEGPointTransforms", ifd, TiffTools.JPEG_POINT_TRANSFORMS);
-    putInt("JPEGQTables", ifd, TiffTools.JPEG_Q_TABLES);
-    putInt("JPEGDCTables", ifd, TiffTools.JPEG_DC_TABLES);
-    putInt("JPEGACTables", ifd, TiffTools.JPEG_AC_TABLES);
-    putInt("YCbCrCoefficients", ifd, TiffTools.Y_CB_CR_COEFFICIENTS);
+      firstIFD, TiffTools.JPEG_LOSSLESS_PREDICTORS);
+    putInt("JPEGPointTransforms", firstIFD, TiffTools.JPEG_POINT_TRANSFORMS);
+    putInt("JPEGQTables", firstIFD, TiffTools.JPEG_Q_TABLES);
+    putInt("JPEGDCTables", firstIFD, TiffTools.JPEG_DC_TABLES);
+    putInt("JPEGACTables", firstIFD, TiffTools.JPEG_AC_TABLES);
+    putInt("YCbCrCoefficients", firstIFD, TiffTools.Y_CB_CR_COEFFICIENTS);
 
-    int ycbcr = TiffTools.getIFDIntValue(ifd,
+    int ycbcr = TiffTools.getIFDIntValue(firstIFD,
       TiffTools.Y_CB_CR_SUB_SAMPLING);
     String subSampling = null;
     switch (ycbcr) {
@@ -444,11 +448,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("YCbCrSubSampling", subSampling);
 
-    putInt("YCbCrPositioning", ifd, TiffTools.Y_CB_CR_POSITIONING);
-    putInt("ReferenceBlackWhite", ifd, TiffTools.REFERENCE_BLACK_WHITE);
+    putInt("YCbCrPositioning", firstIFD, TiffTools.Y_CB_CR_POSITIONING);
+    putInt("ReferenceBlackWhite", firstIFD, TiffTools.REFERENCE_BLACK_WHITE);
 
     // bits per sample and number of channels
-    int[] q = TiffTools.getBitsPerSample(ifd);
+    int[] q = TiffTools.getBitsPerSample(firstIFD);
     int bps = q[0];
     int numC = q.length;
 
@@ -463,7 +467,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     put("NumberOfChannels", numC);
 
     // TIFF comment
-    String comment = TiffTools.getComment(ifd);
+    String comment = TiffTools.getComment(firstIFD);
     if (comment != null && !comment.startsWith("<?xml")) {
       // sanitize comment
       comment = comment.replaceAll("\r\n", "\n"); // CR-LF to LF
@@ -471,16 +475,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       put("Comment", comment);
     }
 
-    int samples = TiffTools.getSamplesPerPixel(ifd);
+    int samples = TiffTools.getSamplesPerPixel(firstIFD);
     core[0].rgb = samples > 1 || photo == TiffTools.RGB;
     core[0].interleaved = false;
-    core[0].littleEndian = TiffTools.isLittleEndian(ifds[0]);
+    core[0].littleEndian = TiffTools.isLittleEndian(firstIFD);
 
-    core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
-    core[0].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+    core[0].sizeX = (int) TiffTools.getImageWidth(firstIFD);
+    core[0].sizeY = (int) TiffTools.getImageLength(firstIFD);
     core[0].sizeZ = 1;
     core[0].sizeC = isRGB() ? samples : 1;
-    core[0].sizeT = ifds.length;
+    core[0].sizeT = ifds.size();
     core[0].metadataComplete = true;
     core[0].indexed = photo == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
@@ -491,7 +495,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
     core[0].falseColor = false;
     core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = TiffTools.getPixelType(ifds[0]);
+    core[0].pixelType = TiffTools.getPixelType(firstIFD);
   }
 
   /**
@@ -511,9 +515,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
+    IFD firstIFD = ifds.get(0);
+
     // populate Experimenter
     String artist = null;
-    Object o = TiffTools.getIFDValue(ifds[0], TiffTools.ARTIST);
+    Object o = TiffTools.getIFDValue(firstIFD, TiffTools.ARTIST);
     if (o instanceof String) artist = (String) o;
     else if (o instanceof String[]) {
       String[] s = (String[]) o;
@@ -531,7 +537,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         lastName = artist.substring(ndx + 1);
       }
       String email = (String)
-        TiffTools.getIFDValue(ifds[0], TiffTools.HOST_COMPUTER);
+        TiffTools.getIFDValue(firstIFD, TiffTools.HOST_COMPUTER);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
       store.setExperimenterEmail(email, 0);
@@ -540,11 +546,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // format the creation date to ISO 8061
 
     String creationDate = getImageCreationDate();
-    String date = parseDate(creationDate, "yyyy:MM:dd HH:mm:ss");
-    if (date == null) date = parseDate(creationDate, "dd/MM/yyyy HH:mm:ss.SS");
-    if (date == null) {
-      date = parseDate(creationDate, "MM/dd/yyyy hh:mm:ss.SSS aa");
-    }
+    String date = DateTools.formatDate(creationDate, DATE_FORMATS);
     if (creationDate != null && date == null) {
       debug("Warning: unknown creation date format: " + creationDate);
     }
@@ -559,15 +561,15 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     else {
        MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
-    store.setImageDescription(TiffTools.getComment(ifds[0]), 0);
+    store.setImageDescription(TiffTools.getComment(firstIFD), 0);
 
     // set the X and Y pixel dimensions
 
-    int resolutionUnit = TiffTools.getIFDIntValue(ifds[0],
+    int resolutionUnit = TiffTools.getIFDIntValue(firstIFD,
       TiffTools.RESOLUTION_UNIT);
-    TiffRational xResolution = TiffTools.getIFDRationalValue(ifds[0],
+    TiffRational xResolution = TiffTools.getIFDRationalValue(firstIFD,
       TiffTools.X_RESOLUTION, false);
-    TiffRational yResolution = TiffTools.getIFDRationalValue(ifds[0],
+    TiffRational yResolution = TiffTools.getIFDRationalValue(firstIFD,
       TiffTools.Y_RESOLUTION, false);
     float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
     float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
@@ -590,8 +592,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     store.setDimensionsPhysicalSizeZ(new Float(0), 0, 0);
 
     // populate StageLabel
-    Object x = TiffTools.getIFDValue(ifds[0], TiffTools.X_POSITION);
-    Object y = TiffTools.getIFDValue(ifds[0], TiffTools.Y_POSITION);
+    Object x = TiffTools.getIFDValue(firstIFD, TiffTools.X_POSITION);
+    Object y = TiffTools.getIFDValue(firstIFD, TiffTools.Y_POSITION);
     Float stageX;
     Float stageY;
     if (x instanceof TiffRational) {
@@ -603,8 +605,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       stageY = y == null ? null : new Float((String) y);
     }
     // populate Instrument
-    //String make = (String) TiffTools.getIFDValue(ifd, TiffTools.MAKE);
-    //String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
+    //String make = TiffTools.getIFDStringValue(ifd, TiffTools.MAKE, false);
+    //String model = TiffTools.getIFDStringValue(ifd, TiffTools.MODEL, false);
     //store.setInstrumentModel(model, 0);
     //store.setInstrumentManufacturer(make, 0);
   }
@@ -614,7 +616,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * @return the image creation date.
    */
   protected String getImageCreationDate() {
-    Object o = TiffTools.getIFDValue(ifds[0], TiffTools.DATE_TIME);
+    Object o = TiffTools.getIFDValue(ifds.get(0), TiffTools.DATE_TIME);
     if (o instanceof String) return (String) o;
     if (o instanceof String[]) return ((String[]) o)[0];
     return null;
@@ -647,11 +649,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   protected void put(String key, long value) { put(key, new Long(value)); }
   protected void put(String key, short value) { put(key, new Short(value)); }
 
-  protected void put(String key, Hashtable ifd, int tag) {
+  protected void put(String key, IFD ifd, int tag) {
     put(key, TiffTools.getIFDValue(ifd, tag));
   }
 
-  protected void putInt(String key, Hashtable ifd, int tag) {
+  protected void putInt(String key, IFD ifd, int tag) {
     put(key, TiffTools.getIFDIntValue(ifd, tag));
   }
 
@@ -754,20 +756,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         return "CFA Pattern";
     }
     return null;
-  }
-
-  private static String parseDate(String date, String format) {
-    if (date == null) return null;
-    try {
-      SimpleDateFormat parse = new SimpleDateFormat(format);
-      parse.setLenient(false);
-      Date d = parse.parse(date, new ParsePosition(0));
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      return sdf.format(d);
-    }
-    catch (NullPointerException exc) {
-      return null;
-    }
   }
 
 }

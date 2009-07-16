@@ -30,6 +30,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -241,7 +242,7 @@ public class InCellReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     DefaultHandler handler = new MinimalInCellHandler();
-    DataTools.parseXML(b, handler);
+    XMLTools.parseXML(b, handler);
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
     if (getSizeC() == 0) core[0].sizeC = 1;
@@ -335,7 +336,7 @@ public class InCellReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     handler = new InCellHandler(store);
-    DataTools.parseXML(b, handler);
+    XMLTools.parseXML(b, handler);
 
     // populate Image data
 

@@ -32,19 +32,21 @@ import java.util.Hashtable;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.TiffIFDEntry;
-import loci.formats.TiffRational;
 import loci.formats.TiffTools;
 import loci.formats.UnknownTagException;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffRational;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -62,6 +64,10 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String SHORT_DATE_FORMAT = "yyyyMMdd HH:mm:ss";
+  public static final String MEDIUM_DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";
+  public static final String LONG_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss:SSS";
+
   public static final String[] ND_SUFFIX = {"nd"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
@@ -71,8 +77,6 @@ public class MetamorphReader extends BaseTiffReader {
   private static final int UIC2TAG = 33629;
   private static final int UIC3TAG = 33630;
   private static final int UIC4TAG = 33631;
-
-  private static final String DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";
 
   // -- Fields --
 
@@ -440,7 +444,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       RandomAccessInputStream s = new RandomAccessInputStream(stks[0][0]);
-      Hashtable ifd = TiffTools.getFirstIFD(s);
+      IFD ifd = TiffTools.getFirstIFD(s);
       s.close();
       core[0].sizeX = (int) TiffTools.getImageWidth(ifd);
       core[0].sizeY = (int) TiffTools.getImageLength(ifd);
@@ -500,20 +504,20 @@ public class MetamorphReader extends BaseTiffReader {
       if (stks != null) {
         RandomAccessInputStream stream =
           new RandomAccessInputStream(stks[i][0]);
-        Hashtable ifd = TiffTools.getFirstIFD(stream);
+        IFD ifd = TiffTools.getFirstIFD(stream);
         stream.close();
         comment = TiffTools.getComment(ifd);
       }
       else {
-        comment = TiffTools.getComment(ifds[0]);
+        comment = TiffTools.getComment(ifds.get(0));
       }
       if (comment != null && comment.startsWith("<MetaData>")) {
-        DataTools.parseXML(comment, handler);
+        XMLTools.parseXML(comment, handler);
       }
 
       if (creationTime != null) {
-        store.setImageCreationDate(DataTools.formatDate(creationTime,
-          "yyyyMMdd HH:mm:ss"), 0);
+        store.setImageCreationDate(DateTools.formatDate(creationTime,
+          SHORT_DATE_FORMAT), 0);
       }
       else if (i > 0) MetadataTools.setDefaultCreationDate(store, id, i);
 
@@ -592,13 +596,14 @@ public class MetamorphReader extends BaseTiffReader {
       timestamps = handler.getTimestamps();
 
       for (int t=0; t<timestamps.size(); t++) {
-        addSeriesMeta("timestamp " + t, DataTools.formatDate(
-          (String) timestamps.get(t), DATE_FORMAT));
+        addSeriesMeta("timestamp " + t, DateTools.formatDate(
+          (String) timestamps.get(t), MEDIUM_DATE_FORMAT));
       }
 
       long startDate = 0;
       if (timestamps.size() > 0) {
-        startDate = DataTools.getTime((String) timestamps.get(0), DATE_FORMAT);
+        startDate = DateTools.getTime((String)
+          timestamps.get(0), MEDIUM_DATE_FORMAT);
       }
 
       Float positionX = new Float(handler.getStagePositionX());
@@ -611,7 +616,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       int lastFile = -1;
-      Hashtable lastIFD = null;
+      IFD lastIFD = null;
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
@@ -630,7 +635,7 @@ public class MetamorphReader extends BaseTiffReader {
           comment = TiffTools.getComment(lastIFD);
           handler = new MetamorphHandler(getSeriesMetadata());
           if (comment != null && comment.startsWith("<MetaData>")) {
-            DataTools.parseXML(comment, handler);
+            XMLTools.parseXML(comment, handler);
           }
           timestamps = handler.getTimestamps();
           exposureTimes = handler.getExposures();
@@ -641,7 +646,7 @@ public class MetamorphReader extends BaseTiffReader {
         if (timestamps.size() > 0) {
           if (coords[2] < timestamps.size()) index = coords[2];
           String stamp = (String) timestamps.get(index);
-          long ms = DataTools.getTime(stamp, DATE_FORMAT);
+          long ms = DateTools.getTime(stamp, MEDIUM_DATE_FORMAT);
           deltaT = new Float((ms - startDate) / 1000f);
         }
         else if (internalStamps != null && p < internalStamps.length) {
@@ -702,10 +707,11 @@ public class MetamorphReader extends BaseTiffReader {
 
       // copy ifds into a new array of Hashtables that will accommodate the
       // additional image planes
-      long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
+      IFD firstIFD = ifds.get(0);
+      long[] uic2 = TiffTools.getIFDLongArray(firstIFD, UIC2TAG, true);
       core[0].imageCount = uic2.length;
 
-      Object entry = TiffTools.getIFDValue(ifds[0], UIC3TAG);
+      Object entry = TiffTools.getIFDValue(firstIFD, UIC3TAG);
       TiffRational[] uic3 = entry instanceof TiffRational[] ?
         (TiffRational[]) entry : new TiffRational[] {(TiffRational) entry};
       wave = new double[uic3.length];
@@ -720,30 +726,31 @@ public class MetamorphReader extends BaseTiffReader {
 
       core[0].sizeC *= uniqueWavelengths.size();
 
-      Hashtable[] tempIFDs = new Hashtable[getImageCount()];
+      Vector<IFD> tempIFDs = new Vector<IFD>();
+      tempIFDs.setSize(getImageCount());
 
-      long[] oldOffsets = TiffTools.getStripOffsets(ifds[0]);
-      long[] stripByteCounts = TiffTools.getStripByteCounts(ifds[0]);
-      int rowsPerStrip = (int) TiffTools.getRowsPerStrip(ifds[0])[0];
+      long[] oldOffsets = TiffTools.getStripOffsets(firstIFD);
+      long[] stripByteCounts = TiffTools.getStripByteCounts(firstIFD);
+      int rowsPerStrip = (int) TiffTools.getRowsPerStrip(firstIFD)[0];
       int stripsPerImage = getSizeY() / rowsPerStrip;
       if (stripsPerImage * rowsPerStrip != getSizeY()) stripsPerImage++;
 
-      int check = TiffTools.getPhotometricInterpretation(ifds[0]);
+      int check = TiffTools.getPhotometricInterpretation(firstIFD);
       if (check == TiffTools.RGB_PALETTE) {
-        TiffTools.putIFDValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
+        TiffTools.putIFDValue(firstIFD, TiffTools.PHOTOMETRIC_INTERPRETATION,
           TiffTools.BLACK_IS_ZERO);
       }
 
-      emWavelength = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
+      emWavelength = TiffTools.getIFDLongArray(firstIFD, UIC3TAG, true);
 
       // for each image plane, construct an IFD hashtable
 
       int pointer = 0;
 
-      Hashtable temp;
+      IFD temp;
       for (int i=0; i<getImageCount(); i++) {
         // copy data from the first IFD
-        temp = new Hashtable(ifds[0]);
+        temp = new IFD(firstIFD);
 
         // now we need a StripOffsets entry - the original IFD doesn't have this
 
@@ -772,7 +779,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), newByteCounts);
 
-        tempIFDs[pointer] = temp;
+        tempIFDs.set(pointer, temp);
         pointer++;
       }
       ifds = tempIFDs;
@@ -783,7 +790,7 @@ public class MetamorphReader extends BaseTiffReader {
     catch (FormatException exc) { if (debug) trace(exc); }
 
     // parse (mangle) TIFF comment
-    String descr = TiffTools.getComment(ifds[0]);
+    String descr = TiffTools.getComment(ifds.get(0));
     if (descr != null) {
       String[] lines = descr.split("\n");
       StringBuffer sb = new StringBuffer();
@@ -898,8 +905,8 @@ public class MetamorphReader extends BaseTiffReader {
       cDate = decodeDate(in.readInt());
       cTime = decodeTime(in.readInt());
 
-      internalStamps[i] = DataTools.getTime(cDate + " " + cTime,
-        "dd/MM/yyyy HH:mm:ss:SSS");
+      internalStamps[i] = DateTools.getTime(cDate + " " + cTime,
+        LONG_DATE_FORMAT);
 
       addSeriesMeta("creationDate[" + iAsString + "]", cDate);
       addSeriesMeta("creationTime[" + iAsString + "]", cTime);

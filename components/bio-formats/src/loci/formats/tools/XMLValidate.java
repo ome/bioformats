@@ -28,7 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import loci.formats.XMLTools;
+import loci.common.XMLTools;
 
 /**
  * Attempts to validate the given XML files.

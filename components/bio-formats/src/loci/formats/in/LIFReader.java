@@ -30,7 +30,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -312,8 +314,8 @@ public class LIFReader extends FormatReader {
     xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml +
       "</LEICA>";
 
-    xml = DataTools.sanitizeXML(xml);
-    DataTools.parseXML(xml, handler);
+    xml = XMLTools.sanitizeXML(xml);
+    XMLTools.parseXML(xml, handler);
 
     Vector widths = handler.getWidths();
     Vector heights = handler.getHeights();
@@ -521,7 +523,7 @@ public class LIFReader extends FormatReader {
       }
     }
     setSeries(0);
-    DataTools.parseXML(xml, new LeicaHandler(store));
+    XMLTools.parseXML(xml, new LeicaHandler(store));
   }
 
 }

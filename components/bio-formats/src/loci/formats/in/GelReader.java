@@ -28,15 +28,18 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffRational;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffRational;
 
 /**
  * GelReader is the file format reader for
@@ -52,6 +55,8 @@ public class GelReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
+
   // GEL TIFF private IFD tags.
   private static final int MD_FILETAG = 33445;
   private static final int MD_SCALE_PIXEL = 33446;
@@ -64,7 +69,6 @@ public class GelReader extends BaseTiffReader {
   // Scaling options
   private static final int SQUARE_ROOT = 2;
   private static final int LINEAR = 128;
-
 
   // -- Constructor --
 
@@ -81,17 +85,19 @@ public class GelReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    boolean sqrt = TiffTools.getIFDLongValue(ifds[no], MD_FILETAG,
-      true, LINEAR) == SQUARE_ROOT;
+    IFD ifd = ifds.get(no);
+
+    boolean sqrt = TiffTools.getIFDLongValue(ifd,
+      MD_FILETAG, true, LINEAR) == SQUARE_ROOT;
 
     if (sqrt) {
-      float scale = ((TiffRational) TiffTools.getIFDValue(ifds[no],
+      float scale = ((TiffRational) TiffTools.getIFDValue(ifd,
         MD_SCALE_PIXEL)).floatValue();
 
       byte[] tmp = new byte[buf.length];
       super.openBytes(no, tmp, x, y, w, h);
 
-      int originalBytes = TiffTools.getBitsPerSample(ifds[no])[0] / 8;
+      int originalBytes = TiffTools.getBitsPerSample(ifd)[0] / 8;
 
       for (int i=0; i<tmp.length/4; i++) {
         long value = DataTools.bytesToShort(tmp, i*originalBytes,
@@ -112,45 +118,51 @@ public class GelReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() throws FormatException, IOException {
     ifds = TiffTools.getIFDs(in);
-    if (ifds.length > 1) {
-      Hashtable[] tmpIFDs = ifds;
-      ifds = new Hashtable[tmpIFDs.length / 2];
-      for (int i=0; i<ifds.length; i++) {
-        ifds[i] = new Hashtable();
-        ifds[i].putAll(tmpIFDs[i*2 + 1]);
-        ifds[i].putAll(tmpIFDs[i*2]);
+    if (ifds.size() > 1) {
+      Vector<IFD> tmpIFDs = ifds;
+      ifds = new Vector<IFD>();
+      ifds.setSize(tmpIFDs.size() / 2);
+      for (int i=0; i<ifds.size(); i++) {
+        IFD ifd = new IFD();
+        ifds.set(i, ifd);
+        ifd.putAll(tmpIFDs.get(i*2 + 1));
+        ifd.putAll(tmpIFDs.get(i*2));
       }
     }
 
     super.initStandardMetadata();
 
-    long fmt = TiffTools.getIFDLongValue(ifds[0], MD_FILETAG, true, LINEAR);
+    IFD firstIFD = ifds.get(0);
+
+    long fmt = TiffTools.getIFDLongValue(firstIFD, MD_FILETAG, true, LINEAR);
     if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
     addGlobalMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
 
     TiffRational scale =
-      (TiffRational) TiffTools.getIFDValue(ifds[0], MD_SCALE_PIXEL);
+      (TiffRational) TiffTools.getIFDValue(firstIFD, MD_SCALE_PIXEL);
     addGlobalMeta("Scale factor", scale == null ?
       new TiffRational(1, 1) : scale);
 
     // ignore MD_COLOR_TABLE
 
-    String lab = (String) TiffTools.getIFDValue(ifds[0], MD_LAB_NAME);
+    String lab = TiffTools.getIFDStringValue(firstIFD, MD_LAB_NAME, false);
     addGlobalMeta("Lab name", lab);
 
-    String info = (String) TiffTools.getIFDValue(ifds[0], MD_SAMPLE_INFO);
+    String info = TiffTools.getIFDStringValue(firstIFD, MD_SAMPLE_INFO, false);
     addGlobalMeta("Sample info", info);
 
-    String prepDate = (String) TiffTools.getIFDValue(ifds[0], MD_PREP_DATE);
+    String prepDate =
+      TiffTools.getIFDStringValue(firstIFD, MD_PREP_DATE, false);
     addGlobalMeta("Date prepared", prepDate);
 
-    String prepTime = (String) TiffTools.getIFDValue(ifds[0], MD_PREP_TIME);
+    String prepTime =
+      TiffTools.getIFDStringValue(firstIFD, MD_PREP_TIME, false);
     addGlobalMeta("Time prepared", prepTime);
 
-    String units = (String) TiffTools.getIFDValue(ifds[0], MD_FILE_UNITS);
+    String units = TiffTools.getIFDStringValue(firstIFD, MD_FILE_UNITS, false);
     addGlobalMeta("File units", units);
 
-    core[0].imageCount = ifds.length;
+    core[0].imageCount = ifds.size();
     core[0].sizeT = getImageCount();
 
     MetadataStore store =
@@ -160,9 +172,9 @@ public class GelReader extends BaseTiffReader {
     store.setImageDescription(info, 0);
 
     if (prepTime != null) {
-      SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+      SimpleDateFormat parse = new SimpleDateFormat(DATE_FORMAT);
       Date date = parse.parse(prepTime, new ParsePosition(0));
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      SimpleDateFormat sdf = new SimpleDateFormat(DateTools.ISO8601_FORMAT);
       store.setImageCreationDate(sdf.format(date), 0);
     }
     else {

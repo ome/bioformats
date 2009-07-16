@@ -29,7 +29,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -53,6 +53,13 @@ import loci.formats.meta.MetadataStore;
 public class ICSReader extends FormatReader {
 
   // -- Constants --
+
+  public static final String[] DATE_FORMATS = {
+    "EEEE, MMMM dd, yyyy HH:mm:ss",
+    "EEE dd MMMM yyyy HH:mm:ss",
+    "EEE MMM dd HH:mm:ss yyyy",
+    "EE dd MMM yyyy HH:mm:ss z"
+  };
 
   /** Metadata field categories. */
   private static final String[] CATEGORIES = new String[] {
@@ -415,21 +422,7 @@ public class ICSReader extends FormatReader {
         {
           if (v.indexOf(" ") == -1) continue;
           date = v.substring(0, v.lastIndexOf(" "));
-          String[] formats = new String[] {"EEEE, MMMM dd, yyyy HH:mm:ss",
-            "EEE dd MMMM yyyy HH:mm:ss", "EEE MMM dd HH:mm:ss yyyy",
-            "EE dd MMM yyyy HH:mm:ss z"};
-
-          boolean success = false;
-
-          for (int n=0; n<formats.length; n++) {
-            try {
-              date = DataTools.formatDate(date, formats[n]);
-              success = true;
-            }
-            catch (NullPointerException e) { }
-          }
-
-          if (!success) date = null;
+          date = DateTools.formatDate(date, DATE_FORMATS);
         }
         else if (k.startsWith("history gain")) {
           Integer n = new Integer(0);

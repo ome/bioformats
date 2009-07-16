@@ -40,6 +40,7 @@ import loci.formats.POITools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
@@ -88,7 +89,7 @@ public class PCIReader extends FormatReader {
     // can be raw pixel data or an embedded TIFF file
 
     if (TiffTools.isValidHeader(s)) {
-      Hashtable ifd = TiffTools.getFirstIFD(s);
+      IFD ifd = TiffTools.getFirstIFD(s);
       TiffTools.getSamples(ifd, s, buf);
     }
     else {

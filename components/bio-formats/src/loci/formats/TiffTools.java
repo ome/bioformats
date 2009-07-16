@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.LogTools;
@@ -48,6 +46,9 @@ import loci.formats.codec.LuraWaveCodec;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.codec.ZlibCodec;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffRational;
 
 /**
  * A utility class for manipulating TIFF files.
@@ -299,13 +300,15 @@ public final class TiffTools {
   }
 
   /** Gets whether this is a BigTIFF IFD. */
-  public static boolean isBigTiff(Hashtable ifd) throws FormatException {
+  public static boolean isBigTiff(IFD ifd) throws FormatException {
     return ((Boolean)
       getIFDValue(ifd, BIG_TIFF, false, Boolean.class)).booleanValue();
   }
 
   /** Gets whether the TIFF information in the given IFD is little-endian. */
-  public static boolean isLittleEndian(Hashtable ifd) throws FormatException {
+  public static boolean isLittleEndian(IFD ifd)
+    throws FormatException
+  {
     return ((Boolean)
       getIFDValue(ifd, LITTLE_ENDIAN, true, Boolean.class)).booleanValue();
   }
@@ -318,7 +321,7 @@ public final class TiffTools {
    * Gets all IFDs within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable[] getIFDs(RandomAccessInputStream in)
+  public static IFDList getIFDs(RandomAccessInputStream in)
     throws IOException
   {
     // check TIFF header
@@ -336,11 +339,11 @@ public final class TiffTools {
     long ifdMax = (in.length() - 8) / 18;
 
     // read in IFDs
-    Vector v = new Vector();
+    IFDList ifds = new IFDList();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
-      Hashtable ifd = getIFD(in, ifdNum, offset, bigTiff);
+      IFD ifd = getIFD(in, ifdNum, offset, bigTiff);
       if (ifd == null || ifd.size() <= 1) break;
-      v.add(ifd);
+      ifds.add(ifd);
       offset = bigTiff ? in.readLong() : (long) (in.readInt() & 0xffffffffL);
       if (offset <= 0 || offset >= in.length()) {
         if (offset != 0) debug("getIFDs: invalid IFD offset: " + offset);
@@ -348,8 +351,6 @@ public final class TiffTools {
       }
     }
 
-    Hashtable[] ifds = new Hashtable[v.size()];
-    v.copyInto(ifds);
     return ifds;
   }
 
@@ -357,9 +358,7 @@ public final class TiffTools {
    * Gets the first IFD within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable getFirstIFD(RandomAccessInputStream in)
-    throws IOException
-  {
+  public static IFD getFirstIFD(RandomAccessInputStream in) throws IOException {
     // check TIFF header
     Boolean result = checkHeader(in);
     if (result == null) return null;
@@ -369,7 +368,7 @@ public final class TiffTools {
 
     long offset = getFirstOffset(in, bigTiff);
 
-    Hashtable ifd = getIFD(in, 0, offset, bigTiff);
+    IFD ifd = getIFD(in, 0, offset, bigTiff);
     ifd.put(new Integer(BIG_TIFF), new Boolean(bigTiff));
     return ifd;
   }
@@ -451,17 +450,17 @@ public final class TiffTools {
   }
 
   /** Gets the IFD stored at the given offset. */
-  public static Hashtable getIFD(RandomAccessInputStream in, long ifdNum,
-    long offset) throws IOException
+  public static IFD getIFD(RandomAccessInputStream in,
+    long ifdNum, long offset) throws IOException
   {
     return getIFD(in, ifdNum, offset, false);
   }
 
   /** Gets the IFD stored at the given offset. */
-  public static Hashtable getIFD(RandomAccessInputStream in,
+  public static IFD getIFD(RandomAccessInputStream in,
     long ifdNum, long offset, boolean bigTiff) throws IOException
   {
-    Hashtable ifd = new Hashtable();
+    IFD ifd = new IFD();
 
     // save little-endian flag to internal LITTLE_ENDIAN tag
     ifd.put(new Integer(LITTLE_ENDIAN), new Boolean(in.isLittleEndian()));
@@ -674,7 +673,7 @@ public final class TiffTools {
   }
 
   /** Gets the given directory entry value from the specified IFD. */
-  public static Object getIFDValue(Hashtable ifd, int tag) {
+  public static Object getIFDValue(IFD ifd, int tag) {
     return ifd.get(new Integer(tag));
   }
 
@@ -682,7 +681,7 @@ public final class TiffTools {
    * Gets the given directory entry value from the specified IFD,
    * performing some error checking.
    */
-  public static Object getIFDValue(Hashtable ifd,
+  public static Object getIFDValue(IFD ifd,
     int tag, boolean checkNull, Class checkClass) throws FormatException
   {
     Object value = ifd.get(new Integer(tag));
@@ -745,7 +744,7 @@ public final class TiffTools {
    * Gets the given directory entry value in long format from the
    * specified IFD, performing some error checking.
    */
-  public static long getIFDLongValue(Hashtable ifd, int tag,
+  public static long getIFDLongValue(IFD ifd, int tag,
     boolean checkNull, long defaultValue) throws FormatException
   {
     long value = defaultValue;
@@ -758,7 +757,7 @@ public final class TiffTools {
    * Gets the given directory entry value in int format from the
    * specified IFD, or -1 if the given directory does not exist.
    */
-  public static int getIFDIntValue(Hashtable ifd, int tag) {
+  public static int getIFDIntValue(IFD ifd, int tag) {
     int value = -1;
     try {
       value = getIFDIntValue(ifd, tag, false, -1);
@@ -771,7 +770,7 @@ public final class TiffTools {
    * Gets the given directory entry value in int format from the
    * specified IFD, performing some error checking.
    */
-  public static int getIFDIntValue(Hashtable ifd, int tag,
+  public static int getIFDIntValue(IFD ifd, int tag,
     boolean checkNull, int defaultValue) throws FormatException
   {
     int value = defaultValue;
@@ -784,17 +783,27 @@ public final class TiffTools {
    * Gets the given directory entry value in rational format from the
    * specified IFD, performing some error checking.
    */
-  public static TiffRational getIFDRationalValue(Hashtable ifd, int tag,
-    boolean checkNull) throws FormatException
+  public static TiffRational getIFDRationalValue(IFD ifd,
+    int tag, boolean checkNull) throws FormatException
   {
     return (TiffRational) getIFDValue(ifd, tag, checkNull, TiffRational.class);
+  }
+
+  /**
+   * Gets the given directory entry value as a string from the
+   * specified IFD, performing some error checking.
+   */
+  public static String getIFDStringValue(IFD ifd,
+    int tag, boolean checkNull) throws FormatException
+  {
+    return (String) getIFDValue(ifd, tag, checkNull, String.class);
   }
 
   /**
    * Gets the given directory entry values in long format
    * from the specified IFD, performing some error checking.
    */
-  public static long[] getIFDLongArray(Hashtable ifd,
+  public static long[] getIFDLongArray(IFD ifd,
     int tag, boolean checkNull) throws FormatException
   {
     Object value = getIFDValue(ifd, tag, checkNull, null);
@@ -826,7 +835,7 @@ public final class TiffTools {
    * Gets the given directory entry values in int format
    * from the specified IFD, performing some error checking.
    */
-  public static int[] getIFDIntArray(Hashtable ifd,
+  public static int[] getIFDIntArray(IFD ifd,
     int tag, boolean checkNull) throws FormatException
   {
     Object value = getIFDValue(ifd, tag, checkNull, null);
@@ -859,7 +868,7 @@ public final class TiffTools {
    * Gets the given directory entry values in short format
    * from the specified IFD, performing some error checking.
    */
-  public static short[] getIFDShortArray(Hashtable ifd,
+  public static short[] getIFDShortArray(IFD ifd,
     int tag, boolean checkNull) throws FormatException
   {
     Object value = getIFDValue(ifd, tag, checkNull, null);
@@ -892,7 +901,7 @@ public final class TiffTools {
   }
 
   /** Convenience method for obtaining the ImageDescription from an IFD. */
-  public static String getComment(Hashtable ifd) {
+  public static String getComment(IFD ifd) {
     if (ifd == null) return null;
 
     // extract comment
@@ -919,25 +928,27 @@ public final class TiffTools {
   {
     // read first IFD
     RandomAccessInputStream in = new RandomAccessInputStream(id);
-    Hashtable ifd = TiffTools.getFirstIFD(in);
+    IFD ifd = TiffTools.getFirstIFD(in);
     in.close();
     return getComment(ifd);
   }
 
   /** Returns the width of an image tile. */
-  public static long getTileWidth(Hashtable ifd) throws FormatException {
+  public static long getTileWidth(IFD ifd) throws FormatException {
     long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, false, 0);
     return tileWidth == 0 ? getImageWidth(ifd) : tileWidth;
   }
 
   /** Returns the length of an image tile. */
-  public static long getTileLength(Hashtable ifd) throws FormatException {
+  public static long getTileLength(IFD ifd)
+    throws FormatException
+  {
     long tileLength = getIFDLongValue(ifd, TILE_LENGTH, false, 0);
     return tileLength == 0 ? getRowsPerStrip(ifd)[0] : tileLength;
   }
 
   /** Returns the number of image tiles per row. */
-  public static long getTilesPerRow(Hashtable ifd) throws FormatException {
+  public static long getTilesPerRow(IFD ifd) throws FormatException {
     long tileWidth = getTileWidth(ifd);
     long imageWidth = getImageWidth(ifd);
     long nTiles = imageWidth / tileWidth;
@@ -946,7 +957,9 @@ public final class TiffTools {
   }
 
   /** Returns the number of image tiles per column. */
-  public static long getTilesPerColumn(Hashtable ifd) throws FormatException {
+  public static long getTilesPerColumn(IFD ifd)
+    throws FormatException
+  {
     long tileLength = getTileLength(ifd);
     long imageLength = getImageLength(ifd);
     long nTiles = imageLength / tileLength;
@@ -956,8 +969,8 @@ public final class TiffTools {
 
   // -- Image reading methods --
 
-  public static byte[] getTile(Hashtable ifd, RandomAccessInputStream in,
-    int row, int col)
+  public static byte[] getTile(IFD ifd,
+    RandomAccessInputStream in, int row, int col)
     throws FormatException, IOException
   {
     int samplesPerPixel = getSamplesPerPixel(ifd);
@@ -970,8 +983,8 @@ public final class TiffTools {
     return getTile(ifd, in, buf, row, col);
   }
 
-  public static byte[] getTile(Hashtable ifd, RandomAccessInputStream in,
-    byte[] buf, int row, int col)
+  public static byte[] getTile(IFD ifd,
+    RandomAccessInputStream in, byte[] buf, int row, int col)
     throws FormatException, IOException
   {
     byte[] jpegTable =
@@ -1018,16 +1031,16 @@ public final class TiffTools {
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static byte[][] getSamples(Hashtable ifd, RandomAccessInputStream in)
-    throws FormatException, IOException
+  public static byte[][] getSamples(IFD ifd,
+    RandomAccessInputStream in) throws FormatException, IOException
   {
     return getSamples(ifd, in, 0, 0, (int) getImageWidth(ifd),
       (int) getImageLength(ifd));
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static byte[][] getSamples(Hashtable ifd, RandomAccessInputStream in,
-    int x, int y, int w, int h)
+  public static byte[][] getSamples(IFD ifd,
+    RandomAccessInputStream in, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     int samplesPerPixel = getSamplesPerPixel(ifd);
@@ -1045,17 +1058,17 @@ public final class TiffTools {
     return samples;
   }
 
-  public static byte[] getSamples(Hashtable ifd, RandomAccessInputStream in,
-    byte[] buf) throws FormatException, IOException
+  public static byte[] getSamples(IFD ifd,
+    RandomAccessInputStream in, byte[] buf) throws FormatException, IOException
   {
     long width = getImageWidth(ifd);
     long length = getImageLength(ifd);
     return getSamples(ifd, in, buf, 0, 0, width, length);
   }
 
-  public static byte[] getSamples(Hashtable ifd, RandomAccessInputStream in,
-    byte[] buf, int x, int y, long width, long height)
-    throws FormatException, IOException
+  public static byte[] getSamples(IFD ifd,
+    RandomAccessInputStream in, byte[] buf, int x, int y,
+    long width, long height) throws FormatException, IOException
   {
     debug("parsing IFD entries");
 
@@ -1155,8 +1168,7 @@ public final class TiffTools {
    * This method is tailored specifically for planar (separated) images.
    */
   public static void planarUnpack(byte[] samples, int startIndex,
-    byte[] bytes, Hashtable ifd)
-    throws FormatException
+    byte[] bytes, IFD ifd) throws FormatException
   {
     BitBuffer bb = new BitBuffer(bytes);
 
@@ -1192,8 +1204,7 @@ public final class TiffTools {
    * No error checking is performed.
    */
   public static void unpackBytes(byte[] samples, int startIndex,
-    byte[] bytes, Hashtable ifd)
-    throws FormatException
+    byte[] bytes, IFD ifd) throws FormatException
   {
     if (getPlanarConfiguration(ifd) == 2) {
       planarUnpack(samples, startIndex, bytes, ifd);
@@ -1401,7 +1412,7 @@ public final class TiffTools {
   }
 
   /** Undoes in-place differencing according to the given predictor value. */
-  public static void undifference(byte[] input, Hashtable ifd)
+  public static void undifference(byte[] input, IFD ifd)
     throws FormatException
   {
     int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
@@ -1441,22 +1452,22 @@ public final class TiffTools {
   // -- IFD population methods --
 
   /** Adds a directory entry to an IFD. */
-  public static void putIFDValue(Hashtable ifd, int tag, Object value) {
+  public static void putIFDValue(IFD ifd, int tag, Object value) {
     ifd.put(new Integer(tag), value);
   }
 
   /** Adds a directory entry of type BYTE to an IFD. */
-  public static void putIFDValue(Hashtable ifd, int tag, short value) {
+  public static void putIFDValue(IFD ifd, int tag, short value) {
     putIFDValue(ifd, tag, new Short(value));
   }
 
   /** Adds a directory entry of type SHORT to an IFD. */
-  public static void putIFDValue(Hashtable ifd, int tag, int value) {
+  public static void putIFDValue(IFD ifd, int tag, int value) {
     putIFDValue(ifd, tag, new Integer(value));
   }
 
   /** Adds a directory entry of type LONG to an IFD. */
-  public static void putIFDValue(Hashtable ifd, int tag, long value) {
+  public static void putIFDValue(IFD ifd, int tag, long value) {
     putIFDValue(ifd, tag, new Long(value));
   }
 
@@ -1860,7 +1871,7 @@ public final class TiffTools {
 
   // -- Tag retrieval methods --
 
-  public static boolean isTiled(Hashtable ifd) throws FormatException {
+  public static boolean isTiled(IFD ifd) throws FormatException {
     Object offsets = ifd.get(new Integer(STRIP_OFFSETS));
     Object tileWidth = ifd.get(new Integer(TILE_WIDTH));
     return offsets == null || tileWidth != null;
@@ -1872,7 +1883,7 @@ public final class TiffTools {
    * @return the image's width.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static long getImageWidth(Hashtable ifd) throws FormatException {
+  public static long getImageWidth(IFD ifd) throws FormatException {
     long width = getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
     if (width > Integer.MAX_VALUE) {
       throw new FormatException("Sorry, ImageWidth > " + Integer.MAX_VALUE +
@@ -1887,7 +1898,7 @@ public final class TiffTools {
    * @return the image's length.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static long getImageLength(Hashtable ifd) throws FormatException {
+  public static long getImageLength(IFD ifd) throws FormatException {
     long length = getIFDLongValue(ifd, IMAGE_LENGTH, true, 0);
     if (length > Integer.MAX_VALUE) {
       throw new FormatException("Sorry, ImageLength > " + Integer.MAX_VALUE +
@@ -1903,9 +1914,9 @@ public final class TiffTools {
    * @return the image's bits per sample. The length of the array is equal to
    *   the number of samples per pixel.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getSamplesPerPixel(Hashtable)
+   * @see #getSamplesPerPixel(IFD)
    */
-  public static int[] getBitsPerSample(Hashtable ifd) throws FormatException {
+  public static int[] getBitsPerSample(IFD ifd) throws FormatException {
     int[] bitsPerSample = getIFDIntArray(ifd, BITS_PER_SAMPLE, false);
     if (bitsPerSample == null) bitsPerSample = new int[] {1};
 
@@ -1939,9 +1950,9 @@ public final class TiffTools {
    *  <li>FormatTools.FLOAT</li>
    *  <li>FormatTools.DOUBLE</li>
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getBitsPerSample(Hashtable)
+   * @see #getBitsPerSample(IFD)
    */
-  public static int getPixelType(Hashtable ifd) throws FormatException {
+  public static int getPixelType(IFD ifd) throws FormatException {
     int bps = getBitsPerSample(ifd)[0];
     int bitFormat = getIFDIntValue(ifd, SAMPLE_FORMAT);
 
@@ -1966,10 +1977,10 @@ public final class TiffTools {
    * @return the image's bytes per sample.  The length of the array is equal to
    *   the number of samples per pixel.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getSamplesPerPixel(Hashtable)
-   * @see #getBitsPerSample(Hashtable)
+   * @see #getSamplesPerPixel(IFD)
+   * @see #getBitsPerSample(IFD)
    */
-  public static int[] getBytesPerSample(Hashtable ifd) throws FormatException {
+  public static int[] getBytesPerSample(IFD ifd) throws FormatException {
     int[] bitsPerSample = getBitsPerSample(ifd);
     int[] bps = new int[bitsPerSample.length];
     for (int i=0; i<bitsPerSample.length; i++) {
@@ -1988,7 +1999,7 @@ public final class TiffTools {
    * @return the number of samples per pixel.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static int getSamplesPerPixel(Hashtable ifd) throws FormatException {
+  public static int getSamplesPerPixel(IFD ifd) throws FormatException {
     return getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1);
   }
 
@@ -2008,7 +2019,7 @@ public final class TiffTools {
    * </ul>
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static int getCompression(Hashtable ifd) throws FormatException {
+  public static int getCompression(IFD ifd) throws FormatException {
     return getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
   }
 
@@ -2031,7 +2042,7 @@ public final class TiffTools {
    *
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static int getPhotometricInterpretation(Hashtable ifd)
+  public static int getPhotometricInterpretation(IFD ifd)
     throws FormatException
   {
     int photoInterp = getIFDIntValue(ifd, PHOTOMETRIC_INTERPRETATION, true, 0);
@@ -2066,8 +2077,7 @@ public final class TiffTools {
    *
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static int getPlanarConfiguration(Hashtable ifd) throws FormatException
-  {
+  public static int getPlanarConfiguration(IFD ifd) throws FormatException {
     int planarConfig = getIFDIntValue(ifd, PLANAR_CONFIGURATION, false, 1);
     if (planarConfig != 1 && planarConfig != 2) {
       throw new FormatException("Sorry, PlanarConfiguration (" + planarConfig +
@@ -2084,10 +2094,10 @@ public final class TiffTools {
    *   to the number of strips per image. <i>StripsPerImage =
    *   floor ((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getStripByteCounts(Hashtable)
-   * @see #getRowsPerStrip(Hashtable)
+   * @see #getStripByteCounts(IFD)
+   * @see #getRowsPerStrip(IFD)
    */
-  public static long[] getStripOffsets(Hashtable ifd) throws FormatException {
+  public static long[] getStripOffsets(IFD ifd) throws FormatException {
     int tag = isTiled(ifd) ? TILE_OFFSETS : STRIP_OFFSETS;
     long[] offsets = getIFDLongArray(ifd, tag, false);
     if (isTiled(ifd) && offsets == null) {
@@ -2113,10 +2123,9 @@ public final class TiffTools {
    *   to the number of strips per image. <i>StripsPerImage =
    *   floor((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getStripOffsets(Hashtable)
+   * @see #getStripOffsets(IFD)
    */
-  public static long[] getStripByteCounts(Hashtable ifd) throws FormatException
-  {
+  public static long[] getStripByteCounts(IFD ifd) throws FormatException {
     int tag = isTiled(ifd) ? TILE_BYTE_COUNTS : STRIP_BYTE_COUNTS;
     long[] byteCounts = getIFDLongArray(ifd, tag, false);
     if (isTiled(ifd) && byteCounts == null) {
@@ -2171,7 +2180,7 @@ public final class TiffTools {
    * @return the number of rows per strip.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static long[] getRowsPerStrip(Hashtable ifd) throws FormatException {
+  public static long[] getRowsPerStrip(IFD ifd) throws FormatException {
     if (isTiled(ifd)) {
       return new long[] {getImageLength(ifd)};
     }
@@ -2207,7 +2216,7 @@ public final class TiffTools {
   }
 
   /** Encodes a strip of data with the given compression scheme. */
-  public static byte[] compress(byte[] input, Hashtable ifd)
+  public static byte[] compress(byte[] input, IFD ifd)
     throws FormatException, IOException
   {
     int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
@@ -2275,7 +2284,7 @@ public final class TiffTools {
   }
 
   /** Prints the contents of an IFD. */
-  public static void printIFD(Hashtable ifd) {
+  public static void printIFD(IFD ifd) {
     StringBuffer sb = new StringBuffer();
     sb.append("IFD directory entry values:");
 

@@ -25,8 +25,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -47,6 +48,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class IvisionReader extends FormatReader {
+
+  // -- Constants --
+
+  public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
   // -- Fields --
 
@@ -211,7 +216,7 @@ public class IvisionReader extends FormatReader {
         in.readString((int) (in.length() - in.getFilePointer())).trim();
       xml = xml.substring(0, xml.lastIndexOf(">") + 1);
       IvisionHandler handler = new IvisionHandler();
-      DataTools.parseXML(xml, handler);
+      XMLTools.parseXML(xml, handler);
     }
 
     status("Populating core metadata");
@@ -228,8 +233,7 @@ public class IvisionReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     if (creationDate != null) {
-      String date =
-        DataTools.formatDate(creationDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+      String date = DateTools.formatDate(creationDate, DATE_FORMAT);
       store.setImageCreationDate(date, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);

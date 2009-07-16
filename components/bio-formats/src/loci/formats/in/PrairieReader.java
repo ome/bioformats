@@ -31,9 +31,9 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -42,6 +42,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -131,10 +132,16 @@ public class PrairieReader extends FormatReader {
     String s = stream.readString(blockCheckLen);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
 
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
-    String software = (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
-    return software.indexOf("Prairie") != -1 &&
-      ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
+    IFD ifd = TiffTools.getFirstIFD(stream);
+    String software = null;
+    try {
+      software = TiffTools.getIFDStringValue(ifd, TiffTools.SOFTWARE, true);
+    }
+    catch (FormatException exc) {
+      return false; // no software tag, or tag is wrong type
+    }
+    if (software.indexOf("Prairie") < 0) return false; // not Prairie software
+    return ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
       ifd.containsKey(new Integer(PRAIRIE_TAG_2)) &&
       ifd.containsKey(new Integer(PRAIRIE_TAG_3));
   }
@@ -229,7 +236,7 @@ public class PrairieReader extends FormatReader {
       }
 
       DefaultHandler handler = new PrairieHandler();
-      DataTools.parseXML(b, handler);
+      XMLTools.parseXML(b, handler);
 
       if (checkSuffix(id, XML_SUFFIX)) {
         files = new String[f.size()];

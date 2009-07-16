@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -51,6 +51,8 @@ import loci.formats.meta.MetadataStore;
 public class MicromanagerReader extends FormatReader {
 
   // -- Constants --
+
+  public static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
 
   /** File containing extra metadata. */
   private static final String METADATA = "metadata.txt";
@@ -409,12 +411,11 @@ public class MicromanagerReader extends FormatReader {
     store.setImageName("", 0);
     store.setImageDescription(comment, 0);
     if (time != null) {
-      SimpleDateFormat parser =
-        new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+      SimpleDateFormat parser = new SimpleDateFormat(DATE_FORMAT);
       try {
         long stamp = parser.parse(time).getTime();
         store.setImageCreationDate(
-          DataTools.convertDate(stamp, DataTools.UNIX), 0);
+          DateTools.convertDate(stamp, DateTools.UNIX), 0);
       }
       catch (ParseException e) {
         MetadataTools.setDefaultCreationDate(store, id, 0);

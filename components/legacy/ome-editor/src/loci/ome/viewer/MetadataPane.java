@@ -54,6 +54,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.TiffTools;
+import loci.formats.tiff.IFD;
 import ome.xml.DOMUtil;
 
 import org.openmicroscopy.xml.OMENode;
@@ -211,7 +212,7 @@ public class MetadataPane extends JPanel
         in.close();
         RandomAccessInputStream ras =
           new RandomAccessInputStream(file.getPath());
-        Hashtable ifd = TiffTools.getFirstIFD(ras);
+        IFD ifd = TiffTools.getFirstIFD(ras);
         ras.close();
         if (ifd == null) return false;
         Object value = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);

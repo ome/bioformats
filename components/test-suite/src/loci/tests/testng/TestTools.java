@@ -34,7 +34,7 @@ package loci.tests.testng;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 
 /**
  * Utility methods for use with TestNG tests.
@@ -52,7 +52,7 @@ public class TestTools {
 
   /** Gets a timestamp for the current moment. */
   public static String timestamp() {
-    return DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
+    return DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);
   }
 
   /** Calculate the MD5 of a byte array. */

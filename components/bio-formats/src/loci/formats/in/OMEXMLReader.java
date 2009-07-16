@@ -29,9 +29,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.CBZip2InputStream;
-import loci.common.DataTools;
 import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -232,7 +232,7 @@ public class OMEXMLReader extends FormatReader {
     compression = new Vector();
 
     DefaultHandler handler = new OMEXMLHandler();
-    DataTools.parseXML(in, handler);
+    XMLTools.parseXML(in, handler);
 
     if (binDataOffsets.size() == 0) {
       throw new FormatException("Pixel data not found");

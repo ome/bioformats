@@ -194,32 +194,36 @@ public interface IFormatReader extends IFormatHandler {
   boolean isInterleaved(int subC);
 
   /**
-   * Obtains the specified image from the current file as a byte array.
+   * Obtains the specified image plane from the current file as a byte array.
    */
   byte[] openBytes(int no) throws FormatException, IOException;
 
   /**
-   * Obtains a sub-image of the specified image, whose upper-left corner is
-   * given by (x, y).
+   * Obtains a sub-image of the specified image plane,
+   * whose upper-left corner is given by (x, y).
    */
   byte[] openBytes(int no, int x, int y, int width, int height)
     throws FormatException, IOException;
 
   /**
-   * Obtains the specified image from the current file into a pre-allocated byte
-   * array of (sizeX * sizeY * bytesPerPixel * RGB channel count).
+   * Obtains the specified image plane from the current file into a
+   * pre-allocated byte array of (sizeX * sizeY * bytesPerPixel * RGB channel
+   * count).
+   *
    * @param no the image index within the file.
    * @param buf a pre-allocated buffer.
    * @return the pre-allocated buffer <code>buf</code> for convenience.
    * @throws FormatException if there was a problem parsing the metadata of the
-   * file.
+   *   file.
    * @throws IOException if there was a problem reading the file.
    */
   byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException;
 
   /**
-   * Obtains a sub-image of the specified image into a pre-allocated byte array.
+   * Obtains a sub-image of the specified image plane
+   * into a pre-allocated byte array.
+   *
    * @param no the image index within the file.
    * @param buf a pre-allocated buffer.
    * @param x X coordinate of the upper-left corner of the sub-image
@@ -228,14 +232,36 @@ public interface IFormatReader extends IFormatHandler {
    * @param height of the sub-image
    * @return the pre-allocated buffer <code>buf</code> for convenience.
    * @throws FormatException if there was a problem parsing the metadata of the
-   * file.
+   *   file.
    * @throws IOException if there was a problem reading the file.
    */
   byte[] openBytes(int no, byte[] buf, int x, int y, int width, int height)
     throws FormatException, IOException;
 
   /**
-   * Obtains a thumbnail for the specified image from the current file,
+   * Returns the native data type of image planes for this reader, as returned
+   * by {@link #openData}. For most readers this type will be a byte array;
+   * however, some readers call external APIs that work with other types such
+   * as {@link java.awt.image.BufferedImage}.
+   */
+  Class getNativeDataType();
+
+  /**
+   * Obtains the specified image plane (or sub-image thereof) in the reader's
+   * native data structure. For most readers this is a byte array; however,
+   * some readers call external APIs that work with other types such as
+   * {@link java.awt.image.BufferedImage}. The openData method exists to
+   * maintain generality and efficiency while avoiding pollution of the API
+   * with AWT-specific logic.
+   *
+   * @see loci.formats.FormatReader
+   * @see loci.formats.gui.BufferedImageReader
+   */
+  Object openData(int no, int x, int y, int width, int height)
+    throws FormatException, IOException;
+
+  /**
+   * Obtains a thumbnail for the specified image plane from the current file,
    * as a byte array.
    */
   byte[] openThumbBytes(int no) throws FormatException, IOException;

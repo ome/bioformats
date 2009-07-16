@@ -33,6 +33,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * ImprovisionTiffReader is the file format reader for
@@ -76,7 +77,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
     String comment = TiffTools.getComment(ifd);
     return comment != null && comment.indexOf("Improvision") != -1;
   }
@@ -99,7 +100,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     put("Improvision", "yes");
 
     // parse key/value pairs in the comment
-    String comment = TiffTools.getComment(ifds[0]);
+    String comment = TiffTools.getComment(ifds.get(0));
     String tz = null, tc = null, tt = null;
     if (comment != null) {
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -144,13 +145,13 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
     // parse each of the comments to determine axis ordering
 
-    long[] stamps = new long[ifds.length];
-    int[][] coords = new int[ifds.length][3];
+    long[] stamps = new long[ifds.size()];
+    int[][] coords = new int[ifds.size()][3];
 
     cNames = new String[getSizeC()];
 
-    for (int i=0; i<ifds.length; i++) {
-      comment = TiffTools.getComment(ifds[i]);
+    for (int i=0; i<ifds.size(); i++) {
+      comment = TiffTools.getComment(ifds.get(i));
       comment = comment.replaceAll("\r\n", "\n");
       comment = comment.replaceAll("\r", "\n");
       StringTokenizer st = new StringTokenizer(comment, "\n");

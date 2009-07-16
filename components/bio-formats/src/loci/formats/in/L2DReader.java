@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -46,6 +46,10 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/L2DReader.java">SVN</a></dd></dl>
  */
 public class L2DReader extends FormatReader {
+
+  // -- Constants --
+
+  public static final String DATE_FORMAT = "yyyy, m, d";
 
   // -- Fields --
 
@@ -270,7 +274,7 @@ public class L2DReader extends FormatReader {
 
       String date = (String) dates.get(i);
       if (date != null) {
-        date = DataTools.formatDate(date, "yyyy, m, d");
+        date = DateTools.formatDate(date, DATE_FORMAT);
         store.setImageCreationDate(date, i);
       }
       else MetadataTools.setDefaultCreationDate(store, id, i);

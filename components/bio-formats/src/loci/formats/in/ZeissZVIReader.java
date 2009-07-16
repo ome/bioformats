@@ -33,6 +33,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -571,8 +572,8 @@ public class ZeissZVIReader extends FormatReader {
     if (timestamps.size() > 0) {
       String timestamp = (String) timestamps.get(new Integer(0));
       firstStamp = parseTimestamp(timestamp);
-      store.setImageCreationDate(DataTools.convertDate(
-        (long) (firstStamp / 1600), DataTools.ZVI), 0);
+      store.setImageCreationDate(DateTools.convertDate(
+        (long) (firstStamp / 1600), DateTools.ZVI), 0);
     }
     else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 

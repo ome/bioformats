@@ -31,6 +31,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -247,7 +248,7 @@ public class TillVisionReader extends FormatReader {
             boolean success = false;
             for (int q=0; q<formats.length; q++) {
               try {
-                dateTime = DataTools.formatDate(dateTime, formats[q]);
+                dateTime = DateTools.formatDate(dateTime, formats[q]);
                 success = true;
               }
               catch (NullPointerException e) { }

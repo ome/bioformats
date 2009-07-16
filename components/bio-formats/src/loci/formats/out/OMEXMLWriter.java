@@ -26,8 +26,8 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
+import loci.common.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -92,7 +92,7 @@ public class OMEXMLWriter extends FormatWriter {
 
       xmlFragments = new Vector();
       currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-      DataTools.parseXML(xml, new OMEHandler());
+      XMLTools.parseXML(xml, new OMEHandler());
 
       xmlFragments.add(currentFragment);
 

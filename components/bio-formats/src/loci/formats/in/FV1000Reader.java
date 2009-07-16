@@ -31,6 +31,7 @@ import java.util.Vector;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -42,6 +43,7 @@ import loci.formats.POITools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
@@ -60,6 +62,8 @@ public class FV1000Reader extends FormatReader {
   public static final String[] OIB_SUFFIX = {"oib"};
   public static final String[] OIF_SUFFIX = {"oif"};
   public static final String[] FV1000_SUFFIXES = {"oib", "oif"};
+
+  public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   private static final int NUM_DIMENSIONS = 9;
 
@@ -203,14 +207,14 @@ public class FV1000Reader extends FormatReader {
     if (filename == null) return buf;
 
     RandomAccessInputStream plane = getFile(filename);
-    Hashtable[] ifds = TiffTools.getIFDs(plane);
-    if (image >= ifds.length) return buf;
+    Vector<IFD> ifds = TiffTools.getIFDs(plane);
+    if (image >= ifds.size()) return buf;
 
-    if (getSizeY() != TiffTools.getImageLength(ifds[image])) {
-      TiffTools.getSamples(ifds[image], plane, buf, x,
+    if (getSizeY() != TiffTools.getImageLength(ifds.get(image))) {
+      TiffTools.getSamples(ifds.get(image), plane, buf, x,
         getIndex(coords[0], 0, coords[2]), w, 1);
     }
-    else TiffTools.getSamples(ifds[image], plane, buf, x, y, w, h);
+    else TiffTools.getSamples(ifds.get(image), plane, buf, x, y, w, h);
 
     plane.close();
     plane = null;
@@ -678,19 +682,19 @@ public class FV1000Reader extends FormatReader {
         core = new CoreMetadata[2];
         core[0] = new CoreMetadata();
         core[1] = new CoreMetadata();
-        Hashtable[] ifds = null;
+        Vector<IFD> ifds = null;
         for (int i=0; i<previewNames.size(); i++) {
           String previewName = (String) previewNames.get(i);
           ifds = TiffTools.getIFDs(getFile(previewName));
-          core[1].imageCount += ifds.length;
+          core[1].imageCount += ifds.size();
         }
-        core[1].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
-        core[1].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+        core[1].sizeX = (int) TiffTools.getImageWidth(ifds.get(0));
+        core[1].sizeY = (int) TiffTools.getImageLength(ifds.get(0));
         core[1].sizeZ = 1;
         core[1].sizeT = 1;
         core[1].sizeC = core[1].imageCount;
         core[1].rgb = false;
-        int bits = TiffTools.getBitsPerSample(ifds[0])[0];
+        int bits = TiffTools.getBitsPerSample(ifds.get(0))[0];
         while ((bits % 8) != 0) bits++;
         switch (bits) {
           case 8:
@@ -994,7 +998,7 @@ public class FV1000Reader extends FormatReader {
 
     if (creationDate != null) {
       creationDate = creationDate.replaceAll("'", "");
-      creationDate = DataTools.formatDate(creationDate, "yyyy-MM-dd HH:mm:ss");
+      creationDate = DateTools.formatDate(creationDate, DATE_FORMAT);
     }
 
     store.setInstrumentID("Instrument:0", 0);

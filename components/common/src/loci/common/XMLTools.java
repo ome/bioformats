@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
+Copyright (C) 2005-@year@ Melissa Linkert and Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,19 +49,75 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * A utility class for working with XML (not necessarily OME-XML).
+ * A utility class for working with XML.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/XMLTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/XMLTools.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/XMLTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/XMLTools.java">SVN</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Chris Allan callan at blackcat.ca
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public final class XMLTools {
+
+  // -- Constants --
+
+  /** Factory for generating SAX parsers. */
+  public static final SAXParserFactory SAX_FACTORY =
+    SAXParserFactory.newInstance();
 
   // -- Constructor --
 
   private XMLTools() { }
 
   // -- Utility methods --
+
+  /** Remove invalid characters from an XML string. */
+  public static String sanitizeXML(String s) {
+    for (int i=0; i<s.length(); i++) {
+      char c = s.charAt(i);
+      if (Character.isISOControl(c) || !Character.isDefined(c) || c > '~') {
+        s = s.replace(c, ' ');
+      }
+    }
+    return s;
+  }
+
+  public static void parseXML(String xml, DefaultHandler handler)
+    throws IOException
+  {
+    parseXML(xml.getBytes(), handler);
+  }
+
+  public static void parseXML(RandomAccessInputStream stream,
+    DefaultHandler handler) throws IOException
+  {
+    byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
+    stream.read(b);
+    parseXML(b, handler);
+    b = null;
+  }
+
+  public static void parseXML(byte[] xml, DefaultHandler handler)
+    throws IOException
+  {
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(new ByteArrayInputStream(xml), handler);
+    }
+    catch (ParserConfigurationException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+    }
+    catch (SAXException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+
+    }
+  }
 
   /**
    * Attempts to validate the given XML string using
@@ -82,10 +138,9 @@ public final class XMLTools {
     // get path to schema from root element using SAX
     LogTools.println("Parsing schema path");
     ValidationSAXHandler saxHandler = new ValidationSAXHandler();
-    SAXParserFactory saxFactory = SAXParserFactory.newInstance();
     Exception exception = null;
     try {
-      SAXParser saxParser = saxFactory.newSAXParser();
+      SAXParser saxParser = SAX_FACTORY.newSAXParser();
       InputStream is = new ByteArrayInputStream(xml.getBytes());
       saxParser.parse(is, saxHandler);
     }

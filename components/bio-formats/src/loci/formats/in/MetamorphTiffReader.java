@@ -29,8 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -91,14 +91,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
     debug("MetamorphTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
-    String[] comments = new String[ifds.length];
+    String[] comments = new String[ifds.size()];
 
     // parse XML comment
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
     for (int i=0; i<comments.length; i++) {
-      comments[i] = TiffTools.getComment(ifds[i]);
-      DataTools.parseXML(comments[i], handler);
+      comments[i] = TiffTools.getComment(ifds.get(i));
+      XMLTools.parseXML(comments[i], handler);
     }
 
     core[0].sizeC = 0;
@@ -125,7 +125,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
     core[0].sizeZ = uniqueZ.size();
-    core[0].sizeT = ifds.length / (getSizeZ() * getSizeC());
+    core[0].sizeT = ifds.size() / (getSizeZ() * getSizeC());
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

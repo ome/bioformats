@@ -364,6 +364,19 @@ public class ImageReader implements IFormatReader {
     return getReader().openBytes(no, buf, x, y, w, h);
   }
 
+  /* @see IFormatReader#getNativeDataType() */
+  public Class getNativeDataType() {
+    return getReader().getNativeDataType();
+  }
+
+  /* @see IFormatReader#openData(int, int, int, int, int) */
+  public Object openData(int no, int x, int y, int width, int height)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().openData(no, x, y, width, height);
+  }
+
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
@@ -429,7 +442,7 @@ public class ImageReader implements IFormatReader {
     return getReader().getSeriesMetadata();
   }
 
-  /* @see IFormatReader#getMetadata() */
+  /** @deprecated */
   public Hashtable getMetadata() {
     FormatTools.assertId(currentId, true, 2);
     return getReader().getMetadata();

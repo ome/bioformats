@@ -41,6 +41,7 @@ import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.tiff.IFD;
 
 /**
  * OMETiffReader is the file format reader for
@@ -80,7 +81,7 @@ public class OMETiffReader extends FormatReader {
     boolean validHeader = TiffTools.isValidHeader(stream);
     if (!validHeader) return false;
     // look for OME-XML in first IFD's comment
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
     String comment = TiffTools.getComment(ifd);
     if (comment == null) return false;
     return comment.trim().endsWith("</OME>");
@@ -147,7 +148,7 @@ public class OMETiffReader extends FormatReader {
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
-    Hashtable firstIFD = TiffTools.getFirstIFD(ras);
+    IFD firstIFD = TiffTools.getFirstIFD(ras);
     ras.close();
     String xml = TiffTools.getComment(firstIFD);
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);

@@ -82,6 +82,7 @@ import loci.formats.in.TiffReader;
 import loci.formats.ome.OMEXML2003FCMetadata;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.TiffWriter;
+import loci.formats.tiff.IFD;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 
@@ -467,10 +468,10 @@ public class MetadataPane extends JPanel
           else exc.printStackTrace();
         }
 
-        Hashtable ifd = null;
+        IFD ifd = null;
         if (i == 0) {
           // save OME-XML metadata to TIFF file's first IFD
-          ifd = new Hashtable();
+          ifd = new IFD();
           TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
         }
         // write plane to output file
@@ -524,10 +525,10 @@ public class MetadataPane extends JPanel
         else exc.printStackTrace();
       }
 
-      Hashtable ifd = null;
+      IFD ifd = null;
       if (i == 0) {
         // save OME-XML metadata to TIFF file's first IFD
-        ifd = new Hashtable();
+        ifd = new IFD();
         TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
       }
       // write plane to output file
@@ -598,7 +599,7 @@ public class MetadataPane extends JPanel
       //get TIFF comment without parsing out TiffData Elements
       RandomAccessInputStream in =
         new RandomAccessInputStream(currentFile.getPath());
-      Hashtable ifd = TiffTools.getFirstIFD(in);
+      IFD ifd = TiffTools.getFirstIFD(in);
       in.close();  // extract comment
       Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
       String comment = null;
@@ -737,7 +738,7 @@ public class MetadataPane extends JPanel
   }
 
   public boolean checkOMETiff(File file) {
-    Hashtable ifd;
+    IFD ifd;
     try{
       RandomAccessInputStream in = new RandomAccessInputStream(file.getPath());
       ifd = TiffTools.getFirstIFD(in);

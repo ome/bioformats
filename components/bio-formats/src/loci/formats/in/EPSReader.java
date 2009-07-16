@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -35,6 +36,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
@@ -60,7 +62,7 @@ public class EPSReader extends FormatReader {
   private boolean binary;
 
   private boolean isTiff;
-  private Hashtable[] ifds;
+  private Vector<IFD> ifds;
 
   // -- Constructor --
 
@@ -85,10 +87,11 @@ public class EPSReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (isTiff) {
-      long[] offsets = TiffTools.getStripOffsets(ifds[0]);
+      long[] offsets = TiffTools.getStripOffsets(ifds.get(0));
       in.seek(offsets[0]);
 
-      int[] map = TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
+      int[] map = TiffTools.getIFDIntArray(ifds.get(0),
+        TiffTools.COLOR_MAP, false);
       if (map == null) {
         readPlane(in, x, y, w, h, buf);
         return buf;
@@ -188,16 +191,18 @@ public class EPSReader extends FormatReader {
       in = new RandomAccessInputStream(b);
       ifds = TiffTools.getIFDs(in);
 
-      core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
-      core[0].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+      IFD firstIFD = ifds.get(0);
+
+      core[0].sizeX = (int) TiffTools.getImageWidth(firstIFD);
+      core[0].sizeY = (int) TiffTools.getImageLength(firstIFD);
       core[0].sizeZ = 1;
       core[0].sizeT = 1;
-      core[0].sizeC = TiffTools.getSamplesPerPixel(ifds[0]);
-      core[0].littleEndian = TiffTools.isLittleEndian(ifds[0]);
+      core[0].sizeC = TiffTools.getSamplesPerPixel(firstIFD);
+      core[0].littleEndian = TiffTools.isLittleEndian(firstIFD);
       core[0].interleaved = true;
       core[0].rgb = getSizeC() > 1;
 
-      bps = TiffTools.getBitsPerSample(ifds[0])[0];
+      bps = TiffTools.getBitsPerSample(firstIFD)[0];
       switch (bps) {
         case 16:
           core[0].pixelType = FormatTools.UINT16;

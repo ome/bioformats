@@ -31,6 +31,8 @@ import java.util.Vector;
 import loci.common.*;
 import loci.formats.*;
 import loci.formats.meta.*;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -84,7 +86,7 @@ public class FlexReader extends FormatReader {
    */
   private String[][] flexFiles;
 
-  private Hashtable[][][] ifds;
+  private IFDList[][] ifds;
 
   /** Specifies the row and column index into 'flexFiles' for a given well. */
   private int[][] wellNumber;
@@ -138,7 +140,7 @@ public class FlexReader extends FormatReader {
       wellCol = 0;
     }
 
-    Hashtable ifd = ifds[wellRow][wellCol][imageNumber];
+    IFD ifd = ifds[wellRow][wellCol].get(imageNumber);
     RandomAccessInputStream s =
       new RandomAccessInputStream(flexFiles[wellRow][wellCol]);
 
@@ -260,7 +262,7 @@ public class FlexReader extends FormatReader {
 
       if (doGrouping) {
         flexFiles = new String[nRows][nCols];
-        ifds = new Hashtable[nRows][nCols][];
+        ifds = new IFDList[nRows][nCols];
         factors = new double[nRows][nCols][];
         wellCount = v.size();
 
@@ -292,7 +294,7 @@ public class FlexReader extends FormatReader {
     if (!doGrouping) {
       wellCount = 1;
       flexFiles = new String[1][1];
-      ifds = new Hashtable[1][1][];
+      ifds = new IFDList[1][1];
       factors = new double[1][1][];
       flexFiles[0][0] = currentFile.getAbsolutePath();
       wellNumber = new int[][] {getWell(flexFiles[0][0])};
@@ -410,14 +412,12 @@ public class FlexReader extends FormatReader {
   /**
    * Returns the IFDs of the first well that has data. May not be
    * <code>[0][0]</code> as the acquisition may have been column or row offset.
-   * @return Hashtable of the first well's IFDs.
+   * @return List of the first well's IFDs.
    */
-  private Hashtable[] firstWellIfds() {
+  private IFDList firstWellIfds() {
     for (int i = 0; i < ifds.length; i++) {
       for (int j = 0; j < ifds[i].length; j++) {
-        if (ifds[i][j] != null) {
-          return ifds[i][j];
-        }
+        if (ifds[i][j] != null) return ifds[i][j];
       }
     }
     return null;
@@ -454,8 +454,8 @@ public class FlexReader extends FormatReader {
     if (filterSets == null) filterSets = new Vector<String>();
 
     // parse factors from XML
-    String xml =
-      (String) TiffTools.getIFDValue(ifds[wellRow][wellCol][0], FLEX);
+    String xml = (String)
+      TiffTools.getIFDValue(ifds[wellRow][wellCol].get(0), FLEX);
 
     // HACK - workaround for Windows and Mac OS X bug where
     // SAX parser fails due to improperly handled mu (181) characters.
@@ -468,7 +468,7 @@ public class FlexReader extends FormatReader {
     Vector f = new Vector();
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell);
-    DataTools.parseXML(c, handler);
+    XMLTools.parseXML(c, handler);
 
     if (firstFile) populateCoreMetadata(wellRow, wellCol, n);
 
@@ -561,14 +561,14 @@ public class FlexReader extends FormatReader {
     // of reported images
 
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    if (getImageCount() * fieldCount != ifds[wellRow][wellCol].length) {
-      core[0].imageCount = ifds[wellRow][wellCol].length / fieldCount;
+    if (getImageCount() * fieldCount != ifds[wellRow][wellCol].size()) {
+      core[0].imageCount = ifds[wellRow][wellCol].size() / fieldCount;
       core[0].sizeZ = 1;
       core[0].sizeC = 1;
-      core[0].sizeT = ifds[wellRow][wellCol].length / fieldCount;
+      core[0].sizeT = ifds[wellRow][wellCol].size() / fieldCount;
     }
 
-    Hashtable ifd = ifds[wellRow][wellCol][0];
+    IFD ifd = ifds[wellRow][wellCol].get(0);
 
     core[0].sizeX = (int) TiffTools.getImageWidth(ifd);
     core[0].sizeY = (int) TiffTools.getImageLength(ifd);
@@ -773,7 +773,7 @@ public class FlexReader extends FormatReader {
       }
       else if ("Image".equals(parentQName)) {
         if (fieldCount == 0) fieldCount = 1;
-        int nImages = firstWellIfds().length / fieldCount;
+        int nImages = firstWellIfds().size() / fieldCount;
         if (nImages == 0) nImages = 1; // probably a manually altered dataset
         int currentSeries = (nextImage - 1) / nImages;
         currentSeries += well * fieldCount;
@@ -884,7 +884,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Field")) {
         parentQName = qName;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        if (fieldNo > fieldCount && fieldCount < firstWellIfds().length) {
+        if (fieldNo > fieldCount && fieldCount < firstWellIfds().size()) {
           fieldCount++;
         }
       }

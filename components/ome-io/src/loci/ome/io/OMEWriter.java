@@ -29,10 +29,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.common.XMLTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -274,7 +275,7 @@ public class OMEWriter extends FormatWriter {
         String creationDate = metadataRetrieve.getImageCreationDate(series);
         if (creationDate == null) {
           creationDate =
-            DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
+            DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);
         }
 
         r.setVar("creationDate", creationDate);
@@ -349,8 +350,8 @@ public class OMEWriter extends FormatWriter {
           r.setVar("VALUE", "Value");
           for (int i=0; i<keys.length; i++) {
             r.exec("attribute = df.createNew(ORIGINAL_METADATA)");
-            r.setVar("K", DataTools.sanitizeXML(keys[i]));
-            r.setVar("V", DataTools.sanitizeXML((String) meta.get(keys[i])));
+            r.setVar("K", XMLTools.sanitizeXML(keys[i]));
+            r.setVar("V", XMLTools.sanitizeXML((String) meta.get(keys[i])));
             r.exec("attribute.setStringElement(NAME, K)");
             r.exec("attribute.setStringElement(VALUE, V)");
             r.exec("attribute.setImage(img)");

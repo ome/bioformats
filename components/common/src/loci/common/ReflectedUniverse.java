@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
@@ -47,7 +47,7 @@ public class ReflectedUniverse {
   // -- Fields --
 
   /** Hashtable containing all variables present in the universe. */
-  protected Hashtable variables;
+  protected HashMap<String, Object> variables;
 
   /** Class loader for imported classes. */
   protected ClassLoader loader;
@@ -74,7 +74,7 @@ public class ReflectedUniverse {
 
   /** Constructs a new reflected universe that uses the given class loader. */
   public ReflectedUniverse(ClassLoader loader) {
-    variables = new Hashtable();
+    variables = new HashMap<String, Object>();
     this.loader = loader == null ? getClass().getClassLoader() : loader;
     debug = false;
   }

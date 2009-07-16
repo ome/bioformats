@@ -29,8 +29,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Pseudo-extension of java.io.File that supports reading over HTTP.
@@ -45,7 +45,7 @@ public class Location {
   // -- Static fields --
 
   /** Map from given filenames to actual filenames. */
-  private static Hashtable idMap = new Hashtable();
+  private static HashMap<String, Object> idMap = new HashMap<String, Object>();
 
   // -- Fields --
 
@@ -91,7 +91,6 @@ public class Location {
    * @see #getMappedId(String)
    */
   public static void mapId(String id, String filename) {
-    if (idMap == null) idMap = new Hashtable();
     if (id == null) return;
     if (filename == null) idMap.remove(id);
     else idMap.put(id, filename);
@@ -99,7 +98,6 @@ public class Location {
 
   /** Maps the given id to the given random access handle. */
   public static void mapFile(String id, IRandomAccess ira) {
-    if (idMap == null) idMap = new Hashtable();
     if (id == null) return;
     if (ira == null) idMap.remove(id);
     else idMap.put(id, ira);
@@ -133,11 +131,11 @@ public class Location {
     return ira;
   }
 
-  public static Hashtable getIdMap() { return idMap; }
+  public static HashMap<String, Object> getIdMap() { return idMap; }
 
-  public static void setIdMap(Hashtable map) {
-    if (map != null) idMap = map;
-    else idMap = new Hashtable();
+  public static void setIdMap(HashMap<String, Object> map) {
+    if (map == null) throw new IllegalArgumentException("map cannot be null");
+    idMap = map;
   }
 
   /**
@@ -184,7 +182,7 @@ public class Location {
    * @see java.io.File#list()
    */
   public String[] list(boolean noDotFiles) {
-    Vector<String> files = new Vector<String>();
+    ArrayList<String> files = new ArrayList<String>();
     if (isURL) {
       if (!isDirectory()) return null;
       try {

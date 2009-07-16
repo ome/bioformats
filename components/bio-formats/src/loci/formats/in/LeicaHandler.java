@@ -27,7 +27,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.formats.meta.MetadataStore;
 
 import org.xml.sax.Attributes;
@@ -549,7 +549,7 @@ public class LeicaHandler extends DefaultHandler {
 
       String n = String.valueOf(count);
       while (n.length() < 4) n = "0" + n;
-      h.put(qName + n, DataTools.convertDate(ms, DataTools.COBOL));
+      h.put(qName + n, DateTools.convertDate(ms, DateTools.COBOL));
       count++;
     }
     else if (qName.equals("ChannelScalingInfo")) {

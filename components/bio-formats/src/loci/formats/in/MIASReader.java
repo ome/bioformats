@@ -42,6 +42,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -102,7 +103,7 @@ public class MIASReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
 
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
     if (ifd == null) return false;
 
     Object s = TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
@@ -636,7 +637,7 @@ public class MIASReader extends FormatReader {
     throws FormatException, IOException
   {
     RandomAccessInputStream s = new RandomAccessInputStream(file);
-    Hashtable ifd = TiffTools.getFirstIFD(s);
+    IFD ifd = TiffTools.getFirstIFD(s);
     s.close();
     int[] colorMap =
       TiffTools.getIFDIntArray(ifd, TiffTools.COLOR_MAP, false);

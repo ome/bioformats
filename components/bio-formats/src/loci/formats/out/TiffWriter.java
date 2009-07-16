@@ -37,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.gui.AWTTiffTools;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.tiff.IFD;
 
 /**
  * TiffWriter is the file format writer for TIFF files.
@@ -82,7 +83,7 @@ public class TiffWriter extends FormatWriter {
    * depth, compression and units.  If this image is the last one in the file,
    * the last flag must be set.
    */
-  public void saveImage(Image image, Hashtable ifd, boolean last) {
+  public void saveImage(Image image, IFD ifd, boolean last) {
     // TODO
   }
 
@@ -92,7 +93,7 @@ public class TiffWriter extends FormatWriter {
    * depth, compression and units.  If this image is the last one in the file,
    * the last flag must be set.
    */
-  public void saveBytes(byte[] buf, Hashtable ifd, boolean last)
+  public void saveBytes(byte[] buf, IFD ifd, boolean last)
     throws IOException, FormatException
   {
     saveBytes(buf, ifd, 0, last, last);
@@ -105,7 +106,7 @@ public class TiffWriter extends FormatWriter {
    * the lastInSeries flag must be set. If this image is the last one in the
    * file, the last flag must be set.
    */
-  public void saveBytes(byte[] buf, Hashtable ifd, int series,
+  public void saveBytes(byte[] buf, IFD ifd, int series,
     boolean lastInSeries, boolean last) throws IOException, FormatException
   {
     MetadataRetrieve retrieve = getMetadataRetrieve();
@@ -176,7 +177,7 @@ public class TiffWriter extends FormatWriter {
   public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    Hashtable h = new Hashtable();
+    IFD h = new IFD();
     if (compression == null) compression = "";
     Integer compressType = new Integer(TiffTools.UNCOMPRESSED);
     if (compression.equals("LZW")) compressType = new Integer(TiffTools.LZW);

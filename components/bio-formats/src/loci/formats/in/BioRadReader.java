@@ -29,9 +29,9 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -408,7 +408,7 @@ public class BioRadReader extends FormatReader {
         raw.close();
 
         DefaultHandler handler = new BioRadHandler();
-        DataTools.parseXML(xml, handler);
+        XMLTools.parseXML(xml, handler);
 
         for (int q=0; q<list.length; q++) {
           if (checkSuffix(list[q], PIC_SUFFIX)) {

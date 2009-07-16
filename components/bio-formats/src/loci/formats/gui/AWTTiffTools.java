@@ -29,14 +29,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Hashtable;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.TiffRational;
 import loci.formats.TiffTools;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffRational;
 
 /**
  * A utility class for manipulating TIFF files.
@@ -57,14 +57,14 @@ public final class AWTTiffTools {
    * byte offset and IFD, in big-endian format.
    *
    * @param buf The pixels to write
-   * @param ifd Hashtable representing the TIFF IFD; can be null
+   * @param ifd The TIFF IFD; can be null
    * @param out The output stream to which the TIFF data should be written
    * @param offset The value to use for specifying byte offsets
    * @param last Whether this image is the final IFD entry of the TIFF data
    * @param bigTiff Whether this image should be written as BigTIFF
    * @return total number of bytes written
    */
-  public static long writeImage(byte[] buf, Hashtable ifd,
+  public static long writeImage(byte[] buf, IFD ifd,
     RandomAccessOutputStream out, long offset, boolean last, boolean bigTiff,
     ColorModel colorModel, int pixelType, boolean interleaved)
     throws FormatException, IOException
@@ -85,7 +85,7 @@ public final class AWTTiffTools {
       colorModel != null && (colorModel instanceof IndexColorModel);
 
     // populate required IFD directory entries (except strip information)
-    if (ifd == null) ifd = new Hashtable();
+    if (ifd == null) ifd = new IFD();
     TiffTools.putIFDValue(ifd, TiffTools.IMAGE_WIDTH, width);
     TiffTools.putIFDValue(ifd, TiffTools.IMAGE_LENGTH, height);
     if (TiffTools.getIFDValue(ifd, TiffTools.BITS_PER_SAMPLE) == null) {

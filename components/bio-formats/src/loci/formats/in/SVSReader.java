@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import loci.formats.CoreMetadata;
@@ -32,6 +33,7 @@ import loci.formats.FormatTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
@@ -63,7 +65,7 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    TiffTools.getSamples(ifds[series], in, buf, x, y, w, h);
+    TiffTools.getSamples(ifds.get(series), in, buf, x, y, w, h);
     return buf;
   }
 
@@ -73,14 +75,14 @@ public class SVSReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    core = new CoreMetadata[ifds.length];
+    core = new CoreMetadata[ifds.size()];
 
-    pixelSize = new float[ifds.length];
-    for (int i=0; i<ifds.length; i++) {
+    pixelSize = new float[core.length];
+    for (int i=0; i<core.length; i++) {
       setSeries(i);
       core[i] = new CoreMetadata();
 
-      String comment = TiffTools.getComment(ifds[i]);
+      String comment = TiffTools.getComment(ifds.get(i));
       StringTokenizer st = new StringTokenizer(comment, "\n");
       while (st.hasMoreTokens()) {
         StringTokenizer tokens = new StringTokenizer(st.nextToken(), "|");
@@ -100,21 +102,22 @@ public class SVSReader extends BaseTiffReader {
 
     // repopulate core metadata
 
-    for (int s=0; s<ifds.length; s++) {
-      int p = TiffTools.getPhotometricInterpretation(ifds[s]);
-      int samples = TiffTools.getSamplesPerPixel(ifds[s]);
+    for (int s=0; s<core.length; s++) {
+      IFD ifd = ifds.get(s);
+      int p = TiffTools.getPhotometricInterpretation(ifd);
+      int samples = TiffTools.getSamplesPerPixel(ifd);
       core[s].rgb = samples > 1 || p == TiffTools.RGB;
 
-      core[s].sizeX = (int) TiffTools.getImageWidth(ifds[s]);
-      core[s].sizeY = (int) TiffTools.getImageLength(ifds[s]);
+      core[s].sizeX = (int) TiffTools.getImageWidth(ifd);
+      core[s].sizeY = (int) TiffTools.getImageLength(ifd);
       core[s].sizeZ = 1;
       core[s].sizeT = 1;
       core[s].sizeC = core[s].rgb ? samples : 1;
-      core[s].littleEndian = TiffTools.isLittleEndian(ifds[s]);
+      core[s].littleEndian = TiffTools.isLittleEndian(ifd);
       core[s].indexed = p == TiffTools.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
       core[s].imageCount = 1;
-      core[s].pixelType = TiffTools.getPixelType(ifds[s]);
+      core[s].pixelType = TiffTools.getPixelType(ifd);
       core[s].metadataComplete = true;
       core[s].interleaved = false;
       core[s].falseColor = false;

@@ -45,6 +45,7 @@ import loci.formats.FormatTools;
 import loci.formats.ImageWriter;
 import loci.formats.TiffTools;
 import loci.formats.out.TiffWriter;
+import loci.formats.tiff.IFD;
 import loci.visbio.BioTask;
 import loci.visbio.TaskManager;
 import loci.visbio.VisBio;
@@ -275,7 +276,7 @@ public class ExportPane extends WizardPane {
               }
               else {
                 // save image to TIFF file
-                Hashtable ifd = new Hashtable();
+                IFD ifd = new IFD();
                 TiffTools.putIFDValue(ifd,
                   TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
                 if (doLZW) {
@@ -307,7 +308,7 @@ public class ExportPane extends WizardPane {
                 }
                 else {
                   // save image to TIFF file
-                  Hashtable ifd = new Hashtable();
+                  IFD ifd = new IFD();
                   TiffTools.putIFDValue(ifd,
                     TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
                   if (doLZW) {

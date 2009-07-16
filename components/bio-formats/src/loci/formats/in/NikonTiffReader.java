@@ -33,6 +33,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
@@ -73,7 +74,7 @@ public class NikonTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
     String software = (String) ifd.get(new Integer(TiffTools.SOFTWARE));
     return software != null && software.indexOf("EZ-C1") != -1;
   }
@@ -107,7 +108,7 @@ public class NikonTiffReader extends BaseTiffReader {
     exWave = new Vector<Integer>();
 
     // parse key/value pairs in the comment
-    String comment = TiffTools.getComment(ifds[0]);
+    String comment = TiffTools.getComment(ifds.get(0));
     metadata.remove("Comment");
     String[] lines = comment.split("\n");
 

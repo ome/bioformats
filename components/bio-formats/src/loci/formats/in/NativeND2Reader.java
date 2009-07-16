@@ -28,8 +28,8 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -304,7 +304,7 @@ public class NativeND2Reader extends FormatReader {
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
 
-      DataTools.parseXML(xmlString, handler);
+      XMLTools.parseXML(xmlString, handler);
 
       // rearrange image data offsets
 
@@ -600,7 +600,7 @@ public class NativeND2Reader extends FormatReader {
       }
 
       String xml = sb.toString().substring(offset, len - offset);
-      DataTools.parseXML(xml, handler);
+      XMLTools.parseXML(xml, handler);
       xml = null;
     }
 

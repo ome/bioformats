@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -151,6 +152,25 @@ public class FileStitcher implements IFormatReader {
   /** Gets the wrapped reader prototype. */
   public IFormatReader getReader() { return reader; }
 
+  /** Gets the reader appropriate for use with the given image plane. */
+  public IFormatReader getReader(int no) throws FormatException, IOException {
+    if (noStitch) return reader;
+    int[] q = computeIndices(no);
+    int sno = seriesInFile ? 0 : getSeries();
+    int fno = q[0];
+    IFormatReader r = readers[sno][fno];
+    if (seriesInFile) r.setSeries(getSeries());
+    return r;
+  }
+
+  /** Gets the local reader index for use with the given image plane. */
+  public int getAdjustedIndex(int no) throws FormatException, IOException {
+    if (noStitch) return no;
+    int[] q = computeIndices(no);
+    int ino = q[1];
+    return ino;
+  }
+
   /**
    * Gets the axis type for each dimensional block.
    * @return An array containing values from the enumeration:
@@ -205,15 +225,12 @@ public class FileStitcher implements IFormatReader {
     FormatTools.assertId(currentId, true, 2);
     if (!patternIds) {
       // find the containing pattern
-      Hashtable map = Location.getIdMap();
+      HashMap<String, Object> map = Location.getIdMap();
       String pattern = null;
       if (map.containsKey(id)) {
         // search ID map for pattern, rather than files on disk
         String[] idList = new String[map.size()];
-        Enumeration en = map.keys();
-        for (int i=0; i<idList.length; i++) {
-          idList[i] = (String) en.nextElement();
-        }
+        map.keySet().toArray(idList);
         pattern = FilePattern.findPattern(id, null, idList);
       }
       else {
@@ -420,19 +437,13 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
-    if (noStitch) return reader.openBytes(no, x, y, w, h);
-    int[] q = computeIndices(no);
-    int sno = seriesInFile ? 0 : getSeries();
-    int fno = q[0], ino = q[1];
-    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
-    if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openBytes(ino, x, y, w, h);
-    }
-
-    sno = getSeries();
+    IFormatReader r = getReader(no);
+    int ino = getAdjustedIndex(no);
+    if (ino < r.getImageCount()) return r.openBytes(ino, x, y, w, h);
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
+    int sno = getSeries();
     if (blankBytes[sno] == null) {
       int bytes = FormatTools.getBytesPerPixel(getPixelType());
       blankBytes[sno] = new byte[w * h * bytes * getRGBChannelCount()];
@@ -445,14 +456,10 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
-    if (noStitch) return reader.openBytes(no, buf, x, y, w, h);
-    int[] q = computeIndices(no);
-    int sno = seriesInFile ? 0 : getSeries();
-    int fno = q[0], ino = q[1];
-    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
-    if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openBytes(ino, buf, x, y, w, h);
-    }
+
+    IFormatReader r = getReader(no);
+    int ino = getAdjustedIndex(no);
+    if (ino < r.getImageCount()) return r.openBytes(ino, buf, x, y, w, h);
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
@@ -460,22 +467,36 @@ public class FileStitcher implements IFormatReader {
     return buf;
   }
 
+  /* @see IFormatReader#getNativeDataType() */
+  public Class getNativeDataType() {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.getNativeDataType();
+  }
+
+  /* @see IFormatReader#openData(int, int, int, int, int) */
+  public Object openData(int no, int x, int y, int width, int height)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 2);
+
+    IFormatReader r = getReader(no);
+    int ino = getAdjustedIndex(no);
+    if (ino < r.getImageCount()) return r.openData(ino, x, y, width, height);
+
+    return null;
+  }
+
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    if (noStitch) return reader.openThumbBytes(no);
-    int[] q = computeIndices(no);
-    int sno = seriesInFile ? 0 : getSeries();
-    int fno = q[0], ino = q[1];
-    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
-    if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openThumbBytes(ino);
-    }
 
-    sno = getSeries();
+    IFormatReader r = getReader(no);
+    int ino = getAdjustedIndex(no);
+    if (ino < r.getImageCount()) return r.openThumbBytes(ino);
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
+    int sno = getSeries();
     if (blankThumbBytes[sno] == null) {
       int bytes = FormatTools.getBytesPerPixel(getPixelType());
       blankThumbBytes[sno] = new byte[getThumbSizeX() * getThumbSizeY() *
@@ -712,7 +733,7 @@ public class FileStitcher implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
-  /* @see IFormatReader#getMetadata() */
+  /** @deprecated */
   public Hashtable getMetadata() {
     FormatTools.assertId(currentId, true ,2);
     return reader.getMetadata();

@@ -25,11 +25,12 @@ package loci.formats;
 
 import java.util.Hashtable;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.common.XMLTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
@@ -375,7 +376,7 @@ public final class MetadataTools {
     Location file = new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
     if (file.exists()) time = file.lastModified();
-    store.setImageCreationDate(DataTools.convertDate(time, DataTools.UNIX),
+    store.setImageCreationDate(DateTools.convertDate(time, DateTools.UNIX),
       series);
   }
 

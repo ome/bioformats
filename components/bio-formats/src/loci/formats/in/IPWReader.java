@@ -43,6 +43,7 @@ import loci.formats.POITools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * IPWReader is the file format reader for Image-Pro Workspace (IPW) files.
@@ -87,11 +88,12 @@ public class IPWReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
-    Hashtable[] ifds = TiffTools.getIFDs(stream);
-    int[] bits = TiffTools.getBitsPerSample(ifds[0]);
+    Vector<IFD> ifds = TiffTools.getIFDs(stream);
+    IFD firstIFD = ifds.get(0);
+    int[] bits = TiffTools.getBitsPerSample(firstIFD);
     if (bits[0] <= 8) {
       int[] colorMap =
-        (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+        (int[]) TiffTools.getIFDValue(firstIFD, TiffTools.COLOR_MAP);
       if (colorMap == null) return null;
 
       byte[][] table = new byte[3][colorMap.length / 3];
@@ -117,8 +119,8 @@ public class IPWReader extends FormatReader {
 
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(no)));
-    Hashtable[] ifds = TiffTools.getIFDs(stream);
-    TiffTools.getSamples(ifds[0], stream, buf, x, y, w, h);
+    Vector<IFD> ifds = TiffTools.getIFDs(stream);
+    TiffTools.getSamples(ifds.get(0), stream, buf, x, y, w, h);
     stream.close();
     return buf;
   }
@@ -229,13 +231,15 @@ public class IPWReader extends FormatReader {
 
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
-    Hashtable[] ifds = TiffTools.getIFDs(stream);
+    Vector<IFD> ifds = TiffTools.getIFDs(stream);
     stream.close();
 
-    core[0].rgb = TiffTools.getSamplesPerPixel(ifds[0]) > 1;
+    IFD firstIFD = ifds.get(0);
+
+    core[0].rgb = TiffTools.getSamplesPerPixel(firstIFD) > 1;
 
     if (!isRGB()) {
-      core[0].indexed = TiffTools.getPhotometricInterpretation(ifds[0]) ==
+      core[0].indexed = TiffTools.getPhotometricInterpretation(firstIFD) ==
         TiffTools.RGB_PALETTE;
     }
     if (isIndexed()) {
@@ -243,7 +247,7 @@ public class IPWReader extends FormatReader {
       core[0].rgb = false;
     }
 
-    core[0].littleEndian = TiffTools.isLittleEndian(ifds[0]);
+    core[0].littleEndian = TiffTools.isLittleEndian(firstIFD);
 
     // retrieve axis sizes
 
@@ -251,9 +255,8 @@ public class IPWReader extends FormatReader {
     addGlobalMeta("channels", "1");
     addGlobalMeta("frames", getImageCount());
 
-    Hashtable h = ifds[0];
-    core[0].sizeX = (int) TiffTools.getImageWidth(h);
-    core[0].sizeY = (int) TiffTools.getImageLength(h);
+    core[0].sizeX = (int) TiffTools.getImageWidth(firstIFD);
+    core[0].sizeY = (int) TiffTools.getImageLength(firstIFD);
     core[0].dimensionOrder = isRGB() ? "XYCZT" : "XYZCT";
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
@@ -266,8 +269,8 @@ public class IPWReader extends FormatReader {
 
     if (isRGB()) core[0].sizeC *= 3;
 
-    int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
-    int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
+    int bitsPerSample = TiffTools.getBitsPerSample(firstIFD)[0];
+    int bitFormat = TiffTools.getIFDIntValue(firstIFD, TiffTools.SAMPLE_FORMAT);
 
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;

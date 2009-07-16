@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -39,6 +40,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -143,7 +145,7 @@ public class ZeissLSMReader extends FormatReader {
   private int validChannels;
 
   private String[] lsmFilenames;
-  private Hashtable[][] ifds;
+  private Vector<Vector<IFD>> ifdsList;
 
   private int nextLaser = 0, nextDetector = 0;
   private int nextFilter = 0, nextFilterSet = 0;
@@ -168,7 +170,7 @@ public class ZeissLSMReader extends FormatReader {
     timestamps = null;
     validChannels = 0;
     lsmFilenames = null;
-    ifds = null;
+    ifdsList = null;
     nextLaser = nextDetector = 0;
     nextFilter = nextFilterSet = 0;
     nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
@@ -247,14 +249,17 @@ public class ZeissLSMReader extends FormatReader {
 
     in = new RandomAccessInputStream(lsmFilenames[getSeries()]);
     in.order(!isLittleEndian());
+
+    Vector<IFD> ifds = ifdsList.get(getSeries());
+
     if (splitPlanes && getSizeC() > 1) {
       int plane = no / getSizeC();
       int c = no % getSizeC();
       byte[][] samples =
-        TiffTools.getSamples(ifds[getSeries()][plane], in, x, y, w, h);
+        TiffTools.getSamples(ifds.get(plane), in, x, y, w, h);
       System.arraycopy(samples[c], 0, buf, 0, buf.length);
     }
-    else TiffTools.getSamples(ifds[getSeries()][no], in, buf, x, y, w, h);
+    else TiffTools.getSamples(ifds.get(no), in, buf, x, y, w, h);
     in.close();
     return buf;
   }
@@ -291,14 +296,15 @@ public class ZeissLSMReader extends FormatReader {
     timestamps = new Vector<Double>();
 
     core = new CoreMetadata[lsmFilenames.length];
-    ifds = new Hashtable[core.length][];
+    ifdsList = new Vector<Vector<IFD>>();
+    ifdsList.setSize(core.length);
     for (int i=0; i<core.length; i++) {
       core[i] = new CoreMetadata();
       RandomAccessInputStream s = new RandomAccessInputStream(lsmFilenames[i]);
       core[i].littleEndian = s.read() == TiffTools.LITTLE;
       s.order(isLittleEndian());
       s.seek(0);
-      ifds[i] = TiffTools.getIFDs(s);
+      ifdsList.set(i, TiffTools.getIFDs(s));
       s.close();
     }
 
@@ -312,10 +318,12 @@ public class ZeissLSMReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    for (int series=0; series<ifds.length; series++) {
-      Vector newIFDs = new Vector();
-      for (int i=0; i<ifds[series].length; i++) {
-        Hashtable ifd = ifds[series][i];
+    for (int series=0; series<ifdsList.size(); series++) {
+      Vector<IFD> ifds = ifdsList.get(series);
+      Vector<IFD> newIFDs =
+        new Vector<IFD>();
+      for (int i=0; i<ifds.size(); i++) {
+        IFD ifd = ifds.get(i);
         long subFileType = TiffTools.getIFDLongValue(ifd,
           TiffTools.NEW_SUBFILE_TYPE, false, 0);
 
@@ -328,18 +336,19 @@ public class ZeissLSMReader extends FormatReader {
           newIFDs.add(ifd);
         }
       }
-      ifds[series] = (Hashtable[]) newIFDs.toArray(new Hashtable[0]);
+      ifdsList.set(series, newIFDs);
+      ifds = newIFDs;
 
       // fix the offsets for > 4 GB files
-      for (int i=1; i<ifds[series].length; i++) {
+      for (int i=1; i<ifds.size(); i++) {
         long thisOffset =
-          TiffTools.getStripOffsets(ifds[series][i])[0] & 0xffffffffL;
-        long prevOffset = TiffTools.getStripOffsets(ifds[series][i - 1])[0];
+          TiffTools.getStripOffsets(ifds.get(i))[0] & 0xffffffffL;
+        long prevOffset = TiffTools.getStripOffsets(ifds.get(i - 1))[0];
         if (prevOffset < 0) prevOffset &= 0xffffffffL;
 
         if (prevOffset > thisOffset) {
           thisOffset += 0xffffffffL;
-          ifds[series][i].put(new Integer(TiffTools.STRIP_OFFSETS),
+          ifds.get(i).put(new Integer(TiffTools.STRIP_OFFSETS),
             new Long(thisOffset));
         }
       }
@@ -355,7 +364,8 @@ public class ZeissLSMReader extends FormatReader {
 
   protected void initMetadata(int series) throws FormatException, IOException {
     setSeries(series);
-    Hashtable ifd = ifds[series][0];
+    Vector<IFD> ifds = ifdsList.get(series);
+    IFD ifd = ifds.get(0);
 
     in = new RandomAccessInputStream(lsmFilenames[series]);
     in.order(isLittleEndian());
@@ -369,7 +379,7 @@ public class ZeissLSMReader extends FormatReader {
     core[series].interleaved = false;
     core[series].sizeC = isRGB() ? samples : 1;
     core[series].pixelType = TiffTools.getPixelType(ifd);
-    core[series].imageCount = ifds[series].length;
+    core[series].imageCount = ifds.size();
     core[series].sizeZ = getImageCount();
     core[series].sizeT = 1;
 
@@ -515,9 +525,9 @@ public class ZeissLSMReader extends FormatReader {
       core[series].imageCount = getSizeZ() * getSizeT() * getEffectiveSizeC();
     }
 
-    if (getImageCount() != ifds[series].length) {
-      int diff = getImageCount() - ifds[series].length;
-      core[series].imageCount = ifds[series].length;
+    if (getImageCount() != ifds.size()) {
+      int diff = getImageCount() - ifds.size();
+      core[series].imageCount = ifds.size();
       if (diff % getSizeZ() == 0) {
         core[series].sizeT -= (diff / getSizeZ());
       }
@@ -525,11 +535,11 @@ public class ZeissLSMReader extends FormatReader {
         core[series].sizeZ -= (diff / getSizeT());
       }
       else if (getSizeZ() > 1) {
-        core[series].sizeZ = ifds[series].length;
+        core[series].sizeZ = ifds.size();
         core[series].sizeT = 1;
       }
       else if (getSizeT() > 1) {
-        core[series].sizeT = ifds[series].length;
+        core[series].sizeT = ifds.size();
         core[series].sizeZ = 1;
       }
     }
@@ -1549,7 +1559,7 @@ public class ZeissLSMReader extends FormatReader {
 
       // start time in days since Dec 30 1899
       long stamp = (long) (getDoubleValue(RECORDING_SAMPLE_0TIME) * 86400000);
-      startTime = DataTools.convertDate(stamp, DataTools.MICROSOFT);
+      startTime = DateTools.convertDate(stamp, DateTools.MICROSOFT);
 
       zoom = getDoubleValue(RECORDING_ZOOM);
 

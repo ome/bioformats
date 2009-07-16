@@ -46,6 +46,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * LeicaReader is the file format reader for Leica files.
@@ -99,10 +100,10 @@ public class LeicaReader extends FormatReader {
 
   // -- Fields --
 
-  protected Hashtable[] ifds;
+  protected Vector<IFD> ifds;
 
   /** Array of IFD-like structures containing metadata. */
-  protected Hashtable[] headerIFDs;
+  protected Vector<IFD> headerIFDs;
 
   /** Helper readers. */
   protected MinimalTiffReader tiff;
@@ -161,7 +162,7 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
     return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
   }
 
@@ -274,7 +275,7 @@ public class LeicaReader extends FormatReader {
 
       ifds = TiffTools.getIFDs(in);
       if (ifds == null) throw new FormatException("No IFDs found");
-      String descr = TiffTools.getComment(ifds[0]);
+      String descr = TiffTools.getComment(ifds.get(0));
 
       // remove anything of the form "[blah]"
 
@@ -342,9 +343,8 @@ public class LeicaReader extends FormatReader {
     in.skipBytes(8);
     int addr = in.readInt();
     Vector v = new Vector();
-    Hashtable ifd;
     while (addr != 0) {
-      ifd = new Hashtable();
+      IFD ifd = new IFD();
       v.add(ifd);
       in.seek(addr + 4);
 
@@ -378,7 +378,7 @@ public class LeicaReader extends FormatReader {
 
     files = new Vector[numSeries];
 
-    headerIFDs = (Hashtable[]) v.toArray(new Hashtable[0]);
+    headerIFDs = new Vector<IFD>();
 
     // determine the length of a filename
 
@@ -391,15 +391,16 @@ public class LeicaReader extends FormatReader {
 
     int seriesIndex = 0;
     boolean[] valid = new boolean[numSeries];
-    for (int i=0; i<headerIFDs.length; i++) {
+    for (int i=0; i<headerIFDs.size(); i++) {
+      IFD ifd = headerIFDs.get(i);
       valid[i] = true;
-      if (headerIFDs[i].get(SERIES) != null) {
-        byte[] temp = (byte[]) headerIFDs[i].get(SERIES);
+      if (ifd.get(SERIES) != null) {
+        byte[] temp = (byte[]) ifd.get(SERIES);
         nameLength = DataTools.bytesToInt(temp, 8, isLittleEndian()) * 2;
       }
 
       Vector f = new Vector();
-      byte[] tempData = (byte[]) headerIFDs[i].get(IMAGES);
+      byte[] tempData = (byte[]) ifd.get(IMAGES);
       RandomAccessInputStream data = new RandomAccessInputStream(tempData);
       data.order(isLittleEndian());
       int tempImages = data.readInt();
@@ -536,10 +537,11 @@ public class LeicaReader extends FormatReader {
     }
 
     Vector[] tempFiles = files;
-    Hashtable[] tempIFDs = headerIFDs;
+    Vector<IFD> tempIFDs = headerIFDs;
     core = new CoreMetadata[numSeries];
     files = new Vector[numSeries];
-    headerIFDs = new Hashtable[numSeries];
+    headerIFDs = new Vector<IFD>();
+    headerIFDs.setSize(numSeries);
     int index = 0;
 
     for (int i=0; i<numSeries; i++) {
@@ -554,7 +556,7 @@ public class LeicaReader extends FormatReader {
         files[i].add(sorted[q]);
       }
 
-      headerIFDs[i] = tempIFDs[index];
+      headerIFDs.set(i, tempIFDs.get(index));
       index++;
     }
 
@@ -567,21 +569,23 @@ public class LeicaReader extends FormatReader {
     int fileLength = 0;
 
     int resolution = -1;
-    String[][] timestamps = new String[headerIFDs.length][];
+    String[][] timestamps = new String[headerIFDs.size()][];
     seriesDescriptions = new Vector();
 
-    physicalSizes = new float[headerIFDs.length][5];
-    pinhole = new float[headerIFDs.length];
-    exposureTime = new float[headerIFDs.length];
+    physicalSizes = new float[headerIFDs.size()][5];
+    pinhole = new float[headerIFDs.size()];
+    exposureTime = new float[headerIFDs.size()];
 
-    for (int i=0; i<headerIFDs.length; i++) {
+    for (int i=0; i<headerIFDs.size(); i++) {
+      IFD ifd = headerIFDs.get(i);
+
       core[i].littleEndian = isLittleEndian();
       setSeries(i);
-      Object[] keys = headerIFDs[i].keySet().toArray();
+      Object[] keys = ifd.keySet().toArray();
       Arrays.sort(keys);
 
       for (int q=0; q<keys.length; q++) {
-        byte[] tmp = (byte[]) headerIFDs[i].get(keys[q]);
+        byte[] tmp = (byte[]) ifd.get(keys[q]);
         if (tmp == null) continue;
         RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
         stream.order(isLittleEndian());
@@ -886,6 +890,7 @@ public class LeicaReader extends FormatReader {
     store.setInstrumentID("Instrument:0", 0);
 
     for (int i=0; i<numSeries; i++) {
+      IFD ifd = headerIFDs.get(i);
       long firstPlane = 0;
 
       if (i < timestamps.length && timestamps[i] != null &&
@@ -919,10 +924,10 @@ public class LeicaReader extends FormatReader {
 
       // parse instrument data
 
-      Object[] keys = headerIFDs[i].keySet().toArray();
+      Object[] keys = ifd.keySet().toArray();
       for (int q=0; q<keys.length; q++) {
         if (keys[q].equals(FILTERSET) || keys[q].equals(SCANNERSET)) {
-          byte[] tmp = (byte[]) headerIFDs[i].get(keys[q]);
+          byte[] tmp = (byte[]) ifd.get(keys[q]);
           if (tmp == null) continue;
           RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
           stream.order(isLittleEndian());

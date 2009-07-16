@@ -26,11 +26,13 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.TiffTools;
+import loci.formats.tiff.IFD;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,
@@ -77,11 +79,11 @@ public class TiffReader extends BaseTiffReader {
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
-    String comment = TiffTools.getComment(ifds[0]);
+    String comment = TiffTools.getComment(ifds.get(0));
 
     status("Checking comment style");
 
-    if (ifds.length > 1) core[0].orderCertain = false;
+    if (ifds.size() > 1) core[0].orderCertain = false;
 
     // check for ImageJ-style TIFF comment
     boolean ij = checkCommentImageJ(comment);
@@ -121,7 +123,7 @@ public class TiffReader extends BaseTiffReader {
   }
 
   private boolean checkCommentMetamorph(String comment) {
-    Object software = TiffTools.getIFDValue(ifds[0], TiffTools.SOFTWARE);
+    Object software = TiffTools.getIFDValue(ifds.get(0), TiffTools.SOFTWARE);
     String check = software instanceof String ? (String) software :
       software instanceof String[] ? ((String[]) software)[0] : null;
     return comment != null && software != null &&
@@ -162,13 +164,13 @@ public class TiffReader extends BaseTiffReader {
     }
     core[0].dimensionOrder = "XYCZT";
 
-    if (z * t * (isRGB() ? 1 : c) == ifds.length) {
+    if (z * t * (isRGB() ? 1 : c) == ifds.size()) {
       core[0].sizeZ = z;
       core[0].sizeT = t;
       core[0].sizeC = c;
     }
-    else if (ifds.length == 1 && z * t > ifds.length &&
-      TiffTools.getCompression(ifds[0]) == TiffTools.UNCOMPRESSED)
+    else if (ifds.size() == 1 && z * t > ifds.size() &&
+      TiffTools.getCompression(ifds.get(0)) == TiffTools.UNCOMPRESSED)
     {
       // file is likely corrupt (missing end IFDs)
       //
@@ -183,42 +185,45 @@ public class TiffReader extends BaseTiffReader {
       // since we know where the pixel data is, we can create fake
       // IFDs in an attempt to read the rest of the pixels
 
+      IFD firstIFD = ifds.get(0);
+
       int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
         FormatTools.getBytesPerPixel(getPixelType());
-      long[] stripOffsets = TiffTools.getStripOffsets(ifds[0]);
-      long[] stripByteCounts = TiffTools.getStripByteCounts(ifds[0]);
+      long[] stripOffsets = TiffTools.getStripOffsets(firstIFD);
+      long[] stripByteCounts = TiffTools.getStripByteCounts(firstIFD);
 
       long endOfFirstPlane = stripOffsets[stripOffsets.length - 1] +
         stripByteCounts[stripByteCounts.length - 1];
       long totalBytes = in.length() - endOfFirstPlane;
       int totalPlanes = (int) (totalBytes / planeSize) + 1;
 
-      Hashtable ifd = ifds[0];
-      ifds = new Hashtable[totalPlanes];
-      ifds[0] = ifd;
+      ifds = new Vector<IFD>();
+      ifds.setSize(totalPlanes);
+      ifds.set(0, firstIFD);
       for (int i=1; i<totalPlanes; i++) {
-        ifds[i] = new Hashtable(ifds[0]);
-        long[] prevOffsets = TiffTools.getStripOffsets(ifds[i - 1]);
+        IFD ifd = new IFD(firstIFD);
+        ifds.set(i, ifd);
+        long[] prevOffsets = TiffTools.getStripOffsets(ifds.get(i - 1));
         long[] offsets = new long[stripOffsets.length];
         offsets[0] = prevOffsets[prevOffsets.length - 1] +
           stripByteCounts[stripByteCounts.length - 1];
         for (int j=1; j<offsets.length; j++) {
           offsets[j] = offsets[j - 1] + stripByteCounts[j - 1];
         }
-        ifds[i].put(new Integer(TiffTools.STRIP_OFFSETS), offsets);
+        ifd.put(new Integer(TiffTools.STRIP_OFFSETS), offsets);
       }
 
-      if (z * c * t == ifds.length) {
+      if (z * c * t == ifds.size()) {
         core[0].sizeZ = z;
         core[0].sizeT = t;
         core[0].sizeC = c;
       }
-      else core[0].sizeZ = ifds.length;
-      core[0].imageCount = ifds.length;
+      else core[0].sizeZ = ifds.size();
+      core[0].imageCount = ifds.size();
     }
     else {
-      core[0].sizeT = ifds.length;
-      core[0].imageCount = ifds.length;
+      core[0].sizeT = ifds.size();
+      core[0].imageCount = ifds.size();
     }
   }
 

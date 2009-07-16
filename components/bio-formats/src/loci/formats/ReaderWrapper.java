@@ -304,6 +304,16 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
+  public Class getNativeDataType() {
+    return reader.getNativeDataType();
+  }
+
+  public Object openData(int no, int x, int y, int width, int height)
+    throws FormatException, IOException
+  {
+    return reader.openData(no, x, y, width, height);
+  }
+
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     return reader.openThumbBytes(no);
   }
@@ -394,6 +404,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
+  /** @deprecated */
   public Hashtable getMetadata() {
     return reader.getMetadata();
   }

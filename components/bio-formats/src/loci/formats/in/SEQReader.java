@@ -65,8 +65,9 @@ public class SEQReader extends BaseTiffReader {
     core[0].sizeZ = 0;
     core[0].sizeT = 0;
 
-    for (int j=0; j<ifds.length; j++) {
-      short[] tag1 = (short[]) TiffTools.getIFDValue(ifds[j], IMAGE_PRO_TAG_1);
+    for (int j=0; j<ifds.size(); j++) {
+      short[] tag1 = (short[])
+        TiffTools.getIFDValue(ifds.get(j), IMAGE_PRO_TAG_1);
 
       if (tag1 != null) {
         String seqId = "";
@@ -74,7 +75,7 @@ public class SEQReader extends BaseTiffReader {
         addGlobalMeta("Image-Pro SEQ ID", seqId);
       }
 
-      int tag2 = TiffTools.getIFDIntValue(ifds[0], IMAGE_PRO_TAG_2);
+      int tag2 = TiffTools.getIFDIntValue(ifds.get(0), IMAGE_PRO_TAG_2);
 
       if (tag2 != -1) {
         // should be one of these for every image plane
@@ -89,7 +90,7 @@ public class SEQReader extends BaseTiffReader {
     if (getSizeT() == 0) core[0].sizeT = 1;
 
     if (getSizeZ() == 1 && getSizeT() == 1) {
-      core[0].sizeZ = ifds.length;
+      core[0].sizeZ = ifds.size();
     }
 
     // default values
@@ -98,7 +99,7 @@ public class SEQReader extends BaseTiffReader {
     addGlobalMeta("slices", getSizeT());
 
     // parse the description to get channels, slices and times where applicable
-    String descr = TiffTools.getComment(ifds[0]);
+    String descr = TiffTools.getComment(ifds.get(0));
     metadata.remove("Comment");
     if (descr != null) {
       StringTokenizer tokenizer = new StringTokenizer(descr, "\n");

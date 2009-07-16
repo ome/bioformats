@@ -34,11 +34,12 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
-import loci.formats.TiffRational;
 import loci.formats.TiffTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.NikonCodecOptions;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffRational;
 
 /**
  * NikonReader is the file format reader for Nikon NEF (TIFF) files.
@@ -125,7 +126,7 @@ public class NikonReader extends BaseTiffReader {
   protected int makerNoteOffset;
 
   /** The original IFD. */
-  protected Hashtable original;
+  protected IFD original;
 
   private TiffRational[] whiteBalance;
   private Object cfaPattern;
@@ -166,7 +167,7 @@ public class NikonReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
     return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
   }
 
@@ -178,15 +179,16 @@ public class NikonReader extends BaseTiffReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int dataSize = TiffTools.getBitsPerSample(ifds[no])[0];
+    IFD ifd = ifds.get(no);
 
-    long[] byteCounts = TiffTools.getStripByteCounts(ifds[no]);
-    long[] offsets = TiffTools.getStripOffsets(ifds[no]);
-    long[] rowsPerStrip = TiffTools.getRowsPerStrip(ifds[no]);
+    int dataSize = TiffTools.getBitsPerSample(ifd)[0];
+
+    long[] byteCounts = TiffTools.getStripByteCounts(ifd);
+    long[] offsets = TiffTools.getStripOffsets(ifd);
+    long[] rowsPerStrip = TiffTools.getRowsPerStrip(ifd);
 
     float bytesPerSample = (float) dataSize / 8;
-    boolean maybeCompressed =
-      TiffTools.getCompression(ifds[no]) == TiffTools.NIKON;
+    boolean maybeCompressed = TiffTools.getCompression(ifd) == TiffTools.NIKON;
     boolean compressed = vPredictor != null && curve != null && maybeCompressed;
 
     if (!maybeCompressed && dataSize == 14) dataSize = 16;
@@ -219,7 +221,7 @@ public class NikonReader extends BaseTiffReader {
     src.close();
 
     int[] colorMap = new int[4];
-    short[] s = (short[]) ifds[no].get(new Integer(33422));
+    short[] s = (short[]) ifd.get(new Integer(33422));
     for (int q=0; q<colorMap.length; q++) {
       colorMap[q] = s[q];
       if (colorMap[q] > 2) {
@@ -306,35 +308,36 @@ public class NikonReader extends BaseTiffReader {
     // the actual image data is stored in IFDs referenced by the SubIFD tag
     // in the 'real' IFD
 
-    original = ifds[0];
+    original = ifds.get(0);
     long[] subIFDOffsets = TiffTools.getIFDLongArray(original, SUB_IFD, false);
 
     if (subIFDOffsets != null) {
-      Vector tmpIFDs = new Vector();
+      Vector<IFD> tmpIFDs = new Vector();
 
       for (int i=0; i<subIFDOffsets.length; i++) {
-        Hashtable ifd = TiffTools.getIFD(in, i, subIFDOffsets[i]);
+        IFD ifd = TiffTools.getIFD(in, i, subIFDOffsets[i]);
         if (TiffTools.getIFDIntValue(ifd, TiffTools.NEW_SUBFILE_TYPE) == 0) {
           tmpIFDs.add(ifd);
         }
       }
 
-      ifds = (Hashtable[]) tmpIFDs.toArray(new Hashtable[0]);
+      ifds = tmpIFDs;
 
-      core[0].imageCount = ifds.length;
+      core[0].imageCount = ifds.size();
 
-      int photo = TiffTools.getPhotometricInterpretation(ifds[0]);
-      int samples = TiffTools.getSamplesPerPixel(ifds[0]);
+      IFD firstIFD = ifds.get(0);
+      int photo = TiffTools.getPhotometricInterpretation(firstIFD);
+      int samples = TiffTools.getSamplesPerPixel(firstIFD);
       core[0].rgb = samples > 1 || photo == TiffTools.RGB ||
         photo == TiffTools.CFA_ARRAY;
       if (photo == TiffTools.CFA_ARRAY) samples = 3;
 
-      core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
-      core[0].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+      core[0].sizeX = (int) TiffTools.getImageWidth(firstIFD);
+      core[0].sizeY = (int) TiffTools.getImageLength(firstIFD);
       core[0].sizeZ = 1;
       core[0].sizeC = isRGB() ? samples : 1;
-      core[0].sizeT = ifds.length;
-      core[0].pixelType = TiffTools.getPixelType(ifds[0]);
+      core[0].sizeT = ifds.size();
+      core[0].pixelType = TiffTools.getPixelType(firstIFD);
       core[0].indexed = false;
     }
 
@@ -391,7 +394,7 @@ public class NikonReader extends BaseTiffReader {
 
                     curve = new int[16385];
 
-                    int bps = TiffTools.getBitsPerSample(ifds[0])[0];
+                    int bps = TiffTools.getBitsPerSample(ifds.get(0))[0];
                     int max = 1 << bps & 0x7fff;
                     int step = 0;
                     int csize = s.readShort();
@@ -457,24 +460,25 @@ public class NikonReader extends BaseTiffReader {
 
     // look for the SubIFD tag (330);
 
+    IFD firstIFD = ifds.get(0);
     int offset = 0;
     try {
-      offset = TiffTools.getIFDIntValue(ifds[0], 330, false, 0);
+      offset = TiffTools.getIFDIntValue(firstIFD, 330, false, 0);
     }
     catch (FormatException exc) {
       if (debug) trace(exc);
-      long[] array = TiffTools.getIFDLongArray(ifds[0], 330, false);
+      long[] array = TiffTools.getIFDLongArray(firstIFD, 330, false);
       offset = (int) array[array.length - 1];
     }
 
-    Hashtable realImage = TiffTools.getIFD(in, 1, offset);
+    IFD realImage = TiffTools.getIFD(in, 1, offset);
 
-    original = ifds[0];
-    ifds[0] = realImage;
+    original = ifds.get(0);
+    ifds.set(0, realImage);
     core[0].imageCount = 1;
 
     if (cfaPattern != null) {
-      ifds[0].put(new Integer(TiffTools.COLOR_MAP), (int[]) cfaPattern);
+      ifds.get(0).put(new Integer(TiffTools.COLOR_MAP), (int[]) cfaPattern);
     }
     core[0].interleaved = true;
   }

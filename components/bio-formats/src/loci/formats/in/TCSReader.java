@@ -31,9 +31,9 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -43,6 +43,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -57,6 +58,8 @@ import loci.formats.meta.MetadataStore;
 public class TCSReader extends FormatReader {
 
   // -- Constants --
+
+  public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss.SSS";
 
   public static final String[] XML_SUFFIX = {"xml"};
 
@@ -121,7 +124,7 @@ public class TCSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     // check for Leica TCS IFD directory entries
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
 
     if (ifd == null) return false;
     String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
@@ -234,7 +237,7 @@ public class TCSReader extends FormatReader {
         }
       }
 
-      DataTools.parseXML(xml, handler);
+      XMLTools.parseXML(xml, handler);
 
       xcal = handler.getXCal();
       ycal = handler.getYCal();
@@ -260,10 +263,9 @@ public class TCSReader extends FormatReader {
       for (int i=0; i<list.length; i++) {
         if (checkSuffix(list[i], TiffReader.TIFF_SUFFIXES)) {
           String file = new Location(parent, list[i]).getAbsolutePath();
-          Hashtable ifd =
-            TiffTools.getIFDs(new RandomAccessInputStream(file))[0];
-          String software =
-            (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
+          IFD ifd = TiffTools.getIFDs(new RandomAccessInputStream(file)).get(0);
+          String software = (String)
+            TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
           if (software != null && software.trim().equals("TCSNTV")) {
             tiffs.add(file);
           }
@@ -335,7 +337,7 @@ public class TCSReader extends FormatReader {
         store.setDimensionsPhysicalSizeY((Float) ycal.get(i), i, 0);
         store.setDimensionsPhysicalSizeZ((Float) zcal.get(i), i, 0);
       }
-      DataTools.parseXML(xml, new LeicaHandler(store));
+      XMLTools.parseXML(xml, new LeicaHandler(store));
     }
     else {
       tiffs = new Vector<String>();
@@ -346,18 +348,18 @@ public class TCSReader extends FormatReader {
       tiffReaders[0].setId(id);
       in = new RandomAccessInputStream(id);
 
-      Hashtable[] ifds = TiffTools.getIFDs(in);
+      Vector<IFD> ifds = TiffTools.getIFDs(in);
 
-      int[] ch = new int[ifds.length];
-      int[] idx = new int[ifds.length];
-      long[] stamp = new long[ifds.length];
+      int[] ch = new int[ifds.size()];
+      int[] idx = new int[ifds.size()];
+      long[] stamp = new long[ifds.size()];
 
       int channelCount = 0;
-      SimpleDateFormat fmt = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.SSS");
+      SimpleDateFormat fmt = new SimpleDateFormat(DATE_FORMAT);
 
-      for (int i=0; i<ifds.length; i++) {
-        String document =
-          (String) ifds[i].get(new Integer(TiffTools.DOCUMENT_NAME));
+      for (int i=0; i<ifds.size(); i++) {
+        String document = (String)
+          ifds.get(i).get(new Integer(TiffTools.DOCUMENT_NAME));
         if (document == null) continue;
 
         int index = document.indexOf("INDEX");
@@ -409,13 +411,13 @@ public class TCSReader extends FormatReader {
 
       if (getSizeT() == 0) core[0].sizeT = 1;
       if (channelCount == 0) channelCount = 1;
-      core[0].sizeZ = ifds.length / (getSizeT() * channelCount);
+      core[0].sizeZ = ifds.size() / (getSizeT() * channelCount);
       core[0].sizeC *= channelCount;
       core[0].imageCount = getSizeZ() * getSizeT() * channelCount;
 
       // cut up comment
 
-      String comment = TiffTools.getComment(ifds[0]);
+      String comment = TiffTools.getComment(ifds.get(0));
       if (comment != null && comment.startsWith("[")) {
         StringTokenizer st = new StringTokenizer(comment, "\n");
         while (st.hasMoreTokens()) {

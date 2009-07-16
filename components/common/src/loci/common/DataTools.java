@@ -28,10 +28,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -55,21 +51,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public final class DataTools {
 
   // -- Constants --
-
-  /** Timestamp formats. */
-  public static final int UNIX = 0;  // January 1, 1970
-  public static final int COBOL = 1;  // January 1, 1601
-  public static final int MICROSOFT = 2; // December 30, 1899
-  public static final int ZVI = 3;
-
-  /** Milliseconds until UNIX epoch. */
-  public static final long UNIX_EPOCH = 0;
-  public static final long COBOL_EPOCH = 11644444800000L;
-  public static final long MICROSOFT_EPOCH = 2272060800000L;
-  public static final long ZVI_EPOCH = 2921084975759000L;
-
-  /** ISO 8601 date format string. */
-  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
   /** Factory for generating SAX parsers. */
   public static final SAXParserFactory SAX_FACTORY =
@@ -617,7 +598,7 @@ public final class DataTools {
     return Double.longBitsToDouble(swap(Double.doubleToLongBits(x)));
   }
 
-  // -- Miscellaneous --
+  // -- Strings --
 
   /** Remove null bytes from a string. */
   public static String stripString(String toStrip) {
@@ -658,16 +639,7 @@ public final class DataTools {
     return buf.toString();
   }
 
-  /** Remove invalid characters from an XML string. */
-  public static String sanitizeXML(String s) {
-    for (int i=0; i<s.length(); i++) {
-      char c = s.charAt(i);
-      if (Character.isISOControl(c) || !Character.isDefined(c) || c > '~') {
-        s = s.replace(c, ' ');
-      }
-    }
-    return s;
-  }
+  // -- Normalization --
 
   /**
    * Normalize the given float array so that the minimum value maps to 0.0
@@ -718,94 +690,6 @@ public final class DataTools {
     return rtn;
   }
 
-  public static void parseXML(String xml, DefaultHandler handler)
-    throws IOException
-  {
-    parseXML(xml.getBytes(), handler);
-  }
-
-  public static void parseXML(RandomAccessInputStream stream,
-    DefaultHandler handler) throws IOException
-  {
-    byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
-    stream.read(b);
-    parseXML(b, handler);
-    b = null;
-  }
-
-  public static void parseXML(byte[] xml, DefaultHandler handler)
-    throws IOException
-  {
-    try {
-      SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(new ByteArrayInputStream(xml), handler);
-    }
-    catch (ParserConfigurationException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-    }
-    catch (SAXException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-
-    }
-  }
-
-  // -- Date handling --
-
-  /** Converts the given timestamp into an ISO 8601 date. */
-  public static String convertDate(long stamp, int format) {
-    // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
-    // dates than you will ever need (or want)
-
-    long ms = stamp;
-
-    switch (format) {
-      case UNIX:
-        ms -= UNIX_EPOCH;
-        break;
-      case COBOL:
-        ms -= COBOL_EPOCH;
-        break;
-      case MICROSOFT:
-        ms -= MICROSOFT_EPOCH;
-        break;
-      case ZVI:
-        ms -= ZVI_EPOCH;
-        break;
-    }
-
-    SimpleDateFormat fmt = new SimpleDateFormat(ISO8601_FORMAT);
-    StringBuffer sb = new StringBuffer();
-
-    Date d = new Date(ms);
-
-    fmt.format(d, sb, new FieldPosition(0));
-    return sb.toString();
-  }
-
-  /** Return given date in ISO 8601 format. */
-  public static String formatDate(String date, String format) {
-    SimpleDateFormat f = new SimpleDateFormat(format);
-    Date d = f.parse(date, new ParsePosition(0));
-    if (d == null) return null;
-    f = new SimpleDateFormat(ISO8601_FORMAT);
-    return f.format(d);
-  }
-
-  /**
-   * Converts a string date in the given format to a long timestamp
-   * (in Unix format: milliseconds since January 1, 1970).
-   */
-  public static long getTime(String date, String format) {
-    SimpleDateFormat f = new SimpleDateFormat(format);
-    Date d = f.parse(date, new ParsePosition(0));
-    if (d == null) return -1;
-    return d.getTime();
-  }
-
   // -- Array handling --
 
   /** Returns true if the given value is contained in the given array. */
@@ -814,8 +698,8 @@ public final class DataTools {
   }
 
   /**
-   * Returns the index of the first occurence of the given value in the given
-   * array.  If the value is not in the array, returns -1.
+   * Returns the index of the first occurrence of the given value in the given
+   * array. If the value is not in the array, returns -1.
    */
   public static int indexOf(int[] array, int value) {
     for (int i=0; i<array.length; i++) {
@@ -825,8 +709,8 @@ public final class DataTools {
   }
 
   /**
-   * Returns the index of the first occurence of the given value in the given
-   * Object array.  If the value is not in the array, returns -1.
+   * Returns the index of the first occurrence of the given value in the given
+   * Object array. If the value is not in the array, returns -1.
    */
   public static int indexOf(Object[] array, Object value) {
     for (int i=0; i<array.length; i++) {

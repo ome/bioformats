@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -144,12 +144,12 @@ public class OpenlabRawReader extends FormatReader {
       stampMs -= (67 * 365.25 * 24 * 60 * 60);
 
       timestamp = new Date(stampMs);
-      sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      sdf = new SimpleDateFormat(DateTools.ISO8601_FORMAT);
       stamp = sdf.format(timestamp);
       addGlobalMeta("Timestamp", stamp);
     }
     if (stamp == null) {
-      stamp = DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
+      stamp = DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);
     }
 
     in.skipBytes(4);

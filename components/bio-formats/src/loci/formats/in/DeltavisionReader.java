@@ -26,7 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -49,6 +49,8 @@ import loci.formats.meta.MetadataStore;
 public class DeltavisionReader extends FormatReader {
 
   // -- Constants --
+
+  public static final String DATE_FORMAT = "EEE MMM  d HH:mm:ss yyyy";
 
   private static final short LITTLE_ENDIAN = -16224;
   private static final int HEADER_LENGTH = 1024;
@@ -741,7 +743,7 @@ public class DeltavisionReader extends FormatReader {
       else if (line.startsWith("Image")) prefix = line;
       else if (line.startsWith("Created")) {
         if (line.length() > 8) line = line.substring(8).trim();
-        String date = DataTools.formatDate(line, "EEE MMM  d HH:mm:ss yyyy");
+        String date = DateTools.formatDate(line, DATE_FORMAT);
         if (date != null) {
           store.setImageCreationDate(date, 0);
         }

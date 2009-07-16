@@ -34,6 +34,7 @@ import loci.formats.FormatTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * FluoviewReader is the file format reader for
@@ -98,7 +99,7 @@ public class FluoviewReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = TiffTools.getFirstIFD(stream);
     String com = TiffTools.getComment(ifd);
     if (com == null) com = "";
     if (ifd == null) return false;
@@ -140,12 +141,12 @@ public class FluoviewReader extends BaseTiffReader {
 
     int image = FormatTools.positionToRaster(lengths, realPos);
 
-    if (getSizeY() == TiffTools.getImageLength(ifds[0])) {
-      TiffTools.getSamples(ifds[image], in, buf, x, y, w, h);
+    if (getSizeY() == TiffTools.getImageLength(ifds.get(0))) {
+      TiffTools.getSamples(ifds.get(image), in, buf, x, y, w, h);
     }
     else {
       FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-      TiffTools.getSamples(ifds[0], in, buf, x, image, w, 1);
+      TiffTools.getSamples(ifds.get(0), in, buf, x, image, w, 1);
     }
 
     return buf;
@@ -171,7 +172,7 @@ public class FluoviewReader extends BaseTiffReader {
     // very similar, so it made more sense to merge the two formats into one
     // reader.
 
-    short[] s = TiffTools.getIFDShortArray(ifds[0], MMHEADER, true);
+    short[] s = TiffTools.getIFDShortArray(ifds.get(0), MMHEADER, true);
     byte[] mmheader = new byte[s.length];
     for (int i=0; i<mmheader.length; i++) {
       mmheader[i] = (byte) s[i];
@@ -239,9 +240,9 @@ public class FluoviewReader extends BaseTiffReader {
 
     // now we need to read the MMSTAMP data to determine dimension order
 
-    double[][] stamps = new double[8][ifds.length];
-    for (int i=0; i<ifds.length; i++) {
-      s = TiffTools.getIFDShortArray(ifds[i], MMSTAMP, true);
+    double[][] stamps = new double[8][ifds.size()];
+    for (int i=0; i<ifds.size(); i++) {
+      s = TiffTools.getIFDShortArray(ifds.get(i), MMSTAMP, true);
       byte[] stamp = new byte[s.length];
       for (int j=0; j<s.length; j++) {
         stamp[j] = (byte) s[j];
@@ -309,7 +310,7 @@ public class FluoviewReader extends BaseTiffReader {
     if (dimensionOrder.indexOf("C") == -1) dimensionOrder += "C";
     if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
 
-    core[0].imageCount = ifds.length / seriesCount;
+    core[0].imageCount = ifds.size() / seriesCount;
     if (getSizeZ() > getImageCount()) core[0].sizeZ = getImageCount();
     if (getSizeT() > getImageCount()) core[0].sizeT = getImageCount();
 
@@ -331,7 +332,7 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     // cut up the comment, if necessary
-    comment = TiffTools.getComment(ifds[0]);
+    comment = TiffTools.getComment(ifds.get(0));
 
     gains = new String[getSizeC()];
     offsets = new String[getSizeC()];

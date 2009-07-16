@@ -32,6 +32,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.TiffTools;
+import loci.formats.tiff.IFD;
 
 /**
  * MinimalTiffReader is the superclass for file format readers compatible with
@@ -48,10 +49,10 @@ public class MinimalTiffReader extends FormatReader {
   // -- Fields --
 
   /** List of IFDs for the current TIFF. */
-  protected Hashtable[] ifds;
+  protected Vector<IFD> ifds;
 
   /** List of thumbnail IFDs for the current TIFF. */
-  protected Hashtable[] thumbnailIFDs;
+  protected Vector<IFD> thumbnailIFDs;
 
   private int lastPlane;
 
@@ -80,11 +81,12 @@ public class MinimalTiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane > ifds.length) return null;
-    int[] bits = TiffTools.getBitsPerSample(ifds[lastPlane]);
+    if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
+    IFD lastIFD = ifds.get(lastPlane);
+    int[] bits = TiffTools.getBitsPerSample(lastIFD);
     if (bits[0] <= 8) {
       int[] colorMap =
-        TiffTools.getIFDIntArray(ifds[lastPlane], TiffTools.COLOR_MAP, false);
+        TiffTools.getIFDIntArray(lastIFD, TiffTools.COLOR_MAP, false);
       if (colorMap == null) return null;
 
       byte[][] table = new byte[3][colorMap.length / 3];
@@ -103,11 +105,12 @@ public class MinimalTiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane > ifds.length) return null;
-    int[] bits = TiffTools.getBitsPerSample(ifds[lastPlane]);
+    if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
+    IFD lastIFD = ifds.get(lastPlane);
+    int[] bits = TiffTools.getBitsPerSample(lastIFD);
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap =
-        TiffTools.getIFDIntArray(ifds[lastPlane], TiffTools.COLOR_MAP, false);
+        TiffTools.getIFDIntArray(lastIFD, TiffTools.COLOR_MAP, false);
       if (colorMap == null || colorMap.length < 65536 * 3) return null;
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;
@@ -130,9 +133,9 @@ public class MinimalTiffReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
-    if (thumbnailIFDs != null && thumbnailIFDs.length > 0) {
+    if (thumbnailIFDs != null && thumbnailIFDs.size() > 0) {
       try {
-        return (int) TiffTools.getImageWidth(thumbnailIFDs[0]);
+        return (int) TiffTools.getImageWidth(thumbnailIFDs.get(0));
       }
       catch (FormatException e) {
         if (debug) trace(e);
@@ -143,9 +146,9 @@ public class MinimalTiffReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#getThumbSizeY() */
   public int getThumbSizeY() {
-    if (thumbnailIFDs != null && thumbnailIFDs.length > 0) {
+    if (thumbnailIFDs != null && thumbnailIFDs.size() > 0) {
       try {
-        return (int) TiffTools.getImageLength(thumbnailIFDs[0]);
+        return (int) TiffTools.getImageLength(thumbnailIFDs.get(0));
       }
       catch (FormatException e) {
         if (debug) trace(e);
@@ -157,10 +160,10 @@ public class MinimalTiffReader extends FormatReader {
   /* @see loci.formats.FormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (thumbnailIFDs == null || thumbnailIFDs.length <= no) {
+    if (thumbnailIFDs == null || thumbnailIFDs.size() <= no) {
       return super.openThumbBytes(no);
     }
-    int[] bps = TiffTools.getBitsPerSample(thumbnailIFDs[no]);
+    int[] bps = TiffTools.getBitsPerSample(thumbnailIFDs.get(no));
     int b = bps[0];
     while ((b % 8) != 0) b++;
     b /= 8;
@@ -172,7 +175,7 @@ public class MinimalTiffReader extends FormatReader {
 
     byte[] buf = new byte[getThumbSizeX() * getThumbSizeY() *
       getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType())];
-    return TiffTools.getSamples(thumbnailIFDs[no], in, buf);
+    return TiffTools.getSamples(thumbnailIFDs.get(no), in, buf);
   }
 
   /**
@@ -184,7 +187,7 @@ public class MinimalTiffReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastPlane = no;
-    TiffTools.getSamples(ifds[no], in, buf, x, y, w, h);
+    TiffTools.getSamples(ifds.get(no), in, buf, x, y, w, h);
     return buf;
   }
 
@@ -215,36 +218,39 @@ public class MinimalTiffReader extends FormatReader {
 
     // separate thumbnail IFDs from regular IFDs
 
-    Vector v = new Vector();
-    Vector thumbs = new Vector();
-    for (int i=0; i<ifds.length; i++) {
-      boolean thumbnail = ifds.length > 1 &&
-        TiffTools.getIFDIntValue(ifds[i], TiffTools.NEW_SUBFILE_TYPE) == 1;
-      if (thumbnail) thumbs.add(ifds[i]);
-      else if (ifds[i].get(new Integer(TiffTools.IMAGE_WIDTH)) != null) {
-        v.add(ifds[i]);
+    Vector<IFD> v = new Vector<IFD>();
+    Vector<IFD> thumbs = new Vector<IFD>();
+    for (int i=0; i<ifds.size(); i++) {
+      IFD ifd = ifds.get(i);
+      boolean thumbnail = ifds.size() > 1 &&
+        TiffTools.getIFDIntValue(ifd, TiffTools.NEW_SUBFILE_TYPE) == 1;
+      if (thumbnail) thumbs.add(ifd);
+      else if (ifd.get(new Integer(TiffTools.IMAGE_WIDTH)) != null) {
+        v.add(ifd);
       }
     }
 
-    ifds = (Hashtable[]) v.toArray(new Hashtable[0]);
-    thumbnailIFDs = (Hashtable[]) thumbs.toArray(new Hashtable[0]);
+    ifds = v;
+    thumbnailIFDs = thumbs;
 
     status("Populating metadata");
 
-    core[0].imageCount = ifds.length;
+    core[0].imageCount = ifds.size();
 
-    int photo = TiffTools.getPhotometricInterpretation(ifds[0]);
-    int samples = TiffTools.getSamplesPerPixel(ifds[0]);
+    IFD firstIFD = ifds.get(0);
+
+    int photo = TiffTools.getPhotometricInterpretation(firstIFD);
+    int samples = TiffTools.getSamplesPerPixel(firstIFD);
     core[0].rgb = samples > 1 || photo == TiffTools.RGB;
     core[0].interleaved = false;
-    core[0].littleEndian = TiffTools.isLittleEndian(ifds[0]);
+    core[0].littleEndian = TiffTools.isLittleEndian(firstIFD);
 
-    core[0].sizeX = (int) TiffTools.getImageWidth(ifds[0]);
-    core[0].sizeY = (int) TiffTools.getImageLength(ifds[0]);
+    core[0].sizeX = (int) TiffTools.getImageWidth(firstIFD);
+    core[0].sizeY = (int) TiffTools.getImageLength(firstIFD);
     core[0].sizeZ = 1;
     core[0].sizeC = isRGB() ? samples : 1;
-    core[0].sizeT = ifds.length;
-    core[0].pixelType = TiffTools.getPixelType(ifds[0]);
+    core[0].sizeT = ifds.size();
+    core[0].pixelType = TiffTools.getPixelType(firstIFD);
     core[0].metadataComplete = true;
     core[0].indexed = photo == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
