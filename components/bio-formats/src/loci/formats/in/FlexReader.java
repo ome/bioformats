@@ -703,6 +703,7 @@ public class FlexReader extends FormatReader {
 
     private String sliderName;
     private int nextFilter;
+    private int nextDichroic;
     private int nextFilterSet;
     private int nextSliderRef;
 
@@ -922,10 +923,18 @@ public class FlexReader extends FormatReader {
         sliderName = attributes.getValue("Name");
       }
       else if (qName.equals("Filter")) {
-        store.setFilterID("Filter:" + attributes.getValue("ID"), 0, nextFilter);
-        store.setFilterFilterWheel(sliderName, 0, nextFilter);
-
-        nextFilter++;
+        String id = attributes.getValue("ID");
+        if (sliderName.endsWith("Dichro")) {
+          store.setDichroicID("Dichroic:" + id, 0, nextDichroic);
+          store.setDichroicModel(id, 0, nextDichroic);
+          nextDichroic++;
+        }
+        else {
+          store.setFilterID("Filter:" + id, 0, nextFilter);
+          store.setFilterModel(id, 0, nextFilter);
+          store.setFilterFilterWheel(sliderName, 0, nextFilter);
+          nextFilter++;
+        }
       }
       else if (qName.equals("FilterCombination")) {
         store.setFilterSetID("FilterSet:" + attributes.getValue("ID"), 0,
@@ -934,6 +943,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("SliderRef")) {
         String filterName = attributes.getValue("Filter");
         String filterID = "Filter:" + filterName;
+        String dichroicID = "Dichroic:" + filterName;
         String slider = attributes.getValue("ID");
         if (nextSliderRef == 0 && slider.startsWith("Camera")) {
           store.setFilterSetEmFilter(filterID, 0, nextFilterSet);
@@ -942,7 +952,7 @@ public class FlexReader extends FormatReader {
           store.setFilterSetExFilter(filterID, 0, nextFilterSet);
         }
         else if (slider.equals("Primary_Dichro")) {
-          store.setFilterSetDichroic(filterID, 0, nextFilterSet);
+          store.setFilterSetDichroic(dichroicID, 0, nextFilterSet);
         }
         String lname = filterName.toLowerCase();
         if (!lname.startsWith("empty") && !lname.startsWith("blocked")) {
