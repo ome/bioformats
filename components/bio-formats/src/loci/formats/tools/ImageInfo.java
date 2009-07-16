@@ -48,8 +48,6 @@ import loci.formats.ImageReader;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
 import loci.formats.XMLTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -789,25 +787,6 @@ public class ImageInfo {
 
   public static void main(String[] args) throws FormatException, IOException {
     if (!new ImageInfo().testRead(args)) System.exit(1);
-  }
-
-  // -- Helper classes --
-
-  /** Used by testRead to echo status messages to the console. */
-  private static class StatusEchoer implements StatusListener {
-    private boolean verbose = true;
-    private boolean next = true;
-
-    public void setVerbose(boolean value) { verbose = value; }
-    public void setEchoNext(boolean value) { next = value; }
-
-    public void statusUpdated(StatusEvent e) {
-      if (verbose) LogTools.println("\t" + e.getStatusMessage());
-      else if (next) {
-        LogTools.print(";");
-        next = false;
-      }
-    }
   }
 
 }
