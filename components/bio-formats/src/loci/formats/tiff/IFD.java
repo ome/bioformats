@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.tiff;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * CTR TODO
@@ -34,7 +34,7 @@ import java.util.Hashtable;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class IFD extends Hashtable<Integer, Object> {
+public class IFD extends HashMap<Integer, Object> {
 
   // -- Constructors --
 

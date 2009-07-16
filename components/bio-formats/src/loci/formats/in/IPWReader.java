@@ -44,6 +44,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * IPWReader is the file format reader for Image-Pro Workspace (IPW) files.
@@ -88,7 +89,7 @@ public class IPWReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
-    Vector<IFD> ifds = TiffTools.getIFDs(stream);
+    IFDList ifds = TiffTools.getIFDs(stream);
     IFD firstIFD = ifds.get(0);
     int[] bits = TiffTools.getBitsPerSample(firstIFD);
     if (bits[0] <= 8) {
@@ -119,7 +120,7 @@ public class IPWReader extends FormatReader {
 
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(no)));
-    Vector<IFD> ifds = TiffTools.getIFDs(stream);
+    IFDList ifds = TiffTools.getIFDs(stream);
     TiffTools.getSamples(ifds.get(0), stream, buf, x, y, w, h);
     stream.close();
     return buf;
@@ -231,7 +232,7 @@ public class IPWReader extends FormatReader {
 
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
-    Vector<IFD> ifds = TiffTools.getIFDs(stream);
+    IFDList ifds = TiffTools.getIFDs(stream);
     stream.close();
 
     IFD firstIFD = ifds.get(0);

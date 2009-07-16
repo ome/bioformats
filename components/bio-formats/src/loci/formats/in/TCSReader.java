@@ -44,6 +44,7 @@ import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -348,7 +349,7 @@ public class TCSReader extends FormatReader {
       tiffReaders[0].setId(id);
       in = new RandomAccessInputStream(id);
 
-      Vector<IFD> ifds = TiffTools.getIFDs(in);
+      IFDList ifds = TiffTools.getIFDs(in);
 
       int[] ch = new int[ifds.size()];
       int[] idx = new int[ifds.size()];

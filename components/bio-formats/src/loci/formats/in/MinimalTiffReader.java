@@ -33,6 +33,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.TiffTools;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * MinimalTiffReader is the superclass for file format readers compatible with
@@ -49,10 +50,10 @@ public class MinimalTiffReader extends FormatReader {
   // -- Fields --
 
   /** List of IFDs for the current TIFF. */
-  protected Vector<IFD> ifds;
+  protected IFDList ifds;
 
   /** List of thumbnail IFDs for the current TIFF. */
-  protected Vector<IFD> thumbnailIFDs;
+  protected IFDList thumbnailIFDs;
 
   private int lastPlane;
 
@@ -218,8 +219,8 @@ public class MinimalTiffReader extends FormatReader {
 
     // separate thumbnail IFDs from regular IFDs
 
-    Vector<IFD> v = new Vector<IFD>();
-    Vector<IFD> thumbs = new Vector<IFD>();
+    IFDList v = new IFDList();
+    IFDList thumbs = new IFDList();
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       boolean thumbnail = ifds.size() > 1 &&

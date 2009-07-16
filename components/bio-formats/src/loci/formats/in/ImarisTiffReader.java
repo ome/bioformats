@@ -35,6 +35,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * ImarisTiffReader is the file format reader for
@@ -77,7 +78,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     status("Verifying IFD sanity");
 
-    Vector<IFD> tmp = new Vector<IFD>();
+    IFDList tmp = new IFDList();
 
     for (int i=1; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);

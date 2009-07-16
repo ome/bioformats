@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -38,6 +36,7 @@ import loci.formats.codec.BitBuffer;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * MRWReader is the file format reader for Minolta MRW files.
@@ -201,7 +200,7 @@ public class MRWReader extends FormatReader {
         byte[] b = new byte[len];
         in.read(b);
         RandomAccessInputStream ras = new RandomAccessInputStream(b);
-        Vector<IFD> ifds = TiffTools.getIFDs(ras);
+        IFDList ifds = TiffTools.getIFDs(ras);
 
         for (int i=0; i<ifds.size(); i++) {
           IFD ifd = ifds.get(i);
@@ -214,7 +213,7 @@ public class MRWReader extends FormatReader {
           long exifOffset =
             TiffTools.getIFDLongValue(ifd, TiffTools.EXIF, false, 0);
           if (exifOffset != 0 && exifOffset < ras.length()) {
-            Hashtable exif = TiffTools.getIFD(ras, 1, exifOffset);
+            IFD exif = TiffTools.getIFD(ras, 1, exifOffset);
 
             Integer[] k = (Integer[]) exif.keySet().toArray(new Integer[0]);
             for (int q=0; q<k.length; q++) {

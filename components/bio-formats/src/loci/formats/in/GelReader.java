@@ -39,6 +39,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -119,9 +120,9 @@ public class GelReader extends BaseTiffReader {
   protected void initMetadata() throws FormatException, IOException {
     ifds = TiffTools.getIFDs(in);
     if (ifds.size() > 1) {
-      Vector<IFD> tmpIFDs = ifds;
-      ifds = new Vector<IFD>();
-      ifds.setSize(tmpIFDs.size() / 2);
+      IFDList tmpIFDs = ifds;
+      ifds = new IFDList();
+      ifds.ensureCapacity(tmpIFDs.size() / 2);
       for (int i=0; i<ifds.size(); i++) {
         IFD ifd = new IFD();
         ifds.set(i, ifd);

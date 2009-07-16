@@ -37,6 +37,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
@@ -62,7 +63,7 @@ public class EPSReader extends FormatReader {
   private boolean binary;
 
   private boolean isTiff;
-  private Vector<IFD> ifds;
+  private IFDList ifds;
 
   // -- Constructor --
 

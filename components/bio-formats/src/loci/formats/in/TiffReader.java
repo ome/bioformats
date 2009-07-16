@@ -33,6 +33,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.TiffTools;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,
@@ -197,8 +198,8 @@ public class TiffReader extends BaseTiffReader {
       long totalBytes = in.length() - endOfFirstPlane;
       int totalPlanes = (int) (totalBytes / planeSize) + 1;
 
-      ifds = new Vector<IFD>();
-      ifds.setSize(totalPlanes);
+      ifds = new IFDList();
+      ifds.ensureCapacity(totalPlanes);
       ifds.set(0, firstIFD);
       for (int i=1; i<totalPlanes; i++) {
         IFD ifd = new IFD(firstIFD);

@@ -39,6 +39,7 @@ import loci.formats.codec.BitBuffer;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.NikonCodecOptions;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -312,7 +313,7 @@ public class NikonReader extends BaseTiffReader {
     long[] subIFDOffsets = TiffTools.getIFDLongArray(original, SUB_IFD, false);
 
     if (subIFDOffsets != null) {
-      Vector<IFD> tmpIFDs = new Vector();
+      IFDList tmpIFDs = new IFDList();
 
       for (int i=0; i<subIFDOffsets.length; i++) {
         IFD ifd = TiffTools.getIFD(in, i, subIFDOffsets[i]);
@@ -345,15 +346,12 @@ public class NikonReader extends BaseTiffReader {
 
     int exif = TiffTools.getIFDIntValue(original, EXIF_IFD_POINTER);
     if (exif != -1) {
-      Hashtable exifIFD = TiffTools.getIFD(in, 0, exif);
+      IFD exifIFD = TiffTools.getIFD(in, 0, exif);
 
       // put all the EXIF data in the metadata hashtable
 
       if (exifIFD != null) {
-        Enumeration e = exifIFD.keys();
-        Integer key;
-        while (e.hasMoreElements()) {
-          key = (Integer) e.nextElement();
+        for (Integer key : exifIFD.keySet()) {
           int tag = key.intValue();
           if (tag == CFA_PATTERN) {
             byte[] cfa = (byte[]) exifIFD.get(key);
@@ -371,12 +369,9 @@ public class NikonReader extends BaseTiffReader {
               System.arraycopy(b, extra, buf, 0, buf.length - extra);
               RandomAccessInputStream makerNote =
                 new RandomAccessInputStream(buf);
-              Hashtable note = TiffTools.getFirstIFD(makerNote);
+              IFD note = TiffTools.getFirstIFD(makerNote);
               if (note != null) {
-                Enumeration en = note.keys();
-                Integer nextKey;
-                while (en.hasMoreElements()) {
-                  nextKey = (Integer) en.nextElement();
+                for (Integer nextKey : note.keySet()) {
                   int nextTag = nextKey.intValue();
                   addGlobalMeta(getTagName(nextTag), note.get(nextKey));
                   if (nextTag == 150) {

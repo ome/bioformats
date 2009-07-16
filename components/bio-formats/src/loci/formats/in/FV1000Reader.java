@@ -44,6 +44,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
@@ -207,7 +208,7 @@ public class FV1000Reader extends FormatReader {
     if (filename == null) return buf;
 
     RandomAccessInputStream plane = getFile(filename);
-    Vector<IFD> ifds = TiffTools.getIFDs(plane);
+    IFDList ifds = TiffTools.getIFDs(plane);
     if (image >= ifds.size()) return buf;
 
     if (getSizeY() != TiffTools.getImageLength(ifds.get(image))) {
@@ -682,7 +683,7 @@ public class FV1000Reader extends FormatReader {
         core = new CoreMetadata[2];
         core[0] = new CoreMetadata();
         core[1] = new CoreMetadata();
-        Vector<IFD> ifds = null;
+        IFDList ifds = null;
         for (int i=0; i<previewNames.size(); i++) {
           String previewName = (String) previewNames.get(i);
           ifds = TiffTools.getIFDs(getFile(previewName));

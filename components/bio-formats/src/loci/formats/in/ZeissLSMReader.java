@@ -41,6 +41,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -145,7 +146,7 @@ public class ZeissLSMReader extends FormatReader {
   private int validChannels;
 
   private String[] lsmFilenames;
-  private Vector<Vector<IFD>> ifdsList;
+  private Vector<IFDList> ifdsList;
 
   private int nextLaser = 0, nextDetector = 0;
   private int nextFilter = 0, nextFilterSet = 0;
@@ -250,7 +251,7 @@ public class ZeissLSMReader extends FormatReader {
     in = new RandomAccessInputStream(lsmFilenames[getSeries()]);
     in.order(!isLittleEndian());
 
-    Vector<IFD> ifds = ifdsList.get(getSeries());
+    IFDList ifds = ifdsList.get(getSeries());
 
     if (splitPlanes && getSizeC() > 1) {
       int plane = no / getSizeC();
@@ -296,7 +297,7 @@ public class ZeissLSMReader extends FormatReader {
     timestamps = new Vector<Double>();
 
     core = new CoreMetadata[lsmFilenames.length];
-    ifdsList = new Vector<Vector<IFD>>();
+    ifdsList = new Vector<IFDList>();
     ifdsList.setSize(core.length);
     for (int i=0; i<core.length; i++) {
       core[i] = new CoreMetadata();
@@ -319,9 +320,8 @@ public class ZeissLSMReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     for (int series=0; series<ifdsList.size(); series++) {
-      Vector<IFD> ifds = ifdsList.get(series);
-      Vector<IFD> newIFDs =
-        new Vector<IFD>();
+      IFDList ifds = ifdsList.get(series);
+      IFDList newIFDs = new IFDList();
       for (int i=0; i<ifds.size(); i++) {
         IFD ifd = ifds.get(i);
         long subFileType = TiffTools.getIFDLongValue(ifd,
@@ -364,7 +364,7 @@ public class ZeissLSMReader extends FormatReader {
 
   protected void initMetadata(int series) throws FormatException, IOException {
     setSeries(series);
-    Vector<IFD> ifds = ifdsList.get(series);
+    IFDList ifds = ifdsList.get(series);
     IFD ifd = ifds.get(0);
 
     in = new RandomAccessInputStream(lsmFilenames[series]);

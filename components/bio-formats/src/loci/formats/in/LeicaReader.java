@@ -47,6 +47,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 
 /**
  * LeicaReader is the file format reader for Leica files.
@@ -100,10 +101,10 @@ public class LeicaReader extends FormatReader {
 
   // -- Fields --
 
-  protected Vector<IFD> ifds;
+  protected IFDList ifds;
 
   /** Array of IFD-like structures containing metadata. */
-  protected Vector<IFD> headerIFDs;
+  protected IFDList headerIFDs;
 
   /** Helper readers. */
   protected MinimalTiffReader tiff;
@@ -378,7 +379,7 @@ public class LeicaReader extends FormatReader {
 
     files = new Vector[numSeries];
 
-    headerIFDs = new Vector<IFD>();
+    headerIFDs = new IFDList();
 
     // determine the length of a filename
 
@@ -537,11 +538,11 @@ public class LeicaReader extends FormatReader {
     }
 
     Vector[] tempFiles = files;
-    Vector<IFD> tempIFDs = headerIFDs;
+    IFDList tempIFDs = headerIFDs;
     core = new CoreMetadata[numSeries];
     files = new Vector[numSeries];
-    headerIFDs = new Vector<IFD>();
-    headerIFDs.setSize(numSeries);
+    headerIFDs = new IFDList();
+    headerIFDs.ensureCapacity(numSeries);
     int index = 0;
 
     for (int i=0; i<numSeries; i++) {

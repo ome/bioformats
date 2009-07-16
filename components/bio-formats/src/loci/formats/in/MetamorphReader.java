@@ -46,6 +46,7 @@ import loci.formats.UnknownTagException;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -726,8 +727,8 @@ public class MetamorphReader extends BaseTiffReader {
 
       core[0].sizeC *= uniqueWavelengths.size();
 
-      Vector<IFD> tempIFDs = new Vector<IFD>();
-      tempIFDs.setSize(getImageCount());
+      IFDList tempIFDs = new IFDList();
+      tempIFDs.ensureCapacity(getImageCount());
 
       long[] oldOffsets = TiffTools.getStripOffsets(firstIFD);
       long[] stripByteCounts = TiffTools.getStripByteCounts(firstIFD);
