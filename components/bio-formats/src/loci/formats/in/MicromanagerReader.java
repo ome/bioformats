@@ -234,10 +234,10 @@ public class MicromanagerReader extends FormatReader {
         String key = token.substring(quote, token.indexOf("\"", quote));
         String value = null;
 
-        if (!open && !closed) {
+        if (open == closed) {
           value = token.substring(token.indexOf(":") + 1);
         }
-        else if (!closed){
+        else if (!closed) {
           StringBuffer valueBuffer = new StringBuffer();
           while (!closed) {
             token = st.nextToken();
