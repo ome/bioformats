@@ -106,6 +106,7 @@ loci.formats.in.PrairieReader         # xml, cfg, tif
 loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
+loci.formats.in.NikonTiffReader       # tif
 loci.formats.in.OMETiffReader         # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
