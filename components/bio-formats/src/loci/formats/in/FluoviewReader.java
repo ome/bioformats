@@ -100,9 +100,9 @@ public class FluoviewReader extends BaseTiffReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
+    if (ifd == null) return false;
     String com = ifd.getComment();
     if (com == null) com = "";
-    if (ifd == null) return false;
     return com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
       ifd.containsKey(new Integer(MMHEADER)) ||
       ifd.containsKey(new Integer(MMSTAMP));
