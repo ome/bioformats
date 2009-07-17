@@ -175,7 +175,7 @@ public class LeicaReader extends FormatReader {
       return tiff.get8BitLookupTable();
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     return null;
   }
@@ -188,7 +188,7 @@ public class LeicaReader extends FormatReader {
       return tiff.get16BitLookupTable();
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     return null;
   }
@@ -276,7 +276,7 @@ public class LeicaReader extends FormatReader {
 
       ifds = TiffTools.getIFDs(in);
       if (ifds == null) throw new FormatException("No IFDs found");
-      String descr = TiffTools.getComment(ifds.get(0));
+      String descr = ifds.get(0).getComment();
 
       // remove anything of the form "[blah]"
 
@@ -1036,7 +1036,7 @@ public class LeicaReader extends FormatReader {
             }
           }
           catch (NumberFormatException e) {
-            if (debug) trace(e);
+            traceDebug(e);
           }
         }
       }

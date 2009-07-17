@@ -38,7 +38,6 @@ import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
-import loci.formats.FormatHandler;
 
 /**
  * Utility class for working with QuickTime for Java.
@@ -167,13 +166,13 @@ public class LegacyQTTools {
     }
     catch (Throwable t) {
       noQT = true;
-      if (FormatHandler.debug) LogTools.trace(t);
+      LogTools.traceDebug(t);
     }
     finally {
       if (needClose) {
         try { r.exec("QTSession.close()"); }
         catch (Throwable t) {
-          if (FormatHandler.debug) LogTools.trace(t);
+          LogTools.traceDebug(t);
         }
       }
       initialized = true;
@@ -203,7 +202,7 @@ public class LegacyQTTools {
         return qtMajor + "." + qtMinor;
       }
       catch (Throwable t) {
-        if (FormatHandler.debug) LogTools.trace(t);
+        LogTools.traceDebug(t);
         return "Error";
       }
     }

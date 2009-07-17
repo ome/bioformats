@@ -88,17 +88,16 @@ public class GelReader extends BaseTiffReader {
   {
     IFD ifd = ifds.get(no);
 
-    boolean sqrt = TiffTools.getIFDLongValue(ifd,
-      MD_FILETAG, true, LINEAR) == SQUARE_ROOT;
+    boolean sqrt = ifd.getIFDLongValue(MD_FILETAG, true, LINEAR) == SQUARE_ROOT;
 
     if (sqrt) {
-      float scale = ((TiffRational) TiffTools.getIFDValue(ifd,
-        MD_SCALE_PIXEL)).floatValue();
+      float scale = ((TiffRational)
+        ifd.getIFDValue(MD_SCALE_PIXEL)).floatValue();
 
       byte[] tmp = new byte[buf.length];
       super.openBytes(no, tmp, x, y, w, h);
 
-      int originalBytes = TiffTools.getBitsPerSample(ifd)[0] / 8;
+      int originalBytes = ifd.getBitsPerSample()[0] / 8;
 
       for (int i=0; i<tmp.length/4; i++) {
         long value = DataTools.bytesToShort(tmp, i*originalBytes,
@@ -135,32 +134,30 @@ public class GelReader extends BaseTiffReader {
 
     IFD firstIFD = ifds.get(0);
 
-    long fmt = TiffTools.getIFDLongValue(firstIFD, MD_FILETAG, true, LINEAR);
+    long fmt = firstIFD.getIFDLongValue(MD_FILETAG, true, LINEAR);
     if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
     addGlobalMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
 
     TiffRational scale =
-      (TiffRational) TiffTools.getIFDValue(firstIFD, MD_SCALE_PIXEL);
+      (TiffRational) firstIFD.getIFDValue(MD_SCALE_PIXEL);
     addGlobalMeta("Scale factor", scale == null ?
       new TiffRational(1, 1) : scale);
 
     // ignore MD_COLOR_TABLE
 
-    String lab = TiffTools.getIFDStringValue(firstIFD, MD_LAB_NAME, false);
+    String lab = firstIFD.getIFDStringValue(MD_LAB_NAME, false);
     addGlobalMeta("Lab name", lab);
 
-    String info = TiffTools.getIFDStringValue(firstIFD, MD_SAMPLE_INFO, false);
+    String info = firstIFD.getIFDStringValue(MD_SAMPLE_INFO, false);
     addGlobalMeta("Sample info", info);
 
-    String prepDate =
-      TiffTools.getIFDStringValue(firstIFD, MD_PREP_DATE, false);
+    String prepDate = firstIFD.getIFDStringValue(MD_PREP_DATE, false);
     addGlobalMeta("Date prepared", prepDate);
 
-    String prepTime =
-      TiffTools.getIFDStringValue(firstIFD, MD_PREP_TIME, false);
+    String prepTime = firstIFD.getIFDStringValue(MD_PREP_TIME, false);
     addGlobalMeta("Time prepared", prepTime);
 
-    String units = TiffTools.getIFDStringValue(firstIFD, MD_FILE_UNITS, false);
+    String units = firstIFD.getIFDStringValue(MD_FILE_UNITS, false);
     addGlobalMeta("File units", units);
 
     core[0].imageCount = ifds.size();

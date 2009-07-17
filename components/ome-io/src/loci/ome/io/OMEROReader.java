@@ -135,7 +135,7 @@ public class OMEROReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("OMEROReader.initFile(" + id + ")");
+    debug("OMEROReader.initFile(" + id + ")");
 
     OMECredentials cred = new OMECredentials(id);
     id = String.valueOf(cred.imageID);

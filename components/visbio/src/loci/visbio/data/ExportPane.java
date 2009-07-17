@@ -43,9 +43,9 @@ import javax.swing.JTextField;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageWriter;
-import loci.formats.TiffTools;
 import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffCompression;
 import loci.visbio.BioTask;
 import loci.visbio.TaskManager;
 import loci.visbio.VisBio;
@@ -277,13 +277,12 @@ public class ExportPane extends WizardPane {
               else {
                 // save image to TIFF file
                 IFD ifd = new IFD();
-                TiffTools.putIFDValue(ifd,
-                  TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
+                ifd.putIFDValue(IFD.SOFTWARE,
+                  VisBio.TITLE + " " + VisBio.VERSION);
                 if (doLZW) {
-                  TiffTools.putIFDValue(ifd,
-                    TiffTools.COMPRESSION, TiffTools.LZW);
+                  ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.LZW);
                   // do horizontal differencing
-                  TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
+                  ifd.putIFDValue(IFD.PREDICTOR, 2);
                 }
                 tiffSaver.setId(filename);
                 tiffSaver.saveImage(image, ifd, true);
@@ -309,13 +308,12 @@ public class ExportPane extends WizardPane {
                 else {
                   // save image to TIFF file
                   IFD ifd = new IFD();
-                  TiffTools.putIFDValue(ifd,
-                    TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
+                  ifd.putIFDValue(IFD.SOFTWARE,
+                    VisBio.TITLE + " " + VisBio.VERSION);
                   if (doLZW) {
-                    TiffTools.putIFDValue(ifd,
-                      TiffTools.COMPRESSION, TiffTools.LZW);
+                    ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.LZW);
                     // do horizontal differencing
-                    TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
+                    ifd.putIFDValue(IFD.PREDICTOR, 2);
                   }
                   tiffSaver.setId(filename);
                   tiffSaver.saveImage(image, ifd, last);

@@ -700,7 +700,7 @@ public class DeltavisionReader extends FormatReader {
             cIndex = getZCTCoords(currentImage)[1];
           }
           catch (IllegalArgumentException e) {
-            if (debug) trace(e);
+            traceDebug(e);
           }
           store.setLogicalChannelName(value, 0, cIndex);
         }
@@ -715,7 +715,7 @@ public class DeltavisionReader extends FormatReader {
             warn("Could not parse ND filter '" + value + "'");
           }
           catch (IllegalArgumentException e) {
-            if (debug) trace(e);
+            traceDebug(e);
           }
         }
         else if (key.equals("Stage coordinates")) {
@@ -812,7 +812,7 @@ public class DeltavisionReader extends FormatReader {
             warn("Could not parse Z position '" + values[0] + "'");
           }
           catch (IllegalArgumentException iae) {
-            if (debug) trace(iae);
+            traceDebug(iae);
           }
           line = s.readLine().trim();
         }
@@ -988,7 +988,7 @@ public class DeltavisionReader extends FormatReader {
         energyConvFactor = in.readFloat();
       }
       catch (IOException e) {
-        if (debug) trace(e);
+        traceDebug(e);
       }
     }
 

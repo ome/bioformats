@@ -33,7 +33,6 @@ import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
-import loci.formats.FormatHandler;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
@@ -72,7 +71,7 @@ public final class ImageConverter {
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
-          if (args[i].equals("-debug")) FormatHandler.setDebug(true);
+          if (args[i].equals("-debug")) LogTools.setDebug(true);
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-merge")) merge = true;
@@ -95,8 +94,8 @@ public final class ImageConverter {
         }
       }
     }
-    if (FormatHandler.debug) {
-      LogTools.println("Debugging at level " + FormatHandler.debugLevel);
+    if (LogTools.isDebug()) {
+      LogTools.println("Debugging at level " + LogTools.getDebugLevel());
     }
     if (in == null || out == null) {
       String[] s = {

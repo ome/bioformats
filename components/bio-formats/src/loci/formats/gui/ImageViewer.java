@@ -63,7 +63,6 @@ import loci.common.ReflectedUniverse;
 import loci.formats.ChannelMerger;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
-import loci.formats.FormatHandler;
 import loci.formats.FormatTools;
 import loci.formats.IFormatHandler;
 import loci.formats.IFormatReader;
@@ -274,7 +273,7 @@ public class ImageViewer extends JFrame implements ActionListener,
       if (c != null) canDoNotes = true;
     }
     catch (Throwable t) {
-      if (FormatHandler.debug) LogTools.trace(t);
+      LogTools.traceDebug(t);
     }
     if (canDoNotes) {
       JMenuItem fileView = new JMenuItem("View Metadata...");
@@ -559,7 +558,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         fps = Integer.parseInt(result);
       }
       catch (NumberFormatException exc) {
-        if (FormatHandler.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
     }
     else if ("about".equals(cmd)) {
@@ -661,7 +660,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         Thread.sleep(1000 / fps);
       }
       catch (InterruptedException exc) {
-        if (FormatHandler.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
     }
   }

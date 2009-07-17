@@ -45,6 +45,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.PhotoInterp;
 
 /**
  * IPWReader is the file format reader for Image-Pro Workspace (IPW) files.
@@ -91,10 +92,9 @@ public class IPWReader extends FormatReader {
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
     IFDList ifds = TiffTools.getIFDs(stream);
     IFD firstIFD = ifds.get(0);
-    int[] bits = TiffTools.getBitsPerSample(firstIFD);
+    int[] bits = firstIFD.getBitsPerSample();
     if (bits[0] <= 8) {
-      int[] colorMap =
-        (int[]) TiffTools.getIFDValue(firstIFD, TiffTools.COLOR_MAP);
+      int[] colorMap = (int[]) firstIFD.getIFDValue(IFD.COLOR_MAP);
       if (colorMap == null) return null;
 
       byte[][] table = new byte[3][colorMap.length / 3];
@@ -237,18 +237,18 @@ public class IPWReader extends FormatReader {
 
     IFD firstIFD = ifds.get(0);
 
-    core[0].rgb = TiffTools.getSamplesPerPixel(firstIFD) > 1;
+    core[0].rgb = firstIFD.getSamplesPerPixel() > 1;
 
     if (!isRGB()) {
-      core[0].indexed = TiffTools.getPhotometricInterpretation(firstIFD) ==
-        TiffTools.RGB_PALETTE;
+      core[0].indexed =
+        firstIFD.getPhotometricInterpretation() == PhotoInterp.RGB_PALETTE;
     }
     if (isIndexed()) {
       core[0].sizeC = 1;
       core[0].rgb = false;
     }
 
-    core[0].littleEndian = TiffTools.isLittleEndian(firstIFD);
+    core[0].littleEndian = firstIFD.isLittleEndian();
 
     // retrieve axis sizes
 
@@ -256,8 +256,8 @@ public class IPWReader extends FormatReader {
     addGlobalMeta("channels", "1");
     addGlobalMeta("frames", getImageCount());
 
-    core[0].sizeX = (int) TiffTools.getImageWidth(firstIFD);
-    core[0].sizeY = (int) TiffTools.getImageLength(firstIFD);
+    core[0].sizeX = (int) firstIFD.getImageWidth();
+    core[0].sizeY = (int) firstIFD.getImageLength();
     core[0].dimensionOrder = isRGB() ? "XYCZT" : "XYZCT";
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
@@ -270,8 +270,8 @@ public class IPWReader extends FormatReader {
 
     if (isRGB()) core[0].sizeC *= 3;
 
-    int bitsPerSample = TiffTools.getBitsPerSample(firstIFD)[0];
-    int bitFormat = TiffTools.getIFDIntValue(firstIFD, TiffTools.SAMPLE_FORMAT);
+    int bitsPerSample = firstIFD.getBitsPerSample()[0];
+    int bitFormat = firstIFD.getIFDIntValue(IFD.SAMPLE_FORMAT);
 
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;

@@ -132,7 +132,7 @@ public class LegacyQTReader extends FormatReader {
       }
     }
     catch (ReflectException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     if (!fileOnly) {
       currentId = null;

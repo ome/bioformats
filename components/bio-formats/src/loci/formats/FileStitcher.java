@@ -846,9 +846,7 @@ public class FileStitcher implements IFormatReader {
 
   /** Initializes the given file or file pattern. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (FormatHandler.debug) {
-      LogTools.println("calling FileStitcher.initFile(" + id + ")");
-    }
+    LogTools.debug("initFile: " + id);
 
     close();
     currentId = id;

@@ -47,6 +47,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -447,8 +448,8 @@ public class MetamorphReader extends BaseTiffReader {
       RandomAccessInputStream s = new RandomAccessInputStream(stks[0][0]);
       IFD ifd = TiffTools.getFirstIFD(s);
       s.close();
-      core[0].sizeX = (int) TiffTools.getImageWidth(ifd);
-      core[0].sizeY = (int) TiffTools.getImageLength(ifd);
+      core[0].sizeX = (int) ifd.getImageWidth();
+      core[0].sizeY = (int) ifd.getImageLength();
 
       core[0].sizeZ = zc;
       core[0].sizeC = cc;
@@ -507,10 +508,10 @@ public class MetamorphReader extends BaseTiffReader {
           new RandomAccessInputStream(stks[i][0]);
         IFD ifd = TiffTools.getFirstIFD(stream);
         stream.close();
-        comment = TiffTools.getComment(ifd);
+        comment = ifd.getComment();
       }
       else {
-        comment = TiffTools.getComment(ifds.get(0));
+        comment = ifds.get(0).getComment();
       }
       if (comment != null && comment.startsWith("<MetaData>")) {
         XMLTools.parseXML(comment, handler);
@@ -633,7 +634,7 @@ public class MetamorphReader extends BaseTiffReader {
             lastIFD = TiffTools.getFirstIFD(stream);
             stream.close();
           }
-          comment = TiffTools.getComment(lastIFD);
+          comment = lastIFD.getComment();
           handler = new MetamorphHandler(getSeriesMetadata());
           if (comment != null && comment.startsWith("<MetaData>")) {
             XMLTools.parseXML(comment, handler);
@@ -709,10 +710,10 @@ public class MetamorphReader extends BaseTiffReader {
       // copy ifds into a new array of Hashtables that will accommodate the
       // additional image planes
       IFD firstIFD = ifds.get(0);
-      long[] uic2 = TiffTools.getIFDLongArray(firstIFD, UIC2TAG, true);
+      long[] uic2 = firstIFD.getIFDLongArray(UIC2TAG, true);
       core[0].imageCount = uic2.length;
 
-      Object entry = TiffTools.getIFDValue(firstIFD, UIC3TAG);
+      Object entry = firstIFD.getIFDValue(UIC3TAG);
       TiffRational[] uic3 = entry instanceof TiffRational[] ?
         (TiffRational[]) entry : new TiffRational[] {(TiffRational) entry};
       wave = new double[uic3.length];
@@ -730,19 +731,19 @@ public class MetamorphReader extends BaseTiffReader {
       IFDList tempIFDs = new IFDList();
       tempIFDs.ensureCapacity(getImageCount());
 
-      long[] oldOffsets = TiffTools.getStripOffsets(firstIFD);
-      long[] stripByteCounts = TiffTools.getStripByteCounts(firstIFD);
-      int rowsPerStrip = (int) TiffTools.getRowsPerStrip(firstIFD)[0];
+      long[] oldOffsets = firstIFD.getStripOffsets();
+      long[] stripByteCounts = firstIFD.getStripByteCounts();
+      int rowsPerStrip = (int) firstIFD.getRowsPerStrip()[0];
       int stripsPerImage = getSizeY() / rowsPerStrip;
       if (stripsPerImage * rowsPerStrip != getSizeY()) stripsPerImage++;
 
-      int check = TiffTools.getPhotometricInterpretation(firstIFD);
-      if (check == TiffTools.RGB_PALETTE) {
-        TiffTools.putIFDValue(firstIFD, TiffTools.PHOTOMETRIC_INTERPRETATION,
-          TiffTools.BLACK_IS_ZERO);
+      int check = firstIFD.getPhotometricInterpretation();
+      if (check == PhotoInterp.RGB_PALETTE) {
+        firstIFD.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION,
+          PhotoInterp.BLACK_IS_ZERO);
       }
 
-      emWavelength = TiffTools.getIFDLongArray(firstIFD, UIC3TAG, true);
+      emWavelength = firstIFD.getIFDLongArray(UIC3TAG, true);
 
       // for each image plane, construct an IFD hashtable
 
@@ -768,7 +769,7 @@ public class MetamorphReader extends BaseTiffReader {
           }
         }
 
-        temp.put(new Integer(TiffTools.STRIP_OFFSETS), newOffsets);
+        temp.put(new Integer(IFD.STRIP_OFFSETS), newOffsets);
 
         long[] newByteCounts = new long[stripsPerImage];
         if (stripsPerImage * i < stripByteCounts.length) {
@@ -778,20 +779,20 @@ public class MetamorphReader extends BaseTiffReader {
         else {
           Arrays.fill(newByteCounts, stripByteCounts[0]);
         }
-        temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), newByteCounts);
+        temp.put(new Integer(IFD.STRIP_BYTE_COUNTS), newByteCounts);
 
         tempIFDs.set(pointer, temp);
         pointer++;
       }
       ifds = tempIFDs;
     }
-    catch (UnknownTagException exc) { if (debug) trace(exc); }
-    catch (NullPointerException exc) { if (debug) trace(exc); }
-    catch (IOException exc) { if (debug) trace(exc); }
-    catch (FormatException exc) { if (debug) trace(exc); }
+    catch (UnknownTagException exc) { traceDebug(exc); }
+    catch (NullPointerException exc) { traceDebug(exc); }
+    catch (IOException exc) { traceDebug(exc); }
+    catch (FormatException exc) { traceDebug(exc); }
 
     // parse (mangle) TIFF comment
-    String descr = TiffTools.getComment(ifds.get(0));
+    String descr = ifds.get(0).getComment();
     if (descr != null) {
       String[] lines = descr.split("\n");
       StringBuffer sb = new StringBuffer();

@@ -205,13 +205,14 @@ public class MRWReader extends FormatReader {
         for (int i=0; i<ifds.size(); i++) {
           IFD ifd = ifds.get(i);
           Integer[] keys = (Integer[]) ifd.keySet().toArray(new Integer[0]);
+          // CTR FIXME - getIFDTagName is for debugging only!
           for (int q=0; q<keys.length; q++) {
-            addGlobalMeta(TiffTools.getIFDTagName(keys[q].intValue()),
+            addGlobalMeta(IFD.getIFDTagName(keys[q].intValue()),
               ifd.get(keys[q]));
           }
 
           long exifOffset =
-            TiffTools.getIFDLongValue(ifd, TiffTools.EXIF, false, 0);
+            ifd.getIFDLongValue(IFD.EXIF, false, 0);
           if (exifOffset != 0 && exifOffset < ras.length()) {
             IFD exif = TiffTools.getIFD(ras, 1, exifOffset);
 

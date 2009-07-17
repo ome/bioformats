@@ -106,7 +106,7 @@ public class MIASReader extends FormatReader {
     IFD ifd = TiffTools.getFirstIFD(stream);
     if (ifd == null) return false;
 
-    Object s = TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
+    Object s = ifd.getIFDValue(IFD.SOFTWARE);
     if (s == null) return false;
     String software = null;
     if (s instanceof String[]) software = ((String[]) s)[0];
@@ -637,8 +637,7 @@ public class MIASReader extends FormatReader {
     RandomAccessInputStream s = new RandomAccessInputStream(file);
     IFD ifd = TiffTools.getFirstIFD(s);
     s.close();
-    int[] colorMap =
-      TiffTools.getIFDIntArray(ifd, TiffTools.COLOR_MAP, false);
+    int[] colorMap = ifd.getIFDIntArray(IFD.COLOR_MAP, false);
     if (colorMap == null) return null;
 
     int[] position = getPositionFromFile(file);

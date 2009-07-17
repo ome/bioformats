@@ -156,7 +156,7 @@ public abstract class FormatReader extends FormatHandler
       return isThisType;
     }
     catch (IOException exc) {
-      if (debug) trace(exc);
+      traceDebug(exc);
       return false;
     }
   }
@@ -424,7 +424,7 @@ public abstract class FormatReader extends FormatHandler
       return isThisType;
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     return false;
   }

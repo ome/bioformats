@@ -88,11 +88,10 @@ public class EPSReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (isTiff) {
-      long[] offsets = TiffTools.getStripOffsets(ifds.get(0));
+      long[] offsets = ifds.get(0).getStripOffsets();
       in.seek(offsets[0]);
 
-      int[] map = TiffTools.getIFDIntArray(ifds.get(0),
-        TiffTools.COLOR_MAP, false);
+      int[] map = ifds.get(0).getIFDIntArray(IFD.COLOR_MAP, false);
       if (map == null) {
         readPlane(in, x, y, w, h, buf);
         return buf;
@@ -194,16 +193,16 @@ public class EPSReader extends FormatReader {
 
       IFD firstIFD = ifds.get(0);
 
-      core[0].sizeX = (int) TiffTools.getImageWidth(firstIFD);
-      core[0].sizeY = (int) TiffTools.getImageLength(firstIFD);
+      core[0].sizeX = (int) firstIFD.getImageWidth();
+      core[0].sizeY = (int) firstIFD.getImageLength();
       core[0].sizeZ = 1;
       core[0].sizeT = 1;
-      core[0].sizeC = TiffTools.getSamplesPerPixel(firstIFD);
-      core[0].littleEndian = TiffTools.isLittleEndian(firstIFD);
+      core[0].sizeC = firstIFD.getSamplesPerPixel();
+      core[0].littleEndian = firstIFD.isLittleEndian();
       core[0].interleaved = true;
       core[0].rgb = getSizeC() > 1;
 
-      bps = TiffTools.getBitsPerSample(firstIFD)[0];
+      bps = firstIFD.getBitsPerSample()[0];
       switch (bps) {
         case 16:
           core[0].pixelType = FormatTools.UINT16;
@@ -249,7 +248,7 @@ public class EPSReader extends FormatReader {
             bps = Integer.parseInt(t.nextToken());
           }
           catch (NumberFormatException exc) {
-            if (debug) trace(exc);
+            traceDebug(exc);
             core[0].sizeC = Integer.parseInt(t.nextToken());
           }
         }

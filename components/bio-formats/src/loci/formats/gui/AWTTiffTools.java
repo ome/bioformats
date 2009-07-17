@@ -31,11 +31,14 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import loci.common.DataTools;
+import loci.common.LogTools;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.TiffTools;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -70,12 +73,12 @@ public final class AWTTiffTools {
     throws FormatException, IOException
   {
     if (buf == null) throw new FormatException("Byte array is null");
-    TiffTools.debug("writeImage (offset=" + offset + "; last=" + last + ")");
+    LogTools.debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
-    boolean little = TiffTools.isLittleEndian(ifd);
+    boolean little = ifd.isLittleEndian();
 
-    int width = (int) TiffTools.getImageWidth(ifd);
-    int height = (int) TiffTools.getImageLength(ifd);
+    int width = (int) ifd.getImageWidth();
+    int height = (int) ifd.getImageLength();
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
     int plane = (int) (width * height * bytesPerPixel);
@@ -86,49 +89,46 @@ public final class AWTTiffTools {
 
     // populate required IFD directory entries (except strip information)
     if (ifd == null) ifd = new IFD();
-    TiffTools.putIFDValue(ifd, TiffTools.IMAGE_WIDTH, width);
-    TiffTools.putIFDValue(ifd, TiffTools.IMAGE_LENGTH, height);
-    if (TiffTools.getIFDValue(ifd, TiffTools.BITS_PER_SAMPLE) == null) {
+    ifd.putIFDValue(IFD.IMAGE_WIDTH, width);
+    ifd.putIFDValue(IFD.IMAGE_LENGTH, height);
+    if (ifd.getIFDValue(IFD.BITS_PER_SAMPLE) == null) {
       int bps = 8 * bytesPerPixel;
       int[] bpsArray = new int[nChannels];
       Arrays.fill(bpsArray, bps);
-      TiffTools.putIFDValue(ifd, TiffTools.BITS_PER_SAMPLE, bpsArray);
+      ifd.putIFDValue(IFD.BITS_PER_SAMPLE, bpsArray);
     }
     if (FormatTools.isFloatingPoint(pixelType)) {
-      TiffTools.putIFDValue(ifd, TiffTools.SAMPLE_FORMAT, 3);
+      ifd.putIFDValue(IFD.SAMPLE_FORMAT, 3);
     }
-    if (TiffTools.getIFDValue(ifd, TiffTools.COMPRESSION) == null) {
-      TiffTools.putIFDValue(ifd, TiffTools.COMPRESSION, TiffTools.UNCOMPRESSED);
+    if (ifd.getIFDValue(IFD.COMPRESSION) == null) {
+      ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.UNCOMPRESSED);
     }
-    if (TiffTools.getIFDValue(ifd,
-      TiffTools.PHOTOMETRIC_INTERPRETATION) == null)
+    if (ifd.getIFDValue(IFD.PHOTOMETRIC_INTERPRETATION) == null)
     {
-      int photometricInterpretation = indexed ? TiffTools.RGB_PALETTE :
-        nChannels == 1 ? TiffTools.BLACK_IS_ZERO : TiffTools.RGB;
-      TiffTools.putIFDValue(ifd, TiffTools.PHOTOMETRIC_INTERPRETATION,
+      int photometricInterpretation = indexed ? PhotoInterp.RGB_PALETTE :
+        nChannels == 1 ? PhotoInterp.BLACK_IS_ZERO : PhotoInterp.RGB;
+      ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION,
         photometricInterpretation);
     }
-    if (TiffTools.getIFDValue(ifd, TiffTools.SAMPLES_PER_PIXEL) == null) {
-      TiffTools.putIFDValue(ifd, TiffTools.SAMPLES_PER_PIXEL, nChannels);
+    if (ifd.getIFDValue(IFD.SAMPLES_PER_PIXEL) == null) {
+      ifd.putIFDValue(IFD.SAMPLES_PER_PIXEL, nChannels);
     }
-    if (TiffTools.getIFDValue(ifd, TiffTools.X_RESOLUTION) == null) {
-      TiffTools.putIFDValue(ifd, TiffTools.X_RESOLUTION,
-        new TiffRational(1, 1)); // no unit
+    if (ifd.getIFDValue(IFD.X_RESOLUTION) == null) {
+      ifd.putIFDValue(IFD.X_RESOLUTION, new TiffRational(1, 1)); // no unit
     }
-    if (TiffTools.getIFDValue(ifd, TiffTools.Y_RESOLUTION) == null) {
-      TiffTools.putIFDValue(ifd, TiffTools.Y_RESOLUTION,
-        new TiffRational(1, 1)); // no unit
+    if (ifd.getIFDValue(IFD.Y_RESOLUTION) == null) {
+      ifd.putIFDValue(IFD.Y_RESOLUTION, new TiffRational(1, 1)); // no unit
     }
-    if (TiffTools.getIFDValue(ifd, TiffTools.RESOLUTION_UNIT) == null) {
-      TiffTools.putIFDValue(ifd, TiffTools.RESOLUTION_UNIT, 1); // no unit
+    if (ifd.getIFDValue(IFD.RESOLUTION_UNIT) == null) {
+      ifd.putIFDValue(IFD.RESOLUTION_UNIT, 1); // no unit
     }
-    if (TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE) == null) {
-      TiffTools.putIFDValue(ifd, TiffTools.SOFTWARE, "LOCI Bio-Formats");
+    if (ifd.getIFDValue(IFD.SOFTWARE) == null) {
+      ifd.putIFDValue(IFD.SOFTWARE, "LOCI Bio-Formats");
     }
-    if (TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION) == null) {
-      TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, "");
+    if (ifd.getIFDValue(IFD.IMAGE_DESCRIPTION) == null) {
+      ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, "");
     }
-    if (indexed && TiffTools.getIFDValue(ifd, TiffTools.COLOR_MAP) == null) {
+    if (indexed && ifd.getIFDValue(IFD.COLOR_MAP) == null) {
       byte[][] lut = new byte[3][256];
       IndexColorModel model = (IndexColorModel) colorModel;
       model.getReds(lut[0]);
@@ -140,22 +140,22 @@ public final class AWTTiffTools {
           colorMap[i * lut[0].length + j] = (int) ((lut[i][j] & 0xff) << 8);
         }
       }
-      TiffTools.putIFDValue(ifd, TiffTools.COLOR_MAP, colorMap);
+      ifd.putIFDValue(IFD.COLOR_MAP, colorMap);
     }
 
     // create pixel output buffers
-    int compression = TiffTools.getIFDIntValue(ifd,
-      TiffTools.COMPRESSION, false, TiffTools.UNCOMPRESSED);
+    int compression = ifd.getCompression();
     boolean fullImageCompression = false;
-    if (compression == TiffTools.JPEG_2000 || compression == TiffTools.JPEG) {
+    if (compression == TiffCompression.JPEG_2000 ||
+      compression == TiffCompression.JPEG)
+    {
       fullImageCompression = true;
     }
     int pixels = fullImageCompression ? width * height : width;
     int stripSize = Math.max(8192, pixels * bytesPerPixel * nChannels);
     int rowsPerStrip = stripSize / (width * bytesPerPixel * nChannels);
     int stripsPerImage = (height + rowsPerStrip - 1) / rowsPerStrip;
-    int[] bps = (int[]) TiffTools.getIFDValue(ifd,
-      TiffTools.BITS_PER_SAMPLE, true, int[].class);
+    int[] bps = (int[]) ifd.getIFDValue(IFD.BITS_PER_SAMPLE, true, int[].class);
     ByteArrayOutputStream[] stripBuf =
       new ByteArrayOutputStream[stripsPerImage];
     DataOutputStream[] stripOut = new DataOutputStream[stripsPerImage];
@@ -180,32 +180,33 @@ public final class AWTTiffTools {
     }
 
     // compress strips according to given differencing and compression schemes
-    int planarConfig = TiffTools.getPlanarConfiguration(ifd);
-    int predictor = TiffTools.getIFDIntValue(ifd,
-      TiffTools.PREDICTOR, false, 1);
+    int planarConfig = ifd.getPlanarConfiguration();
+    int predictor = ifd.getIFDIntValue(IFD.PREDICTOR, false, 1);
 
     byte[][] strips = new byte[stripsPerImage][];
     for (int i=0; i<stripsPerImage; i++) {
       strips[i] = stripBuf[i].toByteArray();
-      TiffTools.difference(strips[i], bps, width, planarConfig, predictor);
-      strips[i] = TiffTools.compress(strips[i], ifd);
+      TiffCompression.difference(strips[i],
+        bps, width, planarConfig, predictor);
+      strips[i] = TiffCompression.compress(strips[i], ifd);
     }
 
     // record strip byte counts and offsets
     long[] stripByteCounts = new long[stripsPerImage];
     long[] stripOffsets = new long[stripsPerImage];
-    TiffTools.putIFDValue(ifd, TiffTools.STRIP_OFFSETS, stripOffsets);
-    TiffTools.putIFDValue(ifd, TiffTools.ROWS_PER_STRIP, rowsPerStrip);
-    TiffTools.putIFDValue(ifd, TiffTools.STRIP_BYTE_COUNTS, stripByteCounts);
+    ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+    ifd.putIFDValue(IFD.ROWS_PER_STRIP, rowsPerStrip);
+    ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
 
     Object[] keys = ifd.keySet().toArray();
     Arrays.sort(keys); // sort IFD tags in ascending order
 
     int keyCount = keys.length;
-    if (ifd.containsKey(new Integer(TiffTools.LITTLE_ENDIAN))) keyCount--;
-    if (ifd.containsKey(new Integer(TiffTools.BIG_TIFF))) keyCount--;
+    if (ifd.containsKey(new Integer(IFD.LITTLE_ENDIAN))) keyCount--;
+    if (ifd.containsKey(new Integer(IFD.BIG_TIFF))) keyCount--;
 
-    int bytesPerEntry = bigTiff ? TiffTools.BIG_TIFF_BYTES_PER_ENTRY :
+    int bytesPerEntry = bigTiff ?
+      TiffTools.BIG_TIFF_BYTES_PER_ENTRY :
       TiffTools.BYTES_PER_ENTRY;
     int ifdBytes = (bigTiff ? 16 : 6) + bytesPerEntry * keyCount;
 
@@ -234,13 +235,13 @@ public final class AWTTiffTools {
       if (!(key instanceof Integer)) {
         throw new FormatException("Malformed IFD tag (" + key + ")");
       }
-      if (((Integer) key).intValue() == TiffTools.LITTLE_ENDIAN) continue;
-      if (((Integer) key).intValue() == TiffTools.BIG_TIFF) continue;
+      if (((Integer) key).intValue() == IFD.LITTLE_ENDIAN) continue;
+      if (((Integer) key).intValue() == IFD.BIG_TIFF) continue;
       Object value = ifd.get(key);
-      String sk = TiffTools.getIFDTagName(((Integer) key).intValue());
+      String sk = IFD.getIFDTagName(((Integer) key).intValue());
       String sv = value instanceof int[] ?
         ("int[" + ((int[]) value).length + "]") : value.toString();
-      TiffTools.debug("writeImage: writing " + sk + " (value=" + sv + ")");
+      LogTools.debug("writeImage: writing " + sk + " (value=" + sv + ")");
       TiffTools.writeIFDValue(ifdOut, extraBuf, extraOut, offset,
         ((Integer) key).intValue(), value, bigTiff, little);
     }

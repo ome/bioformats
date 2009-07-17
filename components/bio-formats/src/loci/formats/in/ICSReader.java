@@ -335,7 +335,7 @@ public class ICSReader extends FormatReader {
           floatValue = new Float(v);
         }
         catch (NumberFormatException e) {
-          if (debug) trace(e);
+          traceDebug(e);
         }
 
         if (k.equalsIgnoreCase("layout sizes")) {
@@ -346,7 +346,7 @@ public class ICSReader extends FormatReader {
               axisLengths[n] = Integer.parseInt(t.nextToken().trim());
             }
             catch (NumberFormatException e) {
-              if (debug) trace(e);
+              traceDebug(e);
             }
           }
         }
@@ -372,7 +372,7 @@ public class ICSReader extends FormatReader {
               pixelSizes[n] = new Float(t.nextToken().trim());
             }
             catch (NumberFormatException e) {
-              if (debug) trace(e);
+              traceDebug(e);
             }
           }
         }
@@ -387,7 +387,7 @@ public class ICSReader extends FormatReader {
               emWaves[n] = new Integer((int) Float.parseFloat(waves[n]));
             }
             catch (NumberFormatException e) {
-              if (debug) trace(e);
+              traceDebug(e);
             }
           }
         }
@@ -399,7 +399,7 @@ public class ICSReader extends FormatReader {
               exWaves[n] = new Integer((int) Float.parseFloat(waves[n]));
             }
             catch (NumberFormatException e) {
-              if (debug) trace(e);
+              traceDebug(e);
             }
           }
         }
@@ -440,7 +440,7 @@ public class ICSReader extends FormatReader {
             wavelengths.put(new Integer(laser), new Integer(v));
           }
           catch (NumberFormatException e) {
-            if (debug) trace(e);
+            traceDebug(e);
           }
         }
         else if (k.equalsIgnoreCase("history objective type")) {
@@ -467,7 +467,7 @@ public class ICSReader extends FormatReader {
               pinholes.put(new Integer(channel++), new Float(pins[n]));
             }
             catch (NumberFormatException e) {
-              if (debug) trace(e);
+              traceDebug(e);
             }
           }
         }
@@ -480,7 +480,7 @@ public class ICSReader extends FormatReader {
               sizes[n] = Float.parseFloat(lengths[n].trim());
             }
             catch (NumberFormatException e) {
-              if (debug) trace(e);
+              traceDebug(e);
             }
           }
         }
@@ -492,7 +492,7 @@ public class ICSReader extends FormatReader {
               stagePos[n] = new Float(positions[n]);
             }
             catch (NumberFormatException e) {
-              if (debug) trace(e);
+              traceDebug(e);
             }
           }
         }

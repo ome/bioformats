@@ -160,7 +160,7 @@ public class DelegateReader extends FormatReader {
         legacyReaderInitialized = true;
       }
       catch (FormatException e) {
-        if (debug) trace(e);
+        traceDebug(e);
         nativeReader.setId(id);
         nativeReaderInitialized = true;
       }
@@ -174,7 +174,7 @@ public class DelegateReader extends FormatReader {
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
       if (exc != null) {
-        if (debug) trace(exc);
+        traceDebug(exc);
         legacyReader.setId(id);
         legacyReaderInitialized = true;
       }

@@ -75,7 +75,7 @@ public class OMEXMLReader extends FormatReader {
     }
     catch (Throwable t) {
       noOME = true;
-      if (debug) LogTools.trace(t);
+      LogTools.traceDebug(t);
     }
   }
 

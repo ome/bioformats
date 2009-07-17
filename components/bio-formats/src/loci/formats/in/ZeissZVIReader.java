@@ -127,7 +127,7 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
     catch (FormatException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     return false;
   }

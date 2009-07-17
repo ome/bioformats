@@ -153,7 +153,7 @@ public class Dataset extends ImageTransform {
   public String getFileFormat() { return reader.getFormat(); }
 
   /** Gets metadata associated with the dataset. */
-  public Hashtable getMetadata() { return reader.getMetadata(); }
+  public Hashtable getMetadata() { return reader.getGlobalMetadata(); }
 
   /** Gets an OME-XML root for the dataset. */
   public OMEXMLNode getOMEXMLRoot() {

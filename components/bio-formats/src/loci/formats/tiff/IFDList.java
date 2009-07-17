@@ -26,7 +26,7 @@ package loci.formats.tiff;
 import java.util.ArrayList;
 
 /**
- * CTR TODO
+ * Data structure for working with a list of TIFF {@link IFD}s.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/tiff/IFDList.java">Trac</a>,
@@ -34,6 +34,4 @@ import java.util.ArrayList;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class IFDList extends ArrayList<IFD> {
-
-}
+public class IFDList extends ArrayList<IFD> { }

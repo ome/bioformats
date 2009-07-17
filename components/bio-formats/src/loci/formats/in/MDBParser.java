@@ -72,7 +72,7 @@ public final class MDBParser {
     }
     catch (Throwable t) {
       noMDB = true;
-      if (FormatHandler.debug) LogTools.trace(t);
+      LogTools.traceDebug(t);
     }
     return r;
   }
@@ -142,7 +142,7 @@ public final class MDBParser {
             r.exec("Table.mdb_read_columns(table)");
           }
           catch (ReflectException e) {
-            if (FormatHandler.debug) LogTools.trace(e);
+            LogTools.traceDebug(e);
             break;
           }
 
@@ -162,7 +162,7 @@ public final class MDBParser {
           }
           catch (ReflectException e) {
             moreRows = false;
-            if (FormatHandler.debug) LogTools.trace(e);
+            LogTools.traceDebug(e);
           }
 
           while (moreRows) {

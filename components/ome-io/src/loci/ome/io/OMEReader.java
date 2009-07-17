@@ -89,7 +89,7 @@ public class OMEReader extends FormatReader {
       r.exec("import org.openmicroscopy.is.PixelsFactory");
     }
     catch (ReflectException e) {
-      if (debug) LogTools.trace(e);
+      LogTools.traceDebug(e);
       hasOMEJava = false;
     }
     return r;

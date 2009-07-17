@@ -144,7 +144,7 @@ public class FlexReader extends FormatReader {
     RandomAccessInputStream s =
       new RandomAccessInputStream(flexFiles[wellRow][wellCol]);
 
-    int nBytes = TiffTools.getBitsPerSample(ifd)[0] / 8;
+    int nBytes = ifd.getBitsPerSample()[0] / 8;
 
     // expand pixel values with multiplication by factor[no]
     byte[] bytes = TiffTools.getSamples(ifd, s, buf, x, y, w, h);
@@ -212,7 +212,7 @@ public class FlexReader extends FormatReader {
       v.put(well[0] + "," + well[1], currentFile.getAbsolutePath());
     }
     catch (NumberFormatException e) {
-      if (debug) trace(e);
+      traceDebug(e);
       doGrouping = false;
     }
 
@@ -222,10 +222,10 @@ public class FlexReader extends FormatReader {
         findMeasurementFiles(currentFile);
       }
       catch (NullPointerException e) {
-        if (debug) trace(e);
+        traceDebug(e);
       }
       catch (IOException e) {
-        if (debug) trace(e);
+        traceDebug(e);
       }
       if (measurementFiles.size() == 0) {
         warn("Measurement files not found.");
@@ -454,8 +454,8 @@ public class FlexReader extends FormatReader {
     if (filterSets == null) filterSets = new Vector<String>();
 
     // parse factors from XML
-    String xml = (String)
-      TiffTools.getIFDValue(ifds[wellRow][wellCol].get(0), FLEX);
+    IFD ifd = ifds[wellRow][wellCol].get(0);
+    String xml = ifd.getIFDStringValue(FLEX, true);
 
     // HACK - workaround for Windows and Mac OS X bug where
     // SAX parser fails due to improperly handled mu (181) characters.
@@ -477,8 +477,8 @@ public class FlexReader extends FormatReader {
     // verify factor count
     int nsize = n.size();
     int fsize = f.size();
-    if (debug && (nsize != fsize || nsize != totalPlanes)) {
-      LogTools.println("Warning: mismatch between image count, " +
+    if (nsize != fsize || nsize != totalPlanes) {
+      warnDebug("mismatch between image count, " +
         "names and factors (count=" + totalPlanes +
         ", names=" + nsize + ", factors=" + fsize + ")");
     }
@@ -495,9 +495,7 @@ public class FlexReader extends FormatReader {
         q = Double.parseDouble(factor);
       }
       catch (NumberFormatException exc) {
-        if (debug) {
-          LogTools.println("Warning: invalid factor #" + i + ": " + factor);
-        }
+        warnDebug("invalid factor #" + i + ": " + factor);
       }
       if (i < factors[wellRow][wellCol].length) {
         factors[wellRow][wellCol][i] = q;
@@ -560,24 +558,24 @@ public class FlexReader extends FormatReader {
     // adjust dimensions if the number of IFDs doesn't match the number
     // of reported images
 
+    IFDList ifdList = ifds[wellRow][wellCol];
+    IFD ifd = ifdList.get(0);
+
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    if (getImageCount() * fieldCount != ifds[wellRow][wellCol].size()) {
-      core[0].imageCount = ifds[wellRow][wellCol].size() / fieldCount;
+    if (getImageCount() * fieldCount != ifdList.size()) {
+      core[0].imageCount = ifdList.size() / fieldCount;
       core[0].sizeZ = 1;
       core[0].sizeC = 1;
-      core[0].sizeT = ifds[wellRow][wellCol].size() / fieldCount;
+      core[0].sizeT = ifdList.size() / fieldCount;
     }
-
-    IFD ifd = ifds[wellRow][wellCol].get(0);
-
-    core[0].sizeX = (int) TiffTools.getImageWidth(ifd);
-    core[0].sizeY = (int) TiffTools.getImageLength(ifd);
+    core[0].sizeX = (int) ifd.getImageWidth();
+    core[0].sizeY = (int) ifd.getImageLength();
     core[0].dimensionOrder = "XYCZT";
     core[0].rgb = false;
     core[0].interleaved = false;
     core[0].indexed = false;
-    core[0].littleEndian = TiffTools.isLittleEndian(ifd);
-    core[0].pixelType = TiffTools.getPixelType(ifd);
+    core[0].littleEndian = ifd.isLittleEndian();
+    core[0].pixelType = ifd.getPixelType();
 
     int seriesCount = plateCount * wellCount * fieldCount;
     if (seriesCount > 1) {

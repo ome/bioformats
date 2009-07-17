@@ -31,9 +31,9 @@ import java.util.Vector;
 import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.TiffTools;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffCompression;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,
@@ -80,7 +80,7 @@ public class TiffReader extends BaseTiffReader {
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
-    String comment = TiffTools.getComment(ifds.get(0));
+    String comment = ifds.get(0).getComment();
 
     status("Checking comment style");
 
@@ -124,7 +124,7 @@ public class TiffReader extends BaseTiffReader {
   }
 
   private boolean checkCommentMetamorph(String comment) {
-    Object software = TiffTools.getIFDValue(ifds.get(0), TiffTools.SOFTWARE);
+    Object software = ifds.get(0).getIFDValue(IFD.SOFTWARE);
     String check = software instanceof String ? (String) software :
       software instanceof String[] ? ((String[]) software)[0] : null;
     return comment != null && software != null &&
@@ -152,7 +152,7 @@ public class TiffReader extends BaseTiffReader {
           value = Integer.parseInt(token.substring(eq + 1));
         }
         catch (NumberFormatException e) {
-          if (debug) trace(e);
+          traceDebug(e);
         }
       }
 
@@ -171,7 +171,7 @@ public class TiffReader extends BaseTiffReader {
       core[0].sizeC = c;
     }
     else if (ifds.size() == 1 && z * t > ifds.size() &&
-      TiffTools.getCompression(ifds.get(0)) == TiffTools.UNCOMPRESSED)
+      ifds.get(0).getCompression() == TiffCompression.UNCOMPRESSED)
     {
       // file is likely corrupt (missing end IFDs)
       //
@@ -190,8 +190,8 @@ public class TiffReader extends BaseTiffReader {
 
       int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
         FormatTools.getBytesPerPixel(getPixelType());
-      long[] stripOffsets = TiffTools.getStripOffsets(firstIFD);
-      long[] stripByteCounts = TiffTools.getStripByteCounts(firstIFD);
+      long[] stripOffsets = firstIFD.getStripOffsets();
+      long[] stripByteCounts = firstIFD.getStripByteCounts();
 
       long endOfFirstPlane = stripOffsets[stripOffsets.length - 1] +
         stripByteCounts[stripByteCounts.length - 1];
@@ -204,14 +204,14 @@ public class TiffReader extends BaseTiffReader {
       for (int i=1; i<totalPlanes; i++) {
         IFD ifd = new IFD(firstIFD);
         ifds.set(i, ifd);
-        long[] prevOffsets = TiffTools.getStripOffsets(ifds.get(i - 1));
+        long[] prevOffsets = ifds.get(i - 1).getStripOffsets();
         long[] offsets = new long[stripOffsets.length];
         offsets[0] = prevOffsets[prevOffsets.length - 1] +
           stripByteCounts[stripByteCounts.length - 1];
         for (int j=1; j<offsets.length; j++) {
           offsets[j] = offsets[j - 1] + stripByteCounts[j - 1];
         }
-        ifd.put(new Integer(TiffTools.STRIP_OFFSETS), offsets);
+        ifd.put(new Integer(IFD.STRIP_OFFSETS), offsets);
       }
 
       if (z * c * t == ifds.size()) {

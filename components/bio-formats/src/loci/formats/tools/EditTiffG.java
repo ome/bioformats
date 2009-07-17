@@ -136,9 +136,6 @@ public class EditTiffG extends JFrame implements ActionListener {
       file = f;
       setTitle(TITLE + " - " + id);
     }
-    catch (FormatException exc) {
-      showError(exc);
-    }
     catch (IOException exc) {
       showError(exc);
     }

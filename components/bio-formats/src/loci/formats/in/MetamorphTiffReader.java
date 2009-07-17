@@ -72,7 +72,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       return isThisType;
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     return false;
   }
@@ -80,7 +80,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
+    String comment = TiffTools.getComment(stream);
     return comment != null && comment.trim().startsWith("<MetaData>");
   }
 
@@ -97,7 +97,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
     for (int i=0; i<comments.length; i++) {
-      comments[i] = TiffTools.getComment(ifds.get(i));
+      comments[i] = ifds.get(i).getComment();
       XMLTools.parseXML(comments[i], handler);
     }
 

@@ -211,11 +211,12 @@ public class FV1000Reader extends FormatReader {
     IFDList ifds = TiffTools.getIFDs(plane);
     if (image >= ifds.size()) return buf;
 
-    if (getSizeY() != TiffTools.getImageLength(ifds.get(image))) {
-      TiffTools.getSamples(ifds.get(image), plane, buf, x,
+    IFD ifd = ifds.get(image);
+    if (getSizeY() != ifd.getImageLength()) {
+      TiffTools.getSamples(ifd, plane, buf, x,
         getIndex(coords[0], 0, coords[2]), w, 1);
     }
-    else TiffTools.getSamples(ifds.get(image), plane, buf, x, y, w, h);
+    else TiffTools.getSamples(ifd, plane, buf, x, y, w, h);
 
     plane.close();
     plane = null;
@@ -689,13 +690,13 @@ public class FV1000Reader extends FormatReader {
           ifds = TiffTools.getIFDs(getFile(previewName));
           core[1].imageCount += ifds.size();
         }
-        core[1].sizeX = (int) TiffTools.getImageWidth(ifds.get(0));
-        core[1].sizeY = (int) TiffTools.getImageLength(ifds.get(0));
+        core[1].sizeX = (int) ifds.get(0).getImageWidth();
+        core[1].sizeY = (int) ifds.get(0).getImageLength();
         core[1].sizeZ = 1;
         core[1].sizeT = 1;
         core[1].sizeC = core[1].imageCount;
         core[1].rgb = false;
-        int bits = TiffTools.getBitsPerSample(ifds.get(0))[0];
+        int bits = ifds.get(0).getBitsPerSample()[0];
         while ((bits % 8) != 0) bits++;
         switch (bits) {
           case 8:
@@ -955,7 +956,7 @@ public class FV1000Reader extends FormatReader {
       Location.mapFile("thumbnail.bmp", null);
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
 
     // initialize lookup table
@@ -975,7 +976,7 @@ public class FV1000Reader extends FormatReader {
         }
       }
       catch (IOException e) {
-        if (debug) trace(e);
+        traceDebug(e);
         lut = null;
         break;
       }

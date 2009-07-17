@@ -210,20 +210,7 @@ public class MetadataPane extends JPanel
       if (TiffTools.isValidHeader(header)) {
         // TIFF file
         in.close();
-        RandomAccessInputStream ras =
-          new RandomAccessInputStream(file.getPath());
-        IFD ifd = TiffTools.getFirstIFD(ras);
-        ras.close();
-        if (ifd == null) return false;
-        Object value = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-        String xml = null;
-        if (value instanceof String) xml = (String) value;
-        else if (value instanceof String[]) {
-          String[] s = (String[]) value;
-          StringBuffer sb = new StringBuffer();
-          for (int i=0; i<s.length; i++) sb.append(s[i]);
-          xml = sb.toString();
-        }
+        String xml = TiffTools.getComment(file.getPath());
         if (xml == null) return false;
         setOMEXML(xml);
       }

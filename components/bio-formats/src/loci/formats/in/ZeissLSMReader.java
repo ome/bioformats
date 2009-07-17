@@ -42,6 +42,8 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffCompression;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -324,14 +326,13 @@ public class ZeissLSMReader extends FormatReader {
       IFDList newIFDs = new IFDList();
       for (int i=0; i<ifds.size(); i++) {
         IFD ifd = ifds.get(i);
-        long subFileType = TiffTools.getIFDLongValue(ifd,
-          TiffTools.NEW_SUBFILE_TYPE, false, 0);
+        long subFileType = ifd.getIFDLongValue(IFD.NEW_SUBFILE_TYPE, false, 0);
 
         if (subFileType == 0) {
           // check that predictor is set to 1 if anything other
           // than LZW compression is used
-          if (TiffTools.getCompression(ifd) != TiffTools.LZW) {
-            ifd.put(new Integer(TiffTools.PREDICTOR), new Integer(1));
+          if (ifd.getCompression() != TiffCompression.LZW) {
+            ifd.put(new Integer(IFD.PREDICTOR), new Integer(1));
           }
           newIFDs.add(ifd);
         }
@@ -341,15 +342,13 @@ public class ZeissLSMReader extends FormatReader {
 
       // fix the offsets for > 4 GB files
       for (int i=1; i<ifds.size(); i++) {
-        long thisOffset =
-          TiffTools.getStripOffsets(ifds.get(i))[0] & 0xffffffffL;
-        long prevOffset = TiffTools.getStripOffsets(ifds.get(i - 1))[0];
+        long thisOffset = ifds.get(i).getStripOffsets()[0] & 0xffffffffL;
+        long prevOffset = ifds.get(i - 1).getStripOffsets()[0];
         if (prevOffset < 0) prevOffset &= 0xffffffffL;
 
         if (prevOffset > thisOffset) {
           thisOffset += 0xffffffffL;
-          ifds.get(i).put(new Integer(TiffTools.STRIP_OFFSETS),
-            new Long(thisOffset));
+          ifds.get(i).put(new Integer(IFD.STRIP_OFFSETS), new Long(thisOffset));
         }
       }
 
@@ -370,15 +369,15 @@ public class ZeissLSMReader extends FormatReader {
     in = new RandomAccessInputStream(lsmFilenames[series]);
     in.order(isLittleEndian());
 
-    int photo = TiffTools.getPhotometricInterpretation(ifd);
-    int samples = TiffTools.getSamplesPerPixel(ifd);
+    int photo = ifd.getPhotometricInterpretation();
+    int samples = ifd.getSamplesPerPixel();
 
-    core[series].sizeX = (int) TiffTools.getImageWidth(ifd);
-    core[series].sizeY = (int) TiffTools.getImageLength(ifd);
-    core[series].rgb = samples > 1 || photo == TiffTools.RGB;
+    core[series].sizeX = (int) ifd.getImageWidth();
+    core[series].sizeY = (int) ifd.getImageLength();
+    core[series].rgb = samples > 1 || photo == PhotoInterp.RGB;
     core[series].interleaved = false;
     core[series].sizeC = isRGB() ? samples : 1;
-    core[series].pixelType = TiffTools.getPixelType(ifd);
+    core[series].pixelType = ifd.getPixelType();
     core[series].imageCount = ifds.size();
     core[series].sizeZ = getImageCount();
     core[series].sizeT = 1;
@@ -403,7 +402,7 @@ public class ZeissLSMReader extends FormatReader {
     store.setImageInstrumentRef("Instrument:" + series, series);
 
     // get TIF_CZ_LSMINFO structure
-    short[] s = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
+    short[] s = ifd.getIFDShortArray(ZEISS_ID, true);
     byte[] cz = new byte[s.length];
     for (int i=0; i<s.length; i++) {
       cz[i] = (byte) s[i];
@@ -1481,7 +1480,7 @@ public class ZeissLSMReader extends FormatReader {
         read();
       }
       catch (IOException e) {
-        if (debug) trace(e);
+        traceDebug(e);
       }
     }
 

@@ -37,17 +37,11 @@ import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.common.Region;
 import loci.formats.codec.BitBuffer;
-import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
-import loci.formats.codec.JPEG2000Codec;
-import loci.formats.codec.JPEGCodec;
-import loci.formats.codec.LZWCodec;
-import loci.formats.codec.LuraWaveCodec;
-import loci.formats.codec.NikonCodec;
-import loci.formats.codec.PackbitsCodec;
-import loci.formats.codec.ZlibCodec;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -71,155 +65,6 @@ public final class TiffTools {
 
   /** The number of bytes in each IFD entry of a BigTIFF file. */
   public static final int BIG_TIFF_BYTES_PER_ENTRY = 20;
-
-  // non-IFD tags (for internal use)
-  public static final int LITTLE_ENDIAN = 0;
-  public static final int BIG_TIFF = 1;
-
-  // IFD types
-  public static final int BYTE = 1;
-  public static final int ASCII = 2;
-  public static final int SHORT = 3;
-  public static final int LONG = 4;
-  public static final int RATIONAL = 5;
-  public static final int SBYTE = 6;
-  public static final int UNDEFINED = 7;
-  public static final int SSHORT = 8;
-  public static final int SLONG = 9;
-  public static final int SRATIONAL = 10;
-  public static final int FLOAT = 11;
-  public static final int DOUBLE = 12;
-  public static final int LONG8 = 16;
-  public static final int SLONG8 = 17;
-  public static final int IFD8 = 18;
-
-  public static final int[] BYTES_PER_ELEMENT = {
-    -1, //  0: invalid type
-    1,  //  1: BYTE
-    1,  //  2: ASCII
-    2,  //  3: SHORT
-    4,  //  4: LONG
-    8,  //  5: RATIONAL
-    1,  //  6: SBYTE
-    1,  //  7: UNDEFINED
-    2,  //  8: SSHORT
-    4,  //  9: SLONG
-    8,  // 10: SRATIONAL
-    4,  // 11: FLOAT
-    8,  // 12: DOUBLE
-    -1, // 13: invalid type
-    -1, // 14: invalid type
-    -1, // 15: invalid type
-    8,  // 16: LONG8
-    8,  // 17: SLONG8
-    8   // 18: IFD8
-  };
-
-  // IFD tags
-  public static final int NEW_SUBFILE_TYPE = 254;
-  public static final int SUBFILE_TYPE = 255;
-  public static final int IMAGE_WIDTH = 256;
-  public static final int IMAGE_LENGTH = 257;
-  public static final int BITS_PER_SAMPLE = 258;
-  public static final int COMPRESSION = 259;
-  public static final int PHOTOMETRIC_INTERPRETATION = 262;
-  public static final int THRESHHOLDING = 263;
-  public static final int CELL_WIDTH = 264;
-  public static final int CELL_LENGTH = 265;
-  public static final int FILL_ORDER = 266;
-  public static final int DOCUMENT_NAME = 269;
-  public static final int IMAGE_DESCRIPTION = 270;
-  public static final int MAKE = 271;
-  public static final int MODEL = 272;
-  public static final int STRIP_OFFSETS = 273;
-  public static final int ORIENTATION = 274;
-  public static final int SAMPLES_PER_PIXEL = 277;
-  public static final int ROWS_PER_STRIP = 278;
-  public static final int STRIP_BYTE_COUNTS = 279;
-  public static final int MIN_SAMPLE_VALUE = 280;
-  public static final int MAX_SAMPLE_VALUE = 281;
-  public static final int X_RESOLUTION = 282;
-  public static final int Y_RESOLUTION = 283;
-  public static final int PLANAR_CONFIGURATION = 284;
-  public static final int PAGE_NAME = 285;
-  public static final int X_POSITION = 286;
-  public static final int Y_POSITION = 287;
-  public static final int FREE_OFFSETS = 288;
-  public static final int FREE_BYTE_COUNTS = 289;
-  public static final int GRAY_RESPONSE_UNIT = 290;
-  public static final int GRAY_RESPONSE_CURVE = 291;
-  public static final int T4_OPTIONS = 292;
-  public static final int T6_OPTIONS = 293;
-  public static final int RESOLUTION_UNIT = 296;
-  public static final int PAGE_NUMBER = 297;
-  public static final int TRANSFER_FUNCTION = 301;
-  public static final int SOFTWARE = 305;
-  public static final int DATE_TIME = 306;
-  public static final int ARTIST = 315;
-  public static final int HOST_COMPUTER = 316;
-  public static final int PREDICTOR = 317;
-  public static final int WHITE_POINT = 318;
-  public static final int PRIMARY_CHROMATICITIES = 319;
-  public static final int COLOR_MAP = 320;
-  public static final int HALFTONE_HINTS = 321;
-  public static final int TILE_WIDTH = 322;
-  public static final int TILE_LENGTH = 323;
-  public static final int TILE_OFFSETS = 324;
-  public static final int TILE_BYTE_COUNTS = 325;
-  public static final int INK_SET = 332;
-  public static final int INK_NAMES = 333;
-  public static final int NUMBER_OF_INKS = 334;
-  public static final int DOT_RANGE = 336;
-  public static final int TARGET_PRINTER = 337;
-  public static final int EXTRA_SAMPLES = 338;
-  public static final int SAMPLE_FORMAT = 339;
-  public static final int S_MIN_SAMPLE_VALUE = 340;
-  public static final int S_MAX_SAMPLE_VALUE = 341;
-  public static final int TRANSFER_RANGE = 342;
-  public static final int JPEG_TABLES = 347;
-  public static final int JPEG_PROC = 512;
-  public static final int JPEG_INTERCHANGE_FORMAT = 513;
-  public static final int JPEG_INTERCHANGE_FORMAT_LENGTH = 514;
-  public static final int JPEG_RESTART_INTERVAL = 515;
-  public static final int JPEG_LOSSLESS_PREDICTORS = 517;
-  public static final int JPEG_POINT_TRANSFORMS = 518;
-  public static final int JPEG_Q_TABLES = 519;
-  public static final int JPEG_DC_TABLES = 520;
-  public static final int JPEG_AC_TABLES = 521;
-  public static final int Y_CB_CR_COEFFICIENTS = 529;
-  public static final int Y_CB_CR_SUB_SAMPLING = 530;
-  public static final int Y_CB_CR_POSITIONING = 531;
-  public static final int REFERENCE_BLACK_WHITE = 532;
-  public static final int COPYRIGHT = 33432;
-  public static final int EXIF = 34665;
-
-  // compression types
-  public static final int UNCOMPRESSED = 1;
-  public static final int CCITT_1D = 2;
-  public static final int GROUP_3_FAX = 3;
-  public static final int GROUP_4_FAX = 4;
-  public static final int LZW = 5;
-  //public static final int JPEG = 6;
-  public static final int JPEG = 7;
-  public static final int PACK_BITS = 32773;
-  public static final int PROPRIETARY_DEFLATE = 32946;
-  public static final int DEFLATE = 8;
-  public static final int THUNDERSCAN = 32809;
-  public static final int JPEG_2000 = 33003;
-  public static final int ALT_JPEG = 33007;
-  public static final int NIKON = 34713;
-  public static final int LURAWAVE = 65535;
-
-  // photometric interpretation types
-  public static final int WHITE_IS_ZERO = 0;
-  public static final int BLACK_IS_ZERO = 1;
-  public static final int RGB = 2;
-  public static final int RGB_PALETTE = 3;
-  public static final int TRANSPARENCY_MASK = 4;
-  public static final int CMYK = 5;
-  public static final int Y_CB_CR = 6;
-  public static final int CIE_LAB = 8;
-  public static final int CFA_ARRAY = 32803;
 
   // TIFF header constants
   public static final int MAGIC_NUMBER = 42;
@@ -299,20 +144,6 @@ public final class TiffTools {
     return new Boolean(littleEndian);
   }
 
-  /** Gets whether this is a BigTIFF IFD. */
-  public static boolean isBigTiff(IFD ifd) throws FormatException {
-    return ((Boolean)
-      getIFDValue(ifd, BIG_TIFF, false, Boolean.class)).booleanValue();
-  }
-
-  /** Gets whether the TIFF information in the given IFD is little-endian. */
-  public static boolean isLittleEndian(IFD ifd)
-    throws FormatException
-  {
-    return ((Boolean)
-      getIFDValue(ifd, LITTLE_ENDIAN, true, Boolean.class)).booleanValue();
-  }
-
   // --------------------------- Reading TIFF files ---------------------------
 
   // -- IFD parsing methods --
@@ -346,7 +177,9 @@ public final class TiffTools {
       ifds.add(ifd);
       offset = bigTiff ? in.readLong() : (long) (in.readInt() & 0xffffffffL);
       if (offset <= 0 || offset >= in.length()) {
-        if (offset != 0) debug("getIFDs: invalid IFD offset: " + offset);
+        if (offset != 0) {
+          LogTools.debug("getIFDs: invalid IFD offset: " + offset);
+        }
         break;
       }
     }
@@ -369,7 +202,7 @@ public final class TiffTools {
     long offset = getFirstOffset(in, bigTiff);
 
     IFD ifd = getIFD(in, 0, offset, bigTiff);
-    ifd.put(new Integer(BIG_TIFF), new Boolean(bigTiff));
+    ifd.put(new Integer(IFD.BIG_TIFF), new Boolean(bigTiff));
     return ifd;
   }
 
@@ -463,14 +296,14 @@ public final class TiffTools {
     IFD ifd = new IFD();
 
     // save little-endian flag to internal LITTLE_ENDIAN tag
-    ifd.put(new Integer(LITTLE_ENDIAN), new Boolean(in.isLittleEndian()));
-    ifd.put(new Integer(BIG_TIFF), new Boolean(bigTiff));
+    ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(in.isLittleEndian()));
+    ifd.put(new Integer(IFD.BIG_TIFF), new Boolean(bigTiff));
 
     // read in directory entries for this IFD
-    debug("getIFDs: seeking IFD #" + ifdNum + " at " + offset);
+    LogTools.debug("getIFDs: seeking IFD #" + ifdNum + " at " + offset);
     in.seek(offset);
     long numEntries = bigTiff ? in.readLong() : in.readShort() & 0xffff;
-    debug("getIFDs: " + numEntries + " directory entries to read");
+    LogTools.debug("getIFDs: " + numEntries + " directory entries to read");
     if (numEntries == 0 || numEntries == 1) return ifd;
 
     int bytesPerEntry = bigTiff ? BIG_TIFF_BYTES_PER_ENTRY : BYTES_PER_ENTRY;
@@ -484,22 +317,18 @@ public final class TiffTools {
       // BigTIFF case is a slight hack
       int count = bigTiff ? (int) (in.readLong() & 0xffffffff) : in.readInt();
 
-      debug("getIFDs: read " + getIFDTagName(tag) +
-        " (type=" + getIFDTypeName(type) + "; count=" + count + ")");
+      LogTools.debug("getIFDs: read " + IFD.getIFDTagName(tag) +
+        " (type=" + IFD.getIFDTypeName(type) + "; count=" + count + ")");
       if (count < 0) return null; // invalid data
       Object value = null;
 
-      if (type < 0 || type >= BYTES_PER_ELEMENT.length) {
-        // invalid data
-        return null;
-      }
-
-      int bpe = BYTES_PER_ELEMENT[type];
+      int bpe = IFD.getIFDTypeLength(type);
+      if (bpe <= 0) return null; // invalid data
 
       if (count > threshhold / bpe) {
         long pointer = bigTiff ? in.readLong() :
           (long) (in.readInt() & 0xffffffffL);
-        debug("getIFDs: seeking to offset: " + pointer);
+        LogTools.debug("getIFDs: seeking to offset: " + pointer);
         in.seek(pointer);
       }
       long inputLen = in.length();
@@ -507,11 +336,11 @@ public final class TiffTools {
       if (count * bpe + inputPointer > inputLen) {
         int oldCount = count;
         count = (int) ((inputLen - inputPointer) / bpe);
-        debug("getIFDs: truncated " + (oldCount - count) +
+        LogTools.debug("getIFDs: truncated " + (oldCount - count) +
           " array elements for tag " + tag);
       }
 
-      if (type == BYTE) {
+      if (type == IFD.BYTE) {
         // 8-bit unsigned integer
         if (count == 1) value = new Short(in.readByte());
         else {
@@ -523,7 +352,7 @@ public final class TiffTools {
           value = shorts;
         }
       }
-      else if (type == ASCII) {
+      else if (type == IFD.ASCII) {
         // 8-bit byte that contain a 7-bit ASCII code;
         // the last byte must be NUL (binary zero)
         byte[] ascii = new byte[count];
@@ -553,7 +382,7 @@ public final class TiffTools {
         }
         value = strings == null ? (Object) s : strings;
       }
-      else if (type == SHORT) {
+      else if (type == IFD.SHORT) {
         // 16-bit (2-byte) unsigned integer
         if (count == 1) value = new Integer(in.readShort() & 0xffff);
         else {
@@ -564,7 +393,7 @@ public final class TiffTools {
           value = shorts;
         }
       }
-      else if (type == LONG) {
+      else if (type == IFD.LONG) {
         // 32-bit (4-byte) unsigned integer
         if (count == 1) value = new Long(in.readInt());
         else {
@@ -573,7 +402,7 @@ public final class TiffTools {
           value = longs;
         }
       }
-      else if (type == LONG8 || type == SLONG8 || type == IFD8) {
+      else if (type == IFD.LONG8 || type == IFD.SLONG8 || type == IFD.IFD8) {
         if (count == 1) value = new Long(in.readLong());
         else {
           long[] longs = new long[count];
@@ -581,7 +410,7 @@ public final class TiffTools {
           value = longs;
         }
       }
-      else if (type == RATIONAL || type == SRATIONAL) {
+      else if (type == IFD.RATIONAL || type == IFD.SRATIONAL) {
         // Two LONGs or SLONGs: the first represents the numerator
         // of a fraction; the second, the denominator
         if (count == 1) value = new TiffRational(in.readInt(), in.readInt());
@@ -593,7 +422,7 @@ public final class TiffTools {
           value = rationals;
         }
       }
-      else if (type == SBYTE || type == UNDEFINED) {
+      else if (type == IFD.SBYTE || type == IFD.UNDEFINED) {
         // SBYTE: An 8-bit signed (twos-complement) integer
         // UNDEFINED: An 8-bit byte that may contain anything,
         // depending on the definition of the field
@@ -604,7 +433,7 @@ public final class TiffTools {
           value = sbytes;
         }
       }
-      else if (type == SSHORT) {
+      else if (type == IFD.SSHORT) {
         // A 16-bit (2-byte) signed (twos-complement) integer
         if (count == 1) value = new Short(in.readShort());
         else {
@@ -613,7 +442,7 @@ public final class TiffTools {
           value = sshorts;
         }
       }
-      else if (type == SLONG) {
+      else if (type == IFD.SLONG) {
         // A 32-bit (4-byte) signed (twos-complement) integer
         if (count == 1) value = new Integer(in.readInt());
         else {
@@ -622,7 +451,7 @@ public final class TiffTools {
           value = slongs;
         }
       }
-      else if (type == FLOAT) {
+      else if (type == IFD.FLOAT) {
         // Single precision (4-byte) IEEE format
         if (count == 1) value = new Float(in.readFloat());
         else {
@@ -631,7 +460,7 @@ public final class TiffTools {
           value = floats;
         }
       }
-      else if (type == DOUBLE) {
+      else if (type == IFD.DOUBLE) {
         // Double precision (8-byte) IEEE format
         if (count == 1) value = new Double(in.readDouble());
         else {
@@ -649,322 +478,21 @@ public final class TiffTools {
     return ifd;
   }
 
-  /** Gets the name of the IFD tag encoded by the given number. */
-  public static String getIFDTagName(int tag) { return getFieldName(tag); }
-
-  /** Gets the name of the IFD type encoded by the given number. */
-  public static String getIFDTypeName(int type) { return getFieldName(type); }
-
-  /**
-   * This method uses reflection to scan the values of this class's
-   * static fields, returning the first matching field's name. It is
-   * probably not very efficient, and is mainly intended for debugging.
-   */
-  public static String getFieldName(int value) {
-    Field[] fields = TiffTools.class.getFields();
-    for (int i=0; i<fields.length; i++) {
-      try {
-        if (fields[i].getInt(null) == value) return fields[i].getName();
-      }
-      catch (IllegalAccessException exc) { }
-      catch (IllegalArgumentException exc) { }
-    }
-    return "" + value;
-  }
-
-  /** Gets the given directory entry value from the specified IFD. */
-  public static Object getIFDValue(IFD ifd, int tag) {
-    return ifd.get(new Integer(tag));
-  }
-
-  /**
-   * Gets the given directory entry value from the specified IFD,
-   * performing some error checking.
-   */
-  public static Object getIFDValue(IFD ifd,
-    int tag, boolean checkNull, Class checkClass) throws FormatException
-  {
-    Object value = ifd.get(new Integer(tag));
-    if (checkNull && value == null) {
-      throw new FormatException(
-        getIFDTagName(tag) + " directory entry not found");
-    }
-    if (checkClass != null && value != null &&
-      !checkClass.isInstance(value))
-    {
-      // wrap object in array of length 1, if appropriate
-      Class cType = checkClass.getComponentType();
-      Object array = null;
-      if (cType == value.getClass()) {
-        array = Array.newInstance(value.getClass(), 1);
-        Array.set(array, 0, value);
-      }
-      if (cType == boolean.class && value instanceof Boolean) {
-        array = Array.newInstance(boolean.class, 1);
-        Array.setBoolean(array, 0, ((Boolean) value).booleanValue());
-      }
-      else if (cType == byte.class && value instanceof Byte) {
-        array = Array.newInstance(byte.class, 1);
-        Array.setByte(array, 0, ((Byte) value).byteValue());
-      }
-      else if (cType == char.class && value instanceof Character) {
-        array = Array.newInstance(char.class, 1);
-        Array.setChar(array, 0, ((Character) value).charValue());
-      }
-      else if (cType == double.class && value instanceof Double) {
-        array = Array.newInstance(double.class, 1);
-        Array.setDouble(array, 0, ((Double) value).doubleValue());
-      }
-      else if (cType == float.class && value instanceof Float) {
-        array = Array.newInstance(float.class, 1);
-        Array.setFloat(array, 0, ((Float) value).floatValue());
-      }
-      else if (cType == int.class && value instanceof Integer) {
-        array = Array.newInstance(int.class, 1);
-        Array.setInt(array, 0, ((Integer) value).intValue());
-      }
-      else if (cType == long.class && value instanceof Long) {
-        array = Array.newInstance(long.class, 1);
-        Array.setLong(array, 0, ((Long) value).longValue());
-      }
-      else if (cType == short.class && value instanceof Short) {
-        array = Array.newInstance(short.class, 1);
-        Array.setShort(array, 0, ((Short) value).shortValue());
-      }
-      if (array != null) return array;
-
-      throw new FormatException(getIFDTagName(tag) +
-        " directory entry is the wrong type (got " +
-        value.getClass().getName() + ", expected " + checkClass.getName());
-    }
-    return value;
-  }
-
-  /**
-   * Gets the given directory entry value in long format from the
-   * specified IFD, performing some error checking.
-   */
-  public static long getIFDLongValue(IFD ifd, int tag,
-    boolean checkNull, long defaultValue) throws FormatException
-  {
-    long value = defaultValue;
-    Number number = (Number) getIFDValue(ifd, tag, checkNull, Number.class);
-    if (number != null) value = number.longValue();
-    return value;
-  }
-
-  /**
-   * Gets the given directory entry value in int format from the
-   * specified IFD, or -1 if the given directory does not exist.
-   */
-  public static int getIFDIntValue(IFD ifd, int tag) {
-    int value = -1;
-    try {
-      value = getIFDIntValue(ifd, tag, false, -1);
-    }
-    catch (FormatException exc) { }
-    return value;
-  }
-
-  /**
-   * Gets the given directory entry value in int format from the
-   * specified IFD, performing some error checking.
-   */
-  public static int getIFDIntValue(IFD ifd, int tag,
-    boolean checkNull, int defaultValue) throws FormatException
-  {
-    int value = defaultValue;
-    Number number = (Number) getIFDValue(ifd, tag, checkNull, Number.class);
-    if (number != null) value = number.intValue();
-    return value;
-  }
-
-  /**
-   * Gets the given directory entry value in rational format from the
-   * specified IFD, performing some error checking.
-   */
-  public static TiffRational getIFDRationalValue(IFD ifd,
-    int tag, boolean checkNull) throws FormatException
-  {
-    return (TiffRational) getIFDValue(ifd, tag, checkNull, TiffRational.class);
-  }
-
-  /**
-   * Gets the given directory entry value as a string from the
-   * specified IFD, performing some error checking.
-   */
-  public static String getIFDStringValue(IFD ifd,
-    int tag, boolean checkNull) throws FormatException
-  {
-    return (String) getIFDValue(ifd, tag, checkNull, String.class);
-  }
-
-  /**
-   * Gets the given directory entry values in long format
-   * from the specified IFD, performing some error checking.
-   */
-  public static long[] getIFDLongArray(IFD ifd,
-    int tag, boolean checkNull) throws FormatException
-  {
-    Object value = getIFDValue(ifd, tag, checkNull, null);
-    long[] results = null;
-    if (value instanceof long[]) results = (long[]) value;
-    else if (value instanceof Number) {
-      results = new long[] {((Number) value).longValue()};
-    }
-    else if (value instanceof Number[]) {
-      Number[] numbers = (Number[]) value;
-      results = new long[numbers.length];
-      for (int i=0; i<results.length; i++) results[i] = numbers[i].longValue();
-    }
-    else if (value instanceof int[]) { // convert int[] to long[]
-      int[] integers = (int[]) value;
-      results = new long[integers.length];
-      for (int i=0; i<integers.length; i++) results[i] = integers[i];
-    }
-    else if (value != null) {
-      throw new FormatException(getIFDTagName(tag) +
-        " directory entry is the wrong type (got " +
-        value.getClass().getName() +
-        ", expected Number, long[], Number[] or int[])");
-    }
-    return results;
-  }
-
-  /**
-   * Gets the given directory entry values in int format
-   * from the specified IFD, performing some error checking.
-   */
-  public static int[] getIFDIntArray(IFD ifd,
-    int tag, boolean checkNull) throws FormatException
-  {
-    Object value = getIFDValue(ifd, tag, checkNull, null);
-    int[] results = null;
-    if (value instanceof int[]) results = (int[]) value;
-    else if (value instanceof long[]) {
-      long[] v = (long[]) value;
-      results = new int[v.length];
-      for (int i=0; i<v.length; i++) {
-        results[i] = (int) v[i];
-      }
-    }
-    else if (value instanceof Number) {
-      results = new int[] {((Number) value).intValue()};
-    }
-    else if (value instanceof Number[]) {
-      Number[] numbers = (Number[]) value;
-      results = new int[numbers.length];
-      for (int i=0; i<results.length; i++) results[i] = numbers[i].intValue();
-    }
-    else if (value != null) {
-      throw new FormatException(getIFDTagName(tag) +
-        " directory entry is the wrong type (got " +
-        value.getClass().getName() + ", expected Number, int[] or Number[])");
-    }
-    return results;
-  }
-
-  /**
-   * Gets the given directory entry values in short format
-   * from the specified IFD, performing some error checking.
-   */
-  public static short[] getIFDShortArray(IFD ifd,
-    int tag, boolean checkNull) throws FormatException
-  {
-    Object value = getIFDValue(ifd, tag, checkNull, null);
-    short[] results = null;
-    if (value instanceof short[]) results = (short[]) value;
-    else if (value instanceof int[]) {
-      int[] v = (int[]) value;
-      results = new short[v.length];
-      for (int i=0; i<v.length; i++) {
-        results[i] = (short) v[i];
-      }
-    }
-    else if (value instanceof Number) {
-      results = new short[] {((Number) value).shortValue()};
-    }
-    else if (value instanceof Number[]) {
-      Number[] numbers = (Number[]) value;
-      results = new short[numbers.length];
-      for (int i=0; i<results.length; i++) {
-        results[i] = numbers[i].shortValue();
-      }
-    }
-    else if (value != null) {
-      throw new FormatException(getIFDTagName(tag) +
-        " directory entry is the wrong type (got " +
-        value.getClass().getName() +
-        ", expected Number, short[] or Number[])");
-    }
-    return results;
-  }
-
-  /** Convenience method for obtaining the ImageDescription from an IFD. */
-  public static String getComment(IFD ifd) {
-    if (ifd == null) return null;
-
-    // extract comment
-    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-    String comment = null;
-    if (o instanceof String) comment = (String) o;
-    else if (o instanceof String[]) {
-      String[] s = (String[]) o;
-      if (s.length > 0) comment = s[0];
-    }
-    else if (o != null) comment = o.toString();
-
-    if (comment != null) {
-      // sanitize line feeds
-      comment = comment.replaceAll("\r\n", "\n");
-      comment = comment.replaceAll("\r", "\n");
-    }
+  /** Convenience method for obtaining a file's first ImageDescription. */
+  public static String getComment(String id) throws IOException {
+    // read first IFD
+    RandomAccessInputStream in = new RandomAccessInputStream(id);
+    String comment = getComment(in);
+    in.close();
     return comment;
   }
 
-  /** Convenience method for obtaining a file's first ImageDescription. */
-  public static String getComment(String id)
-    throws FormatException, IOException
+  /** Convenience method for obtaining a stream's first ImageDescription. */
+  public static String getComment(RandomAccessInputStream in)
+    throws IOException
   {
-    // read first IFD
-    RandomAccessInputStream in = new RandomAccessInputStream(id);
     IFD ifd = TiffTools.getFirstIFD(in);
-    in.close();
-    return getComment(ifd);
-  }
-
-  /** Returns the width of an image tile. */
-  public static long getTileWidth(IFD ifd) throws FormatException {
-    long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, false, 0);
-    return tileWidth == 0 ? getImageWidth(ifd) : tileWidth;
-  }
-
-  /** Returns the length of an image tile. */
-  public static long getTileLength(IFD ifd)
-    throws FormatException
-  {
-    long tileLength = getIFDLongValue(ifd, TILE_LENGTH, false, 0);
-    return tileLength == 0 ? getRowsPerStrip(ifd)[0] : tileLength;
-  }
-
-  /** Returns the number of image tiles per row. */
-  public static long getTilesPerRow(IFD ifd) throws FormatException {
-    long tileWidth = getTileWidth(ifd);
-    long imageWidth = getImageWidth(ifd);
-    long nTiles = imageWidth / tileWidth;
-    if (nTiles * tileWidth < imageWidth) nTiles++;
-    return nTiles;
-  }
-
-  /** Returns the number of image tiles per column. */
-  public static long getTilesPerColumn(IFD ifd)
-    throws FormatException
-  {
-    long tileLength = getTileLength(ifd);
-    long imageLength = getImageLength(ifd);
-    long nTiles = imageLength / tileLength;
-    if (nTiles * tileLength < imageLength) nTiles++;
-    return nTiles;
+    return ifd.getComment();
   }
 
   // -- Image reading methods --
@@ -973,11 +501,11 @@ public final class TiffTools {
     RandomAccessInputStream in, int row, int col)
     throws FormatException, IOException
   {
-    int samplesPerPixel = getSamplesPerPixel(ifd);
-    if (getPlanarConfiguration(ifd) == 2) samplesPerPixel = 1;
-    int bpp = getBytesPerSample(ifd)[0];
-    int width = (int) getTileWidth(ifd);
-    int height = (int) getTileLength(ifd);
+    int samplesPerPixel = ifd.getSamplesPerPixel();
+    if (ifd.getPlanarConfiguration() == 2) samplesPerPixel = 1;
+    int bpp = ifd.getBytesPerSample()[0];
+    int width = (int) ifd.getTileWidth();
+    int height = (int) ifd.getTileLength();
     byte[] buf = new byte[width * height * samplesPerPixel * bpp];
 
     return getTile(ifd, in, buf, row, col);
@@ -987,26 +515,25 @@ public final class TiffTools {
     RandomAccessInputStream in, byte[] buf, int row, int col)
     throws FormatException, IOException
   {
-    byte[] jpegTable =
-      (byte[]) TiffTools.getIFDValue(ifd, JPEG_TABLES, false, null);
+    byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES, false, null);
 
     CodecOptions options = new CodecOptions();
     options.interleaved = true;
-    options.littleEndian = isLittleEndian(ifd);
+    options.littleEndian = ifd.isLittleEndian();
 
-    long tileWidth = getTileWidth(ifd);
-    long tileLength = getTileLength(ifd);
-    int samplesPerPixel = getSamplesPerPixel(ifd);
-    int planarConfig = getPlanarConfiguration(ifd);
-    int compression = getCompression(ifd);
+    long tileWidth = ifd.getTileWidth();
+    long tileLength = ifd.getTileLength();
+    int samplesPerPixel = ifd.getSamplesPerPixel();
+    int planarConfig = ifd.getPlanarConfiguration();
+    int compression = ifd.getCompression();
 
-    long numTileCols = getTilesPerRow(ifd);
+    long numTileCols = ifd.getTilesPerRow();
 
-    int pixel = getBytesPerSample(ifd)[0];
+    int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
 
-    long[] stripOffsets = getStripOffsets(ifd);
-    long[] stripByteCounts = getStripByteCounts(ifd);
+    long[] stripOffsets = ifd.getStripOffsets();
+    long[] stripByteCounts = ifd.getStripByteCounts();
 
     int tileNumber = (int) (row * numTileCols + col);
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
@@ -1020,11 +547,11 @@ public final class TiffTools {
       byte[] q = new byte[jpegTable.length + tile.length - 4];
       System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
       System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
-      tile = uncompress(q, compression, options);
+      tile = TiffCompression.uncompress(q, compression, options);
     }
-    else tile = uncompress(tile, compression, options);
+    else tile = TiffCompression.uncompress(tile, compression, options);
 
-    undifference(tile, ifd);
+    TiffCompression.undifference(tile, ifd);
     unpackBytes(buf, 0, tile, ifd);
 
     return buf;
@@ -1034,8 +561,8 @@ public final class TiffTools {
   public static byte[][] getSamples(IFD ifd,
     RandomAccessInputStream in) throws FormatException, IOException
   {
-    return getSamples(ifd, in, 0, 0, (int) getImageWidth(ifd),
-      (int) getImageLength(ifd));
+    return getSamples(ifd, in, 0, 0, (int) ifd.getImageWidth(),
+      (int) ifd.getImageLength());
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
@@ -1043,10 +570,10 @@ public final class TiffTools {
     RandomAccessInputStream in, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    int samplesPerPixel = getSamplesPerPixel(ifd);
-    int bpp = getBytesPerSample(ifd)[0];
-    long width = getImageWidth(ifd);
-    long length = getImageLength(ifd);
+    int samplesPerPixel = ifd.getSamplesPerPixel();
+    int bpp = ifd.getBytesPerSample()[0];
+    long width = ifd.getImageWidth();
+    long length = ifd.getImageLength();
     byte[] b = new byte[(int) (w * h * samplesPerPixel * bpp)];
 
     getSamples(ifd, in, b, x, y, w, h);
@@ -1061,8 +588,8 @@ public final class TiffTools {
   public static byte[] getSamples(IFD ifd,
     RandomAccessInputStream in, byte[] buf) throws FormatException, IOException
   {
-    long width = getImageWidth(ifd);
-    long length = getImageLength(ifd);
+    long width = ifd.getImageWidth();
+    long length = ifd.getImageLength();
     return getSamples(ifd, in, buf, 0, 0, width, length);
   }
 
@@ -1070,22 +597,22 @@ public final class TiffTools {
     RandomAccessInputStream in, byte[] buf, int x, int y,
     long width, long height) throws FormatException, IOException
   {
-    debug("parsing IFD entries");
+    LogTools.debug("parsing IFD entries");
 
     // get internal non-IFD entries
-    boolean littleEndian = isLittleEndian(ifd);
+    boolean littleEndian = ifd.isLittleEndian();
     in.order(littleEndian);
 
     // get relevant IFD entries
-    int samplesPerPixel = getSamplesPerPixel(ifd);
-    long tileWidth = getTileWidth(ifd);
-    long tileLength = getTileLength(ifd);
-    long numTileRows = getTilesPerColumn(ifd);
-    long numTileCols = getTilesPerRow(ifd);
+    int samplesPerPixel = ifd.getSamplesPerPixel();
+    long tileWidth = ifd.getTileWidth();
+    long tileLength = ifd.getTileLength();
+    long numTileRows = ifd.getTilesPerColumn();
+    long numTileCols = ifd.getTilesPerRow();
 
-    int planarConfig = getPlanarConfiguration(ifd);
+    int planarConfig = ifd.getPlanarConfiguration();
 
-    printIFD(ifd);
+    ifd.printIFD();
 
     if (width * height > Integer.MAX_VALUE) {
       throw new FormatException("Sorry, ImageWidth x ImageLength > " +
@@ -1095,10 +622,10 @@ public final class TiffTools {
     int numSamples = (int) (width * height);
 
     // read in image strips
-    debug("reading image data (samplesPerPixel=" +
+    LogTools.debug("reading image data (samplesPerPixel=" +
       samplesPerPixel + "; numSamples=" + numSamples + ")");
 
-    int pixel = getBytesPerSample(ifd)[0];
+    int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
     long nrows = numTileRows;
     if (planarConfig == 2) numTileRows *= samplesPerPixel;
@@ -1172,21 +699,21 @@ public final class TiffTools {
   {
     BitBuffer bb = new BitBuffer(bytes);
 
-    int numBytes = getBytesPerSample(ifd)[0];
+    int numBytes = ifd.getBytesPerSample()[0];
     int realBytes = numBytes;
     if (numBytes == 3) numBytes++;
 
-    int bitsPerSample = getBitsPerSample(ifd)[0];
-    boolean littleEndian = isLittleEndian(ifd);
-    int photoInterp = getPhotometricInterpretation(ifd);
+    int bitsPerSample = ifd.getBitsPerSample()[0];
+    boolean littleEndian = ifd.isLittleEndian();
+    int photoInterp = ifd.getPhotometricInterpretation();
 
     for (int j=0; j<bytes.length / realBytes; j++) {
       int value = bb.getBits(bitsPerSample);
 
-      if (photoInterp == WHITE_IS_ZERO) {
+      if (photoInterp == PhotoInterp.WHITE_IS_ZERO) {
         value = (int) (Math.pow(2, bitsPerSample) - 1 - value);
       }
-      else if (photoInterp == CMYK) {
+      else if (photoInterp == PhotoInterp.CMYK) {
         value = Integer.MAX_VALUE - value;
       }
 
@@ -1206,31 +733,32 @@ public final class TiffTools {
   public static void unpackBytes(byte[] samples, int startIndex,
     byte[] bytes, IFD ifd) throws FormatException
   {
-    if (getPlanarConfiguration(ifd) == 2) {
+    if (ifd.getPlanarConfiguration() == 2) {
       planarUnpack(samples, startIndex, bytes, ifd);
       return;
     }
 
-    int compression = getCompression(ifd);
-    int photoInterp = getPhotometricInterpretation(ifd);
-    if (compression == JPEG) photoInterp = RGB;
+    int compression = ifd.getCompression();
+    int photoInterp = ifd.getPhotometricInterpretation();
+    if (compression == TiffCompression.JPEG) photoInterp = PhotoInterp.RGB;
 
-    int[] bitsPerSample = getBitsPerSample(ifd);
+    int[] bitsPerSample = ifd.getBitsPerSample();
     int nChannels = bitsPerSample.length;
     int nSamples = samples.length / nChannels;
 
     int totalBits = 0;
     for (int i=0; i<nChannels; i++) totalBits += bitsPerSample[i];
     int sampleCount = 8 * bytes.length / totalBits;
-    if (photoInterp == Y_CB_CR) sampleCount *= 3;
+    if (photoInterp == PhotoInterp.Y_CB_CR) sampleCount *= 3;
 
-    debug("unpacking " + sampleCount + " samples (startIndex=" + startIndex +
-      "; totalBits=" + totalBits + "; numBytes=" + bytes.length + ")");
+    LogTools.debug("unpacking " + sampleCount + " samples (startIndex=" +
+      startIndex + "; totalBits=" + totalBits +
+      "; numBytes=" + bytes.length + ")");
 
-    long imageWidth = getImageWidth(ifd);
+    long imageWidth = ifd.getImageWidth();
 
     int bps0 = bitsPerSample[0];
-    int numBytes = getBytesPerSample(ifd)[0];
+    int numBytes = ifd.getBytesPerSample()[0];
 
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
@@ -1240,12 +768,12 @@ public final class TiffTools {
 
     int cw = 0, ch = 0;
 
-    boolean littleEndian = isLittleEndian(ifd);
+    boolean littleEndian = ifd.isLittleEndian();
 
-    int[] reference = getIFDIntArray(ifd, REFERENCE_BLACK_WHITE, false);
-    int[] subsampling = getIFDIntArray(ifd, Y_CB_CR_SUB_SAMPLING, false);
-    TiffRational[] coefficients =
-      (TiffRational[]) getIFDValue(ifd, Y_CB_CR_COEFFICIENTS);
+    int[] reference = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE, false);
+    int[] subsampling = ifd.getIFDIntArray(IFD.Y_CB_CR_SUB_SAMPLING, false);
+    TiffRational[] coefficients = (TiffRational[])
+      ifd.getIFDValue(IFD.Y_CB_CR_COEFFICIENTS);
 
     int count = 0;
 
@@ -1264,8 +792,8 @@ public final class TiffTools {
           // bits per sample is not a multiple of 8
 
           short s = 0;
-          if ((i == 0 && photoInterp == RGB_PALETTE) ||
-            (photoInterp != CFA_ARRAY && photoInterp != RGB_PALETTE))
+          if ((i == 0 && photoInterp == PhotoInterp.RGB_PALETTE) ||
+            (photoInterp != PhotoInterp.CFA_ARRAY && photoInterp != PhotoInterp.RGB_PALETTE))
           {
             s = (short) (bb.getBits(bps0) & 0xffff);
             if ((ndx % imageWidth) == imageWidth - 1 && bps0 < 8) {
@@ -1273,7 +801,7 @@ public final class TiffTools {
             }
           }
 
-          if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
+          if (photoInterp == PhotoInterp.WHITE_IS_ZERO || photoInterp == PhotoInterp.CMYK) {
             // invert colors
             s = (short) (Math.pow(2, bitsPerSample[0]) - 1 - s);
           }
@@ -1288,18 +816,18 @@ public final class TiffTools {
 
           if (outputIndex >= samples.length) break;
 
-          if (photoInterp != Y_CB_CR) {
+          if (photoInterp != PhotoInterp.Y_CB_CR) {
             samples[outputIndex] = (byte) (bytes[index] & 0xff);
           }
 
-          if (photoInterp == WHITE_IS_ZERO) { // invert color value
+          if (photoInterp == PhotoInterp.WHITE_IS_ZERO) { // invert color value
             samples[outputIndex] = (byte) (255 - samples[outputIndex]);
           }
-          else if (photoInterp == CMYK) {
+          else if (photoInterp == PhotoInterp.CMYK) {
             samples[outputIndex] =
               (byte) (Integer.MAX_VALUE - samples[outputIndex]);
           }
-          else if (photoInterp == Y_CB_CR) {
+          else if (photoInterp == PhotoInterp.Y_CB_CR) {
             if (i == bitsPerSample.length - 1) {
               float lumaRed = 0.299f;
               float lumaGreen = 0.587f;
@@ -1349,11 +877,11 @@ public final class TiffTools {
             index : bytes.length - numBytes;
           long v = DataTools.bytesToLong(bytes, offset, numBytes, littleEndian);
 
-          if (photoInterp == WHITE_IS_ZERO) { // invert color value
+          if (photoInterp == PhotoInterp.WHITE_IS_ZERO) { // invert color value
             long max = (long) Math.pow(2, numBytes * 8) - 1;
             v = max - v;
           }
-          else if (photoInterp == CMYK) {
+          else if (photoInterp == PhotoInterp.CMYK) {
             v = Integer.MAX_VALUE - v;
           }
           if (ndx*numBytes >= nSamples) break;
@@ -1364,112 +892,7 @@ public final class TiffTools {
     }
   }
 
-  // -- Decompression methods --
-
-  /** Returns true if the given decompression scheme is supported. */
-  public static boolean isSupportedDecompression(int decompression) {
-    return decompression == UNCOMPRESSED || decompression == LZW ||
-      decompression == JPEG || decompression == ALT_JPEG ||
-      decompression == JPEG_2000 || decompression == PACK_BITS ||
-      decompression == PROPRIETARY_DEFLATE || decompression == DEFLATE ||
-      decompression == NIKON || decompression == LURAWAVE;
-  }
-
-  /** Decodes a strip of data compressed with the given compression scheme. */
-  public static byte[] uncompress(byte[] input, int compression,
-    CodecOptions options)
-    throws FormatException, IOException
-  {
-    if (compression < 0) compression += 65536;
-
-    if (!isSupportedDecompression(compression)) {
-      String compressionName = getCodecName(compression);
-      String message = null;
-      if (compressionName != null) {
-        message =
-          "Sorry, " + compressionName + " compression mode is not supported";
-      }
-      else message = "Unknown Compression type (" + compression + ")";
-      throw new FormatException(message);
-    }
-
-    Codec codec = null;
-
-    if (compression == UNCOMPRESSED) return input;
-    else if (compression == LZW) codec = new LZWCodec();
-    else if (compression == JPEG || compression == ALT_JPEG) {
-      codec = new JPEGCodec();
-    }
-    else if (compression == JPEG_2000) codec = new JPEG2000Codec();
-    else if (compression == PACK_BITS) codec = new PackbitsCodec();
-    else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      codec = new ZlibCodec();
-    }
-    else if (compression == NIKON) codec = new NikonCodec();
-    else if (compression == LURAWAVE) codec = new LuraWaveCodec();
-    if (codec != null) return codec.decompress(input, options);
-    throw new FormatException("Unhandled compression (" + compression + ")");
-  }
-
-  /** Undoes in-place differencing according to the given predictor value. */
-  public static void undifference(byte[] input, IFD ifd)
-    throws FormatException
-  {
-    int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
-    if (predictor == 2) {
-      debug("reversing horizontal differencing");
-      int[] bitsPerSample = getBitsPerSample(ifd);
-      int len = bitsPerSample.length;
-      long width = getImageWidth(ifd);
-      boolean little = isLittleEndian(ifd);
-      int planarConfig = getPlanarConfiguration(ifd);
-
-      if (planarConfig == 2 || bitsPerSample[len - 1] == 0) len = 1;
-      if (bitsPerSample[0] <= 8) {
-        for (int b=0; b<input.length; b++) {
-          if (b / len % width == 0) continue;
-          input[b] += input[b - len];
-        }
-      }
-      else if (bitsPerSample[0] <= 16) {
-        short[] s = (short[]) DataTools.makeDataArray(input, 2, false, little);
-        for (int b=0; b<s.length; b++) {
-          if (b / len % width == 0) continue;
-          s[b] += s[b - len];
-        }
-        for (int i=0; i<s.length; i++) {
-          DataTools.unpackShort(s[i], input, i*2, little);
-        }
-      }
-    }
-    else if (predictor != 1) {
-      throw new FormatException("Unknown Predictor (" + predictor + ")");
-    }
-  }
-
   // --------------------------- Writing TIFF files ---------------------------
-
-  // -- IFD population methods --
-
-  /** Adds a directory entry to an IFD. */
-  public static void putIFDValue(IFD ifd, int tag, Object value) {
-    ifd.put(new Integer(tag), value);
-  }
-
-  /** Adds a directory entry of type BYTE to an IFD. */
-  public static void putIFDValue(IFD ifd, int tag, short value) {
-    putIFDValue(ifd, tag, new Short(value));
-  }
-
-  /** Adds a directory entry of type SHORT to an IFD. */
-  public static void putIFDValue(IFD ifd, int tag, int value) {
-    putIFDValue(ifd, tag, new Integer(value));
-  }
-
-  /** Adds a directory entry of type LONG to an IFD. */
-  public static void putIFDValue(IFD ifd, int tag, long value) {
-    putIFDValue(ifd, tag, new Long(value));
-  }
 
   // -- IFD writing methods --
 
@@ -1513,7 +936,7 @@ public final class TiffTools {
     DataTools.writeShort(ifdOut, tag, littleEndian); // tag
     if (value instanceof short[]) {
       short[] q = (short[]) value;
-      DataTools.writeShort(ifdOut, BYTE, littleEndian);
+      DataTools.writeShort(ifdOut, IFD.BYTE, littleEndian);
       if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
       else DataTools.writeInt(ifdOut, q.length, littleEndian);
       if (q.length <= dataLength) {
@@ -1533,7 +956,7 @@ public final class TiffTools {
     }
     else if (value instanceof String) { // ASCII
       char[] q = ((String) value).toCharArray();
-      DataTools.writeShort(ifdOut, ASCII, littleEndian); // type
+      DataTools.writeShort(ifdOut, IFD.ASCII, littleEndian); // type
       if (bigTiff) DataTools.writeLong(ifdOut, q.length + 1, littleEndian);
       else DataTools.writeInt(ifdOut, q.length + 1, littleEndian);
       if (q.length < dataLength) {
@@ -1555,7 +978,7 @@ public final class TiffTools {
     }
     else if (value instanceof int[]) { // SHORT
       int[] q = (int[]) value;
-      DataTools.writeShort(ifdOut, SHORT, littleEndian); // type
+      DataTools.writeShort(ifdOut, IFD.SHORT, littleEndian); // type
       if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
       else DataTools.writeInt(ifdOut, q.length, littleEndian);
       if (q.length <= dataLength / 2) {
@@ -1584,7 +1007,7 @@ public final class TiffTools {
       long[] q = (long[]) value;
 
       if (bigTiff) {
-        DataTools.writeShort(ifdOut, LONG8, littleEndian);
+        DataTools.writeShort(ifdOut, IFD.LONG8, littleEndian);
         DataTools.writeLong(ifdOut, q.length, littleEndian);
 
         if (q.length <= dataLength / 4) {
@@ -1603,7 +1026,7 @@ public final class TiffTools {
         }
       }
       else {
-        DataTools.writeShort(ifdOut, LONG, littleEndian);
+        DataTools.writeShort(ifdOut, IFD.LONG, littleEndian);
         DataTools.writeInt(ifdOut, q.length, littleEndian);
         if (q.length <= dataLength / 4) {
           for (int i=0; i<q.length; i++) {
@@ -1624,7 +1047,7 @@ public final class TiffTools {
     }
     else if (value instanceof TiffRational[]) { // RATIONAL
       TiffRational[] q = (TiffRational[]) value;
-      DataTools.writeShort(ifdOut, RATIONAL, littleEndian); // type
+      DataTools.writeShort(ifdOut, IFD.RATIONAL, littleEndian); // type
       if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
       else DataTools.writeInt(ifdOut, q.length, littleEndian);
       if (bigTiff && q.length == 1) {
@@ -1649,7 +1072,7 @@ public final class TiffTools {
     }
     else if (value instanceof float[]) { // FLOAT
       float[] q = (float[]) value;
-      DataTools.writeShort(ifdOut, FLOAT, littleEndian); // type
+      DataTools.writeShort(ifdOut, IFD.FLOAT, littleEndian); // type
       if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
       else DataTools.writeInt(ifdOut, q.length, littleEndian);
       if (q.length <= dataLength / 4) {
@@ -1675,7 +1098,7 @@ public final class TiffTools {
     }
     else if (value instanceof double[]) { // DOUBLE
       double[] q = (double[]) value;
-      DataTools.writeShort(ifdOut, DOUBLE, littleEndian); // type
+      DataTools.writeShort(ifdOut, IFD.DOUBLE, littleEndian); // type
       if (bigTiff) DataTools.writeLong(ifdOut, q.length, littleEndian);
       else DataTools.writeInt(ifdOut, q.length, littleEndian);
       if (bigTiff) {
@@ -1707,8 +1130,8 @@ public final class TiffTools {
   public static void overwriteIFDValue(String file,
     int ifd, int tag, Object value) throws FormatException, IOException
   {
-    debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag + "; value=" +
-      value + ")");
+    LogTools.debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag +
+      "; value=" + value + ")");
     byte[] header = new byte[4];
 
     RandomAccessInputStream raf = new RandomAccessInputStream(file);
@@ -1775,34 +1198,34 @@ public final class TiffTools {
           newOffset = DataTools.bytesToInt(bytes, 8, little);
         }
         boolean terminate = false;
-        debug("overwriteIFDValue:\n\told: (tag=" + oldTag + "; type=" +
-          oldType + "; count=" + oldCount + "; offset=" + oldOffset +
-          ");\n\tnew: (tag=" + newTag + "; type=" + newType + "; count=" +
-          newCount + "; offset=" + newOffset + ")");
+        LogTools.debug("overwriteIFDValue:\n\told: (tag=" + oldTag +
+          "; type=" + oldType + "; count=" + oldCount + "; offset=" +
+          oldOffset + ");\n\tnew: (tag=" + newTag + "; type=" + newType +
+          "; count=" + newCount + "; offset=" + newOffset + ")");
 
         // determine the best way to overwrite the old entry
         if (extra.length == 0) {
           // new entry is inline; if old entry wasn't, old data is orphaned
           // do not override new offset value since data is inline
-          debug("overwriteIFDValue: new entry is inline");
+          LogTools.debug("overwriteIFDValue: new entry is inline");
         }
         else if (oldOffset +
-          oldCount * BYTES_PER_ELEMENT[oldType] == raf.length())
+          oldCount * IFD.getIFDTypeLength(oldType) == raf.length())
         {
           // old entry was already at EOF; overwrite it
           newOffset = oldOffset;
           terminate = true;
-          debug("overwriteIFDValue: old entry is at EOF");
+          LogTools.debug("overwriteIFDValue: old entry is at EOF");
         }
         else if (newCount <= oldCount) {
           // new entry is as small or smaller than old entry; overwrite it
           newOffset = oldOffset;
-          debug("overwriteIFDValue: new entry is <= old entry");
+          LogTools.debug("overwriteIFDValue: new entry is <= old entry");
         }
         else {
           // old entry was elsewhere; append to EOF, orphaning old entry
           newOffset = raf.length();
-          debug("overwriteIFDValue: old entry will be orphaned");
+          LogTools.debug("overwriteIFDValue: old entry will be orphaned");
         }
 
         long filePointer = raf.getFilePointer();
@@ -1825,14 +1248,14 @@ public final class TiffTools {
       }
     }
 
-    throw new FormatException("Tag not found (" + getIFDTagName(tag) + ")");
+    throw new FormatException("Tag not found (" + IFD.getIFDTagName(tag) + ")");
   }
 
   /** Convenience method for overwriting a file's first ImageDescription. */
   public static void overwriteComment(String id, Object value)
     throws FormatException, IOException
   {
-    overwriteIFDValue(id, 0, TiffTools.IMAGE_DESCRIPTION, value);
+    overwriteIFDValue(id, 0, IFD.IMAGE_DESCRIPTION, value);
   }
 
   // -- Image writing methods --
@@ -1867,471 +1290,6 @@ public final class TiffTools {
       // write the offset to the first IFD for BigTIFF files
       DataTools.writeLong(out, 16, littleEndian);
     }
-  }
-
-  // -- Tag retrieval methods --
-
-  public static boolean isTiled(IFD ifd) throws FormatException {
-    Object offsets = ifd.get(new Integer(STRIP_OFFSETS));
-    Object tileWidth = ifd.get(new Integer(TILE_WIDTH));
-    return offsets == null || tileWidth != null;
-  }
-
-  /**
-   * Retrieves the image's width (TIFF tag ImageWidth) from a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the image's width.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   */
-  public static long getImageWidth(IFD ifd) throws FormatException {
-    long width = getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
-    if (width > Integer.MAX_VALUE) {
-      throw new FormatException("Sorry, ImageWidth > " + Integer.MAX_VALUE +
-        " is not supported.");
-    }
-    return width;
-  }
-
-  /**
-   * Retrieves the image's length (TIFF tag ImageLength) from a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the image's length.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   */
-  public static long getImageLength(IFD ifd) throws FormatException {
-    long length = getIFDLongValue(ifd, IMAGE_LENGTH, true, 0);
-    if (length > Integer.MAX_VALUE) {
-      throw new FormatException("Sorry, ImageLength > " + Integer.MAX_VALUE +
-        " is not supported.");
-    }
-    return length;
-  }
-
-  /**
-   * Retrieves the image's bits per sample (TIFF tag BitsPerSample) from a given
-   * TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the image's bits per sample. The length of the array is equal to
-   *   the number of samples per pixel.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getSamplesPerPixel(IFD)
-   */
-  public static int[] getBitsPerSample(IFD ifd) throws FormatException {
-    int[] bitsPerSample = getIFDIntArray(ifd, BITS_PER_SAMPLE, false);
-    if (bitsPerSample == null) bitsPerSample = new int[] {1};
-
-    int samplesPerPixel = getSamplesPerPixel(ifd);
-    if (bitsPerSample.length < samplesPerPixel) {
-      throw new FormatException("BitsPerSample length (" +
-        bitsPerSample.length + ") does not match SamplesPerPixel (" +
-        samplesPerPixel + ")");
-    }
-    int nSamples = (int) Math.min(bitsPerSample.length, samplesPerPixel);
-    for (int i=0; i<nSamples; i++) {
-      if (bitsPerSample[i] < 1) {
-        throw new FormatException("Illegal BitsPerSample (" +
-          bitsPerSample[i] + ")");
-      }
-    }
-
-    return bitsPerSample;
-  }
-
-  /**
-   * Retrieves the image's pixel type based on the BitsPerSample tag.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the pixel type.  This is one of:
-   *  <li>FormatTools.INT8</li>
-   *  <li>FormatTools.UINT8</li>
-   *  <li>FormatTools.INT16</li>
-   *  <li>FormatTools.UINT16</li>
-   *  <li>FormatTools.INT32</li>
-   *  <li>FormatTools.UINT32</li>
-   *  <li>FormatTools.FLOAT</li>
-   *  <li>FormatTools.DOUBLE</li>
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getBitsPerSample(IFD)
-   */
-  public static int getPixelType(IFD ifd) throws FormatException {
-    int bps = getBitsPerSample(ifd)[0];
-    int bitFormat = getIFDIntValue(ifd, SAMPLE_FORMAT);
-
-    while (bps % 8 != 0) bps++;
-    if (bps == 24) bps = 32;
-
-    if (bitFormat == 3) return FormatTools.FLOAT;
-    switch (bps) {
-      case 16:
-        return bitFormat == 2 ? FormatTools.INT16 : FormatTools.UINT16;
-      case 32:
-        return bitFormat == 2 ? FormatTools.INT32 : FormatTools.UINT32;
-      default:
-        return bitFormat == 2 ? FormatTools.INT8 : FormatTools.UINT8;
-    }
-  }
-
-  /**
-   * Retrieves the image's bytes per sample (derived from tag BitsPerSample)
-   * from a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the image's bytes per sample.  The length of the array is equal to
-   *   the number of samples per pixel.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getSamplesPerPixel(IFD)
-   * @see #getBitsPerSample(IFD)
-   */
-  public static int[] getBytesPerSample(IFD ifd) throws FormatException {
-    int[] bitsPerSample = getBitsPerSample(ifd);
-    int[] bps = new int[bitsPerSample.length];
-    for (int i=0; i<bitsPerSample.length; i++) {
-      bps[i] = bitsPerSample[i];
-      while ((bps[i] % 8) != 0) bps[i]++;
-      bps[i] /= 8;
-      if (bps[i] == 0) bps[i] = 1;
-    }
-    return bps;
-  }
-
-  /**
-   * Retrieves the number of samples per pixel for the image (TIFF tag
-   * SamplesPerPixel) from a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the number of samples per pixel.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   */
-  public static int getSamplesPerPixel(IFD ifd) throws FormatException {
-    return getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1);
-  }
-
-  /**
-   * Retrieves the image's compression type (TIFF tag Compression) from a
-   * given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the image's compression type. As of TIFF 6.0 this is one of:
-   * <ul>
-   *  <li>Uncompressed (1)</li>
-   *  <li>CCITT 1D (2)</li>
-   *  <li>Group 3 Fax (3)</li>
-   *  <li>Group 4 Fax (4)</li>
-   *  <li>LZW (5)</li>
-   *  <li>JPEG (6)</li>
-   *  <li>PackBits (32773)</li>
-   * </ul>
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   */
-  public static int getCompression(IFD ifd) throws FormatException {
-    return getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
-  }
-
-  /**
-   * Retrieves the image's photometric interpretation (TIFF tag
-   * PhotometricInterpretation) from a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the image's photometric interpretation. As of TIFF 6.0 this is one
-   * of:
-   * <ul>
-   *  <li>WhiteIsZero (0)</li>
-   *  <li>BlackIsZero (1)</li>
-   *  <li>RGB (2)</li>
-   *  <li>RGB Palette (3)</li>
-   *  <li>Transparency mask (4)</li>
-   *  <li>CMYK (5)</li>
-   *  <li>YbCbCr (6)</li>
-   *  <li>CIELab (8)</li>
-   * </ul>
-   *
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   */
-  public static int getPhotometricInterpretation(IFD ifd)
-    throws FormatException
-  {
-    int photoInterp = getIFDIntValue(ifd, PHOTOMETRIC_INTERPRETATION, true, 0);
-    if (photoInterp == TRANSPARENCY_MASK) {
-      throw new FormatException(
-        "Sorry, Transparency Mask PhotometricInterpretation is not supported");
-    }
-    else if (photoInterp == CIE_LAB) {
-      throw new FormatException(
-        "Sorry, CIELAB PhotometricInterpretation is not supported");
-    }
-    else if (photoInterp != WHITE_IS_ZERO &&
-      photoInterp != BLACK_IS_ZERO && photoInterp != RGB &&
-      photoInterp != RGB_PALETTE && photoInterp != CMYK &&
-      photoInterp != Y_CB_CR && photoInterp != CFA_ARRAY)
-    {
-      throw new FormatException("Unknown PhotometricInterpretation (" +
-        photoInterp + ")");
-    }
-    return photoInterp;
-  }
-
-  /**
-   * Retrieves the image's planar configuration (TIFF tag PlanarConfiguration)
-   * from a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the image's planar configuration.  As of TIFF 6.0 this is one of:
-   * <ul>
-   *  <li>Chunky (1)</li>
-   *  <li>Planar (2)</li>
-   * </ul>
-   *
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   */
-  public static int getPlanarConfiguration(IFD ifd) throws FormatException {
-    int planarConfig = getIFDIntValue(ifd, PLANAR_CONFIGURATION, false, 1);
-    if (planarConfig != 1 && planarConfig != 2) {
-      throw new FormatException("Sorry, PlanarConfiguration (" + planarConfig +
-        ") not supported.");
-    }
-    return planarConfig;
-  }
-
-  /**
-   * Retrieves the strip offsets for the image (TIFF tag StripOffsets) from a
-   * given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the strip offsets for the image. The length of the array is equal
-   *   to the number of strips per image. <i>StripsPerImage =
-   *   floor ((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getStripByteCounts(IFD)
-   * @see #getRowsPerStrip(IFD)
-   */
-  public static long[] getStripOffsets(IFD ifd) throws FormatException {
-    int tag = isTiled(ifd) ? TILE_OFFSETS : STRIP_OFFSETS;
-    long[] offsets = getIFDLongArray(ifd, tag, false);
-    if (isTiled(ifd) && offsets == null) {
-      offsets = getIFDLongArray(ifd, STRIP_OFFSETS, false);
-    }
-
-    if (isTiled(ifd)) return offsets;
-    long rowsPerStrip = getRowsPerStrip(ifd)[0];
-    long numStrips = (getImageLength(ifd) + rowsPerStrip - 1) / rowsPerStrip;
-    if (getPlanarConfiguration(ifd) == 2) numStrips *= getSamplesPerPixel(ifd);
-    if (offsets.length < numStrips) {
-      throw new FormatException("StripOffsets length (" + offsets.length +
-        ") does not match expected " + "number of strips (" + numStrips + ")");
-    }
-    return offsets;
-  }
-
-  /**
-   * Retrieves strip byte counts for the image (TIFF tag StripByteCounts) from
-   * a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the byte counts for each strip. The length of the array is equal
-   *   to the number of strips per image. <i>StripsPerImage =
-   *   floor((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getStripOffsets(IFD)
-   */
-  public static long[] getStripByteCounts(IFD ifd) throws FormatException {
-    int tag = isTiled(ifd) ? TILE_BYTE_COUNTS : STRIP_BYTE_COUNTS;
-    long[] byteCounts = getIFDLongArray(ifd, tag, false);
-    if (isTiled(ifd) && byteCounts == null) {
-      byteCounts = getIFDLongArray(ifd, STRIP_BYTE_COUNTS, false);
-    }
-    if (byteCounts == null) {
-      // technically speaking, this shouldn't happen (since TIFF writers are
-      // required to write the StripByteCounts tag), but we'll support it
-      // anyway
-
-      // don't rely on RowsPerStrip, since it's likely that if the file doesn't
-      // have the StripByteCounts tag, it also won't have the RowsPerStrip tag
-      long[] offsets = getStripOffsets(ifd);
-      int bytesPerSample = getBytesPerSample(ifd)[0];
-      long imageWidth = getImageWidth(ifd);
-      long imageLength = getImageLength(ifd);
-      byteCounts = new long[offsets.length];
-      int samples = getSamplesPerPixel(ifd);
-      long imageSize = imageWidth * imageLength * bytesPerSample *
-        (getPlanarConfiguration(ifd) == 2 ? 1 : samples);
-      long count = imageSize / byteCounts.length;
-      Arrays.fill(byteCounts, count);
-    }
-
-    long[] counts = new long[byteCounts.length];
-
-    if (getCompression(ifd) == LZW) {
-      for (int i=0; i<byteCounts.length; i++) {
-        counts[i] = byteCounts[i] * 2;
-      }
-    }
-    else System.arraycopy(byteCounts, 0, counts, 0, counts.length);
-
-    if (isTiled(ifd)) return counts;
-
-    long rowsPerStrip = getRowsPerStrip(ifd)[0];
-    long numStrips = (getImageLength(ifd) + rowsPerStrip - 1) / rowsPerStrip;
-    if (getPlanarConfiguration(ifd) == 2) numStrips *= getSamplesPerPixel(ifd);
-
-    if (counts.length < numStrips) {
-      throw new FormatException("StripByteCounts length (" + counts.length +
-        ") does not match expected " + "number of strips (" + numStrips + ")");
-    }
-
-    return counts;
-  }
-
-  /**
-   * Retrieves the number of rows per strip for image (TIFF tag RowsPerStrip)
-   * from a given TIFF IFD.
-   * @param ifd a TIFF IFD hashtable.
-   * @return the number of rows per strip.
-   * @throws FormatException if there is a problem parsing the IFD metadata.
-   */
-  public static long[] getRowsPerStrip(IFD ifd) throws FormatException {
-    if (isTiled(ifd)) {
-      return new long[] {getImageLength(ifd)};
-    }
-    long[] rowsPerStrip = getIFDLongArray(ifd, ROWS_PER_STRIP, false);
-    if (rowsPerStrip == null) {
-      // create a fake RowsPerStrip entry if one is not present
-      return new long[] {getImageLength(ifd)};
-    }
-
-    // rowsPerStrip should never be more than the total number of rows
-    long imageLength = getImageLength(ifd);
-    for (int i=0; i<rowsPerStrip.length; i++) {
-      rowsPerStrip[i] = (long) Math.min(rowsPerStrip[i], imageLength);
-    }
-
-    long rows = rowsPerStrip[0];
-    for (int i=1; i<rowsPerStrip.length; i++) {
-      if (rows != rowsPerStrip[i]) {
-        throw new FormatException(
-          "Sorry, non-uniform RowsPerStrip is not supported");
-      }
-    }
-
-    return rowsPerStrip;
-  }
-
-  // -- Compression methods --
-
-  /** Returns true if the given compression scheme is supported. */
-  public static boolean isSupportedCompression(int compression) {
-    return compression == UNCOMPRESSED || compression == LZW ||
-      compression == JPEG || compression == JPEG_2000;
-  }
-
-  /** Encodes a strip of data with the given compression scheme. */
-  public static byte[] compress(byte[] input, IFD ifd)
-    throws FormatException, IOException
-  {
-    int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
-
-    if (!isSupportedCompression(compression)) {
-      String compressionName = getCodecName(compression);
-      if (compressionName != null) {
-        throw new FormatException("Sorry, " + compressionName +
-          " compression mode is not supported");
-      }
-      else {
-        throw new FormatException(
-          "Unknown Compression type (" + compression + ")");
-      }
-    }
-
-    CodecOptions options = new CodecOptions();
-    options.width = (int) getImageWidth(ifd);
-    options.height = (int) getImageLength(ifd);
-    options.bitsPerSample = getBitsPerSample(ifd)[0];
-    options.channels = getSamplesPerPixel(ifd);
-    options.littleEndian = isLittleEndian(ifd);
-    options.interleaved = true;
-    options.signed = false;
-
-    if (compression == UNCOMPRESSED) return input;
-    else if (compression == LZW) {
-      return new LZWCodec().compress(input, options);
-    }
-    else if (compression == JPEG) {
-      return new JPEGCodec().compress(input, options);
-    }
-    else if (compression == JPEG_2000) {
-      return new JPEG2000Codec().compress(input, options);
-    }
-    throw new FormatException("Unhandled compression (" + compression + ")");
-  }
-
-  /** Performs in-place differencing according to the given predictor value. */
-  public static void difference(byte[] input, int[] bitsPerSample,
-    long width, int planarConfig, int predictor) throws FormatException
-  {
-    if (predictor == 2) {
-      debug("performing horizontal differencing");
-      for (int b=input.length-1; b>=0; b--) {
-        if (b / bitsPerSample.length % width == 0) continue;
-        input[b] -= input[b - bitsPerSample.length];
-      }
-    }
-    else if (predictor != 1) {
-      throw new FormatException("Unknown Predictor (" + predictor + ")");
-    }
-  }
-
-  // -- Debugging --
-
-  /** Prints a debugging message with current time. */
-  public static void debug(String message) {
-    int debugLevel = FormatHandler.debug ? FormatHandler.debugLevel : 0;
-    if (debugLevel >= 3) {
-      String msg = System.currentTimeMillis() + ": " + message;
-      if (debugLevel > 3) LogTools.trace(msg);
-      else LogTools.println(msg);
-    }
-  }
-
-  /** Prints the contents of an IFD. */
-  public static void printIFD(IFD ifd) {
-    StringBuffer sb = new StringBuffer();
-    sb.append("IFD directory entry values:");
-
-    Integer[] tags = (Integer[]) ifd.keySet().toArray(new Integer[0]);
-    for (int entry=0; entry<tags.length; entry++) {
-      sb.append("\n\t");
-      sb.append(getIFDTagName(tags[entry].intValue()));
-      sb.append("=");
-      Object value = ifd.get(tags[entry]);
-      if ((value instanceof Boolean) || (value instanceof Number) ||
-        (value instanceof String))
-      {
-        sb.append(value);
-      }
-      else {
-        // this is an array of primitive types, Strings, or TiffRationals
-        int nElements = Array.getLength(value);
-        for (int i=0; i<nElements; i++) {
-          sb.append(Array.get(value, i));
-          if (i < nElements - 1) sb.append(",");
-        }
-      }
-    }
-    debug(sb.toString());
-  }
-
-  /** Returns the name of the given codec. */
-  public static String getCodecName(int codec) {
-    switch (codec) {
-      case UNCOMPRESSED: return "Uncompressed";
-      case CCITT_1D: return "CCITT Group 3 1-Dimensional Modified Huffman";
-      case GROUP_3_FAX: return "CCITT T.4 bi-level encoding (Group 3 Fax)";
-      case GROUP_4_FAX: return "CCITT T.6 bi-level encoding (Group 4 Fax)";
-      case LZW: return "LZW";
-      case JPEG:
-      case ALT_JPEG:
-        return "JPEG";
-      case PACK_BITS: return "PackBits";
-      case DEFLATE:
-      case PROPRIETARY_DEFLATE:
-        return "Deflate (Zlib)";
-      case THUNDERSCAN: return "Thunderscan";
-      case JPEG_2000: return "JPEG-2000";
-      case NIKON: return "Nikon";
-      case LURAWAVE: return "LuraWave";
-    }
-    return null;
   }
 
 }

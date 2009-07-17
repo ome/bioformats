@@ -92,7 +92,7 @@ public class FluoviewReader extends BaseTiffReader {
       return isThisType;
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     return false;
   }
@@ -100,7 +100,7 @@ public class FluoviewReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     IFD ifd = TiffTools.getFirstIFD(stream);
-    String com = TiffTools.getComment(ifd);
+    String com = ifd.getComment();
     if (com == null) com = "";
     if (ifd == null) return false;
     return com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
@@ -141,7 +141,7 @@ public class FluoviewReader extends BaseTiffReader {
 
     int image = FormatTools.positionToRaster(lengths, realPos);
 
-    if (getSizeY() == TiffTools.getImageLength(ifds.get(0))) {
+    if (getSizeY() == ifds.get(0).getImageLength()) {
       TiffTools.getSamples(ifds.get(image), in, buf, x, y, w, h);
     }
     else {
@@ -172,7 +172,7 @@ public class FluoviewReader extends BaseTiffReader {
     // very similar, so it made more sense to merge the two formats into one
     // reader.
 
-    short[] s = TiffTools.getIFDShortArray(ifds.get(0), MMHEADER, true);
+    short[] s = ifds.get(0).getIFDShortArray(MMHEADER, true);
     byte[] mmheader = new byte[s.length];
     for (int i=0; i<mmheader.length; i++) {
       mmheader[i] = (byte) s[i];
@@ -242,7 +242,7 @@ public class FluoviewReader extends BaseTiffReader {
 
     double[][] stamps = new double[8][ifds.size()];
     for (int i=0; i<ifds.size(); i++) {
-      s = TiffTools.getIFDShortArray(ifds.get(i), MMSTAMP, true);
+      s = ifds.get(i).getIFDShortArray(MMSTAMP, true);
       byte[] stamp = new byte[s.length];
       for (int j=0; j<s.length; j++) {
         stamp[j] = (byte) s[j];
@@ -332,7 +332,7 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     // cut up the comment, if necessary
-    comment = TiffTools.getComment(ifds.get(0));
+    comment = ifds.get(0).getComment();
 
     gains = new String[getSizeC()];
     offsets = new String[getSizeC()];

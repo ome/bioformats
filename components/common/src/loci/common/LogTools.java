@@ -34,6 +34,13 @@ public final class LogTools {
 
   // -- Static fields --
 
+  /** Debugging flag. */
+  private static boolean debug = false;
+
+  /** Debugging level. 1=basic, 2=extended, 3=everything, 4=insane. */
+  private static int debugLevel = 1;
+
+  /** Log object to which logging statements will be issued. */
   private static Log log = new Log();
 
   // -- Constructor --
@@ -67,5 +74,75 @@ public final class LogTools {
   public static void trace(Throwable t) { log.trace(t); }
 
   public static void flush()  { log.flush(); }
+
+  // -- Utility methods - Debugging --
+
+  /** Toggles debug mode (more verbose output and error messages). */
+  public static void setDebug(boolean debug) {
+    LogTools.debug = debug;
+  }
+
+  /** Gets whether debug mode is currently enabled. */
+  public static boolean isDebug() { return debug; }
+
+  /**
+   * Toggles debug mode verbosity (which kinds of output are produced).
+   * @param debugLevel 1=basic, 2=extended, 3=everything, 4=insane.
+   */
+  public static void setDebugLevel(int debugLevel) {
+    LogTools.debugLevel = debugLevel;
+  }
+
+  /**
+   * Gets the current debugging level.
+   * @return debugging level: 1=basic, 2=extended, 3=everything, 4=insane.
+   */
+  public static int getDebugLevel() { return debugLevel; }
+
+  /**
+   * Issues a debugging statement if the debug flag is set.
+   * Convenience method for format handlers.
+   */
+  public static void debug(String s) { debug(s, 0); }
+
+  /**
+   * Issues a debugging statement if the debug flag is set and the
+   * debugging level is greater than or equal to the specified level.
+   */
+  public static void debug(String s, int minLevel) {
+    if (!debug || debugLevel < minLevel) return;
+
+    // get calling class
+    StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+    String className = null;
+    for (StackTraceElement ste : trace) {
+      String cn = ste.getClassName();
+      String mn = ste.getMethodName();
+      if (!cn.equals(LogTools.class.getName()) || !mn.equals("debug")) {
+        className = cn;
+        break;
+      }
+    }
+
+    // output message
+    String prefix = "loci.";
+    if (className.startsWith(prefix)) {
+      className = className.substring(className.lastIndexOf(".") + 1);
+    }
+    String msg = System.currentTimeMillis() + ": " + className + ": " + s;
+    if (debugLevel > 3) trace(msg);
+    else println(msg);
+  }
+
+  /** Issues a stack trace if the debug flag is set. */
+  public static void traceDebug(String s) { if (debug) trace(s); }
+
+  /** Issues a stack trace if the debug flag is set. */
+  public static void traceDebug(Throwable t) { if (debug) trace(t); }
+
+  /** Issues a warning if the debug flag is set. */
+  public static void warnDebug(String message) {
+    if (debug) println("Warning: " + message);
+  }
 
 }

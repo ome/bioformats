@@ -70,7 +70,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       return isThisType;
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
     }
     return false;
   }
@@ -78,7 +78,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     IFD ifd = TiffTools.getFirstIFD(stream);
-    String comment = TiffTools.getComment(ifd);
+    String comment = ifd.getComment();
     return comment != null && comment.indexOf("Improvision") != -1;
   }
 
@@ -100,7 +100,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     put("Improvision", "yes");
 
     // parse key/value pairs in the comment
-    String comment = TiffTools.getComment(ifds.get(0));
+    String comment = ifds.get(0).getComment();
     String tz = null, tc = null, tt = null;
     if (comment != null) {
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -151,7 +151,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     cNames = new String[getSizeC()];
 
     for (int i=0; i<ifds.size(); i++) {
-      comment = TiffTools.getComment(ifds.get(i));
+      comment = ifds.get(i).getComment();
       comment = comment.replaceAll("\r\n", "\n");
       comment = comment.replaceAll("\r", "\n");
       StringTokenizer st = new StringTokenizer(comment, "\n");

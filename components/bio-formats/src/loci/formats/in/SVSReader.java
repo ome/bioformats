@@ -34,6 +34,7 @@ import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.PhotoInterp;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
@@ -82,7 +83,7 @@ public class SVSReader extends BaseTiffReader {
       setSeries(i);
       core[i] = new CoreMetadata();
 
-      String comment = TiffTools.getComment(ifds.get(i));
+      String comment = ifds.get(i).getComment();
       StringTokenizer st = new StringTokenizer(comment, "\n");
       while (st.hasMoreTokens()) {
         StringTokenizer tokens = new StringTokenizer(st.nextToken(), "|");
@@ -104,20 +105,20 @@ public class SVSReader extends BaseTiffReader {
 
     for (int s=0; s<core.length; s++) {
       IFD ifd = ifds.get(s);
-      int p = TiffTools.getPhotometricInterpretation(ifd);
-      int samples = TiffTools.getSamplesPerPixel(ifd);
-      core[s].rgb = samples > 1 || p == TiffTools.RGB;
+      int p = ifd.getPhotometricInterpretation();
+      int samples = ifd.getSamplesPerPixel();
+      core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      core[s].sizeX = (int) TiffTools.getImageWidth(ifd);
-      core[s].sizeY = (int) TiffTools.getImageLength(ifd);
+      core[s].sizeX = (int) ifd.getImageWidth();
+      core[s].sizeY = (int) ifd.getImageLength();
       core[s].sizeZ = 1;
       core[s].sizeT = 1;
       core[s].sizeC = core[s].rgb ? samples : 1;
-      core[s].littleEndian = TiffTools.isLittleEndian(ifd);
-      core[s].indexed = p == TiffTools.RGB_PALETTE &&
+      core[s].littleEndian = ifd.isLittleEndian();
+      core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
       core[s].imageCount = 1;
-      core[s].pixelType = TiffTools.getPixelType(ifd);
+      core[s].pixelType = ifd.getPixelType();
       core[s].metadataComplete = true;
       core[s].interleaved = false;
       core[s].falseColor = false;

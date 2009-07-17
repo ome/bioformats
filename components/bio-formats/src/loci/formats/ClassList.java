@@ -109,19 +109,19 @@ public class ClassList {
       Class c = null;
       try { c = Class.forName(line); }
       catch (ClassNotFoundException exc) {
-        if (FormatHandler.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
       catch (NoClassDefFoundError err) {
-        if (FormatHandler.debug) LogTools.trace(err);
+        LogTools.traceDebug(err);
       }
       catch (ExceptionInInitializerError err) {
-        if (FormatHandler.debug) LogTools.trace(err);
+        LogTools.traceDebug(err);
       }
       catch (RuntimeException exc) {
         // HACK: workaround for bug in Apache Axis2
         String msg = exc.getMessage();
         if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-        if (FormatHandler.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
       if (c == null || (base != null && !base.isAssignableFrom(c))) {
         LogTools.println("Error: \"" + line + "\" is not valid.");

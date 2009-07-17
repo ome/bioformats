@@ -41,14 +41,6 @@ public abstract class FormatHandler implements IFormatHandler {
   /** Suffixes for supported compression types. */
   public static final String[] COMPRESSION_SUFFIXES = {"bz2", "gz"};
 
-  // -- Static fields --
-
-  /** Debugging flag. */
-  public static boolean debug = false;
-
-  /** Debugging level. 1=basic, 2=extended, 3=everything, 4=insane. */
-  public static int debugLevel = 1;
-
   // -- Fields --
 
   /** Name of this file format. */
@@ -99,26 +91,20 @@ public abstract class FormatHandler implements IFormatHandler {
     for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
   }
 
+  // -- Internal FormatHandler API methods - debugging --
+
   /**
    * Issues a debugging statement if the debug flag is set.
    * Convenience method for format handlers.
    */
-  protected void debug(String s) { debug(s, 0); }
+  protected void debug(String s) { LogTools.debug(s); }
 
   /**
    * Issues a debugging statement if the debug flag is set and the
    * debugging level is greater than or equal to the specified level.
    */
   protected void debug(String s, int minLevel) {
-    if (!debug || debugLevel < minLevel) return;
-    String name = getClass().getName();
-    String prefix = "loci.formats.";
-    if (name.startsWith(prefix)) {
-      name = name.substring(name.lastIndexOf(".") + 1);
-    }
-    String msg = System.currentTimeMillis() + ": " + name + ": " + s;
-    if (debugLevel > 3) LogTools.trace(msg);
-    else LogTools.println(msg);
+    LogTools.debug(s, minLevel);
   }
 
   /** Issues a stack trace. Convenience method for format handlers. */
@@ -126,6 +112,24 @@ public abstract class FormatHandler implements IFormatHandler {
 
   /** Issues a stack trace. Convenience method for format handlers. */
   protected void trace(Throwable t) { LogTools.trace(t); }
+
+  /**
+   * Issues a stack trace if debug flag is set.
+   * Convenience method for format handlers.
+   */
+  protected void traceDebug(String s) { LogTools.traceDebug(s); }
+
+  /**
+   * Issues a stack trace if debug flag is set.
+   * Convenience method for format handlers.
+   */
+  protected void traceDebug(Throwable t) { LogTools.traceDebug(t); }
+
+  /**
+   * Issues a warning if the debug flag is set.
+   * Convenience method for format handlers.
+   */
+  protected void warnDebug(String message) { LogTools.warnDebug(message); }
 
   // -- IFormatHandler API methods --
 
@@ -182,19 +186,6 @@ public abstract class FormatHandler implements IFormatHandler {
       }
     }
     return false;
-  }
-
-  /** Toggles debug mode (more verbose output and error messages). */
-  public static void setDebug(boolean debug) {
-    FormatHandler.debug = debug;
-  }
-
-  /**
-   * Toggles debug mode verbosity (which kinds of output are produced).
-   * @param debugLevel 1=basic, 2=extended, 3=everything.
-   */
-  public static void setDebugLevel(int debugLevel) {
-    FormatHandler.debugLevel = debugLevel;
   }
 
 }

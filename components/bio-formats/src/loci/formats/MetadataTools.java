@@ -118,7 +118,7 @@ public final class MetadataTools {
       if (ome != null) meta.setRoot(ome);
     }
     catch (ReflectException exc) {
-      if (FormatHandler.debug) LogTools.trace(exc);
+      LogTools.traceDebug(exc);
     }
     return meta;
   }
@@ -136,7 +136,7 @@ public final class MetadataTools {
       return r.exec("OMEXMLFactory.newOMENodeFromSource(xml)");
     }
     catch (ReflectException exc) {
-      if (FormatHandler.debug) LogTools.trace(exc);
+      LogTools.traceDebug(exc);
     }
     return null;
   }
@@ -186,7 +186,7 @@ public final class MetadataTools {
         return (String) r.exec("ome.getVersion()");
       }
       catch (ReflectException exc) {
-        if (FormatHandler.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
     }
     return null;
@@ -217,7 +217,7 @@ public final class MetadataTools {
           (Hashtable<String, String>) r.exec("omexml.getOriginalMetadata()");
       }
       catch (ReflectException exc) {
-        if (FormatHandler.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
     }
     return null;
@@ -235,7 +235,7 @@ public final class MetadataTools {
       return (String) r.exec("omexmlMeta.dumpXML()");
     }
     catch (ReflectException exc) {
-      if (FormatHandler.debug) LogTools.trace(exc);
+      LogTools.traceDebug(exc);
     }
     return null;
   }
@@ -400,7 +400,7 @@ public final class MetadataTools {
       r.exec("omexmlMeta.setOriginalMetadata(key, value)");
     }
     catch (ReflectException exc) {
-      if (FormatHandler.debug) LogTools.trace(exc);
+      LogTools.traceDebug(exc);
     }
   }
 
@@ -421,7 +421,7 @@ public final class MetadataTools {
       return (String) r.exec("omexmlMeta.getOriginalMetadata(key)");
     }
     catch (ReflectException exc) {
-      if (FormatHandler.debug) LogTools.trace(exc);
+      LogTools.traceDebug(exc);
     }
     return null;
   }
@@ -446,7 +446,7 @@ public final class MetadataTools {
         r.exec("omexmlMeta.createRoot(xml)");
       }
       catch (ReflectException exc) {
-        if (FormatHandler.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
     }
     else {
@@ -482,7 +482,7 @@ public final class MetadataTools {
       return c.isInstance(o);
     }
     catch (ReflectException exc) {
-      if (FormatHandler.debug) LogTools.trace(exc);
+      LogTools.traceDebug(exc);
     }
     return false;
   }

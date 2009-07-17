@@ -42,7 +42,6 @@ import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
-import loci.formats.FormatHandler;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
@@ -152,7 +151,7 @@ public class ImageInfo {
         else if (args[i].equals("-omexml")) omexml = true;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
-        else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
+        else if (args[i].equals("-debug")) LogTools.setDebug(true);
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
         else if (args[i].equals("-crop")) {
@@ -164,7 +163,7 @@ public class ImageInfo {
         }
         else if (args[i].equals("-level")) {
           try {
-            FormatHandler.setDebugLevel(Integer.parseInt(args[++i]));
+            LogTools.setDebugLevel(Integer.parseInt(args[++i]));
           }
           catch (NumberFormatException exc) { }
         }
@@ -743,8 +742,8 @@ public class ImageInfo {
       return true;
     }
 
-    if (FormatHandler.debug) {
-      LogTools.println("Debugging at level " + FormatHandler.debugLevel);
+    if (LogTools.isDebug()) {
+      LogTools.println("Debugging at level " + LogTools.getDebugLevel());
     }
 
     if (id == null) {

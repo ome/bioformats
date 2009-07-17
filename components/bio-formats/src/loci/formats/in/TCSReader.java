@@ -112,7 +112,7 @@ public class TCSReader extends FormatReader {
       return isThisType;
     }
     catch (IOException e) {
-      if (debug) trace(e);
+      traceDebug(e);
       return false;
     }
   }
@@ -128,9 +128,9 @@ public class TCSReader extends FormatReader {
     IFD ifd = TiffTools.getFirstIFD(stream);
 
     if (ifd == null) return false;
-    String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
+    String document = (String) ifd.get(new Integer(IFD.DOCUMENT_NAME));
     if (document == null) document = "";
-    Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
+    Object s = ifd.get(new Integer(IFD.SOFTWARE));
     String software = null;
     if (s instanceof String) software = (String) s;
     else if (s instanceof String[]) {
@@ -265,8 +265,7 @@ public class TCSReader extends FormatReader {
         if (checkSuffix(list[i], TiffReader.TIFF_SUFFIXES)) {
           String file = new Location(parent, list[i]).getAbsolutePath();
           IFD ifd = TiffTools.getIFDs(new RandomAccessInputStream(file)).get(0);
-          String software = (String)
-            TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
+          String software = ifd.getIFDStringValue(IFD.SOFTWARE, false);
           if (software != null && software.trim().equals("TCSNTV")) {
             tiffs.add(file);
           }
@@ -360,7 +359,7 @@ public class TCSReader extends FormatReader {
 
       for (int i=0; i<ifds.size(); i++) {
         String document = (String)
-          ifds.get(i).get(new Integer(TiffTools.DOCUMENT_NAME));
+          ifds.get(i).get(new Integer(IFD.DOCUMENT_NAME));
         if (document == null) continue;
 
         int index = document.indexOf("INDEX");
@@ -418,7 +417,7 @@ public class TCSReader extends FormatReader {
 
       // cut up comment
 
-      String comment = TiffTools.getComment(ifds.get(0));
+      String comment = ifds.get(0).getComment();
       if (comment != null && comment.startsWith("[")) {
         StringTokenizer st = new StringTokenizer(comment, "\n");
         while (st.hasMoreTokens()) {

@@ -82,35 +82,33 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     for (int i=1; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
-      long[] byteCounts = TiffTools.getIFDLongArray(ifd,
-        TiffTools.TILE_BYTE_COUNTS, false);
-      long[] offsets = TiffTools.getIFDLongArray(ifd,
-        TiffTools.TILE_OFFSETS, false);
+      long[] byteCounts = ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS, false);
+      long[] offsets = ifd.getIFDLongArray(IFD.TILE_OFFSETS, false);
 
       for (int j=0; j<byteCounts.length; j++) {
         IFD t = new IFD(ifd);
-        TiffTools.putIFDValue(t, TiffTools.TILE_BYTE_COUNTS, byteCounts[j]);
-        TiffTools.putIFDValue(t, TiffTools.TILE_OFFSETS, offsets[j]);
+        t.putIFDValue(IFD.TILE_BYTE_COUNTS, byteCounts[j]);
+        t.putIFDValue(IFD.TILE_OFFSETS, offsets[j]);
         tmp.add(t);
       }
     }
 
-    String comment = TiffTools.getComment(ifds.get(0));
+    String comment = ifds.get(0).getComment();
 
     status("Populating metadata");
 
     core[0].sizeC = ifds.size() - 1;
     core[0].sizeZ = tmp.size() / getSizeC();
     core[0].sizeT = 1;
-    core[0].sizeX = (int) TiffTools.getImageWidth(ifds.get(1));
-    core[0].sizeY = (int) TiffTools.getImageLength(ifds.get(1));
+    core[0].sizeX = (int) ifds.get(1).getImageWidth();
+    core[0].sizeY = (int) ifds.get(1).getImageLength();
 
     ifds = tmp;
     core[0].imageCount = getSizeC() * getSizeZ();
     core[0].dimensionOrder = "XYZCT";
     core[0].interleaved = false;
     core[0].rgb = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
-    core[0].pixelType = TiffTools.getPixelType(ifds.get(0));
+    core[0].pixelType = ifds.get(0).getPixelType();
 
     status("Parsing comment");
 

@@ -135,7 +135,7 @@ public class PrairieReader extends FormatReader {
     IFD ifd = TiffTools.getFirstIFD(stream);
     String software = null;
     try {
-      software = TiffTools.getIFDStringValue(ifd, TiffTools.SOFTWARE, true);
+      software = ifd.getIFDStringValue(IFD.SOFTWARE, true);
     }
     catch (FormatException exc) {
       return false; // no software tag, or tag is wrong type

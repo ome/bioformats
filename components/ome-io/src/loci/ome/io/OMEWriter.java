@@ -88,7 +88,7 @@ public class OMEWriter extends FormatWriter {
       r.exec("import org.openmicroscopy.is.PixelsFactory");
     }
     catch (ReflectException e) {
-      if (debug) LogTools.trace(e);
+      LogTools.traceDebug(e);
       hasOMEJava = false;
     }
     return r;
@@ -203,7 +203,7 @@ public class OMEWriter extends FormatWriter {
       }
     }
     catch (ReflectException e) {
-      if (debug) LogTools.trace(e);
+      LogTools.traceDebug(e);
     }
 
     int x = metadataRetrieve.getPixelsSizeX(series, 0).intValue();

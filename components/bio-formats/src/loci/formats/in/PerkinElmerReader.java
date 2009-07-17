@@ -320,7 +320,7 @@ public class PerkinElmerReader extends FormatReader {
           files[filesPt++] = workingDirPath + ls[i];
         }
         catch (NumberFormatException exc) {
-          if (debug) trace(exc);
+          traceDebug(exc);
         }
       }
     }
@@ -767,7 +767,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
     catch (NumberFormatException exc) {
-      if (debug) trace(exc);
+      traceDebug(exc);
     }
   }
 

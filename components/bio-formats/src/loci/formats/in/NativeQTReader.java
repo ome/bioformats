@@ -138,7 +138,7 @@ public class NativeQTReader extends FormatReader {
         return isThisType;
       }
       catch (IOException e) {
-        if (debug) trace(e);
+        traceDebug(e);
         return false;
       }
     }

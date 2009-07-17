@@ -472,7 +472,7 @@ public class MetadataPane extends JPanel
         if (i == 0) {
           // save OME-XML metadata to TIFF file's first IFD
           ifd = new IFD();
-          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
+          ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, xml);
         }
         // write plane to output file
 
@@ -529,7 +529,7 @@ public class MetadataPane extends JPanel
       if (i == 0) {
         // save OME-XML metadata to TIFF file's first IFD
         ifd = new IFD();
-        TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
+        ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, xml);
       }
       // write plane to output file
 
@@ -596,20 +596,8 @@ public class MetadataPane extends JPanel
     try {
       DocumentBuilder db = docFact.newDocumentBuilder();
 
-      //get TIFF comment without parsing out TiffData Elements
-      RandomAccessInputStream in =
-        new RandomAccessInputStream(currentFile.getPath());
-      IFD ifd = TiffTools.getFirstIFD(in);
-      in.close();  // extract comment
-      Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-      String comment = null;
-      if (o instanceof String) comment = (String) o;
-      else if (o instanceof String[]) {
-        String[] s = (String[]) o;
-        if (s.length > 0) comment = s[0];
-      }
-      else if (o != null) comment = o.toString();
-
+      // get TIFF comment without parsing out TiffData Elements
+      String comment = TiffTools.getComment(currentFile.getPath());
       ByteArrayInputStream bis = new ByteArrayInputStream(comment.getBytes());
       doc = db.parse((java.io.InputStream)bis);
       pixList = DOMUtil.findElementList("Pixels", doc);
@@ -738,25 +726,8 @@ public class MetadataPane extends JPanel
   }
 
   public boolean checkOMETiff(File file) {
-    IFD ifd;
-    try{
-      RandomAccessInputStream in = new RandomAccessInputStream(file.getPath());
-      ifd = TiffTools.getFirstIFD(in);
-      in.close();
-    }
-    catch (IOException exc) {
-      return false;
-    }
-
-    // extract comment
-    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-    String comment = null;
-    if (o instanceof String) comment = (String) o;
-    else if (o instanceof String[]) {
-      String[] s = (String[]) o;  if (s.length > 0) comment = s[0];
-    }
-    else if (o != null) comment = o.toString();
     try {
+      String comment = TiffTools.getComment(file.getPath());
       OMENode testNode = new OMENode(comment);
     }
     catch (IOException exc) {

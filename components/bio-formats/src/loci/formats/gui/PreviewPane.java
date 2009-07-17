@@ -230,7 +230,7 @@ public class PreviewPane extends JPanel
 
       try { reader.setId(id); }
       catch (FormatException exc) {
-        if (FormatReader.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
         boolean badFormat = exc.getMessage().startsWith("Unknown file format");
         iconText = "Unsupported " + (badFormat ? "format" : "file");
         formatText = resText = "";
@@ -239,7 +239,7 @@ public class PreviewPane extends JPanel
         continue;
       }
       catch (IOException exc) {
-        if (FormatReader.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
         iconText = "Unsupported file";
         formatText = resText = "";
         SwingUtilities.invokeLater(refresher);
@@ -270,10 +270,10 @@ public class PreviewPane extends JPanel
       BufferedImage thumb = null;
       try { thumb = reader.openThumbImage(ndx); }
       catch (FormatException exc) {
-        if (FormatReader.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
       catch (IOException exc) {
-        if (FormatReader.debug) LogTools.trace(exc);
+        LogTools.traceDebug(exc);
       }
       icon = new ImageIcon(thumb == null ? makeImage("Failed") : thumb);
       iconText = "";

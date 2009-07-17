@@ -38,6 +38,7 @@ import loci.formats.TiffTools;
 import loci.formats.gui.AWTTiffTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffCompression;
 
 /**
  * TiffWriter is the file format writer for TIFF files.
@@ -149,8 +150,8 @@ public class TiffWriter extends FormatWriter {
       FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0));
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
 
-    ifd.put(new Integer(TiffTools.IMAGE_WIDTH), new Integer(width));
-    ifd.put(new Integer(TiffTools.IMAGE_LENGTH), new Integer(height));
+    ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
+    ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
 
     int plane = width * height * c * bytesPerPixel;
 
@@ -164,7 +165,7 @@ public class TiffWriter extends FormatWriter {
     }
 
     // write the image
-    ifd.put(new Integer(TiffTools.LITTLE_ENDIAN), new Boolean(littleEndian));
+    ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(littleEndian));
     out.seek(out.length());
     lastOffset += AWTTiffTools.writeImage(buf, ifd, out, lastOffset, last,
       isBigTiff, getColorModel(), type, interleaved);
@@ -179,16 +180,16 @@ public class TiffWriter extends FormatWriter {
   {
     IFD h = new IFD();
     if (compression == null) compression = "";
-    Integer compressType = new Integer(TiffTools.UNCOMPRESSED);
-    if (compression.equals("LZW")) compressType = new Integer(TiffTools.LZW);
+    Integer compressType = new Integer(TiffCompression.UNCOMPRESSED);
+    if (compression.equals("LZW")) compressType = new Integer(TiffCompression.LZW);
 
     else if (compression.equals("J2K")) {
-      compressType = new Integer(TiffTools.JPEG_2000);
+      compressType = new Integer(TiffCompression.JPEG_2000);
     }
     else if (compression.equals("JPEG")) {
-      compressType = new Integer(TiffTools.JPEG);
+      compressType = new Integer(TiffCompression.JPEG);
     }
-    h.put(new Integer(TiffTools.COMPRESSION), compressType);
+    h.put(new Integer(IFD.COMPRESSION), compressType);
     saveBytes(buf, h, series, lastInSeries, last);
   }
 

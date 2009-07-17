@@ -42,6 +42,7 @@ import loci.formats.MetadataTools;
 import loci.formats.TiffTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.PhotoInterp;
 
 /**
  * OMETiffReader is the file format reader for
@@ -82,7 +83,7 @@ public class OMETiffReader extends FormatReader {
     if (!validHeader) return false;
     // look for OME-XML in first IFD's comment
     IFD ifd = TiffTools.getFirstIFD(stream);
-    String comment = TiffTools.getComment(ifd);
+    String comment = ifd.getComment();
     if (comment == null) return false;
     return comment.trim().endsWith("</OME>");
   }
@@ -150,7 +151,7 @@ public class OMETiffReader extends FormatReader {
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     IFD firstIFD = TiffTools.getFirstIFD(ras);
     ras.close();
-    String xml = TiffTools.getComment(firstIFD);
+    String xml = firstIFD.getComment();
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
 
     Hashtable originalMetadata = MetadataTools.getOriginalMetadata(meta);
@@ -263,7 +264,7 @@ public class OMETiffReader extends FormatReader {
         Integer samplesPerPixel = meta.getLogicalChannelSamplesPerPixel(i, 0);
         int samples = samplesPerPixel == null ?
           -1 : samplesPerPixel.intValue();
-        int tiffSamples = TiffTools.getSamplesPerPixel(firstIFD);
+        int tiffSamples = firstIFD.getSamplesPerPixel();
         if (samples != tiffSamples) {
           warn("SamplesPerPixel mismatch: OME=" + samples +
             ", TIFF=" + tiffSamples);
@@ -395,13 +396,13 @@ public class OMETiffReader extends FormatReader {
         info[s] = planes;
         try {
           core[s].sizeX = meta.getPixelsSizeX(i, p).intValue();
-          int tiffWidth = (int) TiffTools.getImageWidth(firstIFD);
+          int tiffWidth = (int) firstIFD.getImageWidth();
           if (core[s].sizeX != tiffWidth) {
             warn("SizeX mismatch: OME=" + core[s].sizeX +
               ", TIFF=" + tiffWidth);
           }
           core[s].sizeY = meta.getPixelsSizeY(i, p).intValue();
-          int tiffHeight = (int) TiffTools.getImageLength(firstIFD);
+          int tiffHeight = (int) firstIFD.getImageLength();
           if (core[s].sizeY != tiffHeight) {
             warn("SizeY mismatch: OME=" + core[s].sizeY +
               ", TIFF=" + tiffHeight);
@@ -411,7 +412,7 @@ public class OMETiffReader extends FormatReader {
           core[s].sizeT = meta.getPixelsSizeT(i, p).intValue();
           core[s].pixelType = FormatTools.pixelTypeFromString(
             meta.getPixelsPixelType(i, p));
-          int tiffPixelType = TiffTools.getPixelType(firstIFD);
+          int tiffPixelType = firstIFD.getPixelType();
           if (core[s].pixelType != tiffPixelType) {
             warn("PixelType mismatch: OME=" + core[s].pixelType +
               ", TIFF=" + tiffPixelType);
@@ -420,8 +421,8 @@ public class OMETiffReader extends FormatReader {
           core[s].imageCount = num;
           core[s].dimensionOrder = meta.getPixelsDimensionOrder(i, p);
           core[s].orderCertain = true;
-          int photo = TiffTools.getPhotometricInterpretation(firstIFD);
-          core[s].rgb = samples > 1 || photo == TiffTools.RGB;
+          int photo = firstIFD.getPhotometricInterpretation();
+          core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
           if (samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
             (core[s].sizeC % samples) != 0)
           {
@@ -446,14 +447,14 @@ public class OMETiffReader extends FormatReader {
           }
 
           core[s].littleEndian = !meta.getPixelsBigEndian(i, p).booleanValue();
-          boolean tiffLittleEndian = TiffTools.isLittleEndian(firstIFD);
+          boolean tiffLittleEndian = firstIFD.isLittleEndian();
           if (core[s].littleEndian != tiffLittleEndian) {
             warn("BigEndian mismatch: OME=" + !core[s].littleEndian +
               ", TIFF=" + !tiffLittleEndian);
           }
           core[s].interleaved = false;
-          core[s].indexed = photo == TiffTools.RGB_PALETTE &&
-            TiffTools.getIFDValue(firstIFD, TiffTools.COLOR_MAP) != null;
+          core[s].indexed = photo == PhotoInterp.RGB_PALETTE &&
+            firstIFD.getIFDValue(IFD.COLOR_MAP) != null;
           if (core[s].indexed) {
             core[s].rgb = false;
           }
