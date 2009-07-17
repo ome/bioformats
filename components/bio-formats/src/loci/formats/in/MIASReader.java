@@ -226,9 +226,7 @@ public class MIASReader extends FormatReader {
     }
     if (resultFile != null) files.add(resultFile);
     for (String file : analysisFiles) {
-      if (!file.endsWith(".tif") || !noPixels) {
-        files.add(file);
-      }
+      files.add(file);
     }
     return files.toArray(new String[0]);
   }
