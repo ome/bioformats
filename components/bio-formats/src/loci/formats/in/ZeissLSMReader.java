@@ -44,6 +44,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffParser;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -149,6 +150,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private String[] lsmFilenames;
   private Vector<IFDList> ifdsList;
+  private TiffParser tiffParser;
 
   private int nextLaser = 0, nextDetector = 0;
   private int nextFilter = 0, nextFilterSet = 0;
@@ -253,16 +255,17 @@ public class ZeissLSMReader extends FormatReader {
     in = new RandomAccessInputStream(lsmFilenames[getSeries()]);
     in.order(!isLittleEndian());
 
+    tiffParser = new TiffParser(in);
+
     IFDList ifds = ifdsList.get(getSeries());
 
     if (splitPlanes && getSizeC() > 1) {
       int plane = no / getSizeC();
       int c = no % getSizeC();
-      byte[][] samples =
-        TiffTools.getSamples(ifds.get(plane), in, x, y, w, h);
+      byte[][] samples = tiffParser.getSamples(ifds.get(plane), x, y, w, h);
       System.arraycopy(samples[c], 0, buf, 0, buf.length);
     }
-    else TiffTools.getSamples(ifds.get(no), in, buf, x, y, w, h);
+    else tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
     in.close();
     return buf;
   }
@@ -307,7 +310,7 @@ public class ZeissLSMReader extends FormatReader {
       core[i].littleEndian = s.read() == TiffTools.LITTLE;
       s.order(isLittleEndian());
       s.seek(0);
-      ifdsList.set(i, TiffTools.getIFDs(s));
+      ifdsList.set(i, new TiffParser(s).getIFDs());
       s.close();
     }
 
@@ -368,6 +371,8 @@ public class ZeissLSMReader extends FormatReader {
 
     in = new RandomAccessInputStream(lsmFilenames[series]);
     in.order(isLittleEndian());
+
+    tiffParser = new TiffParser(in);
 
     int photo = ifd.getPhotometricInterpretation();
     int samples = ifd.getSamplesPerPixel();

@@ -30,7 +30,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.DataTools;
-import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
 import loci.formats.CoreMetadata;

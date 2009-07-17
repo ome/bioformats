@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -52,9 +51,7 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import loci.common.RandomAccessInputStream;
 import loci.formats.TiffTools;
-import loci.formats.tiff.IFD;
 import ome.xml.DOMUtil;
 
 import org.openmicroscopy.xml.OMENode;

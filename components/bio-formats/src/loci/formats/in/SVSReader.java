@@ -24,17 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
@@ -66,7 +65,8 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    TiffTools.getSamples(ifds.get(series), in, buf, x, y, w, h);
+    TiffParser tp = new TiffParser(in);
+    tp.getSamples(ifds.get(series), buf, x, y, w, h);
     return buf;
   }
 

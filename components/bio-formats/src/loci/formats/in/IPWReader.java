@@ -40,12 +40,12 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.POITools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
 
 /**
  * IPWReader is the file format reader for Image-Pro Workspace (IPW) files.
@@ -90,7 +90,8 @@ public class IPWReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
-    IFDList ifds = TiffTools.getIFDs(stream);
+    TiffParser tp = new TiffParser(stream);
+    IFDList ifds = tp.getIFDs();
     IFD firstIFD = ifds.get(0);
     int[] bits = firstIFD.getBitsPerSample();
     if (bits[0] <= 8) {
@@ -120,8 +121,9 @@ public class IPWReader extends FormatReader {
 
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(no)));
-    IFDList ifds = TiffTools.getIFDs(stream);
-    TiffTools.getSamples(ifds.get(0), stream, buf, x, y, w, h);
+    TiffParser tp = new TiffParser(stream);
+    IFDList ifds = tp.getIFDs();
+    tp.getSamples(ifds.get(0), buf, x, y, w, h);
     stream.close();
     return buf;
   }
@@ -232,7 +234,8 @@ public class IPWReader extends FormatReader {
 
     RandomAccessInputStream stream =
       poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
-    IFDList ifds = TiffTools.getIFDs(stream);
+    TiffParser tp = new TiffParser(stream);
+    IFDList ifds = tp.getIFDs();
     stream.close();
 
     IFD firstIFD = ifds.get(0);

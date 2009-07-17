@@ -70,7 +70,6 @@ import javax.swing.table.TableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import loci.common.RandomAccessInputStream;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;

@@ -40,11 +40,11 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.POITools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffParser;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
@@ -208,15 +208,16 @@ public class FV1000Reader extends FormatReader {
     if (filename == null) return buf;
 
     RandomAccessInputStream plane = getFile(filename);
-    IFDList ifds = TiffTools.getIFDs(plane);
+    TiffParser tp = new TiffParser(plane);
+    IFDList ifds = tp.getIFDs();
     if (image >= ifds.size()) return buf;
 
     IFD ifd = ifds.get(image);
     if (getSizeY() != ifd.getImageLength()) {
-      TiffTools.getSamples(ifd, plane, buf, x,
+      tp.getSamples(ifd, buf, x,
         getIndex(coords[0], 0, coords[2]), w, 1);
     }
-    else TiffTools.getSamples(ifd, plane, buf, x, y, w, h);
+    else tp.getSamples(ifd, buf, x, y, w, h);
 
     plane.close();
     plane = null;
@@ -687,7 +688,8 @@ public class FV1000Reader extends FormatReader {
         IFDList ifds = null;
         for (int i=0; i<previewNames.size(); i++) {
           String previewName = (String) previewNames.get(i);
-          ifds = TiffTools.getIFDs(getFile(previewName));
+          TiffParser tp = new TiffParser(getFile(previewName));
+          ifds = tp.getIFDs();
           core[1].imageCount += ifds.size();
         }
         core[1].sizeX = (int) ifds.get(0).getImageWidth();

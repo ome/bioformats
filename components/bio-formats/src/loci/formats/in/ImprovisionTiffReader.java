@@ -24,16 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /**
  * ImprovisionTiffReader is the file format reader for
@@ -77,8 +76,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    IFD ifd = TiffTools.getFirstIFD(stream);
-    String comment = ifd.getComment();
+    TiffParser tp = new TiffParser(stream);
+    String comment = tp.getComment();
     return comment != null && comment.indexOf("Improvision") != -1;
   }
 

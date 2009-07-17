@@ -23,10 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.tiff;
 
-import java.io.IOException;
-
-import loci.common.DataTools;
-import loci.common.LogTools;
 import loci.formats.FormatException;
 
 /**

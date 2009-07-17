@@ -27,15 +27,12 @@ import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -117,7 +114,7 @@ public class GelReader extends BaseTiffReader {
 
   /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() throws FormatException, IOException {
-    ifds = TiffTools.getIFDs(in);
+    ifds = tiffParser.getIFDs();
     if (ifds.size() > 1) {
       IFDList tmpIFDs = ifds;
       ifds = new IFDList();

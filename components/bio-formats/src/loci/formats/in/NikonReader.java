@@ -26,15 +26,11 @@ package loci.formats.in;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
-import loci.formats.TiffTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.NikonCodecOptions;
@@ -42,6 +38,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -131,6 +128,8 @@ public class NikonReader extends BaseTiffReader {
   /** The original IFD. */
   protected IFD original;
 
+  protected TiffParser tiffParser;
+
   private TiffRational[] whiteBalance;
   private Object cfaPattern;
   private int[] curve;
@@ -170,7 +169,8 @@ public class NikonReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    IFD ifd = TiffTools.getFirstIFD(stream);
+    TiffParser tp = new TiffParser(stream);
+    IFD ifd = tp.getFirstIFD();
     return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
   }
 
@@ -318,7 +318,7 @@ public class NikonReader extends BaseTiffReader {
       IFDList tmpIFDs = new IFDList();
 
       for (int i=0; i<subIFDOffsets.length; i++) {
-        IFD ifd = TiffTools.getIFD(in, i, subIFDOffsets[i]);
+        IFD ifd = tiffParser.getIFD(i, subIFDOffsets[i]);
         if (ifd.getIFDIntValue(IFD.NEW_SUBFILE_TYPE) == 0) {
           tmpIFDs.add(ifd);
         }
@@ -348,7 +348,7 @@ public class NikonReader extends BaseTiffReader {
 
     int exif = original.getIFDIntValue(EXIF_IFD_POINTER);
     if (exif != -1) {
-      IFD exifIFD = TiffTools.getIFD(in, 0, exif);
+      IFD exifIFD = tiffParser.getIFD(0, exif);
 
       // put all the EXIF data in the metadata hashtable
 
@@ -371,7 +371,8 @@ public class NikonReader extends BaseTiffReader {
               System.arraycopy(b, extra, buf, 0, buf.length - extra);
               RandomAccessInputStream makerNote =
                 new RandomAccessInputStream(buf);
-              IFD note = TiffTools.getFirstIFD(makerNote);
+              TiffParser tp = new TiffParser(makerNote);
+              IFD note = tp.getFirstIFD();
               if (note != null) {
                 for (Integer nextKey : note.keySet()) {
                   int nextTag = nextKey.intValue();
@@ -450,9 +451,10 @@ public class NikonReader extends BaseTiffReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
+    tiffParser = new TiffParser(in);
     if (in.readShort() == 0x4949) in.order(true);
 
-    ifds = TiffTools.getIFDs(in);
+    ifds = tiffParser.getIFDs();
     if (ifds == null) throw new FormatException("No IFDs found");
 
     // look for the SubIFD tag
@@ -467,7 +469,7 @@ public class NikonReader extends BaseTiffReader {
       offset = (int) array[array.length - 1];
     }
 
-    IFD realImage = TiffTools.getIFD(in, 1, offset);
+    IFD realImage = tiffParser.getIFD(1, offset);
 
     original = ifds.get(0);
     ifds.set(0, realImage);

@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -39,12 +38,12 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffParser;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -71,6 +70,8 @@ public class TCSReader extends FormatReader {
 
   /** Helper readers. */
   private TiffReader[] tiffReaders;
+
+  private TiffParser tiffParser;
 
   private Vector seriesNames;
   private Vector containerNames;
@@ -125,7 +126,8 @@ public class TCSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     // check for Leica TCS IFD directory entries
-    IFD ifd = TiffTools.getFirstIFD(stream);
+    TiffParser tp = new TiffParser(stream);
+    IFD ifd = tp.getFirstIFD();
 
     if (ifd == null) return false;
     String document = (String) ifd.get(new Integer(IFD.DOCUMENT_NAME));
@@ -222,6 +224,7 @@ public class TCSReader extends FormatReader {
 
     if (checkSuffix(id, XML_SUFFIX)) {
       in = new RandomAccessInputStream(id);
+      tiffParser = new TiffParser(in);
       MetadataStore store = new DummyMetadata();
 
       // parse XML metadata
@@ -264,7 +267,10 @@ public class TCSReader extends FormatReader {
       for (int i=0; i<list.length; i++) {
         if (checkSuffix(list[i], TiffReader.TIFF_SUFFIXES)) {
           String file = new Location(parent, list[i]).getAbsolutePath();
-          IFD ifd = TiffTools.getIFDs(new RandomAccessInputStream(file)).get(0);
+          RandomAccessInputStream rais = new RandomAccessInputStream(file);
+          TiffParser tp = new TiffParser(rais);
+          IFD ifd = tp.getIFDs().get(0);
+          rais.close();
           String software = ifd.getIFDStringValue(IFD.SOFTWARE, false);
           if (software != null && software.trim().equals("TCSNTV")) {
             tiffs.add(file);
@@ -347,8 +353,9 @@ public class TCSReader extends FormatReader {
       tiffReaders[0].setMetadataStore(getMetadataStore());
       tiffReaders[0].setId(id);
       in = new RandomAccessInputStream(id);
+      tiffParser = new TiffParser(in);
 
-      IFDList ifds = TiffTools.getIFDs(in);
+      IFDList ifds = tiffParser.getIFDs();
 
       int[] ch = new int[ifds.size()];
       int[] idx = new int[ifds.size()];

@@ -25,7 +25,6 @@ package loci.formats.out;
 
 import java.awt.Image;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
@@ -39,6 +38,7 @@ import loci.formats.gui.AWTTiffTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffParser;
 
 /**
  * TiffWriter is the file format writer for TIFF files.
@@ -122,6 +122,7 @@ public class TiffWriter extends FormatWriter {
       out = new RandomAccessOutputStream(currentId);
 
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
+      TiffParser tiffParser = new TiffParser(tmp);
       if (tmp.length() == 0) {
         // write TIFF header
         TiffTools.writeHeader(out, littleEndian, isBigTiff);
@@ -129,12 +130,12 @@ public class TiffWriter extends FormatWriter {
       }
       else {
         // compute the offset to the last IFD
-        TiffTools.checkHeader(tmp);
-        long offset = TiffTools.getFirstOffset(tmp);
+        tiffParser.checkHeader();
+        long offset = tiffParser.getFirstOffset();
         long ifdMax = (tmp.length() - 8) / 18;
 
         for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
-          TiffTools.getIFD(tmp, ifdNum, offset);
+          tiffParser.getIFD(ifdNum, offset);
           offset = tmp.readInt();
           if (offset <= 0 || offset >= tmp.length()) break;
         }

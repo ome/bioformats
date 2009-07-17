@@ -27,10 +27,7 @@ Contributed 2009 by the Center for BioImage Informatics, UCSB
 
 package loci.formats.tools;
 
-import java.io.IOException;
-
 import loci.common.LogTools;
-import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;

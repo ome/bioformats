@@ -28,7 +28,6 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.LogTools;
 import loci.formats.FormatException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;

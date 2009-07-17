@@ -28,11 +28,22 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
-import loci.common.*;
-import loci.formats.*;
-import loci.formats.meta.*;
+
+import loci.common.DataTools;
+import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.common.XMLTools;
+import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffParser;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -143,11 +154,12 @@ public class FlexReader extends FormatReader {
     IFD ifd = ifds[wellRow][wellCol].get(imageNumber);
     RandomAccessInputStream s =
       new RandomAccessInputStream(flexFiles[wellRow][wellCol]);
+    TiffParser tp = new TiffParser(s);
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
 
     // expand pixel values with multiplication by factor[no]
-    byte[] bytes = TiffTools.getSamples(ifd, s, buf, x, y, w, h);
+    byte[] bytes = tp.getSamples(ifd, buf, x, y, w, h);
     s.close();
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -280,7 +292,8 @@ public class FlexReader extends FormatReader {
             wellNumber[currentWell][0] = row;
             wellNumber[currentWell][1] = col;
             s = new RandomAccessInputStream(flexFiles[row][col]);
-            ifds[row][col] = TiffTools.getIFDs(s);
+            TiffParser tp = new TiffParser(s);
+            ifds[row][col] = tp.getIFDs();
             s.close();
 
             parseFlexFile(currentWell, row, col, firstFile, store);
@@ -300,7 +313,8 @@ public class FlexReader extends FormatReader {
       wellNumber = new int[][] {getWell(flexFiles[0][0])};
 
       RandomAccessInputStream s = new RandomAccessInputStream(flexFiles[0][0]);
-      ifds[0][0] = TiffTools.getIFDs(s);
+      TiffParser tp = new TiffParser(s);
+      ifds[0][0] = tp.getIFDs();
       s.close();
 
       parseFlexFile(0, 0, 0, true, store);

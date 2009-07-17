@@ -30,7 +30,6 @@ import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
-import loci.formats.FormatHandler;
 
 /**
  * Utility class for parsing MDB database files.

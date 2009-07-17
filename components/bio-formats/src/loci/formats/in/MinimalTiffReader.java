@@ -24,17 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
-import loci.formats.TiffTools;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
 
 /**
  * MinimalTiffReader is the superclass for file format readers compatible with
@@ -55,6 +53,8 @@ public class MinimalTiffReader extends FormatReader {
 
   /** List of thumbnail IFDs for the current TIFF. */
   protected IFDList thumbnailIFDs;
+
+  protected TiffParser tiffParser;
 
   private int lastPlane;
 
@@ -77,7 +77,7 @@ public class MinimalTiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return TiffTools.isValidHeader(stream);
+    return new TiffParser(stream).isValidHeader();
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -177,7 +177,7 @@ public class MinimalTiffReader extends FormatReader {
 
     byte[] buf = new byte[getThumbSizeX() * getThumbSizeY() *
       getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType())];
-    return TiffTools.getSamples(thumbnailIFDs.get(no), in, buf);
+    return tiffParser.getSamples(thumbnailIFDs.get(no), buf);
   }
 
   /**
@@ -189,7 +189,7 @@ public class MinimalTiffReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastPlane = no;
-    TiffTools.getSamples(ifds.get(no), in, buf, x, y, w, h);
+    tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
     return buf;
   }
 
@@ -210,12 +210,13 @@ public class MinimalTiffReader extends FormatReader {
     debug("MinimalTiffReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    tiffParser = new TiffParser(in);
     boolean little = in.readShort() == 0x4949;
     in.order(little);
 
     status("Reading IFDs");
 
-    ifds = TiffTools.getIFDs(in);
+    ifds = tiffParser.getIFDs();
     if (ifds == null) throw new FormatException("No IFDs found");
 
     // separate thumbnail IFDs from regular IFDs

@@ -24,12 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -137,7 +135,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     long exifOffset = firstIFD.getIFDLongValue(IFD.EXIF, false, 0);
     if (exifOffset != 0) {
-      IFD exif = TiffTools.getIFD(in, 1, exifOffset);
+      IFD exif = tiffParser.getIFD(1, exifOffset);
 
       for (Integer key : exif.keySet()) {
         int k = key.intValue();

@@ -48,6 +48,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffParser;
 
 /**
  * LeicaReader is the file format reader for Leica files.
@@ -163,7 +164,8 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    IFD ifd = TiffTools.getFirstIFD(stream);
+    TiffParser tp = new TiffParser(stream);
+    IFD ifd = tp.getFirstIFD();
     return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
   }
 
@@ -266,7 +268,8 @@ public class LeicaReader extends FormatReader {
       if (ifds == null) super.initFile(id);
 
       in = new RandomAccessInputStream(id);
-      in.order(TiffTools.checkHeader(in).booleanValue());
+      TiffParser tp = new TiffParser(in);
+      in.order(tp.checkHeader().booleanValue());
 
       in.seek(0);
 
@@ -274,7 +277,7 @@ public class LeicaReader extends FormatReader {
 
       // open the TIFF file and look for the "Image Description" field
 
-      ifds = TiffTools.getIFDs(in);
+      ifds = tp.getIFDs();
       if (ifds == null) throw new FormatException("No IFDs found");
       String descr = ifds.get(0).getComment();
 

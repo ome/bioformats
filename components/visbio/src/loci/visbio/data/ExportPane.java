@@ -28,7 +28,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import javax.swing.JButton;

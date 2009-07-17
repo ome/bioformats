@@ -44,7 +44,6 @@ import javax.swing.border.EmptyBorder;
 
 import loci.common.LogTools;
 import loci.formats.FormatException;
-import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;

@@ -34,9 +34,9 @@ import loci.common.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.TiffParser;
 
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
@@ -80,7 +80,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    String comment = TiffTools.getComment(stream);
+    TiffParser tp = new TiffParser(stream);
+    String comment = tp.getComment();
     return comment != null && comment.trim().startsWith("<MetaData>");
   }
 

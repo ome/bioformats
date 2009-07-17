@@ -39,10 +39,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
 
 /**
  * OMETiffReader is the file format reader for
@@ -79,10 +79,11 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    boolean validHeader = TiffTools.isValidHeader(stream);
+    TiffParser tp = new TiffParser(stream);
+    boolean validHeader = tp.isValidHeader();
     if (!validHeader) return false;
     // look for OME-XML in first IFD's comment
-    IFD ifd = TiffTools.getFirstIFD(stream);
+    IFD ifd = tp.getFirstIFD();
     String comment = ifd.getComment();
     if (comment == null) return false;
     return comment.trim().endsWith("</OME>");
@@ -149,7 +150,8 @@ public class OMETiffReader extends FormatReader {
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
-    IFD firstIFD = TiffTools.getFirstIFD(ras);
+    TiffParser tp = new TiffParser(ras);
+    IFD firstIFD = tp.getFirstIFD();
     ras.close();
     String xml = firstIFD.getComment();
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);

@@ -25,7 +25,6 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -37,10 +36,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.POITools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
@@ -85,12 +84,13 @@ public class PCIReader extends FormatReader {
 
     RandomAccessInputStream s =
       poi.getDocumentStream((String) imageFiles.get(no));
+    TiffParser tp = new TiffParser(s);
 
     // can be raw pixel data or an embedded TIFF file
 
-    if (TiffTools.isValidHeader(s)) {
-      IFD ifd = TiffTools.getFirstIFD(s);
-      TiffTools.getSamples(ifd, s, buf);
+    if (tp.isValidHeader()) {
+      IFD ifd = tp.getFirstIFD();
+      tp.getSamples(ifd, buf);
     }
     else {
       s.seek(0);

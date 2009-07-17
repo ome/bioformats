@@ -24,16 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
@@ -74,7 +73,8 @@ public class NikonTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    IFD ifd = TiffTools.getFirstIFD(stream);
+    TiffParser tp = new TiffParser(stream);
+    IFD ifd = tp.getFirstIFD();
     String software = (String) ifd.get(new Integer(IFD.SOFTWARE));
     return software != null && software.indexOf("EZ-C1") != -1;
   }

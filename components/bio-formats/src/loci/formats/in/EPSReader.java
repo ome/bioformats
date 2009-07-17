@@ -24,20 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffParser;
 
 /**
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
@@ -189,7 +187,8 @@ public class EPSReader extends FormatReader {
       in.read(b);
 
       in = new RandomAccessInputStream(b);
-      ifds = TiffTools.getIFDs(in);
+      TiffParser tp = new TiffParser(in);
+      ifds = tp.getIFDs();
 
       IFD firstIFD = ifds.get(0);
 

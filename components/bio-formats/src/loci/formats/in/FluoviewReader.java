@@ -24,17 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /**
  * FluoviewReader is the file format reader for
@@ -99,7 +98,8 @@ public class FluoviewReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    IFD ifd = TiffTools.getFirstIFD(stream);
+    TiffParser tp = new TiffParser(stream);
+    IFD ifd = tp.getFirstIFD();
     String com = ifd.getComment();
     if (com == null) com = "";
     if (ifd == null) return false;
@@ -142,11 +142,11 @@ public class FluoviewReader extends BaseTiffReader {
     int image = FormatTools.positionToRaster(lengths, realPos);
 
     if (getSizeY() == ifds.get(0).getImageLength()) {
-      TiffTools.getSamples(ifds.get(image), in, buf, x, y, w, h);
+      tiffParser.getSamples(ifds.get(image), buf, x, y, w, h);
     }
     else {
       FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-      TiffTools.getSamples(ifds.get(0), in, buf, x, image, w, 1);
+      tiffParser.getSamples(ifds.get(0), buf, x, image, w, 1);
     }
 
     return buf;

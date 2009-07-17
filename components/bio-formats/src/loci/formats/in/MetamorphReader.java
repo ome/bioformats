@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -40,15 +39,15 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffIFDEntry;
-import loci.formats.TiffTools;
-import loci.formats.UnknownTagException;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffIFDEntry;
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+import loci.formats.tiff.UnknownTagException;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -446,7 +445,8 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       RandomAccessInputStream s = new RandomAccessInputStream(stks[0][0]);
-      IFD ifd = TiffTools.getFirstIFD(s);
+      TiffParser tp = new TiffParser(s);
+      IFD ifd = tp.getFirstIFD();
       s.close();
       core[0].sizeX = (int) ifd.getImageWidth();
       core[0].sizeY = (int) ifd.getImageLength();
@@ -506,7 +506,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (stks != null) {
         RandomAccessInputStream stream =
           new RandomAccessInputStream(stks[i][0]);
-        IFD ifd = TiffTools.getFirstIFD(stream);
+        TiffParser tp = new TiffParser(stream);
+        IFD ifd = tp.getFirstIFD();
         stream.close();
         comment = ifd.getComment();
       }
@@ -631,7 +632,8 @@ public class MetamorphReader extends BaseTiffReader {
             lastFile = fileIndex;
             RandomAccessInputStream stream =
               new RandomAccessInputStream(stks[i][lastFile]);
-            lastIFD = TiffTools.getFirstIFD(stream);
+            TiffParser tp = new TiffParser(stream);
+            lastIFD = tp.getFirstIFD();
             stream.close();
           }
           comment = lastIFD.getComment();
@@ -697,9 +699,9 @@ public class MetamorphReader extends BaseTiffReader {
     try {
       // Now that the base TIFF standard metadata has been parsed, we need to
       // parse out the STK metadata from the UIC4TAG.
-      TiffIFDEntry uic1tagEntry = TiffTools.getFirstIFDEntry(in, UIC1TAG);
-      TiffIFDEntry uic2tagEntry = TiffTools.getFirstIFDEntry(in, UIC2TAG);
-      TiffIFDEntry uic4tagEntry = TiffTools.getFirstIFDEntry(in, UIC4TAG);
+      TiffIFDEntry uic1tagEntry = tiffParser.getFirstIFDEntry(UIC1TAG);
+      TiffIFDEntry uic2tagEntry = tiffParser.getFirstIFDEntry(UIC2TAG);
+      TiffIFDEntry uic4tagEntry = tiffParser.getFirstIFDEntry(UIC4TAG);
       mmPlanes = uic4tagEntry.getValueCount();
       parseUIC2Tags(uic2tagEntry.getValueOffset());
       parseUIC4Tags(uic4tagEntry.getValueOffset());
