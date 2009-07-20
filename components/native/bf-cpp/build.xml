@@ -47,9 +47,9 @@ your Jace installation directory. E.g.:
 Please use an absolute path, not a relative one,
 and use forward slashes (/), not backslashes (\).
 
-You can check out the latest known-to-work Jace code
-from the Subversion repository using the command:
-  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk jace -r 6
+You can check out the latest Jace code from
+the Subversion repository using the command:
+  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk jace
 </echo>
         <fail message="Jace not found."/>
       </else>
