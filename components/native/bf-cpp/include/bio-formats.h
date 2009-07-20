@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Jul 9, 2009 5:16:12 PM CDT
+ * Created by curtis via JaceHeaderAutogen on Jul 20, 2009 11:56:14 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,11 +87,7 @@ using namespace jace::proxy::java::io;
 #include "jace/proxy/loci/formats/StatusEvent.h"
 #include "jace/proxy/loci/formats/StatusListener.h"
 #include "jace/proxy/loci/formats/StatusReporter.h"
-#include "jace/proxy/loci/formats/TiffIFDEntry.h"
-#include "jace/proxy/loci/formats/TiffRational.h"
 #include "jace/proxy/loci/formats/TiffTools.h"
-#include "jace/proxy/loci/formats/UnknownTagException.h"
-#include "jace/proxy/loci/formats/XMLTools.h"
 using namespace jace::proxy::loci::formats;
 
 #include "jace/proxy/loci/formats/cache/ByteArraySource.h"
@@ -220,6 +216,7 @@ using namespace jace::proxy::loci::formats::gui;
 #include "jace/proxy/loci/formats/in/NativeQTReader.h"
 #include "jace/proxy/loci/formats/in/NiftiReader.h"
 #include "jace/proxy/loci/formats/in/NikonReader.h"
+#include "jace/proxy/loci/formats/in/NikonTiffReader.h"
 #include "jace/proxy/loci/formats/in/OMETiffReader.h"
 #include "jace/proxy/loci/formats/in/OMEXMLReader.h"
 #include "jace/proxy/loci/formats/in/OpenlabRawReader.h"
@@ -279,10 +276,22 @@ using namespace jace::proxy::loci::formats::ome;
 #include "jace/proxy/loci/formats/out/TiffWriter.h"
 using namespace jace::proxy::loci::formats::out;
 
+#include "jace/proxy/loci/formats/tiff/IFD.h"
+#include "jace/proxy/loci/formats/tiff/IFDList.h"
+#include "jace/proxy/loci/formats/tiff/PhotoInterp.h"
+#include "jace/proxy/loci/formats/tiff/TiffCompression.h"
+#include "jace/proxy/loci/formats/tiff/TiffIFDEntry.h"
+#include "jace/proxy/loci/formats/tiff/TiffParser.h"
+#include "jace/proxy/loci/formats/tiff/TiffRational.h"
+#include "jace/proxy/loci/formats/tiff/UnknownTagException.h"
+using namespace jace::proxy::loci::formats::tiff;
+
 #include "jace/proxy/loci/formats/tools/CacheConsole.h"
 #include "jace/proxy/loci/formats/tools/EditTiffG.h"
 #include "jace/proxy/loci/formats/tools/ImageConverter.h"
 #include "jace/proxy/loci/formats/tools/ImageInfo.h"
+#include "jace/proxy/loci/formats/tools/PrintFormatTable.h"
+#include "jace/proxy/loci/formats/tools/StatusEchoer.h"
 #include "jace/proxy/loci/formats/tools/TiffComment.h"
 #include "jace/proxy/loci/formats/tools/XMLIndent.h"
 #include "jace/proxy/loci/formats/tools/XMLValidate.h"

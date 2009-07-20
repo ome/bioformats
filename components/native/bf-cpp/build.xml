@@ -88,7 +88,7 @@ from the Subversion repository using the command:
             <!-- Generate proxies for Visual C++ builds. -->
 
             <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
-            <java classname="jace.autoproxy.AutoProxy" fork="true">
+            <java classname="jace.proxy.AutoProxy" fork="true">
               <arg path="include"/>
               <arg path="source"/>
               <arg path="${proxies.dir}/include"/>
@@ -138,7 +138,7 @@ from the Subversion repository using the command:
             <!-- Generate proxies for GCC and other builds. -->
 
             <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
-            <java classname="jace.autoproxy.AutoProxy" fork="true">
+            <java classname="jace.proxy.AutoProxy" fork="true">
               <arg path="include"/>
               <arg path="source"/>
               <arg path="${proxies.dir}/include"/>
