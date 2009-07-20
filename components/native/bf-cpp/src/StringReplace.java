@@ -33,8 +33,6 @@ public class StringReplace {
 
   public void processFile(String path) {
     System.out.println("Processing file: " + path);
-    System.out.println("Input pattern: " + input);
-    System.out.println("Output pattern: " + output);
 
     // read data from file
     Vector<String> lines = null;
