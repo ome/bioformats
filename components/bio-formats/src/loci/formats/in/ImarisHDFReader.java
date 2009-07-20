@@ -48,17 +48,14 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- Fields --
 
-  private int previousSeries;
-  private Object previousImage;
-  private int previousImageNumber;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
   private float minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
   private NetcdfTools netcdf;
 
   // channel parameters
-  private Vector emWave, exWave, channelMin, channelMax;
-  private Vector gain, pinhole, channelName, microscopyMode;
+  private Vector<String> emWave, exWave, channelMin, channelMax;
+  private Vector<String> gain, pinhole, channelName, microscopyMode;
 
   // -- Constructor --
 
@@ -86,48 +83,47 @@ public class ImarisHDFReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
-    if (previousImageNumber > getImageCount()) previousImageNumber = -1;
-    int[] oldZCT = previousImageNumber == -1 ? new int[] {-1, -1, -1} :
-      FormatTools.getZCTCoords(this, previousImageNumber);
 
     // pixel data is stored in XYZ blocks
 
-    if (zct[1] != oldZCT[1] || zct[2] != oldZCT[2] || series != previousSeries)
-    {
-      previousImage = netcdf.getVariableValue("/DataSet/ResolutionLevel_" +
-        series + "/TimePoint_" + zct[2] + "/Channel_" + zct[1] + "/Data");
-    }
-    previousImageNumber = no;
+    String path = "/DataSet/ResolutionLevel_" + series + "/TimePoint_" +
+      zct[2] + "/Channel_" + zct[1] + "/Data";
+    Object image = netcdf.getArray(path, new int[] {zct[0], 0, 0},
+      new int[] {1, getSizeX(), getSizeY()});
 
     for (int row=0; row<h; row++) {
-      if (previousImage instanceof byte[][][]) {
-        System.arraycopy(((byte[][][]) previousImage)[zct[0]][row + y], x, buf,
-          row*w, w);
+      if (image instanceof byte[][]) {
+        System.arraycopy(((byte[][]) image)[row + y], x, buf, row*w, w);
       }
-      else if (previousImage instanceof short[][][]) {
+      else if (image instanceof short[][]) {
         for (int i=0; i<w; i++) {
-          DataTools.unpackShort(
-            ((short[][][]) previousImage)[zct[0]][row + y][x + i], buf,
+          DataTools.unpackShort(((short[][]) image)[row + y][x + i], buf,
             2 * (row * w + i), !isLittleEndian());
         }
       }
-      else if (previousImage instanceof int[][][]) {
+      else if (image instanceof int[][]) {
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(
-            ((int[][][]) previousImage)[zct[0]][row + y][x + i], buf,
+          DataTools.unpackBytes(((int[][]) image)[row + y][x + i], buf,
             4 * (row * w + i), 4, !isLittleEndian());
         }
       }
-      else if (previousImage instanceof float[][][]) {
-        float[] s = ((float[][][]) previousImage)[zct[0]][row + y];
+      else if (image instanceof float[][]) {
+        float[] s = ((float[][]) image)[row + y];
         int base = row * w * 4;
         for (int i=0; i<w; i++) {
           int v = Float.floatToIntBits(s[x + i]);
           DataTools.unpackBytes(v, buf, base + i*4, 4, !isLittleEndian());
         }
       }
+      else if (image instanceof double[][]) {
+        double[] d = ((double[][]) image)[row + y];
+        int base = row * w * 8;
+        for (int i=0; i<w; i++) {
+          long v = Double.doubleToLongBits(d[x + i]);
+          DataTools.unpackBytes(v, buf, base + i * 8, 8, !isLittleEndian());
+        }
+      }
     }
-    previousSeries = series;
 
     return buf;
   }
@@ -137,9 +133,6 @@ public class ImarisHDFReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    previousSeries = -1;
-    previousImageNumber = -1;
-    previousImage = null;
     seriesCount = 0;
     pixelSizeX = pixelSizeY = pixelSizeZ = 0;
     minX = minY = minZ = maxX = maxY = maxZ = 0;
@@ -168,8 +161,6 @@ public class ImarisHDFReader extends FormatReader {
     microscopyMode = new Vector();
 
     seriesCount = 0;
-
-    previousImageNumber = -1;
 
     // read all of the metadata key/value pairs
 
@@ -276,12 +267,16 @@ public class ImarisHDFReader extends FormatReader {
 
     int type = -1;
 
-    Object pix = netcdf.getVariableValue(
-      "/DataSet/ResolutionLevel_0/TimePoint_0/Channel_0/Data");
+    Object pix = netcdf.getVariableValue("/DataSet/ResolutionLevel_" +
+      (getSeriesCount() - 1) + "/TimePoint_0/Channel_0/Data");
     if (pix instanceof byte[][][]) type = FormatTools.UINT8;
     else if (pix instanceof short[][][]) type = FormatTools.UINT16;
     else if (pix instanceof int[][][]) type = FormatTools.UINT32;
     else if (pix instanceof float[][][]) type = FormatTools.FLOAT;
+    else if (pix instanceof double[][][]) type = FormatTools.DOUBLE;
+    else {
+      throw new FormatException("Unknown pixel type: " + pix);
+    }
 
     for (int i=0; i<getSeriesCount(); i++) {
       core[i].pixelType = type;
@@ -312,41 +307,33 @@ public class ImarisHDFReader extends FormatReader {
     for (int s=0; s<getSeriesCount(); s++) {
       store.setImageName("Resolution Level " + (s + 1), s);
       MetadataTools.setDefaultCreationDate(store, id, s);
-      for (int i=0; i<core[s].sizeC; i++) {
+      for (int i=0; i<core[s].sizeC; i++, cIndex++) {
         Float gainValue = null;
         Integer pinholeValue = null, emWaveValue = null, exWaveValue;
 
         if (cIndex < gain.size()) {
           try {
-            gainValue = new Float((String) gain.get(cIndex));
+            gainValue = new Float(gain.get(cIndex));
           }
-          catch (NumberFormatException e) {
-            traceDebug(e);
-          }
+          catch (NumberFormatException e) { }
         }
         if (cIndex < pinhole.size()) {
           try {
-            pinholeValue = new Integer((String) pinhole.get(cIndex));
+            pinholeValue = new Integer(pinhole.get(cIndex));
           }
-          catch (NumberFormatException e) {
-            traceDebug(e);
-          }
+          catch (NumberFormatException e) { }
         }
         if (cIndex < emWave.size()) {
           try {
-            emWaveValue = new Integer((String) emWave.get(cIndex));
+            emWaveValue = new Integer(emWave.get(cIndex));
           }
-          catch (NumberFormatException e) {
-            traceDebug(e);
-          }
+          catch (NumberFormatException e) { }
         }
         if (cIndex < exWave.size()) {
           try {
-            exWaveValue = new Integer((String) exWave.get(cIndex));
+            exWaveValue = new Integer(exWave.get(cIndex));
           }
-          catch (NumberFormatException e) {
-            traceDebug(e);
-          }
+          catch (NumberFormatException e) { }
         }
 
         // CHECK
@@ -363,22 +350,16 @@ public class ImarisHDFReader extends FormatReader {
 
         if (cIndex < channelMin.size()) {
           try {
-            minValue = new Double((String) channelMin.get(cIndex));
+            minValue = new Double(channelMin.get(cIndex));
           }
-          catch (NumberFormatException e) {
-            traceDebug(e);
-          }
+          catch (NumberFormatException e) { }
         }
         if (cIndex < channelMax.size()) {
           try {
-            maxValue = new Double((String) channelMax.get(cIndex));
+            maxValue = new Double(channelMax.get(cIndex));
           }
-          catch (NumberFormatException e) {
-            traceDebug(e);
-          }
+          catch (NumberFormatException e) { }
         }
-
-        cIndex++;
       }
     }
   }

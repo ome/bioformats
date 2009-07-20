@@ -78,8 +78,8 @@ public class NetcdfTools {
   }
 
   public String getAttributeValue(String name) {
-    String dir = name.substring(0, name.lastIndexOf("/"));
-    String attr = name.substring(name.lastIndexOf("/") + 1);
+    String dir = getDirectory(name);
+    String attr = getName(name);
 
     try {
       setupGroup(dir);
@@ -106,15 +106,25 @@ public class NetcdfTools {
   }
 
   public Object getVariableValue(String name) {
-    String dir = name.substring(0, name.lastIndexOf("/"));
-    String attr = name.substring(name.lastIndexOf("/") + 1);
+    return getArray(name, null, null);
+  }
+
+  public Object getArray(String path, int[] origin, int[] lengths) {
+    String dir = getDirectory(path);
+    String attr = getName(path);
 
     try {
       setupGroup(dir);
 
       r.setVar("name", attr);
+      r.setVar("origin", origin);
+      r.setVar("shape", lengths);
       r.exec("var = g.findVariable(name)");
-      r.exec("data = var.read()");
+      if (origin != null && lengths != null) {
+        r.exec("data = var.read(origin, shape)");
+        r.exec("data = data.reduce()");
+      }
+      else r.exec("data = var.read()");
       return r.exec("data = data.copyToNDJavaArray()");
     }
     catch (ReflectException e) {
@@ -124,8 +134,8 @@ public class NetcdfTools {
   }
 
   public Hashtable getVariableAttributes(String name) {
-    String dir = name.substring(0, name.lastIndexOf("/"));
-    String attr = name.substring(name.lastIndexOf("/") + 1);
+    String dir = getDirectory(name);
+    String attr = getName(name);
 
     try {
       setupGroup(dir);
@@ -279,6 +289,14 @@ public class NetcdfTools {
       if (tokens.hasMoreTokens()) parent = token;
     }
     if (parent == null) r.setVar("g", r.getVar("root"));
+  }
+
+  private String getDirectory(String path) {
+    return path.substring(0, path.lastIndexOf("/"));
+  }
+
+  private String getName(String path) {
+    return path.substring(path.lastIndexOf("/") + 1);
   }
 
 }
