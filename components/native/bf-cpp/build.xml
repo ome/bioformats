@@ -127,12 +127,6 @@ from the Subversion repository using the command:
               <arg value="${hack.output4}"/>
               <arg path="${hack.path4}"/>
             </java>
-            <java fork="true" classname="${hack.program}"
-              classpath="${classes.dir}:${component.runtime-cp}">
-              <arg value="${hack.input5}"/>
-              <arg value="${hack.output5}"/>
-              <arg path="${hack.path5}"/>
-            </java>
           </then>
           <else>
             <!-- Generate proxies for GCC and other builds. -->
