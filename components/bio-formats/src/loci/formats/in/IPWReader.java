@@ -312,7 +312,6 @@ public class IPWReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
     store.setImageDescription(description, 0);
     if (creationDate != null) {
       store.setImageCreationDate(creationDate, 0);

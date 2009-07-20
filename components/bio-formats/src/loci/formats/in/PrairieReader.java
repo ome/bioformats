@@ -286,7 +286,6 @@ public class PrairieReader extends FormatReader {
           store.setDetectorType("Unknown", 0, i);
         }
 
-        store.setImageName("", 0);
         if (date != null) {
           SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
           Date d = parse.parse(date, new ParsePosition(0));

@@ -424,8 +424,6 @@ public class DeltavisionReader extends FormatReader {
     store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(pixZ), 0, 0);
 
-    store.setImageName("", 0);
-
     store.setImageDescription(imageDesc, 0);
 
     // --- parse extended header ---

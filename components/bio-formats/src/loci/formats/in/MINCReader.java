@@ -142,7 +142,6 @@ public class MINCReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageName("", 0);
     store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
   }
 

@@ -189,7 +189,6 @@ public class ImarisReader extends FormatReader {
 
     // populate Image data
 
-    store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // link Instrument and Image

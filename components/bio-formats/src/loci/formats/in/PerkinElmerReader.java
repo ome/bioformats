@@ -683,7 +683,6 @@ public class PerkinElmerReader extends FormatReader {
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
 
     // populate Image element
-    store.setImageName("", 0);
     if (finishTime != null) {
       finishTime = DateTools.formatDate(finishTime, DATE_FORMAT);
       store.setImageCreationDate(finishTime, 0);

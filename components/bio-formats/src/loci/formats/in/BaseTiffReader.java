@@ -480,7 +480,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     // populate Image
 
-    store.setImageName("", 0);
     if (creationDate != null) {
       store.setImageCreationDate(creationDate, 0);
     }

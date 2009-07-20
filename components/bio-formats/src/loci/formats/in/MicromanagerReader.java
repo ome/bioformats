@@ -408,7 +408,6 @@ public class MicromanagerReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
-    store.setImageName("", 0);
     store.setImageDescription(comment, 0);
     if (time != null) {
       SimpleDateFormat parser = new SimpleDateFormat(DATE_FORMAT);

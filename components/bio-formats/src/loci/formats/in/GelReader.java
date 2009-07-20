@@ -163,7 +163,6 @@ public class GelReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
     store.setImageDescription(info, 0);
 
     if (prepTime != null) {

@@ -713,7 +713,6 @@ public class DicomReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
 
     String stamp = null;
 

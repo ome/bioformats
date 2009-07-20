@@ -400,7 +400,6 @@ public class ZeissLSMReader extends FormatReader {
       imageName =
         imageName.substring(imageName.lastIndexOf(File.separator) + 1);
     }
-    store.setImageName(imageName, series);
 
     // link Instrument and Image
     store.setInstrumentID("Instrument:" + series, series);
@@ -778,6 +777,8 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     MetadataTools.populatePixels(store, this, true);
+
+    store.setImageName(imageName, series);
 
     Float pixX = new Float((float) pixelSizeX);
     Float pixY = new Float((float) pixelSizeY);

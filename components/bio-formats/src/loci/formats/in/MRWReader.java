@@ -244,7 +244,6 @@ public class MRWReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageName("", 0);
   }
 
 }

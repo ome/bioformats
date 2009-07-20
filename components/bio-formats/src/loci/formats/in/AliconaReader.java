@@ -193,7 +193,6 @@ public class AliconaReader extends FormatReader {
     // populate Image data
 
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageName("", 0);
 
     // link Image and Instrument
     store.setInstrumentID("Instrument:0", 0);

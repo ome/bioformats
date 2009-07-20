@@ -163,7 +163,6 @@ public class PCXReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 

@@ -566,7 +566,6 @@ public class ZeissZVIReader extends FormatReader {
     if (isJPEG) core[0].pixelType = FormatTools.UINT8;
 
     MetadataTools.populatePixels(store, this, true);
-    store.setImageName("", 0);
 
     long firstStamp = 0;
     if (timestamps.size() > 0) {

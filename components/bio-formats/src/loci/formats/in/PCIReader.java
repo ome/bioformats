@@ -253,7 +253,6 @@ public class PCIReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setDimensionsPhysicalSizeX(new Float(scaleFactor), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(scaleFactor), 0, 0);

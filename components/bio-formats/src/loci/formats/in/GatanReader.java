@@ -193,7 +193,6 @@ public class GatanReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     Float pixX = new Float(1);

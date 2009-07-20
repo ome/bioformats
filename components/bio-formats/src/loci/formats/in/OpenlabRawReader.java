@@ -193,7 +193,6 @@ public class OpenlabRawReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageName("", 0);
     store.setImageCreationDate(stamp, 0);
   }
 

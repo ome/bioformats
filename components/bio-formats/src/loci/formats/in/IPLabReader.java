@@ -348,7 +348,6 @@ public class IPLabReader extends FormatReader {
         addGlobalMeta("Notes", notes);
 
         store.setImageDescription(notes, 0);
-        store.setImageName("", 0);
         MetadataTools.setDefaultCreationDate(store, id, 0);
       }
       else if (tagBytes[0] == 0x1a && tagBytes[1] == (byte) 0xd9 &&

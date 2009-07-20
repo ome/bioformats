@@ -592,7 +592,6 @@ public class OpenlabReader extends FormatReader {
 
     // populate MetadataStore
 
-    store.setImageName("", 0);
     store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
 

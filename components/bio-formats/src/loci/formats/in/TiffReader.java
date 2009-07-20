@@ -32,6 +32,8 @@ import loci.formats.FormatTools;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.MetadataStore;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,
@@ -51,9 +53,12 @@ public class TiffReader extends BaseTiffReader {
   public static final String[] TIFF_SUFFIXES =
     {"tif", "tiff", "tf2", "tf8", "btf"};
 
+  public static final String[] COMPANION_SUFFIXES = {"xml", "txt"};
+
   // -- Fields --
 
   private String companionFile;
+  private String description;
 
   // -- Constructor --
 
@@ -84,6 +89,8 @@ public class TiffReader extends BaseTiffReader {
 
     if (ifds.size() > 1) core[0].orderCertain = false;
 
+    description = null;
+
     // check for ImageJ-style TIFF comment
     boolean ij = checkCommentImageJ(comment);
     if (ij) parseCommentImageJ(comment);
@@ -106,13 +113,24 @@ public class TiffReader extends BaseTiffReader {
       String name = file;
       if (name.indexOf(".") != -1) name = name.substring(0, name.indexOf("."));
 
-      if (currentName.startsWith(name) && !file.equals(currentName)) {
+      if (currentName.startsWith(name) && checkSuffix(name, COMPANION_SUFFIXES))
+      {
         companionFile = new Location(directory, file).getAbsolutePath();
         break;
       }
     }
 
     // TODO : parse companion file once loci.parsers package is in place
+  }
+
+  /* @see BaseTiffReader#initMetadataStore() */
+  protected void initMetadataStore() throws FormatException {
+    super.initMetadataStore();
+    if (description != null) {
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      store.setImageDescription(description, 0);
+    }
   }
 
   // -- Helper methods --
@@ -135,6 +153,7 @@ public class TiffReader extends BaseTiffReader {
     int nl = comment.indexOf("\n");
     put("ImageJ", nl < 0 ? comment.substring(7) : comment.substring(7, nl));
     metadata.remove("Comment");
+    description = "";
 
     int z = 1, t = 1;
     int c = getSizeC();
@@ -234,6 +253,7 @@ public class TiffReader extends BaseTiffReader {
       int colon = line.indexOf(":");
       if (colon < 0) {
         addGlobalMeta("Comment", line);
+        description = line;
         continue;
       }
       String key = line.substring(0, colon);
@@ -259,6 +279,7 @@ public class TiffReader extends BaseTiffReader {
         }
       }
       addGlobalMeta("Comment", comment);
+      description = comment;
     }
   }
 

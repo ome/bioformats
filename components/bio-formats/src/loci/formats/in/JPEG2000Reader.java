@@ -154,7 +154,6 @@ public class JPEG2000Reader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
-    store.setImageName("", 0);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
   }
 
