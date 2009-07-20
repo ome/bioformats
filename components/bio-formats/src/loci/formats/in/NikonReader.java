@@ -128,8 +128,6 @@ public class NikonReader extends BaseTiffReader {
   /** The original IFD. */
   protected IFD original;
 
-  protected TiffParser tiffParser;
-
   private TiffRational[] whiteBalance;
   private Object cfaPattern;
   private int[] curve;
@@ -450,34 +448,13 @@ public class NikonReader extends BaseTiffReader {
     debug("NikonReader.initFile(" + id + ")");
     super.initFile(id);
 
-    in = new RandomAccessInputStream(id);
-    tiffParser = new TiffParser(in);
-    if (in.readShort() == 0x4949) in.order(true);
-
-    ifds = tiffParser.getIFDs();
-    if (ifds == null) throw new FormatException("No IFDs found");
-
-    // look for the SubIFD tag
-    IFD firstIFD = ifds.get(0);
-    int offset = 0;
-    try {
-      offset = firstIFD.getIFDIntValue(SUB_IFD, false, 0);
-    }
-    catch (FormatException exc) {
-      traceDebug(exc);
-      long[] array = firstIFD.getIFDLongArray(SUB_IFD, false);
-      offset = (int) array[array.length - 1];
-    }
-
-    IFD realImage = tiffParser.getIFD(1, offset);
-
     original = ifds.get(0);
-    ifds.set(0, realImage);
-    core[0].imageCount = 1;
-
     if (cfaPattern != null) {
-      ifds.get(0).put(new Integer(IFD.COLOR_MAP), (int[]) cfaPattern);
+      original.put(new Integer(IFD.COLOR_MAP), (int[]) cfaPattern);
     }
+    ifds.set(0, original);
+
+    core[0].imageCount = 1;
     core[0].interleaved = true;
   }
 

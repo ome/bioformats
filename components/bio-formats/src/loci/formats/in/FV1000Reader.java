@@ -688,8 +688,10 @@ public class FV1000Reader extends FormatReader {
         IFDList ifds = null;
         for (int i=0; i<previewNames.size(); i++) {
           String previewName = (String) previewNames.get(i);
-          TiffParser tp = new TiffParser(getFile(previewName));
+          RandomAccessInputStream preview = getFile(previewName);
+          TiffParser tp = new TiffParser(preview);
           ifds = tp.getIFDs();
+          preview.close();
           core[1].imageCount += ifds.size();
         }
         core[1].sizeX = (int) ifds.get(0).getImageWidth();
@@ -971,6 +973,7 @@ public class FV1000Reader extends FormatReader {
         RandomAccessInputStream stream = getFile((String) lutNames.get(c));
         stream.seek(stream.length() - 65536 * 4);
         stream.read(buffer);
+        stream.close();
         for (int q=0; q<buffer.length; q+=4) {
           lut[c][0][q / 4] = buffer[q + 1];
           lut[c][1][q / 4] = buffer[q + 2];

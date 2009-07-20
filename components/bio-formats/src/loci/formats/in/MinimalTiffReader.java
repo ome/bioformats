@@ -225,12 +225,10 @@ public class MinimalTiffReader extends FormatReader {
     IFDList thumbs = new IFDList();
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
-      boolean thumbnail = ifds.size() > 1 &&
-        ifd.getIFDIntValue(IFD.NEW_SUBFILE_TYPE) == 1;
+      boolean thumbnail = ifd.getIFDIntValue(IFD.NEW_SUBFILE_TYPE) == 1 &&
+        (ifds.size() > 1 || ifd.get(new Integer(IFD.IMAGE_WIDTH)) == null);
       if (thumbnail) thumbs.add(ifd);
-      else if (ifd.get(new Integer(IFD.IMAGE_WIDTH)) != null) {
-        v.add(ifd);
-      }
+      else v.add(ifd);
     }
 
     ifds = v;

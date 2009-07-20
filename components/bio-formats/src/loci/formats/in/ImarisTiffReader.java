@@ -64,23 +64,17 @@ public class ImarisTiffReader extends BaseTiffReader {
     debug("ImarisTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
-    in = new RandomAccessInputStream(id);
-    tiffParser = new TiffParser(in);
-    if (in.readShort() == 0x4949) in.order(true);
-
-    ifds = tiffParser.getIFDs();
-    if (ifds == null) throw new FormatException("No IFDs found");
-
     // hack up the IFDs
     //
     // Imaris TIFFs store a thumbnail in the first IFD; each of the remaining
     // IFDs defines a stack of tiled planes.
+    // MinimalTiffReader.initFile(String) removes thumbnail IFDs.
 
     status("Verifying IFD sanity");
 
     IFDList tmp = new IFDList();
 
-    for (int i=1; i<ifds.size(); i++) {
+    for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       long[] byteCounts = ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS, false);
       long[] offsets = ifd.getIFDLongArray(IFD.TILE_OFFSETS, false);
@@ -97,11 +91,11 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     status("Populating metadata");
 
-    core[0].sizeC = ifds.size() - 1;
+    core[0].sizeC = ifds.size();
     core[0].sizeZ = tmp.size() / getSizeC();
     core[0].sizeT = 1;
-    core[0].sizeX = (int) ifds.get(1).getImageWidth();
-    core[0].sizeY = (int) ifds.get(1).getImageLength();
+    core[0].sizeX = (int) ifds.get(0).getImageWidth();
+    core[0].sizeY = (int) ifds.get(0).getImageLength();
 
     ifds = tmp;
     core[0].imageCount = getSizeC() * getSizeZ();
@@ -119,9 +113,9 @@ public class ImarisTiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     String description = null, creationDate = null;
-    Vector emWave = new Vector();
-    Vector exWave = new Vector();
-    Vector channelNames = new Vector();
+    Vector<Integer> emWave = new Vector<Integer>();
+    Vector<Integer> exWave = new Vector<Integer>();
+    Vector<String> channelNames = new Vector<String>();
 
     if (comment != null && comment.startsWith("[")) {
       // parse key/value pairs
@@ -160,9 +154,9 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     // populate LogicalChannel data
     for (int i=0; i<emWave.size(); i++) {
-      store.setLogicalChannelEmWave((Integer) emWave.get(i), 0, i);
-      store.setLogicalChannelExWave((Integer) exWave.get(i), 0, i);
-      store.setLogicalChannelName((String) channelNames.get(i), 0, i);
+      store.setLogicalChannelEmWave(emWave.get(i), 0, i);
+      store.setLogicalChannelExWave(exWave.get(i), 0, i);
+      store.setLogicalChannelName(channelNames.get(i), 0, i);
     }
   }
 
