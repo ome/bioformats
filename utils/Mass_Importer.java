@@ -81,8 +81,8 @@ public class Mass_Importer implements PlugIn {
       String params =
         "location=[Local machine] " +
         "windowless=true " +
-        "group_files=true " +
-        "open=[" + id + "] ";
+        "groupFiles=true " +
+        "id=[" + id + "] ";
       new LociImporter().run(params);
     }
     IJ.showStatus("");
