@@ -361,8 +361,7 @@ public class ImageInfo {
     int seriesCount = reader.getSeriesCount();
     LogTools.println("Series count = " + seriesCount);
     MetadataStore ms = reader.getMetadataStore();
-    MetadataRetrieve mr = ms instanceof MetadataRetrieve ?
-      (MetadataRetrieve) ms : null;
+    MetadataRetrieve mr = MetadataTools.asRetrieve(ms);
     for (int j=0; j<seriesCount; j++) {
       reader.setSeries(j);
 
@@ -697,8 +696,9 @@ public class ImageInfo {
     else {
       LogTools.println("Generating OME-XML (schema version " + version + ")");
     }
-    if (ms instanceof MetadataRetrieve) {
-      String xml = MetadataTools.getOMEXML((MetadataRetrieve) ms);
+    MetadataRetrieve mr = MetadataTools.asRetrieve(ms);
+    if (mr != null) {
+      String xml = MetadataTools.getOMEXML(mr);
       LogTools.println(XMLTools.indentXML(xml));
       MetadataTools.validateOMEXML(xml);
     }

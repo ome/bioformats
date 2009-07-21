@@ -634,8 +634,8 @@ public final class FormatTools {
     String pattern) throws FormatException, IOException
   {
     MetadataStore store = r.getMetadataStore();
-    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
-      (MetadataRetrieve) store : new DummyMetadata();
+    MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
+    if (retrieve == null) retrieve = new DummyMetadata();
 
     String filename = pattern.replaceAll(SERIES_NUM, String.valueOf(series));
 

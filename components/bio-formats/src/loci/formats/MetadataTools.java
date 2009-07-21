@@ -331,9 +331,8 @@ public final class MetadataTools {
       throw new FormatException("Metadata object is null; " +
           "call IFormatWriter.setMetadataRetrieve() first");
     }
-    if (src instanceof MetadataStore &&
-      ((MetadataStore) src).getRoot() == null)
-    {
+    MetadataStore store = asStore(src);
+    if (store != null && store.getRoot() == null) {
       throw new FormatException("Metadata object has null root; " +
         "call IMetadata.createRoot() first");
     }
@@ -486,6 +485,24 @@ public final class MetadataTools {
       LogTools.traceDebug(exc);
     }
     return false;
+  }
+
+  // -- Utility methods - casting --
+
+  /**
+   * Gets the given {@link MetadataRetrieve} object as a {@link MetadataStore}.
+   * Returns null if the object is incompatible and cannot be casted.
+   */
+  public static MetadataStore asStore(MetadataRetrieve meta) {
+    return meta instanceof MetadataStore ? (MetadataStore) meta : null;
+  }
+
+  /**
+   * Gets the given {@link MetadataStore} object as a {@link MetadataRetrieve}.
+   * Returns null if the object is incompatible and cannot be casted.
+   */
+  public static MetadataRetrieve asRetrieve(MetadataStore meta) {
+    return meta instanceof MetadataRetrieve ? (MetadataRetrieve) meta : null;
   }
 
 }

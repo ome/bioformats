@@ -166,9 +166,8 @@ public final class ImageConverter {
     LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
 
     store = reader.getMetadataStore();
-    if (store instanceof MetadataRetrieve) {
-      writer.setMetadataRetrieve((MetadataRetrieve) store);
-    }
+    MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
+    if (retrieve != null) writer.setMetadataRetrieve(retrieve);
 
     if (writer instanceof TiffWriter) {
       ((TiffWriter) writer).setBigTiff(bigtiff);
