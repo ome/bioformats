@@ -253,7 +253,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read a string of arbitrary length, terminated by a null char. */
   public String readCString() throws IOException {
-    return readString("\\0");
+    return readString("\0");
   }
 
   /** Read a string of length n. */

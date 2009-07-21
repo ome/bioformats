@@ -225,9 +225,11 @@ public class SlidebookReader extends FormatReader {
             int n = in.read(buf);
 
             while (!found && in.getFilePointer() < in.length()) {
-              for (int i=0; i<buf.length-6; i++) {
-                if ((buf[i] == 'h' && buf[i+4] == 'I' && buf[i+5] == 'I') ||
-                  (buf[i+1] == 'h' && buf[i+4] == 'M' && buf[i+5] == 'M'))
+              for (int i=0; i<n-6; i++) {
+                if ((buf[i] == 'h' && buf[i + 1] == 0 &&
+                  buf[i+4] == 'I' && buf[i+5] == 'I') ||
+                  (buf[i] == 0 && buf[i+1] == 'h' &&
+                  buf[i+4] == 'M' && buf[i+5] == 'M'))
                 {
                   found = true;
                   in.seek(in.getFilePointer() - n + i - 20);
@@ -257,45 +259,15 @@ public class SlidebookReader extends FormatReader {
     for (int i=0; i<pixelOffsets.size(); i++) {
       long length = pixelLengths.get(i).longValue();
       long offset = pixelOffsets.get(i).longValue();
-      in.seek(offset);
-      byte checkByte = in.readByte();
-      if (length + offset >= in.length()) {
+
+      if (length + offset + 6 >= in.length()) {
         pixelOffsets.remove(i);
         pixelLengths.remove(i);
         i--;
       }
-      else if (checkByte == 'l') {
-        long lengthSum = pixelLengths.get(0).longValue();
-        while (pixelLengths.size() > 1) {
-          int size = pixelLengths.size() - 1;
-          lengthSum += pixelLengths.get(size).longValue();
-          pixelLengths.remove(size);
-          pixelOffsets.remove(size);
-        }
-
-        for (int q=0; q<metadataOffsets.size(); q++) {
-          long mOffset = metadataOffsets.get(q).longValue();
-          if (mOffset > lengthSum) {
-            lengthSum = mOffset - offset;
-            break;
-          }
-        }
-
-        pixelLengths.setElementAt(new Long(lengthSum), 0);
-        break;
-      }
     }
 
     if (pixelOffsets.size() > 1) {
-      if (pixelOffsets.size() > 2) {
-        int size = pixelOffsets.size();
-        long last = pixelOffsets.get(size - 1).longValue();
-        long nextToLast = pixelOffsets.get(size - 2).longValue();
-        long diff = in.length() - last;
-        if (last - nextToLast > 2*diff && diff < (256 * 256 * 2)) {
-          pixelOffsets.removeElementAt(size - 1);
-        }
-      }
       boolean little = isLittleEndian();
       core = new CoreMetadata[pixelOffsets.size()];
       for (int i=0; i<getSeriesCount(); i++) {
@@ -318,7 +290,7 @@ public class SlidebookReader extends FormatReader {
     }
 
     String[] imageNames = new String[getSeriesCount()];
-    Vector channelNames = new Vector();
+    Vector<String> channelNames = new Vector<String>();
     int nextName = 0;
 
     // try to find the width and height
@@ -334,6 +306,10 @@ public class SlidebookReader extends FormatReader {
       long next = i == metadataOffsets.size() - 1 ? in.length() :
         metadataOffsets.get(i + 1).longValue();
       int totalBlocks = (int) ((next - off) / 128);
+
+      // if there are more than 100 blocks, we probably found a pixel block
+      // by accident (but we'll check the first block anyway)
+      if (totalBlocks > 100) totalBlocks = 1;
       for (int q=0; q<totalBlocks; q++) {
         if (withinPixels(off + q * 128)) break;
         in.seek(off + q * 128);
@@ -444,6 +420,7 @@ public class SlidebookReader extends FormatReader {
         else core[i].sizeY /= 2;
         x = !x;
       }
+      if (getSizeC() == 0) core[i].sizeC = 1;
       if (getSizeZ() == 0) core[i].sizeZ = 1;
       core[i].sizeT = (int) (pixels /
         (getSizeX() * getSizeY() * getSizeZ() * getSizeC()));
@@ -504,7 +481,7 @@ public class SlidebookReader extends FormatReader {
       setSeries(i);
       for (int c=0; c<getSizeC(); c++) {
         if (index < channelNames.size()) {
-          store.setLogicalChannelName((String) channelNames.get(index), i, c);
+          store.setLogicalChannelName(channelNames.get(index), i, c);
           addSeriesMeta("channel " + c, channelNames.get(index));
         }
         if (index < ndFilters.size()) {
