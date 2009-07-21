@@ -30,7 +30,7 @@ function processFiles(inBase, outBase, sub) {
     upath = toUpperCase(path);
     else if (endsWith(upath, "." + ext)) {
       print("-- Processing file: " + path + " --");
-      run("Bio-Formats Importer", "open='" + inBase + path + "' view=[Standard ImageJ] stack_order=Default use_virtual_stack");
+      run("Bio-Formats Importer", "id='" + inBase + path + "' view=[Standard ImageJ] stackOrder=Default virtual");
       outFile = path + ".tif";
       if (flattenFolders) outFile = replace(outFile, "/", "_");
       saveAs("Tiff", outBase + outFile);

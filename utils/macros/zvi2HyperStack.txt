@@ -61,7 +61,7 @@ function zviToHS(path)
   print("sizeT:"+numT);
   Ext.getSizeZ(numZ);
   print("sizeZ:"+numZ);
-  options="open=["+path+"] view=[Standard ImageJ] stack_order="+dimOrder+" autoscale";
+  options="id=["+path+"] view=[Standard ImageJ] stackOrder="+dimOrder+" autoscale";
   showStatus("opening file");
   run("Bio-Formats Importer",options);
   order=toLowerCase(dimOrder);

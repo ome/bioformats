@@ -65,8 +65,8 @@ function bfImport(path,channels,zs,times)
   Ext.getDimensionOrder(dimOrder);
   Ext.getSizeT(numT);
   print(dimOrder+" numT="+numT);
-  options="open=["+path+
-    "] view=[Standard ImageJ] stack_order="+dimOrder+" specify_range ";
+  options="id=["+path+
+    "] view=[Standard ImageJ] stackOrder="+dimOrder+" specifyRanges ";
   cOpts="c_begin="+ channels[0]+ " c_end="+channels[1]+" c_step="+channels[2];
   zOpts="z_begin="+zs[0]+" z_end="+zs[1]+" z_step="+zs[2];
   tOpts="t_begin="+times[0]+" t_end="+times[1]+" t_step="+times[2];
