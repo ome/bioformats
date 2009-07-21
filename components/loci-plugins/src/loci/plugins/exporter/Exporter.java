@@ -193,34 +193,52 @@ public class Exporter {
       if (store == null) IJ.error("OME-XML Java library not found.");
       if (xml == null) {
         store.createRoot();
+      }
 
-        int ptype = 0;
-        int channels = 1;
-        switch (imp.getType()) {
-          case ImagePlus.GRAY8:
-          case ImagePlus.COLOR_256:
-            ptype = FormatTools.UINT8;
-            break;
-          case ImagePlus.COLOR_RGB:
-            channels = 3;
-            ptype = FormatTools.UINT8;
-            break;
-          case ImagePlus.GRAY16:
-            ptype = FormatTools.UINT16;
-            break;
-          case ImagePlus.GRAY32:
-            ptype = FormatTools.FLOAT;
-            break;
-        }
+      int ptype = 0;
+      int channels = 1;
+      switch (imp.getType()) {
+        case ImagePlus.GRAY8:
+        case ImagePlus.COLOR_256:
+          ptype = FormatTools.UINT8;
+          break;
+        case ImagePlus.COLOR_RGB:
+          channels = 3;
+          ptype = FormatTools.UINT8;
+          break;
+        case ImagePlus.GRAY16:
+          ptype = FormatTools.UINT16;
+          break;
+        case ImagePlus.GRAY32:
+          ptype = FormatTools.FLOAT;
+          break;
+      }
 
+      if (store.getPixelsSizeX(0, 0) == null) {
         store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
+      }
+      if (store.getPixelsSizeY(0, 0) == null) {
         store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
+      }
+      if (store.getPixelsSizeZ(0, 0) == null) {
         store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
+      }
+      if (store.getPixelsSizeC(0, 0) == null) {
         store.setPixelsSizeC(new Integer(channels*imp.getNChannels()), 0, 0);
+      }
+      if (store.getPixelsSizeT(0, 0) == null) {
         store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
+      }
+      if (store.getPixelsPixelType(0, 0) == null) {
         store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
+      }
+      if (store.getPixelsBigEndian(0, 0) == null) {
         store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
+      }
+      if (store.getPixelsDimensionOrder(0, 0) == null) {
         store.setPixelsDimensionOrder("XYCZT", 0, 0);
+      }
+      if (store.getLogicalChannelSamplesPerPixel(0, 0) == null) {
         store.setLogicalChannelSamplesPerPixel(new Integer(channels), 0, 0);
       }
 
