@@ -407,14 +407,10 @@ public class ImageInfo {
       LogTools.print("\tIndexed = " + indexed + " (" +
         (falseColor ? "false" : "true") + " color");
       if (table8 != null) {
-        int len0 = table8.length;
-        int len1 = table8[0].length;
         LogTools.print(", 8-bit LUT: " + table8.length + " x ");
         LogTools.print(table8[0] == null ? "null" : "" + table8[0].length);
       }
       if (table16 != null) {
-        int len0 = table16.length;
-        int len1 = table16[0].length;
         LogTools.print(", 16-bit LUT: " + table16.length + " x ");
         LogTools.print(table16[0] == null ? "null" : "" + table16[0].length);
       }
