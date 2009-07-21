@@ -572,6 +572,11 @@ public class TiffParser {
     int endX = (int) width + x;
     int endY = (int) height + y;
 
+    int rowLen = pixel * (int) tileWidth;
+    int tileSize = (int) (rowLen * tileLength);
+    int planeSize = (int) (width * height * pixel);
+    int outputRowLen = (int) (pixel * width);
+
     for (int row=0; row<numTileRows; row++) {
       for (int col=0; col<numTileCols; col++) {
         Region tileBounds = new Region(col * (int) tileWidth,
@@ -597,11 +602,7 @@ public class TiffParser {
 
         // copy appropriate portion of the tile to the output buffer
 
-        int rowLen = pixel * (int) tileWidth;
         int copy = pixel * twidth;
-        int tileSize = (int) (tileWidth * tileLength * pixel);
-        int planeSize = (int) (width * height * pixel);
-        int outputRowLen = (int) (pixel * width);
 
         realX *= pixel;
         realY *= rowLen;

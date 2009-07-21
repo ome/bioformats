@@ -29,6 +29,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -69,11 +70,13 @@ public class MIASReader extends FormatReader {
   private Vector<String> analysisFiles = null;
 
   private int[][] wellNumber;
+  private int[][] plateAndWell;
 
   private int tileRows, tileCols;
   private int tileWidth, tileHeight;
 
   private int wellRows, wellColumns;
+  private int[] bpp;
 
   private Vector<String> plateDirs;
 
@@ -87,6 +90,18 @@ public class MIASReader extends FormatReader {
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#setSeries(int) */
+  public void setSeries(int series) {
+    int oldSeries = getSeries();
+    super.setSeries(series);
+    try {
+      unmapSeries(getPlateNumber(oldSeries), getWellNumber(oldSeries));
+    }
+    catch (IOException e) {
+      traceDebug(e);
+    }
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String filename, boolean open) {
@@ -132,23 +147,6 @@ public class MIASReader extends FormatReader {
     return readers == null ? null : readers[0][0][0].get16BitLookupTable();
   }
 
-  /* @see loci.formats.IFormatReader#openThumbBytes(int) */
-  public byte[] openThumbBytes(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-
-    // TODO : thumbnails take a long time to read
-
-    int well = getWellNumber(getSeries());
-    int plate = getPlateNumber(getSeries());
-    int image = no * tileRows * tileCols;
-
-    readers[plate][well][image].setId(tiffs[plate][well][image]);
-    return readers[plate][well][image].openThumbBytes(0);
-  }
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -160,14 +158,17 @@ public class MIASReader extends FormatReader {
     int well = getWellNumber(getSeries());
     int plate = getPlateNumber(getSeries());
 
+    if (Location.getMappedFile(getFilename(plate, well, 0)) == null) {
+      preReadSeries(plate, well);
+    }
+
     if (tileRows == 1 && tileCols == 1) {
       readers[plate][well][no].setId(tiffs[plate][well][no]);
       readers[plate][well][no].openBytes(0, buf, x, y, w, h);
       return buf;
     }
 
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int outputRowLen = w * bpp;
+    int outputRowLen = w * bpp[getSeries()];
 
     Region image = new Region(x, y, w, h);
     int outputRow = 0, outputCol = 0;
@@ -182,14 +183,9 @@ public class MIASReader extends FormatReader {
         if (!tile.intersects(image)) continue;
 
         intersection = tile.intersection(image);
-        intersection.x %= tileWidth;
-        intersection.y %= tileHeight;
 
         int tileIndex = (no * tileRows + row) * tileCols + col;
-
-        readers[plate][well][tileIndex].setId(tiffs[plate][well][tileIndex]);
-        tileBuf = readers[plate][well][tileIndex].openBytes(0, intersection.x,
-          intersection.y, intersection.width, intersection.height);
+        tileBuf = getTile(plate, well, no, row, col, intersection);
 
         int rowLen = tileBuf.length / intersection.height;
 
@@ -255,6 +251,8 @@ public class MIASReader extends FormatReader {
       tileWidth = tileHeight = 0;
       plateDirs = null;
       wellRows = wellColumns = 0;
+      bpp = null;
+      plateAndWell = null;
     }
   }
 
@@ -434,7 +432,16 @@ public class MIASReader extends FormatReader {
     }
 
     core = new CoreMetadata[nSeries];
+    bpp = new int[nSeries];
+    plateAndWell = new int[nSeries][2];
+
+    // assume that all wells have the same dimensions
+    readers[0][0][0].setId(tiffs[0][0][0]);
+    tileWidth = readers[0][0][0].getSizeX();
+    tileHeight = readers[0][0][0].getSizeY();
+
     for (int i=0; i<core.length; i++) {
+      Arrays.fill(plateAndWell[i], -1);
       core[i] = new CoreMetadata();
 
       int plate = getPlateNumber(i);
@@ -448,18 +455,15 @@ public class MIASReader extends FormatReader {
       if (core[i].sizeC == 0) core[i].sizeC = 1;
       if (core[i].sizeT == 0) core[i].sizeT = 1;
 
-      readers[plate][well][0].setId(tiffs[plate][well][0]);
-      tileWidth = readers[plate][well][0].getSizeX();
-      tileHeight = readers[plate][well][0].getSizeY();
       core[i].sizeX = tileWidth * tileCols;
       core[i].sizeY = tileHeight * tileRows;
-      core[i].pixelType = readers[plate][well][0].getPixelType();
-      core[i].sizeC *= readers[plate][well][0].getSizeC();
-      core[i].rgb = readers[plate][well][0].isRGB();
-      core[i].littleEndian = readers[plate][well][0].isLittleEndian();
-      core[i].interleaved = readers[plate][well][0].isInterleaved();
-      core[i].indexed = readers[plate][well][0].isIndexed();
-      core[i].falseColor = readers[plate][well][0].isFalseColor();
+      core[i].pixelType = readers[0][0][0].getPixelType();
+      core[i].sizeC *= readers[0][0][0].getSizeC();
+      core[i].rgb = readers[0][0][0].isRGB();
+      core[i].littleEndian = readers[0][0][0].isLittleEndian();
+      core[i].interleaved = readers[0][0][0].isInterleaved();
+      core[i].indexed = readers[0][0][0].isIndexed();
+      core[i].falseColor = readers[0][0][0].isFalseColor();
       core[i].dimensionOrder = order[plate][well];
 
       if (core[i].dimensionOrder.indexOf("Z") == -1) {
@@ -473,6 +477,7 @@ public class MIASReader extends FormatReader {
       }
 
       core[i].imageCount = core[i].sizeZ * core[i].sizeT * cCount[plate][well];
+      bpp[i] = FormatTools.getBytesPerPixel(core[i].pixelType);
     }
 
     // Populate metadata hashtable
@@ -577,7 +582,7 @@ public class MIASReader extends FormatReader {
     String[] colors = new String[getSizeC()];
     for (String file : analysisFiles) {
       String name = new Location(file).getName();
-      if (name.startsWith("Well") && name.endsWith(".txt")) {
+      if (name.startsWith("Well") && name.endsWith("detail.txt")) {
         int[] position = getPositionFromFile(file);
 
         int series = getSeriesNumber(position[0], position[1]);
@@ -740,12 +745,18 @@ public class MIASReader extends FormatReader {
 
   /** Retrieve the well to which this series belongs. */
   private int getWellNumber(int series) {
-    return getPlateAndWell(series)[1];
+    if (plateAndWell[series][1] == -1) {
+      plateAndWell[series] = getPlateAndWell(series);
+    }
+    return plateAndWell[series][1];
   }
 
   /** Retrieve the plate to which this series belongs. */
   private int getPlateNumber(int series) {
-    return getPlateAndWell(series)[0];
+    if (plateAndWell[series][0] == -1) {
+      plateAndWell[series] = getPlateAndWell(series);
+    }
+    return plateAndWell[series][0];
   }
 
   /** Retrieve a two element array containing the plate and well indices. */
@@ -759,6 +770,43 @@ public class MIASReader extends FormatReader {
       plateNumber++;
     }
     return new int[] {plateNumber, wellNumber};
+  }
+
+  private byte[] getTile(int plate, int well, int no, int row, int col,
+    Region intersection) throws FormatException, IOException
+  {
+    intersection.x %= tileWidth;
+    intersection.y %= tileHeight;
+
+    int tileIndex = (no * tileRows + row) * tileCols + col;
+    String filename = getFilename(plate, well, tileIndex);
+    readers[plate][well][tileIndex].setId(filename);
+    byte[] buf = readers[plate][well][tileIndex].openBytes(0, intersection.x,
+      intersection.y, intersection.width, intersection.height);
+    return buf;
+  }
+
+  private String getFilename(int plate, int well, int tile) {
+    return plate + "-" + well + "-" + tile + ".tiff";
+  }
+
+  private void unmapSeries(int plate, int well) throws IOException {
+    for (int tile=0; tile<tiffs[plate][well].length; tile++) {
+      Location.mapFile(getFilename(plate, well, tile), null);
+      readers[plate][well][tile].close();
+    }
+  }
+
+  private void preReadSeries(int plate, int well) throws IOException {
+    for (int tile=0; tile<tiffs[plate][well].length; tile++) {
+      String filename = getFilename(plate, well, tile);
+      RandomAccessInputStream s =
+        new RandomAccessInputStream(tiffs[plate][well][tile]);
+      byte[] b = new byte[(int) s.length()];
+      s.read(b);
+      s.close();
+      Location.mapFile(filename, new ByteArrayHandle(b));
+    }
   }
 
 }
