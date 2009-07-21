@@ -94,7 +94,7 @@ public class ZeissZVIReader extends FormatReader {
 
   private POITools poi;
 
-  private Hashtable tagsToParse;
+  private Vector<RandomAccessInputStream> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
   private float stageX = 0f, stageY = 0f;
 
@@ -354,7 +354,7 @@ public class ZeissZVIReader extends FormatReader {
     timestamps = new Hashtable();
     exposureTime = new Hashtable();
     poi = new POITools(Location.getMappedId(id));
-    tagsToParse = new Hashtable();
+    tagsToParse = new Vector<RandomAccessInputStream>();
 
     // count number of images
 
@@ -408,7 +408,7 @@ public class ZeissZVIReader extends FormatReader {
         RandomAccessInputStream s = poi.getDocumentStream(name);
         s.order(true);
         int imageNum = getImageNumber(name, -1);
-        tagsToParse.put(new Integer(imageNum), s);
+        tagsToParse.add(s);
         if (imageNum == -1) {
           parseTags(imageNum, s, new DummyMetadata());
         }
@@ -600,11 +600,9 @@ public class ZeissZVIReader extends FormatReader {
       store.setStagePositionPositionY(new Float(stageY), 0, 0, plane);
     }
 
-    Integer[] keys = (Integer[]) tagsToParse.keySet().toArray(new Integer[0]);
-    for (int i=0; i<keys.length; i++) {
-      RandomAccessInputStream s =
-        (RandomAccessInputStream) tagsToParse.get(keys[i]);
-      parseTags(keys[i].intValue(), s, store);
+    for (RandomAccessInputStream s : tagsToParse) {
+      s.order(true);
+      parseTags(-1, s, store);
       s.close();
     }
     core[0].indexed = !isRGB() && channelColors != null;
@@ -685,8 +683,6 @@ public class ZeissZVIReader extends FormatReader {
 
     int count = s.readInt();
 
-    float pixelSizeX = 0f, pixelSizeY = 0f, pixelSizeZ = 0f;
-
     int effectiveSizeC = 0;
     try {
       effectiveSizeC = getEffectiveSizeC();
@@ -735,23 +731,14 @@ public class ZeissZVIReader extends FormatReader {
             channelColors[cIndex] = Integer.parseInt(value);
           }
         }
-        else if (key.equals("Scale Factor for X")) {
-          pixelSizeX = Float.parseFloat(value);
+        else if (key.startsWith("Scale Factor for X")) {
+          store.setDimensionsPhysicalSizeX(new Float(value), 0, 0);
         }
-        else if (key.equals("Scale Factor for Y")) {
-          pixelSizeY = Float.parseFloat(value);
+        else if (key.startsWith("Scale Factor for Y")) {
+          store.setDimensionsPhysicalSizeY(new Float(value), 0, 0);
         }
-        else if (key.equals("Scale Factor for Z")) {
-          pixelSizeZ = Float.parseFloat(value);
-        }
-        else if (key.equals("Scale Unit for X")) {
-          store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-        }
-        else if (key.equals("Scale Unit for Y")) {
-          store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
-        }
-        else if (key.equals("Scale Unit for Z")) {
-          store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
+        else if (key.startsWith("Scale Factor for Z")) {
+          store.setDimensionsPhysicalSizeZ(new Float(value), 0, 0);
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1 && nextEmWave < effectiveSizeC) {
@@ -806,7 +793,8 @@ public class ZeissZVIReader extends FormatReader {
           store.setExperimenterInstitution(value, 0);
         }
         else if (key.startsWith("Objective Magnification")) {
-          store.setObjectiveNominalMagnification(new Integer(value), 0, 0);
+          float mag = Float.parseFloat(value);
+          store.setObjectiveNominalMagnification(new Integer((int) mag), 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID(value, 0, 0);
@@ -815,29 +803,19 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveLensNA(new Float(value), 0, 0);
         }
         else if (key.startsWith("Objective Name")) {
-          boolean foundMag = false;
           String[] tokens = value.split(" ");
-          StringBuffer correction = new StringBuffer();
           for (int q=0; q<tokens.length; q++) {
-            if (!foundMag) {
-              if (tokens[q].indexOf("/") != -1) {
-                foundMag = true;
-                String mag = tokens[q].substring(0, tokens[q].indexOf("/") - 1);
-                String na = tokens[q].substring(tokens[q].indexOf("/") + 1);
-                store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
-                store.setObjectiveLensNA(new Float(na), 0, 0);
-              }
-              else {
-                correction.append(tokens[q]);
-                correction.append(" ");
-              }
-            }
-            else {
-              store.setObjectiveImmersion(tokens[q], 0, 0);
+            int slash = tokens[q].indexOf("/");
+            if (slash != -1) {
+              int mag =
+                (int) Float.parseFloat(tokens[q].substring(0, slash - q));
+              String na = tokens[q].substring(slash + 1);
+              store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+              store.setObjectiveLensNA(new Float(na), 0, 0);
+              store.setObjectiveCorrection(tokens[q - 1], 0, 0);
               break;
             }
           }
-          store.setObjectiveCorrection(correction.toString().trim(), 0, 0);
         }
         else if (key.startsWith("Objective Working Distance")) {
           store.setObjectiveWorkingDistance(new Float(value), 0, 0);
@@ -856,9 +834,6 @@ public class ZeissZVIReader extends FormatReader {
               immersion = "Unknown";
           }
           store.setObjectiveImmersion(immersion, 0, 0);
-        }
-        else if (key.startsWith("Parfocal Correction")) {
-          store.setObjectiveCorrection(value, 0, 0);
         }
         else if (key.indexOf("Stage Position X") != -1) {
           stageX = Float.parseFloat(value);
