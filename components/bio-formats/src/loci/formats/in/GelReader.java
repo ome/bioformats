@@ -53,7 +53,9 @@ public class GelReader extends BaseTiffReader {
 
   // -- Constants --
 
-  public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
+  public static final String DATE_FORMAT = "yyyy:MM:dd";
+  public static final String TIME_FORMAT = "HH:mm:ss";
+  public static final String DATE_TIME_FORMAT = "yyyy:MM:dd HH:mm:ss";
 
   // GEL TIFF private IFD tags.
   private static final int MD_FILETAG = 33445;
@@ -118,10 +120,9 @@ public class GelReader extends BaseTiffReader {
     if (ifds.size() > 1) {
       IFDList tmpIFDs = ifds;
       ifds = new IFDList();
-      ifds.ensureCapacity(tmpIFDs.size() / 2);
-      for (int i=0; i<ifds.size(); i++) {
+      for (int i=0; i<tmpIFDs.size()/2; i++) {
         IFD ifd = new IFD();
-        ifds.set(i, ifd);
+        ifds.add(ifd);
         ifd.putAll(tmpIFDs.get(i*2 + 1));
         ifd.putAll(tmpIFDs.get(i*2));
       }
@@ -165,19 +166,43 @@ public class GelReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
     store.setImageDescription(info, 0);
 
-    if (prepTime != null) {
-      SimpleDateFormat parse = new SimpleDateFormat(DATE_FORMAT);
-      Date date = parse.parse(prepTime, new ParsePosition(0));
-      SimpleDateFormat sdf = new SimpleDateFormat(DateTools.ISO8601_FORMAT);
-      store.setImageCreationDate(sdf.format(date), 0);
-    }
-    else {
+    if (parseDate(prepDate) != null) {
+      store.setImageCreationDate(parseDate(prepDate), 0);
+    } else if (parseDate(prepTime) != null) {
+      store.setImageCreationDate(parseDate(prepTime), 0);
+    } else {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
     Float pixelSize = new Float(scale.floatValue());
     store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
     store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+  }
+  
+  /**
+   * Attempts to parse a date-only string from a text string using multiple
+   * potential format strings.
+   * @param text String to attempt to parse a date-only string from.
+   * @return Date-only string or <code>null</code> if a date string was not
+   * located.
+   */
+  private String parseDate(String text) {
+    if (text == null) {
+      return null;
+    }
+    SimpleDateFormat dateTimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+    SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+    SimpleDateFormat iso8601Format = 
+      new SimpleDateFormat(DateTools.ISO8601_FORMAT);
+    Date date = dateTimeFormat.parse(text, new ParsePosition(0));
+    if (date != null) {
+      return iso8601Format.format(date);
+    }
+    date = dateFormat.parse(text, new ParsePosition(0));
+    if (date != null) {
+      return iso8601Format.format(date);
+    }
+    return null;
   }
 
 }
