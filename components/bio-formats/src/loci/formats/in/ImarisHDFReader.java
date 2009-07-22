@@ -89,7 +89,7 @@ public class ImarisHDFReader extends FormatReader {
     String path = "/DataSet/ResolutionLevel_" + series + "/TimePoint_" +
       zct[2] + "/Channel_" + zct[1] + "/Data";
     Object image = netcdf.getArray(path, new int[] {zct[0], 0, 0},
-      new int[] {1, getSizeX(), getSizeY()});
+      new int[] {1, getSizeY(), getSizeX()});
 
     for (int row=0; row<h; row++) {
       if (image instanceof byte[][]) {
