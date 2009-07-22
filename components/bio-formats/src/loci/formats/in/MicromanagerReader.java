@@ -25,8 +25,6 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -410,15 +408,9 @@ public class MicromanagerReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
     store.setImageDescription(comment, 0);
     if (time != null) {
-      SimpleDateFormat parser = new SimpleDateFormat(DATE_FORMAT);
-      try {
-        long stamp = parser.parse(time).getTime();
-        store.setImageCreationDate(
-          DateTools.convertDate(stamp, DateTools.UNIX), 0);
-      }
-      catch (ParseException e) {
-        MetadataTools.setDefaultCreationDate(store, id, 0);
-      }
+      long stamp = DateTools.getTime(time, DATE_FORMAT);
+      String date = DateTools.convertDate(stamp, DateTools.UNIX);
+      store.setImageCreationDate(date, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 

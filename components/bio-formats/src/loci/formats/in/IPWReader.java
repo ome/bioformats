@@ -25,14 +25,12 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -209,11 +207,8 @@ public class IPWReader extends FormatReader {
           if (timestamp.length() > 26) {
             timestamp = timestamp.substring(timestamp.length() - 26);
           }
-          SimpleDateFormat fmt =
-            new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS aa");
-          Date d = fmt.parse(timestamp, new ParsePosition(0));
-          fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-          creationDate = fmt.format(d);
+          creationDate =
+            DateTools.formatDate(timestamp, "MM/dd/yyyy HH:mm:ss.SSS aa");
         }
       }
       else if (relativePath.equals("ImageTIFF")) {

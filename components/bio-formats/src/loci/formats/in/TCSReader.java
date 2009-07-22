@@ -24,12 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
@@ -362,7 +361,6 @@ public class TCSReader extends FormatReader {
       long[] stamp = new long[ifds.size()];
 
       int channelCount = 0;
-      SimpleDateFormat fmt = new SimpleDateFormat(DATE_FORMAT);
 
       for (int i=0; i<ifds.size(); i++) {
         String document = (String)
@@ -380,7 +378,7 @@ public class TCSReader extends FormatReader {
 
         String date = document.substring(document.indexOf(" ", index + 6),
           document.indexOf("FORMAT")).trim();
-        stamp[i] = fmt.parse(date, new ParsePosition(0)).getTime();
+        stamp[i] = DateTools.getTime(date, DATE_FORMAT);
       }
 
       core[0].sizeT = 0;

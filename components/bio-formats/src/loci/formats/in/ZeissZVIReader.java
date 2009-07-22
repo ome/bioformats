@@ -25,8 +25,6 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -1422,8 +1420,7 @@ public class ZeissZVIReader extends FormatReader {
       stamp = Long.parseLong(s);
     }
     catch (NumberFormatException exc) {
-      SimpleDateFormat sdf = new SimpleDateFormat("M/d/y h:mm:ss aa");
-      stamp = sdf.parse(s, new ParsePosition(0)).getTime();
+      stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
     }
     return stamp;
   }

@@ -24,14 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FilePattern;
@@ -718,12 +716,7 @@ public class DicomReader extends FormatReader {
 
     if (date != null && time != null) {
       stamp = date + " " + time;
-      SimpleDateFormat parse =
-        new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSSSSS");
-      Date d = parse.parse(stamp, new ParsePosition(0));
-      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      if (d != null) stamp = fmt.format(d);
-      else stamp = null;
+      stamp = DateTools.formatDate(stamp, "yyyy.MM.dd HH:mm:ss.SSSSSS");
     }
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;

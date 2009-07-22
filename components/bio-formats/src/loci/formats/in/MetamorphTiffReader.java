@@ -24,11 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Vector;
 
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
 import loci.formats.FormatException;
@@ -134,15 +132,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
     store.setImageName(handler.getImageName(), 0);
     store.setImageDescription("", 0);
 
-    SimpleDateFormat parse = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
-    Date d = parse.parse(handler.getDate(), new ParsePosition(0));
-    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    SimpleDateFormat tsfmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    String parse = "yyyyMMdd HH:mm:ss.SSS";
 
-    Date td;
     for (int i=0; i<timestamps.size(); i++) {
-      td = parse.parse((String) timestamps.get(i), new ParsePosition(0));
-      addGlobalMeta("timestamp " + i, tsfmt.format(td));
+      long timestamp = DateTools.getTime((String) timestamps.get(i), parse);
+      addGlobalMeta("timestamp " + i, timestamp);
     }
     for (int i=0; i<exposures.size(); i++) {
       addGlobalMeta("exposure time " + i + " (ms)",
@@ -151,15 +145,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     long startDate = 0;
     if (timestamps.size() > 0) {
-      startDate =
-        parse.parse((String) timestamps.get(0), new ParsePosition(0)).getTime();
+      startDate = DateTools.getTime((String) timestamps.get(0), parse);
     }
 
     for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
       if (coords[2] < timestamps.size()) {
         String stamp = (String) timestamps.get(coords[2]);
-        long ms = parse.parse(stamp, new ParsePosition(0)).getTime();
+        long ms = DateTools.getTime(stamp, parse);
         store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
           0, 0, i);
       }
@@ -168,7 +161,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
       }
     }
 
-    store.setImageCreationDate(fmt.format(d), 0);
+    String date =
+      DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT);
+    store.setImageCreationDate(date, 0);
 
     store.setImagingEnvironmentTemperature(
       new Float(handler.getTemperature()), 0);

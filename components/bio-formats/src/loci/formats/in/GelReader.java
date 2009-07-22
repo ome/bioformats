@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -55,7 +52,10 @@ public class GelReader extends BaseTiffReader {
 
   public static final String DATE_FORMAT = "yyyy:MM:dd";
   public static final String TIME_FORMAT = "HH:mm:ss";
-  public static final String DATE_TIME_FORMAT = "yyyy:MM:dd HH:mm:ss";
+  public static final String DATE_TIME_FORMAT = DATE_FORMAT + " " + TIME_FORMAT;
+
+  public static final String[] FORMATS =
+    new String[] {DATE_TIME_FORMAT, DATE_FORMAT, TIME_FORMAT};
 
   // GEL TIFF private IFD tags.
   private static final int MD_FILETAG = 33445;
@@ -166,43 +166,22 @@ public class GelReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
     store.setImageDescription(info, 0);
 
-    if (parseDate(prepDate) != null) {
-      store.setImageCreationDate(parseDate(prepDate), 0);
-    } else if (parseDate(prepTime) != null) {
-      store.setImageCreationDate(parseDate(prepTime), 0);
-    } else {
+    String parsedDate = DateTools.formatDate(prepDate, FORMATS);
+    String parsedTime = DateTools.formatDate(prepTime, FORMATS);
+
+    if (parsedDate != null) {
+      store.setImageCreationDate(parsedDate, 0);
+    }
+    else if (parsedTime != null) {
+      store.setImageCreationDate(parsedTime, 0);
+    }
+    else {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
     Float pixelSize = new Float(scale.floatValue());
     store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
     store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
-  }
-  
-  /**
-   * Attempts to parse a date-only string from a text string using multiple
-   * potential format strings.
-   * @param text String to attempt to parse a date-only string from.
-   * @return Date-only string or <code>null</code> if a date string was not
-   * located.
-   */
-  private String parseDate(String text) {
-    if (text == null) {
-      return null;
-    }
-    SimpleDateFormat dateTimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
-    SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-    SimpleDateFormat iso8601Format = 
-      new SimpleDateFormat(DateTools.ISO8601_FORMAT);
-    Date date = dateTimeFormat.parse(text, new ParsePosition(0));
-    if (date != null) {
-      return iso8601Format.format(date);
-    }
-    date = dateFormat.parse(text, new ParsePosition(0));
-    if (date != null) {
-      return iso8601Format.format(date);
-    }
-    return null;
   }
 
 }

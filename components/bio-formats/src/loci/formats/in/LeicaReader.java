@@ -25,15 +25,13 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.AxisGuesser;
@@ -67,6 +65,9 @@ public class LeicaReader extends FormatReader {
 
   /** All Leica TIFFs have this tag. */
   private static final int LEICA_MAGIC_TAG = 33923;
+
+  /** Format for dates. */
+  private static final String DATE_FORMAT = "yyyy:MM:dd,HH:mm:ss:SSS";
 
   /** IFD tags. */
   private static final Integer SERIES = new Integer(10);
@@ -899,12 +900,9 @@ public class LeicaReader extends FormatReader {
       if (i < timestamps.length && timestamps[i] != null &&
         timestamps[i].length > 0)
       {
-        SimpleDateFormat parse =
-          new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
-        Date date = parse.parse(timestamps[i][0], new ParsePosition(0));
-        firstPlane = date.getTime();
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        store.setImageCreationDate(fmt.format(date), i);
+        firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT);
+        store.setImageCreationDate(
+          DateTools.formatDate(timestamps[i][0], DATE_FORMAT), i);
       }
       else {
         MetadataTools.setDefaultCreationDate(store, id, i);
@@ -941,10 +939,8 @@ public class LeicaReader extends FormatReader {
 
       for (int j=0; j<core[i].imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
-          SimpleDateFormat parse =
-            new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
-          Date date = parse.parse(timestamps[i][j], new ParsePosition(0));
-          float elapsedTime = (float) (date.getTime() - firstPlane) / 1000;
+          long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
+          float elapsedTime = (float) (time - firstPlane) / 1000;
           store.setPlaneTimingDeltaT(new Float(elapsedTime), i, 0, j);
           store.setPlaneTimingExposureTime(new Float(exposureTime[i]), i, 0, j);
         }

@@ -25,12 +25,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
@@ -289,11 +287,8 @@ public class PrairieReader extends FormatReader {
         }
 
         if (date != null) {
-          SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
-          Date d = parse.parse(date, new ParsePosition(0));
-          SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-          date = fmt.format(d);
-          store.setImageCreationDate(date, 0);
+          date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
+          if (date != null) store.setImageCreationDate(date, 0);
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
 

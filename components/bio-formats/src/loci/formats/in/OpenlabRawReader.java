@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -136,21 +134,14 @@ public class OpenlabRawReader extends FormatReader {
     in.skipBytes(1);
 
     long stampMs = in.readLong();
-    Date timestamp = null;
-    String stamp = null;
-    SimpleDateFormat sdf = null;
     if (stampMs > 0) {
       stampMs /= 1000000;
       stampMs -= (67 * 365.25 * 24 * 60 * 60);
+    }
+    else stampMs = System.currentTimeMillis();
 
-      timestamp = new Date(stampMs);
-      sdf = new SimpleDateFormat(DateTools.ISO8601_FORMAT);
-      stamp = sdf.format(timestamp);
-      addGlobalMeta("Timestamp", stamp);
-    }
-    if (stamp == null) {
-      stamp = DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);
-    }
+    String stamp = DateTools.convertDate(stampMs, DateTools.UNIX);
+    addGlobalMeta("Timestamp", stamp);
 
     in.skipBytes(4);
     int len = in.read() & 0xff;
