@@ -158,6 +158,7 @@ public class PrairieReader extends FormatReader {
     if (noPixels) {
       return new String[] {xmlFile, cfgFile};
     }
+    if (files == null) files = new String[0];
     String[] s = new String[files.length + 2];
     System.arraycopy(files, 0, s, 0, files.length);
     s[files.length] = xmlFile;
@@ -209,17 +210,18 @@ public class PrairieReader extends FormatReader {
     if (checkSuffix(id, PRAIRIE_SUFFIXES)) {
       // we have been given the XML file that lists TIFF files (best case)
 
-      status("Parsing XML");
-
       if (checkSuffix(id, XML_SUFFIX)) {
+        status("Parsing XML");
         super.initFile(id);
         tiff = new MinimalTiffReader();
         xmlFile = id;
         readXML = true;
       }
       else if (checkSuffix(id, CFG_SUFFIX)) {
+        status("Parsing CFG");
         cfgFile = id;
         readCFG = true;
+        currentId = id;
       }
 
       f = new Vector();

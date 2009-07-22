@@ -346,10 +346,12 @@ public class LeicaReader extends FormatReader {
 
     in.skipBytes(8);
     int addr = in.readInt();
-    Vector v = new Vector();
+
+    headerIFDs = new IFDList();
+
     while (addr != 0) {
       IFD ifd = new IFD();
-      v.add(ifd);
+      headerIFDs.add(ifd);
       in.seek(addr + 4);
 
       int tag = in.readInt();
@@ -372,7 +374,7 @@ public class LeicaReader extends FormatReader {
       addr = in.readInt();
     }
 
-    numSeries = v.size();
+    numSeries = headerIFDs.size();
 
     core = new CoreMetadata[numSeries];
     for (int i=0; i<numSeries; i++) {
@@ -381,8 +383,6 @@ public class LeicaReader extends FormatReader {
     channelMap = new int[numSeries][];
 
     files = new Vector[numSeries];
-
-    headerIFDs = new IFDList();
 
     // determine the length of a filename
 
@@ -545,7 +545,6 @@ public class LeicaReader extends FormatReader {
     core = new CoreMetadata[numSeries];
     files = new Vector[numSeries];
     headerIFDs = new IFDList();
-    headerIFDs.ensureCapacity(numSeries);
     int index = 0;
 
     for (int i=0; i<numSeries; i++) {
@@ -560,7 +559,7 @@ public class LeicaReader extends FormatReader {
         files[i].add(sorted[q]);
       }
 
-      headerIFDs.set(i, tempIFDs.get(index));
+      headerIFDs.add(tempIFDs.get(index));
       index++;
     }
 

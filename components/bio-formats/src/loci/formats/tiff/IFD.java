@@ -62,6 +62,7 @@ public class IFD extends HashMap<Integer, Object> {
   public static final int SRATIONAL = 10;
   public static final int FLOAT = 11;
   public static final int DOUBLE = 12;
+  public static final int IFD = 13;
   public static final int LONG8 = 16;
   public static final int SLONG8 = 17;
   public static final int IFD8 = 18;
@@ -80,7 +81,7 @@ public class IFD extends HashMap<Integer, Object> {
     8,  // 10: SRATIONAL
     4,  // 11: FLOAT
     8,  // 12: DOUBLE
-    -1, // 13: invalid type
+    4,  // 13: IFD
     -1, // 14: invalid type
     -1, // 15: invalid type
     8,  // 16: LONG8

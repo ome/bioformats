@@ -216,11 +216,10 @@ public class TiffReader extends BaseTiffReader {
       int totalPlanes = (int) (totalBytes / planeSize) + 1;
 
       ifds = new IFDList();
-      ifds.ensureCapacity(totalPlanes);
-      ifds.set(0, firstIFD);
+      ifds.add(firstIFD);
       for (int i=1; i<totalPlanes; i++) {
         IFD ifd = new IFD(firstIFD);
-        ifds.set(i, ifd);
+        ifds.add(ifd);
         long[] prevOffsets = ifds.get(i - 1).getStripOffsets();
         long[] offsets = new long[stripOffsets.length];
         offsets[0] = prevOffsets[prevOffsets.length - 1] +

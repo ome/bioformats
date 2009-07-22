@@ -84,6 +84,7 @@ public class OMETiffReader extends FormatReader {
     if (!validHeader) return false;
     // look for OME-XML in first IFD's comment
     IFD ifd = tp.getFirstIFD();
+    if (ifd == null) return false;
     String comment = ifd.getComment();
     if (comment == null) return false;
     return comment.trim().endsWith("</OME>");

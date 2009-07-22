@@ -731,7 +731,6 @@ public class MetamorphReader extends BaseTiffReader {
       core[0].sizeC *= uniqueWavelengths.size();
 
       IFDList tempIFDs = new IFDList();
-      tempIFDs.ensureCapacity(getImageCount());
 
       long[] oldOffsets = firstIFD.getStripOffsets();
       long[] stripByteCounts = firstIFD.getStripByteCounts();
@@ -748,8 +747,6 @@ public class MetamorphReader extends BaseTiffReader {
       emWavelength = firstIFD.getIFDLongArray(UIC3TAG, true);
 
       // for each image plane, construct an IFD hashtable
-
-      int pointer = 0;
 
       IFD temp;
       for (int i=0; i<getImageCount(); i++) {
@@ -783,8 +780,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         temp.put(new Integer(IFD.STRIP_BYTE_COUNTS), newByteCounts);
 
-        tempIFDs.set(pointer, temp);
-        pointer++;
+        tempIFDs.add(temp);
       }
       ifds = tempIFDs;
     }

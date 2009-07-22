@@ -161,7 +161,9 @@ public class TiffParser {
     long offset = getFirstOffset(bigTiff);
 
     IFD ifd = getIFD(0, offset, bigTiff);
-    ifd.put(new Integer(IFD.BIG_TIFF), new Boolean(bigTiff));
+    if (ifd != null) {
+      ifd.put(new Integer(IFD.BIG_TIFF), new Boolean(bigTiff));
+    }
     return ifd;
   }
 
@@ -346,7 +348,7 @@ public class TiffParser {
           value = shorts;
         }
       }
-      else if (type == IFD.LONG) {
+      else if (type == IFD.LONG || type == IFD.IFD) {
         // 32-bit (4-byte) unsigned integer
         if (count == 1) value = new Long(in.readInt());
         else {

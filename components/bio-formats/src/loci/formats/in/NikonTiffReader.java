@@ -75,8 +75,9 @@ public class NikonTiffReader extends BaseTiffReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
-    String software = (String) ifd.get(new Integer(IFD.SOFTWARE));
-    return software != null && software.indexOf("EZ-C1") != -1;
+    if (ifd == null) return false;
+    Object software = ifd.get(new Integer(IFD.SOFTWARE));
+    return software != null && software.toString().indexOf("EZ-C1") != -1;
   }
 
   // -- IFormatHandler API methods --

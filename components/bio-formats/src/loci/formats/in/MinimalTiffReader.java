@@ -217,7 +217,9 @@ public class MinimalTiffReader extends FormatReader {
     status("Reading IFDs");
 
     ifds = tiffParser.getIFDs();
-    if (ifds == null) throw new FormatException("No IFDs found");
+    if (ifds == null || ifds.size() == 0) {
+      throw new FormatException("No IFDs found");
+    }
 
     // separate thumbnail IFDs from regular IFDs
 
