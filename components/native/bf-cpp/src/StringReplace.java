@@ -45,15 +45,20 @@ public class StringReplace {
     }
 
     // replace patterns
+    int changed = 0;
     for (int i=0; i<lines.size(); i++) {
       String line = lines.get(i);
-      line = line.replaceAll(input, output);
-      lines.set(i, line);
+      String newLine = line.replaceAll(input, output);
+      if (!line.equals(newLine)) {
+        lines.set(i, newLine);
+        changed++;
+      }
     }
 
     // write data back to file
     try {
       writeFile(path, lines);
+      System.out.println(changed + " lines updated.");
     }
     catch (IOException exc) {
       System.err.println("Error: cannot write file: " + path);
