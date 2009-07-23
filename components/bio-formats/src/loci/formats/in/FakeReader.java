@@ -235,7 +235,8 @@ public class FakeReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     for (int s=0; s<seriesCount; s++) {
-      store.setImageName(name, s);
+      String imageName = s > 0 ? name + " " + (s + 1) : name;
+      store.setImageName(imageName, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
     }
   }
