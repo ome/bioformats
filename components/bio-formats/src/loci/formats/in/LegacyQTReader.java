@@ -77,11 +77,6 @@ public class LegacyQTReader extends FormatReader {
   /** Constructs a new QT reader. */
   public LegacyQTReader() { super("QuickTime", "mov"); }
 
-  /** Constructs a new QT reader with the given id mappings. */
-  public LegacyQTReader(Hashtable idMap) {
-    super("QuickTime", "mov");
-  }
-
   // -- IFormatReader API methods --
 
   /**
