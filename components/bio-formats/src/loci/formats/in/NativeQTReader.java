@@ -121,7 +121,7 @@ public class NativeQTReader extends FormatReader {
   /** Constructs a new QuickTime reader. */
   public NativeQTReader() {
     super("QuickTime", "mov");
-    suffixSufficient = false;
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
