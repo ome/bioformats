@@ -106,14 +106,17 @@ public class ThumbLoader implements Runnable {
 
       // find image plane for each series and sort by size
       SeriesInfo[] info = new SeriesInfo[seriesCount];
-      for (int i=0; i<seriesCount && !stop; i++) {
+      for (int i=0; i<seriesCount; i++) {
+        if (stop) return;
         ir.setSeries(i);
         info[i] = new SeriesInfo(i, ir.getSizeX() * ir.getSizeY());
       }
+      if (stop) return;
       Arrays.sort(info);
 
       // open each thumbnail, fastest/smallest first
-      for (int i=0; i<seriesCount && !stop; i++) {
+      for (int i=0; i<seriesCount; i++) {
+        if (stop) return;
         final int ii = info[i].index;
         IJ.showStatus("Reading thumbnail for series #" + (ii + 1));
         ir.setSeries(ii);
