@@ -97,7 +97,7 @@ public class IdDialog extends OptionsDialog {
       if (!options.isQuiet()) IJ.error("Bio-Formats", "No file was specified.");
       return STATUS_FINISHED;
     }
-    else if (!idLoc.exists()) {
+    else if (!idLoc.exists() && !id.toLowerCase().endsWith(".fake")) {
       if (!options.isQuiet()) {
         IJ.error("Bio-Formats",
           "The specified file (" + id + ") does not exist.");
