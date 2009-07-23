@@ -66,6 +66,7 @@ loci.formats.in.MRWReader             # mrw
 loci.formats.in.TillVisionReader      # vws
 loci.formats.in.ARFReader             # arf
 loci.formats.in.CellomicsReader       # c01
+loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
 loci.formats.in.NiftiReader           # hdr, img, nii
