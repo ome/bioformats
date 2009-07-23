@@ -185,7 +185,7 @@ public final class TiffCompression {
           s[b] += s[b - len];
         }
         for (int i=0; i<s.length; i++) {
-          DataTools.unpackShort(s[i], input, i*2, little);
+          DataTools.unpackBytes(s[i], input, i*2, 2, little);
         }
       }
     }

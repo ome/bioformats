@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import ij.gui.GenericDialog;
 
 import java.awt.Checkbox;
@@ -45,10 +49,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
 import loci.plugins.prefs.OptionsDialog;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Bio-Formats Importer general options dialog box.

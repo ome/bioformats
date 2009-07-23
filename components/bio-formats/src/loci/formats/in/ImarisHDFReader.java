@@ -91,36 +91,45 @@ public class ImarisHDFReader extends FormatReader {
     Object image = netcdf.getArray(path, new int[] {zct[0], 0, 0},
       new int[] {1, getSizeY(), getSizeX()});
 
+    boolean big = !isLittleEndian();
     for (int row=0; row<h; row++) {
       if (image instanceof byte[][]) {
-        System.arraycopy(((byte[][]) image)[row + y], x, buf, row*w, w);
+        byte[][] data = (byte[][]) image;
+        byte[] rowData = data[row + y];
+        System.arraycopy(rowData, x, buf, row*w, w);
       }
       else if (image instanceof short[][]) {
+        short[][] data = (short[][]) image;
+        short[] rowData = data[row + y];
+        int base = row * w * 2;
         for (int i=0; i<w; i++) {
-          DataTools.unpackShort(((short[][]) image)[row + y][x + i], buf,
-            2 * (row * w + i), !isLittleEndian());
+          DataTools.unpackBytes(rowData[x + i], buf, base + 2*i, 2, big);
         }
       }
       else if (image instanceof int[][]) {
+        int[][] data = (int[][]) image;
+        int[] rowData = data[row + y];
+        int base = row * w * 4;
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(((int[][]) image)[row + y][x + i], buf,
-            4 * (row * w + i), 4, !isLittleEndian());
+          DataTools.unpackBytes(rowData[x + i], buf, base + i*4, 4, big);
         }
       }
       else if (image instanceof float[][]) {
-        float[] s = ((float[][]) image)[row + y];
+        float[][] data = (float[][]) image;
+        float[] rowData = data[row + y];
         int base = row * w * 4;
         for (int i=0; i<w; i++) {
-          int v = Float.floatToIntBits(s[x + i]);
-          DataTools.unpackBytes(v, buf, base + i*4, 4, !isLittleEndian());
+          int v = Float.floatToIntBits(rowData[x + i]);
+          DataTools.unpackBytes(v, buf, base + i*4, 4, big);
         }
       }
       else if (image instanceof double[][]) {
-        double[] d = ((double[][]) image)[row + y];
+        double[][] data = (double[][]) image;
+        double[] rowData = data[row + y];
         int base = row * w * 8;
         for (int i=0; i<w; i++) {
-          long v = Double.doubleToLongBits(d[x + i]);
-          DataTools.unpackBytes(v, buf, base + i * 8, 8, !isLittleEndian());
+          long v = Double.doubleToLongBits(rowData[x + i]);
+          DataTools.unpackBytes(v, buf, base + i * 8, 8, big);
         }
       }
     }

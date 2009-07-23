@@ -278,7 +278,7 @@ public class ByteArrayHandle implements IRandomAccess {
   /* @see java.io.DataOutput.writeChar(int) */
   public void writeChar(int v) throws IOException {
     if (fp + 2 > length()) setLength(fp + 2);
-    DataTools.unpackShort((short) v, array, fp, false);
+    DataTools.unpackBytes(v, array, fp, 2, false);
     fp += 2;
   }
 
@@ -288,7 +288,7 @@ public class ByteArrayHandle implements IRandomAccess {
     if (fp + len > length()) setLength(fp + len);
     char[] c = s.toCharArray();
     for (int i=0; i<c.length; i++) {
-      DataTools.unpackShort((short) c[i], array, fp, false);
+      DataTools.unpackBytes(c[i], array, fp, 2, false);
       fp += 2;
     }
   }
@@ -320,7 +320,7 @@ public class ByteArrayHandle implements IRandomAccess {
   /* @see java.io.DataOutput.writeShort(int) */
   public void writeShort(int v) throws IOException {
     if (fp + 2 > length()) setLength(fp + 2);
-    DataTools.unpackShort((short) v, array, fp, false);
+    DataTools.unpackBytes(v, array, fp, 2, false);
     fp += 2;
   }
 

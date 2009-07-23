@@ -195,11 +195,11 @@ public final class DataTools {
     }
   }
 
-  // -- Word decoding --
+  // -- Word decoding - bytes to primitive types --
 
   /**
    * Translates up to the first len bytes of a byte array beyond the given
-   * offset to a short. If there are fewer than 2 bytes in the array,
+   * offset to a short. If there are fewer than len bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static short bytesToShort(byte[] bytes, int off, int len,
@@ -216,7 +216,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 2 bytes of a byte array beyond the given
-   * offset to a short. If there are fewer than 2 bytes in the array,
+   * offset to a short. If there are fewer than 2 bytes available
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static short bytesToShort(byte[] bytes, int off, boolean little) {
@@ -225,7 +225,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 2 bytes of a byte array to a short.
-   * If there are fewer than 2 bytes in the array, the MSBs are all
+   * If there are fewer than 2 bytes available, the MSBs are all
    * assumed to be zero (regardless of endianness).
    */
   public static short bytesToShort(byte[] bytes, boolean little) {
@@ -234,7 +234,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first len bytes of a byte array byond the given
-   * offset to a short. If there are fewer than 2 bytes in the array,
+   * offset to a short. If there are fewer than len bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static short bytesToShort(short[] bytes, int off, int len,
@@ -250,7 +250,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 2 bytes of a byte array byond the given
-   * offset to a short. If there are fewer than 2 bytes in the array,
+   * offset to a short. If there are fewer than 2 bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static short bytesToShort(short[] bytes, int off, boolean little) {
@@ -259,7 +259,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 2 bytes of a byte array to a short.
-   * If there are fewer than 2 bytes in the array, the MSBs are all
+   * If there are fewer than 2 bytes available, the MSBs are all
    * assumed to be zero (regardless of endianness).
    */
   public static short bytesToShort(short[] bytes, boolean little) {
@@ -268,7 +268,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first len bytes of a byte array beyond the given
-   * offset to an int. If there are fewer than 4 bytes in the array,
+   * offset to an int. If there are fewer than len bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static int bytesToInt(byte[] bytes, int off, int len,
@@ -285,7 +285,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 4 bytes of a byte array beyond the given
-   * offset to an int. If there are fewer than 4 bytes in the array,
+   * offset to an int. If there are fewer than 4 bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static int bytesToInt(byte[] bytes, int off, boolean little) {
@@ -294,7 +294,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 4 bytes of a byte array to an int.
-   * If there are fewer than 4 bytes in the array, the MSBs are all
+   * If there are fewer than 4 bytes available, the MSBs are all
    * assumed to be zero (regardless of endianness).
    */
   public static int bytesToInt(byte[] bytes, boolean little) {
@@ -303,7 +303,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first len bytes of a byte array beyond the given
-   * offset to an int. If there are fewer than 4 bytes in the array,
+   * offset to an int. If there are fewer than len bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static int bytesToInt(short[] bytes, int off, int len,
@@ -319,7 +319,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 4 bytes of a byte array beyond the given
-   * offset to an int. If there are fewer than 4 bytes in the array,
+   * offset to an int. If there are fewer than 4 bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static int bytesToInt(short[] bytes, int off, boolean little) {
@@ -328,7 +328,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 4 bytes of a byte array to an int.
-   * If there are fewer than 4 bytes in the array, the MSBs are all
+   * If there are fewer than 4 bytes available, the MSBs are all
    * assumed to be zero (regardless of endianness).
    */
   public static int bytesToInt(short[] bytes, boolean little) {
@@ -336,9 +336,9 @@ public final class DataTools {
   }
 
   /**
-   * Translates up to the first 4 bytes of a byte array to a float.
-   * If there are fewer than 4 bytes in the array, the MSBs are all
-   * assumed to be zero (regardless of endianness).
+   * Translates up to the first len bytes of a byte array beyond the given
+   * offset to a float. If there are fewer than len bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static float bytesToFloat(byte[] bytes, int off, int len,
     boolean little)
@@ -347,8 +347,55 @@ public final class DataTools {
   }
 
   /**
+   * Translates up to the first 4 bytes of a byte array beyond a given
+   * offset to a float. If there are fewer than 4 bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
+   */
+  public static float bytesToFloat(byte[] bytes, int off, boolean little) {
+    return bytesToFloat(bytes, off, 4, little);
+  }
+
+  /**
+   * Translates up to the first 4 bytes of a byte array to a float.
+   * If there are fewer than 4 bytes available, the MSBs are all
+   * assumed to be zero (regardless of endianness).
+   */
+  public static float bytesToFloat(byte[] bytes, boolean little) {
+    return bytesToFloat(bytes, 0, 4, little);
+  }
+
+  /**
+   * Translates up to the first len bytes of a byte array beyond a given
+   * offset to a float. If there are fewer than len bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
+   */
+  public static float bytesToFloat(short[] bytes, int off, int len,
+    boolean little)
+  {
+    return Float.intBitsToFloat(bytesToInt(bytes, off, len, little));
+  }
+
+  /**
+   * Translates up to the first 4 bytes of a byte array beyond a given
+   * offset to a float. If there are fewer than 4 bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
+   */
+  public static float bytesToFloat(short[] bytes, int off, boolean little) {
+    return bytesToInt(bytes, off, 4, little);
+  }
+
+  /**
+   * Translates up to the first 4 bytes of a byte array to a float.
+   * If there are fewer than 4 bytes available, the MSBs are all
+   * assumed to be zero (regardless of endianness).
+   */
+  public static float bytesToFloat(short[] bytes, boolean little) {
+    return bytesToInt(bytes, 0, 4, little);
+  }
+
+  /**
    * Translates up to the first len bytes of a byte array beyond the given
-   * offset to a long. If there are fewer than 8 bytes in the array,
+   * offset to a long. If there are fewer than len bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static long bytesToLong(byte[] bytes, int off, int len,
@@ -365,7 +412,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 8 bytes of a byte array beyond the given
-   * offset to a long. If there are fewer than 8 bytes in the array,
+   * offset to a long. If there are fewer than 8 bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static long bytesToLong(byte[] bytes, int off, boolean little) {
@@ -374,7 +421,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 8 bytes of a byte array to a long.
-   * If there are fewer than 8 bytes in the array, the MSBs are all
+   * If there are fewer than 8 bytes available, the MSBs are all
    * assumed to be zero (regardless of endianness).
    */
   public static long bytesToLong(byte[] bytes, boolean little) {
@@ -383,7 +430,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first len bytes of a byte array beyond the given
-   * offset to a long. If there are fewer than 8 bytes to be translated,
+   * offset to a long. If there are fewer than len bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static long bytesToLong(short[] bytes, int off, int len,
@@ -399,7 +446,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 8 bytes of a byte array beyond the given
-   * offset to a long. If there are fewer than 8 bytes to be translated,
+   * offset to a long. If there are fewer than 8 bytes available,
    * the MSBs are all assumed to be zero (regardless of endianness).
    */
   public static long bytesToLong(short[] bytes, int off, boolean little) {
@@ -408,7 +455,7 @@ public final class DataTools {
 
   /**
    * Translates up to the first 8 bytes of a byte array to a long.
-   * If there are fewer than 8 bytes in the array, the MSBs are all
+   * If there are fewer than 8 bytes available, the MSBs are all
    * assumed to be zero (regardless of endianness).
    */
   public static long bytesToLong(short[] bytes, boolean little) {
@@ -416,20 +463,73 @@ public final class DataTools {
   }
 
   /**
-   * Translates the specified number of bytes of a byte array to a double.
-   * If there are fewer than 8 bytes in the array, the MSBs are all assumed
-   * to be zero (regardless of endianness).
+   * Translates up to the first len bytes of a byte array beyond the given
+   * offset to a double. If there are fewer than len bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
    */
-  public static double bytesToDouble(byte[] bytes, int offset, int len,
+  public static double bytesToDouble(byte[] bytes, int off, int len,
     boolean little)
   {
-    return Double.longBitsToDouble(bytesToLong(bytes, offset, len, little));
+    return Double.longBitsToDouble(bytesToLong(bytes, off, len, little));
   }
+
+  /**
+   * Translates up to the first 8 bytes of a byte array beyond the given
+   * offset to a double. If there are fewer than 8 bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
+   */
+  public static double bytesToDouble(byte[] bytes, int off,
+    boolean little)
+  {
+    return bytesToDouble(bytes, off, 8, little);
+  }
+
+  /**
+   * Translates up to the first 8 bytes of a byte array to a double.
+   * If there are fewer than 8 bytes available, the MSBs are all
+   * assumed to be zero (regardless of endianness).
+   */
+  public static double bytesToDouble(byte[] bytes, boolean little) {
+    return bytesToDouble(bytes, 0, 8, little);
+  }
+
+  /**
+   * Translates up to the first len bytes of a byte array beyond the given
+   * offset to a double. If there are fewer than len bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
+   */
+  public static double bytesToDouble(short[] bytes, int off, int len,
+    boolean little)
+  {
+    return Double.longBitsToDouble(bytesToLong(bytes, off, len, little));
+  }
+
+  /**
+   * Translates up to the first 8 bytes of a byte array beyond the given
+   * offset to a double. If there are fewer than 8 bytes available,
+   * the MSBs are all assumed to be zero (regardless of endianness).
+   */
+  public static double bytesToDouble(short[] bytes, int off,
+    boolean little)
+  {
+    return bytesToDouble(bytes, off, 8, little);
+  }
+
+  /**
+   * Translates up to the first 8 bytes of a byte array to a double.
+   * If there are fewer than 8 bytes available, the MSBs are all
+   * assumed to be zero (regardless of endianness).
+   */
+  public static double bytesToDouble(short[] bytes, boolean little) {
+    return bytesToDouble(bytes, 0, 8, little);
+  }
+
+  // -- Word decoding - primitive types to bytes --
 
   /** Translates the short value into an array of two bytes. */
   public static byte[] shortToBytes(short value, boolean little) {
     byte[] v = new byte[2];
-    unpackShort(value, v, 0, little);
+    unpackBytes(value, v, 0, 2, little);
     return v;
   }
 
@@ -440,11 +540,32 @@ public final class DataTools {
     return v;
   }
 
+  /** Translates the float value into an array of four bytes. */
+  public static byte[] floatToBytes(float value, boolean little) {
+    byte[] v = new byte[4];
+    unpackBytes(Float.floatToIntBits(value), v, 0, 4, little);
+    return v;
+  }
+
+  /** Translates the long value into an array of eight bytes. */
+  public static byte[] longToBytes(long value, boolean little) {
+    byte[] v = new byte[8];
+    unpackBytes(value, v, 0, 8, little);
+    return v;
+  }
+
+  /** Translates the double value into an array of eight bytes. */
+  public static byte[] doubleToBytes(double value, boolean little) {
+    byte[] v = new byte[8];
+    unpackBytes(Double.doubleToLongBits(value), v, 0, 8, little);
+    return v;
+  }
+
   /** Translates an array of short values into an array of byte values. */
   public static byte[] shortsToBytes(short[] values, boolean little) {
     byte[] v = new byte[values.length * 2];
     for (int i=0; i<values.length; i++) {
-      unpackShort(values[i], v, i * 2, little);
+      unpackBytes(values[i], v, i * 2, 2, little);
     }
     return v;
   }
@@ -467,21 +588,29 @@ public final class DataTools {
     return v;
   }
 
-  /**
-   * Translates the short value into two bytes, and places them in a byte
-   * array at the given index.
-   */
+  /** Translates an array of long values into an array of byte values. */
+  public static byte[] longsToBytes(long[] values, boolean little) {
+    byte[] v = new byte[values.length * 8];
+    for (int i=0; i<values.length; i++) {
+      unpackBytes(values[i], v, i * 8, 8, little);
+    }
+    return v;
+  }
+
+  /** Translates an array of double values into an array of byte values. */
+  public static byte[] doublesToBytes(long[] values, boolean little) {
+    byte[] v = new byte[values.length * 8];
+    for (int i=0; i<values.length; i++) {
+      unpackBytes(Double.doubleToLongBits(values[i]), v, i * 8, 8, little);
+    }
+    return v;
+  }
+
+  /** @deprecated Use {@link #unpackBytes(long, byte[], int, int, boolean) */
   public static void unpackShort(short value, byte[] buf, int ndx,
     boolean little)
   {
-    if (little) {
-      buf[ndx] = (byte) (value & 0xff);
-      buf[ndx + 1] = (byte) ((value >> 8) & 0xff);
-    }
-    else {
-      buf[ndx + 1] = (byte) (value & 0xff);
-      buf[ndx] = (byte) ((value >> 8) & 0xff);
-    }
+    unpackBytes(value, buf, ndx, 2, little);
   }
 
   /**

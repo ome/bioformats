@@ -171,7 +171,7 @@ public class LuraWaveCodec extends BaseCodec {
 
       byte[] output = new byte[w * h * 2];
       for (int i=0; i<image16.length; i++) {
-        DataTools.unpackShort(image16[i], output, i * 2, true);
+        DataTools.unpackBytes(image16[i], output, i * 2, 2, true);
       }
       return output;
     }

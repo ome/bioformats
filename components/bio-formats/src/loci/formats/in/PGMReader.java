@@ -90,7 +90,7 @@ public class PGMReader extends FormatReader {
         while (t.hasMoreTokens()) {
           int q = Integer.parseInt(t.nextToken().trim());
           if (getPixelType() == FormatTools.UINT16) {
-            DataTools.unpackShort((short) q, buf, pt, isLittleEndian());
+            DataTools.unpackBytes(q, buf, pt, 2, isLittleEndian());
             pt += 2;
           }
           else {

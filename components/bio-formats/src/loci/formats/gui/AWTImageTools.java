@@ -1002,7 +1002,7 @@ public final class AWTImageTools {
       byte[][] b = new byte[s.length][s[0].length * 2];
       for (int i=0; i<b.length; i++) {
         for (int j=0; j<s[0].length; j++) {
-          DataTools.unpackShort(s[i][j], b[i], j * 2, little);
+          DataTools.unpackBytes(s[i][j], b[i], j * 2, 2, little);
         }
       }
       return b;

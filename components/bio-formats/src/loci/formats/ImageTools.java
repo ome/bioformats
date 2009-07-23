@@ -540,11 +540,12 @@ public final class ImageTools {
           }
 
           short v = (short) (sum / ncomps);
-          DataTools.unpackShort(v, buf, row*width*6 + col*6 + 2, littleEndian);
+          DataTools.unpackBytes(v, buf,
+            row*width*6 + col*6 + 2, 2, littleEndian);
         }
         else {
-          DataTools.unpackShort(s[plane + row*width + col],
-            buf, row*width*6 + col*6 + 2, littleEndian);
+          DataTools.unpackBytes(s[plane + row*width + col],
+            buf, row*width*6 + col*6 + 2, 2, littleEndian);
         }
 
         if (needRed) {
@@ -599,11 +600,11 @@ public final class ImageTools {
           }
 
           short v = (short) (sum / ncomps);
-          DataTools.unpackShort(v, buf, row*width*6 + col*6, littleEndian);
+          DataTools.unpackBytes(v, buf, row*width*6 + col*6, 2, littleEndian);
         }
         else {
-          DataTools.unpackShort(s[row*width + col],
-            buf, row*width*6 + col*6, littleEndian);
+          DataTools.unpackBytes(s[row*width + col],
+            buf, row*width*6 + col*6, 2, littleEndian);
         }
 
         if (needBlue) {
@@ -658,11 +659,12 @@ public final class ImageTools {
           }
 
           short v = (short) (sum / ncomps);
-          DataTools.unpackShort(v, buf, row*width*6 + col*6 + 4, littleEndian);
+          DataTools.unpackBytes(v, buf,
+            row*width*6 + col*6 + 4, 2, littleEndian);
         }
         else {
-          DataTools.unpackShort(s[2*plane + row*width + col],
-            buf, row*width*6 + col*6 + 4, littleEndian);
+          DataTools.unpackBytes(s[2*plane + row*width + col],
+            buf, row*width*6 + col*6 + 4, 2, littleEndian);
         }
       }
     }

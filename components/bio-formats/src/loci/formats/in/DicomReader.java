@@ -323,10 +323,10 @@ public class DicomReader extends FormatReader {
       }
       else if (bpp == 2) {
         if (maxPixelValue == -1) maxPixelValue = 65535;
+        boolean little = isLittleEndian();
         for (int i=0; i<buf.length; i+=2) {
-          short s = DataTools.bytesToShort(buf, i, 2, isLittleEndian());
-          s = (short) (maxPixelValue - s);
-          DataTools.unpackShort(s, buf, i, isLittleEndian());
+          short s = DataTools.bytesToShort(buf, i, 2, little);
+          DataTools.unpackBytes(maxPixelValue - s, buf, i, 2, little);
         }
       }
     }

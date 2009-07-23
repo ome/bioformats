@@ -175,7 +175,7 @@ public class LociUploader implements PlugIn {
           short[] s = (short[]) pix;
           toUpload = new byte[s.length * 2];
           for (int j=0; j<s.length; j++) {
-            DataTools.unpackShort(s[j], toUpload, j * 2, little);
+            DataTools.unpackBytes(s[j], toUpload, j * 2, 2, little);
           }
         }
         else if (pix instanceof int[]) {
