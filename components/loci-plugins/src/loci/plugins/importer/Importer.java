@@ -328,6 +328,9 @@ public class Importer {
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(i);
         StringBuffer sb = new StringBuffer();
+        sb.append("Series_");
+        sb.append((i + 1));
+        sb.append(": ");
         String name = omexmlMeta.getImageName(i);
         if (name != null && name.length() > 0) {
           sb.append(name);
@@ -365,7 +368,7 @@ public class Importer {
           }
         }
         seriesLabels[i] = sb.toString();
-        seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
+        //seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
       }
 
       if (seriesCount > 1 && !options.openAllSeries() && !options.isViewNone())
