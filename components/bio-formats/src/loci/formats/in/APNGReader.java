@@ -80,15 +80,9 @@ public class APNGReader extends FormatReader {
   /** Constructs a new APNGReader. */
   public APNGReader() {
     super("Animated PNG", "png");
-    blockCheckLen = 64;
   }
 
   // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return true;
-  }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {

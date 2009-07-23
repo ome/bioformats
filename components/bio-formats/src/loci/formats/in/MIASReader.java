@@ -86,7 +86,6 @@ public class MIASReader extends FormatReader {
   public MIASReader() {
     super("MIAS", new String[] {"tif", "tiff"});
     suffixSufficient = false;
-    blockCheckLen = 1048576;
   }
 
   // -- IFormatReader API methods --
@@ -105,6 +104,8 @@ public class MIASReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String filename, boolean open) {
+    if (!open) return super.isThisType(filename, open); // no file system access
+
     Location baseFile = new Location(filename).getAbsoluteFile();
     Location wellDir = baseFile.getParentFile();
     Location experiment = wellDir.getParentFile().getParentFile();
@@ -115,8 +116,6 @@ public class MIASReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;

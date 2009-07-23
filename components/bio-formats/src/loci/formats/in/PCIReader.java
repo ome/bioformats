@@ -52,6 +52,10 @@ import loci.formats.tiff.TiffParser;
  */
 public class PCIReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final int PCI_MAGIC_BYTES = 0xd0cf11e0;
+
   // -- Fields --
 
   private Vector imageFiles;
@@ -63,15 +67,15 @@ public class PCIReader extends FormatReader {
   /** Constructs a new SimplePCI reader. */
   public PCIReader() {
     super("Compix Simple-PCI", "cxd");
-    blockCheckLen = 4;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readInt() == 0xd0cf11e0;
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readInt() == PCI_MAGIC_BYTES;
   }
 
   /**

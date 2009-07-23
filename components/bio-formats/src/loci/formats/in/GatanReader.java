@@ -49,6 +49,8 @@ public class GatanReader extends FormatReader {
 
   // -- Constants --
 
+  public static final int DM3_MAGIC_BYTES = 3;
+
   /** Tag types. */
   private static final int GROUP = 20;
   private static final int VALUE = 21;
@@ -92,8 +94,9 @@ public class GatanReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readInt() == 3;
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readInt() == DM3_MAGIC_BYTES;
   }
 
   /**

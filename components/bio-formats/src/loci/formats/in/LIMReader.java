@@ -53,11 +53,6 @@ public class LIMReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return false;
-  }
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

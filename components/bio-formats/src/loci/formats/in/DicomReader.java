@@ -58,6 +58,8 @@ public class DicomReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String DICOM_MAGIC_STRING = "DICM";
+
   private static final String[] DICOM_SUFFIXES = {
     "dic", "dcm", "dicom", "j2ki", "j2kr"
   };
@@ -135,7 +137,6 @@ public class DicomReader extends FormatReader {
   public DicomReader() {
     super("DICOM",
       new String[] {"dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw"});
-    blockCheckLen = 2048;
     suffixNecessary = false;
     suffixSufficient = false;
   }
@@ -151,10 +152,11 @@ public class DicomReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, true)) return false;
+    final int blockLen = 2048;
+    if (!FormatTools.validStream(stream, blockLen, true)) return false;
 
     stream.seek(128);
-    if (stream.readString(4).equals("DICM")) return true;
+    if (stream.readString(4).equals(DICOM_MAGIC_STRING)) return true;
     stream.seek(0);
 
     int tag = getNextTag(stream);

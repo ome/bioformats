@@ -57,6 +57,8 @@ public class OpenlabReader extends FormatReader {
 
   // -- Constants --
 
+  public static final long LIFF_MAGIC_BYTES = 0xffff696d7072L;
+
   /** Image types. */
   private static final int MAC_1_BIT = 1;
   private static final int MAC_4_GREYS = 2;
@@ -112,7 +114,6 @@ public class OpenlabReader extends FormatReader {
   /** Constructs a new OpenlabReader. */
   public OpenlabReader() {
     super("Openlab LIFF", "liff");
-    blockCheckLen = 8;
     suffixNecessary = false;
   }
 
@@ -120,8 +121,9 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readLong() == 0xffff696d7072L;
+    final int blockLen = 8;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readLong() == LIFF_MAGIC_BYTES;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

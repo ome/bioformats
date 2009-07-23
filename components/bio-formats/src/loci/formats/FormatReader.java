@@ -64,12 +64,6 @@ public abstract class FormatReader extends FormatHandler
   protected CoreMetadata[] core;
 
   /**
-   * Maximum number of bytes to check for header information.
-   * If blockCheckLen is zero, the file is never opened for file type analysis.
-   */
-  protected int blockCheckLen = 0;
-
-  /**
    * Whether the file extension matching one of the reader's suffixes
    * is necessary to identify the file as an instance of this format.
    */
@@ -142,23 +136,6 @@ public abstract class FormatReader extends FormatHandler
     // reinitialize the MetadataStore
     // NB: critical for metadata conversion to work properly!
     getMetadataStore().createRoot();
-  }
-
-  /**
-   * Opens the given file, reads in the first few KB and calls
-   * isThisType(byte[]) to check whether it matches this format.
-   */
-  protected boolean checkBytes(String name, int maxLen) {
-    try {
-      RandomAccessInputStream ras = new RandomAccessInputStream(name);
-      boolean isThisType = isThisType(ras);
-      ras.close();
-      return isThisType;
-    }
-    catch (IOException exc) {
-      traceDebug(exc);
-      return false;
-    }
   }
 
   /** Returns true if the given file name is in the used files list. */
@@ -388,10 +365,10 @@ public abstract class FormatReader extends FormatHandler
   /**
    * Checks if a file matches the type of this format reader.
    * Checks filename suffixes against those known for this format.
-   * If the suffix check is inconclusive, the open parameter is true, and the
-   * blockCheckLen variable is set to a value greater than zero, the first
-   * blockCheckLen bytes of the file are read and tested with
-   * {@link #isThisType(byte[])}.
+   * If the suffix check is inconclusive and the open parameter is true,
+   * the file is opened and tested with
+   * {@link #isThisType(RandomAccessInputStream)}.
+   *
    * @param open If true, and the file extension is insufficient to determine
    *   the file type, the (existing) file is opened for further analysis.
    */
@@ -407,12 +384,21 @@ public abstract class FormatReader extends FormatHandler
       if (suffixNecessary && !suffixMatch) return false;
 
       // if suffix matches and that's all we need, green light it
-      if (suffixSufficient && suffixMatch) return true;
+      if (suffixMatch && suffixSufficient) return true;
     }
 
     // suffix matching was inconclusive; we need to analyze the file contents
-    if (!open || blockCheckLen == 0) return false;
-    return checkBytes(name, blockCheckLen);
+    if (!open) return false; // not allowed to open any files
+    try {
+      RandomAccessInputStream stream = new RandomAccessInputStream(name);
+      boolean isThisType = isThisType(stream);
+      stream.close();
+      return isThisType;
+    }
+    catch (IOException exc) {
+      traceDebug(exc);
+      return false;
+    }
   }
 
   /* @see IFormatReader#isThisType(byte[]) */
@@ -426,6 +412,11 @@ public abstract class FormatReader extends FormatHandler
     catch (IOException e) {
       traceDebug(e);
     }
+    return false;
+  }
+
+  /* @see IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 

@@ -75,26 +75,10 @@ public class FluoviewReader extends BaseTiffReader {
   /** Constructs a new Fluoview TIFF reader. */
   public FluoviewReader() {
     super("Olympus Fluoview/ABD TIFF", new String[] {"tif", "tiff"});
-    blockCheckLen = 524288;
     suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!open) return false;
-    try {
-      RandomAccessInputStream stream = new RandomAccessInputStream(name);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      traceDebug(e);
-    }
-    return false;
-  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {

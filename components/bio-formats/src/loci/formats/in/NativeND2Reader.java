@@ -61,6 +61,10 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class NativeND2Reader extends FormatReader {
 
+  // -- Constants --
+
+  public static final int ND2_MAGIC_BYTES = 0x6a502020;
+
   // -- Fields --
 
   /** Array of image offsets. */
@@ -99,16 +103,16 @@ public class NativeND2Reader extends FormatReader {
   /** Constructs a new ND2 reader. */
   public NativeND2Reader() {
     super("Nikon ND2", new String[] {"nd2", "jp2"});
-    blockCheckLen = 8;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    final int blockLen = 8;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     stream.seek(4);
-    return stream.readInt() == 0x6a502020;
+    return stream.readInt() == ND2_MAGIC_BYTES;
   }
 
   /**

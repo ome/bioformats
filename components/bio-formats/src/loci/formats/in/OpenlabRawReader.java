@@ -47,6 +47,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class OpenlabRawReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String OPENLAB_RAW_MAGIC_STRING = "OLRW";
+
   // -- Fields --
 
   /** Offset to each image's pixel data. */
@@ -60,7 +64,6 @@ public class OpenlabRawReader extends FormatReader {
   /** Constructs a new RAW reader. */
   public OpenlabRawReader() {
     super("Openlab RAW", "raw");
-    blockCheckLen = 4;
     suffixSufficient = false;
   }
 
@@ -68,8 +71,9 @@ public class OpenlabRawReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(blockCheckLen).startsWith("OLRW");
+    final int blockLen = OPENLAB_RAW_MAGIC_STRING.length();
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).startsWith(OPENLAB_RAW_MAGIC_STRING);
   }
 
   /**

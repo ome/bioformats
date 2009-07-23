@@ -60,6 +60,9 @@ public class FV1000Reader extends FormatReader {
 
   // -- Constants --
 
+  public static final String FV1000_MAGIC_STRING_1 = "FileInformation";
+  public static final String FV1000_MAGIC_STRING_2 = "Acquisition Parameters";
+
   public static final String[] OIB_SUFFIX = {"oib"};
   public static final String[] OIF_SUFFIX = {"oif"};
   public static final String[] FV1000_SUFFIXES = {"oib", "oif"};
@@ -128,7 +131,6 @@ public class FV1000Reader extends FormatReader {
   /** Constructs a new FV1000 reader. */
   public FV1000Reader() {
     super("Olympus FV1000", new String[] {"oib", "oif", "pty", "lut"});
-    blockCheckLen = 1024;
   }
 
   // -- IFormatReader API methods --
@@ -156,10 +158,11 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    String s = DataTools.stripString(stream.readString(blockCheckLen));
-    return s.indexOf("FileInformation") != -1 ||
-      s.indexOf("Acquisition Parameters") != -1;
+    final int blockLen = 1024;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    String s = DataTools.stripString(stream.readString(blockLen));
+    return s.indexOf(FV1000_MAGIC_STRING_1) >= 0 ||
+      s.indexOf(FV1000_MAGIC_STRING_2) >= 0;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

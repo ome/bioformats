@@ -42,6 +42,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class FEIReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String FEI_MAGIC_STRING = "XL";
+
   // -- Fields --
 
   private int originalWidth;
@@ -51,7 +55,6 @@ public class FEIReader extends FormatReader {
   /** Constructs a new FEI reader. */
   public FEIReader() {
     super("FEI", "img");
-    blockCheckLen = 2;
     suffixSufficient = false;
   }
 
@@ -59,8 +62,9 @@ public class FEIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(blockCheckLen).startsWith("XL");
+    final int blockLen = 2;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).startsWith(FEI_MAGIC_STRING);
   }
 
   /**

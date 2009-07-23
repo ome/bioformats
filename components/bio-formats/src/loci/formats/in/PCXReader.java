@@ -44,6 +44,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class PCXReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final byte PCX_MAGIC_BYTE = 10;
+
   // -- Fields --
 
   /** Offset to pixel data. */
@@ -59,15 +63,15 @@ public class PCXReader extends FormatReader {
   /** Constructs a new PCX reader. */
   public PCXReader() {
     super("PCX", "pcx");
-    blockCheckLen = 1;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.read() == 10;
+    final int blockLen = 1;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.read() == PCX_MAGIC_BYTE;
   }
 
   /**

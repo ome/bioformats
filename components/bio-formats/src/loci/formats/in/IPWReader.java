@@ -56,6 +56,10 @@ import loci.formats.tiff.TiffParser;
  */
 public class IPWReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final int IPW_MAGIC_BYTES = 0xd0cf11e0;
+
   // -- Fields --
 
   /** List of embedded image file names (one per image plane). */
@@ -79,8 +83,9 @@ public class IPWReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readInt() == 0xd0cf11e0;
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readInt() == IPW_MAGIC_BYTES;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

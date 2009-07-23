@@ -66,7 +66,6 @@ public class NikonTiffReader extends BaseTiffReader {
   public NikonTiffReader() {
     super("Nikon TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
-    blockCheckLen = 524288;
   }
 
   // -- IFormatReader API methods --

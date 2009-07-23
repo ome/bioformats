@@ -62,11 +62,6 @@ public class APLReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);

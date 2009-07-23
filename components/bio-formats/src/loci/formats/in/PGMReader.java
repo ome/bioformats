@@ -46,6 +46,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class PGMReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final char PGM_MAGIC_CHAR = 'P';
+
   // -- Fields --
 
   private boolean rawBits;
@@ -58,15 +62,15 @@ public class PGMReader extends FormatReader {
   /** Constructs a new PGMReader. */
   public PGMReader() {
     super("Portable Gray Map", "pgm");
-    blockCheckLen = 1;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.read() == 'P';
+    final int blockLen = 1;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.read() == PGM_MAGIC_CHAR;
   }
 
   /**

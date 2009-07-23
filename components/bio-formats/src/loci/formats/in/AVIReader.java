@@ -52,6 +52,8 @@ public class AVIReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String AVI_MAGIC_STRING = "RIFF";
+
   /** Supported compression types. */
   private static final int MSRLE = 1;
   private static final int MS_VIDEO = 1296126531;
@@ -86,7 +88,6 @@ public class AVIReader extends FormatReader {
   /** Constructs a new AVI reader. */
   public AVIReader() {
     super("Audio Video Interleave", "avi");
-    blockCheckLen = 4;
     suffixNecessary = false;
   }
 
@@ -94,8 +95,9 @@ public class AVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(4).equals("RIFF");
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).startsWith(AVI_MAGIC_STRING);
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

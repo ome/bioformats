@@ -93,14 +93,14 @@ public class OMEXMLReader extends FormatReader {
   /** Constructs a new OME-XML reader. */
   public OMEXMLReader() {
     super("OME-XML", "ome");
-    blockCheckLen = 64;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    String xml = stream.readString(blockCheckLen);
+    final int blockLen = 64;
+    String xml = stream.readString(blockLen);
     return xml.startsWith("<?xml") && xml.indexOf("<OME") >= 0;
   }
 

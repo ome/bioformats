@@ -49,7 +49,7 @@ public class ImarisReader extends FormatReader {
   // -- Constants --
 
   /** Magic number; present in all files. */
-  private static final int IMARIS_MAGIC_NUMBER = 5021964;
+  private static final int IMARIS_MAGIC_BYTES = 5021964;
 
   /** Specifies endianness. */
   private static final boolean IS_LITTLE = false;
@@ -64,7 +64,6 @@ public class ImarisReader extends FormatReader {
   /** Constructs a new Imaris reader. */
   public ImarisReader() {
     super("Bitplane Imaris", "ims");
-    blockCheckLen = 4;
     suffixSufficient = false;
   }
 
@@ -72,10 +71,11 @@ public class ImarisReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, IS_LITTLE)) {
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, IS_LITTLE)) {
       return false;
     }
-    return stream.readInt() == IMARIS_MAGIC_NUMBER;
+    return stream.readInt() == IMARIS_MAGIC_BYTES;
   }
 
   /**
@@ -117,7 +117,7 @@ public class ImarisReader extends FormatReader {
     in.order(IS_LITTLE);
 
     long magic = in.readInt();
-    if (magic != IMARIS_MAGIC_NUMBER) {
+    if (magic != IMARIS_MAGIC_BYTES) {
       throw new FormatException("Imaris magic number not found.");
     }
 

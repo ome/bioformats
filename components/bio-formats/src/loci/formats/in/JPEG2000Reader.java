@@ -49,7 +49,6 @@ public class JPEG2000Reader extends FormatReader {
   /** Constructs a new JPEG2000Reader. */
   public JPEG2000Reader() {
     super("JPEG-2000", new String[] {"jp2", "j2k"});
-    blockCheckLen = 8;
     suffixSufficient = false;
   }
 
@@ -57,7 +56,8 @@ public class JPEG2000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    final int blockLen = 8;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     int b1 = stream.read() & 0xff;
     int b2 = stream.read() & 0xff;
     boolean validStart = b1 == 0xff && b2 == 0x4f;

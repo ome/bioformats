@@ -121,37 +121,17 @@ public class NativeQTReader extends FormatReader {
   /** Constructs a new QuickTime reader. */
   public NativeQTReader() {
     super("QuickTime", "mov");
-    blockCheckLen = 64;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true; // check extension
-
-    if (open) {
-      try {
-        RandomAccessInputStream s = new RandomAccessInputStream(name);
-        boolean isThisType = isThisType(s);
-        s.close();
-        return isThisType;
-      }
-      catch (IOException e) {
-        traceDebug(e);
-        return false;
-      }
-    }
-    else { // not allowed to check the file contents
-      return name.indexOf(".") < 0; // file appears to have no extension
-    }
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockLen = 64;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     // use a crappy hack for now
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    String s = stream.readString(blockCheckLen);
+    String s = stream.readString(blockLen);
     for (int i=0; i<CONTAINER_TYPES.length; i++) {
       if (s.indexOf(CONTAINER_TYPES[i]) >= 0 &&
         !CONTAINER_TYPES[i].equals("imag"))

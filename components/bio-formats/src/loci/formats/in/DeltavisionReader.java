@@ -50,6 +50,9 @@ public class DeltavisionReader extends FormatReader {
 
   // -- Constants --
 
+  public static final int DV_MAGIC_BYTES_1 = 0xa0c0;
+  public static final int DV_MAGIC_BYTES_2 = 0xc0a0;
+
   public static final String DATE_FORMAT = "EEE MMM  d HH:mm:ss yyyy";
 
   private static final short LITTLE_ENDIAN = -16224;
@@ -95,17 +98,17 @@ public class DeltavisionReader extends FormatReader {
   public DeltavisionReader() {
     super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d"});
     suffixSufficient = false;
-    blockCheckLen = 98;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    final int blockLen = 98;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     stream.seek(96);
     int magic = stream.readShort() & 0xffff;
-    return magic == 0xa0c0 || magic == 0xc0a0;
+    return magic == DV_MAGIC_BYTES_1 || magic == DV_MAGIC_BYTES_2;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */

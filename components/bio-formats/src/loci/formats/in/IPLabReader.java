@@ -60,7 +60,6 @@ public class IPLabReader extends FormatReader {
   /** Constructs a new IPLab reader. */
   public IPLabReader() {
     super("IPLab", "ipl");
-    blockCheckLen = 12;
     suffixNecessary = false; // allow extensionless IPLab files
   }
 
@@ -68,7 +67,8 @@ public class IPLabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    final int blockLen = 12;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String s = stream.readString(4);
     boolean big = s.equals("iiii");
     boolean little = s.equals("mmmm");

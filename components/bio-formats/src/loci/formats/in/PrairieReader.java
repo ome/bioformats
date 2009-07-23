@@ -92,7 +92,6 @@ public class PrairieReader extends FormatReader {
   /** Constructs a new Prairie TIFF reader. */
   public PrairieReader() {
     super("Prairie TIFF", new String[] {"tif", "tiff", "cfg", "xml"});
-    blockCheckLen = 1048608;
   }
 
   // -- IFormatReader API methods --
@@ -126,12 +125,14 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    String s = stream.readString(blockCheckLen);
+    final int blockLen = 1048608;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    String s = stream.readString(blockLen);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
 
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
+    if (ifd == null) return false;
     String software = null;
     try {
       software = ifd.getIFDStringValue(IFD.SOFTWARE, true);
@@ -139,6 +140,7 @@ public class PrairieReader extends FormatReader {
     catch (FormatException exc) {
       return false; // no software tag, or tag is wrong type
     }
+    if (software == null) return false;
     if (software.indexOf("Prairie") < 0) return false; // not Prairie software
     return ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
       ifd.containsKey(new Integer(PRAIRIE_TAG_2)) &&

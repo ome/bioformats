@@ -59,6 +59,8 @@ public class ZeissZVIReader extends FormatReader {
 
   // -- Constants --
 
+  public static final int ZVI_MAGIC_BYTES = 0xd0cf11e0;
+
   private static final long ROI_SIGNATURE = 0x21fff6977547000dL;
 
   /** ROI types. */
@@ -104,7 +106,6 @@ public class ZeissZVIReader extends FormatReader {
   /** Constructs a new ZeissZVI reader. */
   public ZeissZVIReader() {
     super("Zeiss Vision Image (ZVI)", "zvi");
-    blockCheckLen = 65536;
     suffixNecessary = false;
   }
 
@@ -112,9 +113,10 @@ public class ZeissZVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    final int blockLen = 65536;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     int magic = stream.readInt();
-    if (magic != 0xd0cf11e0) return false;
+    if (magic != ZVI_MAGIC_BYTES) return false;
     try {
       POITools p = new POITools(stream);
       Vector files = p.getDocumentList();

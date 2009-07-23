@@ -110,7 +110,6 @@ public class BioRadReader extends FormatReader {
   /** Constructs a new BioRadReader. */
   public BioRadReader() {
     super("Bio-Rad PIC", new String[] {"pic", "xml", "raw"});
-    blockCheckLen = 56;
   }
 
   // -- IFormatReader API methods --
@@ -124,10 +123,11 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, LITTLE_ENDIAN)) {
+    final int blockLen = 56;
+    if (!FormatTools.validStream(stream, blockLen, LITTLE_ENDIAN)) {
       return false;
     }
-    String c = stream.readString(blockCheckLen);
+    String c = stream.readString(blockLen);
     stream.seek(54);
     return stream.readShort() == PIC_FILE_ID || c.startsWith("[Input Sources]");
   }

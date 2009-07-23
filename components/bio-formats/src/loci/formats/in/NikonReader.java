@@ -140,7 +140,6 @@ public class NikonReader extends BaseTiffReader {
   /** Constructs a new Nikon reader. */
   public NikonReader() {
     super("Nikon NEF", new String[] {"nef", "tif", "tiff"});
-    blockCheckLen = 16384;
     suffixSufficient = false;
   }
 
@@ -150,26 +149,15 @@ public class NikonReader extends BaseTiffReader {
   public boolean isThisType(String name, boolean open) {
     // extension is sufficient as long as it is NEF
     if (checkSuffix(name, NEF_SUFFIX)) return true;
-
-    if (!open) return false;
-    try {
-      RandomAccessInputStream stream = new RandomAccessInputStream(name);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      traceDebug(e);
-    }
-    return false;
+    return super.isThisType(name, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
-    return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
+    if (ifd == null) return false;
+    return ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
   }
 
   /**

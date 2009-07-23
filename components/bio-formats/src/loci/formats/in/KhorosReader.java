@@ -42,6 +42,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class KhorosReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final int KHOROS_MAGIC_BYTES = 0xab01;
+
   // -- Fields --
 
   /** Global lookup table. */
@@ -59,8 +63,9 @@ public class KhorosReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readShort() == 0xab01;
+    final int blockLen = 2;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readShort() == KHOROS_MAGIC_BYTES;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

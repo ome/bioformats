@@ -52,14 +52,14 @@ public class ARFReader extends FormatReader {
   /** Constructs a new ARF reader. */
   public ARFReader() {
     super("ARF", "arf");
-    blockCheckLen = 4;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     byte endian1 = stream.readByte();
     byte endian2 = stream.readByte();
     return ((endian1 == 1 && endian2 == 0) || (endian1 == 0 && endian2 == 1)) &&

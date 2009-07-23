@@ -46,6 +46,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class ImarisHDFReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String HDF_MAGIC_STRING = "HDF";
+
   // -- Fields --
 
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
@@ -62,7 +66,6 @@ public class ImarisHDFReader extends FormatReader {
   /** Constructs a new Imaris HDF reader. */
   public ImarisHDFReader() {
     super("Bitplane Imaris 5.5 (HDF)", "ims");
-    blockCheckLen = 8;
     suffixSufficient = false;
   }
 
@@ -70,8 +73,9 @@ public class ImarisHDFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(8).indexOf("HDF") >= 0;
+    final int blockLen = 8;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).indexOf(HDF_MAGIC_STRING) >= 0;
   }
 
   /**

@@ -44,6 +44,10 @@ import loci.formats.tiff.TiffParser;
  */
 public class ImprovisionTiffReader extends BaseTiffReader {
 
+  // -- Constants --
+
+  public static final String IMPROVISION_MAGIC_STRING = "Improvision";
+
   // -- Fields --
 
   private String[] cNames;
@@ -59,26 +63,12 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!open) return false;
-    try {
-      RandomAccessInputStream stream = new RandomAccessInputStream(name);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      traceDebug(e);
-    }
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
-    return comment != null && comment.indexOf("Improvision") != -1;
+    if (comment == null) return false;
+    return comment.indexOf(IMPROVISION_MAGIC_STRING) >= 0;
   }
 
   // -- IFormatHandler API methods --

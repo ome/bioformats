@@ -47,6 +47,10 @@ import loci.formats.tiff.TiffParser;
  */
 public class MRWReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String MRW_MAGIC_STRING = "MRM";
+
   // -- Fields --
 
   /** Offset to image data. */
@@ -64,14 +68,15 @@ public class MRWReader extends FormatReader {
   /** Constructs a new MRW reader. */
   public MRWReader() {
     super("Minolta MRW", "mrw");
-    blockCheckLen = 4;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return stream.readString(4).endsWith("MRM");
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(4).endsWith(MRW_MAGIC_STRING);
   }
 
   /**

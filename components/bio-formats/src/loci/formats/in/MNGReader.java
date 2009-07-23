@@ -52,6 +52,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class MNGReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final long MNG_MAGIC_BYTES = 0x8a4d4e470d0a1a0aL;
+
   // -- Fields --
 
   /** Offsets to each plane. */
@@ -69,8 +73,9 @@ public class MNGReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readLong() == 0x8a4d4e470d0a1a0aL;
+    final int blockLen = 8;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readLong() == MNG_MAGIC_BYTES;
   }
 
   /**

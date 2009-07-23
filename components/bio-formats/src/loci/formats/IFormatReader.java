@@ -49,6 +49,7 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Checks if the given file is a valid instance of this file format.
+   *
    * @param open If true, and the file extension is insufficient to determine
    *   the file type, the file may be opened for further analysis, or other
    *   relatively expensive file system operations (such as file existence

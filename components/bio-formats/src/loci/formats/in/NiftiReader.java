@@ -75,7 +75,6 @@ public class NiftiReader extends FormatReader {
   public NiftiReader() {
     super("NIfTI", new String[] {"nii", "img", "hdr"});
     suffixSufficient = false;
-    blockCheckLen = 348;
   }
 
   // -- IFormatReader API methods --
@@ -93,13 +92,14 @@ public class NiftiReader extends FormatReader {
       header.close();
       return isValid;
     }
-    catch (IOException e) { }
+    catch (IOException e) { traceDebug(e); }
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
+    final int blockLen = 348;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
     stream.seek(344);
     String magic = stream.readString(3);
     return magic.equals("ni1") || magic.equals("n+1");

@@ -49,6 +49,8 @@ public class BMPReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String BMP_MAGIC_STRING = "BM";
+
   /** Compression types. */
   private static final int RAW = 0;
   private static final int RLE_8 = 1;
@@ -77,15 +79,15 @@ public class BMPReader extends FormatReader {
   /** Constructs a new BMP reader. */
   public BMPReader() {
     super("Windows Bitmap", "bmp");
-    blockCheckLen = 2;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(blockCheckLen).startsWith("BM");
+    final int blockLen = 2;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).startsWith(BMP_MAGIC_STRING);
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

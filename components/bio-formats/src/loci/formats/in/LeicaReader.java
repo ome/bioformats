@@ -164,9 +164,9 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
+    if (ifd == null) return false;
     return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
   }
 

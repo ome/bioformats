@@ -54,33 +54,17 @@ public class MetamorphTiffReader extends BaseTiffReader {
   /** Constructs a new Metamorph TIFF reader. */
   public MetamorphTiffReader() {
     super("Metamorph TIFF", new String[] {"tif", "tiff"});
-    blockCheckLen = 524288;
     suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!open) return false;
-    try {
-      RandomAccessInputStream stream = new RandomAccessInputStream(name);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
-    }
-    catch (IOException e) {
-      traceDebug(e);
-    }
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
-    return comment != null && comment.trim().startsWith("<MetaData>");
+    if (comment == null) return false;
+    return comment.trim().startsWith("<MetaData>");
   }
 
   // -- Internal FormatReader API methods --

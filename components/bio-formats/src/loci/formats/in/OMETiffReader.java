@@ -72,7 +72,6 @@ public class OMETiffReader extends FormatReader {
     super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
     suffixNecessary = false;
     suffixSufficient = false;
-    blockCheckLen = 1024 * 1024 * 5;
   }
 
   // -- IFormatReader API methods --

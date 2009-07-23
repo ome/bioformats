@@ -55,6 +55,8 @@ public class InCellReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String INCELL_MAGIC_STRING = "IN Cell Analyzer 1000";
+
   private static final String[] PIXELS_SUFFIXES =
     new String[] {"tif", "tiff", "im"};
 
@@ -91,16 +93,16 @@ public class InCellReader extends FormatReader {
   public InCellReader() {
     super("InCell 1000", new String[] {"xdce", "xml"});
     suffixSufficient = false;
-    blockCheckLen = 2048;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    String check = stream.readString(blockCheckLen);
-    return check.indexOf("IN Cell Analyzer 1000") != -1;
+    final int blockLen = 2048;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    String check = stream.readString(blockLen);
+    return check.indexOf(INCELL_MAGIC_STRING) >= 0;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

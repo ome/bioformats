@@ -54,6 +54,8 @@ public class LIFReader extends FormatReader {
 
   // -- Constants --
 
+  public static final byte LIF_MAGIC_BYTE = 0x70;
+
   private static final Hashtable CHANNEL_PRIORITIES = createChannelPriorities();
 
   private static Hashtable createChannelPriorities() {
@@ -140,7 +142,9 @@ public class LIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return stream.read() == 0x70;
+    final int blockLen = 1;
+    if (!FormatTools.validStream(stream, blockLen, true)) return false;
+    return stream.read() == LIF_MAGIC_BYTE;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

@@ -47,6 +47,8 @@ public class GIFReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String GIF_MAGIC_STRING = "GIF";
+
   /** Maximum buffer size. */
   private static final int MAX_STACK_SIZE = 4096;
 
@@ -108,15 +110,15 @@ public class GIFReader extends FormatReader {
   /** Constructs a new GIF reader. */
   public GIFReader() {
     super("Graphics Interchange Format", "gif");
-    blockCheckLen = 6;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(blockCheckLen).startsWith("GIF");
+    final int blockLen = GIF_MAGIC_STRING.length();
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).startsWith(GIF_MAGIC_STRING);
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

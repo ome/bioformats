@@ -164,7 +164,6 @@ public class ZeissLSMReader extends FormatReader {
   /** Constructs a new Zeiss LSM reader. */
   public ZeissLSMReader() {
     super("Zeiss Laser-Scanning Microscopy", new String[] {"lsm", "mdb"});
-    blockCheckLen = 4;
   }
 
   // -- IFormatHandler API methods --
@@ -190,9 +189,10 @@ public class ZeissLSMReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    byte[] check = new byte[blockCheckLen];
-    stream.read(check);
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    byte[] check = new byte[blockLen];
+    stream.readFully(check);
     return TiffTools.isValidHeader(check) ||
       (check[2] == 0x53 && check[3] == 0x74);
   }

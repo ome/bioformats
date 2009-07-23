@@ -104,11 +104,6 @@ public class SDTReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);

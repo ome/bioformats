@@ -46,6 +46,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class PSDReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String PSD_MAGIC_STRING = "8BPS";
+
   // -- Fields --
 
   /** Lookup table. */
@@ -59,15 +63,15 @@ public class PSDReader extends FormatReader {
   /** Constructs a new PSD reader. */
   public PSDReader() {
     super("Adobe Photoshop", "psd");
-    blockCheckLen = 4;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(blockCheckLen).startsWith("8BPS");
+    final int blockLen = PSD_MAGIC_STRING.length();
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).startsWith(PSD_MAGIC_STRING);
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

@@ -49,6 +49,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class SlidebookReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final long SLD_MAGIC_BYTES = 0x6c000001494900L;
+
   // -- Fields --
 
   private Vector<Long> metadataOffsets;
@@ -61,15 +65,15 @@ public class SlidebookReader extends FormatReader {
   /** Constructs a new Slidebook reader. */
   public SlidebookReader() {
     super("Olympus Slidebook", "sld");
-    blockCheckLen = 8;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readLong() == 0x6c000001494900L;
+    final int blockLen = 8;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readLong() == SLD_MAGIC_BYTES;
   }
 
   /**

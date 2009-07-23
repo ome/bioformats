@@ -43,20 +43,24 @@ import loci.formats.meta.MetadataStore;
  */
 public class CellomicsReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final int C01_MAGIC_BYTES = 16;
+
   // -- Constructor --
 
   /** Constructs a new Cellomics reader. */
   public CellomicsReader() {
     super("Cellomics C01", "c01");
-    blockCheckLen = 4;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readInt() == 16;
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readInt() == C01_MAGIC_BYTES;
   }
 
   /**

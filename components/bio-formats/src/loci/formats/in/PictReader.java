@@ -99,7 +99,6 @@ public class PictReader extends FormatReader {
   /** Constructs a new PICT reader. */
   public PictReader() {
     super("PICT", new String[] {"pict", "pct"});
-    blockCheckLen = 528;
   }
 
   // -- PictReader API methods --
@@ -194,11 +193,6 @@ public class PictReader extends FormatReader {
       }
     }
     return buf;
-  }
-
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return FormatTools.validStream(stream, blockCheckLen, false);
   }
 
   // -- IFormatHandler API methods --

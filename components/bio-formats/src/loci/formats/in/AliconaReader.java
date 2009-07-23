@@ -42,6 +42,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class AliconaReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String AL3D_MAGIC_STRING = "Alicona";
+
   // -- Fields --
 
   /** Image offset. */
@@ -55,15 +59,15 @@ public class AliconaReader extends FormatReader {
   /** Constructs a new Alicona reader. */
   public AliconaReader() {
     super("Alicona AL3D", "al3d");
-    blockCheckLen = 16;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return (stream.readString(blockCheckLen)).indexOf("Alicona") != -1;
+    final int blockLen = 16;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return (stream.readString(blockLen)).indexOf(AL3D_MAGIC_STRING) >= 0;
   }
 
   /**

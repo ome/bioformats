@@ -45,6 +45,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class NRRDReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String NRRD_MAGIC_STRING = "NRRD";
+
   // -- Fields --
 
   /** Helper reader. */
@@ -66,15 +70,15 @@ public class NRRDReader extends FormatReader {
   /** Constructs a new NRRD reader. */
   public NRRDReader() {
     super("NRRD", new String[] {"nrrd", "nhdr"});
-    blockCheckLen = 4;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    if (!FormatTools.validStream(stream, blockCheckLen, false)) return false;
-    return stream.readString(blockCheckLen).startsWith("NRRD");
+    final int blockLen = NRRD_MAGIC_STRING.length();
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).startsWith(NRRD_MAGIC_STRING);
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

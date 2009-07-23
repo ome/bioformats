@@ -53,7 +53,6 @@ public class ImarisTiffReader extends BaseTiffReader {
   /** Constructs a new Imaris TIFF reader. */
   public ImarisTiffReader() {
     super("Bitplane Imaris 3 (TIFF)", "ims");
-    blockCheckLen = 1024;
     suffixSufficient = false;
   }
 

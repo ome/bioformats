@@ -127,7 +127,6 @@ public class TCSReader extends FormatReader {
     // check for Leica TCS IFD directory entries
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
-
     if (ifd == null) return false;
     String document = (String) ifd.get(new Integer(IFD.DOCUMENT_NAME));
     if (document == null) document = "";
