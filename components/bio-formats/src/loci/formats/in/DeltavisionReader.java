@@ -545,7 +545,11 @@ public class DeltavisionReader extends FormatReader {
   /** Extract metadata from associated log file, if it exists. */
   private boolean parseLogFile(MetadataStore store) throws IOException {
     // see if log file exists
-    logFile = getCurrentFile() + ".log";
+    if (getCurrentFile().endsWith("_D3D.dv")) {
+      logFile = getCurrentFile();
+      logFile = logFile.substring(0, logFile.indexOf("_D3D.dv")) + ".dv.log";
+    }
+    else logFile = getCurrentFile() + ".log";
     if (!new Location(logFile).exists()) {
       logFile = null;
       return false;
@@ -554,13 +558,14 @@ public class DeltavisionReader extends FormatReader {
     status("Parsing log file");
 
     RandomAccessInputStream s = new RandomAccessInputStream(logFile);
+    String[] lines = s.readString((int) s.length()).split("\r\n");
+    s.close();
 
-    String line, key, value = "", prefix = "";
+    String key, value = "", prefix = "";
 
     int currentImage = 0;
 
-    while (s.getFilePointer() < s.length() - 1) {
-      line = s.readLine().trim();
+    for (String line : lines) {
       int colon = line.indexOf(":");
       if (colon != -1) {
         if (line.startsWith("Created")) {
@@ -751,7 +756,6 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    s.close();
     return true;
   }
 
@@ -767,13 +771,14 @@ public class DeltavisionReader extends FormatReader {
 
     RandomAccessInputStream s =
       new RandomAccessInputStream(deconvolutionLogFile);
+    String[] lines = s.readString((int) s.length()).split("\r\n");
+    s.close();
 
     boolean doStatistics = false;
     int cc = 0, tt = 0;
     String previousLine = null;
 
-    while (s.getFilePointer() < s.length() - 1) {
-      String line = s.readLine().trim();
+    for (String line : lines) {
       if (line == null || line.length() == 0) continue;
 
       if (doStatistics) {
@@ -863,8 +868,6 @@ public class DeltavisionReader extends FormatReader {
 
       doStatistics = line.endsWith("- reading image data...");
     }
-
-    s.close();
   }
 
   private void readWavelength(int channel, MetadataStore store)
