@@ -156,6 +156,8 @@ public class ZeissLSMReader extends FormatReader {
   private int nextFilter = 0, nextFilterSet = 0;
   private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
+  private float zoom;
+  private Vector<String> imageNames;
 
   // -- Constructor --
 
@@ -180,6 +182,8 @@ public class ZeissLSMReader extends FormatReader {
     nextFilter = nextFilterSet = 0;
     nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
     splitPlanes = false;
+    zoom = 0f;
+    imageNames = null;
   }
 
   // -- IFormatReader API methods --
@@ -300,6 +304,7 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     timestamps = new Vector<Double>();
+    imageNames = new Vector<String>();
 
     core = new CoreMetadata[lsmFilenames.length];
     ifdsList = new Vector<IFDList>();
@@ -358,6 +363,9 @@ public class ZeissLSMReader extends FormatReader {
       initMetadata(series);
       core[series].littleEndian = !isLittleEndian();
       store.setPixelsBigEndian(new Boolean(!isLittleEndian()), series, 0);
+    }
+    for (int series=0; series<ifdsList.size(); series++) {
+      store.setImageName(imageNames.get(series), series);
     }
     setSeries(0);
   }
@@ -778,7 +786,7 @@ public class ZeissLSMReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    store.setImageName(imageName, series);
+    imageNames.add(imageName);
 
     Float pixX = new Float((float) pixelSizeX);
     Float pixY = new Float((float) pixelSizeY);
@@ -821,7 +829,6 @@ public class ZeissLSMReader extends FormatReader {
     if (block instanceof Recording) {
       Recording recording = (Recording) block;
       if (recording.acquire) {
-        store.setImageName(recording.name, series);
         store.setImageDescription(recording.description, series);
         store.setImageCreationDate(recording.startTime, series);
         for (int c=0; c<getSizeC(); c++) {
@@ -873,7 +880,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.filter != null) {
         String id = "Filter:" + nextFilter;
         if (channel.acquire && nextDetectChannel < getSizeC()) {
-          store.setLogicalChannelSecondaryExcitationFilter(
+          store.setLogicalChannelSecondaryEmissionFilter(
             id, series, nextDetectChannel);
         }
         store.setFilterID(id, series, nextFilter);
@@ -921,6 +928,7 @@ public class ZeissLSMReader extends FormatReader {
         store.setDetectorGain(channel.gain, series, nextDetector);
       }
       store.setDetectorType("Unknown", series, nextDetector);
+      store.setDetectorZoom(new Float(zoom), series, nextDetector);
       nextDetectChannel++;
       nextDetector++;
     }
@@ -1545,7 +1553,6 @@ public class ZeissLSMReader extends FormatReader {
     public String name;
     public String binning;
     public String startTime;
-    public Double zoom;
     // Objective data
     public String correction, immersion;
     public Integer magnification;
@@ -1558,15 +1565,15 @@ public class ZeissLSMReader extends FormatReader {
       name = getStringValue(RECORDING_NAME);
       binning = getStringValue(RECORDING_CAMERA_BINNING);
       if (binning != null && binning.indexOf("x") == -1) {
-        if (binning.equals("0")) binning = "1";
-        binning += "x" + binning;
+        if (binning.equals("0")) binning = null;
+        else binning += "x" + binning;
       }
 
       // start time in days since Dec 30 1899
       long stamp = (long) (getDoubleValue(RECORDING_SAMPLE_0TIME) * 86400000);
       startTime = DateTools.convertDate(stamp, DateTools.MICROSOFT);
 
-      zoom = getDoubleValue(RECORDING_ZOOM);
+      zoom = (float) getDoubleValue(RECORDING_ZOOM);
 
       String objective = getStringValue(RECORDING_OBJECTIVE);
 
