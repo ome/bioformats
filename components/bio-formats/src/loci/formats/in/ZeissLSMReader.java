@@ -291,8 +291,14 @@ public class ZeissLSMReader extends FormatReader {
           Location file =
             new Location(parentFile, fileList[i]).getAbsoluteFile();
           if (file.isDirectory()) continue;
-          setId(new Location(parentFile, fileList[i]).getAbsolutePath());
-          return;
+          // make sure that the .mdb references this .lsm
+          String[] lsms = parseMDB(file.getAbsolutePath());
+          for (String lsm : lsms) {
+            if (id.endsWith(lsm) || lsm.endsWith(id)) {
+              setId(file.getAbsolutePath());
+              return;
+            }
+          }
         }
       }
       lsmFilenames = new String[] {id};
