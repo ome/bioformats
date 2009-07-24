@@ -291,6 +291,14 @@ public class FilePattern {
 
   /**
    * Identifies the group pattern from a given file within that group.
+   * @param path The file path to use as a template for the match.
+   */
+  public static String findPattern(String path) {
+    return findPattern(new Location(path));
+  }
+
+  /**
+   * Identifies the group pattern from a given file within that group.
    * @param file The file to use as a template for the match.
    */
   public static String findPattern(Location file) {
