@@ -141,11 +141,12 @@ public class ImageReader implements IFormatReader {
       }
       if (!success) throw new FormatException("Unknown file format: " + id);
     }
-    return readers[current];
+    return getReader();
   }
 
   /** Gets the reader used to open the current file. */
   public IFormatReader getReader() {
+    FormatTools.assertId(currentId, true, 2);
     return readers[current];
   }
 
@@ -192,151 +193,126 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getImageCount();
   }
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isRGB();
   }
 
   /* @see IFormatReader#getSizeX() */
   public int getSizeX() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getSizeX();
   }
 
   /* @see IFormatReader#getSizeY() */
   public int getSizeY() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getSizeY();
   }
 
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getSizeC();
   }
 
   /* @see IFormatReader#getSizeZ() */
   public int getSizeZ() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getSizeZ();
   }
 
   /* @see IFormatReader#getSizeT() */
   public int getSizeT() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getSizeT();
   }
 
   /* @see IFormatReader#getPixelType() */
   public int getPixelType() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getPixelType();
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
   public int getEffectiveSizeC() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getEffectiveSizeC();
   }
 
   /* @see IFormatReader#getRGBChannelCount() */
   public int getRGBChannelCount() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getRGBChannelCount();
   }
 
   /* @see IFormatReader#isIndexed() */
   public boolean isIndexed() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isIndexed();
   }
 
   /* @see IFormatReader#isFalseColor() */
   public boolean isFalseColor() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isFalseColor();
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().get8BitLookupTable();
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().get16BitLookupTable();
   }
 
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getChannelDimLengths();
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getChannelDimTypes();
   }
 
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getThumbSizeX();
   }
 
   /* @see IFormatReader#getThumbSizeY() */
   public int getThumbSizeY() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getThumbSizeY();
   }
 
   /* @see IFormatReader#isLittleEndian() */
   public boolean isLittleEndian() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isLittleEndian();
   }
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getDimensionOrder();
   }
 
   /* @see IFormatReader#isOrderCertain() */
   public boolean isOrderCertain() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isOrderCertain();
   }
 
   /* @see IFormatReader#isThumbnailSeries() */
   public boolean isThumbnailSeries() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isThumbnailSeries();
   }
 
   /* @see IFormatReader#isInterleaved() */
   public boolean isInterleaved() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isInterleaved();
   }
 
   /* @see IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isInterleaved(subC);
   }
 
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().openBytes(no);
   }
 
@@ -344,7 +320,6 @@ public class ImageReader implements IFormatReader {
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().openBytes(no, x, y, w, h);
   }
 
@@ -352,7 +327,6 @@ public class ImageReader implements IFormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().openBytes(no, buf);
   }
 
@@ -360,7 +334,6 @@ public class ImageReader implements IFormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().openBytes(no, buf, x, y, w, h);
   }
 
@@ -373,25 +346,21 @@ public class ImageReader implements IFormatReader {
   public Object openData(int no, int x, int y, int width, int height)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().openData(no, x, y, width, height);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().openThumbBytes(no);
   }
 
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getSeriesCount();
   }
 
   /* @see IFormatReader#setSeries(int) */
   public void setSeries(int no) {
-    FormatTools.assertId(currentId, true, 2);
     getReader().setSeries(no);
   }
 
@@ -402,63 +371,52 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getUsedFiles();
   }
 
   /* @see IFormatReader#getUsedFiles(boolean) */
   public String[] getUsedFiles(boolean noPixels) {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getUsedFiles(noPixels);
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
   public int getIndex(int z, int c, int t) {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getIndex(z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
   public int[] getZCTCoords(int index) {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getZCTCoords(index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getMetadataValue(field);
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
   public Hashtable getGlobalMetadata() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getGlobalMetadata();
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
   public Hashtable getSeriesMetadata() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getSeriesMetadata();
   }
 
   /** @deprecated */
   public Hashtable getMetadata() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getMetadata();
   }
 
   /* @see IFormatReader#getCoreMetadata() */
   public CoreMetadata[] getCoreMetadata() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getCoreMetadata();
   }
 
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    for (int i=0; i<readers.length; i++) {
-      readers[i].close(fileOnly);
-    }
+    for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
     if (!fileOnly) currentId = null;
   }
 
@@ -480,7 +438,6 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isMetadataComplete() */
   public boolean isMetadataComplete() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().isMetadataComplete();
   }
 
@@ -547,13 +504,11 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#getMetadataStore() */
   public MetadataStore getMetadataStore() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getMetadataStore();
   }
 
   /* @see IFormatReader#getMetadataStoreRoot() */
   public Object getMetadataStoreRoot() {
-    FormatTools.assertId(currentId, true, 2);
     return getReader().getMetadataStoreRoot();
   }
 
