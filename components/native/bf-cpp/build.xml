@@ -102,31 +102,6 @@ the Subversion repository using the command:
               <arg value="-mindep"/>
               <arg value="-exportsymbols"/> <!-- required for Visual C++ -->
             </java>
-            <!-- HACK - Replace patterns to dodge Jace problems on Windows. -->
-            <java fork="true" classname="${hack.program}"
-              classpath="${classes.dir}:${component.runtime-cp}">
-              <arg value="${hack.input1}"/>
-              <arg value="${hack.output1}"/>
-              <arg path="${hack.path1}"/>
-            </java>
-            <java fork="true" classname="${hack.program}"
-              classpath="${classes.dir}:${component.runtime-cp}">
-              <arg value="${hack.input2}"/>
-              <arg value="${hack.output2}"/>
-              <arg path="${hack.path2}"/>
-            </java>
-            <java fork="true" classname="${hack.program}"
-              classpath="${classes.dir}:${component.runtime-cp}">
-              <arg value="${hack.input3}"/>
-              <arg value="${hack.output3}"/>
-              <arg path="${hack.path3}"/>
-            </java>
-            <java fork="true" classname="${hack.program}"
-              classpath="${classes.dir}:${component.runtime-cp}">
-              <arg value="${hack.input4}"/>
-              <arg value="${hack.output4}"/>
-              <arg path="${hack.path4}"/>
-            </java>
           </then>
           <else>
             <!-- Generate proxies for GCC and other builds. -->
@@ -147,6 +122,43 @@ the Subversion repository using the command:
             </java>
           </else>
         </if>
+        <!-- HACK - Replace patterns to dodge Jace problems. -->
+        <java fork="true" classname="${hack.program}"
+          classpath="${classes.dir}:${component.runtime-cp}">
+          <arg value="${hack.input1}"/>
+          <arg value="${hack.output1}"/>
+          <arg path="${hack.path1}"/>
+        </java>
+        <java fork="true" classname="${hack.program}"
+          classpath="${classes.dir}:${component.runtime-cp}">
+          <arg value="${hack.input2}"/>
+          <arg value="${hack.output2}"/>
+          <arg path="${hack.path2}"/>
+        </java>
+        <java fork="true" classname="${hack.program}"
+          classpath="${classes.dir}:${component.runtime-cp}">
+          <arg value="${hack.input3}"/>
+          <arg value="${hack.output3}"/>
+          <arg path="${hack.path3}"/>
+        </java>
+        <java fork="true" classname="${hack.program}"
+          classpath="${classes.dir}:${component.runtime-cp}">
+          <arg value="${hack.input4}"/>
+          <arg value="${hack.output4}"/>
+          <arg path="${hack.path4}"/>
+        </java>
+        <java fork="true" classname="${hack.program}"
+          classpath="${classes.dir}:${component.runtime-cp}">
+          <arg value="${hack.input5}"/>
+          <arg value="${hack.output5}"/>
+          <arg path="${hack.path5}"/>
+        </java>
+        <java fork="true" classname="${hack.program}"
+          classpath="${classes.dir}:${component.runtime-cp}">
+          <arg value="${hack.input6}"/>
+          <arg value="${hack.output6}"/>
+          <arg path="${hack.path6}"/>
+        </java>
       </else>
     </if>
   </target>
