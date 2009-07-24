@@ -64,7 +64,6 @@ bool separate = false;
 bool expand = false;
 bool omexml = false;
 bool normalize = false;
-bool fastBlit = false;
 bool preload = false;
 String* omexmlVersion = NULL;
 int start = 0;
@@ -82,7 +81,6 @@ ChannelSeparator* channelSeparator = NULL;
 ChannelMerger* channelMerger = NULL;
 MinMaxCalculator* minMaxCalc = NULL;
 DimensionSwapper* dimSwapper = NULL;
-BufferedImageReader* biReader = NULL;
 
 StatusEchoer* status = NULL;
 
@@ -128,7 +126,6 @@ void parseArgs(int argc, const char *argv[]) {
       else if (arg.compare("-expand") == 0) expand = true;
       else if (arg.compare("-omexml") == 0) omexml = true;
       else if (arg.compare("-normalize") == 0) normalize = true;
-      else if (arg.compare("-fast") == 0) fastBlit = true;
       else if (arg.compare("-preload") == 0) preload = true;
       else if (arg.compare("-xmlversion") == 0) {
         omexmlVersion = new String(argv[++i]);
@@ -166,7 +163,7 @@ void printUsage() {
   cout << "To test read a file in any format, run:" << endl <<
     "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] [-minmax] " << endl <<
     "    [-merge] [-stitch] [-separate] [-expand] [-omexml]" << endl <<
-    "    [-normalize] [-fast] [-range start end] [-series num]" << endl <<
+    "    [-normalize] [-range start end] [-series num]" << endl <<
     "    [-swap inputOrder] [-shuffle outputOrder] [-preload]" << endl <<
     "    [-xmlversion v] [-crop x,y,w,h]" << endl <<
     "" << endl <<
@@ -184,7 +181,6 @@ void printUsage() {
     "   -expand: expand indexed color to RGB" << endl <<
     "   -omexml: populate OME-XML metadata" << endl <<
     "-normalize: normalize floating point images*" << endl <<
-    "     -fast: paint RGB images as quickly as possible*" << endl <<
     "    -range: specify range of planes to read (inclusive)" << endl <<
     "   -series: specify which image series to read" << endl <<
     "     -swap: override the default input dimension order" << endl <<
@@ -223,7 +219,6 @@ void configureReaderPreInit() {
   if (swapOrder || shuffleOrder) {
     reader = dimSwapper = new DimensionSwapper(*reader);
   }
-  reader = biReader = new BufferedImageReader(*reader);
 
   status = new StatusEchoer;
   reader->addStatusListener(*status);
@@ -417,7 +412,41 @@ void printMinMaxValues() {
 }
 
 void readPixels() {
-  // TODO
+  cout << endl;
+  cout << "Reading ";
+  if (reader->getSeriesCount() > 1) cout << "series #" << series;
+  cout << " pixel data ";
+  status->setVerbose(false);
+  int num = reader->getImageCount();
+  if (start < 0) start = 0;
+  if (start >= num) start = num - 1;
+  if (end < 0) end = 0;
+  if (end >= num) end = num - 1;
+  if (end < start) end = start;
+
+  int sizeX = reader->getSizeX();
+  int sizeY = reader->getSizeY();
+  int sizeC = reader->getSizeC();
+
+  if (width == 0) width = sizeX;
+  if (height == 0) height = sizeY;
+
+  int pixelType = reader->getPixelType();
+
+  cout << "(" << start << "-" << end << ") ";
+  for (int i=start; i<=end; i++) {
+    status->setEchoNext(true);
+    if (thumbs) reader->openThumbBytes(i);
+    else reader->openBytes(i, xCoordinate, yCoordinate, width, height);
+    cout << ".";
+    flush(cout);
+  }
+  cout << " ";
+  cout << "[done]" << endl;
+
+  if (minmax) printMinMaxValues();
+
+  cout << endl;
 }
 
 void printGlobalMetadata() {
@@ -476,8 +505,6 @@ void destroyObjects() {
   minMaxCalc = NULL;
   delete dimSwapper;
   dimSwapper = NULL;
-  delete biReader;
-  biReader = NULL;
 
   delete status;
   status = NULL;
