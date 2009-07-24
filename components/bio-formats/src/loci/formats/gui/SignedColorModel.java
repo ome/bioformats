@@ -100,26 +100,27 @@ public class SignedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getAlpha(int) */
   public int getAlpha(int pixel) {
-    int alpha = helper.getAlpha(pixel);
-    return rescale(alpha);
+    if (nChannels < 4) return 255;
+    if (pixelBits > 8) pixel = helper.getAlpha(pixel);
+    return rescale(pixel);
   }
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
   public int getBlue(int pixel) {
-    int blue = helper.getBlue(pixel);
-    return rescale(blue);
+    if (pixelBits > 8) pixel = helper.getBlue(pixel);
+    return rescale(pixel);
   }
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
   public int getGreen(int pixel) {
-    int green = helper.getGreen(pixel);
-    return rescale(green);
+    if (pixelBits > 8) pixel = helper.getGreen(pixel);
+    return rescale(pixel);
   }
 
   /* @see java.awt.image.ColorModel#getRed(int) */
   public int getRed(int pixel) {
-    int red = helper.getRed(pixel);
-    return rescale(red);
+    if (pixelBits > 8) pixel = helper.getRed(pixel);
+    return rescale(pixel);
   }
 
   /* @see java.awt.image.ColorModel#getAlpha(Object) */
