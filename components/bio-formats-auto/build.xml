@@ -59,6 +59,12 @@ the latest release of the OME-XML schema. E.g.:
       <arg value="bio-formats"/>
       <arg value="../../../bio-formats/src"/>
     </java>
+    <java classname="${component.jace-header-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${component.jace-header-dir}">
+      <arg value="loci-common"/>
+      <arg value="../../../common/src"/>
+    </java>
   </target>
 
 </project>

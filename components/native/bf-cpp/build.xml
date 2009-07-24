@@ -93,7 +93,7 @@ the Subversion repository using the command:
               <arg path="source"/>
               <arg path="${proxies.dir}/include"/>
               <arg path="${proxies.dir}/source"/>
-              <arg path="${jre.runtime}:${artifact.dir}/bio-formats.jar"/>
+              <arg path="${proxies.cp}"/>
               <classpath>
                 <fileset dir="${jace.home}/release/lib">
                   <include name="*.jar"/>
@@ -112,7 +112,7 @@ the Subversion repository using the command:
               <arg path="source"/>
               <arg path="${proxies.dir}/include"/>
               <arg path="${proxies.dir}/source"/>
-              <arg path="${jre.runtime}:${artifact.dir}/bio-formats.jar"/>
+              <arg path="${proxies.cp}"/>
               <classpath>
                 <fileset dir="${jace.home}/release/lib">
                   <include name="*.jar"/>

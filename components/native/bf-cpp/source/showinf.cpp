@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //   components/bio-formats/src/loci/formats/tools/ImageInfo.java
 
 #include "bio-formats.h"
+#include "loci-common.h"
 
 #include <string>
 using std::string;
@@ -72,7 +73,6 @@ int series = 0;
 int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
 String* swapOrder = NULL;
 String* shuffleOrder = NULL;
-String* map = NULL;
 
 IFormatReader* reader = NULL;
 ImageReader* imageReader = NULL;
@@ -153,11 +153,10 @@ void parseArgs(int argc, const char *argv[]) {
       else if (arg.compare("-shuffle") == 0) {
         shuffleOrder = new String(argv[++i]);
       }
-      else if (arg.compare("-map") == 0) map = new String(argv[++i]);
       else cout << "Ignoring unknown command flag: " << arg << endl;
     }
     else {
-      if (!id || id->isNull()) id = new String(arg);
+      if (!id) id = new String(arg);
       else cout << "Ignoring unknown argument: " << arg << endl;
     }
   }
@@ -221,7 +220,7 @@ void configureReaderPreInit() {
   if (separate) reader = channelSeparator = new ChannelSeparator(*reader);
   if (merge) reader = channelMerger = new ChannelMerger(*reader);
   if (minmax) reader = minMaxCalc = new MinMaxCalculator(*reader);
-  if (!swapOrder->isNull() || !shuffleOrder->isNull()) {
+  if (swapOrder || shuffleOrder) {
     reader = dimSwapper = new DimensionSwapper(*reader);
   }
   reader = biReader = new BufferedImageReader(*reader);
@@ -236,12 +235,27 @@ void configureReaderPreInit() {
 }
 
 void configureReaderPostInit() {
-  if (!swapOrder->isNull()) dimSwapper->swapDimensions(*swapOrder);
-  if (!shuffleOrder->isNull()) dimSwapper->setOutputOrder(*shuffleOrder);
+  if (swapOrder) dimSwapper->swapDimensions(*swapOrder);
+  if (shuffleOrder) dimSwapper->setOutputOrder(*shuffleOrder);
 }
 
 void checkWarnings() {
-  // TODO
+  int pixelType = reader->getPixelType();
+  if (!normalize && (pixelType == FormatTools::FLOAT() ||
+    pixelType == FormatTools::DOUBLE()))
+  {
+    cout << "Warning: Java does not support "
+      "display of unnormalized floating point data." << endl;
+    cout << "Please use the '-normalize' option "
+      "to avoid receiving a cryptic exception." << endl;
+  }
+
+  if (reader->isRGB() && reader->getRGBChannelCount() > 4) {
+    cout << "Warning: Java does not support "
+      "merging more than 4 channels." << endl;
+    cout << "Please use the '-separate' option "
+      "to avoid receiving a cryptic exception." << endl;
+  }
 }
 
 /* Reads core metadata from the currently initialized reader. */
@@ -415,26 +429,58 @@ void printOriginalMetadata() {
 }
 
 void printOMEXML() {
-  // TODO
+  cout << endl;
+  MetadataStore ms = reader->getMetadataStore();
+  String version = MetadataTools::getOMEXMLVersion(ms);
+  if (!version.isNull()) cout << "Generating OME-XML" << endl;
+  else cout << "Generating OME-XML (schema version " << version << ")" << endl;
+  MetadataRetrieve mr = MetadataTools::asRetrieve(ms);
+  if (!mr.isNull()) {
+    String xml = MetadataTools::getOMEXML(mr);
+    cout << XMLTools::indentXML(xml) << endl;
+    MetadataTools::validateOMEXML(xml);
+  }
+  else {
+    cout << "The metadata could not be converted to OME-XML." << endl;
+    if (omexmlVersion) {
+      cout << omexmlVersion <<
+        " is probably not a legal schema version." << endl;
+    }
+    else {
+      cout << "The OME-XML Java library is probably not available." << endl;
+    }
+  }
 }
 
 void destroyObjects() {
-  if (id) delete id;
-  if (omexmlVersion) delete omexmlVersion;
-  if (swapOrder) delete swapOrder;
-  if (shuffleOrder) delete shuffleOrder;
-  if (map) delete map;
+  delete id;
+  id = NULL;
+  delete omexmlVersion;
+  omexmlVersion = NULL;
+  delete swapOrder;
+  swapOrder = NULL;
+  delete shuffleOrder;
+  shuffleOrder = NULL;
 
-  if (imageReader) delete imageReader;
-  if (fileStitcher) delete fileStitcher;
-  if (channelFiller) delete channelFiller;
-  if (channelSeparator) delete channelSeparator;
-  if (channelMerger) delete channelMerger;
-  if (minMaxCalc) delete minMaxCalc;
-  if (dimSwapper) delete dimSwapper;
-  if (biReader) delete biReader;
+  delete imageReader;
+  imageReader = NULL;
+  delete fileStitcher;
+  fileStitcher = NULL;
+  delete channelFiller;
+  channelFiller = NULL;
+  delete channelSeparator;
+  channelSeparator = NULL;
+  delete channelMerger;
+  channelMerger = NULL;
+  delete minMaxCalc;
+  minMaxCalc = NULL;
+  delete dimSwapper;
+  dimSwapper = NULL;
+  delete biReader;
+  biReader = NULL;
 
-  if (status) delete status;
+  delete status;
+  status = NULL;
 }
 
 /* Displays information on the given file. */
@@ -447,14 +493,13 @@ bool testRead(int argc, const char *argv[]) {
     return true;
   }
 
-  if (!id || id->isNull()) {
+  if (!id) {
     printUsage();
     return false;
   }
 
   reader = imageReader = new ImageReader;
 
-  //mapLocation();
   configureReaderPreInit();
 
   reader->setId(*id);
