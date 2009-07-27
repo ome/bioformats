@@ -1039,16 +1039,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Institution" type="xsd:string"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				The organizing structure that people belong to other than groups.  A university, or company, etc.
-				We do not specify a department element, and do not mean for Institution to be used in this way.
-				We simply wish to say XXX at YYY.  Where YYY has a better chance of being tied to a geographically fixed location
-				and of being more recognizable than a group of experimenters. 
-			</xsd:documentation>
-		</xsd:annotation>
-	</xsd:element>
 	<xsd:element name="Dataset"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1203,7 +1193,13 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:attribute>
 			<xsd:attribute name="Institution" use="optional" type="xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>A person's Institution</xsd:documentation>
+					<xsd:documentation>
+						A person's Institution
+						The organizing structure that people belong to other than groups.  A university, or company, etc.
+						We do not specify a department element, and do not mean for Institution to be used in this way.
+						We simply wish to say XXX at YYY.  Where YYY has a better chance of being tied to a geographically fixed location
+						and of being more recognizable than a group of experimenters. 
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="UserName" use="optional" type="xsd:string">
