@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.out.TiffWriter;
+import loci.formats.tiff.IFD;
 
 /** Creates a sample OME-TIFF dataset according to the given parameters. */
 public class MakeTestOmeTiff {
@@ -470,8 +471,8 @@ public class MakeTestOmeTiff {
             " -> " + filenames[i][p][j] + (last[i][p][j] ? "*" : ""));
           out.setId(filenames[i][p][j]);
           // write comment stub, to be overwritten later
-          Hashtable ifdHash = new Hashtable();
-          TiffTools.putIFDValue(ifdHash, TiffTools.IMAGE_DESCRIPTION, "");
+          IFD ifdHash = new IFD();
+          ifdHash.putIFDValue(IFD.IMAGE_DESCRIPTION, "");
           out.saveImage(images[i][p][j], ifdHash, last[i][p][j]);
           if (last[i][p][j]) {
             // inject OME-XML block

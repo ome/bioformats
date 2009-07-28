@@ -5,11 +5,12 @@
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffCompression;
 
 /** Converts the given image file to an LZW-compressed TIFF. */
 public class MakeLZW {
@@ -31,15 +32,15 @@ public class MakeLZW {
         System.out.print(".");
         BufferedImage img = reader.openImage(b);
 
-        Hashtable ifd = new Hashtable();
+        IFD ifd = new IFD();
         if (b == 0) {
           // preserve OME-XML block
-          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
+          ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, xml);
         }
 
         // save with LZW
-        TiffTools.putIFDValue(ifd, TiffTools.COMPRESSION, TiffTools.LZW);
-        TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
+        ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.LZW);
+        ifd.putIFDValue(IFD.PREDICTOR, 2);
 
         // write file to disk
         writer.saveImage(img, ifd, b == blocks - 1);

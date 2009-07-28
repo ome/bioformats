@@ -6,8 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 
 import loci.common.RandomAccessInputStream;
-import loci.formats.TiffTools;
 import loci.formats.in.FlexReader;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /**
  * Convenience method to extract the metadata from
@@ -27,8 +28,10 @@ public class ExtractFlexMetadata {
         int dot = id.lastIndexOf(".");
         String outId = (dot >= 0 ? id.substring(0, dot) : id) + ".xml";
         RandomAccessInputStream in = new RandomAccessInputStream(id);
-        String xml = (String) TiffTools.getIFDValue(TiffTools.getIFDs(in)[0],
-          FlexReader.FLEX, true, String.class);
+        TiffParser parser = new TiffParser(in);
+        IFD firstIFD = parser.getIFDs().get(0);
+        String xml =
+          (String) firstIFD.getIFDValue(FlexReader.FLEX, true, String.class);
         in.close();
         FileWriter writer = new FileWriter(new File(outId));
         writer.write(xml);

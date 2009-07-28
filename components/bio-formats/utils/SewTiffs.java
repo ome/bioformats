@@ -7,10 +7,11 @@ import java.util.Hashtable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FilePattern;
-import loci.formats.TiffTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.TiffReader;
 import loci.formats.out.TiffWriter;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /** Stitches the first plane from a collection of TIFFs into a single file. */
 public class SewTiffs {
@@ -53,15 +54,17 @@ public class SewTiffs {
       if (t == 0) {
         // read first IFD
         RandomAccessInputStream ras = new RandomAccessInputStream(inId);
-        Hashtable ifd = TiffTools.getFirstIFD(ras);
+        TiffParser parser = new TiffParser(ras);
+        IFD ifd = parser.getFirstIFD();
         ras.close();
 
         // preserve TIFF comment
-        String desc = TiffTools.getComment(ifd);
+        String desc = ifd.getComment();
 
         if (desc != null) {
-          ifd = new Hashtable();
-          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, desc);
+          //ifd = new Hashtable();
+          ifd = new IFD();
+          ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, desc);
           comment = true;
           out.saveImage(image, ifd, t == num - 1);
           System.out.print(".");

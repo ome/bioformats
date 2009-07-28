@@ -39,6 +39,8 @@ Alternately, you can add the library to MATLAB's static class path:
 
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
+% comment the following line if you are using a stable release
+r = loci.formats.gui.BufferedImageReader(r);
 
 % uncomment the following line to enable grouping of similarly
 % named files into a single dataset based on file numbering

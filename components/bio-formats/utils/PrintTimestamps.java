@@ -4,7 +4,7 @@
 
 import java.util.Arrays;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.formats.FormatReader;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
@@ -47,7 +47,7 @@ public class PrintTimestamps {
     System.out.println("\tCreation date = " + creationDate);
     if (creationDate != null) {
       System.out.println("\tCreation time (in ms since epoch) = " +
-        DataTools.getTime(creationDate, DataTools.ISO8601_FORMAT));
+        DateTools.getTime(creationDate, DateTools.ISO8601_FORMAT));
     }
     System.out.println("\tTime increment (in seconds) = " + timeInc);
   }

@@ -2,7 +2,6 @@
 // MinimumWriter.java
 //
 
-import java.awt.image.BufferedImage;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
 
