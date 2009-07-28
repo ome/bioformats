@@ -25,19 +25,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // For the original Java version, see:
 //   components/bio-formats/src/loci/formats/tools/ImageInfo.java
 
+// for Bio-Formats C++ bindings
 #include "bio-formats.h"
 #include "loci-common.h"
-
-#include <string>
-using std::string;
-
-#include <exception>
-using std::exception;
 
 #include <iostream>
 using std::cout;
 using std::endl;
 
+#include <exception>
+using std::exception;
+
+#include <string>
+using std::string;
+
+// for atoi on some platforms
+#include <stdio.h>
+#include <stdlib.h>
+
+// for INT_MAX
 #include <limits.h>
 
 #if defined (_WIN32)
@@ -413,8 +419,8 @@ void printMinMaxValues() {
 
 void readPixels() {
   cout << endl;
-  cout << "Reading ";
-  if (reader->getSeriesCount() > 1) cout << "series #" << series;
+  cout << "Reading";
+  if (reader->getSeriesCount() > 1) cout << " series #" << series;
   cout << " pixel data ";
   status->setVerbose(false);
   int num = reader->getImageCount();
@@ -435,11 +441,11 @@ void readPixels() {
 
   cout << "(" << start << "-" << end << ") ";
   for (int i=start; i<=end; i++) {
+    flush(cout);
     status->setEchoNext(true);
     if (thumbs) reader->openThumbBytes(i);
     else reader->openBytes(i, xCoordinate, yCoordinate, width, height);
     cout << ".";
-    flush(cout);
   }
   cout << " ";
   cout << "[done]" << endl;
