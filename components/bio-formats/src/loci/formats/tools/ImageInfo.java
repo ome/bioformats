@@ -663,8 +663,7 @@ public class ImageInfo {
     LogTools.println();
     LogTools.println("Reading global metadata");
     Hashtable meta = reader.getGlobalMetadata();
-    String[] keys = (String[]) meta.keySet().toArray(new String[0]);
-    Arrays.sort(keys);
+    String[] keys = MetadataTools.keys(meta);
     for (String key : keys) {
       LogTools.println(key + ": " + meta.get(key));
     }
@@ -676,8 +675,7 @@ public class ImageInfo {
     LogTools.println();
     LogTools.println("Reading" + seriesLabel + " metadata");
     Hashtable meta = reader.getSeriesMetadata();
-    String[] keys = (String[]) meta.keySet().toArray(new String[0]);
-    Arrays.sort(keys);
+    String[] keys = MetadataTools.keys(meta);
     for (int i=0; i<keys.length; i++) {
       LogTools.print(keys[i] + ": ");
       LogTools.println(meta.get(keys[i]));

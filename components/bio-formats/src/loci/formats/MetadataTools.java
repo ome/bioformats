@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import loci.common.DateTools;
@@ -465,6 +466,34 @@ public final class MetadataTools {
     MetadataConverter.convertMetadata(src, dest);
   }
 
+  // -- Utility methods - casting --
+
+  /**
+   * Gets the given {@link MetadataRetrieve} object as a {@link MetadataStore}.
+   * Returns null if the object is incompatible and cannot be casted.
+   */
+  public static MetadataStore asStore(MetadataRetrieve meta) {
+    return meta instanceof MetadataStore ? (MetadataStore) meta : null;
+  }
+
+  /**
+   * Gets the given {@link MetadataStore} object as a {@link MetadataRetrieve}.
+   * Returns null if the object is incompatible and cannot be casted.
+   */
+  public static MetadataRetrieve asRetrieve(MetadataStore meta) {
+    return meta instanceof MetadataRetrieve ? (MetadataRetrieve) meta : null;
+  }
+
+  // -- Utility methods - original metadata --
+
+  /** Gets a sorted list of keys from the given hashtable. */
+  public static String[] keys(Hashtable meta) {
+    String[] keys = new String[meta.size()];
+    meta.keySet().toArray(keys);
+    Arrays.sort(keys);
+    return keys;
+  }
+
   // -- Helper methods --
 
   /**
@@ -485,24 +514,6 @@ public final class MetadataTools {
       LogTools.traceDebug(exc);
     }
     return false;
-  }
-
-  // -- Utility methods - casting --
-
-  /**
-   * Gets the given {@link MetadataRetrieve} object as a {@link MetadataStore}.
-   * Returns null if the object is incompatible and cannot be casted.
-   */
-  public static MetadataStore asStore(MetadataRetrieve meta) {
-    return meta instanceof MetadataStore ? (MetadataStore) meta : null;
-  }
-
-  /**
-   * Gets the given {@link MetadataStore} object as a {@link MetadataRetrieve}.
-   * Returns null if the object is incompatible and cannot be casted.
-   */
-  public static MetadataRetrieve asRetrieve(MetadataStore meta) {
-    return meta instanceof MetadataRetrieve ? (MetadataRetrieve) meta : null;
   }
 
 }
