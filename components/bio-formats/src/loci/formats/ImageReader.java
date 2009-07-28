@@ -481,7 +481,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() {
-    return getReader().getCurrentFile();
+    return currentId;
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
