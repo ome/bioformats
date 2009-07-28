@@ -63,7 +63,6 @@ bool doCore = true;
 bool doMeta = true;
 bool filter = true;
 bool thumbs = false;
-bool minmax = false;
 bool merge = false;
 bool stitch = false;
 bool separate = false;
@@ -85,17 +84,9 @@ FileStitcher* fileStitcher = NULL;
 ChannelFiller* channelFiller = NULL;
 ChannelSeparator* channelSeparator = NULL;
 ChannelMerger* channelMerger = NULL;
-MinMaxCalculator* minMaxCalc = NULL;
 DimensionSwapper* dimSwapper = NULL;
 
 StatusEchoer* status = NULL;
-
-//String* seriesLabel = NULL;
-
-//Double[] preGlobalMin, preGlobalMax;
-//Double[] preKnownMin, preKnownMax;
-//Double[] prePlaneMin, prePlaneMax;
-//bool preIsMinMaxPop = false;
 
 // -- Methods --
 
@@ -125,7 +116,6 @@ void parseArgs(int argc, const char *argv[]) {
       else if (arg.compare("-nometa") == 0) doMeta = false;
       else if (arg.compare("-nofilter") == 0) filter = false;
       else if (arg.compare("-thumbs") == 0) thumbs = true;
-      else if (arg.compare("-minmax") == 0) minmax = true;
       else if (arg.compare("-merge") == 0) merge = true;
       else if (arg.compare("-stitch") == 0) stitch = true;
       else if (arg.compare("-separate") == 0) separate = true;
@@ -136,13 +126,14 @@ void parseArgs(int argc, const char *argv[]) {
       else if (arg.compare("-xmlversion") == 0) {
         omexmlVersion = new String(argv[++i]);
       }
-      //else if (arg.compare("-crop") == 0) {
-      //  StringTokenizer st = new StringTokenizer(argv[++i], ",");
-      //  xCoordinate = Integer.parseInt(st.nextToken());
-      //  yCoordinate = Integer.parseInt(st.nextToken());
-      //  width = Integer.parseInt(st.nextToken());
-      //  height = Integer.parseInt(st.nextToken());
-      //}
+      else if (arg.compare("-crop") == 0) {
+        String cropInfo(argv[++i]);
+        StringArray cropTokens = cropInfo.split(",");
+        xCoordinate = atoi(string(cropTokens[0]).c_str());
+        yCoordinate = atoi(string(cropTokens[1]).c_str());
+        width = atoi(string(cropTokens[2]).c_str());
+        height = atoi(string(cropTokens[3]).c_str());
+      }
       else if (arg.compare("-range") == 0) {
         start = atoi(argv[++i]);
         end = atoi(argv[++i]);
@@ -167,7 +158,7 @@ void parseArgs(int argc, const char *argv[]) {
 
 void printUsage() {
   cout << "To test read a file in any format, run:" << endl <<
-    "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] [-minmax] " << endl <<
+    "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] " << endl <<
     "    [-merge] [-stitch] [-separate] [-expand] [-omexml]" << endl <<
     "    [-normalize] [-range start end] [-series num]" << endl <<
     "    [-swap inputOrder] [-shuffle outputOrder] [-preload]" << endl <<
@@ -180,7 +171,6 @@ void printUsage() {
     "   -nometa: do not parse format-specific metadata table" << endl <<
     " -nofilter: do not filter metadata fields" << endl <<
     "   -thumbs: read thumbnails instead of normal pixels" << endl <<
-    "   -minmax: compute min/max statistics" << endl <<
     "    -merge: combine separate channels into RGB image" << endl <<
     "   -stitch: stitch files with similar names" << endl <<
     " -separate: split RGB image into separate channels" << endl <<
@@ -221,7 +211,6 @@ void configureReaderPreInit() {
   if (expand) reader = channelFiller = new ChannelFiller(*reader);
   if (separate) reader = channelSeparator = new ChannelSeparator(*reader);
   if (merge) reader = channelMerger = new ChannelMerger(*reader);
-  if (minmax) reader = minMaxCalc = new MinMaxCalculator(*reader);
   if (swapOrder || shuffleOrder) {
     reader = dimSwapper = new DimensionSwapper(*reader);
   }
@@ -409,14 +398,6 @@ void readCoreMetadata() {
   }
 }
 
-void initPreMinMaxValues() {
-  // TODO
-}
-
-void printMinMaxValues() {
-  // TODO
-}
-
 void readPixels() {
   cout << endl;
   cout << "Reading";
@@ -449,18 +430,34 @@ void readPixels() {
   }
   cout << " ";
   cout << "[done]" << endl;
-
-  if (minmax) printMinMaxValues();
-
-  cout << endl;
 }
 
 void printGlobalMetadata() {
-  // TODO
+  cout << endl;
+  cout << "Reading global metadata" << endl;
+  Hashtable meta = reader->getGlobalMetadata();
+  StringArray keys = MetadataTools::keys(meta);
+  for (int i=0; i<keys.length(); i++) {
+    Object value = meta.get(keys[i]);
+    cout << keys[i] << ": " << value << endl;
+  }
 }
 
 void printOriginalMetadata() {
-  // TODO
+  cout << endl;
+  int seriesCount = reader->getSeriesCount();
+  if (seriesCount > 1) {
+    cout << "Reading series #" << series << " metadata" << endl;
+  }
+  else {
+    cout << "Reading series metadata" << endl;
+  }
+  Hashtable meta = reader->getSeriesMetadata();
+  StringArray keys = MetadataTools::keys(meta);
+  for (int i=0; i<keys.length(); i++) {
+    Object value = meta.get(keys[i]);
+    cout << keys[i] << ": " << value << endl;
+  }
 }
 
 void printOMEXML() {
@@ -507,8 +504,6 @@ void destroyObjects() {
   channelSeparator = NULL;
   delete channelMerger;
   channelMerger = NULL;
-  delete minMaxCalc;
-  minMaxCalc = NULL;
   delete dimSwapper;
   dimSwapper = NULL;
 
@@ -541,7 +536,6 @@ bool testRead(int argc, const char *argv[]) {
   checkWarnings();
   readCoreMetadata();
   reader->setSeries(series);
-  initPreMinMaxValues();
 
   // read pixels
   if (pixels) readPixels();
