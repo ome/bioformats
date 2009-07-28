@@ -680,7 +680,7 @@ public class FV1000Reader extends FormatReader {
       Vector v = new Vector();
       for (int i=0; i<previewNames.size(); i++) {
         String ss = (String) previewNames.get(i);
-        ss = ss.replaceAll("pty", "tif");
+        ss = replaceExtension(ss, "pty", "tif");
         if (ss.endsWith(".tif")) v.add(ss);
       }
       previewNames = v;
@@ -724,7 +724,7 @@ public class FV1000Reader extends FormatReader {
     tiffs = new Vector<String>(getImageCount());
 
     thumbReader = new BMPReader();
-    thumbId = thumbId.replaceAll("pty", "bmp");
+    thumbId = replaceExtension(thumbId, "pty", "bmp");
     thumbId = sanitizeFile(thumbId, (isOIB || mappedOIF) ? "" : path);
 
     status("Reading additional metadata");
@@ -751,7 +751,7 @@ public class FV1000Reader extends FormatReader {
       if (!isOIB && !ptyFile.exists()) {
         warn("Could not find .pty file (" + file + "); guessing at the " +
           "corresponding TIFF file.");
-        String tiff = file.replaceAll(".pty", ".tif");
+        String tiff = replaceExtension(file, ".pty", ".tif");
         tiffs.add(ii, tiff);
         continue;
       }
@@ -1322,6 +1322,13 @@ public class FV1000Reader extends FormatReader {
     // "-R" in the file name indicates that this is a preview image
     int index = name.indexOf("-R");
     return index == name.length() - 9;
+  }
+
+  private String replaceExtension(String name, String oldExt, String newExt) {
+    if (!name.endsWith("." + oldExt)) {
+      return name;
+    }
+    return name.substring(0, name.length() - oldExt.length()) + newExt;
   }
 
 }
