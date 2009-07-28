@@ -32,6 +32,7 @@ import java.util.Vector;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
+import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -410,6 +411,7 @@ public class BioRadReader extends FormatReader {
         DefaultHandler handler = new BioRadHandler();
         XMLTools.parseXML(xml, handler);
 
+        used.remove(currentId);
         for (int q=0; q<list.length; q++) {
           if (checkSuffix(list[q], PIC_SUFFIX)) {
             path =
@@ -425,20 +427,13 @@ public class BioRadReader extends FormatReader {
       }
     }
 
-    picFiles = (String[]) pics.toArray(new String[0]);
-
     core[0].indexed = lut != null;
 
     // populate Pixels
 
     core[0].dimensionOrder = "XYCTZ";
 
-    if (picFiles.length > 0) {
-      core[0].imageCount = npic * picFiles.length;
-      core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
-    }
-    else picFiles = null;
-
+    boolean multipleFiles = false;
     for (int q=0; q<noteStrings.size(); q++) {
       Note n = (Note) noteStrings.get(q);
 
@@ -836,6 +831,10 @@ public class BioRadReader extends FormatReader {
                 core[0].sizeZ = 1;
                 core[0].sizeT = 1;
               }
+              else if (key.equals("AXIS_9")) {
+                multipleFiles = true;
+                core[0].sizeC = (int) Double.parseDouble(values[3]);
+              }
               break;
             case 14:
               addGlobalMeta(key + " time course type (X)", values[2]);
@@ -859,6 +858,29 @@ public class BioRadReader extends FormatReader {
         }
       }
     }
+
+    if (multipleFiles && isGroupFiles() && pics.size() == 0) {
+      // do file grouping
+      used.remove(currentId);
+      FilePattern pattern = new FilePattern(new Location(id).getAbsoluteFile());
+      String[] patternFiles = pattern.getFiles();
+      for (String file : patternFiles) {
+        pics.add(file);
+        used.add(file);
+      }
+      if (pics.size() == 1) core[0].sizeC = 1;
+    }
+
+    picFiles = (String[]) pics.toArray(new String[0]);
+    Arrays.sort(picFiles);
+    if (picFiles.length > 0) {
+      core[0].imageCount = npic * picFiles.length;
+      if (multipleFiles) {
+        core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+      }
+      else core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
+    }
+    else picFiles = null;
 
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
