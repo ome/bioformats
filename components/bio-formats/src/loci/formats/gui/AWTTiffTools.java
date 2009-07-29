@@ -145,12 +145,9 @@ public final class AWTTiffTools {
 
     // create pixel output buffers
     int compression = ifd.getCompression();
-    boolean fullImageCompression = false;
-    if (compression == TiffCompression.JPEG_2000 || compression == TiffCompression.JPEG_2000_Lossy ||
-      compression == TiffCompression.JPEG)
-    {
-      fullImageCompression = true;
-    }
+    boolean fullImageCompression = compression == TiffCompression.JPEG_2000 ||
+      compression == TiffCompression.JPEG_2000_LOSSY ||
+      compression == TiffCompression.JPEG;
     int pixels = fullImageCompression ? width * height : width;
     int stripSize = Math.max(8192, pixels * bytesPerPixel * nChannels);
     int rowsPerStrip = stripSize / (width * bytesPerPixel * nChannels);

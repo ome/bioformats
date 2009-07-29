@@ -61,16 +61,40 @@ public class CodecOptions {
 
   /** Pixels for preceding image. */
   public byte[] previousImage;
-  
-  /** Used with codecs allowing lossy and lossless compression. Default is set to true. */
+
+  /**
+   * Used with codecs allowing lossy and lossless compression.
+   * Default is set to true.
+   */
   public boolean lossless;
+
+  // -- Constructors --
+
+  /** Construct a new CodecOptions. */
+  public CodecOptions() { }
+
+  /** Construct a new CodecOptions using the given CodecOptions. */
+  public CodecOptions(CodecOptions options) {
+    this.width = options.width;
+    this.height = options.height;
+    this.channels = options.channels;
+    this.bitsPerSample = options.bitsPerSample;
+    this.littleEndian = options.littleEndian;
+    this.interleaved = options.interleaved;
+    this.signed = options.signed;
+    this.maxBytes = options.maxBytes;
+    this.previousImage = options.previousImage;
+    this.lossless = options.lossless;
+  }
+
+  // -- Static methods --
 
   /** Return CodecOptions with reasonable default values. */
   public static CodecOptions getDefaultOptions() {
     CodecOptions options = new CodecOptions();
     options.littleEndian = false;
     options.interleaved = false;
-    options.lossless=true;
+    options.lossless = true;
     return options;
   }
 
