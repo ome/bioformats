@@ -106,6 +106,8 @@ public class BioRadReader extends FormatReader {
 
   private Vector noteStrings;
 
+  private Vector<Float> offset, gain;
+
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
@@ -218,6 +220,9 @@ public class BioRadReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
+
+    offset = new Vector<Float>();
+    gain = new Vector<Float>();
 
     used = new Vector<String>();
     used.add(currentId);
@@ -482,21 +487,32 @@ public class BioRadReader extends FormatReader {
                 if (key.lastIndexOf("_") > index) {
                   String idx = key.substring(index, key.indexOf("_", index));
                   int detector = Integer.parseInt(idx) - 1;
-                  if (key.endsWith("OFFSET")) {
-                    store.setDetectorSettingsOffset(
-                      new Float(value), 0, detector);
-                  }
-                  else if (key.endsWith("GAIN")) {
-                    store.setDetectorSettingsGain(
-                      new Float(value), 0, detector);
-                  }
 
+                  store.setDetectorID("Detector:" + detector, 0, detector);
                   store.setDetectorType("Unknown", 0, detector);
 
-                  // link DetectorSettings to an actual Detector
-                  store.setDetectorID("Detector:" + detector, 0, detector);
-                  store.setDetectorSettingsDetector("Detector:" + detector, 0,
-                    detector);
+                  if (key.endsWith("OFFSET")) {
+                    if (detector < offset.size()) {
+                      offset.setElementAt(new Float(value), detector);
+                    }
+                    else {
+                      while (detector > offset.size()) {
+                        offset.add(null);
+                      }
+                      offset.add(new Float(value));
+                    }
+                  }
+                  else if (key.endsWith("GAIN")) {
+                    if (detector < gain.size()) {
+                      gain.setElementAt(new Float(value), detector);
+                    }
+                    else {
+                      while (detector > gain.size()) {
+                        gain.add(null);
+                      }
+                      gain.add(new Float(value));
+                    }
+                  }
                 }
               }
             }
@@ -511,14 +527,12 @@ public class BioRadReader extends FormatReader {
                     float end = Float.parseFloat(values[2]);
                     float axisLength = end - start;
                     if (key.equals("AXIS_2")) {
-                      float pixelSize = axisLength / getSizeX();
-                      store.setDimensionsPhysicalSizeX(
-                        new Float(pixelSize), 0, 0);
+                      Float pixelSize = new Float(axisLength / getSizeX());
+                      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
                     }
                     else if (key.equals("AXIS_3")) {
-                      float pixelSize = axisLength / getSizeY();
-                      store.setDimensionsPhysicalSizeY(
-                        new Float(pixelSize), 0, 0);
+                      Float pixelSize = new Float(axisLength / getSizeY());
+                      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
                     }
                   }
                 }
@@ -659,6 +673,7 @@ public class BioRadReader extends FormatReader {
                   addGlobalMeta(prefix + "gain", values[i * 3 + 1]);
                   addGlobalMeta(prefix + "black level", values[i * 3 + 2]);
 
+                  store.setDetectorID("Detector:" + i, 0, i);
                   store.setDetectorOffset(new Float(values[i * 3]), 0, i);
                   store.setDetectorGain(new Float(values[i * 3 + 1]), 0, i);
                   store.setDetectorType("Unknown", 0, i);
@@ -898,6 +913,19 @@ public class BioRadReader extends FormatReader {
     store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
     store.setObjectiveCorrection("Unknown", 0, 0);
     store.setObjectiveImmersion("Unknown", 0, 0);
+
+    // link Detector to Image
+    for (int i=0; i<getEffectiveSizeC(); i++) {
+      if (offset.size() > 0 || gain.size() > 0) {
+        store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+      }
+      if (i < offset.size()) {
+        store.setDetectorSettingsOffset(offset.get(i), 0, i);
+      }
+      if (i < gain.size()) {
+        store.setDetectorSettingsGain(gain.get(i), 0, i);
+      }
+    }
   }
 
   // -- Helper classes --
