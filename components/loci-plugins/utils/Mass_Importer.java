@@ -7,8 +7,8 @@ import ij.gui.YesNoCancelDialog;
 import ij.io.DirectoryChooser;
 import ij.plugin.PlugIn;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Vector;
 import loci.formats.FilePattern;
 import loci.formats.ImageReader;
 import loci.plugins.LociImporter;
@@ -27,13 +27,13 @@ public class Mass_Importer implements PlugIn {
     String dirPath = dc.getDirectory();
 
     // create a list of files we have already processed
-    HashSet done = new HashSet();
+    HashSet<String> done = new HashSet<String>();
 
     // image reader object, for testing whether a file is in a supported format
     ImageReader tester = new ImageReader();
 
     // list of files to actually open with Bio-Formats Importer
-    Vector filesToOpen = new Vector();
+    ArrayList<String> filesToOpen = new ArrayList<String>();
 
     // process all files in the chosen directory
     File dir = new File(dirPath);

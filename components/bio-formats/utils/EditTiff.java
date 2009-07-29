@@ -5,7 +5,7 @@
 import java.io.*;
 import java.util.Hashtable;
 import loci.common.RandomAccessInputStream;
-import loci.formats.TiffTools;
+import loci.formats.tiff.*;
 
 /** Allows raw user TIFF comment editing for the given TIFF files. */
 public class EditTiff {
@@ -23,9 +23,8 @@ public class EditTiff {
       String comment = TiffTools.getComment(f);
       // or if you already have the file open for random access, you can use:
       // RandomAccessInputStream fin = new RandomAccessInputStream(f);
-      // Hashtable ifd = TiffTools.getFirstIFD(fin);
-      // String comment = (String)
-      //   TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+      // TiffParser tiffParser = new TiffParser(fin);
+      // String comment = tiffParser.getComment();
       // fin.close();
       System.out.println("[done]");
       // display comment, and prompt for changes
@@ -35,11 +34,7 @@ public class EditTiff {
       String xml = cin.readLine();
       System.out.print("Saving " + f);
       // save results back to the TIFF file
-      TiffTools.overwriteComment(args[i], xml);
-      // or if you already have the file open for random access, you can use:
-      // RandomAccessFile raf = new RandomAccessFile(args[i], "rw");
-      // TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
-      // raf.close();
+      TiffSaver.overwriteComment(args[i], xml);
       System.out.println(" [done]");
     }
   }

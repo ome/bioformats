@@ -10,6 +10,7 @@ import java.util.*;
 import loci.formats.*;
 import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffSaver;
 
 /** Creates a sample OME-TIFF dataset according to the given parameters. */
 public class MakeTestOmeTiff {
@@ -277,7 +278,7 @@ public class MakeTestOmeTiff {
           }
 
           // build list of text lines from planar information
-          Vector lines = new Vector();
+          ArrayList<TextLine> lines = new ArrayList<TextLine>();
           Font font = g.getFont();
           lines.add(new TextLine(name, font.deriveFont(32f), 5, -5));
           lines.add(new TextLine(sizeX[i][p] + " x " + sizeY[i][p],
@@ -332,12 +333,13 @@ public class MakeTestOmeTiff {
 
     // determine filename for each image plane
     String[][][] filenames = new String[numImages][][];
-    Hashtable lastHash = new Hashtable();
+    HashMap<String, ImageIndex> lastHash =
+      new HashMap<String, ImageIndex>();
     boolean[][][] last = new boolean[numImages][][];
-    Hashtable ifdTotal = new Hashtable();
-    Hashtable firstZ = new Hashtable();
-    Hashtable firstC = new Hashtable();
-    Hashtable firstT = new Hashtable();
+    HashMap<String, Integer> ifdTotal = new HashMap<String, Integer>();
+    HashMap<String, Integer> firstZ = new HashMap<String, Integer>();
+    HashMap<String, Integer> firstC = new HashMap<String, Integer>();
+    HashMap<String, Integer> firstT = new HashMap<String, Integer>();
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<numImages; i++) {
       filenames[i] = new String[numPixels[i]][];
@@ -523,7 +525,8 @@ public class MakeTestOmeTiff {
                 }
               }
             }
-            TiffTools.overwriteComment(filenames[i][p][j], xml);
+            out.close();
+            TiffSaver.overwriteComment(filenames[i][p][j], xml);
           }
         }
       }
