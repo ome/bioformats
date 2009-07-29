@@ -25,8 +25,6 @@ package loci.formats.tiff;
 
 import java.io.IOException;
 
-import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
-
 import loci.common.DataTools;
 import loci.common.LogTools;
 import loci.formats.FormatException;

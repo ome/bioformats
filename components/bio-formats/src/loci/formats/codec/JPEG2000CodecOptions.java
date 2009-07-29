@@ -1,13 +1,11 @@
 package loci.formats.codec;
 
-import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
-
 public class JPEG2000CodecOptions extends CodecOptions
 
 {
   public double quality;
   public int[] codeBlockSize;
-  public String filter;
+  //public String filter;
 
   /** Return JPEG2000CodecOptions with reasonable default values. */
   public static JPEG2000CodecOptions getDefaultOptions() {
@@ -27,12 +25,12 @@ public class JPEG2000CodecOptions extends CodecOptions
     
     if(options.lossless) {
     j2kOptions.quality = Double.MAX_VALUE;
-    j2kOptions.filter = J2KImageWriteParam.FILTER_53;
+    //j2kOptions.filter = J2KImageWriteParam.FILTER_53;
     j2kOptions.lossless=true;
     } else {
       
     j2kOptions.quality = 10;
-    j2kOptions.filter = J2KImageWriteParam.FILTER_97;
+    //j2kOptions.filter = J2KImageWriteParam.FILTER_97;
     j2kOptions.lossless=false;
     }
     j2kOptions.codeBlockSize = new int[] { 64, 64 };

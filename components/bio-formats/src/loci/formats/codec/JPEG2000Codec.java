@@ -258,13 +258,14 @@ public class JPEG2000Codec extends BaseCodec
       r.setVar("compressionType", "JPEG2000");
       r.setVar("codeBlockSize", options.codeBlockSize);
       r.setVar("quality", options.quality);
-      r.setVar("compressionFilter",options.filter);
+      String filter =options.lossless?"J2KImageWriteParam.FILTER_53":"J2KImageWriteParam.FILTER_97";
+      //r.setVar("compressionFilter",options.filter);
       
       r.exec("param = j2kWriter.getDefaultWriteParam()");
       r.exec("param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)");
       r.exec("param.setCompressionType(compressionType)");
       r.exec("param.setLossless(lossless)");
-      r.exec("param.setFilter(compressionFilter)");
+      r.exec("param.setFilter("+filter+")");
       r.exec("param.setCodeBlockSize(codeBlockSize)");
       r.exec("param.setEncodingRate(quality)");
       r.exec("j2kWriter.write(null, iioImage, param)");
