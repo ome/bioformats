@@ -61,12 +61,16 @@ public class CodecOptions {
 
   /** Pixels for preceding image. */
   public byte[] previousImage;
+  
+  /** Used with codecs allowing lossy and lossless compression. Default is set to true. */
+  public boolean lossless;
 
   /** Return CodecOptions with reasonable default values. */
   public static CodecOptions getDefaultOptions() {
     CodecOptions options = new CodecOptions();
     options.littleEndian = false;
     options.interleaved = false;
+    options.lossless=true;
     return options;
   }
 

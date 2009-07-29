@@ -146,7 +146,7 @@ public final class AWTTiffTools {
     // create pixel output buffers
     int compression = ifd.getCompression();
     boolean fullImageCompression = false;
-    if (compression == TiffCompression.JPEG_2000 ||
+    if (compression == TiffCompression.JPEG_2000 || compression == TiffCompression.JPEG_2000_Lossy ||
       compression == TiffCompression.JPEG)
     {
       fullImageCompression = true;

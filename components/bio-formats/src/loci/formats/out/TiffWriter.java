@@ -72,7 +72,7 @@ public class TiffWriter extends FormatWriter {
   public TiffWriter(String format, String[] exts) {
     super(format, exts);
     lastOffset = 0;
-    compressionTypes = new String[] {"Uncompressed", "LZW", "J2K", "JPEG"};
+    compressionTypes = new String[] {"Uncompressed", "LZW", "J2K","J2KLossy", "JPEG"};
     isBigTiff = false;
   }
 
@@ -186,6 +186,9 @@ public class TiffWriter extends FormatWriter {
 
     else if (compression.equals("J2K")) {
       compressType = new Integer(TiffCompression.JPEG_2000);
+    }
+    else if (compression.equals("J2KLossy")) {
+      compressType = new Integer(TiffCompression.JPEG_2000_Lossy);
     }
     else if (compression.equals("JPEG")) {
       compressType = new Integer(TiffCompression.JPEG);

@@ -25,12 +25,15 @@ package loci.formats.tiff;
 
 import java.io.IOException;
 
+import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
+
 import loci.common.DataTools;
 import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
+import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LZWCodec;
 import loci.formats.codec.LuraWaveCodec;
@@ -63,10 +66,11 @@ public final class TiffCompression {
   public static final int DEFLATE = 8;
   public static final int THUNDERSCAN = 32809;
   public static final int JPEG_2000 = 33003;
+  //TODO: Verify that this IFID is suitable
+  public static final int JPEG_2000_Lossy = 33004;
   public static final int ALT_JPEG = 33007;
   public static final int NIKON = 34713;
   public static final int LURAWAVE = 65535;
-
   // -- Constructor --
 
   private TiffCompression() { }
@@ -98,6 +102,8 @@ public final class TiffCompression {
         return "Thunderscan";
       case JPEG_2000:
         return "JPEG-2000";
+      case JPEG_2000_Lossy:
+        return "JPEG-2000-Lossy";
       case NIKON:
         return "Nikon";
       case LURAWAVE:
@@ -199,7 +205,7 @@ public final class TiffCompression {
   /** Returns true if the given compression scheme is supported. */
   public static boolean isSupportedCompression(int compression) {
     return compression == UNCOMPRESSED || compression == LZW ||
-      compression == JPEG || compression == JPEG_2000;
+      compression == JPEG || compression == JPEG_2000 || compression==JPEG_2000_Lossy;
   }
 
   /** Encodes a strip of data with the given compression scheme. */
@@ -237,7 +243,14 @@ public final class TiffCompression {
       return new JPEGCodec().compress(input, options);
     }
     else if (compression == JPEG_2000) {
-      return new JPEG2000Codec().compress(input, options);
+    options.lossless=true;
+    JPEG2000CodecOptions j2kOptions = JPEG2000CodecOptions.getJ2KOptions(options);
+    return new JPEG2000Codec().compress(input, j2kOptions);
+    }
+    else if (compression == JPEG_2000_Lossy) {
+      options.lossless=false;
+      JPEG2000CodecOptions j2kOptions = JPEG2000CodecOptions.getJ2KOptions(options);
+      return new JPEG2000Codec().compress(input, j2kOptions);
     }
     throw new FormatException("Unhandled compression (" + compression + ")");
   }
