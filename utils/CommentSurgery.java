@@ -2,7 +2,8 @@
 // CommentSurgery.java
 //
 
-import loci.formats.TiffTools;
+import loci.formats.tiff.TiffSaver;
+import loci.formats.tiff.TiffTools;
 
 /**
  * Performs "surgery" on a TIFF ImageDescription comment, particularly the
@@ -32,7 +33,7 @@ public class CommentSurgery {
       if (test) System.out.println(xml);
       else {
         System.out.println(len + " -> " + xml.length());
-        TiffTools.overwriteComment(id, xml);
+        TiffSaver.overwriteComment(id, xml);
       }
     }
   }
