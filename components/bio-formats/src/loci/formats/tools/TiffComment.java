@@ -26,7 +26,7 @@ package loci.formats.tools;
 import java.io.IOException;
 
 import loci.formats.FormatException;
-import loci.formats.TiffTools;
+import loci.formats.tiff.TiffTools;
 
 /**
  * Extracts the comment from the first IFD of the given TIFF file(s).

@@ -41,11 +41,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -336,10 +336,10 @@ public class LeicaReader extends FormatReader {
 
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
-    core[0].littleEndian = (fourBytes[0] == TiffTools.LITTLE &&
-      fourBytes[1] == TiffTools.LITTLE &&
-      fourBytes[2] == TiffTools.LITTLE &&
-      fourBytes[3] == TiffTools.LITTLE);
+    core[0].littleEndian = (fourBytes[0] == TiffConstants.LITTLE &&
+      fourBytes[1] == TiffConstants.LITTLE &&
+      fourBytes[2] == TiffConstants.LITTLE &&
+      fourBytes[3] == TiffConstants.LITTLE);
 
     in.order(isLittleEndian());
 

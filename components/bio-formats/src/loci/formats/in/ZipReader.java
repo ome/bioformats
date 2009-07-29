@@ -26,7 +26,6 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
 import loci.common.ZipHandle;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;

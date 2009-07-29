@@ -73,7 +73,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
-import loci.formats.TiffTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.OMEXMLReader;
@@ -82,6 +81,8 @@ import loci.formats.ome.OMEXML2003FCMetadata;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffSaver;
+import loci.formats.tiff.TiffTools;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 
@@ -394,7 +395,7 @@ public class MetadataPane extends JPanel
         if (originalTIFF.equals(file)) {
           //just rewrite image description of original file.
           xml = addTiffData(xml, file);
-          TiffTools.overwriteComment(file.getAbsolutePath(), xml);
+          TiffSaver.overwriteComment(file.getAbsolutePath(), xml);
         }
         else {
           //create the new tiff file.

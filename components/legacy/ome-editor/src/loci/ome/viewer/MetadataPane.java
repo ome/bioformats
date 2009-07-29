@@ -51,7 +51,7 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import loci.formats.TiffTools;
+import loci.formats.tiff.TiffTools;
 import ome.xml.DOMUtil;
 
 import org.openmicroscopy.xml.OMENode;

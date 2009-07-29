@@ -25,11 +25,12 @@ package loci.formats.tiff;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.formats.FormatException;
-import loci.formats.TiffTools;
+import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 
 /**
@@ -89,17 +90,17 @@ public class TiffParser {
     in.seek(0);
     int endianOne = in.read();
     int endianTwo = in.read();
-    boolean littleEndian = endianOne == TiffTools.LITTLE &&
-      endianTwo == TiffTools.LITTLE; // II
-    boolean bigEndian = endianOne == TiffTools.BIG &&
-      endianTwo == TiffTools.BIG; // MM
+    boolean littleEndian = endianOne == TiffConstants.LITTLE &&
+      endianTwo == TiffConstants.LITTLE; // II
+    boolean bigEndian = endianOne == TiffConstants.BIG &&
+      endianTwo == TiffConstants.BIG; // MM
     if (!littleEndian && !bigEndian) return null;
 
     // check magic number (42)
     in.order(littleEndian);
     short magic = in.readShort();
-    if (magic != TiffTools.MAGIC_NUMBER &&
-      magic != TiffTools.BIG_TIFF_MAGIC_NUMBER)
+    if (magic != TiffConstants.MAGIC_NUMBER &&
+      magic != TiffConstants.BIG_TIFF_MAGIC_NUMBER)
     {
       return null;
     }
@@ -119,7 +120,7 @@ public class TiffParser {
     if (result == null) return null;
 
     in.seek(2);
-    boolean bigTiff = in.readShort() == TiffTools.BIG_TIFF_MAGIC_NUMBER;
+    boolean bigTiff = in.readShort() == TiffConstants.BIG_TIFF_MAGIC_NUMBER;
 
     long offset = getFirstOffset(bigTiff);
 
@@ -156,7 +157,7 @@ public class TiffParser {
     if (result == null) return null;
 
     in.seek(2);
-    boolean bigTiff = in.readShort() == TiffTools.BIG_TIFF_MAGIC_NUMBER;
+    boolean bigTiff = in.readShort() == TiffConstants.BIG_TIFF_MAGIC_NUMBER;
 
     long offset = getFirstOffset(bigTiff);
 
@@ -174,6 +175,7 @@ public class TiffParser {
    * @param tag the tag of the entry to be retrieved.
    * @return an object representing the entry's fields.
    * @throws IOException when there is an error accessing the stream.
+   * @throws IllegalArgumentException when the tag number is unknown.
    */
   public TiffIFDEntry getFirstIFDEntry(int tag) throws IOException {
     // First lets re-position the file pointer by checking the TIFF header
@@ -181,7 +183,7 @@ public class TiffParser {
     if (result == null) return null;
 
     in.seek(2);
-    boolean bigTiff = in.readShort() == TiffTools.BIG_TIFF_MAGIC_NUMBER;
+    boolean bigTiff = in.readShort() == TiffConstants.BIG_TIFF_MAGIC_NUMBER;
 
     // Get the offset of the first IFD
     long offset = getFirstOffset(bigTiff);
@@ -193,8 +195,8 @@ public class TiffParser {
     for (int i = 0; i < numEntries; i++) {
       in.seek(offset + // The beginning of the IFD
         2 + // The width of the initial numEntries field
-        (bigTiff ? TiffTools.BIG_TIFF_BYTES_PER_ENTRY :
-        TiffTools.BYTES_PER_ENTRY) * i);
+        (bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
+        TiffConstants.BYTES_PER_ENTRY) * i);
 
       int entryTag = in.readShort() & 0xffff;
 
@@ -216,7 +218,7 @@ public class TiffParser {
 
       return new TiffIFDEntry(entryTag, entryType, valueCount, valueOffset);
     }
-    throw new UnknownTagException();
+    throw new IllegalArgumentException("Unknown tag: " + tag);
   }
 
   /**
@@ -261,7 +263,7 @@ public class TiffParser {
     if (numEntries == 0 || numEntries == 1) return ifd;
 
     int bytesPerEntry = bigTiff ?
-      TiffTools.BIG_TIFF_BYTES_PER_ENTRY : TiffTools.BYTES_PER_ENTRY;
+      TiffConstants.BIG_TIFF_BYTES_PER_ENTRY : TiffConstants.BYTES_PER_ENTRY;
     int baseOffset = bigTiff ? 8 : 2;
     int threshhold = bigTiff ? 8 : 4;
 
@@ -494,7 +496,7 @@ public class TiffParser {
     else tile = TiffCompression.uncompress(tile, compression, options);
 
     TiffCompression.undifference(tile, ifd);
-    TiffTools.unpackBytes(buf, 0, tile, ifd);
+    unpackBytes(buf, 0, tile, ifd);
 
     return buf;
   }
@@ -524,7 +526,7 @@ public class TiffParser {
     return samples;
   }
 
-  public byte[] getSamples(IFD ifd,byte[] buf)
+  public byte[] getSamples(IFD ifd, byte[] buf)
     throws FormatException, IOException
   {
     long width = ifd.getImageWidth();
@@ -624,6 +626,216 @@ public class TiffParser {
     }
 
     return buf;
+  }
+
+  // -- Utility methods - byte stream decoding --
+
+  /**
+   * Extracts pixel information from the given byte array according to the
+   * bits per sample, photometric interpretation, and the specified byte
+   * ordering.
+   * No error checking is performed.
+   * This method is tailored specifically for planar (separated) images.
+   */
+  public static void planarUnpack(byte[] samples, int startIndex, byte[] bytes,
+    IFD ifd) throws FormatException
+  {
+    BitBuffer bb = new BitBuffer(bytes);
+
+    int numBytes = ifd.getBytesPerSample()[0];
+    int realBytes = numBytes;
+    if (numBytes == 3) numBytes++;
+
+    int bitsPerSample = ifd.getBitsPerSample()[0];
+    boolean littleEndian = ifd.isLittleEndian();
+    int photoInterp = ifd.getPhotometricInterpretation();
+
+    for (int j=0; j<bytes.length / realBytes; j++) {
+      int value = bb.getBits(bitsPerSample);
+
+      if (photoInterp == PhotoInterp.WHITE_IS_ZERO) {
+        value = (int) (Math.pow(2, bitsPerSample) - 1 - value);
+      }
+      else if (photoInterp == PhotoInterp.CMYK) {
+        value = Integer.MAX_VALUE - value;
+      }
+
+      if (numBytes*(startIndex + j) < samples.length) {
+        DataTools.unpackBytes(value, samples, numBytes*(startIndex + j),
+          numBytes, littleEndian);
+      }
+    }
+  }
+
+  /**
+   * Extracts pixel information from the given byte array according to the
+   * bits per sample, photometric interpretation and color map IFD directory
+   * entry values, and the specified byte ordering.
+   * No error checking is performed.
+   */
+  public static void unpackBytes(byte[] samples, int startIndex, byte[] bytes,
+    IFD ifd) throws FormatException
+  {
+    if (ifd.getPlanarConfiguration() == 2) {
+      planarUnpack(samples, startIndex, bytes, ifd);
+      return;
+    }
+
+    int compression = ifd.getCompression();
+    int photoInterp = ifd.getPhotometricInterpretation();
+    if (compression == TiffCompression.JPEG) photoInterp = PhotoInterp.RGB;
+
+    int[] bitsPerSample = ifd.getBitsPerSample();
+    int nChannels = bitsPerSample.length;
+    int nSamples = samples.length / nChannels;
+
+    int totalBits = 0;
+    for (int i=0; i<nChannels; i++) totalBits += bitsPerSample[i];
+    int sampleCount = 8 * bytes.length / totalBits;
+    if (photoInterp == PhotoInterp.Y_CB_CR) sampleCount *= 3;
+
+    LogTools.debug("unpacking " + sampleCount + " samples (startIndex=" +
+      startIndex + "; totalBits=" + totalBits +
+      "; numBytes=" + bytes.length + ")");
+
+    long imageWidth = ifd.getImageWidth();
+
+    int bps0 = bitsPerSample[0];
+    int numBytes = ifd.getBytesPerSample()[0];
+
+    boolean noDiv8 = bps0 % 8 != 0;
+    boolean bps8 = bps0 == 8;
+
+    int row = startIndex / (int) imageWidth;
+    int col = 0;
+
+    int cw = 0, ch = 0;
+
+    boolean littleEndian = ifd.isLittleEndian();
+
+    int[] reference = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE, false);
+    int[] subsampling = ifd.getIFDIntArray(IFD.Y_CB_CR_SUB_SAMPLING, false);
+    TiffRational[] coefficients = (TiffRational[])
+      ifd.getIFDValue(IFD.Y_CB_CR_COEFFICIENTS);
+
+    int count = 0;
+
+    BitBuffer bb = new BitBuffer(bytes);
+
+    for (int j=0; j<sampleCount; j++) {
+      for (int i=0; i<nChannels; i++) {
+        int index = numBytes * (j * nChannels + i);
+        int ndx = startIndex + j;
+        if (ndx >= nSamples) {
+          break;
+        }
+        int outputIndex = i * nSamples + ndx * numBytes;
+
+        if (noDiv8) {
+          // bits per sample is not a multiple of 8
+
+          short s = 0;
+          if ((i == 0 && photoInterp == PhotoInterp.RGB_PALETTE) ||
+            (photoInterp != PhotoInterp.CFA_ARRAY &&
+            photoInterp != PhotoInterp.RGB_PALETTE))
+          {
+            s = (short) (bb.getBits(bps0) & 0xffff);
+            if ((ndx % imageWidth) == imageWidth - 1 && bps0 < 8) {
+              bb.skipBits((imageWidth * bps0 * sampleCount) % 8);
+            }
+          }
+
+          if (photoInterp == PhotoInterp.WHITE_IS_ZERO ||
+            photoInterp == PhotoInterp.CMYK)
+          {
+            // invert colors
+            s = (short) (Math.pow(2, bitsPerSample[0]) - 1 - s);
+          }
+
+          if (outputIndex + numBytes <= samples.length) {
+            DataTools.unpackBytes(s, samples, outputIndex, numBytes,
+              littleEndian);
+          }
+        }
+        else if (bps8) {
+          // special case handles 8-bit data more quickly
+
+          if (outputIndex >= samples.length) break;
+
+          if (photoInterp != PhotoInterp.Y_CB_CR) {
+            samples[outputIndex] = (byte) (bytes[index] & 0xff);
+          }
+
+          if (photoInterp == PhotoInterp.WHITE_IS_ZERO) { // invert color value
+            samples[outputIndex] = (byte) (255 - samples[outputIndex]);
+          }
+          else if (photoInterp == PhotoInterp.CMYK) {
+            samples[outputIndex] =
+              (byte) (Integer.MAX_VALUE - samples[outputIndex]);
+          }
+          else if (photoInterp == PhotoInterp.Y_CB_CR) {
+            if (i == bitsPerSample.length - 1) {
+              float lumaRed = 0.299f;
+              float lumaGreen = 0.587f;
+              float lumaBlue = 0.114f;
+              if (coefficients != null) {
+                lumaRed = coefficients[0].floatValue();
+                lumaGreen = coefficients[1].floatValue();
+                lumaBlue = coefficients[2].floatValue();
+              }
+
+              int subX = subsampling == null ? 2 : subsampling[0];
+              int subY = subsampling == null ? 2 : subsampling[1];
+
+              int block = subX * subY;
+              int lumaIndex = j + (2 * (j / block));
+              int chromaIndex = (j / block) * (block + 2) + block;
+
+              if (chromaIndex + 1 >= bytes.length) break;
+
+              int tile = ndx / block;
+              int pixel = ndx % block;
+              int nTiles = (int) (imageWidth / subX);
+              long r = subY * (tile / nTiles) + (pixel / subX);
+              long c = subX * (tile % nTiles) + (pixel % subX);
+
+              int idx = (int) (r * imageWidth + c);
+
+              if (idx < nSamples) {
+                int y = (bytes[lumaIndex] & 0xff) - reference[0];
+                int cb = (bytes[chromaIndex] & 0xff) - reference[2];
+                int cr = (bytes[chromaIndex + 1] & 0xff) - reference[4];
+
+                int red = (int) (cr * (2 - 2 * lumaRed) + y);
+                int blue = (int) (cb * (2 - 2 * lumaBlue) + y);
+                int green = (int)
+                  ((y - lumaBlue * blue - lumaRed * red) / lumaGreen);
+
+                samples[idx] = (byte) red;
+                samples[nSamples + idx] = (byte) green;
+                samples[2*nSamples + idx] = (byte) blue;
+              }
+            }
+          }
+        } // end if (bps8)
+        else {
+          int offset = numBytes + index < bytes.length ?
+            index : bytes.length - numBytes;
+          long v = DataTools.bytesToLong(bytes, offset, numBytes, littleEndian);
+
+          if (photoInterp == PhotoInterp.WHITE_IS_ZERO) { // invert color value
+            long max = (long) Math.pow(2, numBytes * 8) - 1;
+            v = max - v;
+          }
+          else if (photoInterp == PhotoInterp.CMYK) {
+            v = Integer.MAX_VALUE - v;
+          }
+          if (ndx*numBytes >= nSamples) break;
+          DataTools.unpackBytes(v, samples, i*nSamples + ndx*numBytes,
+            numBytes, littleEndian);
+        } // end else
+      }
+    }
   }
 
 }

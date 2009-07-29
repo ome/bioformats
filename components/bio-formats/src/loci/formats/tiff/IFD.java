@@ -40,6 +40,9 @@ import loci.formats.FormatTools;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tiff/IFD.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Eric Kjellman egkjellman at wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
+ * @author Chris Allan callan at blackcat.ca
  */
 public class IFD extends HashMap<Integer, Object> {
 
@@ -177,8 +180,7 @@ public class IFD extends HashMap<Integer, Object> {
     super(ifd);
   }
 
-  // -- IFD methods --
-
+  // -- Tag retrieval methods --
 
   /** Gets whether this is a BigTIFF IFD. */
   public boolean isBigTiff() throws FormatException {
@@ -473,8 +475,6 @@ public class IFD extends HashMap<Integer, Object> {
     if (nTiles * tileLength < imageLength) nTiles++;
     return nTiles;
   }
-
-  // -- Tag retrieval methods --
 
   public boolean isTiled() throws FormatException {
     Object offsets = get(new Integer(STRIP_OFFSETS));
@@ -786,7 +786,6 @@ public class IFD extends HashMap<Integer, Object> {
 
     return rowsPerStrip;
   }
-
 
   // -- IFD population methods --
 

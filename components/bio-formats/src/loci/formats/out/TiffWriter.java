@@ -33,12 +33,12 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.gui.AWTTiffTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffParser;
+import loci.formats.tiff.TiffSaver;
 
 /**
  * TiffWriter is the file format writer for TIFF files.
@@ -123,14 +123,15 @@ public class TiffWriter extends FormatWriter {
       out = new RandomAccessOutputStream(currentId);
 
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
-      TiffParser tiffParser = new TiffParser(tmp);
       if (tmp.length() == 0) {
         // write TIFF header
-        TiffTools.writeHeader(out, littleEndian, isBigTiff);
+        TiffSaver tiffSaver = new TiffSaver(out);
+        tiffSaver.writeHeader(littleEndian, isBigTiff);
         lastOffset = isBigTiff ? 16 : 8;
       }
       else {
         // compute the offset to the last IFD
+        TiffParser tiffParser = new TiffParser(tmp);
         tiffParser.checkHeader();
         long offset = tiffParser.getFirstOffset();
         long ifdMax = (tmp.length() - 8) / 18;

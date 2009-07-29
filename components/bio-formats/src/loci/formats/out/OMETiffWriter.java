@@ -30,9 +30,9 @@ import java.util.Vector;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.tiff.TiffSaver;
 
 /**
  * OMETiffWriter is the file format writer for OME-TIFF files.
@@ -148,7 +148,7 @@ public class OMETiffWriter extends TiffWriter {
 
       // write OME-XML to the first IFD's comment
       try {
-        TiffTools.overwriteComment(currentId, xml);
+        TiffSaver.overwriteComment(currentId, xml);
       }
       catch (FormatException exc) {
         IOException io = new IOException("Unable to append OME-XML comment");

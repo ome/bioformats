@@ -37,14 +37,15 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.TiffTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
+import loci.formats.tiff.TiffTools;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -318,7 +319,7 @@ public class ZeissLSMReader extends FormatReader {
     for (int i=0; i<core.length; i++) {
       core[i] = new CoreMetadata();
       RandomAccessInputStream s = new RandomAccessInputStream(lsmFilenames[i]);
-      core[i].littleEndian = s.read() == TiffTools.LITTLE;
+      core[i].littleEndian = s.read() == TiffConstants.LITTLE;
       s.order(isLittleEndian());
       s.seek(0);
       ifdsList.set(i, new TiffParser(s).getIFDs());

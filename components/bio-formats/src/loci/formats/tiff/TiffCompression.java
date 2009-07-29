@@ -47,6 +47,9 @@ import loci.formats.codec.ZlibCodec;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tiff/TiffCompression.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Eric Kjellman egkjellman at wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
+ * @author Chris Allan callan at blackcat.ca
  */
 public final class TiffCompression {
 

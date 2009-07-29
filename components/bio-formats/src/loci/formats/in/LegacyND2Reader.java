@@ -26,7 +26,6 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.LogTools;
-import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;

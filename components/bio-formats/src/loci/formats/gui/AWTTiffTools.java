@@ -35,11 +35,12 @@ import loci.common.LogTools;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.TiffTools;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffRational;
+import loci.formats.tiff.TiffSaver;
 
 /**
  * A utility class for manipulating TIFF files.
@@ -203,8 +204,8 @@ public final class AWTTiffTools {
     if (ifd.containsKey(new Integer(IFD.BIG_TIFF))) keyCount--;
 
     int bytesPerEntry = bigTiff ?
-      TiffTools.BIG_TIFF_BYTES_PER_ENTRY :
-      TiffTools.BYTES_PER_ENTRY;
+      TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
+      TiffConstants.BYTES_PER_ENTRY;
     int ifdBytes = (bigTiff ? 16 : 6) + bytesPerEntry * keyCount;
 
     long pixelBytes = 0;
@@ -239,7 +240,7 @@ public final class AWTTiffTools {
       String sv = value instanceof int[] ?
         ("int[" + ((int[]) value).length + "]") : value.toString();
       LogTools.debug("writeImage: writing " + sk + " (value=" + sv + ")");
-      TiffTools.writeIFDValue(ifdOut, extraBuf, extraOut, offset,
+      TiffSaver.writeIFDValue(ifdOut, extraBuf, extraOut, offset,
         ((Integer) key).intValue(), value, bigTiff, little);
     }
     // offset to next IFD

@@ -41,7 +41,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import loci.formats.FormatException;
-import loci.formats.TiffTools;
+import loci.formats.tiff.TiffSaver;
+import loci.formats.tiff.TiffTools;
 
 /**
  * Provides a GUI for editing TIFF file comments.
@@ -144,7 +145,7 @@ public class EditTiffG extends JFrame implements ActionListener {
   public void saveFile(File f) {
     try {
       String xml = getXML();
-      TiffTools.overwriteComment(f.getAbsolutePath(), xml);
+      TiffSaver.overwriteComment(f.getAbsolutePath(), xml);
     }
     catch (FormatException exc) {
       showError(exc);

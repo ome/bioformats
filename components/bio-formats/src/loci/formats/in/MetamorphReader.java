@@ -47,7 +47,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
-import loci.formats.tiff.UnknownTagException;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -784,7 +783,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
       ifds = tempIFDs;
     }
-    catch (UnknownTagException exc) { traceDebug(exc); }
+    catch (IllegalArgumentException exc) { traceDebug(exc); } // unknown tag
     catch (NullPointerException exc) { traceDebug(exc); }
     catch (IOException exc) { traceDebug(exc); }
     catch (FormatException exc) { traceDebug(exc); }

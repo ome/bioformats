@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 /**

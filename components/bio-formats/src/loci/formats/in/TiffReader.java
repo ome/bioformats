@@ -29,11 +29,11 @@ import java.util.StringTokenizer;
 import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,
