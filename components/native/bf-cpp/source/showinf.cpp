@@ -372,8 +372,9 @@ void readCoreMetadata() {
       cout << " (";
       for (int i=0; i<numDims; i++) {
         if (i > 0) cout << " x ";
-        cout << cLengths[i] << " " << cTypes[i];
-        cProduct *= cLengths[i];
+        int cLength = cLengths[i];
+        cout << cLength << " " << cTypes[i];
+        cProduct *= cLength;
       }
       cout << ")";
     }
@@ -550,6 +551,8 @@ bool testRead(int argc, const char *argv[]) {
   if (omexml) printOMEXML();
 
   destroyObjects();
+
+  return true;
 }
 
 int main(int argc, const char *argv[]) {
