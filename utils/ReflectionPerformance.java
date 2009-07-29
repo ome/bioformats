@@ -114,7 +114,7 @@ public class ReflectionPerformance {
 
   public static void benchmarkSlow() throws Exception {
     System.out.println();
-    System.out.println("--== slowMethod() benchmark ==--");
+    System.out.println("--== Slow method benchmark, no args ==--");
     Class c = ReflectionPerformance.class;
     Method method = c.getMethod("slowMethod");
 
