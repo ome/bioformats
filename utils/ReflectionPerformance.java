@@ -11,43 +11,99 @@ import loci.common.ReflectedUniverse;
 /** A benchmark for Java reflection performance. */
 public class ReflectionPerformance {
 
+  private static int val = 0;
+
+  public static void fastMethod() {
+    val++;
+  }
+
+  public static void fastMethod(int arg) {
+    val += arg;
+  }
+
   public static void slowMethod() {
-    for (int i=0; i<1000000; i++);
+    for (int i=0; i<1000000; i++) val++;
+  }
+
+  public static void slowMethod(int arg) {
+    for (int i=0; i<1000000; i++) val += arg;
   }
 
   public static void benchmarkFast() throws Exception {
-    System.out.println("--== toString() benchmark ==--");
-    Object object = new Object();
-    Class c = Object.class;
-    Method method = c.getMethod("toString");
+    System.out.println();
+    System.out.println("--== Fast method benchmark, no args ==--");
+    Class c = ReflectionPerformance.class;
+    Method method = c.getMethod("fastMethod");
 
     ReflectedUniverse r = new ReflectedUniverse();
-    r.exec("import java.lang.Object");
-    r.setVar("object", object);
+    r.exec("import ReflectionPerformance");
 
     int loops = 100000;
     for (int outer=0; outer<3; outer++) {
       long start = System.currentTimeMillis();
-      for (int i = 0; i < loops; i++) object.toString();
+      for (int i = 0; i < loops; i++) ReflectionPerformance.fastMethod();
       System.out.println(loops + " regular method calls: " +
         (System.currentTimeMillis() - start) + " ms");
 
       start = System.currentTimeMillis();
-      for (int i = 0; i < loops; i++) method.invoke(object);
+      for (int i = 0; i < loops; i++) method.invoke(null);
+
       System.out.println(loops + " reflective method calls without lookup: " +
         (System.currentTimeMillis() - start) + " ms");
-
       start = System.currentTimeMillis();
       for (int i = 0; i < loops; i++) {
-        method = c.getMethod("toString");
-        method.invoke(object);
+        method = c.getMethod("fastMethod");
+        method.invoke(null);
       }
       System.out.println(loops + " reflective method calls with lookup: " +
         (System.currentTimeMillis() - start) + " ms");
 
       start = System.currentTimeMillis();
       for (int i = 0; i < loops; i++) {
-        r.exec("object.toString()");
+        r.exec("ReflectionPerformance.fastMethod()");
+      }
+      System.out.println(loops + " reflected universe method calls: " +
+        (System.currentTimeMillis() - start) + " ms");
+
+      loops *= 10;
+    }
+  }
+
+  public static void benchmarkFastWithArg() throws Exception {
+    System.out.println();
+    System.out.println("--== Fast method benchmark, w/ arg ==--");
+    Class c = ReflectionPerformance.class;
+    Method method = c.getMethod("fastMethod", int.class);
+
+    ReflectedUniverse r = new ReflectedUniverse();
+    r.exec("import ReflectionPerformance");
+
+    int arg = 1;
+    r.setVar("arg", arg);
+
+    int loops = 100000;
+    for (int outer=0; outer<3; outer++) {
+      long start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) ReflectionPerformance.fastMethod(arg);
+      System.out.println(loops + " regular method calls: " +
+        (System.currentTimeMillis() - start) + " ms");
+
+      start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) method.invoke(null, arg);
+
+      System.out.println(loops + " reflective method calls without lookup: " +
+        (System.currentTimeMillis() - start) + " ms");
+      start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) {
+        method = c.getMethod("fastMethod", int.class);
+        method.invoke(null, arg);
+      }
+      System.out.println(loops + " reflective method calls with lookup: " +
+        (System.currentTimeMillis() - start) + " ms");
+
+      start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) {
+        r.exec("ReflectionPerformance.fastMethod(arg)");
       }
       System.out.println(loops + " reflected universe method calls: " +
         (System.currentTimeMillis() - start) + " ms");
@@ -57,6 +113,7 @@ public class ReflectionPerformance {
   }
 
   public static void benchmarkSlow() throws Exception {
+    System.out.println();
     System.out.println("--== slowMethod() benchmark ==--");
     Class c = ReflectionPerformance.class;
     Method method = c.getMethod("slowMethod");
@@ -95,9 +152,55 @@ public class ReflectionPerformance {
     }
   }
 
+  public static void benchmarkSlowWithArg() throws Exception {
+    System.out.println();
+    System.out.println("--== Slow method benchmark, w/ arg ==--");
+    Class c = ReflectionPerformance.class;
+    Method method = c.getMethod("slowMethod", int.class);
+
+    ReflectedUniverse r = new ReflectedUniverse();
+    r.exec("import ReflectionPerformance");
+
+    int arg = 1;
+    r.setVar("arg", arg);
+
+    int loops = 100;
+    for (int outer=0; outer<3; outer++) {
+      long start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) ReflectionPerformance.slowMethod(arg);
+      System.out.println(loops + " regular method calls: " +
+        (System.currentTimeMillis() - start) + " ms");
+
+      start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) method.invoke(null, arg);
+
+      System.out.println(loops + " reflective method calls without lookup: " +
+        (System.currentTimeMillis() - start) + " ms");
+      start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) {
+        method = c.getMethod("slowMethod", int.class);
+        method.invoke(null, arg);
+      }
+      System.out.println(loops + " reflective method calls with lookup: " +
+        (System.currentTimeMillis() - start) + " ms");
+
+      start = System.currentTimeMillis();
+      for (int i = 0; i < loops; i++) {
+        r.exec("ReflectionPerformance.slowMethod(arg)");
+      }
+      System.out.println(loops + " reflected universe method calls: " +
+        (System.currentTimeMillis() - start) + " ms");
+
+      loops *= 10;
+    }
+  }
+
+
   public static void main(String[] args) throws Exception {
     benchmarkFast();
+    benchmarkFastWithArg();
     benchmarkSlow();
+    benchmarkSlowWithArg();
   }
 
 }
