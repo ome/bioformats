@@ -108,10 +108,11 @@ public class FV1000Reader extends FormatReader {
 
   private String[] code, size, pixelSize;
   private int imageDepth;
-  private Vector previewNames;
+  private Vector<String> previewNames;
 
   private String pixelSizeX, pixelSizeY;
-  private Vector channelNames, emWaves, exWaves;
+  private Vector<String> channelNames, illuminations, dyeNames;
+  private Vector<Integer> emWaves, exWaves, wavelengths;
   private String gain, offset, voltage, pinholeSize;
   private String magnification, lensNA, objectiveName, workingDistance;
   private String creationDate;
@@ -120,11 +121,6 @@ public class FV1000Reader extends FormatReader {
 
   private short[][][] lut;
   private int lastChannel;
-
-  private Vector pinholeSizes;
-  private Vector dyeNames;
-  private Vector wavelengths;
-  private Vector illuminations;
 
   // -- Constructor --
 
@@ -201,7 +197,7 @@ public class FV1000Reader extends FormatReader {
       file = no / (getImageCount() / previewNames.size());
       image = no % (getImageCount() / previewNames.size());
       if (file < previewNames.size()) {
-        filename = (String) previewNames.get(file);
+        filename = previewNames.get(file);
       }
     }
 
@@ -260,7 +256,6 @@ public class FV1000Reader extends FormatReader {
       if (poi != null) poi.close();
       poi = null;
       lastChannel = 0;
-      pinholeSizes = null;
       dyeNames = null;
       wavelengths = null;
       illuminations = null;
@@ -295,12 +290,12 @@ public class FV1000Reader extends FormatReader {
     // list of associated files.
     boolean mappedOIF = !isOIB && !new File(id).getAbsoluteFile().exists();
 
-    channelNames = new Vector();
-    emWaves = new Vector();
-    exWaves = new Vector();
-    dyeNames = new Vector();
-    wavelengths = new Vector();
-    illuminations = new Vector();
+    channelNames = new Vector<String>();
+    emWaves = new Vector<Integer>();
+    exWaves = new Vector<Integer>();
+    dyeNames = new Vector<String>();
+    wavelengths = new Vector<Integer>();
+    illuminations = new Vector<String>();
 
     String line = null, key = null, value = null, oifName = null;
 
@@ -333,15 +328,17 @@ public class FV1000Reader extends FormatReader {
           key = line.substring(0, line.indexOf("="));
           value = line.substring(line.indexOf("=") + 1);
 
+          if (directoryKey != null && directoryValue != null) {
+            value = value.replaceAll(directoryKey, directoryValue);
+          }
+
+          if (value.indexOf("GST") != -1) {
+            String first = value.substring(0, value.indexOf("GST"));
+            String last = value.substring(value.lastIndexOf("=") + 1);
+            value = first + last;
+          }
+
           if (key.startsWith("Stream")) {
-            if (directoryKey != null && directoryValue != null) {
-              value = value.replaceAll(directoryKey, directoryValue);
-            }
-            if (value.indexOf("GST") != -1) {
-              String first = value.substring(0, value.indexOf("GST"));
-              String last = value.substring(value.lastIndexOf("=") + 1);
-              value = first + last;
-            }
             if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
             if (directoryKey != null) {
               oibMapping.put(value, "Root Entry" + File.separator +
@@ -350,11 +347,6 @@ public class FV1000Reader extends FormatReader {
             else oibMapping.put(value, "Root Entry" + File.separator + key);
           }
           else if (key.startsWith("Storage")) {
-            if (value.indexOf("GST") != -1) {
-              String first = value.substring(0, value.indexOf("GST"));
-              String last = value.substring(value.lastIndexOf("=") + 1);
-              value = first + last;
-            }
             directoryKey = key;
             directoryValue = value;
           }
@@ -370,10 +362,8 @@ public class FV1000Reader extends FormatReader {
         Location tmp = new Location(parent);
         parent = tmp.getParent();
 
-        id = current.getPath();
-        String oifFile = id.substring(id.lastIndexOf(File.separator));
-        oifFile =
-          parent + oifFile.substring(0, oifFile.lastIndexOf("_")) + ".oif";
+        id = current.getName();
+        String oifFile = parent + id.substring(0, id.lastIndexOf("_")) + ".oif";
 
         tmp = new Location(oifFile);
         if (!tmp.exists()) {
@@ -397,9 +387,8 @@ public class FV1000Reader extends FormatReader {
         else currentId = oifFile;
         super.initFile(currentId);
         in = new RandomAccessInputStream(currentId);
-        oifName = currentId;
       }
-      else oifName = currentId;
+      oifName = currentId;
     }
 
     String f = new Location(oifName).getAbsoluteFile().getAbsolutePath();
@@ -425,15 +414,14 @@ public class FV1000Reader extends FormatReader {
 
     StringTokenizer st = new StringTokenizer(s, "\r\n");
 
-    previewNames = new Vector();
+    previewNames = new Vector<String>();
     boolean laserEnabled = true;
 
     String ptyStart = null, ptyEnd = null, ptyPattern = null;
 
-    Vector channels = new Vector();
-    Vector lutNames = new Vector();
-    Hashtable filenames = new Hashtable();
-    Hashtable roiFilenames = new Hashtable();
+    Vector<String> lutNames = new Vector<String>();
+    Hashtable<Integer, String> filenames = new Hashtable<Integer, String>();
+    Hashtable<Integer, String> roiFilenames = new Hashtable<Integer, String>();
     String prefix = "";
     while (st.hasMoreTokens()) {
       line = DataTools.stripString(st.nextToken().trim());
@@ -444,18 +432,19 @@ public class FV1000Reader extends FormatReader {
           value = value.substring(1, value.length() - 1);
         }
 
+        value = value.replaceAll("/", File.separator);
+        value = value.replace('\\', File.separatorChar);
+        while (value.indexOf("GST") != -1) {
+          String first = value.substring(0, value.indexOf("GST"));
+          int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
+            value.length() : value.indexOf(File.separator);
+          String last = value.substring(value.lastIndexOf("=", ndx) + 1);
+          value = first + last;
+        }
+
         if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1 &&
           !isPreviewName(value))
         {
-          value = value.replaceAll("/", File.separator);
-          value = value.replace('\\', File.separatorChar);
-          while (value.indexOf("GST") != -1) {
-            String first = value.substring(0, value.indexOf("GST"));
-            int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
-              value.length() : value.indexOf(File.separator);
-            String last = value.substring(value.lastIndexOf("=", ndx) + 1);
-            value = first + last;
-          }
           if (mappedOIF) {
             value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
@@ -464,15 +453,6 @@ public class FV1000Reader extends FormatReader {
         else if (key.startsWith("RoiFileName") && key.indexOf("Thumb") == -1 &&
           !isPreviewName(value))
         {
-          value = value.replaceAll("/", File.separator);
-          value = value.replace('\\', File.separatorChar);
-          while (value.indexOf("GST") != -1) {
-            String first = value.substring(0, value.indexOf("GST"));
-            int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
-              value.length() : value.indexOf(File.separator);
-            String last = value.substring(value.lastIndexOf("=", ndx) + 1);
-            value = first + last;
-          }
           if (mappedOIF) {
             value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
@@ -485,47 +465,18 @@ public class FV1000Reader extends FormatReader {
         else if (key.equals("PtyFileNameE")) ptyEnd = value;
         else if (key.equals("PtyFileNameT2")) ptyPattern = value;
         else if (key.indexOf("Thumb") != -1) {
-          value = value.replaceAll("/", File.separator);
-          value = value.replace('\\', File.separatorChar);
-          while (value.indexOf("GST") != -1) {
-            String first = value.substring(0, value.indexOf("GST"));
-            int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
-              value.length() : value.indexOf(File.separator);
-            String last = value.substring(value.lastIndexOf("=", ndx) + 1);
-            value = first + last;
-          }
           if (mappedOIF) {
             value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
           if (thumbId == null) thumbId = value.trim();
         }
         else if (key.startsWith("LutFileName")) {
-          if (!isPreviewName(value)) {
-            value = value.replaceAll("/", File.separator);
-            value = value.replace('\\', File.separatorChar);
-            while (value.indexOf("GST") != -1) {
-              String first = value.substring(0, value.indexOf("GST"));
-              int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
-                value.length() : value.indexOf(File.separator);
-              String last = value.substring(value.lastIndexOf("=", ndx) + 1);
-              value = first + last;
-            }
-          }
           if (mappedOIF) {
             value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
           lutNames.add(path + value);
         }
         else if (isPreviewName(value)) {
-          value = value.replaceAll("/", File.separator);
-          value = value.replace('\\', File.separatorChar);
-          while (value.indexOf("GST") != -1) {
-            String first = value.substring(0, value.indexOf("GST"));
-            int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
-              value.length() : value.indexOf(File.separator);
-            String last = value.substring(value.lastIndexOf("=", ndx) + 1);
-            value = first + last;
-          }
           if (mappedOIF) {
             value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
@@ -568,7 +519,6 @@ public class FV1000Reader extends FormatReader {
           else if (key.equals("ExcitationWavelength")) {
             exWaves.add(new Integer(value));
           }
-          else if (key.equals("SequentialNumber")) channels.add(value);
           else if (key.equals("LightType")) {
             String illumination = value.toLowerCase();
             if (illumination.indexOf("fluorescence") != -1) {
@@ -614,35 +564,22 @@ public class FV1000Reader extends FormatReader {
 
       String[] prefixes = ptyPattern.split("%03d");
 
-      // get first number for each block
+      // get first and last numbers for each block
       int[] first = new int[prefixes.length - 1];
+      int[] last = new int[prefixes.length - 1];
+      int[] lengths = new int[prefixes.length - 1];
       int index = 0;
+      int totalFiles = 1;
       for (int i=0; i<first.length; i++) {
         index += prefixes[i].length();
         first[i] = Integer.parseInt(ptyStart.substring(index, index + 3));
-        index += 3;
-      }
-
-      // get last number for each block
-      int[] last = new int[prefixes.length - 1];
-      index = 0;
-      for (int i=0; i<last.length; i++) {
-        index += prefixes[i].length();
         last[i] = Integer.parseInt(ptyEnd.substring(index, index + 3));
-        index += 3;
-      }
-
-      int[] lengths = new int[first.length];
-      for (int i=0; i<lengths.length; i++) {
         lengths[i] = last[i] - first[i] + 1;
+        totalFiles *= lengths[i];
+        index += 3;
       }
 
       // add each .pty file
-
-      int totalFiles = 1;
-      for (int i=0; i<lengths.length; i++) {
-        totalFiles *= lengths[i];
-      }
 
       for (int file=0; file<totalFiles; file++) {
         int[] pos = FormatTools.rasterToPosition(lengths, file);
@@ -662,24 +599,14 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
-    int reference = ((String) filenames.get(new Integer(0))).length();
-    int numFiles = filenames.size();
-    for (int i=0; i<numFiles; i++) {
-      Integer ii = new Integer(i);
-      value = (String) filenames.get(ii);
-      if (value != null) {
-        if (value.length() > reference) filenames.remove(ii);
-      }
-    }
-
     status("Initializing helper readers");
 
     // populate core metadata for preview series
 
     if (previewNames.size() > 0) {
-      Vector v = new Vector();
+      Vector<String> v = new Vector<String>();
       for (int i=0; i<previewNames.size(); i++) {
-        String ss = (String) previewNames.get(i);
+        String ss = previewNames.get(i);
         ss = replaceExtension(ss, "pty", "tif");
         if (ss.endsWith(".tif")) v.add(ss);
       }
@@ -690,7 +617,7 @@ public class FV1000Reader extends FormatReader {
         core[1] = new CoreMetadata();
         IFDList ifds = null;
         for (int i=0; i<previewNames.size(); i++) {
-          String previewName = (String) previewNames.get(i);
+          String previewName = previewNames.get(i);
           RandomAccessInputStream preview = getFile(previewName);
           TiffParser tp = new TiffParser(preview);
           ifds = tp.getIFDs();
@@ -733,13 +660,11 @@ public class FV1000Reader extends FormatReader {
 
     String tiffPath = null;
 
-    pinholeSizes = new Vector();
-
     core[0].dimensionOrder = "XY";
 
     for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
-      String file = (String) filenames.get(new Integer(i));
-      while (file == null) file = (String) filenames.get(new Integer(++i));
+      String file = filenames.get(new Integer(i));
+      while (file == null) file = filenames.get(new Integer(++i));
       file = sanitizeFile(file, (isOIB || mappedOIF) ? "" : path);
 
       if (file.indexOf(File.separator) != -1) {
@@ -855,8 +780,7 @@ public class FV1000Reader extends FormatReader {
       if (!isOIB) {
         Location dir = new Location(tiffPath);
         String[] list = mappedOIF ?
-          (String[]) Location.getIdMap().keySet().toArray(new String[0]) :
-          dir.list();
+          Location.getIdMap().keySet().toArray(new String[0]) : dir.list();
         for (int i=0; i<list.length; i++) {
           if (mappedOIF) usedFiles.add(list[i]);
           else {
@@ -973,7 +897,7 @@ public class FV1000Reader extends FormatReader {
     int count = (int) Math.min(getSizeC(), lutNames.size());
     for (int c=0; c<count; c++) {
       try {
-        RandomAccessInputStream stream = getFile((String) lutNames.get(c));
+        RandomAccessInputStream stream = getFile(lutNames.get(c));
         stream.seek(stream.length() - 65536 * 4);
         stream.read(buffer);
         stream.close();
@@ -1037,17 +961,16 @@ public class FV1000Reader extends FormatReader {
 
       for (int c=0; c<core[i].sizeC; c++) {
         if (c < channelNames.size()) {
-          store.setLogicalChannelName((String) channelNames.get(c), i, c);
+          store.setLogicalChannelName(channelNames.get(c), i, c);
         }
         if (c < emWaves.size()) {
-          store.setLogicalChannelEmWave((Integer) emWaves.get(c), i, c);
+          store.setLogicalChannelEmWave(emWaves.get(c), i, c);
         }
         if (c < exWaves.size()) {
-          store.setLogicalChannelExWave((Integer) exWaves.get(c), i, c);
+          store.setLogicalChannelExWave(exWaves.get(c), i, c);
         }
         if (c < illuminations.size()) {
-          store.setLogicalChannelIlluminationType(
-            (String) illuminations.get(c), i, c);
+          store.setLogicalChannelIlluminationType(illuminations.get(c), i, c);
         }
       }
     }
@@ -1056,14 +979,14 @@ public class FV1000Reader extends FormatReader {
 
     int nLasers = (int) Math.min(dyeNames.size(), wavelengths.size());
     for (int i=0; i<nLasers; i++) {
-      store.setLaserLaserMedium((String) dyeNames.get(i), 0, i);
-      store.setLaserWavelength((Integer) wavelengths.get(i), 0, i);
+      store.setLaserLaserMedium(dyeNames.get(i), 0, i);
+      store.setLaserWavelength(wavelengths.get(i), 0, i);
 
       // link LightSource to Image
       store.setLightSourceID("LightSource:" + i, 0, i);
       store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
       if (i < exWaves.size()) {
-        store.setLightSourceSettingsWavelength((Integer) exWaves.get(i), 0, i);
+        store.setLightSourceSettingsWavelength(exWaves.get(i), 0, i);
       }
     }
 
@@ -1102,7 +1025,7 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<roiFilenames.size(); i++) {
       if (i >= getImageCount()) break;
       int[] coordinates = getZCTCoords(i);
-      String filename = (String) roiFilenames.get(new Integer(i));
+      String filename = roiFilenames.get(new Integer(i));
       filename = sanitizeFile(filename, (isOIB || mappedOIF) ? "" : path);
 
       RandomAccessInputStream stream = getFile(filename);
