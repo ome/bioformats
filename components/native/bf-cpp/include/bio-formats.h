@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats C++ bindings for native access to Bio-Formats Java library.
-Copyright (C) 2008-2009 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2008-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Jul 24, 2009 10:57:07 AM CDT
+ * Created by curtis via JaceHeaderAutogen on Jul 30, 2009 12:21:26 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -64,7 +64,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/proxy/loci/formats/StatusEvent.h"
 #include "jace/proxy/loci/formats/StatusListener.h"
 #include "jace/proxy/loci/formats/StatusReporter.h"
-#include "jace/proxy/loci/formats/TiffTools.h"
 using namespace jace::proxy::loci::formats;
 
 #include "jace/proxy/loci/formats/cache/ByteArraySource.h"
@@ -92,6 +91,7 @@ using namespace jace::proxy::loci::formats::cache;
 #include "jace/proxy/loci/formats/codec/HuffmanCodec.h"
 #include "jace/proxy/loci/formats/codec/HuffmanCodecOptions.h"
 #include "jace/proxy/loci/formats/codec/JPEG2000Codec.h"
+#include "jace/proxy/loci/formats/codec/JPEG2000CodecOptions.h"
 #include "jace/proxy/loci/formats/codec/JPEGCodec.h"
 #include "jace/proxy/loci/formats/codec/LZOCodec.h"
 #include "jace/proxy/loci/formats/codec/LZWCodec.h"
@@ -258,10 +258,12 @@ using namespace jace::proxy::loci::formats::out;
 #include "jace/proxy/loci/formats/tiff/IFDList.h"
 #include "jace/proxy/loci/formats/tiff/PhotoInterp.h"
 #include "jace/proxy/loci/formats/tiff/TiffCompression.h"
+#include "jace/proxy/loci/formats/tiff/TiffConstants.h"
 #include "jace/proxy/loci/formats/tiff/TiffIFDEntry.h"
 #include "jace/proxy/loci/formats/tiff/TiffParser.h"
 #include "jace/proxy/loci/formats/tiff/TiffRational.h"
-#include "jace/proxy/loci/formats/tiff/UnknownTagException.h"
+#include "jace/proxy/loci/formats/tiff/TiffSaver.h"
+#include "jace/proxy/loci/formats/tiff/TiffTools.h"
 using namespace jace::proxy::loci::formats::tiff;
 
 #include "jace/proxy/loci/formats/tools/CacheConsole.h"

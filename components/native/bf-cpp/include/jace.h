@@ -76,6 +76,14 @@ typedef JArray<ShortArray> ShortArray2D;
 typedef JArray<ShortArray2D> ShortArray3D;
 typedef JArray<ShortArray3D> ShortArray4D;
 
+#include "jace/proxy/java/lang/Boolean.h"
+#include "jace/proxy/java/lang/Byte.h"
+#include "jace/proxy/java/lang/Character.h"
+#include "jace/proxy/java/lang/Double.h"
+#include "jace/proxy/java/lang/Float.h"
+#include "jace/proxy/java/lang/Integer.h"
+#include "jace/proxy/java/lang/Long.h"
+#include "jace/proxy/java/lang/Short.h"
 #include "jace/proxy/java/lang/String.h"
 using namespace jace::proxy::java::lang;
 
