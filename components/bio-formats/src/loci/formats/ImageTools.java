@@ -84,32 +84,32 @@ public final class ImageTools {
       short[] s = (short[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        int v = s[i] & 0xffff;
-        b[i] = (byte) v;
+        float v = (float) Math.abs((float) s[i] / 0xffff);
+        b[i] = (byte) (v * 255);
       }
     }
     else if (pixels instanceof int[]) {
       int[] s = (int[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        int value = s[i] & 0xffffffff;
-        b[i] = (byte) value;
+        float v = (float) Math.abs((float) s[i] / 0xffffffffL);
+        b[i] = (byte) (v * 255);
       }
     }
     else if (pixels instanceof float[]) {
       float[] s = (float[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        float value = s[i];
-        b[i] = (byte) (255 * value);
+        float v = s[i] / Float.MAX_VALUE;
+        b[i] = (byte) (v * 255);
       }
     }
     else if (pixels instanceof double[]) {
       double[] s = (double[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        double value = s[i];
-        b[i] = (byte) Math.round(value);
+        double value = s[i] / Double.MAX_VALUE;
+        b[i] = (byte) (value * 255);
       }
     }
 
@@ -670,6 +670,24 @@ public final class ImageTools {
     }
 
     return buf;
+  }
+
+  public static void bgrToRgb(byte[] buf, boolean interleaved, int bpp) {
+    if (interleaved) {
+      for (int i=0; i<buf.length; i+=bpp*3) {
+        for (int b=0; b<bpp; b++) {
+          byte tmp = buf[i + b];
+          buf[i + b] = buf[i + bpp * 2];
+          buf[i + bpp * 2] = tmp;
+        }
+      }
+    }
+    else {
+      byte[] channel = new byte[buf.length / (bpp * 3)];
+      System.arraycopy(buf, 0, channel, 0, channel.length);
+      System.arraycopy(buf, channel.length * 2, buf, 0, channel.length);
+      System.arraycopy(channel, 0, buf, channel.length * 2, channel.length);
+    }
   }
 
 }
