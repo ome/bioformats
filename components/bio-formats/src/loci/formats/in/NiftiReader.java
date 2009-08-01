@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import loci.common.Location;
@@ -92,6 +93,7 @@ public class NiftiReader extends FormatReader {
       header.close();
       return isValid;
     }
+    catch (FileNotFoundException e) { } // NB: No output for missing header.
     catch (IOException e) { traceDebug(e); }
     return false;
   }
