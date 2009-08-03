@@ -24,15 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.HashMap;
 import java.util.Vector;
 
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
+import loci.formats.AxisGuesser;
 import loci.formats.CoreMetadata;
+import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -59,6 +62,9 @@ public class TCSReader extends FormatReader {
   // -- Constants --
 
   public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss.SSS";
+  public static final String PREFIX =
+    "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>";
+  public static final String SUFFIX = "</LEICA>";
 
   public static final String[] XML_SUFFIX = {"xml"};
 
@@ -72,11 +78,8 @@ public class TCSReader extends FormatReader {
 
   private TiffParser tiffParser;
 
-  private Vector seriesNames;
-  private Vector containerNames;
-  private Vector containerCounts;
-  private Vector xcal, ycal, zcal;
-  private Vector x, y, z, c, t, bits;
+  private long datestamp;
+  private String xmlFile;
 
   // -- Constructor --
 
@@ -138,7 +141,8 @@ public class TCSReader extends FormatReader {
       if (ss.length > 0) software = ss[0];
     }
     if (software == null) software = "";
-    return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
+    software = software.trim();
+    return document.startsWith("CHANNEL") || software.startsWith("TCS");
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -177,14 +181,16 @@ public class TCSReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
       String name = currentId.toLowerCase();
-      if (name.endsWith(".tif") || name.endsWith(".tiff")) return null;
+      if (checkSuffix(name, TiffReader.TIFF_SUFFIXES)) return null;
       return new String[] {currentId};
     }
     Vector<String> v = new Vector<String>();
     for (String f : tiffs) {
       v.add(f);
     }
-    if (!v.contains(currentId)) v.add(currentId);
+
+    String absoluteId = new Location(currentId).getAbsolutePath();
+    if (!v.contains(absoluteId)) v.add(absoluteId);
     return v.toArray(new String[0]);
   }
 
@@ -195,6 +201,9 @@ public class TCSReader extends FormatReader {
     super.close();
     tiffs = null;
     tiffReaders = null;
+    tiffParser = null;
+    datestamp = 0;
+    xmlFile = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -203,112 +212,182 @@ public class TCSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("TCSReader.initFile(" + id + ")");
 
-    if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
-      // find the associated XML file, if it exists
-      Location l = new Location(id).getAbsoluteFile();
-      Location parent = l.getParentFile();
-      String[] list = parent.list();
-      if (list != null) {
-        for (int i=0; i<list.length; i++) {
-          if (checkSuffix(list[i], XML_SUFFIX)) {
-            initFile(new Location(parent, list[i]).getAbsolutePath());
-            return;
-          }
+    Location l = new Location(id).getAbsoluteFile();
+    Location parent = l.getParentFile();
+    String[] list = parent.list();
+
+    boolean isXML = checkSuffix(id, XML_SUFFIX);
+
+    if (list != null) {
+      for (String file : list) {
+        if (checkSuffix(file, XML_SUFFIX) && !isXML) {
+          xmlFile = new Location(parent, file).getAbsolutePath();
+          break;
+        }
+        else if (checkSuffix(file, TiffReader.TIFF_SUFFIXES) && isXML) {
+          initFile(new Location(parent, file).getAbsolutePath());
+          return;
         }
       }
     }
 
     super.initFile(id);
 
-    if (checkSuffix(id, XML_SUFFIX)) {
-      in = new RandomAccessInputStream(id);
-      tiffParser = new TiffParser(in);
-      MetadataStore store = new DummyMetadata();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    in = new RandomAccessInputStream(id);
+    tiffParser = new TiffParser(in);
+    tiffs = new Vector<String>();
+
+    IFDList ifds = tiffParser.getIFDs();
+    String date = ifds.get(0).getIFDStringValue(IFD.DATE_TIME, false);
+    datestamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+
+    groupFiles();
+    tiffReaders = new TiffReader[tiffs.size()];
+
+    for (int i=0; i<tiffReaders.length; i++) {
+      tiffReaders[i] = new TiffReader();
+      tiffReaders[i].setId(tiffs.get(i));
+    }
+
+    int[] ch = new int[ifds.size()];
+    int[] idx = new int[ifds.size()];
+    long[] stamp = new long[ifds.size()];
+
+    int channelCount = 0;
+
+    FilePattern fp = new FilePattern(new Location(currentId).getAbsoluteFile());
+    AxisGuesser guesser = new AxisGuesser(fp, "XYTZC", 1, ifds.size(), 1, true);
+    BigInteger[] first = fp.getFirst();
+    BigInteger[] last = fp.getLast();
+    BigInteger[] step = fp.getStep();
+
+    int[] axisTypes = guesser.getAxisTypes();
+    core[0].sizeZ = 1;
+    core[0].sizeC = tiffReaders[0].getSizeC();
+
+    core[0].dimensionOrder = isRGB() ? "XYC" : "XY";
+
+    for (int i=axisTypes.length-1; i>=0; i--) {
+      int size = last[i].subtract(first[i]).divide(step[i]).intValue() + 1;
+      if (axisTypes[i] == AxisGuesser.Z_AXIS) {
+        if (getDimensionOrder().indexOf("Z") == -1) {
+          core[0].dimensionOrder += "Z";
+        }
+        core[0].sizeZ *= size;
+      }
+      else if (axisTypes[i] == AxisGuesser.C_AXIS) {
+        if (getDimensionOrder().indexOf("C") == -1) {
+          core[0].dimensionOrder += "C";
+        }
+        core[0].sizeC *= size;
+      }
+    }
+
+    for (int i=0; i<ifds.size(); i++) {
+      String document = ifds.get(i).getIFDStringValue(IFD.DOCUMENT_NAME, false);
+      if (document == null) continue;
+
+      int index = document.indexOf("INDEX");
+      String s = document.substring(8, index).trim();
+      ch[i] = Integer.parseInt(s);
+      if (ch[i] > channelCount) channelCount = ch[i];
+
+      String n = document.substring(index + 6,
+        document.indexOf(" ", index + 6)).trim();
+      idx[i] = Integer.parseInt(n);
+
+      date = document.substring(document.indexOf(" ", index + 6),
+        document.indexOf("FORMAT")).trim();
+      stamp[i] = DateTools.getTime(date, DATE_FORMAT);
+    }
+
+    core[0].sizeT = 0;
+
+    // determine the axis sizes and ordering
+    boolean unique = true;
+    for (int i=0; i<stamp.length; i++) {
+      for (int j=i+1; j<stamp.length; j++) {
+        if (stamp[j] == stamp[i]) {
+          unique = false;
+          break;
+        }
+      }
+      if (unique) {
+        core[0].sizeT++;
+        if (getDimensionOrder().indexOf("T") < 0) {
+          core[0].dimensionOrder += "T";
+        }
+      }
+      else if (i > 0) {
+        if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf("C") < 0) {
+          core[0].dimensionOrder += "C";
+        }
+        else if (getDimensionOrder().indexOf("Z") < 0) {
+          core[0].dimensionOrder += "Z";
+        }
+      }
+      unique = true;
+    }
+
+    if (getDimensionOrder().indexOf("Z") < 0) core[0].dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("C") < 0) core[0].dimensionOrder += "C";
+    if (getDimensionOrder().indexOf("T") < 0) core[0].dimensionOrder += "T";
+
+    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (channelCount == 0) channelCount = 1;
+    if (getSizeZ() <= 1) {
+      core[0].sizeZ = ifds.size() / (getSizeT() * channelCount);
+    }
+    core[0].sizeC *= channelCount;
+    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
+
+    // cut up comment
+
+    String comment = ifds.get(0).getComment();
+    if (comment != null && comment.startsWith("[")) {
+      String[] lines = comment.split("\n");
+      for (String line : lines) {
+        if (!line.startsWith("[")) {
+          int eq = line.indexOf("=");
+          String key = line.substring(0, eq).trim();
+          String value = line.substring(eq + 1).trim();
+          addGlobalMeta(key, value);
+        }
+      }
+      metadata.remove("Comment");
+    }
+    core[0].sizeX = tiffReaders[0].getSizeX();
+    core[0].sizeY = tiffReaders[0].getSizeY();
+    core[0].rgb = tiffReaders[0].isRGB();
+    core[0].pixelType = tiffReaders[0].getPixelType();
+    core[0].littleEndian = tiffReaders[0].isLittleEndian();
+    core[0].interleaved = tiffReaders[0].isInterleaved();
+    core[0].falseColor = true;
+
+    if (isRGB()) core[0].imageCount /= (getSizeC() / channelCount);
+
+    MetadataTools.populatePixels(store, this, true);
+
+    if (xmlFile != null) {
       // parse XML metadata
 
+      RandomAccessInputStream xmlStream = new RandomAccessInputStream(xmlFile);
+      String xml = xmlStream.readString((int) xmlStream.length());
+      xmlStream.close();
+
+      xml = XMLTools.sanitizeXML(PREFIX + xml + SUFFIX);
+
       LeicaHandler handler = new LeicaHandler(store);
-      String prefix = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>";
-      String suffix = "</LEICA>";
-      String xml = prefix + in.readString((int) in.length()) + suffix;
-
-      for (int i=0; i<xml.length(); i++) {
-        char ch = xml.charAt(i);
-        if (Character.isISOControl(ch) || !Character.isDefined(ch)) {
-          xml = xml.replace(ch, ' ');
-        }
-      }
-
       XMLTools.parseXML(xml, handler);
 
-      xcal = handler.getXCal();
-      ycal = handler.getYCal();
-      zcal = handler.getZCal();
-      seriesNames = handler.getSeriesNames();
-      containerNames = handler.getContainerNames();
-      containerCounts = handler.getContainerCounts();
-      x = handler.getWidths();
-      y = handler.getHeights();
-      z = handler.getZs();
-      c = handler.getChannels();
-      t = handler.getTs();
-      bits = handler.getBits();
       metadata = handler.getGlobalMetadata();
 
-      // look for associated TIFF files
+      core = handler.getCoreMetadata().toArray(new CoreMetadata[0]);
 
-      tiffs = new Vector<String>();
-
-      Location parent = new Location(id).getAbsoluteFile().getParentFile();
-      String[] list = parent.list();
-      Arrays.sort(list);
-      for (int i=0; i<list.length; i++) {
-        if (checkSuffix(list[i], TiffReader.TIFF_SUFFIXES)) {
-          String file = new Location(parent, list[i]).getAbsolutePath();
-          RandomAccessInputStream rais = new RandomAccessInputStream(file);
-          TiffParser tp = new TiffParser(rais);
-          IFD ifd = tp.getIFDs().get(0);
-          rais.close();
-          String software = ifd.getIFDStringValue(IFD.SOFTWARE, false);
-          if (software != null && software.trim().equals("TCSNTV")) {
-            tiffs.add(file);
-          }
-        }
-      }
-
-      tiffReaders = new TiffReader[tiffs.size()];
-
-      for (int i=0; i<tiffReaders.length; i++) {
-        tiffReaders[i] = new TiffReader();
-        tiffReaders[i].setId(tiffs.get(i));
-      }
-
-      core = new CoreMetadata[x.size()];
-
-      for (int i=0; i<x.size(); i++) {
-        core[i] = new CoreMetadata();
-        core[i].sizeX = ((Integer) x.get(i)).intValue();
-        core[i].sizeY = ((Integer) y.get(i)).intValue();
-        if (z.size() > 0) core[i].sizeZ = ((Integer) z.get(i)).intValue();
-        else core[i].sizeZ = 1;
-        if (c.size() > 0) core[i].sizeC = ((Integer) c.get(i)).intValue();
-        else core[i].sizeC = 1;
-        if (t.size() > 0) core[i].sizeT = ((Integer) t.get(i)).intValue();
-        else core[i].sizeT = 1;
-        core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
-        int bpp = ((Integer) bits.get(i)).intValue();
-        while (bpp % 8 != 0) bpp++;
-        switch (bpp) {
-          case 8:
-            core[i].pixelType = FormatTools.UINT8;
-            break;
-          case 16:
-            core[i].pixelType = FormatTools.UINT16;
-            break;
-          case 32:
-            core[i].pixelType = FormatTools.FLOAT;
-            break;
-        }
+      for (int i=0; i<getSeriesCount(); i++) {
         if (tiffs.size() < core[i].imageCount) {
           int div = core[i].imageCount / core[i].sizeC;
           core[i].imageCount = tiffs.size();
@@ -316,130 +395,84 @@ public class TCSReader extends FormatReader {
           else if (div >= core[i].sizeT) core[i].sizeT /= div;
         }
         core[i].dimensionOrder = getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ";
-        core[i].metadataComplete = true;
         core[i].rgb = false;
         core[i].interleaved = false;
         core[i].indexed = tiffReaders[0].isIndexed();
-        core[i].falseColor = true;
       }
 
-      store = new FilterMetadata(getMetadataStore(), isMetadataFiltered());
       MetadataTools.populatePixels(store, this, true);
 
-      store.setInstrumentID("Instrument:0", 0);
-
-      for (int i=0; i<x.size(); i++) {
-        store.setImageName((String) seriesNames.get(i), i);
+      for (int i=0; i<getSeriesCount(); i++) {
         MetadataTools.setDefaultCreationDate(store, id, i);
-
-        // link Instrument and Image
-        store.setImageInstrumentRef("Instrument:0", 0);
       }
-
-      for (int i=0; i<x.size(); i++) {
-        store.setDimensionsPhysicalSizeX((Float) xcal.get(i), i, 0);
-        store.setDimensionsPhysicalSizeY((Float) ycal.get(i), i, 0);
-        store.setDimensionsPhysicalSizeZ((Float) zcal.get(i), i, 0);
-      }
-      XMLTools.parseXML(xml, new LeicaHandler(store));
     }
-    else {
-      tiffs = new Vector<String>();
-      tiffs.add(id);
-      tiffReaders = new TiffReader[1];
-      tiffReaders[0] = new TiffReader();
-      tiffReaders[0].setMetadataStore(getMetadataStore());
-      tiffReaders[0].setId(id);
-      in = new RandomAccessInputStream(id);
-      tiffParser = new TiffParser(in);
+  }
 
-      IFDList ifds = tiffParser.getIFDs();
+  // -- Helper methods --
 
-      int[] ch = new int[ifds.size()];
-      int[] idx = new int[ifds.size()];
-      long[] stamp = new long[ifds.size()];
+  private void groupFiles() throws FormatException, IOException {
+    // look for associated TIFF files
 
-      int channelCount = 0;
+    // we assume that two files are grouped if all of the following are true:
+    //
+    //  * the files are in the same directory
+    //  * the file names are the same length
+    //  * the time stamps are less than 60 seconds apart
+    //  * the files have the same number of bytes
 
-      for (int i=0; i<ifds.size(); i++) {
-        String document = (String)
-          ifds.get(i).get(new Integer(IFD.DOCUMENT_NAME));
-        if (document == null) continue;
+    Location current = new Location(currentId).getAbsoluteFile();
+    Location parent = current.getParentFile();
 
-        int index = document.indexOf("INDEX");
-        String s = document.substring(8, index).trim();
-        ch[i] = Integer.parseInt(s);
-        if (ch[i] > channelCount) channelCount = ch[i];
+    String[] list = parent.list();
+    Arrays.sort(list);
 
-        String n = document.substring(index + 6,
-          document.indexOf(" ", index + 6)).trim();
-        idx[i] = Integer.parseInt(n);
+    HashMap<String, Long> timestamps = new HashMap<String, Long>();
 
-        String date = document.substring(document.indexOf(" ", index + 6),
-          document.indexOf("FORMAT")).trim();
-        stamp[i] = DateTools.getTime(date, DATE_FORMAT);
+    for (String file : list) {
+      if (checkSuffix(file, TiffReader.TIFF_SUFFIXES)) {
+        file = new Location(parent, file).getAbsolutePath();
+        if (file.length() != current.getAbsolutePath().length()) continue;
+
+        RandomAccessInputStream rais = new RandomAccessInputStream(file);
+        if (rais.length() != in.length()) continue;
+        TiffParser tp = new TiffParser(rais);
+        IFD ifd = tp.getIFDs().get(0);
+
+        String date = ifd.getIFDStringValue(IFD.DATE_TIME, false);
+        long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+
+        rais.close();
+        String software = ifd.getIFDStringValue(IFD.SOFTWARE, false);
+        if (software != null && software.trim().startsWith("TCS")) {
+          timestamps.put(file, new Long(stamp));
+        }
       }
+    }
 
-      core[0].sizeT = 0;
-      core[0].dimensionOrder = isRGB() ? "XYC" : "XY";
+    String[] files = timestamps.keySet().toArray(new String[timestamps.size()]);
+    Arrays.sort(files);
 
-      // determine the axis sizes and ordering
-      boolean unique = true;
-      for (int i=0; i<stamp.length; i++) {
-        for (int j=i+1; j<stamp.length; j++) {
-          if (stamp[j] == stamp[i]) {
-            unique = false;
-            break;
-          }
+    if (checkSuffix(currentId, TiffReader.TIFF_SUFFIXES)) {
+      tiffs.add(current.getAbsolutePath());
+    }
+
+    for (String file : files) {
+      long thisStamp = timestamps.get(file).longValue();
+      boolean match = false;
+      for (String tiff : tiffs) {
+        RandomAccessInputStream s = new RandomAccessInputStream(tiff);
+        TiffParser parser = new TiffParser(s);
+        IFD ifd = parser.getIFDs().get(0);
+        s.close();
+
+        String date = ifd.getIFDStringValue(IFD.DATE_TIME, false);
+        long nextStamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+        if (Math.abs(thisStamp - nextStamp) < 60000) {
+          match = true;
+          break;
         }
-        if (unique) {
-          core[0].sizeT++;
-          if (getDimensionOrder().indexOf("T") < 0) {
-            core[0].dimensionOrder += "T";
-          }
-        }
-        else if (i > 0) {
-          if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf("C") < 0) {
-            core[0].dimensionOrder += "C";
-          }
-          else if (getDimensionOrder().indexOf("Z") < 0) {
-            core[0].dimensionOrder += "Z";
-          }
-        }
-        unique = true;
       }
-
-      if (getDimensionOrder().indexOf("Z") < 0) core[0].dimensionOrder += "Z";
-      if (getDimensionOrder().indexOf("C") < 0) core[0].dimensionOrder += "C";
-      if (getDimensionOrder().indexOf("T") < 0) core[0].dimensionOrder += "T";
-
-      if (getSizeT() == 0) core[0].sizeT = 1;
-      if (channelCount == 0) channelCount = 1;
-      core[0].sizeZ = ifds.size() / (getSizeT() * channelCount);
-      core[0].sizeC *= channelCount;
-      core[0].imageCount = getSizeZ() * getSizeT() * channelCount;
-
-      // cut up comment
-
-      String comment = ifds.get(0).getComment();
-      if (comment != null && comment.startsWith("[")) {
-        StringTokenizer st = new StringTokenizer(comment, "\n");
-        while (st.hasMoreTokens()) {
-          String token = st.nextToken();
-          if (!token.startsWith("[")) {
-            int eq = token.indexOf("=");
-            String key = token.substring(0, eq).trim();
-            String value = token.substring(eq + 1).trim();
-            addGlobalMeta(key, value);
-          }
-        }
-        metadata.remove("Comment");
-      }
-      core = tiffReaders[0].getCoreMetadata();
-
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-      MetadataTools.populatePixels(store, this, true);
+      if (match && !tiffs.contains(file)) tiffs.add(file);
     }
   }
 

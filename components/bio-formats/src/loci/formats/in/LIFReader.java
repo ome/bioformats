@@ -36,6 +36,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
@@ -55,11 +56,13 @@ public class LIFReader extends FormatReader {
   // -- Constants --
 
   public static final byte LIF_MAGIC_BYTE = 0x70;
+  public static final byte LIF_MEMORY_BYTE = 0x2a;
 
-  private static final Hashtable CHANNEL_PRIORITIES = createChannelPriorities();
+  private static final Hashtable<String, Integer> CHANNEL_PRIORITIES =
+    createChannelPriorities();
 
-  private static Hashtable createChannelPriorities() {
-    Hashtable h = new Hashtable();
+  private static Hashtable<String, Integer> createChannelPriorities() {
+    Hashtable<String, Integer> h = new Hashtable<String, Integer>();
 
     h.put("red", new Integer(0));
     h.put("green", new Integer(1));
@@ -119,17 +122,8 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
-  private Vector offsets;
+  private Vector<Long> offsets;
 
-  /** Bits per pixel. */
-  private int[] bitsPerPixel;
-
-  /** Extra dimensions. */
-  private int[] extraDimensions;
-
-  private int numDatasets;
-
-  private int[][] channelMap;
   private int[][] realChannel;
   private int lastChannel = -1;
 
@@ -174,25 +168,26 @@ public class LIFReader extends FormatReader {
       lastChannel = realChannel[series][pos[1]];
     }
 
-    long offset = ((Long) offsets.get(series)).longValue();
+    long offset = offsets.get(series).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
 
+    long planeSize = (long) getSizeX() * getSizeY() * bpp;
+
     long nextOffset = series + 1 < offsets.size() ?
-      ((Long) offsets.get(series + 1)).longValue() : in.length();
-    int bytesToSkip = (int) (nextOffset - offset -
-      bpp * getSizeX() * getSizeY() * getImageCount());
+      offsets.get(series + 1).longValue() : in.length();
+    int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
 
-    in.seek(offset + getSizeX() * getSizeY() * (long) no * bpp);
+    in.seek(offset + planeSize * no);
     in.skipBytes(bytesToSkip * getSizeY() * no);
 
     if (bytesToSkip == 0) {
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      in.skipBytes(y * getSizeX() * bpp + y * bytesToSkip);
+      in.skipBytes(y * (getSizeX() * bpp + bytesToSkip));
       for (int row=0; row<h; row++) {
         in.skipBytes(x * bpp);
         in.read(buf, row * w * bpp, w * bpp);
@@ -202,13 +197,7 @@ public class LIFReader extends FormatReader {
 
     // color planes are stored in BGR order
     if (getRGBChannelCount() == 3) {
-      for (int i=0; i<buf.length; i+=bpp) {
-        for (int b=0; b<bytes; b++) {
-          byte tmp = buf[i + b];
-          buf[i + b] = buf[i + bytes*2];
-          buf[i + bytes*2] = tmp;
-        }
-      }
+      ImageTools.bgrToRgb(buf, isInterleaved(), bytes);
     }
 
     return buf;
@@ -220,10 +209,6 @@ public class LIFReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     offsets = null;
-    bitsPerPixel = null;
-    extraDimensions = null;
-    numDatasets = -1;
-    channelMap = null;
     realChannel = null;
     lastChannel = -1;
   }
@@ -235,19 +220,18 @@ public class LIFReader extends FormatReader {
     debug("LIFReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    offsets = new Vector();
+    offsets = new Vector<Long>();
 
-    core[0].littleEndian = true;
-    in.order(isLittleEndian());
+    in.order(true);
 
     // read the header
 
     status("Reading header");
 
-    byte checkOne = (byte) in.read();
+    byte checkOne = in.readByte();
     in.skipBytes(2);
-    byte checkTwo = (byte) in.read();
-    if (checkOne != 0x70 && checkTwo != 0x70) {
+    byte checkTwo = in.readByte();
+    if (checkOne != LIF_MAGIC_BYTE && checkTwo != LIF_MAGIC_BYTE) {
       throw new FormatException(id + " is not a valid Leica LIF file");
     }
 
@@ -255,7 +239,7 @@ public class LIFReader extends FormatReader {
 
     // read and parse the XML description
 
-    if (in.read() != 0x2a) {
+    if (in.read() != LIF_MEMORY_BYTE) {
       throw new FormatException("Invalid XML description");
     }
 
@@ -266,39 +250,31 @@ public class LIFReader extends FormatReader {
     status("Finding image offsets");
 
     while (in.getFilePointer() < in.length()) {
-      if (in.readInt() != 0x70) {
+      if (in.readInt() != LIF_MAGIC_BYTE) {
         throw new FormatException("Invalid Memory Block");
       }
 
       in.skipBytes(4);
-      if (in.read() != 0x2a) {
+      if (in.read() != LIF_MEMORY_BYTE) {
         throw new FormatException("Invalid Memory Description");
       }
 
       long blockLength = in.readInt();
-      if (in.read() != 0x2a) {
+      if (in.read() != LIF_MEMORY_BYTE) {
         in.seek(in.getFilePointer() - 5);
         blockLength = in.readLong();
-        if (in.read() != 0x2a) {
+        if (in.read() != LIF_MEMORY_BYTE) {
           throw new FormatException("Invalid Memory Description");
         }
       }
 
-      int descrLength = in.readInt();
-      in.skipBytes(descrLength * 2);
+      int descrLength = in.readInt() * 2;
 
       if (blockLength > 0) {
-        offsets.add(new Long(in.getFilePointer()));
+        offsets.add(new Long(in.getFilePointer() + descrLength));
       }
-      long skipped = 0;
-      while (skipped < blockLength) {
-        if (blockLength - skipped > 4096) {
-          skipped += in.skipBytes(4096);
-        }
-        else {
-          skipped += in.skipBytes((int) (blockLength - skipped));
-        }
-      }
+
+      in.seek(in.getFilePointer() + descrLength + blockLength);
     }
     initMetadata(xml);
   }
@@ -307,8 +283,6 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     LeicaHandler handler = new LeicaHandler(new DummyMetadata());
 
     // the XML blocks stored in a LIF file are invalid,
@@ -320,60 +294,31 @@ public class LIFReader extends FormatReader {
     xml = XMLTools.sanitizeXML(xml);
     XMLTools.parseXML(xml, handler);
 
-    Vector widths = handler.getWidths();
-    Vector heights = handler.getHeights();
-    Vector zs = handler.getZs();
-    Vector ts = handler.getTs();
-    Vector channels = handler.getChannels();
-    Vector bps = handler.getBPS();
-    Vector extraDims = handler.getExtraDims();
     metadata = handler.getGlobalMetadata();
-    Vector containerNames = handler.getContainerNames();
-    Vector containerCounts = handler.getContainerCounts();
-    Vector seriesNames = handler.getSeriesNames();
-    Vector xcal = handler.getXCal();
-    Vector ycal = handler.getYCal();
-    Vector zcal = handler.getZCal();
-    Vector bits = handler.getBits();
-    Vector lutNames = handler.getLutNames();
-    Vector stageX = handler.getXPosition();
-    Vector stageY = handler.getYPosition();
-    Vector stageZ = handler.getZPosition();
-    Hashtable timestamps = handler.getTimestamps();
-    Vector<Hashtable> seriesMetadata = handler.getMetadata();
+    Vector<String> lutNames = handler.getLutNames();
 
-    numDatasets = widths.size();
-
-    bitsPerPixel = new int[numDatasets];
-    extraDimensions = new int[numDatasets];
+    core = handler.getCoreMetadata().toArray(new CoreMetadata[0]);
 
     // set up mapping to rearrange channels
     // for instance, the green channel may be #0, and the red channel may be #1
-    channelMap = new int[numDatasets][];
-    realChannel = new int[numDatasets][];
+    realChannel = new int[getSeriesCount()][];
     int nextLut = 0;
-    for (int i=0; i<channelMap.length; i++) {
-      channelMap[i] = new int[((Integer) channels.get(i)).intValue()];
-      realChannel[i] = new int[((Integer) channels.get(i)).intValue()];
+    for (int i=0; i<getSeriesCount(); i++) {
+      realChannel[i] = new int[core[i].sizeC];
 
-      String[] luts = new String[channelMap[i].length];
-      for (int q=0; q<luts.length; q++) {
-        luts[q] = ((String) lutNames.get(nextLut++)).toLowerCase();
+      for (int q=0; q<core[i].sizeC; q++) {
+        String lut = lutNames.get(nextLut++).toLowerCase();
+        if (!CHANNEL_PRIORITIES.containsKey(lut)) lut = "";
+        realChannel[i][q] = CHANNEL_PRIORITIES.get(lut).intValue();
       }
 
-      for (int q=0; q<channelMap[i].length; q++) {
-        if (!CHANNEL_PRIORITIES.containsKey(luts[q])) luts[q] = "";
-        realChannel[i][q] =
-          ((Integer) CHANNEL_PRIORITIES.get(luts[q])).intValue();
-      }
-
-      int[] sorted = new int[channelMap[i].length];
+      int[] sorted = new int[core[i].sizeC];
       Arrays.fill(sorted, -1);
 
       for (int q=0; q<sorted.length; q++) {
         int min = Integer.MAX_VALUE;
         int minIndex = -1;
-        for (int n=0; n<channelMap[i].length; n++) {
+        for (int n=0; n<core[i].sizeC; n++) {
           if (realChannel[i][n] < min && !DataTools.containsValue(sorted, n)) {
             min = realChannel[i][n];
             minIndex = n;
@@ -382,150 +327,22 @@ public class LIFReader extends FormatReader {
 
         sorted[q] = minIndex;
       }
-
-      for (int q=0; q<channelMap[i].length; q++) {
-        channelMap[i][sorted[q]] = q;
-      }
     }
 
     // Populate metadata store
 
     status("Populating metadata");
 
-    core = new CoreMetadata[numDatasets];
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    // populate Pixels data
+    // populate Pixels/Image data
 
-    for (int i=0; i<numDatasets; i++) {
-      core[i] = new CoreMetadata();
-      core[i].orderCertain = true;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].sizeX = ((Integer) widths.get(i)).intValue();
-      core[i].sizeY = ((Integer) heights.get(i)).intValue();
-      core[i].sizeZ = ((Integer) zs.get(i)).intValue();
-      core[i].sizeC = ((Integer) channels.get(i)).intValue();
-      core[i].sizeT = ((Integer) ts.get(i)).intValue();
-
-      bitsPerPixel[i] = ((Integer) bps.get(i)).intValue();
-      extraDimensions[i] = ((Integer) extraDims.get(i)).intValue();
-
-      if (extraDimensions[i] > 1) {
-        if (core[i].sizeZ == 1) core[i].sizeZ = extraDimensions[i];
-        else core[i].sizeT *= extraDimensions[i];
-        extraDimensions[i] = 1;
-      }
-
-      int nBits = ((Integer) bits.get(i)).intValue();
-
-      core[i].metadataComplete = true;
-      core[i].littleEndian = true;
-      core[i].rgb =
-        nBits == (bitsPerPixel[i] * core[i].sizeC) && core[i].sizeC > 1;
-      core[i].interleaved = core[i].rgb;
-      core[i].imageCount = core[i].sizeZ * core[i].sizeT;
-      if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
-      core[i].indexed = realChannel[i][0] < BYTE_LUTS.length ||
-        realChannel[i][0] < SHORT_LUTS.length;
-      core[i].falseColor = true;
-
-      while (bitsPerPixel[i] % 8 != 0) bitsPerPixel[i]++;
-      switch (bitsPerPixel[i]) {
-        case 8:
-          core[i].pixelType = FormatTools.UINT8;
-          break;
-        case 16:
-          core[i].pixelType = FormatTools.UINT16;
-          break;
-        case 32:
-          core[i].pixelType = FormatTools.FLOAT;
-          break;
-      }
-
-      core[i].seriesMetadata = seriesMetadata.get(i);
-    }
     MetadataTools.populatePixels(store, this, true);
 
-    store.setInstrumentID("Instrument:0", 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
-    store.setObjectiveCorrection("Unknown", 0, 0);
-
-    for (int i=0; i<numDatasets; i++) {
-      setSeries(i);
-      // populate Dimensions data
-      Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
-      Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
-      Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
-
-      store.setDimensionsPhysicalSizeX(xf, i, 0);
-      store.setDimensionsPhysicalSizeY(yf, i, 0);
-      store.setDimensionsPhysicalSizeZ(zf, i, 0);
-
-      // populate Image data
-
-      String seriesName = (String) seriesNames.get(i);
-      if (seriesName == null || seriesName.trim().length() == 0) {
-        seriesName = "Series " + (i + 1);
-      }
-      store.setImageName(seriesName, i);
+    for (int i=0; i<getSeriesCount(); i++) {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
-
-      // populate Plane data
-
-      boolean timestampPerPlane = timestamps.get("Series " + i + " Plane " +
-        (getImageCount() - 1)) != null;
-
-      for (int plane=0; plane<getImageCount(); plane++) {
-        int[] coords = getZCTCoords(plane);
-        int index = -1;
-        if (timestampPerPlane) index = plane;
-        else if (coords[0] == 0 && coords[1] == 0) {
-          index = coords[2];
-        }
-
-        Float timestamp =
-          (Float) timestamps.get("Series " + i + " Plane " + index);
-        if (timestamp != null) {
-          store.setPlaneTimingDeltaT(timestamp, i, 0, plane);
-        }
-      }
-
-      // populate StagePosition data
-
-      if (i < stageX.size()) {
-        for (int q=0; q<getImageCount(); q++) {
-          store.setStagePositionPositionX((Float) stageX.get(i), i, 0, q);
-        }
-      }
-      if (i < stageY.size()) {
-        for (int q=0; q<getImageCount(); q++) {
-          store.setStagePositionPositionY((Float) stageY.get(i), i, 0, q);
-        }
-      }
-      if (i < stageZ.size()) {
-        for (int q=0; q<getImageCount(); q++) {
-          store.setStagePositionPositionZ((Float) stageZ.get(i), i, 0, q);
-        }
-      }
-
-      // link Instrument and Image
-      store.setImageInstrumentRef("Instrument:0", i);
-
-      // CTR CHECK
-//      String zoom = (String) getMeta(seriesName + " - dblZoom");
-//      store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-//        new Boolean(core[i].sizeC > 1), new Boolean(core[i].sizeC > 1),
-//        new Boolean(core[i].sizeC > 2), new Boolean(isRGB()), null,
-//        null, null, null, null, ii, null, null, null, null, null);
-
-      Enumeration keys = metadata.keys();
-      while (keys.hasMoreElements()) {
-        String k = (String) keys.nextElement();
-        if (k.startsWith(seriesName + " ")) {
-          core[i].seriesMetadata.put(k, metadata.get(k));
-        }
-      }
     }
-    setSeries(0);
     XMLTools.parseXML(xml, new LeicaHandler(store));
   }
 
