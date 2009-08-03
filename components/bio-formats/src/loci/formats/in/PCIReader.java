@@ -25,10 +25,12 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -58,9 +60,11 @@ public class PCIReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector imageFiles;
+  private HashMap<Integer, String> imageFiles;
   private POITools poi;
-  private Vector timestamps;
+  private HashMap<Integer, Double> timestamps;
+  private String creationDate;
+  private int binning;
 
   // -- Constructor --
 
@@ -87,7 +91,7 @@ public class PCIReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     RandomAccessInputStream s =
-      poi.getDocumentStream((String) imageFiles.get(no));
+      poi.getDocumentStream(imageFiles.get(new Integer(no)));
     TiffParser tp = new TiffParser(s);
 
     // can be raw pixel data or an embedded TIFF file
@@ -116,6 +120,8 @@ public class PCIReader extends FormatReader {
     timestamps = null;
     if (poi != null) poi.close();
     poi = null;
+    binning = 0;
+    creationDate = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -126,39 +132,42 @@ public class PCIReader extends FormatReader {
 
     super.initFile(id);
 
-    imageFiles = new Vector();
-    timestamps = new Vector();
+    imageFiles = new HashMap<Integer, String>();
+    timestamps = new HashMap<Integer, Double>();
 
     poi = new POITools(Location.getMappedId(currentId));
 
     float scaleFactor = 1f;
 
-    Vector allFiles = poi.getDocumentList();
+    Vector<String> allFiles = poi.getDocumentList();
+    if (allFiles.size() == 0) {
+      throw new FormatException(
+        "No files were found - the .cxd may be corrupt.");
+    }
 
-    for (int i=0; i<allFiles.size(); i++) {
-      String name = (String) allFiles.get(i);
-      String relativePath =
-        name.substring(name.lastIndexOf(File.separator) + 1);
+    for (String name : allFiles) {
+      int separator = name.lastIndexOf(File.separator);
+      String parent = name.substring(0, separator);
+      String relativePath = name.substring(separator + 1);
 
       if (relativePath.equals("Field Count")) {
         byte[] b = poi.getDocumentBytes(name, 4);
-        core[0].imageCount = DataTools.bytesToInt(b, 0, true);
+        core[0].imageCount = DataTools.bytesToInt(b, true);
       }
       else if (relativePath.equals("File Has Image")) {
         byte[] b = poi.getDocumentBytes(name, 2);
-        if (DataTools.bytesToInt(b, 0, true) == 0) {
+        if (DataTools.bytesToInt(b, true) == 0) {
           throw new FormatException("This file does not contain image data.");
         }
       }
       else if (relativePath.equals("Comments")) {
         String comments = new String(poi.getDocumentBytes(name));
-        StringTokenizer st = new StringTokenizer(comments.trim(), "\n");
-        while (st.hasMoreTokens()) {
-          String token = st.nextToken().trim();
-          if (token.indexOf("=") != -1) {
-            int idx = token.indexOf("=");
-            String key = token.substring(0, idx).trim();
-            String value = token.substring(idx + 1).trim();
+        String[] lines = comments.split("\n");
+        for (String line : lines) {
+          int eq = line.indexOf("=");
+          if (eq != -1) {
+            String key = line.substring(0, eq).trim();
+            String value = line.substring(eq + 1).trim();
             addGlobalMeta(key, value);
 
             if (key.equals("factor")) {
@@ -172,19 +181,11 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.startsWith("Bitmap") || relativePath.equals("Data"))
       {
-        String parent = name.substring(0, name.lastIndexOf(File.separator));
         int space = parent.lastIndexOf(" ") + 1;
         if (space >= parent.length()) continue;
         int num = Integer.parseInt(parent.substring(space,
           parent.indexOf(File.separator, space))) - 1;
-        if (num < imageFiles.size()) imageFiles.setElementAt(name, num);
-        else {
-          int diff = num - imageFiles.size();
-          for (int q=0; q<diff; q++) {
-            imageFiles.add("");
-          }
-          imageFiles.add(name);
-        }
+        imageFiles.put(new Integer(num), name);
 
         if (getSizeX() != 0 && getSizeY() != 0) {
           int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -199,8 +200,7 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Image_Depth") != -1) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        int bits =
-          (int) Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
+        int bits = (int) DataTools.bytesToDouble(b, true);
         while (bits % 8 != 0 || bits == 0) bits++;
         switch (bits) {
           case 8:
@@ -221,18 +221,34 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        core[0].sizeY =
-          (int) Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
+        core[0].sizeY = (int) DataTools.bytesToDouble(b, true);
       }
       else if (relativePath.indexOf("Image_Width") != -1 && getSizeX() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        core[0].sizeX =
-          (int) Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
+        core[0].sizeX = (int) DataTools.bytesToDouble(b, true);
       }
       else if (relativePath.indexOf("Time_From_Start") != -1) {
         byte[] b = poi.getDocumentBytes(name, 8);
-        double v = Double.longBitsToDouble(DataTools.bytesToLong(b, 0, true));
-        if (!timestamps.contains(new Double(v))) timestamps.add(new Double(v));
+        Double v = new Double(DataTools.bytesToDouble(b, true));
+
+        int space = parent.lastIndexOf(" ") + 1;
+        if (space >= parent.length()) continue;
+        int num = Integer.parseInt(parent.substring(space,
+          parent.indexOf(File.separator, space))) - 1;
+        timestamps.put(new Integer(num), v);
+      }
+      else if (relativePath.equals("First Field Date & Time")) {
+        byte[] b = poi.getDocumentBytes(name);
+        long date = (long) DataTools.bytesToDouble(b, true) * 1000;
+        creationDate = DateTools.convertDate(date, DateTools.COBOL);
+      }
+      else if (relativePath.equals("First Field Start Clock")) {
+        byte[] b = poi.getDocumentBytes(name);
+        double v = DataTools.bytesToDouble(b, true);
+      }
+      else if (relativePath.equals("Binning")) {
+        byte[] b = poi.getDocumentBytes(name, 8);
+        binning = (int) DataTools.bytesToDouble(b, true);
       }
     }
 
@@ -256,10 +272,35 @@ public class PCIReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
+    MetadataTools.populatePixels(store, this, true);
+
+    if (creationDate != null) {
+      store.setImageCreationDate(creationDate, 0);
+    }
+    else MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setDimensionsPhysicalSizeX(new Float(scaleFactor), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(scaleFactor), 0, 0);
+
+    for (int i=0; i<timestamps.size(); i++) {
+      Float timestamp = new Float(timestamps.get(new Integer(i)).floatValue());
+      store.setPlaneTimingDeltaT(timestamp, 0, 0, i);
+      if (i == 2) {
+        float first = timestamps.get(new Integer(1)).floatValue();
+        Float increment = new Float(timestamp.floatValue() - first);
+        store.setDimensionsTimeIncrement(increment, 0, 0);
+      }
+    }
+
+    if (binning > 0) {
+      store.setInstrumentID("Instrument:0", 0);
+      store.setDetectorID("Detector:0", 0, 0);
+      store.setImageInstrumentRef("Instrument:0", 0);
+
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        store.setDetectorSettingsDetector("Detector:0", 0, c);
+        store.setDetectorSettingsBinning(binning + "x" + binning, 0, c);
+      }
+    }
   }
 
 }

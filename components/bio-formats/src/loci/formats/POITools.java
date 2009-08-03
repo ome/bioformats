@@ -56,9 +56,9 @@ public class POITools {
 
   private ReflectedUniverse r;
   private String id;
-  private Vector filePath;
-  private Vector fileList;
-  private Hashtable fileSizes;
+  private Vector<String> filePath;
+  private Vector<String> fileList;
+  private Hashtable<String, Integer> fileSizes;
 
   // -- Constructor --
 
@@ -106,10 +106,10 @@ public class POITools {
   }
 
   public int getFileSize(String name) throws FormatException {
-    return ((Integer) fileSizes.get(name)).intValue();
+    return fileSizes.get(name).intValue();
   }
 
-  public Vector getDocumentList() throws FormatException {
+  public Vector<String> getDocumentList() throws FormatException {
     return fileList;
   }
 
@@ -178,8 +178,8 @@ public class POITools {
       throw new FormatException(e);
     }
 
-    fileList = new Vector();
-    filePath = new Vector();
+    fileList = new Vector<String>();
+    filePath = new Vector<String>();
     try {
       parseFile(r.getVar(makeVarName("root")), fileList);
     }
@@ -187,12 +187,11 @@ public class POITools {
       throw new FormatException(e);
     }
 
-    fileSizes = new Hashtable();
-    for (int i=0; i<fileList.size(); i++) {
-      String name = (String) fileList.get(i);
-      setupFile(name);
+    fileSizes = new Hashtable<String, Integer>();
+    for (String file : fileList) {
+      setupFile(file);
       try {
-        fileSizes.put(name, r.getVar(makeVarName("numBytes")));
+        fileSizes.put(file, (Integer) r.getVar(makeVarName("numBytes")));
       }
       catch (ReflectException e) {
         throw new FormatException(e);
@@ -230,13 +229,15 @@ public class POITools {
     }
   }
 
-  private void parseFile(Object root, Vector fileList) throws FormatException {
+  private void parseFile(Object root, Vector<String> fileList)
+    throws FormatException
+  {
     try {
       String dirVar = makeVarName("dir");
       r.setVar(dirVar, root);
       r.exec(makeVarName("dirName") + " = " + dirVar + ".getName()");
       r.exec(makeVarName("iter") + " = " + dirVar + ".getEntries()");
-      filePath.add(r.getVar(makeVarName("dirName")));
+      filePath.add((String) r.getVar(makeVarName("dirName")));
       Iterator iter = (Iterator) r.getVar(makeVarName("iter"));
       String entryVar = makeVarName("entry");
       while (iter.hasNext()) {
