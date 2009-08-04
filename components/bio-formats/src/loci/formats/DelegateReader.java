@@ -36,7 +36,7 @@ import loci.formats.meta.MetadataStore;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/DelegateReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/DelegateReader.java">SVN</a></dd></dl>
  */
-public class DelegateReader extends FormatReader {
+public abstract class DelegateReader extends FormatReader {
 
   /** Flag indicating whether to use legacy reader by default. */
   protected boolean useLegacy;
@@ -69,6 +69,9 @@ public class DelegateReader extends FormatReader {
 
   /** Sets whether to use the legacy reader by default. */
   public void setLegacy(boolean legacy) { useLegacy = legacy; }
+
+  /** Gets whether to use the legacy reader by default. */
+  public boolean isLegacy() { return useLegacy; }
 
   // -- IFormatReader API methods --
 
