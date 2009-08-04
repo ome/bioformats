@@ -46,7 +46,6 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
-import java.awt.image.DataBufferShort;
 import java.awt.image.DataBufferUShort;
 import java.awt.image.IndexColorModel;
 import java.awt.image.PixelInterleavedSampleModel;
@@ -265,7 +264,7 @@ public final class AWTImageTools {
     DataBuffer buffer;
     if (signed) {
       dataType = DataBuffer.TYPE_SHORT;
-      buffer = new DataBufferShort(data, c * w * h);
+      buffer = new SignedShortBuffer(data, c * w * h);
     }
     else {
       dataType = DataBuffer.TYPE_USHORT;
@@ -422,7 +421,7 @@ public final class AWTImageTools {
     DataBuffer buffer;
     if (signed) {
       dataType = DataBuffer.TYPE_SHORT;
-      buffer = new DataBufferShort(data, data[0].length);
+      buffer = new SignedShortBuffer(data, data[0].length);
     }
     else {
       dataType = DataBuffer.TYPE_USHORT;
