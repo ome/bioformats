@@ -146,12 +146,10 @@ public class SlimData implements ActionListener, CurveListener {
         lifetimeIndex = i;
       }
     }
+    boolean little = reader.isLittleEndian();
     int pixelType = reader.getPixelType();
     int bpp = FormatTools.getBytesPerPixel(pixelType);
-    if (bpp != 2) {
-      throw new FormatException(
-        "Only 16-bit integer data is supported.");
-    }
+    boolean floating = FormatTools.isFloatingPoint(pixelType);
     timeRange = 12.5f;
     minWave = 400;
     waveStep = 10;
@@ -182,7 +180,20 @@ public class SlimData implements ActionListener, CurveListener {
       for (int y=0; y<height; y++) {
         for (int x=0; x<width; x++) {
           int index = bpp * (y * width + x);
-          int val = DataTools.bytesToInt(plane, index, 2, true);
+          int val;
+          if (pixelType == FormatTools.FLOAT) {
+            val = (int) DataTools.bytesToFloat(plane, index, bpp, little);
+          }
+          else if (pixelType == FormatTools.DOUBLE) {
+            val = (int) DataTools.bytesToDouble(plane, index, bpp, little);
+          }
+          else if (!floating) {
+            val = DataTools.bytesToInt(plane, index, bpp, little);
+          }
+          else {
+            throw new FormatException("Unsupported pixel type: " +
+              FormatTools.getPixelTypeString(pixelType));
+          }
           data[c][y][x][t] = val;
         }
       }
