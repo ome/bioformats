@@ -53,7 +53,21 @@ public final class ImageTools {
   public static byte[][] make24Bits(Object pixels, int w, int h,
     boolean interleaved, boolean reverse)
   {
-    int[] pix = make24Bits(pixels, w, h, interleaved);
+    return make24Bits(pixels, w, h, interleaved, reverse, null, null);
+  }
+
+  /**
+   * Convert an arbitrary primitive type array with 3 samples per pixel to
+   * a 3 x (width * height) byte array.  Scaling is performed according to
+   * the specified minimum and maximum pixel values in the original image.
+   *
+   * If the minimum is null, it is assumed to be 0.
+   * If the maximum is null, it is assumed to be 2^nbits - 1.
+   */
+  public static byte[][] make24Bits(Object pixels, int w, int h,
+    boolean interleaved, boolean reverse, Double min, Double max)
+  {
+    int[] pix = make24Bits(pixels, w, h, interleaved, min, max);
     byte[][] rtn = new byte[3][pix.length];
     for (int i=0; i<pix.length; i++) {
       byte r = (byte) ((pix[i] >> 16) & 0xff);
@@ -68,48 +82,78 @@ public final class ImageTools {
   /**
    * Convert an arbitrary primitive type array with 3 samples per pixel to
    * an int array, i.e. RGB color with 8 bits per pixel.
-   * Does not perform any scaling.
    */
   public static int[] make24Bits(Object pixels, int w, int h,
     boolean interleaved)
+  {
+    return make24Bits(pixels, w, h, interleaved, null, null);
+  }
+
+  /**
+   * Convert an arbitrary primitive type array with 3 samples per pixel to
+   * an int array, i.e. RGB color with 8 bits per pixel.
+   *
+   * Scaling is performed according to
+   * the specified minimum and maximum pixel values in the original image.
+   *
+   * If the minimum is null, it is assumed to be 0.
+   * If the maximum is null, it is assumed to be 2^nbits - 1.
+   */
+  public static int[] make24Bits(Object pixels, int w, int h,
+    boolean interleaved, Double min, Double max)
   {
     int[] rtn = new int[w * h];
 
     byte[] b = null;
 
+    if (min == null) min = new Double(0);
+    double newRange = 256d;
+
     // adapted from ImageJ's TypeConverter methods
 
     if (pixels instanceof byte[]) b = (byte[]) pixels;
     else if (pixels instanceof short[]) {
+      if (max == null) max = new Double(0xffff);
+      double range = max.doubleValue() - min.doubleValue() + 1;
+      double mult = newRange / range;
+
       short[] s = (short[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        float v = (float) Math.abs((float) s[i] / 0xffff);
-        b[i] = (byte) (v * 255);
+        b[i] = (byte) (Math.abs(s[i] * mult) - min.doubleValue());
       }
     }
     else if (pixels instanceof int[]) {
+      if (max == null) max = new Double(0xffffffffL);
+      double range = max.doubleValue() - min.doubleValue() + 1;
+      double mult = newRange / range;
+
       int[] s = (int[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        float v = (float) Math.abs((float) s[i] / 0xffffffffL);
-        b[i] = (byte) (v * 255);
+        b[i] = (byte) (Math.abs(s[i] * mult) - min.doubleValue());
       }
     }
     else if (pixels instanceof float[]) {
+      if (max == null) max = new Double(Float.MAX_VALUE);
+      double range = max.doubleValue() - min.doubleValue() + 1;
+      double mult = newRange / range;
+
       float[] s = (float[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        float v = s[i] / Float.MAX_VALUE;
-        b[i] = (byte) (v * 255);
+        b[i] = (byte) (s[i] * mult - min.doubleValue());
       }
     }
     else if (pixels instanceof double[]) {
+      if (max == null) max = new Double(Double.MAX_VALUE);
+      double range = max.doubleValue() - min.doubleValue() + 1;
+      double mult = newRange / range;
+
       double[] s = (double[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        double value = s[i] / Double.MAX_VALUE;
-        b[i] = (byte) (value * 255);
+        b[i] = (byte) (s[i] * mult - min.doubleValue());
       }
     }
 
@@ -118,7 +162,7 @@ public final class ImageTools {
     for (int i=0; i<rtn.length; i++) {
       byte[] a = new byte[4];
       for (int j=c-1; j>=0; j--) {
-        a[j] = b[interleaved ? i*c + j : i + j*w*h];
+        a[j] = b[interleaved ? i + j * w * h : i * c + j];
       }
       if (c == 1) {
         for (int j=1; j<a.length; j++) {

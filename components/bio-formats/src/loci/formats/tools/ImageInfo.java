@@ -80,6 +80,7 @@ public class ImageInfo {
   private boolean omexml = false;
   private boolean normalize = false;
   private boolean fastBlit = false;
+  private boolean autoscale = false;
   private boolean preload = false;
   private String omexmlVersion = null;
   private int start = 0;
@@ -121,6 +122,7 @@ public class ImageInfo {
     omexml = false;
     normalize = false;
     fastBlit = false;
+    autoscale = false;
     preload = false;
     omexmlVersion = null;
     start = 0;
@@ -150,6 +152,7 @@ public class ImageInfo {
         else if (args[i].equals("-omexml")) omexml = true;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
+        else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-debug")) LogTools.setDebug(true);
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
@@ -204,7 +207,7 @@ public class ImageInfo {
       "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
       "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
-      "    [-xmlversion v] [-crop x,y,w,h]",
+      "    [-xmlversion v] [-crop x,y,w,h] [-autoscale]",
       "",
       "  -version: print the library version and exit",
       "      file: the image file to read",
@@ -232,6 +235,8 @@ public class ImageInfo {
       "            requires more memory",
       "  -xmlversion: specify which OME-XML version should be generated",
       "     -crop: crop images before displaying; argument is 'x,y,w,h'",
+      "-autoscale: used in combination with '-fast' to automatically adjust",
+      "            brightness and contrast",
       "",
       "* = may result in loss of precision",
       ""
@@ -282,7 +287,7 @@ public class ImageInfo {
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     minMaxCalc = null;
-    if (minmax) reader = minMaxCalc = new MinMaxCalculator(reader);
+    if (minmax || autoscale) reader = minMaxCalc = new MinMaxCalculator(reader);
     dimSwapper = null;
     if (swapOrder != null || shuffleOrder != null) {
       reader = dimSwapper = new DimensionSwapper(reader);
@@ -618,8 +623,39 @@ public class ImageInfo {
           FormatTools.getBytesPerPixel(pixelType),
           FormatTools.isFloatingPoint(pixelType),
           reader.isLittleEndian());
+        Double min = null, max = null;
+
+        if (autoscale) {
+          Double[] planeMin = minMaxCalc.getPlaneMinimum(i);
+          Double[] planeMax = minMaxCalc.getPlaneMaximum(i);
+          if (planeMin != null && planeMax != null) {
+            min = planeMin[0];
+            max = planeMax[0];
+            for (int j=1; j<planeMin.length; j++) {
+              if (planeMin[j].doubleValue() < min.doubleValue()) {
+                min = planeMin[j];
+              }
+              if (planeMax[j].doubleValue() > max.doubleValue()) {
+                max = planeMax[j];
+              }
+            }
+          }
+        }
+        else if (normalize) {
+          min = new Double(0);
+          max = new Double(1);
+        }
+
+        if (normalize) {
+          if (pix instanceof float[]) {
+            pix = DataTools.normalizeFloats((float[]) pix);
+          }
+          else if (pix instanceof double[]) {
+            pix = DataTools.normalizeDoubles((double[]) pix);
+          }
+        }
         images[i - start] = AWTImageTools.makeImage(
-          ImageTools.make24Bits(pix, sizeX, sizeY, false, false),
+          ImageTools.make24Bits(pix, sizeX, sizeY, false, false, min, max),
           sizeX, sizeY, FormatTools.isSigned(pixelType));
       }
 
