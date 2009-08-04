@@ -122,6 +122,9 @@ public class ICSReader extends FormatReader {
   /** Whether or not the image is inverted along the Y axis. */
   private boolean invertY;
 
+  /** Whether or not the channels represent lifetime histogram bins. */
+  private boolean lifetime;
+
   // -- Constructor --
 
   /** Constructs a new ICSReader. */
@@ -151,7 +154,9 @@ public class ICSReader extends FormatReader {
 
     in.seek(offset + no * len);
 
-    if (!isRGB() && getSizeC() > 4) {
+    int sizeC = lifetime ? 1 : getSizeC();
+
+    if (!isRGB() && sizeC > 4) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
       if (!gzip && data == null) {
@@ -161,7 +166,7 @@ public class ICSReader extends FormatReader {
 
       for (int row=y; row<h + y; row++) {
         for (int col=x; col<w + x; col++) {
-          System.arraycopy(data, bpp * (no + getSizeC() *
+          System.arraycopy(data, bpp * (no + sizeC *
             (row * getSizeX() + col)), buf, bpp * (row * w + col), bpp);
         }
       }
@@ -216,6 +221,7 @@ public class ICSReader extends FormatReader {
     versionTwo = false;
     gzip = false;
     invertY = false;
+    lifetime = false;
   }
 
   // -- Internal FormatReader API methods --
@@ -498,6 +504,10 @@ public class ICSReader extends FormatReader {
           Integer n = new Integer(k.substring(12, k.indexOf(" ", 12)));
           channelNames.put(n, v);
         }
+        else if (k.equalsIgnoreCase("history type")) {
+          // HACK - support for Gray Institute at Oxford's ICS lifetime data
+          if (v.equalsIgnoreCase("time resolved")) lifetime = true;
+        }
         else if (k.equalsIgnoreCase("parameter ch")) {
           String[] names = v.split(" ");
           for (int n=0; n<names.length; n++) {
@@ -569,6 +579,19 @@ public class ICSReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
     core[0].littleEndian = true;
+
+    // HACK - support for Gray Institute at Oxford's ICS lifetime data
+    if (lifetime) {
+      int binCount = core[0].sizeZ;
+      core[0].sizeZ = core[0].sizeC;
+      core[0].sizeC = binCount;
+      core[0].cLengths = new int[] {binCount};
+      core[0].cTypes = new String[] {FormatTools.LIFETIME};
+      String newOrder = core[0].dimensionOrder.replace("Z", "x");
+      newOrder = newOrder.replace("C", "Z");
+      newOrder = newOrder.replace("x", "C");
+      core[0].dimensionOrder = newOrder;
+    }
 
     if (byteOrder != null) {
       String firstByte = byteOrder.split(" ")[0];
