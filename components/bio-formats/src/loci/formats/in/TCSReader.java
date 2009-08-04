@@ -434,7 +434,7 @@ public class TCSReader extends FormatReader {
         if (file.length() != current.getAbsolutePath().length()) continue;
 
         RandomAccessInputStream rais = new RandomAccessInputStream(file);
-        if (rais.length() != in.length()) continue;
+        if (Math.abs(rais.length() - in.length()) > 16) continue;
         TiffParser tp = new TiffParser(rais);
         IFD ifd = tp.getIFDs().get(0);
 
