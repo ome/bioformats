@@ -89,6 +89,7 @@ public class ImageInfo {
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
   private String swapOrder = null, shuffleOrder = null;
   private String map = null;
+  private String format = null;
 
   private IFormatReader reader;
   private MinMaxCalculator minMaxCalc;
@@ -189,6 +190,7 @@ public class ImageInfo {
           shuffleOrder = args[++i].toUpperCase();
         }
         else if (args[i].equals("-map")) map = args[++i];
+        else if (args[i].equals("-format")) format = args[++i];
         else LogTools.println("Ignoring unknown command flag: " + args[i]);
       }
       else {
@@ -207,7 +209,7 @@ public class ImageInfo {
       "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
       "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
-      "    [-xmlversion v] [-crop x,y,w,h] [-autoscale]",
+      "    [-xmlversion v] [-crop x,y,w,h] [-autoscale] [-format Format]",
       "",
       "  -version: print the library version and exit",
       "      file: the image file to read",
@@ -237,11 +239,35 @@ public class ImageInfo {
       "     -crop: crop images before displaying; argument is 'x,y,w,h'",
       "-autoscale: used in combination with '-fast' to automatically adjust",
       "            brightness and contrast",
+      "   -format: read file with a particular reader (e.g., ZeissZVI)",
       "",
       "* = may result in loss of precision",
       ""
     };
     for (int i=0; i<s.length; i++) LogTools.println(s[i]);
+  }
+
+  public void createReader() {
+    if (format != null) {
+      // create reader of a specific format type
+      try {
+        Class c = Class.forName("loci.formats.in." + format + "Reader");
+        reader = (IFormatReader) c.newInstance();
+      }
+      catch (ClassNotFoundException exc) {
+        LogTools.println("Warning: unknown reader: " + format);
+        LogTools.traceDebug(exc);
+      }
+      catch (InstantiationException exc) {
+        LogTools.println("Warning: cannot instantiate reader: " + format);
+        LogTools.traceDebug(exc);
+      }
+      catch (IllegalAccessException exc) {
+        LogTools.println("Warning: cannot access reader: " + format);
+        LogTools.traceDebug(exc);
+      }
+    }
+    if (reader == null) reader = new ImageReader();
   }
 
   public void mapLocation() throws IOException {
@@ -751,18 +777,6 @@ public class ImageInfo {
   public boolean testRead(String[] args)
     throws FormatException, IOException
   {
-    return testRead(new ImageReader(), args);
-  }
-
-  /**
-   * A utility method for reading a file from the command line, and
-   * displaying the results in a simple display, using the given reader.
-   */
-  public boolean testRead(IFormatReader r, String[] args)
-    throws FormatException, IOException
-  {
-    reader = r;
-
     parseArgs(args);
     if (printVersion) {
       LogTools.println("Version: " + FormatTools.VERSION);
@@ -780,6 +794,7 @@ public class ImageInfo {
       return false;
     }
 
+    createReader();
     mapLocation();
     configureReaderPreInit();
 
