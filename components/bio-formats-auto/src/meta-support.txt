@@ -190,6 +190,9 @@ Plane = Yes
 [FlexReader]
 Pixels = Yes since r2711
 Plate.Name = Yes
+Plate.RowNamingConvention = Yes
+Plate.ColumnNamingConvention = Yes
+Plate.ExternalIdentifier = Yes
 Laser.Wavelength = Yes
 Objective.CalibratedMagnification = Yes
 Objective.LensNA = Yes
@@ -203,11 +206,22 @@ Well.Row = Yes
 Well.Column = Yes
 Experimenter = Yes
 LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.FilterSet = Yes
 Plane = Yes
 WellSample.Index = Yes
 WellSample.ImageRef = Yes
 WellSample.PosX = Yes
 WellSample.PosY = Yes
+DetectorSettings.Binning = Yes
+StagePosition = Yes
+PlaneTiming = Yes
+Detector.Type = Yes
+Dichroic.Model = Yes
+Filter.Model = Yes
+Filter.FilterWheel = Yes
+FilterSet.ExFilter = Yes
+FilterSet.EmFilter = Yes
+FilterSet.Dichroic = Yes
 
 [FluoviewReader]
 Pixels = Yes since r639
@@ -344,18 +358,25 @@ Pixels = Yes since r3414
 WellSample.Index = Yes
 WellSample.PosX = Yes
 WellSample.PosY = Yes
+Image.Name = Yes
 Image.CreationDate = Yes
 Image.Description = Yes
 Plane = Yes
 PlaneTiming = Yes
+StagePosition = Yes
 LogicalChannel.EmWave = Yes
 LogicalChannel.ExWave = Yes
 LogicalChannel.SamplesPerPixel = Yes
 Objective.NominalMagnification = Yes
-Objective.Model = Yes
 Objective.LensNA = Yes
+Objective.Correction = Yes
+Objective.Manufacturer = Yes
 ObjectiveSettings.RefractiveIndex = Yes
 Plate.Name = Yes
+Plate.RowNamingConvention = Yes
+Plate.ColumnNamingConvention = Yes
+Plate.WellOriginX = Yes
+Plate.WellOriginY = Yes
 Well.Row = Yes
 Well.Column = Yes
 Dimensions.PhysicalSizeX = Yes
@@ -364,6 +385,13 @@ Detector.Model = Yes
 DetectorSettings.Binning = Yes
 DetectorSettings.Gain = Yes
 ImagingEnvironment.Temperature = Yes
+WellSample.Index = Yes
+WellSample.ImageRef = Yes
+WellSample.PosX = Yes
+WellSample.PosY = Yes
+Circle = Yes
+Experiment.Type = Yes
+
 
 [IvisionReader]
 Pixels = Yes
@@ -439,6 +467,29 @@ Objective.NominalMagnification = Yes
 ObjectiveSettings.RefractiveIndex = Yes
 StagePosition = Yes
 DisplayOptions.Zoom = Yes
+
+[MIASReader]
+Pixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Plane = Yes
+Plate.ColumnNamingConvention = Yes
+Plate.RowNamingConvention = Yes
+Plate.Name = Yes
+Plate.ExternalIdentifier = Yes
+Well.Row = Yes
+Well.Column = Yes
+WellSample.ImageRef = Yes
+WellSample.Index = Yes
+Image.Name = Yes
+ChannelComponent.ColorDomain = Yes
+ROI.T0 = Yes
+ROI.T1 = Yes
+ROI.Z0 = Yes
+ROI.Z1 = Yes
+Shape.Text = Yes
+Shape.TheT = Yes
+Shape.TheZ = Yes
+Circle = Yes
 
 [MINCReader]
 Pixels = Yes
