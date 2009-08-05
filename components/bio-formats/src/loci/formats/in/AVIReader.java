@@ -30,6 +30,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
@@ -195,10 +196,7 @@ public class AVIReader extends FormatReader {
 
     if (bmpBitsPerPixel == 16 && isRGB()) {
       // channels are stored as BGR, need to swap them
-      byte[] r = new byte[getSizeX() * getSizeY() * 2];
-      System.arraycopy(buf, 2 * (buf.length / 3), r, 0, r.length);
-      System.arraycopy(buf, 0, buf, 2 * (buf.length / 3), r.length);
-      System.arraycopy(r, 0, buf, 0, r.length);
+      ImageTools.bgrToRgb(buf, isInterleaved(), 2);
     }
 
     return buf;

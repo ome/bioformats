@@ -29,6 +29,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.FilterMetadata;
@@ -146,14 +147,9 @@ public class BMPReader extends FormatReader {
         for (int i=0; i<w*getSizeC(); i++) {
           buf[row*w*getSizeC() + i] = (byte) (bb.getBits(bpp) & 0xff);
         }
-        bb.skipBits(getSizeC() * bpp * (getSizeX() - w - x));
-        bb.skipBits(pad * 8);
+        bb.skipBits(getSizeC() * bpp * (getSizeX() - w - x) + pad * 8);
       }
-      for (int i=0; i<buf.length/getSizeC(); i++) {
-        byte tmp = buf[i*getSizeC() + 2];
-        buf[i*getSizeC() + 2] = buf[i*getSizeC()];
-        buf[i*getSizeC()] = tmp;
-      }
+      ImageTools.bgrToRgb(buf, isInterleaved(), 1);
     }
     return buf;
   }
