@@ -44,6 +44,11 @@ import loci.formats.meta.MetadataStore;
  */
 public class MRCReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final String[] TYPES =
+    new String[] {"mono", "tilt", "tilts", "lina", "lins"};
+
   // -- Fields --
 
   /** Number of bytes per pixel */
@@ -72,7 +77,7 @@ public class MRCReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(1024 + no * FormatTools.getPlaneSize(this));
+    in.seek(1024 + extHeaderSize + no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
 
     return buf;
@@ -99,7 +104,7 @@ public class MRCReader extends FormatReader {
 
     // check endianness
 
-    in.seek(213);
+    in.seek(212);
     core[0].littleEndian = in.read() == 68;
 
     // read dimension information from 1024 byte header
@@ -143,6 +148,8 @@ public class MRCReader extends FormatReader {
 
     bpp = FormatTools.getBytesPerPixel(getPixelType());
 
+    in.skipBytes(12);
+
     // pixel size = xlen / mx
 
     int mx = in.readInt();
@@ -176,8 +183,7 @@ public class MRCReader extends FormatReader {
 
     int idtype = in.readShort();
 
-    String[] types = new String[] {"mono", "tilt", "tilts", "lina", "lins"};
-    String type = (idtype >= 0 && idtype < types.length) ? types[idtype] :
+    String type = (idtype >= 0 && idtype < TYPES.length) ? TYPES[idtype] :
       "unknown";
 
     addGlobalMeta("Series type", type);
