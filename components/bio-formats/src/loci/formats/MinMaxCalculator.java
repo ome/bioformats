@@ -294,12 +294,12 @@ public class MinMaxCalculator extends ReaderWrapper {
     boolean signed = pixelType == FormatTools.INT8 ||
       pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
 
+    long threshold = (long) Math.pow(2, bytes * 8 - 1);
     for (int i=0; i<pixels; i++) {
       for (int c=0; c<numRGB; c++) {
         int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
         long bits = DataTools.bytesToLong(b, idx, bytes, little);
         if (signed) {
-          long threshold = (long) Math.pow(2, bytes * 8 - 1);
           if (bits >= threshold) bits -= 2*threshold;
         }
         double v = (double) bits;
