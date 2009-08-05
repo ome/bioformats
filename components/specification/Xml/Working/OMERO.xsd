@@ -30,16 +30,34 @@
 	
 	<xsd:element name="ShapeDisplayOptions"> <!-- top level definition -->
 		<xsd:complexType>
-			<xsd:attribute name="Fill" use="optional" type="xsd:integer"/>
+			<xsd:attribute name="Fill" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="FillRule" use="optional" type="xsd:string"/>
-			<xsd:attribute name="Stroke" use="optional" type="xsd:integer"/>
-			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float"/>
+			<xsd:attribute name="Stroke" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string"/>
 			<xsd:attribute name="LineCap" use="optional">
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							MISSING
+							The shape of the end of the line.
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
@@ -56,7 +74,7 @@
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							MISSING
+							The font family used to draw the text.
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
@@ -67,12 +85,18 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="FontSize" use="optional" type="xsd:integer"/>
+			<xsd:attribute name="FontSize" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="FontStyle" use="optional">
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							MISSING
+							The style applied to the text.
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
