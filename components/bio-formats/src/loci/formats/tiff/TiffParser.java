@@ -51,6 +51,9 @@ public class TiffParser {
 
   /** Input source from which to parse TIFF data. */
   protected RandomAccessInputStream in;
+  
+  /** Cached tile buffer to avoid re-allocations when reading tiles. */
+  private byte[] cachedTileBuffer;
 
   // -- Constructors --
 
@@ -581,6 +584,15 @@ public class TiffParser {
     int planeSize = (int) (width * height * pixel);
     int outputRowLen = (int) (pixel * width);
 
+    int bufferSizeSamplesPerPixel = samplesPerPixel;
+    if (ifd.getPlanarConfiguration() == 2) bufferSizeSamplesPerPixel = 1;
+    int bpp = ifd.getBytesPerSample()[0];
+    int bufferSize = (int) tileWidth * (int) tileLength
+                     * bufferSizeSamplesPerPixel * bpp;
+    if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
+      cachedTileBuffer = new byte[bufferSize];
+    }
+    
     for (int row=0; row<numTileRows; row++) {
       for (int col=0; col<numTileCols; col++) {
         Region tileBounds = new Region(col * (int) tileWidth,
@@ -592,7 +604,7 @@ public class TiffParser {
           tileBounds.y = (int) ((row % nrows) * tileLength);
         }
 
-        byte[] tile = getTile(ifd, row, col);
+        getTile(ifd, cachedTileBuffer, row, col);
 
         // adjust tile bounds, if necessary
 
@@ -617,7 +629,7 @@ public class TiffParser {
             outputRowLen * (tileY - y);
           if (planarConfig == 2) dest += (planeSize * (row / nrows));
           for (int tileRow=0; tileRow<theight; tileRow++) {
-            System.arraycopy(tile, src, buf, dest, copy);
+            System.arraycopy(cachedTileBuffer, src, buf, dest, copy);
             src += rowLen;
             dest += outputRowLen;
           }
@@ -705,6 +717,7 @@ public class TiffParser {
 
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
+    boolean bps16 = bps0 == 16;
 
     int row = startIndex / (int) imageWidth;
     int col = 0;
@@ -722,6 +735,21 @@ public class TiffParser {
 
     BitBuffer bb = new BitBuffer(bytes);
 
+    // Hyper optimisation that takes any 8-bit or 16-bit data, where there is
+    // only one channel, the source byte buffer's size is less than or equal to
+    // that of the destination buffer and for which no special unpacking is
+    // required and performs a simple array copy. Over the course of reading
+    // semi-large datasets this can save **billions** of method calls.
+    // Wed Aug  5 19:04:59 BST 2009
+    // Chris Allan <callan@glencoesoftware.com>
+    if ((bps8 || bps16) && bytes.length <= samples.length && nChannels == 1
+        && photoInterp != PhotoInterp.WHITE_IS_ZERO
+        && photoInterp != PhotoInterp.CMYK
+        && photoInterp != PhotoInterp.Y_CB_CR) {
+      System.arraycopy(bytes, 0, samples, 0, bytes.length);
+      return;
+    }
+    
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<nChannels; i++) {
         int index = numBytes * (j * nChannels + i);

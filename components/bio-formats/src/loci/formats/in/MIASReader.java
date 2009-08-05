@@ -79,6 +79,9 @@ public class MIASReader extends FormatReader {
   private int[] bpp;
 
   private Vector<String> plateDirs;
+  
+  /** Cached tile buffer to avoid re-allocations when reading tiles. */
+  private byte[] cachedTileBuffer;
 
   // -- Constructor --
 
@@ -780,8 +783,14 @@ public class MIASReader extends FormatReader {
     int tileIndex = (no * tileRows + row) * tileCols + col;
     String filename = getFilename(plate, well, tileIndex);
     readers[plate][well][tileIndex].setId(filename);
-    byte[] buf = readers[plate][well][tileIndex].openBytes(0, intersection.x,
-      intersection.y, intersection.width, intersection.height);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int ch = getRGBChannelCount();
+    int bufferSize = intersection.width * intersection.height * ch * bpp;
+    if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
+      cachedTileBuffer = new byte[bufferSize];
+    }
+    byte[] buf = readers[plate][well][tileIndex].openBytes(0, cachedTileBuffer,
+      intersection.x, intersection.y, intersection.width, intersection.height);
     return buf;
   }
 
