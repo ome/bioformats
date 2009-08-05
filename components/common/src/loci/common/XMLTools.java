@@ -121,16 +121,20 @@ public final class XMLTools {
    * Attempts to validate the given XML string using
    * Java's XML validation facility. Requires Java 1.5+.
    * @param xml The XML string to validate.
+   * @return whether or not validation was successful.
    */
-  public static void validateXML(String xml) { validateXML(xml, null); }
+  public static boolean validateXML(String xml) {
+    return validateXML(xml, null);
+  }
 
   /**
    * Attempts to validate the given XML string using
    * Java's XML validation facility. Requires Java 1.5+.
    * @param xml The XML string to validate.
    * @param label String describing the type of XML being validated.
+   * @return whether or not validation was successful.
    */
-  public static void validateXML(String xml, String label) {
+  public static boolean validateXML(String xml, String label) {
     if (label == null) label = "XML";
 
     // get path to schema from root element using SAX
@@ -148,12 +152,12 @@ public final class XMLTools {
     if (exception != null) {
       LogTools.println("Error parsing schema path from " + label + ":");
       LogTools.trace(exception);
-      return;
+      return false;
     }
     String schemaPath = saxHandler.getSchemaPath();
     if (schemaPath == null) {
       LogTools.println("No schema path found. Validation cannot continue.");
-      return;
+      return false;
     }
     else LogTools.println(schemaPath);
 
@@ -171,7 +175,7 @@ public final class XMLTools {
     catch (MalformedURLException exc) {
       LogTools.println("Error accessing schema at " + schemaPath + ":");
       LogTools.trace(exc);
-      return;
+      return false;
     }
     Schema schema = null;
     try {
@@ -180,7 +184,7 @@ public final class XMLTools {
     catch (SAXException exc) {
       LogTools.println("Error parsing schema at " + schemaPath + ":");
       LogTools.trace(exc);
-      return;
+      return false;
     }
 
     // get a validator from the schema
@@ -202,9 +206,10 @@ public final class XMLTools {
     if (exception != null) {
       LogTools.println("Error validating document:");
       LogTools.trace(exception);
-      return;
+      return false;
     }
     if (errorHandler.ok()) LogTools.println("No validation errors found.");
+    return errorHandler.ok();
   }
 
   /** Indents XML to be more readable. */

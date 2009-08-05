@@ -39,8 +39,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.LogTools;
+import loci.common.XMLTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -337,53 +339,116 @@ public class FormatReaderTest {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "testOMEXML";
-    boolean success = true;
     String msg = null;
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
-      success = MetadataTools.isOMEXMLMetadata(retrieve);
+      boolean success = MetadataTools.isOMEXMLMetadata(retrieve);
       if (!success) msg = TestTools.shortClassName(retrieve);
 
-      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+      for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
         reader.setSeries(i);
 
         String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
-        boolean passX = reader.getSizeX() ==
-          retrieve.getPixelsSizeX(i, 0).intValue();
-        if (!passX) msg = "SizeX";
-        boolean passY = reader.getSizeY() ==
-          retrieve.getPixelsSizeY(i, 0).intValue();
-        if (!passY) msg = "SizeY";
-        boolean passZ = reader.getSizeZ() ==
-          retrieve.getPixelsSizeZ(i, 0).intValue();
-        if (!passZ) msg = "SizeZ";
-        boolean passC = reader.getSizeC() ==
-          retrieve.getPixelsSizeC(i, 0).intValue();
-        if (!passC) msg = "SizeC";
-        boolean passT = reader.getSizeT() ==
-          retrieve.getPixelsSizeT(i, 0).intValue();
-        if (!passT) msg = "SizeT";
-        boolean passBE = reader.isLittleEndian() !=
-          retrieve.getPixelsBigEndian(i, 0).booleanValue();
-        if (!passBE) msg = "BigEndian";
-        boolean passDE = reader.getDimensionOrder().equals(
-          retrieve.getPixelsDimensionOrder(i, 0));
-        if (!passDE) msg = "DimensionOrder";
-        boolean passType = type.equalsIgnoreCase(
-          retrieve.getPixelsPixelType(i, 0));
-        if (!passType) msg = "PixelType";
-
-        success = passX && passY && passZ &&
-          passC && passT && passBE && passDE && passType;
+        if (reader.getSizeX() != retrieve.getPixelsSizeX(i, 0).intValue()) {
+          msg = "SizeX";
+        }
+        if (reader.getSizeY() != retrieve.getPixelsSizeY(i, 0).intValue()) {
+          msg = "SizeY";
+        }
+        if (reader.getSizeZ() != retrieve.getPixelsSizeZ(i, 0).intValue()) {
+          msg = "SizeZ";
+        }
+        if (reader.getSizeC() != retrieve.getPixelsSizeC(i, 0).intValue()) {
+          msg = "SizeC";
+        }
+        if (reader.getSizeT() != retrieve.getPixelsSizeT(i, 0).intValue()) {
+          msg = "SizeT";
+        }
+        if (reader.isLittleEndian() ==
+          retrieve.getPixelsBigEndian(i, 0).booleanValue())
+        {
+          msg = "BigEndian";
+        }
+        if (!reader.getDimensionOrder().equals(
+          retrieve.getPixelsDimensionOrder(i, 0)))
+        {
+          msg = "DimensionOrder";
+        }
+        if (!type.equalsIgnoreCase(retrieve.getPixelsPixelType(i, 0))) {
+          msg = "PixelType";
+        }
       }
     }
     catch (Throwable t) {
       LogTools.trace(t);
-      success = false;
+      msg = t.getMessage();
     }
-    result(testName, success, msg);
+    result(testName, msg == null, msg);
   }
+
+  /**
+   * @testng.test groups = "all xml"
+   */
+  public void testSaneOMEXML() {
+    if (!initFile()) return;
+    String file = reader.getCurrentFile();
+    String testName = "testSaneOMEXML";
+    String msg = null;
+    try {
+      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
+      boolean success = MetadataTools.isOMEXMLMetadata(retrieve);
+      if (!success) msg = TestTools.shortClassName(retrieve);
+
+      for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
+        // total number of ChannelComponents should match SizeC
+        int sizeC = retrieve.getPixelsSizeC(i, 0).intValue();
+        int nChannelComponents = 0;
+        for (int c=0; c<retrieve.getLogicalChannelCount(i); c++) {
+          nChannelComponents += retrieve.getChannelComponentCount(i, c);
+        }
+
+        if (sizeC != nChannelComponents) msg = "ChannelComponent";
+
+        // all LogicalChannels should have at least one ChannelComponent
+
+        for (int c=0; c<retrieve.getLogicalChannelCount(i) && msg == null; c++)
+        {
+          if (retrieve.getChannelComponentCount(i, c) == 0) {
+            msg = "LogicalChannel";
+          }
+        }
+
+        // Z, C and T indices should be populated if PlaneTiming is present
+
+        Float deltaT = retrieve.getPlaneTimingDeltaT(i, 0, 0);
+        Float exposure = retrieve.getPlaneTimingExposureTime(i, 0, 0);
+        Integer z = retrieve.getPlaneTheZ(i, 0, 0);
+        Integer c = retrieve.getPlaneTheC(i, 0, 0);
+        Integer t = retrieve.getPlaneTheT(i, 0, 0);
+
+        if ((deltaT != null || exposure != null) &&
+          (z == null || c == null || t == null))
+        {
+          msg = "PlaneTiming";
+        }
+
+        // if CreationDate is before 1995, it's probably invalid
+        String date = retrieve.getImageCreationDate(i);
+        if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
+          DateTools.getTime("1995-01-01T00:00:00", DateTools.ISO8601_FORMAT))
+        {
+          msg = "CreationDate";
+        }
+      }
+    }
+    catch (Throwable t) {
+      LogTools.trace(t);
+      msg = t.getMessage();
+    }
+    result(testName, msg == null, msg);
+  }
+
 
   /**
    * @testng.test groups = "all fast"
@@ -620,8 +685,7 @@ public class FormatReaderTest {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
 
       String xml = MetadataTools.getOMEXML(retrieve);
-      success = xml != null;
-      // TODO call XMLTools.validateXML; somehow get a return value
+      success = xml != null && XMLTools.validateXML(xml);
     }
     catch (Throwable t) {
       LogTools.trace(t);
