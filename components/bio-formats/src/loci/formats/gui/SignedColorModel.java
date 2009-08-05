@@ -48,6 +48,8 @@ public class SignedColorModel extends ColorModel {
   private int nChannels;
   private ComponentColorModel helper;
 
+  private int max;
+
   // -- Constructors --
 
   public SignedColorModel(int pixelBits, int dataType, int nChannels)
@@ -67,6 +69,8 @@ public class SignedColorModel extends ColorModel {
 
     this.pixelBits = pixelBits;
     this.nChannels = nChannels;
+
+    max = (int) Math.pow(2, pixelBits) - 1;
   }
 
   // -- ColorModel API methods --
@@ -101,31 +105,28 @@ public class SignedColorModel extends ColorModel {
   /* @see java.awt.image.ColorModel#getAlpha(int) */
   public int getAlpha(int pixel) {
     if (nChannels < 4) return 255;
-    if (pixelBits > 8) pixel = helper.getAlpha(pixel);
-    return rescale(pixel);
+    return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
   public int getBlue(int pixel) {
-    if (pixelBits > 8) pixel = helper.getBlue(pixel);
-    return rescale(pixel);
+    if (nChannels == 1) return getRed(pixel);
+    return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
   public int getGreen(int pixel) {
-    if (pixelBits > 8) pixel = helper.getGreen(pixel);
-    return rescale(pixel);
+    if (nChannels == 1) return getRed(pixel);
+    return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getRed(int) */
   public int getRed(int pixel) {
-    if (pixelBits > 8) pixel = helper.getRed(pixel);
-    return rescale(pixel);
+    return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getAlpha(Object) */
   public int getAlpha(Object data) {
-    int max = (int) Math.pow(2, pixelBits) - 1;
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;
       if (b.length == 1) return getAlpha(b[0]);
@@ -146,7 +147,6 @@ public class SignedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getRed(Object) */
   public int getRed(Object data) {
-    int max = (int) Math.pow(2, pixelBits) - 1;
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;
       if (b.length == 1) return getRed(b[0]);
@@ -167,7 +167,6 @@ public class SignedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getGreen(Object) */
   public int getGreen(Object data) {
-    int max = (int) Math.pow(2, pixelBits) - 1;
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;
       if (b.length == 1) return getGreen(b[0]);
@@ -188,7 +187,6 @@ public class SignedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getBlue(Object) */
   public int getBlue(Object data) {
-    int max = (int) Math.pow(2, pixelBits) - 1;
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;
       if (b.length == 1) return getBlue(b[0]);
