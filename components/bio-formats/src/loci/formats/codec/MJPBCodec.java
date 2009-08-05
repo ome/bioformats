@@ -142,7 +142,7 @@ public class MJPBCodec extends BaseCodec {
 
         in.seek(fp + sof + 7);
 
-        int channels = in.read();
+        int channels = in.read() & 0xff;
 
         int[] sampling = new int[channels];
         for (int i=0; i<channels; i++) {
@@ -312,12 +312,14 @@ public class MJPBCodec extends BaseCodec {
         int row = options.width * bpp;
 
         for (int yy=0; yy<options.height; yy++) {
-          if (yy % 2 == 0) {
+          if (yy % 2 == 0 && (topNdx + 1) * row <= top.length) {
             System.arraycopy(top, topNdx*row, result, yy*row, row);
             topNdx++;
           }
           else {
-            System.arraycopy(bottom, bottomNdx*row, result, yy*row, row);
+            if ((bottomNdx + 1) * row <= bottom.length) {
+              System.arraycopy(bottom, bottomNdx*row, result, yy*row, row);
+            }
             bottomNdx++;
           }
         }

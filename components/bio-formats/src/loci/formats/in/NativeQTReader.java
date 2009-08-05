@@ -82,7 +82,7 @@ public class NativeQTReader extends FormatReader {
   private int rawSize;
 
   /** Offsets to each plane's pixel data. */
-  private Vector offsets;
+  private Vector<Integer> offsets;
 
   /** Pixel data for the previous image plane. */
   private byte[] prevPixels;
@@ -106,7 +106,7 @@ public class NativeQTReader extends FormatReader {
   private int scale;
 
   /** Number of bytes in each plane. */
-  private Vector chunkSizes;
+  private Vector<Integer> chunkSizes;
 
   /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
   private boolean interlaced;
@@ -154,15 +154,14 @@ public class NativeQTReader extends FormatReader {
     String code = codec;
     if (no >= getImageCount() - altPlanes) code = altCodec;
 
-    int offset = ((Integer) offsets.get(no)).intValue();
+    int offset = offsets.get(no).intValue();
     int nextOffset = (int) pixelBytes;
 
-    scale = ((Integer) offsets.get(0)).intValue();
+    scale = offsets.get(0).intValue();
     offset -= scale;
 
     if (no < offsets.size() - 1) {
-      nextOffset = ((Integer) offsets.get(no + 1)).intValue();
-      nextOffset -= scale;
+      nextOffset = offsets.get(no + 1).intValue() - scale;
     }
 
     if ((nextOffset - offset) < 0) {
@@ -203,8 +202,13 @@ public class NativeQTReader extends FormatReader {
     int pad = (4 - (getSizeX() % 4)) % 4;
     if (codec.equals("mjpb")) pad = 0;
 
-    int size = getSizeX() * getSizeY();
-    if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
+    int expectedSize = FormatTools.getPlaneSize(this);
+
+    if (prevPixels.length == expectedSize ||
+      (bitsPerPixel == 32 && (3 * (prevPixels.length / 4)) == expectedSize))
+    {
+      pad = 0;
+    }
 
     if (pad > 0) {
       int bytes = bitsPerPixel < 40 ? bitsPerPixel / 8 :
@@ -267,8 +271,8 @@ public class NativeQTReader extends FormatReader {
     in = new RandomAccessInputStream(id);
 
     spork = true;
-    offsets = new Vector();
-    chunkSizes = new Vector();
+    offsets = new Vector<Integer>();
+    chunkSizes = new Vector<Integer>();
     status("Parsing tags");
 
     parse(0, 0, in.length());
@@ -348,6 +352,9 @@ public class NativeQTReader extends FormatReader {
           }
         }
       }
+      // reset the stream, otherwise openBytes will try to read pixels
+      // from the resource fork
+      in = new RandomAccessInputStream(currentId);
     }
 
     core[0].rgb = bitsPerPixel < 40;
@@ -462,7 +469,7 @@ public class NativeQTReader extends FormatReader {
             offsets.add(new Integer(off));
             for (int i=1; i<getImageCount(); i++) {
               if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
-                rawSize = ((Integer) chunkSizes.get(i)).intValue();
+                rawSize = chunkSizes.get(i).intValue();
               }
               else i = getImageCount();
               off += rawSize;
