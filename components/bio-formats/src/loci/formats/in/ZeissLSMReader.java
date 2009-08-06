@@ -838,7 +838,7 @@ public class ZeissLSMReader extends FormatReader {
       if (recording.acquire) {
         store.setImageDescription(recording.description, series);
         store.setImageCreationDate(recording.startTime, series);
-        for (int c=0; c<getSizeC(); c++) {
+        for (int c=0; c<getEffectiveSizeC(); c++) {
           store.setDetectorSettingsBinning(recording.binning, series, c);
         }
         store.setObjectiveSettingsObjective("Objective:" + series, series);
@@ -1578,7 +1578,9 @@ public class ZeissLSMReader extends FormatReader {
 
       // start time in days since Dec 30 1899
       long stamp = (long) (getDoubleValue(RECORDING_SAMPLE_0TIME) * 86400000);
-      startTime = DateTools.convertDate(stamp, DateTools.MICROSOFT);
+      if (stamp > 0) {
+        startTime = DateTools.convertDate(stamp, DateTools.MICROSOFT);
+      }
 
       zoom = (float) getDoubleValue(RECORDING_ZOOM);
 

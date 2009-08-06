@@ -52,7 +52,7 @@ public final class DateTools {
   /** Milliseconds until UNIX epoch. */
   public static final long UNIX_EPOCH = 0;
   public static final long COBOL_EPOCH = 11644473600000L;
-  public static final long MICROSOFT_EPOCH = 2272060800000L;
+  public static final long MICROSOFT_EPOCH = 2209143600000L;
   public static final long ZVI_EPOCH = 2921084975759000L;
 
   /** ISO 8601 date format string. */
