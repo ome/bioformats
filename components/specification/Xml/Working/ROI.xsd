@@ -57,7 +57,9 @@
 	<xsd:element name="Shape"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				The shape element contains a single specific ROI shape and links 
+				that to any channels, and a timepoint and a z-section. It also 
+				records any transform applied to the ROI shape.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -84,21 +86,23 @@
 			<xsd:attribute name="TheZ" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The z-section the ROI applies to. If not specified then 
+						the ROI applies to all the z-sections of the image.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TheT" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The timepoint the ROI applies to. If not specified then 
+						the ROI applies to all the timepoints of the image.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Transform" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						MISSING - definition
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -108,35 +112,36 @@
 	<xsd:element name="Rectangle"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				A simple rectangle object. If rotation is required apply a 
+				transformation at the Shape level.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The X value of the left edge or the rectangle.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The y value of the top edge or the rectangle.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Width" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The width of the rectangle.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Height" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The height of the rectangle. 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -146,7 +151,10 @@
 	<xsd:element name="Mask"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				The Mask ROI shape is a link to and OME Pixels object that is 
+				drawn on top of the image as an ROI. It is applied at the same 
+				scale, pixel to pixel, as the Image the ROI is applied to, 
+				unless a transform is applied at the shape level.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -156,14 +164,14 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The X coordinate of the left side of the image.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Y coordinate of the top side of the image.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -175,14 +183,14 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The X coordinate of the point.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Y coordinate of the point.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -192,35 +200,36 @@
 	<xsd:element name="Ellipse"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				A simple ellipse object. If rotation is required apply a 
+				transformation at the Shape level.
 			</xsd:documentation>
 		</xsd:annotation>		
 		<xsd:complexType>
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The X coordinate of the center of the ellipse.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Y coordinate of the center of the ellipse.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="RadiusX" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The horizontal radius of the ellipse.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="RadiusY" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The vertical radius of the ellipse.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -230,35 +239,35 @@
 	<xsd:element name="Line"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				A straight line defined by it's end points.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 					<xsd:attribute name="X1" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The X coordinate of the start of the line.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y1" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Y coordinate of the start of the line.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="X2" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The X coordinate of the end of the line.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y2" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Y coordinate of the end of the line.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -268,22 +277,26 @@
 	<xsd:element name="Polyline"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
-				Note: Polyline uses counterclockwise winding (this is the default OpenGL behavior)
+				The Polyline defines open and closed shapes formed of straight 
+				lines. Note: Polyline uses counterclockwise winding (this is the 
+				default OpenGL behavior)
 			</xsd:documentation>
 		</xsd:annotation>		
 		<xsd:complexType>
 					<xsd:attribute name="Points" use="required" type="xsd:string">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The points of the polyline are defined as a list 
+								of comma separated x,y coordinates seperated by 
+								spaces like "x1,y1 x2,y2 x3,y3" e.g. "0,0 1,2 3,5"
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Closed" use="optional" type="xsd:boolean" default="false">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								Indicates if the shape is closed with an extra 
+								line form the end point back to the start point.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -293,14 +306,39 @@
 	<xsd:element name="Path"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				A path is a complex shape that can consists of straight and 
+				curved sections. It is defined as a collection of drawing 
+				commands.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 					<xsd:attribute name="Definition" use="required" type="xsd:string">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The commands are listed in the string separated by spaces.
+								The following commands are available:
+								
+								M = moveto (absolute)
+								L = lineto (absolute)
+								H = horizontal lineto (absolute)
+								V = vertical lineto (absolute)
+								C = curveto (absolute)
+								S = smooth curveto (absolute)
+								Q = quadratic Belzier curve (absolute)
+								T = smooth quadratic Belzier curveto (absolute)
+								A = elliptical Arc (absolute)
+								Z = closepath
+								
+								m = moveto (relative)
+								l = lineto (relative)
+								h = horizontal lineto (relative)
+								v = vertical lineto (relative)
+								c = curveto (relative)
+								s = smooth curveto (relative)
+								q = quadratic Belzier curve (relative)
+								t = smooth quadratic Belzier curveto (relative)
+								a = elliptical Arc (relative)
+								z = closepath
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -310,7 +348,8 @@
 	<xsd:element name="Text"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				The text annotation. Any transformation should be applied at the 
+				shape level.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -318,7 +357,8 @@
 						<xsd:element name="Value">
 							<xsd:annotation>
 								<xsd:documentation>
-									MISSING
+									The string of characters to display. 
+									White space should be preserved.
 								</xsd:documentation>
 							</xsd:annotation>
 							<xsd:simpleType>
@@ -331,14 +371,18 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								This defines the X coordinate of the current 
+								text position of the first character in the 
+								string.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								This defines the X coordinate of the current 
+								text position of the first character in the 
+								string.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
