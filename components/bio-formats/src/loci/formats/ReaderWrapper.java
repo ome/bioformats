@@ -115,6 +115,7 @@ public abstract class ReaderWrapper implements IFormatReader {
    *   <li>{@link #isMetadataFiltered()}</li>
    *   <li>{@link #isMetadataCollected()}</li>
    *   <li>Attached {@link StatusListener}s</li>
+   *   <li>{@link DelegateReader#isLegacy()}</li>
    * </ul>
    *
    * @param imageReaderClass If non-null, any {@link ImageReader}s in the
@@ -124,41 +125,9 @@ public abstract class ReaderWrapper implements IFormatReader {
   public ReaderWrapper duplicate(Class imageReaderClass)
     throws FormatException
   {
-    IFormatReader childCopy = null;
-    if (reader instanceof ReaderWrapper) {
-      // found a nested reader layer; duplicate via recursion
-      childCopy = ((ReaderWrapper) reader).duplicate(imageReaderClass);
-    }
-    else {
-      Class c = null;
-      if (reader instanceof ImageReader) {
-        // found an image reader; if given, substitute the reader class
-        c = imageReaderClass == null ? ImageReader.class : imageReaderClass;
-      }
-      else {
-        // bottom of the reader stack; duplicate the core reader
-        c = reader.getClass();
-      }
-      try {
-        childCopy = (IFormatReader) c.newInstance();
-      }
-      catch (IllegalAccessException exc) { throw new FormatException(exc); }
-      catch (InstantiationException exc) { throw new FormatException(exc); }
-    }
+    ReaderWrapper wrapperCopy = duplicateRecurse(imageReaderClass);
 
-    // use crazy reflection to instantiate a reader of the proper type
-    Class wrapperClass = getClass();
-    ReaderWrapper wrapperCopy = null;
-    try {
-      wrapperCopy = (ReaderWrapper) wrapperClass.getConstructor(new Class[]
-        {IFormatReader.class}).newInstance(new Object[] {childCopy});
-    }
-    catch (InstantiationException exc) { throw new FormatException(exc); }
-    catch (IllegalAccessException exc) { throw new FormatException(exc); }
-    catch (NoSuchMethodException exc) { throw new FormatException(exc); }
-    catch (InvocationTargetException exc) { throw new FormatException(exc); }
-
-    // sync configuration with original reader
+    // sync top-level configuration with original reader
     boolean normalized = isNormalized();
     boolean metadataFiltered = isMetadataFiltered();
     boolean metadataCollected = isMetadataCollected();
@@ -465,6 +434,55 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public StatusListener[] getStatusListeners() {
     return reader.getStatusListeners();
+  }
+
+  // -- Helper methods --
+
+  private ReaderWrapper duplicateRecurse(Class imageReaderClass)
+    throws FormatException
+  {
+    IFormatReader childCopy = null;
+    if (reader instanceof ReaderWrapper) {
+      // found a nested reader layer; duplicate via recursion
+      childCopy = ((ReaderWrapper) reader).duplicateRecurse(imageReaderClass);
+    }
+    else {
+      Class c = null;
+      if (reader instanceof ImageReader) {
+        // found an image reader; if given, substitute the reader class
+        c = imageReaderClass == null ? ImageReader.class : imageReaderClass;
+      }
+      else {
+        // bottom of the reader stack; duplicate the core reader
+        c = reader.getClass();
+      }
+      try {
+        childCopy = (IFormatReader) c.newInstance();
+      }
+      catch (IllegalAccessException exc) { throw new FormatException(exc); }
+      catch (InstantiationException exc) { throw new FormatException(exc); }
+
+      // preserve reader-specific configuration with original reader
+      if (reader instanceof DelegateReader) {
+        DelegateReader delegateOriginal = (DelegateReader) reader;
+        DelegateReader delegateCopy = (DelegateReader) childCopy;
+        delegateCopy.setLegacy(delegateOriginal.isLegacy());
+      }
+    }
+
+    // use crazy reflection to instantiate a reader of the proper type
+    Class wrapperClass = getClass();
+    ReaderWrapper wrapperCopy = null;
+    try {
+      wrapperCopy = (ReaderWrapper) wrapperClass.getConstructor(new Class[]
+        {IFormatReader.class}).newInstance(new Object[] {childCopy});
+    }
+    catch (InstantiationException exc) { throw new FormatException(exc); }
+    catch (IllegalAccessException exc) { throw new FormatException(exc); }
+    catch (NoSuchMethodException exc) { throw new FormatException(exc); }
+    catch (InvocationTargetException exc) { throw new FormatException(exc); }
+
+    return wrapperCopy;
   }
 
 }
