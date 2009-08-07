@@ -312,7 +312,11 @@ public class LeicaHandler extends DefaultHandler {
         store.setDetectorModel(value, numDatasets, 0);
       }
       else if (id.indexOf("WFC") == 1) {
-        int c = Integer.parseInt(id.replaceAll("\\D", ""));
+        int c = 0;
+        try {
+          c = Integer.parseInt(id.replaceAll("\\D", ""));
+        }
+        catch (NumberFormatException e) { }
         if (id.endsWith("ExposureTime")) {
           store.setPlaneTimingExposureTime(new Float(value), numDatasets, 0, c);
         }
