@@ -889,7 +889,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
               double reducedChi2 = cf.getReducedChiSquaredError();
               double rawChi2 = cf.getChiSquaredError();
               int first = cf.getFirst();
-              int last = cf.getFirst();
+              int last = cf.getLast();
               boolean inMask = roiCount == 1 ?
                 (y == roiY && x == roiX) :
                 (mask == null ? false : mask[y][x]);
