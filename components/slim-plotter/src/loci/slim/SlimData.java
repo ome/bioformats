@@ -123,7 +123,7 @@ public class SlimData implements ActionListener, CurveListener {
   {
     this.progress = progress;
 
-    // read SDT file header
+    // read file header
     IFormatReader reader = new ChannelSeparator();
     reader.setId(id);
     width = reader.getSizeX();
@@ -150,7 +150,11 @@ public class SlimData implements ActionListener, CurveListener {
     int pixelType = reader.getPixelType();
     int bpp = FormatTools.getBytesPerPixel(pixelType);
     boolean floating = FormatTools.isFloatingPoint(pixelType);
-    timeRange = 12.5f;
+
+    Number timeBase = (Number) reader.getGlobalMetadata().get("time base");
+    System.out.println("timeBase = " + timeBase);//TEMP
+    timeRange = timeBase == null ? Float.NaN : timeBase.floatValue();
+    if (timeRange != timeRange) timeRange = 10.0f;
     minWave = 400;
     waveStep = 10;
     binRadius = 3;
