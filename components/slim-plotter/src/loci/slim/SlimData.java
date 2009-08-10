@@ -152,7 +152,6 @@ public class SlimData implements ActionListener, CurveListener {
     boolean floating = FormatTools.isFloatingPoint(pixelType);
 
     Number timeBase = (Number) reader.getGlobalMetadata().get("time base");
-    System.out.println("timeBase = " + timeBase);//TEMP
     timeRange = timeBase == null ? Float.NaN : timeBase.floatValue();
     if (timeRange != timeRange) timeRange = 10.0f;
     minWave = 400;
