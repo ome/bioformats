@@ -146,9 +146,11 @@ public class LeicaHandler extends DefaultHandler {
         }
       }
 
-      for (int c=0; c<detectorIndices.size(); c++) {
-        store.setDetectorSettingsDetector(
-          "Detector:" + detectorIndices.get(c), numDatasets, c);
+      for (int c=0; c<numChannels; c++) {
+        String id = "Detector:";
+        if (c < detectorIndices.size()) id += detectorIndices.get(c);
+        else id += c;
+        store.setDetectorSettingsDetector(id, numDatasets, c);
       }
 
       xPos.clear();
@@ -323,6 +325,7 @@ public class LeicaHandler extends DefaultHandler {
         else if (id.endsWith("Gain")) {
           store.setDetectorSettingsGain(new Float(value), numDatasets, c);
           store.setDetectorSettingsDetector("Detector:0", numDatasets, c);
+          store.setDetectorID("Detector:0", numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
           store.setLogicalChannelExWave(new Integer(value), numDatasets, c);
