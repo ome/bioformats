@@ -13,8 +13,14 @@ import java.util.Vector;
 /**
  * A program to filter and replace strings in a file.
  *
- * The only reason this program exists is because sed is
+ * The main reason this program exists is because sed is
  * not available by default on Windows systems.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/native/bf-cpp/src/StringReplace.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/native/bf-cpp/src/StringReplace.java">SVN</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class StringReplace {
 
@@ -103,6 +109,7 @@ public class StringReplace {
     if (args == null || args.length < 3) {
       System.out.println("Usage: java StringReplace " +
         "inputPattern outputPattern file [file2 file3 ...]");
+      return;
     }
     String inputPattern = fixEscaped(args[0]);
     String outputPattern = fixEscaped(args[1]);

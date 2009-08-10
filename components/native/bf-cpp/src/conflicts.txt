@@ -1,0 +1,12 @@
+#
+# conflicts.txt
+#
+
+# This file lists Java constants with potential namespace conflicts.
+# These constants will be renamed with a "JACE_" prefix to avoid the issue.
+
+java.awt.Transparency.OPAQUE
+java.awt.image.ImageObserver.ERROR
+loci.formats.tiff.IFD.IFD
+loci.formats.tiff.PhotoInterp.CMYK
+loci.formats.tiff.PhotoInterp.RGB

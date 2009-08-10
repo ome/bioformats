@@ -27,7 +27,7 @@ else(WIN32)
 cmake_minimum_required(VERSION 2.6)
 endif(WIN32)
 
-project(bfjace)
+project(bfcpp)
 
 ### search for prerequisite libraries ###
 
@@ -140,35 +140,35 @@ endif(APPLE)
 
 #message("-- Bio-Formats C++ bindings:")
 file(GLOB_RECURSE BFJACE_SRC "proxies/source/*.cpp")
-#message("bfjace source : ${BFJACE_SRC}")
+#message("bfcpp source  : ${BFJACE_SRC}")
 #message("")
 
-add_library(bfjace SHARED ${BFJACE_SRC})
+add_library(bfcpp SHARED ${BFJACE_SRC})
 
-target_link_libraries(bfjace jace)
+target_link_libraries(bfcpp jace)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set_target_properties(bfjace PROPERTIES
+  set_target_properties(bfcpp PROPERTIES
     COMPILE_FLAGS "-fpermissive")
 else(CMAKE_COMPILER_IS_GNUCXX)
-  set_target_properties(bfjace PROPERTIES
+  set_target_properties(bfcpp PROPERTIES
     DEFINE_SYMBOL JACE_PROXY_EXPORTS)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
-target_link_libraries(bfjace jace)
+target_link_libraries(bfcpp jace)
 
-### build showinf example for testing bfjace ###
+### build showinf example for testing bfcpp ###
 
 add_executable(showinf source/showinf.cpp)
 
-target_link_libraries(showinf bfjace jace "${JAVA_JVM_LIBRARY}")
+target_link_libraries(showinf bfcpp jace "${JAVA_JVM_LIBRARY}")
 
 ### TEMP - build some examples for testing ###
 
 add_executable(example1 source/example1.cpp)
 
-target_link_libraries(example1 bfjace jace "${JAVA_JVM_LIBRARY}")
+target_link_libraries(example1 bfcpp jace "${JAVA_JVM_LIBRARY}")
 
 add_executable(array_example source/array_example.cpp)
 
-target_link_libraries(array_example bfjace jace "${JAVA_JVM_LIBRARY}")
+target_link_libraries(array_example bfcpp jace "${JAVA_JVM_LIBRARY}")

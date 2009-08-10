@@ -99,7 +99,7 @@ BUILD RESULTS
 Afterwards, the build subdirectory will contain the following files:
 
 1) libjace.so / libjace.jnilib / jace.dll : Jace shared library
-2) libbfjace.so / libbfjace.dylib / bfjace.dll : Bio-Formats C++ bindings
+2) libbfcpp.so / libbfcpp.dylib / bfcpp.dll : Bio-Formats C++ bindings
 3) jace-runtime.jar : Jace Java classes needed at runtime
 4) loci_tools.jar : Bio-Formats Java library needed at runtime
 5) showinf / showinf.exe : Example command line application
