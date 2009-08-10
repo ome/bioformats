@@ -716,9 +716,10 @@ public final class ImageTools {
     return buf;
   }
 
-  public static void bgrToRgb(byte[] buf, boolean interleaved, int bpp) {
+  public static void bgrToRgb(byte[] buf, boolean interleaved, int bpp, int c) {
+    if (c < 3) return;
     if (interleaved) {
-      for (int i=0; i<buf.length; i+=bpp*3) {
+      for (int i=0; i<buf.length; i+=bpp*c) {
         for (int b=0; b<bpp; b++) {
           byte tmp = buf[i + b];
           buf[i + b] = buf[i + bpp * 2];
@@ -727,7 +728,7 @@ public final class ImageTools {
       }
     }
     else {
-      byte[] channel = new byte[buf.length / (bpp * 3)];
+      byte[] channel = new byte[buf.length / (bpp * c)];
       System.arraycopy(buf, 0, channel, 0, channel.length);
       System.arraycopy(buf, channel.length * 2, buf, 0, channel.length);
       System.arraycopy(channel, 0, buf, channel.length * 2, channel.length);

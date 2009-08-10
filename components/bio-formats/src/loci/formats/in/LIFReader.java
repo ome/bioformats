@@ -197,7 +197,7 @@ public class LIFReader extends FormatReader {
 
     // color planes are stored in BGR order
     if (getRGBChannelCount() == 3) {
-      ImageTools.bgrToRgb(buf, isInterleaved(), bytes);
+      ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 
     return buf;

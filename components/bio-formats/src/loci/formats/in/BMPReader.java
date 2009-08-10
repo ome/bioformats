@@ -149,7 +149,7 @@ public class BMPReader extends FormatReader {
         }
         bb.skipBits(getSizeC() * bpp * (getSizeX() - w - x) + pad * 8);
       }
-      ImageTools.bgrToRgb(buf, isInterleaved(), 1);
+      ImageTools.bgrToRgb(buf, isInterleaved(), 1, getRGBChannelCount());
     }
     return buf;
   }

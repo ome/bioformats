@@ -196,7 +196,7 @@ public class AVIReader extends FormatReader {
 
     if (bmpBitsPerPixel == 16 && isRGB()) {
       // channels are stored as BGR, need to swap them
-      ImageTools.bgrToRgb(buf, isInterleaved(), 2);
+      ImageTools.bgrToRgb(buf, isInterleaved(), 2, getRGBChannelCount());
     }
 
     return buf;
