@@ -29,6 +29,8 @@ import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,6 +42,7 @@ import java.net.URLEncoder;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatTools;
+import loci.plugins.util.WindowTools;
 
 /**
  * A plugin for updating the LOCI plugins.
@@ -73,13 +76,15 @@ public class Updater implements PlugIn {
     "java.runtime.version", "java.vm.vendor"
   };
 
+  public static final int CHUNK_SIZE = 8192;
+
   // -- Fields --
 
   /** Flag indicating whether last operation was canceled. */
   public boolean canceled;
 
-  /** Plugin options. */
-  private String arg;
+  /** Path to loci_tools.jar. */
+  private String urlPath;
 
   // -- PlugIn API methods --
 
@@ -96,10 +101,12 @@ public class Updater implements PlugIn {
     }
 
     String release = upgradeDialog.getNextChoice();
-    if (release.equals(options[0])) install(TRUNK_BUILD);
-    else if (release.equals(options[1])) install(TODAYS_BUILD);
-    else if (release.equals(options[2])) install(YESTERDAYS_BUILD);
-    else install(STABLE_BUILD);
+    if (release.equals(options[0])) urlPath = TRUNK_BUILD;
+    else if (release.equals(options[1])) urlPath = TODAYS_BUILD;
+    else if (release.equals(options[2])) urlPath = YESTERDAYS_BUILD;
+    else urlPath = STABLE_BUILD;
+
+    install(urlPath);
   }
 
   // -- Utility methods --
@@ -163,7 +170,7 @@ public class Updater implements PlugIn {
   }
 
   /** Download and install a JAR file from the given URL. */
-  public static void install(String url) {
+  public static void install(final String urlPath) {
     String pluginsDirectory = IJ.getDirectory("plugins");
     String jarPath = pluginsDirectory + File.separator + "loci_tools.jar";
     String downloadPath = jarPath + ".tmp";
@@ -173,12 +180,31 @@ public class Updater implements PlugIn {
     if (plugin.exists()) plugin.delete();
 
     // download new version to plugins directory
-    IJ.showStatus("Downloading loci_tools.jar...");
+    IJ.showStatus("Connecting to download server...");
     try {
-      RandomAccessInputStream in = new RandomAccessInputStream(url);
-      byte[] buf = new byte[(int) in.length()];
-      in.read(buf);
+      URL url = new URL(urlPath);
+      URLConnection urlConn = url.openConnection();
+      int total = urlConn.getContentLength();
+      byte[] buf = new byte[total];
+      DataInputStream in = new DataInputStream(
+        new BufferedInputStream(urlConn.getInputStream()));
+      int off = 0;
+      while (off < total) {
+        IJ.showStatus("Downloading loci_tools.jar...");
+        IJ.showProgress((double) off / total);
+        int len = CHUNK_SIZE;
+        if (off + len > total) len = total - off;
+        int r = in.read(buf, off, len);
+        if (r <= 0) {
+          IJ.showStatus("");
+          IJ.showMessage("Error downloading the LOCI plugins.");
+          return;
+        }
+        off += r;
+      }
       in.close();
+      IJ.showProgress(1);
+      IJ.showStatus("Saving loci_tools.jar...");
 
       FileOutputStream out = new FileOutputStream(plugin);
       out.write(buf);
@@ -196,8 +222,10 @@ public class Updater implements PlugIn {
       }
     }
     catch (IOException e) {
-      IJ.showMessage("An error occurred while downloading the LOCI plugins");
-      e.printStackTrace();
+      IJ.showStatus("");
+      IJ.showProgress(1);
+      WindowTools.reportException(e, false,
+        "An error occurred while downloading the LOCI plugins");
       return;
     }
     IJ.showStatus("");
