@@ -884,18 +884,12 @@ public class Importer {
 
     if (!concatenate && mergeChannels) imp.show();
 
-    if (!options.isVirtual() && !concatenate) {
-      if (mergeChannels && windowless) {
-        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=true merge_option=[" + options.getMergeOption() + "] " +
-          "series=" + r.getSeries() + " hyper_stack=" +
-          options.isViewHyperstack() + " ");
-      }
-      else if (mergeChannels) {
-        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=true series=" + r.getSeries() + " hyper_stack=" +
-          options.isViewHyperstack() + " ");
-      }
+    if (imp.isVisible() && !options.isVirtual()) {
+      String arg = "stack_order=" + stackOrder + " merge=true series=" +
+        r.getSeries() + " hyper_stack=" + options.isViewHyperstack();
+      if (windowless) arg += " merge_option=[" + options.getMergeOption() + "]";
+      arg += " ";
+      IJ.runPlugIn("loci.plugins.Colorizer", arg);
     }
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
