@@ -7,6 +7,10 @@
 
 java.awt.Transparency.OPAQUE
 java.awt.image.ImageObserver.ERROR
+java.awt.Frame.NORMAL
 loci.formats.tiff.IFD.IFD
 loci.formats.tiff.PhotoInterp.CMYK
 loci.formats.tiff.PhotoInterp.RGB
+loci.formats.in.SDTInfo.BH_HEADER_CHKSUM
+loci.formats.in.SDTInfo.BH_HEADER_NOT_VALID
+loci.formats.in.SDTInfo.BH_HEADER_VALID
