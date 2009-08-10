@@ -108,7 +108,7 @@ public class FileStitcher implements IFormatReader {
 
   private String[] seriesBlocks;
   private Vector fileVector;
-  private Vector seriesNames;
+  private Vector<String> seriesNames;
   private boolean seriesInFile;
 
   private boolean noStitch;
@@ -530,7 +530,8 @@ public class FileStitcher implements IFormatReader {
       core = null;
       series = 0;
       seriesBlocks = null;
-      fileVector = seriesNames = null;
+      fileVector = null;
+      seriesNames = null;
       seriesInFile = false;
       store = null;
       originalOrder = null;
@@ -883,7 +884,7 @@ public class FileStitcher implements IFormatReader {
 
       seriesBlocks = (String[]) sBlock.toArray(new String[0]);
       fileVector = new Vector();
-      seriesNames = new Vector();
+      seriesNames = new Vector<String>();
 
       String file = fp.getFiles()[0];
       Location dir = new Location(file).getAbsoluteFile().getParentFile();
@@ -1022,12 +1023,15 @@ public class FileStitcher implements IFormatReader {
 
     // populate metadata store
     store = reader.getMetadataStore();
+    // don't overwrite pixel info if files aren't actually grouped
+    if (!seriesInFile || files.length > 1) {
+      MetadataTools.populatePixels(store, this);
+    }
     for (int i=0; i<core.length; i++) {
-      if (seriesNames != null) {
-        store.setImageName((String) seriesNames.get(i), i);
+      if (seriesNames != null && !seriesInFile) {
+        store.setImageName(seriesNames.get(i), i);
       }
     }
-    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --
