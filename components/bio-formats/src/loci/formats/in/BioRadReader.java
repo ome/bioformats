@@ -523,15 +523,11 @@ public class BioRadReader extends FormatReader {
                   int type = Integer.parseInt(values[0]);
                   if (type == 257 && values.length >= 3) {
                     // found length of axis in um
-                    float start = Float.parseFloat(values[1]);
-                    float end = Float.parseFloat(values[2]);
-                    float axisLength = end - start;
+                    Float pixelSize = new Float(values[2]);
                     if (key.equals("AXIS_2")) {
-                      Float pixelSize = new Float(axisLength / getSizeX());
                       store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
                     }
                     else if (key.equals("AXIS_3")) {
-                      Float pixelSize = new Float(axisLength / getSizeY());
                       store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
                     }
                   }
@@ -539,6 +535,16 @@ public class BioRadReader extends FormatReader {
                 catch (NumberFormatException e) { }
               }
             }
+          }
+          else if (n.p.startsWith("AXIS_2")) {
+            String[] values = n.p.split(" ");
+            Float pixelSize = new Float(values[3]);
+            store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+          }
+          else if (n.p.startsWith("AXIS_3")) {
+            String[] values = n.p.split(" ");
+            Float pixelSize = new Float(values[3]);
+            store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
           }
           else {
             addGlobalMeta("Note #" + noteCount, n.toString());
@@ -889,6 +895,7 @@ public class BioRadReader extends FormatReader {
     picFiles = (String[]) pics.toArray(new String[0]);
     Arrays.sort(picFiles);
     if (picFiles.length > 0) {
+      if (getSizeC() == 0) core[0].sizeC = 1;
       core[0].imageCount = npic * picFiles.length;
       if (multipleFiles) {
         core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
