@@ -916,7 +916,7 @@ public class BioRadReader extends FormatReader {
 
     // link Detector to Image
     for (int i=0; i<getEffectiveSizeC(); i++) {
-      if (offset.size() > 0 || gain.size() > 0) {
+      if (offset.size() > i || gain.size() > i) {
         store.setDetectorSettingsDetector("Detector:" + i, 0, i);
       }
       if (i < offset.size()) {
