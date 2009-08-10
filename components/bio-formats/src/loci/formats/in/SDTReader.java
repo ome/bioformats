@@ -209,6 +209,7 @@ public class SDTReader extends FormatReader {
     channels = info.channels;
     addGlobalMeta("time bins", timeBins);
     addGlobalMeta("channels", channels);
+    addGlobalMeta("time base", 1e9 * info.tacR / info.tacG);
 
     status("Populating metadata");
 
