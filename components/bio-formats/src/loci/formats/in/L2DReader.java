@@ -276,11 +276,15 @@ public class L2DReader extends FormatReader {
 
       String c = (String) wavelengths.get(i);
       if (c != null) {
-        String[] waves = c.split(",");
+        String[] waves = c.split("[, ]");
+        if (waves.length < getEffectiveSizeC()) {
+          debug("Expected " + getEffectiveSizeC() + " wavelengths; got " +
+            waves.length + " wavelengths.");
+        }
         for (int q=0; q<waves.length; q++) {
-          store.setLightSourceID("LightSource:0", 0, q);
+          store.setLightSourceID("LightSource:" + q, 0, q);
           store.setLaserWavelength(new Integer(waves[q].trim()), 0, q);
-          store.setLogicalChannelLightSource("LightSource:0", i, q);
+          store.setLogicalChannelLightSource("LightSource:" + q, i, q);
         }
       }
     }
