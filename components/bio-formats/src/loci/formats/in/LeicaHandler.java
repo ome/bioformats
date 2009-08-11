@@ -161,7 +161,6 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("Element")) {
       nextLaser = 0;
       nextFilter = 0;
-      nextDetector = -1;
 
       for (int c=0; c<detectorIndices.size(); c++) {
         store.setDetectorSettingsDetector(
@@ -324,8 +323,9 @@ public class LeicaHandler extends DefaultHandler {
         }
         else if (id.endsWith("Gain")) {
           store.setDetectorSettingsGain(new Float(value), numDatasets, c);
-          store.setDetectorSettingsDetector("Detector:0", numDatasets, c);
-          store.setDetectorID("Detector:0", numDatasets, 0);
+          store.setDetectorSettingsDetector("Detector:" + numDatasets,
+            numDatasets, c);
+          store.setDetectorID("Detector:" + numDatasets, numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
           store.setLogicalChannelExWave(new Integer(value), numDatasets, c);
@@ -425,8 +425,9 @@ public class LeicaHandler extends DefaultHandler {
         store.setObjectiveModel(model.toString().trim(), numDatasets, 0);
       }
       else if (attribute.equals("RefractionIndex")) {
-        store.setObjectiveID("Objective:0", numDatasets, 0);
-        store.setObjectiveSettingsObjective("Objective:0", numDatasets);
+        String id = "Objective:" + numDatasets;
+        store.setObjectiveID(id, numDatasets, 0);
+        store.setObjectiveSettingsObjective(id, numDatasets);
         store.setObjectiveSettingsRefractiveIndex(new Float(variant),
           numDatasets);
       }
