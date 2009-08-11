@@ -685,8 +685,9 @@ public class PerkinElmerReader extends FormatReader {
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     // populate LogicalChannel element
     for (int i=0; i<getEffectiveSizeC(); i++) {

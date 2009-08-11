@@ -266,8 +266,9 @@ public class PrairieReader extends FormatReader {
         MetadataTools.populatePixels(store, this);
 
         // link Instrument and Image
-        store.setInstrumentID("Instrument:0", 0);
-        store.setImageInstrumentRef("Instrument:0", 0);
+        String instrumentID = MetadataTools.createLSID("Instrument", 0);
+        store.setInstrumentID(instrumentID, 0);
+        store.setImageInstrumentRef(instrumentID, 0);
 
         store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
         store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
@@ -283,8 +284,9 @@ public class PrairieReader extends FormatReader {
           }
 
           // link DetectorSettings to an actual Detector
-          store.setDetectorID("Detector:" + i, 0, i);
-          store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+          String detectorID = MetadataTools.createLSID("Detector", 0, i);
+          store.setDetectorID(detectorID, 0, i);
+          store.setDetectorSettingsDetector(detectorID, 0, i);
           store.setDetectorType("Unknown", 0, i);
         }
 
@@ -294,20 +296,9 @@ public class PrairieReader extends FormatReader {
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-        /*
+        /* TODO : check if this is correct
         if (laserPower != null) {
           store.setLaserPower(new Float(laserPower), 0, 0);
-        }
-        */
-
-        // CTR CHECK
-        /*
-        String zoom = (String) getMeta("opticalZoom");
-        if (zoom != null) {
-          store.setDisplayOptions(new Float(zoom),
-            new Boolean(core[0].sizeC > 1), new Boolean(core[0].sizeC > 1),
-            new Boolean(core[0].sizeC > 2), Boolean.FALSE,
-            null, null, null, null, null, null, null, null, null, null, null);
         }
         */
       }

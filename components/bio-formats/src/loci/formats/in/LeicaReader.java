@@ -891,7 +891,8 @@ public class LeicaReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
-    store.setInstrumentID("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
 
     for (int i=0; i<numSeries; i++) {
       IFD ifd = headerIFDs.get(i);
@@ -912,7 +913,7 @@ public class LeicaReader extends FormatReader {
       store.setImageDescription((String) seriesDescriptions.get(i), i);
 
       // link Instrument and Image
-      store.setImageInstrumentRef("Instrument:0", i);
+      store.setImageInstrumentRef(instrumentID, i);
 
       store.setDimensionsPhysicalSizeX(new Float(physicalSizes[i][0]), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(physicalSizes[i][1]), i, 0);
@@ -1024,11 +1025,12 @@ public class LeicaReader extends FormatReader {
             }
             else if (tokens[2].equals("State")) {
               // link Detector to Image, if the detector was actually used
-              store.setDetectorID("Detector:" + detector, 0, detector);
+              String detectorID =
+                MetadataTools.createLSID("Detector", 0, detector);
+              store.setDetectorID(detectorID, 0, detector);
               for (int i=0; i<getSeriesCount(); i++) {
                 if (detector < core[i].sizeC) {
-                store.setDetectorSettingsDetector("Detector:" + detector, i,
-                  detector);
+                  store.setDetectorSettingsDetector(detectorID, i, detector);
                 }
               }
             }
@@ -1091,10 +1093,12 @@ public class LeicaReader extends FormatReader {
         }
 
         // link Objective to Image
-        store.setObjectiveID("Objective:" + objective, 0, objective);
+        String objectiveID =
+          MetadataTools.createLSID("Objective", 0, objective);
+        store.setObjectiveID(objectiveID, 0, objective);
         if (objective == 0) {
-          store.setObjectiveSettingsObjective("Objective:" + objective, series);
-          store.setImageObjective("Objective:" + objective, series);
+          store.setObjectiveSettingsObjective(objectiveID, series);
+          store.setImageObjective(objectiveID, series);
         }
       }
       else if (tokens[0].startsWith("CSpectrophotometerUnit")) {

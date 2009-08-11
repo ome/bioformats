@@ -496,9 +496,15 @@ public class MetamorphReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
+    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       handler = new MetamorphHandler(getSeriesMetadata());
+
+      String instrumentID = MetadataTools.createLSID("Instrument", i);
+      store.setInstrumentID(instrumentID, i);
+      store.setImageInstrumentRef(instrumentID, i);
 
       String comment = null;
 
@@ -518,8 +524,8 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       if (creationTime != null) {
-        store.setImageCreationDate(DateTools.formatDate(creationTime,
-          SHORT_DATE_FORMAT), 0);
+        String date = DateTools.formatDate(creationTime, SHORT_DATE_FORMAT);
+        store.setImageCreationDate(date, 0);
       }
       else if (i > 0) MetadataTools.setDefaultCreationDate(store, id, i);
 
@@ -579,7 +585,7 @@ public class MetamorphReader extends BaseTiffReader {
           store.setDetectorSettingsReadOutRate(
             new Float(handler.getReadOutRate()), i, c);
         }
-        store.setDetectorSettingsDetector("Detector:0", i, c);
+        store.setDetectorSettingsDetector(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length &&
           (int) wave[waveIndex] >= 1)
@@ -588,8 +594,9 @@ public class MetamorphReader extends BaseTiffReader {
             new Integer((int) wave[waveIndex]), i, c);
 
           // link LightSource to Image
-          store.setLightSourceID("LightSource:" + c, i, c);
-          store.setLightSourceSettingsLightSource("LightSource:" + c, i, c);
+          String lightSourceID = MetadataTools.createLSID("LightSource", i, c);
+          store.setLightSourceID(lightSourceID, i, c);
+          store.setLightSourceSettingsLightSource(lightSourceID, i, c);
           store.setLaserType("Unknown", i, c);
         }
         waveIndex++;
@@ -677,7 +684,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
     setSeries(0);
 
-    store.setDetectorID("Detector:0", 0, 0);
+    store.setDetectorID(detectorID, 0, 0);
     store.setDetectorZoom(new Float(zoom), 0, 0);
     if (handler != null && handler.getZoom() != 0f) {
       store.setDetectorZoom(new Float(handler.getZoom()), 0, 0);

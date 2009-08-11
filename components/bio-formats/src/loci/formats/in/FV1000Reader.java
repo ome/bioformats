@@ -935,7 +935,8 @@ public class FV1000Reader extends FormatReader {
       creationDate = DateTools.formatDate(creationDate, DATE_FORMAT);
     }
 
-    store.setInstrumentID("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
@@ -944,7 +945,7 @@ public class FV1000Reader extends FormatReader {
       else MetadataTools.setDefaultCreationDate(store, id, i);
 
       // link Instrument and Image
-      store.setImageInstrumentRef("Instrument:0", i);
+      store.setImageInstrumentRef(instrumentID, i);
 
       // populate Dimensions data
 
@@ -979,15 +980,15 @@ public class FV1000Reader extends FormatReader {
 
     int nLasers = (int) Math.min(dyeNames.size(), wavelengths.size());
     for (int i=0; i<nLasers; i++) {
-      store.setLaserLaserMedium(dyeNames.get(i), 0, i);
-      store.setLaserWavelength(wavelengths.get(i), 0, i);
-
       // link LightSource to Image
-      store.setLightSourceID("LightSource:" + i, 0, i);
-      store.setLightSourceSettingsLightSource("LightSource:" + i, 0, i);
+      String lightSourceID = MetadataTools.createLSID("LightSource", 0, i);
+      store.setLightSourceID(lightSourceID, 0, i);
+      store.setLightSourceSettingsLightSource(lightSourceID, 0, i);
       if (i < exWaves.size()) {
         store.setLightSourceSettingsWavelength(exWaves.get(i), 0, i);
       }
+      store.setLaserLaserMedium(dyeNames.get(i), 0, i);
+      store.setLaserWavelength(wavelengths.get(i), 0, i);
     }
 
     // populate Detector data
@@ -998,8 +999,9 @@ public class FV1000Reader extends FormatReader {
     store.setDetectorType("Unknown", 0, 0);
 
     // link Detector to Image using DetectorSettings
-    store.setDetectorID("Detector:0", 0, 0);
-    store.setDetectorSettingsDetector("Detector:0", 0, 0);
+    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+    store.setDetectorID(detectorID, 0, 0);
+    store.setDetectorSettingsDetector(detectorID, 0, 0);
 
     // populate Objective data
 
@@ -1016,8 +1018,9 @@ public class FV1000Reader extends FormatReader {
     store.setObjectiveImmersion("Unknown", 0, 0);
 
     // link Objective to Image using ObjectiveSettings
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
 
     int nextROI = -1;
 

@@ -762,7 +762,8 @@ public class NativeND2Reader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
-    store.setInstrumentID("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
 
     // populate Image data
     for (int i=0; i<getSeriesCount(); i++) {
@@ -770,7 +771,7 @@ public class NativeND2Reader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, currentId, i);
 
       // link Instrument and Image
-      store.setImageInstrumentRef("Instrument:0", i);
+      store.setImageInstrumentRef(instrumentID, i);
     }
 
     // populate Dimensions data
@@ -800,7 +801,8 @@ public class NativeND2Reader extends FormatReader {
       }
     }
 
-    store.setDetectorID("Detector:0", 0, 0);
+    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+    store.setDetectorID(detectorID, 0, 0);
     store.setDetectorModel(cameraModel, 0, 0);
     store.setDetectorType("Unknown", 0, 0);
 
@@ -828,7 +830,7 @@ public class NativeND2Reader extends FormatReader {
         if (index < speed.size()) {
           store.setDetectorSettingsReadOutRate((Float) speed.get(index), i, c);
         }
-        store.setDetectorSettingsDetector("Detector:0", i, c);
+        store.setDetectorSettingsDetector(detectorID, i, c);
       }
     }
 
@@ -858,9 +860,10 @@ public class NativeND2Reader extends FormatReader {
     store.setObjectiveCorrection(correction, 0, 0);
 
     // link Objective to Image
-    store.setObjectiveID("Objective:0", 0, 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setObjectiveSettingsObjective("Objective:0", 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
     }
 
     setSeries(0);

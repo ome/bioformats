@@ -316,7 +316,8 @@ public class FlexReader extends FormatReader {
     }
 
     MetadataTools.populatePixels(store, this, true);
-    store.setInstrumentID("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
 
     if (plateName == null) plateName = currentFile.getParentFile().getName();
     if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
@@ -336,8 +337,9 @@ public class FlexReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
 
-      store.setImageID("Image:" + i, i);
-      store.setImageInstrumentRef("Instrument:0", i);
+      String imageID = MetadataTools.createLSID("Image", i);
+      store.setImageID(imageID, i);
+      store.setImageInstrumentRef(instrumentID, i);
       char wellRow = (char) ('A' + wellNumber[pos[1]][0]);
       store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
         "; Field #" + (pos[0] + 1), i);
@@ -388,7 +390,7 @@ public class FlexReader extends FormatReader {
       }
 
       store.setWellSampleIndex(new Integer(i), pos[2], well, pos[0]);
-      store.setWellSampleImageRef("Image:" + i, pos[2], well, pos[0]);
+      store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
       if (pos[0] < xPositions.size()) {
         store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], well, pos[0]);
       }
@@ -748,8 +750,8 @@ public class FlexReader extends FormatReader {
         store.setPlateExternalIdentifier(value, nextPlate - 1);
       }
       else if (qName.equals("Wavelength")) {
-        String LSID = "LightSource:" + nextLaser;
-        store.setLightSourceID(LSID, 0, nextLaser);
+        String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
+        store.setLightSourceID(lsid, 0, nextLaser);
         store.setLaserWavelength(new Integer(value), 0, nextLaser);
         store.setLaserType("Unknown", 0, nextLaser);
         store.setLaserLaserMedium("Unknown", 0, nextLaser);
@@ -795,10 +797,14 @@ public class FlexReader extends FormatReader {
           binY = Integer.parseInt(value);
         }
         else if (qName.equals("ObjectiveRef")) {
-          objectiveRefs.add("Objective:" + objectiveIDs.indexOf(value));
+          String objectiveID = MetadataTools.createLSID(
+            "Objective", 0, objectiveIDs.indexOf(value));
+          objectiveRefs.add(objectiveID);
         }
         else if (qName.equals("CameraRef")) {
-          cameraRefs.add("Detector:" + cameraIDs.indexOf(value));
+          String detectorID =
+            MetadataTools.createLSID("Detector", 0, cameraIDs.indexOf(value));
+          cameraRefs.add(detectorID);
         }
         else if (qName.equals("ImageResolutionX")) {
           float v = Float.parseFloat(value) * 1000000;
@@ -868,14 +874,16 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("LightSourceRef")) {
         Vector<String> v = lightSourceCombinationIDs.get(lightSourceID);
         if (v != null) {
-          String id = attributes.getValue("ID");
-          v.add("LightSource:" + lightSourceIDs.indexOf(id));
+          int id = lightSourceIDs.indexOf(attributes.getValue("ID"));
+          String lightSourceID = MetadataTools.createLSID("LightSource", 0, id);
+          v.add(lightSourceID);
           lightSourceCombinationIDs.put(lightSourceID, v);
         }
       }
       else if (qName.equals("Camera")) {
         parentQName = qName;
-        store.setDetectorID("Detector:" + nextCamera, 0, nextCamera);
+        String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
+        store.setDetectorID(detectorID, 0, nextCamera);
         store.setDetectorType(attributes.getValue("CameraType"), 0, nextCamera);
         cameraIDs.add(attributes.getValue("ID"));
         nextCamera++;
@@ -884,7 +892,9 @@ public class FlexReader extends FormatReader {
         parentQName = qName;
         nextObjective++;
 
-        store.setObjectiveID("Objective:" + nextObjective, 0, nextObjective);
+        String objectiveID =
+          MetadataTools.createLSID("Objective", 0, nextObjective);
+        store.setObjectiveID(objectiveID, 0, nextObjective);
         store.setObjectiveCorrection("Unknown", 0, nextObjective);
         objectiveIDs.add(attributes.getValue("ID"));
       }

@@ -259,10 +259,11 @@ public class L2DReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this);
 
-    store.setInstrumentID("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
 
     for (int i=0; i<scans.size(); i++) {
-      store.setImageInstrumentRef("Instrument:0", i);
+      store.setImageInstrumentRef(instrumentID, i);
 
       store.setImageName((String) scans.get(i), i);
       store.setImageDescription((String) comments.get(i), i);
@@ -282,9 +283,10 @@ public class L2DReader extends FormatReader {
             waves.length + " wavelengths.");
         }
         for (int q=0; q<waves.length; q++) {
-          store.setLightSourceID("LightSource:" + q, 0, q);
+          String lightSourceID = MetadataTools.createLSID("LightSource", 0, q);
+          store.setLightSourceID(lightSourceID, 0, q);
           store.setLaserWavelength(new Integer(waves[q].trim()), 0, q);
-          store.setLogicalChannelLightSource("LightSource:" + q, i, q);
+          store.setLogicalChannelLightSource(lightSourceID, i, q);
         }
       }
     }

@@ -199,8 +199,9 @@ public class AliconaReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // link Image and Instrument
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     // populate Detector data
 
@@ -210,8 +211,9 @@ public class AliconaReader extends FormatReader {
       store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
 
       // link DetectorSettings to an actual Detector
-      store.setDetectorID("Detector:0", 0, 0);
-      store.setDetectorSettingsDetector("Detector:0", 0, 0);
+      String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+      store.setDetectorID(detectorID, 0, 0);
+      store.setDetectorSettingsDetector(detectorID, 0, 0);
 
       // set required Detector type
       store.setDetectorType("Unknown", 0, 0);
@@ -231,8 +233,9 @@ public class AliconaReader extends FormatReader {
     store.setObjectiveImmersion("Unknown", 0, 0);
 
     // link Objective to an Image using ObjectiveSettings
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
 
     // populate Dimensions data
 

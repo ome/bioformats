@@ -342,7 +342,10 @@ public class InCellReader extends FormatReader {
 
     // populate Image data
 
-    store.setInstrumentID("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    String experimentID = MetadataTools.createLSID("Experiment", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setExperimentID(experimentID, 0);
 
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
@@ -350,9 +353,10 @@ public class InCellReader extends FormatReader {
       int timepoint = oneTimepointPerSeries ?
         (i % channelsPerTimepoint.size()) + 1 : -1;
 
-      store.setImageID("Image:" + i, i);
-      store.setImageInstrumentRef("Instrument:0", i);
-      store.setImageExperimentRef("Experiment:0", i);
+      String imageID = MetadataTools.createLSID("Image", i);
+      store.setImageID(imageID, i);
+      store.setImageInstrumentRef(instrumentID, i);
+      store.setImageExperimentRef(experimentID, i);
 
       int wellRow = well / wellCols;
       int wellCol = well % wellCols;
@@ -431,8 +435,9 @@ public class InCellReader extends FormatReader {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i);
 
+      String imageID = MetadataTools.createLSID("Image", i);
       store.setWellSampleIndex(new Integer(i), 0, well, field);
-      store.setWellSampleImageRef("Image:" + i, 0, well, field);
+      store.setWellSampleImageRef(imageID, 0, well, field);
       store.setWellSamplePosX(posX.get(field), 0, well, field);
       store.setWellSamplePosY(posY.get(field), 0, well, field);
     }
@@ -696,7 +701,8 @@ public class InCellReader extends FormatReader {
       }
 
       if (qName.equals("Microscopy")) {
-        store.setExperimentID("Experiment:0", 0);
+        String experimentID = MetadataTools.createLSID("Experiment", 0);
+        store.setExperimentID(experimentID, 0);
         store.setExperimentType(attributes.getValue("type"), 0);
       }
       else if (qName.equals("Image")) {
@@ -743,9 +749,10 @@ public class InCellReader extends FormatReader {
         Float refractive = new Float(attributes.getValue("refractive_index"));
 
         // link Objective to Image
-        store.setObjectiveID("Objective:0", 0, 0);
+        String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+        store.setObjectiveID(objectiveID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
-          store.setObjectiveSettingsObjective("Objective:0", i);
+          store.setObjectiveSettingsObjective(objectiveID, i);
           store.setObjectiveSettingsRefractiveIndex(refractive, i);
           store.setDimensionsPhysicalSizeX(pixelSizeX, i, 0);
           store.setDimensionsPhysicalSizeY(pixelSizeY, i, 0);
@@ -762,10 +769,11 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
         store.setDetectorType("Unknown", 0, 0);
-        store.setDetectorID("Detector:0", 0, 0);
+        String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+        store.setDetectorID(detectorID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
           for (int q=0; q<getSizeC(); q++) {
-            store.setDetectorSettingsDetector("Detector:0", i, q);
+            store.setDetectorSettingsDetector(detectorID, i, q);
           }
         }
       }

@@ -443,8 +443,9 @@ public class SlidebookReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     int index = 0;
 
@@ -454,8 +455,9 @@ public class SlidebookReader extends FormatReader {
     store.setObjectiveImmersion("Unknown", 0, 0);
 
     // link Objective to Image
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
 
     // populate Image data
 

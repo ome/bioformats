@@ -270,8 +270,9 @@ public final class MetadataTools {
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
       store.setImageName(r.getCurrentFile(), i);
-      store.setPixelsID("Pixels:" + i, i, 0);
-      store.setImageDefaultPixels("Pixels:" + i, i);
+      String pixelsID = createLSID("Pixels", i, 0);
+      store.setPixelsID(pixelsID, i, 0);
+      store.setImageDefaultPixels(pixelsID, i);
       store.setPixelsSizeX(new Integer(r.getSizeX()), i, 0);
       store.setPixelsSizeY(new Integer(r.getSizeY()), i, 0);
       store.setPixelsSizeZ(new Integer(r.getSizeZ()), i, 0);
@@ -289,7 +290,7 @@ public final class MetadataTools {
           for (int rgb=0; rgb<r.getRGBChannelCount(); rgb++) {
             store.setChannelComponentIndex(
               new Integer(c * r.getRGBChannelCount() + rgb), i, c, rgb);
-            store.setChannelComponentPixels("Pixels:" + i, i, c, rgb);
+            store.setChannelComponentPixels(pixelsID, i, c, rgb);
           }
         }
       }
@@ -303,6 +304,20 @@ public final class MetadataTools {
       }
     }
     r.setSeries(oldSeries);
+  }
+
+  /**
+   * Constructs an LSID, given the object type and indices.
+   * For example, if the arguments are "Detector", 1, and 0, the LSID will
+   * be "Detector:1:0".
+   */
+  public static String createLSID(String type, int... indices) {
+    StringBuffer lsid = new StringBuffer(type);
+    for (int index : indices) {
+      lsid.append(":");
+      lsid.append(index);
+    }
+    return lsid.toString();
   }
 
   /**

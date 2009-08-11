@@ -233,15 +233,18 @@ public class IvisionReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     if (deltaT != null) {
       store.setDimensionsTimeIncrement(new Float(deltaT), 0, 0);
     }
 
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
 
     store.setObjectiveCorrection("Unknown", 0, 0);
     store.setObjectiveImmersion("Unknown", 0, 0);
@@ -254,8 +257,9 @@ public class IvisionReader extends FormatReader {
       store.setObjectiveSettingsRefractiveIndex(new Float(refractiveIndex), 0);
     }
 
-    store.setDetectorID("Detector:0", 0, 0);
-    store.setDetectorSettingsDetector("Detector:0", 0, 0);
+    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+    store.setDetectorID(detectorID, 0, 0);
+    store.setDetectorSettingsDetector(detectorID, 0, 0);
 
     store.setDetectorType("Unknown", 0, 0);
 

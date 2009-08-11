@@ -407,10 +407,11 @@ public class DeltavisionReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
-    String objectiveID = "Objective:" + lensID;
+    String objectiveID = MetadataTools.createLSID("Objective", 0, lensID);
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveSettingsObjective(objectiveID, 0);
     store.setObjectiveCorrection("Unknown", 0, 0);
@@ -623,8 +624,9 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equals("Lens ID")) {
-          store.setObjectiveID("Objective:" + value, 0, 0);
-          store.setObjectiveSettingsObjective("Objective:" + value, 0);
+          String objectiveID = "Objective:" + value;
+          store.setObjectiveID(objectiveID, 0, 0);
+          store.setObjectiveSettingsObjective(objectiveID, 0);
         }
         // Image properties
         else if (key.equals("Pixel Size")) {
@@ -645,11 +647,12 @@ public class DeltavisionReader extends FormatReader {
         }
         else if (key.equals("Binning")) {
           store.setDetectorType("Unknown", 0, 0);
-          store.setDetectorID("Detector:0", 0, 0);
+          String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+          store.setDetectorID(detectorID, 0, 0);
           for (int c=0; c<getSizeC(); c++) {
             store.setDetectorSettingsBinning(value, 0, c);
             // link DetectorSettings to an actual Detector
-            store.setDetectorSettingsDetector("Detector:0", 0, c);
+            store.setDetectorSettingsDetector(detectorID, 0, c);
           }
         }
         // Camera properties

@@ -192,8 +192,9 @@ public class ImarisReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     // populate Dimensions data
 
@@ -220,8 +221,9 @@ public class ImarisReader extends FormatReader {
       store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
 
       // link DetectorSettings to an actual Detector
-      store.setDetectorID("Detector:" + i, 0, i);
-      store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+      String detectorID = MetadataTools.createLSID("Detector", 0, i);
+      store.setDetectorID(detectorID, 0, i);
+      store.setDetectorSettingsDetector(detectorID, 0, i);
     }
 
     // CTR CHECK

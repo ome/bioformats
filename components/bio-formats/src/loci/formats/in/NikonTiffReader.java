@@ -212,11 +212,13 @@ public class NikonTiffReader extends BaseTiffReader {
     store.setDimensionsPhysicalSizeY(new Float(physicalSizeY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(physicalSizeZ), 0, 0);
 
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
     store.setObjectiveNominalMagnification(new Integer(magnification), 0, 0);
     store.setObjectiveCorrection(correction, 0, 0);
     store.setObjectiveLensNA(new Float(lensNA), 0, 0);

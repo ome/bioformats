@@ -565,7 +565,8 @@ public class MIASReader extends FormatReader {
         int wellIndex = wellNumber[plate][well];
 
         int series = getSeriesNumber(plate, well);
-        store.setWellSampleImageRef("Image:" + series, plate, wellIndex, 0);
+        String imageID = MetadataTools.createLSID("Image", series);
+        store.setWellSampleImageRef(imageID, plate, wellIndex, 0);
         store.setWellSampleIndex(new Integer(series), plate, wellIndex, 0);
 
         // populate Image/Pixels metadata
@@ -573,7 +574,7 @@ public class MIASReader extends FormatReader {
         char wellRow = (char) ('A' + (wellIndex / wellColumns));
         int wellCol = (well % wellColumns) + 1;
 
-        store.setImageID("Image:" + series, series);
+        store.setImageID(imageID, series);
         store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol,
           series);
         MetadataTools.setDefaultCreationDate(store, id, series);

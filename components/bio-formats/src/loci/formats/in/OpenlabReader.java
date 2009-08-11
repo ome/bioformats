@@ -598,8 +598,9 @@ public class OpenlabReader extends FormatReader {
     store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     try {
       if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
@@ -613,8 +614,9 @@ public class OpenlabReader extends FormatReader {
     catch (NumberFormatException e) { }
 
     // link DetectorSettings to an actual Detector
-    store.setDetectorID("Detector:0", 0, 0);
-    store.setDetectorSettingsDetector("Detector:0", 0, 0);
+    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+    store.setDetectorID(detectorID, 0, 0);
+    store.setDetectorSettingsDetector(detectorID, 0, 0);
 
     store.setDetectorType("Unknown", 0, 0);
 

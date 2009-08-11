@@ -675,8 +675,9 @@ public class ICSReader extends FormatReader {
     store.setImageDescription(description, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     // populate Dimensions data
 
@@ -751,16 +752,18 @@ public class ICSReader extends FormatReader {
     store.setObjectiveCorrection("Unknown", 0, 0);
 
     // link Objective to Image
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
 
     Integer[] gainKeys = gains.keySet().toArray(new Integer[0]);
     for (int i=0; i<gainKeys.length; i++) {
       int index = gainKeys[i].intValue();
       store.setDetectorSettingsGain(gains.get(gainKeys[i]), 0, index);
       store.setDetectorType("Unknown", 0, index);
-      store.setDetectorID("Detector:" + index, 0, index);
-      store.setDetectorSettingsDetector("Detector:0", 0, index);
+      String detectorID = MetadataTools.createLSID("Detector", 0, index);
+      store.setDetectorID(detectorID, 0, index);
+      store.setDetectorSettingsDetector(detectorID, 0, index);
     }
 
     // populate Experimenter data

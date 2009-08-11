@@ -415,8 +415,9 @@ public class MicromanagerReader extends FormatReader {
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     for (int i=0; i<channels.length; i++) {
       store.setLogicalChannelName(channels[i], 0, i);
@@ -433,7 +434,9 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
-    if (detectorID == null) detectorID = "Detector:0";
+    if (detectorID == null) {
+      detectorID = MetadataTools.createLSID("Detector", 0, 0);
+    }
 
     for (int i=0; i<channels.length; i++) {
       store.setDetectorSettingsBinning(binning, 0, i);

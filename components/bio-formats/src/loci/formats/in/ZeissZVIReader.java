@@ -577,8 +577,9 @@ public class ZeissZVIReader extends FormatReader {
     else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     for (int plane=0; plane<getImageCount(); plane++) {
       int[] zct = getZCTCoords(plane);
@@ -609,14 +610,16 @@ public class ZeissZVIReader extends FormatReader {
 
     // link DetectorSettings to an actual Detector
     for (int i=0; i<getEffectiveSizeC(); i++) {
-      store.setDetectorID("Detector:" + i, 0, i);
-      store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+      String detectorID = MetadataTools.createLSID("Detector", 0, i);
+      store.setDetectorID(detectorID, 0, i);
+      store.setDetectorSettingsDetector(detectorID, 0, i);
       store.setDetectorType("Unknown", 0, i);
     }
 
     // link Objective to Image
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {
@@ -797,7 +800,7 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveNominalMagnification(new Integer((int) mag), 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
-          store.setObjectiveID(value, 0, 0);
+          store.setObjectiveID("Objective:" + value, 0, 0);
         }
         else if (key.startsWith("Objective N.A.")) {
           store.setObjectiveLensNA(new Float(value), 0, 0);

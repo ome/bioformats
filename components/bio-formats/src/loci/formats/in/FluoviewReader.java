@@ -30,6 +30,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -411,8 +412,9 @@ public class FluoviewReader extends BaseTiffReader {
     store.setImageDescription(comment, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     // populate Dimensions
     store.setDimensionsPhysicalSizeX(new Float(voxelX), 0, 0);
@@ -451,8 +453,9 @@ public class FluoviewReader extends BaseTiffReader {
       store.setDetectorType("Unknown", 0, i);
 
       // link DetectorSettings to an actual Detector
-      store.setDetectorID("Detector:" + i, 0, i);
-      store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+      String detectorID = MetadataTools.createLSID("Detector", 0, i);
+      store.setDetectorID(detectorID, 0, i);
+      store.setDetectorSettingsDetector(detectorID, 0, i);
     }
 
     // populate Objective data
@@ -484,8 +487,9 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     // link Objective to Image using ObjectiveSettings
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
   }
 
 }

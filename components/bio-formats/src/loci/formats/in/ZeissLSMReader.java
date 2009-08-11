@@ -417,8 +417,9 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:" + series, series);
-    store.setImageInstrumentRef("Instrument:" + series, series);
+    String instrumentID = MetadataTools.createLSID("Instrument", series);
+    store.setInstrumentID(instrumentID, series);
+    store.setImageInstrumentRef(instrumentID, series);
 
     // get TIF_CZ_LSMINFO structure
     short[] s = ifd.getIFDShortArray(ZEISS_ID, true);
@@ -835,13 +836,14 @@ public class ZeissLSMReader extends FormatReader {
     // is the only thing that should be populated.
     if (block instanceof Recording) {
       Recording recording = (Recording) block;
+      String objectiveID = MetadataTools.createLSID("Objective", series, 0);
       if (recording.acquire) {
         store.setImageDescription(recording.description, series);
         store.setImageCreationDate(recording.startTime, series);
         for (int c=0; c<getEffectiveSizeC(); c++) {
           store.setDetectorSettingsBinning(recording.binning, series, c);
         }
-        store.setObjectiveSettingsObjective("Objective:" + series, series);
+        store.setObjectiveSettingsObjective(objectiveID, series);
       }
       store.setObjectiveCorrection(recording.correction, series, 0);
       store.setObjectiveImmersion(recording.immersion, series, 0);
@@ -849,7 +851,7 @@ public class ZeissLSMReader extends FormatReader {
         series, 0);
       store.setObjectiveLensNA(recording.lensNA, series, 0);
       store.setObjectiveIris(recording.iris, series, 0);
-      store.setObjectiveID("Objective:" + series, series, 0);
+      store.setObjectiveID(objectiveID, series, 0);
     }
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
@@ -859,7 +861,9 @@ public class ZeissLSMReader extends FormatReader {
       if (laser.type != null) {
         store.setLaserType(laser.type, series, nextLaser);
       }
-      store.setLightSourceID("LightSource:" + nextLaser, series, nextLaser);
+      String lightSourceID =
+        MetadataTools.createLSID("LightSource", series, nextLaser);
+      store.setLightSourceID(lightSourceID, series, nextLaser);
       nextLaser++;
     }
     else if (block instanceof Track) {
@@ -885,7 +889,7 @@ public class ZeissLSMReader extends FormatReader {
           nextDetectChannel);
       }
       if (channel.filter != null) {
-        String id = "Filter:" + nextFilter;
+        String id = MetadataTools.createLSID("Filter", series, nextFilter);
         if (channel.acquire && nextDetectChannel < getSizeC()) {
           store.setLogicalChannelSecondaryEmissionFilter(
             id, series, nextDetectChannel);
@@ -921,7 +925,7 @@ public class ZeissLSMReader extends FormatReader {
       }
       if (channel.channelName != null) {
         String detectorID =
-          "Detector:" + channel.channelName + "-" + (nextDetector + 1);
+          MetadataTools.createLSID("Detector", series, nextDetector);
         store.setDetectorID(detectorID, series, nextDetector);
         if (channel.acquire && nextDetector < getSizeC()) {
           store.setDetectorSettingsDetector(detectorID, series, nextDetector);
@@ -963,10 +967,11 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof BeamSplitter) {
       BeamSplitter beamSplitter = (BeamSplitter) block;
       if (beamSplitter.filterSet != null) {
-        store.setFilterSetID("FilterSet:" + beamSplitter.filterSet, series,
-          nextFilterSet);
+        String filterSetID =
+          MetadataTools.createLSID("FilterSet", series, nextFilterSet);
+        store.setFilterSetID(filterSetID, series, nextFilterSet);
         if (beamSplitter.filter != null) {
-          String id = "Dichroic:" + nextFilter;
+          String id = MetadataTools.createLSID("Dichroic", series, nextFilter);
           store.setDichroicID(id, series, nextFilter);
           store.setDichroicModel(beamSplitter.filter, series, nextFilter);
           store.setFilterSetDichroic(id, series, nextFilterSet);

@@ -292,12 +292,14 @@ public class PCIReader extends FormatReader {
     }
 
     if (binning > 0) {
-      store.setInstrumentID("Instrument:0", 0);
-      store.setDetectorID("Detector:0", 0, 0);
-      store.setImageInstrumentRef("Instrument:0", 0);
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      String detectorID = MetadataTools.createLSID("Detector", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setDetectorID(detectorID, 0, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        store.setDetectorSettingsDetector("Detector:0", 0, c);
+        store.setDetectorSettingsDetector(detectorID, 0, c);
         store.setDetectorSettingsBinning(binning + "x" + binning, 0, c);
       }
     }

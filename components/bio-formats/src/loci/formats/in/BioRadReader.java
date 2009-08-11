@@ -398,7 +398,7 @@ public class BioRadReader extends FormatReader {
     // look for companion metadata files
 
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
-    String[] list = parent.list();
+    String[] list = parent.list(true);
     Arrays.sort(list);
 
     Vector pics = new Vector();
@@ -488,7 +488,9 @@ public class BioRadReader extends FormatReader {
                   String idx = key.substring(index, key.indexOf("_", index));
                   int detector = Integer.parseInt(idx) - 1;
 
-                  store.setDetectorID("Detector:" + detector, 0, detector);
+                  String detectorID =
+                    MetadataTools.createLSID("Detector", 0, detector);
+                  store.setDetectorID(detectorID, 0, detector);
                   store.setDetectorType("Unknown", 0, detector);
 
                   if (key.endsWith("OFFSET")) {
@@ -679,7 +681,9 @@ public class BioRadReader extends FormatReader {
                   addGlobalMeta(prefix + "gain", values[i * 3 + 1]);
                   addGlobalMeta(prefix + "black level", values[i * 3 + 2]);
 
-                  store.setDetectorID("Detector:" + i, 0, i);
+                  String detectorID =
+                    MetadataTools.createLSID("Detector", 0, i);
+                  store.setDetectorID(detectorID, 0, i);
                   store.setDetectorOffset(new Float(values[i * 3]), 0, i);
                   store.setDetectorGain(new Float(values[i * 3 + 1]), 0, i);
                   store.setDetectorType("Unknown", 0, i);
@@ -909,12 +913,14 @@ public class BioRadReader extends FormatReader {
     store.setImageName(name, 0);
 
     // link Instrument and Image
-    store.setInstrumentID("Instrument:0", 0);
-    store.setImageInstrumentRef("Instrument:0", 0);
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
 
     // link Objective to Image using ObjectiveSettings
-    store.setObjectiveID("Objective:0", 0, 0);
-    store.setObjectiveSettingsObjective("Objective:0", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
 
     store.setObjectiveLensNA(new Float(lens), 0, 0);
     store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
@@ -924,7 +930,8 @@ public class BioRadReader extends FormatReader {
     // link Detector to Image
     for (int i=0; i<getEffectiveSizeC(); i++) {
       if (offset.size() > i || gain.size() > i) {
-        store.setDetectorSettingsDetector("Detector:" + i, 0, i);
+        String detectorID = MetadataTools.createLSID("Detector", 0, i);
+        store.setDetectorSettingsDetector(detectorID, 0, i);
       }
       if (i < offset.size()) {
         store.setDetectorSettingsOffset(offset.get(i), 0, i);
