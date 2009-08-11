@@ -445,9 +445,6 @@ public class ImageInfo {
         LogTools.print(table16[0] == null ? "null" : "" + table16[0].length);
       }
       LogTools.println(")");
-      if (indexed && table8 == null && table16 == null) {
-        LogTools.println("\t************ Warning: no LUT ************");
-      }
       if (table8 != null && table16 != null) {
         LogTools.println(
           "\t************ Warning: multiple LUTs ************");
@@ -683,6 +680,13 @@ public class ImageInfo {
         images[i - start] = AWTImageTools.makeImage(
           ImageTools.make24Bits(pix, sizeX, sizeY, false, false, min, max),
           sizeX, sizeY, FormatTools.isSigned(pixelType));
+      }
+
+      if (reader.isIndexed() && reader.get8BitLookupTable() == null &&
+        reader.get16BitLookupTable() == null)
+      {
+        LogTools.println("\t************ Warning: no LUT for plane #"
+          + i + " ************");
       }
 
       // check for pixel type mismatch
