@@ -79,7 +79,7 @@ public class MIASReader extends FormatReader {
   private int[] bpp;
 
   private Vector<String> plateDirs;
-  
+
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;
 
@@ -140,13 +140,19 @@ public class MIASReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return readers == null ? null : readers[0][0][0].get8BitLookupTable();
+    if (readers == null || readers[0][0][0].getCurrentFile() == null) {
+      return null;
+    }
+    return readers[0][0][0].get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return readers == null ? null : readers[0][0][0].get16BitLookupTable();
+    if (readers == null || readers[0][0][0].getCurrentFile() == null) {
+      return null;
+    }
+    return readers[0][0][0].get16BitLookupTable();
   }
 
   /**
@@ -554,6 +560,26 @@ public class MIASReader extends FormatReader {
       store.setPlateName(plateDir, plate);
       store.setPlateExternalIdentifier(plateDir, plate);
 
+      int nWells = tiffs[plate].length;
+      // HACK: if we don't have the analysis file, we don't how many
+      // rows/columns are in the plate
+      //
+      // assume that a 96 well plate is 8x12, and a 384 well plate is 16x24
+      if (wellRows == 0 || wellColumns == 0) {
+        if (nWells == 96) {
+          wellRows = 8;
+          wellColumns = 12;
+        }
+        else if (nWells == 384) {
+          wellRows = 16;
+          wellColumns = 24;
+        }
+        else {
+          throw new FormatException(
+            "Could not determine the plate dimensions.");
+        }
+      }
+
       for (int row=0; row<wellRows; row++) {
         for (int col=0; col<wellColumns; col++) {
           store.setWellRow(new Integer(row), plate, row * wellColumns + col);
@@ -561,7 +587,7 @@ public class MIASReader extends FormatReader {
         }
       }
 
-      for (int well=0; well<tiffs[plate].length; well++) {
+      for (int well=0; well<nWells; well++) {
         int wellIndex = wellNumber[plate][well];
 
         int series = getSeriesNumber(plate, well);
