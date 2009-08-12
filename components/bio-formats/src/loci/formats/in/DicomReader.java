@@ -118,6 +118,7 @@ public class DicomReader extends FormatReader {
   private boolean isJP2K = false;
   private boolean isJPEG = false;
   private boolean isRLE = false;
+  private boolean isDeflate = false;
   private boolean inverted;
 
   private String date, time, imageType;
@@ -307,6 +308,9 @@ public class DicomReader extends FormatReader {
         }
       }
     }
+    else if (isDeflate) {
+      /* debug */ System.out.println("look at me, I found Deflate data");
+    }
     else {
       // plane is not compressed
       int c = isIndexed() ? 1 : getSizeC();
@@ -345,7 +349,7 @@ public class DicomReader extends FormatReader {
     super.close();
     bitsPerPixel = location = elementLength = vr = 0;
     oddLocations = inSequence = bigEndianTransferSyntax = false;
-    isJPEG = isRLE = false;
+    isJPEG = isJP2K = isRLE = isDeflate = false;
     lut = null;
     offsets = null;
     shortLut = null;
@@ -401,12 +405,12 @@ public class DicomReader extends FormatReader {
     boolean signed = false;
 
     while (decodingTags) {
-      if (in.getFilePointer() + 2 >= in.length()) {
+      if (in.getFilePointer() + 4 >= in.length()) {
         break;
       }
       int tag = getNextTag(in);
 
-      if (elementLength == 0) continue;
+      if (elementLength <= 0 || tag < 0) continue;
 
       oddLocations = (location & 1) != 0;
 
@@ -419,6 +423,7 @@ public class DicomReader extends FormatReader {
           if (s.startsWith("1.2.840.10008.1.2.4.9")) isJP2K = true;
           else if (s.startsWith("1.2.840.10008.1.2.4")) isJPEG = true;
           else if (s.startsWith("1.2.840.10008.1.2.5")) isRLE = true;
+          else if (s.equals("1.2.8.10008.1.2.1.99")) isDeflate = true;
           else if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
             throw new FormatException("Sorry, compressed DICOM images not " +
               "supported");
@@ -620,6 +625,7 @@ public class DicomReader extends FormatReader {
       FilePattern pattern =
         new FilePattern(currentFile.getName(), directory.getAbsolutePath());
       String[] patternFiles = pattern.getFiles();
+      if (patternFiles == null) patternFiles = new String[0];
       Arrays.sort(patternFiles);
       String[] files = directory.list();
       Arrays.sort(files);
@@ -665,6 +671,7 @@ public class DicomReader extends FormatReader {
           if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 100))
           {
             int position = Integer.parseInt(instance) - 1;
+            if (position < 0) position = 0;
             if (position < fileList.size()) {
               while (position < fileList.size() &&
                 fileList.get(position) != null)
@@ -691,6 +698,7 @@ public class DicomReader extends FormatReader {
       for (int i=0; i<files.length; i++) {
         if (files[i] != null) fileList.add(files[i]);
       }
+      if (fileList.size() == 0) fileList.add(currentId);
     }
     else if (fileList == null) {
       fileList = new Vector<String>();
@@ -708,6 +716,10 @@ public class DicomReader extends FormatReader {
     core[0].metadataComplete = true;
     core[0].falseColor = false;
     if (isRLE) core[0].interleaved = false;
+
+
+    if (getSizeX() == 0) core[0].sizeX = 1;
+    if (getSizeY() == 0) core[0].sizeY = 1;
 
     // The metadata store we're working with.
     MetadataStore store =
@@ -961,7 +973,7 @@ public class DicomReader extends FormatReader {
         return min;
       default:
         vr = IMPLICIT_VR;
-        return DataTools.bytesToInt(b, stream.isLittleEndian());
+        return DataTools.bytesToInt(b, 2, 2, stream.isLittleEndian());
     }
   }
 
