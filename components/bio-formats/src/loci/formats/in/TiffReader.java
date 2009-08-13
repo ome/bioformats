@@ -24,9 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.FilterMetadata;
@@ -90,6 +93,35 @@ public class TiffReader extends BaseTiffReader {
     if (ifds.size() > 1) core[0].orderCertain = false;
 
     description = null;
+
+    // check for reusable proprietary tags (65000-65535),
+    // which may contain additional metadata
+
+    Integer[] tags = ifds.get(0).keySet().toArray(new Integer[0]);
+    for (Integer tag : tags) {
+      if (tag.intValue() >= 65000) {
+        Object value = ifds.get(0).get(tag);
+        if (value instanceof short[]) {
+          short[] s = (short[]) value;
+          byte[] b = new byte[s.length];
+          for (int i=0; i<b.length; i++) {
+            b[i] = (byte) s[i];
+          }
+          String metadata = DataTools.stripString(new String(b));
+          if (metadata.indexOf("xml") != -1) {
+            metadata = metadata.substring(metadata.indexOf("<"));
+            metadata = "<root>" + XMLTools.sanitizeXML(metadata) + "</root>";
+            Hashtable<String, String> xmlMetadata = XMLTools.parseXML(metadata);
+            for (String key : xmlMetadata.keySet()) {
+              addGlobalMeta(key, xmlMetadata.get(key));
+            }
+          }
+          else {
+            addGlobalMeta(tag.toString(), metadata);
+          }
+        }
+      }
+    }
 
     // check for ImageJ-style TIFF comment
     boolean ij = checkCommentImageJ(comment);

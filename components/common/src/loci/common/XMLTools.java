@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -80,6 +81,14 @@ public final class XMLTools {
       }
     }
     return s;
+  }
+
+  public static Hashtable<String, String> parseXML(String xml)
+    throws IOException
+  {
+    MetadataHandler handler = new MetadataHandler();
+    parseXML(xml, handler);
+    return handler.getMetadata();
   }
 
   public static void parseXML(String xml, DefaultHandler handler)
@@ -342,6 +351,36 @@ public final class XMLTools {
     public void warning(SAXParseException e) {
       LogTools.println("warning: " + e.getMessage());
       ok = false;
+    }
+  }
+
+  /** Used to retrieve key/value pairs from XML. */
+  private static class MetadataHandler extends DefaultHandler {
+    private String currentQName;
+    private Hashtable<String, String> metadata =
+      new Hashtable<String, String>();
+
+    // -- MetadataHandler API methods --
+
+    public Hashtable<String, String> getMetadata() {
+      return metadata;
+    }
+
+    // -- DefaultHandler API methods --
+
+    public void characters(char[] data, int start, int len) {
+      metadata.put(currentQName, new String(data, start, len));
+    }
+
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (attributes.getLength() == 0) currentQName += " - " + qName;
+      else currentQName = qName;
+      for (int i=0; i<attributes.getLength(); i++) {
+        metadata.put(qName + " - " + attributes.getQName(i),
+          attributes.getValue(i));
+      }
     }
   }
 
