@@ -16,9 +16,9 @@
 	# Written by:  Ilya G. Goldberg, Josiah Johnston, Andrew J Patterson 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-09"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-09"
-	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
+<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2009-09"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2009-09"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">

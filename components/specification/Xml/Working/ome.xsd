@@ -16,36 +16,36 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-09"
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09" 
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-09" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09" 
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2008-09" 
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" 
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09" 
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" 
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
 	<!-- Using the svn location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ROI.xsd"/>
     <!-- Using the local directory location for import 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09" schemaLocation="AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09" schemaLocation="STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" schemaLocation="BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" schemaLocation="CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" schemaLocation="SPW.xsd"/>http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" schemaLocation="SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2008-09" schemaLocation="ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" schemaLocation="AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09" schemaLocation="STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" schemaLocation="CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" schemaLocation="SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2009-09" schemaLocation="ROI.xsd"/>
     -->
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
@@ -243,7 +243,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element name="AcquiredDate" minOccurs="0" maxOccurs="1" type="xsd:dateTime">
 					<xsd:annotation>
 						<xsd:documentation>
-							The acquisition date of the Image/
+							The acquisition date of the Image.
 							The element contains a string in the ISO 8601 dateTime format (i.e. 1988-04-07T18:39:09)
 						</xsd:documentation>
 					</xsd:annotation>
@@ -306,7 +306,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="required" type="PixelType">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The variable type used to represent each pixel in the image.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -380,6 +380,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="Plane"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
+				The Plane object holds microscope stage and image timing data 
+				for a given channel/z-section/timepoint. 
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -413,21 +415,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:attribute name="PositionX" use="optional" type="xsd:float">
 							<xsd:annotation>
 								<xsd:documentation>
-									MISSING
+									The X position of the stage.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:attribute>
 						<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 							<xsd:annotation>
 								<xsd:documentation>
-									MISSING
+									The Y position of the stage.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:attribute>
 						<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
 							<xsd:annotation>
 								<xsd:documentation>
-									MISSING
+									The Z position of the stage.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:attribute>
@@ -447,24 +449,24 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="TheZ" use="required" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The Z-section this plane is for.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TheT" use="required" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The timepoint this plane is for.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TheC" use="required" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The channel this plane is for.
 					</xsd:documentation>
 				</xsd:annotation>
-			</xsd:attribute>
+			</xsd:attribute> 
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Channel"> <!-- top level definition -->
@@ -476,20 +478,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				constituting a ChannelComponent of the FTIR Logical Channel.  An RGB image where the Red, Green and Blue components do not reflect discrete probes but are
 				instead the output of a color camera would be treated similarly - one Logical channel with three ChannelComponents in this case.
 				The total number of ChannelComponents for a set of pixels must equal SizeC.
-				The SamplesPerPixel attribute is the number of channel components in the logical channel.
 				The IlluminationType attribute is a string enumeration which may be set to 'Transmitted', 'Epifluorescence', 'Oblique', or 'NonLinear'.
 				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
 				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
-				The Mode attribute describes the type of microscopy performed for each channel.  This may be set to:
-				'Wide-field','Wide-field','Laser Scanning Microscopy','Laser Scanning Confocal','Spinning Disk Confocal','Slit Scan Confocal','Multi-Photon Microscopy',
-				'Structured Illumination','Single Molecule Imaging','Total Internal Reflection','Fluorescence-Lifetime','Spectral Imaging',
-				'Fluorescence Correlation Spectroscopy','Near Field Scanning Optical Microscopy','Second Harmonic Generation Imaging'.
-				The ContrastMethod attribute may be set to 'Brightfield','Phase','DIC','Hoffman Modulation','Oblique Illumination','Polarized Light','Darkfield','Fluorescence'.
-				The ExcitationWavelength, EmissionWavelength and Fluor attributes allow specifying the nominal excitation and emission wavelengths and the type of fluor being imaged in a particular channel.
-				The Fluor attribute is used for fluorescence images, while the Name attribute is used to name channels that are not imaged using fluorescence techniques.
 				The user interface logic for labeling a given channel for the user should use the first existing attribute in the following sequence:
 				Name -> Fluor -> EmissionWavelength -> ChannelComponent/Index.
-				The NDfilter attribute is used to specify (in O.D. units) the combined effect of any neutral density filters used.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -499,45 +492,46 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="DetectorSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="ChannelID">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
+			<xsd:attribute name="ID" use="required" type="ChannelID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						A name for the channel that is suitable be presented to the user.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SamplesPerPixel" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The number of samples the detector takes to form each pixel value.
+						The SamplesPerPixel attribute is the number of channel components in the logical channel.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SecondaryEmissionFilter" use="optional" type="FilterID">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The primary filter in the emission path is defines as part 
+						of the FilterSet. If a second filter is also used then it 
+						is linked here. If there is no primary defined in the 
+						FilterSet then this should also be absent. 
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SecondaryExcitationFilter" use="optional" type="FilterID">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The primary filter in the excitation path is defines as part 
+						of the FilterSet. If a second filter is also used then it 
+						is linked here. If there is no primary defined in the 
+						FilterSet then this should also be absent. 
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="IlluminationType" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The method of illumination used to capture the channel. 
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -562,7 +556,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="AcquisitionMode" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						AcquisitionMode describes the type of microscopy performed for each channel
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -588,7 +582,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="ContrastMethod" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						ContrastMethod describes the technique used to achieve contrast for each channel
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -622,14 +616,15 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Fluor" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The Fluor attribute is used for fluorescence images.
+						This is the name of the fluorophore used to produce this channel
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="NDFilter" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The NDfilter attribute is used to specify (in O.D. units) the combined effect of any neutral density filters used.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>	
@@ -748,21 +743,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="X" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The X position of the stage label.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The Y position of the stage label.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Z" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The Z position of the stage label.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -788,7 +783,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The type of manipulation performed.
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -814,18 +809,22 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				This element describes the instrument used to capture the Image.
-				It is primarily a container for manufacturer's model and catalog numbers for the
-				Microscope, LightSource, Detector, Objective and Filters components.
-				Additionally, one or more OTF elements may be specified, describing the optical transfer function under different conditions.
+				It is primarily a container for manufacturer's model and catalog 
+				numbers for the Microscope, LightSource, Detector, Objective and 
+				Filters components.
+				Additionally, one or more OTF elements may be specified, describing 
+				the optical transfer function under different conditions.
 				The Objective element contains the additional elements LensNA and Magnification.
-				The Filters element can be composed either of separate excitation, emission filters and a dichroic mirror
-				or a single filter set.  Within the Image itself, a reference is made to this one Filter element.
+				The Filters element can be composed either of separate excitation, 
+				emission filters and a dichroic mirror or a single filter set. 
+				Within the Image itself, a reference is made to this one Filter element.
 				The OTF element contains an optical transfer function.
 				The same OTF can be used for all wavelengths, or there may be one per wavelength.
 				There may be multiple light sources, detectors, objectives and filters on a microscope.
 				Each of these has their own ID attribute, which can be referred to from Channel.
-				It is understood that the light path configuration can be different for each channel,
-				but cannot be different for each timepoint or each plane of an XYZ stack.
+				It is understood that the light path configuration can be different 
+				for each channel, but cannot be different for each timepoint or 
+				each plane of an XYZ stack.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -867,12 +866,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="OTF"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The optical transfer function. FilterSetRef refers to the set of filters used in computing the OTF.
-				BitsPerPixel is an integer '1', '8', '16'.
-				The OpticalAxisAveraged is a boolean specifying whether or not optical axis averaging was done.
-				SizeX, SizeY specify the width and height of the OTF.
-				This element must contain a BinData element containing the Base64-encoded OTF.
-				Both of these work the same way as they do for the Data element within Image.
+				The optical transfer function. FilterSetRef refers to the set of 
+				filters used in computing the OTF.
+				This element must contain a BinData element containing the 
+				Base64-encoded OTF. These work the same way as they do for the 
+				Data element within Image.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -885,28 +883,29 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="required" type="PixelType">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The variable type used to specify the size of pixel the OTF is for designed for.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="OpticalAxisAveraged" use="required" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The OpticalAxisAveraged is a boolean specifying whether or not 
+						optical axis averaging was done.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The width of the OTF.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The height of the OTF.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -916,34 +915,37 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Image sample elements -->
 	<xsd:element name="ImagingEnvironment"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation>The Temperature is in Celsius, AirPressure is in millibars, Humidity and CO2Percent are percent-fractions from 0.0 to 1.0.</xsd:documentation>
+			<xsd:documentation>
+				This describes the environment that the biological sample was in 
+				during the experiment.
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="Temperature" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The Temperature is in Celsius.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="AirPressure" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						AirPressure is in millibars.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Humidity" use="optional" type="PercentFraction">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						Humidity as a percent-fraction from 0.0 to 1.0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CO2Percent" use="optional" type="PercentFraction">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						CO2Percent as a percent-fractions from 0.0 to 1.0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1013,7 +1015,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="Leader"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				Contact information for a Group leader specified using a reference to an Experimenter element defined elsewhere in the document.
+				Contact information for a Group leader specified using a reference 
+				to an Experimenter element defined elsewhere in the document.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1027,7 +1030,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="Contact"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The Contact element describes the contact person for a group of experimenters - typically a project leader or lab manager.
+				The Contact element describes the contact person for a group of 
+				experimenters - typically a project leader or lab manager.
 				This person is specified as a reference to an OME experimenter.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1499,34 +1503,51 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
-					<xsd:attribute name="ExcitationFilterRef" use="optional" type="FilterID" >
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="DichroicRef" use="optional" type="DichroicID">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="EmissionFilterRef" use="optional" type="FilterID">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="ID" use="required" type="FilterSetID">
-						<xsd:annotation>
-							<xsd:documentation>
-								MISSING
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
+					<xsd:sequence>
+						<xsd:element name="ExcitationFilterRef" minOccurs="0" maxOccurs="1" >
+							<xsd:annotation>
+								<xsd:documentation>
+									The Filter placed in the Excitation light path.
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="OME:Reference">
+										<xsd:attribute name="ID" use="required" type="FilterID"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="DichroicRef" minOccurs="0" maxOccurs="1" >
+							<xsd:annotation>
+								<xsd:documentation>
+									The 
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="OME:Reference">
+										<xsd:attribute name="ID" use="required" type="DichroicID"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="EmissionFilterRef" minOccurs="0" maxOccurs="1" >
+							<xsd:annotation>
+								<xsd:documentation>
+									The Filter placed in the Emission light path.
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="OME:Reference">
+										<xsd:attribute name="ID" use="required" type="FilterID"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

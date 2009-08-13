@@ -17,16 +17,16 @@
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema
-	targetNamespace = "http://openmicroscopy.com/Schemas/DataHistory/2008-09"
-	 xmlns:DH = "http://openmicroscopy.com/Schemas/DataHistory/2008-09"
+	targetNamespace = "http://openmicroscopy.com/Schemas/DataHistory/2009-09"
+	 xmlns:DH = "http://openmicroscopy.com/Schemas/DataHistory/2009-09"
 	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	 xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
+	 xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
 	 version="1"
 	 elementFormDefault = "qualified">
 	<!-- Using the svn location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd"/>
 	<!-- Using the local directory location for import 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation="ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="ome.xsd"/>
 	-->
 	<xsd:element name = "Input"> <!-- top level definition -->
 		<xsd:annotation>
