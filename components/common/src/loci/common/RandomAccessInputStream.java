@@ -296,30 +296,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
-    int status = checkEfficiency(array.length);
-    int n = 0;
-
-    if (status == DIS) {
-      return read(array, 0, array.length);
-    }
-    else if (status == ARRAY) {
-      n = array.length;
-      if ((buf.length - afp) < array.length) {
-        n = buf.length - (int) afp;
-      }
-      System.arraycopy(buf, (int) afp, array, 0, n);
-    }
-    else n = raf.read(array);
-
-    afp += n;
-    if (status == DIS) fp += n;
-    if (n < array.length && ext > 0) {
-      while (n < array.length && ext > 0) {
-        n++;
-        ext--;
-      }
-    }
-    return n;
+    return read(array, 0, array.length);
   }
 
   /**
@@ -329,26 +306,31 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     int toRead = n;
     int status = checkEfficiency(n);
 
-    if (status == DIS) {
-      int p = dis.read(array, offset, n);
-      if (p == -1) return -1;
-      if ((p >= 0) && ((fp + p) < length)) {
-        int k = p;
-        while ((k >= 0) && (p < n) && ((afp + p) <= length) &&
-          ((offset + p) < array.length))
-        {
-          k = dis.read(array, offset + p, n - p);
-          if (k >= 0) p += k;
+    try {
+      if (status == DIS) {
+        int p = dis.read(array, offset, n);
+        if (p == -1) return -1;
+        if ((p >= 0) && ((fp + p) < length)) {
+          int k = p;
+          while ((k >= 0) && (p < n) && ((afp + p) <= length) &&
+            ((offset + p) < array.length))
+          {
+            k = dis.read(array, offset + p, n - p);
+            if (k >= 0) p += k;
+          }
         }
+        n = p;
       }
-      n = p;
+      else if (status == ARRAY) {
+        if ((buf.length - afp) < n) n = buf.length - (int) afp;
+        System.arraycopy(buf, (int) afp, array, offset, n);
+      }
+      else {
+        n = raf.read(array, offset, n);
+      }
     }
-    else if (status == ARRAY) {
-      if ((buf.length - afp) < n) n = buf.length - (int) afp;
-      System.arraycopy(buf, (int) afp, array, offset, n);
-    }
-    else {
-      n = raf.read(array, offset, n);
+    catch (IOException e) {
+      throw new HandleException("Error reading from" + file, e);
     }
     afp += n;
     if (status == DIS) fp += n;
@@ -373,14 +355,19 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   public void readFully(byte[] array, int offset, int n) throws IOException {
     int status = checkEfficiency(n);
 
-    if (status == DIS) {
-      dis.readFully(array, offset, n);
+    try {
+      if (status == DIS) {
+        dis.readFully(array, offset, n);
+      }
+      else if (status == ARRAY) {
+        System.arraycopy(buf, (int) afp, array, offset, n);
+      }
+      else {
+        raf.readFully(array, offset, n);
+      }
     }
-    else if (status == ARRAY) {
-      System.arraycopy(buf, (int) afp, array, offset, n);
-    }
-    else {
-      raf.readFully(array, offset, n);
+    catch (IOException e) {
+      throw new HandleException("Error reading from " + file, e);
     }
     afp += n;
     if (status == DIS) fp += n;

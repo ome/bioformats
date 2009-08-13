@@ -118,15 +118,15 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see IRandomAccess.seek(long) */
   public void seek(long pos) throws IOException {
-    if (pos < 0) throw new IOException("pos < 0");
-    if (pos > Integer.MAX_VALUE) throw new IOException("pos is too large");
+    if (pos < 0) throw new HandleException("pos < 0");
+    if (pos > Integer.MAX_VALUE) throw new HandleException("pos is too large");
     fp = (int) pos;
   }
 
   /* @see IRandomAccess.setLength(long) */
   public void setLength(long newLength) throws IOException {
     if (newLength > Integer.MAX_VALUE) {
-      throw new IOException("newLength is too large");
+      throw new HandleException("newLength is too large");
     }
 
     length = newLength;
@@ -147,13 +147,17 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see java.io.DataInput.readByte() */
   public byte readByte() throws IOException {
-    if (fp + 1 > length()) throw new EOFException();
+    if (fp + 1 > length()) {
+      throw new EOFException("length = " + length() + ", fp = " + fp);
+    }
     return array[fp++];
   }
 
   /* @see java.io.DataInput.readChar() */
   public char readChar() throws IOException {
-    if (fp + 2 > length()) throw new EOFException();
+    if (fp + 2 > length()) {
+      throw new EOFException("length = " + length() + ", fp = " + fp);
+    }
     char c = (char) DataTools.bytesToShort(array, fp, false);
     fp += 2;
     return c;
@@ -176,14 +180,19 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see java.io.DataInput.readFully(byte[], int, int) */
   public void readFully(byte[] b, int off, int len) throws IOException {
-    if (fp + len > length()) throw new EOFException();
+    if (fp + len > length()) {
+      throw new EOFException(
+        "length = " + length() + ", fp = " + fp + ", len = " + len);
+    }
     System.arraycopy(array, fp, b, off, len);
     fp += len;
   }
 
   /* @see java.io.DataInput.readInt() */
   public int readInt() throws IOException {
-    if (fp + 4 > length()) throw new EOFException();
+    if (fp + 4 > length()) {
+      throw new EOFException("length = " + length() + ", fp = " + fp);
+    }
     int i = DataTools.bytesToInt(array, fp, false);
     fp += 4;
     return i;
@@ -196,7 +205,9 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see java.io.DataInput.readLong() */
   public long readLong() throws IOException {
-    if (fp + 8 > length()) throw new EOFException();
+    if (fp + 8 > length()) {
+      throw new EOFException("length = " + length + ", fp = " + fp);
+    }
     long l = DataTools.bytesToLong(array, fp, false);
     fp += 8;
     return l;
@@ -204,7 +215,9 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see java.io.DataInput.readShort() */
   public short readShort() throws IOException {
-    if (fp + 2 > length()) throw new EOFException();
+    if (fp + 2 > length()) {
+      throw new EOFException("length = " + length + ", fp = " + fp);
+    }
     short s = DataTools.bytesToShort(array, fp, false);
     fp += 2;
     return s;
@@ -212,13 +225,17 @@ public class ByteArrayHandle implements IRandomAccess {
 
   /* @see java.io.DataInput.readUnsignedByte() */
   public int readUnsignedByte() throws IOException {
-    if (fp + 1 > length()) throw new EOFException();
+    if (fp + 1 > length()) {
+      throw new EOFException("length = " + length() + ", fp = " + fp);
+    }
     return DataTools.bytesToInt(array, fp++, 1, false);
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
   public int readUnsignedShort() throws IOException {
-    if (fp + 2 > length()) throw new EOFException();
+    if (fp + 2 > length()) {
+      throw new EOFException("length = " + length() + ", fp = " + fp);
+    }
     int i = DataTools.bytesToInt(array, fp, 2, false);
     fp += 2;
     return i;

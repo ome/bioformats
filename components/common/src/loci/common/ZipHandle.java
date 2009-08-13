@@ -56,7 +56,7 @@ public class ZipHandle extends CompressedRandomAccess {
     super();
     this.file = file;
     if (!isZipFile(file)) {
-      throw new IOException(file + " is not a Zip file.");
+      throw new HandleException(file + " is not a Zip file.");
     }
     zip = new ZipFile(file);
 
@@ -79,7 +79,7 @@ public class ZipHandle extends CompressedRandomAccess {
       else if (entry == null) entry = ze; // default to first entry
     }
     if (entry == null) {
-      throw new IOException("Zip file '" + file + "' has no entries");
+      throw new HandleException("Zip file '" + file + "' has no entries");
     }
 
     length = entry.getSize();

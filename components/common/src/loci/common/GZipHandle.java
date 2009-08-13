@@ -49,7 +49,7 @@ public class GZipHandle extends CompressedRandomAccess {
     super();
     this.file = file;
     if (!isGZipFile(file)) {
-      throw new IOException(file + " is not a gzip file.");
+      throw new HandleException(file + " is not a gzip file.");
     }
 
     resetStream();

@@ -48,7 +48,7 @@ public class BZip2Handle extends CompressedRandomAccess {
     super();
     this.file = file;
     if (!isBZip2File(file)) {
-      throw new IOException(file + " is not a BZip2 file.");
+      throw new HandleException(file + " is not a BZip2 file.");
     }
 
     resetStream();
