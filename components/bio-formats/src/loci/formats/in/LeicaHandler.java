@@ -551,20 +551,33 @@ public class LeicaHandler extends DefaultHandler {
       long ms = (high + low) / 10000;
       if (count == 0) {
         String date = DateTools.convertDate(ms, DateTools.COBOL);
-        store.setImageCreationDate(date, numDatasets);
+        if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
+          System.currentTimeMillis())
+        {
+          store.setImageCreationDate(date, numDatasets);
+        }
         firstStamp = ms;
         store.setPlaneTimingDeltaT(new Float(0), numDatasets, 0, count);
       }
       else {
-        ms -= firstStamp;
-        store.setPlaneTimingDeltaT(new Float(ms / 1000), numDatasets, 0, count);
+        CoreMetadata coreMeta = core.get(numDatasets);
+        int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
+        if (count < nImages) {
+          ms -= firstStamp;
+          store.setPlaneTimingDeltaT(
+            new Float(ms / 1000), numDatasets, 0, count);
+        }
       }
 
       count++;
     }
     else if (qName.equals("RelTimeStamp")) {
-      Float time = new Float(attributes.getValue("Time"));
-      store.setPlaneTimingDeltaT(time, numDatasets, 0, count++);
+      CoreMetadata coreMeta = core.get(numDatasets);
+      int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
+      if (count < nImages) {
+        Float time = new Float(attributes.getValue("Time"));
+        store.setPlaneTimingDeltaT(time, numDatasets, 0, count++);
+      }
     }
     else if (qName.equals("Wheel")) {
       filterIndex = Integer.parseInt(attributes.getValue("FilterIndex"));
