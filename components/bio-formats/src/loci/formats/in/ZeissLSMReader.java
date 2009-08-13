@@ -159,6 +159,7 @@ public class ZeissLSMReader extends FormatReader {
   private boolean splitPlanes = false;
   private float zoom;
   private Vector<String> imageNames;
+  private String binning;
 
   // -- Constructor --
 
@@ -184,6 +185,7 @@ public class ZeissLSMReader extends FormatReader {
     splitPlanes = false;
     zoom = 0f;
     imageNames = null;
+    binning = null;
   }
 
   // -- IFormatReader API methods --
@@ -840,10 +842,8 @@ public class ZeissLSMReader extends FormatReader {
       if (recording.acquire) {
         store.setImageDescription(recording.description, series);
         store.setImageCreationDate(recording.startTime, series);
-        for (int c=0; c<getEffectiveSizeC(); c++) {
-          store.setDetectorSettingsBinning(recording.binning, series, c);
-        }
         store.setObjectiveSettingsObjective(objectiveID, series);
+        binning = recording.binning;
       }
       store.setObjectiveCorrection(recording.correction, series, 0);
       store.setObjectiveImmersion(recording.immersion, series, 0);
@@ -929,6 +929,7 @@ public class ZeissLSMReader extends FormatReader {
         store.setDetectorID(detectorID, series, nextDetector);
         if (channel.acquire && nextDetector < getSizeC()) {
           store.setDetectorSettingsDetector(detectorID, series, nextDetector);
+          store.setDetectorSettingsBinning(binning, series, nextDetector);
         }
       }
       if (channel.amplificationGain != null) {
