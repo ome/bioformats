@@ -7,11 +7,14 @@
     </meta>
     <projectTree name="omeOxySvnProject.xpr">
         <folder name="SampleFiles">
+            <file name="BrokenConstraints.xml"/>
+            <file name="BrokenConstraintsSmall.xml"/>
             <file name="completesample-local.xml"/>
             <file name="completesample.xml"/>
             <file name="completesamplenopre.xml"/>
             <file name="min-sample.xml"/>
             <file name="objective-sample.xml"/>
+            <file name="ProposedChanges.txt"/>
             <file name="roi-sa-sample.xml"/>
             <file name="roi-sample.xml"/>
             <file name="sample-updated.ome.xml"/>
@@ -19,15 +22,12 @@
         <file name="AnalysisChain.xsd"/>
         <file name="AnalysisModule.xsd"/>
         <file name="BinaryFile.xsd"/>
-        <file name="BrokenConstraints.xml"/>
-        <file name="BrokenConstraintsSmall.xml"/>
         <file name="CA.xsd"/>
         <file name="CLI.xsd"/>
         <file name="DataHistory.xsd"/>
         <file name="MLI.xsd"/>
         <file name="ome.xsd"/>
         <file name="OMERO.xsd"/>
-        <file name="ProposedChanges.txt"/>
         <file name="ROI.xsd"/>
         <file name="SA.xsd"/>
         <file name="SPW.xsd"/>

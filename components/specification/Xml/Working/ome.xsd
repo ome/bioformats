@@ -1512,7 +1512,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							</xsd:annotation>
 							<xsd:complexType>
 								<xsd:complexContent>
-									<xsd:extension base="OME:Reference">
+									<xsd:extension base="Reference">
 										<xsd:attribute name="ID" use="required" type="FilterID"/>
 									</xsd:extension>
 								</xsd:complexContent>
@@ -1526,7 +1526,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							</xsd:annotation>
 							<xsd:complexType>
 								<xsd:complexContent>
-									<xsd:extension base="OME:Reference">
+									<xsd:extension base="Reference">
 										<xsd:attribute name="ID" use="required" type="DichroicID"/>
 									</xsd:extension>
 								</xsd:complexContent>
@@ -1540,7 +1540,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							</xsd:annotation>
 							<xsd:complexType>
 								<xsd:complexContent>
-									<xsd:extension base="OME:Reference">
+									<xsd:extension base="Reference">
 										<xsd:attribute name="ID" use="required" type="FilterID"/>
 									</xsd:extension>
 								</xsd:complexContent>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
-	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-09"
-	xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
+<ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
+	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+	xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 ome.xsd http://www.openmicroscopy.org/Schemas/SPW/2008-09 SPW.xsd">
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 ome.xsd http://www.openmicroscopy.org/Schemas/SPW/2009-09 SPW.xsd">
 	<ome:Project ID="Project:1">
 		<ome:ExperimenterRef ID="Experimenter:1"/>
 		<ome:GroupRef ID="Group:1"/>
