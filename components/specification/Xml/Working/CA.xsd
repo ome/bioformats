@@ -55,7 +55,6 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref = "DatasetRef" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xsd:element ref = "Region" minOccurs = "0" maxOccurs = "unbounded"/>
 				<xsd:element ref = "CustomAttributes" minOccurs = "0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name = "ID" use = "required" type = "OME:ImageID"/>
@@ -65,17 +64,6 @@
 			<xsd:attribute name = "Experimenter" use="optional" type = "OME:ExperimenterID"/>
 			<xsd:attribute name = "Group" use="optional" type = "OME:GroupID"/>
 			<xsd:attribute name = "DefaultPixels" use="optional" type = "OME:PixelsID"/>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name = "Region"> <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref = "Region" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xsd:element ref = "CustomAttributes" minOccurs = "0" maxOccurs="1"/>
-			</xsd:sequence>
-			<xsd:attribute name = "ID" use = "required" type = "OME:RegionID"/>
-			<xsd:attribute name = "Name" use="optional" type = "xsd:string"/>
-			<xsd:attribute name = "Tag" use="optional" type = "xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name = "CustomAttributes"> <!-- top level definition -->
