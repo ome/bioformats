@@ -75,7 +75,7 @@ public class MIASReader extends FormatReader {
   private int tileRows, tileCols;
   private int tileWidth, tileHeight;
 
-  private int wellRows, wellColumns;
+  private int wellColumns;
   private int[] bpp;
 
   private Vector<String> plateDirs;
@@ -252,7 +252,7 @@ public class MIASReader extends FormatReader {
       wellNumber = null;
       tileWidth = tileHeight = 0;
       plateDirs = null;
-      wellRows = wellColumns = 0;
+      wellColumns = 0;
       bpp = null;
       plateAndWell = null;
       plateFiles = null;
@@ -586,7 +586,6 @@ public class MIASReader extends FormatReader {
           if (cols[col].equals("AreaCode")) {
             String wellID = d[col].replaceAll("\\D", "");
             wellColumns = Integer.parseInt(wellID);
-            wellRows = (int) (d[col].charAt(0) - 'A') + 1;
           }
         }
       }
@@ -618,32 +617,27 @@ public class MIASReader extends FormatReader {
       // rows/columns are in the plate
       //
       // assume that a 96 well plate is 8x12, and a 384 well plate is 16x24
-      if (wellRows == 0 || wellColumns == 0) {
+      if (wellColumns == 0) {
         if (nWells == 96) {
-          wellRows = 8;
           wellColumns = 12;
         }
         else if (nWells == 384) {
-          wellRows = 16;
           wellColumns = 24;
         }
         else {
           warn("Could not determine the plate dimensions.");
           wellColumns = 24;
-          wellRows = nWells / wellColumns;
-          if (wellRows == 0) wellRows = 1;
-        }
-      }
-
-      for (int row=0; row<wellRows; row++) {
-        for (int col=0; col<wellColumns; col++) {
-          store.setWellRow(new Integer(row), plate, row * wellColumns + col);
-          store.setWellColumn(new Integer(col), plate, row * wellColumns + col);
         }
       }
 
       for (int well=0; well<nWells; well++) {
         int wellIndex = wellNumber[plate][well];
+
+        int row = wellIndex / wellColumns;
+        int wellCol = (well % wellColumns) + 1;
+
+        store.setWellRow(new Integer(row), plate, wellIndex);
+        store.setWellColumn(new Integer(wellCol), plate, wellIndex);
 
         int series = getSeriesNumber(plate, well);
         String imageID = MetadataTools.createLSID("Image", series);
@@ -652,8 +646,7 @@ public class MIASReader extends FormatReader {
 
         // populate Image/Pixels metadata
         store.setImageExperimentRef("Experiment:" + experimentName, series);
-        char wellRow = (char) ('A' + (wellIndex / wellColumns));
-        int wellCol = (well % wellColumns) + 1;
+        char wellRow = (char) ('A' + row);
 
         store.setImageID(imageID, series);
         store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol,
