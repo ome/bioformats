@@ -1272,7 +1272,7 @@ public class ZeissLSMReader extends FormatReader {
           {
             String filename = tableRow[col].trim();
             filename = filename.replace('\\', File.separatorChar);
-            filename = filename.replaceAll("/", File.separator);
+            filename = filename.replace('/', File.separatorChar);
             filename =
               filename.substring(filename.lastIndexOf(File.separator) + 1);
             if (filename.length() > 0) {
