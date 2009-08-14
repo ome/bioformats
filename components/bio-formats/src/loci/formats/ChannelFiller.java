@@ -172,4 +172,11 @@ public class ChannelFiller extends ReaderWrapper {
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
+  /* @see IFormatReader#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+    MetadataStore store = getMetadataStore();
+    MetadataTools.populatePixels(store, this, false, false);
+  }
+
 }

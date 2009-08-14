@@ -254,7 +254,7 @@ public final class MetadataTools {
    * metadata from the given reader.
    */
   public static void populatePixels(MetadataStore store, IFormatReader r) {
-    populatePixels(store, r, false);
+    populatePixels(store, r, false, true);
   }
 
   /**
@@ -265,11 +265,24 @@ public final class MetadataTools {
   public static void populatePixels(MetadataStore store, IFormatReader r,
     boolean doPlane)
   {
+    populatePixels(store, r, doPlane, true);
+  }
+
+  /**
+   * Populates the 'pixels' element of the given metadata store, using core
+   * metadata from the given reader.  If the 'doPlane' flag is set,
+   * then the 'plane' elements will be populated as well.
+   * If the 'doImageName' flag is set, then the image name will be populated
+   * as well.  By default, 'doImageName' is true.
+   */
+  public static void populatePixels(MetadataStore store, IFormatReader r,
+    boolean doPlane, boolean doImageName)
+  {
     if (store == null || r == null) return;
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
-      store.setImageName(r.getCurrentFile(), i);
+      if (doImageName) store.setImageName(r.getCurrentFile(), i);
       String pixelsID = createLSID("Pixels", i, 0);
       store.setPixelsID(pixelsID, i, 0);
       store.setImageDefaultPixels(pixelsID, i);
