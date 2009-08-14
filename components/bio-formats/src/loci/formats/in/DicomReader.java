@@ -118,6 +118,7 @@ public class DicomReader extends FormatReader {
   private boolean isJP2K = false;
   private boolean isJPEG = false;
   private boolean isRLE = false;
+  private boolean isDeflate = false;
   private boolean inverted;
 
   private String date, time, imageType;
@@ -159,8 +160,12 @@ public class DicomReader extends FormatReader {
     if (stream.readString(4).equals(DICOM_MAGIC_STRING)) return true;
     stream.seek(0);
 
-    int tag = getNextTag(stream);
-    return TYPES.get(new Integer(tag)) != null;
+    try {
+      int tag = getNextTag(stream);
+      return TYPES.get(new Integer(tag)) != null;
+    }
+    catch (NullPointerException e) { }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -307,6 +312,10 @@ public class DicomReader extends FormatReader {
         }
       }
     }
+    else if (isDeflate) {
+      // TODO
+      throw new FormatException("Deflate data is not supported.");
+    }
     else {
       // plane is not compressed
       int c = isIndexed() ? 1 : getSizeC();
@@ -345,7 +354,7 @@ public class DicomReader extends FormatReader {
     super.close();
     bitsPerPixel = location = elementLength = vr = 0;
     oddLocations = inSequence = bigEndianTransferSyntax = false;
-    isJPEG = isRLE = false;
+    isJPEG = isJP2K = isRLE = isDeflate = false;
     lut = null;
     offsets = null;
     shortLut = null;
@@ -401,12 +410,13 @@ public class DicomReader extends FormatReader {
     boolean signed = false;
 
     while (decodingTags) {
-      if (in.getFilePointer() + 2 >= in.length()) {
+      if (in.getFilePointer() + 4 >= in.length()) {
         break;
       }
       int tag = getNextTag(in);
 
-      if (elementLength == 0) continue;
+      //if (elementLength <= 0 || tag < 0) continue;
+      if (elementLength <= 0) continue;
 
       oddLocations = (location & 1) != 0;
 
@@ -419,6 +429,7 @@ public class DicomReader extends FormatReader {
           if (s.startsWith("1.2.840.10008.1.2.4.9")) isJP2K = true;
           else if (s.startsWith("1.2.840.10008.1.2.4")) isJPEG = true;
           else if (s.startsWith("1.2.840.10008.1.2.5")) isRLE = true;
+          else if (s.equals("1.2.8.10008.1.2.1.99")) isDeflate = true;
           else if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
             throw new FormatException("Sorry, compressed DICOM images not " +
               "supported");
@@ -589,7 +600,7 @@ public class DicomReader extends FormatReader {
             for (int q=0; q<4; q++) {
               buf[q] = buf[buf.length + q - 4];
             }
-            n = in.read(buf, 4, buf.length - 4);
+            n = in.read(buf, 4, buf.length - 4) + 4;
           }
         }
       }
@@ -620,6 +631,7 @@ public class DicomReader extends FormatReader {
       FilePattern pattern =
         new FilePattern(currentFile.getName(), directory.getAbsolutePath());
       String[] patternFiles = pattern.getFiles();
+      if (patternFiles == null) patternFiles = new String[0];
       Arrays.sort(patternFiles);
       String[] files = directory.list();
       Arrays.sort(files);
@@ -665,6 +677,7 @@ public class DicomReader extends FormatReader {
           if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 100))
           {
             int position = Integer.parseInt(instance) - 1;
+            if (position < 0) position = 0;
             if (position < fileList.size()) {
               while (position < fileList.size() &&
                 fileList.get(position) != null)
@@ -691,6 +704,7 @@ public class DicomReader extends FormatReader {
       for (int i=0; i<files.length; i++) {
         if (files[i] != null) fileList.add(files[i]);
       }
+      if (fileList.size() == 0) fileList.add(currentId);
     }
     else if (fileList == null) {
       fileList = new Vector<String>();
@@ -977,6 +991,12 @@ public class DicomReader extends FormatReader {
     int tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
 
     elementLength = getLength(stream, tag);
+    if (elementLength > in.length()) {
+      in.seek(in.getFilePointer() - 8);
+      core[0].littleEndian = !isLittleEndian();
+      in.order(isLittleEndian());
+      return getNextTag(in);
+    }
 
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
       elementLength = getLength(stream, tag);
@@ -984,7 +1004,7 @@ public class DicomReader extends FormatReader {
 
     // HACK - needed to read some GE files
     // The element length must be even!
-    if (elementLength == 13 && !oddLocations) elementLength = 10;
+    if (!oddLocations && (elementLength % 2) == 1) elementLength++;
 
     // "Undefined" element length.
     // This is a sort of bracket that encloses a sequence of elements.
