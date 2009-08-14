@@ -79,6 +79,7 @@ public class MIASReader extends FormatReader {
   private int[] bpp;
 
   private Vector<String> plateDirs;
+  private Vector<String> plateFiles;
 
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;
@@ -93,18 +94,6 @@ public class MIASReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#setSeries(int) */
-  public void setSeries(int series) {
-    int oldSeries = getSeries();
-    super.setSeries(series);
-    try {
-      unmapSeries(getPlateNumber(oldSeries), getWellNumber(oldSeries));
-    }
-    catch (IOException e) {
-      traceDebug(e);
-    }
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
@@ -113,8 +102,12 @@ public class MIASReader extends FormatReader {
     Location wellDir = baseFile.getParentFile();
     Location experiment = wellDir.getParentFile().getParentFile();
 
-    return wellDir != null && experiment != null &&
-      wellDir.getName().startsWith("Well") && super.isThisType(filename, open);
+    if (wellDir == null || experiment == null) return false;
+
+    String wellName = wellDir.getName();
+    boolean validName = wellName.startsWith("Well") ||
+      (wellName.length() == 1 && wellName.replaceAll("\\d", "").length() == 0);
+    return validName && super.isThisType(filename, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -129,7 +122,7 @@ public class MIASReader extends FormatReader {
     if (s instanceof String[]) software = ((String[]) s)[0];
     else software = s.toString();
 
-    return software.startsWith("eaZYX");
+    return software.startsWith("eaZYX") || software.startsWith("SCIL_Image");
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -165,10 +158,6 @@ public class MIASReader extends FormatReader {
 
     int well = getWellNumber(getSeries());
     int plate = getPlateNumber(getSeries());
-
-    if (Location.getMappedFile(getFilename(plate, well, 0)) == null) {
-      preReadSeries(plate, well);
-    }
 
     if (tileRows == 1 && tileCols == 1) {
       readers[plate][well][no].setId(tiffs[plate][well][no]);
@@ -232,6 +221,11 @@ public class MIASReader extends FormatReader {
     for (String file : analysisFiles) {
       files.add(file);
     }
+    if (plateFiles != null) {
+      for (String file : plateFiles) {
+        files.add(file);
+      }
+    }
     return files.toArray(new String[0]);
   }
 
@@ -261,6 +255,7 @@ public class MIASReader extends FormatReader {
       wellRows = wellColumns = 0;
       bpp = null;
       plateAndWell = null;
+      plateFiles = null;
     }
   }
 
@@ -276,13 +271,14 @@ public class MIASReader extends FormatReader {
 
     analysisFiles = new Vector<String>();
     plateDirs = new Vector<String>();
+    plateFiles = new Vector<String>();
 
     // MIAS is a high content screening format which supports multiple plates,
     // wells and fields.
     // Most of the metadata comes from the directory hierarchy, as very little
     // metadata is present in the actual files.
     //
-    // The directory hierarchy is:
+    // The directory hierarchy is either:
     //
     // <experiment name>                        top level experiment directory
     //   Batchresults                           analysis results for experiment
@@ -290,6 +286,14 @@ public class MIASReader extends FormatReader {
     //     results                              analysis results for plate
     //     Well<xxxx>                           one directory for each well
     //       mode<x>_z<xxx>_t<xxx>_im<x>_<x>.tif
+    //
+    // or:
+    //
+    // <experiment name>                        top level experiment directory
+    //   <plate number>                         plate directory (3 digits)
+    //     <well number>                        well directory (4 digits)
+    //       <channel number>                   channel directory (1 digit)
+    //         <tile row>_<tile col>_<Z>_<T>.tif
     //
     // Each TIFF file contains a single grayscale plane.  The "mode" block
     // refers to the channel number; the "z" and "t" blocks refer to the
@@ -307,12 +311,18 @@ public class MIASReader extends FormatReader {
       baseFile.getParentFile().getParentFile().getParentFile();
 
     String experimentName = experiment.getName();
+    if (experimentName.length() == 3 || (experimentName.length() > 3 &&
+      experimentName.replaceAll("\\d", "").startsWith("-")))
+    {
+      experiment = experiment.getParentFile();
+      experimentName = experiment.getName();
+    }
 
     String[] directories = experiment.list(true);
     Arrays.sort(directories);
     for (String dir : directories) {
+      Location f = new Location(experiment, dir);
       if (dir.equals("Batchresults")) {
-        Location f = new Location(experiment, dir);
         String[] results = f.list(true);
         for (String result : results) {
           Location file = new Location(f, result);
@@ -322,7 +332,9 @@ public class MIASReader extends FormatReader {
           }
         }
       }
-      else plateDirs.add(dir);
+      else if (f.isDirectory()) {
+        plateDirs.add(dir);
+      }
     }
 
     int nPlates = plateDirs.size();
@@ -344,7 +356,7 @@ public class MIASReader extends FormatReader {
       Vector<String> wellDirectories = new Vector<String>();
       for (String dir : list) {
         Location f = new Location(plateDir, dir);
-        if (f.getName().startsWith("Well")) {
+        if (f.getName().startsWith("Well") || f.getName().length() == 4) {
           wellDirectories.add(f.getAbsolutePath());
         }
         else if (f.getName().equals("results")) {
@@ -357,6 +369,9 @@ public class MIASReader extends FormatReader {
             }
           }
         }
+        else if (f.getName().equals("Nugenesistemplate.txt")) {
+          plateFiles.add(f.getAbsolutePath());
+        }
       }
       readers[i] = new MinimalTiffReader[wellDirectories.size()][];
       tiffs[i] = new String[wellDirectories.size()][];
@@ -368,22 +383,44 @@ public class MIASReader extends FormatReader {
 
       for (int j=0; j<wellDirectories.size(); j++) {
         Location well = new Location(wellDirectories.get(j));
-
         String wellName = well.getName().replaceAll("Well", "");
         wellNumber[i][j] = Integer.parseInt(wellName) - 1;
 
-        String wellPath = well.getAbsolutePath();
         String[] tiffFiles = well.list(true);
         Vector<String> tmpFiles = new Vector<String>();
         for (String tiff : tiffFiles) {
           String name = tiff.toLowerCase();
           if (name.endsWith(".tif") || name.endsWith(".tiff")) {
-            tmpFiles.add(tiff);
+            tmpFiles.add(new Location(well, tiff).getAbsolutePath());
           }
         }
+
+        if (tmpFiles.size() == 0) {
+          debug("No TIFFs in well directory " + wellDirectories.get(j));
+          // no TIFFs in the well directory, so there are probably channel
+          // directories which contain the TIFFs
+          for (String dir : tiffFiles) {
+            Location file = new Location(well, dir);
+            if (dir.length() == 1 && file.isDirectory()) {
+              cCount[i][j]++;
+
+              String[] tiffs = file.list();
+              for (String tiff : tiffs) {
+                String name = tiff.toLowerCase();
+                if (name.endsWith(".tif") || name.endsWith(".tiff")) {
+                  tmpFiles.add(new Location(file, tiff).getAbsolutePath());
+                }
+              }
+            }
+          }
+        }
+
         tiffFiles = tmpFiles.toArray(new String[0]);
 
-        FilePattern fp = new FilePattern(tiffFiles[0], wellPath);
+        Location firstTiff = new Location(tiffFiles[0]);
+
+        FilePattern fp = new FilePattern(
+          firstTiff.getName(), firstTiff.getParentFile().getAbsolutePath());
         String[] blocks = fp.getPrefixes();
         BigInteger[] firstNumber = fp.getFirst();
         BigInteger[] lastNumber = fp.getLast();
@@ -414,17 +451,27 @@ public class MIASReader extends FormatReader {
           }
           else if (blocks[block].equals("im")) tileRows = count;
           else if (blocks[block].equals("")) tileCols = count;
+          else if (blocks[block].replaceAll("\\d", "").length() == 0) {
+            if (block == 3) tileRows = count;
+            else if (block == 2) tileCols = count;
+            else if (block == 1) {
+              zCount[i][j] = count;
+              order[i][j] += "Z";
+            }
+            else if (block == 0) {
+              tCount[i][j] = count;
+              order[i][j] += "T";
+            }
+          }
           else {
             throw new FormatException("Unsupported block '" + blocks[block]);
           }
         }
 
         Arrays.sort(tiffFiles);
-        tiffs[i][j] = new String[tiffFiles.length];
+        tiffs[i][j] = tiffFiles;
         readers[i][j] = new MinimalTiffReader[tiffFiles.length];
         for (int k=0; k<tiffFiles.length; k++) {
-          tiffs[i][j][k] =
-            new Location(wellPath, tiffFiles[k]).getAbsolutePath();
           readers[i][j][k] = new MinimalTiffReader();
         }
       }
@@ -447,6 +494,9 @@ public class MIASReader extends FormatReader {
     readers[0][0][0].setId(tiffs[0][0][0]);
     tileWidth = readers[0][0][0].getSizeX();
     tileHeight = readers[0][0][0].getSizeY();
+
+    if (tileCols == 0) tileCols = 1;
+    if (tileRows == 0) tileRows = 1;
 
     for (int i=0; i<core.length; i++) {
       Arrays.fill(plateAndWell[i], -1);
@@ -485,6 +535,9 @@ public class MIASReader extends FormatReader {
       }
 
       core[i].imageCount = core[i].sizeZ * core[i].sizeT * cCount[plate][well];
+      if (core[i].imageCount == 0) {
+        core[i].imageCount = 1;
+      }
       bpp[i] = FormatTools.getBytesPerPixel(core[i].pixelType);
     }
 
@@ -575,8 +628,10 @@ public class MIASReader extends FormatReader {
           wellColumns = 24;
         }
         else {
-          throw new FormatException(
-            "Could not determine the plate dimensions.");
+          warn("Could not determine the plate dimensions.");
+          wellColumns = 24;
+          wellRows = nWells / wellColumns;
+          if (wellRows == 0) wellRows = 1;
         }
       }
 
@@ -808,8 +863,8 @@ public class MIASReader extends FormatReader {
     intersection.y %= tileHeight;
 
     int tileIndex = (no * tileRows + row) * tileCols + col;
-    String filename = getFilename(plate, well, tileIndex);
-    readers[plate][well][tileIndex].setId(filename);
+
+    readers[plate][well][tileIndex].setId(tiffs[plate][well][tileIndex]);
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int ch = getRGBChannelCount();
     int bufferSize = intersection.width * intersection.height * ch * bpp;
@@ -823,25 +878,6 @@ public class MIASReader extends FormatReader {
 
   private String getFilename(int plate, int well, int tile) {
     return plate + "-" + well + "-" + tile + ".tiff";
-  }
-
-  private void unmapSeries(int plate, int well) throws IOException {
-    for (int tile=0; tile<tiffs[plate][well].length; tile++) {
-      Location.mapFile(getFilename(plate, well, tile), null);
-      readers[plate][well][tile].close();
-    }
-  }
-
-  private void preReadSeries(int plate, int well) throws IOException {
-    for (int tile=0; tile<tiffs[plate][well].length; tile++) {
-      String filename = getFilename(plate, well, tile);
-      RandomAccessInputStream s =
-        new RandomAccessInputStream(tiffs[plate][well][tile]);
-      byte[] b = new byte[(int) s.length()];
-      s.read(b);
-      s.close();
-      Location.mapFile(filename, new ByteArrayHandle(b));
-    }
   }
 
 }
