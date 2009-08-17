@@ -590,7 +590,8 @@ public class OpenlabReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
+    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     // populate MetadataStore
 

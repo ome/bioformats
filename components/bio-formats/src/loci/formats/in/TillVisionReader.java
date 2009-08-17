@@ -57,11 +57,16 @@ public class TillVisionReader extends FormatReader {
   private static final byte[] MARKER_0 = new byte[] {0x25, (byte) 0x80, 3, 0};
   private static final byte[] MARKER_1 =
     new byte[] {(byte) 0x96, (byte) 0x81, 3, 0};
+  private static final byte[] MARKER_2 = new byte[] {0x72, (byte) 0x80, 3, 0};
+
+  private static final String[] DATE_FORMATS = new String[] {
+    "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy",
+    "HH:mm:ss aa", "HH:mm:ss.SSS aa"};
 
   // -- Fields --
 
   private RandomAccessInputStream[] pixelsStream;
-  private Hashtable exposureTimes;
+  private Hashtable<Integer, Float> exposureTimes;
   private boolean embeddedImages;
   private int embeddedOffset;
 
@@ -118,24 +123,25 @@ public class TillVisionReader extends FormatReader {
     debug("TillVisionReader.initFile(" + id + ")");
     super.initFile(id);
 
-    exposureTimes = new Hashtable();
+    exposureTimes = new Hashtable<Integer, Float>();
 
     POITools poi = new POITools(id);
-    Vector documents = poi.getDocumentList();
+    Vector<String> documents = poi.getDocumentList();
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    Vector imageNames = new Vector();
-    Vector waves = new Vector();
-    Vector types = new Vector();
-    Vector dates = new Vector();
+    Vector<String> imageNames = new Vector<String>();
+    Vector<String> waves = new Vector<String>();
+    Vector<String> types = new Vector<String>();
+    Vector<String> dates = new Vector<String>();
     int nImages = 0;
 
     Hashtable tmpSeriesMetadata = new Hashtable();
 
     for (int i=0; i<documents.size(); i++) {
-      String name = (String) documents.get(i);
+      String name = documents.get(i);
+
       if (name.equals("Root Entry/Contents")) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
 
@@ -180,7 +186,6 @@ public class TillVisionReader extends FormatReader {
         }
 
         byte[] marker = getMarker(b);
-        byte[] check = new byte[] {4, 0, 0, 4};
         s.seek(0);
 
         while (s.getFilePointer() < s.length() - 2) {
@@ -202,12 +207,12 @@ public class TillVisionReader extends FormatReader {
           String dateTime = "";
 
           String[] lines = description.split("\n");
-          for (int q=0; q<lines.length; q++) {
-            lines[q] = lines[q].trim();
-            if (lines[q].indexOf(":") != -1 && !lines[q].startsWith(";")) {
-              String key = lines[q].substring(0, lines[q].indexOf(":")).trim();
-              String value =
-                lines[q].substring(lines[q].indexOf(":") + 1).trim();
+          for (String line : lines) {
+            line = line.trim();
+            int colon = line.indexOf(":");
+            if (colon != -1 && !line.startsWith(";")) {
+              String key = line.substring(0, colon).trim();
+              String value = line.substring(colon + 1).trim();
               String metaKey = "Series " + nImages + " " + key;
               addMeta(metaKey, value, tmpSeriesMetadata);
 
@@ -237,13 +242,10 @@ public class TillVisionReader extends FormatReader {
 
           dateTime = dateTime.trim();
           if (!dateTime.equals("")) {
-            String[] formats = new String[] {"mm/dd/yy HH:mm:ss aa",
-              "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy", "HH:mm:ss aa",
-              "HH:mm:ss.SSS aa"};
             boolean success = false;
-            for (int q=0; q<formats.length; q++) {
+            for (String format : DATE_FORMATS) {
               try {
-                dateTime = DateTools.formatDate(dateTime, formats[q]);
+                dateTime = DateTools.formatDate(dateTime, format);
                 success = true;
               }
               catch (NullPointerException e) { }
@@ -255,7 +257,9 @@ public class TillVisionReader extends FormatReader {
       }
     }
 
-    String directory = new Location(currentId).getAbsoluteFile().getParent();
+    Location directory =
+      new Location(currentId).getAbsoluteFile().getParentFile();
+    /* debug */ System.out.println(directory.getAbsolutePath());
 
     String[] pixelsFile = new String[nImages];
 
@@ -267,14 +271,13 @@ public class TillVisionReader extends FormatReader {
 
       // look for appropriate pixels files
 
-      Location dir = new Location(directory);
-      String[] files = dir.list();
+      String[] files = directory.list();
 
       int nextFile = 0;
 
       for (int i=0; i<files.length; i++) {
         if (files[i].endsWith(".pst")) {
-          Location pst = new Location(directory + File.separator + files[i]);
+          Location pst = new Location(directory, files[i]);
           if (pst.isDirectory()) {
             String[] subfiles = pst.list();
             for (int q=0; q<subfiles.length; q++) {
@@ -308,20 +311,21 @@ public class TillVisionReader extends FormatReader {
 
         String file = pixelsFile[i];
 
-        file = file.replaceAll("/", File.separator);
+        file = file.replace('/', File.separatorChar);
         file = file.replace('\\', File.separatorChar);
         String oldFile = file;
 
-        file = directory + File.separator + oldFile;
+        Location f = new Location(directory, oldFile);
 
-        if (!new Location(file).exists()) {
+        if (!f.exists()) {
           oldFile = oldFile.substring(oldFile.lastIndexOf(File.separator) + 1);
-          file = directory + File.separator + oldFile;
-          if (!new Location(file).exists()) {
+          f = new Location(directory, oldFile);
+          if (!f.exists()) {
             throw new FormatException("Could not find pixels file '" + file);
           }
         }
 
+        file = f.getAbsolutePath();
         pixelsStream[i] = new RandomAccessInputStream(file);
 
         // read key/value pairs from .inf files
@@ -384,9 +388,9 @@ public class TillVisionReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
       if (i < imageNames.size()) {
-        store.setImageName((String) imageNames.get(i), i);
+        store.setImageName(imageNames.get(i), i);
       }
-      String date = i < dates.size() ? (String) dates.get(i) : "";
+      String date = i < dates.size() ? dates.get(i) : "";
       if (date != null && !date.equals("")) {
         store.setImageCreationDate(date, i);
       }
@@ -396,13 +400,13 @@ public class TillVisionReader extends FormatReader {
 
       for (int q=0; q<core[i].imageCount; q++) {
         store.setPlaneTimingExposureTime(
-          (Float) exposureTimes.get(new Integer(i)), i, 0, q);
+          exposureTimes.get(new Integer(i)), i, 0, q);
       }
 
       // populate Dimensions data
 
       if (i < waves.size()) {
-        int waveIncrement = Integer.parseInt((String) waves.get(i));
+        int waveIncrement = Integer.parseInt(waves.get(i));
         if (waveIncrement > 0) {
           store.setDimensionsWaveIncrement(new Integer(waveIncrement), i, 0);
         }
@@ -411,7 +415,7 @@ public class TillVisionReader extends FormatReader {
       // populate Experiment data
 
       if (i < types.size()) {
-        store.setExperimentType((String) types.get(i), i);
+        store.setExperimentType(types.get(i), i);
       }
     }
   }
@@ -436,7 +440,8 @@ public class TillVisionReader extends FormatReader {
   private byte[] getMarker(byte[] s) throws IOException {
     int offset = findNextOffset(s, MARKER_0, 0);
     if (offset != -1) return MARKER_0;
-    return MARKER_1;
+    offset = findNextOffset(s, MARKER_1, 0);
+    return offset == -1 ? MARKER_2 : MARKER_1;
   }
 
   private int findNextOffset(byte[] s, byte[] marker, int pos)

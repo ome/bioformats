@@ -300,8 +300,10 @@ public class ICSReader extends FormatReader {
     Hashtable<Integer, Integer> wavelengths = new Hashtable<Integer, Integer>();
     Hashtable<Integer, String> channelNames = new Hashtable<Integer, String>();
 
-    while (line != null && !line.trim().equals("end")) {
-     String[] tokens = null;
+    while (line != null && !line.trim().equals("end") &&
+      reader.getFilePointer() < reader.length() - 1)
+    {
+      String[] tokens = null;
       if (line.indexOf("\t") != -1) tokens = line.split("\t");
       else tokens = line.split(" ");
       StringBuffer key = new StringBuffer();
@@ -516,7 +518,6 @@ public class ICSReader extends FormatReader {
         }
       }
       line = reader.readString("\r\n");
-      if (line.trim().equals("")) line = null;
     }
     reader.close();
 
@@ -756,14 +757,15 @@ public class ICSReader extends FormatReader {
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveSettingsObjective(objectiveID, 0);
 
-    Integer[] gainKeys = gains.keySet().toArray(new Integer[0]);
-    for (int i=0; i<gainKeys.length; i++) {
-      int index = gainKeys[i].intValue();
-      store.setDetectorSettingsGain(gains.get(gainKeys[i]), 0, index);
-      store.setDetectorType("Unknown", 0, index);
-      String detectorID = MetadataTools.createLSID("Detector", 0, index);
-      store.setDetectorID(detectorID, 0, index);
-      store.setDetectorSettingsDetector(detectorID, 0, index);
+    for (Integer key : gains.keySet()) {
+      int index = key.intValue();
+      if (index < getEffectiveSizeC()) {
+        store.setDetectorSettingsGain(gains.get(key), 0, index);
+        store.setDetectorType("Unknown", 0, index);
+        String detectorID = MetadataTools.createLSID("Detector", 0, index);
+        store.setDetectorID(detectorID, 0, index);
+        store.setDetectorSettingsDetector(detectorID, 0, index);
+      }
     }
 
     // populate Experimenter data
