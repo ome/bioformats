@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
+ * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -877,6 +877,13 @@ public interface MetadataStore {
   void setGreyChannelMapColorMap(String colorMap, int imageIndex);
 
   // - Group property storage -
+
+  /**
+   * For a particular Group, sets unique label identifying the group.
+   * @param id unique label identifying the group
+   * @param groupIndex index of the Group
+   */
+  void setGroupID(String id, int groupIndex);
 
   /**
    * For a particular Group, sets the name of the group.

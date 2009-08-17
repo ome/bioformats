@@ -5,12 +5,12 @@
 # This file lists Java constants with potential namespace conflicts.
 # These constants will be renamed with a "JACE_" prefix to avoid the issue.
 
+java.awt.Frame.NORMAL
 java.awt.Transparency.OPAQUE
 java.awt.image.ImageObserver.ERROR
-java.awt.Frame.NORMAL
-loci.formats.tiff.IFD.IFD
-loci.formats.tiff.PhotoInterp.CMYK
-loci.formats.tiff.PhotoInterp.RGB
 loci.formats.in.SDTInfo.BH_HEADER_CHKSUM
 loci.formats.in.SDTInfo.BH_HEADER_NOT_VALID
 loci.formats.in.SDTInfo.BH_HEADER_VALID
+loci.formats.tiff.IFD.IFD
+loci.formats.tiff.PhotoInterp.CMYK
+loci.formats.tiff.PhotoInterp.RGB

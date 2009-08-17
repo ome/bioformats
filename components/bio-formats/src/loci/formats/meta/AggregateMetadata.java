@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
+ * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1912,6 +1912,19 @@ public class AggregateMetadata implements IMetadata {
   }
 
   // - Group property retrieval -
+
+  /* @see MetadataRetrieve#getGroupID(int) */
+  public String getGroupID(int groupIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getGroupID(groupIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   /* @see MetadataRetrieve#getGroupName(int) */
   public String getGroupName(int groupIndex) {
@@ -6523,6 +6536,17 @@ public class AggregateMetadata implements IMetadata {
   }
 
   // - Group property storage -
+
+  /* @see MetadataStore#setGroupID(String, int) */
+  public void setGroupID(String id, int groupIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setGroupID(id, groupIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setGroupName(String, int) */
   public void setGroupName(String name, int groupIndex) {

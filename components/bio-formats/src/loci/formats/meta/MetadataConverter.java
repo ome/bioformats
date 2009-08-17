@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jul 2, 2009 12:57:21 PM CDT
+ * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -118,6 +118,8 @@ public final class MetadataConverter {
     }
     int groupCount = src.getGroupCount();
     for (int groupIndex=0; groupIndex<groupCount; groupIndex++) {
+      String groupIDValue = src.getGroupID(groupIndex);
+      if (groupIDValue != null) dest.setGroupID(groupIDValue, groupIndex);
       String groupNameValue = src.getGroupName(groupIndex);
       if (groupNameValue != null) dest.setGroupName(groupNameValue, groupIndex);
       String contactExperimenterValue = src.getContactExperimenter(groupIndex);

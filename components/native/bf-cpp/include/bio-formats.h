@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats C++ bindings for native access to Bio-Formats Java library.
-Copyright (C) 2008-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2008-2009 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Jul 30, 2009 12:21:26 PM CDT
+ * Created by curtis via JaceHeaderAutogen on Aug 17, 2009 1:34:49 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -127,6 +127,7 @@ using namespace jace::proxy::loci::formats::codec;
 #include "jace/proxy/loci/formats/gui/PreviewPane.h"
 #include "jace/proxy/loci/formats/gui/SignedByteBuffer.h"
 #include "jace/proxy/loci/formats/gui/SignedColorModel.h"
+#include "jace/proxy/loci/formats/gui/SignedShortBuffer.h"
 #include "jace/proxy/loci/formats/gui/TwoChannelColorSpace.h"
 #include "jace/proxy/loci/formats/gui/UnsignedIntBuffer.h"
 #include "jace/proxy/loci/formats/gui/UnsignedIntColorModel.h"

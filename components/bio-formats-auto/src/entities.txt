@@ -2851,6 +2851,12 @@ countable = true
 path = Group+
 description = a group of experimenters
 
+[Group ID]
+type = String
+getter = getNodeID
+setter = setNodeID
+description = unique label identifying the group
+
 [Group Name]
 type = String
 description = the name of the group
