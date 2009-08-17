@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.ByteArrayHandle;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -597,7 +598,7 @@ public class MIASReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     store.setExperimentID("Experiment:" + experimentName, 0);
     store.setExperimentType("Other", 0);
@@ -606,6 +607,8 @@ public class MIASReader extends FormatReader {
     for (int plate=0; plate<tiffs.length; plate++) {
       store.setPlateColumnNamingConvention("1", plate);
       store.setPlateRowNamingConvention("A", plate);
+
+      parseTemplateFile(store, plate);
 
       String plateDir = plateDirs.get(plate);
       plateDir = plateDir.substring(plateDir.indexOf("-") + 1);
@@ -651,6 +654,11 @@ public class MIASReader extends FormatReader {
         store.setImageID(imageID, series);
         store.setImageName("Plate #" + plate + ", Well " + wellRow + wellCol,
           series);
+
+        String instrumentID = MetadataTools.createLSID("Instrument", series);
+        store.setInstrumentID(instrumentID, series);
+        store.setImageInstrumentRef(instrumentID, series);
+
         MetadataTools.setDefaultCreationDate(store, id, series);
       }
     }
@@ -869,8 +877,81 @@ public class MIASReader extends FormatReader {
     return buf;
   }
 
-  private String getFilename(int plate, int well, int tile) {
-    return plate + "-" + well + "-" + tile + ".tiff";
+  /**
+   * Parse metadata from the Nugenesistemplate.txt file associated with the
+   * given plate.
+   */
+  private void parseTemplateFile(MetadataStore store, int plate)
+    throws IOException
+  {
+    if (plate >= plateFiles.size()) return;
+
+    Float physicalSizeX = null, physicalSizeY = null, exposure = null;
+    Vector<String> channelNames = new Vector<String>();
+    String date = null;
+
+    String templateFile = plateFiles.get(plate);
+    RandomAccessInputStream s = new RandomAccessInputStream(templateFile);
+    String[] lines = s.readString((int) s.length()).split("\r\n");
+    for (String line : lines) {
+      int eq = line.indexOf("=");
+      if (eq != -1) {
+        String key = line.substring(0, eq);
+        String value = line.substring(eq + 1);
+
+        if (key.equals("Barcode")) {
+          store.setPlateExternalIdentifier(value, plate);
+        }
+        else if (key.equals("Carrier")) {
+          store.setPlateName(value, plate);
+        }
+        else if (key.equals("Pixel_X")) {
+          physicalSizeX = new Float(value);
+        }
+        else if (key.equals("Pixel_Y")) {
+          physicalSizeY = new Float(value);
+        }
+        else if (key.equals("Objective_ID")) {
+          store.setObjectiveModel(value, plate, 0);
+        }
+        else if (key.equals("Magnification")) {
+          store.setObjectiveNominalMagnification(new Integer(value), plate, 0);
+        }
+        else if (key.startsWith("Mode_")) {
+          channelNames.add(value);
+        }
+        else if (key.equals("Date")) {
+          date = value;
+        }
+        else if (key.equals("Time")) {
+          date += " " + value;
+        }
+        else if (key.equals("Exposure")) {
+          exposure = new Float(value);
+        }
+      }
+    }
+
+    for (int well=0; well<tiffs[plate].length; well++) {
+      int series = getSeriesNumber(plate, well);
+      if (physicalSizeX != null) {
+        store.setDimensionsPhysicalSizeX(physicalSizeX, series, 0);
+      }
+      if (physicalSizeY != null) {
+        store.setDimensionsPhysicalSizeY(physicalSizeY, series, 0);
+      }
+      for (int c=0; c<channelNames.size(); c++) {
+        if (c < getEffectiveSizeC()) {
+          store.setLogicalChannelName(channelNames.get(c), series, c);
+        }
+      }
+      date = DateTools.formatDate(date, "dd/MM/yyyy HH:mm:ss");
+      store.setImageCreationDate(date, series);
+
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneTimingExposureTime(exposure, series, 0, i);
+      }
+    }
   }
 
 }
