@@ -562,7 +562,7 @@ public class DeltavisionReader extends FormatReader {
     status("Parsing log file");
 
     RandomAccessInputStream s = new RandomAccessInputStream(logFile);
-    String[] lines = s.readString((int) s.length()).split("\r\n");
+    String[] lines = s.readString((int) s.length()).split("[\r\n]");
     s.close();
 
     String key, value = "", prefix = "";
@@ -777,7 +777,7 @@ public class DeltavisionReader extends FormatReader {
 
     RandomAccessInputStream s =
       new RandomAccessInputStream(deconvolutionLogFile);
-    String[] lines = s.readString((int) s.length()).split("\r\n");
+    String[] lines = s.readString((int) s.length()).split("[\r\n]");
     s.close();
 
     boolean doStatistics = false;
