@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -132,13 +133,16 @@ public class APLReader extends FormatReader {
 
     Vector<String[]> rows = MDBParser.parseDatabase(mtb)[0];
     String[] columnNames = rows.get(0);
+    String[] tmpNames = columnNames;
+    columnNames = new String[tmpNames.length - 1];
+    System.arraycopy(tmpNames, 1, columnNames, 0, columnNames.length);
 
     // add full table to metadata hashtable
 
     for (int i=1; i<rows.size(); i++) {
       String[] row = rows.get(i);
       for (int q=0; q<row.length; q++) {
-        addGlobalMeta(columnNames[q + 1] + " " + i, row[q]);
+        addGlobalMeta(columnNames[q] + " " + i, row[q]);
       }
     }
 
@@ -148,18 +152,22 @@ public class APLReader extends FormatReader {
 
     // calculate indexes to relevant metadata
 
-    int calibrationUnit = calculateIndex("Calibration Unit", columnNames);
-    int colorChannels = calculateIndex("Color Channels", columnNames);
-    int frames = calculateIndex("Frames", columnNames);
-    int calibratedHeight = calculateIndex("Height", columnNames);
-    int calibratedWidth = calculateIndex("Width", columnNames);
-    int path = calculateIndex("Image Path", columnNames);
-    int magnification = calculateIndex("Magnification", columnNames);
-    int width = calculateIndex("X-Resolution", columnNames);
-    int height = calculateIndex("Y-Resolution", columnNames);
-    int imageName = calculateIndex("Image Name", columnNames);
+    int calibrationUnit = DataTools.indexOf(columnNames, "Calibration Unit");
+    int colorChannels = DataTools.indexOf(columnNames, "Color Channels");
+    int frames = DataTools.indexOf(columnNames, "Frames");
+    int calibratedHeight = DataTools.indexOf(columnNames, "Height");
+    int calibratedWidth = DataTools.indexOf(columnNames, "Width");
+    int path = DataTools.indexOf(columnNames, "Image Path");
+    int filename = DataTools.indexOf(columnNames, "File Name");
+    int magnification = DataTools.indexOf(columnNames, "Magnification");
+    int width = DataTools.indexOf(columnNames, "X-Resolution");
+    int height = DataTools.indexOf(columnNames, "Y-Resolution");
+    int imageName = DataTools.indexOf(columnNames, "Image Name");
 
     int seriesCount = (rows.size() - 1) / 3;
+    if (rows.size() > 1 && rows.size() < 4) {
+      seriesCount = 1;
+    }
 
     core = new CoreMetadata[seriesCount];
     for (int i=0; i<seriesCount; i++) {
@@ -171,40 +179,35 @@ public class APLReader extends FormatReader {
 
     String parentDirectory = mtb.substring(0, mtb.lastIndexOf(File.separator));
 
+    // look for the directory that contains TIFF and XML files
+
+    Location dir = new Location(parentDirectory);
+    String[] list = dir.list();
+    String topDirectory = null;
+    for (String f : list) {
+      Location file = new Location(dir, f);
+      if (file.isDirectory() && f.endsWith("_DocumentFiles")) {
+        topDirectory = file.getAbsolutePath();
+      }
+    }
+    if (topDirectory == null) {
+      throw new FormatException("Could not find a directory with TIFF files.");
+    }
+
     for (int i=0; i<seriesCount; i++) {
-      String[] row2 = rows.get(i * 3 + 2);
-      String[] row3 = rows.get(i * 3 + 3);
+      int firstRow = rows.size() < 4 ? i * 3 + 1 : i * 3 + 2;
+      int secondRow = rows.size() < 4 ? i * 3 + 2 : i * 3 + 3;
+      String[] row2 = rows.get(firstRow);
+      String[] row3 = rows.get(secondRow);
 
       core[i].sizeZ = Integer.parseInt(row3[frames]);
       core[i].sizeT = 1;
       core[i].dimensionOrder = "XYCZT";
 
-      xmlFiles[i] = row2[path];
-      tiffFiles[i] = row3[path];
+      xmlFiles[i] = topDirectory + File.separator + row2[filename];
+      tiffFiles[i] = topDirectory + File.separator + row3[filename];
 
-      // sanitize file names
-
-      xmlFiles[i] = xmlFiles[i].replaceAll("/", File.separator);
-      while (xmlFiles[i].indexOf('\\') != -1) {
-        xmlFiles[i] = xmlFiles[i].replace('\\', File.separatorChar);
-      }
-      tiffFiles[i] = tiffFiles[i].replaceAll("/", File.separator);
-      while (tiffFiles[i].indexOf('\\') != -1) {
-        tiffFiles[i] = tiffFiles[i].replace('\\', File.separatorChar);
-      }
-
-      int slash = xmlFiles[i].lastIndexOf(File.separator);
-      slash = xmlFiles[i].lastIndexOf(slash - 1);
-      slash = xmlFiles[i].lastIndexOf(slash - 1);
-      xmlFiles[i] =
-        parentDirectory + File.separator + xmlFiles[i].substring(slash + 1);
-
-      slash = tiffFiles[i].lastIndexOf(File.separator);
-      slash = tiffFiles[i].lastIndexOf(File.separator, slash - 1);
-      tiffFiles[i] =
-        parentDirectory + File.separator + tiffFiles[i].substring(slash + 1);
-
-      used.add(xmlFiles[i]);
+      if (new Location(xmlFiles[i]).exists()) used.add(xmlFiles[i]);
       used.add(tiffFiles[i]);
 
       tiffReaders[i] = new MinimalTiffReader();
@@ -228,7 +231,7 @@ public class APLReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<seriesCount; i++) {
-      String[] row3 = rows.get(i * 3 + 3);
+      String[] row3 = rows.get(rows.size() < 4 ? i * 3 + 2 : i * 3 + 3);
 
       // populate Image data
       MetadataTools.setDefaultCreationDate(store, mtb, i);
@@ -255,15 +258,6 @@ public class APLReader extends FormatReader {
       store.setDimensionsPhysicalSizeX(new Float(px), i, 0);
       store.setDimensionsPhysicalSizeY(new Float(py), i, 0);
     }
-  }
-
-  // -- Helper methods --
-
-  private int calculateIndex(String key, String[] array) {
-    for (int i=0; i<array.length; i++) {
-      if (key.equals(array[i])) return i - 1;
-    }
-    return -1;
   }
 
 }
