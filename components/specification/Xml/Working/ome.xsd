@@ -94,107 +94,75 @@
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
+
 		<!-- Unique IDs and Valid References -->
-		<xsd:key name="ProjectIDKey">
-			<xsd:selector xpath="OME:Project"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>		
-		<xsd:keyref name="DatasetProjectIDKeyRef" refer="OME:ProjectIDKey" >
-			<xsd:selector xpath="OME:Dataset/OME:ProjectRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:key name="DatasetIDKey">
-			<xsd:selector xpath="OME:Dataset"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:key name="ExperimentIDKey">
-			<xsd:selector xpath="OME:Experiment"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:key name="ScreenIDKey">
-			<xsd:selector xpath="SPW:Screen"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:keyref name="PlateScreenIDKeyRef" refer="OME:ScreenIDKey" >
-			<xsd:selector xpath="SPW:Plate/SPW:ScreenRef"/> <!-- ok -->
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:key name="PlateIDKey">
-			<xsd:selector xpath="SPW:Plate"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-	  	<xsd:keyref name="ScreenPlateIDKeyRef" refer="OME:PlateIDKey" >
-			<xsd:selector xpath="SPW:Screen/SPW:PlateRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:key name="ExperimenterIDKey">
-			<xsd:selector xpath="OME:Experimenter"/>
+		<xsd:key name="GroupIDKey"><xsd:selector xpath="OME:Group"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DatasetIDKey"><xsd:selector xpath="OME:Dataset"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ProjectIDKey"><xsd:selector xpath="OME:Project"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="LightSourceIDKey"><xsd:selector xpath="OME:Instrument/OME:LightSource"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="OTFIDKey"><xsd:selector xpath="OME:OTF"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ObjectiveIDKey"><xsd:selector xpath="OME:Instrument/OME:Objective"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DetectorIDKey"><xsd:selector xpath="OME:Instrument/OME:Detector"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ExperimentIDKey"><xsd:selector xpath="OME:Experiment"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="MicrobeamManipulationIDKey"><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="PixelsIDKey"><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ChannelIDKey"><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="WellIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="PlateIDKey"><xsd:selector xpath="SPW:Plate"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ReagentIDKey"><xsd:selector xpath="SPW:Screen/SPW:Reagent"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ScreenAcquisitionIDKey"><xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ScreenIDKey"><xsd:selector xpath="SPW:Screen"/><xsd:field xpath="@ID"/></xsd:key>
+		
+		<!-- FIX keys for ROI and objects below (ROI can be in two places?)-->
+		<xsd:key name="ROIIDKey">
+			<xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/ROI:ROI"/>
+			<!-- or -->
+			<!-- <xsd:selector xpath="OME:Image/ROI:ROI"/> -->
 			<xsd:field xpath="@ID"/>
 		</xsd:key>
-		<xsd:keyref name="ProjectExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" >
-			<xsd:selector xpath="OME:Project/OME:ExperimenterRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:key name="GroupIDKey">
-			<xsd:selector xpath="OME:Group"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:keyref name="ProjectGroupIDKeyRef" refer="OME:GroupIDKey" >
-			<xsd:selector xpath="OME:Project/OME:GroupRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:keyref name="DatasetGroupIDKeyRef" refer="OME:GroupIDKey" >
-			<xsd:selector xpath="OME:Dataset/OME:GroupRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:key name="InstrumentIDKey">
-			<xsd:selector xpath="OME:Instrument"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:key name="ImageIDKey">
-			<xsd:selector xpath="OME:Image"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:key name="PixelsIDKey">
-			<xsd:selector xpath="OME:Image/OME:Pixels"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:key name="ChannelIDKey">
-			<xsd:selector xpath="OME:Image/OME:Channel"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:keyref name="ChannelPixelsIDKeyRef" refer="OME:PixelsIDKey" >
-			<xsd:selector xpath="OME:Image/OME:Channel"/>
-			<xsd:field xpath="@Pixels"/>
-		</xsd:keyref>
-		<xsd:key name="WellIDKey">
-			<xsd:selector xpath="SPW:Plate/SPW:Well"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:key name="ReagentIDKey">
-			<xsd:selector xpath="SPW:Screen/SPW:Reagent"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:keyref name="PlateWellReagentIDKeyRef" refer="OME:ReagentIDKey" >
-			<xsd:selector xpath="SPW:Plate/SPW:Well/SPW:ReagentRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:key name="ScreenAcquisitionIDKey">
-			<xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:key name="WellSampleIDKey">
-			<xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:key>
-		<xsd:keyref name="PlateWellWellSampleImageIDKeyRef" refer="OME:ImageIDKey" >
-			<xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample/SPW:ImageRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
-		<xsd:keyref name="ScreenAcquisitionIDKeyRef" refer="OME:WellSampleIDKey" >
-			<xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition/SPW:WellSampleRef"/>
-			<xsd:field xpath="@ID"/>
-		</xsd:keyref>
+		
+		<xsd:keyref name="DatasetExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Dataset/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="DatasetGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Dataset/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="DatasetProjectIDKeyRef" refer="OME:ProjectIDKey" ><xsd:selector xpath="OME:Dataset/OME:ProjectRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ExperimentExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Experiment/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ExperimentMicrobeamManipulationExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ExperimentMicrobeamManipulationLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ExperimenterGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Experimenter/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="GroupContactExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Group/OME:Contact"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="GroupLeaderExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Group/OME:Leader"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageDatasetIDKeyRef" refer="OME:DatasetIDKey" ><xsd:selector xpath="OME:Image/OME:DatasetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Image/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageExperimentIDKeyRef" refer="OME:ExperimentIDKey" ><xsd:selector xpath="OME:Image/OME:ExperimentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Image/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageInstrumentIDKeyRef" refer="OME:InstrumentIDKey" ><xsd:selector xpath="OME:Image/OME:InstrumentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageMicrobeamManipulationIDKeyRef" refer="OME:MicrobeamManipulationIDKey" ><xsd:selector xpath="OME:Image/OME:MicrobeamManipulationRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageObjectiveSettingsObjectiveIDKeyRef" refer="OME:ObjectiveIDKey" ><xsd:selector xpath="OME:Image/OME:ObjectiveSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelDetectorSettingsDetectorIDKeyRef" refer="OME:DetectorIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:DetectorSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelFilterSetIDKeyRef" refer="OME:FilterSetIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:FilterSetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelOTFIDKeyRef" refer="OME:OTFIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:OTFRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelSecondaryEmissionFilterFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelSecondaryExcitationFilterFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentFilterSetDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentFilterSetEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:EmissionFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentFilterSetExcitationFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:ExcitationFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentLightSourceLaserPumpLightSourceIDKey" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Instrument/OME:LightSource/OME:Laser/OME:Pump"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentOTFFilterSetIDKeyRef" refer="OME:FilterSetIDKey" ><xsd:selector xpath="OME:Instrument/OME:OTF/OME:FilterSetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentOTFObjectiveSettingsObjectiveIDKeyRef" refer="OME:ObjectiveIDKey" ><xsd:selector xpath="OME:Instrument/OME:OTF/OME:ObjectiveSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="PlateScreenIDKeyRef" refer="OME:ScreenIDKey" ><xsd:selector xpath="SPW:Plate/SPW:ScreenRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="PlateWellReagentIDKeyRef" refer="OME:ReagentIDKey" ><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:ReagentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="PlateWellWellSampleImageIDKeyRef" refer="OME:ImageIDKey" ><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample/SPW:ImageRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ProjectExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Project/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ProjectGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Project/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ScreenPlateIDKeyRef" refer="OME:PlateIDKey" ><xsd:selector xpath="SPW:Screen/SPW:PlateRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ScreenScreenAcquisitionWellSampleIDKeyRef" refer="OME:WellSampleIDKey" ><xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition/SPW:WellSampleRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		
 <!--
 		<xsd:element ref="STD:SemanticTypeDefinitions" minOccurs="0" maxOccurs="1"/>
@@ -631,7 +599,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The PockelCellSetting used for this channel.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1077,17 +1045,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						A name for the dataset that is suitable be presented to the user.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="ID" use="required" type="DatasetID">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
+			<xsd:attribute name="ID" use="required" type="DatasetID"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Experiment"> <!-- top level definition -->
@@ -1621,21 +1583,23 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" >
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						MISSING - Check units
+						CutInTolerance Units: nanometres[nm],
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" >
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						MISSING - Check units
+						CutOutTolerance Units: nanometres[nm],
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" >
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The amount of light the filter transmits at a maximum as a percentage.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1662,8 +1626,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
 				Each of the light source types has its own Type attribute to further differentiate the light source
 				(eg, Nd-YAG for Laser or Hg for Arc).
-				A LightSource ID must be specified for each light source, and the individual 
-				light sources can be referred to by their LightSource IDs (eg from Channel).
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1678,7 +1640,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="ID" use="required" type="LightSourceID">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								A LightSource ID must be specified for each light source, and the individual 
+								light sources can be referred to by their LightSource IDs (eg from Channel).
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1824,7 +1787,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PockelCell" use="optional" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						If true the laser has a PockelCell to rotate the polarization of the beam.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1849,7 +1812,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The type of Arc lamp.
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -1874,7 +1837,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The type of filament.
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -2072,14 +2035,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Attenuation" use="optional" type="PercentFraction">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Attenuation of the light source.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Wavelength of the light source.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2102,21 +2065,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Offset of the detector.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Gain of the detector.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Voltage of the detector.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>

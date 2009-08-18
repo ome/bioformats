@@ -16,7 +16,7 @@
 	<ome:Dataset ID="Dataset:2"></ome:Dataset>
 	<spw:Plate ID="Plate:1">
 		<spw:ScreenRef ID="Screen:1"/>
-		<spw:ScreenRef ID="Well:1"/>
+		<spw:ScreenRef ID="Screen:2"/>
 		<spw:Well ID="Well:1" Column="1" Row="1" Type="Dummy">
 			<spw:ReagentRef ID="Reagent:1"/>
 		</spw:Well>
@@ -43,7 +43,7 @@
 	<spw:Screen ID="Screen:2">
 		<spw:PlateRef ID="Plate:2"/>
 	</spw:Screen>
-	<spw:Screen ID="ScreenX:3">
+	<spw:Screen ID="Screen:3">
 		<spw:PlateRef ID="Plate:2"/>
 	</spw:Screen>
 	<ome:Experimenter ID="Experimenter:1" DisplayName="Dummy1"/>

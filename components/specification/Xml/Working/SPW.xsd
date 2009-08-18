@@ -63,6 +63,13 @@
 					</xsd:simpleType>
 				</xsd:element>
 				<xsd:element name="ScreenRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>
+							The ScreenRef element is a reference to a Screen element.
+							Plate elements may have one or more ScreenRef elements to define the screen that a plate belongs to.
+							Plates may belong to more than one screen.
+						</xsd:documentation>
+					</xsd:annotation>
 					<xsd:complexType>
 						<xsd:complexContent>
 							<xsd:extension base="OME:ReferenceWithID"></xsd:extension>
@@ -168,23 +175,6 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
-	<xsd:element name="PlateRef"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				The PlateRef element is a reference to a Plate element.
-				Screen elements may have one or more PlateRef elements to define the plates that are part of the screen.
-				Plates may belong to more than one screen.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="OME:Reference">
-					<xsd:attribute name="ID" use="required" type="PlateID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-
 	<xsd:simpleType name="PlateID">
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Plate:\S+)|(Plate:\S+)"/>
@@ -273,7 +263,20 @@
 					</xsd:simpleType>
 				</xsd:element>
 				<xsd:element ref="Reagent" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="PlateRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="PlateRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>
+							The PlateRef element is a reference to a Plate element.
+							Screen elements may have one or more PlateRef elements to define the plates that are part of the screen.
+							Plates may belong to more than one screen.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="OME:ReferenceWithID"></xsd:extension>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
 				<xsd:element ref="ScreenAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required">
@@ -323,22 +326,6 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>	
-		</xsd:complexType>
-	</xsd:element>
-
-	<xsd:element name="ScreenRefX">	<!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation> <!-- top level definition -->
-				The ScreenRef element is a reference to a Screen element.
-				Plate elements may have one or more ScreenRef elements to define the screen that a plate belongs to.
-				Plates may belong to more than one screen.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="OME:Reference">
-				</xsd:extension>
-			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
