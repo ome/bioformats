@@ -96,29 +96,29 @@
 		</xsd:complexType>
 
 		<!-- Unique IDs and Valid References -->
-		<xsd:key name="GroupIDKey"><xsd:selector xpath="OME:Group"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="DatasetIDKey"><xsd:selector xpath="OME:Dataset"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="ProjectIDKey"><xsd:selector xpath="OME:Project"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="LightSourceIDKey"><xsd:selector xpath="OME:Instrument/OME:LightSource"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="OTFIDKey"><xsd:selector xpath="OME:OTF"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="ObjectiveIDKey"><xsd:selector xpath="OME:Instrument/OME:Objective"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="DetectorIDKey"><xsd:selector xpath="OME:Instrument/OME:Detector"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="ExperimentIDKey"><xsd:selector xpath="OME:Experiment"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="MicrobeamManipulationIDKey"><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="PixelsIDKey"><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ChannelIDKey"><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DatasetIDKey"><xsd:selector xpath="OME:Dataset"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DetectorIDKey"><xsd:selector xpath="OME:Instrument/OME:Detector"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ExperimentIDKey"><xsd:selector xpath="OME:Experiment"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="GroupIDKey"><xsd:selector xpath="OME:Group"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="WellIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="LightSourceIDKey"><xsd:selector xpath="OME:Instrument/OME:LightSource"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="MicrobeamManipulationIDKey"><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="OTFIDKey"><xsd:selector xpath="OME:OTF"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ObjectiveIDKey"><xsd:selector xpath="OME:Instrument/OME:Objective"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="PixelsIDKey"><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="PlateIDKey"><xsd:selector xpath="SPW:Plate"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ProjectIDKey"><xsd:selector xpath="OME:Project"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ReagentIDKey"><xsd:selector xpath="SPW:Screen/SPW:Reagent"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ScreenAcquisitionIDKey"><xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ScreenIDKey"><xsd:selector xpath="SPW:Screen"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="WellIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
 		
 		<!-- FIX keys for ROI and objects below (ROI can be in two places?)-->
 		<xsd:key name="ROIIDKey">
