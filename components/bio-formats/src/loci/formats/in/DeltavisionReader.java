@@ -411,12 +411,6 @@ public class DeltavisionReader extends FormatReader {
     store.setInstrumentID(instrumentID, 0);
     store.setImageInstrumentRef(instrumentID, 0);
 
-    String objectiveID = MetadataTools.createLSID("Objective", 0, lensID);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
-
     if (store instanceof IMinMaxStore) {
       IMinMaxStore minMaxStore = (IMinMaxStore) store;
       for (int i=0; i<minWave.length; i++) {
@@ -627,6 +621,8 @@ public class DeltavisionReader extends FormatReader {
           String objectiveID = "Objective:" + value;
           store.setObjectiveID(objectiveID, 0, 0);
           store.setObjectiveSettingsObjective(objectiveID, 0);
+          store.setObjectiveCorrection("Unknown", 0, 0);
+          store.setObjectiveImmersion("Unknown", 0, 0);
         }
         // Image properties
         else if (key.equals("Pixel Size")) {
