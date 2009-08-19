@@ -259,7 +259,6 @@ public class TillVisionReader extends FormatReader {
 
     Location directory =
       new Location(currentId).getAbsoluteFile().getParentFile();
-    /* debug */ System.out.println(directory.getAbsolutePath());
 
     String[] pixelsFile = new String[nImages];
 
