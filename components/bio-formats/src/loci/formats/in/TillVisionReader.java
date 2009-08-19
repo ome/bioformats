@@ -142,7 +142,7 @@ public class TillVisionReader extends FormatReader {
     for (int i=0; i<documents.size(); i++) {
       String name = documents.get(i);
 
-      if (name.equals("Root Entry/Contents")) {
+      if (name.equals("Root Entry" + File.separator + "Contents")) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
 
         byte[] b = new byte[(int) s.length()];
@@ -206,7 +206,7 @@ public class TillVisionReader extends FormatReader {
 
           String dateTime = "";
 
-          String[] lines = description.split("\n");
+          String[] lines = description.split("[\r\n]");
           for (String line : lines) {
             line = line.trim();
             int colon = line.indexOf(":");
