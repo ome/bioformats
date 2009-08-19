@@ -210,18 +210,18 @@ public class ICSReader extends FormatReader {
       new String[] {currentIcsId, currentIdsId};
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    currentIcsId = null;
-    currentIdsId = null;
-    data = null;
-    versionTwo = false;
-    gzip = false;
-    invertY = false;
-    lifetime = false;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      currentIcsId = null;
+      currentIdsId = null;
+      data = null;
+      versionTwo = false;
+      gzip = false;
+      invertY = false;
+      lifetime = false;
+    }
   }
 
   // -- Internal FormatReader API methods --

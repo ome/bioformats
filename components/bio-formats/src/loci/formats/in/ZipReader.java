@@ -82,13 +82,11 @@ public class ZipReader extends FormatReader {
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (reader != null) reader.close();
-    reader = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (reader != null) reader.close(fileOnly);
+    if (!fileOnly) reader = null;
   }
 
   // -- Internal FormatReader API methods --

@@ -79,6 +79,15 @@ public class NAFReader extends FormatReader {
     return buf;
   }
 
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      offsets = null;
+      compressed = false;
+    }
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

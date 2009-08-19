@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
@@ -163,18 +164,19 @@ public class GIFReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    gctFlag = lctFlag = interlace = transparency = false;
-    gctSize = lctSize = ix = iy = iw = ih = blockSize = 0;
-    dispose = lastDispose = transIndex = 0;
-    gct = lct = act;
-    prefix = null;
-    suffix = pixelStack = pixels = null;
-    images = colorTables = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      gctFlag = lctFlag = interlace = transparency = false;
+      gctSize = lctSize = ix = iy = iw = ih = blockSize = 0;
+      dispose = lastDispose = transIndex = 0;
+      gct = lct = act;
+      prefix = null;
+      suffix = pixelStack = pixels = null;
+      images = colorTables = null;
+      Arrays.fill(dBlock, (byte) 0);
+    }
   }
 
   // -- Internal FormatReader API methods --

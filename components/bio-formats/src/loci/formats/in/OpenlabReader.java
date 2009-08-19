@@ -282,31 +282,22 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) {
-      if (in != null) in.close();
-      if (pict != null) pict.close(fileOnly);
+    super.close(fileOnly);
+    if (pict != null) pict.close(fileOnly);
+    if (!fileOnly) {
+      planes = null;
+      luts = null;
+      lastPlane = 0;
+      version = 0;
+      numSeries = 0;
+      xcal = ycal = 0f;
+      nextTag = 0;
+      tag = subTag = 0;
+      fmt = "";
+      planeOffsets = null;
+      gain = detectorOffset = null;
+      xPos = yPos = zPos = null;
     }
-    else close();
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (pict != null) pict.close();
-    planes = null;
-    luts = null;
-    lastPlane = 0;
-    version = 0;
-    numSeries = 0;
-    xcal = ycal = 0f;
-    nextTag = 0;
-    tag = subTag = 0;
-    fmt = "";
-    planeOffsets = null;
-    gain = detectorOffset = null;
-    xPos = yPos = zPos = null;
   }
 
   // -- Internal FormatReader API methods --

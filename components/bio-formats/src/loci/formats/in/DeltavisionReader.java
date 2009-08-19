@@ -137,16 +137,16 @@ public class DeltavisionReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    extSize = wSize = zSize = tSize = 0;
-    numIntsPerSection = numFloatsPerSection = 0;
-    extHdrFields = null;
-    ndFilters = null;
-    logFile = deconvolutionLogFile = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      extSize = wSize = zSize = tSize = 0;
+      numIntsPerSection = numFloatsPerSection = 0;
+      extHdrFields = null;
+      ndFilters = null;
+      logFile = deconvolutionLogFile = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

@@ -137,14 +137,15 @@ public class NiftiReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    pixelOffset = 0;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
     if (pixelFile != null) pixelFile.close();
-    pixelFile = null;
+    if (!fileOnly) {
+      pixelOffset = 0;
+      pixelFile = null;
+      pixelsFilename = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

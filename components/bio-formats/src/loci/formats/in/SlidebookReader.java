@@ -92,13 +92,13 @@ public class SlidebookReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    metadataOffsets = pixelOffsets = pixelLengths = null;
-    ndFilters = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      metadataOffsets = pixelOffsets = pixelLengths = null;
+      ndFilters = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

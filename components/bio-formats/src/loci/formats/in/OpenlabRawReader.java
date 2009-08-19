@@ -96,13 +96,13 @@ public class OpenlabRawReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    offsets = null;
-    bytesPerPixel = 0;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      offsets = null;
+      bytesPerPixel = 0;
+    }
   }
 
   // -- Internal FormatReader API methods --

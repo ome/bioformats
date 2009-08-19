@@ -168,27 +168,28 @@ public class ZeissLSMReader extends FormatReader {
     super("Zeiss Laser-Scanning Microscopy", new String[] {"lsm", "mdb"});
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
-    lut = null;
-    timestamps = null;
-    validChannels = 0;
-    lsmFilenames = null;
-    ifdsList = null;
-    nextLaser = nextDetector = 0;
-    nextFilter = nextFilterSet = 0;
-    nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
-    splitPlanes = false;
-    zoom = 0f;
-    imageNames = null;
-    binning = null;
-  }
-
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
+      lut = null;
+      timestamps = null;
+      validChannels = 0;
+      lsmFilenames = null;
+      ifdsList = null;
+      tiffParser = null;
+      nextLaser = nextDetector = 0;
+      nextFilter = nextFilterSet = 0;
+      nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
+      splitPlanes = false;
+      zoom = 0f;
+      imageNames = null;
+      binning = null;
+    }
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {

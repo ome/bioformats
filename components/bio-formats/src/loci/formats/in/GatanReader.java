@@ -113,14 +113,18 @@ public class GatanReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    pixelOffset = 0;
-    bytesPerPixel = pixelDataNum = numPixelBytes = 0;
-    pixelSizes = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      pixelOffset = 0;
+      bytesPerPixel = pixelDataNum = numPixelBytes = 0;
+      pixelSizes = null;
+      signed = false;
+      timestamp = 0;
+      gamma = mag = voltage = 0;
+      info = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

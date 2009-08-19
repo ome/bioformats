@@ -95,12 +95,13 @@ public class IPLabReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    bps = dataSize = 0;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      bps = dataSize = 0;
+      pixelSize = timeIncrement = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

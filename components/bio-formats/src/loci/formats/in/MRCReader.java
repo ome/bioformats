@@ -83,13 +83,13 @@ public class MRCReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    bpp = extHeaderSize = 0;
-    isFloat = false;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      bpp = extHeaderSize = 0;
+      isFloat = false;
+    }
   }
 
   // -- Internal FormatReader API methods --

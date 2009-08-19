@@ -186,14 +186,17 @@ public class BioRadReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    used = null;
-    picFiles = null;
-    lut = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      used = null;
+      picFiles = null;
+      lut = null;
+      lastChannel = 0;
+      noteStrings = null;
+      offset = gain = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

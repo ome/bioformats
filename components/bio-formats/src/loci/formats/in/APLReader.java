@@ -87,20 +87,20 @@ public class APLReader extends FormatReader {
     return tiffReaders[series].openBytes(no, buf, x, y, w, h);
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
     if (tiffReaders != null) {
       for (MinimalTiffReader reader : tiffReaders) {
-        reader.close();
+        reader.close(fileOnly);
       }
     }
-    tiffReaders = null;
-    tiffFiles = null;
-    xmlFiles = null;
-    used = null;
+    if (!fileOnly) {
+      tiffReaders = null;
+      tiffFiles = null;
+      xmlFiles = null;
+      used = null;
+    }
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

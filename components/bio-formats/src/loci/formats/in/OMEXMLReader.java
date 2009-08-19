@@ -207,14 +207,15 @@ public class OMEXMLReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    compression = null;
-    binDataOffsets = null;
-    binDataLengths = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      compression = null;
+      binDataOffsets = null;
+      binDataLengths = null;
+      omexml = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

@@ -154,14 +154,14 @@ public class BMPReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    offset = bpp = compression = 0;
-    global = 0;
-    palette = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      offset = bpp = compression = 0;
+      global = 0;
+      palette = null;
+    }
   }
 
   // -- Internel FormatReader API methods --

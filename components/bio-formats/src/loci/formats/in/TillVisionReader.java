@@ -100,20 +100,20 @@ public class TillVisionReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (pixelsStream != null) {
-      for (int i=0; i<pixelsStream.length; i++) {
-        if (pixelsStream[i] != null) {
-          pixelsStream[i].close();
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      if (pixelsStream != null) {
+        for (RandomAccessInputStream stream : pixelsStream) {
+          if (stream != null) stream.close();
         }
       }
+      pixelsStream = null;
+      embeddedOffset = 0;
+      embeddedImages = false;
+      exposureTimes = null;
     }
-    pixelsStream = null;
-    embeddedOffset = 0;
   }
 
   // -- Internal FormatReader API methods --

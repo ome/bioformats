@@ -126,12 +126,10 @@ public class MNGReader extends FormatReader {
     return img;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    offsets = lengths = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) offsets = lengths = null;
   }
 
   // -- Internal FormatReader API methods --

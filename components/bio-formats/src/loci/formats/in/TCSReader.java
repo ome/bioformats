@@ -194,16 +194,16 @@ public class TCSReader extends FormatReader {
     return v.toArray(new String[0]);
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    tiffs = null;
-    tiffReaders = null;
-    tiffParser = null;
-    datestamp = 0;
-    xmlFile = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      tiffs = null;
+      tiffReaders = null;
+      tiffParser = null;
+      datestamp = 0;
+      xmlFile = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

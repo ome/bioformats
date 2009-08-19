@@ -177,22 +177,25 @@ public class FlexReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    factors = null;
-    binX = binY = 0;
-    plateCount = wellCount = fieldCount = 0;
-    channelNames = null;
-    measurementFiles = null;
-    xSizes = ySizes = null;
-    cameraIDs = objectiveIDs = lightSourceIDs = null;
-    lightSourceCombinationIDs = null;
-    lightSourceCombinationRefs = null;
-    cameraRefs = objectiveRefs = binnings = null;
-    wellRows = wellColumns = 0;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      factors = null;
+      binX = binY = 0;
+      plateCount = wellCount = fieldCount = 0;
+      channelNames = null;
+      measurementFiles = null;
+      xSizes = ySizes = null;
+      cameraIDs = objectiveIDs = lightSourceIDs = null;
+      lightSourceCombinationIDs = null;
+      lightSourceCombinationRefs = null;
+      cameraRefs = objectiveRefs = binnings = null;
+      wellRows = wellColumns = 0;
+      xPositions = yPositions = null;
+      filterSets = null;
+      plateName = plateBarcode = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

@@ -141,17 +141,20 @@ public class ImarisHDFReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      seriesCount = 0;
+      pixelSizeX = pixelSizeY = pixelSizeZ = 0;
+      minX = minY = minZ = maxX = maxY = maxZ = 0;
 
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    seriesCount = 0;
-    pixelSizeX = pixelSizeY = pixelSizeZ = 0;
-    minX = minY = minZ = maxX = maxY = maxZ = 0;
+      if (netcdf != null) netcdf.close();
+      netcdf = null;
 
-    if (netcdf != null) netcdf.close();
-    netcdf = null;
+      emWave = exWave = channelMin = channelMax = null;
+      gain = pinhole = channelName = microscopyMode = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

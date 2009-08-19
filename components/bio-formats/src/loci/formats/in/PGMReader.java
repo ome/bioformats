@@ -107,13 +107,13 @@ public class PGMReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    rawBits = false;
-    offset = 0;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      rawBits = false;
+      offset = 0;
+    }
   }
 
   // -- Internal FormatReader API methods --

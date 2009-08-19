@@ -111,17 +111,17 @@ public class PCIReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    imageFiles = null;
-    timestamps = null;
-    if (poi != null) poi.close();
-    poi = null;
-    binning = 0;
-    creationDate = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      imageFiles = null;
+      timestamps = null;
+      if (poi != null) poi.close();
+      poi = null;
+      binning = 0;
+      creationDate = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

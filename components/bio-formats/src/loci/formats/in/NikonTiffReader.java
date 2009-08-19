@@ -79,18 +79,18 @@ public class NikonTiffReader extends BaseTiffReader {
     return software != null && software.toString().indexOf("EZ-C1") != -1;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    physicalSizeX = physicalSizeY = physicalSizeZ = 0;
-    dichroicModels = filterModels = laserIDs = null;
-    magnification = 0;
-    lensNA = workingDistance = pinholeSize = 0;
-    correction = null;
-    gain = null;
-    wavelength = emWave = exWave = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      physicalSizeX = physicalSizeY = physicalSizeZ = 0;
+      dichroicModels = filterModels = laserIDs = null;
+      magnification = 0;
+      lensNA = workingDistance = pinholeSize = 0;
+      correction = immersion = null;
+      gain = null;
+      wavelength = emWave = exWave = null;
+    }
   }
 
   // -- Internal BaseTiffReader API methods --

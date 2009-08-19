@@ -190,23 +190,18 @@ public class PerkinElmerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) {
-      if (tiff != null) tiff.close();
+    super.close(fileOnly);
+    if (tiff != null) tiff.close(fileOnly);
+    if (!fileOnly) {
+      tiff = null;
+      allFiles = null;
+      files = null;
+      details = sliceSpace = null;
+      isTiff = true;
+      pixelSizeX = pixelSizeY = 1f;
+      finishTime = startTime = null;
+      originX = originY = originZ = 0f;
     }
-    else close();
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    currentId = null;
-    if (tiff != null) tiff.close();
-    tiff = null;
-    allFiles = null;
-    files = null;
-    details = sliceSpace = null;
-    isTiff = true;
   }
 
   // -- Internal FormatReader API methods --

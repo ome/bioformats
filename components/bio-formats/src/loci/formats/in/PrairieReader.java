@@ -179,23 +179,20 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (fileOnly && tiff != null) tiff.close(fileOnly);
-    else if (!fileOnly) close();
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (tiff != null) tiff.close();
-    currentId = xmlFile = cfgFile = null;
-    tiff = null;
-    files = null;
-    readXML = false;
-    readCFG = false;
-    isZ = false;
-    zt = 0;
-    f = null;
+    super.close(fileOnly);
+    if (tiff != null) tiff.close(fileOnly);
+    if (!fileOnly) {
+      xmlFile = cfgFile = null;
+      tiff = null;
+      files = null;
+      readXML = false;
+      readCFG = false;
+      isZ = false;
+      zt = 0;
+      f = gains = offsets = null;
+      pixelSizeX = pixelSizeY = 0;
+      date = laserPower = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

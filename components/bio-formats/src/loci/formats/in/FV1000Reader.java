@@ -244,14 +244,14 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (in != null) in.close();
+    super.close(fileOnly);
     if (thumbReader != null) thumbReader.close(fileOnly);
 
     if (!fileOnly) {
-      super.close();
       tiffs = usedFiles = null;
       thumbReader = null;
       thumbId = null;
+      isOIB = false;
       previewNames = null;
       if (poi != null) poi.close();
       poi = null;
@@ -259,14 +259,17 @@ public class FV1000Reader extends FormatReader {
       dyeNames = null;
       wavelengths = null;
       illuminations = null;
+      oibMapping = null;
+      code = size = pixelSize = null;
+      imageDepth = 0;
+      pixelSizeX = pixelSizeY = null;
+      channelNames = null;
+      emWaves = exWaves = null;
+      gain = offset = voltage = pinholeSize = null;
+      magnification = lensNA = objectiveName = workingDistance = null;
+      creationDate = null;
+      lut = null;
     }
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    close(false);
   }
 
   // -- Internal FormatReader API methods --

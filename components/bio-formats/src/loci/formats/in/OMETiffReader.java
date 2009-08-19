@@ -137,6 +137,16 @@ public class OMETiffReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      info = null;
+      used = null;
+      lastPlane = 0;
+    }
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

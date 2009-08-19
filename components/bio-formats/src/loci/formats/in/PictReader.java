@@ -195,16 +195,16 @@ public class PictReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    rowBytes = 0;
-    strips = null;
-    versionOne = false;
-    lookup = null;
-    legacy = false;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      rowBytes = 0;
+      strips = null;
+      versionOne = false;
+      lookup = null;
+      legacy = false;
+    }
   }
 
   // -- Internal FormatReader API methods --

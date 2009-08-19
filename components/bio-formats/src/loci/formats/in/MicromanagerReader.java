@@ -144,23 +144,22 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) {
-      if (tiffReader != null) tiffReader.close(fileOnly);
+    super.close(fileOnly);
+    if (tiffReader != null) tiffReader.close(fileOnly);
+    if (!fileOnly) {
+      tiffReader = null;
+      tiffs = null;
+      comment = time = null;
+      exposureTime = sliceThickness = pixelSize = null;
+      timestamps = null;
+      metadataFile = null;
+      channels = null;
+      gain = 0;
+      binning = detectorID = detectorModel = detectorManufacturer = null;
+      temperature = 0;
+      voltage = null;
+      cameraRef = cameraMode = null;
     }
-    else close();
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (tiffReader != null) tiffReader.close();
-    tiffReader = null;
-    tiffs = null;
-    comment = time = null;
-    exposureTime = sliceThickness = pixelSize = null;
-    timestamps = null;
   }
 
   // -- Internal FormatReader API methods --

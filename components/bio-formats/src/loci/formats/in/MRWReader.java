@@ -154,11 +154,17 @@ public class MRWReader extends FormatReader {
       isLittleEndian());
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      offset = 0;
+      sensorWidth = sensorHeight = 0;
+      bayerPattern = 0;
+      storageMethod = 0;
+      dataSize = 0;
+      wbg = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

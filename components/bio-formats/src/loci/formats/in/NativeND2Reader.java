@@ -162,33 +162,33 @@ public class NativeND2Reader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      offsets = null;
+      zs.clear();
+      ts.clear();
+      isJPEG = isLossless = false;
+      numSeries = 0;
+      tsT.clear();
 
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-
-    offsets = null;
-    zs.clear();
-    ts.clear();
-    isJPEG = isLossless = false;
-    numSeries = 0;
-    tsT.clear();
-
-    pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
-    voltage = mag = na = objectiveModel = immersion = correction = null;
-    channelNames = null;
-    binning = null;
-    speed = null;
-    gain = null;
-    temperature = null;
-    exposureTime = null;
-    modality = null;
-    exWave = null;
-    emWave = null;
-    power = null;
-    cameraModel = null;
-    fieldIndex = 0;
+      pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
+      voltage = mag = na = objectiveModel = immersion = correction = null;
+      channelNames = null;
+      binning = null;
+      speed = null;
+      gain = null;
+      temperature = null;
+      exposureTime = null;
+      modality = null;
+      exWave = null;
+      emWave = null;
+      power = null;
+      cameraModel = null;
+      fieldIndex = 0;
+      rois = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

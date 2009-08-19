@@ -146,14 +146,14 @@ public class EPSReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    bps = start = 0;
-    binary = isTiff = false;
-    ifds = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      bps = start = 0;
+      binary = isTiff = false;
+      ifds = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

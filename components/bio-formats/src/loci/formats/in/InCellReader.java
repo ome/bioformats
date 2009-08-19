@@ -181,26 +181,33 @@ public class InCellReader extends FormatReader {
     return files.toArray(new String[0]);
   }
 
-  // -- IFormatHandler API methods --
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (tiffReader != null) tiffReader.close(fileOnly);
 
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    imageFiles = null;
-    if (tiffReader != null) tiffReader.close();
-    tiffReader = null;
-    totalImages = 0;
-
-    emWaves = exWaves = null;
-    wellCoordinates = null;
-    posX = null;
-    posY = null;
-    creationDate = null;
-    wellRows = wellCols = 0;
-    startRow = startCol = 0;
-    fieldCount = 0;
-    exclude = null;
-    metadataFiles = null;
+    if (!fileOnly) {
+      imageFiles = null;
+      tiffReader = null;
+      totalImages = 0;
+      emWaves = exWaves = null;
+      wellCoordinates = null;
+      posX = null;
+      posY = null;
+      creationDate = null;
+      wellRows = wellCols = 0;
+      startRow = startCol = 0;
+      fieldCount = 0;
+      exclude = null;
+      metadataFiles = null;
+      imageWidth = imageHeight = 0;
+      rowName = colName = null;
+      firstRow = firstCol = 0;
+      lastCol = 0;
+      channelsPerTimepoint = null;
+      oneTimepointPerSeries = false;
+      totalChannels = 0;
+    }
   }
 
   // -- Internal FormatReader API methods --

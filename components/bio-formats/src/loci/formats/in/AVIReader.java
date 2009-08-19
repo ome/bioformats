@@ -202,22 +202,23 @@ public class AVIReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    offsets = null;
-    lengths = null;
-    type = null;
-    fcc = null;
-    size = -1;
-    pos = 0;
-    bmpColorsUsed = bmpWidth = bmpCompression = bmpScanLineSize = 0;
-    bmpBitsPerPixel = 0;
-    lut = null;
-    lastImage = null;
-    lastImageNo = -1;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      offsets = null;
+      lengths = null;
+      type = null;
+      fcc = null;
+      size = -1;
+      pos = 0;
+      bytesPerPlane = 0;
+      bmpColorsUsed = bmpWidth = bmpCompression = bmpScanLineSize = 0;
+      bmpBitsPerPixel = 0;
+      lut = null;
+      lastImage = null;
+      lastImageNo = -1;
+    }
   }
 
   // -- Internal FormatReader API methods --

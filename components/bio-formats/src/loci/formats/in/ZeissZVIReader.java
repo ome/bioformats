@@ -325,23 +325,27 @@ public class ZeissZVIReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-
-    timestamps = exposureTime = null;
-    offsets = null;
-    coordinates = null;
-    imageFiles = null;
-    cIndex = -1;
-    bpp = tileRows = tileColumns = 0;
-    isTiled = isJPEG = isZlib = false;
-    if (poi != null) poi.close();
-    poi = null;
-    tagsToParse = null;
-    nextEmWave = nextExWave = nextChName = 0;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      timestamps = exposureTime = null;
+      offsets = null;
+      coordinates = null;
+      imageFiles = null;
+      cIndex = -1;
+      bpp = tileRows = tileColumns = 0;
+      isTiled = isJPEG = isZlib = false;
+      if (poi != null) poi.close();
+      poi = null;
+      tagsToParse = null;
+      nextEmWave = nextExWave = nextChName = 0;
+      firstImageTile = secondImageTile = null;
+      tileWidth = tileHeight = realWidth = realHeight = 0;
+      stageX = stageY = 0;
+      channelColors = null;
+      lastPlane = 0;
+    }
   }
 
   // -- Internal FormatReader API methods --

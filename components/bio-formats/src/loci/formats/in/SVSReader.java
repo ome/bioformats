@@ -70,6 +70,12 @@ public class SVSReader extends BaseTiffReader {
     return buf;
   }
 
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) pixelSize = null;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */

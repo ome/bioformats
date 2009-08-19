@@ -79,12 +79,13 @@ public class MINCReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (netcdf != null) netcdf.close();
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      if (netcdf != null) netcdf.close();
+      pixelData = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

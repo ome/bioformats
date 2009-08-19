@@ -184,18 +184,27 @@ public class MetamorphReader extends BaseTiffReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (stkReader != null) stkReader.close();
-    stkReader = null;
-    imageName = imageCreationDate = null;
-    emWavelength = null;
-    stks = null;
-    mmPlanes = 0;
-    ndFilename = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (stkReader != null) stkReader.close(fileOnly);
+    if (!fileOnly) {
+      stkReader = null;
+      imageName = imageCreationDate = null;
+      emWavelength = null;
+      stks = null;
+      mmPlanes = 0;
+      ndFilename = null;
+      wave = null;
+      binning = null;
+      zoom = stepSize = 0;
+      exposureTime = null;
+      waveNames = stageNames = null;
+      internalStamps = null;
+      zDistances = stageX = stageY = null;
+      canLookForND = true;
+      firstSeriesChannels = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

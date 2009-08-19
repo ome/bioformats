@@ -230,9 +230,7 @@ public class MIASReader extends FormatReader {
     return files.toArray(new String[0]);
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
@@ -257,6 +255,7 @@ public class MIASReader extends FormatReader {
       bpp = null;
       plateAndWell = null;
       plateFiles = null;
+      cachedTileBuffer = null;
     }
   }
 

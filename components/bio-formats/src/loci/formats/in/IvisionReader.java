@@ -105,22 +105,22 @@ public class IvisionReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    color16 = false;
-    squareRoot = false;
-    lut = null;
-    imageOffset = 0;
-    binX = binY = null;
-    creationDate = null;
-    exposureTime = null;
-    gain = offset = null;
-    deltaT = null;
-    magnification = lensNA = refractiveIndex = null;
-    wavelength = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      color16 = false;
+      squareRoot = false;
+      lut = null;
+      imageOffset = 0;
+      binX = binY = null;
+      creationDate = null;
+      exposureTime = null;
+      gain = offset = null;
+      deltaT = null;
+      magnification = lensNA = refractiveIndex = null;
+      wavelength = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

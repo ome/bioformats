@@ -105,12 +105,10 @@ public class VisitechReader extends FormatReader {
     return files == null ? new String[0] : files.toArray(new String[0]);
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    files = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) files = null;
   }
 
   // -- Internal FormatReader API methods --

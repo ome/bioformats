@@ -347,22 +347,28 @@ public class DicomReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    bitsPerPixel = location = elementLength = vr = 0;
-    oddLocations = inSequence = bigEndianTransferSyntax = false;
-    isJPEG = isJP2K = isRLE = isDeflate = false;
-    lut = null;
-    offsets = null;
-    shortLut = null;
-    rescaleSlope = 1.0;
-    rescaleIntercept = 0.0;
-    pixelSizeX = pixelSizeY = null;
-    imagesPerFile = 0;
-    fileList = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (helper != null) helper.close(fileOnly);
+    if (!fileOnly) {
+      bitsPerPixel = location = elementLength = vr = 0;
+      oddLocations = inSequence = bigEndianTransferSyntax = false;
+      isJPEG = isJP2K = isRLE = isDeflate = false;
+      lut = null;
+      offsets = null;
+      shortLut = null;
+      maxPixelValue = 0;
+      rescaleSlope = 1.0;
+      rescaleIntercept = 0.0;
+      pixelSizeX = pixelSizeY = null;
+      imagesPerFile = 0;
+      fileList = null;
+      inverted = false;
+      date = time = imageType = null;
+      originalDate = originalTime = originalInstance = null;
+      helper = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

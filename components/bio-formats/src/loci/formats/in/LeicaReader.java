@@ -238,11 +238,9 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (in != null) in.close();
-    if (tiff != null) tiff.close();
-    tiff = null;
+    super.close(fileOnly);
+    if (tiff != null) tiff.close(fileOnly);
     if (!fileOnly) {
-      super.close();
       leiFilename = null;
       files = null;
       ifds = headerIFDs = null;

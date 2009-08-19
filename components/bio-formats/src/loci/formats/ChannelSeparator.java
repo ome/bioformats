@@ -191,16 +191,18 @@ public class ChannelSeparator extends ReaderWrapper {
     else return reader.openBytes(no, buf, x, y, w, h);
   }
 
-  /* @see IFormatReader#close() */
-  public void close() throws IOException {
-    super.close();
-    lastImage = null;
-    lastImageIndex = -1;
-    lastImageSeries = -1;
-    lastImageX = -1;
-    lastImageY = -1;
-    lastImageWidth = -1;
-    lastImageHeight = -1;
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      lastImage = null;
+      lastImageIndex = -1;
+      lastImageSeries = -1;
+      lastImageX = -1;
+      lastImageY = -1;
+      lastImageWidth = -1;
+      lastImageHeight = -1;
+    }
   }
 
   public int getIndex(int z, int c, int t) {

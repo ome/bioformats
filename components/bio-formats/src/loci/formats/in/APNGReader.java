@@ -186,10 +186,14 @@ public class APNGReader extends FormatReader {
     return new BufferedImage(first.getColorModel(), firstRaster, false, null);
   }
 
-  /* @see loci.formats.IFormatReader#close() */
-  public void close() throws IOException {
-    super.close();
-    lut = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      lut = null;
+      frameCoordinates = null;
+      blocks = null;
+    }
   }
 
   // -- Internal FormatReader methods --

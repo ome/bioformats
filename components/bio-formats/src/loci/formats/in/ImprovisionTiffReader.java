@@ -70,13 +70,14 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     return comment.indexOf(IMPROVISION_MAGIC_STRING) >= 0;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    cNames = null;
-    pixelSizeT = 1;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      cNames = null;
+      pixelSizeT = 1;
+      pixelSizeX = pixelSizeY = pixelSizeZ = 0;
+    }
   }
 
   // -- Internal BaseTiffReader API methods --

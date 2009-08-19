@@ -249,17 +249,20 @@ public class NativeQTReader extends FormatReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    offsets = null;
-    prevPixels = null;
-    codec = altCodec = null;
-    pixelOffset = pixelBytes = bitsPerPixel = rawSize = 0;
-    prevPlane = altPlanes = 0;
-    canUsePrevious = false;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      offsets = null;
+      prevPixels = null;
+      codec = altCodec = null;
+      pixelOffset = pixelBytes = bitsPerPixel = rawSize = 0;
+      prevPlane = altPlanes = 0;
+      canUsePrevious = false;
+      scale = 0;
+      chunkSizes = null;
+      interlaced = spork = flip = false;
+    }
   }
 
   // -- Internal FormatReader API methods --

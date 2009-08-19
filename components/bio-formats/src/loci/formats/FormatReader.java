@@ -626,10 +626,11 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) {
-      if (in != null) in.close();
+    if (in != null) in.close();
+    if (!fileOnly) {
+      in = null;
+      currentId = null;
     }
-    else close();
   }
 
   /* @see IFormatReader#getSeriesCount() */
@@ -834,9 +835,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatHandler#close() */
   public void close() throws IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
+    close(false);
   }
 
 }

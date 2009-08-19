@@ -272,19 +272,19 @@ public class NikonReader extends BaseTiffReader {
       isLittleEndian());
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    makerNoteOffset = 0;
-    original = null;
-    split = -1;
-    whiteBalance = null;
-    cfaPattern = null;
-    curve = null;
-    vPredictor = null;
-    lossyCompression = false;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      makerNoteOffset = 0;
+      original = null;
+      split = -1;
+      whiteBalance = null;
+      cfaPattern = null;
+      curve = null;
+      vPredictor = null;
+      lossyCompression = false;
+    }
   }
 
   // -- Internal BaseTiffReader API methods --

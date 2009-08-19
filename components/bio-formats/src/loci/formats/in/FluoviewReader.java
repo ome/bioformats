@@ -137,13 +137,16 @@ public class FluoviewReader extends BaseTiffReader {
     return buf;
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    voxelX = voxelY = voxelZ = voxelC = voxelT = 1f;
-    dimensionOrder = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      voxelX = voxelY = voxelZ = voxelC = voxelT = 1f;
+      dimensionOrder = null;
+      gains = voltages = offsets = channelNames = lensNA = null;
+      mag = detManu = objManu = comment = null;
+      gamma = null;
+    }
   }
 
   // -- Internal BaseTiffReader API methods --

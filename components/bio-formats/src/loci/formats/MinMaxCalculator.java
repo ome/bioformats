@@ -248,14 +248,16 @@ public class MinMaxCalculator extends ReaderWrapper {
     return buf;
   }
 
-  /* @see IFormatReader#close() */
-  public void close() throws IOException {
-    reader.close();
-    chanMin = null;
-    chanMax = null;
-    planeMin = null;
-    planeMax = null;
-    minMaxDone = null;
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    reader.close(fileOnly);
+    if (!fileOnly) {
+      chanMin = null;
+      chanMax = null;
+      planeMin = null;
+      planeMax = null;
+      minMaxDone = null;
+    }
   }
 
   // -- Helper methods --

@@ -81,6 +81,15 @@ public class TiffReader extends BaseTiffReader {
     return new String[] {currentId};
   }
 
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      companionFile = null;
+      description = null;
+    }
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */

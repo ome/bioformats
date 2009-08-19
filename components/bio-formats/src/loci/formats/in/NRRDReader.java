@@ -118,16 +118,16 @@ public class NRRDReader extends FormatReader {
     return helper.openBytes(no, buf, x, y, w, h);
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (helper != null) helper.close();
-    helper = null;
-    dataFile = encoding = null;
-    offset = 0;
-    pixelSizes = null;
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (helper != null) helper.close(fileOnly);
+    if (!fileOnly) {
+      helper = null;
+      dataFile = encoding = null;
+      offset = 0;
+      pixelSizes = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

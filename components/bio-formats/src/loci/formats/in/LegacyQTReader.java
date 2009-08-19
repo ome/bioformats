@@ -129,13 +129,6 @@ public class LegacyQTReader extends FormatReader {
     }
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    close(false);
-  }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
