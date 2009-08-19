@@ -793,12 +793,13 @@ public class ImageInfo {
       LogTools.println("Debugging at level " + LogTools.getDebugLevel());
     }
 
+    createReader();
+
     if (id == null) {
       printUsage();
       return false;
     }
 
-    createReader();
     mapLocation();
     configureReaderPreInit();
 
