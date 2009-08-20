@@ -80,20 +80,37 @@ public class LIFReader extends FormatReader {
   private static final byte[][][] BYTE_LUTS = createByteLUTs();
 
   private static byte[][][] createByteLUTs() {
-    byte[][][] lut = new byte[6][3][256];
+    byte[][][] lut = new byte[9][3][256];
     for (int i=0; i<256; i++) {
+      // red
       lut[0][0][i] = (byte) (i & 0xff);
+      // green
       lut[1][1][i] = (byte) (i & 0xff);
+      // blue
       lut[2][2][i] = (byte) (i & 0xff);
 
+      // cyan
       lut[3][1][i] = (byte) (i & 0xff);
       lut[3][2][i] = (byte) (i & 0xff);
 
+      // magenta
       lut[4][0][i] = (byte) (i & 0xff);
       lut[4][2][i] = (byte) (i & 0xff);
 
+      // yellow
       lut[5][0][i] = (byte) (i & 0xff);
       lut[5][1][i] = (byte) (i & 0xff);
+
+      // gray
+      lut[6][0][i] = (byte) (i & 0xff);
+      lut[6][1][i] = (byte) (i & 0xff);
+      lut[6][2][i] = (byte) (i & 0xff);
+      lut[7][0][i] = (byte) (i & 0xff);
+      lut[7][1][i] = (byte) (i & 0xff);
+      lut[7][2][i] = (byte) (i & 0xff);
+      lut[8][0][i] = (byte) (i & 0xff);
+      lut[8][1][i] = (byte) (i & 0xff);
+      lut[8][2][i] = (byte) (i & 0xff);
     }
     return lut;
   }
@@ -101,20 +118,37 @@ public class LIFReader extends FormatReader {
   private static final short[][][] SHORT_LUTS = createShortLUTs();
 
   private static short[][][] createShortLUTs() {
-    short[][][] lut = new short[6][3][65536];
+    short[][][] lut = new short[9][3][65536];
     for (int i=0; i<65536; i++) {
+      // red
       lut[0][0][i] = (short) (i & 0xffff);
+      // green
       lut[1][1][i] = (short) (i & 0xffff);
+      // blue
       lut[2][2][i] = (short) (i & 0xffff);
 
+      // cyan
       lut[3][1][i] = (short) (i & 0xffff);
       lut[3][2][i] = (short) (i & 0xffff);
 
+      // magenta
       lut[4][0][i] = (short) (i & 0xffff);
       lut[4][2][i] = (short) (i & 0xffff);
 
+      // yellow
       lut[5][0][i] = (short) (i & 0xffff);
       lut[5][1][i] = (short) (i & 0xffff);
+
+      // gray
+      lut[6][0][i] = (short) (i & 0xffff);
+      lut[6][1][i] = (short) (i & 0xffff);
+      lut[6][2][i] = (short) (i & 0xffff);
+      lut[7][0][i] = (short) (i & 0xffff);
+      lut[7][1][i] = (short) (i & 0xffff);
+      lut[7][2][i] = (short) (i & 0xffff);
+      lut[8][0][i] = (short) (i & 0xffff);
+      lut[8][1][i] = (short) (i & 0xffff);
+      lut[8][2][i] = (short) (i & 0xffff);
     }
     return lut;
   }
