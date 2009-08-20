@@ -685,7 +685,8 @@ public class ImageInfo {
       if (reader.isIndexed() && reader.get8BitLookupTable() == null &&
         reader.get16BitLookupTable() == null)
       {
-        LogTools.println("\t************ Warning: no LUT for plane #"
+        LogTools.println();
+        LogTools.println("************ Warning: no LUT for plane #"
           + i + " ************");
       }
 
