@@ -155,16 +155,6 @@ description = label reference for the associated instrument
 type = String
 description = reference to the group that owns this image
 
-[Image Objective]
-path = Image+/ObjectiveRef
-type = String
-getter = getNodeID
-setter = setNodeID
-description = reference to the objective used when acquiring this image
-
-[Image Objective 200706]
-path = -
-
 [Image ExperimentRef]
 type = String
 description = reference to the experiment to which this image belongs
@@ -2034,7 +2024,6 @@ description = the objective associated with a particular image
 
 [ObjectiveSettings 200706]
 path = Image+/ObjectiveSettings
-description = the objective associated with a particular image
 
 [ObjectiveSettings Objective]
 type = String
