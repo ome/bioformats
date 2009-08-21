@@ -515,17 +515,15 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
     if (f.exists()) {
       compressed = raf instanceof CompressedRandomAccess;
-      if (compressed) {
-        BufferedInputStream bis = new BufferedInputStream(
-          new FileInputStream(path), MAX_OVERHEAD);
+      BufferedInputStream bis = new BufferedInputStream(
+        new FileInputStream(path), MAX_OVERHEAD);
 
-        if (dis != null) dis.close();
-        dis = new DataInputStream(bis);
-        buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
-        raf.readFully(buf);
-        raf.seek(0);
-        nextMark = MAX_OVERHEAD;
-      }
+      if (dis != null) dis.close();
+      dis = new DataInputStream(bis);
+      buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
+      raf.readFully(buf);
+      raf.seek(0);
+      nextMark = MAX_OVERHEAD;
     }
     fileCache.put(this, true);
     openFiles++;
