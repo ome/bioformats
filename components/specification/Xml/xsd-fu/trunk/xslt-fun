@@ -66,8 +66,12 @@ def run_stylesheet(xslt, document):
     return transform(document)
 
 
+
+
+
+
 class Test200809(unittest.TestCase):
-    STYLESHEET = "2008-09.xsl"
+    STYLESHEET = "../../../Xslt/2008-09.xsl"
     
     DOCUMENT = "tmp/sample-2008-09.ome"
     
@@ -78,7 +82,109 @@ class Test200809(unittest.TestCase):
     NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
 
     NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2009-09"
+    
+    # Create the XPath for the element in the scope of root or local. 
+    # and add attribute if supplied.
+    def createXPath(self, scope, NS, elementName, attribute=None):
+        if(scope=='local'):
+            scope = './';
+        if(scope=='root'):
+            scope = './/';
+        if(attribute!=None):
+            return '%s{%s}%s' % (scope, NS, elementName);
+        return '%s{%s}%s@%s' % (scope, NS, elementName, attribute)
 
+    # return the name of the element without NameSpace e.g. {NameSpace}elementName.
+    def localName(elementTag):
+        return elementTag[elementTag.find("}") + 1:]
+    
+    # Get all elements from rootElement in elementList in namespace NS.
+    def getAllElements(self, rootElement, NS, elementList):
+        returnList = [];
+        for elementName in elementList:
+            elementXPath = self.createXPath('root', NS, elementName);
+            foundElements = rootElement.findall(elementXPath);
+            returnList.extend(foundElements);
+        return returnList;
+    
+    # Check that the elements in the exclusionList are not in the element.
+    def checkElementsExcluded(self, element, exclusionList):
+        children = element.getchildren();
+        for child in children:
+            self.assertFalse(child in exclusionList)
+            
+    # Check that the attributes in element with Namespace NS are not in exclusionList.
+    def checkAttributesExcluded(self, root, NS, element, exclusionList):
+        for attribute in exclusionList:
+            xpath = createXPath('root', NS, element, attribute);
+            self.assertTrue(len(root.findall(xpath)), 0)
+   
+    # Check the alll the elements in oldRoot with namespace oldNS have been mapped to newRoot with namespace newNS.
+    # Rename those elements in renameMap.
+    def checkElementsMapped(self, oldRoot, oldNS, newRoot, newNS, renameMap):
+        for mappedElement in renameMap:
+            oldXPath = self.createXPath('root',oldNS, mappedElement);
+            newXPath = self.createXPath('root',newNS, renameMap[mappedElement]);
+            oldElements = oldRoot.findall(oldXPath);
+            newElements = newRoot.findall(newXPath);
+            self.assertEqual(len(oldElements),len(newElements))
+            self.assertFalse(len(newRoot.findall(oldXPath)),0)
+    
+    # Compare Elements in oldElement with the NameSpace oldElementNS to the attributes with the same name in newElement.
+    # Don't compare those elements in the exceptionList.
+    # Rename those attributes in the renameMap.
+    def compareElementsWithAttributes(self, oldElement, oldElementNS, newElement, exceptionList=None, renameMap=None):
+        for oldChildElement in oldElement.getchildren():
+            elementName = localName(oldChildElement.tag);
+            if(elementName in exceptionList):
+                continue;
+            mappedName = elementName;
+            if(elementName in renameMap):
+                mappedName = renameMap[mappedName];
+            newValue = newElement.get(mappedName);
+            self.assertFalse(newValue, None);
+            self.assertEquals(newValue, oldChildElement.text);
+
+    # Compare elements from oldElement in oldElement NameSpace to the newElement in newElement NameSpace.
+    # Don't compare those elements in the exceptionList list.
+    # Rename those elements in the renameMap.
+    def compareElements(self, oldElement, oldElementNS, newElement, newElementNS, exceptionList=None, renameMap=None):
+        for oldChildElement in oldElement.getchildren():
+            elementName = localName(oldChildElement.tag);
+            if(elementName in exceptionList):
+                continue;
+            mappedName = elementName;
+            if(elementName in renameMap):
+                mappedName = renameMap[elementName];
+            newChildXPath = self.createXPath('local', newElementNS, mappedName);
+            newChildElement = newElement.find(newChildXPath);
+            self.assertFalse(newChildElement, None);
+            self.assertEquals(newChildElement.text, oldChildElement.text)
+
+    # Compare attributes from oldElement to new element
+    # Don't compare those elements in the exceptionList.
+    # Rename those elements in the renameMap.
+    def compareAttributes(oldElement, newElement, exceptionList=None, renameMap=None):
+        for key in oldElement:
+            if key in exceptionList:
+                continue;
+            mappedKey = key;
+            if(key in renameMap):
+                mappedKey = renameMap[key];
+            newValue = newElement.get(mapepdKey);
+            oldValue = oldElement.get(key);
+            self.assertEquals(newValue, oldValue);    
+
+    # Get all the child elements from the element, in namespace. 
+    # Exclude thoses child elements in the exclusions list.
+    def getChildElements(self, element, elementNS, exceptionList):
+        childList = [];
+        for child in element.getchildren():
+            name = localName(child);
+            if(name not in exceptionList):
+                childList.append(name);
+        return childList;
+        
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
         self.instance_file = open(self.DOCUMENT)
@@ -92,69 +198,147 @@ class Test200809(unittest.TestCase):
         self.instance_file.close()
 
     def test_objective_settings(self):
-        xpath = './/{%s}ObjectiveRef' % self.OLD_OME_NS
-        reference_count = len(self.old_root.findall(xpath))
-        self.assertTrue(reference_count > 0)
-        xpath = './/{%s}ObjectiveRef' % self.NEW_OME_NS
-        old_elements = self.new_root.findall(xpath)
-        xpath = './/{%s}ObjectiveSettings' % self.NEW_OME_NS
-        new_elements = self.new_root.findall(xpath)
-        self.assertEquals(reference_count, len(new_elements))
-        self.assertEquals(0, len(old_elements))
-
+        """
+        ObjectiveRef to ObjectiveSettings transformation 
+        """
+        
+        self.checkElementsMapped( self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'ObjectiveRef':'ObjectiveSettings'})
+        
     def test_light_source_settings(self):
-        xpath = './/{%s}LightSourceRef' % self.OLD_OME_NS
-        reference_count = len(self.old_root.findall(xpath))
-        self.assertTrue(reference_count > 0)
-        xpath = './/{%s}LightSourceRef' % self.NEW_OME_NS
-        old_elements = self.new_root.findall(xpath)
-        xpath = './/{%s}LightSettings' % self.NEW_OME_NS
-        new_elements = self.new_root.findall(xpath)
-        self.assertEquals(reference_count, len(new_elements))
-        self.assertEquals(0, len(old_elements))
-
+        """
+        LightSourceRef to LightSettings transformation 
+        """
+        self.checkElementsMapped(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'LightSourceRef':'LightSettings'})
+        
     def test_detector_settings(self):
-        xpath = './/{%s}DetectorRef' % self.OLD_OME_NS
-        reference_count = len(self.old_root.findall(xpath))
-        self.assertTrue(reference_count > 0)
-        xpath = './/{%s}DetectorRef' % self.NEW_OME_NS
-        old_elements = self.new_root.findall(xpath)
-        xpath = './/{%s}DetectorSettings' % self.NEW_OME_NS
-        new_elements = self.new_root.findall(xpath)
-        self.assertEquals(reference_count, len(new_elements))
-        self.assertEquals(0, len(old_elements))
+        """
+        DetectorRef to DetectorSettings transformation
+        """
+        self.checkElementsMapped(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'DetectorRef':'DetectorSettings'})
+
+    def test_wellsample_attributes(self):
+        """
+        Change the WellSample attributes
+        Remove Index, Rename PosX to PositionX & PosY to PositionY
+        """
+
+        self.checkElementsMapped(self.old_root, self.OLD_SPW_NS, self.new_root, self.NEW_SPW_NS, {'WellSample':'WellSample'})
+        self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['Index'])
+        self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['PosX'])
+        self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['PosY'])
+        
+        # count old PosX and PosY attributes in old WellSample
+        xpath = './/{%s}WellSample' % self.OLD_SPW_NS
+        old_elements = self.old_root.findall(xpath)
+        reference_count_posx = 0
+        reference_count_posy = 0
+        for element in old_elements:
+            if ('PosX' in element.keys()):
+                reference_count_posx+=1
+            if ('PosY' in element.keys()):
+                reference_count_posy+=1
+                
+        # count old PosX and PosY attributes in new WellSample
+        xpath = './/{%s}WellSample' % self.NEW_SPW_NS
+        new_wellsample_elements = self.new_root.findall(xpath)
+        new_count_posx = 0
+        new_count_posy = 0
+        for element in new_wellsample_elements:
+            if ('PositionX' in element.keys()):
+                new_count_posx+=1
+            if ('PositionY' in element.keys()):
+                new_count_posy+=1
+
+        # compare old PosX attributes to new PositionX attributes
+        self.assertEquals(reference_count_posx, new_count_posx)
+        # compare old PosY attributes to new PositionY attributes
+        self.assertEquals(reference_count_posy, new_count_posy)
 
     def test_description_no_lang(self):
+        """
+        Change OME:Description to be a local simple type in each
+        element it is used called Description based on xsd:string
+        """
         print self.result
+        # find old OME:Description
         xpath = './/{%s}Description' % self.OLD_OME_NS
         reference_count_all = len(self.old_root.findall(xpath))
         self.assertTrue(reference_count_all > 0)
+        # find old OME:Description only in SPW:Screen
         xpath = './/{%s}Screen/{%s}Description' % (self.OLD_SPW_NS, self.OLD_OME_NS)
-        reference_screen_descripton_elements = self.new_root.findall(xpath)
+        reference_screen_descripton_elements = self.old_root.findall(xpath)
+        # find new OME:Description
         xpath = './/{%s}Description' % self.NEW_OME_NS
         new_ome_descripton_elements = self.new_root.findall(xpath)
+        # find new SPW:Description only in SPW:Screen
         xpath = './/{%s}Screen/{%s}Description' % (self.NEW_SPW_NS, self.NEW_SPW_NS)
         new_screen_descripton_elements = self.new_root.findall(xpath)
-        self.assertEquals(reference_count_all, len(new_ome_descripton_elements)+len(new_screen_descripton_elements))
-        self.assertEquals(len(reference_screen_descripton_elements),len(new_screen_descripton_elements))
-        
-
+        # old attributes must not be present in new OME:Description nodes
         xpath = './/{%s}Description' % self.NEW_OME_NS
         new_elements = self.new_root.findall(xpath)
         for element in new_elements:
             self.assertFalse('lang' in element.keys())
+        # old attributes must not be present in new SPW:Description nodes
+        xpath = './/{%s}Description' % self.NEW_SPW_NS
+        new_elements = self.new_root.findall(xpath)
+        for element in new_elements:
+            self.assertFalse('lang' in element.keys())
+        # all old OME must equal new OME + new SPW
+        self.assertEquals(reference_count_all, len(new_ome_descripton_elements)+len(new_screen_descripton_elements))
+        # old OME in screen must equal new OME in screen
+        self.assertEquals(len(reference_screen_descripton_elements),len(new_screen_descripton_elements))
+
+    def test_plate_description(self):
+        """
+        Change the Description attribute to be a local simple type in the Plate
+        element to be a Description element based on xsd:string
+        """
+        # find old SPW:Plate
+        xpath = './/{%s}Plate' % self.OLD_SPW_NS
+        reference_count_all = len(self.old_root.findall(xpath))
+        self.assertTrue(reference_count_all > 0)
+        # count old Description attributes in Plate
+        old_elements = self.old_root.findall(xpath)
+        reference_count_attribute = 0
+        for element in old_elements:
+            if ('Description' in element.keys()):
+                reference_count_attribute+=1
+                
+        # find new SPW:Plate
+        xpath = './/{%s}Plate' % self.NEW_SPW_NS
+        new_plate_count = len(self.new_root.findall(xpath))
+        # old plate equals new plate
+        self.assertEquals(reference_count_all, new_plate_count)
+        # find new SPW:Description only in SPW:Plate
+        xpath = './/{%s}Plate/{%s}Description' % (self.NEW_SPW_NS, self.NEW_SPW_NS)
+        new_plate_descripton_count = len(self.new_root.findall(xpath))
+        # compare old Description attributes to new Description elements in Plate
+        self.assertEquals(reference_count_attribute, new_plate_descripton_count)
+        
+        # old attributes must not be present in new SPW:Plate nodes
+        xpath = './/{%s}Plate' % self.NEW_SPW_NS
+        new_elements = self.new_root.findall(xpath)
+        for element in new_elements:
+            self.assertFalse('Description' in element.keys())   
 
     def test_dataset_no_locked(self):
-        xpath = './/{%s}Dataset' % self.OLD_OME_NS
-        reference_count = len(self.old_root.findall(xpath))
-        self.assertTrue(reference_count > 0)
-        xpath = './/{%s}Dataset' % self.NEW_OME_NS
-        new_elements = self.new_root.findall(xpath)
-        self.assertEquals(reference_count, len(new_elements))
-        for element in new_elements:
-            self.assertFalse('Locked' in element.keys())
-
+        """
+        Remove Locked from Dataset
+        """
+        self.checkElementsMapped(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'Dataset':'Dataset'})
+        self.checkAttributesExcluded(self.new_root, self.NEW_OME_NS, 'Dataset', ['Locked'])
+        
     def test_objective_elements_to_attributes(self):
+        """
+        Objective transformation. See stylesheet for details
+        """
+        
+        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, 'Objective');
+        toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, 'Objective');
+        for i, toAttributeElement in enumerate(toAttributes):
+            self.compareElementsWithAttributes(fromElements[i], self.OLD_OME_NS, toAttributeElement);
+        
+        '''
         xpath = './/{%s}Objective' % self.OLD_OME_NS
         old_elements = self.old_root.findall(xpath)
         reference_count = len(old_elements)
@@ -168,8 +352,22 @@ class Test200809(unittest.TestCase):
             for child in old_element.getchildren():
                 name = child.tag[child.tag.find("}") + 1:]
                 self.assertEquals(element.get(name), child.text)
-
+        '''
     def test_experimenter_elements_to_attributes(self):
+        """
+        Experimenter transformation. See stylesheet for details
+        """
+        
+        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, 'Experimenter');
+        toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, 'Experimenter');
+        self.assertEqual(len(fromElements), len(toAttributes));
+        if(len(fromElements)==0):
+            return;
+        inverseExceptionList = self.getChildElements(fromElements[0], self.OLD_OME_NS, ['GroupRef']);
+        for i, toAttributeElement in enumerate(toAttributes):
+            self.compareElementsWithAttributes(fromElements[i], self.OLD_OME_NS, toAttributeElement, ['GroupRef'], {'OMEName':'UserName'});
+            self.compareElements(fromElements[i], self.OLD_OME_NS, toAttributeElement, self.NEW_OME_NS, inverseExceptionList)
+        """            
         xpath = './/{%s}Experimenter' % self.OLD_OME_NS
         old_elements = self.old_root.findall(xpath)
         reference_count = len(old_elements)
@@ -193,8 +391,20 @@ class Test200809(unittest.TestCase):
                 if name in ['GroupRef', 'OMEName']:
                     continue
                 self.assertEquals(element.get(name), child.text)
-    
+        """     
     def test_filter_set_elements_to_attributes(self):
+        """
+        FilterSet transformation. See stylesheet for details 
+        """
+        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, 'FilterSet');
+        toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, 'FilterSet');
+        self.assertEqual(len(fromElements), len(toAttributes));
+        if(len(fromElements)==0):
+            return;
+        for i, toAttributeElement in enumerate(toAttributes):
+            self.compareElementsWithAttributes(fromElements[i], self.OLD_OME_NS, toAttributeElement, None, {'EmFilterRef':'EmissionFilterRef', 'ExFilterRef':'ExcitationFilterRef'});
+            self.compareElements(fromElements[i], self.OLD_OME_NS, toAttributeElement, self.NEW_OME_NS, inverseExceptionList)
+
         xpath = './/{%s}FilterSet' % self.OLD_OME_NS
         old_elements = self.old_root.findall(xpath)
         reference_count = len(old_elements)
@@ -225,8 +435,11 @@ class Test200809(unittest.TestCase):
                 if key in ['EmFilterRef', 'ExFilterRef', 'DichroicRef']:
                     continue
                 self.assertEquals(element.get(key), old_element.get(key))
-                
+              
     def test_plane_elements_to_attributes(self):
+        """
+        Plane transformation. See stylesheet for details 
+        """
         xpath = './/{%s}Plane' % self.OLD_OME_NS
         old_elements = self.old_root.findall(xpath)
         reference_count = len(old_elements)
@@ -254,6 +467,9 @@ class Test200809(unittest.TestCase):
             self.assertEquals(len(old_element.keys())+pt_count+sp_count, len(element.keys()))  
     
     def test_pixels_attributes_name_changed(self):
+        """
+        Pixels transformation. See stylesheet for details
+        """
         xpath = './/{%s}Pixels' % self.OLD_OME_NS
         old_elements = self.old_root.findall(xpath)
         reference_count = len(old_elements)
