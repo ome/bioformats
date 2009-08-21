@@ -581,7 +581,9 @@ public class OpenlabReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    MetadataTools.populatePixels(store, this, false);
+    boolean planeInfoNeeded = xPos != null || yPos != null || zPos != null;
+
+    MetadataTools.populatePixels(store, this, planeInfoNeeded);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     // populate MetadataStore
@@ -612,9 +614,25 @@ public class OpenlabReader extends FormatReader {
 
     store.setDetectorType("Unknown", 0, 0);
 
-    if (xPos != null) store.setStagePositionPositionX(new Float(xPos), 0, 0, 0);
-    if (yPos != null) store.setStagePositionPositionY(new Float(yPos), 0, 0, 0);
-    if (zPos != null) store.setStagePositionPositionZ(new Float(zPos), 0, 0, 0);
+    Float stageX = xPos == null ? null : new Float(xPos);
+    Float stageY = yPos == null ? null : new Float(yPos);
+    Float stageZ = zPos == null ? null : new Float(zPos);
+
+    for (int series=0; series<getSeriesCount(); series++) {
+      setSeries(series);
+      for (int plane=0; plane<getImageCount(); plane++) {
+        if (stageX != null) {
+          store.setStagePositionPositionX(stageX, series, 0, plane);
+        }
+        if (stageY != null) {
+          store.setStagePositionPositionY(stageY, series, 0, plane);
+        }
+        if (stageZ != null) {
+          store.setStagePositionPositionZ(stageZ, series, 0, plane);
+        }
+      }
+    }
+    setSeries(0);
   }
 
   // -- Helper methods --
