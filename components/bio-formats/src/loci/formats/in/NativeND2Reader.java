@@ -227,7 +227,9 @@ public class NativeND2Reader extends FormatReader {
       Vector<Long> customDataOffsets = new Vector<Long>();
       Vector<int[]> customDataLengths = new Vector<int[]>();
 
-      while (in.getFilePointer() < in.length() && in.getFilePointer() >= 0) {
+      while (in.getFilePointer() < in.length() - 1 &&
+        in.getFilePointer() >= 0)
+      {
         int b1 = in.read();
         int b2 = in.read();
         int b3 = in.read();
@@ -609,7 +611,9 @@ public class NativeND2Reader extends FormatReader {
         int closedBracket = s.lastIndexOf(">") + 1;
         if (closedBracket < openBracket) continue;
         s = s.substring(openBracket, closedBracket).trim();
-        if (s.indexOf("VCAL") == -1 && s.indexOf("jp2cLUNK") == -1) {
+        if (s.indexOf("CalibrationSeq") == -1 && s.indexOf("VCAL") == -1 &&
+          s.indexOf("jp2cLUNK") == -1)
+        {
           sb.append(s);
         }
       }

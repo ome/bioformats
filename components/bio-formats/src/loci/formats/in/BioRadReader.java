@@ -932,15 +932,18 @@ public class BioRadReader extends FormatReader {
 
     // link Detector to Image
     for (int i=0; i<getEffectiveSizeC(); i++) {
-      if (offset.size() > i || gain.size() > i) {
+      Float detectorOffset = i < offset.size() ? offset.get(i) : null;
+      Float detectorGain = i < gain.size() ? gain.get(i) : null;
+
+      if (detectorOffset != null || detectorGain != null) {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorSettingsDetector(detectorID, 0, i);
       }
-      if (i < offset.size()) {
-        store.setDetectorSettingsOffset(offset.get(i), 0, i);
+      if (detectorOffset != null) {
+        store.setDetectorSettingsOffset(detectorOffset, 0, i);
       }
-      if (i < gain.size()) {
-        store.setDetectorSettingsGain(gain.get(i), 0, i);
+      if (detectorGain != null) {
+        store.setDetectorSettingsGain(detectorGain, 0, i);
       }
     }
   }

@@ -419,6 +419,7 @@ public class InCellReader extends FormatReader {
     // populate LogicalChannel data
 
     for (int i=0; i<seriesCount; i++) {
+      setSeries(i);
       for (int q=0; q<getEffectiveSizeC(); q++) {
         if (q < emWaves.size()) {
           store.setLogicalChannelEmWave(emWaves.get(q), i, q);
@@ -428,6 +429,7 @@ public class InCellReader extends FormatReader {
         }
       }
     }
+    setSeries(0);
 
     // populate Plate data
 
@@ -500,6 +502,7 @@ public class InCellReader extends FormatReader {
             }
             else {
               // assume that rows are sorted by well
+              if (wellIndex == -1) continue;
               well = values[wellIndex].trim();
               if (!well.equals(prevWell) && prevWell != null) image++;
 
@@ -779,26 +782,32 @@ public class InCellReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
         store.setDetectorID(detectorID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
+          setSeries(i);
           for (int q=0; q<getSizeC(); q++) {
             store.setDetectorSettingsDetector(detectorID, i, q);
           }
         }
+        setSeries(0);
       }
       else if (qName.equals("Binning")) {
         String binning = attributes.getValue("value");
         for (int i=0; i<getSeriesCount(); i++) {
+          setSeries(i);
           for (int q=0; q<getSizeC(); q++) {
             store.setDetectorSettingsBinning(binning, i, q);
           }
         }
+        setSeries(0);
       }
       else if (qName.equals("Gain")) {
         Float gain = new Float(attributes.getValue("value"));
         for (int i=0; i<getSeriesCount(); i++) {
+          setSeries(i);
           for (int q=0; q<getSizeC(); q++) {
             store.setDetectorSettingsGain(gain, i, q);
           }
         }
+        setSeries(0);
       }
       else if (qName.equals("PlateTemperature")) {
         Float temperature = new Float(attributes.getValue("value"));

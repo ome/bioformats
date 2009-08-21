@@ -722,6 +722,9 @@ public class FlexReader extends FormatReader {
     private boolean populateCore = true;
     private int well = 0;
 
+    private Hashtable<String, String> filterMap;
+    private Hashtable<String, String> dichroicMap;
+
     private StringBuffer charData = new StringBuffer();
 
     public FlexHandler(Vector names, Vector factors, MetadataStore store,
@@ -732,6 +735,8 @@ public class FlexReader extends FormatReader {
       this.store = store;
       this.populateCore = populateCore;
       this.well = well;
+      filterMap = new Hashtable<String, String>();
+      dichroicMap = new Hashtable<String, String>();
     }
 
     public void characters(char[] ch, int start, int length) {
@@ -790,6 +795,13 @@ public class FlexReader extends FormatReader {
         int currentSeries = (nextImage - 1) / nImages;
         currentSeries += well * fieldCount;
         int currentImage = (nextImage - 1) % nImages;
+
+        int seriesCount = 1;
+        if (plateCount > 0) seriesCount *= plateCount;
+        if (wellCount > 0) seriesCount *= wellCount;
+        if (fieldCount > 0) seriesCount *= fieldCount;
+        if (currentSeries >= seriesCount) return;
+
         if (qName.equals("DateTime")) {
           store.setImageCreationDate(value, currentSeries);
         }
@@ -945,25 +957,31 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Filter")) {
         String id = attributes.getValue("ID");
         if (sliderName.endsWith("Dichro")) {
-          store.setDichroicID("Dichroic:" + id, 0, nextDichroic);
+          String dichroicID =
+            MetadataTools.createLSID("Dichroic", 0, nextDichroic);
+          dichroicMap.put(id, dichroicID);
+          store.setDichroicID(dichroicID, 0, nextDichroic);
           store.setDichroicModel(id, 0, nextDichroic);
           nextDichroic++;
         }
         else {
-          store.setFilterID("Filter:" + id, 0, nextFilter);
+          String filterID = MetadataTools.createLSID("Filter", 0, nextFilter);
+          filterMap.put(id, filterID);
+          store.setFilterID(filterID, 0, nextFilter);
           store.setFilterModel(id, 0, nextFilter);
           store.setFilterFilterWheel(sliderName, 0, nextFilter);
           nextFilter++;
         }
       }
       else if (qName.equals("FilterCombination")) {
-        store.setFilterSetID("FilterSet:" + attributes.getValue("ID"), 0,
-          nextFilterSet);
+        String filterSetID =
+          MetadataTools.createLSID("FilterSet", 0, nextFilterSet);
+        store.setFilterSetID(filterSetID, 0, nextFilterSet);
       }
       else if (qName.equals("SliderRef")) {
         String filterName = attributes.getValue("Filter");
-        String filterID = "Filter:" + filterName;
-        String dichroicID = "Dichroic:" + filterName;
+        String filterID = filterMap.get(filterName);
+        String dichroicID = dichroicMap.get(filterName);
         String slider = attributes.getValue("ID");
         if (nextSliderRef == 0 && slider.startsWith("Camera")) {
           store.setFilterSetEmFilter(filterID, 0, nextFilterSet);
