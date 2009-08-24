@@ -73,10 +73,14 @@
 				<CalibratedMagnification>3.14159E0</CalibratedMagnification>
 				<WorkingDistance>3.14159E0</WorkingDistance>
 		</Objective>
-		<FilterSet ExFilterRef="urn:lsid:-.-:Filter:1" DichroicRef="urn:lsid:-.-:Dichroic:1" EmFilterRef="urn:lsid:-.-:Filter:1"
+		<FilterSet ExFilterRef="urn:lsid:-.-:Filter:1" DichroicRef="urn:lsid:-.-:Dichroic:1" EmFilterRef="urn:lsid:-.-:Filter:2"
 			 ID="urn:lsid:-.-:FilterSet:1" Manufacturer="Manufacturer9" Model="Model9" LotNumber="LotNumber1"/>
 		<Filter Type="LongPass" FilterWheel="FilterWheel1" ID="urn:lsid:-.-:Filter:1" Manufacturer="Manufacturer11"
-			 Model="Model11" LotNumber="LotNumber3">
+			Model="Model11" LotNumber="LotNumber3">
+			<TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0.10"/>
+		</Filter>
+		<Filter Type="LongPass" FilterWheel="FilterWheel1" ID="urn:lsid:-.-:Filter:2" Manufacturer="Manufacturer11"
+			Model="Model112" LotNumber="LotNumber3">
 			<TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0.10"/>
 		</Filter>
 		<Dichroic ID="urn:lsid:-.-:Dichroic:1" Manufacturer="Manufacturer13" Model="Model13" LotNumber="LotNumber5"/>
@@ -110,8 +114,8 @@
 				 Binning="1x1"/>
 			<FilterSetRef ID="urn:lsid:-.-:FilterSet:1"/>
 			<ChannelComponent Pixels="urn:lsid:-.-:Pixels:1" ColorDomain="ColorDomain1" Index="1"/>
-			<ChannelComponent Pixels="urn:lsid:-.-:Pixels:1" ColorDomain="ColorDomain3" Index="1"/>
-			<ChannelComponent Pixels="urn:lsid:-.-:Pixels:1" ColorDomain="ColorDomain5" Index="1"/>
+			<ChannelComponent Pixels="urn:lsid:-.-:Pixels:2" ColorDomain="ColorDomain3" Index="2"/>
+			<ChannelComponent Pixels="urn:lsid:-.-:Pixels:3" ColorDomain="ColorDomain5" Index="3"/>
 		</LogicalChannel>
 		<DisplayOptions Zoom="3.14159E0" ID="urn:lsid:-.-:DisplayOptions:1" Display="RGB">
 			<RedChannel ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0" isOn="false"/>
@@ -123,26 +127,20 @@
 			<Time TStart="0" TStop="0"/>
 			<ROI ID="urn:lsid:-.-:ROI:1">
 				<Union>
-					<Shape ID="urn:lsid:-.-:ROI:1" theZ="0" theT="0">
+					<Shape ID="Shape:1" theZ="0" theT="0">
 						<Channels>
-							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
-							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 						</Channels>
 							<Line x1="x11" y1="y11" x2="x21" y2="y21" transform="transform1"/>
 					</Shape>
-					<Shape ID="urn:lsid:-.-:ROI:1" theZ="0" theT="0">
+					<Shape ID="Shape:2" theZ="0" theT="0">
 						<Channels>
-							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
-							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 						</Channels>
 							<Ellipse cx="cx1" cy="cy1" rx="rx1" ry="ry1" transform="transform3"/>
 					</Shape>
-					<Shape ID="urn:lsid:-.-:ROI:1" theZ="0" theT="0">
+					<Shape ID="Shape:3" theZ="0" theT="0">
 						<Channels>
-							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
-							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 							<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 						</Channels>
 							<Point cx="cx3" cy="cy3" r="r1" transform="transform5"/>
@@ -163,7 +161,7 @@
 				<HashSHA1>1234567890ABCDEF1234567890ABCDEF12345678</HashSHA1>
 			</Plane>
 		</Pixels>
-		<Pixels ID="urn:lsid:-.-:Pixels:1" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2"
+		<Pixels ID="urn:lsid:-.-:Pixels:2" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2"
 			 SizeZ="2" SizeC="2" SizeT="2" PhysicalSizeX="3.14159E0" PhysicalSizeY="3.14159E0" PhysicalSizeZ="3.14159E0"
 			 TimeIncrement="3.14159E0" WaveStart="2" WaveIncrement="2">
 				<Bin:BinData Compression="none" Length="1">ZGVmYXVsdA==</Bin:BinData>
@@ -175,7 +173,7 @@
 				<HashSHA1>1234567890ABCDEF1234567890ABCDEF12345678</HashSHA1>
 			</Plane>
 		</Pixels>
-		<Pixels ID="urn:lsid:-.-:Pixels:1" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2"
+		<Pixels ID="urn:lsid:-.-:Pixels:3" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2"
 			 SizeZ="2" SizeC="2" SizeT="2" PhysicalSizeX="3.14159E0" PhysicalSizeY="3.14159E0" PhysicalSizeZ="3.14159E0"
 			 TimeIncrement="3.14159E0" WaveStart="2" WaveIncrement="2">
 				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
@@ -201,26 +199,20 @@
 		</CA:CustomAttributes>
 		<ROI ID="urn:lsid:-.-:ROI:1">
 			<Union>
-				<Shape ID="urn:lsid:-.-:ROI:1" theZ="0" theT="0">
+				<Shape ID="Shape:4" theZ="0" theT="0">
 					<Channels>
-						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
-						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 					</Channels>
 						<Rect x="x1" y="y1" width="width1" height="height1" transform="transform7"/>
 				</Shape>
-				<Shape ID="urn:lsid:-.-:ROI:1" theZ="0" theT="0">
+				<Shape ID="Shape:5" theZ="0" theT="0">
 					<Channels>
-						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
-						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 					</Channels>
 						<Circle cx="cx5" cy="cy5" r="r3" transform="transform9"/>
 				</Shape>
-				<Shape ID="urn:lsid:-.-:ROI:1" theZ="0" theT="0">
+				<Shape ID="Shape:6" theZ="0" theT="0">
 					<Channels>
-						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
-						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 					</Channels>
 						<Point cx="cx7" cy="cy7" r="r5" transform="transform11"/>
@@ -228,9 +220,9 @@
 			</Union>
 		</ROI>
 		<MicrobeamManipulation ID="urn:lsid:-.-:MicrobeamManipulation:1" Type="FRAP">
-			<ROIRef ID="urn:lsid:-.-:ROI:1"/>
-			<ROIRef ID="urn:lsid:-.-:ROI:1"/>
-			<ROIRef ID="urn:lsid:-.-:ROI:1"/>
+			<ROIRef ID="urn:lsid:-.-:ROI:4"/>
+			<ROIRef ID="urn:lsid:-.-:ROI:5"/>
+			<ROIRef ID="urn:lsid:-.-:ROI:6"/>
 			<ExperimenterRef ID="urn:lsid:-.-:Experimenter:1"/>
 			<LightSourceRef ID="urn:lsid:-.-:LightSource:1" Attenuation="0.50" Wavelength="2"/>
 		</MicrobeamManipulation>
@@ -336,7 +328,7 @@
 				</MLI:ExecutionInstructions>
 		</AM:AnalysisModule>
 		<AM:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator3" NewRegionName="NewRegionName3"
-			 Category="Category3" ProgramID="ProgramID3" ModuleName="ModuleName3" ID="urn:lsid:-.-:Module:1">
+			 Category="Category3" ProgramID="ProgramID3" ModuleName="ModuleName3" ID="urn:lsid:-.-:Module:2">
 			<Description xml:lang="en">Description9</Description>
 			<AM:Declaration>
 				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName5">
@@ -385,7 +377,7 @@
 				</MLI:ExecutionInstructions>
 		</AM:AnalysisModule>
 		<AM:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator5" NewRegionName="NewRegionName5"
-			 Category="Category5" ProgramID="ProgramID5" ModuleName="ModuleName5" ID="urn:lsid:-.-:Module:1">
+			 Category="Category5" ProgramID="ProgramID5" ModuleName="ModuleName5" ID="urn:lsid:-.-:Module:3">
 			<Description xml:lang="en">Description13</Description>
 			<AM:Declaration>
 				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName9">
@@ -453,27 +445,28 @@
 	</CA:CustomAttributes>
 	<SA:StructuredAnnotations>
 		<SA:XmlAnnotation ID="urn:lsid:-.-:Annotation:1" Namespace="http://www.oxygenxml.com/">
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Value>
-				</SA:Value>
+			<SA:Link>urn:lsid:-.-:Image:1</SA:Link>
+			<SA:Link>urn:lsid:-.-:Instrument:1</SA:Link>
+			<SA:Link>urn:lsid:-.-:Plate:1</SA:Link>
+			<SA:Value>
+				<!-- Arbitrary XML content -->
+			</SA:Value>
 		</SA:XmlAnnotation>
-		<SA:StringAnnotation ID="urn:lsid:-.-:Annotation:1" Namespace="http://www.oxygenxml.com/">
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Value>Value0</SA:Value>
+		<SA:StringAnnotation ID="urn:lsid:-.-:Annotation:2" Namespace="http://www.oxygenxml.com/">
+			<SA:Link>urn:lsid:-.-:Image:1</SA:Link>
+			<SA:Link>urn:lsid:-.-:Instrument:1</SA:Link>
+			<SA:Link>urn:lsid:-.-:Plate:1</SA:Link>
+			<SA:Value>Value0</SA:Value>
 		</SA:StringAnnotation>
-		<SA:ListAnnotation ID="urn:lsid:-.-:Annotation:1" Namespace="http://www.oxygenxml.com/">
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:Link>urn:lsid:-.-:1</SA:Link>
-				<SA:List>
-					<SA:Link>urn:lsid:-.-:1</SA:Link>
-					<SA:Link>urn:lsid:-.-:1</SA:Link>
-					<SA:Link>urn:lsid:-.-:1</SA:Link>
-				</SA:List>
+		<SA:ListAnnotation ID="urn:lsid:-.-:Annotation:3" Namespace="http://www.oxygenxml.com/">
+			<SA:Link>urn:lsid:-.-:Image:1</SA:Link>
+			<SA:Link>urn:lsid:-.-:Instrument:1</SA:Link>
+			<SA:Link>urn:lsid:-.-:Plate:1</SA:Link>
+			<SA:List>
+				<SA:Link>urn:lsid:-.-:Screen:1</SA:Link>
+				<SA:Link>urn:lsid:-.-:Experiment:1</SA:Link>
+				<SA:Link>urn:lsid:-.-:Experimenter:1</SA:Link>
+			</SA:List>
 		</SA:ListAnnotation>
 	</SA:StructuredAnnotations>
 </OME>
