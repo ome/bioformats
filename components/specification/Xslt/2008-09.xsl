@@ -213,30 +213,30 @@ Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamMan
 <xsl:template match="OME:Experiment">
 <xsl:variable name="images">
   <xsl:copy-of select="following-sibling::OME:Image"/>
-</xsl:variable>
+  </xsl:variable>
  <xsl:element name="Experiment" namespace="{$newOMENS}">
-   <xsl:for-each select="*">
-    <xsl:choose>
-      <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
-        <xsl:variable name="id" select="@ID"/>
-        <xsl:for-each select="exsl:node-set($images)/*">
-          <xsl:for-each select="* [name()='MicrobeamManipulation']">
-            <xsl:if test="@ID=$id">
-              <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-                <xsl:apply-templates select="@*|node()"/>
-              </xsl:element>
-            </xsl:if>
-           </xsl:for-each>
-         </xsl:for-each>
-       </xsl:when>
-       <xsl:otherwise>
-        <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-         <xsl:apply-templates select="@*|node()"/>
-        </xsl:element>
-      </xsl:otherwise>
+ <xsl:for-each select="*">
+ <xsl:choose>
+ <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
+ <xsl:variable name="id" select="@ID"/>
+  <xsl:for-each select="exsl:node-set($images)/*">
+  <xsl:for-each select="* [name()='MicrobeamManipulation']">
+  <xsl:if test="@ID=$id">
+  <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+  <xsl:apply-templates select="@*|node()"/>
+  </xsl:element>
+  </xsl:if>
+  </xsl:for-each>
+  </xsl:for-each>
+ </xsl:when>
+ <xsl:otherwise>
+  <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+  <xsl:apply-templates select="@*|node()"/>
+  </xsl:element>
+ </xsl:otherwise>
  </xsl:choose>
 </xsl:for-each>
-</xsl:element>
+  </xsl:element>
 </xsl:template>
 
 <!--
@@ -291,7 +291,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
                             <xsl:for-each select="* [not(local-name(.) = 'ChannelComponent')]">
                                 <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
                                     <xsl:apply-templates select="@*|node()"/>
-                                </xsl:element>
+             </xsl:element>
                             </xsl:for-each>
                         </xsl:for-each>
                     </xsl:element>
