@@ -134,6 +134,9 @@ class ReferenceDelegate(object):
 		# which conform to an enumeration can still function.
 		self.values = None
 	
+	def getValues(self):
+		return self.values
+	
 	def getMaxOccurs(self):
 		return 9999
 
@@ -232,7 +235,7 @@ class OMEModelProperty(object):
 		doc="""The property's Java argument name (camelCase).""")
 		
 	def _get_isEnumeration(self):
-		v = self.delegate.values
+		v = self.delegate.getValues()
 		if v is not None and len(v) > 0:
 			return True
 		return False
@@ -240,7 +243,7 @@ class OMEModelProperty(object):
 		doc="""Whether or not the property is an enumeration.""")
 		
 	def _get_possibleValues(self):
-		return self.delegate.values
+		return self.delegate.getValues()
 	possibleValues = property(_get_possibleValues,
 		doc="""If the property is an enumeration, it's possible values.""")
 	
@@ -350,7 +353,10 @@ class OMEModel(object):
 		self.objects[element] = obj
 		
 	def getObject(self, element):
-		return self.objects[element]
+		try:
+			return self.objects[element]
+		except KeyError:
+			return None
 		
 	def getObjectByName(self, name):
 		for obj in self.objects:
@@ -401,7 +407,9 @@ class OMEModel(object):
 		   and (e_name not in EXPLICIT_DEFINE_OVERRIDE or not e.topLevel):
 			logging.info("Element %s.%s not an explicit define, skipping." % (parent, e))
 			if parent is not None:
-				self.parents[e_name] = parent
+				if e_name not in self.parents:
+					self.parents[e_name] = list()
+				self.parents[e_name].append(parent.getName())
 			return
 		if e.getMixedExtensionError():
 			logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, e))
@@ -448,20 +456,6 @@ class OMEModel(object):
 					prop = OMEModelProperty.fromReference(delegate, o, self)
 					o.properties[ref] = prop
 
-	def postProcessParents(self):
-		"""
-		Examines the list of parents in the model that were recorded during
-		recursive processing and populates those where non-explicit
-		definitions describe the hierarchy.
-		"""
-		for (k, v) in self.parents.items():
-			o = self.getObjectByName(k)
-			if o is not None:
-				logging.debug("%s parent is %s" % (o, v))
-				o.parent = self.getObjectByName(v.getName())
-			else:
-				logging.debug("Model does not contain: %s" % k)
-
 	def process(klass, contentHandler):
 		"""
 		Main process entry point. All instantiations of this class should be
@@ -473,7 +467,6 @@ class OMEModel(object):
 		model.topLevelSimpleTypes = contentHandler.topLevelSimpleTypes
 		model.processTree(elements)
 		model.postProcessReferences()
-		model.postProcessParents()
 		return model
 	process = classmethod(process)
 	
