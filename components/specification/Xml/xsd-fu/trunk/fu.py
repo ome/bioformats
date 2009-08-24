@@ -155,9 +155,10 @@ class OMEModelProperty(object):
 	collection.
 	"""
 	
-	def __init__(self, delegate, model):
+	def __init__(self, delegate, parent, model):
 		self.model = model
 		self.delegate = delegate
+		self.parent = parent
 		self.isAttribute = False
 		self.isReference = False
 
@@ -201,7 +202,7 @@ class OMEModelProperty(object):
 			# Handle OME XML Schema "ID" types
 			if self.type[-2:] == "ID":
 				return self.type[:-2] + "Node"
-			elif not self.delegate.values:
+			elif not self.isEnumeration:
 				# We have a property whose type was defined by a top level 
 				# simpleType. 
 				getSimpleType = self.model.getTopLevelSimpleType
@@ -229,6 +230,19 @@ class OMEModelProperty(object):
 		return self.name[:i].lower() + self.name[i:]
 	javaArgumentName = property(_get_javaArgumentName,
 		doc="""The property's Java argument name (camelCase).""")
+		
+	def _get_isEnumeration(self):
+		v = self.delegate.values
+		if v is not None and len(v) > 0:
+			return True
+		return False
+	isEnumeration = property(_get_isEnumeration,
+		doc="""Whether or not the property is an enumeration.""")
+		
+	def _get_possibleValues(self):
+		return self.delegate.values
+	possibleValues = property(_get_possibleValues,
+		doc="""If the property is an enumeration, it's possible values.""")
 	
 	def isComplex(self):
 		"""
@@ -244,27 +258,27 @@ class OMEModelProperty(object):
 			return False
 		return self.delegate.isComplex()
 		
-	def fromAttribute(klass, attribute, model):
+	def fromAttribute(klass, attribute, parent, model):
 		"""
 		Instantiates a property from an XML Schema attribute.
 		"""
-		instance = klass(attribute, model)
+		instance = klass(attribute, parent, model)
 		instance.isAttribute = True
 		return instance
 	fromAttribute = classmethod(fromAttribute)
 	
-	def fromElement(klass, element, model):
+	def fromElement(klass, element, parent, model):
 		"""
 		Instantiates a property from an XML Schema element.
 		"""
-		return klass(element, model)
+		return klass(element, parent, model)
 	fromElement = classmethod(fromElement)
 
-	def fromReference(klass, reference, model):
+	def fromReference(klass, reference, parent, model):
 		"""
 		Instantiates a property from a "virtual" OME XML schema reference.
 		"""
-		instance = klass(reference, model)
+		instance = klass(reference, parent, model)
 		instance.isReference = True
 		return instance
 	fromReference = classmethod(fromReference)
@@ -274,9 +288,10 @@ class OMEModelObject(object):
 	A single element of an OME data model.
 	"""
 	
-	def __init__(self, element, model):
+	def __init__(self, element, parent, model):
 		self.model = model
 		self.element = element
+		self.parent = parent
 		self.base = element.getBase()
 		self.name = element.getName()
 		self.type = element.getType()
@@ -288,7 +303,7 @@ class OMEModelObject(object):
 		"""
 		name = attribute.getName()
 		self.properties[name] = \
-			OMEModelProperty.fromAttribute(attribute, self.model)
+			OMEModelProperty.fromAttribute(attribute, self, self.model)
 		
 	def addElement(self, element):
 		"""
@@ -296,7 +311,7 @@ class OMEModelObject(object):
 		"""
 		name = element.getName()
 		self.properties[name] = \
-			OMEModelProperty.fromElement(element, self.model)
+			OMEModelProperty.fromElement(element, self, self.model)
 
 	def _get_javaBase(self):
 		base = self.element.getBase()
@@ -326,6 +341,7 @@ class OMEModelObject(object):
 class OMEModel(object):
 	def __init__(self):
 		self.objects = dict()
+		self.parents = dict()
 		
 	def addObject(self, element, obj):
 		if self.objects.has_key(element):
@@ -359,7 +375,7 @@ class OMEModel(object):
 		obj = self.getObject(element)
 		length = len(attributes)
 		for i, key in enumerate(attributes):
-			logging.debug("Processing attribute: %s %d/%d" % (key, i, length))
+			logging.debug("Processing attribute: %s %d/%d" % (key, i + 1, length))
 			attribute = attributes[key]
 			logging.debug("Dump: %s" % attribute.__dict__)
 			name = attribute.getName()
@@ -368,7 +384,7 @@ class OMEModel(object):
 		children = element.getChildren()
 		length = len(children)
 		for i, child in enumerate(children):
-			logging.debug("Processing child: %s %d/%d" % (child, i, length))
+			logging.debug("Processing child: %s %d/%d" % (child, i + 1, length))
 			logging.debug("Dump: %s" % child.__dict__)
 			name = child.getCleanName()
 			obj.addElement(child)
@@ -377,12 +393,15 @@ class OMEModel(object):
 		"""
 		Process an element (a leaf).
 		"""
+		logging.debug("Processing leaf: (%s) --> (%s)" % (parent, element))
 		e = element
 		e_name = e.getName()
 		e_type = e.getType()
 		if not e.isExplicitDefine() \
 		   and (e_name not in EXPLICIT_DEFINE_OVERRIDE or not e.topLevel):
 			logging.info("Element %s.%s not an explicit define, skipping." % (parent, e))
+			if parent is not None:
+				self.parents[e_name] = parent
 			return
 		if e.getMixedExtensionError():
 			logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, e))
@@ -390,7 +409,7 @@ class OMEModel(object):
 		if e_type != e_name and e_name not in EXPLICIT_DEFINE_OVERRIDE:
 		    logging.info("Element %s.%s is not a concrete type (%s != %s), skipping." % (parent, e, e_type, e_name))
 		    return
-		obj = OMEModelObject(e, self)
+		obj = OMEModelObject(e, parent, self)
 		self.addObject(e, obj)
 		self.processAttributes(e)
 
@@ -426,8 +445,22 @@ class OMEModel(object):
 			if o.name in references:
 				for ref in references[o.name]:
 					delegate = ReferenceDelegate(ref)
-					prop = OMEModelProperty.fromReference(delegate, self)
+					prop = OMEModelProperty.fromReference(delegate, o, self)
 					o.properties[ref] = prop
+
+	def postProcessParents(self):
+		"""
+		Examines the list of parents in the model that were recorded during
+		recursive processing and populates those where non-explicit
+		definitions describe the hierarchy.
+		"""
+		for (k, v) in self.parents.items():
+			o = self.getObjectByName(k)
+			if o is not None:
+				logging.debug("%s parent is %s" % (o, v))
+				o.parent = self.getObjectByName(v.getName())
+			else:
+				logging.debug("Model does not contain: %s" % k)
 
 	def process(klass, contentHandler):
 		"""
@@ -440,6 +473,7 @@ class OMEModel(object):
 		model.topLevelSimpleTypes = contentHandler.topLevelSimpleTypes
 		model.processTree(elements)
 		model.postProcessReferences()
+		model.postProcessParents()
 		return model
 	process = classmethod(process)
 	

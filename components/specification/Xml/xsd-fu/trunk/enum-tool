@@ -1,0 +1,143 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+Toolkit for working with enumerations from an OME XML
+(http://www.ome-xml.org) XSD document.
+"""
+
+#  
+#  Copyright (c) 2007 Chris Allan
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+#  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+#  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+#  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+#  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+#  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+#  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+#  SUCH DAMAGE.
+
+import logging
+import sys
+import os
+
+from fu import *
+
+from getopt import getopt, GetoptError
+from xml import sax
+
+
+def usage(error):
+	"""
+	Prints usage so that we don't have to. :)
+	"""
+	cmd = sys.argv[0]
+	print """%s
+Usage: %s (-t | -x) <path/to/ome.xsd>
+Toolkit for working with enumerations from an OME XML Schema definition.
+
+Options:
+  -t			Dumps all enumerations in a visual tree
+  -x			Displays the XPath expressions for each enumeration 
+
+Examples:
+  %s -t schemas/ome.xsd
+  %s -x schemas/ome.xsd
+
+Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
+	(error, cmd, cmd, cmd)
+	sys.exit(2)
+	
+def resolve_parents(element):
+	"""Resolves the parents of an element and returns them as an order list."""
+	parents = list()
+	parent = element.parent
+	while True:
+		if parent is None:
+			break
+		parents.append(parent)
+		parent = parent.parent
+	return parents
+
+def dump(model):
+	"""Dumps enumerations to STDOUT."""
+	count = 0
+	for obj in model.objects.values():
+		current = None
+		for prop in obj.properties.values():
+			if prop.isEnumeration:
+				count += 1
+				if prop.parent != current:
+					current = prop.parent
+					parents = [current] + resolve_parents(current)
+					parents.reverse()
+					for o in parents:
+						print " +-- %s(base=%s, type=%s)" % \
+							(o.name, o.base, o.type)
+				print " +---- %s(%s)" % (prop.name, prop.type)
+				for value in prop.possibleValues:
+					print " +------ %s" % value
+	print "\nTotal enumerations: %d" % count
+	
+def dump_xpath(model):
+	"""
+	Dumps XPath definitions for each enumeration to STDOUT, sorted
+	hierarchically.
+	"""
+	for obj in model.objects.values():
+		if obj.name != 'Objective':
+			continue
+		for prop in obj.properties.values():
+			if prop.name != 'Immersion':
+				continue
+			print prop.name, prop.possibleValues, prop.type, prop.delegate.__dict__
+			if prop.isEnumeration:
+				parents = resolve_parents(prop)
+				parents.reverse()
+				parents = [parent.name for parent in parents]
+				xpath = "/" + "/".join(parents)
+				if prop.isAttribute:
+					xpath = "/".join([xpath, "@%s" % prop.name])
+				else:
+					xpath = "/".join([xpath, prop.name])
+				print xpath
+
+if __name__ == '__main__':
+	try:
+		options, args = getopt(sys.argv[1:], "tx")
+	except GetoptError, (msg, opt):
+		usage(msg)
+
+	namespace = DEFAULT_NAMESPACE
+	do_tree = False
+	do_xpath = False
+	for option, argument in options:
+		if option == "-t":
+			do_tree = True
+		if option == "-x":
+			do_xpath = True
+
+	if len(args) != 1:
+		usage("Expecting single ome.xsd file path!")
+	elif not do_tree and not do_xpath:
+		usage("Must select at least one option!")
+
+	model = parseXmlSchema(args[0], namespace)
+	if do_tree:
+		dump(model)
+	if do_xpath:
+		dump_xpath(model)
+	sys.exit(0)
+
