@@ -60,36 +60,67 @@ Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
 	(error, cmd, cmd, cmd)
 	sys.exit(2)
 	
-def resolve_parents(element):
-	"""Resolves the parents of an element and returns them as an order list."""
-	parents = list()
-	parent = element.parent
-	while True:
-		if parent is None:
-			break
-		parents.append(parent)
-		parent = parent.parent
+def resolve_parents(model, element_name):
+	"""
+	Resolves the parents of an element and returns them as an ordered list.
+	"""
+	parents = dict()
+	try:
+		my_parents = model.parents[element_name]
+	except KeyError:
+		return None
+	for parent in my_parents:
+		parents[parent] = resolve_parents(model, parent)
 	return parents
+	
+def resolve_paths(paths, level, names):
+	"""
+	Resolves a set of ASCII art graphics for a given hierarchical tree
+	structure of element names.
+	"""
+	if names is None:
+		return
+	for name in names.keys():
+		path = "+-- %s" % name
+		paths.insert(0, path)
+		resolve_paths(paths, level + 1, names[name])
 
 def dump(model):
 	"""Dumps enumerations to STDOUT."""
 	count = 0
 	for obj in model.objects.values():
+#		if obj.name != 'OTF':
+#			continue
 		current = None
 		for prop in obj.properties.values():
 			if prop.isEnumeration:
 				count += 1
-				if prop.parent != current:
-					current = prop.parent
-					parents = [current] + resolve_parents(current)
-					parents.reverse()
-					for o in parents:
-						print " +-- %s(base=%s, type=%s)" % \
-							(o.name, o.base, o.type)
-				print " +---- %s(%s)" % (prop.name, prop.type)
+				parents = resolve_parents(model, obj.name)
+				paths = list()
+				resolve_paths(paths, 0, parents)
+				for path in paths:
+					print path
+				print "  +-- %s" % obj.name
+				print "     +-- %s(%s)" % (prop.name, prop.type)
 				for value in prop.possibleValues:
-					print " +------ %s" % value
+					print ("  " * (len(paths) + 1)) + "   +-- %s" % value
 	print "\nTotal enumerations: %d" % count
+	
+def resolve_xpaths(xpaths, suffix, names):
+	"""
+	Resolves a set of XPath definitions for a given hierarchical tree
+	structure of element names.
+	"""
+	if names is None:
+		return
+	for name in names.keys():
+		xpath = name
+		if suffix is not None:
+			xpath = "/".join([xpath, suffix])
+		xpaths.append(xpath)
+		resolve_xpaths(xpaths, xpath, names[name])
+		if suffix in xpaths:
+			xpaths.remove(suffix)
 	
 def dump_xpath(model):
 	"""
@@ -97,17 +128,21 @@ def dump_xpath(model):
 	hierarchically.
 	"""
 	for obj in model.objects.values():
+#		if obj.name != 'Pixels':
+#			continue
 		for prop in obj.properties.values():
 			if prop.isEnumeration:
-				parents = resolve_parents(prop)
-				parents.reverse()
-				parents = [parent.name for parent in parents]
-				xpath = "/" + "/".join(parents)
-				if prop.isAttribute:
-					xpath += "@%s" % prop.name
-				else:
-					xpath = "/".join([xpath, prop.name])
-				print xpath
+				parents = resolve_parents(model, obj.name)
+				parents = {obj.name: parents}
+				xpaths = list()
+				resolve_xpaths(xpaths, None, parents)
+#				print "XPaths: %r" % xpaths
+				for xpath in xpaths:
+					if prop.isAttribute:
+						print "/%s@%s" % (xpath, prop.name)
+					else:
+						print "/%s/%s" % (xpath, prop.name)
+#				parents.reverse()
 
 if __name__ == '__main__':
 	try:
