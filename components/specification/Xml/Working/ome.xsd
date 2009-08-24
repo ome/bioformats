@@ -689,7 +689,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="NumPlanes" use="optional" type="xsd:integer">
+			<xsd:attribute name="PlaneCount" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
