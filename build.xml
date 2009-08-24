@@ -807,6 +807,11 @@ Apache XML-RPC
     <ant dir="components/flow-cytometry" target="flow.clean"/>
   </target>
 
+  <target name="dist-flow"
+    description="create distribution bundle for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="dist"/>
+  </target>
+
   <!-- LOCI Checkstyle checks -->
 
   <target name="compile-checks"
