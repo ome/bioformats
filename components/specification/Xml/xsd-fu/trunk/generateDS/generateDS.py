@@ -596,16 +596,19 @@ class XschemaElement(XschemaElementBase):
                 # another simpleType (potentially of the same name). Its
                 # fundamental function is to avoid the incorrect 
                 # categorization of "complex" to Elements which are not and 
-                # correctly resolve the Element's type. It also handles cases 
-                # where the Element's "simpleType" is so-called "top level" 
-                # and is only available through the global SimpleTypeDict.
+                # correctly resolve the Element's type as well as its
+                # potential values. It also handles cases where the Element's
+                # "simpleType" is so-called "top level" and is only available
+                # through the global SimpleTypeDict.
                 i = 0
                 while True:
                     element = ElementDict[type_val1]
-                    t = element.resolve_type_1()
+                    # Resolve our potential values if present
+                    self.values = element.values
                     # If the type is available in the SimpleTypeDict, we
                     # know we've gone far enough in the Element hierarchy
                     # and can return the correct base type.
+                    t = element.resolve_type_1()
                     if t in SimpleTypeDict:
                         type_val1 = SimpleTypeDict[t].getBase()
                         break
@@ -1111,6 +1114,7 @@ class XschemaHandler(handler.ContentHandler):
                     for entry in reversed(self.stack):
                         if isinstance(entry, XschemaElement):
                             element = entry
+                            break
                 if element is None:
                     err_msg('Cannot find element to attach enumeration: %s\n' % (
                             attrs['value']), )
