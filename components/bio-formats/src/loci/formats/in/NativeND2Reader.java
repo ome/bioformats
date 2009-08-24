@@ -331,7 +331,7 @@ public class NativeND2Reader extends FormatReader {
       // calculate the image count
       for (int i=0; i<getSeriesCount(); i++) {
         core[i].imageCount = getSizeZ() * getSizeT() * getSizeC();
-        if (imageOffsets.size() < core[i].imageCount) {
+        if (imageOffsets.size() / getSeriesCount() < core[i].imageCount) {
           core[i].imageCount /= getSizeC();
         }
         if (core[i].imageCount > imageOffsets.size() / getSeriesCount()) {
@@ -389,7 +389,7 @@ public class NativeND2Reader extends FormatReader {
         int length = p[0] + p[1];
 
         in.seek(offset);
-        byte[] b = new byte[length];
+        byte[] b = new byte[p[0]];
         in.read(b);
 
         StringBuffer sb = new StringBuffer();
@@ -397,6 +397,7 @@ public class NativeND2Reader extends FormatReader {
         while (b[pt] != '!') {
           sb.append((char) b[pt++]);
         }
+        b = null;
         int ndx = Integer.parseInt(sb.toString());
 
         if (getSizeC() == 0) {
@@ -416,7 +417,6 @@ public class NativeND2Reader extends FormatReader {
         {
           offsets[seriesIndex][plane] = offset + p[0] + 8;
         }
-        b = null;
       }
 
       Vector<long[]> tmpOffsets = new Vector<long[]>();
