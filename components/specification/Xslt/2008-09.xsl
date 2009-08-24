@@ -39,14 +39,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+  xmlns:exsl="http://exslt.org/common" 
+  extension-element-prefixes="exsl"
   version="1.0">
  
   <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2009-09</xsl:variable>
   <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2009-09</xsl:variable>
-  <xsl:variable name="root" select="/"/>
-  
   <xsl:output method="xml" indent="yes"/>
-
   <xsl:preserve-space elements="*"/>
 
   
@@ -207,6 +206,42 @@ Convert the attibutes of  all the elements except element HashSHA1 into attribut
  </xsl:element>
 </xsl:template>
 
+<!-- 
+Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamManipulationRef.
+-->
+<xsl:template match="OME:Experiment">
+<xsl:variable name="images">
+  <xsl:copy-of select="following-sibling::OME:Image"/>
+  
+  <xsl:copy-of select="preceding-sibling::OME:Image"/>
+  </xsl:variable>
+ <xsl:element name="Experiment" namespace="{$newOMENS}">
+ <xsl:for-each select="*">
+ <xsl:choose>
+ <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
+ <xsl:variable name="id" select="@ID"/>
+  <xsl:for-each select="exsl:node-set($images)/*">
+  <xsl:for-each select="* [name()='MicrobeamManipulation']">
+  <xsl:if test="@ID=$id">
+  <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+  <xsl:apply-templates select="@*|node()"/>
+  </xsl:element>
+  </xsl:if>
+  </xsl:for-each>
+  </xsl:for-each>
+  
+ </xsl:when>
+ <xsl:otherwise>
+  <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+  <xsl:apply-templates select="@*|node()"/>
+  </xsl:element>
+ </xsl:otherwise>
+ </xsl:choose>
+</xsl:for-each>
+  
+  </xsl:element>
+</xsl:template>
+
 <!--
 Remove AcquiredPixels and DefaultPixels attributes.
 Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
@@ -230,38 +265,12 @@ Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
             </xsl:if>
          </xsl:when>
          <xsl:when test="local-name(.) = 'MicrobeamManipulation'">
-         <xsl:variable name="mbm" select="current()"/>
-         <xsl:for-each select="$root//Experiment"> 
-         <!-- xsl:if test="/MicrobeamManipulationRef[@ID=$id]" -->
-            <xsl:choose>
-                <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
-                    <xsl:element name="Foo" namespace="{$newOMENS}">
-                    <xsl:copy-of select="$mbm"/>
-                    </xsl:element>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-                    <xsl:apply-templates select="@*|node()"/>
-                    <xsl:value-of select="."/>
-                    </xsl:element>
-                </xsl:otherwise>
-        </xsl:choose>
-        <!-- /xsl:if -->
-        
-         </xsl:for-each>
-         <!--
-         
-          <xsl:call-template name="moveMicrobeamManipulation">
-                <xsl:with-param name="id" select="@ID"/>
-                <xsl:with-param name="mbm" select="current()"/>
-            </xsl:call-template>
-            -->
-            
+            <xsl:variable name="id" select="@ID"/>
             <xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
              <xsl:apply-templates select="@* [name() = 'ID']"/>
              <xsl:value-of select="."/>
             </xsl:element>
-          
+           
          </xsl:when>
          <xsl:otherwise>
             <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
@@ -272,28 +281,6 @@ Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
        </xsl:choose>
     </xsl:for-each>
  </xsl:element>
-</xsl:template>
-
-<xsl:template name="moveMicrobeamManipulation">
- <xsl:param name="id"/>
- <xsl:param name="mbm"/>
- <xsl:for-each select="$root//Experiment">
- <xsl:if test="/MicrobeamManipulationRef[@ID=$id]">
-  <xsl:choose>
-    <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
-    <xsl:element name="Foo" namespace="{$newOMENS}">
-      <xsl:copy-of select="$mbm"/>
-      </xsl:element>
-    </xsl:when>
-    <xsl:otherwise>
-       <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-         <xsl:apply-templates select="@*|node()"/>
-          <xsl:value-of select="."/>
-       </xsl:element>
-    </xsl:otherwise>
-  </xsl:choose>
-  </xsl:if>
- </xsl:for-each>
 </xsl:template>
 
  <!-- Screen Plate Well -->
@@ -322,7 +309,7 @@ Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
     </xsl:element>
   </xsl:template>
  
- 
+
  <!-- General -->
   <!-- Fix the various Description Elements and Attributes -->
   <!-- 
@@ -357,6 +344,27 @@ Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
         </xsl:attribute>
       </xsl:for-each>
       <xsl:for-each select="@* [name() = 'Description']">
+        <xsl:element name="Description">
+          <xsl:value-of select="."/>
+        </xsl:element>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()"/>
+    </xsl:element>
+  </xsl:template>
+
+  <!-- 
+  Convert the attribute Description in Plate into a child element.
+  Copy all the other attributes.
+  Copy all child elements.
+  -->
+  <xsl:template match="SPW:Plate">
+   <xsl:element name="Plate" namespace="{$newSPWNS}">
+      <xsl:for-each select="@* [not(name() = 'Description')]">
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
+      </xsl:for-each>
+      <xsl:for-each select="@* [name() = 'Description']">
         <xsl:element name="Description" namespace="{$newSPWNS}">
           <xsl:value-of select="."/>
         </xsl:element>
@@ -364,6 +372,7 @@ Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
       <xsl:apply-templates select="node()"/>
     </xsl:element>
   </xsl:template>
+
 
   <!-- Rewriting all namespaces -->
 
