@@ -40,6 +40,7 @@
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
   xmlns:exsl="http://exslt.org/common" 
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
   extension-element-prefixes="exsl"
   version="1.0">
  
@@ -212,45 +213,45 @@ Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamMan
 <xsl:template match="OME:Experiment">
 <xsl:variable name="images">
   <xsl:copy-of select="following-sibling::OME:Image"/>
-  
-  <xsl:copy-of select="preceding-sibling::OME:Image"/>
-  </xsl:variable>
+</xsl:variable>
  <xsl:element name="Experiment" namespace="{$newOMENS}">
- <xsl:for-each select="*">
- <xsl:choose>
- <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
- <xsl:variable name="id" select="@ID"/>
-  <xsl:for-each select="exsl:node-set($images)/*">
-  <xsl:for-each select="* [name()='MicrobeamManipulation']">
-  <xsl:if test="@ID=$id">
-  <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-  <xsl:apply-templates select="@*|node()"/>
-  </xsl:element>
-  </xsl:if>
-  </xsl:for-each>
-  </xsl:for-each>
-  
- </xsl:when>
- <xsl:otherwise>
-  <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-  <xsl:apply-templates select="@*|node()"/>
-  </xsl:element>
- </xsl:otherwise>
+   <xsl:for-each select="*">
+    <xsl:choose>
+      <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
+        <xsl:variable name="id" select="@ID"/>
+        <xsl:for-each select="exsl:node-set($images)/*">
+          <xsl:for-each select="* [name()='MicrobeamManipulation']">
+            <xsl:if test="@ID=$id">
+              <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+                <xsl:apply-templates select="@*|node()"/>
+              </xsl:element>
+            </xsl:if>
+           </xsl:for-each>
+         </xsl:for-each>
+       </xsl:when>
+       <xsl:otherwise>
+        <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+         <xsl:apply-templates select="@*|node()"/>
+        </xsl:element>
+      </xsl:otherwise>
  </xsl:choose>
 </xsl:for-each>
-  
-  </xsl:element>
+</xsl:element>
 </xsl:template>
 
 <!--
 Remove AcquiredPixels and DefaultPixels attributes.
 Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
+MicrobeamManipulation node is moved to Experiment see Experiment template.
+LogicalChannel and ChannelComponent are merged: new name is Channel
+If a logical channel has n ChannelComponent nodes, n Channel nodes are created.
+The Channel nodes are then linked to Pixels and no longer to Image. 
 -->
 <xsl:template match="OME:Image">
  <xsl:element name="Image" namespace="{$newOMENS}">
     <xsl:variable name="ac" select="current()/@AcquiredPixels"/>
     <xsl:apply-templates select="@* [not(name() = 'DefaultPixels' or name() = 'AcquiredPixels')]"/>
-    <xsl:for-each select="* [not(local-name(.) = 'Thumbnail' or local-name(.) = 'DisplayOptions' or local-name(.) = 'Region' or local-name(.) = 'LogicalChannel' or local-name(.) = 'CustomAttributes')]">
+    <xsl:for-each select="* [not(local-name(.) = 'Thumbnail' or local-name(.) = 'DisplayOptions' or local-name(.) = 'Region' or local-name(.) = 'CustomAttributes' or local-name(.) = 'ROI' or local-name(.) = 'LogicalChannel')]">
         <xsl:choose>
          <xsl:when test="local-name(.) = 'CreationDate'">
           <xsl:element name="AcquiredDate" namespace="{$newOMENS}">
@@ -261,17 +262,60 @@ Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
             <xsl:if test="@ID=$ac"> <!-- add controls to make sure we only copy one. -->
              <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
              <xsl:apply-templates select="@*|node()"/>
+             <!-- copy channel to Pixels -->
+                <!-- logical channel start -->
+                <!--
+                <xsl:when test="local-name(.) = 'LogicalChannel'">
+                <xsl:variable name="lc">
+                    <xsl:copy-of select="current()"/>
+                </xsl:variable>
+                -->
+                <xsl:variable name="logicalChannels">
+                <xsl:copy-of select="preceding-sibling::OME:LogicalChannel"/>
+                </xsl:variable>
+                <xsl:for-each select="exsl:node-set($logicalChannels)/*">
+                <xsl:variable name="lc">
+                    <xsl:copy-of select="current()"/>
+                </xsl:variable>
+                
+                <xsl:for-each select="*  [local-name(.) = 'ChannelComponent']">
+                    <xsl:element name="Channel" namespace="{$newOMENS}">
+                        <xsl:attribute name="Color">
+                        <!-- convert value of @ColorDomain-->
+                         <xsl:call-template name="convertColorDomain">
+                         <xsl:with-param name="cc" select="@ColorDomain"/>
+                        </xsl:call-template>
+                        </xsl:attribute>
+                        <xsl:for-each select="exsl:node-set($lc)/*">
+                            <xsl:apply-templates select="@*"/>
+                            <xsl:for-each select="* [not(local-name(.) = 'ChannelComponent')]">
+                                <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+                                    <xsl:apply-templates select="@*|node()"/>
+                                </xsl:element>
+                            </xsl:for-each>
+                        </xsl:for-each>
+                    </xsl:element>
+                </xsl:for-each>
+                </xsl:for-each>
+                <!--
+                </xsl:when>
+                -->
+            <!-- logical channel end -->
+             
+             
              </xsl:element>
             </xsl:if>
          </xsl:when>
+         <!-- replace MicrobeamManipulation by MicrobeamManipulationRef -->
          <xsl:when test="local-name(.) = 'MicrobeamManipulation'">
             <xsl:variable name="id" select="@ID"/>
             <xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
              <xsl:apply-templates select="@* [name() = 'ID']"/>
              <xsl:value-of select="."/>
             </xsl:element>
-           
          </xsl:when>
+      
+         
          <xsl:otherwise>
             <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
              <xsl:apply-templates select="@*|node()"/>
@@ -282,6 +326,28 @@ Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
     </xsl:for-each>
  </xsl:element>
 </xsl:template>
+
+<xsl:template name="convertColorDomain">
+<xsl:param name="cc"/>
+<xsl:choose>
+
+<xsl:when test="contains($cc,'red') or contains($cc,'r')">
+foo
+</xsl:when>
+<xsl:when test="contains($cc,'green') or contains($cc,'g')">
+foo
+</xsl:when>
+<xsl:when test="contains($cc,'blue') or contains($cc,'b')">
+foo
+</xsl:when>
+<xsl:otherwise>
+0
+</xsl:otherwise>
+</xsl:choose>
+
+
+</xsl:template>
+
 
  <!-- Screen Plate Well -->
   <!-- 
