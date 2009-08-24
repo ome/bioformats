@@ -97,19 +97,14 @@ def dump_xpath(model):
 	hierarchically.
 	"""
 	for obj in model.objects.values():
-		if obj.name != 'Objective':
-			continue
 		for prop in obj.properties.values():
-			if prop.name != 'Immersion':
-				continue
-			print prop.name, prop.possibleValues, prop.type, prop.delegate.__dict__
 			if prop.isEnumeration:
 				parents = resolve_parents(prop)
 				parents.reverse()
 				parents = [parent.name for parent in parents]
 				xpath = "/" + "/".join(parents)
 				if prop.isAttribute:
-					xpath = "/".join([xpath, "@%s" % prop.name])
+					xpath += "@%s" % prop.name
 				else:
 					xpath = "/".join([xpath, prop.name])
 				print xpath
