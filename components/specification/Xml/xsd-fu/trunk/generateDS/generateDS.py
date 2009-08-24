@@ -482,6 +482,13 @@ class XschemaElement(XschemaElementBase):
     def getSimpleType(self): return self.simpleType
     def setDefault(self, default): self.default = default
     def getDefault(self): return self.default
+    
+    def getValues(self):
+        """
+        Returns not only the element's values but its aggregated list of
+        possible values. FIXME: Does not work for UNION types.
+        """
+        return self.values
 
     def show(self, outfile, level):
         showLevel(outfile, level)
@@ -879,15 +886,38 @@ class XschemaAttribute:
         self.default = default
         # Enumeration values for the attribute.
         self.values = list()
+        # The other simple types this is a union of.
+        self.unionOf = list()
+        
+    def resolveValues(self, simpleType):
+        """Resolves values from a SimpleType recursively."""
+        values = list()
+        if simpleType in SimpleTypeDict:
+            t = SimpleTypeDict[simpleType]
+            values += t.values
+            for union in t.unionOf:
+                values += self.resolveValues(union)
+        return values
+
+    def getValues(self):
+        """
+        Returns not only the attribute's explicitly defined values but its
+        aggregated list of possible values defined by UNION relationships
+        or extended restrictions.
+        """
+        values = list(self.values)
+        values += self.resolveValues(self.data_type)
+        return values
+
     def setName(self, name): self.name = name
     def getName(self): return self.name
     def setData_type(self, data_type): self.data_type = data_type
     def getData_type(self): return self.data_type
     def getType(self):
         returnType = self.data_type
-        if SimpleElementDict.has_key(self.data_type):
-            typeObj = SimpleElementDict[self.data_type]
-            typeObjType = typeObj.getRawType()
+        if self.data_type in SimpleTypeDict:
+            typeObj = SimpleTypeDict[self.data_type]
+            typeObjType = typeObj.getBase()
             if typeObjType in StringType or \
                 typeObjType == TokenType or \
                 typeObjType == DateTimeType or \
@@ -926,6 +956,7 @@ class XschemaHandler(handler.ContentHandler):
         self.inAttribute = 0
         self.inAttributeGroup = 0
         self.inSimpleType = 0
+        self.inUnionType = 0
         # The last attribute we processed.
         self.lastAttribute = None
         # Simple types that exist in the global context and may be used to
@@ -1070,7 +1101,7 @@ class XschemaHandler(handler.ContentHandler):
             # fixlist
             if self.inAttribute:
                 pass
-            elif self.inSimpleType and self.inRestrictionType:
+            elif self.inSimpleType and (self.inRestrictionType or self.inUnionType):
                 pass
             else:
                 # Save the name of the simpleType, but ignore everything
@@ -1103,6 +1134,7 @@ class XschemaHandler(handler.ContentHandler):
                 # We know that the restriction is on an attribute and the
                 # attributes of the current element are un-ordered so the
                 # instance variable "lastAttribute" will have our attribute.
+                logging.debug("Adding value %s to %s" % (attrs['value'], self.lastAttribute))
                 self.lastAttribute.values.append(attrs['value'])
             elif self.inElement and attrs.has_key('value'):
                 # We're not in an attribute so the restriction must have
@@ -1122,13 +1154,17 @@ class XschemaHandler(handler.ContentHandler):
                 element.values.append(attrs['value'])
             elif self.inSimpleType and attrs.has_key('value'):
                 # We've been defined as a simpleType on our own.
+                logging.debug("Adding value %s to %s" % (attrs['value'], self.stack[-1]))
                 self.stack[-1].values.append(attrs['value'])
         elif name == UnionType:
             # Union types are only used with a parent simpleType and we want
             # the parent to know what it's a union of.
             if attrs.has_key('memberTypes'):
                 for member in attrs['memberTypes'].split(" "):
-                    self.stack[-1].unionOf.append(member)
+                    o = self.stack[-1]
+                    logging.debug("Adding union member %s to %s" % (member, o))
+                    o.unionOf.append(member)
+            self.inUnionType = 1
         elif name == WhiteSpaceType and self.inRestrictionType:
             if attrs.has_key('value'):
                 if attrs.getValue('value') == 'collapse':
@@ -1138,14 +1174,14 @@ class XschemaHandler(handler.ContentHandler):
             # fixlist
             if self.inSimpleType and self.inRestrictionType:
                 self.stack[-1].setListType(1)
-        logging.debug("Start element stack: %d" % len(self.stack))
+        logging.debug("Start element stack: %d (%r)" % (len(self.stack), self.stack))
 
     def endElement(self, name):
         logging.debug("End element: %s" % (name))
         logging.debug("End element stack: %d" % (len(self.stack)))
         if name == SimpleTypeType: # and self.inSimpleType:
             self.inSimpleType = 0
-            if self.inAttribute:
+            if self.inAttribute or self.inUnionType:
                 pass
             else:
                 # If the simpleType is directly off the root, it may be used to 
@@ -1158,6 +1194,8 @@ class XschemaHandler(handler.ContentHandler):
                     self.stack[-1].setListType(simpleType.isListType())
         elif name == RestrictionType and self.inRestrictionType:
             self.inRestrictionType = 0
+        elif name == UnionType:
+            self.inUnionType = 0
         elif name == ElementType or (name == ComplexTypeType and self.stack[-1].complexType):
             self.inElement = 0
             self.inNonanonymousComplexType = 0
