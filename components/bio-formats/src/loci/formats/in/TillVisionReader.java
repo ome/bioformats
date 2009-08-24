@@ -54,10 +54,8 @@ public class TillVisionReader extends FormatReader {
 
   // -- Constants --
 
-  private static final byte[] MARKER_0 = new byte[] {0x25, (byte) 0x80, 3, 0};
-  private static final byte[] MARKER_1 =
-    new byte[] {(byte) 0x96, (byte) 0x81, 3, 0};
-  private static final byte[] MARKER_2 = new byte[] {0x72, (byte) 0x80, 3, 0};
+  private static final byte[] MARKER_0 = new byte[] {(byte) 0x80, 3, 0};
+  private static final byte[] MARKER_1 = new byte[] {(byte) 0x81, 3, 0};
 
   private static final String[] DATE_FORMATS = new String[] {
     "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy",
@@ -141,6 +139,7 @@ public class TillVisionReader extends FormatReader {
 
     for (int i=0; i<documents.size(); i++) {
       String name = documents.get(i);
+      debug("Reading " + name);
 
       if (name.equals("Root Entry" + File.separator + "Contents")) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
@@ -151,6 +150,7 @@ public class TillVisionReader extends FormatReader {
         int nFound = 0;
 
         embeddedImages = b[0] == 1;
+        debug("Images are " + (embeddedImages ? "" : "not ") + "embedded");
 
         if (embeddedImages) {
           int len = DataTools.bytesToShort(b, 13, 2, true);
@@ -183,12 +183,19 @@ public class TillVisionReader extends FormatReader {
             convertPixelType(DataTools.bytesToInt(b, offset, 4, true));
           embeddedOffset = offset + 32;
           in = poi.getDocumentStream(name);
+          nImages++;
+          break;
         }
 
         byte[] marker = getMarker(b);
+        if (marker == null) {
+          throw new FormatException("Could not find known marker.");
+        }
+        debug("Marker: " + marker[0] + ", " + marker[1] + ", " + marker[2]);
         s.seek(0);
 
         while (s.getFilePointer() < s.length() - 2) {
+          debug("  Looking for image at " + s.getFilePointer());
           s.order(false);
           s.seek(findNextOffset(b, marker, (int) s.getFilePointer()));
           if (s.getFilePointer() < 0) break;
@@ -201,6 +208,7 @@ public class TillVisionReader extends FormatReader {
           len = s.readShort();
           if (len < 0 || len > 0x1000) continue;
           String description = s.readString(len);
+          debug("Description: " + description);
 
           // parse key/value pairs from description
 
@@ -440,7 +448,7 @@ public class TillVisionReader extends FormatReader {
     int offset = findNextOffset(s, MARKER_0, 0);
     if (offset != -1) return MARKER_0;
     offset = findNextOffset(s, MARKER_1, 0);
-    return offset == -1 ? MARKER_2 : MARKER_1;
+    return offset == -1 ? null : MARKER_1;
   }
 
   private int findNextOffset(byte[] s, byte[] marker, int pos)
