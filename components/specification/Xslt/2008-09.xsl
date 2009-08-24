@@ -67,7 +67,8 @@ Convert element into Attribute except GroupRef
 Rename attribute OMEName into UserName
 -->
  <xsl:template match="OME:Experimenter">
-    <xsl:element name="Experimenter" namespace="{$newOMENS}">
+    <xsl:element name="Experimenter" namespace="{$newOMENS}">  
+      <xsl:apply-templates select="@*"/>
       <xsl:for-each select="* [not(local-name(.) = 'GroupRef')]">
           <xsl:choose>
           <xsl:when test="local-name(.) = 'OMEName'">
@@ -82,7 +83,6 @@ Rename attribute OMEName into UserName
           </xsl:otherwise>
           </xsl:choose>
       </xsl:for-each>
-      <xsl:apply-templates select="@*"/>
       <xsl:for-each select="* [name() = 'GroupRef']">
         <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
             <xsl:apply-templates select="@*"/>
@@ -241,11 +241,12 @@ Remove BigEndian attribute from Pixels and move it to Bin:BinData
          <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
         </xsl:when>
-        
+        <xsl:when test="name(.)='Plane'">
+         <xsl:apply-templates select="current()"/>
+        </xsl:when>
          <xsl:otherwise>
           <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
            <xsl:apply-templates select="@*|node()"/>
-            <xsl:apply-templates select="current()"/>
           </xsl:element>
          </xsl:otherwise>
        </xsl:choose>
@@ -284,6 +285,7 @@ Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamMan
   <xsl:copy-of select="following-sibling::OME:Image"/>
 </xsl:variable>
  <xsl:element name="Experiment" namespace="{$newOMENS}">
+ <xsl:apply-templates select="@*"/>
    <xsl:for-each select="*">
     <xsl:choose>
       <xsl:when test="local-name(.) = 'MicrobeamManipulationRef'">
@@ -297,6 +299,9 @@ Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamMan
             </xsl:if>
            </xsl:for-each>
          </xsl:for-each>
+       </xsl:when>
+       <xsl:when test="local-name(.) = 'Description'">
+       <xsl:apply-templates select="current()"/>
        </xsl:when>
        <xsl:otherwise>
         <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
@@ -326,6 +331,9 @@ The Channel nodes are then linked to Pixels and no longer to Image.
           <xsl:element name="AcquiredDate" namespace="{$newOMENS}">
             <xsl:value-of select="."/>
           </xsl:element>
+         </xsl:when>
+         <xsl:when test="local-name(.) ='Description'">
+           <xsl:apply-templates select="current()"/>
          </xsl:when>
          <xsl:when test="local-name(.) = 'Pixels'">
             <xsl:if test="@ID=$ac"> <!-- add controls to make sure we only copy one. -->
