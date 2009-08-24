@@ -3,20 +3,21 @@
 //
 
 /*
-JVMLink client/server architecture for communicating between Java and
-non-Java programs using sockets.
-Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
+WiscScan Flow Cytometry package for performing
+flow cytometry analysis from WiscScan or ImageJ.
+Copyright (c) 2008-@year@ Hidayath Ansari and Curtis Rueden.
+All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
+  notice, this list of conditions and the following disclaimer.
 * Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
 * Neither the name of the UW-Madison LOCI nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE UW-MADISON LOCI ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
