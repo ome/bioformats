@@ -126,8 +126,8 @@ public class OMETiffReader extends FormatReader {
     return r.openBytes(info[series][no].ifd, buf, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels ? null : used;
   }

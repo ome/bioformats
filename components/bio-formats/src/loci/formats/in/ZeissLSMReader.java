@@ -201,8 +201,8 @@ public class ZeissLSMReader extends FormatReader {
       (check[2] == 0x53 && check[3] == 0x74);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
       if (checkSuffix(currentId, MDB_SUFFIX)) return new String[] {currentId};
@@ -212,10 +212,7 @@ public class ZeissLSMReader extends FormatReader {
     if (lsmFilenames.length == 1 && currentId.equals(lsmFilenames[0])) {
       return lsmFilenames;
     }
-    String[] files = new String[lsmFilenames.length + 1];
-    System.arraycopy(lsmFilenames, 0, files, 0, lsmFilenames.length);
-    files[files.length - 1] = currentId;
-    return files;
+    return new String[] {lsmFilenames[getSeries()], currentId};
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

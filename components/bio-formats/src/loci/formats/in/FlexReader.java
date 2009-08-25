@@ -109,19 +109,15 @@ public class FlexReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
+    files.addAll(measurementFiles);
     if (!noPixels) {
-      for (int i=0; i<flexFiles.length; i++) {
-        for (int j=0; j<flexFiles[i].length; j++) {
-          if (flexFiles[i][j] != null) files.add(flexFiles[i][j]);
-        }
-      }
-    }
-    for (String file : measurementFiles) {
-      files.add(file);
+      int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+      int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
+      files.add(flexFiles[wellNumber[pos[1]][0]][wellNumber[pos[1]][1]]);
     }
     return files.toArray(new String[files.size()]);
   }

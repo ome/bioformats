@@ -120,14 +120,13 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.isThisType(stream);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) return new String[] {metadataFile};
-    String[] s = new String[tiffs.size() + 1];
-    tiffs.copyInto(s);
-    s[tiffs.size()] = metadataFile;
-    return s;
+    Vector<String> files = new Vector<String>();
+    files.add(metadataFile);
+    if (!noPixels) files.addAll(tiffs);
+    return files.toArray(new String[files.size()]);
   }
 
   /**

@@ -176,8 +176,8 @@ public class TCSReader extends FormatReader {
     return tiffReaders[n].openBytes(0, buf, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
       String name = currentId.toLowerCase();
@@ -185,13 +185,11 @@ public class TCSReader extends FormatReader {
       return new String[] {currentId};
     }
     Vector<String> v = new Vector<String>();
-    for (String f : tiffs) {
-      v.add(f);
-    }
+    v.addAll(tiffs);
 
     String absoluteId = new Location(currentId).getAbsolutePath();
     if (!v.contains(absoluteId)) v.add(absoluteId);
-    return v.toArray(new String[0]);
+    return v.toArray(new String[v.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

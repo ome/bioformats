@@ -147,17 +147,17 @@ public class BioRadReader extends FormatReader {
     return lut == null ? null : lut[lastChannel];
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
       Vector<String> files = new Vector<String>();
       for (String f : used) {
         if (!checkSuffix(f, PIC_SUFFIX)) files.add(f);
       }
-      return files.toArray(new String[0]);
+      return files.toArray(new String[files.size()]);
     }
-    return used.toArray(new String[0]);
+    return used.toArray(new String[used.size()]);
   }
 
   /**

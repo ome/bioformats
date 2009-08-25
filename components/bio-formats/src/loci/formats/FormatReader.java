@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -716,7 +717,57 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles(boolean noPixels) {
+    int oldSeries = getSeries();
+    Vector<String> files = new Vector<String>();
+    for (int i=0; i<getSeriesCount(); i++) {
+      setSeries(i);
+      String[] s = getSeriesUsedFiles(noPixels);
+      for (String file : s) {
+        if (!files.contains(file)) {
+          files.add(file);
+        }
+      }
+    }
+    setSeries(oldSeries);
+    return files.toArray(new String[files.size()]);
+  }
+
+  /* @see IFormatReader#getSeriesUsedFiles() */
+  public String[] getSeriesUsedFiles() {
+    return getSeriesUsedFiles(false);
+  }
+
+  /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     return noPixels ? null : new String[] {currentId};
+  }
+
+  /* @see IFormatReader#getAdvancedUsedFiles(boolean) */
+  public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
+    String[] files = getUsedFiles(noPixels);
+    if (files == null) return null;
+    FileInfo[] infos = new FileInfo[files.length];
+    for (int i=0; i<infos.length; i++) {
+      infos[i] = new FileInfo();
+      infos[i].filename = files[i];
+      infos[i].reader = this.getClass();
+      infos[i].usedToInitialize = files[i].endsWith(getCurrentFile());
+    }
+    return infos;
+  }
+
+  /* @see IFormatReader#getAdvancedSeriesUsedFiles(boolean) */
+  public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
+    String[] files = getSeriesUsedFiles(noPixels);
+    if (files == null) return null;
+    FileInfo[] infos = new FileInfo[files.length];
+    for (int i=0; i<infos.length; i++) {
+      infos[i] = new FileInfo();
+      infos[i].filename = files[i];
+      infos[i].reader = this.getClass();
+      infos[i].usedToInitialize = files[i].endsWith(getCurrentFile());
+    }
+    return infos;
   }
 
   /* @see IFormatReader#getCurrentFile() */

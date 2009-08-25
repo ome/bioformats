@@ -190,11 +190,11 @@ public class DicomReader extends FormatReader {
     return shortLut;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels || fileList == null ? null :
-      fileList.toArray(new String[0]);
+      fileList.toArray(new String[fileList.size()]);
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -981,7 +981,11 @@ public class DicomReader extends FormatReader {
         return min;
       default:
         vr = IMPLICIT_VR;
-        return DataTools.bytesToInt(b, stream.isLittleEndian());
+        int len = DataTools.bytesToInt(b, stream.isLittleEndian());
+        if (len + stream.getFilePointer() > stream.length()) {
+          len = DataTools.bytesToInt(b, 2, 2, stream.isLittleEndian());
+        }
+        return len;
     }
   }
 
@@ -997,11 +1001,11 @@ public class DicomReader extends FormatReader {
     int tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
 
     elementLength = getLength(stream, tag);
-    if (elementLength > in.length()) {
-      in.seek(in.getFilePointer() - 8);
+    if (elementLength > stream.length()) {
+      stream.seek(stream.getFilePointer() - 8);
       core[0].littleEndian = !isLittleEndian();
-      in.order(isLittleEndian());
-      return getNextTag(in);
+      stream.order(isLittleEndian());
+      return getNextTag(stream);
     }
 
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {

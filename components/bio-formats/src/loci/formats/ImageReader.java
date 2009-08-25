@@ -379,6 +379,26 @@ public class ImageReader implements IFormatReader {
     return getReader().getUsedFiles(noPixels);
   }
 
+  /* @see IFormatReader#getSeriesUsedFiles() */
+  public String[] getSeriesUsedFiles() {
+    return getReader().getSeriesUsedFiles();
+  }
+
+  /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    return getReader().getSeriesUsedFiles(noPixels);
+  }
+
+  /* @see IFormatReader#getAdvancedUsedFiles(boolean) */
+  public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
+    return getReader().getAdvancedUsedFiles(noPixels);
+  }
+
+  /* @see IFormatReader#getAdvancedSeriesUsedFiles(boolean) */
+  public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
+    return getReader().getAdvancedSeriesUsedFiles(noPixels);
+  }
+
   /* @see IFormatReader#getIndex(int, int, int) */
   public int getIndex(int z, int c, int t) {
     return getReader().getIndex(z, c, t);

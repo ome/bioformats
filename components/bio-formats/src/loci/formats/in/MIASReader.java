@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.ByteArrayHandle;
@@ -67,8 +68,7 @@ public class MIASReader extends FormatReader {
   /** Path to file containing analysis results for all plates. */
   private String resultFile = null;
 
-  /** Other files that contain analysis results. */
-  private Vector<String> analysisFiles = null;
+  private Vector<AnalysisFile> analysisFiles;
 
   private int[][] wellNumber;
   private int[][] plateAndWell;
@@ -205,29 +205,28 @@ public class MIASReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
+    int well = getWellNumber(getSeries());
+    int plate = getPlateNumber(getSeries());
     if (!noPixels) {
-      for (String[][] plates : tiffs) {
-        for (String[] wells : plates) {
-          for (String file : wells) {
-            files.add(file);
-          }
-        }
+      files.addAll(Arrays.asList(tiffs[plate][well]));
+    }
+
+    for (AnalysisFile file : analysisFiles) {
+      if ((file.plate == plate || file.plate < 0) &&
+        (file.well == well || file.well < 0))
+      {
+        files.add(file.filename);
       }
     }
-    if (resultFile != null) files.add(resultFile);
-    for (String file : analysisFiles) {
-      files.add(file);
+
+    if (plateFiles != null && plate < plateFiles.size()) {
+      files.add(plateFiles.get(plate));
     }
-    if (plateFiles != null) {
-      for (String file : plateFiles) {
-        files.add(file);
-      }
-    }
-    return files.toArray(new String[0]);
+    return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -269,9 +268,9 @@ public class MIASReader extends FormatReader {
     // TODO : initFile currently accepts a constituent TIFF file.
     // Consider allowing the top level experiment directory to be passed in
 
-    analysisFiles = new Vector<String>();
     plateDirs = new Vector<String>();
     plateFiles = new Vector<String>();
+    analysisFiles = new Vector<AnalysisFile>();
 
     // MIAS is a high content screening format which supports multiple plates,
     // wells and fields.
@@ -326,9 +325,18 @@ public class MIASReader extends FormatReader {
         String[] results = f.list(true);
         for (String result : results) {
           Location file = new Location(f, result);
-          analysisFiles.add(file.getAbsolutePath());
           if (result.startsWith("NEO_Results")) {
             resultFile = file.getAbsolutePath();
+            AnalysisFile af = new AnalysisFile();
+            af.filename = resultFile;
+            analysisFiles.add(af);
+          }
+          else if (result.startsWith("NEO_PlateOutput_")) {
+            String plateIndex = result.substring(16, 19);
+            AnalysisFile af = new AnalysisFile();
+            af.filename = file.getAbsolutePath();
+            af.plate = Integer.parseInt(plateIndex) - 1;
+            analysisFiles.add(af);
           }
         }
       }
@@ -365,7 +373,13 @@ public class MIASReader extends FormatReader {
             // exclude proprietary program state files
             if (!result.endsWith(".sav") && !result.endsWith(".dsv")) {
               Location r = new Location(f, result);
-              analysisFiles.add(r.getAbsolutePath());
+              AnalysisFile af = new AnalysisFile();
+              af.filename = r.getAbsolutePath();
+              af.plate = i;
+              if (result.toLowerCase().startsWith("well")) {
+                af.well = Integer.parseInt(result.substring(4, 8)) - 1;
+              }
+              analysisFiles.add(af);
             }
           }
         }
@@ -664,13 +678,15 @@ public class MIASReader extends FormatReader {
 
     // populate image-level ROIs
     String[] colors = new String[getSizeC()];
-    for (String file : analysisFiles) {
+    for (AnalysisFile af : analysisFiles) {
+      String file = af.filename;
       String name = new Location(file).getName();
-      if (name.startsWith("Well") && name.endsWith("detail.txt")) {
-        int[] position = getPositionFromFile(file);
+      if (!name.startsWith("Well")) continue;
 
-        int series = getSeriesNumber(position[0], position[1]);
+      int[] position = getPositionFromFile(file);
+      int series = getSeriesNumber(position[0], position[1]);
 
+      if (name.endsWith("detail.txt")) {
         RandomAccessInputStream s = new RandomAccessInputStream(file);
         String data = s.readString((int) s.length());
         String[] lines = data.split("\n");
@@ -684,18 +700,16 @@ public class MIASReader extends FormatReader {
         Vector<String> columnNames = new Vector<String>();
         for (String v : columns) columnNames.add(v);
 
-        for (int i=start+1; i<lines.length; i++) {
-          populateROI(columnNames, lines[i].split("\t"), series, i - start - 1,
-            position[2], position[3], store);
+        for (int j=start+1; j<lines.length; j++) {
+          populateROI(columnNames, lines[j].split("\t"), series,
+            j - start - 1, position[2], position[3], store);
         }
 
         s.close();
       }
-      else if (name.startsWith("Well") && name.endsWith("AllModesOverlay.tif"))
-      {
+      else if (name.endsWith("AllModesOverlay.tif")) {
         // original color for each channel is stored in
-        // <plate>/results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
-        int[] position = getPositionFromFile(file);
+        // results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
         if (colors[position[4]] != null) continue;
         try {
           colors[position[4]] = getChannelColorFromFile(file);
@@ -703,7 +717,6 @@ public class MIASReader extends FormatReader {
         catch (IOException e) { }
         if (colors[position[4]] == null) continue;
 
-        int seriesIndex = getSeriesNumber(position[0], position[1]);
         for (int s=0; s<getSeriesCount(); s++) {
           store.setChannelComponentColorDomain(
             colors[position[4]], s, position[4], 0);
@@ -951,6 +964,13 @@ public class MIASReader extends FormatReader {
         store.setPlaneTimingExposureTime(exposure, series, 0, i);
       }
     }
+  }
+
+  // -- Helper class --
+
+  class AnalysisFile {
+    public String filename;
+    public int plate = -1, well = -1;
   }
 
 }

@@ -135,10 +135,26 @@ public final class LogTools {
   }
 
   /** Issues a stack trace if the debug flag is set. */
-  public static void traceDebug(String s) { if (debug) trace(s); }
+  public static void traceDebug(String s) { traceDebug(s, 0); }
 
   /** Issues a stack trace if the debug flag is set. */
-  public static void traceDebug(Throwable t) { if (debug) trace(t); }
+  public static void traceDebug(Throwable t) { traceDebug(t, 0); }
+
+  /**
+   * Issues a stack trace if the debug flag is set and the
+   * debugging level is greater than or equal to the specified level.
+   */
+  public static void traceDebug(String s, int minLevel) {
+    if (debug && debugLevel >= minLevel) trace(s);
+  }
+
+  /**
+   * Issues a stack trace if the debug flag is set and the
+   * debugging level is greater than or equal to the specified level.
+   */
+  public static void traceDebug(Throwable t, int minLevel) {
+    if (debug && debugLevel >= minLevel) trace(t);
+  }
 
   /** Issues a warning if the debug flag is set. */
   public static void warnDebug(String message) {

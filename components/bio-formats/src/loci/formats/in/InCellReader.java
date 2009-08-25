@@ -155,30 +155,23 @@ public class InCellReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) {
-      return metadataFiles.toArray(new String[0]);
-    }
     Vector<String> files = new Vector<String>();
-    if (imageFiles != null) {
-      for (Image[][][] wells : imageFiles) {
-        for (Image[][] fields : wells) {
-          for (Image[] timepoints : fields) {
-            for (Image plane : timepoints) {
-              if (plane != null && plane.filename != null) {
-                files.add(plane.filename);
-              }
-            }
+    files.addAll(metadataFiles);
+    if (!noPixels && imageFiles != null) {
+      int well = getWellFromSeries(getSeries());
+      int field = getFieldFromSeries(getSeries());
+      for (Image[] timepoints : imageFiles[well][field]) {
+        for (Image plane : timepoints) {
+          if (plane != null && plane.filename != null) {
+            files.add(plane.filename);
           }
         }
       }
     }
-    for (String file : metadataFiles) {
-      files.add(file);
-    }
-    return files.toArray(new String[0]);
+    return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

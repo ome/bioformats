@@ -98,11 +98,18 @@ public class VisitechReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) return new String[] {currentId};
-    return files == null ? new String[0] : files.toArray(new String[0]);
+    Vector<String> v = new Vector<String>();
+    v.add(currentId);
+    if (!noPixels && files != null) {
+      int nFiles = getSizeC();
+      for (int i=0; i<nFiles; i++) {
+        v.add(files.get(getSeries() * nFiles + i));
+      }
+    }
+    return v.toArray(new String[v.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

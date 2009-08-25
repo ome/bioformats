@@ -138,22 +138,15 @@ public class MetamorphReader extends BaseTiffReader {
     return FormatTools.CANNOT_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) {
-      if (ndFilename == null) return null;
-      return new String[] {ndFilename};
-    }
     if (stks == null) return new String[] {currentId};
+
     Vector<String> v = new Vector<String>();
     if (ndFilename != null) v.add(ndFilename);
-    for (int i=0; i<stks.length; i++) {
-      for (int j=0; j<stks[i].length; j++) {
-        v.add(stks[i][j]);
-      }
-    }
-    return v.toArray(new String[0]);
+    if (!noPixels) v.addAll(Arrays.asList(stks[getSeries()]));
+    return v.toArray(new String[v.size()]);
   }
 
   /**

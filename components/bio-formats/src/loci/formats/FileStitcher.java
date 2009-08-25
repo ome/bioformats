@@ -698,6 +698,60 @@ public class FileStitcher implements IFormatReader {
       reader.getUsedFiles(noPixels) : getUsedFiles();
   }
 
+  /* @see IFormatReader#getSeriesUsedFiles() */
+  public String[] getSeriesUsedFiles() {
+    return getUsedFiles();
+  }
+
+  /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    return getUsedFiles(noPixels);
+  }
+
+  /* @see IFormatReader#getAdvancedUsedFiles(boolean) */
+  public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
+    String[] files = getUsedFiles(noPixels);
+    if (files == null) return null;
+    FileInfo[] infos = new FileInfo[files.length];
+    for (int i=0; i<infos.length; i++) {
+      infos[i] = new FileInfo();
+      infos[i].filename = files[i];
+      try {
+        infos[i].reader = reader.unwrap().getClass();
+      }
+      catch (FormatException e) {
+        LogTools.traceDebug(e);
+      }
+      catch (IOException e) {
+        LogTools.traceDebug(e);
+      }
+      infos[i].usedToInitialize = files[i].endsWith(getCurrentFile());
+    }
+    return infos;
+  }
+
+  /* @see IFormatReader#getAdvancedSeriesUsedFiles(boolean) */
+  public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
+    String[] files = getSeriesUsedFiles(noPixels);
+    if (files == null) return null;
+    FileInfo[] infos = new FileInfo[files.length];
+    for (int i=0; i<infos.length; i++) {
+      infos[i] = new FileInfo();
+      infos[i].filename = files[i];
+      try {
+        infos[i].reader = reader.unwrap().getClass();
+      }
+      catch (FormatException e) {
+        LogTools.traceDebug(e);
+      }
+      catch (IOException e) {
+        LogTools.traceDebug(e);
+      }
+      infos[i].usedToInitialize = files[i].endsWith(getCurrentFile());
+    }
+    return infos;
+  }
+
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() { return currentId; }
 

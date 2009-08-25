@@ -332,6 +332,32 @@ public interface IFormatReader extends IFormatHandler {
    */
   String[] getUsedFiles(boolean noPixels);
 
+  /** Returns an array of filenames needed to open the current series. */
+  String[] getSeriesUsedFiles();
+
+  /**
+   * Returns an array of filenames needed to open the current series.
+   * If the 'noPixels' flag is set, then only files that do not contain
+   * pixel data will be returned.
+   */
+  String[] getSeriesUsedFiles(boolean noPixels);
+
+  /**
+   * Returns an array of FileInfo objects representing the files needed
+   * to open this dataset.
+   * If the 'noPixels' flag is set, then only files that do not contain
+   * pixel data will be returned.
+   */
+  FileInfo[] getAdvancedUsedFiles(boolean noPixels);
+
+  /**
+   * Returns an array of FileInfo objects representing the files needed to
+   * open the current series.
+   * If the 'noPixels' flag is set, then only files that do not contain
+   * pixel data will be returned.
+   */
+  FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels);
+
   /** Returns the current file. */
   String getCurrentFile();
 

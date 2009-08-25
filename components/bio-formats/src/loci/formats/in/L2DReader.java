@@ -56,8 +56,8 @@ public class L2DReader extends FormatReader {
   /** List of constituent TIFF files. */
   private Vector[] tiffs;
 
-  /** List of all files in the dataset. */
-  private Vector<String> used;
+  /** List of all metadata files in the dataset. */
+  private Vector[] metadataFiles;
 
   private MinimalTiffReader reader;
 
@@ -87,20 +87,14 @@ public class L2DReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) {
-      Vector<String> files = new Vector<String>();
-      for (int i=0; i<used.size(); i++) {
-        String f = used.get(i).toLowerCase();
-        if (!f.endsWith(".tif") && !f.endsWith(".tiff")) {
-          files.add(used.get(i));
-        }
-      }
-      return files.toArray(new String[0]);
-    }
-    return used.toArray(new String[0]);
+    Vector<String> files = new Vector<String>();
+    files.add(currentId);
+    files.addAll(metadataFiles[getSeries()]);
+    if (!noPixels) files.addAll(tiffs[series]);
+    return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -110,7 +104,7 @@ public class L2DReader extends FormatReader {
     if (!fileOnly) {
       tiffs = null;
       reader = null;
-      used = null;
+      metadataFiles = null;
     }
   }
 
@@ -140,9 +134,6 @@ public class L2DReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    used = new Vector<String>();
-    used.add(new Location(id).getAbsolutePath());
-
     Location parent = new Location(id).getAbsoluteFile().getParentFile();
 
     // parse key/value pairs from file - this gives us a list of scans
@@ -170,6 +161,7 @@ public class L2DReader extends FormatReader {
     // read metadata from each scan
 
     tiffs = new Vector[scans.size()];
+    metadataFiles = new Vector[scans.size()];
 
     core = new CoreMetadata[scans.size()];
 
@@ -182,6 +174,7 @@ public class L2DReader extends FormatReader {
       setSeries(i);
       core[i] = new CoreMetadata();
       tiffs[i] = new Vector();
+      metadataFiles[i] = new Vector();
       String scanName = (String) scans.get(i);
       Location scanDir = new Location(parent, scanName);
 
@@ -189,7 +182,7 @@ public class L2DReader extends FormatReader {
 
       String scanPath =
         new Location(scanDir, scanName + ".scn").getAbsolutePath();
-      addDirectory(scanDir.getAbsolutePath());
+      addDirectory(scanDir.getAbsolutePath(), i);
       RandomAccessInputStream scan = new RandomAccessInputStream(scanPath);
       line = scan.readLine().trim();
       while (line != null && line.length() > 0) {
@@ -300,19 +293,20 @@ public class L2DReader extends FormatReader {
    * Recursively add all of the files in the given directory to the
    * used file list.
    */
-  private void addDirectory(String path) { Location dir = new Location(path);
+  private void addDirectory(String path, int series) {
+    Location dir = new Location(path);
     String[] files = dir.list();
     for (int i=0; i<files.length; i++) {
       Location file = new Location(path, files[i]);
       if (file.isDirectory()) {
-        addDirectory(file.getAbsolutePath());
+        addDirectory(file.getAbsolutePath(), series);
       }
       else {
         String check = files[i].toLowerCase();
-        if (check.endsWith(".tif") || check.endsWith(".data") ||
-          check.endsWith(".log") || check.endsWith(".scn"))
+        if (check.endsWith(".data") || check.endsWith(".log") ||
+          check.endsWith(".scn"))
         {
-          used.add(file.getAbsolutePath());
+          metadataFiles[series].add(file.getAbsolutePath());
         }
       }
     }

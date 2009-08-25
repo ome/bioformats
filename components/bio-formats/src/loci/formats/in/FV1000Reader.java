@@ -223,23 +223,30 @@ public class FV1000Reader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) {
-      if (isOIB) return null;
-      Vector<String> files = new Vector<String>();
-      for (int i=0; i<usedFiles.size(); i++) {
-        String f = usedFiles.get(i).toLowerCase();
-        if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp"))
-        {
-          files.add(usedFiles.get(i));
-        }
-      }
-      return files.toArray(new String[0]);
+    if (isOIB) {
+      return noPixels ? null : new String[] {currentId};
     }
-    if (usedFiles == null) return new String[] {currentId};
-    return usedFiles.toArray(new String[0]);
+
+    Vector<String> files = new Vector<String>();
+    for (String file : usedFiles) {
+      String f = file.toLowerCase();
+      if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp")) {
+        files.add(file);
+      }
+    }
+    if (!noPixels) {
+      if (getSeries() == 0) {
+        files.addAll(tiffs);
+      }
+      else if (getSeries() == 1) {
+        files.addAll(previewNames);
+      }
+    }
+
+    return files.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -1102,18 +1109,20 @@ public class FV1000Reader extends FormatReader {
 
           if (width + x <= getSizeX() && height + y <= getSizeY()) {
             nextShape++;
+
+            Integer zIndex = new Integer(coordinates[0]);
+            Integer tIndex = new Integer(coordinates[2]);
+
             if (nextShape == 0) {
               nextROI++;
-              store.setROIZ0(new Integer(coordinates[0]), 0, nextROI);
-              store.setROIZ1(new Integer(coordinates[0]), 0, nextROI);
-              store.setROIT0(new Integer(coordinates[2]), 0, nextROI);
-              store.setROIT1(new Integer(coordinates[2]), 0, nextROI);
+              store.setROIZ0(zIndex, 0, nextROI);
+              store.setROIZ1(zIndex, 0, nextROI);
+              store.setROIT0(tIndex, 0, nextROI);
+              store.setROIT1(tIndex, 0, nextROI);
             }
 
-            store.setShapeTheZ(new Integer(coordinates[0]), 0,
-              nextROI, nextShape);
-            store.setShapeTheT(new Integer(coordinates[2]), 0,
-              nextROI, nextShape);
+            store.setShapeTheZ(zIndex, 0, nextROI, nextShape);
+            store.setShapeTheT(tIndex, 0, nextROI, nextShape);
 
             store.setShapeFontSize(new Integer(fontSize), 0, nextROI,
               nextShape);

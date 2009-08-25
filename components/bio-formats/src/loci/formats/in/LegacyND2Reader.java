@@ -67,7 +67,7 @@ public class LegacyND2Reader extends FormatReader {
       System.loadLibrary("LegacyND2Reader");
     }
     catch (UnsatisfiedLinkError e) {
-      LogTools.traceDebug(e);
+      LogTools.traceDebug(e, 4);
       libraryFound = false;
     }
   }

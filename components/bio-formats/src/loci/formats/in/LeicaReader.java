@@ -222,18 +222,15 @@ public class LeicaReader extends FormatReader {
     return tiff.openBytes(0, buf, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) return new String[] {currentId};
     Vector<String> v = new Vector<String>();
     v.add(leiFilename);
-    for (int i=0; i<files.length; i++) {
-      for (int j=0; j<files[i].size(); j++) {
-        v.add((String) files[i].get(j));
-      }
+    if (!noPixels) {
+      v.addAll(files[getSeries()]);
     }
-    return v.toArray(new String[0]);
+    return v.toArray(new String[v.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

@@ -72,8 +72,8 @@ public class TiffReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     if (noPixels) {
       return companionFile == null ? null : new String[] {companionFile};
     }

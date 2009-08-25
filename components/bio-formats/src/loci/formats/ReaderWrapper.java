@@ -351,6 +351,22 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getUsedFiles(noPixels);
   }
 
+  public String[] getSeriesUsedFiles() {
+    return reader.getSeriesUsedFiles();
+  }
+
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    return reader.getSeriesUsedFiles(noPixels);
+  }
+
+  public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
+    return reader.getAdvancedUsedFiles(noPixels);
+  }
+
+  public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
+    return reader.getAdvancedSeriesUsedFiles(noPixels);
+  }
+
   public String getCurrentFile() { return reader.getCurrentFile(); }
 
   public int getIndex(int z, int c, int t) {

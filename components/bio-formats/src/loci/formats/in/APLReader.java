@@ -62,20 +62,16 @@ public class APLReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  public String[] getUsedFiles(boolean noPixels) {
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) {
-      Vector<String> files = new Vector();
-      for (String f : used) {
-        String name = f.toLowerCase();
-        if (!name.endsWith(".tif") && !name.endsWith(".tiff")) {
-          files.add(f);
-        }
-      }
-      return files.toArray(new String[0]);
+    Vector<String> files = new Vector<String>();
+    files.addAll(used);
+    if (getSeries() < xmlFiles.length) files.add(xmlFiles[getSeries()]);
+    if (!noPixels && getSeries() < tiffFiles.length) {
+      files.add(tiffFiles[getSeries()]);
     }
-    return used == null ? new String[0] : used.toArray(new String[0]);
+    return files.toArray(new String[files.size()]);
   }
 
   /**
@@ -206,9 +202,6 @@ public class APLReader extends FormatReader {
 
       xmlFiles[i] = topDirectory + File.separator + row2[filename];
       tiffFiles[i] = topDirectory + File.separator + row3[filename];
-
-      if (new Location(xmlFiles[i]).exists()) used.add(xmlFiles[i]);
-      used.add(tiffFiles[i]);
 
       tiffReaders[i] = new MinimalTiffReader();
       tiffReaders[i].setId(tiffFiles[i]);
