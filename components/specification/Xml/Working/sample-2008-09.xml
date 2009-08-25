@@ -205,7 +205,7 @@
 					<Channels>
 						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 					</Channels>
-						<Rect x="x1" y="y1" width="width1" height="height1" transform="transform7"/>
+					<Rect x="x1" y="y1" width="width1" height="height1" transform="transform7"/>
 				</Shape>
 				<Shape ID="Shape:5" theZ="0" theT="0">
 					<Channels>
@@ -218,6 +218,52 @@
 						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
 					</Channels>
 						<Point cx="cx7" cy="cy7" r="r5" transform="transform11"/>
+				</Shape>
+				<Shape ID="Shape:7" theZ="0" theT="0">
+					<Channels>
+						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
+					</Channels>
+					<Polyline points="" transform="dummy7"/>
+				</Shape>
+				<Shape ID="Shape:8" theZ="0" theT="0">
+					<Channels>
+						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
+					</Channels>
+					<Polygon points="" transform="dummy8"/>
+				</Shape>
+				<Shape ID="Shape:9" theZ="0" theT="0">
+					<Channels>
+						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
+					</Channels>
+					<Point cx="1" cy="2" r="2" transform="dummy9"/>
+				</Shape>
+				<Shape ID="Shape:10" theZ="0" theT="0">
+					<Channels>
+						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
+					</Channels>
+					<Mask height="1" width="2" x="3" y="4" transform="dummy10">
+						<MaskPixels ExtendedPixelType="bit" BigEndian="true" SizeX="128" SizeY="128">
+							<Bin:BinData Compression="zlib" Length="1">ZGVmYXVsdA==</Bin:BinData>
+						</MaskPixels>
+					</Mask>
+				</Shape>
+				<Shape ID="Shape:11" theZ="0" theT="0">
+					<Channels>
+						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
+					</Channels>
+					<Line x1="1" x2="2" y1="3" y2="4" transform="dummy11"/>
+				</Shape>
+				<Shape ID="Shape:12" theZ="0" theT="0">
+					<Channels>
+						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
+					</Channels>
+					<Ellipse cy="1" cx="2" rx="3" ry="4" transform="dummy12"/>
+				</Shape>
+				<Shape ID="Shape:13" theZ="0" theT="0">
+					<Channels>
+						<LogicalChannelRef ID="urn:lsid:-.-:LogicalChannel:1"/>
+					</Channels>
+					<Circle cx="1" cy="2" r="3" transform="dummy13"/>
 				</Shape>
 			</Union>
 		</ROI>
