@@ -354,55 +354,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="PlaneTiming" minOccurs="0" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
-							<xsd:annotation>
-								<xsd:documentation>
-									Units are seconds since the beginning of the experiment
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-						<xsd:attribute name="ExposureTime" use="optional" type="xsd:float">
-							<xsd:annotation>
-								<xsd:documentation>
-									Units are seconds
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-					</xsd:complexType>
-					
-				</xsd:element>
-				<xsd:element name="StagePosition" minOccurs="0" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:annotation>
-							<xsd:documentation>
-								All units are in the microscope reference frame
-							</xsd:documentation>
-						</xsd:annotation>
-						<xsd:attribute name="PositionX" use="optional" type="xsd:float">
-							<xsd:annotation>
-								<xsd:documentation>
-									The X position of the stage.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-						<xsd:attribute name="PositionY" use="optional" type="xsd:float">
-							<xsd:annotation>
-								<xsd:documentation>
-									The Y position of the stage.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-						<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
-							<xsd:annotation>
-								<xsd:documentation>
-									The Z position of the stage.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-					</xsd:complexType>
-				</xsd:element>
 				<xsd:choice minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -435,6 +386,41 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute> 
+			<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						Units are seconds since the beginning of the experiment
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="ExposureTime" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						Units are seconds
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The X position of the stage. Units are in the microscope reference frame.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The Y position of the stage. Units are in the microscope reference frame.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The Z position of the stage. Units are in the microscope reference frame.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Channel"> <!-- top level definition -->
