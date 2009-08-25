@@ -196,6 +196,15 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="AcquiredDate" minOccurs="0" maxOccurs="1" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:documentation>
+							The acquisition date of the Image.
+							The element contains a string in the ISO 8601 dateTime format (i.e. 1988-04-07T18:39:09)
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -208,15 +217,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:element name="AcquiredDate" minOccurs="0" maxOccurs="1" type="xsd:dateTime">
-					<xsd:annotation>
-						<xsd:documentation>
-							The acquisition date of the Image.
-							The element contains a string in the ISO 8601 dateTime format (i.e. 1988-04-07T18:39:09)
-						</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ExperimentRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded"/>
