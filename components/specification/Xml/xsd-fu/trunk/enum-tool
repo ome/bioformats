@@ -128,12 +128,13 @@ def dump_xpath(model):
 	hierarchically.
 	"""
 	for obj in model.objects.values():
-#		if obj.name != 'Pixels':
+#		if obj.name != 'MaskPixels':
 #			continue
 		for prop in obj.properties.values():
 			if prop.isEnumeration:
 				parents = resolve_parents(model, obj.name)
 				parents = {obj.name: parents}
+#				print "Parents: %r" % parents
 				xpaths = list()
 				resolve_xpaths(xpaths, None, parents)
 #				print "XPaths: %r" % xpaths

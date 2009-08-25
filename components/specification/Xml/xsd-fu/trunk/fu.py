@@ -403,13 +403,13 @@ class OMEModel(object):
 		e = element
 		e_name = e.getName()
 		e_type = e.getType()
+		if parent is not None:
+			if e_name not in self.parents:
+				self.parents[e_name] = list()
+			self.parents[e_name].append(parent.getName())
 		if not e.isExplicitDefine() \
 		   and (e_name not in EXPLICIT_DEFINE_OVERRIDE or not e.topLevel):
 			logging.info("Element %s.%s not an explicit define, skipping." % (parent, e))
-			if parent is not None:
-				if e_name not in self.parents:
-					self.parents[e_name] = list()
-				self.parents[e_name].append(parent.getName())
 			return
 		if e.getMixedExtensionError():
 			logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, e))
