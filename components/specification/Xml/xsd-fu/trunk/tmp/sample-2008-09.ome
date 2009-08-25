@@ -444,7 +444,7 @@
 	<CA:CustomAttributes>
 	</CA:CustomAttributes>
 	<SA:StructuredAnnotations>
-		<SA:XmlAnnotation ID="urn:lsid:-.-:Annotation:1" Namespace="http://www.oxygenxml.com/">
+		<SA:XmlAnnotation ID="urn:lsid:-.-:Annotation:1" Namespace="org.openmicroscopy.example.file.xml/">
 			<SA:Link>urn:lsid:-.-:Image:1</SA:Link>
 			<SA:Link>urn:lsid:-.-:Instrument:1</SA:Link>
 			<SA:Link>urn:lsid:-.-:Plate:1</SA:Link>
@@ -452,13 +452,13 @@
 				<!-- Arbitrary XML content -->
 			</SA:Value>
 		</SA:XmlAnnotation>
-		<SA:StringAnnotation ID="urn:lsid:-.-:Annotation:2" Namespace="http://www.oxygenxml.com/">
+		<SA:StringAnnotation ID="urn:lsid:-.-:Annotation:2" Namespace="org.openmicroscopy.example.file.string">
 			<SA:Link>urn:lsid:-.-:Image:1</SA:Link>
 			<SA:Link>urn:lsid:-.-:Instrument:1</SA:Link>
 			<SA:Link>urn:lsid:-.-:Plate:1</SA:Link>
 			<SA:Value>Value0</SA:Value>
 		</SA:StringAnnotation>
-		<SA:ListAnnotation ID="urn:lsid:-.-:Annotation:3" Namespace="http://www.oxygenxml.com/">
+		<SA:ListAnnotation ID="urn:lsid:-.-:Annotation:3" Namespace="org.openmicroscopy.example.file.list">
 			<SA:Link>urn:lsid:-.-:Image:1</SA:Link>
 			<SA:Link>urn:lsid:-.-:Instrument:1</SA:Link>
 			<SA:Link>urn:lsid:-.-:Plate:1</SA:Link>
