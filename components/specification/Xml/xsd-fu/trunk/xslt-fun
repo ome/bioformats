@@ -97,7 +97,7 @@ class Test200809(unittest.TestCase):
         return '%s{%s}%s' % (scope, NS, elementName);
 
     # return the name of the element without NameSpace e.g. {NameSpace}elementName.
-    def localName(elementTag):
+    def localName(self, elementTag):
         return elementTag[elementTag.find("}") + 1:]
     
     # Get all elements from rootElement in elementList in namespace NS.
@@ -130,7 +130,7 @@ class Test200809(unittest.TestCase):
             oldElements = oldRoot.findall(oldXPath);
             newElements = newRoot.findall(newXPath);
             self.assertEqual(len(oldElements),len(newElements))
-            self.assertFalse(len(newRoot.findall(oldXPath)), 0)
+            self.assertTrue(len(newRoot.findall(oldXPath))==0)
             
     # Check the alll the elements in oldRoot with namespace oldNS have been mapped to newRoot with namespace newNS.
     # Rename those elements in renameMap.
@@ -140,32 +140,34 @@ class Test200809(unittest.TestCase):
             newXPath = self.createXPath('root',newNS, renameMap[mappedElement]);
             oldElements = oldRoot.findall(oldXPath);
             newElements = newRoot.findall(newXPath);
-            self.assertFalse(len(newRoot.findall(oldXPath)), 0)
+            self.assertTrue(len(newRoot.findall(oldXPath))==0)
             
     # Compare Elements in oldElement with the NameSpace oldElementNS to the attributes with the same name in newElement.
     # Don't compare those elements in the exceptionList.
     # Rename those attributes in the renameMap.
     def compareElementsWithAttributes(self, oldElement, oldElementNS, newElement, exceptionList=None, renameMap=None):
         for oldChildElement in oldElement.getchildren():
-            elementName = localName(oldChildElement.tag);
-            if(elementName in exceptionList):
-                continue;
+            elementName = self.localName(oldChildElement.tag);
+            if(exceptionList != None):
+                if(elementName in exceptionList):
+                    continue;
             mappedName = elementName;
-            if(elementName in renameMap):
-                mappedName = renameMap[mappedName];
+            if(renameMap != None):
+                if(elementName in renameMap):
+                    mappedName = renameMap[mappedName];
             newValue = newElement.get(mappedName);
-            self.assertFalse(newValue, None);
+            self.assertFalse(newValue==None);
             self.assertEquals(newValue, oldChildElement.text);
 
     # Compare Elements in left with the attributes in right if they are in comparison map.
-    def compareElementsWithAttributesFromMap(self, left, right, comparisonMap=None):
+    def compareElementsWithAttributesFromMap(self, left, right, comparisonMap):
         for leftChild in left.getchildren():
-            leftChildName = localName(leftChild.tag);
+            leftChildName = self.localName(leftChild.tag);
             if(leftChildName not in comparisonMap):
                 continue;
             mappedName = comparisonMap[leftChildName];
             newValue = newElement.get(mappedName);
-            self.assertFalse(newValue, None);
+            self.assertFalse(newValue==None);
             self.assertEquals(newValue, leftChild.text);
 
     # Check that the element contains the elements in containsList
@@ -199,7 +201,7 @@ class Test200809(unittest.TestCase):
         containsMap = {};
         for name in containsList:
             containsMap[name] = False;
-        for attribute in element:
+        for attribute in element.attrib.keys():
             if(attribute in containsMap):
                 containsMap[attribute] = True;
         for key in containsMap:
@@ -210,7 +212,7 @@ class Test200809(unittest.TestCase):
         equalsMap = {};
         for key in containsMap:
             equalsMap[key] = False;
-        for attribute in element:
+        for attribute in element.attrib.keys():
             if(attribute in containsMap):
                 if(containsMap[attribute] == element.get(attribute)):
                     equalsMap[attribute] = True;
@@ -227,7 +229,7 @@ class Test200809(unittest.TestCase):
    # Get attributes in list as a map from element [name:value].
     def getElementsAsMap(self, element):
         attributeMap = {};
-        for attribute in element:
+        for attribute in element.attrib.keys():
             attributeMap[attribute] = element.get(attribute);
         return attributeMap;
 
@@ -240,12 +242,14 @@ class Test200809(unittest.TestCase):
             for elem in inclusionList:
                 inclusionMap[elem] = False;
         for oldChildElement in oldElement.getchildren():
-            elementName = localName(oldChildElement.tag);
-            if(elementName in exceptionList):
-                continue;
+            elementName = self.localName(oldChildElement.tag);
+            if(exceptionList != None):
+                if(elementName in exceptionList):
+                    continue;
             mappedName = elementName;
-            if(elementName in renameMap):
-                mappedName = renameMap[elementName];
+            if(renameMap != None):
+                if(elementName in renameMap):
+                    mappedName = renameMap[elementName];
             if(elementName in inclusionMap):
                 inclusionMap[elementName] = True;
             newChildXPath = self.createXPath('local', newElementNS, mappedName);
@@ -259,13 +263,15 @@ class Test200809(unittest.TestCase):
     # Don't compare those elements in the exceptionList.
     # Rename those elements in the renameMap.
     def compareAttributes(self, oldElement, newElement, exceptionList=None, renameMap=None):
-        for key in oldElement:
-            if key in exceptionList:
-                continue;
+        for key in oldElement.attrib.keys():
+            if(exceptionList != None):
+                if(key in exceptionList):
+                    continue;
             mappedKey = key;
-            if(key in renameMap):
-                mappedKey = renameMap[key];
-            newValue = newElement.get(mapepdKey);
+            if(renameMap != None):
+                if(key in renameMap):
+                    mappedKey = renameMap[key];
+            newValue = newElement.get(mappedKey);
             oldValue = oldElement.get(key);
             self.assertEquals(newValue, oldValue);    
 
@@ -274,12 +280,12 @@ class Test200809(unittest.TestCase):
     def getChildElements(self, element, elementNS, exceptionList):
         childList = [];
         for child in element.getchildren():
-            name = localName(child);
+            name = self.localName(child.tag);
             if(name not in exceptionList):
                 childList.append(name);
         return childList;
         
-    # Return true if the attributes in the elements left and right match and the bumber if children match.
+    # Return true if the attributes in the elements left and right match and the number if children match.
     def elementsEqual(self, left, right, renamedAttributes):
         if(self.localName(tag)!=self.localName(right.tag)):
             return false;
@@ -361,7 +367,7 @@ class Test200809(unittest.TestCase):
         """
         LightSourceRef to LightSettings transformation 
         """
-        self.checkElementsMappedNoCount(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'LightSourceRef':'LightSettings'})
+        self.checkElementsMappedNoCount(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'LightSourceRef':'LightSourceSettings'})
         
     def test_detector_settings(self):
         """
@@ -486,8 +492,9 @@ class Test200809(unittest.TestCase):
         Objective transformation. See stylesheet for details
         """
         
-        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, 'Objective');
-        toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, 'Objective');
+        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['Objective']);
+        
+        toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, ['Objective']);
         for i, toAttributeElement in enumerate(toAttributes):
             self.compareElementsWithAttributes(fromElements[i], self.OLD_OME_NS, toAttributeElement);
         
@@ -496,8 +503,8 @@ class Test200809(unittest.TestCase):
         Experimenter transformation. See stylesheet for details
         """
         
-        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, 'Experimenter');
-        toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, 'Experimenter');
+        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['Experimenter']);
+        toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, ['Experimenter']);
         self.assertEqual(len(fromElements), len(toAttributes));
         if (len(fromElements) == 0):
             return;
@@ -510,17 +517,51 @@ class Test200809(unittest.TestCase):
         """
         FilterSet transformation. See stylesheet for details 
         """
-        fromAttributes = self.getAllElements(self.old_root, self.OLD_OME_NS, 'FilterSet');
-        toElements = self.getAllElements(self.new_root, self.NEW_OME_NS, 'FilterSet');
-        self.assertEqual(len(fromAttributes), len(toElements));
+        fromAttributes = self.getAllElements(self.old_root, self.OLD_OME_NS, ['FilterSet'])
+        toElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ['FilterSet'])
+        self.assertEqual(len(fromAttributes), len(toElements))
         if(len(fromAttributes)==0):
             return;
         for i, fromAttributeElement in enumerate(fromAttributes):
-            self.compareElementsWithAttributesFromList(toElements[i], self.OLD_OME_NS, fromAttributeElement, {'EmFilterRef':'EmissionFilterRef', 'ExFilterRef':'ExcitationFilterRef'});
-            self.compareAttributes(fromAttributeElement, toElements[i], ["EmFilterRef","ExFilterRef","DichroicRef"]);
-        self.checkAttributesExcluded(self.new_root, self.NEW_OME_NS, 'FilterSet', ["EmFilterRef","ExFilterRef","DichroicRef"]);
-               
-                     
+            self.compareElementsWithAttributesFromMap(toElements[i], fromAttributeElement, {'EmFilterRef':'EmissionFilterRef', 'ExFilterRef':'ExcitationFilterRef'})
+            self.compareAttributes(fromAttributeElement, toElements[i], ["EmFilterRef","ExFilterRef","DichroicRef"])
+        self.checkAttributesExcluded(self.new_root, self.NEW_OME_NS, 'FilterSet', ["EmFilterRef","ExFilterRef","DichroicRef"])
+
+    def test_tiffdata_rename_numplanes_to_planecount(self):
+        """
+        TiffData transformation. See stylesheet for details 
+        """
+        oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['TiffData']);
+        newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ['TiffData']);
+
+        for i, oldElement in enumerate(oldElements):
+            self.compareAttributes(oldElement, newElements[i], None, {"NumPlanes":"PlaneCount"});
+
+    def test_experiment_copy_microbeammanipulation_from_image(self):
+        """
+        Move microbeamManipulation node from Image to Experiment
+        """
+        oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ["Experiment"]);
+        newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ["Experiment"]);
+        
+        for i, newElement in enumerate(newElements):
+            microbeamXPath = "{%s}%s" % (self.NEW_OME_NS, "MicrobeamManipulation");
+            microbeamElement = newElement.findall(microbeamXPath);
+             
+ 
+    def test_detector_type(self):
+        """
+        Checks that the Detector types have been correctly transformed.
+        """
+        fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS,
+                                           ['Detector'])
+        toElements = self.getAllElements(self.new_root, self.NEW_OME_NS,
+                                         ['Detector'])
+        self.assertEqual(len(fromElements), len(toElements))
+        print "Element count: %d" % len(toElements)
+        for element in toElements:
+            print dump(element)
+
 if __name__ == '__main__':
     unittest.main()
 """
