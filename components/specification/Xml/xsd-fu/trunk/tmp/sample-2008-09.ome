@@ -64,7 +64,9 @@
 			</LightEmittingDiode>
 		</LightSource>
 		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
-			 ID="urn:lsid:-.-:Detector:1" Type="CCD" Manufacturer="Manufacturer5" Model="Model5" SerialNumber="SerialNumber5"/>
+			ID="urn:lsid:-.-:Detector:1" Type="CCD" Manufacturer="Manufacturer5" Model="Model5" SerialNumber="SerialNumber5"/>
+		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
+			ID="urn:lsid:-.-:Detector:2" Type="EM-CCD" Manufacturer="Manufacturer55" Model="Model55" SerialNumber="SerialNumber55"/>
 		<Objective ID="urn:lsid:-.-:Objective:1" Manufacturer="Manufacturer7" Model="Model7" SerialNumber="SerialNumber7">
 				<Correction>UV</Correction>
 				<Immersion>Oil</Immersion>
