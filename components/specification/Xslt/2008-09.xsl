@@ -198,40 +198,32 @@ Convert the attributes EmFilterRef, ExFilterRef and DichroicRef into
 elements EmissionFilterRef, ExcitationFilterRef and DichroicRef.
 Copy all the other attributes.
 -->  
-   <xsl:template match="OME:FilterSet">
-    <xsl:element name="FilterSet" namespace="{$newOMENS}">
-        <xsl:for-each select="@* [not(name() = 'EmFilterRef' or name() = 'ExFilterRef' or name() = 'DichroicRef')]">
-          <xsl:attribute name="{local-name(.)}">
-            <xsl:value-of select="."/>
-          </xsl:attribute>
-        </xsl:for-each>
-       <xsl:for-each select="@* [name() = 'EmFilterRef' or name() = 'ExFilterRef' or name() = 'DichroicRef']">
-       <xsl:choose>
+<xsl:template match="OME:FilterSet">
+  <xsl:element name="FilterSet" namespace="{$newOMENS}">
+    <xsl:for-each select="@* [not(name() = 'EmFilterRef' or name() = 'ExFilterRef' or name() = 'DichroicRef')]">
+      <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
+    </xsl:for-each>
+    <xsl:for-each select="@* [name() = 'EmFilterRef' or name() = 'ExFilterRef' or name() = 'DichroicRef']">
+      <xsl:choose>
         <xsl:when test="local-name(.) = 'EmFilterRef'">
-            <xsl:element name="EmissionFilterRef">
-               <xsl:attribute name="ID">
-                <xsl:value-of select="."/>
-                </xsl:attribute>
-            </xsl:element>
+          <xsl:element name="EmissionFilterRef">
+            <xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
+          </xsl:element>
         </xsl:when>
         <xsl:when test="local-name(.) = 'ExFilterRef'">
-            <xsl:element name="ExcitationFilterRef">
-                <xsl:attribute name="ID">
-                <xsl:value-of select="."/>
-                </xsl:attribute>
-            </xsl:element>
+          <xsl:element name="ExcitationFilterRef">
+            <xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
+          </xsl:element>
         </xsl:when>
         <xsl:otherwise>
-             <xsl:element name="{local-name(.)}">
-              <xsl:attribute name="ID">
-                <xsl:value-of select="."/>
-                </xsl:attribute>
-            </xsl:element>
-          </xsl:otherwise>
-       </xsl:choose>
-        </xsl:for-each>
-    </xsl:element>
-  </xsl:template>
+          <xsl:element name="{local-name(.)}">
+            <xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
+          </xsl:element>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:element>
+</xsl:template>
 
 <!-- Image and Pixels -->
 
@@ -262,52 +254,23 @@ Rename PixelType attribute to Type
 Remove BigEndian attribute from Pixels and move it to Bin:BinData 
 -->   
 <xsl:template match="OME:Pixels">
-<xsl:variable name="bg" select="current()/@BigEndian"/>
- <!--<xsl:element name="Pixels" namespace="{$newOMENS}">-->
-    <xsl:for-each select="@* [not(local-name(.) ='BigEndian')]">
-       <xsl:choose>
-         <xsl:when test="local-name(.) = 'PixelType'">
-          <xsl:attribute name="Type">
-            <xsl:value-of select="."/>
-          </xsl:attribute>
-         </xsl:when>
-         <xsl:otherwise>
-          <xsl:attribute name="{local-name(.)}">
-            <xsl:value-of select="."/>
-          </xsl:attribute>
-         </xsl:otherwise>
-       </xsl:choose>
-    </xsl:for-each>
-    <xsl:for-each select="*">
+  <xsl:variable name="bg" select="current()/@BigEndian"/>
+  <xsl:for-each select="@* [not(local-name(.) ='BigEndian')]">
+    <xsl:choose>
+      <xsl:when test="local-name(.) = 'PixelType'">
+        <xsl:attribute name="Type"><xsl:value-of select="."/></xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:for-each>
+  <xsl:for-each select="*">
     <xsl:call-template name="convertPixelsData">
       <xsl:with-param name="bg" select="$bg"/>
       <xsl:with-param name="node" select="current()"/>
     </xsl:call-template>
-    <!--
-        <xsl:choose>
-         <xsl:when test="name(.) = 'Bin:BinData'">
-         <xsl:element name="{name(.)}" namespace="{$newBINNS}">
-         <xsl:attribute name="BigEndian">
-         <xsl:value-of select="$bg"/>
-         </xsl:attribute>
-         <xsl:apply-templates select="@*|node()"/>
-        </xsl:element>
-        </xsl:when>
-        <xsl:when test="name(.)='Plane'">
-         <xsl:apply-templates select="current()"/>
-        </xsl:when>
-        <xsl:when test="name(.)='TiffData'">
-         <xsl:apply-templates select="current()"/>
-        </xsl:when>
-         <xsl:otherwise>
-          <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-           <xsl:apply-templates select="@*|node()"/>
-          </xsl:element>
-         </xsl:otherwise>
-       </xsl:choose>
--->
-    </xsl:for-each>
- <!--</xsl:element>-->
+  </xsl:for-each>
 </xsl:template>
 
 <!-- Rename attribute NumPlanes into PlateCount -->
@@ -349,49 +312,44 @@ Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamMan
           <xsl:variable name="rois">
             <xsl:copy-of select="preceding-sibling::OME:ROI"/>
           </xsl:variable>
-            <xsl:if test="@ID=$id">
-            
-              <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+          <xsl:if test="@ID=$id">
+            <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
               <xsl:apply-templates select="@*"/> 
               <xsl:for-each select="*">
                 <xsl:choose>
-                <xsl:when test="local-name(.) = 'ROIRef'">
-                <xsl:variable name="roiID" select="@ID"/>
-                <xsl:for-each select="exsl:node-set($rois)/*">
-                
-                <xsl:if test="@ID=$roiID">
-                <xsl:element name="ROI">
-                <xsl:apply-templates select="@*|node()"/>
-                </xsl:element>
-                </xsl:if>
-                </xsl:for-each> 
-                
-                
-                </xsl:when>
-                 <xsl:otherwise>
+                  <xsl:when test="local-name(.) = 'ROIRef'">
+                    <xsl:variable name="roiID" select="@ID"/>
+                    <xsl:for-each select="exsl:node-set($rois)/*">
+                      <xsl:if test="@ID=$roiID">
+                        <xsl:element name="ROI">
+                          <xsl:apply-templates select="@*|node()"/>
+                        </xsl:element>
+                      </xsl:if>
+                    </xsl:for-each>     
+                  </xsl:when>
+                  <xsl:otherwise>
                     <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-                    <xsl:apply-templates select="@*|node()"/>
+                      <xsl:apply-templates select="@*|node()"/>
                     </xsl:element>
-                </xsl:otherwise>
+                  </xsl:otherwise>
                 </xsl:choose>
                </xsl:for-each>             
               </xsl:element>
-              
             </xsl:if>
            </xsl:for-each>
          </xsl:for-each>
        </xsl:when>
        <xsl:when test="local-name(.) = 'Description'">
-       <xsl:apply-templates select="current()"/>
+         <xsl:apply-templates select="current()"/>
        </xsl:when>
        <xsl:otherwise>
         <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
          <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
       </xsl:otherwise>
- </xsl:choose>
-</xsl:for-each>
-</xsl:element>
+    </xsl:choose>
+  </xsl:for-each>
+  </xsl:element>
 </xsl:template>
 
 <!--
@@ -425,52 +383,49 @@ The Channel nodes are then linked to Pixels and no longer to Image.
              <!-- copy channel to Pixels -->
                 <!-- logical channel start -->
                 <xsl:variable name="logicalChannels">
-                <xsl:copy-of select="preceding-sibling::OME:LogicalChannel"/>
+                  <xsl:copy-of select="preceding-sibling::OME:LogicalChannel"/>
                 </xsl:variable>
                 <xsl:for-each select="exsl:node-set($logicalChannels)/*">
-                <xsl:variable name="lc">
-                    <xsl:copy-of select="current()"/>
-                </xsl:variable>
-                
-                <xsl:for-each select="*  [local-name(.) = 'ChannelComponent']">
+                  <xsl:variable name="lc"><xsl:copy-of select="current()"/></xsl:variable>
+                  <xsl:for-each select="*  [local-name(.) = 'ChannelComponent']">
                     <xsl:if test="$pixelsID = @Pixels">
-                    <xsl:element name="Channel" namespace="{$newOMENS}">
-                        <xsl:attribute name="Color">
+                      <xsl:element name="Channel" namespace="{$newOMENS}">
+                      <xsl:attribute name="Color">
                         <!-- convert value of @ColorDomain-->
-                         <xsl:call-template name="convertColorDomain">
-                         <xsl:with-param name="cc" select="@ColorDomain"/>
+                        <xsl:call-template name="convertColorDomain">
+                          <xsl:with-param name="cc" select="@ColorDomain"/>
                         </xsl:call-template>
-                        </xsl:attribute>
-                        <xsl:for-each select="exsl:node-set($lc)/*">
-                            <!-- convert attribute of logicalChannel -->
-                            <xsl:for-each select="@* [not(name(.) = 'PhotometricInterpretation')]">
-                                <xsl:choose>
-                                    <xsl:when test="name() = 'Mode'">
-                                        <xsl:attribute name="AcquisitionMode">
-                                            <xsl:value-of select="."/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:when test="name() = 'ExWave'">
-                                        <xsl:attribute name="ExcitationWavelength">
-                                            <xsl:value-of select="."/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:when test="name() = 'EmWave'">
-                                        <xsl:attribute name="EmissionWavelength">
-                                            <xsl:value-of select="."/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:when test="name() = 'NdFilter'">
-                                        <xsl:attribute name="NDFilter">
-                                            <xsl:value-of select="."/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:attribute name="{local-name(.)}">
-                                            <xsl:value-of select="."/>
-                                        </xsl:attribute>
-                                    </xsl:otherwise>
-                                </xsl:choose>
+                      </xsl:attribute>
+                      <xsl:for-each select="exsl:node-set($lc)/*">
+                        <!-- convert attribute of logicalChannel -->
+                        <xsl:for-each select="@* [not(name(.) = 'PhotometricInterpretation')]">
+                            <xsl:choose>
+                              <xsl:when test="name() = 'Mode'">
+                                <xsl:attribute name="AcquisitionMode"><xsl:value-of select="."/></xsl:attribute>
+                              </xsl:when>
+                              <xsl:when test="name() = 'ExWave'">
+                                <xsl:attribute name="ExcitationWavelength"><xsl:value-of select="."/></xsl:attribute>
+                              </xsl:when>
+                              <xsl:when test="name() = 'EmWave'">
+                                <xsl:attribute name="EmissionWavelength"><xsl:value-of select="."/></xsl:attribute>
+                              </xsl:when>
+                              <xsl:when test="name() = 'NdFilter'">
+                                <xsl:attribute name="NDFilter"><xsl:value-of select="."/></xsl:attribute>
+                              </xsl:when>
+                              <xsl:when test="name() = 'ID'">
+                                <xsl:variable name="idLc"><xsl:value-of select="."/></xsl:variable>
+                                <xsl:attribute name="{local-name(.)}">
+                                  <xsl:call-template name="replace-string-id">
+                                    <xsl:with-param name="text" select="$idLc"/>
+                                    <xsl:with-param name="replace" select="'LogicalChannel'"/>
+                                    <xsl:with-param name="replacement" select="'Channel'"/>
+                                  </xsl:call-template> 
+                                </xsl:attribute>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
+                              </xsl:otherwise>
+                            </xsl:choose>
                             </xsl:for-each>
                             <xsl:for-each select="* [not(local-name(.) = 'ChannelComponent')]">
                                 <xsl:choose>
@@ -502,8 +457,8 @@ The Channel nodes are then linked to Pixels and no longer to Image.
          <xsl:when test="local-name(.) = 'MicrobeamManipulation'">
             <xsl:variable name="id" select="@ID"/>
             <xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
-             <xsl:apply-templates select="@* [name() = 'ID']"/>
-             <xsl:value-of select="."/>
+              <xsl:attribute name="ID"><xsl:value-of select="$id"/></xsl:attribute>
+              <!--<xsl:apply-templates select="@* [name() = 'ID']"/><xsl:value-of select="."/>-->
             </xsl:element>
          </xsl:when>
          <xsl:otherwise>
@@ -627,7 +582,6 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <!-- Rename attributes points -->
 <xsl:template match="OME:Polyline">
   <xsl:variable name="default" select="'false'"/>
-
   <xsl:element name="Polyline" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:choose>
@@ -676,10 +630,77 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   </xsl:element>
 </xsl:template>
 
+<!-- Transform attributes and move the transform attribute from a "real" shape to Shape -->
+<xsl:template match="OME:Shape">
+  <xsl:element name="Shape" namespace="{$newROINS}">
+  <xsl:variable name="shape" select="'Shape:'"/>
+  <xsl:variable name="id" select="@ID"/>
+  <xsl:variable name="convertedID">
+    <xsl:choose>
+      <xsl:when test="contains($id, 'Shape')">
+        <xsl:value-of select="$id"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$shape"/>
+        <xsl:value-of select="$id"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+  
+  <xsl:for-each select="@*">
+    <xsl:choose>
+      <xsl:when test="name()='theZ'">
+        <xsl:attribute name="TheZ"><xsl:value-of select="."/></xsl:attribute>
+      </xsl:when>
+      <xsl:when test="name()='theT'">
+        <xsl:attribute name="TheT"><xsl:value-of select="."/></xsl:attribute>
+      </xsl:when>
+      <!-- control ID due b/c bug in previous version -->
+      <xsl:when test="name()='ID'">
+        <xsl:attribute name="{local-name()}">
+          <xsl:value-of select="$convertedID"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+       <xsl:attribute name="{local-name()}"><xsl:value-of select="."/></xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:for-each>
+  
+  <!-- retrieve the value of the transform attribute -->
+  <xsl:variable name="trans">
+    <xsl:for-each select="* [not(local-name(.) = 'Channels')]">
+      <xsl:value-of select="@transform"/>
+    </xsl:for-each>
+  </xsl:variable>  
+  
+  <xsl:attribute name="Transform"><xsl:value-of select="$trans"/></xsl:attribute>
+  <xsl:for-each select="*">
+     <xsl:choose>
+       <xsl:when test="name()='Channels'">
+        <xsl:apply-templates select="@*|node()"/>
+       </xsl:when>
+       <xsl:when test="name()='Mask'">
+        <xsl:call-template name="maskTansformation">
+          <xsl:with-param name="mask" select="current()"/>
+          <xsl:with-param name="id" select="$convertedID"/>
+        </xsl:call-template>
+        <!-- <xsl:apply-templates select="@*|node()"/>-->
+       </xsl:when>
+       <xsl:otherwise>
+       <xsl:apply-templates select="current()"/>
+       </xsl:otherwise>
+     </xsl:choose>
+  </xsl:for-each>
+  </xsl:element>
+</xsl:template>
+   
 <!-- Rename attributes and link to Pixels -->
-<xsl:template match="OME:Mask">
+<xsl:template name="maskTansformation">
+  <xsl:param name="mask"/>
+  <xsl:param name="id"/>
   <xsl:element name="Mask" namespace="{$newROINS}">
-  <xsl:for-each select="@* [not(name() ='transform' or name() ='width' or name() ='height')]">
+  <xsl:for-each select="$mask/@* [not(name() ='transform' or name() ='width' or name() ='height')]">
     <xsl:choose>
       <xsl:when test="name()='x'">
         <xsl:attribute name="X"><xsl:value-of select="."/></xsl:attribute>
@@ -691,7 +712,9 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   </xsl:for-each>
   <!-- transform MaskPixels -->
   <xsl:variable name="default" select="'1'"/>
-  <xsl:for-each select="*">
+  <xsl:variable name="order" select="'XYZCT'"/>
+  <xsl:variable name="idText" select="'Pixels:Mask:'"/>
+  <xsl:for-each select="exsl:node-set($mask)/*">
     <xsl:choose>
       <xsl:when test="local-name(.)='MaskPixels'">
         <xsl:variable name="bg" select="current()/@BigEndian"/>
@@ -703,14 +726,18 @@ The Channel nodes are then linked to Pixels and no longer to Image.
               </xsl:when>
               <xsl:otherwise>
                 <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
-              </xsl:otherwise>
+              </xsl:otherwise>   
              </xsl:choose>
            </xsl:for-each>
            <!-- Add required attribute -->
            <xsl:attribute name="SizeZ"><xsl:value-of select="$default"/></xsl:attribute>
            <xsl:attribute name="SizeT"><xsl:value-of select="$default"/></xsl:attribute>
            <xsl:attribute name="SizeC"><xsl:value-of select="$default"/></xsl:attribute>
-    
+           <xsl:attribute name="DimensionOrder"><xsl:value-of select="$order"/></xsl:attribute>
+           <xsl:attribute name="ID">
+            <xsl:value-of select="$idText"/>
+            <xsl:value-of select="$id"/>
+           </xsl:attribute>
         <xsl:for-each select="current()/*">
           <xsl:call-template name="convertPixelsData">
             <xsl:with-param name="bg" select="$bg"/>
@@ -727,62 +754,6 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   </xsl:element>
 </xsl:template>
 
-
-<!-- Transform attributes and move the transform attribute from a "real" shape to Shape -->
-<xsl:template match="OME:Shape">
-  <xsl:element name="Shape" namespace="{$newROINS}">
-  <xsl:variable name="shape" select="'Shape:'"/>
-  <xsl:for-each select="@*">
-    <xsl:choose>
-      <xsl:when test="name()='theZ'">
-        <xsl:attribute name="TheZ"><xsl:value-of select="."/></xsl:attribute>
-      </xsl:when>
-      <xsl:when test="name()='theT'">
-        <xsl:attribute name="TheT"><xsl:value-of select="."/></xsl:attribute>
-      </xsl:when>
-      <!-- control ID due b/c bug in previous version -->
-      <xsl:when test="name()='ID'">
-        <xsl:variable name="id">
-            <xsl:value-of select="current()"/> 
-        </xsl:variable>
-        <xsl:attribute name="{local-name()}">
-        <xsl:choose>
-            <xsl:when test="contains($id, 'Shape')">
-            <xsl:value-of select="."/>
-            </xsl:when>
-            <xsl:otherwise>
-            <xsl:value-of select="$shape"/>
-             <xsl:value-of select="."/>
-             </xsl:otherwise>
-        </xsl:choose>
-        </xsl:attribute>
-      </xsl:when>
-      <xsl:otherwise>
-       <xsl:attribute name="{local-name()}"><xsl:value-of select="."/></xsl:attribute>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:for-each>
-  
-  <!-- retrieve the value of the transform attribute -->
-  <xsl:variable name="trans">
-    <xsl:for-each select="* [not(local-name(.) = 'Channels')]">
-      <xsl:value-of select="@transform"/>
-    </xsl:for-each>
-  </xsl:variable>
-  <xsl:attribute name="Transform"><xsl:value-of select="$trans"/></xsl:attribute>
-  <xsl:for-each select="*">
-     <xsl:choose>
-       <xsl:when test="name()='Channels'">
-        <xsl:apply-templates select="@*|node()"/>
-       </xsl:when>
-       <xsl:otherwise>
-       <xsl:apply-templates select="current()"/>
-       </xsl:otherwise>
-     </xsl:choose>
-  </xsl:for-each>
-  </xsl:element>
-</xsl:template>
-   
 <!-- template to transform the possibile data source related to Pixels -->
 <xsl:template name="convertPixelsData">
   <xsl:param name="bg"/>
@@ -807,31 +778,29 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 
 
 
- <!-- Screen Plate Well -->
-  <!-- 
-  Remove or rename attributes in WellSample.
-  Remove Index, Rename PosX to PositionX & PosY to PositionY
-  -->
-  <xsl:template match="SPW:WellSample">
-   <xsl:element name="WellSample" namespace="{$newSPWNS}">
-      <xsl:for-each select="@* [not(name() = 'Index')]">
-        <xsl:choose>
+<!-- Screen Plate Well -->
+<!-- 
+Remove or rename attributes in WellSample.
+Remove Index, Rename PosX to PositionX & PosY to PositionY
+-->
+<xsl:template match="SPW:WellSample">
+  <xsl:element name="WellSample" namespace="{$newSPWNS}">
+    <xsl:for-each select="@* [not(name() = 'Index')]">
+      <xsl:choose>
         <xsl:when test="name() = 'PosX'">
-            <xsl:attribute name="PositionX"><xsl:value-of select="."/></xsl:attribute>
+          <xsl:attribute name="PositionX"><xsl:value-of select="."/></xsl:attribute>
         </xsl:when>
         <xsl:when test="name() = 'PosY'">
-            <xsl:attribute name="PositionY"><xsl:value-of select="."/></xsl:attribute>
+          <xsl:attribute name="PositionY"><xsl:value-of select="."/></xsl:attribute>
         </xsl:when>
         <xsl:otherwise>
-            <xsl:attribute name="{local-name(.)}">
-                <xsl:value-of select="."/>
-            </xsl:attribute>
+          <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
         </xsl:otherwise>
         </xsl:choose>
       </xsl:for-each>
-      <xsl:apply-templates select="node()"/>
-    </xsl:element>
-  </xsl:template>
+    <xsl:apply-templates select="node()"/>
+  </xsl:element>
+</xsl:template>
   
   <!-- 
   Convert the attribute Description in Plate into a child element.
@@ -839,17 +808,14 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   Copy all child elements.
   -->
   <xsl:template match="SPW:Plate">
-   <xsl:element name="Plate" namespace="{$newSPWNS}">
+   <xsl:element name="SPW:Plate">
       <xsl:for-each select="@* [not(name() = 'Description')]">
-        <xsl:attribute name="{local-name(.)}">
-          <xsl:value-of select="."/>
-        </xsl:attribute>
+        <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
-      <xsl:for-each select="@* [name() = 'Description']">
-        <xsl:element name="Description">
-          <xsl:value-of select="."/>
-        </xsl:element>
-      </xsl:for-each>
+      <xsl:variable name="des" select="@Description"/>
+      <xsl:element name="Description" namespace="{$newSPWNS}">
+        <xsl:value-of select="$des"/>
+      </xsl:element>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
   </xsl:template>
@@ -860,17 +826,14 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   Copy all child elements.
   -->
   <xsl:template match="SPW:Reagent">
-   <xsl:element name="Reagent" namespace="{$newSPWNS}">
+   <xsl:element name="SPW:Reagent">
       <xsl:for-each select="@* [not(name() = 'Description')]">
-        <xsl:attribute name="{local-name(.)}">
-          <xsl:value-of select="."/>
-        </xsl:attribute>
+        <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
-      <xsl:for-each select="@* [name() = 'Description']">
-        <xsl:element name="Description">
-          <xsl:value-of select="."/>
-        </xsl:element>
-      </xsl:for-each>
+      <xsl:variable name="des" select="@Description"/>
+      <xsl:element name="Description" namespace="{$newSPWNS}">
+        <xsl:value-of select="$des"/>
+      </xsl:element>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
   </xsl:template>
