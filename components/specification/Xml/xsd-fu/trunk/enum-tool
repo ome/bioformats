@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-Toolkit for working with enumerations from an OME XML
-(http://www.ome-xml.org) XSD document.
+Toolkit for working with enumerations from one or more OME XML
+(http://www.ome-xml.org) XSD documents.
 """
 
 #  
-#  Copyright (c) 2007 Chris Allan
+#  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@ import os
 
 from fu import *
 
+from configobj import ConfigObj
 from getopt import getopt, GetoptError
-from xml import sax
 
 
 def usage(error):
@@ -45,19 +45,24 @@ def usage(error):
 	"""
 	cmd = sys.argv[0]
 	print """%s
-Usage: %s (-t | -x) <path/to/ome.xsd>
+Usage: %s (-t | -x | -d <file>) [path/to/ome.xsd]
 Toolkit for working with enumerations from an OME XML Schema definition.
 
 Options:
   -t			Dumps all enumerations in a visual tree
-  -x			Displays the XPath expressions for each enumeration 
+  -x			Displays the XPath expressions for each enumeration
+  -d file		Diffs enumeration possible values from an XPath
+  				configuration file. This file is expected to have two sections
+  				the first containing the "old" and "new" XSD files and the
+  				second containing the XPath mappings. (See: example.cfg)
 
 Examples:
   %s -t schemas/ome.xsd
   %s -x schemas/ome.xsd
+  %s -d example.cfg
 
 Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
-	(error, cmd, cmd, cmd)
+	(error, cmd, cmd, cmd, cmd)
 	sys.exit(2)
 	
 def resolve_parents(model, element_name):
@@ -89,8 +94,6 @@ def dump(model):
 	"""Dumps enumerations to STDOUT."""
 	count = 0
 	for obj in model.objects.values():
-#		if obj.name != 'OTF':
-#			continue
 		current = None
 		for prop in obj.properties.values():
 			if prop.isEnumeration:
@@ -101,9 +104,9 @@ def dump(model):
 				for path in paths:
 					print path
 				print "  +-- %s" % obj.name
-				print "     +-- %s(%s)" % (prop.name, prop.type)
+				print "    +-- %s(%s)" % (prop.name, prop.type)
 				for value in prop.possibleValues:
-					print ("  " * (len(paths) + 1)) + "   +-- %s" % value
+					print "      +-- %s" % value
 	print "\nTotal enumerations: %d" % count
 	
 def resolve_xpaths(xpaths, suffix, names):
@@ -121,44 +124,71 @@ def resolve_xpaths(xpaths, suffix, names):
 		resolve_xpaths(xpaths, xpath, names[name])
 		if suffix in xpaths:
 			xpaths.remove(suffix)
-	
+
+def build_xpaths(model):
+	"""Builds XPath definitions for each enumeration in the model."""
+	xpaths = dict()
+	for obj in model.objects.values():
+		for prop in obj.properties.values():
+			if prop.isEnumeration:
+				parents = resolve_parents(model, obj.name)
+				parents = {obj.name: parents}
+				obj_xpaths = list()
+				resolve_xpaths(obj_xpaths, None, parents)
+				for xpath in obj_xpaths:
+					if prop.isAttribute:
+						xpath = "/%s@%s" % (xpath, prop.name)
+					else:
+						xpath = "/%s/%s" % (xpath, prop.name)
+					xpaths[xpath] = {'object': obj, 'property': prop}
+	return xpaths
+
 def dump_xpath(model):
 	"""
 	Dumps XPath definitions for each enumeration to STDOUT, sorted
 	hierarchically.
 	"""
-	for obj in model.objects.values():
-#		if obj.name != 'MaskPixels':
-#			continue
-		for prop in obj.properties.values():
-			if prop.isEnumeration:
-				parents = resolve_parents(model, obj.name)
-				parents = {obj.name: parents}
-#				print "Parents: %r" % parents
-				xpaths = list()
-				resolve_xpaths(xpaths, None, parents)
-#				print "XPaths: %r" % xpaths
-				for xpath in xpaths:
-					if prop.isAttribute:
-						print "/%s@%s" % (xpath, prop.name)
-					else:
-						print "/%s/%s" % (xpath, prop.name)
-#				parents.reverse()
+	for xpath in build_xpaths(model).keys():
+		print xpath
+
+def diff_enumerations(old, new, xpaths):
+	"""Diffs all enumerations from two XSD files."""
+	old_model = parseXmlSchema(old, DEFAULT_NAMESPACE)
+	new_model = parseXmlSchema(new, DEFAULT_NAMESPACE)
+	old_xpaths = build_xpaths(old_model)
+	new_xpaths = build_xpaths(new_model)
+	for old_xpath, new_xpath in xpaths.items():
+		old_values = old_xpaths[old_xpath]['property'].possibleValues
+		new_values = new_xpaths[new_xpath]['property'].possibleValues
+		for old_value in old_values:
+			if old_value not in new_values:
+				print "%s:%s not in %s" % (old_xpath, old_value, new_xpath)
 
 if __name__ == '__main__':
 	try:
-		options, args = getopt(sys.argv[1:], "tx")
+		options, args = getopt(sys.argv[1:], "txd:")
 	except GetoptError, (msg, opt):
 		usage(msg)
 
 	namespace = DEFAULT_NAMESPACE
 	do_tree = False
 	do_xpath = False
+	config = None
 	for option, argument in options:
 		if option == "-t":
 			do_tree = True
 		if option == "-x":
 			do_xpath = True
+		if option == "-d":
+			config = argument
+			
+	if config is not None:
+		config = ConfigObj(config)
+		old = config['schemas']['old']
+		new = config['schemas']['new']
+		xpaths = config['xpaths']
+		diff_enumerations(old, new, xpaths)
+		sys.exit(0)
 
 	if len(args) != 1:
 		usage("Expecting single ome.xsd file path!")
@@ -171,4 +201,3 @@ if __name__ == '__main__':
 	if do_xpath:
 		dump_xpath(model)
 	sys.exit(0)
-
