@@ -97,8 +97,7 @@ Rename attribute OMEName into UserName
                     </xsl:variable>  
                      <xsl:if test="(count(exsl:node-set($omeName)/*)+count(exsl:node-set($email)/*))=0">
                         <xsl:value-of select="."/>
-                    </xsl:if> 
-                    
+                    </xsl:if>    
                 </xsl:otherwise>
              </xsl:choose>
         </xsl:for-each>
@@ -158,6 +157,25 @@ Rename attribute OMEName into UserName
 
 <!-- Instrument components -->
 
+ <xsl:template match="OME:TransmittanceRange">
+   <xsl:element name="TransmittanceRange" namespace="{$newOMENS}">
+      <xsl:for-each select="@*">
+        <xsl:attribute name="{local-name(.)}">
+        <xsl:choose>
+          <xsl:when test="local-name(.) ='Transmittance'">
+            <xsl:call-template name="convertPercentFraction">
+              <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
+        </xsl:attribute>
+      </xsl:for-each>
+    </xsl:element>
+ </xsl:template>
+ 
 <!-- Rename attributes -->
  <xsl:template match="OME:OTF">
     <xsl:element name="OTF" namespace="{$newOMENS}">
@@ -186,12 +204,23 @@ Rename attribute OMEName into UserName
     <xsl:element name="Objective" namespace="{$newOMENS}">
       <xsl:for-each select="*">
         <xsl:attribute name="{local-name(.)}">
-          <xsl:value-of select="."/>
+        <xsl:choose>
+          <xsl:when test="local-name(.) ='LensNA'">
+            <xsl:call-template name="valueInInterval">
+              <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+              <xsl:with-param name="min" select="0.02"/>
+              <xsl:with-param name="max" select="1.5"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
         </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="@*"/>
     </xsl:element>
-  </xsl:template>
+ </xsl:template>
 
 <!-- 
 Convert the attributes EmFilterRef, ExFilterRef and DichroicRef into 
@@ -960,6 +989,46 @@ A limited number of strings is supported.
     </xsl:when>
     <xsl:otherwise>
       <xsl:value-of select="$text"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- Control if a value is in the specified interval -->
+<xsl:template name="valueInInterval">
+  <xsl:param name="value"/>
+  <xsl:param name="min"/>
+  <xsl:param name="max"/>
+  <xsl:choose>
+    <xsl:when test="$value &lt; $min">
+      <xsl:value-of select="$min"/>
+    </xsl:when>
+    <xsl:when test="$value &gt; $max">
+      <xsl:value-of select="$max"/>
+    </xsl:when>
+    <xsl:otherwise>
+     <xsl:value-of select="$value"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!--Convert value to PercentFration -->
+<xsl:template name="convertPercentFraction">
+  <xsl:param name="value"/>
+  <xsl:variable name="min" select="0"/>
+  <xsl:variable name="max" select="1"/>
+  <xsl:choose>
+    <xsl:when test="$value &lt; $min">
+      <xsl:value-of select="$min"/>
+    </xsl:when>
+    <xsl:when test="$value &gt; $max">
+      <xsl:call-template name="convertPercentFraction">
+        <xsl:with-param name="value">
+          <xsl:value-of select="$value div 100"/>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+     <xsl:value-of select="$value"/>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
