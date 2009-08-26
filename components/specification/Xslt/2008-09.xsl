@@ -279,6 +279,11 @@ Remove BigEndian attribute from Pixels and move it to Bin:BinData
        </xsl:choose>
     </xsl:for-each>
     <xsl:for-each select="*">
+    <xsl:call-template name="convertPixelsData">
+      <xsl:with-param name="bg" select="$bg"/>
+      <xsl:with-param name="node" select="current()"/>
+    </xsl:call-template>
+    <!--
         <xsl:choose>
          <xsl:when test="name(.) = 'Bin:BinData'">
          <xsl:element name="{name(.)}" namespace="{$newBINNS}">
@@ -300,7 +305,7 @@ Remove BigEndian attribute from Pixels and move it to Bin:BinData
           </xsl:element>
          </xsl:otherwise>
        </xsl:choose>
-
+-->
     </xsl:for-each>
  <!--</xsl:element>-->
 </xsl:template>
@@ -504,7 +509,6 @@ The Channel nodes are then linked to Pixels and no longer to Image.
          <xsl:otherwise>
             <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
              <xsl:apply-templates select="@*|node()"/>
-             <xsl:value-of select="."/>
             </xsl:element>
          </xsl:otherwise>
        </xsl:choose>
@@ -622,6 +626,8 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 
 <!-- Rename attributes points -->
 <xsl:template match="OME:Polyline">
+  <xsl:variable name="default" select="'false'"/>
+
   <xsl:element name="Polyline" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:choose>
@@ -630,12 +636,13 @@ The Channel nodes are then linked to Pixels and no longer to Image.
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
-  <xsl:attribute name="Closed" select="false"/>
+    <xsl:attribute name="Closed"><xsl:value-of select="$default"/></xsl:attribute>
   </xsl:element>
 </xsl:template>
 
 <!-- Rename attributes points -->
 <xsl:template match="OME:Polygon">
+  <xsl:variable name="default" select="'true'"/>
   <xsl:element name="Polyline" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:choose>
@@ -644,7 +651,8 @@ The Channel nodes are then linked to Pixels and no longer to Image.
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
-  <xsl:attribute name="Closed" select="true"/>
+  <xsl:attribute name="Closed"><xsl:value-of select="$default"/></xsl:attribute>
+
   </xsl:element>
 </xsl:template>
 
@@ -668,7 +676,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   </xsl:element>
 </xsl:template>
 
-<!-- Rename attributes -->
+<!-- Rename attributes and link to Pixels -->
 <xsl:template match="OME:Mask">
   <xsl:element name="Mask" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform' or name() ='width' or name() ='height')]">
@@ -681,13 +689,49 @@ The Channel nodes are then linked to Pixels and no longer to Image.
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
-  <!-- TODO: maskPixels -->
+  <!-- transform MaskPixels -->
+  <xsl:variable name="default" select="'1'"/>
+  <xsl:for-each select="*">
+    <xsl:choose>
+      <xsl:when test="local-name(.)='MaskPixels'">
+        <xsl:variable name="bg" select="current()/@BigEndian"/>
+        <xsl:element name="Pixels" namespace="{$newOMENS}">
+          <xsl:for-each select="@* [not(local-name(.) ='BigEndian')]">
+            <xsl:choose>
+              <xsl:when test="local-name(.) = 'ExtendedPixelType'">
+                <xsl:attribute name="Type"><xsl:value-of select="."/></xsl:attribute>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
+              </xsl:otherwise>
+             </xsl:choose>
+           </xsl:for-each>
+           <!-- Add required attribute -->
+           <xsl:attribute name="SizeZ"><xsl:value-of select="$default"/></xsl:attribute>
+           <xsl:attribute name="SizeT"><xsl:value-of select="$default"/></xsl:attribute>
+           <xsl:attribute name="SizeC"><xsl:value-of select="$default"/></xsl:attribute>
+    
+        <xsl:for-each select="current()/*">
+          <xsl:call-template name="convertPixelsData">
+            <xsl:with-param name="bg" select="$bg"/>
+            <xsl:with-param name="node" select="current()"/>
+         </xsl:call-template>
+        </xsl:for-each>
+      </xsl:element>
+      </xsl:when>
+      <xsl:otherwise>
+         <xsl:apply-templates select="node()"/>
+       </xsl:otherwise>
+       </xsl:choose>
+  </xsl:for-each>
   </xsl:element>
 </xsl:template>
+
 
 <!-- Transform attributes and move the transform attribute from a "real" shape to Shape -->
 <xsl:template match="OME:Shape">
   <xsl:element name="Shape" namespace="{$newROINS}">
+  <xsl:variable name="shape" select="'Shape:'"/>
   <xsl:for-each select="@*">
     <xsl:choose>
       <xsl:when test="name()='theZ'">
@@ -695,6 +739,23 @@ The Channel nodes are then linked to Pixels and no longer to Image.
       </xsl:when>
       <xsl:when test="name()='theT'">
         <xsl:attribute name="TheT"><xsl:value-of select="."/></xsl:attribute>
+      </xsl:when>
+      <!-- control ID due b/c bug in previous version -->
+      <xsl:when test="name()='ID'">
+        <xsl:variable name="id">
+            <xsl:value-of select="current()"/> 
+        </xsl:variable>
+        <xsl:attribute name="{local-name()}">
+        <xsl:choose>
+            <xsl:when test="contains($id, 'Shape')">
+            <xsl:value-of select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+            <xsl:value-of select="$shape"/>
+             <xsl:value-of select="."/>
+             </xsl:otherwise>
+        </xsl:choose>
+        </xsl:attribute>
       </xsl:when>
       <xsl:otherwise>
        <xsl:attribute name="{local-name()}"><xsl:value-of select="."/></xsl:attribute>
@@ -712,9 +773,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   <xsl:for-each select="*">
      <xsl:choose>
        <xsl:when test="name()='Channels'">
-        <xsl:element name="{local-name()}" namespace="{$newOMENS}">
-            <xsl:apply-templates select="@*|node()"/>
-        </xsl:element>
+        <xsl:apply-templates select="@*|node()"/>
        </xsl:when>
        <xsl:otherwise>
        <xsl:apply-templates select="current()"/>
@@ -724,6 +783,27 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   </xsl:element>
 </xsl:template>
    
+<!-- template to transform the possibile data source related to Pixels -->
+<xsl:template name="convertPixelsData">
+  <xsl:param name="bg"/>
+  <xsl:param name="node"/>
+  <xsl:choose>
+    <xsl:when test="name(.) = 'Bin:BinData'">
+      <xsl:element name="{name(.)}" namespace="{$newBINNS}">
+        <xsl:attribute name="BigEndian"><xsl:value-of select="$bg"/></xsl:attribute>
+        <xsl:apply-templates select="@*|node()"/>
+      </xsl:element>
+    </xsl:when>
+    <xsl:when test="name(.)='Plane' or name(.)='TiffData'">
+      <xsl:apply-templates select="current()"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+        <xsl:apply-templates select="@*|node()"/>
+      </xsl:element>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
 
 
 
@@ -737,14 +817,10 @@ The Channel nodes are then linked to Pixels and no longer to Image.
       <xsl:for-each select="@* [not(name() = 'Index')]">
         <xsl:choose>
         <xsl:when test="name() = 'PosX'">
-            <xsl:attribute name="PositionX">
-                <xsl:value-of select="."/>
-            </xsl:attribute>
+            <xsl:attribute name="PositionX"><xsl:value-of select="."/></xsl:attribute>
         </xsl:when>
         <xsl:when test="name() = 'PosY'">
-            <xsl:attribute name="PositionY">
-                <xsl:value-of select="."/>
-            </xsl:attribute>
+            <xsl:attribute name="PositionY"><xsl:value-of select="."/></xsl:attribute>
         </xsl:when>
         <xsl:otherwise>
             <xsl:attribute name="{local-name(.)}">
