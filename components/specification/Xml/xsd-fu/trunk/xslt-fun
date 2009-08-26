@@ -33,6 +33,7 @@ import sys
 
 from StringIO import StringIO
 from getopt import getopt, GetoptError
+from copy import deepcopy
 
 # We're using lxml's ElementTree implementation for XML manipulation due to
 # its XSLT integration.
@@ -106,6 +107,7 @@ class Test200809(unittest.TestCase):
         for elementName in elementList:
             elementXPath = self.createXPath('root', NS, elementName);
             foundElements = rootElement.findall(elementXPath);
+            print rootElement, elementXPath, foundElements
             returnList.extend(foundElements);
         return returnList;
     
@@ -341,9 +343,41 @@ class Test200809(unittest.TestCase):
                 assetEqual(renameElements[self.localName(leftChildren[i].tag)], self.localName(rightChild.tag));
             assetEqual(self.leftChildren[i].text, self.rightChild.text);
             compareGraphsWithoutOrder(leftChildren[i], rightChild);            
+    
+    def elementRefName(self, name):
+        return name[:len(name)-3];
         
+    def isRef(self, element):
+        return (element.tag[len(element.tag)-3:]=='Ref');
+         
+    def findElementByID(self, root, NS, elementName, id):
+        elements = self.getAllElements(root, NS, [elementName]);
+        for element in elements:
+            if(element.get('ID')==id):
+                return element;
+        return None;
 
+    def shallowcopy(self, element):
+        newElement = Element(element.tag);
+        newElement.text = element.text
+        for key in element.keys():
+            newElement.set(key, element.get(key));
+        return newElement;
 
+    def replaceRefsWithElements(self, root, NS, element):
+        newElement = self.shallowcopy(element);
+        children = element.getchildren();
+        if(len(children)==0):
+            return;
+        for i, child in enumerate(children):
+            if(self.isRef(child)):
+                elementName = self.elementRefName(self.localName(child.tag))
+                elementFromRef = self.findElementByID(root, NS, elementName, child.get('ID'));
+                newElement.append(deepcopy(elementFromRef));
+            else:
+                newElement.append(deepcopy(child));
+        return newElement
+    
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
         self.instance_file = open(self.DOCUMENT)
@@ -536,19 +570,22 @@ class Test200809(unittest.TestCase):
 
         for i, oldElement in enumerate(oldElements):
             self.compareAttributes(oldElement, newElements[i], None, {"NumPlanes":"PlaneCount"});
-
+    
     def test_experiment_copy_microbeammanipulation_from_image(self):
         """
-        Move microbeamManipulation node from Image to Experiment
+        Experiment transformation. See stylesheet for details 
         """
         oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ["Experiment"]);
         newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ["Experiment"]);
         
         for i, newElement in enumerate(newElements):
             microbeamXPath = "{%s}%s" % (self.NEW_OME_NS, "MicrobeamManipulation");
-            microbeamElement = newElement.findall(microbeamXPath);
-             
- 
+            microbeamElements = newElement.findall(microbeamXPath);
+            for mbElement in microbeamElements:
+                id = mbElement.get('ID');  
+                elementWithRefs = self.findElementByID(self.old_root,self.OLD_OME_NS,'MicrobeamManipulation',id);
+                oldElementWithoutRefs = self.replaceRefsWithElements(self.old_root, self.OLD_OME_NS, elementWithRefs);
+                
     def test_detector_type(self):
         """
         Checks that the Detector types have been correctly transformed.
