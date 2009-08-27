@@ -51,7 +51,9 @@
   <xsl:output method="xml" indent="yes"/>
   <xsl:preserve-space elements="*"/>
   
-
+  <xsl:variable name="pointsDefault" select="'0,0 1,1'"/>
+  <xsl:variable name="numberDefault" select="1"/>
+  
   <!-- Actual schema changes -->
 
  <!-- data management -->
@@ -157,6 +159,7 @@ Rename attribute OMEName into UserName
 
 <!-- Instrument components -->
 
+<!--Transform the value of the Transmittance attribute from integer to percentFraction -->
  <xsl:template match="OME:TransmittanceRange">
    <xsl:element name="TransmittanceRange" namespace="{$newOMENS}">
       <xsl:for-each select="@*">
@@ -175,6 +178,35 @@ Rename attribute OMEName into UserName
       </xsl:for-each>
     </xsl:element>
  </xsl:template>
+ 
+<!-- Transform the value of RepetitionRate attribute from boolean to float -->
+<xsl:template match="OME:Laser">
+  <xsl:variable name="false" select="0"/>
+  <xsl:variable name="true" select="1"/>
+   <xsl:element name="Laser" namespace="{$newOMENS}">
+      <xsl:for-each select="@*">
+        <xsl:attribute name="{local-name(.)}">
+        <xsl:choose>
+          <xsl:when test="local-name(.) ='RepetitionRate'">
+            <xsl:choose>
+              <xsl:when test="@RepetitionRate = 'true' or @RepetitionRate = 't'">
+                <xsl:value-of select="$true"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="$false"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
+        </xsl:attribute>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()"/>
+    </xsl:element>
+ </xsl:template>
+
  
 <!-- Rename attributes -->
  <xsl:template match="OME:OTF">
@@ -631,7 +663,11 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:choose>
       <xsl:when test="name()='points'">
-        <xsl:attribute name="Points"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Points">
+          <xsl:call-template name="setPoints">
+            <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+          </xsl:call-template>
+        </xsl:attribute>
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
@@ -646,13 +682,30 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:choose>
       <xsl:when test="name()='points'">
-        <xsl:attribute name="Points"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Points">
+          <xsl:call-template name="setPoints">
+            <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+          </xsl:call-template>
+        </xsl:attribute>
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
   <xsl:attribute name="Closed"><xsl:value-of select="$default"/></xsl:attribute>
 
   </xsl:element>
+</xsl:template>
+
+<!-- Sets the value of the points attribute for Polygon and Polyline -->
+<xsl:template name="setPoints">
+  <xsl:param name="value"/>
+  <xsl:choose>
+    <xsl:when test="string-length($value) > 0">
+      <xsl:value-of select="$value"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$pointsDefault"/>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!-- Transform a Circle into an Ellipse -->
@@ -826,8 +879,6 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   </xsl:choose>
 </xsl:template>
 
-
-
 <!-- Screen Plate Well -->
 <!-- 
 Remove or rename attributes in WellSample.
@@ -852,6 +903,29 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
   </xsl:element>
 </xsl:template>
   
+<!--  Transform the Row and Column attribute from Integer to nonNegativeInteger -->
+ <xsl:template match="SPW:Well">
+  <xsl:element name="Well" namespace="{$newSPWNS}">
+    <xsl:for-each select="@*">
+      <xsl:choose>
+        <xsl:when test="name() = 'Row' or name() = 'Column'">
+          <xsl:attribute name="{local-name(.)}">
+            <xsl:call-template name="isValueValid">
+              <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+              <xsl:with-param name="control" select="0"/>
+              <xsl:with-param name="type" select="'less'"/>
+            </xsl:call-template>
+          </xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
+        </xsl:otherwise>
+        </xsl:choose>
+    </xsl:for-each>
+    <xsl:apply-templates select="node()"/>
+  </xsl:element>
+</xsl:template>
+ 
   <!-- 
   Convert the attribute Description in Plate into a child element.
   Copy all the other attributes.
@@ -1054,17 +1128,48 @@ A limited number of strings is supported.
   </xsl:choose>
 </xsl:template>
 
+<!-- 
+Controls if a value is greater than or less than depending on the type. 
+The types are greater or less.
+-->
+<xsl:template name="isValueValid">
+  <xsl:param name="value"/> 
+  <xsl:param name="control"/>
+  <xsl:param name="type"/>
+  <xsl:choose>
+    <xsl:when test="$type = 'less'">
+      <xsl:choose>
+        <xsl:when test="$value &lt; $control">
+          <xsl:value-of select="$control"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$value"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <xsl:otherwise>
+    <xsl:choose>
+        <xsl:when test="$value &gt; $control">
+          <xsl:value-of select="$control"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$value"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <!-- Check if the passed value is a number, if not extract number if any -->
 <xsl:template name="formatNumber">
   <xsl:param name="value"/>
-  <xsl:variable name="default" select="1"/>
   <xsl:choose>
     <!-- number already -->
     <xsl:when test="number($value)=number($value)">
       <xsl:value-of select="$value"/>
     </xsl:when>
     <xsl:otherwise><!-- try to find a number -->
-      <xsl:value-of select="$default"/>
+      <xsl:value-of select="$numberDefault"/>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
