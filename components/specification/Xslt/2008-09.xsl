@@ -38,11 +38,10 @@
   xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
-  xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
   xmlns:exsl="http://exslt.org/common"
   extension-element-prefixes="exsl"
   version="1.0">
- 
+ <!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"-->
   <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2009-09</xsl:variable>
   <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2009-09</xsl:variable>
   <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09</xsl:variable>
@@ -57,7 +56,43 @@
   <!-- default value for non-numerical value when transforming the attribute of concrete shape -->
   <xsl:variable name="numberDefault" select="1"/>
   
-  <!-- Actual schema changes -->
+  <!-- The Enumeration terms to be modified. -->
+  <xsl:variable name="enumeration-maps">
+    <mapping name="DetectorType">
+      <map from="EM-CCD" to="EMCCD"/>
+    </mapping>
+  </xsl:variable>
+
+ <!-- Transform the value coming from an enumeration -->
+ <xsl:template name="transformEnumerationValue">
+   <xsl:param name="mappingName"/>
+   <xsl:param name="value"/>
+   <!-- read the values from the mapping node -->
+   <xsl:variable name="mappingNode" select="exsl:node-set($enumeration-maps)/mapping[@name=$mappingName]"/>
+   <xsl:variable name="newValue" select="exsl:node-set($mappingNode)/map[@from=$value]/@to"/>
+   <xsl:variable name="isOptional" select="exsl:node-set($mappingNode)/@optional"/>
+   <xsl:choose>
+     <xsl:when test="string-length($newValue) > 0">
+       <xsl:value-of select="$newValue"/>
+     </xsl:when>
+     <xsl:when test="$value = 'Unknown'">
+       <xsl:value-of select="'Other'"/>
+     </xsl:when>
+     <xsl:otherwise>
+       <xsl:value-of select="$value"/>
+      <!-- If the property is optional we don't want to set 
+        "Unknown" if that's our current value. Otherwise use the current value. 
+         <xsl:if test="not($isOptional) or $value != 'Unknown'">
+        <xsl:value-of select="$value"/>
+       </xsl:if>
+        
+        -->
+     <xsl:value-of select="''"/>
+     </xsl:otherwise>
+   </xsl:choose>
+ </xsl:template>
+
+ <!-- Actual schema changes -->
 
  <!-- data management -->
  <!-- Remove the Locked attribute -->
@@ -183,9 +218,9 @@ Rename attribute OMEName into UserName
  </xsl:template>
  
 <!-- Transform the value of RepetitionRate attribute from boolean to float -->
-<xsl:template match="OME:Laser">
-  <xsl:variable name="false" select="0"/>
-  <xsl:variable name="true" select="1"/>
+ <xsl:template match="OME:Laser">
+   <xsl:variable name="false" select="0"/>
+   <xsl:variable name="true" select="1"/>
    <xsl:element name="Laser" namespace="{$newOMENS}">
       <xsl:for-each select="@*">
         <xsl:attribute name="{local-name(.)}">
@@ -200,6 +235,12 @@ Rename attribute OMEName into UserName
               </xsl:otherwise>
             </xsl:choose>
           </xsl:when>
+          <xsl:when test="local-name(.) ='Type'">
+            <xsl:call-template name="transformEnumerationValue">
+                <xsl:with-param name="mappingName" select="'LightSourceType'"/>
+                <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+            </xsl:call-template>
+          </xsl:when>
           <xsl:otherwise>
             <xsl:value-of select="."/>
           </xsl:otherwise>
@@ -207,32 +248,114 @@ Rename attribute OMEName into UserName
         </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
-    </xsl:element>
- </xsl:template>
+     </xsl:element>
+  </xsl:template>
 
+ <!-- Check the value of the Type attribute -->
+ <xsl:template match="OME:Arc">
+   <xsl:element name="Arc" namespace="{$newOMENS}">
+     <xsl:for-each select="@*">
+       <xsl:attribute name="{local-name(.)}">
+         <xsl:choose>
+           <xsl:when test="local-name(.) ='Type'">
+             <xsl:call-template name="transformEnumerationValue">
+               <xsl:with-param name="mappingName" select="'LightSourceType'"/>
+               <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+             </xsl:call-template>
+           </xsl:when>
+           <xsl:otherwise>
+            <xsl:value-of select="."/>
+           </xsl:otherwise>
+        </xsl:choose>
+       </xsl:attribute>
+     </xsl:for-each>
+     <xsl:apply-templates select="node()"/>
+   </xsl:element>
+ </xsl:template>
+ 
+ <!-- Check the value of the Type attribute -->
+ <xsl:template match="OME:Filament">
+   <xsl:element name="Filament" namespace="{$newOMENS}">
+     <xsl:for-each select="@*">
+       <xsl:attribute name="{local-name(.)}">
+         <xsl:choose>
+           <xsl:when test="local-name(.) ='Type'">
+             <xsl:call-template name="transformEnumerationValue">
+               <xsl:with-param name="mappingName" select="'LightSourceType'"/>
+               <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+             </xsl:call-template>
+           </xsl:when>
+           <xsl:otherwise>
+            <xsl:value-of select="."/>
+           </xsl:otherwise>
+        </xsl:choose>
+       </xsl:attribute>
+     </xsl:for-each>
+     <xsl:apply-templates select="node()"/>
+   </xsl:element>
+ </xsl:template>
+ 
+ <!-- Check the value of the Type attribute -->
+ <xsl:template match="OME:Microscope">
+   <xsl:element name="Microscope" namespace="{$newOMENS}">
+     <xsl:for-each select="@*">
+       <xsl:attribute name="{local-name(.)}">
+         <xsl:choose>
+           <xsl:when test="local-name(.) ='Type'">
+             <xsl:call-template name="transformEnumerationValue">
+               <xsl:with-param name="mappingName" select="'MicroscopeType'"/>
+               <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+             </xsl:call-template>
+           </xsl:when>
+           <xsl:otherwise>
+            <xsl:value-of select="."/>
+           </xsl:otherwise>
+        </xsl:choose>
+       </xsl:attribute>
+     </xsl:for-each>
+     <xsl:apply-templates select="node()"/>
+   </xsl:element>
+ </xsl:template>
  
 <!-- Rename attributes -->
  <xsl:template match="OME:OTF">
-    <xsl:element name="OTF" namespace="{$newOMENS}">
-      <xsl:for-each select="@*">
+   <xsl:element name="OTF" namespace="{$newOMENS}">
+     <xsl:for-each select="@*">
       <xsl:choose>
-      <xsl:when test="local-name(.)='PixelType'">
-       <xsl:attribute name="Type">
-          <xsl:value-of select="."/>
-        </xsl:attribute>
-      </xsl:when>
-      <xsl:otherwise>
-      <xsl:attribute name="{local-name(.)}">
-          <xsl:value-of select="."/>
-        </xsl:attribute>
-      </xsl:otherwise>
-      
+        <xsl:when test="local-name(.)='PixelType'">
+         <xsl:attribute name="Type"><xsl:value-of select="."/></xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
+        </xsl:otherwise>
       </xsl:choose>
+    </xsl:for-each>
+    <xsl:apply-templates select="node()"/>
+   </xsl:element>
+  </xsl:template>
+
+<!-- Check the value of the type attribute -->
+  <xsl:template match="OME:Detector">
+    <xsl:element name="Detector" namespace="{$newOMENS}">
+      <xsl:for-each select="@*">
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:choose>
+            <xsl:when test="local-name(.)='Type'">
+              <xsl:call-template name="transformEnumerationValue">
+                <xsl:with-param name="mappingName" select="'DetectorType'"/>
+                <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
-  </xsl:template>
   
+  </xsl:template>
   
 <!-- Convert element into Attribute -->
  <xsl:template match="OME:Objective">
@@ -246,6 +369,12 @@ Rename attribute OMEName into UserName
               <xsl:with-param name="min" select="0.02"/>
               <xsl:with-param name="max" select="1.5"/>
             </xsl:call-template>
+          </xsl:when>
+          <xsl:when test="local-name(.)='Correction' or local-name(.)='Immersion'">
+              <xsl:call-template name="transformEnumerationValue">
+                <xsl:with-param name="mappingName" select="'ObjectiveStuff'"/>
+                <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+              </xsl:call-template>
           </xsl:when>
           <xsl:otherwise>
             <xsl:value-of select="."/>
