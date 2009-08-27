@@ -51,7 +51,10 @@
   <xsl:output method="xml" indent="yes"/>
   <xsl:preserve-space elements="*"/>
   
+  <!-- default value for points attribute for Polygon and PolyLine -->
   <xsl:variable name="pointsDefault" select="'0,0 1,1'"/>
+  
+  <!-- default value for non-numerical value when transforming the attribute of concrete shape -->
   <xsl:variable name="numberDefault" select="1"/>
   
   <!-- Actual schema changes -->
@@ -353,7 +356,6 @@ Remove BigEndian attribute from Pixels and move it to Bin:BinData
     </xsl:for-each>
  </xsl:element>
 </xsl:template>
-
 
 <!-- 
 Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamManipulationRef.
@@ -1040,9 +1042,7 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
   </xsl:template>
   
 
-
   <!-- Default processing -->
-
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
