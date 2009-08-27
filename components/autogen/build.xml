@@ -1,14 +1,14 @@
 <!--
 build.xml
 
-Ant build file for Bio-Formats code generator.
+Ant build file for LOCI code generators.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="formats-auto" default="jar" basedir=".">
+<project name="autogen" default="jar" basedir=".">
   <description>
-    Build file for Bio-Formats code generator
+    Build file for LOCI code generators
   </description>
   <property file="base.properties"/>
   <import file="${root.dir}/java.xml"/>

@@ -69,7 +69,8 @@ import loci.formats.ImageTools;
  * use the {@link loci.formats.ImageTools} class.
  *
  * Much code was stolen and adapted from
- * <a href="http://forum.java.sun.com/thread.jspa?threadID=522483">DrLaszloJamf's posts</a>
+ * <a href="http://forum.java.sun.com/thread.jspa?threadID=522483">
+ * DrLaszloJamf's posts</a>
  * on the Java forums.
  *
  * <dl><dt><b>Source code:</b></dt>

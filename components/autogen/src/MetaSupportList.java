@@ -3,7 +3,7 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
+LOCI autogen package for programmatically generating source code.
 Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,9 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.IniList;
 import loci.common.IniParser;
+import loci.common.IniTable;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.IFormatHandler;
@@ -99,10 +101,8 @@ public class MetaSupportList {
 
     // parse INI data
     IniParser parser = new IniParser();
-    Vector<HashMap<String, String>> groupsList =
-      parser.parseINI(groupsPath, MetaSupportList.class);
-    Vector<HashMap<String, String>> supportList =
-      parser.parseINI(supportPath, MetaSupportList.class);
+    IniList groupsList = parser.parseINI(groupsPath, MetaSupportList.class);
+    IniList supportList = parser.parseINI(supportPath, MetaSupportList.class);
 
     // convert unprocessed INI-style config data into data structures
 
@@ -122,8 +122,8 @@ public class MetaSupportList {
 
     // process list of supported metadata properties
     for (HashMap<String, String> propHash : supportList) {
-      String handler = propHash.get(IniParser.HEADER_KEY);
-      propHash.remove(IniParser.HEADER_KEY);
+      String handler = propHash.get(IniTable.HEADER_KEY);
+      propHash.remove(IniTable.HEADER_KEY);
       supported.put(handler, propHash);
     }
   }

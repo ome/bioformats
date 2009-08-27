@@ -42,12 +42,12 @@ Bio-Formats
                    MDB Tools (Java port), JAI Image I/O Tools, NetCDF
     License:       GPL
 
-Bio-Formats code generator
-    Code that generates the Bio-Formats metadata API, related documentation and
-    Ice bindings
+LOCI autogen
+    Package for generating other code, including the Bio-Formats metadata API,
+    related documentation, Ice bindings, and Bio-Formats C++ bindings headers
     -=-
-    JAR file:      bio-formats-auto.jar
-    Path:          components/bio-formats-auto
+    JAR file:      loci-autogen.jar
+    Path:          components/autogen
     Project deps:  LOCI Common, Bio-Formats
     Library deps:  Apache Velocity
     Optional:      (none)
@@ -448,7 +448,7 @@ Apache XML-RPC
   <target name="jars"
     depends="copy-jars, jar-common, jar-ome-xml,
       jar-jai, jar-poi-loci, jar-mdbtools,
-      jar-formats, jar-formats-auto, jar-formats-ice,
+      jar-formats, jar-autogen, jar-formats-ice,
       jar-loci-plugins, jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
       jar-checks, jar-tests,
@@ -459,7 +459,7 @@ Apache XML-RPC
   <target name="clean"
     depends="clean-common, clean-ome-xml,
       clean-jai, clean-poi-loci, clean-mdbtools,
-      clean-formats, clean-formats-auto, clean-formats-ice,
+      clean-formats, clean-autogen, clean-formats-ice,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
       clean-checks, clean-tests,
@@ -608,24 +608,24 @@ Apache XML-RPC
     <ant dir="components/bio-formats" target="formats.clean"/>
   </target>
 
-  <!-- Bio-Formats code generator -->
+  <!-- LOCI autogen -->
 
-  <target name="compile-formats-auto"
+  <target name="compile-autogen"
     depends="compile-common, compile-formats"
-    description="compile classes for Bio-Formats code gen">
-    <ant dir="components/bio-formats-auto" target="formats-auto.compile"/>
+    description="compile classes for LOCI autogen">
+    <ant dir="components/autogen" target="autogen.compile"/>
   </target>
 
-  <target name="jar-formats-auto"
+  <target name="jar-autogen"
     depends="jar-common, jar-formats"
-    description="generate JAR file for Bio-Formats code gen">
-    <ant dir="components/bio-formats-auto" target="formats-auto.jar"/>
+    description="generate JAR file for LOCI autogen">
+    <ant dir="components/autogen" target="autogen.jar"/>
   </target>
 
-  <target name="clean-formats-auto"
+  <target name="clean-autogen"
     depends="clean-common, clean-formats"
-    description="remove build files for Bio-Formats code gen">
-    <ant dir="components/bio-formats-auto" target="formats-auto.clean"/>
+    description="remove build files for LOCI autogen">
+    <ant dir="components/autogen" target="autogen.clean"/>
   </target>
 
   <!-- Bio-Formats Ice framework -->

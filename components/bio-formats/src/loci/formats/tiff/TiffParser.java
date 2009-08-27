@@ -51,7 +51,7 @@ public class TiffParser {
 
   /** Input source from which to parse TIFF data. */
   protected RandomAccessInputStream in;
-  
+
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;
 
@@ -592,7 +592,7 @@ public class TiffParser {
     if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
       cachedTileBuffer = new byte[bufferSize];
     }
-    
+
     for (int row=0; row<numTileRows; row++) {
       for (int col=0; col<numTileCols; col++) {
         Region tileBounds = new Region(col * (int) tileWidth,
@@ -749,7 +749,7 @@ public class TiffParser {
       System.arraycopy(bytes, 0, samples, 0, bytes.length);
       return;
     }
-    
+
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<nChannels; i++) {
         int index = numBytes * (j * nChannels + i);

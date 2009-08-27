@@ -3,7 +3,7 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
+LOCI autogen package for programmatically generating source code.
 Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,9 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.IniList;
 import loci.common.IniParser;
+import loci.common.IniTable;
 
 /**
  * An EntityList is a list of entities parsed from an INI-style resource,
@@ -149,24 +151,22 @@ public class EntityList {
     // parse INI data
     System.out.println("Parsing configuration data");
     IniParser parser = new IniParser();
-    Vector<HashMap<String, String>> versionList =
-      parser.parseINI(versionPath, EntityList.class);
-    Vector<HashMap<String, String>> entityList =
-      parser.parseINI(entityPath, EntityList.class);
+    IniList versionList = parser.parseINI(versionPath, EntityList.class);
+    IniList entityList = parser.parseINI(entityPath, EntityList.class);
 
     // convert unprocessed INI-style config data into
     // hierarchical entity/property/version structure
 
     // process list of versions
     for (HashMap<String, String> attrs : versionList) {
-      String name = attrs.get(IniParser.HEADER_KEY);
+      String name = attrs.get(IniTable.HEADER_KEY);
       versions.put(name, attrs);
     }
 
     // process list of entities
     entities = new HashMap<String, Entity>();
     for (HashMap<String, String> attrs : entityList) {
-      String name = attrs.get(IniParser.HEADER_KEY);
+      String name = attrs.get(IniTable.HEADER_KEY);
       if (DEBUG) debug("-- Parsing entry '" + name + "' --");
 
       // "entity" list actually contains attribute tables for entities,
@@ -189,7 +189,7 @@ public class EntityList {
           if (entity == null) {
             throw new IOException("bad entity name '" + t1 + "'");
           }
-          attrs.put(IniParser.HEADER_KEY, t2);
+          attrs.put(IniTable.HEADER_KEY, t2);
           if (DEBUG) debug("Reset header value to '" + t2 + "'");
           HashMap<String, String> version = versions.get(t2);
           if (version == null) {
@@ -224,7 +224,7 @@ public class EntityList {
             throw new IOException("bad property name '" +
               t2 + "' for entity '" + t1 + "'");
           }
-          attrs.put(IniParser.HEADER_KEY, t2);
+          attrs.put(IniTable.HEADER_KEY, t2);
           if (DEBUG) debug("Reset header value to '" + t2 + "'");
           prop.versions.put(t3, attrs);
           if (DEBUG) {
@@ -295,7 +295,7 @@ public class EntityList {
   }
 
   /** Gets the attribute value for the header key. */
-  public String name() { return value(IniParser.HEADER_KEY); }
+  public String name() { return value(IniTable.HEADER_KEY); }
 
   /**
    * Queries the attribute value for the given key, for the active version,

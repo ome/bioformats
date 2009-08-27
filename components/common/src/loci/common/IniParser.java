@@ -26,8 +26,6 @@ package loci.common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Vector;
 
 /**
  * A simple parser for INI configuration files. Supports pound (#) as comments,
@@ -41,15 +39,10 @@ import java.util.Vector;
  */
 public class IniParser {
 
-  // -- Constants --
-
-  /** Key to use for storing header value (in brackets). */
-  public static final String HEADER_KEY = "header";
-
   // -- IniParser API methods --
 
   /** Parses the INI-style configuration data from the given resource. */
-  public Vector<HashMap<String, String>> parseINI(String path)
+  public IniList parseINI(String path)
     throws IOException
   {
     return parseINI(openTextResource(path));
@@ -59,19 +52,18 @@ public class IniParser {
    * Parses the INI-style configuration data from the given resource,
    * using the given class to find the resource.
    */
-  public Vector<HashMap<String, String>> parseINI(String path, Class c)
+  public IniList parseINI(String path, Class c)
     throws IOException
   {
     return parseINI(openTextResource(path, c));
   }
 
   /** Parses the INI-style configuration data from the given input stream. */
-  public Vector<HashMap<String, String>> parseINI(BufferedReader in)
+  public IniList parseINI(BufferedReader in)
     throws IOException
   {
-    Vector<HashMap<String, String>> list =
-      new Vector<HashMap<String, String>>();
-    HashMap<String, String> attrs = null;
+    IniList list = new IniList();
+    IniTable attrs = null;
     int no = 1;
     StringBuffer sb = new StringBuffer();
     while (true) {
@@ -87,7 +79,7 @@ public class IniParser {
 
       if (line.startsWith("[")) {
         // section header
-        attrs = new HashMap<String, String>();
+        attrs = new IniTable();
         list.add(attrs);
 
         // strip brackets
@@ -95,7 +87,7 @@ public class IniParser {
         if (line.endsWith("]")) end--;
         String header = line.substring(1, end);
 
-        attrs.put(HEADER_KEY, header);
+        attrs.put(IniTable.HEADER_KEY, header);
         no += num;
         continue;
       }

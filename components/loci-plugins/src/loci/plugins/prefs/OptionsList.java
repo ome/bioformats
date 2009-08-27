@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.IniList;
 import loci.common.IniParser;
+import loci.common.IniTable;
 
 /**
  * Base class for ImageJ preferences for LOCI plugins.
@@ -62,9 +64,9 @@ public class OptionsList {
     this(new IniParser().parseINI(path, c));
   }
 
-  public OptionsList(Vector<HashMap<String, String>> ini) {
+  public OptionsList(IniList ini) {
     options = new HashMap<String, Option>();
-    for (HashMap<String, String> entry : ini) {
+    for (IniTable entry : ini) {
       String type = entry.get(INI_TYPE);
       Option o;
       if (type.equals(TYPE_BOOLEAN)) o = new BooleanOption(entry);
