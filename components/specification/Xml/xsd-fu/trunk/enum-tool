@@ -52,9 +52,9 @@ Options:
   -t			Dumps all enumerations in a visual tree
   -x			Displays the XPath expressions for each enumeration
   -d file		Diffs enumeration possible values from an XPath
-  				configuration file. This file is expected to have two sections
-  				the first containing the "old" and "new" XSD files and the
-  				second containing the XPath mappings. (See: example.cfg)
+			configuration file. This file is expected to have two sections
+			the first containing the "old" and "new" XSD files and the
+			second containing the XPath mappings. (See: example.cfg)
 
 Examples:
   %s -t schemas/ome.xsd
