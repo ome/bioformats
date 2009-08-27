@@ -473,10 +473,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
                     </xsl:if>
                 </xsl:for-each>
                 </xsl:for-each>
-            <!-- logical channel end -->
-             
-             
-             </xsl:element>
+             </xsl:element><!-- logical channel end -->
             </xsl:if>
          </xsl:when>
           <xsl:when test="local-name(.) = 'ObjectiveRef'">
@@ -524,24 +521,28 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 </xsl:element>
 </xsl:template>
 
-
 <!-- ROI -->
 <!-- Rename all the attributes -->
 <xsl:template match="OME:Ellipse">
   <xsl:element name="Ellipse" namespace="{$newROINS}">
   <xsl:for-each select="@*">
+    <xsl:variable name="converted">
+      <xsl:call-template name="formatNumber">
+        <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="name()='cx'">
-        <xsl:attribute name="X"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="X"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='cy'">
-        <xsl:attribute name="Y"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Y"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='rx'">
-        <xsl:attribute name="RadiusX"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="RadiusX"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='ry'">
-        <xsl:attribute name="RadiusY"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="RadiusY"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
@@ -552,18 +553,23 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <xsl:template match="OME:Rect">
   <xsl:element name="Rectangle" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
+    <xsl:variable name="converted">
+      <xsl:call-template name="formatNumber">
+        <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="name()='x'">
-        <xsl:attribute name="X"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="X"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='y'">
-        <xsl:attribute name="Y"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Y"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='width'">
-        <xsl:attribute name="Width"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Width"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='height'">
-        <xsl:attribute name="Height"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Height"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
@@ -574,12 +580,17 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <xsl:template match="OME:Point">
   <xsl:element name="Point" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform' or name() ='r')]">
+    <xsl:variable name="converted">
+      <xsl:call-template name="formatNumber">
+        <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="name()='cx'">
-        <xsl:attribute name="X"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="X"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='cy'">
-        <xsl:attribute name="Y"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Y"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
@@ -590,18 +601,23 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <xsl:template match="OME:Line">
   <xsl:element name="Line" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
+    <xsl:variable name="converted">
+      <xsl:call-template name="formatNumber">
+        <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="name()='x1'">
-        <xsl:attribute name="X1"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="X1"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='x2'">
-        <xsl:attribute name="X2"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="X2"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='y1'">
-        <xsl:attribute name="Y1"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Y1"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='y2'">
-        <xsl:attribute name="Y2"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Y2"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
@@ -643,16 +659,21 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <xsl:template match="OME:Circle">
   <xsl:element name="Ellipse" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
+    <xsl:variable name="converted">
+      <xsl:call-template name="formatNumber">
+        <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="name()='cx'">
-        <xsl:attribute name="X"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="X"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='cy'">
-        <xsl:attribute name="Y"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="Y"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
       <xsl:when test="name()='r'">
-        <xsl:attribute name="RadiusX"><xsl:value-of select="."/></xsl:attribute>
-        <xsl:attribute name="RadiusY"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="RadiusX"><xsl:value-of select="$converted"/></xsl:attribute>
+        <xsl:attribute name="RadiusY"><xsl:value-of select="$converted"/></xsl:attribute>
       </xsl:when>
     </xsl:choose>
   </xsl:for-each>
@@ -1029,6 +1050,21 @@ A limited number of strings is supported.
     </xsl:when>
     <xsl:otherwise>
      <xsl:value-of select="$value"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- Check if the passed value is a number, if not extract number if any -->
+<xsl:template name="formatNumber">
+  <xsl:param name="value"/>
+  <xsl:variable name="default" select="1"/>
+  <xsl:choose>
+    <!-- number already -->
+    <xsl:when test="number($value)=number($value)">
+      <xsl:value-of select="$value"/>
+    </xsl:when>
+    <xsl:otherwise><!-- try to find a number -->
+      <xsl:value-of select="$default"/>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
