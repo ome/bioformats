@@ -519,6 +519,9 @@ Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamMan
                       </xsl:if>
                     </xsl:for-each>     
                   </xsl:when>
+                  <xsl:when test="local-name(.) = 'LightSourceRef'">
+                    <xsl:apply-templates select="current()"/>
+                  </xsl:when>
                   <xsl:otherwise>
                     <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
                       <xsl:apply-templates select="@*|node()"/>
@@ -647,7 +650,6 @@ The Channel nodes are then linked to Pixels and no longer to Image.
             <xsl:variable name="id" select="@ID"/>
             <xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
               <xsl:attribute name="ID"><xsl:value-of select="$id"/></xsl:attribute>
-              <!--<xsl:apply-templates select="@* [name() = 'ID']"/><xsl:value-of select="."/>-->
             </xsl:element>
          </xsl:when>
          <xsl:otherwise>
@@ -864,6 +866,13 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   </xsl:element>
 </xsl:template>
 
+<!-- Move the ROI to its new name space -->
+ <xsl:template match="OME:ROI">
+  <xsl:element name="ROI" namespace="{$newROINS}">
+    <xsl:apply-templates select="@*|node()"/>
+  </xsl:element>
+ </xsl:template>
+ 
 <!-- Transform attributes and move the transform attribute from a "real" shape to Shape -->
 <xsl:template match="OME:Shape">
   <xsl:element name="Shape" namespace="{$newROINS}">
@@ -880,7 +889,6 @@ The Channel nodes are then linked to Pixels and no longer to Image.
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
-  
   <xsl:for-each select="@*">
     <xsl:choose>
       <xsl:when test="name()='theZ'">
@@ -1063,7 +1071,7 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
   Copy all child elements.
   -->
   <xsl:template match="SPW:Plate">
-   <xsl:element name="SPW:Plate">
+   <xsl:element name="SPW:Plate" namespace="{$newSPWNS}">
       <xsl:for-each select="@* [not(name() = 'Description')]">
         <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
@@ -1081,7 +1089,7 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
   Copy all child elements.
   -->
   <xsl:template match="SPW:Reagent">
-   <xsl:element name="SPW:Reagent">
+   <xsl:element name="SPW:Reagent" namespace="{$newSPWNS}">
       <xsl:for-each select="@* [not(name() = 'Description')]">
         <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
