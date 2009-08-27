@@ -101,13 +101,19 @@ class Test200809(unittest.TestCase):
     def localName(self, elementTag):
         return elementTag[elementTag.find("}") + 1:]
     
+    # if var is not none then remove trailing spaces and if '' then return None.
+    def stripStr(self, var):
+        if(var != None):
+            if(var.strip()!=''):
+                return var.strip();
+        return None;
+    
     # Get all elements from rootElement in elementList in namespace NS.
     def getAllElements(self, rootElement, NS, elementList):
         returnList = [];
         for elementName in elementList:
             elementXPath = self.createXPath('root', NS, elementName);
             foundElements = rootElement.findall(elementXPath);
-            print rootElement, elementXPath, foundElements
             returnList.extend(foundElements);
         return returnList;
     
@@ -159,7 +165,7 @@ class Test200809(unittest.TestCase):
                     mappedName = renameMap[mappedName];
             newValue = newElement.get(mappedName);
             self.assertFalse(newValue==None);
-            self.assertEquals(newValue, oldChildElement.text);
+            self.assertEquals(newValue, self.stripStr(oldChildElement.text));
 
     # Compare Elements in left with the attributes in right if they are in comparison map.
     def compareElementsWithAttributesFromMap(self, left, right, comparisonMap):
@@ -170,7 +176,7 @@ class Test200809(unittest.TestCase):
             mappedName = comparisonMap[leftChildName];
             newValue = newElement.get(mappedName);
             self.assertFalse(newValue==None);
-            self.assertEquals(newValue, leftChild.text);
+            self.assertEquals(newValue, self.stripStr(leftChild.text));
 
     # Check that the element contains the elements in containsList
     def containsElements(self, element, NS, containsList):
@@ -192,7 +198,7 @@ class Test200809(unittest.TestCase):
         for child in element.getchildren():
             elementName = self.localName(child.tag);
             if(elementName in containsMap):
-                if(containsMap[elementName] == child.text):
+                if(containsMap[elementName] == self.stripStr(child.text)):
                     equalsMap[elementName] = True;
         for key in equalsMap:
             self.assertEquals(equalsMap[key], True);
@@ -257,7 +263,7 @@ class Test200809(unittest.TestCase):
             newChildXPath = self.createXPath('local', newElementNS, mappedName);
             newChildElement = newElement.find(newChildXPath);
             self.assertFalse(newChildElement, None);
-            self.assertEquals(newChildElement.text, oldChildElement.text)
+            self.assertEquals(self.stripStr(newChildElement.text), self.stripStr(oldChildElement.text))
         for key in inclusionMap:
             self.assertEquals(inclusionMap[key], True);
             
@@ -267,6 +273,7 @@ class Test200809(unittest.TestCase):
     def compareAttributes(self, oldElement, newElement, exceptionList=None, renameMap=None):
         for key in oldElement.attrib.keys():
             if(exceptionList != None):
+                print key
                 if(key in exceptionList):
                     continue;
             mappedKey = key;
@@ -275,6 +282,15 @@ class Test200809(unittest.TestCase):
                     mappedKey = renameMap[key];
             newValue = newElement.get(mappedKey);
             oldValue = oldElement.get(key);
+            if(oldValue != newValue):
+                print 'FAILURE'
+                print 'EXCEPTIONLIST %s' % exceptionList
+                print 'oldElement.tag %s' % oldElement.tag
+                print 'newElement.tag %s' % newElement.tag
+                print key
+                print oldValue
+                print newValue
+                print 'END FAILURE'
             self.assertEquals(newValue, oldValue);    
 
     # Get all the child elements from the element, in namespace. 
@@ -311,45 +327,53 @@ class Test200809(unittest.TestCase):
         
     # Compare graph's are same, the attributes and elements maybe renamed using the renameAttributes
     # and renameElements map, this method assumes that the graphs are in the same element order.
-    def compareGraphs(self, left, right, renameAttributes = None, renameElements=None):
+    def compareGraphs(self, left, right, ignoreAttributes = None, renameAttributes = None, renameElements=None):
+        print 'IGNOREATTRIBUTES %s' % ignoreAttributes
         leftChildren = left.getchildren();
         rightChildren = right.getchildren();
-        self.assetEqual(len(leftChildren), len(rightChildren));
+        self.assertEqual(len(leftChildren), len(rightChildren));
         if(len(leftChildren)==0):
             return;
         for i in range(len(leftChildren)):
-            self.assetEqual(compareAttributes(leftChildren[i], rightChildren[i], None, renameAttributes), True);
+            self.compareAttributes(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes);
             if(renameElements==None):
-                assetEqual(self.localName(leftChildren[i].tag), self.localName(rightChildren[i].tag));
+                self.assertEqual(self.localName(leftChildren[i].tag), self.localName(rightChildren[i].tag));
             else:  
-                assetEqual(renameElements[self.localName(leftChildren[i].tag)], self.localName(rightChildren[i].tag));
-            assetEqual(self.leftChildren[i].text, self.rightChildren[i].text);
-            compareGraphs(leftChildren[i], rightChildren[i]);            
+                leftChildTag = self.localName(leftChildren[i].tag);
+                if(leftChildTag in renameElements):
+                    leftChildTag = renameElements[leftChildTag];
+                self.assertEqual(leftChildTag, self.localName(rightChildren[i].tag));
+            self.assertEqual(self.stripStr(leftChildren[i].text), self.stripStr(rightChildren[i].text));
+            self.compareGraphs(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes, renameElements);            
         
     # Compare graph's are same, the attributes and elements maybe renamed using the renameAttributes
     # and renameElements map, this method assumes that the graphs are in the same element order.
     def compareGraphsWithoutOrder(self, left, right, renameAttributes = None, renameElements=None):
         leftChildren = left.getchildren();
         rightChildren = right.getchildren();
-        self.assetEqual(len(leftChildren), len(rightChildren));
+        self.assertEqual(len(leftChildren), len(rightChildren));
         if(len(leftChildren)==0):
             return;
         for i in range(len(leftChildren)):
-            rightChild = getElementFromList(leftChildren[i], rightChildren, renameAttributes);
+            rightChild = self.getElementFromList(leftChildren[i], rightChildren, renameAttributes);
             self.assertTrue(rightChild!=None);     
             if(renameElements==None):
-                assetEqual(self.localName(leftChildren[i].tag), self.localName(rightChild.tag));
+                self.assertEqual(self.localName(leftChildren[i].tag), self.localName(rightChild.tag));
             else:  
-                assetEqual(renameElements[self.localName(leftChildren[i].tag)], self.localName(rightChild.tag));
-            assetEqual(self.leftChildren[i].text, self.rightChild.text);
-            compareGraphsWithoutOrder(leftChildren[i], rightChild);            
+                self.assertEqual(renameElements[self.localName(leftChildren[i].tag)], self.localName(rightChild.tag));
+            self.assertEqual(self.stripStr(leftChildren[i].text), self.stripStr(rightChild.text));
+            self.compareGraphsWithoutOrder(leftChildren[i], rightChild, ignoreAttributes, renameAttributes, renameElements);            
     
+    # get the name of a reference, by removing the Ref suffix.
     def elementRefName(self, name):
         return name[:len(name)-3];
-        
+    
+    # return true if the element is a reference, has Ref suffix.
     def isRef(self, element):
         return (element.tag[len(element.tag)-3:]=='Ref');
          
+    # return the elemenet in the root tree with name element name and id 
+    # if it does not exist it will return None
     def findElementByID(self, root, NS, elementName, id):
         elements = self.getAllElements(root, NS, [elementName]);
         for element in elements:
@@ -357,6 +381,8 @@ class Test200809(unittest.TestCase):
                 return element;
         return None;
 
+    # create a new element based on the element param, this will copy the element tag,
+    # and attribs but not children. To copy children use deepcopy.
     def shallowcopy(self, element):
         newElement = Element(element.tag);
         newElement.text = element.text
@@ -364,20 +390,62 @@ class Test200809(unittest.TestCase):
             newElement.set(key, element.get(key));
         return newElement;
 
-    def replaceRefsWithElements(self, root, NS, element):
+    # Replace the references in elemenet with the full element from root, this method only works
+    # on the children of the element, to replace all references in element use replaceRefsWithElementRecurse. 
+    # If RefList is not empty it will only replace the References in RefList. 
+    # The elements in RefList should only be the name of the element, ROI not ROIRef.
+    def replaceRefsWithElements(self, root, NS, element, RefList=None):
+        if(RefList==None):
+            RefList = [];
         newElement = self.shallowcopy(element);
         children = element.getchildren();
         if(len(children)==0):
             return;
         for i, child in enumerate(children):
-            if(self.isRef(child)):
-                elementName = self.elementRefName(self.localName(child.tag))
+            elementName = self.elementRefName(self.localName(child.tag))
+            print elementName
+            if(self.isRef(child) and elementName in RefList):
                 elementFromRef = self.findElementByID(root, NS, elementName, child.get('ID'));
                 newElement.append(deepcopy(elementFromRef));
             else:
                 newElement.append(deepcopy(child));
         return newElement
-    
+
+    # Replace the references in elemenet with the full element from root, this method works to 
+    # replace all references in element. 
+    # If RefList is not empty it will only replace the References in RefList. 
+    # The elements in RefList should only be the name of the element, ROI not ROIRef.
+    def replaceRefsWithElementsRecurse(self, root, NS, element, RefList=None):
+        if(RefList==None):
+            RefList = [];
+        newElement = self.shallowcopy(element);
+        children = element.getchildren();
+        if(len(children)==0):
+            return newElement;
+        for i, child in enumerate(children):
+            elementName = self.elementRefName(self.localName(child.tag))
+            if(self.isRef(child) and elementName in RefList):
+                elementFromRef = self.findElementByID(root, NS, elementName, child.get('ID'));
+                newElement.append(deepcopy(elementFromRef));
+            else:
+                newElement.append(self.replaceRefsWithElementsRecurse(root, NS, child, RefList));
+        return newElement
+ 
+    # Move the child elements from removeElement to removeElements parent element and remove 
+    # it from the element.
+    def moveElementsFromChildToParent(self, element, NS, removeElement):
+        returnElement = deepcopy(element);
+        
+        xpath = self.createXPath('root', NS, removeElement);
+        elementsToRemove = returnElement.findall(xpath);
+        for elementToRemove in elementsToRemove:
+            elementsParent = elementToRemove.getparent();
+            elementsParent.remove(elementToRemove);
+            for child in elementToRemove.getchildren():
+                elementsParent.append(child);
+        return returnElement;
+        
+            
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
         self.instance_file = open(self.DOCUMENT)
@@ -525,12 +593,13 @@ class Test200809(unittest.TestCase):
         """
         Objective transformation. See stylesheet for details
         """
-        
+        """
         fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['Objective']);
         
         toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, ['Objective']);
         for i, toAttributeElement in enumerate(toAttributes):
             self.compareElementsWithAttributes(fromElements[i], self.OLD_OME_NS, toAttributeElement);
+        """
         
     def test_experimenter_elements_to_attributes(self):
         """
@@ -578,13 +647,19 @@ class Test200809(unittest.TestCase):
         oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ["Experiment"]);
         newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ["Experiment"]);
         
+        
         for i, newElement in enumerate(newElements):
-            microbeamXPath = "{%s}%s" % (self.NEW_OME_NS, "MicrobeamManipulation");
-            microbeamElements = newElement.findall(microbeamXPath);
-            for mbElement in microbeamElements:
-                id = mbElement.get('ID');  
-                elementWithRefs = self.findElementByID(self.old_root,self.OLD_OME_NS,'MicrobeamManipulation',id);
-                oldElementWithoutRefs = self.replaceRefsWithElements(self.old_root, self.OLD_OME_NS, elementWithRefs);
+            id = newElement.get('ID');
+            elementWithRefs = self.findElementByID(self.old_root,self.OLD_OME_NS,'Experiment',id);
+            oldElementWithoutMBRef = self.replaceRefsWithElements(self.old_root, self.OLD_OME_NS, elementWithRefs, ["MicrobeamManipulation"]);
+            oldElementsWithoutROIRef = self.replaceRefsWithElementsRecurse(self.old_root, self.OLD_OME_NS, oldElementWithoutMBRef, ["ROI"]);
+            oldElementWithoutChannel = self.moveElementsFromChildToParent(oldElementsWithoutROIRef, self.OLD_OME_NS, "Channels");
+            print 'DUMP(oldElementWithoutChannel)';
+            dump(oldElementWithoutChannel);
+            print 'DUMP(newElement)';
+            dump(newElement);
+            self.compareGraphs(oldElementWithoutChannel, newElement, ['{http://www.w3.org/XML/1998/namespace}lang', 'ID'], {'theZ':'TheZ', 'theT':'TheT','theC':'TheC'}, {"LogicalChannelRef":"ChannelRef"});
+                
                 
     def test_detector_type(self):
         """
@@ -599,6 +674,15 @@ class Test200809(unittest.TestCase):
         for element in toElements:
             print dump(element)
 
+    """
+    Follow a collection of tests for transformation related to ROI elements.
+    """
+ 
+    def test_shape_transformation(self):
+        """
+        Checks that the Detector types have been correctly transformed.
+        """
+        
 if __name__ == '__main__':
     unittest.main()
 """
