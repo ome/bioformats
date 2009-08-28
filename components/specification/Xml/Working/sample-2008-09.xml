@@ -268,9 +268,7 @@
 			</Union>
 		</ROI>
 		<MicrobeamManipulation ID="urn:lsid:-.-:MicrobeamManipulation:1" Type="FRAP">
-			<ROIRef ID="urn:lsid:-.-:ROI:4"/>
-			<ROIRef ID="urn:lsid:-.-:ROI:5"/>
-			<ROIRef ID="urn:lsid:-.-:ROI:6"/>
+			<ROIRef ID="urn:lsid:-.-:ROI:1"/>
 			<ExperimenterRef ID="urn:lsid:-.-:Experimenter:1"/>
 			<LightSourceRef ID="urn:lsid:-.-:LightSource:1" Attenuation="0.50" Wavelength="2"/>
 		</MicrobeamManipulation>
