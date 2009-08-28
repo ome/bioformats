@@ -586,9 +586,7 @@ Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamMan
                     <xsl:variable name="roiID" select="@ID"/>
                     <xsl:for-each select="exsl:node-set($rois)/*">
                       <xsl:if test="@ID=$roiID">
-                        <xsl:element name="ROI">
                           <xsl:apply-templates select="current()"/>
-                        </xsl:element>
                       </xsl:if>
                     </xsl:for-each>     
                   </xsl:when>
