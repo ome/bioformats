@@ -668,9 +668,12 @@ The Channel nodes are then linked to Pixels and no longer to Image.
               <xsl:attribute name="ID"><xsl:value-of select="$id"/></xsl:attribute>
             </xsl:element>
          </xsl:when>
+         <xsl:when test="local-name(.) = 'ROI'">
+            <xsl:apply-templates select="current()"/>
+         </xsl:when>
          <xsl:otherwise>
             <xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
-             <xsl:apply-templates select="@*|node()"/>
+              <xsl:apply-templates select="@*|node()"/>
             </xsl:element>
          </xsl:otherwise>
        </xsl:choose>
