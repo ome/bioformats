@@ -109,7 +109,7 @@
 		<xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="LightSourceIDKey"><xsd:selector xpath="OME:Instrument/OME:LightSource"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="MicrobeamManipulationIDKey"><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="OTFIDKey"><xsd:selector xpath="OME:OTF"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="OTFIDKey"><xsd:selector xpath="OME:Instrument/OME:OTF"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ObjectiveIDKey"><xsd:selector xpath="OME:Instrument/OME:Objective"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="PixelsIDKey"><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="PlateIDKey"><xsd:selector xpath="SPW:Plate"/><xsd:field xpath="@ID"/></xsd:key>
@@ -148,8 +148,8 @@
 		<xsd:keyref name="ImagePixelsChannelFilterSetIDKeyRef" refer="OME:FilterSetIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:FilterSetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelOTFIDKeyRef" refer="OME:OTFIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:OTFRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelSecondaryEmissionFilterFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelSecondaryExcitationFilterFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelSecondaryEmissionFilterFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@SecondaryEmissionFilter"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelSecondaryExcitationFilterFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@SecondaryExcitationFilter"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:EmissionFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetExcitationFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:ExcitationFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
