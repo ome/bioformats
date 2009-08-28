@@ -1195,7 +1195,7 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
   </xsl:template>
 
   <xsl:template match="AML:*">
-    <xsl:element name="{name()}" namespace="http://www.openmicroscopy.org/Schemas/AML/2009-09">
+  	<xsl:element name="{name()}" namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09">
       <xsl:apply-templates select="@*|node()"/>
     </xsl:element>
   </xsl:template>
