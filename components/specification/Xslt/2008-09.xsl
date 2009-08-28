@@ -363,6 +363,7 @@ Rename attribute OMEName into UserName
       <xsl:for-each select="*">
         <xsl:attribute name="{local-name(.)}">
         <xsl:choose>
+        <!--
           <xsl:when test="local-name(.) ='LensNA'">
             <xsl:call-template name="valueInInterval">
               <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
@@ -370,6 +371,7 @@ Rename attribute OMEName into UserName
               <xsl:with-param name="max" select="1.5"/>
             </xsl:call-template>
           </xsl:when>
+          -->
           <xsl:when test="local-name(.)='Correction' or local-name(.)='Immersion'">
               <xsl:call-template name="transformEnumerationValue">
                 <xsl:with-param name="mappingName" select="'ObjectiveStuff'"/>
