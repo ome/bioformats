@@ -537,9 +537,7 @@ Due to the sequence constraints, we have to transform it that way.
       <xsl:with-param name="node" select="current()"/>
     </xsl:call-template>
   </xsl:for-each>
-
  </xsl:template>
-
 
 <!-- Rename attribute NumPlanes into PlateCount -->
 <xsl:template match="OME:TiffData">
@@ -888,6 +886,13 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <!-- Move the ROI to its new name space -->
  <xsl:template match="OME:ROI">
   <xsl:element name="ROI" namespace="{$newROINS}">
+    <xsl:apply-templates select="@*|node()"/>
+  </xsl:element>
+ </xsl:template>
+ 
+ <!-- Move the ROI to its new name space -->
+ <xsl:template match="OME:Union">
+  <xsl:element name="Union" namespace="{$newROINS}">
     <xsl:apply-templates select="@*|node()"/>
   </xsl:element>
  </xsl:template>
