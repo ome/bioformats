@@ -63,7 +63,8 @@ public class NativeND2Reader extends FormatReader {
 
   // -- Constants --
 
-  public static final int ND2_MAGIC_BYTES = 0x6a502020;
+  public static final long ND2_MAGIC_BYTES_1 = 0xdacebe0a;
+  public static final long ND2_MAGIC_BYTES_2 = 0x6a502020;
 
   // -- Fields --
 
@@ -99,6 +100,7 @@ public class NativeND2Reader extends FormatReader {
   /** Constructs a new ND2 reader. */
   public NativeND2Reader() {
     super("Nikon ND2", new String[] {"nd2", "jp2"});
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -107,8 +109,9 @@ public class NativeND2Reader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    stream.seek(4);
-    return stream.readInt() == ND2_MAGIC_BYTES;
+    long magic1 = stream.readInt() & 0xffffffff;
+    long magic2 = stream.readInt() & 0xffffffff;
+    return magic1 == ND2_MAGIC_BYTES_1 || magic2 == ND2_MAGIC_BYTES_2;
   }
 
   /**
@@ -159,6 +162,7 @@ public class NativeND2Reader extends FormatReader {
       // plane is not compressed
       readPlane(in, x, y, w, h, buf);
     }
+
     return buf;
   }
 
@@ -328,6 +332,24 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
+      // make sure the channel count is reasonable
+      // sometimes the XML will indicate that there are multiple channels,
+      // when in fact there is only one channel
+
+      long firstOffset = imageOffsets.get(0);
+      long secondOffset =
+        imageOffsets.size() > 1 ? imageOffsets.get(1) : in.length();
+      int planeSize = getSizeX() * getSizeY() * getSizeC() *
+        FormatTools.getBytesPerPixel(getPixelType());
+      if (isLossless) planeSize /= 4;
+
+      if (secondOffset - firstOffset < planeSize) {
+        debug("Correcting SizeC: was " + getSizeC());
+        debug("plane size = " + planeSize);
+        debug("available bytes = " + (secondOffset - firstOffset));
+        core[0].sizeC = 1;
+      }
+
       // calculate the image count
       for (int i=0; i<getSeriesCount(); i++) {
         core[i].imageCount = getSizeZ() * getSizeT() * getSizeC();
@@ -359,6 +381,7 @@ public class NativeND2Reader extends FormatReader {
 
       if (getSizeC() > 1 && getDimensionOrder().indexOf("C") == -1) {
         core[0].dimensionOrder = "C" + getDimensionOrder();
+        fieldIndex++;
       }
 
       core[0].dimensionOrder = "XY" + getDimensionOrder();
@@ -375,7 +398,7 @@ public class NativeND2Reader extends FormatReader {
         else {
           char axis = getDimensionOrder().charAt(nextChar++);
           if (axis == 'Z') lengths[i] = getSizeZ();
-          else if (axis == 'C') lengths[i] = getSizeC();
+          else if (axis == 'C') lengths[i] = 1;
           else if (axis == 'T') lengths[i] = getSizeT();
         }
       }
@@ -1019,13 +1042,17 @@ public class NativeND2Reader extends FormatReader {
         if (runtype.endsWith("ZStackLoop")) {
           if (getSizeZ() == 0) {
             core[0].sizeZ = Integer.parseInt(value);
-            core[0].dimensionOrder = "Z" + getDimensionOrder();
+            if (getDimensionOrder().indexOf("Z") == -1) {
+              core[0].dimensionOrder = "Z" + getDimensionOrder();
+            }
           }
         }
         else if (runtype.endsWith("TimeLoop")) {
           if (getSizeT() == 0) {
             core[0].sizeT = Integer.parseInt(value);
-            core[0].dimensionOrder = "T" + getDimensionOrder();
+            if (getDimensionOrder().indexOf("T") == -1) {
+              core[0].dimensionOrder = "T" + getDimensionOrder();
+            }
           }
         }
       }
@@ -1033,7 +1060,9 @@ public class NativeND2Reader extends FormatReader {
     else if (key.equals("VirtualComponents")) {
       if (getSizeC() == 0) {
         core[0].sizeC = Integer.parseInt(value);
-        core[0].dimensionOrder += "C" + getDimensionOrder();
+        if (getDimensionOrder().indexOf("C") == -1) {
+          core[0].dimensionOrder += "C" + getDimensionOrder();
+        }
       }
     }
     else if (key.startsWith("TextInfoItem") || key.endsWith("TextInfoItem")) {
@@ -1077,7 +1106,9 @@ public class NativeND2Reader extends FormatReader {
             }
             else if (dim.startsWith("T")) core[0].sizeT = v;
             else if (dim.startsWith("Z")) core[0].sizeZ = v;
-            else core[0].sizeC = v;
+            else {
+              core[0].sizeC = v;
+            }
           }
 
           core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();

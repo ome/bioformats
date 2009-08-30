@@ -165,6 +165,7 @@ public class DicomReader extends FormatReader {
       return TYPES.get(new Integer(tag)) != null;
     }
     catch (NullPointerException e) { }
+    catch (FormatException e) { }
     return false;
   }
 
@@ -269,7 +270,7 @@ public class DicomReader extends FormatReader {
 
         for (int row=0; row<h; row++) {
           int src = (row + y) * srcRowLen + x * bpp;
-          int dest = h * rowLen * c + row * rowLen;
+          int dest = (h * c + row) * rowLen;
           int len = (int) Math.min(rowLen, t.length - src - 1);
           if (len < 0) break;
           System.arraycopy(t, src, buf, dest, len);
@@ -281,6 +282,7 @@ public class DicomReader extends FormatReader {
       long end = no < offsets.length - 1 ? offsets[no + 1] : in.length();
       byte[] b = new byte[(int) (end - in.getFilePointer())];
       in.read(b);
+
       if (b[2] != (byte) 0xff) {
         byte[] tmp = new byte[b.length + 1];
         tmp[0] = b[0];
@@ -289,9 +291,20 @@ public class DicomReader extends FormatReader {
         System.arraycopy(b, 2, tmp, 3, b.length - 2);
         b = tmp;
       }
-      if (b[3] >= (byte) 0xf0) {
+      if ((b[3] & 0xff) >= 0xf0) {
         b[3] -= (byte) 0x30;
       }
+
+      int pt = b.length - 2;
+      while (pt >= 0 && b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9) {
+        pt--;
+      }
+      if (pt < b.length - 2) {
+        byte[] tmp = b;
+        b = new byte[pt + 2];
+        System.arraycopy(tmp, 0, b, 0, b.length);
+      }
+
       Codec codec = null;
       CodecOptions options = new CodecOptions();
       options.littleEndian = isLittleEndian();
@@ -419,12 +432,15 @@ public class DicomReader extends FormatReader {
       if (in.getFilePointer() + 4 >= in.length()) {
         break;
       }
+      debug("Reading tag from " + in.getFilePointer());
       int tag = getNextTag(in);
 
-      //if (elementLength <= 0 || tag < 0) continue;
       if (elementLength <= 0) continue;
 
       oddLocations = (location & 1) != 0;
+
+      debug("  tag=" + tag + " len=" + elementLength +
+        " fp=" + in.getFilePointer());
 
       String s = null;
       switch (tag) {
@@ -510,6 +526,7 @@ public class DicomReader extends FormatReader {
           break;
         case PIXEL_DATA:
         case ITEM:
+        case 0xffee000:
           if (elementLength != 0) {
             baseOffset = in.getFilePointer();
             addInfo(tag, location);
@@ -593,9 +610,7 @@ public class DicomReader extends FormatReader {
             if (buf[q] == (byte) 0xff && buf[q + 1] == secondCheck &&
               buf[q + 2] == (byte) 0xff)
             {
-              if (isJPEG ||
-                (isJP2K && buf[q + 2] == (byte) 0xff && buf[q + 3] == 0x51))
-              {
+              if (isJPEG || (isJP2K && buf[q + 3] == 0x51)) {
                 found = true;
                 offsets[i] = in.getFilePointer() + q - n;
                 break;
@@ -639,14 +654,16 @@ public class DicomReader extends FormatReader {
       String[] patternFiles = pattern.getFiles();
       if (patternFiles == null) patternFiles = new String[0];
       Arrays.sort(patternFiles);
-      String[] files = directory.list();
+      String[] files = directory.list(true);
       Arrays.sort(files);
       for (int i=0; i<files.length; i++) {
         String file = new Location(directory, files[i]).getAbsolutePath();
+        debug("Checking file " + file);
         if (!files[i].equals(currentId) && !file.equals(currentId) &&
           isThisType(files[i]) && Arrays.binarySearch(patternFiles, file) >= 0)
         {
           RandomAccessInputStream stream = new RandomAccessInputStream(file);
+          if (!isThisType(stream)) continue;
           stream.order(true);
 
           stream.seek(128);
@@ -933,7 +950,7 @@ public class DicomReader extends FormatReader {
     // match the known codes. It is possible that these two
     // bytes are part of a 32-bit length for an implicit VR.
 
-    vr = (b[0] << 8) + b[1];
+    vr = ((b[0] & 0xff) << 8) | (b[1] & 0xff);
     switch (vr) {
       case OB:
       case OW:
@@ -974,27 +991,35 @@ public class DicomReader extends FormatReader {
         }
         int n1 = DataTools.bytesToShort(b, 2, 2, stream.isLittleEndian());
         int n2 = DataTools.bytesToShort(b, 2, 2, !stream.isLittleEndian());
-        if (n1 < 0) return n2;
-        if (n2 < 0) return n1;
-        int min = (int) Math.min(n1, n2);
-        if (min == n2 && (min % 2) != 0) return n1;
-        return min;
+        if (n1 < 0 || n1 + stream.getFilePointer() > stream.length()) return n2;
+        if (n2 < 0 || n2 + stream.getFilePointer() > stream.length()) return n1;
+        return n1;
+      case 0xffff:
+        vr = IMPLICIT_VR;
+        return 8;
       default:
         vr = IMPLICIT_VR;
         int len = DataTools.bytesToInt(b, stream.isLittleEndian());
-        if (len + stream.getFilePointer() > stream.length()) {
+        if (len + stream.getFilePointer() > stream.length() || len < 0) {
           len = DataTools.bytesToInt(b, 2, 2, stream.isLittleEndian());
         }
         return len;
     }
   }
 
-  private int getNextTag(RandomAccessInputStream stream) throws IOException {
-    int groupWord = stream.readShort();
+  private int getNextTag(RandomAccessInputStream stream)
+    throws FormatException, IOException
+  {
+    long fp = stream.getFilePointer();
+    int groupWord = stream.readShort() & 0xffff;
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
       core[0].littleEndian = false;
       groupWord = 0x0008;
       stream.order(false);
+    }
+    else if (groupWord == 0xfeff || groupWord == 0xfffe) {
+      stream.skipBytes(6);
+      return getNextTag(stream);
     }
 
     int elementWord = stream.readShort();
@@ -1002,10 +1027,25 @@ public class DicomReader extends FormatReader {
 
     elementLength = getLength(stream, tag);
     if (elementLength > stream.length()) {
-      stream.seek(stream.getFilePointer() - 8);
+      stream.seek(fp);
       core[0].littleEndian = !isLittleEndian();
       stream.order(isLittleEndian());
-      return getNextTag(stream);
+
+      groupWord = stream.readShort() & 0xffff;
+      elementWord = stream.readShort();
+      tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
+      elementLength = getLength(stream, tag);
+
+      if (elementLength > stream.length()) {
+        throw new FormatException("Invalid tag length " + elementLength);
+      }
+      return tag;
+    }
+
+    if (elementLength < 0 && groupWord == 0x7fe0) {
+      stream.skipBytes(12);
+      elementLength = stream.readInt();
+      if (elementLength < 0) elementLength = stream.readInt();
     }
 
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
