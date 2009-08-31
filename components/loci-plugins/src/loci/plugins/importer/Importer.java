@@ -935,7 +935,7 @@ public class Importer {
     }
     else if (options.isViewView5D()) {
       WindowManager.setTempCurrentImage(imp);
-      IJ.run("View5D ", "");
+      IJ.run("start viewer", "");
     }
     else {
       // NB: ImageJ 1.39+ is required for hyperstacks
