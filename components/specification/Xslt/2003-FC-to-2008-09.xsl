@@ -562,7 +562,64 @@
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
+
+	<!-- 
+	Convert namespace of PlateRef to SPW
+	-->
+	<xsl:template match="OME:PlateRef">
+		<!-- not in Image any more -->
+		<!-- TODO convert to well sample? -->
+		<xsl:comment>
+		PlateRef ID="<xsl:value-of select="@ID"/>" not supported in this schema.
+		</xsl:comment>
+	</xsl:template>
+
+	<!-- 
+	Projection rename Zstart and Zstop
+	-->
+	<xsl:template match="OME:Projection">
+		<xsl:element name="Projection" namespace="{$newOMENS}">
+			<xsl:apply-templates select="node()"/>
+				<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Zstart'">
+						<xsl:attribute name="ZStart">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='Zstop'">
+						<xsl:attribute name="ZStop">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
 	
+	<!-- 
+	Time rename Tstart and Tstop
+	-->
+	<xsl:template match="OME:Time">
+		<xsl:element name="Time" namespace="{$newOMENS}">
+			<xsl:apply-templates select="node()"/>
+				<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Tstart'">
+						<xsl:attribute name="TStart">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='Tstop'">
+						<xsl:attribute name="TStop">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
