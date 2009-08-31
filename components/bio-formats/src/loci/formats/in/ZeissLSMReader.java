@@ -282,7 +282,7 @@ public class ZeissLSMReader extends FormatReader {
     debug("ZeissLSMReader.initFile(" + id + ")");
     super.initFile(id);
 
-    if (!checkSuffix(id, MDB_SUFFIX)) {
+    if (!checkSuffix(id, MDB_SUFFIX) && isGroupFiles()) {
       // look for an .mdb file
       Location parentFile = new Location(id).getAbsoluteFile().getParentFile();
       String[] fileList = parentFile.list();
@@ -304,7 +304,10 @@ public class ZeissLSMReader extends FormatReader {
       }
       lsmFilenames = new String[] {id};
     }
-    else lsmFilenames = parseMDB(id);
+    else if (checkSuffix(id, MDB_SUFFIX)) {
+      lsmFilenames = parseMDB(id);
+    }
+    else lsmFilenames = new String[] {id};
 
     if (lsmFilenames.length == 0) {
       throw new FormatException("LSM files were not found.");
