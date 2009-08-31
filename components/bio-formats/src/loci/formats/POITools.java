@@ -106,7 +106,8 @@ public class POITools {
   }
 
   public int getFileSize(String name) throws FormatException {
-    return fileSizes.get(name).intValue();
+    Integer numBytes = fileSizes.get(name);
+    return numBytes.intValue();
   }
 
   public Vector<String> getDocumentList() throws FormatException {
@@ -191,7 +192,8 @@ public class POITools {
     for (String file : fileList) {
       setupFile(file);
       try {
-        fileSizes.put(file, (Integer) r.getVar(makeVarName("numBytes")));
+        Integer numBytes = (Integer) r.getVar(makeVarName("numBytes"));
+        fileSizes.put(file, numBytes);
       }
       catch (ReflectException e) {
         throw new FormatException(e);
