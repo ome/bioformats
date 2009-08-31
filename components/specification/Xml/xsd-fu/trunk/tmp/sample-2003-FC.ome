@@ -89,7 +89,9 @@
 			<Magnification>3.14159E0</Magnification>
 		</Objective>
 		<Filter ID="urn:lsid:-.-:Filter:1">
-				<FilterSet Manufacturer="Manufacturer10" Model="Model10" LotNumber="LotNumber0"/>
+			<ExFilter Manufacturer="Manufacturer10-1" Model="Model10-1" LotNumber="LotNumber0-1" Type="BandPass"/>
+			<Dichroic Manufacturer="Manufacturer10-2" Model="Model10-2" LotNumber="LotNumber0-2"/>
+			<EmFilter Manufacturer="Manufacturer10-3" Model="Model10-3" LotNumber="LotNumber0-3" Type="LongPass"/>
 		</Filter>
 		<Filter ID="urn:lsid:-.-:Filter:2">
 				<FilterSet Manufacturer="Manufacturer11" Model="Model11" LotNumber="LotNumber1"/>

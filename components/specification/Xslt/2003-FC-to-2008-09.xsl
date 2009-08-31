@@ -461,6 +461,108 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<!--
+	Turn old Filter into FilterSet, Filters, & Dichroic
+	TODO - order is not guaranteed if multiple Filter elements in one Instrument
+	-->
+	<xsl:template match="OME:Filter">
+	  <xsl:variable name="filterID" select="@ID"/>
+	<!-- Currently ignore FilterSet as cannot see how to make one with available info.
+		<xsl:for-each select="*  [local-name(.) = 'FilterSet']">
+			<xsl:element name="FilterSet" namespace="{$newOMENS}">
+				<xsl:attribute name="ID">FilterSet:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:apply-templates select="@*"/>
+				<xsl:value-of select="."/>
+			</xsl:element>
+		</xsl:for-each>
+	-->
+		<xsl:for-each select="*  [local-name(.) = 'ExFilter']">
+			<!-- make new FilterSet to hold content of old Filter's contents -->
+			<xsl:element name="FilterSet" namespace="{$newOMENS}">
+				<xsl:attribute name="ID">FilterSet:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:attribute name="ExFilterRef">Filter:Ex:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:attribute name="DichroicRef">Dichroic:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:attribute name="EmFilterRef">Filter:Em:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:attribute name="Manufacturer">GeneratedByOMEXslt</xsl:attribute>
+				<xsl:attribute name="Model">2003-FC-to-2008-9</xsl:attribute>
+			</xsl:element>
+			<xsl:element name="Filter" namespace="{$newOMENS}">
+				<xsl:attribute name="ID">Filter:Ex:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:apply-templates select="@*"/>
+				<xsl:value-of select="."/>
+			</xsl:element>
+		</xsl:for-each>
+		<xsl:for-each select="*  [local-name(.) = 'EmFilter']">
+			<xsl:element name="Filter" namespace="{$newOMENS}">
+				<xsl:attribute name="ID">Filter:Em:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:apply-templates select="@*"/>
+				<xsl:value-of select="."/>
+			</xsl:element>
+		</xsl:for-each>
+		<xsl:for-each select="*  [local-name(.) = 'Dichroic']">
+			<xsl:element name="Dichroic" namespace="{$newOMENS}">
+				<xsl:attribute name="ID">Dichroic:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:apply-templates select="@*"/>
+				<xsl:value-of select="."/>
+			</xsl:element>
+		</xsl:for-each>
+	</xsl:template>
+
+	<!--
+	In OTF rename FilterRef and fix ID in new FilterSetRef
+	-->
+	<xsl:template match="OME:OTF">
+		<xsl:element name="OTF" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'OpticalAxisAvrg')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name() = 'OpticalAxisAvrg']">
+				<xsl:attribute name="OpticalAxisAveraged">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="*  [local-name(.) = 'ObjectiveRef']">
+				<xsl:element name="ObjectiveRef" namespace="{$newOMENS}">
+					<xsl:apply-templates select="@*"/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="*  [local-name(.) = 'FilterRef']">
+				<xsl:variable name="filterRefID" select="@ID"/>
+				<xsl:element name="FilterSetRef" namespace="{$newOMENS}">
+					<xsl:attribute name="ID">FilterSet:<xsl:value-of select="$filterRefID"/></xsl:attribute>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="*  [local-name(.) = 'BinaryFile']">
+				<xsl:element name="BinaryFile" namespace="{$newBINNS}">
+					<xsl:apply-templates select="@*|node()"/>
+				</xsl:element>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+	
+	<!-- 
+	In Bin:BinData add Length attribute.
+	-->
+	<xsl:template match="Bin:BinData">
+		<xsl:element name="Bin:BinData" namespace="{$newBINNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:variable name="contentLength" select="."/>
+			<xsl:attribute name="Length"><xsl:value-of select="string-length($contentLength)"/></xsl:attribute>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<!-- 
+	Convert namespace of ScreenRef to SPW
+	-->
+	<xsl:template match="OME:ScreenRef">
+		<xsl:element name="SPW:ScreenRef" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+	
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
