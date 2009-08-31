@@ -61,17 +61,20 @@
 		<LightSource ID="urn:lsid:-.-:LightSource:1" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
 			<Filament Type="Incandescent" Power="3.14159E0"/>
 		</LightSource>
+		<LightSource ID="urn:lsid:-.-:LightSource:1" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
+			<Arc Type="Hg-Xe" Power="3.14159E0"/>
+		</LightSource>
 		<LightSource ID="urn:lsid:-.-:LightSource:1" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3">
-			<Laser Type="Excimer" Medium="Ti-Sapphire" Wavelength="2" FrequencyDoubled="false" Tunable="false" Pulse="CW"
+			<Laser Type="Excimer" Medium="Ti-Sapphire" Wavelength="2" FrequencyDoubled="true" Tunable="false" Pulse="CW"
 				 Power="3.14159E0">
 				<Pump ID="urn:lsid:-.-:LightSource:1"/>
 			</Laser>
 		</LightSource>
 		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="CCD" Manufacturer="Manufacturer4"
 			 Model="Model4" SerialNumber="SerialNumber4"/>
-		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="CCD" Manufacturer="Manufacturer5"
+		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="Analog-Video" Manufacturer="Manufacturer5"
 			 Model="Model5" SerialNumber="SerialNumber5"/>
-		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="CCD" Manufacturer="Manufacturer6"
+		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="Life-time-Imaging" Manufacturer="Manufacturer6"
 			 Model="Model6" SerialNumber="SerialNumber6"/>
 		<Objective ID="urn:lsid:-.-:Objective:1" Manufacturer="Manufacturer7" Model="Model7" SerialNumber="SerialNumber7">
 			<LensNA>3.14159E0</LensNA>
@@ -247,261 +250,7 @@
 			</STD:Element>
 		</STD:SemanticType>
 	</STD:SemanticTypeDefinitions>
-	<AM:AnalysisModuleLibrary>
-		<AM:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" FeatureIterator="FeatureIterator0" NewFeatureName="NewFeatureName0"
-			 Category="Category0" ProgramID="ProgramID0" ModuleName="ModuleName0" ID="urn:lsid:-.-:Module:1">
-			<AM:Description>Description0</AM:Description>
-			<AM:Declaration>
-				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName1">
-					<AM:LookupTable Name="Name45">
-						<AM:Entry Value="Value1" Label="Label1"/>
-						<AM:Entry Value="Value3" Label="Label3"/>
-						<AM:Entry Value="Value5" Label="Label5"/>
-						<AM:Description>Description6</AM:Description>
-					</AM:LookupTable>
-					<AM:Description>Description7</AM:Description>
-				</AM:FormalInput>
-				<AM:FormalOutput IBelongTo="[Feature]" Count="+" Name=" " SemanticTypeName="SemanticTypeName1">
-					<AM:Description>Description3</AM:Description>
-				</AM:FormalOutput>
-			</AM:Declaration>
-				<CLI:ExecutionInstructions ExecutionPoint="executeGlobal" MakesNewFeature="false">
-					<CLI:CommandLine>
-						<CLI:Parameter>
-							<CLI:InputSubString>
-								<CLI:Input Location="Location0" DivideBy="DivideBy0" MultiplyBy="MultiplyBy0"/>
-							</CLI:InputSubString>
-							<CLI:InputSubString>
-								<CLI:RawText>RawText0</CLI:RawText>
-							</CLI:InputSubString>
-							<CLI:InputSubString>
-								<CLI:RawText>RawText1</CLI:RawText>
-							</CLI:InputSubString>
-						</CLI:Parameter>
-					</CLI:CommandLine>
-					<CLI:STDIN>
-						<CLI:InputRecord>
-							<CLI:Index>
-								<CLI:Input Location="Location2" DivideBy="DivideBy2" MultiplyBy="MultiplyBy2"/>
-								<CLI:Input Location="Location3" DivideBy="DivideBy3" MultiplyBy="MultiplyBy3"/>
-								<CLI:Input Location="Location4" DivideBy="DivideBy4" MultiplyBy="MultiplyBy4"/>
-							</CLI:Index>
-							<CLI:Index>
-								<CLI:Input Location="Location5" DivideBy="DivideBy5" MultiplyBy="MultiplyBy5"/>
-								<CLI:Input Location="Location6" DivideBy="DivideBy6" MultiplyBy="MultiplyBy6"/>
-								<CLI:Input Location="Location7" DivideBy="DivideBy7" MultiplyBy="MultiplyBy7"/>
-							</CLI:Index>
-							<CLI:Index>
-								<CLI:Input Location="Location8" DivideBy="DivideBy8" MultiplyBy="MultiplyBy8"/>
-								<CLI:Input Location="Location9" DivideBy="DivideBy9" MultiplyBy="MultiplyBy9"/>
-								<CLI:Input Location="Location10" DivideBy="DivideBy10" MultiplyBy="MultiplyBy10"/>
-							</CLI:Index>
-								<CLI:CustomRecord>
-									<CLI:InputSubString>
-										<CLI:RawText>RawText2</CLI:RawText>
-									</CLI:InputSubString>
-									<CLI:InputSubString>
-										<CLI:RawText>RawText3</CLI:RawText>
-									</CLI:InputSubString>
-									<CLI:InputSubString>
-										<CLI:XYPlane BPP="8" Format="RAW" XYPlaneID="XYPlaneID0" Return="FilePath" Pixels="Pixels0">
-											<CLI:theZ>
-												<CLI:Match XYPlaneID="XYPlaneID0"/>
-											</CLI:theZ>
-											<CLI:theT>
-												<CLI:Match XYPlaneID="XYPlaneID0"/>
-											</CLI:theT>
-											<CLI:theW>
-												<CLI:Match XYPlaneID="XYPlaneID0"/>
-											</CLI:theW>
-										</CLI:XYPlane>
-									</CLI:InputSubString>
-								</CLI:CustomRecord>
-						</CLI:InputRecord>
-						<CLI:InputRecord>
-							<CLI:Index>
-								<CLI:Input Location="Location29" DivideBy="DivideBy25" MultiplyBy="MultiplyBy25"/>
-								<CLI:Input Location="Location30" DivideBy="DivideBy26" MultiplyBy="MultiplyBy26"/>
-								<CLI:Input Location="Location31" DivideBy="DivideBy27" MultiplyBy="MultiplyBy27"/>
-							</CLI:Index>
-							<CLI:Index>
-								<CLI:Input Location="Location32" DivideBy="DivideBy28" MultiplyBy="MultiplyBy28"/>
-								<CLI:Input Location="Location33" DivideBy="DivideBy29" MultiplyBy="MultiplyBy29"/>
-								<CLI:Input Location="Location34" DivideBy="DivideBy30" MultiplyBy="MultiplyBy30"/>
-							</CLI:Index>
-							<CLI:Index>
-								<CLI:Input Location="Location35" DivideBy="DivideBy31" MultiplyBy="MultiplyBy31"/>
-								<CLI:Input Location="Location36" DivideBy="DivideBy32" MultiplyBy="MultiplyBy32"/>
-								<CLI:Input Location="Location37" DivideBy="DivideBy33" MultiplyBy="MultiplyBy33"/>
-							</CLI:Index>
-								<CLI:CustomRecord>
-									<CLI:InputSubString>
-										<CLI:RawImageFilePath Pixels="Pixels2"/>
-									</CLI:InputSubString>
-									<CLI:InputSubString>
-										<CLI:RawImageFilePath Pixels="Pixels2"/>
-									</CLI:InputSubString>
-									<CLI:InputSubString>
-										<CLI:XYPlane BPP="8" Format="RAW" XYPlaneID="XYPlaneID4" Return="FilePath" Pixels="Pixels3">
-											<CLI:theZ>
-												<CLI:Match XYPlaneID="XYPlaneID4"/>
-											</CLI:theZ>
-											<CLI:theT>
-												<CLI:IterateRange>
-													<CLI:Start Location="Location19"/>
-													<CLI:End Location="Location20"/>
-													<CLI:OutputTo Location="Location97"/>
-													<CLI:OutputTo Location="Location98"/>
-													<CLI:OutputTo Location="Location99"/>
-												</CLI:IterateRange>
-											</CLI:theT>
-											<CLI:theW>
-												<CLI:UseValue Location="Location24"/>
-											</CLI:theW>
-										</CLI:XYPlane>
-									</CLI:InputSubString>
-								</CLI:CustomRecord>
-						</CLI:InputRecord>
-						<CLI:InputRecord>
-							<CLI:Index>
-								<CLI:Input Location="Location101" DivideBy="DivideBy58" MultiplyBy="MultiplyBy58"/>
-								<CLI:Input Location="Location102" DivideBy="DivideBy59" MultiplyBy="MultiplyBy59"/>
-								<CLI:Input Location="Location103" DivideBy="DivideBy60" MultiplyBy="MultiplyBy60"/>
-							</CLI:Index>
-							<CLI:Index>
-								<CLI:Input Location="Location104" DivideBy="DivideBy61" MultiplyBy="MultiplyBy61"/>
-								<CLI:Input Location="Location105" DivideBy="DivideBy62" MultiplyBy="MultiplyBy62"/>
-								<CLI:Input Location="Location106" DivideBy="DivideBy63" MultiplyBy="MultiplyBy63"/>
-							</CLI:Index>
-							<CLI:Index>
-								<CLI:Input Location="Location107" DivideBy="DivideBy64" MultiplyBy="MultiplyBy64"/>
-								<CLI:Input Location="Location108" DivideBy="DivideBy65" MultiplyBy="MultiplyBy65"/>
-								<CLI:Input Location="Location109" DivideBy="DivideBy66" MultiplyBy="MultiplyBy66"/>
-							</CLI:Index>
-								<CLI:CustomRecord>
-									<CLI:InputSubString>
-										<CLI:Input Location="Location34" DivideBy="DivideBy28" MultiplyBy="MultiplyBy28"/>
-									</CLI:InputSubString>
-									<CLI:InputSubString>
-										<CLI:RawText>RawText4</CLI:RawText>
-									</CLI:InputSubString>
-									<CLI:InputSubString>
-										<CLI:RawText>RawText5</CLI:RawText>
-									</CLI:InputSubString>
-								</CLI:CustomRecord>
-						</CLI:InputRecord>
-					</CLI:STDIN>
-					<CLI:STDOUT>
-						<CLI:OutputRecord RepeatCount="2" TerminateAt="TerminateAt3"/>
-						<CLI:OutputRecord RepeatCount="2" TerminateAt="TerminateAt4"/>
-						<CLI:OutputRecord RepeatCount="2" TerminateAt="TerminateAt5"/>
-					</CLI:STDOUT>
-				</CLI:ExecutionInstructions>
-		</AM:AnalysisModule>
-		<AM:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" FeatureIterator="FeatureIterator1" NewFeatureName="NewFeatureName1"
-			 Category="Category1" ProgramID="ProgramID1" ModuleName="ModuleName1" ID="urn:lsid:-.-:Module:1">
-			<AM:Description>Description4</AM:Description>
-			<AM:Declaration>
-				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName2">
-					<AM:LookupTable Name="Name22">
-						<AM:Entry Value="Value3" Label="Label3"/>
-						<AM:Entry Value="Value4" Label="Label4"/>
-						<AM:Entry Value="Value5" Label="Label5"/>
-						<AM:Description>Description5</AM:Description>
-					</AM:LookupTable>
-					<AM:Description>Description6</AM:Description>
-				</AM:FormalInput>
-				<AM:FormalOutput IBelongTo="[Feature]" Count="+" Name=" " SemanticTypeName="SemanticTypeName3">
-					<AM:Description>Description7</AM:Description>
-				</AM:FormalOutput>
-			</AM:Declaration>
-				<MLI:ExecutionInstructions ExecutionGranularity="G">
-					<MLI:FunctionInputs>
-						<MLI:Input>
-							<MLI:Scalar InputLocation="InputLocation0"/>
-						</MLI:Input>
-						<MLI:Input>
-							<MLI:PixelsArray FormalInput="FormalInput0" ID="ID000" ConvertToDatatype="uint8"/>
-						</MLI:Input>
-						<MLI:Input>
-							<MLI:Scalar InputLocation="InputLocation1"/>
-						</MLI:Input>
-					</MLI:FunctionInputs>
-					<MLI:FunctionOutputs>
-						<MLI:Output>
-							<MLI:Vector DecodeWith="DecodeWith0"/>
-						</MLI:Output>
-						<MLI:Output>
-							<MLI:Struct FormalOutput="FormalOutput0" ID="ID001"/>
-						</MLI:Output>
-						<MLI:Output>
-							<MLI:Scalar UseTemplate="UseTemplate0" OutputLocation="OutputLocation0"/>
-						</MLI:Output>
-					</MLI:FunctionOutputs>
-					<MLI:Templates>
-					</MLI:Templates>
-				</MLI:ExecutionInstructions>
-		</AM:AnalysisModule>
-		<AM:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" FeatureIterator="FeatureIterator2" NewFeatureName="NewFeatureName2"
-			 Category="Category2" ProgramID="ProgramID2" ModuleName="ModuleName2" ID="urn:lsid:-.-:Module:1">
-			<AM:Description>Description8</AM:Description>
-			<AM:Declaration>
-				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName4">
-					<AM:LookupTable Name="Name24">
-						<AM:Entry Value="Value6" Label="Label6"/>
-						<AM:Entry Value="Value7" Label="Label7"/>
-						<AM:Entry Value="Value8" Label="Label8"/>
-						<AM:Description>Description9</AM:Description>
-					</AM:LookupTable>
-					<AM:Description>Description10</AM:Description>
-				</AM:FormalInput>
-				<AM:FormalOutput IBelongTo="[Feature]" Count="+" Name=" " SemanticTypeName="SemanticTypeName5">
-					<AM:Description>Description11</AM:Description>
-				</AM:FormalOutput>
-			</AM:Declaration>
-				<MLI:ExecutionInstructions ExecutionGranularity="G">
-					<MLI:FunctionInputs>
-						<MLI:Input>
-							<MLI:PixelsArray FormalInput="FormalInput1" ID="ID002" ConvertToDatatype="uint8"/>
-						</MLI:Input>
-						<MLI:Input>
-							<MLI:Scalar InputLocation="InputLocation2"/>
-						</MLI:Input>
-						<MLI:Input>
-							<MLI:PixelsArray FormalInput="FormalInput2" ID="ID003" ConvertToDatatype="uint8"/>
-						</MLI:Input>
-					</MLI:FunctionInputs>
-					<MLI:FunctionOutputs>
-						<MLI:Output>
-							<MLI:PixelsArray FormalOutput="FormalOutput1" ID="ID004" ConvertToDatatype="uint8"/>
-						</MLI:Output>
-						<MLI:Output>
-							<MLI:PixelsArray FormalOutput="FormalOutput2" ID="ID005" ConvertToDatatype="uint8"/>
-						</MLI:Output>
-						<MLI:Output>
-							<MLI:Scalar UseTemplate="UseTemplate1" OutputLocation="OutputLocation1"/>
-						</MLI:Output>
-					</MLI:FunctionOutputs>
-					<MLI:Templates>
-					</MLI:Templates>
-				</MLI:ExecutionInstructions>
-		</AM:AnalysisModule>
-		<AM:Category Path="^ $">
-			<AM:Description>Description17</AM:Description>
-		</AM:Category>
-		<AM:Program Name="Name51" Version="Version1" ProgramID="ProgramID7">
-				<AM:InstallationScript>
-					<Bin:BinaryFile FileName="FileName9" Size="0">
-						<Bin:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF1234567890ABCDEF12345678" Compression="none"/>
-					</Bin:BinaryFile>
-				</AM:InstallationScript>
-				<AM:InstallationFile Format="Format1">
-					<Bin:BinaryFile FileName="FileName11" Size="0">
-						<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
-					</Bin:BinaryFile>
-				</AM:InstallationFile>
-		</AM:Program>
-	</AM:AnalysisModuleLibrary>
+	<!-- add back the AM stuff -->
 	<CA:CustomAttributes>
 	</CA:CustomAttributes>
 </OME>

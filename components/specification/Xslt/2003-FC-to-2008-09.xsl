@@ -115,6 +115,23 @@
 			<map from="Solid State" to="SolidState"/>
 			<map from="Free Electron" to="FreeElectron"/>
 		</mapping>
+		<mapping name="LaserMedium">
+			<map from="Metal Vapor" to="MetalVapor"/>
+			<map from="Nitrogen" to="N"/>
+			<map from="Argon" to="Ar"/>
+			<map from="Krypton" to="Kr"/>
+			<map from="Xenon" to="Xe"/>
+			<map from="Nd-Glass" to="NdGlass"/>
+			<map from="Nd-YAG" to="NdYAG"/>
+			<map from="Er-Glass" to="ErGlass"/>
+			<map from="Er-YAG" to="ErYAG"/>
+			<map from="Ho-YLF" to="HoYLF"/>
+			<map from="Ho-YAG" to="HoYAG"/>
+			<map from="Ti-Sapphire" to="TiSapphire"/>
+			<map from="Rhodamine-6G" to="Rhodamine6G"/>
+			<map from="Coumarin-C30" to="CoumarinC30"/>
+			<map from="e-" to="EMinus"/>
+		</mapping>
 	</xsl:variable>
 
 	<!-- Transform the value coming from an enumeration -->
@@ -259,15 +276,191 @@
 				</xsl:choose>
 			</xsl:for-each>
 			<!-- 
-		process the nodes: Need to check what AuxLightSourceRef becomes 
-		and review FilterRef
-		-->
+				process the nodes: Need to check what AuxLightSourceRef becomes 
+				and review FilterRef
+			-->
 			<xsl:for-each select="* [not(name() = 'AuxLightSourceRef')]">
 				<xsl:apply-templates select="node()"/>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
 
+	<!--
+	In LightSource get Power from child
+	-->
+	<xsl:template match="OME:LightSource">
+		<xsl:element name="LightSource" namespace="{$newOMENS}">
+			<xsl:variable name="power">
+				<xsl:for-each select="*">
+					<xsl:variable name="p" select="@Power"/>
+					<xsl:if test="$p != ''">
+						<xsl:value-of select="@Power"/>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:apply-templates select="@*"/>
+				<xsl:attribute name="Power">
+					<xsl:value-of select="$power"/>
+			</xsl:attribute>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!--
+	In Laser rename Tunable, convert FrequencyDoubled, remove Power
+	and update enumerations
+	-->
+	<xsl:template match="OME:Laser">
+		<xsl:element name="Laser" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'Power')]">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Pulse'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'LaserPulse'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName" select="'LaserType'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='Tunable'">
+						<xsl:attribute name="Tuneable">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='Medium'">
+						<xsl:attribute name="LaserMedium">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName" select="'LaserMedium'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='FrequencyDoubled'">
+						<xsl:attribute name="FrequencyMultiplication">
+							<xsl:variable name="double">
+								<xsl:value-of select="."/>
+							</xsl:variable>
+							<xsl:choose>
+								<xsl:when test="$double='true' or $double='t'">2</xsl:when>
+								<xsl:otherwise>1</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!--
+	In Arc update enumerations and remove Power
+	-->
+	<xsl:template match="OME:Arc">
+		<xsl:element name="Arc" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'Power')]">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'ArcType'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+	
+	<!--
+	In Filament remove Power
+	-->
+	<xsl:template match="OME:Filament">
+		<xsl:element name="Filament" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'Power')]">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+	
+	<!--
+	In Detector update enumerations
+	-->
+	<xsl:template match="OME:Detector">
+		<xsl:element name="Detector" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'DetectorType'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+	
+	<!--
+	In Objective add Correction, Immersion and move Magnification to CalibratedMagnification
+	-->
+	<xsl:template match="OME:Objective">
+		<xsl:element name="Objective" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:element name="Correction" namespace="{$newOMENS}">Unknown</xsl:element>
+			<xsl:element name="Immersion" namespace="{$newOMENS}">Unknown</xsl:element>
+			<xsl:for-each select="*  [local-name(.) = 'LensNA']">
+				<xsl:element name="LensNA" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="*  [local-name(.) = 'Magnification']">
+				<xsl:element name="CalibratedMagnification" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+	
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
