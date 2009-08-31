@@ -121,7 +121,7 @@ public class LeicaHandler extends DefaultHandler {
         coreMeta.interleaved = coreMeta.rgb;
         coreMeta.imageCount = coreMeta.sizeZ * coreMeta.sizeT;
         if (!coreMeta.rgb) coreMeta.imageCount *= coreMeta.sizeC;
-        coreMeta.indexed = true;
+        coreMeta.indexed = !coreMeta.rgb;
         coreMeta.falseColor = true;
 
         core.setElementAt(coreMeta, numDatasets);
