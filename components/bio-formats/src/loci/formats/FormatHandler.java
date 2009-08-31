@@ -176,6 +176,11 @@ public abstract class FormatHandler implements IFormatHandler {
   // -- Utility methods --
 
   /** Performs suffix matching for the given filename. */
+  public static boolean checkSuffix(String name, String suffix) {
+    return checkSuffix(name, new String[] {suffix});
+  }
+
+  /** Performs suffix matching for the given filename. */
   public static boolean checkSuffix(String name, String[] suffixList) {
     String lname = name.toLowerCase();
     for (int i=0; i<suffixList.length; i++) {
