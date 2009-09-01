@@ -991,6 +991,8 @@ public class DicomReader extends FormatReader {
         }
         int n1 = DataTools.bytesToShort(b, 2, 2, stream.isLittleEndian());
         int n2 = DataTools.bytesToShort(b, 2, 2, !stream.isLittleEndian());
+        n1 &= 0xffff;
+        n2 &= 0xffff;
         if (n1 < 0 || n1 + stream.getFilePointer() > stream.length()) return n2;
         if (n2 < 0 || n2 + stream.getFilePointer() > stream.length()) return n1;
         return n1;
@@ -1002,6 +1004,7 @@ public class DicomReader extends FormatReader {
         int len = DataTools.bytesToInt(b, stream.isLittleEndian());
         if (len + stream.getFilePointer() > stream.length() || len < 0) {
           len = DataTools.bytesToInt(b, 2, 2, stream.isLittleEndian());
+          len &= 0xffff;
         }
         return len;
     }
