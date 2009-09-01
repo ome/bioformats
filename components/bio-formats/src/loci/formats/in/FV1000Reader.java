@@ -581,18 +581,13 @@ public class FV1000Reader extends FormatReader {
       String[] prefixes = ptyPattern.split("%03d");
 
       // get first and last numbers for each block
-      int[] first = new int[prefixes.length - 1];
-      int[] last = new int[prefixes.length - 1];
+      int[] first = scanFormat(ptyPattern, ptyStart);
+      int[] last = scanFormat(ptyPattern, ptyEnd);
       int[] lengths = new int[prefixes.length - 1];
-      int index = 0;
       int totalFiles = 1;
       for (int i=0; i<first.length; i++) {
-        index += prefixes[i].length();
-        first[i] = Integer.parseInt(ptyStart.substring(index, index + 3));
-        last[i] = Integer.parseInt(ptyEnd.substring(index, index + 3));
         lengths[i] = last[i] - first[i] + 1;
         totalFiles *= lengths[i];
-        index += 3;
       }
 
       // add each .pty file
@@ -1273,6 +1268,66 @@ public class FV1000Reader extends FormatReader {
       return name;
     }
     return name.substring(0, name.length() - oldExt.length()) + newExt;
+  }
+
+  /* Return the numbers in the given string matching %..d style patterns */
+  private static int[] scanFormat(String pattern, String string)
+    throws FormatException
+  {
+    Vector<Integer> percentOffsets = new Vector<Integer>();
+    int offset = -1;
+    for (;;) {
+      offset = pattern.indexOf('%', offset + 1);
+      if (offset < 0 || offset + 1 >= pattern.length()) {
+        break;
+      }
+      if (pattern.charAt(offset + 1) == '%') {
+        continue;
+      }
+      percentOffsets.add(new Integer(offset));
+    }
+
+    int[] result = new int[percentOffsets.size()];
+    int patternOffset = 0;
+    offset = 0;
+    for (int i=0; i<result.length; i++) {
+      int percent = percentOffsets.get(i).intValue();
+      if (!string.regionMatches(offset, pattern, patternOffset,
+        percent - patternOffset))
+      {
+        throw new FormatException("String '" + string +
+          "' does not match format '" + pattern + "'");
+      }
+
+      offset += percent - patternOffset;
+      patternOffset = percent;
+
+      int endOffset = offset;
+      while (endOffset < string.length() &&
+        Character.isDigit(string.charAt(endOffset)))
+      {
+        endOffset++;
+      }
+      result[i] = Integer.parseInt(string.substring(offset, endOffset));
+      offset = endOffset;
+
+      while (++patternOffset < pattern.length() &&
+        pattern.charAt(patternOffset - 1) != 'd')
+      {
+        ; /* do nothing */
+      }
+    }
+
+    int remaining = pattern.length() - patternOffset;
+
+    if (string.length() - offset != remaining ||
+      !string.regionMatches(offset, pattern, patternOffset, remaining))
+    {
+      throw new FormatException("String '" + string +
+        "' does not match format '" + pattern + "'");
+    }
+
+    return result;
   }
 
 }
