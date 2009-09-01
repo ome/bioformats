@@ -26,7 +26,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -77,8 +77,8 @@ public class FlexReader extends FormatReader {
   /**
    * Mapping from server names stored in the .mea file to actual server names.
    */
-  private static Hashtable<String, String> serverMap =
-    new Hashtable<String, String>();
+  private static HashMap<String, String> serverMap =
+    new HashMap<String, String>();
 
   // -- Fields --
 
@@ -98,10 +98,11 @@ public class FlexReader extends FormatReader {
   private Vector<Float> xPositions, yPositions;
   private Vector<Float> xSizes, ySizes;
   private Vector<String> cameraIDs, objectiveIDs, lightSourceIDs;
-  private Hashtable<String, Vector<String>> lightSourceCombinationIDs;
+  private HashMap<String, Vector<String>> lightSourceCombinationIDs;
   private Vector<String> cameraRefs, binnings, objectiveRefs;
   private Vector<String> lightSourceCombinationRefs;
   private Vector<String> filterSets;
+  private HashMap<String, String> filterSetMap;
 
   private Vector<String> measurementFiles;
 
@@ -209,6 +210,7 @@ public class FlexReader extends FormatReader {
       wellRows = wellColumns = 0;
       xPositions = yPositions = null;
       filterSets = null;
+      filterSetMap = null;
       plateName = plateBarcode = null;
       nRows = nCols = 0;
     }
@@ -383,7 +385,8 @@ public class FlexReader extends FormatReader {
             store.setLightSourceSettingsLightSource(lightSources.get(0), i, c);
           }
           if (index < filterSets.size()) {
-            store.setLogicalChannelFilterSet(filterSets.get(index), i, c);
+            String filterSetID = filterSetMap.get(filterSets.get(index));
+            store.setLogicalChannelFilterSet(filterSetID, i, c);
           }
         }
       }
@@ -466,7 +469,7 @@ public class FlexReader extends FormatReader {
     if (lightSourceIDs == null) lightSourceIDs = new Vector<String>();
     if (objectiveIDs == null) objectiveIDs = new Vector<String>();
     if (lightSourceCombinationIDs == null) {
-      lightSourceCombinationIDs = new Hashtable<String, Vector<String>>();
+      lightSourceCombinationIDs = new HashMap<String, Vector<String>>();
     }
     if (lightSourceCombinationRefs == null) {
       lightSourceCombinationRefs = new Vector<String>();
@@ -475,6 +478,7 @@ public class FlexReader extends FormatReader {
     if (objectiveRefs == null) objectiveRefs = new Vector<String>();
     if (binnings == null) binnings = new Vector<String>();
     if (filterSets == null) filterSets = new Vector<String>();
+    if (filterSetMap == null) filterSetMap = new HashMap<String, String>();
 
     // parse factors from XML
     IFD ifd = ifds[wellRow][wellCol].get(0);
@@ -749,7 +753,7 @@ public class FlexReader extends FormatReader {
   private void groupFiles(String[] fileList, MetadataStore store)
     throws FormatException, IOException
   {
-    Hashtable<String, String> v = new Hashtable<String, String>();
+    HashMap<String, String> v = new HashMap<String, String>();
     for (String file : fileList) {
       int[] well = getWell(file);
       if (well[0] > nRows) nRows = well[0];
@@ -823,8 +827,8 @@ public class FlexReader extends FormatReader {
     private boolean populateCore = true;
     private int well = 0;
 
-    private Hashtable<String, String> filterMap;
-    private Hashtable<String, String> dichroicMap;
+    private HashMap<String, String> filterMap;
+    private HashMap<String, String> dichroicMap;
 
     private StringBuffer charData = new StringBuffer();
 
@@ -836,8 +840,8 @@ public class FlexReader extends FormatReader {
       this.store = store;
       this.populateCore = populateCore;
       this.well = well;
-      filterMap = new Hashtable<String, String>();
-      dichroicMap = new Hashtable<String, String>();
+      filterMap = new HashMap<String, String>();
+      dichroicMap = new HashMap<String, String>();
     }
 
     public void characters(char[] ch, int start, int length) {
@@ -1078,6 +1082,7 @@ public class FlexReader extends FormatReader {
         String filterSetID =
           MetadataTools.createLSID("FilterSet", 0, nextFilterSet);
         store.setFilterSetID(filterSetID, 0, nextFilterSet);
+        filterSetMap.put("FilterSet:" + attributes.getValue("ID"), filterSetID);
       }
       else if (qName.equals("SliderRef")) {
         String filterName = attributes.getValue("Filter");
