@@ -167,8 +167,8 @@
 	<!-- Actual schema changes -->
 
 	<!-- 
- Move Plate to new name space and rename ExternRef attribute.
- -->
+	Move Plate to new name space and rename ExternRef attribute.
+	-->
 	<xsl:template match="OME:Plate">
 		<xsl:element name="SPW:Plate" namespace="{$newSPWNS}">
 			<xsl:for-each select="@*">
@@ -190,8 +190,8 @@
 	</xsl:template>
 
 	<!-- 
- Move Screen to new name space and remove ExternRef attribute.
- -->
+	Move Screen to new name space and remove ExternRef attribute.
+	-->
 	<xsl:template match="OME:Screen">
 		<xsl:element name="SPW:Screen" namespace="{$newSPWNS}">
 			<xsl:for-each select="@* [not(name() = 'ExternRef')]">
@@ -204,8 +204,8 @@
 	</xsl:template>
 
 	<!-- 
- Renaming possible values of the attribute Type
- -->
+	Renaming possible values of the attribute Type
+	-->
 	<xsl:template match="OME:Experiment">
 		<xsl:element name="Experiment" namespace="{$newOMENS}">
 			<xsl:for-each select="@*">
@@ -230,8 +230,8 @@
 	</xsl:template>
 
 	<!--
- Rename ChannelInfo and remove elements
- -->
+	Rename ChannelInfo, remove element AuxLightSourceRef, process enums
+	-->
 	<xsl:template match="OME:ChannelInfo">
 		<xsl:element name="LogicalChannel" namespace="{$newOMENS}">
 			<xsl:for-each select="@*">
@@ -275,12 +275,8 @@
 					</xsl:when>
 				</xsl:choose>
 			</xsl:for-each>
-			<!-- 
-				process the nodes: Need to check what AuxLightSourceRef becomes 
-				and review FilterRef
-			-->
 			<xsl:for-each select="* [not(name() = 'AuxLightSourceRef')]">
-				<xsl:apply-templates select="node()"/>
+				<xsl:apply-templates select="."/>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
@@ -466,6 +462,15 @@
 	-->
 	<xsl:template match="OME:Filter" mode="OnlyFilterSet">
 	  <xsl:variable name="filterID" select="@ID"/>
+		<xsl:for-each select="*  [local-name(.) = 'FilterSet']">
+			<!-- make new but empty FilterSet -->
+			<xsl:element name="FilterSet" namespace="{$newOMENS}">
+				<xsl:attribute name="ID">FilterSet:<xsl:value-of select="$filterID"/></xsl:attribute>
+				<xsl:attribute name="Manufacturer"><xsl:value-of select="@Manufacturer"/></xsl:attribute>
+				<xsl:attribute name="Model"><xsl:value-of select="@Model"/></xsl:attribute>
+				<xsl:attribute name="LotNumber"><xsl:value-of select="@LotNumber"/></xsl:attribute>
+			</xsl:element>
+		</xsl:for-each>
 		<xsl:for-each select="*  [local-name(.) = 'ExFilter']">
 			<!-- make new FilterSet to hold content of old Filter's contents -->
 			<xsl:element name="FilterSet" namespace="{$newOMENS}">
@@ -514,8 +519,18 @@
 		</xsl:for-each>
 	</xsl:template>
 
+	<!-- 
+	Convert FilterRef to FilterSetRef
+	-->
+	<xsl:template match="OME:FilterRef">
+		<xsl:variable name="filterRefID" select="@ID"/>
+		<xsl:element name="FilterSetRef" namespace="{$newOMENS}">
+			<xsl:attribute name="ID">FilterSet:<xsl:value-of select="$filterRefID"/></xsl:attribute>
+		</xsl:element>
+	</xsl:template>
+
 	<!--
-	In OTF rename FilterRef and fix ID in new FilterSetRef
+	In OTF rename attribute OpticalAxisAvrg
 	-->
 	<xsl:template match="OME:OTF">
 		<xsl:element name="OTF" namespace="{$newOMENS}">
@@ -529,22 +544,7 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:for-each select="*  [local-name(.) = 'ObjectiveRef']">
-				<xsl:element name="ObjectiveRef" namespace="{$newOMENS}">
-					<xsl:apply-templates select="@*"/>
-				</xsl:element>
-			</xsl:for-each>
-			<xsl:for-each select="*  [local-name(.) = 'FilterRef']">
-				<xsl:variable name="filterRefID" select="@ID"/>
-				<xsl:element name="FilterSetRef" namespace="{$newOMENS}">
-					<xsl:attribute name="ID">FilterSet:<xsl:value-of select="$filterRefID"/></xsl:attribute>
-				</xsl:element>
-			</xsl:for-each>
-			<xsl:for-each select="*  [local-name(.) = 'BinaryFile']">
-				<xsl:element name="BinaryFile" namespace="{$newBINNS}">
-					<xsl:apply-templates select="@*|node()"/>
-				</xsl:element>
-			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -653,7 +653,6 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-
 
 	<!-- Rewriting all namespaces -->
 
@@ -775,9 +774,9 @@
 	</xsl:template>
 
 	<!-- 
-Controls if a value is greater than or less than depending on the type. 
-The types are greater or less.
--->
+	Controls if a value is greater than or less than depending on the type. 
+	The types are greater or less.
+	-->
 	<xsl:template name="isValueValid">
 		<xsl:param name="value"/>
 		<xsl:param name="control"/>
