@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -307,7 +308,7 @@ public class FV1000Reader extends FormatReader {
     wavelengths = new Vector<Integer>();
     illuminations = new Vector<String>();
 
-    String line = null, key = null, value = null, oifName = null;
+    String key = null, value = null, oifName = null;
 
     if (isOIB) {
       String infoFile = null;
@@ -330,10 +331,15 @@ public class FV1000Reader extends FormatReader {
 
       String s = DataTools.stripString(ras.readString((int) ras.length()));
       ras.close();
-      StringTokenizer lines = new StringTokenizer(s, "\n");
+      String[] lines = s.split("\n");
+
+      // sort the lines to ensure that the
+      // directory key is before the file names
+      Arrays.sort(lines);
+
       String directoryKey = null, directoryValue = null;
-      while (lines.hasMoreTokens()) {
-        line = lines.nextToken().trim();
+      for (String line : lines) {
+        line = line.trim();
         if (line.indexOf("=") != -1) {
           key = line.substring(0, line.indexOf("="));
           value = line.substring(line.indexOf("=") + 1);
@@ -350,7 +356,7 @@ public class FV1000Reader extends FormatReader {
 
           if (key.startsWith("Stream")) {
             if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
-            if (directoryKey != null) {
+            if (directoryKey != null && value.startsWith(directoryValue)) {
               oibMapping.put(value, "Root Entry" + File.separator +
                 directoryKey + File.separator + key);
             }
@@ -427,7 +433,7 @@ public class FV1000Reader extends FormatReader {
     previewNames = new Vector<String>();
     boolean laserEnabled = true;
 
-    String ptyStart = null, ptyEnd = null, ptyPattern = null;
+    String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
 
     Vector<String> lutNames = new Vector<String>();
     Hashtable<Integer, String> filenames = new Hashtable<Integer, String>();
