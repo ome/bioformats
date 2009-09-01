@@ -411,7 +411,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!--
 	In Detector update enumerations
 	-->
@@ -439,7 +439,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!--
 	In Objective add Correction, Immersion and move Magnification to CalibratedMagnification
 	-->
@@ -460,22 +460,12 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!--
-	Turn old Filter into FilterSet, Filters, & Dichroic
-	TODO - order is not guaranteed if multiple Filter elements in one Instrument
+	Turn old Filter into just FilterSet
 	-->
-	<xsl:template match="OME:Filter">
+	<xsl:template match="OME:Filter" mode="OnlyFilterSet">
 	  <xsl:variable name="filterID" select="@ID"/>
-	<!-- Currently ignore FilterSet as cannot see how to make one with available info.
-		<xsl:for-each select="*  [local-name(.) = 'FilterSet']">
-			<xsl:element name="FilterSet" namespace="{$newOMENS}">
-				<xsl:attribute name="ID">FilterSet:<xsl:value-of select="$filterID"/></xsl:attribute>
-				<xsl:apply-templates select="@*"/>
-				<xsl:value-of select="."/>
-			</xsl:element>
-		</xsl:for-each>
-	-->
 		<xsl:for-each select="*  [local-name(.) = 'ExFilter']">
 			<!-- make new FilterSet to hold content of old Filter's contents -->
 			<xsl:element name="FilterSet" namespace="{$newOMENS}">
@@ -486,6 +476,15 @@
 				<xsl:attribute name="Manufacturer">GeneratedByOMEXslt</xsl:attribute>
 				<xsl:attribute name="Model">2003-FC-to-2008-9</xsl:attribute>
 			</xsl:element>
+		</xsl:for-each>
+	</xsl:template>
+
+	<!--
+	Turn old Filter into just new Filters
+	-->
+	<xsl:template match="OME:Filter" mode="OnlyFilter">
+	  <xsl:variable name="filterID" select="@ID"/>
+		<xsl:for-each select="*  [local-name(.) = 'ExFilter']">
 			<xsl:element name="Filter" namespace="{$newOMENS}">
 				<xsl:attribute name="ID">Filter:Ex:<xsl:value-of select="$filterID"/></xsl:attribute>
 				<xsl:apply-templates select="@*"/>
@@ -499,6 +498,13 @@
 				<xsl:value-of select="."/>
 			</xsl:element>
 		</xsl:for-each>
+	</xsl:template>
+
+	<!--
+	Turn old Filter into just Dichroic
+	-->
+	<xsl:template match="OME:Filter" mode="OnlyDichroic">
+	  <xsl:variable name="filterID" select="@ID"/>
 		<xsl:for-each select="*  [local-name(.) = 'Dichroic']">
 			<xsl:element name="Dichroic" namespace="{$newOMENS}">
 				<xsl:attribute name="ID">Dichroic:<xsl:value-of select="$filterID"/></xsl:attribute>
@@ -541,7 +547,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- 
 	In Bin:BinData add Length attribute.
 	-->
@@ -553,7 +559,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- 
 	Convert namespace of ScreenRef to SPW
 	-->
@@ -596,7 +602,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- 
 	Time rename Tstart and Tstop
 	-->
@@ -619,6 +625,35 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
+
+	<!-- 
+	Instrument
+	-->
+	<xsl:template match="OME:Instrument">
+		<xsl:element name="Instrument" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name(.) = 'Filter' or local-name(.) = 'OTF')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+			<!-- 
+			Currently ignore Filter only containing a FilterSet as cannot see 
+			how to make one with available info.
+			-->
+			<xsl:for-each select="* [local-name(.) = 'Filter']">
+				<xsl:apply-templates select="." mode="OnlyFilterSet"/>
+			</xsl:for-each>
+			<xsl:for-each select="* [local-name(.) = 'Filter']">
+				<xsl:apply-templates select="." mode="OnlyFilter"/>
+			</xsl:for-each>
+			<xsl:for-each select="* [local-name(.) = 'Filter']">
+				<xsl:apply-templates select="." mode="OnlyDichroic"/>
+			</xsl:for-each>
+			<xsl:for-each select="* [local-name(.) = 'OTF']">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
 
 	<!-- Rewriting all namespaces -->
 
