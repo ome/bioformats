@@ -160,7 +160,7 @@
 				 isOn="false"/>
 			<Projection Zstart="0" Zstop="0"/>
 			<Time Tstart="0" Tstop="0"/>
-			<ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0"/>
+			<ROI X0="2" Y0="3" Z0="1" T0="1" X1="5" Y1="6" Z1="4" T1="7"/>
 		</DisplayOptions>
 		<StageLabel Name="Name7" X="3.14159E0" Y="3.14159E0" Z="3.14159E0"/>
 		<PlateRef ID="urn:lsid:-.-:Plate:1" Well="A0" Sample="0"/>
