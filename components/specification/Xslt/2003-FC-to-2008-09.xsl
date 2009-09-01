@@ -551,13 +551,20 @@
 	<!-- 
 	In Bin:BinData add Length attribute.
 	-->
-	<xsl:template match="Bin:BinData">
+	<xsl:template match="Bin:BinData" mode="OnlyBinData">
 		<xsl:element name="Bin:BinData" namespace="{$newBINNS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:variable name="contentLength" select="."/>
 			<xsl:attribute name="Length"><xsl:value-of select="string-length($contentLength)"/></xsl:attribute>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	Skip BinData
+	-->
+	<xsl:template match="Bin:BinData" mode="OnlyTiffData">
+		<xsl:comment>Skip BinData</xsl:comment>
 	</xsl:template>
 
 	<!-- 
@@ -651,6 +658,92 @@
 			<xsl:for-each select="* [local-name(.) = 'OTF']">
 				<xsl:apply-templates select="."/>
 			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	Convert Pixels
+	-->
+	<xsl:template match="OME:Pixels">
+		<xsl:element name="Pixels" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*[not(local-name(.)='PixelType')]"/>
+			<xsl:for-each select="@* [name() = 'PixelType']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:call-template name="transformEnumerationValue">
+						<xsl:with-param name="mappingName" select="'PixelsPixelType'"/>
+						<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+					</xsl:call-template>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="ancestor::OME:Image">
+				<xsl:for-each select="@* [name() = 'PixelSizeX']">
+					<xsl:attribute name="PhysicalSizeX">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="@* [name() = 'PixelSizeY']">
+					<xsl:attribute name="PhysicalSizeY">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="@* [name() = 'PixelSizeZ']">
+					<xsl:attribute name="PhysicalSizeZ">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="@* [name() = 'TimeIncrement']">
+					<xsl:attribute name="TimeIncrement">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="@* [name() = 'WaveStart']">
+					<xsl:attribute name="WaveStart">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="@* [name() = 'WaveIncrement']">
+					<xsl:attribute name="WaveIncrement">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+			</xsl:for-each>
+			<xsl:choose>
+				<xsl:when test="local-name(*[1])='BinData'">
+					<xsl:apply-templates select="node()" mode="OnlyBinData"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="node()" mode="OnlyTiffData"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	Convert TiffData
+	-->
+	<xsl:template match="OME:TiffData" mode="OnlyTiffData">
+		<xsl:element name="TiffData" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	Skip TiffData
+	-->
+	<xsl:template match="OME:TiffData" mode="OnlyBinData">
+		<xsl:comment>Skip TiffData</xsl:comment>
+	</xsl:template>
+
+	<!-- 
+	Convert Feature
+	-->
+	<xsl:template match="OME:Feature">
+		<xsl:element name="Region" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*[not(local-name(.)='ID')]"/>
+			<xsl:for-each select="@* [name() = 'ID']">
+				<xsl:attribute name="ID">Region:<xsl:value-of select="."/></xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 

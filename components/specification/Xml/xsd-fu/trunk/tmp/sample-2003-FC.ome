@@ -99,6 +99,11 @@
 		<Filter ID="urn:lsid:-.-:Filter:3">
 				<FilterSet Manufacturer="Manufacturer12" Model="Model12" LotNumber="LotNumber2"/>
 		</Filter>
+		<Filter ID="urn:lsid:-.-:Filter:4">
+			<ExFilter Manufacturer="Manufacturer10-1b" Model="Model10-1b" LotNumber="LotNumber0-1b" Type="BandPass"/>
+			<Dichroic Manufacturer="Manufacturer10-2b" Model="Model10-2b" LotNumber="LotNumber0-2b"/>
+			<EmFilter Manufacturer="Manufacturer10-3b" Model="Model10-3b" LotNumber="LotNumber0-3b" Type="LongPass"/>
+		</Filter>
 		<OTF ID="urn:lsid:-.-:OTF:1" PixelType="bit" OpticalAxisAvrg="false" SizeX="2" SizeY="2">
 			<ObjectiveRef ID="urn:lsid:-.-:Objective:1"/>
 			<FilterRef ID="urn:lsid:-.-:Filter:1"/>
@@ -108,14 +113,14 @@
 		</OTF>
 		<OTF ID="urn:lsid:-.-:OTF:1" PixelType="bit" OpticalAxisAvrg="false" SizeX="2" SizeY="2">
 			<ObjectiveRef ID="urn:lsid:-.-:Objective:1"/>
-			<FilterRef ID="urn:lsid:-.-:Filter:1"/>
+			<FilterRef ID="urn:lsid:-.-:Filter:4"/>
 			<Bin:BinaryFile FileName="FileName1" Size="0">
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 			</Bin:BinaryFile>
 		</OTF>
 		<OTF ID="urn:lsid:-.-:OTF:1" PixelType="bit" OpticalAxisAvrg="false" SizeX="2" SizeY="2">
 			<ObjectiveRef ID="urn:lsid:-.-:Objective:1"/>
-			<FilterRef ID="urn:lsid:-.-:Filter:1"/>
+			<FilterRef ID="urn:lsid:-.-:Filter:2"/>
 			<Bin:BinaryFile FileName="FileName2" Size="0">
 				<Bin:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF1234567890ABCDEF12345678" Compression="none"/>
 			</Bin:BinaryFile>
@@ -171,7 +176,7 @@
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 		</Pixels>
-		<Pixels ID="urn:lsid:-.-:Pixels:1" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
+		<Pixels ID="urn:lsid:-.-:Pixels:1" DimensionOrder="XYZCT" PixelType="Uint8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
 			 SizeC="2" SizeT="2">
 				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0"/>
 				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0"/>
