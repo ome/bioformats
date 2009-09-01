@@ -551,6 +551,18 @@
 	<!-- 
 	In Bin:BinData add Length attribute.
 	-->
+	<xsl:template match="Bin:BinData">
+		<xsl:element name="Bin:BinData" namespace="{$newBINNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:variable name="contentLength" select="."/>
+			<xsl:attribute name="Length"><xsl:value-of select="string-length($contentLength)"/></xsl:attribute>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	In Bin:BinData add Length attribute.
+	-->
 	<xsl:template match="Bin:BinData" mode="OnlyBinData">
 		<xsl:element name="Bin:BinData" namespace="{$newBINNS}">
 			<xsl:apply-templates select="@*"/>
