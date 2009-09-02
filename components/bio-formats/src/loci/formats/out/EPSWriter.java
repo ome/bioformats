@@ -71,7 +71,11 @@ public class EPSWriter extends FormatWriter {
     int height = meta.getPixelsSizeY(series, 0).intValue();
     int type =
       FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
-    int nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    if (channels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int nChannels = channels == null ? 1 : channels.intValue();
 
     if (!DataTools.containsValue(getPixelTypes(), type)) {
       throw new FormatException("Unsupported image type '" +

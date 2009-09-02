@@ -80,7 +80,11 @@ public class APNGWriter extends FormatWriter {
       FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0)));
 
     boolean indexed = getColorModel() instanceof IndexColorModel;
-    int nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    if (channels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int nChannels = channels == null ? 1 : channels.intValue();
     int width = meta.getPixelsSizeX(series, 0).intValue();
     int height = meta.getPixelsSizeY(series, 0).intValue();
 

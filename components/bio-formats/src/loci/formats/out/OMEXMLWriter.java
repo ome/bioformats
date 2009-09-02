@@ -117,8 +117,11 @@ public class OMEXMLWriter extends FormatWriter {
     int bytes = FormatTools.getBytesPerPixel(pixelType);
     options.bitsPerSample = bytes * 8;
 
-    int nChannels =
-      retrieve.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
+    if (channels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int nChannels = channels == null ? 1 : channels.intValue();
 
     for (int i=0; i<nChannels; i++) {
       byte[] b = ImageTools.splitChannels(buf, i, nChannels, bytes, false,

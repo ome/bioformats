@@ -67,8 +67,11 @@ public class JPEG2000Writer extends FormatWriter {
     int height = retrieve.getPixelsSizeY(series, 0).intValue();
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0)));
-    int nChannels =
-      retrieve.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
+    if (channels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int nChannels = channels == null ? 1 : channels.intValue();
 
     out = new RandomAccessOutputStream(currentId);
 

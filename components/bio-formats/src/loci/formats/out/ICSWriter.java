@@ -68,8 +68,11 @@ public class ICSWriter extends FormatWriter {
     int pixelType =
       FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int rgbChannels =
-      meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    if (channels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int rgbChannels = channels == null ? 1 : channels.intValue();
 
     if (!initialized) {
       initialized = true;

@@ -389,9 +389,6 @@ public final class MetadataTools {
     if (src.getPixelsSizeZ(n, 0) == null) {
       throw new FormatException("SizeZ #" + n + " is null");
     }
-    if (src.getLogicalChannelSamplesPerPixel(n, 0) == null) {
-      throw new FormatException("SamplesPerPixel #" + n + " is null");
-    }
   }
 
   /**

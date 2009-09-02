@@ -126,7 +126,11 @@ public class LegacyQTWriter extends FormatWriter {
     MetadataTools.verifyMinimumPopulated(r, series);
     int width = r.getPixelsSizeX(series, 0).intValue();
     int height = r.getPixelsSizeY(series, 0).intValue();
-    int c = r.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer channels = r.getLogicalChannelSamplesPerPixel(series, 0);
+    if (channels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int c = channels == null ? 1 : channels.intValue();
     int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
     int bpp = FormatTools.getBytesPerPixel(type);
     boolean little = !r.getPixelsBigEndian(series, 0).booleanValue();

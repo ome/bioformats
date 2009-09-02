@@ -85,7 +85,11 @@ public abstract class ImageIOWriter extends FormatWriter {
     int height = meta.getPixelsSizeY(series, 0).intValue();
     int type =
       FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
-    int channels = meta.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    if (nChannels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int channels = nChannels == null ? 1 : nChannels.intValue();
     boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
 
     BufferedImage image = AWTImageTools.makeImage(buf, width, height, channels,

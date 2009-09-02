@@ -148,7 +148,11 @@ public class TiffWriter extends FormatWriter {
 
     int width = retrieve.getPixelsSizeX(series, 0).intValue();
     int height = retrieve.getPixelsSizeY(series, 0).intValue();
-    int c = retrieve.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
+    if (channels == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int c = channels == null ? 1 : channels.intValue();
     int type =
       FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0));
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);

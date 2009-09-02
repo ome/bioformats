@@ -187,7 +187,11 @@ public class QTWriter extends FormatWriter {
     int bytesPerPixel =
       FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
     int pad = ((4 - (width % 4)) % 4) * bytesPerPixel;
-    int nChannels = r.getLogicalChannelSamplesPerPixel(series, 0).intValue();
+    Integer samples = r.getLogicalChannelSamplesPerPixel(series, 0);
+    if (samples == null) {
+      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+    }
+    int nChannels = samples == null ? 1 : samples.intValue();
 
     // invert each pixel
     // this will makes the colors look right in other readers (e.g. xine),
