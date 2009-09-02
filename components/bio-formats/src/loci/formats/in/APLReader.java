@@ -159,19 +159,7 @@ public class APLReader extends FormatReader {
     int width = DataTools.indexOf(columnNames, "X-Resolution");
     int height = DataTools.indexOf(columnNames, "Y-Resolution");
     int imageName = DataTools.indexOf(columnNames, "Image Name");
-
-    int seriesCount = (rows.size() - 1) / 3;
-    if (rows.size() > 1 && rows.size() < 4) {
-      seriesCount = 1;
-    }
-
-    core = new CoreMetadata[seriesCount];
-    for (int i=0; i<seriesCount; i++) {
-      core[i] = new CoreMetadata();
-    }
-    tiffFiles = new String[seriesCount];
-    xmlFiles = new String[seriesCount];
-    tiffReaders = new MinimalTiffReader[seriesCount];
+    int zLayers = DataTools.indexOf(columnNames, "Z-Layers");
 
     String parentDirectory = mtb.substring(0, mtb.lastIndexOf(File.separator));
 
@@ -190,15 +178,55 @@ public class APLReader extends FormatReader {
       throw new FormatException("Could not find a directory with TIFF files.");
     }
 
+    Vector<Integer> seriesIndexes = new Vector<Integer>();
+
+    for (int i=1; i<rows.size(); i++) {
+      String file = rows.get(i)[filename].trim();
+      if (file.equals("")) continue;
+      file = topDirectory + File.separator + file;
+      if (new Location(file).exists() && file.toLowerCase().endsWith(".tif")) {
+        seriesIndexes.add(new Integer(i));
+      }
+    }
+    int seriesCount = seriesIndexes.size();
+
+    core = new CoreMetadata[seriesCount];
     for (int i=0; i<seriesCount; i++) {
-      int firstRow = rows.size() < 4 ? i * 3 + 1 : i * 3 + 2;
-      int secondRow = rows.size() < 4 ? i * 3 + 2 : i * 3 + 3;
+      core[i] = new CoreMetadata();
+    }
+    tiffFiles = new String[seriesCount];
+    xmlFiles = new String[seriesCount];
+    tiffReaders = new MinimalTiffReader[seriesCount];
+
+    for (int i=0; i<seriesCount; i++) {
+      int secondRow = seriesIndexes.get(i).intValue();
+      int firstRow = secondRow - 1;
       String[] row2 = rows.get(firstRow);
       String[] row3 = rows.get(secondRow);
 
-      core[i].sizeZ = Integer.parseInt(row3[frames]);
-      core[i].sizeT = 1;
+      try {
+        core[i].sizeT = Integer.parseInt(row3[frames]);
+      }
+      catch (NumberFormatException e) {
+        core[i].sizeT = 1;
+      }
+      try {
+        core[i].sizeZ = Integer.parseInt(row3[zLayers]);
+      }
+      catch (NumberFormatException e) {
+        core[i].sizeZ = 1;
+      }
+      try {
+        core[i].sizeC = Integer.parseInt(row3[colorChannels]);
+      }
+      catch (NumberFormatException e) {
+        core[i].sizeC = 1;
+      }
       core[i].dimensionOrder = "XYCZT";
+
+      if (core[i].sizeZ == 0) core[i].sizeZ = 1;
+      if (core[i].sizeC == 0) core[i].sizeC = 1;
+      if (core[i].sizeT == 0) core[i].sizeT = 1;
 
       xmlFiles[i] = topDirectory + File.separator + row2[filename];
       tiffFiles[i] = topDirectory + File.separator + row3[filename];
@@ -210,13 +238,18 @@ public class APLReader extends FormatReader {
 
       core[i].sizeX = tiffReaders[i].getSizeX();
       core[i].sizeY = tiffReaders[i].getSizeY();
-      core[i].sizeC = tiffReaders[i].getSizeC();
       core[i].rgb = tiffReaders[i].isRGB();
       core[i].pixelType = tiffReaders[i].getPixelType();
       core[i].littleEndian = tiffReaders[i].isLittleEndian();
       core[i].indexed = tiffReaders[i].isIndexed();
       core[i].falseColor = tiffReaders[i].isFalseColor();
-      core[i].imageCount = core[i].sizeZ * (core[i].rgb ? 1 : core[i].sizeC);
+      core[i].imageCount = tiffReaders[i].getImageCount();
+      if (core[i].sizeZ * core[i].sizeT * (core[i].rgb ? 1 : core[i].sizeC) !=
+        core[i].imageCount)
+      {
+        core[i].sizeT = core[i].imageCount / (core[i].rgb ? 1 : core[i].sizeC);
+        core[i].sizeZ = 1;
+      }
     }
 
     MetadataStore store =
@@ -224,20 +257,20 @@ public class APLReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<seriesCount; i++) {
-      String[] row3 = rows.get(rows.size() < 4 ? i * 3 + 2 : i * 3 + 3);
+      String[] row = rows.get(seriesIndexes.get(i).intValue());
 
       // populate Image data
       MetadataTools.setDefaultCreationDate(store, mtb, i);
-      store.setImageName(row3[imageName], i);
+      store.setImageName(row[imageName], i);
 
       // populate Dimensions data
 
       // calculate physical X and Y sizes
 
-      float realWidth = Float.parseFloat(row3[calibratedWidth]);
-      float realHeight = Float.parseFloat(row3[calibratedHeight]);
+      float realWidth = Float.parseFloat(row[calibratedWidth]);
+      float realHeight = Float.parseFloat(row[calibratedHeight]);
 
-      String units = row3[calibrationUnit];
+      String units = row[calibrationUnit];
 
       float px = realWidth / core[i].sizeX;
       float py = realHeight / core[i].sizeY;

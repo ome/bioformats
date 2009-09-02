@@ -587,8 +587,8 @@ public class TiffParser {
     int bufferSizeSamplesPerPixel = samplesPerPixel;
     if (ifd.getPlanarConfiguration() == 2) bufferSizeSamplesPerPixel = 1;
     int bpp = ifd.getBytesPerSample()[0];
-    int bufferSize = (int) tileWidth * (int) tileLength
-                     * bufferSizeSamplesPerPixel * bpp;
+    int bufferSize = (int) tileWidth * (int) tileLength *
+      bufferSizeSamplesPerPixel * bpp;
     if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
       cachedTileBuffer = new byte[bufferSize];
     }
@@ -664,6 +664,7 @@ public class TiffParser {
 
     for (int j=0; j<bytes.length / realBytes; j++) {
       int value = bb.getBits(bitsPerSample);
+      if (littleEndian) value = DataTools.swap(value) >> (32 - bitsPerSample);
 
       if (photoInterp == PhotoInterp.WHITE_IS_ZERO) {
         value = (int) (Math.pow(2, bitsPerSample) - 1 - value);
