@@ -311,6 +311,7 @@ public class LIFReader extends FormatReader {
       in.seek(in.getFilePointer() + descrLength + blockLength);
     }
     initMetadata(xml);
+    xml = null;
   }
 
   // -- Helper methods --

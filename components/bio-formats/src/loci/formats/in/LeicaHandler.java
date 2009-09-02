@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -71,6 +72,8 @@ public class LeicaHandler extends DefaultHandler {
   private boolean canParse = true;
   private long firstStamp = 0;
 
+  private Hashtable<Integer, String> bytesPerAxis;
+
   // -- Constructor --
 
   public LeicaHandler(MetadataStore store) {
@@ -83,6 +86,7 @@ public class LeicaHandler extends DefaultHandler {
     xPos = new Vector<Float>();
     yPos = new Vector<Float>();
     zPos = new Vector<Float>();
+    bytesPerAxis = new Hashtable<Integer, String>();
   }
 
   // -- LeicaHandler API methods --
@@ -115,7 +119,6 @@ public class LeicaHandler extends DefaultHandler {
         if (coreMeta.sizeT == 0) coreMeta.sizeT = 1;
 
         coreMeta.orderCertain = true;
-        coreMeta.dimensionOrder = "XYCZT";
         coreMeta.metadataComplete = true;
         coreMeta.littleEndian = true;
         coreMeta.interleaved = coreMeta.rgb;
@@ -123,6 +126,22 @@ public class LeicaHandler extends DefaultHandler {
         if (!coreMeta.rgb) coreMeta.imageCount *= coreMeta.sizeC;
         coreMeta.indexed = !coreMeta.rgb;
         coreMeta.falseColor = true;
+
+        Integer[] bytes = bytesPerAxis.keySet().toArray(new Integer[0]);
+        Arrays.sort(bytes);
+        coreMeta.dimensionOrder = "XY";
+        for (Integer nBytes : bytes) {
+          String axis = bytesPerAxis.get(nBytes);
+          if (coreMeta.dimensionOrder.indexOf(axis) == -1) {
+            coreMeta.dimensionOrder += axis;
+          }
+        }
+        String[] axes = new String[] {"Z", "C", "T"};
+        for (String axis : axes) {
+          if (coreMeta.dimensionOrder.indexOf(axis) == -1) {
+            coreMeta.dimensionOrder += axis;
+          }
+        }
 
         core.setElementAt(coreMeta, numDatasets);
       }
@@ -230,6 +249,10 @@ public class LeicaHandler extends DefaultHandler {
       count++;
       numChannels++;
       lutNames.add(attributes.getValue("LUTName"));
+      int bytes = Integer.parseInt(attributes.getValue("BytesInc"));
+      if (bytes > 0) {
+        bytesPerAxis.put(new Integer(bytes), "C");
+      }
     }
     else if (qName.equals("DimensionDescription")) {
       int len = Integer.parseInt(attributes.getValue("NumberOfElements"));
@@ -295,6 +318,7 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeZ = len;
             store.setDimensionsPhysicalSizeZ(physicalSize, numDatasets, 0);
           }
+          bytesPerAxis.put(new Integer(nBytes), "Z");
           break;
         case 4: // T axis
           if (coreMeta.sizeY == 0) {
@@ -307,6 +331,7 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeT = len;
             store.setDimensionsTimeIncrement(physicalSize, numDatasets, 0);
           }
+          bytesPerAxis.put(new Integer(nBytes), "T");
           break;
         default:
           extras *= len;
