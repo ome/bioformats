@@ -394,6 +394,19 @@ Rename attribute OMEName into UserName
    </xsl:element>
   </xsl:template>
 
+	<!-- 
+	In Bin:BinData add BigEndian attribute.
+	This template is for BinData inside BinaryFile inside OTF
+	-->
+	<xsl:template match="OME:OTF/Bin:BinaryFile/Bin:BinData">
+		<xsl:element name="Bin:BinData" namespace="{$newBINNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:attribute name="BigEndian">false</xsl:attribute>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+
 <!-- Check the value of the type attribute -->
   <xsl:template match="OME:Detector">
     <xsl:element name="Detector" namespace="{$newOMENS}">
