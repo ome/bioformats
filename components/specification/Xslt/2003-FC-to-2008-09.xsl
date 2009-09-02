@@ -268,11 +268,16 @@
 							</xsl:call-template>
 						</xsl:attribute>
 					</xsl:when>
-					<xsl:when test="local-name(.)='NDFilter'">
+					<xsl:when test="local-name(.)='NDfilter'">
 						<xsl:attribute name="NdFilter">
 							<xsl:value-of select="."/>
 						</xsl:attribute>
 					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
 			<xsl:for-each select="* [not(name() = 'AuxLightSourceRef')]">
@@ -898,6 +903,59 @@
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
+
+	<!--
+	Rename ChannelInfo, remove element AuxLightSourceRef, process enums
+	-->
+	<xsl:template match="OME:Image">
+		<xsl:element name="Image" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='ID'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='Name'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='DefaultPixels'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:variable name="defaultPixels">
+				<xsl:for-each select="@*[name(.) = 'DefaultPixels']">
+					<xsl:value-of select="."/>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="string-length($defaultPixels) = 0">
+					<xsl:variable name="firstPixels">
+						<xsl:for-each select="* [name(.) = 'Pixels']">
+							<xsl:value-of select="@ID"/>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:if test="not(string-length($firstPixels) = 0)">
+						<xsl:attribute name="AcquiredPixels">
+							<xsl:value-of select="$firstPixels"/>
+						</xsl:attribute>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="AcquiredPixels">
+						<xsl:value-of select="$defaultPixels"/>
+					</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
 
 	<!-- Rewriting all namespaces -->
 

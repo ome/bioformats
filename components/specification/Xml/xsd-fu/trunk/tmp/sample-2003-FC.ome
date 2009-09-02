@@ -58,13 +58,13 @@
 				<Pump ID="urn:lsid:-.-:LightSource:1"/>
 			</Laser>
 		</LightSource>
-		<LightSource ID="urn:lsid:-.-:LightSource:1" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
+		<LightSource ID="urn:lsid:-.-:LightSource:2" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
 			<Filament Type="Incandescent" Power="3.14159E0"/>
 		</LightSource>
-		<LightSource ID="urn:lsid:-.-:LightSource:1" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
+		<LightSource ID="urn:lsid:-.-:LightSource:3" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
 			<Arc Type="Hg-Xe" Power="3.14159E0"/>
 		</LightSource>
-		<LightSource ID="urn:lsid:-.-:LightSource:1" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3">
+		<LightSource ID="urn:lsid:-.-:LightSource:4" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3">
 			<Laser Type="Excimer" Medium="Ti-Sapphire" Wavelength="2" FrequencyDoubled="true" Tunable="false" Pulse="CW"
 				 Power="3.14159E0">
 				<Pump ID="urn:lsid:-.-:LightSource:1"/>
@@ -72,19 +72,19 @@
 		</LightSource>
 		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="CCD" Manufacturer="Manufacturer4"
 			 Model="Model4" SerialNumber="SerialNumber4"/>
-		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="Analog-Video" Manufacturer="Manufacturer5"
+		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:2" Type="Analog-Video" Manufacturer="Manufacturer5"
 			 Model="Model5" SerialNumber="SerialNumber5"/>
-		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:1" Type="Life-time-Imaging" Manufacturer="Manufacturer6"
+		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" ID="urn:lsid:-.-:Detector:3" Type="Life-time-Imaging" Manufacturer="Manufacturer6"
 			 Model="Model6" SerialNumber="SerialNumber6"/>
 		<Objective ID="urn:lsid:-.-:Objective:1" Manufacturer="Manufacturer7" Model="Model7" SerialNumber="SerialNumber7">
 			<LensNA>3.14159E0</LensNA>
 			<Magnification>3.14159E0</Magnification>
 		</Objective>
-		<Objective ID="urn:lsid:-.-:Objective:1" Manufacturer="Manufacturer8" Model="Model8" SerialNumber="SerialNumber8">
+		<Objective ID="urn:lsid:-.-:Objective:2" Manufacturer="Manufacturer8" Model="Model8" SerialNumber="SerialNumber8">
 			<LensNA>3.14159E0</LensNA>
 			<Magnification>3.14159E0</Magnification>
 		</Objective>
-		<Objective ID="urn:lsid:-.-:Objective:1" Manufacturer="Manufacturer9" Model="Model9" SerialNumber="SerialNumber9">
+		<Objective ID="urn:lsid:-.-:Objective:3" Manufacturer="Manufacturer9" Model="Model9" SerialNumber="SerialNumber9">
 			<LensNA>3.14159E0</LensNA>
 			<Magnification>3.14159E0</Magnification>
 		</Objective>
@@ -111,14 +111,14 @@
 				<Bin:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF1234567890ABCDEF12345678" Compression="none"/>
 			</Bin:BinaryFile>
 		</OTF>
-		<OTF ID="urn:lsid:-.-:OTF:1" PixelType="bit" OpticalAxisAvrg="false" SizeX="2" SizeY="2">
+		<OTF ID="urn:lsid:-.-:OTF:2" PixelType="bit" OpticalAxisAvrg="false" SizeX="2" SizeY="2">
 			<ObjectiveRef ID="urn:lsid:-.-:Objective:1"/>
 			<FilterRef ID="urn:lsid:-.-:Filter:4"/>
 			<Bin:BinaryFile FileName="FileName1" Size="0">
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 			</Bin:BinaryFile>
 		</OTF>
-		<OTF ID="urn:lsid:-.-:OTF:1" PixelType="bit" OpticalAxisAvrg="false" SizeX="2" SizeY="2">
+		<OTF ID="urn:lsid:-.-:OTF:3" PixelType="bit" OpticalAxisAvrg="false" SizeX="2" SizeY="2">
 			<ObjectiveRef ID="urn:lsid:-.-:Objective:1"/>
 			<FilterRef ID="urn:lsid:-.-:Filter:2"/>
 			<Bin:BinaryFile FileName="FileName2" Size="0">
@@ -176,7 +176,7 @@
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 		</Pixels>
-		<Pixels ID="urn:lsid:-.-:Pixels:1" DimensionOrder="XYZCT" PixelType="Uint8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
+		<Pixels ID="urn:lsid:-.-:Pixels:2" DimensionOrder="XYZCT" PixelType="Uint8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
 			 SizeC="2" SizeT="2">
 				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0"/>
 				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0"/>
@@ -188,7 +188,7 @@
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 		</Pixels>
-		<Pixels ID="urn:lsid:-.-:Pixels:1" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
+		<Pixels ID="urn:lsid:-.-:Pixels:3" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
 			 SizeC="2" SizeT="2">
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>
 				<Bin:BinData Compression="none">ZGVmYXVsdA==</Bin:BinData>

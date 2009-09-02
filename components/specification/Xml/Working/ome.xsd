@@ -1322,19 +1322,13 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
-					<xsd:attribute name="LensNA" use="optional">
+					<xsd:attribute name="LensNA" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
 								The numerical aperture of the lens expressed as a floating point (real) number.
 								Expected range 0.02 - 1.5
 							</xsd:documentation>
 						</xsd:annotation>
-						<xsd:simpleType>
-							<xsd:restriction base="xsd:float">
-								<xsd:minInclusive value="0.02"/>
-								<xsd:maxInclusive value="1.5"/>
-							</xsd:restriction>
-						</xsd:simpleType>
 					</xsd:attribute>
 					<xsd:attribute name="NominalMagnification" use="optional" type="xsd:integer">
 						<xsd:annotation>
