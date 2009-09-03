@@ -63,8 +63,14 @@
 	</Group>
 	<Instrument ID="urn:lsid:-.-:Instrument:1">
 		<Microscope Type="Upright" Manufacturer="Manufacturer0" Model="Model0" SerialNumber="SerialNumber0"/>
-		<LightSource ID="urn:lsid:-.-:LightSource:1" Power="3.14159E0" Manufacturer="Manufacturer1" Model="Model1" SerialNumber="SerialNumber1">
-			<Arc Type="Hg" Power="3.14159E0"/>
+		<LightSource ID="urn:lsid:-.-:LightSource:1" Power="1" Manufacturer="Manufacturer1" Model="Model1" SerialNumber="SerialNumber1">
+			<Arc Type="Hg" Power="2"/>
+		</LightSource>
+		<LightSource ID="urn:lsid:-.-:LightSource:2" Power="3" Manufacturer="Manufacturer1" Model="Model1" SerialNumber="SerialNumber1">
+			<Arc Type="Hg"/>
+		</LightSource>
+		<LightSource ID="urn:lsid:-.-:LightSource:3" Manufacturer="Manufacturer1" Model="Model1" SerialNumber="SerialNumber1">
+			<Arc Type="Hg" Power="4"/>
 		</LightSource>
 		<Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
 			ID="urn:lsid:-.-:Detector:1" Type="CCD" Manufacturer="Manufacturer5" Model="Model5" SerialNumber="SerialNumber5"/>

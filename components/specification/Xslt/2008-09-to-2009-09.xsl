@@ -1276,7 +1276,7 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
 
   <!-- Default processing -->
   <xsl:template match="@*|node()">
