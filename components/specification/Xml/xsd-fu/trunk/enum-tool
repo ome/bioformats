@@ -49,20 +49,23 @@ Usage: %s (-t | -x | -d <file>) [path/to/ome.xsd]
 Toolkit for working with enumerations from an OME XML Schema definition.
 
 Options:
-  -t			Dumps all enumerations in a visual tree
-  -x			Displays the XPath expressions for each enumeration
-  -d file		Diffs enumeration possible values from an XPath
-			configuration file. This file is expected to have two sections
-			the first containing the "old" and "new" XSD files and the
-			second containing the XPath mappings. (See: example.cfg)
+  -t		Dumps all enumerations in a visual tree
+  -x		Displays the XPath expressions for each enumeration
+  -d file	Diffs enumeration possible values from an XPath configuration
+		file. This file is expected to have two sections the first
+		containing the "old" and "new" XSD files and the second
+		containing the XPath mappings. (See: example.cfg)
+  -n namespace	For -t, -x sets the XSD namespace.
+
+Default namespace: "%s"
 
 Examples:
   %s -t schemas/ome.xsd
-  %s -x schemas/ome.xsd
+  %s -n 'xs:' -x schemas/ome.xsd
   %s -d example.cfg
 
 Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
-	(error, cmd, cmd, cmd, cmd)
+	(error, cmd, DEFAULT_NAMESPACE, cmd, cmd, cmd)
 	sys.exit(2)
 	
 def resolve_parents(model, element_name):
@@ -151,11 +154,12 @@ def dump_xpath(model):
 	for xpath in build_xpaths(model).keys():
 		print xpath
 
-def diff_enumerations(old, new, xpaths):
+def diff_enumerations(old, old_ns, new, new_ns, xpaths):
 	"""Diffs all enumerations from two XSD files."""
-	old_model = parseXmlSchema(old, DEFAULT_NAMESPACE)
-	new_model = parseXmlSchema(new, DEFAULT_NAMESPACE)
+	old_model = parseXmlSchema(old, old_ns)
 	old_xpaths = build_xpaths(old_model)
+	resetGenerateDS()
+	new_model = parseXmlSchema(new, new_ns)
 	new_xpaths = build_xpaths(new_model)
 	for old_xpath, new_xpath in xpaths.items():
 		old_values = old_xpaths[old_xpath]['property'].possibleValues
@@ -166,7 +170,7 @@ def diff_enumerations(old, new, xpaths):
 
 if __name__ == '__main__':
 	try:
-		options, args = getopt(sys.argv[1:], "txd:")
+		options, args = getopt(sys.argv[1:], "txd:n:")
 	except GetoptError, (msg, opt):
 		usage(msg)
 
@@ -181,13 +185,23 @@ if __name__ == '__main__':
 			do_xpath = True
 		if option == "-d":
 			config = argument
+		if option == "-n":
+			namespace = argument
 			
 	if config is not None:
 		config = ConfigObj(config)
 		old = config['schemas']['old']
+		try:
+			old_ns = config['schemas']['oldNS']
+		except KeyError:
+			old_ns = DEFAULT_NAMESPACE
 		new = config['schemas']['new']
+		try:
+			new_ns = config['schemas']['newNS']
+		except KeyError:
+			new_ns = DEFAULT_NAMESPACE
 		xpaths = config['xpaths']
-		diff_enumerations(old, new, xpaths)
+		diff_enumerations(old, old_ns, new, new_ns, xpaths)
 		sys.exit(0)
 
 	if len(args) != 1:

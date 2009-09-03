@@ -27,6 +27,7 @@ an OME XML (http://www.ome-xml.org) XSD document.
 #  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #  SUCH DAMAGE.
 
+import generateDS.generateDS
 import logging
 import re
 import os
@@ -515,3 +516,48 @@ def parseXmlSchema(filename, namespace=DEFAULT_NAMESPACE):
 			"No model objects found, have you set the correct namespace?")
 	root.annotate()
 	return OMEModel.process(ch)
+
+def resetGenerateDS():
+	"""
+	Since the generateDS module contains many globals and package scoped
+	variables we need the ability to reset its state if we are to re-use
+	it multiple times in the same process.
+	"""
+	generateDS.generateDS.GenerateProperties = 0
+	generateDS.generateDS.UseOldGetterSetter = 0
+	generateDS.generateDS.MemberSpecs = None
+	generateDS.generateDS.DelayedElements = []
+	generateDS.generateDS.DelayedElements_subclass = []
+	generateDS.generateDS.AlreadyGenerated = []
+	generateDS.generateDS.AlreadyGenerated_subclass = []
+	generateDS.generateDS.PostponedExtensions = []
+	generateDS.generateDS.ElementsForSubclasses = []
+	generateDS.generateDS.ElementDict = {}
+	generateDS.generateDS.Force = 0
+	generateDS.generateDS.Dirpath = []
+	generateDS.generateDS.ExternalEncoding = sys.getdefaultencoding()
+
+	generateDS.generateDS.NamespacesDict = {}
+	generateDS.generateDS.Targetnamespace = ""
+
+	generateDS.generateDS.NameTable = {
+		'type': 'type_',
+		'float': 'float_',
+	}
+	for kw in keyword.kwlist:
+		generateDS.generateDS.NameTable[kw] = '%sxx' % kw
+
+	generateDS.generateDS.SubclassSuffix = 'Sub'
+	generateDS.generateDS.RootElement = None
+	generateDS.generateDS.AttributeGroups = {}
+	generateDS.generateDS.SubstitutionGroups = {}
+	#
+	# SubstitutionGroups can also include simple types that are
+	#   not (defined) elements.  Keep a list of these simple types.
+	#   These are simple types defined at top level.
+	generateDS.generateDS.SimpleElementDict = {}
+	generateDS.generateDS.SimpleTypeDict = {}
+	generateDS.generateDS.ValidatorBodiesBasePath = None
+	generateDS.generateDS.UserMethodsPath = None
+	generateDS.generateDS.UserMethodsModule = None
+	generateDS.generateDS.XsdNameSpace = ''
