@@ -27,6 +27,7 @@ package loci.plugins.util;
 
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.ImageStatistics;
 
 import java.io.IOException;
 import java.util.Vector;
@@ -53,6 +54,9 @@ public class VirtualImagePlus extends ImagePlus {
 
   public VirtualImagePlus(String title, ImageStack stack) {
     super(title, stack);
+    // call getStatistics() to ensure that single-slice stacks have the
+    // correct pixel type
+    getStatistics();
   }
 
   // -- VirtualImagePlus API methods --
@@ -87,6 +91,21 @@ public class VirtualImagePlus extends ImagePlus {
       r.close();
     }
     catch (IOException e) { }
+  }
+
+  public ImageStatistics getStatistics(int mOptions, int nBins,
+    double histMin, double histMax)
+  {
+    if (this.ip instanceof RecordedImageProcessor) {
+      RecordedImageProcessor currentProc = (RecordedImageProcessor) this.ip;
+      this.ip = currentProc.getChild();
+      setProcessor(getTitle(), this.ip);
+      ImageStatistics s =
+        super.getStatistics(mOptions, nBins, histMin, histMax);
+      this.ip = currentProc;
+      return s;
+    }
+    return super.getStatistics(mOptions, nBins, histMin, histMax);
   }
 
 }
