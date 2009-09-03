@@ -64,8 +64,11 @@ public class IOTester {
     int left = data.length - middle - TAG.length();
     int rest = middle + TAG.length();
 
-    LogTools.println("Generating data: " + middle + " alphanumeric + " +
-      TAG.length() + " divider tag + " + left + " binary");
+    long middlePercent = 100L * middle / SIZE;
+    long leftPercent = 100L * left / SIZE;
+
+    LogTools.println("Generating data: " + middle + " (" + middlePercent +
+      "%) alphanumeric + " + left + " (" + leftPercent + "%) binary");
 
     long progress = 0;
     for (int i=0; i<data.length; i++) {
@@ -142,20 +145,7 @@ public class IOTester {
     long start = System.currentTimeMillis();
 
     RandomAccessInputStream in = new RandomAccessInputStream(filename);
-    StringBuilder buffer = new StringBuilder();
-    int tagLen = TAG.length();
-    int inputLen = (int) in.length();
-    for (int i=0; i<inputLen; i+=blockSize) {
-      int num = i + blockSize > inputLen ? inputLen - i : blockSize;
-      String s = in.readString(num);
-      buffer.append(s);
-      int match = buffer.indexOf(TAG, i == 0 ? i : i - tagLen);
-      if (match >= 0) {
-        in.seek(match + tagLen);
-        break;
-      }
-    }
-    long offset = in.getFilePointer();
+    long offset = in.findString(blockSize, TAG).length();
     in.close();
 
     long end = System.currentTimeMillis();

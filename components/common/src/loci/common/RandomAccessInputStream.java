@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 /**
@@ -42,6 +43,7 @@ import java.util.Hashtable;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/RandomAccessInputStream.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class RandomAccessInputStream extends InputStream implements DataInput {
 
@@ -49,6 +51,15 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Maximum size of the buffer used by the DataInputStream. */
   protected static final int MAX_OVERHEAD = 1048576;
+
+  /**
+   * Block size to use when searching through the stream.
+   * This value should not exceed MAX_OVERHEAD!
+   */
+  protected static final int DEFAULT_BLOCK_SIZE = 256 * 1024; // 256 KB
+
+  /** Maximum number of bytes to search when searching through the stream. */
+  protected static final int MAX_SEARCH_SIZE = 512 * 1024 * 1024; // 512 MB
 
   /** Maximum number of open files. */
   protected static final int MAX_FILES = 100;
@@ -185,17 +196,86 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /**
    * Reads a string ending with one of the characters in the given string.
-   * @see readCString()
-   * @see readLine()
+   *
+   * @see findString(String)
    */
   public String readString(String lastChars) throws IOException {
-    StringBuffer sb = new StringBuffer();
-    char c = readChar();
-    while (lastChars.indexOf(c) == -1 && getFilePointer() < length()) {
-      sb = sb.append(c);
-      c = readChar();
+    String[] terminators = new String[lastChars.length()];
+    for (int i=0; i<terminators.length; i++) {
+      terminators[i] = lastChars.substring(i, i + 1);
     }
-    return sb.toString();
+    return findString(terminators);
+  }
+
+  /**
+   * Reads a string ending with one of the given terminating substrings.
+   *
+   * @param terminators The strings for which to search.
+   *
+   * @return The string from the initial position through the end of the
+   *   terminating sequence, or through the end of the stream if no
+   *   terminating sequence is found.
+   */
+  public String findString(String... terminators) throws IOException {
+    return findString(DEFAULT_BLOCK_SIZE, terminators);
+  }
+
+  /**
+   * Reads a string ending with one of the given terminating substrings,
+   * using the specified block size for buffering.
+   *
+   * @param terminators The strings for which to search.
+   * @param blockSize The block size to use when reading bytes in chunks.
+   *
+   * @throws IOException If the maximum search length (512 MB) is exceeded.
+   *
+   * @return The string from the initial position through the end of the
+   *   terminating sequence, or through the end of the stream if no
+   *   terminating sequence is found.
+   */
+  public String findString(int blockSize, String... terminators)
+    throws IOException
+  {
+    StringBuilder out = new StringBuilder();
+    long startPos = getFilePointer();
+    long inputLen = length();
+    long maxLen = inputLen - startPos;
+    if (maxLen > MAX_SEARCH_SIZE) maxLen = MAX_SEARCH_SIZE;
+    boolean match = false;
+
+    InputStreamReader in = new InputStreamReader(this);
+    char[] buf = new char[blockSize];
+    int i = 0;
+    while (i < maxLen) {
+      long pos = startPos + i;
+      int num = blockSize;
+      if (pos + blockSize > inputLen) num = (int) (inputLen - pos);
+
+      // read block from stream
+      int r = in.read(buf, 0, blockSize);
+      if (r <= 0) throw new IOException("Cannot read from stream: " + r);
+
+      // append block to output
+      out.append(buf, 0, r);
+
+      // check output
+      for (String term : terminators) {
+        int tagLen = term.length();
+        int index = out.indexOf(term, i == 0 ? 0 : i - tagLen);
+        if (index >= 0) {
+          match = true;
+          seek(index + tagLen); // reset input stream to proper location
+          out.setLength(index + tagLen); // trim output
+          break;
+        }
+      }
+      if (match) break;
+      i += r;
+    }
+
+    if (!match) throw new IOException("Maximum search length reached.");
+
+    return out.toString();
   }
 
   // -- DataInput API methods --
@@ -248,18 +328,18 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read the next line of text from the input stream. */
   public String readLine() throws IOException {
-    return readString("\n");
+    return findString("\n");
   }
 
   /** Read a string of arbitrary length, terminated by a null char. */
   public String readCString() throws IOException {
-    return readString("\0");
+    return findString("\0");
   }
 
   /** Read a string of length n. */
   public String readString(int n) throws IOException {
     byte[] b = new byte[n];
-    read(b);
+    readFully(b);
     return new String(b);
   }
 

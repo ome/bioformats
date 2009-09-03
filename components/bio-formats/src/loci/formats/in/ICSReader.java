@@ -54,6 +54,9 @@ public class ICSReader extends FormatReader {
 
   // -- Constants --
 
+  /** Newline characters. */
+  public static final String NL = "\r\n";
+
   public static final String[] DATE_FORMATS = {
     "EEEE, MMMM dd, yyyy HH:mm:ss",
     "EEE dd MMMM yyyy HH:mm:ss",
@@ -283,8 +286,8 @@ public class ICSReader extends FormatReader {
 
     RandomAccessInputStream reader = new RandomAccessInputStream(icsId);
     reader.seek(0);
-    reader.readString("\r\n");
-    String line = reader.readString("\r\n");
+    reader.readString(NL);
+    String line = reader.readString(NL);
     boolean signed = false;
 
     StringBuffer textBlock = new StringBuffer();
@@ -517,7 +520,7 @@ public class ICSReader extends FormatReader {
           }
         }
       }
-      line = reader.readString("\r\n");
+      line = reader.readString(NL);
     }
     reader.close();
 
@@ -603,8 +606,8 @@ public class ICSReader extends FormatReader {
     gzip = (compression == null) ? false : compression.equals("gzip");
 
     if (versionTwo) {
-      String s = in.readString("\r\n");
-      while (!s.trim().equals("end")) s = in.readString("\r\n");
+      String s = in.readString(NL);
+      while (!s.trim().equals("end")) s = in.readString(NL);
     }
 
     offset = in.getFilePointer();
